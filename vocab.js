@@ -192,6 +192,16 @@
     half_life:     { label: '반감기', value: 'number', unit: true, speciesRequired: true },
     activity_level:{ label: '활성 정도', value: ['high', 'medium', 'low', 'none'], speciesRequired: true },
     ortholog_xref: { label: '다른 종의 대응 외부 ID', value: 'xref', speciesRequired: true },
+    copy_number:   { label: '세포당 분자 수', value: 'number', unit: true, speciesRequired: true },
+    compartment_volume: { label: '구획 부피 (세포 유형·위치별)', value: 'number', unit: true, speciesRequired: true },
+  },
+
+  // ===== 한계 종류 (Limitation & Constraint Registry) =====
+  // 모든 한계는 [Target | Type | Requirement] 로 등록한다. 새 종류는 사람이 검토해 추가한다.
+  gapTypes: {
+    Kinetic_Gap:       { label: '속도·친화도·시간 상수 공백', aliases: ['kinetic'], note: '반응 속도(kcat·Km), 결합 친화도(Kd), 반감기 같은 시간 정보가 없어 경쟁·지속·종료를 정할 수 없는 곳.' },
+    Concentration_Gap: { label: '농도·부피·질량 수지 공백', aliases: ['concentration'], note: '몰 농도, 세포당 분자 수, 구획 부피, 질량 수지가 없어 시작량을 기본값·무한 풀로 둔 곳.' },
+    Structural_Gap:    { label: '구조·위상·해상도 공백', aliases: ['structural'], note: '3차원 좌표, 잔기 번호, 화학량(구성 비), 막 위상을 모르거나 다른 분자에서 빌려 온 곳.' },
   },
 
   // ===== 근거 수준 =====

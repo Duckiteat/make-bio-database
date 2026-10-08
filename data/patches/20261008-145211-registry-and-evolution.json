@@ -1,0 +1,1087 @@
+{
+  "applied_at": "2026-10-08T14:52:11.344Z",
+  "result": {
+    "added": [
+      "T000104",
+      "T000105",
+      "T000106",
+      "T000107",
+      "T000108",
+      "T000109",
+      "T000110",
+      "T000111",
+      "T000112",
+      "T000113",
+      "T000114",
+      "D000106",
+      "D000107",
+      "D000108",
+      "D000109",
+      "D000110",
+      "D000111",
+      "D000112",
+      "D000113",
+      "D000114",
+      "D000115",
+      "D000116",
+      "L000001",
+      "L000002",
+      "L000003",
+      "L000004",
+      "L000005",
+      "L000006",
+      "L000007",
+      "L000008",
+      "L000009",
+      "L000010",
+      "L000011",
+      "L000012",
+      "L000013",
+      "L000014",
+      "L000015"
+    ],
+    "updated": [
+      "D000100"
+    ],
+    "removed": [],
+    "mapped": [
+      {
+        "from": "신호 전달 경로",
+        "to": "D000024",
+        "via": "이름 '신호 전달 경로'"
+      },
+      {
+        "from": "수용체",
+        "to": "D000025",
+        "via": "이름 '수용체'"
+      },
+      {
+        "from": "유전자#1",
+        "to": "D000017",
+        "via": "'유전자#1'"
+      },
+      {
+        "from": "단백질 키네이스",
+        "to": "D000041",
+        "via": "이름 '단백질 키네이스'"
+      },
+      {
+        "from": "2차 전령",
+        "to": "D000038",
+        "via": "이름 '2차 전령'"
+      },
+      {
+        "from": "GTP",
+        "to": "D000035",
+        "via": "이름 'GTP'"
+      },
+      {
+        "from": "유전자#1",
+        "to": "D000017",
+        "via": "'유전자#1'"
+      },
+      {
+        "from": "LPS–TLR4–NF-κB 신호 전달",
+        "to": "D000102",
+        "via": "이름 'LPS–TLR4–NF-κB 신호 전달'"
+      },
+      {
+        "from": "NF-κB–IκBα 복합체",
+        "to": "D000090",
+        "via": "이름 'NF-κB–IκBα 복합체'"
+      },
+      {
+        "from": "TLR4–MD-2 복합체",
+        "to": "D000069",
+        "via": "이름 'TLR4–MD-2 복합체'"
+      },
+      {
+        "from": "TNF 유전자",
+        "to": "D000100",
+        "via": "이름 'TNF 유전자'"
+      },
+      {
+        "from": "LPS–TLR4–NF-κB 신호 전달",
+        "to": "D000102",
+        "via": "이름 'LPS–TLR4–NF-κB 신호 전달'"
+      },
+      {
+        "from": "ATP",
+        "to": "D000032",
+        "via": "이름 'ATP'"
+      },
+      {
+        "from": "LPS–TLR4–NF-κB 신호 전달",
+        "to": "D000102",
+        "via": "이름 'LPS–TLR4–NF-κB 신호 전달'"
+      },
+      {
+        "from": "TNF 유전자",
+        "to": "D000100",
+        "via": "이름 'TNF 유전자'"
+      },
+      {
+        "from": "TNF 유전자",
+        "to": "D000100",
+        "via": "이름 'TNF 유전자'"
+      },
+      {
+        "from": "포스포다이에스터레이스",
+        "to": "D000049",
+        "via": "이름 '포스포다이에스터레이스'"
+      },
+      {
+        "from": "포스포다이에스터레이스",
+        "to": "D000049",
+        "via": "이름 '포스포다이에스터레이스'"
+      },
+      {
+        "from": "포스포다이에스터레이스",
+        "to": "D000049",
+        "via": "이름 '포스포다이에스터레이스'"
+      },
+      {
+        "from": "PKA 조절 소단위",
+        "to": "D000056",
+        "via": "이름 'PKA 조절 소단위'"
+      },
+      {
+        "from": "LPS–TLR4–NF-κB 신호 전달",
+        "to": "D000102",
+        "via": "이름 'LPS–TLR4–NF-κB 신호 전달'"
+      },
+      {
+        "from": "IκBα",
+        "to": "D000086",
+        "via": "이름 'IκBα'"
+      },
+      {
+        "from": "IKK 복합체",
+        "to": "D000085",
+        "via": "이름 'IKK 복합체'"
+      },
+      {
+        "from": "TAK1",
+        "to": "D000078",
+        "via": "이름 'TAK1'"
+      },
+      {
+        "from": "TAK1",
+        "to": "D000078",
+        "via": "이름 'TAK1'"
+      },
+      {
+        "from": "TAK1 복합체",
+        "to": "D000081",
+        "via": "이름 'TAK1 복합체'"
+      },
+      {
+        "from": "TRAF6",
+        "to": "D000076",
+        "via": "이름 'TRAF6'"
+      },
+      {
+        "from": "TRAF6",
+        "to": "D000076",
+        "via": "이름 'TRAF6'"
+      },
+      {
+        "from": "마이도솜",
+        "to": "D000075",
+        "via": "이름 '마이도솜'"
+      },
+      {
+        "from": "인산화효소 키네이스",
+        "to": "D000043",
+        "via": "이름 '인산화효소 키네이스'"
+      },
+      {
+        "from": "인산화효소 키네이스",
+        "to": "D000043",
+        "via": "이름 '인산화효소 키네이스'"
+      },
+      {
+        "from": "마이도솜",
+        "to": "D000075",
+        "via": "이름 '마이도솜'"
+      },
+      {
+        "from": "마이도솜",
+        "to": "D000075",
+        "via": "이름 '마이도솜'"
+      },
+      {
+        "from": "LPS–TLR4–MD-2 다량체",
+        "to": "D000070",
+        "via": "이름 'LPS–TLR4–MD-2 다량체'"
+      },
+      {
+        "from": "LPS–TLR4–MD-2 다량체",
+        "to": "D000070",
+        "via": "이름 'LPS–TLR4–MD-2 다량체'"
+      },
+      {
+        "from": "IKK 복합체",
+        "to": "D000085",
+        "via": "이름 'IKK 복합체'"
+      },
+      {
+        "from": "IKK 복합체",
+        "to": "D000085",
+        "via": "이름 'IKK 복합체'"
+      },
+      {
+        "from": "26S 프로테아좀",
+        "to": "D000098",
+        "via": "이름 '26S 프로테아좀'"
+      },
+      {
+        "from": "26S 프로테아좀",
+        "to": "D000098",
+        "via": "이름 '26S 프로테아좀'"
+      },
+      {
+        "from": "TNF 유전자",
+        "to": "D000100",
+        "via": "이름 'TNF 유전자'"
+      },
+      {
+        "from": "Gs 단백질",
+        "to": "D000029",
+        "via": "이름 'Gs 단백질'"
+      }
+    ]
+  },
+  "format": "definition-db-patch",
+  "version": 5,
+  "_설명": "한계 등록부 첫 등록(15건) + 상위 개념 10개(Step A, motif 로 사례 계산) + 구획 농도 모델(Step B) + TNF 유전자 사본 수(L+copies 의 필요 데이터 1/3)",
+  "terms": [
+    {
+      "id": "T+cascade",
+      "names": {
+        "ko": "수용체 매개 신호 연쇄",
+        "en": "receptor-mediated signaling cascade"
+      }
+    },
+    {
+      "id": "T+m2n",
+      "names": {
+        "ko": "막–핵 신호 연쇄",
+        "en": "membrane-to-nucleus signaling cascade"
+      }
+    },
+    {
+      "id": "T+relay",
+      "names": {
+        "ko": "리간드 전달 릴레이",
+        "en": "ligand transfer relay"
+      }
+    },
+    {
+      "id": "T+cluster",
+      "names": {
+        "ko": "리간드 유도 수용체 다량체화",
+        "en": "ligand-induced receptor clustering"
+      }
+    },
+    {
+      "id": "T+scaffold",
+      "names": {
+        "ko": "신호 발판 조립",
+        "en": "signaling scaffold assembly"
+      }
+    },
+    {
+      "id": "T+kinase",
+      "names": {
+        "ko": "키네이스 연쇄",
+        "en": "kinase cascade"
+      }
+    },
+    {
+      "id": "T+second",
+      "names": {
+        "ko": "2차 전령 증폭",
+        "en": "second messenger amplification"
+      }
+    },
+    {
+      "id": "T+timer",
+      "names": {
+        "ko": "GTPase 타이머",
+        "en": "GTPase timer"
+      }
+    },
+    {
+      "id": "T+release",
+      "names": {
+        "ko": "억제자 분해에 의한 전사 인자 방출",
+        "en": "transcription factor release by inhibitor degradation"
+      }
+    },
+    {
+      "id": "T+nucleus",
+      "names": {
+        "ko": "핵 이동 후 전사 활성화",
+        "en": "nuclear translocation and transcriptional activation"
+      }
+    },
+    {
+      "id": "T+cmodel",
+      "names": {
+        "ko": "구획 농도 모델",
+        "en": "compartmental concentration model"
+      }
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+cascade",
+      "term": "T+cascade",
+      "kind": "process",
+      "motif": "receptor_signaling",
+      "desc": [
+        {
+          "text": "세포 밖 신호를 막 수용체가 인식한 뒤 단계적인 분자 변화로 세포 안의 반응까지 전달하는 신호 전달 경로의 일반 형태",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "신호 전달 경로",
+              "rel": "is_a",
+              "span": "신호 전달 경로"
+            },
+            {
+              "to": "수용체",
+              "rel": "refers",
+              "span": "수용체"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+time",
+          "how": "두 사례 경로의 시간 공백을 한 상위 개념 아래 모은다 — 단계별 반감기·kcat 이 채워지면 이 형태의 모든 경로가 같은 시간 모델을 쓴다. 이 개념만으로 해결되지는 않는다(부분)."
+        }
+      ]
+    },
+    {
+      "id": "D+m2n",
+      "term": "T+m2n",
+      "kind": "process",
+      "motif": "membrane_to_nucleus",
+      "desc": [
+        {
+          "text": "세포 밖 신호가 막 수용체에서 세포질을 거쳐 핵으로 전해져 유전자 전사를 바꾸는 수용체 매개 신호 연쇄",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "is_a",
+              "span": "수용체 매개 신호 연쇄"
+            },
+            {
+              "to": "유전자#1",
+              "rel": "refers",
+              "span": "유전자"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+kb_kd",
+          "how": "핵 단계의 κB 자리 경쟁이 이 형태 공통의 병목임을 드러낸다 — 표적 유전자별 Kd 를 관찰로 넣을 자리를 정해 준다(부분)."
+        }
+      ]
+    },
+    {
+      "id": "D+relay",
+      "term": "T+relay",
+      "kind": "process",
+      "motif": "ligand_relay",
+      "desc": [
+        {
+          "text": "리간드가 운반 단백질에서 보조 수용체를 거쳐 신호 수용체로 차례로 넘겨지는 수용체 매개 신호 연쇄의 앞부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "part_of",
+              "span": "수용체 매개 신호 연쇄"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "gap_review": "등록부 검토: 이 패턴에 직접 걸린 한계 없음. 전달 단계의 속도는 L+time 과 같은 시간 공백에 속한다."
+    },
+    {
+      "id": "D+cluster",
+      "term": "T+cluster",
+      "kind": "process",
+      "motif": "receptor_clustering",
+      "desc": [
+        {
+          "text": "리간드를 결합한 수용체 단위들이 모여 다량체를 이루면서 세포질 쪽 신호 발판을 만드는 수용체 매개 신호 연쇄의 한 부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "part_of",
+              "span": "수용체 매개 신호 연쇄"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+tirap",
+          "how": "다량체가 만드는 발판(tir)의 화학량을 이 패턴의 공통 속성으로 보게 한다 — 다량체 구조(PDB)가 들어오면 해결.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+scaffold",
+      "term": "T+scaffold",
+      "kind": "process",
+      "motif": "scaffold_assembly",
+      "desc": [
+        {
+          "text": "활성 수용체를 핵으로 어댑터와 키네이스가 정해진 화학량의 큰 복합체로 조립되어 키네이스끼리 서로 인산화하게 하는 수용체 매개 신호 연쇄의 한 부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "part_of",
+              "span": "수용체 매개 신호 연쇄"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+mydd",
+          "how": "발판의 화학량이 구조에서 온다는 것을 패턴 수준에서 명시 — 발판 정의항의 PDB 를 해결 경로로 삼는다.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+kinase",
+      "term": "T+kinase",
+      "kind": "process",
+      "motif": "kinase_cascade",
+      "desc": [
+        {
+          "text": "인산화되어 활성화된 키네이스가 다음 키네이스를 인산화해 활성화하는 단계가 이어지는 수용체 매개 신호 연쇄의 한 부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "part_of",
+              "span": "수용체 매개 신호 연쇄"
+            },
+            {
+              "to": "단백질 키네이스",
+              "rel": "refers",
+              "span": "키네이스"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+time",
+          "how": "증폭 정도는 단계별 kcat 으로 정해진다 — 두 사례 경로(PKA→PhK→GP, TAK1→IKK→IκBα)의 kcat 요구를 한 패턴으로 묶는다.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+second",
+      "term": "T+second",
+      "kind": "process",
+      "motif": "second_messenger",
+      "desc": [
+        {
+          "text": "활성 효소 하나가 작은 분자인 2차 전령을 많이 만들어 신호를 키우는 수용체 매개 신호 연쇄의 한 부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "part_of",
+              "span": "수용체 매개 신호 연쇄"
+            },
+            {
+              "to": "2차 전령",
+              "rel": "refers",
+              "span": "2차 전령"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+camp_split",
+          "how": "2차 전령을 만드는 쪽과 없애는 쪽(PDE)의 경쟁이 이 패턴의 핵심임을 명시 — Km·kcat 이 들어오면 해결.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+timer",
+      "term": "T+timer",
+      "kind": "process",
+      "motif": "gtpase_timer",
+      "desc": [
+        {
+          "text": "GTP 를 결합해 켜진 단백질이 스스로 GTP 를 가수분해해 꺼지는 순환으로, 신호의 지속 시간을 정하는 수용체 매개 신호 연쇄의 한 부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+cascade",
+              "rel": "part_of",
+              "span": "수용체 매개 신호 연쇄"
+            },
+            {
+              "to": "GTP",
+              "rel": "refers",
+              "span": "GTP"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+time",
+          "how": "\"지속 시간 = 가수분해 속도\"라는 시간 모델의 첫 사례 — GTPase 반감기를 관찰로 넣으면 이 패턴 전부에 쓴다.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+release",
+      "term": "T+release",
+      "kind": "process",
+      "motif": "inhibitor_degradation_release",
+      "desc": [
+        {
+          "text": "전사 인자를 붙잡고 있던 억제 단백질이 표지되어 분해되면 풀려난 전사 인자가 핵으로 들어가는 막–핵 신호 연쇄의 한 부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+m2n",
+              "rel": "part_of",
+              "span": "막–핵 신호 연쇄"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+ubchain",
+          "how": "분해 표지(K48 사슬) 길이가 질량 수지에 들어가야 하는 자리를 패턴으로 고정한다.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+nucleus",
+      "term": "T+nucleus",
+      "kind": "process",
+      "motif": "nuclear_translocation_transcription",
+      "desc": [
+        {
+          "text": "전사 인자가 핵으로 옮겨진 뒤 표적 유전자의 조절 자리에 결합해 전사를 켜는 막–핵 신호 연쇄의 끝부분",
+          "field": "세포생물학",
+          "context": {
+            "scope": "신호 전달 일반"
+          },
+          "links": [
+            {
+              "to": "D+m2n",
+              "rel": "part_of",
+              "span": "막–핵 신호 연쇄"
+            },
+            {
+              "to": "유전자#1",
+              "rel": "refers",
+              "span": "유전자"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "LPS–TLR4–NF-κB 신호 전달(D000102)·에피네프린에 의한 글리코겐 분해(D000051)의 단계 구조에서 pattern 검출기로 찾은 공통 구조"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+kb_kd",
+          "how": "표적 유전자 사이 경쟁이 일어나는 단계를 지정한다 — Kd 관찰의 대상이 된다.(부분)"
+        },
+        {
+          "limitation": "L+kb_sites",
+          "how": "조절 자리 여러 개를 하나로 묶은 단순화가 이 패턴 전체에 있다는 것을 드러낸다.(부분)"
+        }
+      ]
+    },
+    {
+      "id": "D+cmodel",
+      "term": "T+cmodel",
+      "kind": "principle",
+      "desc": [
+        {
+          "text": "분자의 양을 세포 유형과 세포 내 위치마다 세포당 분자 수, 또는 농도와 구획 부피의 곱으로 정해 기전 시뮬레이션의 시작량을 데이터에 묶는 원리",
+          "field": "세포생물학",
+          "context": {
+            "scope": "기전 시뮬레이션"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "한계 L+copies·L+pools(시작량 기본값·무한 풀 때문에 경쟁 결과가 단계 순서에 좌우됨)에서 설계"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L+copies",
+          "how": "시뮬레이터가 정의항의 copy_number 관찰(세포·위치 맥락)을 그 묶음의 시작량으로 쓴다. 등록부의 needs 가 바로 그 관찰이라 데이터가 들어오면 한계가 자동으로 resolved 가 되고, 경쟁 결과가 순서가 아니라 데이터로 정해진다."
+        },
+        {
+          "limitation": "L+pools",
+          "how": "농도(concentration) × 이 정의항이 갖는 구획 부피(compartment_volume, 세포·위치별) × 아보가드로 수로 분자 수를 계산해 무한 풀을 유한 풀로 바꾼다."
+        }
+      ],
+      "note": "구획 부피 관찰은 이 정의항이 소유한다(세포 유형·위치 맥락). 아직 값은 없다 — 지어내지 않는다."
+    },
+    {
+      "id": "D000100",
+      "obs": [
+        {
+          "property": "copy_number",
+          "value": 2,
+          "unit": "copies/cell",
+          "context": {
+            "scope": "이배체 체세포",
+            "species": "9606",
+            "cell": "macrophage",
+            "location": "nucleoplasm"
+          },
+          "evidence": {
+            "level": "asserted",
+            "note": "상염색체 유전자의 대립유전자 2개 (이배체 기준) — 일반 지식"
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+copies",
+      "target": "LPS–TLR4–NF-κB 신호 전달",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "대식세포의 분자별 세포당 분자 수 — 지금 시작량은 기본값 10이라, NF-κB 를 두고 TNF·NFKBIA 프로모터가 경쟁한 결과가 단계 순서에 좌우된다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "NF-κB–IκBα 복합체",
+            "cell": "macrophage",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "TLR4–MD-2 복합체",
+            "cell": "macrophage",
+            "location": "plasma_membrane"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "TNF 유전자",
+            "cell": "macrophage",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "재사용 시연(NFKBIA 표적 추가): 기본 시작량에서 TNF 유전자 10개가 핵 NF-κB 10개를 다 차지해 NFKBIA 가 전사되지 못함",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+pools",
+      "target": "LPS–TLR4–NF-κB 신호 전달",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "ATP·뉴클레오타이드 같은 대사물을 무한 풀(1000)로 둠 — 실제 농도와 구획 부피가 있어야 유한 풀이 된다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "concentration",
+            "on": "ATP",
+            "cell": "macrophage",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D+cmodel",
+            "cell": "macrophage",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D+cmodel",
+            "cell": "macrophage",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "시뮬레이터에서 뉴클레오타이드 10개가 TNF 전사에 다 쓰여 두 번째 표적이 막힌 문제를 무한 풀로 우회함",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+ubchain",
+      "target": "LPS–TLR4–NF-κB 신호 전달",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "K63·K48 폴리유비퀴틴 사슬을 유비퀴틴 1 단위로 셈 — 질량 수지가 사슬 길이만큼 틀린다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "사슬 길이(유비퀴틴 개수) 분포 데이터와, 그것을 담을 특징·관찰 어휘"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+kb_kd",
+      "target": "TNF 유전자/rule/kb_binding",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NF-κB 가 여러 프로모터의 κB 자리를 두고 경쟁하는데 결합 친화도가 없어 누가 먼저 차지하는지 단계 순서로 정해진다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "Kd",
+            "on": "TNF 유전자"
+          }
+        ]
+      },
+      "found_in": "재사용 시연(NFKBIA 표적 추가)",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+camp_split",
+      "target": "포스포다이에스터레이스/rule/camp_hydrolysis",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "cAMP 를 PKA 활성화와 PDE 분해가 나눠 갖는 비율 — 이산 시뮬레이션은 촉매 수로만 정한다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "Km",
+            "on": "포스포다이에스터레이스"
+          },
+          {
+            "kind": "obs",
+            "property": "kcat",
+            "on": "포스포다이에스터레이스"
+          },
+          {
+            "kind": "obs",
+            "property": "Kd",
+            "on": "PKA 조절 소단위"
+          }
+        ]
+      },
+      "found_in": "첫 시뮬레이션: 한 라운드 1회 발화에서 PDE 가 cAMP 를 먼저 다 분해해 PKA 가 켜지지 않음 → 촉매 수만큼 발화로 우회",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+time",
+      "target": "LPS–TLR4–NF-κB 신호 전달",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "단계에 시간이 없다 — 신호의 지속·종료(IκBα 재합성, 탈인산화)와 진동을 다룰 수 없다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "half_life",
+            "on": "IκBα"
+          },
+          {
+            "kind": "obs",
+            "property": "kcat",
+            "on": "IKK 복합체"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+tak1_res",
+      "target": "TAK1/site/act",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "TAK1 활성화 고리의 자가 인산화 잔기 번호(사람)",
+        "needs": [
+          {
+            "kind": "residue",
+            "site": "TAK1/site/act"
+          },
+          {
+            "kind": "residue",
+            "site": "TAK1 복합체/site/tak1_act"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+traf6_res",
+      "target": "TRAF6/site/k63",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "TRAF6 자가 K63 유비퀴틴화 라이신 번호(사람)",
+        "needs": [
+          {
+            "kind": "residue",
+            "site": "TRAF6/site/k63"
+          },
+          {
+            "kind": "residue",
+            "site": "마이도솜/site/k63_ub"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+phk_res",
+      "target": "인산화효소 키네이스/site/pka_phos",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "PKA 가 인산화하는 인산화효소 키네이스 β 소단위 세린의 사람 번호",
+        "needs": [
+          {
+            "kind": "residue",
+            "site": "인산화효소 키네이스/site/pka_phos"
+          }
+        ]
+      },
+      "found_in": "형식 v4 변환(migration 003)",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+mydd",
+      "target": "마이도솜",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "마이도솜 화학량 MyD88 6 : IRAK4 4 : IRAK1 4 는 IRAK2 를 담은 구조(Lin et al., 2010)에서 빌린 값 — IRAK1 을 담은 구조가 필요하다",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "PDB",
+            "on": "마이도솜"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+tirap",
+      "target": "LPS–TLR4–MD-2 다량체/site/tir",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "TIR 발판–TIRAP 결합면과 화학량(단위당 1 로 가정)",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "PDB",
+            "on": "LPS–TLR4–MD-2 다량체"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+nemo",
+      "target": "IKK 복합체",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "IKK 복합체의 NEMO 화학량(2 로 가정)과 전체 구조",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "PDB",
+            "on": "IKK 복합체"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+prot",
+      "target": "26S 프로테아좀",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "20S·19S 입자의 소단위를 정의항으로 나누지 않음 — 구성 요소가 열거되지 않은 복합체",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "PDB",
+            "on": "26S 프로테아좀"
+          },
+          {
+            "kind": "manual",
+            "text": "20S(α1–7·β1–7 두 벌)·19S 소단위 정의항과 구성 요소 목록"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+kb_sites",
+      "target": "TNF 유전자/site/kb_site",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "Collart et al. 1990 이 보고한 κB 유사 모티프 네 개를 하나로 묶었고 프로모터 위 위치가 없다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "κB 자리별 프로모터 좌표(뉴클레오타이드 위치)와 그것을 담을 핵산 좌표 어휘"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L+gs",
+      "target": "Gs 단백질",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "활성화 때 Gαs(GTP)와 Gβγ 가 갈라지는 것을 표현하지 않고 삼량체를 한 단위로 둠",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "Gαs–Gβγ 해리 규칙·단계와 그 구조 근거"
+          }
+        ]
+      },
+      "found_in": "형식 v4 변환(migration 003)",
+      "by": "Claude",
+      "at": "2026-10-08"
+    }
+  ],
+  "steps": [],
+  "remove": []
+}

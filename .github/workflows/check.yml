@@ -14,5 +14,6 @@ jobs:
         run: node --test tests/*.test.mjs
       - name: 저장소 전체 검사
         run: node dbtool.mjs validate
+      - run: node dbtool.mjs limitations --check
       - name: index.html 이 viewer.html 과 같은지
         run: cmp index.html viewer.html

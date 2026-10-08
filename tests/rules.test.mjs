@@ -8,7 +8,7 @@ const DefDB = createRequire(import.meta.url)('../core.js');
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 4 }, o);
+const P = (o) => Object.assign({ format: 'definition-db-patch', version: 5 }, o);
 const run = (patch, opt) => { const res = DefDB.merge(BASE, P(patch)); return { res, g: DefDB.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
@@ -377,4 +377,58 @@ test('시뮬레이션: 만들어지지 않는 변환 기질(뉴클레오타이�
   assert.ok(r.origin[`${id('뉴클레오타이드')}|nucleoplasm`] >= 1000);
   const g = DefDB.simulate(BASE, '에피네프린에 의한 글리코겐 분해', { until: id('포도당-1-인산') });
   assert.equal(g.origin[`${CAMP}|cytosol`], undefined);
+});
+
+// ===== 한계 등록부 · 상위 개념 · 구획 농도 모델 (형식 v5) =====
+const lim = (o) => ({ limitations: [Object.assign({ id: 'L+1', target: 'IκBα', type: 'Kinetic_Gap', requirement: { text: '테스트', needs: [{ kind: 'obs', property: 'half_life', on: 'IκBα' }] } }, o)] });
+test('한계: [Target | Type | Requirement] — 대상·종류·해결 경로가 없거나 틀리면 거부', () => {
+  passes(lim({}));
+  rejectedFor(lim({ type: 'Speed_Gap' }), /한계 종류 'Speed_Gap'/);
+  rejectedFor(lim({ target: 'IκBα/site/nope' }), /대상 부위/);
+  rejectedFor(lim({ requirement: { text: 't', needs: [] } }), /해결 경로\(requirement.needs\) 없음/);
+  rejectedFor(lim({ requirement: { text: 't', needs: [{ kind: 'obs', property: 'speed', on: 'IκBα' }] } }), /관찰 속성\(property\) 'speed'|관찰 속성 'speed'/);
+  rejectedFor(lim({ requirement: { text: 't', needs: [{ kind: 'xref', db: 'PDB', on: '무기 인산' }] } }), /해결되지 않음/);
+  rejectedFor({ limitations: { L000001: {} } }, /이전 형식/);
+});
+test('한계는 저장된 상태가 아니라 계산된 상태 — 필요한 데이터가 들어오면 자동으로 resolved', () => {
+  const L1 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].requirement.needs.some((n) => n.property === 'half_life'));
+  assert.equal(DefDB.limitationStatus(BASE, BASE.limitations[L1]).status, 'open');
+  const res = passes({ senses: [{ id: IKBA, obs: [{ property: 'half_life', value: 10, unit: 'min', context: { species: '9606' }, evidence: { level: 'predicted', confidence: 0.1 } }] },
+    { id: id('IKK 복합체'), obs: [{ property: 'kcat', value: 1, unit: '1/s', context: { species: '9606' }, evidence: { level: 'predicted', confidence: 0.1 } }] }] });
+  assert.equal(DefDB.limitationStatus(res.db, res.db.limitations[L1]).status, 'resolved');
+  const R = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${id('TAK1')}/site/act`);
+  const res2 = passes({ senses: [{ id: id('TAK1'), site: { act: { type: 'modification_site', features: ['phosphorylated'], numbering: { 9606: 'Thr187' } } } },
+    { id: id('TAK1 복합체'), site: { tak1_act: { type: 'modification_site', features: ['phosphorylated'], on: id('TAK1'), numbering: { 9606: 'Thr187' } } } }] });
+  assert.equal(DefDB.limitationStatus(res2.db, res2.db.limitations[R]).status, 'resolved', '잔기 번호가 들어오면 Structural_Gap 해결');
+});
+test('limitations.md 는 data/db.json 에서 생성된 최신 상태여야 함', () => {
+  assert.equal(readFileSync(new URL('../limitations.md', import.meta.url), 'utf8'), DefDB.limitationsMarkdown(BASE));
+  assert.deepEqual(DefDB.detectGaps(BASE), [], '잔기 모름 부위는 모두 등록되어 있어야 함');
+});
+test('상위 개념(motif): kind process 만, 한계 검토(addresses 또는 gap_review) 필수, 없는 한계를 가리키면 거부', () => {
+  const c = (sense) => one('테스트 패턴', Object.assign({ kind: 'process', motif: 'kinase_cascade' }, sense));
+  rejectedFor(c({}), /한계 등록부를 검토/);
+  passes(c({ gap_review: '해당 없음 — 테스트' }));
+  rejectedFor(c({ kind: 'concept', gap_review: 'x' }), /kind process/);
+  rejectedFor(c({ motif: 'nope', gap_review: 'x' }), /motif 'nope'/);
+  rejectedFor(c({ addresses: [{ limitation: 'L999999', how: 'x' }] }), /한계 'L999999' 없음/);
+  rejectedFor(c({ addresses: [{ limitation: Object.keys(BASE.limitations)[0] }] }), /how/);
+});
+test('패턴 검출: 막–핵 연쇄는 LPS 경로에만, 키네이스 연쇄는 두 경로 모두에', () => {
+  const lps = DefDB.findMotifs(BASE, id(TLRP)), gly = DefDB.findMotifs(BASE, id('에피네프린에 의한 글리코겐 분해'));
+  assert.ok(lps.found.membrane_to_nucleus && !gly.found.membrane_to_nucleus);
+  assert.ok(lps.found.kinase_cascade && gly.found.kinase_cascade);
+  assert.ok(lps.found.ligand_relay && lps.found.inhibitor_degradation_release && gly.found.second_messenger && gly.found.gtpase_timer);
+  assert.deepEqual(lps.trajectory, ['extracellular', 'plasma_membrane', 'cytosol', 'nucleoplasm']);
+});
+test('구획 농도 모델: copy_number 관찰 → 시작량, 농도 × 구획 부피 → 분자 수, 없으면 기본값으로 표시', () => {
+  const r = DefDB.simulate(BASE, TLRP, { until: TNFM });
+  assert.equal(r.origin[`${id('TNF 유전자')}|nucleoplasm`], 2);
+  assert.match(r.source[`${id('TNF 유전자')}|nucleoplasm`], /^data: copy_number/);
+  assert.equal(r.source[`${NI}|cytosol`], 'default');
+  const ev = { level: 'predicted', confidence: 0.1 };
+  const res = passes({ senses: [{ id: NI, obs: [{ property: 'concentration', value: 0.1, unit: 'µM', context: { species: '9606', cell: 'macrophage', location: 'cytosol' }, evidence: ev }] },
+    { id: id('구획 농도 모델'), obs: [{ property: 'compartment_volume', value: 1000, unit: 'fL', context: { species: '9606', cell: 'macrophage', location: 'cytosol' }, evidence: ev }] }] });
+  const r2 = DefDB.simulate(res.db, TLRP, { until: TNFM });
+  assert.equal(r2.origin[`${NI}|cytosol`], 60221, '0.1 µM × 1000 fL(=1e-12 L) × 6.022e23 ≈ 60221 분자');
 });

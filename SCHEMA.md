@@ -1,4 +1,4 @@
-# 스키마와 매핑 규칙 (형식 버전 4)
+# 스키마와 매핑 규칙 (형식 버전 5)
 
 이 데이터베이스는 AI가 채운다. 규칙 없이 쌓이면 같은 개념이 여러 이름으로 생기고, 값이 제각각이 되어 연결이 끊긴다.
 그래서 **모든 입력은 패치 → 매핑 → 검사 → 관문**을 거치고, 하나라도 어기면 패치 전체가 거부된다.
@@ -192,6 +192,35 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - `--init "묶음키=N;…"` 으로 시작 양을 바꾼다 (음성 대조: `--init "D000064|extracellular=0"` → LPS 없으면 TNF 전사 없음).
 - 속도·농도는 다루지 않는 이산(토큰) 시뮬레이션이다.
 
+## 8B. 한계 등록부 (Limitation & Constraint Registry) — 형식 v5
+
+실패를 일시적 오류로 버리지 않고, 다음 버전의 요구 사항으로 남긴다. 모든 한계는 `[Target | Type | Requirement]` 구조의 데이터(`limitations`, 번호 `L…`)다.
+
+```json
+{ "id": "L+1", "target": "TNF 유전자/rule/kb_binding", "type": "Kinetic_Gap",
+  "requirement": { "text": "무엇이 모자라 무엇을 못 하는지",
+                   "needs": [ { "kind": "obs", "property": "Kd", "on": "TNF 유전자", "cell": "macrophage", "location": "nucleoplasm" },
+                              { "kind": "residue", "site": "TAK1/site/act" },
+                              { "kind": "xref", "db": "PDB", "on": "마이도솜" },
+                              { "kind": "manual", "text": "어휘·형식이 아직 없는 요구" } ] },
+  "found_in": "어디서 드러났나 (시뮬레이션·변환·시연)", "resolution": { "note": "…", "evidence": { … } } }
+```
+
+- **Target**: 정의항 `D…`, 그 부위 `D…/site/키`·규칙 `D…/rule/키`, 또는 단계 `S…`. 패치에서는 이름도 된다(`TAK1/site/act`).
+- **Type** (`vocab.js` 의 `gapTypes`): `Kinetic_Gap`(속도·Kd·시간 상수) · `Concentration_Gap`(몰 농도·부피·질량 수지) · `Structural_Gap`(3차원 좌표·위상·잔기·화학량).
+- **Requirement**: 사람이 읽는 `text` + 기계가 확인하는 해결 경로 `needs`.
+  - `obs`: 그 정의항에 그 관찰(세포·위치 맥락)이 들어오면 충족 · `residue`: 그 부위에 기준 종 잔기 번호가 들어오면 충족 · `xref`: 그 외부 ID 가 붙으면 충족 · `manual`: 형식으로 확인할 수 없는 요구 — `resolution` 으로만 닫힘.
+- **상태는 저장하지 않고 계산한다**: needs 가 모두 충족되면 `resolved`, manual 이 resolution 으로 닫히면 `resolved_manual`, 아니면 `open`.
+- `limitations.md` 는 이 데이터에서 생성된다(`node dbtool.mjs limitations --write`). CI 가 최신인지 검사한다. `--detect` 는 등록되지 않은 한계 후보(잔기 모름 부위)를 찾는다.
+- 시뮬레이터는 기본값·무한 풀로 시작량을 정한 묶음을 표시하고, 그 경로의 Concentration_Gap 이 등록되어 있지 않으면 등록하라고 알린다.
+
+## 8C. 상위 개념 (Evolution Engine)
+
+- **Step A — 아래에서 위로 추상화**: kind `process` 정의항에 `motif`(경로에서 찾는 패턴, `core.js` 의 `MOTIFS`)를 주면 그 정의항은 실행 가능한 상위 개념이 된다. 사례 경로는 링크로 저장하지 않고 매번 계산한다 — 새 경로도 자동으로 잡힌다. `node dbtool.mjs pattern <경로|상위 개념>`.
+  - 패턴: receptor_signaling · ligand_relay · receptor_clustering · scaffold_assembly · second_messenger · kinase_cascade · gtpase_timer · inhibitor_degradation_release · nuclear_translocation_transcription · membrane_to_nucleus
+- **Step B — 한계에서 나온 확장**: 한계를 해결하는 새 개념은 `addresses: [{ limitation: L…, how }]` 로 어떤 한계를 어떻게 해결하는지 적는다. 해결하지 않는 상위 개념은 `gap_review` 에 이유를 적는다 — motif 정의항은 둘 중 하나가 없으면 거부된다.
+- **구획 농도 모델**(principle): 시뮬레이터가 시작량을 데이터에서 정한다 — 정의항의 `copy_number` 관찰(세포·위치 맥락), 없으면 `concentration` × 구획 부피(`compartment_volume`, 구획 농도 모델 정의항이 세포·위치별로 소유) × 아보가드로 수. 둘 다 없으면 기본값이고 출력에 "농도 공백"으로 표시된다. 관찰 맥락에는 `context.location` 을 쓸 수 있다.
+
 ## 9. 외부 ID
 
 | kind | 필수 | 허용 |
@@ -258,6 +287,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 5 | 한계 등록부 `limitations`(L…, `[Target | Type | Requirement]`, 계산되는 상태, `limitations.md` 생성·CI 검사), 상위 개념 `motif`·`addresses`·`gap_review`, 패턴 검출기(`pattern`), 구획 농도 모델(시작량을 copy_number 또는 농도 × 구획 부피에서), 관찰 맥락 `location`, 관찰 속성 copy_number·compartment_volume, 어휘 gapTypes. 한계 16건·상위 개념 10개·구획 농도 모델 등록 (`migrations/004-v4-to-v5-limitations.mjs`) |
 | 2026-10-08 | 4 (확장) | LPS → TLR4 → NF-κB 스트레스 시험으로 엔진 확장: 효과 `transfer`·`degrade`, 전제 조건 `requires`, 동일성 보존 검사, 수송 대상의 접촉 검사 예외, 근거 `sources[{db,id,citation}]`·`basis`·근거 수준 `abstracted`, 시뮬레이터(`simulate`). 어휘: 변화 종류 전달·유비퀴틴화·단백질 분해·전사, 특징 K48/K63 폴리유비퀴틴, 분야 면역학, 세포 대식세포·단핵구. 데이터 형식 버전은 그대로(기존 데이터에 curated 근거가 없어 변환 불필요) |
 | 2026-10-08 | 4 | 두 해상도 구조. 정의항이 원천으로 설명(desc)·막 위상·구성 요소·부위(종별 잔기 번호, 면, 리간드)·규칙(상태 의미·전이)·관찰(obs)을 소유. 상태(states) 폐지 → 묶음 키 `D|부위:특징|위치`. 단계는 규칙 참조 + 묶음만, 위치는 묶음마다. 위치 계층·막 면·공간 접촉 검사, 기준 종, 근거 수준. 어휘: compartments·modifications → locations·faces·associations·siteTypes·features·taxa·tissues·cells·obsProperties·evidenceLevels. 소단위·보조인자 정의항 10개 추가 (`migrations/003-v3-to-v4.mjs`) |
 | 2026-10-08 | 3 | 이름이 곧 ID 이던 것을 고정 번호(T/D/S)로 교체, 이름은 names {ko, en} + 별칭, 번호 재사용 금지(meta.next), `이름#n` 주소, 구조 지문 필드 (`migrations/002-v2-to-v3-stable-ids.mjs`) |

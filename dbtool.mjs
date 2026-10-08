@@ -12,6 +12,9 @@
 //   node dbtool.mjs context   <번호|이름|이름#n> [--up N] [--down N]
 //   node dbtool.mjs mechanism <S…|경로 번호·이름> [--up N] [--down N]
 //   node dbtool.mjs prompt    [자료.txt]                     AI 에게 줄 작성 지침 + 현재 색인
+//   node dbtool.mjs limitations [--open] [--write | --check] [--detect]
+//                                                           한계 등록부: 출력 / limitations.md 생성 / 최신인지 검사 / 미등록 후보 찾기
+//   node dbtool.mjs pattern   <경로|상위 개념>              경로에서 상위 패턴(모티프) 찾기, 또는 상위 개념이 나타나는 경로
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -112,12 +115,34 @@ switch (cmd) {
     console.log(DefDB.mechanismText(loadDB(), args[0], { up: +(flags.up || 3), down: +(flags.down || 3) }));
     break;
   }
+  case 'limitations': {
+    const db = loadDB(), md = DefDB.limitationsMarkdown(db), file = join(HERE, 'limitations.md');
+    if (flags.write) { writeFileSync(file, md); console.log('저장: ' + rel(file)); break; }
+    if (flags.check) {
+      const cur = existsSync(file) ? readFileSync(file, 'utf8') : '';
+      if (cur !== md) die('limitations.md 가 data/db.json 과 다름 — node dbtool.mjs limitations --write');
+      console.log('limitations.md 최신');
+      break;
+    }
+    if (flags.detect) {
+      const c = DefDB.detectGaps(db);
+      console.log(c.length ? '등록되지 않은 한계 후보:\n' + c.map((x) => `  [${x.target} | ${x.type}] ${x.why}`).join('\n') : '등록되지 않은 한계 후보 없음');
+      break;
+    }
+    console.log(DefDB.limitationsText(db, { open: !!flags.open }));
+    break;
+  }
+  case 'pattern': {
+    if (!args[0]) die('사용법: pattern <경로|상위 개념>');
+    console.log(DefDB.patternText(loadDB(), args[0]));
+    break;
+  }
   case 'simulate': {
     if (!args[0]) die('사용법: simulate <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]');
     const db = loadDB(), ix = DefDB.index(db), id = (r) => { if (!r || r === true) return undefined; const x = DefDB.resolveRef(ix, r); if (x.error) die(x.error); return x.id; };
     const init = {};
     for (const kv of String(flags.init || '').split(';').filter(Boolean)) { const i = kv.lastIndexOf('='); init[kv.slice(0, i).trim()] = +kv.slice(i + 1); }
-    const opt = { until: id(flags.until), from: id(flags.from), amount: +(flags.amount || 10), rounds: +(flags.rounds || 60), init };
+    const opt = { until: id(flags.until), from: id(flags.from), amount: +(flags.amount || 10), rounds: +(flags.rounds || 60), init, cell: flags.cell && flags.cell !== true ? flags.cell : undefined };
     const txt = DefDB.simulateText(db, args[0], opt);
     console.log(txt);
     if (opt.until && (/✗/.test(txt))) process.exit(1);
@@ -128,5 +153,5 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | pattern | limitations | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }

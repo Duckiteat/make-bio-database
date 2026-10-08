@@ -79,6 +79,7 @@ pre{white-space:pre-wrap;background:var(--side);padding:8px;border-radius:6px;fo
   <button onclick="saveDB()">저장</button>
   <button onclick="reloadStore()" title="data/db.json 다시 읽기 (브라우저 보관본 대체)">저장소</button>
   <button id="chk" onclick="showIssues()">검사</button>
+  <button id="lim" onclick="showLimits()">한계</button>
  </div>
  <input type="file" id="f" accept=".json,application/json" multiple hidden onchange="loadFiles(this.files)">
  <input id="search" placeholder="이름·영문명·별칭·번호·정의 검색" oninput="renderList()">
@@ -274,6 +275,7 @@ function render(){
   ${d.distinction?`<div class="why">다른 뜻과의 차이: ${esc(d.distinction)}</div>`:''}
   ${d.note?`<div class="why">${esc(d.note)}</div>`:''}
   ${structureHTML(id,d)}
+  ${conceptHTML(id,d)}${limitsHTML(id)}
   ${up?`<div class="sec up"><b>상위 맥락</b>${up}</div>`:''}
   ${down?`<div class="sec down"><b>하위 개념·구성 요소</b>${down}</div>`:''}
   ${sides.length?`<div class="sec rel"><b>관련</b><ul class="tree">${sides.map(e=>{const r=DefDB.REL[e.rel]||{};
@@ -324,6 +326,26 @@ function preview(){
  if(g.ok){pending=res;$('apply').disabled=false;}
 }
 function applyPending(){if(!pending)return;db=pending.db;const first=pending.report.added[0]||pending.report.updated[0];pending=null;closeBox();changed();if(first)go(first,true);}
+// 한계 등록부: 이 정의항(또는 그 부위·규칙)을 대상으로 한 한계
+function limRow(lid){const l=db.limitations[lid],st=DefDB.limitationStatus(db,l),t=DefDB.parseTarget(l.target);
+ return `<li><span class="idt">${lid}</span> <b class="${st.status=='open'?'bad':'ok'}">${esc(l.type)}</b> <span class="tag">${esc(st.status)} ${st.done}/${st.total}</span> ${t?`<span class="ref" data-go="${t.base}">${esc(L(t.base))}</span>${t.sub?` <span class="idt">${esc(t.sub+'/'+t.key)}</span>`:''}`:''} — ${esc(l.requirement.text)}${ix.addressedBy(lid).length?` <span class="tag">다루는 개념: ${ix.addressedBy(lid).map(x=>`<span class="ref" data-go="${x}">${esc(L(x))}</span>`).join(', ')}</span>`:''}</li>`;}
+function limitsHTML(id){const ls=ix.limitsOf(id);return ls.length?`<div class="sec"><b class="bad">한계 ${ls.length}</b><ul class="tree">${ls.map(limRow).join('')}</ul></div>`:'';}
+// 상위 개념: motif 로 계산한 사례 경로 + 다루는 한계
+function conceptHTML(id,d){
+ if(!d.motif&&!(d.addresses||[]).length&&!d.gap_review)return'';
+ let h='<div class="sec mech">';
+ if(d.motif){const hits=[...ix.senses].filter(([,x])=>x.kind=='pathway').map(([pid])=>[pid,DefDB.findMotifs(db,pid,ix).found[d.motif]]).filter(([,f])=>f);
+  h+=`<b>패턴 ${esc(d.motif)} — 사례 경로 ${hits.length}</b><ul class="tree">${hits.map(([pid,f])=>`<li>${nodeHTML(pid)} <span class="tag">${f.length}곳: ${f.map(x=>x.steps.map(s=>`<span class="ref" data-go="${s}">${s}</span>`).join('→')).join(' | ')}</span></li>`).join('')}</ul>`;}
+ if((d.addresses||[]).length)h+=`<b>다루는 한계</b><ul class="tree">${d.addresses.map(a=>`<li><span class="idt">${esc(a.limitation)}</span> ${esc(a.how)}</li>`).join('')}</ul>`;
+ if(d.gap_review)h+=`<div class="why">한계 검토: ${esc(d.gap_review)}</div>`;
+ return h+'</div>';
+}
+function showLimits(){
+ const ids=Object.keys(db.limitations),open=ids.filter(k=>DefDB.limitationStatus(db,db.limitations[k]).status=='open');
+ box(`<h3>한계 등록부 — 열림 ${open.length} / ${ids.length}</h3><p class="tag">[Target | Type | Requirement]. 해결 경로의 데이터가 들어오면 자동으로 resolved.</p>
+ ${Object.keys(V.gapTypes).map(t=>`<h4>${esc(t)} — ${esc(V.gapTypes[t].label)}</h4><ul class="tree">${ids.filter(k=>db.limitations[k].type==t).map(limRow).join('')}</ul>`).join('')}
+ <p><button onclick="closeBox()">닫기</button></p>`);
+ document.querySelectorAll('#box [data-go]').forEach(e=>e.addEventListener('click',closeBox));}
 function showIssues(){const v=DefDB.validate(db);
  const target=w=>{const m=String(w).match(/[TDS]\d{6}/);return m&&(db.terms[m[0]]||db.senses[m[0]]||db.steps[m[0]])?m[0]:'';};
  const row=(i,cls,mark)=>{const t=target(i.where);return `<div class="${cls}">${mark} ${t?`<span class="ref" data-go="${t}" onclick="closeBox()">${esc(i.where)}</span>`:esc(i.where)}: ${esc(i.msg)}</div>`;};

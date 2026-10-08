@@ -15,7 +15,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 4;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 5;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -36,7 +36,7 @@
   // 동일성 보존을 검사하는 효과 (화학 변환이 없는 물리적 변화)
   const CONSERVING = new Set(['dissociate', 'associate', 'transport', 'transfer', 'degrade']);
 
-  const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/ };
+  const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/, L: /^L\d{6}$/ };
   const fmtId = (p, n) => p + String(n).padStart(6, '0');
   const isId = (p, id) => ID_RE[p].test(String(id));
   const isTemp = (p, id) => !id || new RegExp('^' + p + '\\+').test(String(id));
@@ -73,10 +73,10 @@
 
   // ===== 통제 어휘 매핑 =====
   const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
-    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels'];
+    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes'];
   const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
     locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
-    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준' };
+    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류' };
   const VIX = {};
   for (const table of VTABLES) {
     const m = new Map();
@@ -137,16 +137,17 @@
   const bundleKey = (b) => [b.base, ...b.features.map((f) => `${f.site}:${f.feature}`).sort(), b.location].join('|');
 
   // ===== 정규화 =====
-  function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1 } }, terms: {}, senses: {}, steps: {} }; }
+  function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1, L: 1 } }, terms: {}, senses: {}, steps: {}, limitations: {} }; }
   function normalize(input) {
     const db = emptyDB();
     if (!isObj(input)) return db;
     if (input.version != null && Number(input.version) !== VERSION) Object.defineProperty(db, '_version', { value: Number(input.version) });
     const nx = isObj(input.meta) && isObj(input.meta.next) ? input.meta.next : {};
-    for (const p of ['T', 'D', 'S']) db.meta.next[p] = Math.max(1, parseInt(nx[p], 10) || 1);
+    for (const p of ['T', 'D', 'S', 'L']) db.meta.next[p] = Math.max(1, parseInt(nx[p], 10) || 1);
     for (const [id, t] of Object.entries(isObj(input.terms) ? input.terms : {})) if (isObj(t)) db.terms[id] = normTerm(t);
     for (const [id, d] of Object.entries(isObj(input.senses) ? input.senses : {})) if (isObj(d)) db.senses[id] = normSense(d);
     for (const [id, st] of Object.entries(isObj(input.steps) ? input.steps : {})) if (isObj(st)) db.steps[id] = normStep(st);
+    for (const [id, l] of Object.entries(isObj(input.limitations) ? input.limitations : {})) if (isObj(l)) db.limitations[id] = normLimitation(l);
     return db;
   }
   function normTerm(t) {
@@ -171,7 +172,7 @@
   const normContext = (c) => {
     if (!isObj(c)) return { scope: str(c) };
     const o = { scope: str(c.scope) };
-    for (const k of ['species', 'tissue', 'cell', 'condition']) if (str(c[k])) o[k] = str(c[k]);
+    for (const k of ['species', 'tissue', 'cell', 'location', 'condition']) if (str(c[k])) o[k] = str(c[k]);
     return o;
   };
   function normDesc(d) {
@@ -230,7 +231,7 @@
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
-  const SENSE_FIELDS = ['kind', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'desc', 'site', 'rule', 'obs', 'distinction', 'note'];
+  const SENSE_FIELDS = ['kind', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note'];
   function normSense(d) {
     const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
     if (str(d.reference_species)) o.reference_species = str(d.reference_species);
@@ -244,7 +245,10 @@
     if (isObj(d.site)) for (const [k, s] of Object.entries(d.site)) if (isObj(s)) o.site[str(k)] = normSite(s);
     o.rule = arr(d.rule).filter(isObj).map(normRule);
     o.obs = arr(d.obs).filter(isObj).map(normObs);
-    for (const k of ['distinction', 'note']) if (str(d[k])) o[k] = str(d[k]);
+    // 상위 개념: motif = 경로에서 자동으로 찾는 패턴(MOTIFS 의 키), addresses = 이 개념이 해결하려는 한계(L…)와 방법
+    if (str(d.motif)) o.motif = str(d.motif);
+    if (arr(d.addresses).length) o.addresses = arr(d.addresses).filter(isObj).map((a) => ({ limitation: str(a.limitation), how: str(a.how) }));
+    for (const k of ['gap_review', 'distinction', 'note']) if (str(d[k])) o[k] = str(d[k]);
     Object.defineProperty(o, '_given', { value: Object.fromEntries(SENSE_FIELDS.map((k) => [k, k in d])) });
     return o;
   }
@@ -264,6 +268,47 @@
     for (const k of ['agents', 'inputs', 'outputs', 'regulators']) o[k] = arr(st[k]).map(normPart).filter(Boolean);
     o.part_of = arr(st.part_of).map(str).filter(Boolean);
     return o;
+  }
+
+  // ===== 한계 등록부 (Limitation & Constraint Registry) =====
+  // { target: D… | D…/site/키 | D…/rule/키 | S…, type: Kinetic_Gap|Concentration_Gap|Structural_Gap,
+  //   requirement: { text, needs: [ {kind:'obs', property, on, cell?, location?} | {kind:'residue', site} | {kind:'xref', db, on} | {kind:'manual', text} ] },
+  //   found_in, note, resolution: { note, evidence } (manual 해결), by, at }
+  // 상태는 저장하지 않고 계산한다: 필요한 데이터가 모두 들어오면 resolved.
+  function normNeed(n) {
+    if (!isObj(n)) return { kind: 'manual', text: str(n) };
+    const o = { kind: str(n.kind) || (n.property ? 'obs' : n.site ? 'residue' : n.db ? 'xref' : 'manual') };
+    for (const k of ['property', 'on', 'cell', 'location', 'site', 'db', 'text']) if (str(n[k])) o[k] = str(n[k]);
+    return o;
+  }
+  function normLimitation(l) {
+    const r = isObj(l.requirement) ? l.requirement : { text: str(l.requirement) };
+    const o = { target: str(l.target), type: str(l.type), requirement: { text: str(r.text), needs: arr(r.needs).map(normNeed) } };
+    for (const k of ['found_in', 'note', 'by', 'at']) if (str(l[k])) o[k] = str(l[k]);
+    if (isObj(l.resolution)) o.resolution = { note: str(l.resolution.note), evidence: normEvidence(l.resolution.evidence) };
+    return o;
+  }
+  // 대상 문자열 → { base: D/S 번호, sub: 'site'|'rule'|null, key }
+  function parseTarget(t) {
+    const m = String(t || '').match(/^([DS]\d{6})(?:\/(site|rule)\/(.+))?$/);
+    return m ? { base: m[1], sub: m[2] || null, key: m[3] || null } : null;
+  }
+  function needMet(db, n) {
+    if (n.kind === 'obs') {
+      const d = db.senses[n.on];
+      return !!d && d.obs.some((o) => o.property === n.property && (!n.cell || o.context.cell === n.cell) && (!n.location || o.context.location === n.location));
+    }
+    if (n.kind === 'residue') {
+      const t = parseTarget(n.site), d = t && db.senses[t.base], st = d && d.site[t.key];
+      return !!st && !st.residue_unknown && !!st.numbering && !!(st.numbering[d.reference_species || V.defaultReferenceSpecies] || Object.keys(st.numbering).length);
+    }
+    if (n.kind === 'xref') { const d = db.senses[n.on]; return !!d && d.xrefs.some((x) => x.db === n.db); }
+    return false; // manual: resolution 으로만 닫힘
+  }
+  function limitationStatus(db, l) {
+    const met = l.requirement.needs.map((n) => needMet(db, n));
+    const auto = met.length > 0 && met.every(Boolean);
+    return { status: auto ? 'resolved' : l.resolution ? 'resolved_manual' : 'open', met, done: met.filter(Boolean).length, total: met.length };
   }
 
   // ===== 색인 =====
@@ -330,7 +375,11 @@
       const fs = b.features.map((f) => `${siteLabel(b.base, f.site)}:${vlabel('features', f.feature)}`);
       return `${label(b.base)}${fs.length ? '[' + fs.join(', ') + ']' : ''}@${vlabel('locations', b.location)}`;
     };
+    const limitsOf = new Map(), addressedBy = new Map();
+    for (const [lid, l] of Object.entries(db.limitations || {})) { const t = parseTarget(l.target); if (t) push(limitsOf, t.base, lid); }
+    for (const [id, d] of senses) for (const a of d.addresses || []) push(addressedBy, a.limitation, id);
     return Object.assign({ db, senses, termSenses, names, xrefs, fps, edges, label, termName, ruleOf, ruleOwner, activityOf, bundleLabel, siteLabel,
+      limitsOf: (id) => limitsOf.get(id) || [], addressedBy: (lid) => addressedBy.get(lid) || [],
       parents: (n) => up.get(n) || [], children, sides: (n) => side.get(n) || [] }, mechIndex(db, children));
   }
   const lookupName = (ix, name) => uniq((ix.names.get(normName(name)) || []).map((h) => h.term));
@@ -414,13 +463,14 @@
     if (c.species && !V.taxa[c.species]) E(where, `종 '${c.species}' 은(는) 종 어휘에 없음`);
     if (c.tissue && !V.tissues[c.tissue]) E(where, `조직 '${c.tissue}' 은(는) 어휘에 없음`);
     if (c.cell && !V.cells[c.cell]) E(where, `세포 '${c.cell}' 은(는) 어휘에 없음`);
+    if (c.location && !V.locations[c.location]) E(where, `위치 '${c.location}' 은(는) 위치 어휘에 없음`);
   }
   function validate(db) {
     const errors = [], warnings = [];
     const E = (where, msg) => errors.push({ where, msg }), W = (where, msg) => warnings.push({ where, msg });
     if (db._version) E('데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
-    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps]]) {
+    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations]]) {
       const max = Math.max(0, ...Object.keys(table).map((id) => parseInt(id.slice(1), 10) || 0));
       if (db.meta.next[p] <= max) E('meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
     }
@@ -451,7 +501,40 @@
     };
     for (const n of parentsOf.keys()) dfs(n, []);
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
+    for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
     return { errors, warnings };
+  }
+
+  function validateLimitation(db, ix, id, l, E, W) {
+    const w = `${id}`;
+    if (!isId('L', id)) E(id, "한계 번호는 'L' + 숫자 6자리");
+    const t = parseTarget(l.target);
+    if (!t) E(w, `대상 '${l.target}' 형식 — D…, D…/site/키, D…/rule/키, S…`);
+    else if (t.base[0] === 'S' ? !db.steps[t.base] : !db.senses[t.base]) E(w, `대상 '${t.base}' 없음`);
+    else if (t.sub === 'site' && !db.senses[t.base].site[t.key]) E(w, `대상 부위 '${l.target}' 없음`);
+    else if (t.sub === 'rule' && !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `대상 규칙 '${l.target}' 없음`);
+    if (!V.gapTypes[l.type]) E(w, `한계 종류 '${l.type}' — ${Object.keys(V.gapTypes).join(' | ')}`);
+    if (!l.requirement.text) E(w, '요구 사항(requirement.text) 없음 — 무엇이 있어야 해결되는지');
+    if (!l.requirement.needs.length) E(w, '해결 경로(requirement.needs) 없음 — 필요한 데이터를 하나 이상');
+    l.requirement.needs.forEach((n, i) => {
+      const nw = `${id} 필요 ${i + 1}`;
+      if (n.kind === 'obs') {
+        if (!V.obsProperties[n.property]) E(nw, `관찰 속성 '${n.property}' 은(는) 어휘에 없음`);
+        if (!db.senses[n.on]) E(nw, `관찰을 받을 정의항 '${n.on || ''}' 없음`);
+        if (n.cell && !V.cells[n.cell]) E(nw, `세포 '${n.cell}' 은(는) 어휘에 없음`);
+        if (n.location && !V.locations[n.location]) E(nw, `위치 '${n.location}' 은(는) 어휘에 없음`);
+      } else if (n.kind === 'residue') {
+        const s = parseTarget(n.site);
+        if (!s || s.sub !== 'site' || !db.senses[s.base] || !db.senses[s.base].site[s.key]) E(nw, `잔기를 채울 부위 '${n.site || ''}' 없음 — D…/site/키`);
+      } else if (n.kind === 'xref') {
+        if (!V.xrefs[n.db]) E(nw, `외부 ID 종류 '${n.db}' 없음`);
+        const d = db.senses[n.on];
+        if (!d) E(nw, `외부 ID 를 받을 정의항 '${n.on || ''}' 없음`);
+        else if (V.kinds[d.kind] && !V.kinds[d.kind].xref.allowed.includes(n.db)) E(nw, `kind '${d.kind}' 에는 ${n.db} ID 를 붙일 수 없어 이 경로로는 해결되지 않음`);
+      } else if (n.kind === 'manual') { if (!n.text) E(nw, 'manual 해결 경로에 설명(text) 없음'); }
+      else E(nw, `해결 경로 종류 '${n.kind}' — obs | residue | xref | manual`);
+    });
+    if (l.resolution) { if (!l.resolution.note) E(w, 'resolution 에 해결 설명(note) 없음'); checkEvidence(l.resolution.evidence, w, E); }
   }
 
   function validateSense(db, ix, id, d, E, W) {
@@ -640,6 +723,17 @@
         if (!x.site[q.site]) E(rw, `전제 조건의 부위 '${q.site}' 가 '${L(ref)}' 에 없음`);
         else if (!x.site[q.site].features.includes(q.feature)) E(rw, `전제 조건: 부위 '${q.site}' 는 특징 '${q.feature}' 를 가질 수 없음`);
       }
+    }
+    // 상위 개념
+    if (d.motif) {
+      if (!MOTIFS[d.motif]) E(where, `motif '${d.motif}' — 가능한 값: ${Object.keys(MOTIFS).join(', ')}`);
+      if (d.kind !== 'process') E(where, 'motif(경로에서 찾는 패턴)는 kind process 정의항만 가질 수 있음');
+      // Gap-filling Loop: 상위 개념은 한계 등록부를 검토한 결과를 반드시 가진다
+      if (!(d.addresses || []).length && !d.gap_review) E(where, '상위 개념(motif)은 한계 등록부를 검토해 addresses(해결하는 한계와 방법) 또는 gap_review(해결하지 않는 이유)를 적어야 함');
+    }
+    for (const a of d.addresses || []) {
+      if (!db.limitations[a.limitation]) E(where, `addresses: 한계 '${a.limitation}' 없음`);
+      if (!a.how) E(where, `addresses: 한계 ${a.limitation} 를 어떻게 해결하는지(how) 없음`);
     }
     // 관찰
     d.obs.forEach((b, i) => {
@@ -899,7 +993,7 @@
     const ERR = (where, msg) => report.errors.push({ where, msg });
     const MAP = (from, to, via) => report.mapped.push({ from, to, via });
     if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }
-    if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states)) { ERR('패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
+    if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states) || isObj(patchIn.limitations)) { ERR('패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
     const alloc = (p) => fmtId(p, db.meta.next[p]++);
     const ix0 = index(db);
     const preSenses = new Map([...ix0.termSenses].map(([k, v]) => [k, v.length]));
@@ -1001,6 +1095,18 @@
       } else { id = alloc('S'); if (rid) report.idmap[rid] = id; report.added.push(id); }
       db.steps[id] = st; touchedSteps.push([id, st]);
     }
+    // 3b. 한계
+    const touchedLimits = [];
+    for (const raw of arr(patchIn.limitations)) {
+      if (!isObj(raw)) { ERR('limitations', '한계 항목이 객체가 아님'); continue; }
+      const l = normLimitation(raw), rid = str(raw.id);
+      let id;
+      if (rid && !isTemp('L', rid)) {
+        if (!db.limitations[rid]) { ERR(rid, '없는 한계 번호 — 새 한계는 임시 번호(L+1)를 쓸 것'); continue; }
+        id = rid; report.updated.push(id);
+      } else { id = alloc('L'); if (rid) report.idmap[rid] = id; report.added.push(id); }
+      db.limitations[id] = l; touchedLimits.push([id, l]);
+    }
     // 4. 참조·어휘 매핑
     const ix = index(db);
     const ref = (r, where) => {
@@ -1018,7 +1124,7 @@
       if (m.mapped) MAP(value, m.key, VNAME[table]);
       return m.key;
     };
-    const ctx = (c, w) => { for (const [k, t] of [['species', 'taxa'], ['tissue', 'tissues'], ['cell', 'cells']]) if (c[k]) c[k] = voc(t, c[k], w); };
+    const ctx = (c, w) => { for (const [k, t] of [['species', 'taxa'], ['tissue', 'tissues'], ['cell', 'cells'], ['location', 'locations']]) if (c[k]) c[k] = voc(t, c[k], w); };
     for (const [id, d] of new Map(touched)) {
       d.kind = voc('kinds', d.kind, id);
       if (d.reference_species) d.reference_species = voc('taxa', d.reference_species, id);
@@ -1093,10 +1199,32 @@
       }
       st.part_of = st.part_of.map((p) => ref(p, `${id} 소속 경로`));
     }
+    const target = (t, w) => {
+      if (!t) return t;
+      if (report.idmap[t]) return report.idmap[t];
+      const i = t.indexOf('/');
+      const head = i < 0 ? t : t.slice(0, i), tail = i < 0 ? '' : t.slice(i);
+      if (isStepId(head)) return t;
+      const h = report.idmap[head] || (isTemp('S', head) ? head : ref(head, w));
+      return h + tail;
+    };
+    for (const [id, l] of touchedLimits) {
+      l.target = target(l.target, `${id} 대상`);
+      l.type = l.type ? (V.gapTypes[l.type] ? l.type : (mapVocab('gapTypes', l.type).key || l.type)) : l.type;
+      for (const n of l.requirement.needs) {
+        if (n.on) n.on = ref(n.on, `${id} 필요`);
+        if (n.site) n.site = target(n.site, `${id} 필요`);
+        if (n.cell) n.cell = voc('cells', n.cell, id);
+        if (n.location) n.location = voc('locations', n.location, id);
+        if (n.property) n.property = voc('obsProperties', n.property, id);
+      }
+    }
+    for (const [id, d] of new Map(touched)) for (const a of d.addresses || []) if (report.idmap[a.limitation]) a.limitation = report.idmap[a.limitation];
     // 5. 삭제 (번호 재사용 금지)
     const gone = new Set();
     for (const r of arr(patchIn.remove).map(str)) {
       if (db.steps[r]) { delete db.steps[r]; report.removed.push(r); continue; }
+      if (db.limitations[r]) { delete db.limitations[r]; report.removed.push(r); continue; }
       if (db.terms[r]) {
         for (const [sid, s] of Object.entries(db.senses)) if (s.term === r) { delete db.senses[sid]; gone.add(sid); report.removed.push(sid); }
         delete db.terms[r]; report.removed.push(r); continue;
@@ -1381,12 +1509,134 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 `;
   }
 
+  // ===== 상위 패턴 (Bottom-up Abstraction) =====
+  // 경로의 단계·규칙·묶음에서 반복되는 구조를 찾는 검출기. kind process 정의항의 motif 필드가 이 키를 가리키면
+  // 그 정의항은 "실행 가능한 상위 개념"이 된다 — 사례(경로)는 저장하지 않고 매번 계산한다(새 경로도 자동으로 잡힘).
+  function motifCtx(db, ix, ids) {
+    const st = (sid) => db.steps[sid], rule = (sid) => ix.ruleOf(db.steps[sid].rule) || { effect: {} };
+    const major = (ps) => ps.filter((p) => !p.minor).map((p) => p.b);
+    const uses = (sid) => [...major(st(sid).agents), ...major(st(sid).inputs)];
+    const feeds = (a, b) => major(st(a).outputs).some((x) => uses(b).includes(x));
+    const kindOf = (b) => (db.senses[b.split('|')[0]] || {}).kind;
+    return { db, ix, ids, st, rule, major, uses, feeds, kindOf, act: (sid) => rule(sid).action, eff: (sid) => rule(sid).effect.type };
+  }
+  const chains = (c, pick, link) => {
+    const sel = c.ids.filter(pick), out = [];
+    const nexts = (a) => sel.filter((b) => b !== a && link(a, b));
+    // 순환(예: 빈 CD14 가 다시 첫 전달로 돌아감)이 있어도 찾도록 모든 단계에서 출발하고, 다른 사슬에 포함되는 사슬은 버린다
+    const walk = (path) => { const n = nexts(path[path.length - 1]).filter((x) => !path.includes(x)); if (!n.length) { if (path.length >= 2) out.push(path); return; } for (const x of n) walk([...path, x]); };
+    for (const s0 of sel) walk([s0]);
+    const key = (p) => ',' + p.join(',') + ',';
+    const set = (p) => [...p].sort().join(',');
+    const max = out.filter((p, i) => !out.some((q, j) => j !== i && q.length > p.length && key(q).includes(key(p))));
+    return max.filter((p, i) => max.findIndex((q) => set(q) === set(p)) === i); // 같은 순환을 다른 곳에서 시작한 것은 하나로
+  };
+  const MOTIFS = {
+    receptor_signaling: { label: '세포 밖 신호의 막 수용체 인식', detect: (c) => c.ids.filter((sid) => c.st(sid).inputs.some((p) => p.b.endsWith('|extracellular')) && c.st(sid).outputs.some((p) => p.b.endsWith('|plasma_membrane'))).map((sid) => ({ steps: [sid] })) },
+    ligand_relay: { label: '리간드 전달 릴레이', detect: (c) => chains(c, (sid) => c.eff(sid) === 'transfer', (a, b) => c.feeds(a, b)).map((steps) => ({ steps })) },
+    receptor_clustering: { label: '리간드 유도 수용체 다량체화', detect: (c) => c.ids.filter((sid) => c.eff(sid) === 'associate' && (c.rule(sid).effect.requires || []).length && !c.rule(sid).agent).map((sid) => ({ steps: [sid] })) },
+    scaffold_assembly: { label: '활성 수용체가 핵을 이루는 신호 발판 조립', detect: (c) => c.ids.filter((sid) => c.eff(sid) === 'associate' && c.rule(sid).agent).map((sid) => ({ steps: [sid] })) },
+    second_messenger: { label: '2차 전령 증폭', detect: (c) => c.ids.filter((a) => c.eff(a) === 'convert' && c.rule(a).agent && c.major(c.st(a).outputs).some((x) => c.kindOf(x) === 'small_molecule' && c.ids.some((b) => b !== a && c.eff(b) !== 'convert' && c.uses(b).includes(x)))).map((sid) => ({ steps: [sid] })) },
+    kinase_cascade: { label: '키네이스 연쇄', detect: (c) => chains(c, (sid) => c.act(sid) === '인산화' && c.rule(sid).agent, (a, b) => c.major(c.st(a).outputs).some((x) => c.major(c.st(b).agents).includes(x))).map((steps) => ({ steps })) },
+    gtpase_timer: { label: 'GTPase 타이머 (스스로 꺼지는 스위치)', detect: (c) => c.ids.filter((b) => c.act(b) === '가수분해' && c.eff(b) === 'modify').filter((b) => c.ids.some((a) => a !== b && c.feeds(a, b) && c.feeds(b, a))).map((sid) => ({ steps: [sid] })) },
+    inhibitor_degradation_release: { label: '억제자 분해에 의한 전사 인자 방출', detect: (c) => c.ids.filter((a) => c.eff(a) === 'degrade' && c.ids.some((b) => c.eff(b) === 'transport' && c.feeds(a, b))).map((sid) => ({ steps: [sid, ...c.ids.filter((b) => c.eff(b) === 'transport' && c.feeds(sid, b))] })) },
+    nuclear_translocation_transcription: { label: '핵 이동 후 전사 활성화', detect: (c) => {
+      const out = [];
+      for (const t of c.ids.filter((sid) => c.eff(sid) === 'transport' && (c.rule(sid).effect.to === 'nucleoplasm'))) {
+        const seen = [t]; let frontier = [t];
+        for (let k = 0; k < 3 && frontier.length; k++) { frontier = c.ids.filter((b) => !seen.includes(b) && frontier.some((a) => c.feeds(a, b))); seen.push(...frontier); const hit = frontier.find((b) => c.act(b) === '전사'); if (hit) { out.push({ steps: seen.slice(0, seen.indexOf(hit) + 1) }); break; } }
+      }
+      return out;
+    } },
+    membrane_to_nucleus: { label: '막–핵 신호 연쇄', detect: (c) => { const tr = trajectory(c); return tr.includes('nucleoplasm') && (tr.includes('extracellular') || tr.includes('plasma_membrane')) && c.ids.some((sid) => c.eff(sid) === 'transport') ? [{ steps: c.ids.slice(), note: tr.join(' → ') }] : []; } },
+  };
+  // 신호가 지나간 위치의 순서 (단계 순서대로 처음 나타나는 위치)
+  function trajectory(c) { const out = []; for (const sid of c.ids) for (const b of [...c.major(c.st(sid).inputs), ...c.major(c.st(sid).agents), ...c.major(c.st(sid).outputs)]) { const l = b.split('|').pop(); if (!out.includes(l)) out.push(l); } return out; }
+  function findMotifs(db, pathwayId, ix) {
+    ix = ix || index(db);
+    const c = motifCtx(db, ix, ix.stepsIn(pathwayId));
+    const found = {};
+    for (const [k, m] of Object.entries(MOTIFS)) { const hits = m.detect(c); if (hits.length) found[k] = hits; }
+    return { trajectory: trajectory(c), found, steps: c.ids };
+  }
+  function patternText(db, target) {
+    db = normalize(db);
+    const ix = index(db), tg = targets(ix, target);
+    if (tg.error) return tg.error;
+    const concepts = [...ix.senses].filter(([, d]) => d.motif);
+    const conceptOf = (k) => concepts.filter(([, d]) => d.motif === k).map(([id]) => `${id} ${ix.label(id)}`);
+    const out = [];
+    for (const id of tg.ids) {
+      const d = ix.senses.get(id);
+      if (d.motif) {
+        out.push(`[${id} ${ix.label(id)}] 상위 개념 — 패턴 '${d.motif}' (${(MOTIFS[d.motif] || {}).label || '?'})`, '  이 패턴이 나타나는 경로:');
+        for (const [pid, pd] of ix.senses) if (pd.kind === 'pathway') { const f = findMotifs(db, pid, ix).found[d.motif]; if (f) out.push(`    ${pid} ${ix.label(pid)} — ${f.length}곳: ${f.map((h) => h.steps.join('→')).join(' | ')}`); }
+        for (const a of d.addresses || []) out.push(`  해결하려는 한계 ${a.limitation}: ${a.how}`);
+        continue;
+      }
+      const r = findMotifs(db, id, ix);
+      if (!r.steps.length) { out.push(`${id} ${ix.label(id)}: 단계가 없음`); continue; }
+      out.push(`[${id} ${ix.label(id)}] 단계 ${r.steps.length}개`, `  위치 궤적: ${r.trajectory.map((l) => vlabel('locations', l)).join(' → ')}`, '  찾은 패턴:');
+      for (const [k, hits] of Object.entries(r.found)) out.push(`    · ${MOTIFS[k].label} (${k}) ×${hits.length} — ${hits.map((h) => h.steps.map((s) => `${s} ${ix.label(s)}`).join(' → ')).join(' | ')}` + (conceptOf(k).length ? `\n        상위 개념: ${conceptOf(k).join(', ')}` : '\n        상위 개념 없음 — 반복되면 kind process + motif 로 정의항을 만들 것'));
+    }
+    return out.join('\n');
+  }
+
+  // ===== 한계 등록부 출력 =====
+  function limitationRows(db, ix) {
+    return Object.entries(db.limitations).map(([id, l]) => {
+      const t = parseTarget(l.target), st = limitationStatus(db, l);
+      const tl = t ? `${l.target} (${ix.label(t.base)}${t.sub ? ' · ' + t.key : ''})` : l.target;
+      const needs = l.requirement.needs.map((n, i) => `${st.met[i] ? '✓' : '✗'} ` + (n.kind === 'obs' ? `관찰 ${n.property} @ ${n.on} ${ix.label(n.on)}${n.cell ? ' · ' + vlabel('cells', n.cell) : ''}${n.location ? ' · ' + vlabel('locations', n.location) : ''}`
+        : n.kind === 'residue' ? `잔기 번호 @ ${n.site}` : n.kind === 'xref' ? `${n.db} ID @ ${n.on} ${ix.label(n.on)}` : `수동: ${n.text}`));
+      return { id, l, st, tl, needs, by: ix.addressedBy(id) };
+    });
+  }
+  function limitationsText(db, opt) {
+    db = normalize(db);
+    const ix = index(db), rows = limitationRows(db, ix).filter((r) => !(opt && opt.open) || r.st.status === 'open');
+    const out = [];
+    for (const type of Object.keys(V.gapTypes)) {
+      const rs = rows.filter((r) => r.l.type === type);
+      if (!rs.length) continue;
+      out.push(`## ${type} — ${V.gapTypes[type].label} (${rs.filter((r) => r.st.status === 'open').length} 열림 / ${rs.length})`);
+      for (const r of rs) out.push(`[${r.id} | ${r.tl} | ${type}] ${r.st.status} ${r.st.done}/${r.st.total}`, `  요구: ${r.l.requirement.text}`, ...r.needs.map((x) => '    ' + x), ...(r.by.length ? [`  다루는 개념: ${r.by.map((d) => `${d} ${ix.label(d)}`).join(', ')}`] : []));
+    }
+    return out.join('\n') || '등록된 한계 없음';
+  }
+  function limitationsMarkdown(db) {
+    db = normalize(db);
+    const ix = index(db), rows = limitationRows(db, ix), cell = (x) => String(x).replace(/\|/g, '\\|').replace(/\n/g, ' ');
+    const out = ['# 한계 등록부 (Limitation & Constraint Registry)', '',
+      '> 이 파일은 `data/db.json` 의 `limitations` 에서 생성된다 — 직접 고치지 말고 패치(`limitations: [...]`)로 등록한 뒤 `node dbtool.mjs limitations --write`.',
+      '> 새 개념(정의항)을 설계하기 전에 반드시 이 파일을 읽고, 그 개념이 어떤 한계를 어떻게 해결하는지 정의항의 `addresses` 에 적는다.',
+      '> 상태는 계산된다: 해결 경로(needs)의 데이터가 모두 들어오면 resolved. ✓ = 이미 채워진 데이터, ✗ = 아직 없는 데이터.', '',
+      '| 종류 | 열림 | 해결 | 합계 |', '|---|---|---|---|'];
+    for (const type of Object.keys(V.gapTypes)) { const rs = rows.filter((r) => r.l.type === type); out.push(`| ${type} | ${rs.filter((r) => r.st.status === 'open').length} | ${rs.filter((r) => r.st.status !== 'open').length} | ${rs.length} |`); }
+    for (const type of Object.keys(V.gapTypes)) {
+      const rs = rows.filter((r) => r.l.type === type);
+      if (!rs.length) continue;
+      out.push('', `## ${type} — ${V.gapTypes[type].label}`, '', V.gapTypes[type].note || '', '', '| ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |', '|---|---|---|---|---|---|---|');
+      for (const r of rs) out.push(`| ${r.id} | ${cell(r.tl)} | ${type} | ${cell(r.l.requirement.text)}${r.l.found_in ? `<br>발견: ${cell(r.l.found_in)}` : ''} | ${r.needs.map(cell).join('<br>')} | ${r.st.status} (${r.st.done}/${r.st.total}) | ${r.by.map((d) => `${d} ${cell(ix.label(d))}`).join('<br>') || '—'} |`);
+    }
+    return out.join('\n') + '\n';
+  }
+  // 등록되지 않은 한계 후보 — 잔기 모름 부위 중 어떤 한계도 가리키지 않는 것
+  function detectGaps(db) {
+    db = normalize(db);
+    const ix = index(db), covered = new Set();
+    for (const l of Object.values(db.limitations)) { covered.add(l.target); for (const n of l.requirement.needs) if (n.site) covered.add(n.site); }
+    const out = [];
+    for (const [id, d] of ix.senses) for (const [k, st] of Object.entries(d.site)) if (st.residue_unknown && !covered.has(`${id}/site/${k}`)) out.push({ target: `${id}/site/${k}`, type: 'Structural_Gap', why: `${ix.label(id)} 의 부위 ${k} 잔기 번호 모름` });
+    return out;
+  }
+
   // ===== 시뮬레이션: 단계를 규칙대로 실제로 발화시켜 묶음 풀(pool)이 어떻게 바뀌는지 본다 =====
   // 시작 풀 = 경로 안에서 어떤 단계도 만들지 않는 묶음(원천 묶음). 보조 기질(부산물·with)은 넉넉히(bulk), 나머지는 amount 개.
   // 한 라운드에 단계 순서대로 각 단계를 최대 한 번 발화: 행위자 ≥1, 입력이 n 개 이상 있으면 입력을 소비하고 출력을 만든다.
   function simulate(db, target, opt) {
     db = normalize(db);
-    opt = Object.assign({ amount: 10, bulk: 1000, rounds: 60, init: {}, maxFire: 1000 }, opt || {});
+    opt = Object.assign({ amount: 10, bulk: 1000, rounds: 60, init: {}, maxFire: 1e12 }, opt || {});
     const ix = index(db), tg = targets(ix, target);
     if (tg.error) return { error: tg.error };
     const ids = uniq(tg.ids.flatMap((d) => ix.stepsIn(d)));
@@ -1394,6 +1644,29 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     const made = new Set(ids.flatMap((sid) => db.steps[sid].outputs.map((p) => p.b)));
     const pool = new Map(), origin = new Map(), producer = new Map(), trace = [];
     const seed = (b, n) => { origin.set(b, n); pool.set(b, n); };
+    // 구획 농도 모델: 시작량을 데이터에서 — 분자 수(copy_number) 또는 농도 × 구획 부피(compartment_volume)
+    const cell = opt.cell || (tg.ids.map((d) => (db.senses[d].desc[0] || { context: {} }).context.cell).find(Boolean));
+    const source = {};
+    const fromData = (b) => {
+      const [base, ...rest] = b.split('|'), loc = rest[rest.length - 1], d = db.senses[base];
+      if (!d) return null;
+      const okCtx = (o) => (!o.context.cell || !cell || o.context.cell === cell) && (!o.context.location || o.context.location === loc);
+      const cn = d.obs.find((o) => o.property === 'copy_number' && okCtx(o));
+      if (cn) return { n: Math.round(cn.value), how: `copy_number ${cn.value} (${d.obs.indexOf(cn) + 1}번 관찰)` };
+      const cc = d.obs.find((o) => o.property === 'concentration' && okCtx(o));
+      if (!cc) return null;
+      const vol = Object.values(db.senses).flatMap((x) => x.obs).find((o) => o.property === 'compartment_volume' && o.context.location === loc && (!cell || !o.context.cell || o.context.cell === cell));
+      if (!vol) return null;
+      const M = { pM: 1e-12, nM: 1e-9, 'µM': 1e-6, uM: 1e-6, mM: 1e-3, M: 1 }[cc.unit], L = { fL: 1e-15, pL: 1e-12, nL: 1e-9 }[vol.unit];
+      if (!M || !L) return null;
+      return { n: Math.round(cc.value * M * vol.value * L * 6.02214076e23), how: `concentration ${cc.value} ${cc.unit} × volume ${vol.value} ${vol.unit}` };
+    };
+    const amountFor = (b) => {
+      if (opt.init[b] != null) { source[b] = 'init'; return opt.init[b]; }
+      const x = fromData(b);
+      if (x) { source[b] = 'data: ' + x.how; return x.n; }
+      source[b] = 'default'; return opt.amount;
+    };
     // 어느 단계에서든 부산물(minor)이거나 보조 기질(with)인 묶음은 대사물 풀로 보고 넉넉히 둔다 (ATP 등)
     const bulkSet = new Set();
     for (const sid of ids) {
@@ -1408,8 +1681,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       for (const p of [...st.agents, ...st.inputs]) {
         if (origin.has(p.b)) continue;
         const bulk = bulkSet.has(p.b);
-        if (bulk) seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : opt.bulk);
-        else if (!made.has(p.b)) seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : opt.amount);
+        if (bulk) { seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : opt.bulk); source[p.b] = opt.init[p.b] != null ? 'init' : 'bulk'; }
+        else if (!made.has(p.b)) seed(p.b, amountFor(p.b));
       }
     }
     // 순환 안에서만 만들어지는 휴지 상태(예: Gs[GDP] 는 자체 비활성화 단계의 출력)는 순환을 시작할 수 없다.
@@ -1436,7 +1709,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       // 가장 상류의 순환 하나만 (Tarjan 은 하류부터 끝내므로 완료 순번이 클수록 상류) — 보충 뒤 다시 계산
       const top = Math.max(...missing.map((b) => compRank.get(comp.get(b))));
       const pick = missing.filter((b) => compRank.get(comp.get(b)) === top).sort((a, b) => parseBundle(a).features.length - parseBundle(b).features.length)[0];
-      seed(pick, opt.init[pick] != null ? opt.init[pick] : opt.amount); cycleSeeds.push(pick);
+      seed(pick, amountFor(pick)); cycleSeeds.push(pick);
     }
     for (const [k, n] of Object.entries(opt.init)) if (!origin.has(k)) { origin.set(k, n); pool.set(k, n); }
     const has = (b) => pool.get(b) || 0, reachedBy = () => opt.until ? [...pool].find(([k, n]) => n > 0 && k.split('|')[0] === opt.until) : null;
@@ -1477,13 +1750,17 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       }
       derivation = { target: reached[0], steps: ix.order([...steps]), roots: [...roots] };
     }
-    return { ids, origin: Object.fromEntries(origin), cycleSeeds, pool: Object.fromEntries(pool), trace, rounds: round, reached: reached ? reached[0] : null, derivation, ix };
+    return { ids, scope: tg.ids, cell, source, origin: Object.fromEntries(origin), cycleSeeds, pool: Object.fromEntries(pool), trace, rounds: round, reached: reached ? reached[0] : null, derivation, ix };
   }
   function simulateText(db, target, opt) {
     const r = simulate(db, target, opt);
     if (r.error) return r.error;
     const ix = r.ix, out = [`시뮬레이션: ${target} — 단계 ${r.ids.length}개, ${r.rounds} 라운드, 발화 ${r.trace.length}회`];
-    out.push('시작 풀(원천 묶음):', ...Object.entries(r.origin).filter(([, n]) => n < (opt && opt.bulk || 1000)).map(([k, n]) => `  ${n}× ${ix.bundleLabel(k)}`));
+    out.push(`시작 풀(원천 묶음)${r.cell ? ' — 세포 ' + vlabel('cells', r.cell) : ''}:`, ...Object.entries(r.origin).filter(([k]) => r.source[k] !== 'bulk').map(([k, n]) => `  ${n}× ${ix.bundleLabel(k)}  [${r.source[k] === 'default' ? '기본값 — 농도 공백' : r.source[k]}]`));
+    const defaulted = Object.keys(r.origin).filter((k) => r.source[k] === 'default'), bulk = Object.keys(r.origin).filter((k) => r.source[k] === 'bulk');
+    const inScope = new Set([...r.scope, ...r.ids, ...r.ids.flatMap((sid) => { const st = r.ix.db.steps[sid]; return [st.rule.split('/')[0], ...[...st.agents, ...st.inputs, ...st.outputs].map((p) => p.b.split('|')[0])]; })]);
+    const gaps = Object.entries(r.ix.db.limitations).filter(([, l]) => l.type === 'Concentration_Gap' && limitationStatus(r.ix.db, l).status === 'open' && inScope.has((parseTarget(l.target) || {}).base)).map(([id]) => id);
+    if (defaulted.length || bulk.length) out.push(`  ⚠ 농도 공백: 시작량 ${defaulted.length}개가 기본값, ${bulk.length}개가 무한 풀 — 결과는 질적(도달 여부)으로만 읽을 것${gaps.length ? ` (등록된 한계: ${gaps.join(', ')})` : ' — 한계 등록부에 Concentration_Gap 으로 등록할 것'}`);
     if (r.cycleSeeds.length) out.push('  (순환의 휴지 상태라 자동 보충: ' + r.cycleSeeds.map((b) => ix.bundleLabel(b)).join(', ') + ')');
     out.push('발화 순서:');
     let last = 0;
@@ -1514,5 +1791,6 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 
   return { FORMAT, PATCH_FORMAT, VERSION, VOCAB: V, REL, AXIS_UP, AXIS_DOWN, ROLE, emptyDB, normalize, normName, index, validate, merge, gate, ingest,
     resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
-    xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText };
+    xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
+    MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget };
 });

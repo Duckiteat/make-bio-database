@@ -30,6 +30,13 @@
 - 새 항목에는 임시 번호(T+1, D+1, S+1)를 쓴다. 번호를 직접 지어내지 않는다. `data/db.json` 의 `meta.next` 를 손대지 않는다.
 - 구조 지문(InChIKey·서열 해시)은 머릿속으로 계산해 넣지 않는다. 도구로 계산한 값만 `computed` 로 넣는다.
 
+## 한계와 개념 진화 (반드시)
+
+- **한계는 데이터다.** 시뮬레이션 실패·우회·추정·단순화를 오류로 넘기지 않는다. 발견하는 즉시 패치의 `limitations` 로 `[Target | Type | Requirement]` 를 등록하고(해결 경로 `needs` 포함) `node dbtool.mjs limitations --write` 로 `limitations.md` 를 갱신한다. `node dbtool.mjs limitations --detect` 의 후보가 0 이 되게 한다.
+- **새 개념을 설계하기 전에 `limitations.md` 를 먼저 읽는다.** 새 정의항이 어떤 한계를 어떻게 해결하는지 `addresses: [{ limitation, how }]` 에 적는다. 해결하지 않으면 `gap_review` 에 이유를 적는다(상위 개념은 둘 중 하나가 없으면 거부된다).
+- **개별 단계에 갇히지 않는다.** 경로를 넣은 뒤 `node dbtool.mjs pattern <경로>` 로 상위 패턴을 확인하고, 상위 개념이 없는 패턴이 두 경로 이상에서 반복되면 kind process + `motif` 정의항으로 추상화한다.
+- 시뮬레이션 결과를 보고할 때는 "농도 공백" 표시(기본값·무한 풀)를 함께 밝힌다 — 그 결과는 도달 여부만 말한다.
+
 ## 규칙·코드를 바꿀 때
 
 - 통제 어휘(`vocab.js`)나 규칙(`core.js`)은 사용자 요청이 있을 때만 바꾼다. 데이터를 통과시키려고 규칙을 느슨하게 하지 않는다.
