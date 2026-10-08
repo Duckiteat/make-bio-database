@@ -207,7 +207,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 ```
 
 - **Target**: 정의항 `D…`, 그 부위 `D…/site/키`·규칙 `D…/rule/키`, 또는 단계 `S…`. 패치에서는 이름도 된다(`TAK1/site/act`).
-- **Type** (`vocab.js` 의 `gapTypes`): `Kinetic_Gap`(속도·Kd·시간 상수) · `Concentration_Gap`(몰 농도·부피·질량 수지) · `Structural_Gap`(3차원 좌표·위상·잔기·화학량).
+- **Type** (`vocab.js` 의 `gapTypes`): `Kinetic_Gap`(속도·Kd·시간 상수) · `Concentration_Gap`(몰 농도·부피·질량 수지) · `Structural_Gap`(3차원 좌표·위상·잔기·화학량) · `Identity_Gap`(unmapped 필수 외부 ID — 해결 경로 `xref`, 어휘에 없는 ID 체계면 `manual`).
 - **Requirement**: 사람이 읽는 `text` + 기계가 확인하는 해결 경로 `needs`.
   - `obs`: 그 정의항에 그 관찰(세포·위치 맥락)이 들어오면 충족 · `residue`: 그 부위에 기준 종 잔기 번호가 들어오면 충족 · `xref`: 그 외부 ID 가 붙으면 충족 · `manual`: 형식으로 확인할 수 없는 요구 — `resolution` 으로만 닫힘.
 - **상태는 저장하지 않고 계산한다**: needs 가 모두 충족되면 `resolved`, manual 이 resolution 으로 닫히면 `resolved_manual`, 아니면 `open`.
@@ -360,6 +360,13 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 이전 형식(v2·v3) 패치(`terms` 가 객체, `definientia`, `states`)는 거부된다.
 - 예: `examples/pgm-isomerization.json`.
 
+### Patch Report (v7 확장)
+- 패치 최상위 `why`(문자열) — `dbtool merge` 에서 필수. 없으면 거부.
+- `merge` 는 `patchReport(이전 db, 병합 결과, 패치, 관문)` 로 계산한 보고서를 출력하고 기록 `data/patches/…json` 의 `report` 에 저장한다:
+  `{ scope: { files, added, updated, removed (종류별), fields: { 번호: [바뀐 최상위 필드] } }, why, impact: { rules, senses, steps, pathways(상위 경로 포함), limitations[{id,before,after}], limitation_status_changed, regenerate }, verification: { gate, errors, warnings, new_errors, new_warnings, undetected_gaps } }`
+- 하류(impact) = 바뀐 정의항을 참조하는 다른 정의항의 규칙(효과·with·조절자·공급·재활용)·정의항(구성 요소·부분 구조·연결·리간드), 바뀐 정의항·규칙·묶음을 쓰는 단계, 그 단계의 경로와 상위 경로, 바뀐 것을 대상·해결 경로로 가진 한계.
+- `undetected_gaps > 0` 이면 `dbtool merge` 가 거부한다 (`limitations --detect` 후보 0 이 병합 조건).
+
 ## 12. 관문
 
 | 결과 | 처리 |
@@ -379,6 +386,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 7 (확장) | Traceable Evolution Protocol: 패치 `why` 필수, Patch Report(`patchReport`·`patchReportText`, 기록의 `report`, `dbtool report`), 미등록 한계 후보가 있으면 병합 거부. 한계 종류 `Identity_Gap`(unmapped 외부 ID — `detectGaps` 가 후보로 잡음). 데이터: Identity_Gap 6건(L000028–L000033). 형식 버전은 그대로 (`CHANGES.md` 도입) |
 | 2026-10-08 | 7 | 생애 주기·대사물 저장소: 규칙 종류 `supply`(Metabolic_Supply_Rule)·`degradation`(Degradation_Rule, fate lost/recycled, recycle_to, sequence_length), 정의항 `moieties`(부분 구조)와 부분 구조 수지 검사, 부위 `ligands`(특징별 리간드), 속도 법칙 `zero_order`, 속도 필드 `half_life`, 관찰 `sequence_length`, 어휘 `lifecycleFates`·`reservoirModes`·`ruleTypes`. 시뮬레이터: 유한 저장소(기본)·공급·분해(결정론/확률적)·매 Δt 질량 감사(국소·전역, 실체·부분 구조)·고갈/재생 사건·원장 Δ·자원 순환, 감사 코드 `AUDIT_RESOURCE`. 데이터: 부분 구조 3개·피로인산, ATP·ADP·AMP·cAMP·GTP·GDP·Pi·G1P 부분 구조, Gs 특징별 리간드, AC·E1·프로테아좀 규칙의 빠진 산물(피로인산·Pi) 교정, 공급 규칙 5개(NDPK·아데닐산 키네이스·PPase·ATP 재생·뉴클레오타이드 공급), 분해 규칙 2개(TNF mRNA·IκBα), 원리 2개(생애 주기 모델·대사물 저장소 모델), 한계 9건 (`migrations/006-v6-to-v7-lifecycle.mjs`) |
 | 2026-10-08 | 6 | 혼합 해상도(R0 위상·R1 부위·R2 구조, 전환 문턱 T1–T3, 부위 구조 참조 `site.structure`), 반응 속도(`rule.kinetics`, 법칙 3종, SI 정준 단위, 속도 무결성 검사), 한계 해결 경로 `kinetics`, 속도 기반 시뮬레이터·시나리오 층, 감사 명령(`audit-run`). 데이터: 혼합 해상도 모델·반응 속도 모델 원리, 3FXI 구조 참조, Kinetic_Gap 해결 경로 교정, 한계 2건 추가(2D 환산, Gs–AC 이중 계산) (`migrations/005-v5-to-v6-hybrid-kinetics.mjs`) |
 | 2026-10-08 | 5 | 한계 등록부 `limitations`(L…, `[Target | Type | Requirement]`, 계산되는 상태, `limitations.md` 생성·CI 검사), 상위 개념 `motif`·`addresses`·`gap_review`, 패턴 검출기(`pattern`), 구획 농도 모델(시작량을 copy_number 또는 농도 × 구획 부피에서), 관찰 맥락 `location`, 관찰 속성 copy_number·compartment_volume, 어휘 gapTypes. 한계 16건·상위 개념 10개·구획 농도 모델 등록 (`migrations/004-v4-to-v5-limitations.mjs`) |

@@ -243,6 +243,7 @@
     Kinetic_Gap:       { label: '속도·친화도·시간 상수 공백', aliases: ['kinetic'], note: '반응 속도(kcat·Km), 결합 친화도(Kd), 반감기 같은 시간 정보가 없어 경쟁·지속·종료를 정할 수 없는 곳.' },
     Concentration_Gap: { label: '농도·부피·질량 수지 공백', aliases: ['concentration'], note: '몰 농도, 세포당 분자 수, 구획 부피, 질량 수지가 없어 시작량을 기본값·무한 풀로 둔 곳.' },
     Structural_Gap:    { label: '구조·위상·해상도 공백', aliases: ['structural'], note: '3차원 좌표, 잔기 번호, 화학량(구성 비), 막 위상을 모르거나 다른 분자에서 빌려 온 곳.' },
+    Identity_Gap:      { label: '정체성(외부 ID) 공백', aliases: ['identity', 'unmapped'], note: '필수 외부 ID(ChEBI·UniProt …)를 원본과 대조하지 못해 unmapped 에 사유만 둔 곳. 확인된 ID 가 들어오면 닫힌다.' },
   },
 
   // ===== 근거 수준 =====

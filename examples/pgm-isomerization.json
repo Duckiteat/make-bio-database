@@ -1,6 +1,7 @@
 {
   "format": "definition-db-patch",
   "version": 7,
+  "why": "예시: 글리코겐 분해 경로의 포도당-1-인산 다음 단계(G1P → G6P)를 이름 매핑과 함께 보여 줌",
   "_설명": "형식 v4 예시 — 포스포글루코뮤테이스가 포도당-1-인산을 포도당-6-인산으로 바꾸는 단계. 참조를 일부러 이름·영문명·별칭·어휘 별칭으로 써서 (부분 구조 moieties 도 이름으로) 병합 때 번호·표준 값으로 매핑되는 것을 보여 준다. 원천(정의항)이 규칙을 소유하고, 단계는 규칙 참조와 묶음만 가진다. 저장소에는 병합하지 않은 예시다 (node dbtool.mjs merge examples/pgm-isomerization.json --dry).",
   "terms": [
     { "id": "T+g6p", "names": { "ko": "포도당-6-인산", "en": "glucose 6-phosphate" }, "aliases": ["G6P"] },

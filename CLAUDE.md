@@ -42,6 +42,20 @@
 - **물질은 무한하지 않다 (v7).** 대사물은 유한 저장소이고, 재생은 공급 규칙(`type: supply`)으로, 소멸은 분해 규칙(`type: degradation`, lost | recycled)으로만 표현한다. 고갈(AUDIT_RESOURCE·stalled)은 결과로 보고하고, 재생 경로가 없으면 공급 규칙을 정의하거나 Kinetic_Gap 으로 등록한다.
 - **부분 구조 수지를 지킨다.** 부분이 옮겨 다니는 분자에는 `moieties` 를 달고, 변환·분해·공급 규칙의 빠진 산물(피로인산·Pi …)은 규칙과 단계(minor)에 함께 넣는다. 원료가 모델 밖이면 `source: true` — 수지 검사를 피하려고 쓰지 않는다. 반감기·공급 속도·서열 길이는 확인한 값만.
 
+## 추적 가능한 진화 (Traceable Evolution Protocol)
+
+추적 가능성 > 장황함. 기록은 구조화·고밀도·차등(diff)으로.
+| 변경 | 기록 | 도구 |
+|---|---|---|
+| 데이터 패치 | 패치 최상위 `why` 필수 → `merge` 가 **Patch Report**(Scope·Why·Impact·Verification)를 계산해 출력하고 `data/patches/` 기록의 `report` 에 저장. `why` 없거나 미등록 한계 후보가 있으면 거부 | `merge`, `report <기록>` |
+| 코드·형식·어휘·문서 구조 | `CHANGES.md` 맨 위에 한 행(표): Scope(파일·함수·정의항) · Why · Impact(하류 규칙·명령·데이터) · Verification(테스트 수·validate·check) | 손으로, 같은 커밋 |
+| 사용자 보고 | 같은 네 칸의 표. 산문 요약 금지 | — |
+
+- 살아 있는 문서: 구조(D·묶음·S 형식) 변경 → `SCHEMA.md`, 작업 규칙·원리 → `CLAUDE.md`, 모든 실패·unmapped·미해결 공백 → `limitations.md`(패치 `limitations` → `--write`). 문서는 전체 재작성 금지, 해당 절만 고친다.
+- `unmapped` 외부 ID 도 한계다(`Identity_Gap`). `limitations --detect` 후보 0 은 병합 조건.
+- 세션 시작: `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록 순으로 최신 설계와 동기화한다.
+- 변경이 논리를 깨면 감지·수정·기록까지가 한 작업이다 (테스트·`audit-run` 로 감지, CHANGES.md 에 기록).
+
 ## 규칙·코드를 바꿀 때
 
 - 통제 어휘(`vocab.js`)나 규칙(`core.js`)은 사용자 요청이 있을 때만 바꾼다. 데이터를 통과시키려고 규칙을 느슨하게 하지 않는다.

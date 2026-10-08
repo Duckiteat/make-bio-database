@@ -607,3 +607,34 @@ test('한계 후보 탐지: 속도 없는 공급·분해 규칙과 서열 길이
   assert.ok(c.some((x) => x.target === `${ATPREGEN}/rule/atp_supply` && x.type === 'Kinetic_Gap'));
   assert.ok(c.some((x) => x.target === TNFM2 && x.type === 'Structural_Gap'));
 });
+
+// ===== Patch Report (Scope · Why · Impact · Verification) =====
+test('Patch Report: 바뀐 필드·하류 규칙·단계·경로·한계 상태 변화를 계산한다', () => {
+  const patch = P({ why: '시험: AC 고리화 속도 상수', senses: [withKin(AC, 'cyclization', { law: 'michaelis_menten', kcat: 1, Km: 1e-4, evidence: { level: 'predicted', confidence: 0 } })] });
+  const res = DefDB.merge(BASE, patch), g = DefDB.gate(BASE, res), rep = DefDB.patchReport(BASE, res, patch, g);
+  assert.equal(rep.why, '시험: AC 고리화 속도 상수');
+  assert.deepEqual(rep.scope.updated.senses, [AC]);
+  assert.deepEqual(rep.scope.fields[AC], ['rule']);
+  assert.ok(rep.impact.steps.includes(sid(AC, 'cyclization')) && rep.impact.steps.includes(sid(id('Gs 단백질'), 'ac_activation')), '소유 규칙의 단계와 AC 묶음을 쓰는 단계');
+  assert.ok(rep.impact.pathways.includes(id('에피네프린에 의한 글리코겐 분해')));
+  assert.ok(rep.impact.rules.includes(`${id('Gs 단백질')}/rule/ac_activation`), 'AC 를 대상으로 하는 다른 정의항의 규칙');
+  assert.equal(rep.verification.gate, 'pass');
+  assert.ok(/\| Why \| 시험/.test(DefDB.patchReportText(rep, DefDB.index(res.db))));
+  // 한계를 닫는 데이터 → 상태 변화가 보고되고 limitations.md 재생성이 요구됨
+  const lid = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${ATPREGEN}/rule/atp_supply`);
+  const p2 = P({ why: '시험', senses: [{ id: ATPREGEN, rule: BASE.senses[ATPREGEN].rule.map((r) => ({ ...r, kinetics: { law: 'mass_action', k: 1, order: 2, evidence: { level: 'predicted', confidence: 0 } } })) }] });
+  const r2 = DefDB.merge(BASE, p2), rep2 = DefDB.patchReport(BASE, r2, p2, DefDB.gate(BASE, r2));
+  assert.ok(rep2.impact.limitation_status_changed.some((l) => l.id === lid && l.before === 'open' && l.after === 'resolved'));
+  assert.ok(rep2.impact.regenerate.includes('limitations.md'));
+  assert.equal(DefDB.patchReport(BASE, r2, { senses: [] }, null).why, '', 'why 가 없으면 빈 값 (dbtool merge 가 거부)');
+});
+test('Identity_Gap: unmapped 외부 ID 는 한계로 등록되어야 하고, 확인된 ID 가 들어오면 닫힌다', () => {
+  const d = JSON.parse(JSON.stringify(BASE)), pi = id('무기 인산');
+  const lid = Object.keys(d.limitations).find((k) => d.limitations[k].target === pi && d.limitations[k].type === 'Identity_Gap');
+  assert.ok(lid);
+  delete d.limitations[lid];
+  assert.ok(DefDB.detectGaps(d).some((x) => x.target === pi && x.type === 'Identity_Gap'));
+  const e = JSON.parse(JSON.stringify(BASE));
+  e.senses[pi].xrefs.push({ db: 'ChEBI', id: 'CHEBI:1', status: 'asserted' });
+  assert.equal(DefDB.limitationStatus(DefDB.normalize(e), DefDB.normalize(e).limitations[lid]).status, 'resolved');
+});

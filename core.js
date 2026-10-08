@@ -1392,6 +1392,80 @@
     return { ok, changed, errors, warnings, preexisting: before.errors.length };
   }
 
+  // ===== 패치 보고서 (Patch Report: Scope · Why · Impact · Verification) =====
+  // 병합 하나의 기술 기록. 사람이 쓰는 것은 patch.why 하나뿐이고 나머지는 이전·이후 db 를 비교해 계산한다.
+  function refsOfRule(r) {
+    const e = r.effect || {}, out = [];
+    for (const k of ['target', 'partner', 'complex', 'component']) if (e[k]) out.push(e[k]);
+    out.push(...(e.consumes || []), ...(e.produces || []), ...(e.requires || []).map((q) => q.ref).filter(Boolean));
+    if (e.partner_site) out.push(e.partner_site.component);
+    if (r.with) out.push(...r.with.consumes, ...r.with.produces);
+    for (const g of r.regulators || []) out.push(g.ref);
+    if (r.via_component) out.push(r.via_component);
+    for (const k of ['consumes', 'produces', 'recycle_to']) for (const q of r[k] || []) out.push(q.ref);
+    return out;
+  }
+  function patchReport(dbBefore, result, patch, gateResult) {
+    const before = normalize(dbBefore), after = result.db, r = result.report, ix = index(after);
+    const kindOf = (id) => ({ T: 'terms', D: 'senses', S: 'steps', L: 'limitations' })[String(id)[0]];
+    const group = (ids) => { const o = {}; for (const id of ids) (o[kindOf(id)] = o[kindOf(id)] || []).push(id); return o; };
+    // 수정된 정의항의 바뀐 최상위 필드
+    const fields = {};
+    for (const id of r.updated) {
+      const t = kindOf(id), a = before[t][id], b = after[t][id];
+      if (!a || !b) continue;
+      fields[id] = uniq([...Object.keys(a), ...Object.keys(b)]).filter((k) => JSON.stringify(a[k]) !== JSON.stringify(b[k]));
+    }
+    const changed = new Set([...r.added, ...r.updated, ...r.removed]);
+    const changedD = [...changed].filter((x) => /^D/.test(x)), cd = new Set(changedD);
+    // 하류: 바뀐 정의항을 참조하는 규칙·정의항·단계·경로·한계
+    const rules = [], senses = [];
+    for (const [id, d] of Object.entries(after.senses)) {
+      if (cd.has(id)) continue;
+      for (const x of d.rule) if (refsOfRule(x).some((y) => cd.has(y))) rules.push(`${id}/rule/${x.id}`);
+      const refs = [...d.components.map((c) => c.ref), ...(d.moieties || []).map((m) => m.ref), ...d.desc.flatMap((ds) => ds.links.map((l) => l.to)),
+        ...Object.values(d.site).flatMap((x) => [x.ligand, x.on, ...Object.values(x.ligands || {})]).filter(Boolean)];
+      if (refs.some((y) => cd.has(y))) senses.push(id);
+    }
+    const ruleSet = new Set(rules);
+    const steps = Object.entries(after.steps).filter(([sid, st]) => changed.has(sid) || cd.has(st.rule.split('/')[0]) || ruleSet.has(st.rule)
+      || [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators].some((p) => cd.has(p.b.split('|')[0]))).map(([sid]) => sid);
+    // 경로는 상위 경로(part_of 연결)까지 — 하위 경로의 변화는 그것을 품은 경로의 시뮬레이션도 바꾼다
+    const pathways = uniq(steps.flatMap((sid) => after.steps[sid].part_of));
+    const parentsOf = (p) => { const out = []; const d = after.senses[p]; if (d) for (const ds of d.desc) for (const l of ds.links) if (l.rel === 'part_of') out.push(l.to);
+      for (const [q, x] of Object.entries(after.senses)) if (x.kind === 'pathway') for (const ds of x.desc) for (const l of ds.links) if (l.rel === 'has_part' && l.to === p) out.push(q); return out; };
+    for (let i = 0; i < pathways.length; i++) for (const q of parentsOf(pathways[i])) if (after.senses[q] && after.senses[q].kind === 'pathway' && !pathways.includes(q)) pathways.push(q);
+    const status = (db, id) => (db.limitations[id] ? limitationStatus(db, db.limitations[id]).status : null);
+    const limits = Object.entries(after.limitations).filter(([lid, l]) => changed.has(lid) || cd.has((parseTarget(l.target) || {}).base) || l.requirement.needs.some((n) => cd.has(n.on) || cd.has((parseTarget(n.rule || n.site || '') || {}).base)))
+      .map(([lid]) => ({ id: lid, before: status(before, lid), after: status(after, lid) }));
+    const statusChanged = Object.keys(after.limitations).filter((lid) => status(before, lid) !== status(after, lid)).map((lid) => ({ id: lid, before: status(before, lid), after: status(after, lid) }));
+    const v = validate(after), gaps = detectGaps(after);
+    const regenerate = ['docs/textbook/90-부록-자동생성.md'];
+    if (statusChanged.length || r.added.concat(r.updated, r.removed).some((x) => /^L/.test(x)) || limits.length) regenerate.unshift('limitations.md');
+    return {
+      scope: { files: ['data/db.json', 'data/patches/'], added: group(r.added), updated: group(r.updated), removed: group(r.removed), fields },
+      why: str(patch && patch.why),
+      impact: { rules: uniq(rules), senses: uniq(senses), steps, pathways, limitations: limits, limitation_status_changed: statusChanged, regenerate },
+      verification: { gate: gateResult ? (gateResult.ok ? 'pass' : 'reject') : null, errors: v.errors.length, warnings: v.warnings.length, new_errors: gateResult ? gateResult.errors.length : null, new_warnings: gateResult ? gateResult.warnings.length : null, undetected_gaps: gaps.length },
+    };
+  }
+  function patchReportText(rep, ix) {
+    const L = (id) => (ix ? `${id} ${ix.label(id)}` : id), list = (xs) => (xs && xs.length ? xs.map(L).join(', ') : '—');
+    const g = (o) => Object.entries(o).map(([k, xs]) => `${k} ${xs.length}: ${xs.join(' ')}`).join(' · ') || '—';
+    const out = ['## Patch Report', '', '| 항목 | 내용 |', '|---|---|',
+      `| Scope · 파일 | ${rep.scope.files.join(', ')} |`,
+      `| Scope · 추가 | ${g(rep.scope.added)} |`, `| Scope · 수정 | ${g(rep.scope.updated)} |`, `| Scope · 삭제 | ${g(rep.scope.removed)} |`,
+      `| Scope · 바뀐 필드 | ${Object.entries(rep.scope.fields).map(([id, fs]) => `${id}{${fs.join(',')}}`).join(' ') || '—'} |`,
+      `| Why | ${rep.why || '✗ 없음 (patch.why 필수)'} |`,
+      `| Impact · 참조하는 규칙 | ${list(rep.impact.rules)} |`, `| Impact · 참조하는 정의항 | ${list(rep.impact.senses)} |`,
+      `| Impact · 단계 | ${rep.impact.steps.join(', ') || '—'} |`, `| Impact · 경로 (simulate·audit-run 대상) | ${list(rep.impact.pathways)} |`,
+      `| Impact · 관련 한계 | ${rep.impact.limitations.map((l) => `${l.id}(${l.before || 'new'}→${l.after})`).join(', ') || '—'} |`,
+      `| Impact · 상태가 바뀐 한계 | ${rep.impact.limitation_status_changed.map((l) => `${l.id}(${l.before || 'new'}→${l.after || 'removed'})`).join(', ') || '—'} |`,
+      `| Impact · 다시 만들 생성물 | ${rep.impact.regenerate.join(', ')} |`,
+      `| Verification | 관문 ${rep.verification.gate} · 새 오류 ${rep.verification.new_errors} · 새 경고 ${rep.verification.new_warnings} · 전체 오류 ${rep.verification.errors} · 경고 ${rep.verification.warnings} · 미등록 한계 후보 ${rep.verification.undetected_gaps} |`];
+    return out.join('\n');
+  }
+
   // ===== 매핑·채움 현황 =====
   function audit(db) {
     db = normalize(db);
@@ -1772,6 +1846,10 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     for (const l of Object.values(db.limitations)) { covered.add(l.target); for (const n of l.requirement.needs) { if (n.site) covered.add(n.site); if (n.rule) covered.add(n.rule); if (n.kind === 'obs' && n.on) covered.add(`${n.on}#${n.property}`); } }
     const out = [];
     for (const [id, d] of ix.senses) for (const [k, st] of Object.entries(d.site)) if (st.residue_unknown && !covered.has(`${id}/site/${k}`)) out.push({ target: `${id}/site/${k}`, type: 'Structural_Gap', why: `${ix.label(id)} 의 부위 ${k} 잔기 번호 모름` });
+    // 정체성: unmapped(필수 외부 ID 를 확인 못 함) 정의항 중 그 ID 를 요구하는 한계(xref need 또는 Identity_Gap 대상)가 없는 것
+    const idCovered = new Set();
+    for (const l of Object.values(db.limitations)) { if (l.type === 'Identity_Gap') idCovered.add(l.target); for (const n of l.requirement.needs) if (n.kind === 'xref' && n.on) idCovered.add(n.on); }
+    for (const [id, d] of ix.senses) if (d.unmapped && !idCovered.has(id)) out.push({ target: id, type: 'Identity_Gap', why: `${ix.label(id)}: ${d.unmapped}` });
     // 생애 주기·저장소: 속도 상수가 없는 공급·분해 규칙, 서열 길이를 모르는 재활용 화학량
     for (const [id, d] of ix.senses) for (const r of d.rule) {
       const ref = `${id}/rule/${r.id}`;
@@ -2407,5 +2485,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
     xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
     MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget,
-    kineticIssues, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS };
+    kineticIssues, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS };
 });

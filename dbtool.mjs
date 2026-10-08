@@ -5,6 +5,7 @@
 //   node dbtool.mjs status                                  저장소 요약
 //   node dbtool.mjs validate                                전체 검사 (오류 있으면 종료 코드 1)
 //   node dbtool.mjs merge     <patch.json...> [--dry] [--allow-warnings]
+//                                                           병합 + Patch Report(Scope·Why·Impact·Verification). patch.why 필수, 미등록 한계 후보가 있으면 거부
 //                                                           매핑 → 검사 → 관문 통과 시 저장, 적용한 패치는 data/patches/ 에 기록
 //   node dbtool.mjs map       <번호|이름|이름#n|외부ID|지문>   참조가 어느 정의항(D…)으로 매핑되는지
 //   node dbtool.mjs audit                                   매핑·채움 현황 (외부 ID 대조 여부, 미매핑, 잔기 모름, 구조 지문)
@@ -18,6 +19,7 @@
 //   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(R0 위상·R1 부위·R2 구조)와 전환 문턱
 //   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N]
 //                                                           감사: 스키마·해상도 일관성·속도 무결성·질량 보존 (Audit Error 가 있으면 종료 코드 1)
+//   node dbtool.mjs report    <data/patches/….json>          기록된 병합의 Patch Report (Scope·Why·Impact·Verification)
 //   node dbtool.mjs textbook  [--write | --check]            교과서 부록(docs/textbook/90-부록-자동생성.md) 생성 / 최신·파일 분류 검사
 //   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N]
 //                                                           속도 기반 시뮬레이션 (유한 대사물 저장소·공급·분해·매 Δt 질량 감사)
@@ -78,21 +80,33 @@ switch (cmd) {
       for (const [a, b] of Object.entries(r.idmap)) console.log(`  id   ${a} → ${b}`);
       for (const m of r.mapped) console.log(`  매핑 ${m.from} → ${m.to}  (${m.via})`);
       printIssues(g.errors, g.warnings);
+      const rep = DefDB.patchReport(db, res, patch, g);
+      console.log(DefDB.patchReportText(rep, DefDB.index(res.db)));
+      if (g.ok && !rep.why && !flags.dry) die('Patch Report: patch.why(변경 이유) 가 없음 — 거부했습니다. 패치 최상위에 "why": "…" 를 적으세요.');
+      if (g.ok && rep.verification.undetected_gaps && !flags.dry) die(`Patch Report: 등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — limitations --detect 를 보고 같은 패치에 등록하세요.`);
       if (!g.ok) die(!g.changed ? '바뀐 것이 없음 — 저장하지 않았습니다.'
         : g.errors.length ? `오류 ${g.errors.length} — 패치를 거부했습니다. 위 메시지대로 패치를 고치세요.`
         : `패치가 새 경고 ${g.warnings.length}개를 만듦 — 거부했습니다. 고치거나 --allow-warnings 로 명시적으로 허용하세요.`);
-      applied.push({ name: basename(p), patch, result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped } });
+      applied.push({ name: basename(p), patch, result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep });
       db = res.db;
     }
     if (flags.dry) { console.log('관문 통과 (--dry: 저장하지 않음)'); break; }
     mkdirSync(PATCH_DIR, { recursive: true });
     for (const a of applied) {
       const out = join(PATCH_DIR, `${stamp()}-${a.name}`);
-      writeFileSync(out, JSON.stringify({ applied_at: new Date().toISOString(), result: a.result, ...a.patch }, null, 2) + '\n');
+      writeFileSync(out, JSON.stringify({ applied_at: new Date().toISOString(), result: a.result, report: a.report, ...a.patch }, null, 2) + '\n');
       console.log('기록: ' + rel(out));
     }
     writeFileSync(DB_PATH, JSON.stringify(db, null, 2) + '\n');
     console.log('저장: ' + rel(DB_PATH));
+    break;
+  }
+  case 'report': {
+    // 기록된 패치의 Patch Report 다시 보기 (v7.1 이후 기록에만 report 가 있음)
+    if (!args[0]) die('사용법: report <data/patches/….json>');
+    const rec = readJSON(args[0]);
+    if (!rec.report) die('이 기록에는 Patch Report 가 없음 (report 도입 이전 병합)');
+    console.log(DefDB.patchReportText(rec.report, DefDB.index(loadDB())));
     break;
   }
   case 'map': {
@@ -136,7 +150,7 @@ switch (cmd) {
     if (flags.detect) {
       const c = DefDB.detectGaps(db);
       console.log(c.length ? '등록되지 않은 한계 후보:\n' + c.map((x) => `  [${x.target} | ${x.type}] ${x.why}`).join('\n') : '등록되지 않은 한계 후보 없음');
-      break;
+      process.exit(c.length ? 1 : 0); // CI: 미등록 공백(unmapped·속도 없는 공급/분해 …)이 있으면 실패
     }
     console.log(DefDB.limitationsText(db, { open: !!flags.open }));
     break;

@@ -9,6 +9,7 @@
 | Kinetic_Gap | 10 | 0 | 10 |
 | Concentration_Gap | 5 | 0 | 5 |
 | Structural_Gap | 12 | 0 | 12 |
+| Identity_Gap | 6 | 0 | 6 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
 
@@ -57,3 +58,16 @@
 | L000018 | D000031/site/gs_site (아데닐산 고리화효소 · gs_site) | Structural_Gap | Gs 가 AC 활성화 단계(S000003)에서 행위자로 풀에 남으면서 AC 의 gs_site 리간드로도 세어져 Gαs·Gβ·Gγ 가 두 번 계산된다 — 실제로는 GTP 결합 Gαs 가 AC 에 붙고 Gβγ 가 떨어지며, GTP 가수분해로 Gαs 가 풀려난다<br>발견: 2026-10-08 audit-run 에피네프린 경로 (속도 기반 시뮬레이션의 AUDIT_MASS: Gαs·Gβ·Gγ 10 → 20) | ✗ 수동: Gαs·GTP 가 AC 에 흡수되는 결합 단계(partner)와, GTP 가수분해로 Gαs·GDP 가 풀려나 Gβγ 와 다시 모이는 단계·규칙 — L000015 의 Gs 해리 모델과 함께 | open (0/1) | — |
 | L000026 | D000101 (TNF mRNA) | Structural_Gap | TNF mRNA 의 서열 길이(뉴클레오타이드 수, 사람) — 없으면 분해 때 뉴클레오타이드 몇 개가 돌아가는지 몰라 재활용분을 소실로 처리한다<br>발견: TNF mRNA 분해 규칙(recycle_to n: sequence_length)에 관찰이 없음 | ✗ 관찰 sequence_length @ D000101 TNF mRNA | open (0/1) | D000128 생애 주기 모델 |
 | L000027 | D000098/rule/ikba_degradation (26S 프로테아좀 · ikba_degradation) | Structural_Gap | 프로테아좀이 기질 하나를 분해할 때 쓰는 ATP 수 — 지금은 1 분자(ATP → ADP + Pi)로 둔 단순화라 ATP 저장소 소비가 실제보다 적다<br>발견: v7 부분 구조 수지 검사가 ATP → ADP 에서 빠진 Pi 를 잡아 규칙을 고치면서 화학량 단순화가 드러남 | ✗ 수동: 26S 프로테아좀의 기질당 ATP 가수분해 화학량을 문헌에서 확인해 with 화학량(단계 n)에 반영 | open (0/1) | — |
+
+## Identity_Gap — 정체성(외부 ID) 공백
+
+필수 외부 ID(ChEBI·UniProt …)를 원본과 대조하지 못해 unmapped 에 사유만 둔 곳. 확인된 ID 가 들어오면 닫힌다.
+
+| ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |
+|---|---|---|---|---|---|---|
+| L000028 | D000027 (에피네프린) | Identity_Gap | 에피네프린의 ChEBI 항목(adrenaline 대 (R)-adrenaline)을 원본에서 골라 번호를 확인 — 지금은 unmapped: ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000027 에피네프린 | open (0/1) | — |
+| L000029 | D000037 (무기 인산) | Identity_Gap | 무기 인산을 대표할 ChEBI 항목(phosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000037 무기 인산 | open (0/1) | — |
+| L000030 | D000048 (포도당-1-인산) | Identity_Gap | 포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000048 포도당-1-인산 | open (0/1) | — |
+| L000031 | D000062 (피리독살 인산) | Identity_Gap | 피리독살 인산의 ChEBI 번호를 원본에서 확인 — 지금은 unmapped: ChEBI 번호 원본 미확인 (네트워크로 대조할 수 없어 비워 둠)<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000062 피리독살 인산 | open (0/1) | — |
+| L000032 | D000122 (피로인산) | Identity_Gap | 피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000122 피로인산 | open (0/1) | — |
+| L000033 | D000101 (TNF mRNA) | Identity_Gap | TNF mRNA 전사체 ID — 외부 ID 어휘에 RefSeq(NM_)·Ensembl 전사체 체계가 없어 정체성을 외부 ID 로 고정하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ 수동: vocab.js xrefs 에 전사체 ID 체계(RefSeq NM_ 또는 Ensembl ENST)를 사람이 검토해 추가한 뒤, 원본에서 확인한 TNF 표준 전사체 ID 를 등록 | open (0/1) | — |
