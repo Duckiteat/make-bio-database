@@ -1,0 +1,2359 @@
+{
+  "applied_at": "2026-10-08T17:52:17.989Z",
+  "result": {
+    "added": [
+      "T000128",
+      "T000129",
+      "T000130",
+      "T000131",
+      "T000132",
+      "T000133",
+      "T000134",
+      "T000135",
+      "T000136",
+      "T000137",
+      "T000138",
+      "T000139",
+      "T000140",
+      "T000141",
+      "T000142",
+      "T000143",
+      "T000144",
+      "T000145",
+      "T000146",
+      "T000147",
+      "T000148",
+      "T000149",
+      "T000150",
+      "T000151",
+      "T000152",
+      "T000153",
+      "T000154",
+      "T000155",
+      "T000156",
+      "T000157",
+      "T000158",
+      "D000130",
+      "D000131",
+      "D000132",
+      "D000133",
+      "D000134",
+      "D000135",
+      "D000136",
+      "D000137",
+      "D000138",
+      "D000139",
+      "D000140",
+      "D000141",
+      "D000142",
+      "D000143",
+      "D000144",
+      "D000145",
+      "D000146",
+      "D000147",
+      "D000148",
+      "D000149",
+      "D000150",
+      "D000151",
+      "D000152",
+      "D000153",
+      "D000154",
+      "D000155",
+      "D000156",
+      "D000157",
+      "D000158",
+      "D000159",
+      "D000160",
+      "S000031",
+      "S000032",
+      "S000033",
+      "S000034",
+      "S000035",
+      "S000036",
+      "S000037",
+      "S000038",
+      "L000034",
+      "L000035",
+      "L000036",
+      "L000037",
+      "L000038",
+      "L000039",
+      "L000040",
+      "L000041"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "terms": [
+          "T000128",
+          "T000129",
+          "T000130",
+          "T000131",
+          "T000132",
+          "T000133",
+          "T000134",
+          "T000135",
+          "T000136",
+          "T000137",
+          "T000138",
+          "T000139",
+          "T000140",
+          "T000141",
+          "T000142",
+          "T000143",
+          "T000144",
+          "T000145",
+          "T000146",
+          "T000147",
+          "T000148",
+          "T000149",
+          "T000150",
+          "T000151",
+          "T000152",
+          "T000153",
+          "T000154",
+          "T000155",
+          "T000156",
+          "T000157",
+          "T000158"
+        ],
+        "senses": [
+          "D000130",
+          "D000131",
+          "D000132",
+          "D000133",
+          "D000134",
+          "D000135",
+          "D000136",
+          "D000137",
+          "D000138",
+          "D000139",
+          "D000140",
+          "D000141",
+          "D000142",
+          "D000143",
+          "D000144",
+          "D000145",
+          "D000146",
+          "D000147",
+          "D000148",
+          "D000149",
+          "D000150",
+          "D000151",
+          "D000152",
+          "D000153",
+          "D000154",
+          "D000155",
+          "D000156",
+          "D000157",
+          "D000158",
+          "D000159",
+          "D000160"
+        ],
+        "steps": [
+          "S000031",
+          "S000032",
+          "S000033",
+          "S000034",
+          "S000035",
+          "S000036",
+          "S000037",
+          "S000038"
+        ],
+        "limitations": [
+          "L000034",
+          "L000035",
+          "L000036",
+          "L000037",
+          "L000038",
+          "L000039",
+          "L000040",
+          "L000041"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "Survival-to-Exhaustion Stress Test: 시트르산 회로(8 단계, 탄소·CoA·NAD·FAD 부분 구조 수지)와 재생 경로(NAD⁺·FAD·아세틸-CoA 공급, CO₂ 배출)를 넣고, 소진 시험 사후 분석의 제한 요인을 Resource_Gap 으로 등록",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [
+        "S000031",
+        "S000032",
+        "S000033",
+        "S000034",
+        "S000035",
+        "S000036",
+        "S000037",
+        "S000038"
+      ],
+      "pathways": [
+        "D000148"
+      ],
+      "limitations": [
+        {
+          "id": "L000034",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000035",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000036",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000037",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000038",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000039",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000040",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000034",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000035",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000036",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000037",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000038",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000039",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000040",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 7,
+  "why": "Survival-to-Exhaustion Stress Test: 시트르산 회로(8 단계, 탄소·CoA·NAD·FAD 부분 구조 수지)와 재생 경로(NAD⁺·FAD·아세틸-CoA 공급, CO₂ 배출)를 넣고, 소진 시험 사후 분석의 제한 요인을 Resource_Gap 으로 등록",
+  "terms": [
+    {
+      "id": "T+c",
+      "names": {
+        "ko": "탄소 골격 단위",
+        "en": "carbon skeleton unit"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+coa_m",
+      "names": {
+        "ko": "조효소 A 부분",
+        "en": "coenzyme A moiety"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+nic",
+      "names": {
+        "ko": "니코틴아마이드 뉴클레오타이드 부분",
+        "en": "nicotinamide nucleotide moiety"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+fl",
+      "names": {
+        "ko": "플라빈 부분",
+        "en": "flavin moiety"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+accoa",
+      "names": {
+        "ko": "아세틸-CoA",
+        "en": "acetyl-CoA"
+      },
+      "aliases": [
+        "아세틸 CoA",
+        "acetyl coenzyme A"
+      ]
+    },
+    {
+      "id": "T+coa",
+      "names": {
+        "ko": "조효소 A",
+        "en": "coenzyme A"
+      },
+      "aliases": [
+        "CoA",
+        "CoA-SH"
+      ]
+    },
+    {
+      "id": "T+oaa",
+      "names": {
+        "ko": "옥살로아세트산",
+        "en": "oxaloacetate"
+      },
+      "aliases": [
+        "옥살아세트산",
+        "OAA"
+      ]
+    },
+    {
+      "id": "T+cit",
+      "names": {
+        "ko": "시트르산",
+        "en": "citrate"
+      },
+      "aliases": [
+        "시트르산염",
+        "구연산"
+      ]
+    },
+    {
+      "id": "T+icit",
+      "names": {
+        "ko": "아이소시트르산",
+        "en": "isocitrate"
+      },
+      "aliases": [
+        "이소시트르산"
+      ]
+    },
+    {
+      "id": "T+akg",
+      "names": {
+        "ko": "2-옥소글루타르산",
+        "en": "2-oxoglutarate"
+      },
+      "aliases": [
+        "α-케토글루타르산",
+        "alpha-ketoglutarate",
+        "α-KG"
+      ]
+    },
+    {
+      "id": "T+succoa",
+      "names": {
+        "ko": "석시닐-CoA",
+        "en": "succinyl-CoA"
+      },
+      "aliases": [
+        "숙시닐-CoA"
+      ]
+    },
+    {
+      "id": "T+succ",
+      "names": {
+        "ko": "석신산",
+        "en": "succinate"
+      },
+      "aliases": [
+        "숙신산",
+        "호박산"
+      ]
+    },
+    {
+      "id": "T+fum",
+      "names": {
+        "ko": "푸마르산",
+        "en": "fumarate"
+      },
+      "aliases": [
+        "푸마레이트"
+      ]
+    },
+    {
+      "id": "T+mal",
+      "names": {
+        "ko": "말산",
+        "en": "L-malate"
+      },
+      "aliases": [
+        "L-말산",
+        "사과산"
+      ]
+    },
+    {
+      "id": "T+co2",
+      "names": {
+        "ko": "이산화탄소",
+        "en": "carbon dioxide"
+      },
+      "aliases": [
+        "CO2",
+        "CO₂"
+      ]
+    },
+    {
+      "id": "T+nad",
+      "names": {
+        "ko": "NAD⁺",
+        "en": "NAD+"
+      },
+      "aliases": [
+        "NAD",
+        "산화형 NAD",
+        "nicotinamide adenine dinucleotide"
+      ]
+    },
+    {
+      "id": "T+nadh",
+      "names": {
+        "ko": "NADH",
+        "en": "NADH"
+      },
+      "aliases": [
+        "환원형 NAD"
+      ]
+    },
+    {
+      "id": "T+fad",
+      "names": {
+        "ko": "FAD",
+        "en": "FAD"
+      },
+      "aliases": [
+        "산화형 FAD",
+        "flavin adenine dinucleotide"
+      ]
+    },
+    {
+      "id": "T+fadh2",
+      "names": {
+        "ko": "FADH₂",
+        "en": "FADH2"
+      },
+      "aliases": [
+        "FADH2",
+        "환원형 FAD"
+      ]
+    },
+    {
+      "id": "T+tca",
+      "names": {
+        "ko": "시트르산 회로",
+        "en": "citric acid cycle"
+      },
+      "aliases": [
+        "TCA 회로",
+        "TCA cycle",
+        "크레브스 회로",
+        "Krebs cycle",
+        "트라이카복실산 회로"
+      ]
+    },
+    {
+      "id": "T+cs",
+      "names": {
+        "ko": "시트르산 생성효소",
+        "en": "citrate synthase"
+      },
+      "aliases": [
+        "시트르산 합성효소",
+        "CS"
+      ]
+    },
+    {
+      "id": "T+aco",
+      "names": {
+        "ko": "아코니테이스",
+        "en": "aconitase"
+      },
+      "aliases": [
+        "아코니트산 수화효소"
+      ]
+    },
+    {
+      "id": "T+idh",
+      "names": {
+        "ko": "아이소시트르산 탈수소효소",
+        "en": "isocitrate dehydrogenase (NAD+)"
+      },
+      "aliases": [
+        "IDH3",
+        "NAD 의존 아이소시트르산 탈수소효소"
+      ]
+    },
+    {
+      "id": "T+kgdh",
+      "names": {
+        "ko": "2-옥소글루타르산 탈수소효소 복합체",
+        "en": "2-oxoglutarate dehydrogenase complex"
+      },
+      "aliases": [
+        "α-케토글루타르산 탈수소효소",
+        "OGDH 복합체"
+      ]
+    },
+    {
+      "id": "T+scs",
+      "names": {
+        "ko": "석시닐-CoA 합성효소",
+        "en": "succinyl-CoA synthetase (GDP-forming)"
+      },
+      "aliases": [
+        "석시닐-CoA 연결효소",
+        "SCS"
+      ]
+    },
+    {
+      "id": "T+sdh",
+      "names": {
+        "ko": "석신산 탈수소효소",
+        "en": "succinate dehydrogenase"
+      },
+      "aliases": [
+        "복합체 II",
+        "SDH"
+      ]
+    },
+    {
+      "id": "T+fh",
+      "names": {
+        "ko": "푸마레이스",
+        "en": "fumarase"
+      },
+      "aliases": [
+        "푸마르산 수화효소"
+      ]
+    },
+    {
+      "id": "T+mdh",
+      "names": {
+        "ko": "말산 탈수소효소",
+        "en": "malate dehydrogenase"
+      },
+      "aliases": [
+        "MDH"
+      ]
+    },
+    {
+      "id": "T+etc_nadh",
+      "names": {
+        "ko": "NADH 재산화 (전자 전달계)",
+        "en": "NADH reoxidation by the respiratory chain"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+etc_fad",
+      "names": {
+        "ko": "FADH₂ 재산화",
+        "en": "FADH2 reoxidation"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+accoa_in",
+      "names": {
+        "ko": "아세틸-CoA 공급",
+        "en": "acetyl-CoA supply"
+      },
+      "aliases": []
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+c",
+      "term": "T+c",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "회로 중간물의 탄소 골격에 있는 탄소 원자 하나에 해당하는 부분 구조로, 조효소와 뉴클레오타이드 부분의 탄소는 세지 않는다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산 (탄소 수지)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+coa_m",
+      "term": "T+coa_m",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "아실기를 싣는 조효소 A 의 몸체에 해당하는 부분 구조",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+nic",
+      "term": "T+nic",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "NAD⁺ 와 NADH 에 공통인 니코틴아마이드 아데닌 다이뉴클레오타이드 몸체에 해당하는 부분 구조",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fl",
+      "term": "T+fl",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "FAD 와 FADH₂ 에 공통인 플라빈 아데닌 다이뉴클레오타이드 몸체에 해당하는 부분 구조",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+accoa",
+      "term": "T+accoa",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 2
+        },
+        {
+          "ref": "D+coa_m",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "아세틸기가 조효소 A 에 싸이오에스터 결합으로 붙은 분자로, 시트르산 회로에 탄소 두 개를 들여보낸다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+coa",
+      "term": "T+coa",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+coa_m",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "아실기를 싸이오에스터로 실어 나르는 조효소로, 아세틸-CoA 와 석시닐-CoA 에서 풀려난다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+oaa",
+      "term": "T+oaa",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 4
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 네 개의 다이카복실산으로, 아세틸-CoA 와 축합해 시트르산이 되고 회로 끝에서 다시 만들어진다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+cit",
+      "term": "T+cit",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 6
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 여섯 개의 트라이카복실산으로, 시트르산 회로의 첫 산물이다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+icit",
+      "term": "T+icit",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 6
+        }
+      ],
+      "desc": [
+        {
+          "text": "시트르산의 이성질체로, 산화적 탈카복실화로 2-옥소글루타르산이 된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+akg",
+      "term": "T+akg",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 5
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 다섯 개의 케토산으로, 산화적 탈카복실화로 석시닐-CoA 가 된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+succoa",
+      "term": "T+succoa",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 4
+        },
+        {
+          "ref": "D+coa_m",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "석신산이 조효소 A 에 싸이오에스터로 붙은 분자로, 그 결합 에너지로 GTP 를 만든다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+succ",
+      "term": "T+succ",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 4
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 네 개의 다이카복실산으로, 산화되어 푸마르산이 된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fum",
+      "term": "T+fum",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 4
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 네 개의 불포화 다이카복실산으로, 물이 더해져 말산이 된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+mal",
+      "term": "T+mal",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 4
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 네 개의 하이드록시 다이카복실산으로, 산화되어 옥살로아세트산이 된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+nad",
+      "term": "T+nad",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+nic",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "니코틴아마이드 아데닌 다이뉴클레오타이드의 산화형으로, 탈수소효소 반응에서 전자를 받아 NADH 가 된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+nadh",
+      "term": "T+nadh",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+nic",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "니코틴아마이드 아데닌 다이뉴클레오타이드의 환원형으로, 전자 전달계에서 다시 NAD⁺ 로 산화된다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fad",
+      "term": "T+fad",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+fl",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "플라빈 아데닌 다이뉴클레오타이드의 산화형으로, 석신산 탈수소효소에서 전자를 받는다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fadh2",
+      "term": "T+fadh2",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+fl",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "플라빈 아데닌 다이뉴클레오타이드의 환원형",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+tca",
+      "term": "T+tca",
+      "kind": "pathway",
+      "desc": [
+        {
+          "text": "미토콘드리아 기질에서 아세틸-CoA 의 탄소 두 개를 이산화탄소 두 분자로 산화하고, 그 전자를 NADH 와 FADH₂ 에 싣고 GTP 하나를 만드는 여덟 단계의 순환 경로로, 옥살로아세트산이 다시 만들어져 회로가 닫힌다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (진핵세포 미토콘드리아)"
+          },
+          "links": [
+            {
+              "to": "D+accoa",
+              "rel": "refers",
+              "span": "아세틸-CoA"
+            },
+            {
+              "to": "D+co2",
+              "rel": "refers",
+              "span": "이산화탄소"
+            },
+            {
+              "to": "D+nadh",
+              "rel": "refers",
+              "span": "NADH"
+            },
+            {
+              "to": "D+oaa",
+              "rel": "refers",
+              "span": "옥살로아세트산"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+cs",
+      "term": "T+cs",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 2.3.3.1",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "아세틸-CoA 와 옥살로아세트산을 축합해 시트르산을 만드는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [
+            {
+              "to": "D+accoa",
+              "rel": "refers",
+              "span": "아세틸-CoA"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "condense",
+          "label": "시트르산 생성",
+          "action": "축합",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+accoa",
+              "D+oaa"
+            ],
+            "produces": [
+              "D+cit",
+              "D+coa"
+            ]
+          },
+          "text": "아세틸-CoA 의 아세틸기가 옥살로아세트산과 축합해 시트르산이 되고 조효소 A 가 풀려난다 (물 분자는 부분 구조가 없어 생략).",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+aco",
+      "term": "T+aco",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 4.2.1.3",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "시트르산을 시스-아코니트산을 거쳐 아이소시트르산으로 이성질화하는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "isomerize",
+          "label": "시트르산 이성질화",
+          "action": "이성질화",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+cit"
+            ],
+            "produces": [
+              "D+icit"
+            ]
+          },
+          "text": "시스-아코니트산 중간체는 한 단계로 묶었다.",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+idh",
+      "term": "T+idh",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 1.1.1.41",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "아이소시트르산을 산화적 탈카복실화해 2-옥소글루타르산과 이산화탄소를 만들고 NAD⁺ 를 환원하는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxdecarb",
+          "label": "아이소시트르산 산화적 탈카복실화",
+          "action": "산화",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+icit"
+            ],
+            "produces": [
+              "D+akg",
+              "D+co2"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D+nad"
+            ],
+            "produces": [
+              "D+nadh"
+            ]
+          },
+          "text": "첫 번째 이산화탄소와 첫 번째 NADH.",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+kgdh",
+      "term": "T+kgdh",
+      "kind": "molecule_class",
+      "desc": [
+        {
+          "text": "2-옥소글루타르산을 산화적 탈카복실화해 석시닐-CoA 와 이산화탄소를 만들고 NAD⁺ 를 환원하는 다효소 복합체",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxdecarb",
+          "label": "2-옥소글루타르산 산화적 탈카복실화",
+          "action": "산화",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+akg",
+              "D+coa"
+            ],
+            "produces": [
+              "D+succoa",
+              "D+co2"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D+nad"
+            ],
+            "produces": [
+              "D+nadh"
+            ]
+          },
+          "text": "두 번째 이산화탄소와 두 번째 NADH.",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+scs",
+      "term": "T+scs",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 6.2.1.4",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "석시닐-CoA 의 싸이오에스터 결합 에너지로 GDP 와 무기 인산에서 GTP 를 만들며 석신산과 조효소 A 를 내놓는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "slp",
+          "label": "기질 수준 인산화 (GTP 생성)",
+          "action": "기 전이",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+succoa"
+            ],
+            "produces": [
+              "D+succ",
+              "D+coa"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000036",
+              "D000037"
+            ],
+            "produces": [
+              "D000035"
+            ]
+          },
+          "text": "회로에서 유일한 기질 수준 인산화.",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+sdh",
+      "term": "T+sdh",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 1.3.5.1",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "석신산을 푸마르산으로 산화하고 전자를 FAD 에 싣는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxidize",
+          "label": "석신산 산화",
+          "action": "산화",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+succ"
+            ],
+            "produces": [
+              "D+fum"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D+fad"
+            ],
+            "produces": [
+              "D+fadh2"
+            ]
+          },
+          "text": "실제로는 내막 복합체 II 이고 FAD 가 공유 결합해 전자가 유비퀴논으로 간다 — 여기서는 기질의 FAD 저장소로 단순화 (한계 등록).",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fh",
+      "term": "T+fh",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 4.2.1.2",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "푸마르산에 물을 더해 L-말산을 만드는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "hydrate",
+          "label": "푸마르산 수화",
+          "action": "수화",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+fum"
+            ],
+            "produces": [
+              "D+mal"
+            ]
+          },
+          "text": "물 분자는 부분 구조가 없어 생략.",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+mdh",
+      "term": "T+mdh",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 1.1.1.37",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "L-말산을 옥살로아세트산으로 산화하고 NAD⁺ 를 환원해 회로를 닫는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxidize",
+          "label": "말산 산화",
+          "action": "산화",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D+mal"
+            ],
+            "produces": [
+              "D+oaa"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D+nad"
+            ],
+            "produces": [
+              "D+nadh"
+            ]
+          },
+          "text": "세 번째 NADH, 옥살로아세트산 재생으로 회로가 닫힌다.",
+          "agent": true,
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+etc_nadh",
+      "term": "T+etc_nadh",
+      "kind": "process",
+      "desc": [
+        {
+          "text": "전자 전달계의 복합체 I 이 NADH 를 NAD⁺ 로 되돌리는 과정을 저장소 공급 하나로 본 것",
+          "field": "생화학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 미토콘드리아 기질"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "복합체 I 의 순 효과(NADH → NAD⁺)를 전자 수용체를 생략하고 공급 하나로 묶음"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "nad_regen",
+          "type": "supply",
+          "label": "NAD⁺ 재생 (NADH → NAD⁺)",
+          "consumes": [
+            {
+              "ref": "D+nadh",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D+nad",
+              "n": 1
+            }
+          ],
+          "text": "전자의 최종 수용체(O₂)와 양성자 기울기는 모델 밖.",
+          "where": [
+            "mito_matrix"
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "복합체 I 의 순 효과(NADH → NAD⁺)를 전자 수용체를 생략하고 공급 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+etc_fad",
+      "term": "T+etc_fad",
+      "kind": "process",
+      "desc": [
+        {
+          "text": "석신산 탈수소효소의 환원된 플라빈이 유비퀴논에 전자를 넘겨 다시 산화되는 과정을 저장소 공급 하나로 본 것",
+          "field": "생화학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 미토콘드리아 기질"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "복합체 II 의 FAD 재산화를 유비퀴논을 생략하고 공급 하나로 묶음"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "fad_regen",
+          "type": "supply",
+          "label": "FAD 재생 (FADH₂ → FAD)",
+          "consumes": [
+            {
+              "ref": "D+fadh2",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D+fad",
+              "n": 1
+            }
+          ],
+          "text": "유비퀴논 풀은 모델 밖.",
+          "where": [
+            "mito_matrix"
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "복합체 II 의 FAD 재산화를 유비퀴논을 생략하고 공급 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+accoa_in",
+      "term": "T+accoa_in",
+      "kind": "process",
+      "desc": [
+        {
+          "text": "피루브산 탈수소효소와 지방산 β-산화가 조효소 A 에 아세틸기를 실어 아세틸-CoA 를 만드는 과정을 계 밖 공급 하나로 본 것",
+          "field": "생화학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 미토콘드리아 기질"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "피루브산 탈수소효소·β-산화의 순 효과를 원료를 생략하고 계 밖 공급으로 묶음"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "accoa_supply",
+          "type": "supply",
+          "label": "아세틸-CoA 공급 (조효소 A → 아세틸-CoA, 계 밖 탄소)",
+          "consumes": [
+            {
+              "ref": "D+coa",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D+accoa",
+              "n": 1
+            }
+          ],
+          "source": true,
+          "text": "아세틸기의 탄소 두 개는 계 밖(피루브산·지방산)에서 들어온다 — source.",
+          "where": [
+            "mito_matrix"
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "피루브산 탈수소효소·β-산화의 순 효과를 원료를 생략하고 계 밖 공급으로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+co2",
+      "term": "T+co2",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "moieties": [
+        {
+          "ref": "D+c",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 하나가 완전히 산화된 기체 분자로, 시트르산 회로의 탈카복실화 단계에서 폐기물로 나온다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (미토콘드리아 기질의 시트르산 회로)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "efflux",
+          "type": "degradation",
+          "label": "이산화탄소 확산 배출",
+          "fate": "lost",
+          "where": [
+            "mito_matrix"
+          ],
+          "text": "막을 통과해 세포 밖으로 빠져나가 계에서 사라진다 (분해가 아니라 계 밖 배출을 소실로 표현).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "기체 확산 배출을 1차 소실로 근사"
+          }
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "S+1",
+      "rule": {
+        "owner": "D+cs",
+        "id": "condense"
+      },
+      "agents": [
+        {
+          "ref": "D+cs",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+accoa",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+oaa",
+          "location": "mito_matrix"
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+cit",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+coa",
+          "location": "mito_matrix"
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+2",
+      "rule": {
+        "owner": "D+aco",
+        "id": "isomerize"
+      },
+      "agents": [
+        {
+          "ref": "D+aco",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+cit",
+          "location": "mito_matrix"
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+icit",
+          "location": "mito_matrix"
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+3",
+      "rule": {
+        "owner": "D+idh",
+        "id": "oxdecarb"
+      },
+      "agents": [
+        {
+          "ref": "D+idh",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+icit",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+nad",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+akg",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+co2",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+nadh",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+4",
+      "rule": {
+        "owner": "D+kgdh",
+        "id": "oxdecarb"
+      },
+      "agents": [
+        {
+          "ref": "D+kgdh",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+akg",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+coa",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+nad",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+succoa",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+co2",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+nadh",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+5",
+      "rule": {
+        "owner": "D+scs",
+        "id": "slp"
+      },
+      "agents": [
+        {
+          "ref": "D+scs",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+succoa",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D000036",
+          "location": "mito_matrix",
+          "minor": true
+        },
+        {
+          "ref": "D000037",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+succ",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+coa",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D000035",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+6",
+      "rule": {
+        "owner": "D+sdh",
+        "id": "oxidize"
+      },
+      "agents": [
+        {
+          "ref": "D+sdh",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+succ",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+fad",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+fum",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+fadh2",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+7",
+      "rule": {
+        "owner": "D+fh",
+        "id": "hydrate"
+      },
+      "agents": [
+        {
+          "ref": "D+fh",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+fum",
+          "location": "mito_matrix"
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+mal",
+          "location": "mito_matrix"
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    },
+    {
+      "id": "S+8",
+      "rule": {
+        "owner": "D+mdh",
+        "id": "oxidize"
+      },
+      "agents": [
+        {
+          "ref": "D+mdh",
+          "location": "mito_matrix"
+        }
+      ],
+      "inputs": [
+        {
+          "ref": "D+mal",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+nad",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D+oaa",
+          "location": "mito_matrix"
+        },
+        {
+          "ref": "D+nadh",
+          "location": "mito_matrix",
+          "minor": true
+        }
+      ],
+      "part_of": [
+        "D+tca"
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+accoa",
+      "target": "D+accoa_in/rule/accoa_supply",
+      "type": "Resource_Gap",
+      "requirement": {
+        "text": "아세틸-CoA 공급 속도(피루브산 탈수소효소·β-산화, 세포 유형별) — 없으면 회로는 처음 있던 아세틸-CoA 수만큼만 돌고 아세틸-CoA 고갈로 멈춘다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+accoa_in/rule/accoa_supply",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목"
+    },
+    {
+      "id": "L+nad",
+      "target": "D+etc_nadh/rule/nad_regen",
+      "type": "Resource_Gap",
+      "requirement": {
+        "text": "전자 전달계의 NADH 재산화 속도 — 없으면 회로 한 바퀴마다 NAD⁺ 3 분자가 NADH 로 쌓이고 NAD⁺ 고갈로 멈춘다 (NAD⁺ 시작량 ÷ 3 바퀴)",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+etc_nadh/rule/nad_regen",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목"
+    },
+    {
+      "id": "L+fad",
+      "target": "D+etc_fad/rule/fad_regen",
+      "type": "Resource_Gap",
+      "requirement": {
+        "text": "FADH₂ 재산화 속도 — 없으면 바퀴마다 FAD 1 분자가 소비되어 FAD 고갈로 석신산 산화가 멈춘다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+etc_fad/rule/fad_regen",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목"
+    },
+    {
+      "id": "L+co2",
+      "target": "D+co2/rule/efflux",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "이산화탄소 배출 속도(반감기) — 없으면 CO₂ 가 기질에 쌓이기만 하고 가역 탈카복실화의 역반응 압력을 정할 수 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+co2/rule/efflux",
+            "params": [
+              "half_life"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목"
+    },
+    {
+      "id": "L+tcakin",
+      "target": "D+tca",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시트르산 회로 여덟 효소의 kcat·Km (사람, 미토콘드리아 기질) — 없으면 단계가 즉시 처리되어 회로의 시간·병목을 말할 수 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+cs/rule/condense",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+aco/rule/isomerize",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+idh/rule/oxdecarb",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+kgdh/rule/oxdecarb",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+scs/rule/slp",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+sdh/rule/oxidize",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+fh/rule/hydrate",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+mdh/rule/oxidize",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로를 넣으면서 — 속도 상수 미확인"
+    },
+    {
+      "id": "L+tcaconc",
+      "target": "D+tca",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "미토콘드리아 기질 부피와 아세틸-CoA·NAD⁺·옥살로아세트산 농도 — 없으면 소진 시각·완료 바퀴 수가 기본값·가상 시작량에 좌우된다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D000116",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "concentration",
+            "on": "D+accoa",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "concentration",
+            "on": "D+nad",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "concentration",
+            "on": "D+oaa",
+            "location": "mito_matrix"
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목"
+    },
+    {
+      "id": "L+sdhfad",
+      "target": "D+sdh/rule/oxidize",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "석신산 탈수소효소는 내막 복합체 II 이고 FAD 가 공유 결합한 보결분자단이며 전자는 유비퀴논으로 간다 — 지금은 기질의 자유 FAD 저장소로 단순화",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "복합체 II 를 소단위·막 위상(내막, 기질 면)·공유 결합 FAD 부위를 가진 복합체로 정의하고 유비퀴논 풀(내막 2D 저장소)을 전자 수용체로"
+          }
+        ]
+      },
+      "found_in": "시트르산 회로를 넣으면서"
+    },
+    {
+      "id": "L+tcaid",
+      "target": "D+tca",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+accoa"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+coa"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+oaa"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+cit"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+icit"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+akg"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+succoa"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+succ"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+fum"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+mal"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+co2"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+nad"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+nadh"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+fad"
+          },
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+fadh2"
+          }
+        ]
+      },
+      "found_in": "시트르산 회로를 넣으면서 (Identity_Gap)"
+    }
+  ]
+}

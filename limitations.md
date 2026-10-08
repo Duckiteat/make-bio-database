@@ -6,10 +6,11 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 10 | 0 | 10 |
-| Concentration_Gap | 5 | 0 | 5 |
-| Structural_Gap | 12 | 0 | 12 |
-| Identity_Gap | 6 | 0 | 6 |
+| Kinetic_Gap | 13 | 0 | 13 |
+| Concentration_Gap | 6 | 0 | 6 |
+| Structural_Gap | 13 | 0 | 13 |
+| Resource_Gap | 4 | 0 | 4 |
+| Identity_Gap | 7 | 0 | 7 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
 
@@ -27,6 +28,9 @@
 | L000023 | D000127/rule/nt_supply (뉴클레오타이드 공급 · nt_supply) | Kinetic_Gap | 핵질 뉴클레오타이드 공급 속도(합성·재활용) — 없으면 전사가 뉴클레오타이드 저장소를 바닥낸다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 k @ D000127/rule/nt_supply | open (0/1) | — |
 | L000024 | D000101/rule/turnover (TNF mRNA · turnover) | Kinetic_Gap | TNF mRNA 반감기(대식세포, LPS 자극 조건) — 없으면 mRNA 가 분해되지 않고 쌓인다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 half_life @ D000101/rule/turnover | open (0/1) | — |
 | L000025 | D000086/rule/basal_turnover (IκBα · basal_turnover) | Kinetic_Gap | 유리 IκBα 의 기저 분해 반감기 — 없으면 유리 IκBα 가 분해되지 않는다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 half_life @ D000086/rule/basal_turnover | open (0/1) | — |
+| L000037 | D000160/rule/efflux (이산화탄소 · efflux) | Kinetic_Gap | 이산화탄소 배출 속도(반감기) — 없으면 CO₂ 가 기질에 쌓이기만 하고 가역 탈카복실화의 역반응 압력을 정할 수 없다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 half_life @ D000160/rule/efflux | open (0/1) | — |
+| L000038 | D000148 (시트르산 회로) | Kinetic_Gap | 시트르산 회로 여덟 효소의 kcat·Km (사람, 미토콘드리아 기질) — 없으면 단계가 즉시 처리되어 회로의 시간·병목을 말할 수 없다<br>발견: 시트르산 회로를 넣으면서 — 속도 상수 미확인 | ✗ 속도 상수 kcat·Km @ D000149/rule/condense<br>✗ 속도 상수 kcat·Km @ D000150/rule/isomerize<br>✗ 속도 상수 kcat·Km @ D000151/rule/oxdecarb<br>✗ 속도 상수 kcat·Km @ D000152/rule/oxdecarb<br>✗ 속도 상수 kcat·Km @ D000153/rule/slp<br>✗ 속도 상수 kcat·Km @ D000154/rule/oxidize<br>✗ 속도 상수 kcat·Km @ D000155/rule/hydrate<br>✗ 속도 상수 kcat·Km @ D000156/rule/oxidize | open (0/8) | — |
+| L000043 | D000151/rule/oxdecarb (아이소시트르산 탈수소효소 · oxdecarb) | Kinetic_Gap | NAD 의존 아이소시트르산 탈수소효소의 역반응 속도(또는 평형 상수) — 생리 조건에서 거의 비가역으로 알려져 있으나 값이 없어, CO₂ 축적이 회로를 평형으로 멈추게 하는지(가상 시험 3) 데이터로 판정할 수 없다<br>발견: 시트르산 회로 소진 시험 3(가상): 가역으로 둔 IDH 가 CO₂ 축적으로 평형(역/정 ≈ 1)에 닿아 정지 | ✗ 속도 상수 k_r @ D000151/rule/oxdecarb | open (0/1) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 
@@ -39,6 +43,7 @@
 | L000003 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | K63·K48 폴리유비퀴틴 사슬을 유비퀴틴 1 단위로 셈 — 질량 수지가 사슬 길이만큼 틀린다<br>발견: 2026-10-08 LPS→NF-κB 스트레스 시험 | ✗ 수동: 사슬 길이(유비퀴틴 개수) 분포 데이터와, 그것을 담을 특징·관찰 어휘 | open (0/1) | D000114 억제자 분해에 의한 전사 인자 방출 |
 | L000016 | D000051 (에피네프린에 의한 글리코겐 분해) | Concentration_Gap | 간세포의 분자별 세포당 분자 수 — 시작량이 기본값 10이라 증폭 정도(수용체 하나당 cAMP·인산화효소 수)를 말할 수 없다<br>발견: 2026-10-08 simulate 의 농도 공백 경고 (등록되지 않은 경로) | ✗ 관찰 copy_number @ D000030 β-아드레날린 수용체 · 간세포 · 세포막<br>✗ 관찰 copy_number @ D000042 단백질 키네이스 A · 간세포 · 세포질<br>✗ 관찰 copy_number @ D000044 글리코겐 인산화효소 · 간세포 · 세포질 | open (0/3) | D000116 구획 농도 모델 |
 | L000017 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | 막(2D) 분자가 낀 반응을 인접 3D 구획 부피의 농도로 환산함 — 면적 농도(분자/µm²)와 막 면적이 없다<br>발견: 2026-10-08 속도 기반 시뮬레이터(simulate --rate)의 AUDIT_RESOLUTION | ✗ 수동: 세포막 면적(세포 유형별)과 면적 농도 모델 — 2D 반응 속도(k_on 단위 µm²/s)를 담을 어휘 | open (0/1) | — |
+| L000039 | D000148 (시트르산 회로) | Concentration_Gap | 미토콘드리아 기질 부피와 아세틸-CoA·NAD⁺·옥살로아세트산 농도 — 없으면 소진 시각·완료 바퀴 수가 기본값·가상 시작량에 좌우된다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000134 아세틸-CoA · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000144 NAD⁺ · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000136 옥살로아세트산 · 미토콘드리아 기질 | open (0/4) | — |
 
 ## Structural_Gap — 구조·위상·해상도 공백
 
@@ -58,6 +63,18 @@
 | L000018 | D000031/site/gs_site (아데닐산 고리화효소 · gs_site) | Structural_Gap | Gs 가 AC 활성화 단계(S000003)에서 행위자로 풀에 남으면서 AC 의 gs_site 리간드로도 세어져 Gαs·Gβ·Gγ 가 두 번 계산된다 — 실제로는 GTP 결합 Gαs 가 AC 에 붙고 Gβγ 가 떨어지며, GTP 가수분해로 Gαs 가 풀려난다<br>발견: 2026-10-08 audit-run 에피네프린 경로 (속도 기반 시뮬레이션의 AUDIT_MASS: Gαs·Gβ·Gγ 10 → 20) | ✗ 수동: Gαs·GTP 가 AC 에 흡수되는 결합 단계(partner)와, GTP 가수분해로 Gαs·GDP 가 풀려나 Gβγ 와 다시 모이는 단계·규칙 — L000015 의 Gs 해리 모델과 함께 | open (0/1) | — |
 | L000026 | D000101 (TNF mRNA) | Structural_Gap | TNF mRNA 의 서열 길이(뉴클레오타이드 수, 사람) — 없으면 분해 때 뉴클레오타이드 몇 개가 돌아가는지 몰라 재활용분을 소실로 처리한다<br>발견: TNF mRNA 분해 규칙(recycle_to n: sequence_length)에 관찰이 없음 | ✗ 관찰 sequence_length @ D000101 TNF mRNA | open (0/1) | D000128 생애 주기 모델 |
 | L000027 | D000098/rule/ikba_degradation (26S 프로테아좀 · ikba_degradation) | Structural_Gap | 프로테아좀이 기질 하나를 분해할 때 쓰는 ATP 수 — 지금은 1 분자(ATP → ADP + Pi)로 둔 단순화라 ATP 저장소 소비가 실제보다 적다<br>발견: v7 부분 구조 수지 검사가 ATP → ADP 에서 빠진 Pi 를 잡아 규칙을 고치면서 화학량 단순화가 드러남 | ✗ 수동: 26S 프로테아좀의 기질당 ATP 가수분해 화학량을 문헌에서 확인해 with 화학량(단계 n)에 반영 | open (0/1) | — |
+| L000040 | D000154/rule/oxidize (석신산 탈수소효소 · oxidize) | Structural_Gap | 석신산 탈수소효소는 내막 복합체 II 이고 FAD 가 공유 결합한 보결분자단이며 전자는 유비퀴논으로 간다 — 지금은 기질의 자유 FAD 저장소로 단순화<br>발견: 시트르산 회로를 넣으면서 | ✗ 수동: 복합체 II 를 소단위·막 위상(내막, 기질 면)·공유 결합 FAD 부위를 가진 복합체로 정의하고 유비퀴논 풀(내막 2D 저장소)을 전자 수용체로 | open (0/1) | — |
+
+## Resource_Gap — 자원(저장소) 공백
+
+재생·공급 경로나 그 속도가 없어 저장소가 고갈되고 경로가 멈추는 곳 — 사후 분석(post-mortem)이 제한 요인으로 지목한 저장소. 공급 규칙의 속도·시작량이 들어오면 닫힌다.
+
+| ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |
+|---|---|---|---|---|---|---|
+| L000034 | D000159/rule/accoa_supply (아세틸-CoA 공급 · accoa_supply) | Resource_Gap | 아세틸-CoA 공급 속도(피루브산 탈수소효소·β-산화, 세포 유형별) — 없으면 회로는 처음 있던 아세틸-CoA 수만큼만 돌고 아세틸-CoA 고갈로 멈춘다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 k @ D000159/rule/accoa_supply | open (0/1) | — |
+| L000035 | D000157/rule/nad_regen (NADH 재산화 (전자 전달계) · nad_regen) | Resource_Gap | 전자 전달계의 NADH 재산화 속도 — 없으면 회로 한 바퀴마다 NAD⁺ 3 분자가 NADH 로 쌓이고 NAD⁺ 고갈로 멈춘다 (NAD⁺ 시작량 ÷ 3 바퀴)<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 k @ D000157/rule/nad_regen | open (0/1) | — |
+| L000036 | D000158/rule/fad_regen (FADH₂ 재산화 · fad_regen) | Resource_Gap | FADH₂ 재산화 속도 — 없으면 바퀴마다 FAD 1 분자가 소비되어 FAD 고갈로 석신산 산화가 멈춘다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 k @ D000158/rule/fad_regen | open (0/1) | — |
+| L000042 | D000123/rule/gdp_regeneration_matrix (뉴클레오사이드 이인산 키네이스 · gdp_regeneration_matrix) | Resource_Gap | 미토콘드리아 기질의 GTP → GDP 재생 속도 (NDPK 기질 쪽 아형 또는 석시닐-CoA 합성효소의 ADP 형 아형 비율) — 없으면 석시닐-CoA 합성효소가 기질 GDP 를 다 써서 회로가 GDP 고갈로 멈춘다 (GDP 시작량 = 최대 바퀴 수)<br>발견: 시트르산 회로 소진 시험 3(가상)의 사후 분석: 기질 GTP 를 GDP 로 되돌리는 경로가 없어 GDP 저장소가 정확히 그 수만큼의 바퀴 뒤 고갈 | ✗ 속도 상수 k @ D000123/rule/gdp_regeneration_matrix | open (0/1) | — |
 
 ## Identity_Gap — 정체성(외부 ID) 공백
 
@@ -71,3 +88,4 @@
 | L000031 | D000062 (피리독살 인산) | Identity_Gap | 피리독살 인산의 ChEBI 번호를 원본에서 확인 — 지금은 unmapped: ChEBI 번호 원본 미확인 (네트워크로 대조할 수 없어 비워 둠)<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000062 피리독살 인산 | open (0/1) | — |
 | L000032 | D000122 (피로인산) | Identity_Gap | 피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000122 피로인산 | open (0/1) | — |
 | L000033 | D000101 (TNF mRNA) | Identity_Gap | TNF mRNA 전사체 ID — 외부 ID 어휘에 RefSeq(NM_)·Ensembl 전사체 체계가 없어 정체성을 외부 ID 로 고정하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ 수동: vocab.js xrefs 에 전사체 ID 체계(RefSeq NM_ 또는 Ensembl ENST)를 사람이 검토해 추가한 뒤, 원본에서 확인한 TNF 표준 전사체 ID 를 등록 | open (0/1) | — |
+| L000041 | D000148 (시트르산 회로) | Identity_Gap | 시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped<br>발견: 시트르산 회로를 넣으면서 (Identity_Gap) | ✗ ChEBI ID @ D000134 아세틸-CoA<br>✗ ChEBI ID @ D000135 조효소 A<br>✗ ChEBI ID @ D000136 옥살로아세트산<br>✗ ChEBI ID @ D000137 시트르산<br>✗ ChEBI ID @ D000138 아이소시트르산<br>✗ ChEBI ID @ D000139 2-옥소글루타르산<br>✗ ChEBI ID @ D000140 석시닐-CoA<br>✗ ChEBI ID @ D000141 석신산<br>✗ ChEBI ID @ D000142 푸마르산<br>✗ ChEBI ID @ D000143 말산<br>✗ ChEBI ID @ D000160 이산화탄소<br>✗ ChEBI ID @ D000144 NAD⁺<br>✗ ChEBI ID @ D000145 NADH<br>✗ ChEBI ID @ D000146 FAD<br>✗ ChEBI ID @ D000147 FADH₂ | open (0/15) | — |

@@ -207,7 +207,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 ```
 
 - **Target**: 정의항 `D…`, 그 부위 `D…/site/키`·규칙 `D…/rule/키`, 또는 단계 `S…`. 패치에서는 이름도 된다(`TAK1/site/act`).
-- **Type** (`vocab.js` 의 `gapTypes`): `Kinetic_Gap`(속도·Kd·시간 상수) · `Concentration_Gap`(몰 농도·부피·질량 수지) · `Structural_Gap`(3차원 좌표·위상·잔기·화학량) · `Identity_Gap`(unmapped 필수 외부 ID — 해결 경로 `xref`, 어휘에 없는 ID 체계면 `manual`).
+- **Type** (`vocab.js` 의 `gapTypes`): `Kinetic_Gap`(속도·Kd·시간 상수) · `Concentration_Gap`(몰 농도·부피·질량 수지) · `Structural_Gap`(3차원 좌표·위상·잔기·화학량) · `Resource_Gap`(재생·공급 경로나 속도가 없어 저장소가 고갈되는 곳 — 사후 분석의 제한 요인) · `Identity_Gap`(unmapped 필수 외부 ID — 해결 경로 `xref`, 어휘에 없는 ID 체계면 `manual`).
 - **Requirement**: 사람이 읽는 `text` + 기계가 확인하는 해결 경로 `needs`.
   - `obs`: 그 정의항에 그 관찰(세포·위치 맥락)이 들어오면 충족 · `residue`: 그 부위에 기준 종 잔기 번호가 들어오면 충족 · `xref`: 그 외부 ID 가 붙으면 충족 · `manual`: 형식으로 확인할 수 없는 요구 — `resolution` 으로만 닫힘.
 - **상태는 저장하지 않고 계산한다**: needs 가 모두 충족되면 `resolved`, manual 이 resolution 으로 닫히면 `resolved_manual`, 아니면 `open`.
@@ -307,6 +307,12 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 단계마다 국소 수지도 첫 발화 때 검사한다: 단계 한 번의 실체 Δ(그 규칙의 화학 실체 제외)와 부분 구조 Δ(공유 결합 수식이면 공유 결합 경로로 기록). 결과에는 묶음별 원장 Δ(반응·공급·분해·재활용), 저장소 표(시작·끝·최소·분류 closed | consumed_only | produced_only | idle), 저장소 분자 사이의 순환 성분(강하게 연결된 성분)이 붙는다.
 
+### 정지까지 실행과 사후 분석 (Survival-to-Exhaustion)
+- 단계 순환: 저장소가 아닌 비가산 묶음으로 이어진 단계 고리(SCC). 완료한 바퀴 = ⌊min(고리 단계들의 누적 진행량)⌋.
+- 정지: 창(`window`, 기본 1 s) 동안 1 바퀴 미만(회로가 없으면 1 분자 미만) 또는 `death_frac` > 0 이면 최고 속도의 그 비율 미만 — 단, 한 바퀴 이상 돈 뒤에만. `until_death`(`--until-death`)면 정지 확인 시 실행을 멈춘다.
+- 사후 분석 `postMortem`: `cause` exhaustion(감시 단계 입력 저장소 < 1 분자) | equilibrium(가역 단계 역/정 > 0.5) | intermediate_drained | kinetic_stall · `t_death`(고갈 시각, 아니면 마지막 바퀴 시각) · `last_turn` · `limiting{bundle, starved, regeneration}` · `bottleneck{sid, ratio}` · `cycles[{steps, completed}]` · `firstToZero`(끝까지 0 인 입력) · `waste`(생성만 되는 저장소 + 입력으로 안 쓰이는 산물) · `dp`(저장소 순소비 ÷ 순생산, 폐기물 포함). AUDIT_RESOURCE 로 보고하고 Resource_Gap(고갈) / Kinetic_Gap(평형·속도) 한계를 교정 제안.
+- 적분 안정성: 속도 법칙 단계가 한 Δt 에 입력의 20% 넘게 쓰려 하면 AUDIT_KINETIC (Δt 를 줄여 결과가 같은지 확인).
+
 ### 감사 코드 (v7 추가·변경)
 - `AUDIT_MASS` — 국소(단계·첫 발화 시각) · 전역(실체·부분 구조, 처음 어긋난 시각) · 음수 저장소(엔진 오류)
 - `AUDIT_RESOURCE` — 소비만 되고 재생 경로가 없는 저장소(켜진 공급·재활용 없음), 재활용 화학량(서열 길이)을 모름
@@ -386,6 +392,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 7 (확장 2) | Survival-to-Exhaustion: 단계 순환·완료 바퀴 수, 정지 감지(`until_death`·`window`·`death_frac`), 사후 분석(`postMortem`), 적분 안정성 감사, 한계 종류 `Resource_Gap`, 변화 종류 축합·수화, Patch Report 하류에 공급 규칙의 저장소 도달 포함. 데이터: 시트르산 회로(경로 1·효소 8·단계 8·대사물 15·부분 구조 4·재생 경로 3·CO₂ 배출), 기질 NDPK 공급 규칙, 한계 10건(L000034–L000043). 형식 버전 그대로 |
 | 2026-10-08 | 7 (확장) | Traceable Evolution Protocol: 패치 `why` 필수, Patch Report(`patchReport`·`patchReportText`, 기록의 `report`, `dbtool report`), 미등록 한계 후보가 있으면 병합 거부. 한계 종류 `Identity_Gap`(unmapped 외부 ID — `detectGaps` 가 후보로 잡음). 데이터: Identity_Gap 6건(L000028–L000033). 형식 버전은 그대로 (`CHANGES.md` 도입) |
 | 2026-10-08 | 7 | 생애 주기·대사물 저장소: 규칙 종류 `supply`(Metabolic_Supply_Rule)·`degradation`(Degradation_Rule, fate lost/recycled, recycle_to, sequence_length), 정의항 `moieties`(부분 구조)와 부분 구조 수지 검사, 부위 `ligands`(특징별 리간드), 속도 법칙 `zero_order`, 속도 필드 `half_life`, 관찰 `sequence_length`, 어휘 `lifecycleFates`·`reservoirModes`·`ruleTypes`. 시뮬레이터: 유한 저장소(기본)·공급·분해(결정론/확률적)·매 Δt 질량 감사(국소·전역, 실체·부분 구조)·고갈/재생 사건·원장 Δ·자원 순환, 감사 코드 `AUDIT_RESOURCE`. 데이터: 부분 구조 3개·피로인산, ATP·ADP·AMP·cAMP·GTP·GDP·Pi·G1P 부분 구조, Gs 특징별 리간드, AC·E1·프로테아좀 규칙의 빠진 산물(피로인산·Pi) 교정, 공급 규칙 5개(NDPK·아데닐산 키네이스·PPase·ATP 재생·뉴클레오타이드 공급), 분해 규칙 2개(TNF mRNA·IκBα), 원리 2개(생애 주기 모델·대사물 저장소 모델), 한계 9건 (`migrations/006-v6-to-v7-lifecycle.mjs`) |
 | 2026-10-08 | 6 | 혼합 해상도(R0 위상·R1 부위·R2 구조, 전환 문턱 T1–T3, 부위 구조 참조 `site.structure`), 반응 속도(`rule.kinetics`, 법칙 3종, SI 정준 단위, 속도 무결성 검사), 한계 해결 경로 `kinetics`, 속도 기반 시뮬레이터·시나리오 층, 감사 명령(`audit-run`). 데이터: 혼합 해상도 모델·반응 속도 모델 원리, 3FXI 구조 참조, Kinetic_Gap 해결 경로 교정, 한계 2건 추가(2D 환산, Gs–AC 이중 계산) (`migrations/005-v5-to-v6-hybrid-kinetics.mjs`) |

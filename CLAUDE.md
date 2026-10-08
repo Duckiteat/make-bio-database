@@ -40,6 +40,7 @@
 - **속도 상수는 규칙의 `kinetics` 에 SI 정준 단위로, 근거와 함께.** 확인하지 못한 값은 넣지 않는다 — 엔진 시험용 값은 `examples/scenarios/` 의 `hypothetical: true` 시나리오에만 둔다.
 - **모든 시뮬레이션·갱신 뒤 `node dbtool.mjs audit-run <경로>` 를 돌린다.** Audit Error 는 오류로 넘기지 말고, 교정 제안의 한계를 채우거나 새 한계로 등록한다.
 - **물질은 무한하지 않다 (v7).** 대사물은 유한 저장소이고, 재생은 공급 규칙(`type: supply`)으로, 소멸은 분해 규칙(`type: degradation`, lost | recycled)으로만 표현한다. 고갈(AUDIT_RESOURCE·stalled)은 결과로 보고하고, 재생 경로가 없으면 공급 규칙을 정의하거나 Kinetic_Gap 으로 등록한다.
+- **유한 계는 결국 멈춘다.** 회로·경로를 넣으면 `simulate --rate --until-death` 로 정지까지 돌리고, 사후 분석의 제한 요인(고갈 → Resource_Gap, 평형·속도 → Kinetic_Gap)을 등록한다. 적분 안정성 감사(Δt 너무 큼)가 나오면 Δt 를 줄여 결과가 수렴할 때만 보고한다.
 - **부분 구조 수지를 지킨다.** 부분이 옮겨 다니는 분자에는 `moieties` 를 달고, 변환·분해·공급 규칙의 빠진 산물(피로인산·Pi …)은 규칙과 단계(minor)에 함께 넣는다. 원료가 모델 밖이면 `source: true` — 수지 검사를 피하려고 쓰지 않는다. 반감기·공급 속도·서열 길이는 확인한 값만.
 
 ## 추적 가능한 진화 (Traceable Evolution Protocol)

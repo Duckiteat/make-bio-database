@@ -638,3 +638,57 @@ test('Identity_Gap: unmapped 외부 ID 는 한계로 등록되어야 하고, 확
   e.senses[pi].xrefs.push({ db: 'ChEBI', id: 'CHEBI:1', status: 'asserted' });
   assert.equal(DefDB.limitationStatus(DefDB.normalize(e), DefDB.normalize(e).limitations[lid]).status, 'resolved');
 });
+
+// ===== 소진 시험 (Survival-to-Exhaustion): 시트르산 회로 =====
+const TCA = '시트르산 회로', ACCOA = id('아세틸-CoA'), NADP = id('NAD⁺'), NADH = id('NADH'), CO2 = id('이산화탄소'), IDH = id('아이소시트르산 탈수소효소');
+const mx = (d) => `${d}|mito_matrix`;
+test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복실화에서 CO₂ 를 빼면 거부', () => {
+  const rs = BASE.senses[IDH].rule.map((r) => (r.id === 'oxdecarb' ? { ...r, effect: { ...r.effect, produces: [id('2-옥소글루타르산')] } } : r));
+  rejectedFor({ senses: [{ id: IDH, rule: rs }] }, /부분 구조 수지가 맞지 않음 — 탄소 골격 단위 6 → 5/);
+  const rs2 = BASE.senses[IDH].rule.map((r) => (r.id === 'oxdecarb' ? { ...r, with: { consumes: [NADP], produces: [] } } : r));
+  rejectedFor({ senses: [{ id: IDH, rule: rs2 }] }, /니코틴아마이드 뉴클레오타이드 부분 1 → 0/);
+});
+test('소진 시험 1: 아세틸-CoA 1000 → 정확히 1000 바퀴 뒤 아세틸-CoA 고갈로 정지, CO₂ 2000·GTP 1000 축적', () => {
+  const r = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-acetylcoa-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 });
+  const pm = r.postMortem;
+  assert.equal(r.stepCycles.length, 1);
+  assert.equal(r.stepCycles[0].length, 8);
+  assert.ok(pm.dead && pm.cause === 'exhaustion');
+  assert.equal(pm.limiting.bundle, mx(ACCOA));
+  assert.equal(pm.cycles[0].completed, 1000);
+  assert.ok(Math.abs(pm.t_death - 1) < 0.011 && pm.last_turn.n === 1000);
+  assert.ok(r.t_end === 60 && r.series[r.series.length - 1].t < 60, 'until_death: 정지 확인 뒤 멈춤');
+  assert.ok(Math.abs(pm.waste.find((w) => w.bundle === mx(CO2)).accumulated - 2000) < 1e-6);
+  assert.ok(Math.abs(pm.dp.produced[mx(id('GTP'))] - 1000) < 1e-6);
+  const lid = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].type === 'Resource_Gap' && /accoa_supply/.test(BASE.limitations[k].target));
+  assert.ok(r.audit.some((a) => a.code === 'AUDIT_RESOURCE' && /사후 분석/.test(a.msg) && a.suggestion.includes(lid)), '사후 분석 → 등록된 Resource_Gap');
+  assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS'), '탄소·CoA·NAD 수지 위반 없음');
+});
+test('소진 시험 2: NAD⁺ 3002 → 1000 바퀴 + 부분 바퀴 뒤 NAD⁺ 고갈, NADH 3002 축적 (바퀴당 NAD⁺ 3)', () => {
+  const r = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-nad-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 }), pm = r.postMortem;
+  assert.ok(pm.cause === 'exhaustion' && pm.limiting.bundle === mx(NADP));
+  assert.equal(pm.cycles[0].completed, 1000);
+  assert.ok(pm.limiting.starved.length === 3, 'NAD⁺ 를 쓰는 세 탈수소효소가 굶음');
+  assert.ok(Math.abs(r.final[mx(NADH)] - 3002) < 1e-6 && Math.abs(pm.waste.find((w) => w.bundle === mx(CO2)).accumulated - 2002) < 1e-6, '부분 바퀴: IDH·KGDH 가 한 번 더');
+});
+test('소진 시험 3: 기질이 남아도 CO₂ 축적이 가역 IDH 를 평형에 묶어 정지 — 병목과 역/정 비를 보고', () => {
+  const r = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-co2-equilibrium-hypothetical.json'), t_end: 3600, dt: 0.005 }), pm = r.postMortem;
+  assert.ok(!r.audit.some((a) => /Δt .* 너무 큼/.test(a.msg)), '수렴하는 Δt');
+  const coarse = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-co2-equilibrium-hypothetical.json'), t_end: 300, dt: 0.1 });
+  assert.ok(coarse.audit.some((a) => a.code === 'AUDIT_KINETIC' && /Δt 0.1 s 가 너무 큼/.test(a.msg)), '큰 Δt 는 적분 안정성 감사');
+  assert.ok(pm.dead && pm.cause === 'equilibrium');
+  assert.equal(pm.bottleneck.sid, Object.keys(BASE.steps).find((k) => BASE.steps[k].rule === `${IDH}/rule/oxdecarb`));
+  assert.ok(pm.bottleneck.ratio > 0.5 && pm.limiting === null);
+  assert.ok(r.final[mx(ACCOA)] > 1e8, '아세틸-CoA 는 넉넉히 남음 (고갈 아님)');
+  const lid = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${IDH}/rule/oxdecarb`);
+  assert.ok(r.audit.find((a) => /사후 분석/.test(a.msg)).suggestion.includes(lid));
+});
+test('재생이 있으면 죽지 않는다: 아세틸-CoA 공급을 켜면 정지 없이 계속 돈다 · 시동 중에는 정지로 보지 않음', () => {
+  const sc = scenario('tca-acetylcoa-exhaustion-hypothetical.json');
+  sc.kinetics['D000159/rule/accoa_supply'] = { law: 'mass_action', k: 100, order: 1, evidence: { level: 'predicted', confidence: 0 } };
+  const r = DefDB.simulateRate(BASE, TCA, { scenario: sc, t_end: 5, dt: 0.01 });
+  assert.ok(r.postMortem.alive && r.postMortem.cycles[0].completed > 1000);
+  const slow = scenario('tca-co2-equilibrium-hypothetical.json');
+  for (const k of Object.keys(slow.kinetics)) if (slow.kinetics[k].k) slow.kinetics[k].k /= 1e6;
+  assert.ok(DefDB.simulateRate(BASE, TCA, { scenario: slow, t_end: 30, dt: 0.05 }).postMortem.alive, '한 바퀴도 못 돈 시동 단계는 정지가 아님');
+});

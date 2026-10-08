@@ -1,0 +1,55 @@
+{
+  "name": "TCA 소진 시험 1 — 아세틸-CoA 고갈 (가상)",
+  "hypothetical": true,
+  "_설명": "아세틸-CoA 1000 분자, 아세틸-CoA 공급 없음, NAD⁺·FAD 재생은 켬. 기대: 정확히 1000 바퀴 뒤 아세틸-CoA 고갈로 정지. 모든 값은 가상이다 — 엔진 시험용, data/db.json 에 들어가지 않는다.",
+  "until_death": true,
+  "window": 1,
+  "volumes": {
+    "mito_matrix": {
+      "value": 100,
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000149|mito_matrix": 100,
+    "D000150|mito_matrix": 100,
+    "D000151|mito_matrix": 100,
+    "D000152|mito_matrix": 100,
+    "D000153|mito_matrix": 100,
+    "D000154|mito_matrix": 100,
+    "D000155|mito_matrix": 100,
+    "D000156|mito_matrix": 100,
+    "D000136|mito_matrix": 10,
+    "D000135|mito_matrix": 100
+  },
+  "reservoirs": {
+    "D000134|mito_matrix": 1000,
+    "D000144|mito_matrix": 1000000,
+    "D000145|mito_matrix": 0,
+    "D000146|mito_matrix": 100000,
+    "D000147|mito_matrix": 0,
+    "D000036|mito_matrix": 100000,
+    "D000037|mito_matrix": 1000000,
+    "D000035|mito_matrix": 0
+  },
+  "kinetics": {
+    "D000157/rule/nad_regen": {
+      "law": "mass_action",
+      "k": 50,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000158/rule/fad_regen": {
+      "law": "mass_action",
+      "k": 50,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  }
+}

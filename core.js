@@ -1428,8 +1428,10 @@
       if (refs.some((y) => cd.has(y))) senses.push(id);
     }
     const ruleSet = new Set(rules);
+    // 바뀐 정의항의 공급 규칙이 닿는 저장소 묶음(정의항|위치) — 그 묶음을 쓰는 단계는 시뮬레이션에서 그 공급을 켠다
+    const supplyKeys = new Set(changedD.flatMap((id) => (after.senses[id] ? after.senses[id].rule : []).filter((x) => x.type === 'supply').flatMap((x) => [...x.consumes, ...x.produces].map((q) => `${q.ref}|${x.where[0]}`))));
     const steps = Object.entries(after.steps).filter(([sid, st]) => changed.has(sid) || cd.has(st.rule.split('/')[0]) || ruleSet.has(st.rule)
-      || [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators].some((p) => cd.has(p.b.split('|')[0]))).map(([sid]) => sid);
+      || [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators].some((p) => cd.has(p.b.split('|')[0]) || supplyKeys.has(p.b))).map(([sid]) => sid);
     // 경로는 상위 경로(part_of 연결)까지 — 하위 경로의 변화는 그것을 품은 경로의 시뮬레이션도 바꾼다
     const pathways = uniq(steps.flatMap((sid) => after.steps[sid].part_of));
     const parentsOf = (p) => { const out = []; const d = after.senses[p]; if (d) for (const ds of d.desc) for (const l of ds.links) if (l.rel === 'part_of') out.push(l.to);
@@ -2245,10 +2247,25 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     for (const b of res) if (N.has(b)) resStat[b] = { start: N.get(b), min: N.get(b), max: N.get(b), state: (N.get(b) || 0) >= 1 ? 'ok' : 'empty', source: srcOf[b] || 'bulk', consumers: [], producers: [] };
     const record = (t) => series.push({ t, N: Object.fromEntries([...N].filter(([b]) => finite || !res.has(b))) });
     const ev = (e) => { if (events.length < 200) events.push(e); };
-    const stalls = {};
+    const stalls = {}, stiff = {};
     record(0);
     const steps = Math.ceil(opt.t_end / opt.dt), every = Math.max(1, Math.floor(steps / 200)), TOL = 1e-6;
     let massFirst = null, moiFirst = null;
+    // 단계 순환(예: 시트르산 회로): 저장소가 아닌 비가산 묶음으로 한 단계의 출력이 다음 단계의 입력이 되는 고리 — 강하게 연결된 성분
+    const SG = new Map();
+    for (const a of ids) for (const b of ids) if (a !== b && react.get(a).st.outputs.some((p) => !p.minor && !res.has(p.b) && react.get(b).st.inputs.some((q) => !q.minor && q.b === p.b))) { if (!SG.has(a)) SG.set(a, new Set()); SG.get(a).add(b); }
+    const stepCycles = sccs(SG).filter((c) => c.length > 1).map((c) => ids.filter((x) => c.includes(x)));
+    const cum = {}; // 단계별 누적 진행량 (정방향 − 역방향)
+    const turns = (c) => Math.min(...c.map((sid) => cum[sid] || 0)); // 회로 한 바퀴 = 모든 단계가 한 번씩
+    const cycleSteps = new Set(stepCycles.flat()), watch = cycleSteps.size ? cycleSteps : new Set(ids);
+    // 소멸(정지) 감지: 창(window) 동안 회로가 1 바퀴도(회로가 없으면 단계 진행량 합이 1 분자도) 돌지 못하면 정지. until_death 면 그때 멈춘다.
+    const untilDeath = opt.until_death != null ? !!opt.until_death : !!sc.until_death;
+    const winN = Math.max(1, Math.round((opt.window || sc.window || 1) / opt.dt));
+    const progress = () => (stepCycles.length ? Math.max(...stepCycles.map(turns)) : [...watch].reduce((a, sid) => a + Math.abs(cum[sid] || 0), 0));
+    const hist = [], peak = { rate: 0 }, zeroAt = {}, seenOK = new Set();
+    const deathFrac = opt.death_frac != null ? +opt.death_frac : +(sc.death_frac || 0); // 0 이면 '창 동안 1 바퀴 미만'만, >0 이면 '최고 속도의 그 비율 미만'도 정지
+    let lastTurn = { n: 0, t: 0 }; // 마지막으로 바퀴(또는 분자) 수가 정수로 늘어난 시각 = 정지 시각의 정밀 값
+    let death = null;
     for (let i = 1; i <= steps; i++) {
       const t = +(i * opt.dt).toFixed(9);
       // ① 반응 단계
@@ -2270,6 +2287,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
           xi = v * NA * Vr * opt.dt;
         }
         const want = xi;
+        // 적분 안정성: 속도 법칙 단계가 한 Δt 에 소비하려 한 입력의 비율 (오일러 적분은 이 비율이 작아야 믿을 수 있음)
+        if (k && xi > 0 && ins.size) { const f = Math.max(...[...ins].map(([b, n]) => (n * xi) / Math.max(N.get(b) || 0, 1e-12))); if (f > (stiff[sid] || 0)) stiff[sid] = f; }
         if (xi > 0) xi = Math.min(xi, ...[...ins].map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
         else if (xi < 0) xi = -Math.min(-xi, ...[...outs].map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
         // 고갈: 하고 싶었지만 저장소가 모자라 못 한 것
@@ -2284,6 +2303,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
         }
         for (const [b, n] of ins) { N.set(b, (N.get(b) || 0) - n * xi); L1(b, 'reaction', -n * xi); }
         for (const [b, n] of outs) { N.set(b, (N.get(b) || 0) + n * xi); L1(b, 'reaction', n * xi); if (xi > 0 && N.get(b) >= 1 && firstReach[b] == null) firstReach[b] = t; }
+        cum[sid] = (cum[sid] || 0) + xi;
         // 국소 질량 감사 (단계가 일어날 때마다)
         if (Object.keys(x.unitEnt).length) once('loc:' + sid, () => AE('AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 국소 수지 위반 — 한 번 일어날 때마다 ${Object.entries(x.unitEnt).map(([en, v]) => `${ix.label(en)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (보존되어야 할 실체가 생기거나 사라짐)`, massSuggest(db, ix, Object.keys(x.unitEnt)[0])));
         if (finite && Object.keys(x.unitMoi).length) {
@@ -2340,14 +2360,35 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
         const n = N.get(b) || 0;
         if (n < -1e-9) once('neg:' + b, () => AE('AUDIT_MASS', b, `t=${t} s 에 저장소 ${ix.bundleLabel(b)} 가 음수(${n}) — 엔진 오류`, '엔진 버그: 보고할 것'));
         r.min = Math.min(r.min, n); r.max = Math.max(r.max, n);
-        if (r.state === 'ok' && n < 1) { r.state = 'exhausted'; r.episodes = (r.episodes || 0) + 1; r.firstExhausted = r.firstExhausted != null ? r.firstExhausted : t; ev({ t, type: 'exhausted', bundle: b }); }
+        if (r.state === 'ok' && n < 1) { r.state = 'exhausted'; r.episodes = (r.episodes || 0) + 1; r.firstExhausted = r.firstExhausted != null ? r.firstExhausted : t; r.lastExhausted = t; ev({ t, type: 'exhausted', bundle: b }); }
         else if (r.state === 'exhausted' && n >= Math.max(2, 0.01 * r.start)) { r.state = 'ok'; r.regenerated = (r.regenerated || 0) + 1; ev({ t, type: 'regenerated', bundle: b }); }
         else if (r.state === 'empty' && n >= 1) r.state = 'ok'; // 처음부터 비어 있던 산물 저장소가 채워짐 (재생 사건 아님)
       }
+      // ⑥ 정지 감지: 창 길이 동안의 진행이 1 바퀴(또는 1 분자) 미만. 감시 단계의 입력이 1 분자 아래로 처음 내려간 시각도 기록
+      for (const sid of watch) for (const [b, n] of react.get(sid).ins) { const v = N.get(b) || 0; if (v >= n) { seenOK.add(b); delete zeroAt[b]; } else if (seenOK.has(b) && zeroAt[b] == null) zeroAt[b] = t; } // 지금도 0 인 것만 남는다 (일시적 0 은 지움)
+      const pg = progress();
+      if (Math.floor(pg + 1e-9) > lastTurn.n) lastTurn = { n: Math.floor(pg + 1e-9), t };
+      hist.push(pg);
+      if (hist.length > winN + 1) hist.shift();
+      if (hist.length > winN) {
+        const moved = hist[hist.length - 1] - hist[0], rate = moved / (winN * opt.dt);
+        peak.rate = Math.max(peak.rate, rate);
+        // 시동 중(아직 창당 1 바퀴도 돈 적 없음)에는 정지로 보지 않는다
+        const stalled = peak.rate * winN * opt.dt >= 1 && (moved < 1 || (deathFrac > 0 && rate < deathFrac * peak.rate));
+        if (!death && stalled && pg >= 1) {
+          const exhausted = Object.entries(resStat).filter(([, r]) => r.state === 'exhausted').map(([b, r]) => ({ b, t: r.lastExhausted }));
+          death = { t_detected: t, window: winN * opt.dt, exhausted };
+        }
+        if (death && !stalled) death = null; // 다시 돌기 시작하면 정지가 아님 (재생)
+      }
       if (i % every === 0 || i === steps) record(t);
+      if (untilDeath && death) { if (i % every !== 0) record(t); break; }
     }
     if (massFirst) AE('AUDIT_MASS', massFirst.en, `${ix.label(massFirst.en)}: t=${massFirst.t} s 에 처음 어긋남 — 시작 ${(ent0[massFirst.en] || 0).toFixed(3)} + 생성 ${(created[massFirst.en] || 0).toFixed(3)} − 소멸 ${(destroyed[massFirst.en] || 0).toFixed(3)}${finite ? '' : ` + 풀에서 들어옴 ${(exIn[massFirst.en] || 0).toFixed(3)} − 풀로 나감 ${(exOut[massFirst.en] || 0).toFixed(3)}`} = ${massFirst.want.toFixed(3)} ≠ 실제 ${massFirst.got.toFixed(3)} — 보존되어야 하는 실체가 원장 밖에서 사라지거나 생김`, massSuggest(db, ix, massFirst.en));
     if (moiFirst) AE('AUDIT_MASS', moiFirst.k, `부분 구조 ${ix.label(moiFirst.k)}: t=${moiFirst.t} s 에 처음 어긋남 — 기대 ${moiFirst.want.toFixed(3)} ≠ 실제 ${moiFirst.got.toFixed(3)} (원장 밖 변화 ${moiFirst.viol.toFixed(3)} 는 위 국소 수지 위반 단계에서 옴)`, '국소 수지 위반 단계를 먼저 고칠 것');
+    // 적분 안정성 감사: 한 Δt 에 입력의 20% 넘게 쓰려 한 속도 법칙 단계 — 결과(특히 정지 시각·평형)는 Δt 를 줄여 다시 확인해야 함
+    const stiffSteps = Object.entries(stiff).filter(([, f]) => f > 0.2).sort((a, b) => b[1] - a[1]);
+    if (stiffSteps.length) AE('AUDIT_KINETIC', target, `Δt ${opt.dt} s 가 너무 큼 — 속도 법칙 단계가 한 Δt 에 입력을 최대 ${stiffSteps.slice(0, 4).map(([sid, f]) => `${sid} ${Math.min(f, 99.99) * 100 > 9999 ? '>9999' : (f * 100).toFixed(0)}%`).join(', ')} 소비하려 함 (오일러 적분 불안정·과도 진동 위험)`, `dt 를 ${(opt.dt * 0.2 / stiffSteps[0][1]).toPrecision(2)} s 이하로 줄여 다시 실행하고 결과가 같은지 확인`);
     // 평형 일치: 결합 단계의 Q 와 Kd
     for (const sid of ids) {
       const { st, k, V: Vr } = react.get(sid);
@@ -2382,6 +2423,37 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
         if (r.source === 'bulk' && r.consumers.some(active)) once('resamt:' + b, () => AE('AUDIT_CONCENTRATION', b, `저장소 ${ix.bundleLabel(b)} 의 시작량이 기본값(${opt.bulk}) — 고갈 시각은 질적 의미만`, gapSuggest(db, ix, b.split('|')[0], 'Concentration_Gap', /저장소|대사물|뉴클레오타이드|reservoir/)));
       }
     }
+    // ===== 사후 분석 (Post-Mortem): 정지 시각·원인·제한 요인·완료한 회로 수·폐기물 축적·소비/생산 비 =====
+    const tEnd = series[series.length - 1].t;
+    const turnsDone = stepCycles.map((c) => ({ steps: c, completed: Math.floor(turns(c) + 1e-9), exact: turns(c) }));
+    const watchIns = new Set([...watch].flatMap((sid) => [...react.get(sid).ins.keys()]));
+    const exhaustedNow = Object.entries(resStat).filter(([b, r]) => r.state === 'exhausted' && watchIns.has(b)).sort((a, b) => a[1].lastExhausted - b[1].lastExhausted);
+    const firstToZero = Object.entries(zeroAt).sort((a, b) => a[1] - b[1]).map(([b, t]) => ({ bundle: b, t, reservoir: res.has(b) }));
+    const consumed = {}, produced = {};
+    for (const [b, l] of Object.entries(ledger)) if (res.has(b)) { const net = l.reaction + l.supply + l.degradation + l.recycle; if (net < -1e-6) consumed[b] = -net; else if (net > 1e-6) produced[b] = net; }
+    const sum = (o) => Object.values(o).reduce((a, v) => a + v, 0);
+    // 폐기물: 생성만 되는 저장소 + 어떤 단계도 입력으로 쓰지 않는 산물 묶음(예: CO₂)
+    const usedAsInput = new Set(ids.flatMap((sid) => react.get(sid).st.inputs.map((p) => p.b)));
+    const waste = [...Object.entries(resStat).filter(([, r]) => r.class === 'produced_only' || (r.end - r.start > 0 && !r.consumers.length)).map(([b, r]) => ({ bundle: b, accumulated: r.end - r.start })),
+      ...Object.entries(ledger).filter(([b, l]) => !res.has(b) && !usedAsInput.has(b) && l.reaction > 0).map(([b, l]) => ({ bundle: b, accumulated: l.reaction + l.degradation }))].filter((w) => w.accumulated > 0).sort((a, b) => b.accumulated - a.accumulated);
+    for (const w of waste) if (!res.has(w.bundle)) produced[w.bundle] = w.accumulated; // 저장소가 아닌 폐기물(CO₂ 등)도 생산 쪽에
+    let pm = { dead: !!death, alive: !death, t_end: tEnd, cycles: turnsDone, last_turn: lastTurn, death_frac: deathFrac, firstToZero, waste, dp: { consumed, produced, ratio: sum(produced) ? sum(consumed) / sum(produced) : null }, peak_rate: peak.rate };
+    if (death) {
+      if (exhaustedNow.length) {
+        const [b, r] = exhaustedNow[0];
+        pm = { ...pm, cause: 'exhaustion', t_death: r.lastExhausted, t_detected: death.t_detected, window: death.window, limiting: { bundle: b, starved: [...watch].filter((sid) => react.get(sid).ins.has(b)), consumers: r.consumers, regeneration: r.producers.filter(active) } };
+      } else {
+        // 고갈 없이 멈춤: 가역 단계가 평형에 닿음(산물 축적) 또는 속도 상수 한계
+        const eq = [...watch].map((sid) => { const x = react.get(sid), k = x.k; if (!k || k.law !== 'mass_action' || !k.reversible || !k.k_r) return null; const f = k.k * [...x.lawIns].reduce((a, [b2, n]) => a * conc(b2, x.V) ** n, 1) * x.st.agents.reduce((a, p2) => a * conc(p2.b, x.V), 1), rv = k.k_r * [...x.lawOuts].reduce((a, [b2, n]) => a * conc(b2, x.V) ** n, 1); return { sid, ratio: f > 0 ? rv / f : Infinity }; }).filter(Boolean).sort((a, b) => b.ratio - a.ratio);
+        const starvedIn = firstToZero.find((z) => !z.reservoir);
+        const cause = eq.length && eq[0].ratio > 0.5 ? 'equilibrium' : starvedIn ? 'intermediate_drained' : 'kinetic_stall';
+        pm = { ...pm, cause, t_death: lastTurn.t, t_detected: death.t_detected, window: death.window, bottleneck: eq[0] || null, limiting: cause === 'intermediate_drained' ? { bundle: starvedIn.bundle, starved: [...watch].filter((sid) => react.get(sid).ins.has(starvedIn.bundle)) } : null };
+      }
+      const lb = pm.limiting && pm.limiting.bundle, base0 = lb ? lb.split('|')[0] : (pm.bottleneck ? ix.ruleOwner(db.steps[pm.bottleneck.sid].rule) : tg.ids[0]);
+      const gtype = pm.cause === 'exhaustion' ? 'Resource_Gap' : 'Kinetic_Gap';
+      AE('AUDIT_RESOURCE', target, `사후 분석: t=${pm.t_death} s 에 정지 (${{ exhaustion: '자원 고갈', equilibrium: '산물 축적으로 평형', intermediate_drained: '중간물 고갈', kinetic_stall: '속도 정지' }[pm.cause]})${lb ? ` — 제한 요인 ${ix.bundleLabel(lb)}${pm.limiting.starved.length ? ` (굶은 단계 ${pm.limiting.starved.join(', ')})` : ''}` : ''}${pm.bottleneck ? ` — 병목 ${pm.bottleneck.sid} (역/정 = ${pm.bottleneck.ratio.toFixed(3)})` : ''} · 완료한 회로 ${turnsDone.map((c) => c.completed).join('/') || '—'}바퀴`,
+        gapSuggest(db, ix, base0, gtype, gtype === 'Resource_Gap' ? new RegExp(lb ? ix.label(base0).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '고갈') : null));
+    }
     const gaps = kineticGaps.filter((x) => !/\/rule\//.test(x) || react.has(x));
     const sgaps = kineticGaps.filter((x) => /\/rule\//.test(x));
     if (gaps.length) AE('AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${gaps.length}개를 즉시(사건 기반)로 처리함: ${gaps.join(', ')}`, gapSuggest(db, ix, tg.ids[0], 'Kinetic_Gap'));
@@ -2389,7 +2461,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     if (approx.size) AE('AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${approx.size}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${[...approx].join(', ')}`, gapSuggest(db, ix, tg.ids[0], 'Concentration_Gap', /2D|면적/));
     return { ids, cell, mode, stochastic, scenario: sc.name || null, hypothetical: !!sc.hypothetical, series, firstReach, final: Object.fromEntries(N), audit, kineticGaps, react, ix, t_end: opt.t_end, dt: opt.dt,
       reservoirs: resStat, ledger, events, stalls, cycles, supplies: sup.map((s) => ({ ref: s.ref, active: !!(s.k && s.V), law: s.k ? s.k.law : null, src: s.k ? s.k.src : null, kin: s.k })),
-      degradations: degr.map((g) => ({ bundle: g.b, ref: g.ref, k_deg: g.k, fate: g.rule.fate, src: g.kin ? g.kin.src : null })), created, destroyed, channels: chan };
+      degradations: degr.map((g) => ({ bundle: g.b, ref: g.ref, k_deg: g.k, fate: g.rule.fate, src: g.kin ? g.kin.src : null })), created, destroyed, channels: chan, stepCycles, postMortem: pm };
   }
   // 강하게 연결된 성분 (Tarjan, 반복형)
   function sccs(G) {
@@ -2454,6 +2526,19 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     if (r.events.length) out.push('고갈·재생 사건:', ...r.events.slice(0, 30).map((e) => `  t=${e.t} s ${e.type === 'exhausted' ? '고갈 ' + ix.bundleLabel(e.bundle) : e.type === 'regenerated' ? '재생 ' + ix.bundleLabel(e.bundle) : `멈춤 ${e.step} ${ix.label(e.step)} ← ${e.by.map((b) => ix.bundleLabel(b)).join(', ')} 부족`}`), ...(r.events.length > 30 ? [`  … ${r.events.length - 30}건 더`] : []));
     const led = Object.entries(r.ledger).filter(([, l]) => l.supply || l.degradation || l.recycle);
     if (led.length) out.push('변화량 원장 Δ (반응 · 공급 · 분해 · 재활용):', ...led.map(([b, l]) => `  ${ix.bundleLabel(b)}: ${fmt(l.reaction)} · ${fmt(l.supply)} · ${fmt(l.degradation)} · ${fmt(l.recycle)}`));
+    const pm = r.postMortem;
+    if (r.stepCycles.length) out.push('단계 순환 (회로):', ...pm.cycles.map((c) => `  ⟳ ${c.steps.join(' → ')} → … : 완료 ${c.completed}바퀴 (진행량 ${c.exact.toFixed(3)})`));
+    out.push(pm.dead ? `사후 분석 (Post-Mortem) — 정지:` : `사후 분석 — ${pm.t_end} s 까지 정지하지 않음 (최고 속도 ${pm.peak_rate.toPrecision(3)} ${r.stepCycles.length ? '바퀴' : '분자'}/s)`);
+    if (pm.dead) {
+      const CA = { exhaustion: '자원 고갈 (저장소 < 1 분자 — 다음 반응을 일으킬 수 없음)', equilibrium: '산물 축적으로 평형 (역반응 ≈ 정반응)', intermediate_drained: '중간물 고갈', kinetic_stall: '속도 정지' };
+      out.push(`  정지 시각 t=${pm.t_death} s (감지 t=${pm.t_detected} s · 확인 창 ${pm.window} s${pm.death_frac ? ` · 정지 기준 최고 속도의 ${pm.death_frac * 100}%` : ''} · 시간 해상도 Δt ${r.dt} s) · 원인: ${CA[pm.cause]}`);
+      out.push(`  마지막으로 완료한 ${r.stepCycles.length ? '바퀴' : '진행'}: ${pm.last_turn.n} 번째, t=${pm.last_turn.t} s`);
+      if (pm.limiting) out.push(`  제한 요인: ${ix.bundleLabel(pm.limiting.bundle)} — 굶은 단계 ${pm.limiting.starved.map((x) => `${x} ${ix.label(x)}`).join(', ') || '—'}${pm.limiting.regeneration ? ` · 켜진 재생 경로 ${pm.limiting.regeneration.join(', ') || '없음'}` : ''}`);
+      if (pm.bottleneck) out.push(`  병목: ${pm.bottleneck.sid} ${ix.label(pm.bottleneck.sid)} (역/정 = ${pm.bottleneck.ratio.toFixed(3)})`);
+    }
+    if (pm.firstToZero.length) out.push('  0 에 닿은 순서 (감시 단계의 입력 중 끝까지 1 분자 미만인 것):', ...pm.firstToZero.slice(0, 8).map((z) => `    t=${z.t} s ${ix.bundleLabel(z.bundle)}${z.reservoir ? ' [저장소]' : ''}`));
+    if (pm.waste.length) out.push('  축적된 폐기물·산물 (소비되지 않음):', ...pm.waste.slice(0, 8).map((w) => `    +${fmt(w.accumulated)} ${ix.bundleLabel(w.bundle)}`));
+    out.push(`  소비/생산 비 (저장소 순소비 ÷ 순생산): ${pm.dp.ratio == null ? '—' : pm.dp.ratio.toFixed(4)} — 소비 ${Object.entries(pm.dp.consumed).map(([b, v]) => `${ix.bundleLabel(b)} ${fmt(v)}`).join(', ') || '—'} / 생산 ${Object.entries(pm.dp.produced).map(([b, v]) => `${ix.bundleLabel(b)} ${fmt(v)}`).join(', ') || '—'}`);
     out.push(r.audit.length ? `감사 (Audit) — ${r.audit.length}건:` : '감사 (Audit): 위반 없음');
     for (const a of r.audit) out.push(`  [${a.code}] ${a.where}: ${a.msg}`, `      → 교정 제안: ${a.suggestion}`);
     return out.join('\n');

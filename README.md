@@ -89,6 +89,9 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - **매 Δt 질량 감사**: 단계 국소 수지(첫 발화 시각) + 전역 합계 = 시작 + 원장(분해·재활용·공급). 원자 대신 부분 구조(`moieties`: 아데노신·구아노신·인산기 단위)를 센다 — 이 검사가 AC 고리화의 피로인산, 유비퀴틴 활성화의 피로인산, 프로테아좀의 Pi 누락을 찾아 데이터를 고쳤다.
 - 시험: `node dbtool.mjs simulate "에피네프린에 의한 글리코겐 분해" --rate --scenario examples/scenarios/gtp-exhaustion-hypothetical.json` 대 `gtp-regeneration-hypothetical.json` (가상 값).
 
+### 소진 시험 (Survival-to-Exhaustion)
+- `node dbtool.mjs simulate "시트르산 회로" --rate --scenario examples/scenarios/tca-acetylcoa-exhaustion-hypothetical.json --until-death` — 유한 저장소에서 회로를 정지까지 돌리고 사후 분석(정지 시각·원인·제한 요인·완료 바퀴·폐기물·소비/생산 비)을 낸다. 제한 요인은 Resource_Gap/Kinetic_Gap 한계로 연결된다 (가상 값).
+
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
 
