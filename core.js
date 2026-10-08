@@ -1399,6 +1399,9 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     for (const sid of ids) {
       const st = db.steps[sid], rule = ix.ruleOf(st.rule) || {}, cos = new Set(rule.with ? [...rule.with.consumes, ...rule.with.produces] : []);
       for (const p of [...st.agents, ...st.inputs, ...st.outputs]) if (p.minor || cos.has(p.b.split('|')[0])) bulkSet.add(p.b);
+      // 변환 규칙의 기질 중 어떤 단계도 만들지 않는 것(뉴클레오타이드·ATP 등 대사물 풀)도 넉넉히 — 만들어지는 것(cAMP 등)은 제외
+      const cons = new Set(rule.effect && rule.effect.type === 'convert' ? rule.effect.consumes || [] : []);
+      for (const p of st.inputs) if (cons.has(p.b.split('|')[0]) && !made.has(p.b)) bulkSet.add(p.b);
     }
     for (const sid of ids) {
       const st = db.steps[sid];

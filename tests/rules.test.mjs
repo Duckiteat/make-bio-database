@@ -372,3 +372,9 @@ test('시뮬레이션: 기존 경로도 에피네프린에서 포도당-1-인산
   assert.ok(r.reached);
   assert.ok(r.derivation.roots.some((b) => b.startsWith(EPI + '|')));
 });
+test('시뮬레이션: 만들어지지 않는 변환 기질(뉴클레오타이드)은 대사물 풀로 넉넉히, 만들어지는 기질(cAMP)은 보충하지 않음', () => {
+  const r = DefDB.simulate(BASE, TLRP, { until: TNFM });
+  assert.ok(r.origin[`${id('뉴클레오타이드')}|nucleoplasm`] >= 1000);
+  const g = DefDB.simulate(BASE, '에피네프린에 의한 글리코겐 분해', { until: id('포도당-1-인산') });
+  assert.equal(g.origin[`${CAMP}|cytosol`], undefined);
+});
