@@ -282,7 +282,8 @@ function textbookAppendix(db, map) {
   out.push('### 감사 코드', '', ...T(['코드', '뜻'], [
     ['AUDIT_SCHEMA', '저장소 검사(validate) 오류'], ['AUDIT_RESOLUTION', '필요 해상도 > 갖춘 해상도, 또는 2D 를 3D 농도로 환산'], ['AUDIT_KINETIC', '속도 무결성(법칙·상수·Kd=k_off/k_on·차수·평형) 위반'],
     ['AUDIT_KINETIC_GAP', '속도 상수가 없어 즉시(사건 기반)로 처리한 단계'], ['AUDIT_CONCENTRATION', '반응 부피를 몰라 농도 계산 불가'], ['AUDIT_MASS', '질량·동일성·부분 구조 보존 위반 — 단계 국소(첫 발화 시각)·매 Δt 전역 (분해·재활용·공급 원장, 무한 풀이면 교환 반영)'],
-    ['AUDIT_RESOURCE', '재생 경로 없는 저장소(소비만), 재활용 화학량(서열 길이)을 모름'],
+    ['AUDIT_RESOURCE', '재생 경로 없는 저장소(소비만), 재활용 화학량(서열 길이)을 모름, 사후 분석(정지 원인·제한 요인)'],
+    ['AUDIT_THERMO', '닫힌 고리의 ΣΔG° ≠ 0 (Wegscheider·미시적 가역성 위반)'],
   ]), '');
   // 7. 명령
   const cmds = readFileSync(join(HERE, 'dbtool.mjs'), 'utf8').split('\n').filter((l) => l.startsWith('//   node dbtool.mjs') || /^\/\/\s{20,}\S/.test(l)).map((l) => l.replace(/^\/\/\s?/, ''));

@@ -15,7 +15,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 7;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 8;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -73,10 +73,10 @@
 
   // ===== 통제 어휘 매핑 =====
   const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
-    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates'];
+    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates', 'tiers'];
   const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
     locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
-    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)' };
+    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)', tiers: '층(tier)' };
   const VIX = {};
   for (const table of VTABLES) {
     const m = new Map();
@@ -251,20 +251,25 @@
     const o = { law: str(k.law) };
     for (const f of KIN_FIELDS) if (k[f] != null && k[f] !== '') o[f] = Number(k[f]);
     if (k.reversible) o.reversible = true;
+    // v8: 환경 보정 ΔG_env = dG_dpH·(pH − pH_ref) + dG_dinv_eps·(1/ε − 1/eps_ref)
+    if (isObj(k.env)) { o.env = {}; for (const f of ENV_FIELDS) if (k.env[f] != null && k.env[f] !== '') o.env[f] = Number(k.env[f]); }
     if (isObj(k.context)) o.context = normContext(k.context);
     o.evidence = normEvidence(k.evidence);
     return o;
   }
-  const KIN_FIELDS = ['k', 'k_r', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km', 'half_life'];
+  const KIN_FIELDS = ['k', 'k_r', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km', 'half_life', 'k0', 'dG_act', 'dG0'];
+  const SIGNED_KIN = new Set(['dG_act', 'dG0']); // 자유 에너지(J/mol)는 음수일 수 있음 (dG_act 는 음수면 오류)
+  const ENV_FIELDS = ['pH_ref', 'dG_dpH', 'eps_ref', 'dG_dinv_eps'];
   function normObs(b) {
     const o = { property: str(b.property), value: typeof b.value === 'number' ? b.value : str(b.value), context: normContext(b.context), evidence: normEvidence(b.evidence) };
     if (str(b.unit)) o.unit = str(b.unit);
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
-  const SENSE_FIELDS = ['kind', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note'];
+  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note'];
   function normSense(d) {
     const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
+    if (str(d.tier)) o.tier = str(d.tier);
     if (str(d.reference_species)) o.reference_species = str(d.reference_species);
     if (isObj(d.membrane)) { o.membrane = { association: str(d.membrane.association) }; for (const k of ['location', 'side']) if (str(d.membrane[k])) o.membrane[k] = str(d.membrane[k]); }
     o.xrefs = arr(d.xrefs).map(parseXref).map((x) => (x.note ? x : { db: x.db, id: x.id, status: x.status }));
@@ -341,7 +346,7 @@
       const t = parseTarget(n.rule), d = t && db.senses[t.base], r = d && d.rule.find((x) => x.id === t.key);
       // 분해 규칙은 k(k_deg) 와 half_life 가 서로를 대신한다 (k = ln2 / t½)
       const alt = (f) => r.type === 'degradation' && (f === 'k' || f === 'half_life') ? r.kinetics.k > 0 || r.kinetics.half_life > 0 : false;
-      return !!(r && r.kinetics && (n.params || []).every((f) => r.kinetics[f] > 0 || alt(f)));
+      return !!(r && r.kinetics && (n.params || []).every((f) => (SIGNED_KIN.has(f) ? Number.isFinite(r.kinetics[f]) : r.kinetics[f] > 0) || alt(f)));
     }
     return false; // manual: resolution 으로만 닫힘
   }
@@ -614,6 +619,14 @@
       if (!V.fingerprintStatus.includes(f.status)) E(where, `지문 상태 '${f.status}'`);
     }
     const participant = isParticipantKind(d.kind);
+    // 층 (형식 v8): 분자 종류는 기본 층 T1(연속 장) | T2(규칙 행위자) 필수, 그 밖의 종류는 두지 않음. T3 은 영역 상태라 쓸 수 없음
+    if (d.tier) {
+      if (!V.tiers[d.tier]) E(where, `층 '${d.tier}' 은(는) 어휘에 없음 (T1 | T2)`);
+      else if (d.tier === 'T3') E(where, 'T3(공간 영역)은 영역의 동적 상태 — 정의항의 기본 층은 T1 | T2');
+      if (!participant) E(where, '층(tier)은 분자 종류 정의항만');
+      if (d.tier === 'T1' && ['protein', 'complex', 'nucleic_acid'].includes(d.kind)) E(where, `kind '${d.kind}' 는 부위 상태를 가진 행위자 — T2`);
+      if (d.tier === 'T1' && Object.keys(d.site).length) E(where, 'T1(연속 장) 분자는 부위 상태를 갖지 않음 — 부위가 있으면 T2');
+    } else if (participant) E(where, '분자 종류는 기본 층(tier: T1 | T2)이 필요함 (형식 v8)');
     // 막 위상
     if (d.membrane) {
       const m = d.membrane;
@@ -815,12 +828,22 @@
       if (P.speciesRequired && !b.context.species) E(ow, `'${b.property}' 는 종에 따라 달라짐 — context.species 필수`);
       if (P.value === 'number' && typeof b.value !== 'number') E(ow, '값은 숫자여야 함');
       if (P.unit && !b.unit) E(ow, '단위(unit) 필요');
+      if (P.units && b.unit && !P.units.includes(b.unit)) E(ow, `'${b.property}' 의 단위는 SI 정준 ${P.units.join(' | ')} 만 (지금 '${b.unit}')`);
+      if (P.requiresLocation && !b.context.location) E(ow, `'${b.property}' 는 위치마다 다름 — context.location 필수`);
+      if (b.property === 'pH' && typeof b.value === 'number' && !(b.value >= 0 && b.value <= 14)) E(ow, 'pH 는 0–14');
+      if (['diffusion_coefficient', 'ionic_strength', 'relative_permittivity'].includes(b.property) && typeof b.value === 'number' && !(b.value > 0)) E(ow, `'${b.property}' 는 양수`);
       if (P.value === 'location' && !V.locations[b.value]) E(ow, `값 '${b.value}' 은(는) 위치 어휘에 없음`);
       if (Array.isArray(P.value) && !P.value.includes(b.value)) E(ow, `값은 ${P.value.join(' | ')} 중 하나`);
       if (P.value === 'xref') { const x = parseXref(b.value); if (!V.xrefs[x.db] || !new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(ow, `외부 ID '${b.value}' 형식 틀림`); }
     });
   }
 
+  // 기본 층 (형식 v8): 저분자·이온·고분자 물질 → T1, 단백질·복합체·핵산 → T2, 분자 부류는 명시해야 함(null)
+  function defaultTier(d) {
+    if (['small_molecule', 'ion', 'macromolecule'].includes(d.kind)) return 'T1';
+    if (['protein', 'complex', 'nucleic_acid'].includes(d.kind)) return 'T2';
+    return null;
+  }
   // 부분 구조 계산: 정의항 → { moiety: 개수 } (복합체는 구성 요소를 펼쳐서)
   function moietyOf(db, ref, mult, out, depth) {
     const d = db.senses[ref];
@@ -1255,6 +1278,8 @@
     const ctx = (c, w) => { for (const [k, t] of [['species', 'taxa'], ['tissue', 'tissues'], ['cell', 'cells'], ['location', 'locations']]) if (c[k]) c[k] = voc(t, c[k], w); };
     for (const [id, d] of new Map(touched)) {
       d.kind = voc('kinds', d.kind, id);
+      if (d.tier) d.tier = voc('tiers', d.tier, id);
+      else if (!d._given.tier && isParticipantKind(d.kind)) { const t = defaultTier(d); if (t) d.tier = t; }
       if (d.reference_species) d.reference_species = voc('taxa', d.reference_species, id);
       else if (V.kinds[d.kind] && V.kinds[d.kind].species === 'required' && !d._given.reference_species) d.reference_species = V.defaultReferenceSpecies;
       if (d.membrane) {
@@ -2013,6 +2038,55 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     return out.join('\n');
   }
 
+  // ===== 열역학 일관성 (형식 v8) =====
+  // 전이 상태 이론: k(r) = k0·exp(−(ΔG‡ + ΔG_env(r))/RT). 미시적 가역성: k_f/k_r = exp(−ΔG°/RT) — 환경이 장벽을 옮겨도 이 비는 유지.
+  const RT = () => V.thermo.R * V.thermo.T_ref;
+  function envShift(env, local) {
+    if (!env || !local) return 0;
+    let g = 0;
+    if (env.dG_dpH != null && local.pH != null) g += env.dG_dpH * (local.pH - (env.pH_ref != null ? env.pH_ref : 7));
+    if (env.dG_dinv_eps != null && local.eps != null && local.eps > 0) g += env.dG_dinv_eps * (1 / local.eps - 1 / (env.eps_ref || 80));
+    return g;
+  }
+  // 국소 환경에서의 정·역 속도 상수 쌍 — 역 상수는 언제나 k_f·exp(ΔG°/RT) 로 계산되어 상세 균형을 깨지 않는다
+  function rateAt(kin, local) {
+    const g = envShift(kin.env, local);
+    const kf = kin.k0 > 0 && Number.isFinite(kin.dG_act) ? kin.k0 * Math.exp(-(kin.dG_act + g) / RT()) : (kin.k || 0) * Math.exp(-g / RT());
+    const kr = Number.isFinite(kin.dG0) ? kf * Math.exp(kin.dG0 / RT()) : kin.k_r != null ? kin.k_r * Math.exp(-g / RT()) : 0;
+    return { kf, kr, dG_env: g };
+  }
+  function thermoIssues(k) {
+    const out = [], close = (a, b) => a > 0 && b > 0 && Math.abs(Math.log(a / b)) <= Math.log(1.1);
+    if (k.dG_act != null && !(Number.isFinite(k.dG_act) && k.dG_act >= 0)) out.push('dG_act(활성화 자유 에너지, J/mol)는 0 이상');
+    if (k.dG0 != null && !Number.isFinite(k.dG0)) out.push('dG0(표준 반응 자유 에너지, J/mol)가 수가 아님');
+    if ((k.k0 != null) !== (k.dG_act != null)) out.push('전이 상태 이론은 k0 와 dG_act 를 함께 적어야 함');
+    if (k.k0 > 0 && k.dG_act >= 0 && k.k > 0 && !close(k.k, k.k0 * Math.exp(-k.dG_act / RT()))) out.push(`k ${k.k} 와 k0·exp(−dG_act/RT) = ${(k.k0 * Math.exp(-k.dG_act / RT())).toExponential(3)} 가 10% 안에서 맞지 않음 (T_ref ${V.thermo.T_ref} K)`);
+    if (k.env && k.dG_act == null && k.k == null) out.push('env(환경 보정)는 기준 속도(k 또는 k0·dG_act)가 있을 때만');
+    if (k.env) for (const f of Object.keys(k.env)) if (!Number.isFinite(k.env[f])) out.push(`env.${f} 가 수가 아님`);
+    if (k.env && k.env.eps_ref != null && !(k.env.eps_ref > 0)) out.push('env.eps_ref 는 양수');
+    if (Number.isFinite(k.dG0) && k.reversible && k.k > 0 && k.k_r > 0 && !close(k.k / k.k_r, Math.exp(-k.dG0 / RT()))) out.push(`미시적 가역성 위반: k/k_r = ${(k.k / k.k_r).toExponential(3)} 인데 exp(−dG0/RT) = ${Math.exp(-k.dG0 / RT()).toExponential(3)} (10% 밖)`);
+    return out;
+  }
+  // 닫힌 고리의 ΣΔG° = 0 (Wegscheider): 경로의 단계 순환 중 순 화학량이 0 인 고리에서 모든 단계가 dG0 를 가지면 합이 0 이어야 함
+  function thermoLoops(db, target) {
+    db = normalize(db);
+    const ix = index(db), tg = targets(ix, target);
+    if (tg.error) return { error: tg.error };
+    const ids = uniq(tg.ids.flatMap((d) => ix.stepsIn(d)));
+    const G = new Map();
+    for (const a of ids) for (const b of ids) if (a !== b && db.steps[a].outputs.some((p) => !p.minor && db.steps[b].inputs.some((q) => !q.minor && q.b === p.b))) { if (!G.has(a)) G.set(a, new Set()); G.get(a).add(b); }
+    const out = [];
+    for (const c of sccs(G).filter((x) => x.length > 1)) {
+      const net = {};
+      for (const sid of c) { for (const p of db.steps[sid].inputs) net[p.b] = (net[p.b] || 0) - (p.n || 1); for (const p of db.steps[sid].outputs) net[p.b] = (net[p.b] || 0) + (p.n || 1); }
+      const closed = Object.values(net).every((v) => v === 0);
+      const dG = c.map((sid) => (ix.ruleOf(db.steps[sid].rule).kinetics || {}).dG0);
+      const known = dG.every(Number.isFinite), sum = known ? dG.reduce((a, b) => a + b, 0) : null;
+      out.push({ steps: c, closed, known, sum, ok: !closed || !known || Math.abs(sum) <= V.thermo.loop_tolerance, net: Object.fromEntries(Object.entries(net).filter(([, v]) => v)) });
+    }
+    return { loops: out, ix };
+  }
+
   // ===== 반응 속도 무결성 (Kinetic Integrity) =====
   // r: 규칙, st: 단계(있으면 화학량까지 검사). 문제 목록(문자열)을 돌려준다.
   function kineticIssues(r, st, kin) {
@@ -2024,12 +2098,14 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       if (k.order != null && k.order !== 1) out.push(`분해 규칙은 1차 (order 1) — 지금 ${k.order}`);
       if (!(k.k > 0) && !(k.half_life > 0)) out.push('분해 규칙은 k(k_deg, s⁻¹) 또는 half_life(s) 가 필요함');
       if (k.k > 0 && k.half_life > 0) { const ratio = k.k * k.half_life / Math.LN2; if (ratio < 0.9 || ratio > 1.1) out.push(`k_deg ${k.k} s⁻¹ 와 반감기 ${k.half_life} s 가 맞지 않음 (ln2/t½ = ${(Math.LN2 / k.half_life).toExponential(3)})`); }
-      for (const f of KIN_FIELDS) if (k[f] != null && !(Number.isFinite(k[f]) && k[f] > 0)) out.push(`${f} 값이 양수가 아님`);
+      for (const f of KIN_FIELDS) if (k[f] != null && !SIGNED_KIN.has(f) && !(Number.isFinite(k[f]) && k[f] > 0)) out.push(`${f} 값이 양수가 아님`);
+      out.push(...thermoIssues(k));
       return out;
     }
     if (k.law === 'zero_order' && r.type !== 'supply') out.push('zero_order 는 공급 규칙(supply)에만');
     for (const f of L.required) if (!(f.split('|').some((g) => k[g] > 0))) out.push(`${k.law} 는 ${f.split('|').join(' 또는 ')} 가 필요함 (양수, SI 정준 단위)`);
-    for (const f of KIN_FIELDS) if (k[f] != null && !(Number.isFinite(k[f]) && (f === 'order' ? k[f] >= 0 : k[f] > 0))) out.push(`${f} 값이 양수가 아님`);
+    for (const f of KIN_FIELDS) if (k[f] != null && !SIGNED_KIN.has(f) && !(Number.isFinite(k[f]) && (f === 'order' ? k[f] >= 0 : k[f] > 0))) out.push(`${f} 값이 양수가 아님`);
+    out.push(...thermoIssues(k));
     if (k.law === 'binding' && k.Kd > 0 && k.k_on > 0 && k.k_off > 0) {
       const ratio = k.k_off / k.k_on / k.Kd;
       if (ratio < 0.9 || ratio > 1.1) out.push(`Kd 와 k_off/k_on 이 맞지 않음 (Kd ${k.Kd} M, k_off/k_on ${(k.k_off / k.k_on).toExponential(3)} M)`);
@@ -2143,6 +2219,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       return o && VOL[o.unit] ? { L: o.value * VOL[o.unit], src: 'data' } : null;
     };
     const N = new Map(Object.entries(base.origin)), res = new Set(base.bulkSet), srcOf = Object.assign({}, base.source);
+    // Tier 1 환경 장 (v8): 시나리오 environment[위치] → 관찰(pH·relative_permittivity, context.location)
+    const envOf = (loc) => { if (!loc) return null; const e = (sc.environment || {})[loc]; if (e) return { pH: e.pH, eps: e.relative_permittivity }; const ob = (p) => { const o = Object.values(db.senses).flatMap((x) => x.obs).find((b) => b.property === p && b.context.location === loc); return o ? o.value : undefined; }; const pH = ob('pH'), eps = ob('relative_permittivity'); return pH == null && eps == null ? null : { pH, eps }; };
     const resAmount = (b) => { const v = (sc.reservoirs || {})[b] != null ? sc.reservoirs[b] : (sc.amounts || {})[b]; if (v != null) { srcOf[b] = 'init'; return v; } srcOf[b] = 'bulk'; return opt.bulk; };
     const addRes = (b) => { if (!N.has(b)) { N.set(b, resAmount(b)); res.add(b); } };
     for (const sid of ids) for (const p of db.steps[sid].outputs) if (!N.has(p.b)) { if (res.has(p.b)) addRes(p.b); else N.set(p.b, 0); }
@@ -2199,6 +2277,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       const vol = loc3 ? volOf(loc3) : null;
       if (k) { for (const m of kineticIssues(rule, st, k)) AE('AUDIT_KINETIC', `${sid} ${rule.label}`, m, gapSuggest(db, ix, st.rule.split('/')[0], 'Kinetic_Gap')); }
       else kineticGaps.push(sid);
+      // Tier 1 (v8): 구획 환경(pH·ε)과 전이 상태 이론·ΔG° 로 국소 k, k_r — 역 상수는 상세 균형으로 정해진다
+      if (k && k.law === 'mass_action' && (k.k0 > 0 || Number.isFinite(k.dG0) || k.env)) { const r2 = rateAt(k, envOf(loc3)); k.k = r2.kf; if (Number.isFinite(k.dG0)) { k.k_r = r2.kr; k.reversible = true; } k.dG_env = r2.dG_env; }
       if (k && !vol) AE('AUDIT_CONCENTRATION', `${sid} ${rule.label}`, `반응 부피(${loc3 ? vlabel('locations', loc3) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tg.ids[0], 'Concentration_Gap'));
       // 유한 저장소면 저장소도 입력·출력으로 센다(소비하면 준다). 무한 풀이면 v6 처럼 빼고 교환 원장에 적는다.
       const inc = (p) => finite || !res.has(p.b);
@@ -2550,6 +2630,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     for (const e of v.errors) out.push({ code: 'AUDIT_SCHEMA', where: e.where, msg: e.msg, suggestion: '패치를 고쳐 다시 병합' });
     const p = resolutionPlan(db, target);
     if (!p.error) for (const r of p.rows) if (!r.ok) out.push({ code: 'AUDIT_RESOLUTION', where: `${r.sid} ${p.ix.label(r.sid)}`, msg: `필요 ${['R0', 'R1', 'R2'][r.need]} 인데 갖춤 ${['R0', 'R1', 'R2'][r.have]} — ${r.hits.join(', ')}: ${r.comp.map((c) => p.ix.bundleLabel(c.bundle)).join(', ')} 를 두고 ${r.comp.flatMap((c) => c.steps).filter((x, i, a) => a.indexOf(x) === i).join('·')} 가 경쟁하는데 속도 상수도 반응 중심 구조도 없음`, suggestion: gapSuggest(db, p.ix, p.ix.ruleOwner(db.steps[r.sid].rule), 'Kinetic_Gap') });
+    const th = thermoLoops(db, target);
+    if (!th.error) for (const l of th.loops) if (!l.ok) out.push({ code: 'AUDIT_THERMO', where: l.steps.join('→'), msg: `닫힌 고리의 ΣΔG° = ${l.sum.toFixed(1)} J/mol ≠ 0 (허용 ${V.thermo.loop_tolerance}) — 미시적 가역성 위반: 고리를 한 바퀴 돌면 에너지가 생기거나 사라짐`, suggestion: '고리 단계들의 dG0 를 확인하고 하나를 나머지로부터 정할 것 (Wegscheider 조건)' });
     const s = simulateRate(db, target, opt);
     if (!s.error) out.push(...s.audit);
     return out;
@@ -2570,5 +2652,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
     xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
     MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget,
-    kineticIssues, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS };
+    kineticIssues, rateAt, envShift, thermoLoops, defaultTier, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS };
 });

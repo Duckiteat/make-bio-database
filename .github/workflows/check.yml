@@ -17,6 +17,11 @@ jobs:
       - run: node dbtool.mjs limitations --check
       - name: 미등록 한계 후보 0 (unmapped 포함)
         run: node dbtool.mjs limitations --detect
+      - name: v8 인터페이스 — Python 자체 시험·C++ 구문
+        run: |
+          python3 engine/interfaces/hmse.py --selftest
+          printf '#include "engine/interfaces/hmse.hpp"\nint main(){return 0;}\n' > /tmp/hmse_check.cpp
+          g++ -std=c++20 -fsyntax-only -Wall -Wextra -I. /tmp/hmse_check.cpp
       - name: 교과서 부록 최신·모든 파일 분류
         run: node dbtool.mjs textbook --check
       - name: index.html 이 viewer.html 과 같은지

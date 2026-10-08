@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hmse/v8/domain-metrics.schema.json",
+  "title": "DomainMetrics / DomainTransition — 영역 점수와 승격·강등 기록 (형식 v8, 불변식 2)",
+  "type": "object",
+  "required": ["domain_id", "t", "score", "laplacian", "entropy", "dSdt", "action"],
+  "properties": {
+    "domain_id": { "type": "string" }, "t": { "type": "number", "minimum": 0 },
+    "score": { "type": "number", "minimum": 0, "description": "S = w1·⟨|∇²C|⟩ + w2·∂S_spatial/∂t (engine/hmse.js domainScore)" },
+    "laplacian": { "type": "number", "minimum": 0 }, "entropy": { "type": "number", "minimum": 0, "maximum": 1 }, "dSdt": { "type": "number", "minimum": 0 },
+    "action": { "enum": ["hold", "promote", "demote"] },
+    "tier_before": { "enum": ["T1", "T2", "T3"] }, "tier_after": { "enum": ["T1", "T2", "T3"] },
+    "ledger_digest_before": { "type": "string" }, "ledger_digest_after": { "type": "string", "description": "승격·강등 전후 같아야 함" },
+    "elevation": { "enum": ["gpr", "inverse_diffusion", "none"] },
+    "surrogate": { "type": "object", "properties": { "error": { "type": "number", "minimum": 0 }, "fallback": { "type": "boolean" }, "template": { "type": "string" } } }
+  }
+}

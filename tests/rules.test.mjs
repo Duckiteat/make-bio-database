@@ -8,7 +8,7 @@ const DefDB = createRequire(import.meta.url)('../core.js');
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 7 }, o);
+const P = (o) => Object.assign({ format: 'definition-db-patch', version: 8 }, o);
 const run = (patch, opt) => { const res = DefDB.merge(BASE, P(patch)); return { res, g: DefDB.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
@@ -107,23 +107,23 @@ test('별칭이 기존 개념의 이름과 겹치는 새 개념은 거부', () =
   rejectedFor(one('아데닐레이트 사이클레이스', {}, { aliases: ['adenylyl cyclase'] }), /이미 .* 의 이름/);
 });
 test('띄어쓰기만 다른 이름은 기존 개념으로 매핑되고, 설명 없는 새 뜻 추가는 거부', () => {
-  const { res, g } = run(one('아데닐산고리화효소', { kind: 'molecule_class' }));
+  const { res, g } = run(one('아데닐산고리화효소', { kind: 'molecule_class', tier: 'T2' }));
   assert.ok(res.report.mapped.some((m) => m.to === BASE.senses[AC].term));
   assert.equal(g.ok, false);
   assert.ok(g.errors.some((e) => /distinction/.test(e.msg)));
 });
 test('영문 이름·그리스 문자 표기 차이도 같은 개념', () => {
-  const { res } = run(one('glycogen phosphorylase', { kind: 'molecule_class', distinction: '테스트' }));
+  const { res } = run(one('glycogen phosphorylase', { kind: 'molecule_class', tier: 'T2', distinction: '테스트' }));
   assert.ok(res.report.mapped.some((m) => m.to === BASE.senses[GP].term));
   assert.equal(id('beta-아드레날린 수용체'), REC);
 });
 test('뜻이 여러 개인 이름으로 연결하면 거부, "이름#n" 은 통과', () => {
-  rejectedFor(one('테스트', { kind: 'molecule_class', desc: desc('효소 관련', { links: [{ to: '효소', rel: 'is_a', span: '효소' }] }) }), /뜻이 여러 개/);
-  const res = passes(one('테스트', { kind: 'molecule_class', desc: desc('효소 관련', { links: [{ to: '효소#2', rel: 'is_a', span: '효소' }] }) }));
+  rejectedFor(one('테스트', { kind: 'molecule_class', tier: 'T2', desc: desc('효소 관련', { links: [{ to: '효소', rel: 'is_a', span: '효소' }] }) }), /뜻이 여러 개/);
+  const res = passes(one('테스트', { kind: 'molecule_class', tier: 'T2', desc: desc('효소 관련', { links: [{ to: '효소#2', rel: 'is_a', span: '효소' }] }) }));
   assert.equal(findText(res.db, '효소 관련').desc[0].links[0].to, id('효소#2'));
 });
 test('외부 ID 로 연결하면 정의항 번호로 매핑', () => {
-  const res = passes(one('테스트 부류', { kind: 'molecule_class', desc: desc('ATP 관련', { links: [{ to: 'CHEBI:15422', rel: 'refers', span: 'ATP' }] }) }));
+  const res = passes(one('테스트 부류', { kind: 'molecule_class', tier: 'T2', desc: desc('ATP 관련', { links: [{ to: 'CHEBI:15422', rel: 'refers', span: 'ATP' }] }) }));
   assert.equal(findText(res.db, 'ATP 관련').desc[0].links[0].to, ATP);
 });
 test('없는 개념으로 연결하면 거부', () => {
@@ -691,4 +691,110 @@ test('재생이 있으면 죽지 않는다: 아세틸-CoA 공급을 켜면 정�
   const slow = scenario('tca-co2-equilibrium-hypothetical.json');
   for (const k of Object.keys(slow.kinetics)) if (slow.kinetics[k].k) slow.kinetics[k].k /= 1e6;
   assert.ok(DefDB.simulateRate(BASE, TCA, { scenario: slow, t_end: 30, dt: 0.05 }).postMortem.alive, '한 바퀴도 못 돈 시동 단계는 정지가 아님');
+});
+
+// ===== 형식 v8: 3 층 엔진 =====
+const HMSE = createRequire(import.meta.url)('../engine/hmse.js');
+const RTv = DefDB.VOCAB.thermo.R * DefDB.VOCAB.thermo.T_ref;
+test('v8 층(tier): 분자 종류는 T1|T2 필수, 기본값은 kind 로, T1 은 부위 없음, T3 는 정의항에 못 씀', () => {
+  rejectedFor(one('부류', { kind: 'molecule_class' }), /기본 층\(tier: T1 \| T2\)이 필요함/);
+  const r = passes(one('작은 분자', { kind: 'small_molecule', unmapped: '시험' }));
+  assert.equal(findText(r.db, '테스트 정의').tier, 'T1', '저분자 기본 T1');
+  rejectedFor(one('부류', { kind: 'molecule_class', tier: 'T3' }), /T3\(공간 영역\)은 영역의 동적 상태/);
+  rejectedFor(one('개념', { tier: 'T1' }), /층\(tier\)은 분자 종류 정의항만/);
+  rejectedFor({ senses: [{ id: id('IκBα'), tier: 'T1' }] }, /kind 'protein' 는 부위 상태를 가진 행위자 — T2/);
+  assert.equal(BASE.senses[id('ATP')].tier, 'T1'); assert.equal(BASE.senses[id('뉴클레오타이드')].tier, 'T1'); assert.equal(BASE.senses[id('시트르산 생성효소')].tier, 'T2');
+});
+test('v8 관찰: 확산 계수·pH·이온 세기·유전율은 위치 필수, SI 단위, 값 범위', () => {
+  const ob = (o) => ({ id: CAMP, obs: [Object.assign({ evidence: { level: 'asserted' } }, o)] });
+  passes({ senses: [ob({ property: 'diffusion_coefficient', value: 3e-10, unit: 'm^2/s', context: { location: 'cytosol' } })] });
+  rejectedFor({ senses: [ob({ property: 'diffusion_coefficient', value: 300, unit: 'µm^2/s', context: { location: 'cytosol' } })] }, /SI 정준 m\^2\/s/);
+  rejectedFor({ senses: [ob({ property: 'diffusion_coefficient', value: 3e-10, unit: 'm^2/s', context: {} })] }, /context\.location 필수/);
+  rejectedFor({ senses: [ob({ property: 'pH', value: 15, context: { location: 'cytosol' } })] }, /pH 는 0–14/);
+});
+test('v8 열역학: 전이 상태 이론 일치, 미시적 가역성(k/k_r = exp(−ΔG°/RT)), dG_act ≥ 0', () => {
+  const kf = 1e3, dG = 5000;
+  rejectedFor({ senses: [withKin(AC, 'cyclization', { law: 'michaelis_menten', kcat: 1, Km: 1e-4, k0: 1e13, evidence: { level: 'asserted' } })] }, /k0 와 dG_act 를 함께/);
+  rejectedFor({ senses: [withKin(IDH, 'oxdecarb', { law: 'mass_action', k: 1, order: 2, k0: 1e13, dG_act: 50000, evidence: { level: 'asserted' } })] }, /k0·exp\(−dG_act\/RT\)/);
+  passes({ senses: [withKin(IDH, 'oxdecarb', { law: 'mass_action', k: 1e13 * Math.exp(-50000 / RTv), order: 2, k0: 1e13, dG_act: 50000, evidence: { level: 'asserted' } })] });
+  rejectedFor({ senses: [withKin(IDH, 'oxdecarb', { law: 'mass_action', k: kf, k_r: kf, reversible: true, order: 2, dG0: dG, evidence: { level: 'asserted' } })] }, /미시적 가역성 위반/);
+  passes({ senses: [withKin(IDH, 'oxdecarb', { law: 'mass_action', k: kf, k_r: kf * Math.exp(dG / RTv), reversible: true, order: 2, dG0: dG, evidence: { level: 'asserted' } })] });
+  rejectedFor({ senses: [withKin(IDH, 'oxdecarb', { law: 'mass_action', k0: 1e13, dG_act: -1, order: 2, evidence: { level: 'asserted' } })] }, /dG_act.*0 이상/);
+});
+test('v8 Tier 1: 환경(pH·ε)이 장벽을 옮겨도 k_f/k_r 는 exp(−ΔG°/RT) 로 유지 (상세 균형)', () => {
+  const kin = { law: 'mass_action', k0: 1e12, dG_act: 60000, dG0: -8000, env: { pH_ref: 7, dG_dpH: 3000, eps_ref: 80, dG_dinv_eps: 2e5 } };
+  const a = DefDB.rateAt(kin, { pH: 7, eps: 80 }), b = DefDB.rateAt(kin, { pH: 6.2, eps: 30 });
+  assert.notEqual(a.kf, b.kf, '환경이 속도를 바꿈');
+  for (const r of [a, b]) assert.ok(Math.abs(Math.log(r.kf / r.kr) - 8000 / RTv) < 1e-9);
+  assert.ok(Math.abs(b.dG_env - (3000 * (6.2 - 7) + 2e5 * (1 / 30 - 1 / 80))) < 1e-6);
+  // 시뮬레이터: 시나리오 environment 가 반영되고 역 상수가 ΔG° 에서 나옴
+  const sc = scenario('tca-co2-equilibrium-hypothetical.json');
+  sc.kinetics[`${IDH}/rule/oxdecarb`] = { law: 'mass_action', order: 2, k0: 1e20, dG_act: 50000, dG0: -10000, evidence: { level: 'predicted', confidence: 0 } };
+  sc.environment = { mito_matrix: { pH: 7.8, relative_permittivity: 80 } };
+  const r = DefDB.simulateRate(BASE, TCA, { scenario: sc, t_end: 0.1, dt: 0.005 }), x = r.react.get(Object.keys(BASE.steps).find((k) => BASE.steps[k].rule === `${IDH}/rule/oxdecarb`));
+  assert.ok(x.k.reversible && Math.abs(Math.log(x.k.k / x.k.k_r) - 10000 / RTv) < 1e-9);
+});
+test('v8 Wegscheider: 닫힌 고리의 ΣΔG° ≠ 0 이면 AUDIT_THERMO', () => {
+  const mk = (dGs) => P({ why: '시험', terms: [{ id: 'T+a', names: { ko: '시험 A' } }, { id: 'T+b', names: { ko: '시험 B' } }, { id: 'T+c', names: { ko: '시험 C' } }, { id: 'T+e', names: { ko: '시험 이성질화효소' } }, { id: 'T+p', names: { ko: '시험 고리' } }],
+    senses: [...['a', 'b', 'c'].map((x) => ({ id: 'D+' + x, term: 'T+' + x, kind: 'small_molecule', unmapped: '시험', desc: desc('시험 분자') })),
+      { id: 'D+p', term: 'T+p', kind: 'pathway', desc: desc('시험 고리 경로') },
+      { id: 'D+e', term: 'T+e', kind: 'molecule_class', tier: 'T2', desc: desc('시험 효소'), rule: [{ id: 'on', type: 'meaning', label: '활성', when: {}, activity: 'active', evidence: { level: 'asserted' } },
+        ...[['ab', 'D+a', 'D+b'], ['bc', 'D+b', 'D+c'], ['ca', 'D+c', 'D+a']].map(([rid, s, p], i) => ({ id: rid, type: 'transition', label: rid, action: '이성질화', agent: true, effect: { type: 'convert', consumes: [s], produces: [p] }, kinetics: { law: 'mass_action', k: 1, order: 2, dG0: dGs[i], evidence: { level: 'predicted', confidence: 0 } }, evidence: { level: 'asserted' } }))] }],
+    steps: [['S+1', 'ab', 'D+a', 'D+b'], ['S+2', 'bc', 'D+b', 'D+c'], ['S+3', 'ca', 'D+c', 'D+a']].map(([sidn, rid, s, p]) => ({ id: sidn, rule: { owner: 'D+e', id: rid }, agents: [{ ref: 'D+e', location: 'cytosol' }], inputs: [{ ref: s, location: 'cytosol' }], outputs: [{ ref: p, location: 'cytosol' }], part_of: ['D+p'] })) });
+  const bad = passes(mk([-1000, -2000, -3000])).db, good = passes(mk([-1000, -2000, 3000])).db;
+  const pth = Object.keys(bad.senses).find((k) => bad.terms[bad.senses[k].term].names.ko === '시험 고리');
+  const lb = DefDB.thermoLoops(bad, pth).loops, lg = DefDB.thermoLoops(good, pth).loops;
+  assert.ok(lb.length === 1 && lb[0].closed && !lb[0].ok && lb[0].sum === -6000);
+  assert.ok(lg[0].ok);
+  assert.ok(DefDB.auditRun(bad, pth, { t_end: 0.01, dt: 0.01 }).some((a) => a.code === 'AUDIT_THERMO'));
+  assert.ok(!DefDB.auditRun(good, pth, { t_end: 0.01, dt: 0.01 }).some((a) => a.code === 'AUDIT_THERMO'));
+  assert.ok(DefDB.thermoLoops(BASE, TCA).loops.every((l) => !l.closed), '시트르산 회로는 열린 고리(아세틸-CoA 가 몰아감) — Wegscheider 대상 아님');
+});
+const CFG = { domains: [{ id: 'cyt', tier: 'T1', location: 'cytosol', volume_fL: 1000 }, { id: 'nodeA', tier: 'T2', location: 'cytosol', volume_fL: 10 }, { id: 'reg3', tier: 'T3', location: 'cytosol', volume_fL: 5, geometry_template: 'box', grid: { n: 8, h_m: 2e-7 } }],
+  adjacency: [['cyt', 'nodeA'], ['nodeA', 'reg3']], metrics: { w1: 1, w2: 1, tau_high: 0.5, tau_low: 0.1, t_min: 1 }, solver: { epsilon_max: 0.05, fallback: 'fv3d', window_min_s: 0.01 } };
+test('v8 영역 구성: T3 는 기준 경계·격자 필수, 히스테리시스 tau_low < tau_high', () => {
+  assert.deepEqual(HMSE.validateDomainConfig(CFG), []);
+  const bad = JSON.parse(JSON.stringify(CFG)); delete bad.domains[2].geometry_template; bad.metrics.tau_low = 0.9;
+  const e = HMSE.validateDomainConfig(bad);
+  assert.ok(e.some((m) => /기준 경계/.test(m)) && e.some((m) => /히스테리시스/.test(m)));
+});
+test('v8 정수 원장·인접 경계 거래: 보존, 멱등, 낙관적 버전 충돌, 인접성, 실현 가능성, 정수만', () => {
+  let s = HMSE.makeLedgerState(CFG, { cyt: { 'X|cytosol': 1000 }, nodeA: { 'X|cytosol': 5 } });
+  const tx = (o) => Object.assign({ from: 'cyt', to: 'nodeA', seq: 1, t: 0.1, base_version: { cyt: s.ledgers.cyt.version, nodeA: s.ledgers.nodeA.version }, items: [{ key: 'X|cytosol', dn: 7 }] }, o);
+  let r = HMSE.applyLedgerTx(s, tx()); assert.equal(r.status, 'committed'); const s1 = r.state;
+  assert.equal(HMSE.applyLedgerTx(s1, tx()).status, 'duplicate');
+  assert.equal(HMSE.applyLedgerTx(s1, tx({ seq: 2 })).status, 'conflict', '옛 버전으로는 커밋 못 함');
+  assert.equal(HMSE.applyLedgerTx(s1, tx({ from: 'cyt', to: 'reg3', seq: 1, base_version: { cyt: 1, reg3: 0 } })).status, 'not_adjacent');
+  s = s1;
+  assert.equal(HMSE.applyLedgerTx(s, tx({ seq: 2, items: [{ key: 'X|cytosol', dn: -100 }] })).status, 'infeasible');
+  assert.equal(HMSE.applyLedgerTx(s, tx({ seq: 2, items: [{ key: 'X|cytosol', dn: 1.5 }] })).status, 'invalid');
+  // 무작위 거래 1000 개 — 총량 불변
+  const rand = HMSE.rngOf(42); let st = s; const total0 = HMSE.ledgerTotals(st)['X|cytosol']; let seq = 2;
+  for (let i = 0; i < 1000; i++) { const dn = Math.floor(rand() * 21) - 10 || 1; const rr = HMSE.applyLedgerTx(st, { from: 'cyt', to: 'nodeA', seq: seq, t: i, base_version: { cyt: st.ledgers.cyt.version, nodeA: st.ledgers.nodeA.version }, items: [{ key: 'X|cytosol', dn }] }); if (rr.status === 'committed') { st = rr.state; seq++; } }
+  assert.equal(HMSE.ledgerTotals(st)['X|cytosol'], total0);
+});
+test('v8 경계 이동 표본: 나머지 이월은 누적 오차 < 1, 부족분은 pending 으로 이월, 포아송 평균·분산', () => {
+  let r = 0, sumMu = 0, sumK = 0;
+  const rand = HMSE.rngOf(7);
+  for (let i = 0; i < 10000; i++) { const mu = rand() * 3.7; const o = HMSE.sampleTransfer(mu, r, 'residual', null); r = o.residual; sumMu += mu; sumK += o.k; assert.ok(Math.abs(sumMu - sumK) < 1 + 1e-9); }
+  const c = HMSE.sampleTransfer(10.4, 0, 'residual', null, 6); assert.ok(c.k === 6 && c.pending === 4 && Math.abs(c.residual - 0.4) < 1e-9);
+  const ks = Array.from({ length: 20000 }, () => HMSE.poisson(rand, 4)); const m = ks.reduce((a, b) => a + b, 0) / ks.length, v = ks.reduce((a, b) => a + (b - m) ** 2, 0) / ks.length;
+  assert.ok(Math.abs(m - 4) < 0.1 && Math.abs(v - 4) < 0.2, '확률 모드는 잡음을 보존 (평균 = 분산)');
+});
+test('v8 영역 점수·깜빡임 방지·보존적 투영·정수 분배', () => {
+  const n = 8, uni = new Float64Array(n ** 3).fill(1), grad = new Float64Array(n ** 3).map((_, i) => (Math.floor(i / (n * n)) === 3 ? 50 : 1));
+  const su = HMSE.domainScore(uni, null, n, 1e-7, 0.1, CFG.metrics), sg = HMSE.domainScore(grad, 1, n, 1e-7, 0.1, CFG.metrics);
+  assert.ok(su.score === 0 && sg.score > su.score && sg.entropy < 1);
+  let st = { tier: 'T2', since: 0 }; const flips = [];
+  for (let i = 1; i <= 40; i++) { const t = i * 0.1, sc = i % 2 ? 0.9 : 0.0; st = HMSE.decideTransition(st, sc, t, CFG.metrics); if (st.action !== 'hold') flips.push(t); }
+  for (let i = 1; i < flips.length; i++) assert.ok(flips[i] - flips[i - 1] >= CFG.metrics.t_min - 1e-9, '최소 체류 시간 안에서 다시 바뀌지 않음');
+  const pf = HMSE.conservativeProject(Float64Array.from([-1, 2, 3, 5]), 100); assert.ok(Math.abs(pf.reduce((a, b) => a + b, 0) - 100) < 1e-9 && pf[0] === 0);
+  const dc = HMSE.distributeCounts([0.1, 0.5, 0.2, 0.2], 1001); assert.equal(dc.reduce((a, b) => a + b, 0), 1001);
+  const ds = HMSE.distributeCounts([0.1, 0.5, 0.2, 0.2], 1001, HMSE.rngOf(3)); assert.equal(ds.reduce((a, b) => a + b, 0), 1001, '다항 표본도 정확히 N');
+});
+test('v8 스키마 파일: 파싱되고 참조 구현의 필수 필드와 일치', () => {
+  const sch = (f) => JSON.parse(readFileSync(new URL(`../schemas/v8/${f}`, import.meta.url), 'utf8'));
+  assert.deepEqual(sch('ledger-transaction.schema.json').required.sort(), ['base_version', 'from', 'items', 'seq', 't', 'to']);
+  assert.deepEqual(sch('domain-config.schema.json').properties.domains.items.properties.geometry_template.enum, HMSE.TEMPLATES);
+  for (const f of ['boundary-flux-packet.schema.json', 'domain-metrics.schema.json']) assert.ok(sch(f).$schema.includes('2020-12'));
 });

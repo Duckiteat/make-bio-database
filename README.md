@@ -92,6 +92,10 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 ### 소진 시험 (Survival-to-Exhaustion)
 - `node dbtool.mjs simulate "시트르산 회로" --rate --scenario examples/scenarios/tca-acetylcoa-exhaustion-hypothetical.json --until-death` — 유한 저장소에서 회로를 정지까지 돌리고 사후 분석(정지 시각·원인·제한 요인·완료 바퀴·폐기물·소비/생산 비)을 낸다. 제한 요인은 Resource_Gap/Kinetic_Gap 한계로 연결된다 (가상 값).
 
+### 3 층 엔진 (형식 v8)
+- 정의항마다 기본 층 `tier`(T1 연속 장 / T2 규칙 행위자), Tier 1 환경(pH·유전율)과 전이 상태 이론 k(r), ΔG° 로 정해지는 역 상수(미시적 가역성), 닫힌 고리 ΣΔG° = 0 감사(AUDIT_THERMO).
+- 실행 층 `engine/hmse.js`: 정수 원장·인접 경계 거래(두 원장만 잠금)·이동량 표본(포아송·나머지 이월)·영역 점수와 히스테리시스. 인터페이스 `engine/interfaces/hmse.{hpp,py}`, 스키마 `schemas/v8/`, 설계 `docs/design/hybrid-multiscale-engine.md`.
+
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
 

@@ -1,12 +1,12 @@
 {
   "format": "definition-db",
-  "version": 7,
+  "version": 8,
   "meta": {
     "next": {
       "T": 159,
       "D": 161,
       "S": 39,
-      "L": 44
+      "L": 49
     }
   },
   "terms": {
@@ -1316,6 +1316,7 @@
       "term": "T000001",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1353,6 +1354,7 @@
       "term": "T000002",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1437,6 +1439,7 @@
       "term": "T000005",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1474,6 +1477,7 @@
       "term": "T000006",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1507,6 +1511,7 @@
       "term": "T000007",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T1",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1533,6 +1538,7 @@
       "term": "T000008",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1566,6 +1572,7 @@
       "term": "T000009",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1607,6 +1614,7 @@
       "term": "T000009",
       "n": 2,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1645,6 +1653,7 @@
       "term": "T000010",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1688,6 +1697,7 @@
       "term": "T000011",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1720,6 +1730,7 @@
       "term": "T000012",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T1",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1752,6 +1763,7 @@
       "term": "T000013",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1789,6 +1801,7 @@
       "term": "T000014",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1858,6 +1871,7 @@
       "term": "T000016",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -1962,6 +1976,7 @@
       "term": "T000018",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -2034,6 +2049,7 @@
       "term": "T000020",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -2075,6 +2091,7 @@
       "term": "T000021",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -2149,6 +2166,7 @@
       "term": "T000023",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -2181,6 +2199,7 @@
       "term": "T000024",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -2207,6 +2226,7 @@
       "term": "T000025",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함",
       "components": [],
@@ -2240,6 +2260,7 @@
       "term": "T000026",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -2282,6 +2303,7 @@
       "term": "T000027",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "membrane": {
         "association": "lipid_anchored",
         "location": "plasma_membrane",
@@ -2431,6 +2453,7 @@
       "term": "T000028",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "membrane": {
         "association": "integral",
         "location": "plasma_membrane"
@@ -2575,6 +2598,7 @@
       "term": "T000029",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "membrane": {
         "association": "integral",
         "location": "plasma_membrane"
@@ -2692,6 +2716,7 @@
       "term": "T000030",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -2740,6 +2765,7 @@
       "term": "T000031",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -2793,6 +2819,7 @@
       "term": "T000032",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -2841,6 +2868,7 @@
       "term": "T000033",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -2889,6 +2917,7 @@
       "term": "T000034",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -2937,6 +2966,7 @@
       "term": "T000035",
       "n": 1,
       "kind": "ion",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음",
       "components": [],
@@ -2970,6 +3000,7 @@
       "term": "T000036",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -3002,6 +3033,7 @@
       "term": "T000037",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -3087,6 +3119,7 @@
       "term": "T000039",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -3124,6 +3157,7 @@
       "term": "T000040",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -3207,6 +3241,7 @@
       "term": "T000041",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -3339,6 +3374,7 @@
       "term": "T000042",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -3485,6 +3521,7 @@
       "term": "T000043",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -3517,6 +3554,7 @@
       "term": "T000044",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -3549,6 +3587,7 @@
       "term": "T000045",
       "n": 1,
       "kind": "macromolecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -3592,6 +3631,7 @@
       "term": "T000046",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인",
       "components": [],
@@ -3631,6 +3671,7 @@
       "term": "T000047",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -3798,6 +3839,7 @@
       "term": "T000050",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -3886,6 +3928,7 @@
       "term": "T000051",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "membrane": {
         "association": "lipid_anchored",
@@ -3956,6 +3999,7 @@
       "term": "T000052",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "membrane": {
         "association": "peripheral",
         "location": "plasma_membrane",
@@ -3999,6 +4043,7 @@
       "term": "T000053",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "membrane": {
         "association": "lipid_anchored",
         "location": "plasma_membrane",
@@ -4042,6 +4087,7 @@
       "term": "T000054",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -4102,6 +4148,7 @@
       "term": "T000055",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -4185,6 +4232,7 @@
       "term": "T000056",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -4218,6 +4266,7 @@
       "term": "T000057",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -4255,6 +4304,7 @@
       "term": "T000058",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -4298,6 +4348,7 @@
       "term": "T000059",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -4336,6 +4387,7 @@
       "term": "T000060",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호 원본 미확인 (네트워크로 대조할 수 없어 비워 둠)",
       "components": [],
@@ -4374,6 +4426,7 @@
       "term": "T000061",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -4406,6 +4459,7 @@
       "term": "T000062",
       "n": 1,
       "kind": "macromolecule",
+      "tier": "T1",
       "xrefs": [
         {
           "db": "ChEBI",
@@ -4457,6 +4511,7 @@
       "term": "T000063",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -4580,6 +4635,7 @@
       "term": "T000064",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "membrane": {
         "association": "lipid_anchored",
@@ -4672,6 +4728,7 @@
       "term": "T000065",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "membrane": {
         "association": "integral",
@@ -4747,6 +4804,7 @@
       "term": "T000066",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -4812,6 +4870,7 @@
       "term": "T000067",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "membrane": {
         "association": "integral",
         "location": "plasma_membrane"
@@ -4896,6 +4955,7 @@
       "term": "T000068",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "membrane": {
         "association": "integral",
         "location": "plasma_membrane"
@@ -5089,6 +5149,7 @@
       "term": "T000069",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "membrane": {
         "association": "peripheral",
@@ -5149,6 +5210,7 @@
       "term": "T000070",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5212,6 +5274,7 @@
       "term": "T000071",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5272,6 +5335,7 @@
       "term": "T000072",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5357,6 +5421,7 @@
       "term": "T000073",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -5612,6 +5677,7 @@
       "term": "T000074",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5675,6 +5741,7 @@
       "term": "T000075",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -5708,6 +5775,7 @@
       "term": "T000076",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5768,6 +5836,7 @@
       "term": "T000077",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5814,6 +5883,7 @@
       "term": "T000078",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -5874,6 +5944,7 @@
       "term": "T000079",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -6065,6 +6136,7 @@
       "term": "T000080",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6135,6 +6207,7 @@
       "term": "T000081",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6210,6 +6283,7 @@
       "term": "T000082",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6263,6 +6337,7 @@
       "term": "T000083",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -6472,6 +6547,7 @@
       "term": "T000084",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6596,6 +6672,7 @@
       "term": "T000085",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6643,6 +6720,7 @@
       "term": "T000086",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6683,6 +6761,7 @@
       "term": "T000087",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -6774,6 +6853,7 @@
       "term": "T000088",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -6880,6 +6960,7 @@
       "term": "T000089",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6939,6 +7020,7 @@
       "term": "T000090",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -6978,6 +7060,7 @@
       "term": "T000091",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -7017,6 +7100,7 @@
       "term": "T000092",
       "n": 1,
       "kind": "protein",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -7056,6 +7140,7 @@
       "term": "T000093",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [],
       "components": [
         {
@@ -7191,6 +7276,7 @@
       "term": "T000094",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -7224,6 +7310,7 @@
       "term": "T000095",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -7262,6 +7349,7 @@
       "term": "T000096",
       "n": 1,
       "kind": "complex",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "GO",
@@ -7377,6 +7465,7 @@
       "term": "T000097",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T1",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -7409,6 +7498,7 @@
       "term": "T000098",
       "n": 1,
       "kind": "nucleic_acid",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [
         {
@@ -7586,6 +7676,7 @@
       "term": "T000099",
       "n": 1,
       "kind": "nucleic_acid",
+      "tier": "T2",
       "reference_species": "9606",
       "xrefs": [],
       "unmapped": "전사체 ID(RefSeq NM_) 체계가 외부 ID 어휘에 없음 — 유전자 ID(NCBIGene 7124)는 TNF 유전자 정의항에 있음",
@@ -8500,6 +8591,7 @@
       "term": "T000120",
       "n": 1,
       "kind": "ion",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함",
       "components": [],
@@ -8542,6 +8634,7 @@
       "term": "T000121",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -8656,6 +8749,7 @@
       "term": "T000122",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -8728,6 +8822,7 @@
       "term": "T000123",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -9112,6 +9207,7 @@
       "term": "T000132",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9147,6 +9243,7 @@
       "term": "T000133",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9178,6 +9275,7 @@
       "term": "T000134",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9209,6 +9307,7 @@
       "term": "T000135",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9240,6 +9339,7 @@
       "term": "T000136",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9271,6 +9371,7 @@
       "term": "T000137",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9302,6 +9403,7 @@
       "term": "T000138",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9337,6 +9439,7 @@
       "term": "T000139",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9368,6 +9471,7 @@
       "term": "T000140",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9399,6 +9503,7 @@
       "term": "T000141",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9430,6 +9535,7 @@
       "term": "T000143",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9461,6 +9567,7 @@
       "term": "T000144",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9492,6 +9599,7 @@
       "term": "T000145",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9523,6 +9631,7 @@
       "term": "T000146",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -9599,6 +9708,7 @@
       "term": "T000148",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -9669,6 +9779,7 @@
       "term": "T000149",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -9731,6 +9842,7 @@
       "term": "T000150",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -9802,6 +9914,7 @@
       "term": "T000151",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [],
       "components": [],
       "desc": [
@@ -9868,6 +9981,7 @@
       "term": "T000152",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -9940,6 +10054,7 @@
       "term": "T000153",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -10010,6 +10125,7 @@
       "term": "T000154",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -10072,6 +10188,7 @@
       "term": "T000155",
       "n": 1,
       "kind": "molecule_class",
+      "tier": "T2",
       "xrefs": [
         {
           "db": "EC",
@@ -10296,6 +10413,7 @@
       "term": "T000142",
       "n": 1,
       "kind": "small_molecule",
+      "tier": "T1",
       "xrefs": [],
       "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
       "components": [],
@@ -12322,6 +12440,172 @@
         ]
       },
       "found_in": "시트르산 회로 소진 시험 3(가상): 가역으로 둔 IDH 가 CO₂ 축적으로 평형(역/정 ≈ 1)에 닿아 정지"
+    },
+    "L000044": {
+      "target": "D000039",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "cAMP 의 세포질 확산 계수 (SI m^2/s) — 없으면 Tier 3 영역 승격 판단(Damköhler)과 경계 유속을 계산할 수 없다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000039",
+            "location": "cytosol"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    "L000045": {
+      "target": "D000089",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NF-κB p50–p65 이량체의 세포질·핵질 확산 계수 — 핵 이동 전후 공간 기울기를 Tier 3 로 풀 때 필요",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000089",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000089",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    "L000046": {
+      "target": "D000032",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "ATP 의 세포질 확산 계수 — Tier 1 연속 장의 청산 시간 상수",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000032",
+            "location": "cytosol"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    "L000047": {
+      "target": "D000116",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "구획별 pH 와 상대 유전율(세포질·미토콘드리아 기질·핵질) — 없으면 Tier 1 환경 보정 ΔG_env 가 0 (기준 환경)으로 계산된다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "pH",
+            "on": "D000116",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "relative_permittivity",
+            "on": "D000116",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "pH",
+            "on": "D000116",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "relative_permittivity",
+            "on": "D000116",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "pH",
+            "on": "D000116",
+            "location": "nucleoplasm"
+          },
+          {
+            "kind": "obs",
+            "property": "relative_permittivity",
+            "on": "D000116",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    "L000048": {
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시트르산 회로 여덟 단계의 표준 반응 자유 에너지 ΔG°′ (J/mol) — 없으면 역반응 속도를 미시적 가역성으로 정할 수 없고 고리 열역학 검사가 비어 있다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000149/rule/condense",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000150/rule/isomerize",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000151/rule/oxdecarb",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000152/rule/oxdecarb",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000153/rule/slp",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000154/rule/oxidize",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000155/rule/hydrate",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000156/rule/oxidize",
+            "params": [
+              "dG0"
+            ]
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
     }
   }
 }

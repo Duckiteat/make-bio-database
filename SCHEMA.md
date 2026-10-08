@@ -319,6 +319,23 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - `AUDIT_CONCENTRATION` — 저장소 시작량이 기본값
 - `AUDIT_KINETIC_GAP` — 속도 상수가 없어 적용하지 않은 공급·분해 규칙도 보고
 
+## 8F. 3 층 다중 규모 엔진 — 형식 v8
+
+설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`.
+
+| 필드 | 위치 | 규칙 |
+|---|---|---|
+| `tier` | 정의항 | 분자 종류 필수 `T1`(연속 장: 저분자·이온·고분자·대사물 부류) \| `T2`(규칙 행위자: 단백질·복합체·핵산·효소 부류). 저분자·이온·고분자 → T1, 단백질·복합체·핵산 → T2 가 병합 기본값, 분자 부류는 명시. T1 은 부위를 갖지 못함. `T3` 는 영역 상태라 정의항에 쓸 수 없음. 그 밖의 kind 는 두지 않음 |
+| `diffusion_coefficient` | 관찰 | SI `m^2/s` 만, `context.location` 필수, 양수 |
+| `pH` · `ionic_strength`(M) · `relative_permittivity` | 관찰 (보통 구획 농도 모델 정의항) | `context.location` 필수 — Tier 1 환경 장. pH 0–14 |
+| `k0`, `dG_act` | 규칙 kinetics | 전이 상태 이론: 함께 적음, dG_act ≥ 0 (J/mol). k 도 있으면 k ≈ k0·e^{−dG_act/RT} (10%, T_ref 310.15 K) |
+| `dG0` | 규칙 kinetics | 표준 반응 자유 에너지 (J/mol, 음수 가능). 가역 mass_action 의 k/k_r ≈ e^{−dG0/RT} (10%) — **미시적 가역성** |
+| `env { pH_ref, dG_dpH, eps_ref, dG_dinv_eps }` | 규칙 kinetics | ΔG_env = dG_dpH(pH − pH_ref) + dG_dinv_eps(1/ε − 1/eps_ref). 기준 속도가 있을 때만 |
+
+- 시뮬레이터: mass_action 규칙에 k0·dG_act·dG0·env 가 있으면 구획 환경(시나리오 `environment[위치] = { pH, relative_permittivity }` → 관찰)으로 k 를 계산하고, dG0 가 있으면 k_r = k·e^{dG0/RT} 로 정해 가역으로 돌린다 (환경은 장벽만 옮기고 평형은 옮기지 않음).
+- `audit-run`: **AUDIT_THERMO** — 경로의 단계 순환 중 순 화학량이 0 인 닫힌 고리에서 ΣdG0 ≠ 0 (허용 `vocab.thermo.loop_tolerance` J/mol) — Wegscheider 조건 위반.
+- 실행 상태(영역·원장·경계 거래·영역 점수)는 데이터베이스가 아니라 시나리오 `domains`(domain-config 스키마)와 실행 층(`engine/hmse.js`)에 둔다 — 지식과 실행 상태를 섞지 않는다.
+
 ## 9. 외부 ID
 
 | kind | 필수 | 허용 |
@@ -392,6 +409,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 8 | 3 층 다중 규모 엔진: 정의항 `tier`(T1/T2, 마이그레이션이 kind·쓰임으로 배정: T1 32, T2 86), 관찰 diffusion_coefficient·pH·ionic_strength·relative_permittivity(위치 필수, SI), kinetics k0·dG_act·dG0·env(전이 상태 이론·미시적 가역성 검사), `rateAt`·`thermoLoops`·AUDIT_THERMO, 시뮬레이터의 구획 환경 반영, 어휘 tiers·thermo. 실행 층 `engine/hmse.js`(정수 원장·인접 경계 거래·이동량 표본·영역 점수·히스테리시스·보존적 투영), 스키마 `schemas/v8`, 인터페이스 `engine/interfaces/hmse.{hpp,py}`. 데이터: 한계 5건(L000044–L000048) (`migrations/007-v7-to-v8-three-tier.mjs`) |
 | 2026-10-08 | 7 (확장 2) | Survival-to-Exhaustion: 단계 순환·완료 바퀴 수, 정지 감지(`until_death`·`window`·`death_frac`), 사후 분석(`postMortem`), 적분 안정성 감사, 한계 종류 `Resource_Gap`, 변화 종류 축합·수화, Patch Report 하류에 공급 규칙의 저장소 도달 포함. 데이터: 시트르산 회로(경로 1·효소 8·단계 8·대사물 15·부분 구조 4·재생 경로 3·CO₂ 배출), 기질 NDPK 공급 규칙, 한계 10건(L000034–L000043). 형식 버전 그대로 |
 | 2026-10-08 | 7 (확장) | Traceable Evolution Protocol: 패치 `why` 필수, Patch Report(`patchReport`·`patchReportText`, 기록의 `report`, `dbtool report`), 미등록 한계 후보가 있으면 병합 거부. 한계 종류 `Identity_Gap`(unmapped 외부 ID — `detectGaps` 가 후보로 잡음). 데이터: Identity_Gap 6건(L000028–L000033). 형식 버전은 그대로 (`CHANGES.md` 도입) |
 | 2026-10-08 | 7 | 생애 주기·대사물 저장소: 규칙 종류 `supply`(Metabolic_Supply_Rule)·`degradation`(Degradation_Rule, fate lost/recycled, recycle_to, sequence_length), 정의항 `moieties`(부분 구조)와 부분 구조 수지 검사, 부위 `ligands`(특징별 리간드), 속도 법칙 `zero_order`, 속도 필드 `half_life`, 관찰 `sequence_length`, 어휘 `lifecycleFates`·`reservoirModes`·`ruleTypes`. 시뮬레이터: 유한 저장소(기본)·공급·분해(결정론/확률적)·매 Δt 질량 감사(국소·전역, 실체·부분 구조)·고갈/재생 사건·원장 Δ·자원 순환, 감사 코드 `AUDIT_RESOURCE`. 데이터: 부분 구조 3개·피로인산, ATP·ADP·AMP·cAMP·GTP·GDP·Pi·G1P 부분 구조, Gs 특징별 리간드, AC·E1·프로테아좀 규칙의 빠진 산물(피로인산·Pi) 교정, 공급 규칙 5개(NDPK·아데닐산 키네이스·PPase·ATP 재생·뉴클레오타이드 공급), 분해 규칙 2개(TNF mRNA·IκBα), 원리 2개(생애 주기 모델·대사물 저장소 모델), 한계 9건 (`migrations/006-v6-to-v7-lifecycle.mjs`) |

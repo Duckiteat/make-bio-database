@@ -6,8 +6,8 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 13 | 0 | 13 |
-| Concentration_Gap | 6 | 0 | 6 |
+| Kinetic_Gap | 17 | 0 | 17 |
+| Concentration_Gap | 7 | 0 | 7 |
 | Structural_Gap | 13 | 0 | 13 |
 | Resource_Gap | 4 | 0 | 4 |
 | Identity_Gap | 7 | 0 | 7 |
@@ -31,6 +31,10 @@
 | L000037 | D000160/rule/efflux (이산화탄소 · efflux) | Kinetic_Gap | 이산화탄소 배출 속도(반감기) — 없으면 CO₂ 가 기질에 쌓이기만 하고 가역 탈카복실화의 역반응 압력을 정할 수 없다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 half_life @ D000160/rule/efflux | open (0/1) | — |
 | L000038 | D000148 (시트르산 회로) | Kinetic_Gap | 시트르산 회로 여덟 효소의 kcat·Km (사람, 미토콘드리아 기질) — 없으면 단계가 즉시 처리되어 회로의 시간·병목을 말할 수 없다<br>발견: 시트르산 회로를 넣으면서 — 속도 상수 미확인 | ✗ 속도 상수 kcat·Km @ D000149/rule/condense<br>✗ 속도 상수 kcat·Km @ D000150/rule/isomerize<br>✗ 속도 상수 kcat·Km @ D000151/rule/oxdecarb<br>✗ 속도 상수 kcat·Km @ D000152/rule/oxdecarb<br>✗ 속도 상수 kcat·Km @ D000153/rule/slp<br>✗ 속도 상수 kcat·Km @ D000154/rule/oxidize<br>✗ 속도 상수 kcat·Km @ D000155/rule/hydrate<br>✗ 속도 상수 kcat·Km @ D000156/rule/oxidize | open (0/8) | — |
 | L000043 | D000151/rule/oxdecarb (아이소시트르산 탈수소효소 · oxdecarb) | Kinetic_Gap | NAD 의존 아이소시트르산 탈수소효소의 역반응 속도(또는 평형 상수) — 생리 조건에서 거의 비가역으로 알려져 있으나 값이 없어, CO₂ 축적이 회로를 평형으로 멈추게 하는지(가상 시험 3) 데이터로 판정할 수 없다<br>발견: 시트르산 회로 소진 시험 3(가상): 가역으로 둔 IDH 가 CO₂ 축적으로 평형(역/정 ≈ 1)에 닿아 정지 | ✗ 속도 상수 k_r @ D000151/rule/oxdecarb | open (0/1) | — |
+| L000044 | D000039 (cAMP) | Kinetic_Gap | cAMP 의 세포질 확산 계수 (SI m^2/s) — 없으면 Tier 3 영역 승격 판단(Damköhler)과 경계 유속을 계산할 수 없다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 diffusion_coefficient @ D000039 cAMP · 세포질 | open (0/1) | — |
+| L000045 | D000089 (NF-κB p50–p65 이량체) | Kinetic_Gap | NF-κB p50–p65 이량체의 세포질·핵질 확산 계수 — 핵 이동 전후 공간 기울기를 Tier 3 로 풀 때 필요<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 diffusion_coefficient @ D000089 NF-κB p50–p65 이량체 · 세포질<br>✗ 관찰 diffusion_coefficient @ D000089 NF-κB p50–p65 이량체 · 핵질 | open (0/2) | — |
+| L000046 | D000032 (ATP) | Kinetic_Gap | ATP 의 세포질 확산 계수 — Tier 1 연속 장의 청산 시간 상수<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 diffusion_coefficient @ D000032 ATP · 세포질 | open (0/1) | — |
+| L000048 | D000148 (시트르산 회로) | Kinetic_Gap | 시트르산 회로 여덟 단계의 표준 반응 자유 에너지 ΔG°′ (J/mol) — 없으면 역반응 속도를 미시적 가역성으로 정할 수 없고 고리 열역학 검사가 비어 있다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 속도 상수 dG0 @ D000149/rule/condense<br>✗ 속도 상수 dG0 @ D000150/rule/isomerize<br>✗ 속도 상수 dG0 @ D000151/rule/oxdecarb<br>✗ 속도 상수 dG0 @ D000152/rule/oxdecarb<br>✗ 속도 상수 dG0 @ D000153/rule/slp<br>✗ 속도 상수 dG0 @ D000154/rule/oxidize<br>✗ 속도 상수 dG0 @ D000155/rule/hydrate<br>✗ 속도 상수 dG0 @ D000156/rule/oxidize | open (0/8) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 
@@ -44,6 +48,7 @@
 | L000016 | D000051 (에피네프린에 의한 글리코겐 분해) | Concentration_Gap | 간세포의 분자별 세포당 분자 수 — 시작량이 기본값 10이라 증폭 정도(수용체 하나당 cAMP·인산화효소 수)를 말할 수 없다<br>발견: 2026-10-08 simulate 의 농도 공백 경고 (등록되지 않은 경로) | ✗ 관찰 copy_number @ D000030 β-아드레날린 수용체 · 간세포 · 세포막<br>✗ 관찰 copy_number @ D000042 단백질 키네이스 A · 간세포 · 세포질<br>✗ 관찰 copy_number @ D000044 글리코겐 인산화효소 · 간세포 · 세포질 | open (0/3) | D000116 구획 농도 모델 |
 | L000017 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | 막(2D) 분자가 낀 반응을 인접 3D 구획 부피의 농도로 환산함 — 면적 농도(분자/µm²)와 막 면적이 없다<br>발견: 2026-10-08 속도 기반 시뮬레이터(simulate --rate)의 AUDIT_RESOLUTION | ✗ 수동: 세포막 면적(세포 유형별)과 면적 농도 모델 — 2D 반응 속도(k_on 단위 µm²/s)를 담을 어휘 | open (0/1) | — |
 | L000039 | D000148 (시트르산 회로) | Concentration_Gap | 미토콘드리아 기질 부피와 아세틸-CoA·NAD⁺·옥살로아세트산 농도 — 없으면 소진 시각·완료 바퀴 수가 기본값·가상 시작량에 좌우된다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000134 아세틸-CoA · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000144 NAD⁺ · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000136 옥살로아세트산 · 미토콘드리아 기질 | open (0/4) | — |
+| L000047 | D000116 (구획 농도 모델) | Concentration_Gap | 구획별 pH 와 상대 유전율(세포질·미토콘드리아 기질·핵질) — 없으면 Tier 1 환경 보정 ΔG_env 가 0 (기준 환경)으로 계산된다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 pH @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 핵질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 핵질 | open (0/6) | — |
 
 ## Structural_Gap — 구조·위상·해상도 공백
 

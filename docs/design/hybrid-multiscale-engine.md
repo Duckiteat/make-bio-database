@@ -1,6 +1,29 @@
-# Hybrid Multi-Scale Simulation Engine — Architecture & Specification (v8 proposal)
+# Hybrid Multi-Scale Simulation Engine — 3-Tier Architecture & Specification (format v8)
 
-> Status: **design proposal, not implemented**. Current rules = `SCHEMA.md` (v7). This spec extends the v7 engine (`core.js simulateRate`) with a spatial tier; terms in `[brackets]` are existing v7 concepts it reuses.
+> Status (2026-10-08): **format v8 implemented** (data fields, thermodynamic checks, migration 007), **runtime reference layer implemented** (`engine/hmse.js`: integer ledger + adjacent boundary transactions, transfer sampling, domain score/hysteresis, conservative projection, integer distribution), **interfaces specified** (`engine/interfaces/hmse.hpp`, `engine/interfaces/hmse.py`), wire schemas `schemas/v8/*.schema.json`. **Not implemented**: DEVS scheduler, FNO surrogate, 3D FV solver, GPR elevation, CLE integrator (phases P3–P5, §5).
+> Terms in `[brackets]` are existing v7 concepts that are reused.
+
+## A. Three tiers
+
+| Tier | Scope | State | Solver | Existing anchor |
+|---|---|---|---|---|
+| **T1 Thermodynamic potential field & continuous clearing** | environment (pH, ionic strength, ε_r) + high-copy metabolites (ATP, NAD⁺, CO₂ …) | continuous fields per domain (compartment-level today, voxel-level with T3) | rate laws with local k(r), D(r); **CLE** above `cle_threshold` copies (avoids SSA stalling on stiff fast reactions) | sense `tier: "T1"`, obs `pH`/`ionic_strength`/`relative_permittivity`/`diffusion_coefficient`, kinetics `k0`/`dG_act`/`dG0`/`env`, `rateAt` |
+| **T2 Discrete contextual network** | multi-site proteins, complexes (PKA, Myddosome) | rule agents with site:feature state [bundle keys] | network-free rule evaluation + Parallel-DEVS events (SSA per node) | sense `tier: "T2"`, [transition rules, steps] |
+| **T3 3D spatial core** | domains with steep gradients / active transport | voxel grid C ∈ R^{S×n³} + integer ledger | FNO/DeepONet surrogate, O(N log N) per macro-step; async 3D FV fallback when error > ε_max | domain config `tier: "T3"`, `geometry_template`, `grid` |
+
+T1 rate law (transition-state theory, environment-shifted barrier):
+  **k(r) = k₀ · exp(−(ΔG‡ + ΔG_env(pH(r), ε(r))) / RT)**, ΔG_env = (∂G/∂pH)(pH − pH_ref) + (∂G/∂ε⁻¹)(1/ε − 1/ε_ref), T_ref = 310.15 K.
+Reverse constant is never independent: **k_r(r) = k_f(r) · exp(ΔG°/RT)** — the environment moves the barrier, not the equilibrium (Invariant 5). `rateAt` implements both; `simulateRate` applies them per compartment using scenario `environment` or location obs.
+
+## B. Core invariants (normative)
+
+| # | Invariant | Mechanism | Where enforced now |
+|---|---|---|---|
+| 1 | **Integer mass ledger is ground truth**; inter-tier exchange = integer stochastic sampling with remainder carry-forward; mutations isolated to **adjacent boundary pairs** | `applyLedgerTx`: touches only `ledgers[from]`, `ledgers[to]`; optimistic per-ledger versions (CONFLICT → re-read/retry), idempotent per (pair, seq), integer `dn` only, fractional remainder |r|<1 and clamped `pending` carried | `engine/hmse.js`, `hmse.py DictIntegerLedger`, tests (1000 random tx conserve totals) |
+| 2 | **Promotion/demotion score with flapping control**: S = w₁·⟨|∇²C|⟩ + w₂·∂S_spatial/∂t, hysteresis τ_low < τ_high, dwell ≥ t_min, GPR smoothing on elevation | `domainScore`, `decideTransition`, `conservativeProject`, `distributeCounts` | engine + tests (alternating score never flips within t_min) |
+| 3 | **FNO OOD guard**: promoted boundaries are mapped to canonical templates {box, slab, sphere, spherical_shell, cylinder}; non-template geometry is never sent to the surrogate | `DomainManager.normalizeGeometry`, `SurrogateSolver.inDistribution`; domain config requires `geometry_template` for T3 | schema + `validateDomainConfig` |
+| 4 | **Conservative, rollback-free DEVS; async fallback** | no event beyond safeTime = min_u(tLast_u + lookahead_u); a failing T3 step is re-solved by FV on a worker, its region's lookahead becomes the fallback's committed window (≥ `window_min_s`), other models advance up to that window | interfaces (`DEVSScheduler.scheduleFallback`) — implementation P3 |
+| 5 | **Thermodynamic consistency**: microscopic reversibility per rule (k/k_r = e^{−ΔG°/RT}), ΣΔG° = 0 over closed loops (Wegscheider) | `thermoIssues` (validate), `thermoLoops` + `AUDIT_THERMO` (audit-run), `rateAt` derives k_r from ΔG° | core + tests |
 
 ## 0. Scope, reuse, and claim corrections
 
@@ -44,6 +67,9 @@
 ## 2. Mathematical Formulation
 
 ### 2.1 Region metric (promotion/demotion)
+
+**Normative v8 score (Invariant 2, implemented in `domainScore`)**: S = w₁·⟨|∇²C|⟩·h²/C̄ + w₂·|∂S_spatial/∂t|, S_spatial = normalized Shannon entropy of the voxel distribution (1 = uniform). The terms below (variance, Damköhler, flux steadiness) are optional diagnostics recorded in `DomainMetrics`; the decision uses S with hysteresis and t_min.
+
 Region Ω_k (coarse block, n³ voxels, voxel size h), species s with field C_s, mean C̄_s, copy number N_s = N_A Σ C_s h³.
 
 | Term | Definition | Meaning |
@@ -95,7 +121,16 @@ Given node j with integer counts n_{j,s} and context (neighbor boundary values b
 - **Counts → field consistency**: elevation never invents mass — the integral constraint pins Σ C to the ledger; sampled realisations (for stochastic mode) use multinomial(n_{j,s}, p_i ∝ μ*_i).
 - **Collapse (demotion)**: n_{j,s} = L_{k,s} (exact); site/feature distribution of rule agents is kept from the region's agent pool (agents carry site:feature state through both tiers — the field only holds unmodified/abundant species; modified states stay as agents) [v7 bundle keys preserved].
 
+## 2.8 Async fallback timeline (Invariant 4)
+1. T3 region k emits surrogate step [t, t+Δ]; `errorEstimate` > ε_max or `inDistribution` false → step is **not committed**.
+2. Scheduler sets lookahead_k := w = max(window_min_s, Δ) and posts an FV job (worker thread) for [t, t+w]; boundary packets from k for that window are produced only when the job completes.
+3. All other models continue while their safeTime allows (influencers of k see lookahead_k, so they advance up to t+w without waiting). No model ever receives a packet with timestamp < its tLast → no rollback.
+4. If the job exceeds wall-clock budget, w is shrunk for the next window (dynamic conservative window); the ledger is untouched until commit, so failure costs time, never mass.
+
 ## 3. Data Structures & Interfaces
+
+**v8 artefacts**: JSON Schemas `schemas/v8/{ledger-transaction, boundary-flux-packet, domain-config, domain-metrics}.schema.json` (canonical wire form, mirrors the proto below); C++20 `engine/interfaces/hmse.hpp` (`IntegerLedger`, `ThermodynamicField`, `SpatialSolver`/`SurrogateSolver`/`FiniteVolumeSolver`, `DomainManager`, `BoundaryEngine`, `AtomicModel`, `DEVSScheduler`); Python `engine/interfaces/hmse.py` (same ABCs + `DictIntegerLedger` reference, `--selftest`).
+
 
 ### 3.1 Protocol Buffers
 ```proto
@@ -246,14 +281,14 @@ function BoundaryEngine.onPacket(p):                              // routed by s
 | Phase | Deliverable | Where |
 |---|---|---|
 | P1 | Spec (this file) + gap registration once data fields exist | `docs/design/` |
-| P2 | Format v8: location geometry (`locations[].volume_model`), species `diffusion_coefficient` obs property, region/agent split rule (`continuum: true` on species), R3 tier in `resolutionPlan` | `vocab.js`, `core.js`, migration 007 |
+| P2 ✅ | Format v8 (migration 007): sense `tier` (T1/T2), obs `diffusion_coefficient`/`pH`/`ionic_strength`/`relative_permittivity`, kinetics `k0`/`dG_act`/`dG0`/`env`, microscopic-reversibility + Wegscheider checks, env-aware rates; runtime ledger/transfer/score layer + schemas + interfaces | `vocab.js`, `core.js`, `engine/`, `schemas/v8/` |
 | P3 | JS reference implementation: DEVS scheduler + BoundaryEngine + DomainManager with a **finite-volume** diffusion solver (no ML) — establishes the conservation test-suite | `core.js` (or `engine/`), `tests/` |
 | P4 | Surrogate service (PyTorch FNO/DeepONet) behind `SurrogateClient` gRPC; trained against P3 solver outputs; ErrorEstimator gates every step | external repo / service |
 | P5 | HPC: regions sharded by MPI rank, scheduler per rank, cross-rank boundary packets = same proto | external |
 
 Acceptance tests (all must be exact, inherit v7 style): ledger digest unchanged across 10⁴ promote/demote cycles; |Σμ − Σk| < 1 per face in residual mode; Poisson-mode transfer variance within 3σ of μ; elevation integral = count exactly; surrogate vs FV solver error ≤ ε_sur on held-out geometries; DEVS replay determinism by seed.
 
-## 6. Open gaps (to register in `limitations.md` when P2 fields exist)
+## 6. Open gaps (fields now exist — registered in `limitations.md`: see L-entries referencing diffusion_coefficient / pH; the rest remain design-level)
 
 | Target (planned) | Type | Requirement |
 |---|---|---|

@@ -50,7 +50,7 @@
     {
       "path": "data/db.json",
       "class": "source",
-      "format": "JSON (형식 버전은 version 필드, 지금 7)",
+      "format": "JSON (형식 버전은 version 필드, 지금 8)",
       "writer": "node dbtool.mjs merge (core.js merge → gate 통과 시)",
       "readers": "dbtool.mjs 모든 명령, viewer.html, tests",
       "interpret": "terms(T)·senses(D)·steps(S)·limitations(L) 네 표와 meta.next(다음 번호). 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장."
@@ -86,6 +86,38 @@
       "writer": "사람·AI",
       "readers": "AI 에이전트, CI",
       "interpret": "core.js 를 부르는 얇은 껍질. 파일 읽기·쓰기(db.json, patches, limitations.md, 교과서 부록)만 여기서 한다."
+    },
+    {
+      "path": "engine/hmse.js",
+      "class": "law",
+      "format": "UMD JavaScript (브라우저 HMSE / Node require)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "tests, (예정) DEVS 스케줄러",
+      "interpret": "3 층 엔진의 실행 층 참조 구현 — 정수 원장·인접 경계 거래·이동량 표본·영역 점수·히스테리시스·보존적 투영. 지식(core.js)과 분리. 다른 언어 구현은 이 함수들과 같은 결과를 내야 한다."
+    },
+    {
+      "path": "engine/interfaces/hmse.hpp",
+      "class": "spec",
+      "format": "C++20 헤더 (인터페이스만)",
+      "writer": "사람·AI",
+      "readers": "C++ 구현자, CI(g++ -fsyntax-only)",
+      "interpret": "IntegerLedger·ThermodynamicField·SpatialSolver·DomainManager·BoundaryEngine·AtomicModel·DEVSScheduler 계약. 의미는 engine/hmse.js 와 설계 문서."
+    },
+    {
+      "path": "engine/interfaces/hmse.py",
+      "class": "spec",
+      "format": "Python 3 (ABC + 참조 원장)",
+      "writer": "사람·AI",
+      "readers": "Python 구현자, CI(--selftest)",
+      "interpret": "같은 인터페이스의 Python 판 + DictIntegerLedger 참조 구현과 자체 시험 (engine/hmse.js 와 같은 의미)."
+    },
+    {
+      "path": "schemas/v8/*.schema.json",
+      "class": "spec",
+      "format": "JSON Schema 2020-12",
+      "writer": "사람·AI (형식을 바꿀 때)",
+      "readers": "구현자, tests(필수 필드 대조)",
+      "interpret": "실행 층 통신 형식 — 원장 거래, 경계 유속 패킷, 영역 구성(시나리오 domains), 영역 점수·전이 기록."
     },
     {
       "path": "viewer.html",
@@ -197,7 +229,7 @@
       "format": "Node ESM",
       "writer": "형식을 올릴 때 한 번",
       "readers": "(실행 기록)",
-      "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도, 006 v6→7 생애 주기·대사물 저장소."
+      "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도, 006 v6→7 생애 주기·대사물 저장소, 007 v7→8 3 층(tier 배정)."
     },
     {
       "path": "migrations/002-id-map.json",

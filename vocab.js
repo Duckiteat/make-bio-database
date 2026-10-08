@@ -197,6 +197,11 @@
     copy_number:   { label: '세포당 분자 수', value: 'number', unit: true, speciesRequired: true },
     compartment_volume: { label: '구획 부피 (세포 유형·위치별)', value: 'number', unit: true, speciesRequired: true },
     sequence_length: { label: '서열 길이 (아미노산·뉴클레오타이드 수 — 재활용 화학량의 근거)', value: 'number', unit: true, speciesRequired: true },
+    // 형식 v8 — 3 층 엔진: 확산 계수(SI m^2/s)와 Tier 1 환경 장(pH·이온 세기·상대 유전율). 모두 위치(context.location) 필수
+    diffusion_coefficient: { label: '확산 계수 (SI, m^2/s) — Tier 3 공간 동역학·Damköhler 수', value: 'number', unit: true, units: ['m^2/s'], speciesRequired: false, requiresLocation: true },
+    pH:                    { label: '구획 pH (Tier 1 환경 장)', value: 'number', speciesRequired: false, requiresLocation: true },
+    ionic_strength:        { label: '이온 세기 (SI 정준 M, Tier 1 환경 장)', value: 'number', unit: true, units: ['M'], speciesRequired: false, requiresLocation: true },
+    relative_permittivity: { label: '상대 유전율 ε_r (Tier 1 환경 장 — 극성)', value: 'number', speciesRequired: false, requiresLocation: true },
   },
 
   // ===== 반응 속도 법칙 (Kinetic) — 값은 SI 정준 단위: k_on M⁻¹s⁻¹, k_off·kcat s⁻¹, Kd·Km M, mass_action k 는 M^(1-order)·s⁻¹ =====
@@ -207,6 +212,17 @@
     michaelis_menten: { label: '미카엘리스–멘텐', required: ['kcat', 'Km'], aliases: ['MM', 'michaelis-menten'] },
     zero_order:       { label: '0차 (일정한 공급 속도, k 는 M·s⁻¹)', required: ['k'], aliases: ['zero order', 'constant supply'] },
   },
+
+  // ===== 3 층 다중 규모 엔진 (형식 v8) — docs/design/hybrid-multiscale-engine.md =====
+  // 종의 기본 층: T1 = 연속 장으로 다루는 고분자수 분자(대사물·이온), T2 = 부위 상태를 가진 규칙 행위자.
+  // T3 은 종의 속성이 아니라 영역(domain)의 동적 상태 — 정의항의 tier 로는 쓰지 않는다.
+  tiers: {
+    T1: { label: 'Tier 1 열역학 퍼텐셜 장·연속 청산 (고분자수 대사물·환경 장, 확산·CLE)', aliases: ['tier1', 'field'] },
+    T2: { label: 'Tier 2 이산 맥락 네트워크 (규칙 기반 행위자·DEVS — 부위 상태·복합체)', aliases: ['tier2', 'agent', 'rule'] },
+    T3: { label: 'Tier 3 3차원 공간 동역학 영역 (대리 모델 + 유한 체적 대체) — 영역 상태 전용', aliases: ['tier3', 'spatial'] },
+  },
+  // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
+  thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
   // ===== 생애 주기 (Lifecycle) — 정의항의 lifecycle 필드 (형식 v7) =====
   // k_deg (s⁻¹, 1차 분해) 또는 half_life (s), k_syn (분자/s/세포, 0차 합성). fate: 분해 산물이 어디로 가나.
