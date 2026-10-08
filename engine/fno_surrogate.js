@@ -74,6 +74,11 @@
       const st = ax === 0 ? nn : ax === 1 ? n : 1, o1 = ax === 0 ? n : nn, o2 = ax === 2 ? n : 1;
       for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) {
         const base = a * o1 + b * o2;
+        if (st === 1) { // 연속 축: 모으기 없이 보기(view)로
+          const v = out.subarray(base, base + n);
+          if (inverse) dct.inverse(v, res); else dct.forward(v, res);
+          v.set(res); continue;
+        }
         for (let j = 0; j < n; j++) line[j] = out[base + j * st];
         if (inverse) dct.inverse(line, res); else dct.forward(line, res);
         for (let j = 0; j < n; j++) out[base + j * st] = res[j];
@@ -146,16 +151,36 @@
     sur.train.samples = opt.samples; sur.trained = true;
     return sur.train;
   }
+  // 닫힌 꼴 이득 (P5): 상자 무유속 FV 의 이산 라플라시안 고윳값 λ_k = −(2/h²)Σ_d(1 − cos(πk_d/n)) 에서
+  //   g_s(k) = (1 + Δt_sub·D_s·λ_k)^{n_sub} — calibrate 가 최소 제곱으로 배우는 것과 같은 값 (시험에서 대조). D 가 바뀌면 O(N) 으로 다시 계산.
+  function analyticGains(sur, region) {
+    const n = sur.n, N = n ** 3, h2 = region.spec.h_m ** 2, ns = FV.substepsFor(region, sur.dt), sdt = sur.dt / ns, cs = Float64Array.from({ length: n }, (_, k) => 1 - Math.cos(Math.PI * k / n));
+    for (const key of sur.keys) {
+      const D = region.spec.species[key].D || 0, g = new Float64Array(N);
+      for (let i = 0, p = 0; i < n; i++) for (let j = 0; j < n; j++) for (let k = 0; k < n; k++, p++) g[p] = Math.pow(1 - sdt * D * (2 / h2) * (cs[i] + cs[j] + cs[k]), ns);
+      sur.gains[key] = g;
+    }
+    sur.gainsFor = diffusionKey(region); sur.trained = true;
+    return sur;
+  }
+  const diffusionKey = (region) => Object.entries(region.spec.species).map(([k, s]) => `${k}:${s.D || 0}`).join(',');
+
   // 한 거시 단계 (장만): ½반응 → 확산 → ½반응. 반응한 실수량을 돌려줌 (FV.integrate 와 같은 형태)
   function integrate(sur, region) {
     if (!sur.trained) throw new Error('학습되지 않은 대리 모델');
     const n = sur.n, N = n ** 3, keys = sur.keys, F = keys.map((k) => region.fields[k]), S = keys.length, moved = {};
+    const M = sur.Rhalf;
     const halfReact = () => {
       if (!(region.spec.reactions || []).length) return;
+      if (S === 2) { // 흔한 경우(쌍 하나) 특수화 — 칸마다 2×2 행렬 곱
+        const a0 = F[0], a1 = F[1], m00 = M[0][0], m01 = M[0][1], m10 = M[1][0], m11 = M[1][1];
+        for (let p = 0; p < N; p++) { const x = a0[p], y = a1[p]; a0[p] = m00 * x + m01 * y; a1[p] = m10 * x + m11 * y; }
+        return;
+      }
       const v = new Float64Array(S);
-      for (let p = 0; p < N; p++) { for (let i = 0; i < S; i++) v[i] = F[i][p]; for (let i = 0; i < S; i++) { let x = 0; for (let j = 0; j < S; j++) x += sur.Rhalf[i][j] * v[j]; F[i][p] = x; } }
+      for (let p = 0; p < N; p++) { for (let i = 0; i < S; i++) v[i] = F[i][p]; for (let i = 0; i < S; i++) { let x = 0; for (let j = 0; j < S; j++) x += M[i][j] * v[j]; F[i][p] = x; } }
     };
-    const totalsNow = () => keys.map((k, i) => { let s = 0; for (let p = 0; p < N; p++) s += F[i][p]; return s; });
+    const totalsNow = () => F.map((f) => { let s = 0; for (let p = 0; p < N; p++) s += f[p]; return s; });
     const t0 = totalsNow();
     halfReact();
     const spec = {};
@@ -183,5 +208,5 @@
     return null;
   }
 
-  return { fft, makeDCT, dct3, bandEnergy, reactionMatrix, reactionPairs, expm, createSurrogate, calibrate, integrate, reconcileMass, isPow2 };
+  return { fft, makeDCT, dct3, bandEnergy, analyticGains, diffusionKey, reactionMatrix, reactionPairs, expm, createSurrogate, calibrate, integrate, reconcileMass, isPow2 };
 });

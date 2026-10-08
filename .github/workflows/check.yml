@@ -21,6 +21,8 @@ jobs:
         run: node tests/p3_end_to_end.js --every 2500
       - name: P4 종단 시험 (대리 모델 + OOD 대체, 10,000 단계 질량 보존)
         run: node tests/p4_end_to_end.js --every 5000
+      - name: P5 동적 승격·강등 (10,000 단계, 질량·장 정합·충격 강등)
+        run: node tests/p5_dynamic_promotion.js --every 5000
       - name: v8 인터페이스 — Python 자체 시험·C++ 구문
         run: |
           python3 engine/interfaces/hmse.py --selftest

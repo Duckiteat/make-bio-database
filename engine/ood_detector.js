@@ -16,12 +16,14 @@
 
   function spectralHighFraction(field, n, dct) { return FNO.bandEnergy(FNO.dct3(field, n, dct, false), n); }
   function gradientExplosion(field, n, mask, eps) {
-    let mx = 0, sum = 0, cnt = 0, csum = 0;
-    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) for (let k = 0; k < n; k++) {
-      const p = (i * n + j) * n + k; if (mask && !mask[p]) continue;
-      const g = (q) => (q >= 0 && (!mask || mask[q]) ? field[q] - field[p] : 0);
-      const gx = i + 1 < n ? g(p + n * n) : 0, gy = j + 1 < n ? g(p + n) : 0, gz = k + 1 < n ? g(p + 1) : 0;
-      const m = Math.sqrt(gx * gx + gy * gy + gz * gz); mx = Math.max(mx, m); sum += m; cnt++; csum += field[p];
+    let mx = 0, sum = 0, cnt = 0, csum = 0; const nn = n * n;
+    for (let i = 0, p = 0; i < n; i++) for (let j = 0; j < n; j++) for (let k = 0; k < n; k++, p++) {
+      if (mask && !mask[p]) continue;
+      const c = field[p];
+      const gx = i + 1 < n && (!mask || mask[p + nn]) ? field[p + nn] - c : 0;
+      const gy = j + 1 < n && (!mask || mask[p + n]) ? field[p + n] - c : 0;
+      const gz = k + 1 < n && (!mask || mask[p + 1]) ? field[p + 1] - c : 0;
+      const m = Math.sqrt(gx * gx + gy * gy + gz * gz); if (m > mx) mx = m; sum += m; cnt++; csum += c;
     }
     const den = (cnt ? sum / cnt : 0) + (eps == null ? 0.01 : eps) * (cnt ? csum / cnt : 0);
     return den > 1e-12 ? mx / den : 1;

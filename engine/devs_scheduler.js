@@ -90,9 +90,11 @@
   function regionModel(handle, cfg) {
     const R = cfg.region, A = R.iface.length * R.spec.h_m ** 2, ledger = { get state() { return handle.state; }, set state(v) { handle.state = v; }, domainId: cfg.id, moieties: cfg.moieties };
     const sv = Object.assign({ mode: 'fv', warmup: 200 }, cfg.solver || {});
-    const P4 = sv.mode === 'surrogate' ? { FNO: require('./fno_surrogate.js'), OOD: require('./ood_detector.js') } : null;
+    const P4 = sv.mode === 'surrogate' || sv.mode === 'dynamic' ? { FNO: require('./fno_surrogate.js'), OOD: require('./ood_detector.js') } : null;
+    const GATE = sv.mode === 'dynamic' ? require('./p5_dynamic_gate.js') : null;
     const m = { id: cfg.id, lookahead: cfg.dt_macro, steps: 0, lastFlux: {}, pending: null,
-      p4: { surrogateSteps: 0, fvSteps: 0, fallbacks: 0, flaggedAt: [], lockWindows: 0, snapshots: [], sur: null, det: null, lastScore: null, maxScore: 0, ready: false } };
+      p4: { surrogateSteps: 0, fvSteps: 0, fallbacks: 0, flaggedAt: [], lockWindows: 0, snapshots: [], sur: null, det: null, lastScore: null, maxScore: 0, ready: false },
+      p5: GATE ? { gate: GATE.createGate(sv.gate), path: [], ms: [], nsub: [], maxDev: 0, clipped: 0, clippedMass: 0, gainRefresh: 0, promotionDrift: 0 } : null };
     const fvNow = (t) => { // 대체: 실행기(inline 이면 즉시, worker 면 다음 사건에서 join) — 잠금 창 [t, t+Δt]
       if (sv.executor) { m.pending = sv.executor.submit(R, cfg.dt_macro, cfg.id); m.p4.lockWindows++; if (m.pending.done) finishPending(); }
       else FV.step(R, cfg.dt_macro, ledger);
@@ -101,11 +103,13 @@
     function finishPending() { const r = sv.executor.join(m.pending); m.pending = null; FV.reconcile(R, r.moved, ledger); }
     // 대리 한 단계: 추론 → 같은 단계 안에서 사전(입력)·사후(원 출력) 탐지 — 어느 쪽이든 OOD 면 출력을 버리고 FV (지연 0 단계).
     //   사전 검사를 추론 뒤에 하는 것은 대리 모델이 이미 계산한 입력 스펙트럼을 재사용하기 위해서다 (추가 변환 없음, 판단 시점은 같은 단계).
-    function surrogateStep(t) {
+    //   lean(P5 동적): 입력 쪽 공간 충격은 관문의 γ 사전 필터가 이미 걸렀으므로 사전 S_ood 의 기울기 계산을 생략하고,
+    //   사후 S_ood 에 입력 스펙트럼도 함께 넣는다 (E = max(E_in, E_out)) — 판정은 같은 단계, 추가 변환 없음.
+    function surrogateStep(t, lean) {
       const p = m.p4, backup = Object.fromEntries(Object.entries(R.fields).map(([k, f]) => [k, Float64Array.from(f)]));
       const res = P4.FNO.integrate(p.sur, R), sp = p.sur.lastSpectra;
-      const pre = P4.OOD.evaluate(p.det, R, p.sur, 'pre', { fields: backup, E: Object.fromEntries(Object.entries(sp).map(([k, v]) => [k, v.E_in])) });
-      const post = pre.ood ? pre : P4.OOD.evaluate(p.det, R, p.sur, 'post', { E: Object.fromEntries(Object.entries(sp).map(([k, v]) => [k, v.E_out])) });
+      const pre = lean ? { ood: false, score: 0 } : P4.OOD.evaluate(p.det, R, p.sur, 'pre', { fields: backup, E: Object.fromEntries(Object.entries(sp).map(([k, v]) => [k, v.E_in])) });
+      const post = pre.ood ? pre : P4.OOD.evaluate(p.det, R, p.sur, 'post', { E: Object.fromEntries(Object.entries(sp).map(([k, v]) => [k, lean ? Math.max(v.E_in, v.E_out) : v.E_out])) });
       p.lastScore = Math.max(pre.score, post.score); if (Number.isFinite(p.lastScore) && !pre.ood && !post.ood) p.maxScore = Math.max(p.maxScore, p.lastScore);
       if (!pre.ood && !post.ood) {
         for (const f of Object.values(R.fields)) for (const q of R.active) if (!(f[q] > 0)) f[q] = 0; // 비음수 투영 (재척도는 reconcile 의 anchor)
@@ -115,22 +119,52 @@
       p.fallbacks++; p.flaggedAt.push({ step: m.steps, t, score: p.lastScore, phase: pre.ood ? 'pre' : 'post', reasons: (pre.ood ? pre : post).reasons, components: (pre.ood ? pre : post).components });
       fvNow(t);
     }
+    // P5 동적 관문: 강성 O(1) → 히스테리시스 → (필요할 때만) 사전 필터 O(N) → 경로. 전이마다 정밀 질량 협정.
+    function dynamicStep(t) {
+      const p = m.p4, q = m.p5, gate = q.gate, L = () => handle.state.ledgers[cfg.id].counts;
+      const anchorExact = () => { const r = GATE.exactAnchor(R, L()); q.maxDev = Math.max(q.maxDev, r.maxDev); q.clipped += r.clipped; q.clippedMass += r.clippedMass; };
+      const st = GATE.stiffness(R.spec, cfg.dt_macro);
+      const d = p.sur ? GATE.decide(gate, m.steps, st.Nsub, () => GATE.shockGamma(R)) : { path: 'fv', state: 'FV_ONLY' };
+      q.nsub.push(st.Nsub);
+      if (d.path === 'surrogate') {
+        if (d.promoted) { // 승격 협정: Σu 를 원장과 대조하고 부동 소수 드리프트를 지운 뒤 첫 변환
+          q.promotionDrift = Math.max(q.promotionDrift, Math.max(...Object.keys(R.fields).map((k) => Math.abs(GATE.kahan(R.fields[k], R.active) - (L()[k] || 0)))));
+          anchorExact();
+        }
+        if (p.sur.gainsFor !== P4.FNO.diffusionKey(R)) { P4.FNO.analyticGains(p.sur, R); q.gainRefresh++; } // D 가 바뀌면 O(N) 닫힌 꼴 이득
+        const before = p.fallbacks;
+        surrogateStep(t, true);
+        if (p.fallbacks > before) { GATE.reportOOD(gate, m.steps); gate.stats.fvSteps++; anchorExact(); return 'fv_ood'; } // 같은 단계 강제 강등 + 냉각
+        anchorExact(); gate.stats.surSteps++; return 'surrogate'; // 음수 0 개 보장 + 정밀 닻
+      }
+      if (d.event && d.event.startsWith('demote')) anchorExact(); // 강등 협정: 대리 장의 음수 잘라내고 원장과 비트 수준 일치 뒤 FV 로
+      FV.step(R, cfg.dt_macro, ledger); p.fvSteps++; gate.stats.fvSteps++; anchorExact();
+      return d.event === 'demote_prefilter' ? 'fv_prefilter' : 'fv';
+    }
     function stepNow(t) {
       if (sv.beforeStep) sv.beforeStep(m, R);
       if (!P4) { FV.step(R, cfg.dt_macro, ledger); return; }
+      if (GATE && (m.p4.ready || m.steps >= sv.warmup)) {
+        if (!m.p4.ready) prepareP4();
+        m.p5.path.push(dynamicStep(t));
+        return;
+      }
       const p = m.p4;
       if (!p.ready && m.steps < sv.warmup) { // 학습 단계: FV 로 진행하며 스냅숏 수집
         FV.step(R, cfg.dt_macro, ledger); p.fvSteps++;
         if (m.steps % Math.max(1, Math.floor(sv.warmup / 20)) === 0) for (const f of Object.values(R.fields)) p.snapshots.push(Float64Array.from(f));
         return;
       }
-      if (!p.ready) {
-        try { p.sur = P4.FNO.createSurrogate(R, cfg.dt_macro); P4.FNO.calibrate(p.sur, R); } catch (e) { p.sur = null; p.unsupported = e.message; }
-        p.det = P4.OOD.createDetector(sv.detector); if (p.sur) P4.OOD.train(p.det, p.snapshots, R.n, R.mask);
-        p.ready = true; p.snapshots = [];
-      }
+      if (!p.ready) prepareP4();
       if (!p.sur) { p.fallbacks++; fvNow(t); return; } // 분포 밖 모양(구·이류 …): 대리 모델 없이 FV
       surrogateStep(t);
+    }
+    function prepareP4() { // 워밍업 끝: 대리 모델 학습(FV 궤적), 탐지기·관문 사전 필터 기준 학습
+      const p = m.p4;
+      try { p.sur = P4.FNO.createSurrogate(R, cfg.dt_macro); P4.FNO.calibrate(p.sur, R); p.sur.gainsFor = P4.FNO.diffusionKey(R); } catch (e) { p.sur = null; p.unsupported = e.message; }
+      p.det = P4.OOD.createDetector(sv.detector); if (p.sur) P4.OOD.train(p.det, p.snapshots, R.n, R.mask);
+      if (GATE && p.sur) { const keys = Object.keys(R.fields), per = Math.max(1, keys.length); const like = []; for (let i = 0; i + per <= p.snapshots.length; i += per) like.push({ n: R.n, mask: R.mask, active: R.active, fields: Object.fromEntries(keys.map((k, j) => [k, p.snapshots[i + j]])) }); GATE.trainGamma(m.p5.gate, like); }
+      p.ready = true; p.snapshots = [];
     }
     Object.assign(m, {
       ta: () => cfg.dt_macro,
@@ -143,7 +177,10 @@
           return { source: cfg.id, target: cfg.node, species: sp, mu_out: g * cFace, mu_in: g * cNode };
         });
       },
-      deltaInt: (t) => { stepNow(t); m.steps++; },
+      deltaInt: (t) => { // profile: 영역 풀이 시간(단계별 ms) — 모드 비교용
+        if (sv.profile) { const t0 = process.hrtime.bigint(); stepNow(t); (m.prof = m.prof || []).push(Number(process.hrtime.bigint() - t0) / 1e6); } else stepNow(t);
+        m.steps++;
+      },
       deltaExt: (t, e, inp) => { if (m.pending) finishPending(); for (const c of inp) { FV.applyInterfaceTransfer(R, c.species, c.net); m.lastFlux[c.species] = c.net; } FV.anchor(R, ledger); },
       deltaConf: (t, inp) => { m.deltaExt(t, 0, inp); m.deltaInt(t); },
     });

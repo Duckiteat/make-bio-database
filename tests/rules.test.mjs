@@ -931,3 +931,71 @@ test('P4 속도·정확도: FV 가 안정 조건으로 부분 단계를 많이 �
   assert.ok(stiff.speedup >= 10, `강성 영역 속도 향상 ${stiff.speedup.toFixed(1)}×`);
   assert.ok(rows.every((r) => r.l2 < 0.02 && r.flagged === 0));
 });
+
+// ===== Phase P5: 동적 승격·강등 관문 =====
+const GATE = createRequire(import.meta.url)('../engine/p5_dynamic_gate.js'), P5 = createRequire(import.meta.url)('./p5_dynamic_promotion.js');
+
+test('P5 강성 지표: N_sub = ⌈C_CFL·K_est⌉ 가 FV 가 실제로 쓰는 부분 단계 수와 경계값까지 같다', () => {
+  assert.equal(GATE.C_CFL, 15);
+  for (const D of [0, 1e-14, 2e-12, 6e-12, 1e-11, 1.0000001e-11, 2e-11, 4.6666e-11, 5e-11, 3e-10]) for (const dt of [1e-4, 1e-3, 3.3e-3]) {
+    const spec = { ...boxSpec(8), species: { A: { D }, B: { D: D / 2 } } };
+    assert.equal(GATE.stiffness(spec, dt).Nsub, FVS.substepsFor(FVS.createRegion(spec, {}), dt), `D ${D} dt ${dt}`);
+  }
+});
+test('P5 상태 기계: M 단계 연속이어야 승격, K_down 미만이면 강등, 대역 안에서는 유지, 충격·OOD 는 같은 단계 강등 + W 냉각', () => {
+  const g = GATE.createGate({ K_up: 15, K_down: 8, M: 5, W: 20 }); g.gammaMax = 1; const ok = () => 0.5, bad = () => 5;
+  for (let s = 0; s < 4; s++) assert.equal(GATE.decide(g, s, 20, ok).path, 'fv');
+  assert.equal(GATE.decide(g, 4, 10, ok).path, 'fv', '연속이 끊기면 처음부터'); for (let s = 5; s < 9; s++) GATE.decide(g, s, 20, ok);
+  const p = GATE.decide(g, 9, 20, ok); assert.ok(p.promoted && p.path === 'surrogate' && g.state === 'PROMOTED');
+  for (let s = 10; s < 30; s++) assert.equal(GATE.decide(g, s, 8 + (s % 7), ok).path, 'surrogate', '히스테리시스 대역 8 ≤ N_sub < 15 에서 유지');
+  assert.equal(GATE.decide(g, 30, 7, ok).event, 'demote_stiffness');
+  for (let s = 31; s < 36; s++) GATE.decide(g, s, 20, ok); assert.equal(g.state, 'PROMOTED');
+  const d = GATE.decide(g, 36, 70, bad); assert.ok(d.event === 'demote_prefilter' && d.path === 'fv', '사전 필터 → 같은 단계 강등');
+  for (let s = 37; s < 57; s++) assert.equal(GATE.decide(g, s, 70, ok).event, 'cooldown', `냉각 ${s}`);
+  for (let s = 57; s < 61; s++) assert.equal(GATE.decide(g, s, 70, ok).path, 'fv');
+  assert.ok(GATE.decide(g, 61, 70, ok).promoted, '냉각 W + 연속 M 뒤 재승격');
+  GATE.reportOOD(g, 62); assert.ok(g.state === 'FV_ONLY' && g.cooldownUntil === 83 && g.stats.oodTrips === 1);
+  assert.throws(() => GATE.createGate({ K_up: 8, K_down: 8 }), /K_down < K_up/);
+});
+test('P5 정밀 닻: 음수를 잘라내고 Σu = N_ledger 를 1e-15 안에서 (보상 합), Σ = 0 이면 균일', () => {
+  const R = FVS.createRegion(boxSpec(), {}), r = HMSE.rngOf(3);
+  for (let p = 0; p < 4096; p++) { R.fields.A[p] = 100 * r() - 3; R.fields.B[p] = 1e-3 * r(); }
+  const rep = GATE.exactAnchor(R, { A: 123457, B: 7 });
+  assert.ok(rep.clipped > 0 && rep.clippedMass > 0 && rep.maxDev <= 1e-15);
+  for (const [k, N] of [['A', 123457], ['B', 7]]) { assert.ok(R.fields[k].every((v) => v >= 0)); assert.ok(Math.abs(GATE.kahan(R.fields[k], R.active) - N) / N <= 1e-15); }
+  R.fields.A.fill(-1); GATE.exactAnchor(R, { A: 4096, B: 7 }); assert.ok(R.fields.A.every((v) => v === 1));
+});
+test('P5 닫힌 꼴 이득: 이산 라플라시안 고윳값으로 구한 이득 = 최소 제곱으로 배운 이득 (D 가 바뀌면 O(N) 재계산)', () => {
+  for (const D of [1e-12, 5e-11]) {
+    const spec = { ...boxSpec(8), species: { A: { D }, B: { D: D / 2 } } }, R = FVS.createRegion(spec, {});
+    for (let p = 0; p < 512; p++) { R.fields.A[p] = 50 + 10 * Math.cos(p); R.fields.B[p] = 5; }
+    const a = FNOS.createSurrogate(R, 1e-3); FNOS.calibrate(a, R); const b = FNOS.createSurrogate(R, 1e-3); FNOS.analyticGains(b, R);
+    for (const k of ['A', 'B']) for (let i = 0; i < 512; i++) assert.ok(Math.abs(a.gains[k][i] - b.gains[k][i]) < 1e-10, `D ${D} ${k}[${i}]`);
+    assert.equal(b.gainsFor, FNOS.diffusionKey(R));
+  }
+});
+test('P5 사전 필터 γ: 매끄러운 장은 낮고 국소 충격은 학습 최댓값 × 여유를 넘는다', () => {
+  const R = FVS.createRegion(boxSpec(), {}); for (let p = 0; p < 4096; p++) { R.fields.A[p] = 100 + 20 * Math.cos(Math.PI * (p % 16) / 16); R.fields.B[p] = 50; }
+  const g = GATE.createGate(); const gm = GATE.trainGamma(g, [R]); assert.ok(GATE.shockGamma(R) <= gm);
+  R.fields.A[2000] += 0.3 * FVS.totals(R).A; assert.ok(GATE.shockGamma(R) > gm);
+});
+test('P5 P3 보존: mode fv 영역 모형 = FV.step 직접 반복 (비트 단위), 동적 관문의 FV 경로는 FV.step + 정밀 닻뿐 (원장 같음, 장 차 ≤ 1e-12)', () => {
+  const flat = [{ from: 0, to: 1e9, name: '비강성', D: () => 2e-12 }];
+  const d = P5.build({ mode: 'dynamic', coupled: false, phases: flat, n: 8 }), f = P5.build({ mode: 'fv', coupled: false, phases: flat, n: 8 });
+  const raw = FVS.createRegion({ ...f.region.spec, species: JSON.parse(JSON.stringify(f.region.spec.species)) }, f.handle.state.ledgers.reg.counts);
+  const rawLed = { state: HMSE.makeLedgerState({ domains: [{ id: 'reg' }], adjacency: [] }, { reg: { ...f.handle.state.ledgers.reg.counts } }), domainId: 'reg', moieties: f.moieties };
+  d.sched.run(Infinity, { stop: () => d.reg.steps >= 400 }); f.sched.run(Infinity, { stop: () => f.reg.steps >= 400 });
+  for (let i = 0; i < 400; i++) FVS.step(raw, 1e-3, rawLed);
+  for (const k of ['A', 'B']) assert.ok(f.region.fields[k].every((v, i) => Object.is(v, raw.fields[k][i])), `P3 경로 ${k} 비트 동일`);
+  assert.deepEqual(f.handle.state.ledgers.reg.counts, rawLed.state.ledgers.reg.counts);
+  assert.equal(d.reg.p5.gate.stats.promotions, 0); assert.deepEqual(d.handle.state.ledgers.reg.counts, f.handle.state.ledgers.reg.counts);
+  for (const k of ['A', 'B']) { const N = f.handle.state.ledgers.reg.counts[k]; assert.ok(d.region.fields[k].every((v, i) => Math.abs(v - f.region.fields[k][i]) <= 1e-12 * Math.max(1, N))); }
+  assert.ok(d.reg.p5.maxDev <= 1e-15, '동적 FV 경로는 장–원장 ≤ 1e-15 (P3 의 anchor 는 ~1e-13)');
+});
+test('P5 종단: 10,000 동적 단계 |ΔN| = 0, 장–원장 ≤ 1e-15, 음수 0, L2 < 2%, 충격 같은 단계 강등 → W 뒤 재승격, 강성 ≥ 10×', () => {
+  const r = P5.run({ quiet: true });
+  assert.ok(r.pass, JSON.stringify({ ...r, phaseStats: r.phaseStats.map((p) => [p.key, p.dynMs, p.fvMs]) }));
+  assert.equal(r.massError, 0); assert.ok(r.moietyExact && r.fieldParity <= 1e-15 && r.negatives === 0 && r.maxL2 < 0.02);
+  assert.ok(r.shockDemote.step === r.shockAt && r.repromote.step >= r.shockAt + 21);
+  assert.equal(r.flipsHystPromoted + r.flipsAdversarial + r.flipsHystDemoted, 0);
+});

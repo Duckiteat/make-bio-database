@@ -44,6 +44,7 @@
 - **3 층 (v8).** 새 분자 정의항에는 `tier`(T1 연속 장 | T2 규칙 행위자)를 — 분자 부류는 반드시 명시. 확산 계수·pH·유전율은 위치(`context.location`)와 SI 단위로만. 가역 반응은 `dG0` 로 역 상수를 정하고(k_r 를 따로 지어내지 않음), 닫힌 고리 ΣΔG° = 0 (AUDIT_THERMO). 실행 상태(영역·원장 거래)는 데이터베이스에 넣지 않고 시나리오 `domains`·`engine/` 에.
 - **실행 층(P3) 을 바꾸면** `node tests/p3_end_to_end.js` 가 |N_initial − N_final| < 1 로 통과해야 한다. 원장은 거래(`applyLedgerTx`·`applyLocalTx`)로만 바꾸고, 장(FV)은 언제나 원장에 맞춰 재척도한다 — 반대 방향 금지.
 - **대리 모델(P4) 은 분포 안에서만.** 대리 출력은 같은 단계에서 OOD 탐지를 통과해야 쓰고, 아니면 버리고 FV. 속도 향상을 보고할 때는 `tests/p4_benchmark.js` 의 FV 부분 단계 수(강성)와 함께 — 비강성 영역에서는 대리 모델이 더 느리다. 정확도 기준(L2 < 2%)과 `tests/p4_end_to_end.js` 통과가 바꾼 뒤의 조건.
+- **동적 관문(P5) 은 강성으로 고른다.** 경로는 `engine/p5_dynamic_gate.js` 의 N_sub(FV 부분 단계 수와 같아야 함)·히스테리시스(K_up/K_down/M)·사전 필터 γ 로만 정하고, 충격·OOD 는 같은 단계 강등 + W 냉각. 전이마다 `exactAnchor` 로 |Σu − N_ledger| ≤ 1e-15. `mode: 'fv'`(P3) 결과는 비트 단위로 바꾸지 않는다. 관문·대리 모델을 바꾸면 `tests/p5_dynamic_promotion.js` 통과가 조건이고, 속도는 구간별 N_sub 와 함께 보고한다(N_sub < 15 구간은 ≈ 1×).
 - **부분 구조 수지를 지킨다.** 부분이 옮겨 다니는 분자에는 `moieties` 를 달고, 변환·분해·공급 규칙의 빠진 산물(피로인산·Pi …)은 규칙과 단계(minor)에 함께 넣는다. 원료가 모델 밖이면 `source: true` — 수지 검사를 피하려고 쓰지 않는다. 반감기·공급 속도·서열 길이는 확인한 값만.
 
 ## 추적 가능한 진화 (Traceable Evolution Protocol)
