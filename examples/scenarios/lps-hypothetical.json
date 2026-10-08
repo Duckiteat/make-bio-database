@@ -1,0 +1,92 @@
+{
+  "name": "LPS 가상 시나리오 (엔진 시험용)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 속도 기반 엔진·감사가 작동하는지 보기 위한 크기 정도(order of magnitude) 값만 둔다.",
+  "cell": "macrophage",
+  "volumes": {
+    "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+    },
+    "cytosol": {
+      "value": 1000,
+      "unit": "fL"
+    },
+    "nucleoplasm": {
+      "value": 300,
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000064|extracellular": 60000,
+    "D000065|extracellular": 100000,
+    "D000066|plasma_membrane": 50000,
+    "D000069|plasma_membrane": 10000,
+    "D000071|plasma_membrane": 10000,
+    "D000072|cytosol": 60000,
+    "D000073|cytosol": 40000,
+    "D000074|cytosol": 40000,
+    "D000076|cytosol": 20000,
+    "D000081|cytosol": 20000,
+    "D000085|cytosol": 50000,
+    "D000090|cytosol": 100000,
+    "D000095|cytosol": 20000,
+    "D000098|cytosol": 100000
+  },
+  "kinetics": {
+    "D000065/rule/lps_binding": {
+      "law": "binding",
+      "k_on": 1000000.0,
+      "k_off": 0.001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000085/rule/ikba_s32": {
+      "law": "michaelis_menten",
+      "kcat": 1,
+      "Km": 1e-07,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000085/rule/ikba_s36": {
+      "law": "michaelis_menten",
+      "kcat": 1,
+      "Km": 1e-07,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000098/rule/ikba_degradation": {
+      "law": "michaelis_menten",
+      "kcat": 0.5,
+      "Km": 1e-07,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000089/rule/nuclear_import": {
+      "law": "mass_action",
+      "k": 0.05,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000100/rule/kb_binding": {
+      "law": "binding",
+      "k_on": 10000000.0,
+      "k_off": 0.01,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  }
+}

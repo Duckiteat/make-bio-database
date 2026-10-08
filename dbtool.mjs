@@ -15,6 +15,10 @@
 //   node dbtool.mjs limitations [--open] [--write | --check] [--detect]
 //                                                           한계 등록부: 출력 / limitations.md 생성 / 최신인지 검사 / 미등록 후보 찾기
 //   node dbtool.mjs pattern   <경로|상위 개념>              경로에서 상위 패턴(모티프) 찾기, 또는 상위 개념이 나타나는 경로
+//   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(R0 위상·R1 부위·R2 구조)와 전환 문턱
+//   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001]
+//                                                           감사: 스키마·해상도 일관성·속도 무결성·질량 보존 (Audit Error 가 있으면 종료 코드 1)
+//   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001]   속도 기반 시뮬레이션
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -137,7 +141,24 @@ switch (cmd) {
     console.log(DefDB.patternText(loadDB(), args[0]));
     break;
   }
+  case 'resolution': {
+    if (!args[0]) die('사용법: resolution <경로>');
+    console.log(DefDB.resolutionText(loadDB(), args[0]));
+    break;
+  }
+  case 'audit-run': {
+    if (!args[0]) die('사용법: audit-run <경로> [--scenario s.json]');
+    const list = DefDB.auditRun(loadDB(), args[0], { scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3) });
+    for (const a of list) console.log(`[${a.code}] ${a.where}: ${a.msg}\n    → 교정 제안: ${a.suggestion}`);
+    console.log(`— Audit Error ${list.length}건`);
+    process.exit(list.length ? 1 : 0);
+  }
   case 'simulate': {
+    if (flags.rate) {
+      if (!args[0]) die('사용법: simulate <경로> --rate [--scenario s.json]');
+      console.log(DefDB.simulateRateText(loadDB(), args[0], { scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3) }));
+      break;
+    }
     if (!args[0]) die('사용법: simulate <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]');
     const db = loadDB(), ix = DefDB.index(db), id = (r) => { if (!r || r === true) return undefined; const x = DefDB.resolveRef(ix, r); if (x.error) die(x.error); return x.id; };
     const init = {};
@@ -153,5 +174,5 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | pattern | limitations | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | resolution | audit-run | pattern | limitations | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }

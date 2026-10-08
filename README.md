@@ -77,6 +77,11 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - 상위 개념 10개(키네이스 연쇄, 막–핵 신호 연쇄, 억제자 분해에 의한 전사 인자 방출 …)는 패턴 검출기로 사례 경로를 스스로 찾는다 — `node dbtool.mjs pattern "키네이스 연쇄"`.
 - 구획 농도 모델: 시뮬레이션 시작량을 기본값 대신 copy_number·농도 × 구획 부피 데이터에서 가져온다.
 
+### 혼합 해상도와 반응 속도 (형식 v6)
+- **3차원은 필요한 곳에만.** `node dbtool.mjs resolution <경로>` — LPS 경로 19단계 중 R2(구조)가 필요한 단계는 0, 글리코겐 경로는 cAMP 를 두고 PKA 활성화·PDE 가 경쟁하는 2단계뿐(속도 상수가 들어오면 R1 로 해결). 확인된 구조 참조: 3FXI(TLR4–MD-2–LPS 주머니).
+- **속도 기반 시뮬레이션** `simulate --rate`: 규칙의 `kinetics`(binding·michaelis_menten·mass_action)를 농도 × 부피로 적분. 시험용 값은 가상 시나리오(`examples/scenarios/`)에만.
+- **감사** `audit-run`: 질량 보존·해상도 일관성·속도 무결성 위반을 Audit Error 로 내고, 한계 등록부에서 교정 제안을 찾는다. 예: Gs 를 AC 의 리간드와 행위자로 두 번 센 단순화를 질량 감사가 찾아 L000018 로 등록.
+
 ## 매핑 규칙 요약 (자세히는 SCHEMA.md)
 
 - **통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막 결합 방식·부위 종류·특징·변화 종류·활성·종(NCBI)·조직·세포·관찰 속성·근거 수준은 목록의 값만. 별칭은 표준 값으로 바뀐다.
@@ -89,7 +94,7 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - **단계는 규칙의 적용**: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.
 - **관문**: 오류가 하나라도 있거나 패치가 새 경고를 만들면 패치 전체 거부. 통과한 패치는 `data/patches/` 에 매핑 결과와 함께 기록.
 
-규칙은 `tests/rules.test.mjs`(67개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
+규칙은 `tests/rules.test.mjs`(73개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
 
 ## 사용법
 
@@ -116,6 +121,9 @@ node dbtool.mjs mechanism S000009 --up 3 --down 3
 node dbtool.mjs simulate <경로> --until D… --from D…   # 규칙대로 발화시켜 도달·유도 확인
 node dbtool.mjs limitations [--open|--write|--detect]  # 한계 등록부
 node dbtool.mjs pattern <경로|상위 개념>              # 상위 패턴·사례 경로
+node dbtool.mjs resolution <경로>                     # 혼합 해상도 계획 (R0·R1·R2, 전환 문턱)
+node dbtool.mjs simulate <경로> --rate --scenario s.json   # 속도 기반 시뮬레이션
+node dbtool.mjs audit-run <경로> [--scenario s.json]  # 감사 (Audit Error + 교정 제안)
 node dbtool.mjs audit                           # 매핑·채움 현황 (미매핑, 잔기 모름, 지문 없음)
 node dbtool.mjs vocab locations actions         # 통제 어휘 보기
 node --test tests/*.test.mjs                    # 규칙 테스트
@@ -125,7 +133,8 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 
 | 경로 | 내용 |
 |---|---|
-| `data/db.json` | 데이터베이스 원본 (형식 v5) |
+| `data/db.json` | 데이터베이스 원본 (형식 v6) |
+| `examples/scenarios/` | 속도 기반 시뮬레이션용 가상 시나리오 (지식이 아님) |
 | `limitations.md` | 한계 등록부 (data/db.json 에서 생성, 직접 고치지 않음) |
 | `data/patches/` | 병합된 패치 기록 |
 | `vocab.js` | 통제 어휘(위치·특징·종 …)·외부 ID 형식·관계의 kind 제약 |

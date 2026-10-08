@@ -1,4 +1,4 @@
-# 스키마와 매핑 규칙 (형식 버전 5)
+# 스키마와 매핑 규칙 (형식 버전 6)
 
 이 데이터베이스는 AI가 채운다. 규칙 없이 쌓이면 같은 개념이 여러 이름으로 생기고, 값이 제각각이 되어 연결이 끊긴다.
 그래서 **모든 입력은 패치 → 매핑 → 검사 → 관문**을 거치고, 하나라도 어기면 패치 전체가 거부된다.
@@ -221,6 +221,36 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - **Step B — 한계에서 나온 확장**: 한계를 해결하는 새 개념은 `addresses: [{ limitation: L…, how }]` 로 어떤 한계를 어떻게 해결하는지 적는다. 해결하지 않는 상위 개념은 `gap_review` 에 이유를 적는다 — motif 정의항은 둘 중 하나가 없으면 거부된다.
 - **구획 농도 모델**(principle): 시뮬레이터가 시작량을 데이터에서 정한다 — 정의항의 `copy_number` 관찰(세포·위치 맥락), 없으면 `concentration` × 구획 부피(`compartment_volume`, 구획 농도 모델 정의항이 세포·위치별로 소유) × 아보가드로 수. 둘 다 없으면 기본값이고 출력에 "농도 공백"으로 표시된다. 관찰 맥락에는 `context.location` 을 쓸 수 있다.
 
+## 8D. 혼합 해상도와 반응 속도 — 형식 v6
+
+### 해상도 (`vocab.js` 의 `resolutionLevels`·`resolutionThresholds`)
+모든 것을 3차원으로 다루지 않는다. 단계마다 필요한 해상도를 전환 문턱으로 계산하고 갖춘 해상도와 비교한다 (`node dbtool.mjs resolution <경로>`).
+
+| 해상도 | 담는 것 | 언제 |
+|---|---|---|
+| R0 위상 | 위치·상태(묶음 키) | 풀 안의 분자, 수송, 부위 없는 변환 |
+| R1 부위 | 이름 붙은 부위·특징·잔기 번호·막 면 | **T1** 부위 사건(site·from_site·partner_site·via_site·requires), **T2** 구성 요소 화학량(결합체 형성·해리·분해) |
+| R2 구조 | 반응 중심 부위의 3차원 구조 참조 `site.structure: { db: "PDB", id, chain, residues }` | **T3** 같은 묶음을 두 단계 이상이 소비하는 경쟁 — 속도 상수가 있으면 R1 에서 해결, 없을 때만 구조가 필요 |
+
+- 하향 전환(반응 중심 → 풀): 바뀐 부위는 묶음 키의 `부위:특징`으로 남아 무손실이고, 수송·해리는 특징 보존 검사를 받는다.
+- 해상도 일관성: 부위의 구조 참조는 정의항 `xrefs` 의 같은 PDB 여야 한다. 좌표 자체는 저장하지 않고 구조 데이터베이스를 가리킨다.
+
+### 반응 속도 `rule.kinetics`
+```json
+{ "law": "binding", "k_on": 1e6, "k_off": 1e-3, "Kd": 1e-9, "context": { "species": "9606" }, "evidence": { … } }
+```
+- 값은 SI 정준 단위만: `k_on` M⁻¹s⁻¹, `k_off`·`kcat` s⁻¹, `Kd`·`Km` M, `mass_action` 의 `k` 는 M^(1−order)·s⁻¹.
+- 법칙(`kineticLaws`): `mass_action`(k, order — 차수 = 반응물 분자 수 + 행위자 수) · `binding`(k_on·k_off 또는 Kd — 두 분자 결합만) · `michaelis_menten`(kcat·Km — 행위자가 있는 규칙만).
+- 속도 무결성: Kd 와 k_off/k_on 이 10% 안에서 맞아야 하고, 차수·분자 수·효소 조건이 맞아야 한다. 근거(evidence)는 다른 근거와 같은 규칙.
+- 한계 해결 경로 `{ kind: "kinetics", rule: "D…/rule/키", params: ["Kd"] }` — 규칙에 그 상수가 들어오면 자동 resolved.
+
+### 속도 기반 시뮬레이션과 감사
+- `node dbtool.mjs simulate <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001]`: 농도 = 분자 수 / (N_A × 반응 부피), 속도 법칙을 dt 마다 적분. 속도 상수가 없는 단계는 즉시(사건 기반)로 처리하고 보고한다. 막(2D) 분자는 인접 3D 부피의 농도로 환산한다(한계 등록).
+- 시나리오(`examples/scenarios/*.json`): 부피·시작량·속도 상수를 덧씌우는 시험용 층. `hypothetical: true` 면 출력에 가상 값임을 표시하고, 데이터베이스에는 들어가지 않는다.
+- `node dbtool.mjs audit-run <경로> [--scenario s.json]`: 감사 오류(Audit Error)
+  - `AUDIT_SCHEMA` 저장소 검사 · `AUDIT_RESOLUTION` 필요 해상도 > 갖춘 해상도, 2D 환산 · `AUDIT_KINETIC` 속도 무결성, 평형(닫힌 결합에서 [A][B]/[AB] ≈ Kd) · `AUDIT_KINETIC_GAP` 속도 상수 없음 · `AUDIT_CONCENTRATION` 반응 부피 없음 · `AUDIT_MASS` 질량·동일성 보존(대사물 풀과 주고받은 양까지 계산; 변환·분해되는 실체 제외)
+  - 모든 감사 오류는 한계 등록부에서 찾은 교정 제안을 단다. 맞는 한계가 없으면 등록할 형식을 제안한다. 감사 오류가 있으면 종료 코드 1.
+
 ## 9. 외부 ID
 
 | kind | 필수 | 허용 |
@@ -287,6 +317,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 6 | 혼합 해상도(R0 위상·R1 부위·R2 구조, 전환 문턱 T1–T3, 부위 구조 참조 `site.structure`), 반응 속도(`rule.kinetics`, 법칙 3종, SI 정준 단위, 속도 무결성 검사), 한계 해결 경로 `kinetics`, 속도 기반 시뮬레이터·시나리오 층, 감사 명령(`audit-run`). 데이터: 혼합 해상도 모델·반응 속도 모델 원리, 3FXI 구조 참조, Kinetic_Gap 해결 경로 교정, 한계 2건 추가(2D 환산, Gs–AC 이중 계산) (`migrations/005-v5-to-v6-hybrid-kinetics.mjs`) |
 | 2026-10-08 | 5 | 한계 등록부 `limitations`(L…, `[Target | Type | Requirement]`, 계산되는 상태, `limitations.md` 생성·CI 검사), 상위 개념 `motif`·`addresses`·`gap_review`, 패턴 검출기(`pattern`), 구획 농도 모델(시작량을 copy_number 또는 농도 × 구획 부피에서), 관찰 맥락 `location`, 관찰 속성 copy_number·compartment_volume, 어휘 gapTypes. 한계 16건·상위 개념 10개·구획 농도 모델 등록 (`migrations/004-v4-to-v5-limitations.mjs`) |
 | 2026-10-08 | 4 (확장) | LPS → TLR4 → NF-κB 스트레스 시험으로 엔진 확장: 효과 `transfer`·`degrade`, 전제 조건 `requires`, 동일성 보존 검사, 수송 대상의 접촉 검사 예외, 근거 `sources[{db,id,citation}]`·`basis`·근거 수준 `abstracted`, 시뮬레이터(`simulate`). 어휘: 변화 종류 전달·유비퀴틴화·단백질 분해·전사, 특징 K48/K63 폴리유비퀴틴, 분야 면역학, 세포 대식세포·단핵구. 데이터 형식 버전은 그대로(기존 데이터에 curated 근거가 없어 변환 불필요) |
 | 2026-10-08 | 4 | 두 해상도 구조. 정의항이 원천으로 설명(desc)·막 위상·구성 요소·부위(종별 잔기 번호, 면, 리간드)·규칙(상태 의미·전이)·관찰(obs)을 소유. 상태(states) 폐지 → 묶음 키 `D|부위:특징|위치`. 단계는 규칙 참조 + 묶음만, 위치는 묶음마다. 위치 계층·막 면·공간 접촉 검사, 기준 종, 근거 수준. 어휘: compartments·modifications → locations·faces·associations·siteTypes·features·taxa·tissues·cells·obsProperties·evidenceLevels. 소단위·보조인자 정의항 10개 추가 (`migrations/003-v3-to-v4.mjs`) |

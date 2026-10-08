@@ -8,7 +8,7 @@ const DefDB = createRequire(import.meta.url)('../core.js');
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 5 }, o);
+const P = (o) => Object.assign({ format: 'definition-db-patch', version: 6 }, o);
 const run = (patch, opt) => { const res = DefDB.merge(BASE, P(patch)); return { res, g: DefDB.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
@@ -391,11 +391,12 @@ test('한계: [Target | Type | Requirement] — 대상·종류·해결 경로가
   rejectedFor({ limitations: { L000001: {} } }, /이전 형식/);
 });
 test('한계는 저장된 상태가 아니라 계산된 상태 — 필요한 데이터가 들어오면 자동으로 resolved', () => {
-  const L1 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].requirement.needs.some((n) => n.property === 'half_life'));
+  const L1 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].requirement.needs.some((n) => n.property === 'copy_number' && n.cell === 'hepatocyte'));
   assert.equal(DefDB.limitationStatus(BASE, BASE.limitations[L1]).status, 'open');
-  const res = passes({ senses: [{ id: IKBA, obs: [{ property: 'half_life', value: 10, unit: 'min', context: { species: '9606' }, evidence: { level: 'predicted', confidence: 0.1 } }] },
-    { id: id('IKK 복합체'), obs: [{ property: 'kcat', value: 1, unit: '1/s', context: { species: '9606' }, evidence: { level: 'predicted', confidence: 0.1 } }] }] });
+  const cn = (location) => [{ property: 'copy_number', value: 1000, unit: 'copies/cell', context: { species: '9606', cell: 'hepatocyte', location }, evidence: { level: 'predicted', confidence: 0.1 } }];
+  const res = passes({ senses: [{ id: REC, obs: cn('plasma_membrane') }, { id: PKA, obs: cn('cytosol') }, { id: GP, obs: cn('cytosol') }] });
   assert.equal(DefDB.limitationStatus(res.db, res.db.limitations[L1]).status, 'resolved');
+  assert.equal(DefDB.simulate(res.db, '에피네프린에 의한 글리코겐 분해', {}).origin[`${GP}|cytosol`], 1000, '관찰이 시작량이 됨');
   const R = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${id('TAK1')}/site/act`);
   const res2 = passes({ senses: [{ id: id('TAK1'), site: { act: { type: 'modification_site', features: ['phosphorylated'], numbering: { 9606: 'Thr187' } } } },
     { id: id('TAK1 복합체'), site: { tak1_act: { type: 'modification_site', features: ['phosphorylated'], on: id('TAK1'), numbering: { 9606: 'Thr187' } } } }] });
@@ -431,4 +432,59 @@ test('구획 농도 모델: copy_number 관찰 → 시작량, 농도 × 구획 �
     { id: id('구획 농도 모델'), obs: [{ property: 'compartment_volume', value: 1000, unit: 'fL', context: { species: '9606', cell: 'macrophage', location: 'cytosol' }, evidence: ev }] }] });
   const r2 = DefDB.simulate(res.db, TLRP, { until: TNFM });
   assert.equal(r2.origin[`${NI}|cytosol`], 60221, '0.1 µM × 1000 fL(=1e-12 L) × 6.022e23 ≈ 60221 분자');
+});
+
+// ===== 형식 v6: 혼합 해상도 · 반응 속도 · 감사 =====
+const scenario = (f) => JSON.parse(readFileSync(new URL(`../examples/scenarios/${f}`, import.meta.url), 'utf8'));
+const TNFG = id('TNF 유전자'), PKAR = id('PKA'), PDE = id('포스포다이에스터레이스');
+const withKin = (owner, rid, kinetics) => ({ id: owner, rule: BASE.senses[owner].rule.map((r) => (r.id === rid ? { ...r, kinetics } : r)) });
+const pred = { level: 'predicted', confidence: 0 };
+test('속도 무결성: 법칙·필수 상수·Kd = k_off/k_on·두 분자 결합·효소 규칙', () => {
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'hill', evidence: pred })] }, /반응 속도 법칙 'hill'/);
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', k_on: 1e6, evidence: pred })] }, /k_off 또는 Kd/);
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', k_on: 1e6, k_off: 1, Kd: 1e-9, evidence: pred })] }, /Kd 와 k_off\/k_on 이 맞지 않음/);
+  rejectedFor({ senses: [withKin(PKAR, 'camp_release', { law: 'binding', Kd: 1e-7, k_on: 1e7, evidence: pred })] }, /두 분자 결합.*5분자/);
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'michaelis_menten', kcat: 1, Km: 1e-6, evidence: pred })] }, /행위자\(효소\)가 있는 규칙에만/);
+  rejectedFor({ senses: [withKin(PKAR, 'camp_release', { law: 'mass_action', k: 1, order: 2, evidence: pred })] }, /차수 2 가 단계의 반응물 수\(5/);
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', Kd: 1e-9, k_on: 1e7, evidence: { level: 'curated' } })] }, /출처\(source/);
+  passes({ senses: [withKin(PKAR, 'camp_release', { law: 'mass_action', k: 1e20, order: 5, evidence: pred })] });
+});
+test('한계 해결 경로 kinetics: 규칙에 속도 상수가 들어오면 Kinetic_Gap 이 자동으로 resolved', () => {
+  const L4 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${TNFG}/rule/kb_binding`);
+  assert.equal(DefDB.limitationStatus(BASE, BASE.limitations[L4]).status, 'open');
+  const res = passes({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', Kd: 1e-9, k_on: 1e7, evidence: pred })] });
+  assert.equal(DefDB.limitationStatus(res.db, res.db.limitations[L4]).status, 'resolved');
+});
+test('반응 중심 구조(R2): PDB 만, 정의항 xrefs 에도 같은 구조가 있어야 함 — 3FXI 는 LPS 주머니에', () => {
+  assert.equal(BASE.senses[RCX].site.lps_pocket.structure.id, '3FXI');
+  failsWith((d) => { d.senses[RCX].xrefs = []; }, /해상도 일관성: 부위의 구조 3FXI/);
+  failsWith((d) => { d.senses[RCX].site.tir.structure = { db: 'PDB', id: 'XYZ' }; }, /PDB ID 여야/);
+});
+test('혼합 해상도 계획: LPS 경로는 3차원 0단계, 글리코겐 경로는 cAMP 경쟁(T3) 두 단계만 R2 — 속도 상수가 들어오면 R1 로 해결', () => {
+  const lps = DefDB.resolutionPlan(BASE, TLRP), gly = DefDB.resolutionPlan(BASE, '에피네프린에 의한 글리코겐 분해');
+  assert.equal(lps.rows.filter((r) => r.need === 2).length, 0);
+  assert.ok(lps.rows.find((r) => r.sid === sid(NFKB, 'nuclear_import')).need === 0, '수송은 R0(위상)');
+  assert.deepEqual(gly.rows.filter((r) => r.need === 2).map((r) => r.sid).sort(), [sid(PKAR, 'camp_release'), sid(PDE, 'camp_hydrolysis')].sort());
+  assert.ok(gly.rows.some((r) => !r.ok));
+  const res = passes({ senses: [withKin(PKAR, 'camp_release', { law: 'mass_action', k: 1e20, order: 5, evidence: pred }), withKin(PDE, 'camp_hydrolysis', { law: 'michaelis_menten', kcat: 5, Km: 1e-6, evidence: pred })] });
+  assert.ok(DefDB.resolutionPlan(res.db, '에피네프린에 의한 글리코겐 분해').rows.every((r) => r.ok), '속도 상수로 T3 해결');
+});
+test('속도 기반 시뮬레이션(가상 시나리오): TNF mRNA 에 시간 순서대로 도달, 질량 보존 위반 없음', () => {
+  const r = DefDB.simulateRate(BASE, TLRP, { scenario: scenario('lps-hypothetical.json'), t_end: 60, dt: 0.01 });
+  const t = (b) => r.firstReach[b];
+  const mrna = Object.keys(r.firstReach).find((b) => b.startsWith(TNFM + '|'));
+  assert.ok(mrna && t(mrna) > 0, 'TNF mRNA 도달');
+  assert.ok(t(`${NFKB}|nucleoplasm`) < t(mrna) && t(`${NFKB}|cytosol`) < t(`${NFKB}|nucleoplasm`), '세포질 → 핵 → 전사 순서');
+  assert.ok(r.hypothetical);
+  assert.deepEqual(r.audit.filter((a) => a.code === 'AUDIT_MASS'), []);
+  assert.ok(r.audit.some((a) => a.code === 'AUDIT_KINETIC_GAP'));
+});
+test('감사: 잘못된 속도 법칙·Kd 불일치를 잡고, 이중 계산(Gs)은 한계 등록부의 교정 제안으로 연결', () => {
+  const a = DefDB.auditRun(BASE, '에피네프린에 의한 글리코겐 분해', { scenario: scenario('camp-competition-hypothetical.json'), t_end: 10, dt: 0.01 });
+  assert.ok(a.some((x) => x.code === 'AUDIT_KINETIC' && /두 분자 결합/.test(x.msg)));
+  assert.ok(a.some((x) => x.code === 'AUDIT_KINETIC' && /Kd 와 k_off\/k_on/.test(x.msg)));
+  assert.ok(a.some((x) => x.code === 'AUDIT_RESOLUTION' && /T3 경쟁/.test(x.msg)));
+  const mass = a.find((x) => x.code === 'AUDIT_MASS');
+  const gsGap = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${AC}/site/gs_site`);
+  assert.ok(mass && mass.suggestion.includes(gsGap), '질량 위반 제안이 등록된 한계를 가리킴');
 });
