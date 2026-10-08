@@ -1562,8 +1562,14 @@
       scope: { files: ['data/db.json', 'data/patches/'], added: group(r.added), updated: group(r.updated), removed: group(r.removed), fields },
       why: str(patch && patch.why),
       impact: { rules: uniq(rules), senses: uniq(senses), steps, pathways, limitations: limits, limitation_status_changed: statusChanged, regenerate },
-      verification: { gate: gateResult ? (gateResult.ok ? 'pass' : 'reject') : null, errors: v.errors.length, warnings: v.warnings.length, new_errors: gateResult ? gateResult.errors.length : null, new_warnings: gateResult ? gateResult.warnings.length : null, undetected_gaps: gaps.length },
+      verification: { gate: gateResult ? (gateResult.ok ? 'pass' : 'reject') : null, errors: v.errors.length, warnings: v.warnings.length, new_errors: gateResult ? gateResult.errors.length : null, new_warnings: gateResult ? gateResult.warnings.length : null, undetected_gaps: gaps.length, augment_candidates: augmentCandidates(after) },
     };
+  }
+  // 자동 보강 후보 (원본 대조 대상): unmapped 필수 외부 ID, 또는 대조 안 된(asserted) UniProt·ChEBI — engine/augment.js 의 plan 과 같은 기준
+  function augmentCandidates(db) {
+    let n = 0;
+    for (const d of Object.values(db.senses)) { const K = V.kinds[d.kind]; if (!K) continue; if (d.xrefs.some((x) => ['UniProt', 'ChEBI'].includes(x.db) && x.status !== 'verified') || (d.unmapped && (K.xref.required || []).some((r) => ['UniProt', 'ChEBI'].includes(r)))) n++; }
+    return n;
   }
   function patchReportText(rep, ix) {
     const L = (id) => (ix ? `${id} ${ix.label(id)}` : id), list = (xs) => (xs && xs.length ? xs.map(L).join(', ') : '—');
@@ -1578,7 +1584,7 @@
       `| Impact · 관련 한계 | ${rep.impact.limitations.map((l) => `${l.id}(${l.before || 'new'}→${l.after})`).join(', ') || '—'} |`,
       `| Impact · 상태가 바뀐 한계 | ${rep.impact.limitation_status_changed.map((l) => `${l.id}(${l.before || 'new'}→${l.after || 'removed'})`).join(', ') || '—'} |`,
       `| Impact · 다시 만들 생성물 | ${rep.impact.regenerate.join(', ')} |`,
-      `| Verification | 관문 ${rep.verification.gate} · 새 오류 ${rep.verification.new_errors} · 새 경고 ${rep.verification.new_warnings} · 전체 오류 ${rep.verification.errors} · 경고 ${rep.verification.warnings} · 미등록 한계 후보 ${rep.verification.undetected_gaps} |`];
+      `| Verification | 관문 ${rep.verification.gate} · 새 오류 ${rep.verification.new_errors} · 새 경고 ${rep.verification.new_warnings} · 전체 오류 ${rep.verification.errors} · 경고 ${rep.verification.warnings} · 미등록 한계 후보 ${rep.verification.undetected_gaps}${rep.verification.augment_candidates != null ? ` · 자동 보강 후보 ${rep.verification.augment_candidates} (augment plan)` : ''} |`];
     return out.join('\n');
   }
 
@@ -2787,5 +2793,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
     MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget,
     kineticIssues, rateAt, envShift, thermoLoops, defaultTier, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS,
-    modulationIndex, hillFactor, SAT_K, moietyOf, moietyImbalance, entityTally, supplyRules, rngOf, binomial, gapSuggest, NA, VOL };
+    modulationIndex, hillFactor, SAT_K, augmentCandidates, moietyOf, moietyImbalance, entityTally, supplyRules, rngOf, binomial, gapSuggest, NA, VOL };
 });

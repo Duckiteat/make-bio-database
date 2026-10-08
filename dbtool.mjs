@@ -23,6 +23,9 @@
 //   node dbtool.mjs textbook  [--write | --check]            교과서 부록(docs/textbook/90-부록-자동생성.md) 생성 / 최신·파일 분류 검사
 //   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N] [--until-death] [--window s] [--death-frac f]
 //                                                           속도 기반 시뮬레이션 (유한 대사물 저장소·공급·분해·매 Δt 질량 감사·정지까지 실행·사후 분석)
+//   node dbtool.mjs augment   plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync]
+//                                                           자동 보강 고리: unmapped·Identity_Gap·asserted 외부 ID → UniProt·ChEBI 원본(data/fetched/) → 확인 → 패치 → 관문 → CHANGES.md
+//                                                           네트워크가 막히면 data/fetched/RETRIEVAL_TASKS.md 에 수동 수집 과제를 쓴다
 //   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]
 //                                                           세포 운명 (v9): 신호 → 대사 → 전사 인자 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
@@ -30,6 +33,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative } from 'node:path';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -211,6 +215,50 @@ switch (cmd) {
     if (opt.until && (/✗/.test(txt))) process.exit(1);
     break;
   }
+  case 'augment': {
+    const AUG = createRequire(import.meta.url)('./engine/augment.js');
+    const sub = args[0] || 'plan', date = new Date().toISOString().slice(0, 10), dir = flags.dir && flags.dir !== true ? flags.dir : AUG.INBOX;
+    const tasksMd = join(HERE, dir, 'RETRIEVAL_TASKS.md');
+    const table = (tasks) => { for (const t of tasks) console.log(`  ${t.present ? '✓' : '·'} ${t.sense} ${t.label} — ${t.kind} ${t.key}: ${t.why}${t.gaps.length ? ` [${t.gaps.join(', ')}]` : ''}`); };
+    if (sub === 'plan' || sub === 'fetch') {
+      let tasks = AUG.plan(loadDB(), { dir });
+      console.log(`자동 보강 과제 ${tasks.length}개 (수신함 ${dir}: 있음 ${tasks.filter((t) => t.present).length})`);
+      let results = null;
+      if (sub === 'fetch') {
+        results = AUG.fetchTasks(tasks, { refetch: !!flags.refetch });
+        const ok = results.filter((r) => r.ok && !r.cached).length, bad = results.filter((r) => !r.ok);
+        console.log(`받음 ${ok} · 이미 있음 ${results.filter((r) => r.cached).length} · 실패 ${bad.length}${bad.length ? ` (${[...new Set(bad.map((r) => r.error))].join(' · ')})` : ''}`);
+        tasks = AUG.plan(loadDB(), { dir }); // 검색 결과가 생기면 다음 단계 과제가 늘어난다
+      }
+      table(tasks);
+      if (flags.write || sub === 'fetch') { mkdirSync(dirname(tasksMd), { recursive: true }); writeFileSync(tasksMd, AUG.retrievalTasksMarkdown(tasks, results, date)); console.log('수동 수집 과제: ' + rel(tasksMd) + (tasks.some((t) => !t.present) ? ` — 원본에 닿지 못한 ${tasks.filter((t) => !t.present).length}개는 이 파일대로 받아 수신함에 두고 'augment build'` : '')); }
+      break;
+    }
+    if (sub === 'build' || sub === 'apply') {
+      const db = loadDB(), b = AUG.build(db, { dir, sync: !!flags.sync, date });
+      const mark = { verified: '✓', rejected: '✗', ambiguous: '?', candidate: '→', missing: '·', unreadable: '!' };
+      for (const r of b.rows) console.log(`  ${mark[r.outcome] || ' '} ${r.sense} ${r.label} [${r.kind} ${r.key}] ${r.outcome}: ${r.detail}`);
+      if (b.empty) { console.log('바꿀 것이 없음 — 수신함 파일을 더하거나 (augment plan --write) 과제를 확인할 것'); process.exit(b.rows.some((r) => r.outcome === 'rejected') ? 1 : 0); }
+      const out = flags.out && flags.out !== true ? flags.out : join(tmpdir(), `augment-${date}.json`);
+      writeFileSync(out, JSON.stringify(b.patch, null, 2) + '\n');
+      const res = DefDB.ingest(db, b.patch), g = DefDB.gate(db, res, {}), rep = DefDB.patchReport(db, res, b.patch, g);
+      printIssues(g.errors, g.warnings);
+      console.log(DefDB.patchReportText(rep, DefDB.index(res.db)));
+      console.log('패치: ' + out);
+      if (!g.ok) die('관문 거부 — 패치를 저장하지 않음');
+      if (rep.verification.undetected_gaps) die(`등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — 저장하지 않음`);
+      if (sub === 'build') { console.log(`관문 통과 — 병합하려면: node dbtool.mjs augment apply${flags.sync ? ' --sync' : ''}`); break; }
+      mkdirSync(PATCH_DIR, { recursive: true });
+      const recPath = join(PATCH_DIR, `${stamp()}-auto-augmentation.json`), r = res.report;
+      writeFileSync(recPath, JSON.stringify({ applied_at: new Date().toISOString(), result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch }, null, 2) + '\n');
+      writeFileSync(DB_PATH, JSON.stringify(res.db, null, 2) + '\n');
+      const ch = join(HERE, 'CHANGES.md'), txt = readFileSync(ch, 'utf8'), anchor = '|---|---|---|---|---|\n', i = txt.indexOf(anchor) + anchor.length;
+      writeFileSync(ch, txt.slice(0, i) + AUG.changesRow(rel(recPath), rep, b.rows, date) + txt.slice(i));
+      console.log(`기록: ${rel(recPath)}\n저장: ${rel(DB_PATH)}\nCHANGES.md 에 한 행 추가 — limitations --write 와 textbook --write 로 생성물을 갱신할 것`);
+      break;
+    }
+    die('사용법: augment plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync]');
+  }
   case 'fate': {
     if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]');
     const db = loadDB(), x = DefDB.resolveRef(DefDB.index(db), args[0]);
@@ -227,7 +275,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | augment | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

@@ -44,6 +44,10 @@
     "config": {
       "label": "설정",
       "rule": "저장소 도구 설정."
+    },
+    "evidence": {
+      "label": "외부 원본 사본 (수신함)",
+      "rule": "권위 있는 원본(UniProt·ChEBI)에서 받은 응답을 그대로 둔 사본. 해석만 하고 실행하지 않으며 고치지 않는다. 패치의 xref note 가 파일 경로와 sha256 으로 가리킨다 — 지우면 출처 추적이 끊긴다."
     }
   },
   "files": [
@@ -374,6 +378,54 @@
       "writer": "사람·AI",
       "readers": "git",
       "interpret": ""
+    },
+    {
+      "path": "engine/augment.js",
+      "class": "interface",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool.mjs augment, tests",
+      "interpret": "자동 보강 고리 — 과제(plan)·받기(fetch, curl)·해석(UniProt JSON/FASTA/평문, ChEBI JSON)·확인(번호·종·이름·중복·화학식 ↔ 부분 구조 원자 수)·패치·CHANGES 행. 규칙은 core.js 관문이 정한다."
+    },
+    {
+      "path": "data/fetched/README.md",
+      "class": "spec",
+      "format": "Markdown",
+      "writer": "사람·AI",
+      "readers": "사람·AI",
+      "interpret": "수신함 배치와 수동 수집 방법."
+    },
+    {
+      "path": "data/fetched/RETRIEVAL_TASKS.md",
+      "class": "generated",
+      "format": "Markdown 표",
+      "writer": "node dbtool.mjs augment plan --write | fetch",
+      "readers": "사람(원본을 받아 줄 사람)",
+      "interpret": "원본에 닿지 못한 과제 목록 — 받을 주소·저장 위치·관련 한계·간이 JSON 형식."
+    },
+    {
+      "path": "data/fetched/*/*",
+      "class": "evidence",
+      "format": "원본 응답 (JSON · FASTA · UniProt 평문) 또는 간이 JSON",
+      "writer": "augment fetch (curl) 또는 사람(수동 수집)",
+      "readers": "engine/augment.js build",
+      "interpret": "과제 하나에 파일 하나: uniprot/{번호}, uniprot-search/{D…}, chebi/{CHEBI_번호}, chebi-search/{D…}."
+    },
+    {
+      "path": "tests/fixtures/augment/README.md",
+      "class": "verification",
+      "format": "Markdown",
+      "writer": "사람·AI",
+      "readers": "사람",
+      "interpret": "합성 시험 자료임을 밝힘 — 실제 원본 값이 아님."
+    },
+    {
+      "path": "tests/fixtures/augment/*/*",
+      "class": "verification",
+      "format": "합성 JSON · FASTA · 평문",
+      "writer": "사람·AI",
+      "readers": "tests/rules.test.mjs",
+      "interpret": "자동 보강 확인 단계의 경로(검증·거부·모호·화학식 불일치·중복)마다 하나. data/db.json 에 들어가지 않는다."
     }
   ]
 }

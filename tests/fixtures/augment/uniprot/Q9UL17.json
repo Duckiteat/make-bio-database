@@ -1,0 +1,37 @@
+{
+ "_fixture": "합성 시험 자료 — 실제 UniProt·ChEBI 값이 아님 (서열·지문은 가짜). tests/rules.test.mjs 의 자동 보강 시험 전용, data/db.json 에 들어가지 않는다.",
+ "primaryAccession": "Q9UL17",
+ "uniProtkbId": "TBX21_HUMAN",
+ "entryType": "UniProtKB reviewed (Swiss-Prot)",
+ "organism": {
+  "scientificName": "Homo sapiens",
+  "taxonId": 9606
+ },
+ "genes": [
+  {
+   "geneName": {
+    "value": "TBX21"
+   },
+   "synonyms": [
+    {
+     "value": "TBET"
+    }
+   ]
+  }
+ ],
+ "proteinDescription": {
+  "recommendedName": {
+   "fullName": {
+    "value": "T-box transcription factor TBX21"
+   }
+  }
+ },
+ "sequence": {
+  "value": "MSEQFIXTUREAAAAAAAAK",
+  "length": 20
+ },
+ "entryAudit": {
+  "entryVersion": 1,
+  "sequenceVersion": 1
+ }
+}

@@ -1,0 +1,9 @@
+ID   IL15_HUMAN              Reviewed;          12 AA.
+AC   P40933;
+DE   RecName: Full=Interleukin-15;
+GN   Name=IL15;
+OS   Homo sapiens (Human).
+OX   NCBI_TaxID=9606;
+SQ   SEQUENCE   12 AA;
+     MSEQFIXTURE A
+//

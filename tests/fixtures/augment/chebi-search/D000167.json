@@ -1,0 +1,15 @@
+{
+ "_fixture": "합성 시험 자료 — 실제 UniProt·ChEBI 값이 아님 (서열·지문은 가짜). tests/rules.test.mjs 의 자동 보강 시험 전용, data/db.json 에 들어가지 않는다.",
+ "results": [
+  {
+   "id": "CHEBI:15361",
+   "name": "pyruvate",
+   "formula": "C3H3O3"
+  },
+  {
+   "id": "CHEBI:32816",
+   "name": "pyruvic acid",
+   "formula": "C3H4O3"
+  }
+ ]
+}

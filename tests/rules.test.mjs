@@ -1057,3 +1057,51 @@ test('v9 Fate-Test: 계통 충실도·경쟁·결정 비가역성(관문 충격 
   const r = FSUITE.run({ quiet: true, quick: true });
   assert.ok(r.pass, r.checks.filter((c) => !c.ok).map((c) => `${c.group} ${c.name}: ${c.detail}`).join('\n'));
 });
+
+// ===== 자동 보강 고리 (UniProt·ChEBI) — 합성 시험 자료 tests/fixtures/augment =====
+const AUG = createRequire(import.meta.url)('../engine/augment.js');
+const FIX = new URL('./fixtures/augment', import.meta.url).pathname;
+test('자동 보강 plan: unmapped → 이름 검색, asserted UniProt·ChEBI → 직접 조회, 서열 길이 한계 연결, 막히면 수동 수집 과제', () => {
+  const t = AUG.plan(BASE, { dir: '/nonexistent' });
+  const k = (kind, key) => t.find((x) => x.kind === kind && x.key === key);
+  assert.ok(k('uniprot_entry', 'Q9UL17') && k('uniprot_entry', 'Q9UL17').gaps.includes('L000058'));
+  assert.ok(k('chebi_entity', 'CHEBI:15422') && k('chebi_search', id('피루브산')) && !t.some((x) => x.kind === 'chebi_search' && x.sense === id('ATP')));
+  assert.equal(DefDB.augmentCandidates(BASE), new Set(t.map((x) => x.sense)).size);
+  const md = AUG.retrievalTasksMarkdown(t, [], '2026-10-08');
+  assert.ok(md.includes('rest.uniprot.org/uniprotkb/Q9UL17.json') && md.includes('/nonexistent/uniprot/Q9UL17.json') && md.split('\n').filter((l) => /^\| \d+ \|/.test(l)).length === t.length);
+});
+test('자동 보강 해석: UniProt JSON·FASTA·평문, ChEBI 단순·OLS·중첩 JSON, 화학식 원자 수', () => {
+  const rd = (f) => readFileSync(`${FIX}/${f}`, 'utf8');
+  assert.equal(AUG.parseUniProt(rd('uniprot/Q9UL17.json'), 'x').genes[0], 'TBX21');
+  assert.deepEqual([AUG.parseUniProt(rd('uniprot/O95936.fasta'), 'x').taxon, AUG.parseUniProt(rd('uniprot/P40933.txt'), 'x').genes], ['10090', ['IL15']]);
+  assert.equal(AUG.parseChEBI(rd('chebi/CHEBI_15525.json')).formula, 'C37H66N7O17P3S');
+  assert.equal(AUG.parseChEBI(rd('chebi/CHEBI_15361.json')).charge, -1);
+  assert.deepEqual(AUG.parseChEBISearch(rd('chebi-search/D000169.json')).candidates.map((c) => c.id), ['CHEBI:15525', 'CHEBI:57379']);
+  assert.deepEqual(AUG.parseFormula('C21H36N7O16P3S'), { C: 21, H: 36, N: 7, O: 16, P: 3, S: 1 });
+  assert.equal(AUG.parseFormula('(C6H10O5)n'), null);
+  assert.equal(AUG.formulaCheck(BASE, id('아세틸-CoA'), 'C23H38N7O17P3S').status, 'ok');
+  assert.equal(AUG.formulaCheck(BASE, id('ATP'), 'C10H16N5O13P2').status, 'mismatch');
+});
+test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, 종·번호·이름·화학식·중복 위반은 거부, 모호하면 unmapped 유지 + 후보 메모, asserted 는 덮어쓰지 않음', () => {
+  const b = AUG.build(BASE, { dir: FIX, date: '2026-10-08' }), out = (s, kind) => b.rows.find((r) => r.sense === id(s) && (!kind || r.kind === kind)).outcome;
+  assert.equal(out('T-bet'), 'verified'); assert.equal(out('IL-15'), 'verified');
+  assert.equal(out('Eomes'), 'rejected', '종 불일치 (생쥐)');
+  assert.equal(out('IL-12 p35'), 'rejected', '번호 불일치 — sync 없이는 바꾸지 않음');
+  assert.equal(out('ADP', 'chebi_entity'), 'rejected', '화학식 P3 ≠ 부분 구조 P2');
+  assert.equal(out('에피네프린', 'chebi_entity'), 'rejected', '이름 불일치 + 이미 ATP 에 있는 번호');
+  assert.equal(out('젖산'), 'ambiguous');
+  const res = DefDB.merge(BASE, b.patch), g = DefDB.gate(BASE, res, {});
+  assert.ok(g.ok, msgs(g));
+  const T = res.db.senses[id('T-bet')], up = T.xrefs.find((x) => x.db === 'UniProt');
+  assert.ok(up.status === 'verified' && /UniProtKB json 조회 2026-10-08/.test(up.note) && /sha256:/.test(up.note));
+  assert.ok(T.obs.some((o) => o.property === 'sequence_length' && o.value === 20 && o.evidence.level === 'computed') && T.fingerprint.scheme === 'SEQ_SHA256' && T.fingerprint.status === 'computed');
+  assert.equal(res.db.senses[id('IL-12 p35')].xrefs[0].id, 'P29459', 'asserted 값 유지');
+  const P = res.db.senses[id('피루브산')];
+  assert.ok(!P.unmapped && P.xrefs.some((x) => x.db === 'ChEBI' && x.id === 'CHEBI:15361' && x.status === 'verified'));
+  assert.equal(DefDB.limitationStatus(res.db, res.db.limitations.L000064).status, 'resolved');
+  assert.ok(res.db.senses[id('젖산')].unmapped && /모호/.test(res.db.limitations.L000065.note));
+  assert.ok(res.db.senses[id('팔미토일-CoA')].xrefs.some((x) => x.id === 'CHEBI:15525'), 'OLS 형식 + 부분 구조 원자 수 일치 (C37 N7 P3 S1)');
+  assert.ok(DefDB.augmentCandidates(res.db) < DefDB.augmentCandidates(BASE));
+  const s = AUG.build(BASE, { dir: FIX, date: '2026-10-08', sync: true });
+  assert.notEqual(s.rows.find((r) => r.sense === id('IL-12 p35')).outcome, 'verified', 'sync 여도 이름·종 확인은 그대로 (번호만 바뀐 응답은 이름 확인이 없으면 거부)');
+});

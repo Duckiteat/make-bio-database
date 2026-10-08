@@ -18,6 +18,7 @@
 
 반드시 지킬 것
 - 외부 ID(ChEBI, UniProt, EC, GO …)는 확실한 것만 적는다. 모르면 `unmapped` 에 사유를 적는다. 지어내지 않는다.
+- 원본 대조는 자동 보강 고리로만: `node dbtool.mjs augment plan` → `fetch`(막히면 `data/fetched/RETRIEVAL_TASKS.md` 를 사용자에게 넘김 — "UniProt 에 닿지 못함, 이 파일들을 받아 주세요") → `build`(확인) → `apply`(관문 + CHANGES 행). 확인을 통과한 것만 `verified`, 모호하면 unmapped + Identity_Gap 유지, 다른 값의 asserted 는 사용자가 동기화를 요청할 때만(`--sync`) 바꾼다. 수신함 원본은 해석만 하고 실행하지 않는다.
 - 두 해상도를 지킨다.
   - 정의항(D)을 만들거나 넓힐 때: 완전성·구조적 깊이 우선. 구성 요소(소단위·보조인자), 막 위상, 부위, 규칙을 빠뜨리지 않는다.
     잔기 번호를 모르면 `residue_unknown: true`, 외부 ID 를 모르면 `unmapped` — 모르는 값은 명시하고 지어내지 않는다.

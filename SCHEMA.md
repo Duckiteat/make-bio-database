@@ -369,6 +369,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 형식은 `vocab.js` 의 정규식으로 검사한다. 같은 외부 ID 는 정의항 하나에만 붙는다.
 - **추측 금지**: 필수 ID 를 확실히 모르면 `unmapped` 에 사유를 적는다. 사유가 있으면 통과하고 `audit` 목록에 남는다.
 - `status`: `asserted`(적었지만 원본과 대조 안 함) / `verified`(원본과 대조함).
+- **원본 대조 = 자동 보강 고리** (`node dbtool.mjs augment plan | fetch | build | apply`, `engine/augment.js`): 원본 응답을 `data/fetched/` 에 그대로 두고, 번호·종(기준 종)·이름(개념 이름·별칭)·중복·화학식(C·N·P·S 원자 수 = 선언된 부분 구조의 원자 수)을 확인한 것만 `verified` 로 올리며 `note` 에 조회 날짜·파일·sha256 을 적는다. 함께 넣는 것: 단백질 `sequence_length` 관찰(근거 computed)·`SEQ_SHA256` 지문(computed), 저분자 InChIKey(verified). 이름 검색은 이름이 정확히 하나로 맞을 때만 고르고, 아니면 unmapped 를 두고 Identity_Gap 의 `note` 에 후보를 적는다. 다른 값의 asserted 는 `--sync` 없이는 바꾸지 않는다. 네트워크가 막히면 `data/fetched/RETRIEVAL_TASKS.md`(수동 수집 과제). 모든 Patch Report 의 Verification 에 '자동 보강 후보' 수가 나온다.
 - 효소 번호는 활성을 가진 정의항에 둔다(예: PKA 의 EC 는 전효소가 아니라 촉매 소단위에).
 
 ## 10. 구조 지문 (fingerprint)
@@ -428,6 +429,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 9 (확장) | 자동 보강 고리: xref `note` 에 원본 출처(조회 날짜·수신함 파일·sha256), 확인 규칙(번호·종·이름·중복·화학식 ↔ 부분 구조 원자 수), 수신함 `data/fetched/`, Patch Report 의 자동 보강 후보 수. 형식 버전 그대로 |
 | 2026-10-08 | 9 | 세포 운명 층: kind `cell_state`(signature · metabolome · transitions), 규칙 종류 `modulation`(대상 규칙의 힐 배율 — 신호 → 대사, 대사 → 유전자 조절), 속도 법칙 `hill`, 공급 소비 `saturating`, 외부 ID `CL`, 한계 종류 `Regulatory_Gap`, 어휘 `signatureLevels`·`commitmentCriteria`·세포 `cd8_t_cell`(그리고 `ruleTypes` 에 빠져 있던 degradation). `simulateRate` 가 조절 배율을 적용. 실행 층 `engine/fate_engine.js`(다중 속도 적분·P5 관문·결정 탐침·분화 정지 사후 분석). 데이터: CD8 T 세포 효과기/기억 전구 프로그램(정의항 16·조절 규칙 12·공급 규칙 6·분해 규칙 3·세포 상태 3), 회로 순 반응, 한계 20건(L000049–L000068) (`migrations/008-v8-to-v9-cell-fate.mjs`) |
 | 2026-10-08 | 8 | 3 층 다중 규모 엔진: 정의항 `tier`(T1/T2, 마이그레이션이 kind·쓰임으로 배정: T1 32, T2 86), 관찰 diffusion_coefficient·pH·ionic_strength·relative_permittivity(위치 필수, SI), kinetics k0·dG_act·dG0·env(전이 상태 이론·미시적 가역성 검사), `rateAt`·`thermoLoops`·AUDIT_THERMO, 시뮬레이터의 구획 환경 반영, 어휘 tiers·thermo. 실행 층 `engine/hmse.js`(정수 원장·인접 경계 거래·이동량 표본·영역 점수·히스테리시스·보존적 투영), 스키마 `schemas/v8`, 인터페이스 `engine/interfaces/hmse.{hpp,py}`. 데이터: 한계 5건(L000044–L000048) (`migrations/007-v7-to-v8-three-tier.mjs`) |
 | 2026-10-08 | 7 (확장 2) | Survival-to-Exhaustion: 단계 순환·완료 바퀴 수, 정지 감지(`until_death`·`window`·`death_frac`), 사후 분석(`postMortem`), 적분 안정성 감사, 한계 종류 `Resource_Gap`, 변화 종류 축합·수화, Patch Report 하류에 공급 규칙의 저장소 도달 포함. 데이터: 시트르산 회로(경로 1·효소 8·단계 8·대사물 15·부분 구조 4·재생 경로 3·CO₂ 배출), 기질 NDPK 공급 규칙, 한계 10건(L000034–L000043). 형식 버전 그대로 |
