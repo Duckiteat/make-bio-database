@@ -2,7 +2,7 @@
 
 데이터는 사람이 아니라 AI가 넣는다. 저장소는 `data/db.json`, 병합 기록은 `data/patches/`.
 모든 항목은 고정 번호(개념 T…, 뜻 D…, 단계 S…)로 식별되고 연결도 번호로만 건다. 정의항의 하위 항목은 `D…/site/키`·`D…/rule/키`, 묶음은 `D…|부위:특징|위치`.
-규칙 전체는 `SCHEMA.md`. 명령은 저장소 최상위에서 실행한다.
+규칙 전체는 `SCHEMA.md`, 구조·저장·알고리즘·상호작용의 설명은 교과서 `docs/textbook/00-목차.md`. 명령은 저장소 최상위에서 실행한다.
 
 ## 데이터를 넣을 때
 
@@ -46,3 +46,4 @@
 - 바꾼 뒤 `node --test tests/*.test.mjs` 와 `node dbtool.mjs validate` 가 모두 통과해야 한다. 새 규칙에는 거부 테스트를 추가한다.
 - 형식이 바뀌면 `migrations/` 에 변환 스크립트를 추가하고 `SCHEMA.md` 변경 기록을 갱신한다.
 - `index.html` 은 `viewer.html` 의 복사본이다. 화면을 고치면 둘 다 맞춘다.
+- 교과서: 알고리즘·형식·상호작용을 바꾸면 `docs/textbook/` 해당 장을 같은 커밋에서 고친다. 지금 값은 손으로 쓰지 않고 `node dbtool.mjs textbook --write` 로 부록을 만든다. 파일을 더하거나 옮기면 `docs/textbook/storage-map.json` 에 분류를 적는다 — `textbook --check` 가 분류되지 않은 파일을 잡는다.

@@ -18,10 +18,11 @@
 //   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(R0 위상·R1 부위·R2 구조)와 전환 문턱
 //   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001]
 //                                                           감사: 스키마·해상도 일관성·속도 무결성·질량 보존 (Audit Error 가 있으면 종료 코드 1)
+//   node dbtool.mjs textbook  [--write | --check]            교과서 부록(docs/textbook/90-부록-자동생성.md) 생성 / 최신·파일 분류 검사
 //   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001]   속도 기반 시뮬레이션
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,8 +53,8 @@ switch (cmd) {
     const sum = (f) => senses.reduce((n, d) => n + f(d), 0);
     const links = sum((d) => d.desc.reduce((m, x) => m + x.links.length, 0)), sites = sum((d) => Object.keys(d.site).length), rules = sum((d) => d.rule.length);
     const r = DefDB.validate(db), nx = db.meta.next;
-    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 부위 ${sites}, 규칙 ${rules}, 관찰 ${sum((d) => d.obs.length)}, 기전 단계 ${Object.keys(db.steps).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
-    console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')}`);
+    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 부위 ${sites}, 규칙 ${rules}, 관찰 ${sum((d) => d.obs.length)}, 기전 단계 ${Object.keys(db.steps).length}, 한계 ${Object.keys(db.limitations).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
+    console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')} L${String(nx.L).padStart(6, '0')}`);
     break;
   }
   case 'validate': {
@@ -141,6 +142,25 @@ switch (cmd) {
     console.log(DefDB.patternText(loadDB(), args[0]));
     break;
   }
+  case 'textbook': {
+    const dir = join(HERE, 'docs', 'textbook'), file = join(dir, '90-부록-자동생성.md');
+    const map = readJSON(join(dir, 'storage-map.json'));
+    // 파일 분류 검사: 저장소의 모든 파일이 storage-map 의 경로 패턴 하나에 맞아야 한다
+    const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(HERE, p).split('\\').join('/')]; });
+    const re = (g) => new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*') + '$');
+    const pats = map.files.map((f) => ({ f, re: re(f.path) }));
+    const unclassified = walk(HERE).filter((p) => !pats.some((x) => x.re.test(p)));
+    for (const f of map.files) if (!map.classes[f.class]) die(`storage-map: '${f.path}' 의 분류 '${f.class}' 가 classes 에 없음`);
+    const md = textbookAppendix(loadDB(), map);
+    if (flags.write) { mkdirSync(dir, { recursive: true }); writeFileSync(file, md); console.log('저장: ' + rel(file)); }
+    if (unclassified.length) die('storage-map.json 에 분류되지 않은 파일:\n' + unclassified.map((p) => '  ' + p).join('\n'));
+    if (flags.check) {
+      if ((existsSync(file) ? readFileSync(file, 'utf8') : '') !== md) die('교과서 부록이 현재 코드·데이터와 다름 — node dbtool.mjs textbook --write');
+      console.log('교과서 부록 최신, 모든 파일 분류됨');
+    }
+    if (!flags.write && !flags.check) console.log(md);
+    break;
+  }
   case 'resolution': {
     if (!args[0]) die('사용법: resolution <경로>');
     console.log(DefDB.resolutionText(loadDB(), args[0]));
@@ -174,5 +194,77 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | resolution | audit-run | pattern | limitations | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+}
+
+// ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====
+function textbookAppendix(db, map) {
+  const V = DefDB.VOCAB, ix = DefDB.index(db), out = [], cell = (x) => String(x == null ? '' : x).replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  const T = (head, rows) => [`| ${head.join(' | ')} |`, `|${head.map(() => '---').join('|')}|`, ...rows.map((r) => `| ${r.map(cell).join(' | ')} |`)];
+  out.push('# 부록 — 자동 생성 (지금 값)', '', '> `node dbtool.mjs textbook --write` 로 만든다. 손으로 고치지 말 것. CI 가 `--check` 로 최신인지 본다.', '');
+  // 1. 규모
+  const senses = Object.values(db.senses), rules = senses.flatMap((d) => d.rule), sites = senses.flatMap((d) => Object.values(d.site));
+  const byKind = {}; for (const d of senses) byKind[d.kind] = (byKind[d.kind] || 0) + 1;
+  const ev = {}; for (const d of senses) for (const x of [...d.desc, ...d.rule, ...d.obs]) ev[x.evidence.level] = (ev[x.evidence.level] || 0) + 1;
+  const lim = Object.values(db.limitations).map((l) => [l.type, DefDB.limitationStatus(db, l).status]);
+  out.push('## 9.1 규모', '', ...T(['항목', '값'], [
+    ['형식 버전', db.version], ['개념 T', Object.keys(db.terms).length], ['정의항 D', senses.length], ['기전 단계 S', Object.keys(db.steps).length], ['한계 L', lim.length],
+    ['다음 번호 (meta.next)', Object.entries(db.meta.next).map(([k, v]) => `${k}${String(v).padStart(6, '0')}`).join(' ')],
+    ['정의항 종류별', Object.entries(byKind).sort().map(([k, n]) => `${k} ${n}`).join(', ')],
+    ['부위 / 구조 참조(R2) 있는 부위', `${sites.length} / ${sites.filter((x) => x.structure).length}`],
+    ['규칙 (상태 의미 / 전이 / 속도 상수 있음)', `${rules.filter((r) => r.type === 'meaning').length} / ${rules.filter((r) => r.type === 'transition').length} / ${rules.filter((r) => r.kinetics).length}`],
+    ['관찰(obs)', senses.reduce((n, d) => n + d.obs.length, 0)],
+    ['근거 수준 (설명·규칙·관찰)', Object.entries(ev).sort().map(([k, n]) => `${k} ${n}`).join(', ')],
+    ['한계 (종류: 열림/전체)', Object.keys(V.gapTypes).map((t) => `${t} ${lim.filter(([a, b]) => a === t && b === 'open').length}/${lim.filter(([a]) => a === t).length}`).join(', ')],
+    ['상위 개념(motif)', senses.filter((d) => d.motif).length],
+  ]), '');
+  // 2. 경로
+  out.push('## 9.2 경로 (단계·패턴·해상도)', '');
+  const prow = [];
+  for (const [pid, d] of ix.senses) if (d.kind === 'pathway') {
+    const st = ix.stepsIn(pid); if (!st.length) continue;
+    const m = DefDB.findMotifs(db, pid, ix), rp = DefDB.resolutionPlan(db, pid);
+    const need = [0, 1, 2].map((n) => rp.rows.filter((r) => r.need === n).length);
+    prow.push([`${pid} ${ix.label(pid)}`, st.length, m.trajectory.join(' → '), Object.keys(m.found).join(', '), `R0 ${need[0]} · R1 ${need[1]} · R2 ${need[2]}`]);
+  }
+  out.push(...T(['경로', '단계', '위치 궤적', '찾은 패턴', '필요 해상도'], prow), '');
+  // 3. 저장 지도
+  out.push('## 9.3 저장 지도 (docs/textbook/storage-map.json)', '');
+  for (const [k, c] of Object.entries(map.classes)) {
+    const fs = map.files.filter((f) => f.class === k); if (!fs.length) continue;
+    out.push(`### ${c.label} (\`${k}\`)`, '', c.rule, '', ...T(['경로', '형식', '쓰는 쪽', '읽는 쪽', '해석'], fs.map((f) => [`\`${f.path}\``, f.format, f.writer, f.readers, f.interpret])), '');
+  }
+  // 4. 식별자
+  out.push('## 9.4 식별자 문법', '', ...T(['형태', '예', '뜻'], [
+    ['T + 6자리', 'T000042', '개념(피정의항, 이름 묶음)'], ['D + 6자리', 'D000044', '정의항(뜻, 원천)'], ['S + 6자리', 'S000009', '기전 단계'], ['L + 6자리', 'L000004', '한계'],
+    ['D…/site/키', 'D000044/site/reg_phos', '정의항이 소유한 부위'], ['D…/rule/키', 'D000085/rule/ikba_s32', '정의항이 소유한 규칙'], ['D…/desc/n · D…/obs/n', 'D000044/desc/1', '설명·관찰 (1부터)'],
+    ['D…|부위:특징|…|위치', 'D000044|reg_phos:phosphorylated|cytosol', '묶음 — 번호가 아닌 파생 키, 부위 이름순 정렬'],
+    ['임시 번호 (패치 안에서만)', 'T+1, D+gp, S+1, L+1', '병합 때 실제 번호로 바뀜'], ['이름 주소', '효소#2', '개념 안 뜻 번호'],
+  ]), '', `예약 문자(이름에 금지): \`# @ | /\` · 부위·규칙 키 형식: \`${V.siteKeyPattern}\` · 잔기 형식: \`${V.residuePattern}\``, '');
+  // 5. 어휘
+  out.push('## 9.5 통제 어휘 (vocab.js)', '');
+  const vt = { kinds: 'kind', fields: '분야', locations: '위치', faces: '막 면', associations: '막 결합 방식', siteTypes: '부위 종류', features: '특징', actions: '변화 종류', activity: '활성', effects: '조절 효과', taxa: '종', tissues: '조직', cells: '세포', obsProperties: '관찰 속성', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', resolutionLevels: '해상도', resolutionThresholds: '전환 문턱' };
+  for (const [t, name] of Object.entries(vt)) {
+    out.push(`### ${name} (\`${t}\`)`, '', ...T(['키', '이름', '세부'], Object.entries(V[t]).map(([k, v]) => [k, v.label || v.name || '', [
+      v.aliases && v.aliases.length ? '별칭 ' + v.aliases.join(', ') : '', v.dim ? `${v.dim}${v.parent ? ' ⊂' + v.parent : ''}${v.sides ? ' 면 ' + Object.entries(v.sides).map(([a, b]) => a + '→' + b).join(', ') : ''}` : '',
+      v.effects ? `효과 ${v.effects.join('/')}${v.adds ? ' +' + v.adds : ''}${v.removes ? ' −' + v.removes : ''}` : '', v.species ? `종 ${v.species}` : '', v.participant ? '기전 참여' : '',
+      v.xref && v.xref.required && v.xref.required.length ? `필수 ID ${v.xref.required.join(', ')}` : '', v.required ? `필수 ${v.required.join(', ')}` : '', v.requires ? `필요 ${v.requires}` : '',
+      v.value ? `값 ${Array.isArray(v.value) ? v.value.join('/') : v.value}${v.speciesRequired ? ', 종 필수' : ''}` : '', v.up ? `→ ${v.up}` : '', v.when || v.note || '', v.parent && !v.dim ? `상위 ${v.parent}` : ''].filter(Boolean).join(' · ')])), '');
+  }
+  out.push('### 외부 ID 형식 (`xrefs`)', '', ...T(['종류', '형식(정규식)'], Object.entries(V.xrefs).map(([k, v]) => [k, '`' + v.pattern + '`'])), '');
+  // 6. 엔진 상수
+  out.push('## 9.6 엔진 상수 (core.js)', '', ...T(['이름', '값'], [
+    ['효과 종류 EFFECT_TYPES', DefDB.EFFECT_TYPES.join(', ')], ['동일성 보존 검사 효과 CONSERVING', [...DefDB.CONSERVING].join(', ') + ' (+ partner 가 있는 modify)'],
+    ['속도 상수 필드 KIN_FIELDS', DefDB.KIN_FIELDS.join(', ')], ['정의항 필드 SENSE_FIELDS', DefDB.SENSE_FIELDS.join(', ')],
+    ['관계 REL', Object.entries(DefDB.REL).map(([k, v]) => `${k}(${v.label})`).join(', ')],
+    ['패턴 MOTIFS', Object.entries(DefDB.MOTIFS).map(([k, v]) => `${k}(${v.label})`).join(', ')],
+  ]), '');
+  out.push('### 감사 코드', '', ...T(['코드', '뜻'], [
+    ['AUDIT_SCHEMA', '저장소 검사(validate) 오류'], ['AUDIT_RESOLUTION', '필요 해상도 > 갖춘 해상도, 또는 2D 를 3D 농도로 환산'], ['AUDIT_KINETIC', '속도 무결성(법칙·상수·Kd=k_off/k_on·차수·평형) 위반'],
+    ['AUDIT_KINETIC_GAP', '속도 상수가 없어 즉시(사건 기반)로 처리한 단계'], ['AUDIT_CONCENTRATION', '반응 부피를 몰라 농도 계산 불가'], ['AUDIT_MASS', '질량·동일성 보존 위반 (대사물 풀 출입 반영)'],
+  ]), '');
+  // 7. 명령
+  const cmds = readFileSync(join(HERE, 'dbtool.mjs'), 'utf8').split('\n').filter((l) => l.startsWith('//   node dbtool.mjs') || /^\/\/\s{20,}\S/.test(l)).map((l) => l.replace(/^\/\/\s?/, ''));
+  out.push('## 9.7 명령 (dbtool.mjs 머리 주석)', '', '```', ...cmds, '```', '');
+  return out.join('\n');
 }

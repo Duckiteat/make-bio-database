@@ -1,0 +1,41 @@
+{
+  "_설명": "저장소의 모든 파일이 어느 저장 분류에 속하는지, 누가 어떻게 쓰고 무엇이 읽는지, 어떻게 해석해야 하는지를 적은 지도. node dbtool.mjs textbook --check 가 분류되지 않은 파일을 찾아낸다. 경로의 * 는 한 단계 안의 아무 이름.",
+  "classes": {
+    "source": { "label": "원천 데이터", "rule": "지식의 유일한 원본. 사람·AI 모두 직접 편집하지 않고 패치 → merge 로만 바뀐다. 다른 모든 생성물·출력은 여기서 계산된다." },
+    "log": { "label": "기록 (추가만)", "rule": "병합이 성공할 때마다 하나씩 늘어나는 기록. 고치거나 지우지 않는다. 당시 형식·번호로 적혀 있으므로 지금 형식으로 다시 읽지 않는다 (옛 ID 는 migrations/002-id-map.json)." },
+    "law": { "label": "규칙 정의 (코드가 곧 법)", "rule": "무엇이 허용되는지를 정한다. 사용자 요청이 있을 때만 바꾸고, 바꾸면 테스트·검사·SCHEMA 변경 기록·교과서를 함께 고친다." },
+    "interface": { "label": "도구·화면", "rule": "원천 데이터를 읽고(화면은 브라우저 안에서만 바꿈) 병합을 실행하는 입구. 규칙은 core.js 에만 있고 여기에는 없다." },
+    "generated": { "label": "생성물 (손으로 고치지 않음)", "rule": "명령으로 만들어지는 파일. 고칠 일이 있으면 원천이나 생성기를 고치고 다시 만든다. CI 가 최신인지 검사한다." },
+    "spec": { "label": "명세·안내 문서", "rule": "현재 규칙과 사용법을 사람·AI 가 읽게 쓴 문서. 코드와 어긋나면 코드가 맞고 문서를 고친다." },
+    "history": { "label": "설계 기록", "rule": "결정의 배경. 지금 규칙의 근거가 아니다 — 현재 규칙은 SCHEMA.md 와 이 교과서." },
+    "migration": { "label": "형식 변환 (1회성)", "rule": "형식 버전을 올릴 때 한 번 실행한 스크립트. 다시 실행하지 않고 기록으로 보관한다." },
+    "verification": { "label": "검증", "rule": "규칙이 느슨해지면 실패하도록 만든 테스트와 CI. 새 규칙에는 거부 테스트를 더한다." },
+    "scenario": { "label": "예시·시나리오 (지식 아님)", "rule": "엔진을 시험하거나 패치 작성법을 보여 주는 파일. 데이터베이스에 들어가지 않는다. hypothetical: true 인 값은 결론에 쓰지 않는다." },
+    "config": { "label": "설정", "rule": "저장소 도구 설정." }
+  },
+  "files": [
+    { "path": "data/db.json", "class": "source", "format": "JSON (형식 버전은 version 필드, 지금 6)", "writer": "node dbtool.mjs merge (core.js merge → gate 통과 시)", "readers": "dbtool.mjs 모든 명령, viewer.html, tests", "interpret": "terms(T)·senses(D)·steps(S)·limitations(L) 네 표와 meta.next(다음 번호). 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장." },
+    { "path": "data/patches/*.json", "class": "log", "format": "JSON — 패치 원문 + applied_at + result(added·updated·removed·mapped)", "writer": "node dbtool.mjs merge (--dry 가 아닐 때)", "readers": "사람·AI (이력 추적)", "interpret": "파일 이름 = 병합 시각-원래 이름. result.mapped 로 이름 → 번호가 어떻게 바뀌었는지 볼 수 있다." },
+    { "path": "vocab.js", "class": "law", "format": "UMD JavaScript 객체 (브라우저·Node 공용)", "writer": "사람이 검토 후 (AI 는 사용자 요청이 있을 때만)", "readers": "core.js", "interpret": "통제 어휘 — 이 목록에 없는 값은 거부된다. 별칭은 병합 때 표준 키로 바뀐다. 9장 부록에 현재 값 전부." },
+    { "path": "core.js", "class": "law", "format": "UMD JavaScript (브라우저 DefDB / Node require)", "writer": "사람·AI (사용자 요청 시, 테스트 필수)", "readers": "dbtool.mjs, viewer.html, tests, migrations", "interpret": "정규화·매핑·검사·관문·색인·시뮬레이션·감사의 유일한 구현. 4장이 함수별 설명." },
+    { "path": "dbtool.mjs", "class": "interface", "format": "Node ESM 명령줄", "writer": "사람·AI", "readers": "AI 에이전트, CI", "interpret": "core.js 를 부르는 얇은 껍질. 파일 읽기·쓰기(db.json, patches, limitations.md, 교과서 부록)만 여기서 한다." },
+    { "path": "viewer.html", "class": "interface", "format": "단일 HTML (vocab.js·core.js 를 불러 씀)", "writer": "사람·AI", "readers": "사람 (브라우저)", "interpret": "화면에서 반영한 패치는 브라우저 localStorage 에만 남는다. 저장소에 넣으려면 dbtool merge." },
+    { "path": "index.html", "class": "generated", "format": "viewer.html 의 바이트 단위 복사본", "writer": "cp viewer.html index.html", "readers": "GitHub Pages 등 웹 서버", "interpret": "CI 가 cmp 로 같은지 검사한다." },
+    { "path": "limitations.md", "class": "generated", "format": "Markdown 표", "writer": "node dbtool.mjs limitations --write", "readers": "AI (새 개념 설계 전 필독), 사람", "interpret": "data/db.json 의 limitations 에서 생성. ✓/✗ 는 해결 경로 데이터가 있는지, 상태는 계산값. CI: limitations --check." },
+    { "path": "docs/textbook/90-부록-자동생성.md", "class": "generated", "format": "Markdown", "writer": "node dbtool.mjs textbook --write", "readers": "AI·사람", "interpret": "어휘·통계·명령·감사 코드 같은 '지금 값'. CI: textbook --check." },
+    { "path": "docs/textbook/storage-map.json", "class": "spec", "format": "JSON", "writer": "사람·AI (파일을 더하거나 옮길 때 함께)", "readers": "node dbtool.mjs textbook (분류 검사·부록 생성)", "interpret": "이 지도. 분류되지 않은 파일이 생기면 textbook --check 가 실패한다." },
+    { "path": "docs/textbook/*.md", "class": "spec", "format": "Markdown (장마다 한 파일)", "writer": "사람·AI (코드·형식을 바꿀 때 해당 장도)", "readers": "AI·사람", "interpret": "알고리즘·저장·상호작용·해석·작업 절차의 설명. 00-목차.md 부터." },
+    { "path": "SCHEMA.md", "class": "spec", "format": "Markdown", "writer": "사람·AI (형식·규칙이 바뀔 때 + 변경 기록)", "readers": "AI·사람", "interpret": "필드·규칙의 명세와 형식 변경 기록. 교과서는 '왜·어떻게 돌아가나', SCHEMA 는 '무엇이 허용되나'." },
+    { "path": "CLAUDE.md", "class": "spec", "format": "Markdown", "writer": "사람·AI", "readers": "Claude Code 등 AI 에이전트 (세션 시작 시 자동)", "interpret": "에이전트가 반드시 지킬 작업 규칙의 요약." },
+    { "path": "README.md", "class": "spec", "format": "Markdown", "writer": "사람·AI", "readers": "사람 (첫 화면)", "interpret": "개요와 빠른 사용법." },
+    { "path": "DESIGN-v4.md", "class": "history", "format": "Markdown", "writer": "(동결)", "readers": "사람·AI", "interpret": "v4 설계 배경 — 원천 중심 소유, 위치 의존 기전, 종." },
+    { "path": "FEATURES.md", "class": "history", "format": "Markdown", "writer": "(대부분 동결)", "readers": "사람·AI", "interpret": "특징 층·가설 층 설계. 특징은 v4 에서 부위·규칙·관찰로 구현됨, 가설 층은 미구현." },
+    { "path": "migrations/*.mjs", "class": "migration", "format": "Node ESM", "writer": "형식을 올릴 때 한 번", "readers": "(실행 기록)", "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도." },
+    { "path": "migrations/002-id-map.json", "class": "migration", "format": "JSON", "writer": "migration 002", "readers": "옛 패치 기록을 읽을 때", "interpret": "v2 이름 ID → v3 고정 번호 대응표." },
+    { "path": "tests/rules.test.mjs", "class": "verification", "format": "node:test", "writer": "사람·AI (규칙을 바꿀 때 거부 테스트 추가)", "readers": "node --test tests/*.test.mjs, CI", "interpret": "규칙이 실제로 거부하는지, 시뮬레이션·감사가 기대대로인지." },
+    { "path": ".github/workflows/check.yml", "class": "verification", "format": "GitHub Actions YAML", "writer": "사람·AI", "readers": "GitHub", "interpret": "푸시마다: 테스트, validate, limitations --check, textbook --check, index.html = viewer.html." },
+    { "path": "examples/*.json", "class": "scenario", "format": "패치 JSON", "writer": "사람·AI", "readers": "사람·AI (작성 예), tests", "interpret": "병합되지 않은 예시 패치. pgm-isomerization.json 은 이름·별칭 매핑을 보여 준다." },
+    { "path": "examples/scenarios/*.json", "class": "scenario", "format": "시나리오 JSON (volumes·amounts·kinetics)", "writer": "사람·AI", "readers": "simulate --rate, audit-run, tests", "interpret": "hypothetical: true 면 가상 값 — 엔진 시험용. 결론·데이터베이스에 쓰지 않는다." },
+    { "path": ".gitignore", "class": "config", "format": "gitignore", "writer": "사람·AI", "readers": "git", "interpret": "" }
+  ]
+}

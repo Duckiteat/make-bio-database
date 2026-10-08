@@ -2041,5 +2041,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
     xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
     MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget,
-    kineticIssues, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun };
+    kineticIssues, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS };
 });

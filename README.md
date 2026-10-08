@@ -82,6 +82,9 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - **속도 기반 시뮬레이션** `simulate --rate`: 규칙의 `kinetics`(binding·michaelis_menten·mass_action)를 농도 × 부피로 적분. 시험용 값은 가상 시나리오(`examples/scenarios/`)에만.
 - **감사** `audit-run`: 질량 보존·해상도 일관성·속도 무결성 위반을 Audit Error 로 내고, 한계 등록부에서 교정 제안을 찾는다. 예: Gs 를 AC 의 리간드와 행위자로 두 번 센 단순화를 질량 감사가 찾아 L000018 로 등록.
 
+### 교과서
+구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
+
 ## 매핑 규칙 요약 (자세히는 SCHEMA.md)
 
 - **통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막 결합 방식·부위 종류·특징·변화 종류·활성·종(NCBI)·조직·세포·관찰 속성·근거 수준은 목록의 값만. 별칭은 표준 값으로 바뀐다.
@@ -124,6 +127,7 @@ node dbtool.mjs pattern <경로|상위 개념>              # 상위 패턴·사
 node dbtool.mjs resolution <경로>                     # 혼합 해상도 계획 (R0·R1·R2, 전환 문턱)
 node dbtool.mjs simulate <경로> --rate --scenario s.json   # 속도 기반 시뮬레이션
 node dbtool.mjs audit-run <경로> [--scenario s.json]  # 감사 (Audit Error + 교정 제안)
+node dbtool.mjs textbook [--write|--check]             # 교과서 부록 생성·검사 (파일 분류 포함)
 node dbtool.mjs audit                           # 매핑·채움 현황 (미매핑, 잔기 모름, 지문 없음)
 node dbtool.mjs vocab locations actions         # 통제 어휘 보기
 node --test tests/*.test.mjs                    # 규칙 테스트
@@ -142,6 +146,7 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 | `dbtool.mjs` | 명령줄 도구 |
 | `viewer.html`, `index.html` | 화면 |
 | `SCHEMA.md` | 규칙 명세와 변경 기록 |
+| `docs/textbook/` | 교과서 (00-목차부터), storage-map.json, 자동 생성 부록 |
 | `migrations/` | 형식 변환 스크립트, 옛 ID ↔ 번호 대응표 |
 | `tests/` | 규칙 테스트 |
 | `examples/` | 패치 예시 (`pgm-isomerization.json`: 원천이 규칙을 소유하고 단계는 규칙 참조 + 묶음, 이름·별칭이 번호로 매핑되는 예) |
