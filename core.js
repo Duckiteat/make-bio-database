@@ -1,24 +1,21 @@
-// 맥락 보존형 생명과학 데이터베이스 — 공용 로직 (브라우저 viewer.html 과 Node dbtool.mjs 가 함께 사용)
+// 맥락 보존형 생명과학 데이터베이스 — 공용 로직 (브라우저 viewer.html 과 Node dbtool.mjs 가 함께 사용). 형식 v4.
 //
-// 식별자 (형식 v3): 모든 연결은 의미 없는 고정 번호로만 한다. 이름은 번호에 붙는 꼬리표다.
-//   T000001  피정의항(개념) — names {ko, en}, aliases
-//   D000001  정의항(뜻)     — term(T…), n(그 개념 안의 뜻 번호), kind·field·정의 문장·맥락·연결·외부 ID·지문·상태
-//   D000001@a 상태          — 분자 정의항의 형태(인산화형, GTP 결합형 …)
-//   S000001  기전 단계      — 행위자(상태)가 입력(상태)을 출력(상태)으로 바꾸는 사건
-//   번호는 meta.next 로만 배정하고 다시 쓰지 않는다. 이름을 바꿔도 번호와 연결은 그대로다.
-//   사람·AI 는 "글리코겐 인산화효소", "효소#2", "CHEBI:15422" 처럼 불러도 된다 — 병합 때 번호로 매핑된다.
+// 두 해상도 (DESIGN-v4.md)
+//   지식 해상도 — 정의항(D, 원천): 가능한 가장 높은 구조적 진실. 구성 요소(소단위·보조인자), 막 위상, 부위(종별 잔기 번호, 막 면),
+//                 규칙(상태 의미·전이), 설명, 관찰을 하위 번호로 소유한다. 모르는 값은 지어내지 않고 '모름'으로 명시한다.
+//   시뮬레이션 해상도 — 묶음(B)·단계(S, 결과): 의미 있는 변화만 담는 최소 참조 집합.
+//                 묶음 = "D|부위:특징|…|위치" 파생 키, 단계 = "이 규칙이 이 묶음들에 적용됨". 라벨·설명문을 갖지 않는다.
+//   규칙 — 두 해상도의 다리. 원천의 부위·구조 능력으로부터 결과의 변화량을 정하고, 단계는 규칙에 맞는지 검사된다.
 //
-// 매핑 규칙 (SCHEMA.md)
-//   - 저장된 데이터의 모든 참조는 정의항 번호(D…)다.
-//   - 정규화한 이름(ko·en·별칭) 하나는 개념 하나만 가리킨다. 같은 외부 ID·같은 지문은 정의항 하나에만 붙는다.
-//   - kind·field·action·위치·활성·수식·효과는 vocab.js 의 값만 쓴다.
+// 식별자: 개념 T000001, 정의항 D000001, 단계 S000001 (meta.next 로만 배정, 재사용 금지).
+//   하위 번호: D…/site/키, D…/rule/키, D…/desc/n, D…/obs/n.  묶음 키: D000044|reg_phos:phosphorylated|cytosol
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(require('./vocab.js'));
   else root.DefDB = factory(root.DefDBVocab);
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 3;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 4;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -34,7 +31,8 @@
   const UP_OF = { has_kind: 'is_a', has_part: 'part_of', has_instance: 'instance_of' };
   const AXIS_UP = { kind: '상위 범주', part: '전체', instance: '유형' };
   const AXIS_DOWN = { kind: '하위 범주', part: '구성요소', instance: '사례' };
-  const ROLE = { agent: '촉매/행위자', agent_after: '행위자 상태 변화로 생김', input: '소비(입력)', output: '생성(출력)', activator: '활성화 조절', inhibitor: '억제 조절' };
+  const ROLE = { agent: '촉매/행위자', input: '소비(입력)', output: '생성(출력)', regulator: '조절자' };
+  const EFFECT_TYPES = ['modify', 'convert', 'dissociate', 'associate', 'transport'];
 
   const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/ };
   const fmtId = (p, n) => p + String(n).padStart(6, '0');
@@ -47,17 +45,15 @@
   const str = (s) => (s == null ? '' : String(s)).normalize('NFC').trim();
   const arr = (a) => (Array.isArray(a) ? a : a == null || a === '' ? [] : [a]);
   const uniq = (a) => [...new Set(a)];
-  const RESERVED = /[#@|]/;
-  const KEY_RE = new RegExp(V.stateKeyPattern), RES_RE = new RegExp(V.residuePattern);
+  const RESERVED = /[#@|/]/;
+  const RES_RE = new RegExp(V.residuePattern), SITE_RE = new RegExp(V.siteKeyPattern);
   const MOLECULAR = new Set(V.groups.molecular);
   const isParticipantKind = (k) => !!(V.kinds[k] && V.kinds[k].participant);
 
-  // ===== 이름 정규화: 띄어쓰기·하이픈·괄호·대소문자·그리스 문자 차이를 없앤다 =====
+  // ===== 이름 정규화 =====
   const GREEK = { 'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'ε': 'epsilon', 'κ': 'kappa', 'μ': 'mu' };
   function normName(s) {
-    return String(s || '').normalize('NFKC').toLowerCase()
-      .replace(/[αβγδεκμ]/g, (c) => GREEK[c])
-      .replace(/[\s\-_·•.,'’"()[\]{}/:]/g, '');
+    return String(s || '').normalize('NFKC').toLowerCase().replace(/[αβγδεκμ]/g, (c) => GREEK[c]).replace(/[\s\-_·•.,'’"()[\]{}/:]/g, '');
   }
   function lev(a, b) {
     if (Math.abs(a.length - b.length) > 3) return 99;
@@ -74,13 +70,17 @@
   }
 
   // ===== 통제 어휘 매핑 =====
+  const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
+    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels'];
+  const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
+    locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
+    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준' };
   const VIX = {};
-  for (const table of ['kinds', 'fields', 'compartments', 'actions', 'activity', 'modifications', 'effects']) {
+  for (const table of VTABLES) {
     const m = new Map();
-    for (const [key, v] of Object.entries(V[table])) for (const n of [key, v.label, ...(v.aliases || [])]) if (n) m.set(normName(n), key);
+    for (const [key, v] of Object.entries(V[table])) for (const n of [key, v.label, v.name, ...(v.aliases || [])]) if (n) m.set(normName(n), key);
     VIX[table] = m;
   }
-  const VNAME = { kinds: 'kind', fields: '분야(field)', compartments: '세포 내 위치(compartment)', actions: '변화 종류(action)', activity: '활성(activity)', modifications: '수식(modification)', effects: '조절 효과(effect)' };
   function mapVocab(table, value) {
     const v = str(value);
     if (!v) return { error: `${VNAME[table]} 없음` };
@@ -90,16 +90,49 @@
     const sug = similar(v, Object.keys(V[table]));
     return { error: `${VNAME[table]} '${v}' 은(는) 어휘 목록에 없음 — 가능한 값: ${(sug.length ? sug : Object.keys(V[table])).join(', ')}` };
   }
+  const vlabel = (table, k) => (V[table][k] && (V[table][k].label || k)) || k;
   function parseXref(x) {
     if (isObj(x)) return { db: str(x.db), id: str(x.id), status: str(x.status) || 'asserted', note: str(x.note) || undefined };
     const s = str(x);
-    for (const [db, v] of Object.entries(V.xrefs)) if (new RegExp(v.pattern).test(s)) return { db, id: s, status: 'asserted' };
+    for (const [db, v] of Object.entries(V.xrefs)) if (!['NCBIGene', 'PMID'].includes(db) && new RegExp(v.pattern).test(s)) return { db, id: s, status: 'asserted' };
     const i = s.indexOf(':');
     return i > 0 ? { db: s.slice(0, i), id: s.slice(i + 1), status: 'asserted' } : { db: '', id: s, status: 'asserted' };
   }
   const xrefKey = (x) => `${x.db}:${x.id}`;
   const xrefLabel = (x) => (/^[A-Z]+[: ]/.test(x.id) ? x.id : `${x.db}:${x.id}`);
   const fpKey = (f) => `${f.scheme}:${f.value}`;
+
+  // ===== 위치 계층 =====
+  const locAncestors = (l) => { const out = []; let c = l; while (c && V.locations[c]) { out.push(c); c = V.locations[c].parent; } return out; };
+  const locSides = (l) => { for (const a of locAncestors(l)) if (V.locations[a].sides) return V.locations[a].sides; return {}; };
+  const sameFamily = (a, b) => locAncestors(a).includes(b) || locAncestors(b).includes(a);
+  // 두 위치가 상호작용할 수 있는가. face: 2D 쪽 분자가 그 상호작용에 쓰는 막 면
+  function locCompatible(a, b, face) {
+    const A = V.locations[a], B = V.locations[b];
+    if (!A || !B) return { ok: false, why: '위치 없음' };
+    if (sameFamily(a, b)) return { ok: true };
+    if (A.dim === '3D' && B.dim === '3D') return { ok: false, why: `${A.label}와(과) ${B.label}은(는) 막을 사이에 둔 다른 부피 — 직접 반응할 수 없음(수송 필요)` };
+    if (A.dim === '2D' && B.dim === '2D') return { ok: false, why: `${A.label}와(과) ${B.label}은(는) 다른 막` };
+    const [mem, vol] = A.dim === '2D' ? [a, b] : [b, a];
+    const sides = locSides(mem), allowed = face ? (sides[face] ? [sides[face]] : []) : Object.values(sides);
+    if (locAncestors(vol).some((x) => allowed.includes(x))) return { ok: true };
+    return { ok: false, why: `${V.locations[vol].label}은(는) ${V.locations[mem].label}의 ${face ? vlabel('faces', face) : '어느 면'}과도 맞닿지 않음` };
+  }
+  const taxAncestors = (t) => { const out = []; let c = t; while (c && V.taxa[c]) { out.push(c); c = V.taxa[c].parent; } return out; };
+
+  // ===== 묶음 키 =====
+  function parseBundle(key) {
+    const parts = String(key || '').split('|').map(str);
+    if (parts.length < 2) return { error: `묶음 키 '${key}' 형식 틀림 — 'D…|부위:특징|위치'` };
+    const base = parts[0], location = parts[parts.length - 1], features = [];
+    for (const f of parts.slice(1, -1)) {
+      const i = f.indexOf(':');
+      if (i <= 0) return { error: `묶음 키 '${key}' 의 특징 '${f}' 형식 틀림 — '부위:특징'` };
+      features.push({ site: f.slice(0, i), feature: f.slice(i + 1) });
+    }
+    return { base, features, location };
+  }
+  const bundleKey = (b) => [b.base, ...b.features.map((f) => `${f.site}:${f.feature}`).sort(), b.location].join('|');
 
   // ===== 정규화 =====
   function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1 } }, terms: {}, senses: {}, steps: {} }; }
@@ -114,18 +147,30 @@
     for (const [id, st] of Object.entries(isObj(input.steps) ? input.steps : {})) if (isObj(st)) db.steps[id] = normStep(st);
     return db;
   }
-  function normNames(n) {
-    const o = { ko: str(isObj(n) ? n.ko : n) };
-    if (isObj(n) && str(n.en)) o.en = str(n.en);
-    return o;
-  }
   function normTerm(t) {
-    const o = { names: normNames(t.names), aliases: uniq(arr(t.aliases).map(str).filter(Boolean)) };
+    const n = isObj(t.names) ? t.names : { ko: t.names };
+    const o = { names: { ko: str(n.ko) }, aliases: uniq(arr(t.aliases).map(str).filter(Boolean)) };
+    if (str(n.en)) o.names.en = str(n.en);
     if (str(t.note)) o.note = str(t.note);
     return o;
   }
-  function normSense(d) {
-    const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind), field: str(d.field), text: str(d.text), context: str(d.context), links: [] };
+  const normEvidence = (e) => {
+    if (!isObj(e)) return { level: str(e) || 'asserted' };
+    const o = { level: str(e.level) || 'asserted' };
+    if (e.source) o.source = parseXref(e.source);
+    if (str(e.tool)) o.tool = str(e.tool);
+    if (e.confidence != null && e.confidence !== '') o.confidence = Number(e.confidence);
+    return o;
+  };
+  const normContext = (c) => {
+    if (!isObj(c)) return { scope: str(c) };
+    const o = { scope: str(c.scope) };
+    for (const k of ['species', 'tissue', 'cell', 'condition']) if (str(c[k])) o[k] = str(c[k]);
+    return o;
+  };
+  function normDesc(d) {
+    const o = { text: str(d.text), field: str(d.field), context: normContext(d.context), links: [] };
+    if (str(d.genus)) o.genus = str(d.genus);
     for (const l of arr(d.links)) {
       if (!isObj(l)) continue;
       const nl = { to: str(l.to), rel: str(l.rel) };
@@ -133,44 +178,83 @@
       if (str(l.note)) nl.note = str(l.note);
       o.links.push(nl);
     }
+    o.examples = arr(d.examples).map(str).filter(Boolean);
+    o.evidence = normEvidence(d.evidence);
+    for (const k of ['note', 'source', 'by', 'at']) if (str(d[k])) o[k] = str(d[k]);
+    return o;
+  }
+  function normSite(s) {
+    const o = { type: str(s.type), features: uniq(arr(s.features).map(str).filter(Boolean)) };
+    if (isObj(s.numbering)) { o.numbering = {}; for (const [t, r] of Object.entries(s.numbering)) if (str(r)) o.numbering[str(t)] = str(r); }
+    if (s.residue_unknown) o.residue_unknown = true;
+    for (const k of ['on', 'face', 'ligand', 'note']) if (str(s[k])) o[k] = str(s[k]);
+    if (arr(s.taxa).length) o.taxa = arr(s.taxa).map(str);
+    return o;
+  }
+  function normRule(r) {
+    const o = { id: str(r.id), type: str(r.type) || (r.effect ? 'transition' : 'meaning'), label: str(r.label) };
+    if (o.type === 'meaning') {
+      o.when = {};
+      if (isObj(r.when)) for (const [s, f] of Object.entries(r.when)) o.when[str(s)] = str(f);
+      o.activity = str(r.activity);
+    } else {
+      o.action = str(r.action);
+      o.agent = !!r.agent;
+      if (str(r.via_site)) o.via_site = str(r.via_site);
+      if (str(r.via_component)) o.via_component = str(r.via_component);
+      const e = isObj(r.effect) ? r.effect : {};
+      o.effect = { type: str(e.type) };
+      for (const k of ['target', 'site', 'partner', 'from', 'to', 'complex']) if (str(e[k])) o.effect[k] = str(e[k]);
+      for (const k of ['add', 'remove', 'consumes', 'produces']) if (arr(e[k]).length) o.effect[k] = arr(e[k]).map(str);
+      if (isObj(e.partner_site)) o.effect.partner_site = { component: str(e.partner_site.component), sites: uniq(arr(e.partner_site.sites || e.partner_site.site).map(str).filter(Boolean)) };
+      if (isObj(r.with)) o.with = { consumes: arr(r.with.consumes).map(str), produces: arr(r.with.produces).map(str) };
+      o.regulators = arr(r.regulators).filter(isObj).map((g) => { const x = { ref: str(g.ref), effect: str(g.effect) || 'activates' }; if (str(g.note)) x.note = str(g.note); return x; });
+      if (arr(r.where).length) o.where = arr(r.where).map(str);
+      if (str(r.text)) o.text = str(r.text);
+    }
+    if (arr(r.taxa).length) o.taxa = arr(r.taxa).map(str);
+    o.evidence = normEvidence(r.evidence);
+    return o;
+  }
+  function normObs(b) {
+    const o = { property: str(b.property), value: typeof b.value === 'number' ? b.value : str(b.value), context: normContext(b.context), evidence: normEvidence(b.evidence) };
+    if (str(b.unit)) o.unit = str(b.unit);
+    if (str(b.note)) o.note = str(b.note);
+    return o;
+  }
+  const SENSE_FIELDS = ['kind', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'desc', 'site', 'rule', 'obs', 'distinction', 'note'];
+  function normSense(d) {
+    const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
+    if (str(d.reference_species)) o.reference_species = str(d.reference_species);
+    if (isObj(d.membrane)) { o.membrane = { association: str(d.membrane.association) }; for (const k of ['location', 'side']) if (str(d.membrane[k])) o.membrane[k] = str(d.membrane[k]); }
     o.xrefs = arr(d.xrefs).map(parseXref).map((x) => (x.note ? x : { db: x.db, id: x.id, status: x.status }));
     if (str(d.unmapped)) o.unmapped = str(d.unmapped);
     if (isObj(d.fingerprint) && str(d.fingerprint.value)) o.fingerprint = { scheme: str(d.fingerprint.scheme), value: str(d.fingerprint.value), status: str(d.fingerprint.status) || 'asserted' };
-    o.states = arr(d.states).filter(isObj).map(normState);
-    o.examples = arr(d.examples).map(str).filter(Boolean);
-    for (const k of ['distinction', 'note', 'source', 'by', 'at']) if (str(d[k])) o[k] = str(d[k]);
-    // 패치에서 생략된 필드는 기존 값을 유지하기 위한 표시 (JSON 으로 저장되지 않음)
-    Object.defineProperty(o, '_given', { value: { states: 'states' in d, xrefs: 'xrefs' in d, unmapped: 'unmapped' in d, fingerprint: 'fingerprint' in d } });
+    o.components = arr(d.components).filter(isObj).map((c) => { const x = { ref: str(c.ref), n: parseInt(c.n, 10) || 1 }; if (str(c.role)) x.role = str(c.role); return x; });
+    o.desc = arr(d.desc).filter(isObj).map(normDesc);
+    o.site = {};
+    if (isObj(d.site)) for (const [k, s] of Object.entries(d.site)) if (isObj(s)) o.site[str(k)] = normSite(s);
+    o.rule = arr(d.rule).filter(isObj).map(normRule);
+    o.obs = arr(d.obs).filter(isObj).map(normObs);
+    for (const k of ['distinction', 'note']) if (str(d[k])) o[k] = str(d[k]);
+    Object.defineProperty(o, '_given', { value: Object.fromEntries(SENSE_FIELDS.map((k) => [k, k in d])) });
     return o;
   }
-  function normState(s) {
-    const o = {
-      key: str(s.key), label: str(s.label), aliases: uniq(arr(s.aliases).map(str).filter(Boolean)), activity: str(s.activity) || 'unknown',
-      modifications: arr(s.modifications).filter(isObj).map((m) => (str(m.site) ? { type: str(m.type), site: str(m.site) } : { type: str(m.type) })),
-      bound: arr(s.bound).map(str).filter(Boolean),
-    };
-    if (str(s.note)) o.note = str(s.note);
-    return o;
-  }
+  // 단계 참여자: { b: 묶음 키, n, minor } — 패치에서는 { ref, features, location } 도 받는다(병합 때 키로 바뀜)
   function normPart(p) {
-    if (typeof p === 'string') p = { ref: p };
-    const o = { ref: str(p && p.ref) };
-    if (str(p.state)) o.state = str(p.state);
+    if (typeof p === 'string') return { b: str(p) };
+    if (!isObj(p)) return null;
+    const o = {};
+    if (str(p.b)) o.b = str(p.b);
+    else { o.raw = { ref: str(p.ref), location: str(p.location), features: isObj(p.features) ? Object.entries(p.features).map(([s, f]) => `${s}:${f}`) : arr(p.features).map(str) }; }
+    if (parseInt(p.n, 10) > 1) o.n = parseInt(p.n, 10);
     if (p.minor) o.minor = true;
-    if (str(p.note)) o.note = str(p.note);
     return o;
   }
   function normStep(st) {
-    const o = {
-      label: str(st.label), action: str(st.action), compartment: str(st.compartment), cell: str(st.cell), text: str(st.text), context: str(st.context),
-      agents: arr(st.agents).map((a) => { const x = normPart(a); if (isObj(a) && str(a.after)) x.after = str(a.after); return x; }).filter((x) => x.ref),
-      inputs: arr(st.inputs).map(normPart).filter((x) => x.ref),
-      outputs: arr(st.outputs).map(normPart).filter((x) => x.ref),
-      regulators: arr(st.regulators).map((r) => { const x = normPart(r); x.effect = str(isObj(r) && r.effect) || 'activates'; return x; }).filter((x) => x.ref),
-      part_of: arr(st.part_of).map(str).filter(Boolean),
-    };
-    for (const k of ['cell', 'context']) if (!o[k]) delete o[k];
-    for (const k of ['source', 'by', 'at']) if (str(st[k])) o[k] = str(st[k]);
+    const o = { rule: isObj(st.rule) ? `${str(st.rule.owner)}/rule/${str(st.rule.id)}` : str(st.rule) };
+    for (const k of ['agents', 'inputs', 'outputs', 'regulators']) o[k] = arr(st[k]).map(normPart).filter(Boolean);
+    o.part_of = arr(st.part_of).map(str).filter(Boolean);
     return o;
   }
 
@@ -190,70 +274,84 @@
     }
     for (const ids of termSenses.values()) ids.sort((a, b) => db.senses[a].n - db.senses[b].n);
     const termName = (tid) => (db.terms[tid] ? db.terms[tid].names.ko : tid);
-    // 사람용 꼬리표: 뜻이 하나면 "이름", 여러 개면 "이름#n"
     const label = (id) => {
       if (db.senses[id]) { const d = db.senses[id], many = (termSenses.get(d.term) || []).length > 1; return termName(d.term) + (many ? '#' + d.n : ''); }
       if (db.terms[id]) return termName(id);
-      if (db.steps[id]) return db.steps[id].label;
+      if (db.steps[id]) { const sr = ruleOf(db.steps[id].rule); return sr ? sr.label : id; }
+      const r = ruleOf(id); if (r) return r.label;
       return id;
     };
+    // 개념 연결: 모든 설명의 연결을 모은다
     const edges = [];
-    for (const [id, d] of senses) d.links.forEach((link, i) => {
+    for (const [id, d] of senses) d.desc.forEach((ds, di) => ds.links.forEach((link, i) => {
       const r = REL[link.rel] || {};
-      const e = { from: id, link, i, target: link.to, status: senses.has(link.to) ? 'ok' : 'missing', rel: link.rel, axis: r.axis || null };
+      const e = { from: id, desc: di, link, i, target: link.to, status: senses.has(link.to) ? 'ok' : 'missing', rel: link.rel, axis: r.axis || null };
       if (r.axis) { e.child = r.dir === 'up' ? id : link.to; e.parent = r.dir === 'up' ? link.to : id; }
       edges.push(e);
-    });
+    }));
+    // 구성 요소도 part 축의 위계로 본다 (복합체가 소유하는 구조 관계)
+    for (const [id, d] of senses) for (const c of d.components) edges.push({ from: id, link: { rel: 'has_part', to: c.ref, note: `구성 요소 ×${c.n}${c.role ? ' · ' + c.role : ''}` }, target: c.ref, status: senses.has(c.ref) ? 'ok' : 'missing', rel: 'has_part', axis: 'part', child: c.ref, parent: id, component: true });
     const up = new Map(), down = new Map(), side = new Map();
     for (const e of edges) {
       if (e.axis) { push(up, e.child, e); push(down, e.parent, e); }
       else { push(side, e.from, e); if (e.target !== e.from) push(side, e.target, e); }
     }
     const children = (n) => down.get(n) || [];
-    const stateOf = (id, key) => { const d = senses.get(id); return d ? d.states.find((s) => s.key === key) || null : null; };
-    return Object.assign({ db, senses, termSenses, names, xrefs, fps, edges, stateOf, label, termName,
-      parents: (n) => up.get(n) || [], children, sides: (n) => side.get(n) || [] }, mechIndex(db, children, stateOf, label));
+    function ruleOf(ref) {
+      const m = String(ref).match(/^(D\d{6})\/rule\/(.+)$/);
+      if (!m || !db.senses[m[1]]) return null;
+      return db.senses[m[1]].rule.find((r) => r.id === m[2]) || null;
+    }
+    const ruleOwner = (ref) => String(ref).split('/')[0];
+    // 활성: 원천의 상태 의미 규칙을 차례로 적용 (첫 번째로 맞는 규칙, when 이 비면 기본값)
+    function activityOf(key) {
+      const b = parseBundle(key), d = db.senses[b.base];
+      if (!d || b.error) return 'unknown';
+      const has = new Map(b.features.map((f) => [f.site, f.feature]));
+      for (const r of d.rule) if (r.type === 'meaning' && Object.entries(r.when).every(([s, f]) => has.get(s) === f)) return r.activity || 'unknown';
+      return 'unknown';
+    }
+    const siteLabel = (base, s) => {
+      const d = db.senses[base], st = d && d.site[s];
+      const res = st && st.numbering && (st.numbering[d.reference_species || V.defaultReferenceSpecies] || Object.values(st.numbering)[0]);
+      return s + (res ? `(${res})` : '');
+    };
+    const bundleLabel = (key) => {
+      const b = parseBundle(key);
+      if (b.error) return key;
+      const fs = b.features.map((f) => `${siteLabel(b.base, f.site)}:${vlabel('features', f.feature)}`);
+      return `${label(b.base)}${fs.length ? '[' + fs.join(', ') + ']' : ''}@${vlabel('locations', b.location)}`;
+    };
+    return Object.assign({ db, senses, termSenses, names, xrefs, fps, edges, label, termName, ruleOf, ruleOwner, activityOf, bundleLabel, siteLabel,
+      parents: (n) => up.get(n) || [], children, sides: (n) => side.get(n) || [] }, mechIndex(db, children));
   }
   const lookupName = (ix, name) => uniq((ix.names.get(normName(name)) || []).map((h) => h.term));
 
-  // ===== 기전 색인: 참여자 열쇠 = "D…@상태키" =====
-  function mechIndex(db, children, stateOf, label) {
-    const K = (ref, state) => ref + '@' + (state || '');
-    const steps = new Map(), byKey = new Map(), byNode = new Map();
+  // ===== 기전 색인: 단계끼리는 묶음 키가 같을 때 이어진다 =====
+  function mechIndex(db, children) {
+    const steps = new Map(), byKey = new Map(), byBase = new Map();
     const push = (m, k, v) => { if (!m.has(k)) m.set(k, []); m.get(k).push(v); };
     for (const [id, st] of Object.entries(db.steps)) {
-      const uses = [], makes = [];
-      for (const a of st.agents) {
-        uses.push({ key: K(a.ref, a.state), role: 'agent', p: a });
-        if (a.after && a.after !== (a.state || '')) makes.push({ key: K(a.ref, a.after), role: 'agent_after', p: { ref: a.ref, state: a.after } });
-      }
-      for (const p of st.inputs) uses.push({ key: K(p.ref, p.state), role: 'input', p });
-      for (const p of st.regulators) uses.push({ key: K(p.ref, p.state), role: p.effect === 'inhibits' ? 'inhibitor' : 'activator', p });
-      for (const p of st.outputs) makes.push({ key: K(p.ref, p.state), role: 'output', p });
+      const uses = [...st.agents.map((p) => ({ p, role: 'agent' })), ...st.inputs.map((p) => ({ p, role: 'input' })), ...st.regulators.map((p) => ({ p, role: 'regulator' }))];
+      const makes = st.outputs.map((p) => ({ p, role: 'output' }));
       steps.set(id, { id, step: st, uses, makes });
-      for (const u of [...uses, ...makes]) {
-        push(byKey, u.key, { id, role: u.role, p: u.p });
-        push(byNode, u.p.ref, { id, role: u.role, p: u.p, key: u.key });
+      for (const u of [...uses, ...makes]) if (u.p.b) {
+        push(byKey, u.p.b, { id, role: u.role, p: u.p });
+        push(byBase, u.p.b.split('|')[0], { id, role: u.role, p: u.p });
       }
     }
-    const major = (x) => !x.p.minor;
-    // 다음 단계: 이 단계가 만든 것(부산물 제외)을 입력·행위자·조절자로 쓰는 단계
     const next = (id) => {
       const r = steps.get(id); if (!r) return [];
       const out = [];
-      for (const m of r.makes.filter(major)) for (const u of byKey.get(m.key) || [])
-        if (u.id !== id && u.role !== 'output' && u.role !== 'agent_after' && !u.p.minor) out.push({ id: u.id, via: m.key, role: u.role });
+      for (const m of r.makes) if (!m.p.minor) for (const u of byKey.get(m.p.b) || []) if (u.id !== id && u.role !== 'output' && !u.p.minor) out.push({ id: u.id, via: m.p.b, role: u.role });
       return out;
     };
-    // 앞 단계: 이 단계가 쓰는 것(부산물 제외)을 만든 단계
     const prev = (id) => {
       const r = steps.get(id); if (!r) return [];
       const out = [];
-      for (const u of r.uses.filter(major)) for (const m of byKey.get(u.key) || [])
-        if (m.id !== id && (m.role === 'output' || m.role === 'agent_after') && !m.p.minor) out.push({ id: m.id, via: u.key, role: u.role });
+      for (const u of r.uses) if (!u.p.minor) for (const m of byKey.get(u.p.b) || []) if (m.id !== id && m.role === 'output' && !m.p.minor) out.push({ id: m.id, via: u.p.b, role: u.role });
       return out;
     };
-    // 이어지는 순서대로 정렬 (순환이 있으면 남은 것은 원래 순서)
     const order = (ids) => {
       const set = new Set(ids), indeg = new Map(ids.map((i) => [i, 0]));
       for (const i of ids) for (const n of new Set(next(i).map((x) => x.id))) if (set.has(n)) indeg.set(n, indeg.get(n) + 1);
@@ -264,26 +362,18 @@
         const i = ready.shift();
         if (done.has(i)) continue;
         done.add(i); out.push(i);
-        for (const n of new Set(next(i).map((x) => x.id))) if (set.has(n) && !done.has(n)) {
-          indeg.set(n, indeg.get(n) - 1);
-          if (indeg.get(n) <= 0 && !ready.includes(n)) ready.push(n);
-        }
+        for (const n of new Set(next(i).map((x) => x.id))) if (set.has(n) && !done.has(n)) { indeg.set(n, indeg.get(n) - 1); if (indeg.get(n) <= 0 && !ready.includes(n)) ready.push(n); }
       }
       return out;
     };
-    // 경로 정의항에 속한 단계: 그 정의항과 part 축 하위 정의항(하위 경로)에 part_of 로 붙은 단계 전부
     const stepsIn = (defId) => {
       const scope = new Set([defId]), queue = [defId];
-      while (queue.length) for (const e of children(queue.shift())) if (e.axis === 'part' && !scope.has(e.child)) { scope.add(e.child); queue.push(e.child); }
+      while (queue.length) for (const e of children(queue.shift())) if (e.axis === 'part' && !e.component && !scope.has(e.child)) { scope.add(e.child); queue.push(e.child); }
       return order([...steps.values()].filter((r) => r.step.part_of.some((p) => scope.has(p))).map((r) => r.id));
     };
-    const roles = (defId) => byNode.get(defId) || [];
-    const partName = (p) => {
-      const s = p.state ? stateOf(p.ref, p.state) : null;
-      return label(p.ref) + (p.state ? `(${s ? s.label : p.state})` : '');
-    };
-    const keyName = (k) => { const i = k.lastIndexOf('@'); return partName({ ref: k.slice(0, i), state: k.slice(i + 1) }); };
-    return { steps, next, prev, stepsIn, order, roles, partName, keyName };
+    const roles = (defId) => byBase.get(defId) || [];
+    const stepsOfRule = (ref) => [...steps.values()].filter((r) => r.step.rule === ref).map((r) => r.id);
+    return { steps, next, prev, stepsIn, order, roles, stepsOfRule };
   }
 
   // ===== 검사 =====
@@ -295,102 +385,45 @@
     if (!allowed) return false;
     return allowed.some((a) => a === tgtKind || (a === '=' && srcKind === tgtKind) || (a.startsWith('@') && (V.groups[a.slice(1)] || []).includes(tgtKind)));
   }
+  function checkEvidence(e, where, E) {
+    const lv = V.evidenceLevels[e.level];
+    if (!lv) { E(where, `근거 수준 '${e.level}' 은(는) 어휘에 없음 (${Object.keys(V.evidenceLevels).join(', ')})`); return; }
+    if (lv.requires === 'source' && !e.source) E(where, `근거 수준 curated 는 출처(source)가 필요함 — 없으면 asserted`);
+    if (lv.requires === 'tool' && !e.tool) E(where, `근거 수준 computed 는 도구(tool)가 필요함`);
+    if (lv.requires === 'confidence' && !(e.confidence >= 0 && e.confidence <= 1)) E(where, `근거 수준 predicted 는 0–1 의 confidence 가 필요함`);
+    if (e.confidence != null && e.level !== 'predicted') E(where, 'confidence 는 predicted 에만');
+    if (e.source && V.xrefs[e.source.db] && !new RegExp(V.xrefs[e.source.db].pattern).test(e.source.id)) E(where, `출처 ${e.source.db} '${e.source.id}' 형식 틀림`);
+    if (e.source && !V.xrefs[e.source.db]) E(where, `출처 종류 '${e.source.db}' 없음`);
+  }
+  function checkContext(c, where, E) {
+    if (c.species && !V.taxa[c.species]) E(where, `종 '${c.species}' 은(는) 종 어휘에 없음`);
+    if (c.tissue && !V.tissues[c.tissue]) E(where, `조직 '${c.tissue}' 은(는) 어휘에 없음`);
+    if (c.cell && !V.cells[c.cell]) E(where, `세포 '${c.cell}' 은(는) 어휘에 없음`);
+  }
   function validate(db) {
     const errors = [], warnings = [];
     const E = (where, msg) => errors.push({ where, msg }), W = (where, msg) => warnings.push({ where, msg });
     if (db._version) E('데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
-    // 번호 배정기: 다음 번호가 이미 쓰인 번호보다 커야 한다 (재사용 금지)
     for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps]]) {
       const max = Math.max(0, ...Object.keys(table).map((id) => parseInt(id.slice(1), 10) || 0));
       if (db.meta.next[p] <= max) E('meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
     }
-    // 이름 충돌
     for (const hits of ix.names.values()) {
       const terms = uniq(hits.map((h) => h.term));
       if (terms.length > 1) E(terms.map((t) => `${t}(${ix.termName(t)})`).join(' / '), `이름 충돌 '${hits.map((h) => h.name).join("' ≈ '")}' — 같은 개념이면 합치고, 다른 개념이면 이름을 구별해야 함`);
     }
     for (const [k, ids] of ix.xrefs) if (uniq(ids).length > 1) E(uniq(ids).join(' / '), `외부 ID ${k.slice(k.indexOf(':') + 1)} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
     for (const [k, ids] of ix.fps) if (uniq(ids).length > 1) E(uniq(ids).join(' / '), `구조 지문 ${k} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
-    // 개념
     for (const [tid, t] of Object.entries(db.terms)) {
       const w = `${tid}(${t.names.ko || '?'})`;
       if (!isId('T', tid)) E(tid, "개념 번호는 'T' + 숫자 6자리");
       if (!t.names.ko) E(w, '한국어 이름(names.ko) 없음');
-      for (const n of [t.names.ko, t.names.en, ...t.aliases].filter(Boolean)) if (RESERVED.test(n)) E(w, `이름 '${n}' 에 # @ | 를 쓸 수 없음`);
+      for (const n of [t.names.ko, t.names.en, ...t.aliases].filter(Boolean)) if (RESERVED.test(n)) E(w, `이름 '${n}' 에 # @ | / 를 쓸 수 없음`);
       if (!ix.termSenses.get(tid).length) E(w, '정의항(뜻)이 없는 개념');
     }
-    // 정의항
-    for (const [id, d] of Object.entries(db.senses)) {
-      const where = `${id}(${L(id)})`;
-      if (!isId('D', id)) E(id, "정의항 번호는 'D' + 숫자 6자리");
-      if (!db.terms[d.term]) E(where, `소속 개념 '${d.term}' 없음`);
-      if (!(d.n >= 1)) E(where, '뜻 번호(n) 없음');
-      else if ((ix.termSenses.get(d.term) || []).filter((x) => db.senses[x].n === d.n).length > 1) E(where, `같은 개념 안에 뜻 번호 ${d.n} 이 겹침`);
-      if (!d.text) E(where, '정의 문장(text) 없음');
-      if (!d.context) E(where, '맥락(context) 없음');
-      if (!V.kinds[d.kind]) E(where, `kind '${d.kind}' 은(는) 어휘 목록에 없음`);
-      if (!V.fields[d.field]) E(where, `field '${d.field}' 은(는) 어휘 목록에 없음`);
-      const K = V.kinds[d.kind];
-      // 외부 ID
-      const dbs = new Set();
-      for (const x of d.xrefs) {
-        const src = V.xrefs[x.db];
-        if (!src) { E(where, `외부 ID 종류 '${x.db}' 없음`); continue; }
-        if (!new RegExp(src.pattern).test(x.id)) E(where, `${x.db} ID '${x.id}' 형식이 틀림`);
-        if (K && !K.xref.allowed.includes(x.db)) E(where, `kind '${d.kind}' 에는 ${x.db} ID 를 붙일 수 없음 (허용: ${K.xref.allowed.join(', ') || '없음'})`);
-        if (!V.xrefStatus.includes(x.status)) E(where, `외부 ID 상태 '${x.status}' — ${V.xrefStatus.join(' | ')}`);
-        dbs.add(x.db);
-      }
-      if (K) for (const req of K.xref.required || []) if (!dbs.has(req) && !d.unmapped)
-        E(where, `kind '${d.kind}' 는 ${req} ID 가 필요함 — 확실한 ID 를 모르면 unmapped 에 사유를 적을 것 (추측 금지)`);
-      // 구조 지문
-      if (d.fingerprint) {
-        const f = d.fingerprint, sc = V.fingerprints[f.scheme];
-        if (!sc) E(where, `지문 방식 '${f.scheme}' 없음 (허용: ${Object.keys(V.fingerprints).join(', ')})`);
-        else {
-          if (!new RegExp(sc.pattern).test(f.value)) E(where, `${f.scheme} 지문 '${f.value}' 형식이 틀림`);
-          if (!sc.kinds.includes(d.kind)) E(where, `kind '${d.kind}' 에는 ${f.scheme} 지문을 붙일 수 없음`);
-        }
-        if (!V.fingerprintStatus.includes(f.status)) E(where, `지문 상태 '${f.status}' — ${V.fingerprintStatus.join(' | ')}`);
-      }
-      // 상태
-      if (d.states.length && K && !K.participant) E(where, `kind '${d.kind}' 는 상태를 가질 수 없음 (분자 종류만)`);
-      const sk = new Map();
-      for (const s of d.states) {
-        const sw = `${id}@${s.key}(${L(id)})`;
-        if (!KEY_RE.test(s.key)) E(sw, '상태 키는 영문·숫자·한글·_- 만');
-        if (!s.label) E(sw, '상태 이름(label) 없음');
-        if (!V.activity[s.activity]) E(sw, `활성 '${s.activity}' 은(는) 어휘 목록에 없음`);
-        for (const n of uniq([s.key, s.label, ...s.aliases].map(normName))) {
-          if (sk.has(n) && sk.get(n) !== s.key) E(sw, `상태 이름이 상태 '${sk.get(n)}' 와 겹침`);
-          sk.set(n, s.key);
-        }
-        for (const m of s.modifications) {
-          if (!V.modifications[m.type]) E(sw, `수식 '${m.type}' 은(는) 어휘 목록에 없음`);
-          if (m.site && !RES_RE.test(m.site)) E(sw, `잔기 '${m.site}' 형식 틀림 (예: Ser14)`);
-        }
-        for (const b of s.bound) {
-          const x = db.senses[b];
-          if (!x) E(sw, `결합 분자 '${b}' 가 없음`);
-          else if (!MOLECULAR.has(x.kind)) E(sw, `결합 분자 '${b}' 는 분자 종류가 아님`);
-        }
-      }
-      // 연결
-      d.links.forEach((l, i) => {
-        const lw = `${where} 연결 ${i + 1}`;
-        if (!REL[l.rel]) { E(lw, `알 수 없는 관계 '${l.rel}'`); return; }
-        if (l.to === id) E(lw, '자기 자신을 가리킴');
-        const tg = db.senses[l.to];
-        if (!tg) { E(lw, `대상 '${l.to}' 가 정의항 번호가 아니거나 없음`); return; }
-        const down = !!UP_OF[l.rel];
-        if (V.kinds[d.kind] && V.kinds[tg.kind] && !(down ? kindAllowed(l.rel, tg.kind, d.kind) : kindAllowed(l.rel, d.kind, tg.kind)))
-          E(lw, `${l.rel}: kind '${d.kind}' → '${tg.kind}'(${L(l.to)}) 는 허용되지 않음 (vocab.js relationRules)`);
-        if (l.span && !d.text.includes(l.span)) E(lw, `근거 구절 '${l.span}' 이 정의 문장에 없음`);
-        if (!l.span && !['contrasts', 'requires'].includes(l.rel)) W(lw, `(→${L(l.to)}) 근거 구절(span) 없음`);
-      });
-    }
-    // 위계 순환
+    for (const [id, d] of Object.entries(db.senses)) validateSense(db, ix, id, d, E, W);
+    // 개념 위계 순환
     const parentsOf = new Map();
     for (const e of ix.edges) if (e.axis && e.status === 'ok') { if (!parentsOf.has(e.child)) parentsOf.set(e.child, []); parentsOf.get(e.child).push(e.parent); }
     const state = new Map();
@@ -402,37 +435,333 @@
       path.pop(); state.set(n, 2);
     };
     for (const n of parentsOf.keys()) dfs(n, []);
-    // 기전 단계
-    for (const [id, st] of Object.entries(db.steps)) {
-      const where = `${id}(${st.label || '?'})`;
-      if (!isStepId(id)) E(id, "단계 번호는 'S' + 숫자 6자리");
-      if (!st.label) E(where, '단계 이름(label) 없음');
-      if (!V.actions[st.action]) E(where, `변화 종류 '${st.action}' 은(는) 어휘 목록에 없음`);
-      if (!V.compartments[st.compartment]) E(where, `세포 내 위치 '${st.compartment}' 은(는) 어휘 목록에 없음`);
-      if (!st.inputs.length && !st.outputs.length && !st.agents.some((a) => a.after)) E(where, '입력·출력이 없음');
-      if (!st.part_of.length) E(where, 'part_of 없음 — 어느 경로에 속하는지 적어야 함');
-      for (const p of st.part_of) {
-        const x = db.senses[p];
-        if (!x) E(where, `소속 경로 '${p}' 가 정의항 번호가 아니거나 없음`);
-        else if (x.kind !== 'pathway') E(where, `소속 '${L(p)}' 의 kind 가 pathway 가 아님 (${x.kind})`);
-      }
-      const chkPart = (p, what) => {
-        const x = db.senses[p.ref];
-        if (!x) { E(where, `${what} '${p.ref}' 가 정의항 번호가 아니거나 없음`); return; }
-        if (!isParticipantKind(x.kind)) E(where, `${what} '${L(p.ref)}' 의 kind '${x.kind}' 는 참여자가 될 수 없음`);
-        for (const [k, nm] of [[p.state, '상태'], [p.after, '단계 뒤 상태']]) if (k && !ix.stateOf(p.ref, k))
-          E(where, `${what} '${L(p.ref)}' 에 ${nm} '${k}' 가 정의되지 않음 (있는 상태: ${x.states.map((s) => s.key).join(', ') || '없음'})`);
-        if (!p.state && x.states.length && !p.minor) E(where, `${what} '${L(p.ref)}' 는 상태가 정의된 분자 — state 를 지정해야 함 (${x.states.map((s) => s.key).join(', ')})`);
-      };
-      st.agents.forEach((p) => chkPart(p, '행위자'));
-      st.inputs.forEach((p) => chkPart(p, '입력'));
-      st.outputs.forEach((p) => chkPart(p, '출력'));
-      st.regulators.forEach((p) => { chkPart(p, '조절자'); if (!V.effects[p.effect]) E(where, `조절 효과 '${p.effect}' 은(는) 어휘 목록에 없음`); });
-    }
+    for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     return { errors, warnings };
   }
 
-  // ===== 참조 매핑: 번호·"이름#n"·이름·별칭·외부 ID·지문 → 정의항 번호 =====
+  function validateSense(db, ix, id, d, E, W) {
+    const L = ix.label, where = `${id}(${L(id)})`, K = V.kinds[d.kind];
+    if (!isId('D', id)) E(id, "정의항 번호는 'D' + 숫자 6자리");
+    if (!db.terms[d.term]) E(where, `소속 개념 '${d.term}' 없음`);
+    if (!(d.n >= 1)) E(where, '뜻 번호(n) 없음');
+    else if ((ix.termSenses.get(d.term) || []).filter((x) => db.senses[x].n === d.n).length > 1) E(where, `같은 개념 안에 뜻 번호 ${d.n} 이 겹침`);
+    if (!K) E(where, `kind '${d.kind}' 은(는) 어휘 목록에 없음`);
+    // 종
+    if (K && K.species === 'required' && !d.reference_species) E(where, `kind '${d.kind}' 는 기준 종(reference_species)이 필요함 (기본 ${V.defaultReferenceSpecies})`);
+    if (K && K.species === 'forbidden' && d.reference_species) E(where, `kind '${d.kind}' 는 종과 무관 — reference_species 를 두지 않음`);
+    if (d.reference_species && !V.taxa[d.reference_species]) E(where, `기준 종 '${d.reference_species}' 은(는) 종 어휘에 없음`);
+    // 외부 ID·지문
+    const dbs = new Set();
+    for (const x of d.xrefs) {
+      const src = V.xrefs[x.db];
+      if (!src) { E(where, `외부 ID 종류 '${x.db}' 없음`); continue; }
+      if (!new RegExp(src.pattern).test(x.id)) E(where, `${x.db} ID '${x.id}' 형식이 틀림`);
+      if (K && !K.xref.allowed.includes(x.db)) E(where, `kind '${d.kind}' 에는 ${x.db} ID 를 붙일 수 없음 (허용: ${K.xref.allowed.join(', ') || '없음'})`);
+      if (!V.xrefStatus.includes(x.status)) E(where, `외부 ID 상태 '${x.status}' — ${V.xrefStatus.join(' | ')}`);
+      dbs.add(x.db);
+    }
+    if (K) for (const req of K.xref.required || []) if (!dbs.has(req) && !d.unmapped) E(where, `kind '${d.kind}' 는 ${req} ID 가 필요함 — 확실한 ID 를 모르면 unmapped 에 사유를 적을 것 (추측 금지)`);
+    if (d.fingerprint) {
+      const f = d.fingerprint, sc = V.fingerprints[f.scheme];
+      if (!sc) E(where, `지문 방식 '${f.scheme}' 없음`);
+      else {
+        if (!new RegExp(sc.pattern).test(f.value)) E(where, `${f.scheme} 지문 '${f.value}' 형식이 틀림`);
+        if (!sc.kinds.includes(d.kind)) E(where, `kind '${d.kind}' 에는 ${f.scheme} 지문을 붙일 수 없음`);
+      }
+      if (!V.fingerprintStatus.includes(f.status)) E(where, `지문 상태 '${f.status}'`);
+    }
+    const participant = isParticipantKind(d.kind);
+    // 막 위상
+    if (d.membrane) {
+      const m = d.membrane;
+      if (!participant) E(where, '막 위상은 분자 종류만 가질 수 있음');
+      if (!V.associations[m.association]) E(where, `막 결합 방식 '${m.association}' 은(는) 어휘에 없음`);
+      else if (m.association !== 'soluble') {
+        if (!V.locations[m.location] || V.locations[m.location].dim !== '2D') E(where, `막 결합 분자는 막(2D 위치)을 membrane.location 으로 가져야 함`);
+        if (['peripheral', 'lipid_anchored'].includes(m.association) && !(m.side && locSides(m.location)[m.side])) E(where, `${vlabel('associations', m.association)} 분자는 붙어 있는 막 면(membrane.side)이 필요함`);
+      } else if (m.location || m.side) E(where, '수용성 분자에는 membrane.location/side 를 두지 않음');
+    }
+    // 구성 요소 (구조 계층)
+    if (d.components.length) {
+      if (d.kind !== 'complex') E(where, `구성 요소(components)는 kind complex 만 가질 수 있음 (현재 ${d.kind})`);
+      for (const c of d.components) {
+        const x = db.senses[c.ref];
+        if (!x) E(where, `구성 요소 '${c.ref}' 없음`);
+        else if (!isParticipantKind(x.kind)) E(where, `구성 요소 '${L(c.ref)}' 는 분자 종류가 아님`);
+        if (c.ref === id) E(where, '자기 자신을 구성 요소로 가질 수 없음');
+        if (!(c.n >= 1)) E(where, `구성 요소 개수 틀림`);
+      }
+    } else if (d.kind === 'complex') W(where, '복합체인데 구성 요소(components)가 없음 — 구조 계층을 채울 것');
+    // 설명
+    if (!d.desc.length) E(where, '설명(desc)이 하나도 없음');
+    d.desc.forEach((ds, di) => {
+      const dw = `${id}/desc/${di + 1}`;
+      if (!ds.text) E(dw, '정의 문장(text) 없음');
+      if (!V.fields[ds.field]) E(dw, `field '${ds.field}' 은(는) 어휘 목록에 없음`);
+      if (!ds.context.scope) E(dw, '맥락 범위(context.scope) 없음');
+      checkContext(ds.context, dw, E);
+      checkEvidence(ds.evidence, dw, E);
+      if (ds.genus && !ds.links.some((l) => l.rel === 'is_a' && l.to === ds.genus)) E(dw, `genus '${ds.genus}' 는 이 설명의 is_a 연결 대상이어야 함`);
+      ds.links.forEach((l, i) => {
+        const lw = `${dw} 연결 ${i + 1}`;
+        if (!REL[l.rel]) { E(lw, `알 수 없는 관계 '${l.rel}'`); return; }
+        if (l.to === id) E(lw, '자기 자신을 가리킴');
+        const tg = db.senses[l.to];
+        if (!tg) { E(lw, `대상 '${l.to}' 가 정의항 번호가 아니거나 없음`); return; }
+        const down = !!UP_OF[l.rel];
+        if (V.kinds[d.kind] && V.kinds[tg.kind] && !(down ? kindAllowed(l.rel, tg.kind, d.kind) : kindAllowed(l.rel, d.kind, tg.kind)))
+          E(lw, `${l.rel}: kind '${d.kind}' → '${tg.kind}'(${L(l.to)}) 는 허용되지 않음`);
+        if (l.span && !ds.text.includes(l.span)) E(lw, `근거 구절 '${l.span}' 이 정의 문장에 없음`);
+        if (!l.span && !['contrasts', 'requires'].includes(l.rel)) W(lw, `(→${L(l.to)}) 근거 구절(span) 없음`);
+      });
+    });
+    // 부위
+    const sites = Object.entries(d.site);
+    if (sites.length && !participant) E(where, '부위(site)는 분자 종류만 가질 수 있음');
+    const memAssoc = d.membrane ? d.membrane.association : 'soluble';
+    for (const [k, s] of sites) {
+      const sw = `${id}/site/${k}`;
+      if (!SITE_RE.test(k)) E(sw, '부위 키는 영문 소문자·숫자·_ (예: reg_phos)');
+      if (!V.siteTypes[s.type]) E(sw, `부위 종류 '${s.type}' 은(는) 어휘에 없음`);
+      if (!s.features.length) E(sw, '허용 특징(features)이 없음');
+      for (const f of s.features) if (!V.features[f]) E(sw, `특징 '${f}' 은(는) 특징 어휘에 없음`);
+      for (const [t, r] of Object.entries(s.numbering || {})) {
+        if (!V.taxa[t]) E(sw, `잔기 번호의 종 '${t}' 은(는) 종 어휘에 없음`);
+        if (!RES_RE.test(r)) E(sw, `잔기 '${r}' 형식 틀림 (예: Ser14)`);
+      }
+      if (s.type === 'modification_site' && ['protein', 'nucleic_acid'].includes(d.kind)) {
+        const ref = d.reference_species;
+        if (!(s.numbering && s.numbering[ref]) && !s.residue_unknown) E(sw, `기준 종(${ref}) 잔기 번호가 없음 — 모르면 residue_unknown: true 로 명시(지어내지 않음)`);
+      }
+      if (s.face) {
+        if (!V.faces[s.face]) E(sw, `막 면 '${s.face}' 은(는) 어휘에 없음`);
+        else if (memAssoc === 'soluble') E(sw, '막 면(face)은 막 결합 분자의 부위에만');
+        else if (s.face !== 'transmembrane' && !locSides(d.membrane.location)[s.face]) E(sw, `${vlabel('locations', d.membrane.location)}에는 '${s.face}' 면이 없음`);
+      }
+      if (s.on && !d.components.some((c) => c.ref === s.on)) E(sw, `부위가 있는 구성 요소 '${s.on}' 는 이 복합체의 구성 요소가 아님`);
+      if (s.ligand) { const x = db.senses[s.ligand]; if (!x) E(sw, `리간드 '${s.ligand}' 없음`); else if (!MOLECULAR.has(x.kind)) E(sw, `리간드 '${L(s.ligand)}' 는 분자 종류가 아님`); }
+      for (const t of s.taxa || []) if (!V.taxa[t]) E(sw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
+    }
+    // 규칙
+    const ruleIds = new Set();
+    for (const r of d.rule) {
+      const rw = `${id}/rule/${r.id || '?'}`;
+      if (!r.id || !SITE_RE.test(r.id)) E(rw, '규칙 id 는 영문 소문자·숫자·_');
+      if (ruleIds.has(r.id)) E(rw, '규칙 id 중복');
+      ruleIds.add(r.id);
+      if (!r.label) E(rw, '규칙 이름(label) 없음');
+      if (!participant) E(rw, '규칙은 분자 종류 정의항만 가질 수 있음');
+      checkEvidence(r.evidence, rw, E);
+      for (const t of r.taxa || []) if (!V.taxa[t]) E(rw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
+      if (r.type === 'meaning') {
+        if (!V.activity[r.activity]) E(rw, `활성 '${r.activity}' 은(는) 어휘에 없음`);
+        for (const [s, f] of Object.entries(r.when)) {
+          if (!d.site[s]) E(rw, `조건의 부위 '${s}' 가 이 정의항에 없음`);
+          else if (!d.site[s].features.includes(f)) E(rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`);
+        }
+        continue;
+      }
+      if (r.type !== 'transition') { E(rw, `규칙 종류 '${r.type}' — meaning | transition`); continue; }
+      const A = V.actions[r.action], e = r.effect;
+      if (!A) E(rw, `변화 종류 '${r.action}' 은(는) 어휘에 없음`);
+      if (!EFFECT_TYPES.includes(e.type)) { E(rw, `효과 종류 '${e.type}' — ${EFFECT_TYPES.join(' | ')}`); continue; }
+      if (A && !A.effects.includes(e.type)) E(rw, `변화 종류 '${r.action}' 에는 효과 '${e.type}' 를 쓸 수 없음 (허용: ${A.effects.join(', ')})`);
+      if (r.via_site && !d.site[r.via_site]) E(rw, `행위 부위 '${r.via_site}' 가 이 정의항에 없음`);
+      if (r.via_component && !d.components.some((c) => c.ref === r.via_component)) E(rw, `행위 구성 요소 '${r.via_component}' 는 구성 요소가 아님`);
+      if (!r.agent && r.via_site) W(rw, 'agent 가 아닌 규칙에 via_site 가 있음');
+      for (const l of r.where || []) if (!V.locations[l]) E(rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
+      for (const g of r.regulators) {
+        if (!db.senses[g.ref]) E(rw, `조절자 '${g.ref}' 없음`);
+        if (!V.effects[g.effect]) E(rw, `조절 효과 '${g.effect}' 은(는) 어휘에 없음`);
+      }
+      for (const x of [...(r.with ? [...r.with.consumes, ...r.with.produces] : [])]) if (!db.senses[x]) E(rw, `보조 기질 '${x}' 없음`);
+      const need = (ref, what) => { const x = db.senses[ref]; if (!x) { E(rw, `${what} '${ref}' 없음`); return null; } if (!isParticipantKind(x.kind)) E(rw, `${what} '${L(ref)}' 는 분자 종류가 아님`); return x; };
+      if (e.type === 'modify') {
+        const T = need(e.target || id, '대상');
+        if (T) {
+          const s = T.site[e.site];
+          if (!s) E(rw, `대상 '${L(e.target || id)}' 에 부위 '${e.site}' 가 없음`);
+          else for (const f of [...(e.add || []), ...(e.remove || [])]) if (!s.features.includes(f)) E(rw, `부위 '${e.site}' 는 특징 '${f}' 를 가질 수 없음`);
+          if ((e.add || []).length > 1 || (e.remove || []).length > 1) E(rw, '한 부위에는 특징이 하나 — add/remove 는 각각 하나까지');
+          if (!(e.add || []).length && !(e.remove || []).length) E(rw, 'modify 효과에 add/remove 가 없음');
+          if (A && A.adds && !(e.add || []).includes(A.adds)) E(rw, `'${r.action}' 은(는) 특징 '${A.adds}' 를 추가해야 함`);
+          if (A && A.removes && !(e.remove || []).includes(A.removes)) E(rw, `'${r.action}' 은(는) 특징 '${A.removes}' 를 제거해야 함`);
+          if (e.partner) { need(e.partner, '결합 상대'); if (s && s.ligand && s.ligand !== e.partner) E(rw, `부위 '${e.site}' 의 리간드(${L(s.ligand)})와 결합 상대가 다름`); }
+        }
+      } else if (e.type === 'convert') {
+        if (!(e.consumes || []).length || !(e.produces || []).length) E(rw, 'convert 효과는 consumes 와 produces 가 필요함');
+        for (const x of [...(e.consumes || []), ...(e.produces || [])]) need(x, '기질/생성물');
+      } else if (e.type === 'dissociate' || e.type === 'associate') {
+        const C = need(e.complex || id, '복합체');
+        if (C && !C.components.length) E(rw, `'${L(e.complex || id)}' 는 구성 요소가 정의되지 않은 복합체`);
+        if (e.partner) need(e.partner, '결합 상대');
+        if (e.partner_site) {
+          const comp = db.senses[e.partner_site.component];
+          if (C && !C.components.some((c) => c.ref === e.partner_site.component)) E(rw, `partner_site 의 구성 요소는 복합체의 구성 요소여야 함`);
+          if (!e.partner_site.sites.length) E(rw, 'partner_site 에 부위(sites)가 없음');
+          for (const ps of e.partner_site.sites) if (comp && !(comp.site[ps] && comp.site[ps].features.includes('bound'))) E(rw, `구성 요소 '${L(e.partner_site.component)}' 에 'bound' 를 받는 부위 '${ps}' 가 없음`);
+        }
+      } else if (e.type === 'transport') {
+        need(e.target || id, '대상');
+        if (!V.locations[e.from] || !V.locations[e.to]) E(rw, '수송 효과는 위치 어휘의 from/to 가 필요함');
+      }
+    }
+    // 관찰
+    d.obs.forEach((b, i) => {
+      const ow = `${id}/obs/${i + 1}`, P = V.obsProperties[b.property];
+      if (!P) { E(ow, `관찰 속성 '${b.property}' 은(는) 어휘에 없음`); return; }
+      checkContext(b.context, ow, E);
+      checkEvidence(b.evidence, ow, E);
+      if (P.speciesRequired && !b.context.species) E(ow, `'${b.property}' 는 종에 따라 달라짐 — context.species 필수`);
+      if (P.value === 'number' && typeof b.value !== 'number') E(ow, '값은 숫자여야 함');
+      if (P.unit && !b.unit) E(ow, '단위(unit) 필요');
+      if (P.value === 'location' && !V.locations[b.value]) E(ow, `값 '${b.value}' 은(는) 위치 어휘에 없음`);
+      if (Array.isArray(P.value) && !P.value.includes(b.value)) E(ow, `값은 ${P.value.join(' | ')} 중 하나`);
+      if (P.value === 'xref') { const x = parseXref(b.value); if (!V.xrefs[x.db] || !new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(ow, `외부 ID '${b.value}' 형식 틀림`); }
+    });
+  }
+
+  // 묶음 하나 검사: 바탕 정의항·부위·특징·위치·막 위상
+  function checkBundle(db, ix, key, where, E) {
+    const b = parseBundle(key);
+    if (b.error) { E(where, b.error); return null; }
+    if (bundleKey(b) !== key) E(where, `묶음 키 '${key}' 는 정렬된 표준 형식이 아님 (${bundleKey(b)})`);
+    const d = db.senses[b.base];
+    if (!d) { E(where, `묶음 바탕 '${b.base}' 없음`); return null; }
+    if (!isParticipantKind(d.kind)) E(where, `'${ix.label(b.base)}'(${d.kind}) 는 기전에 참여할 수 없음`);
+    const L = V.locations[b.location];
+    if (!L) E(where, `위치 '${b.location}' 은(는) 위치 어휘에 없음`);
+    else {
+      const assoc = d.membrane ? d.membrane.association : 'soluble';
+      if (assoc === 'soluble' && L.dim !== '3D') E(where, `${ix.label(b.base)} 은(는) 수용성 — 막(2D) 위치 '${L.label}' 에 있을 수 없음`);
+      if (assoc !== 'soluble' && !(L.dim === '2D' && sameFamily(b.location, d.membrane.location))) E(where, `${ix.label(b.base)} 은(는) ${vlabel('locations', d.membrane.location)}에 박힌 분자 — '${L.label}' 에 있을 수 없음`);
+    }
+    const seen = new Set();
+    for (const f of b.features) {
+      const s = d.site[f.site];
+      if (!s) E(where, `'${ix.label(b.base)}' 에 부위 '${f.site}' 가 없음`);
+      else if (!s.features.includes(f.feature)) E(where, `부위 '${f.site}' 는 특징 '${f.feature}' 를 가질 수 없음 (허용: ${s.features.join(', ')})`);
+      if (seen.has(f.site)) E(where, `부위 '${f.site}' 에 특징이 둘`);
+      seen.add(f.site);
+    }
+    return { ...b, d };
+  }
+
+  // 단계 검사: 단계는 규칙의 한 번 적용이다. 변화량·위치·접촉·행위자 활성이 규칙과 맞아야 한다.
+  function validateStep(db, ix, id, st, E, W) {
+    const L = ix.label, where = `${id}`;
+    if (!isStepId(id)) E(id, "단계 번호는 'S' + 숫자 6자리");
+    const rule = ix.ruleOf(st.rule), owner = ix.ruleOwner(st.rule);
+    if (!rule) { E(where, `규칙 '${st.rule}' 없음 — 'D…/rule/키' 로 원천의 전이 규칙을 가리킬 것`); return; }
+    const w = `${id}(${rule.label})`;
+    if (rule.type !== 'transition') { E(w, '단계는 전이(transition) 규칙만 적용할 수 있음'); return; }
+    if (!st.part_of.length) E(w, 'part_of 없음 — 어느 경로에 속하는지 적어야 함');
+    for (const p of st.part_of) { const x = db.senses[p]; if (!x) E(w, `소속 경로 '${p}' 없음`); else if (x.kind !== 'pathway') E(w, `소속 '${L(p)}' 의 kind 가 pathway 가 아님`); }
+    const B = {};
+    for (const role of ['agents', 'inputs', 'outputs', 'regulators']) B[role] = st[role].map((p) => {
+      if (!p.b) { E(w, `${role} 참여자가 묶음 키가 아님`); return null; }
+      const b = checkBundle(db, ix, p.b, w, E);
+      return b ? { ...b, key: p.b, n: p.n || 1, minor: !!p.minor } : null;
+    }).filter(Boolean);
+    const e = rule.effect, major = (x) => !x.minor;
+    const findOne = (list, base, what) => {
+      const xs = list.filter((x) => x.base === base && major(x));
+      if (xs.length !== 1) { E(w, `${what}에 '${L(base)}' 묶음이 ${xs.length}개 (정확히 1개여야 함)`); return null; }
+      return xs[0];
+    };
+    // 행위자
+    let center = null;
+    if (rule.agent) {
+      const ag = B.agents.find((x) => x.base === owner);
+      if (!ag) E(w, `규칙 '${rule.label}' 의 행위자 '${L(owner)}' 묶음이 agents 에 없음`);
+      else {
+        const act = ix.activityOf(ag.key);
+        if (act === 'inactive') E(w, `행위자 ${ix.bundleLabel(ag.key)} 은(는) 원천 규칙상 비활성 — 이 전이를 일으킬 수 없음`);
+        center = { b: ag, face: rule.via_site ? (db.senses[owner].site[rule.via_site] || {}).face : null };
+      }
+    } else if (B.agents.length) E(w, '행위자가 없는 규칙인데 agents 가 있음');
+    const inF = (x) => new Map(x.features.map((f) => [f.site, f.feature]));
+    let targetIn = null;
+    if (e.type === 'modify') {
+      const T = e.target || owner, tin = findOne(B.inputs, T, '입력'), tout = findOne(B.outputs, T, '출력');
+      if (tin && tout) {
+        targetIn = tin;
+        const a = inF(tin), b = inF(tout);
+        for (const s of uniq([...a.keys(), ...b.keys()])) if (s !== e.site && a.get(s) !== b.get(s)) E(w, `규칙이 바꾸지 않는 부위 '${s}' 가 바뀜`);
+        const expIn = (e.remove || [])[0], expOut = (e.add || [])[0];
+        if (a.get(e.site) !== expIn) E(w, `입력의 부위 '${e.site}' 는 ${expIn ? `'${expIn}'` : '빈 상태'} 여야 함 (실제 ${a.get(e.site) || '빈 상태'})`);
+        if (b.get(e.site) !== expOut) E(w, `출력의 부위 '${e.site}' 는 ${expOut ? `'${expOut}'` : '빈 상태'} 여야 함 (실제 ${b.get(e.site) || '빈 상태'})`);
+        if (tin.location !== tout.location) E(w, '수송이 아닌 단계에서 위치가 바뀜');
+      }
+      if (e.partner) {
+        if (!B.inputs.some((x) => x.base === e.partner)) E(w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
+        if (B.outputs.some((x) => x.base === e.partner && major(x))) E(w, `결합 상대 '${L(e.partner)}' 는 대상 부위에 흡수되므로 출력에 따로 남지 않음`);
+      }
+    } else if (e.type === 'convert') {
+      for (const x of e.consumes || []) if (!B.inputs.some((y) => y.base === x)) E(w, `기질 '${L(x)}' 묶음이 입력에 없음`);
+      for (const x of e.produces || []) if (!B.outputs.some((y) => y.base === x)) E(w, `생성물 '${L(x)}' 묶음이 출력에 없음`);
+      targetIn = B.inputs.find((y) => (e.consumes || []).includes(y.base)) || null;
+    } else if (e.type === 'dissociate' || e.type === 'associate') {
+      const C = e.complex || owner, cd = db.senses[C];
+      const [whole, parts, wName, pName] = e.type === 'dissociate' ? [B.inputs, B.outputs, '입력', '출력'] : [B.outputs, B.inputs, '출력', '입력'];
+      const cx = findOne(whole, C, wName);
+      if (cx && cd) {
+        targetIn = cx;
+        for (const c of cd.components) {
+          const got = parts.filter((x) => x.base === c.ref && major(x)).reduce((s, x) => s + x.n, 0);
+          if (got !== c.n * cx.n) E(w, `${pName}의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${c.n * cx.n}개`);
+        }
+        for (const x of parts.filter(major)) if (!cd.components.some((c) => c.ref === x.base) && x.base !== e.partner) E(w, `'${L(x.base)}' 는 '${L(C)}' 의 구성 요소가 아님`);
+        for (const x of parts) if (x.location !== cx.location && major(x)) E(w, '해리·결합 단계에서 위치가 바뀜');
+      }
+      if (e.partner) {
+        if (!B.inputs.some((x) => x.base === e.partner)) E(w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
+        if (e.partner_site && B.outputs.some((x) => x.base === e.partner && major(x))) E(w, `결합 상대 '${L(e.partner)}' 는 구성 요소 '${L(e.partner_site.component)}' 의 부위에 흡수되므로 출력에 따로 남지 않음`);
+        if (e.partner_site && e.type === 'dissociate') {
+          const outs = B.outputs.filter((x) => x.base === e.partner_site.component);
+          for (const ps of e.partner_site.sites) if (!outs.length || outs.some((x) => inF(x).get(ps) !== 'bound')) E(w, `구성 요소 '${L(e.partner_site.component)}' 의 부위 '${ps}' 가 'bound' 여야 함 (결합 상대가 흡수된 곳)`);
+        }
+      }
+    } else if (e.type === 'transport') {
+      const T = e.target || owner, tin = findOne(B.inputs, T, '입력'), tout = findOne(B.outputs, T, '출력');
+      if (tin && tout) {
+        targetIn = tin;
+        if (tin.location !== e.from || tout.location !== e.to) E(w, `수송 규칙은 ${vlabel('locations', e.from)} → ${vlabel('locations', e.to)} (실제 ${vlabel('locations', tin.location)} → ${vlabel('locations', tout.location)})`);
+        if (JSON.stringify([...inF(tin)].sort()) !== JSON.stringify([...inF(tout)].sort())) E(w, '수송 단계에서 특징이 바뀜');
+      }
+    }
+    if (rule.with) {
+      for (const x of rule.with.consumes) if (!B.inputs.some((y) => y.base === x)) E(w, `보조 기질 '${L(x)}' 가 입력에 없음`);
+      for (const x of rule.with.produces) if (!B.outputs.some((y) => y.base === x)) E(w, `보조 생성물 '${L(x)}' 가 출력에 없음`);
+    }
+    for (const g of B.regulators) if (!rule.regulators.some((r) => r.ref === g.base)) E(w, `'${L(g.base)}' 는 규칙 '${rule.label}' 에 정의된 조절자가 아님`);
+    // 위치 조건
+    if (!center && targetIn) center = { b: targetIn, face: e.site ? (targetIn.d.site[e.site] || {}).face : null };
+    if (center && rule.where && !rule.where.includes(center.b.location)) E(w, `규칙 '${rule.label}' 은(는) ${rule.where.map((l) => vlabel('locations', l)).join(', ')}에서만 작동 — 실제 ${vlabel('locations', center.b.location)}`);
+    // 공간 접촉: 반응 중심(행위자 또는 대상)과 모든 참여자
+    if (center) {
+      const cb = center.b, cDim = (V.locations[cb.location] || {}).dim;
+      for (const role of ['agents', 'inputs', 'outputs', 'regulators']) for (const x of B[role]) {
+        if (x === cb) continue;
+        const xDim = (V.locations[x.location] || {}).dim;
+        let face = null;
+        if (cDim === '2D' && xDim === '3D') {
+          face = center.face;
+          if (x === targetIn || (e.partner && x.base === e.partner)) { const ts = e.site && cb.base === (e.target || owner) ? cb.d.site[e.site] : null; face = (ts && ts.face) || face; }
+        } else if (cDim === '3D' && xDim === '2D') {
+          const ts = x === targetIn && e.site ? x.d.site[e.site] : null;
+          face = ts && ts.face;
+        } else if (cDim === '2D' && xDim === '2D') {
+          const cf = center.face, side = x.d.membrane && x.d.membrane.side;
+          if (cf && side && cf !== 'transmembrane' && cf !== side) E(w, `${ix.bundleLabel(cb.key)} 의 작용 면(${vlabel('faces', cf)})과 ${ix.bundleLabel(x.key)} 가 붙은 면(${vlabel('faces', side)})이 다름`);
+        }
+        const c = locCompatible(cb.location, x.location, face && face !== 'transmembrane' ? face : null);
+        if (!c.ok) E(w, `공간 접촉 불가: ${ix.bundleLabel(cb.key)} ↔ ${ix.bundleLabel(x.key)} — ${c.why}`);
+      }
+    }
+  }
+
+  // ===== 참조 매핑 =====
   function resolveRef(ix, ref) {
     const r = str(ref);
     if (!r) return { error: '참조가 비어 있음' };
@@ -442,16 +771,13 @@
     const fromTerm = (tid, via) => {
       const ds = ix.termSenses.get(tid) || [];
       if (ds.length === 1) return { id: ds[0], via };
-      return { error: `'${r}' 은(는) 뜻이 여러 개 — 하나를 지정할 것: ${ds.map((x) => `${x}(${ix.label(x)}: ${ix.senses.get(x).context})`).join(', ')}` };
+      return { error: `'${r}' 은(는) 뜻이 여러 개 — 하나를 지정할 것: ${ds.map((x) => `${x}(${ix.label(x)})`).join(', ')}` };
     };
     if (isId('T', r)) return ix.db.terms[r] ? fromTerm(r, `개념 ${r}`) : { error: `개념 ${r} 없음` };
     if (r.includes('#')) {
       const i = r.lastIndexOf('#'), name = r.slice(0, i), n = parseInt(r.slice(i + 1), 10);
       const hit = lookupName(ix, name);
-      if (hit.length === 1) {
-        const id = (ix.termSenses.get(hit[0]) || []).find((x) => ix.senses.get(x).n === n);
-        if (id) return { id, via: `'${r}'` };
-      }
+      if (hit.length === 1) { const id = (ix.termSenses.get(hit[0]) || []).find((x) => ix.senses.get(x).n === n); if (id) return { id, via: `'${r}'` }; }
       return { error: `'${r}' 정의항 없음` + suggest(ix, name) };
     }
     const x = parseXref(r);
@@ -462,37 +788,29 @@
     return { error: `'${r}' 은(는) 데이터베이스에 없음` + suggest(ix, r) };
   }
   function suggest(ix, name) {
-    const all = uniq([...ix.names.values()].flat().map((h) => h.name));
-    const s = similar(name, all, 4);
+    const s = similar(name, uniq([...ix.names.values()].flat().map((h) => h.name)), 4);
     return s.length ? ` — 비슷한 이름: ${s.join(', ')}` : ' — 새 개념이면 같은 패치에서 만들고 임시 번호로 가리킬 것';
-  }
-  function resolveState(ix, defId, value) {
-    const d = ix.senses.get(defId), v = str(value), n = normName(v);
-    const s = d.states.find((x) => x.key === v) || d.states.find((x) => [x.key, x.label, ...x.aliases].some((y) => normName(y) === n));
-    return s ? { key: s.key, mapped: s.key !== v } : { error: `'${ix.label(defId)}'(${defId}) 에 상태 '${v}' 없음 — 있는 상태: ${d.states.map((x) => `${x.key}(${x.label})`).join(', ') || '없음'}` };
   }
 
   // ===== 병합 =====
-  // 패치(v3): { terms:[{id?, names:{ko,en}, aliases, note}], senses:[{id?, term, kind, field, text, context, links, …}],
-  //            states:{ 정의항참조:[상태…] }, steps:[{id?, …}], remove:[번호…] }
-  //   새 항목 id 는 비우거나 "T+1"·"D+gp"·"S+1" 같은 임시 번호. 기존 번호를 쓰면 수정.
-  //   sense.term 은 개념 번호, 임시 번호, 또는 이름(없으면 그 이름으로 개념을 새로 만든다).
+  // 패치(v4): { terms:[…], senses:[{id?, term, kind, …정의항 필드…}], steps:[{id?, rule, agents, inputs, outputs, regulators, part_of}], remove:[…] }
+  //   기존 정의항은 패치에 적힌 최상위 필드만 교체된다(적지 않은 필드는 유지).
   function merge(dbIn, patchIn) {
     const db = normalize(clone(dbIn));
     const report = { added: [], updated: [], removed: [], idmap: {}, mapped: [], errors: [] };
     const ERR = (where, msg) => report.errors.push({ where, msg });
     const MAP = (from, to, via) => report.mapped.push({ from, to, via });
     if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }
-    if (isObj(patchIn.terms) || patchIn.definientia) { ERR('패치', '형식 v2 패치 — terms 는 배열, 뜻은 senses 배열로 써야 함 (prompt 참고)'); return { db, report }; }
+    if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states)) { ERR('패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
     const alloc = (p) => fmtId(p, db.meta.next[p]++);
     const ix0 = index(db);
     const preSenses = new Map([...ix0.termSenses].map(([k, v]) => [k, v.length]));
-    const nameOwner = new Map();   // 이 패치에서 새로 생긴 이름 → 개념 (패치 안 중복 방지)
+    const nameOwner = new Map();
     const findTerm = (name) => { const h = lookupName(ix0, name); return h.length ? h : nameOwner.has(normName(name)) ? [nameOwner.get(normName(name))] : []; };
-    const claimNames = (tid, t) => {
-      for (const n of [t.names.ko, t.names.en, ...t.aliases].filter(Boolean)) {
+    const claimNames = (tid, names) => {
+      for (const n of names.filter(Boolean)) {
         const owner = findTerm(n).filter((x) => x !== tid);
-        if (owner.length) ERR(`${tid}(${t.names.ko})`, `이름 '${n}' 은(는) 이미 ${owner.map((o) => `${o}(${db.terms[o].names.ko})`).join(', ')} 의 이름 — 같은 개념이면 그 개념을 쓸 것`);
+        if (owner.length) ERR(`${tid}(${db.terms[tid] ? db.terms[tid].names.ko : n})`, `이름 '${n}' 은(는) 이미 ${owner.map((o) => `${o}(${db.terms[o].names.ko})`).join(', ')} 의 이름 — 같은 개념이면 그 개념을 쓸 것`);
         else nameOwner.set(normName(n), tid);
       }
     };
@@ -503,23 +821,23 @@
       if (rid && !isTemp('T', rid)) {
         const t = db.terms[rid];
         if (!t) { ERR(rid, '없는 개념 번호 — 새 개념은 임시 번호(T+1)를 쓸 것'); continue; }
-        if (pt.names.ko && pt.names.ko !== t.names.ko) t.aliases.push(t.names.ko);   // 이름을 바꾸면 옛 이름은 별칭으로 남긴다
+        if (pt.names.ko && pt.names.ko !== t.names.ko) t.aliases.push(t.names.ko);
         t.names = { ...t.names, ...Object.fromEntries(Object.entries(pt.names).filter(([, v]) => v)) };
         t.aliases = uniq([...t.aliases, ...pt.aliases]).filter((a) => a !== t.names.ko && a !== t.names.en);
         if (pt.note) t.note = pt.note;
-        claimNames(rid, { names: t.names, aliases: pt.aliases });
+        claimNames(rid, [t.names.ko, t.names.en, ...pt.aliases]);
         report.updated.push(rid);
         continue;
       }
       if (!pt.names.ko) { ERR(rid || 'terms', '새 개념에 names.ko 가 없음'); continue; }
       const same = uniq([pt.names.ko, pt.names.en].filter(Boolean).flatMap((n) => lookupName(ix0, n)));
-      if (same.length === 1) {   // 이미 있는 이름 → 그 개념으로 매핑, 새 별칭·영문명만 더한다
+      if (same.length === 1) {
         const tid = same[0], t = db.terms[tid];
         MAP(pt.names.ko, tid, '같은 이름의 기존 개념');
         if (rid) report.idmap[rid] = tid;
         if (pt.names.en && !t.names.en) t.names.en = pt.names.en;
         const extra = uniq([pt.names.ko, pt.names.en, ...pt.aliases].filter((n) => n && !lookupName(ix0, n).includes(tid)));
-        claimNames(tid, { names: {}, aliases: extra });
+        claimNames(tid, extra);
         t.aliases = uniq([...t.aliases, ...extra]).filter((a) => a !== t.names.ko && a !== t.names.en);
         continue;
       }
@@ -527,7 +845,7 @@
       const tid = alloc('T');
       if (rid) report.idmap[rid] = tid;
       db.terms[tid] = pt;
-      claimNames(tid, pt);
+      claimNames(tid, [pt.names.ko, pt.names.en, ...pt.aliases]);
       report.added.push(tid);
     }
     // 2. 정의항
@@ -541,8 +859,8 @@
       const h = findTerm(r);
       if (h.length === 1) { MAP(r, h[0], '이름'); return h[0]; }
       if (h.length > 1) { ERR(where, `이름 '${r}' 이 여러 개념과 겹침`); return null; }
-      if (RESERVED.test(r)) { ERR(where, `이름 '${r}' 에 # @ | 를 쓸 수 없음`); return null; }
-      const tid = alloc('T');   // 이름만 적은 새 개념
+      if (RESERVED.test(r)) { ERR(where, `이름 '${r}' 에 # @ | / 를 쓸 수 없음`); return null; }
+      const tid = alloc('T');
       db.terms[tid] = { names: { ko: r }, aliases: [] };
       nameOwner.set(normName(r), tid);
       report.added.push(tid);
@@ -555,15 +873,16 @@
         const old = db.senses[rid];
         if (!old) { ERR(rid, '없는 정의항 번호 — 새 정의항은 임시 번호(D+1)를 쓸 것'); continue; }
         if (raw.term && termOf(raw.term, rid) !== old.term) { ERR(rid, '정의항을 다른 개념으로 옮길 수 없음'); continue; }
-        d.term = old.term; d.n = old.n;
-        for (const k of ['states', 'xrefs', 'unmapped', 'fingerprint']) if (!d._given[k] && old[k] !== undefined) d[k] = old[k];
-        db.senses[rid] = d; report.updated.push(rid); touched.push([rid, d]);
+        const merged = clone(old);
+        for (const k of SENSE_FIELDS) if (d._given[k]) { if (d[k] === undefined) delete merged[k]; else merged[k] = d[k]; }
+        const nd = normSense({ ...merged, term: old.term, n: old.n });
+        db.senses[rid] = nd; report.updated.push(rid); touched.push([rid, nd]);
         continue;
       }
       const tid = termOf(raw.term, rid || 'senses');
       if (!tid) continue;
       if (preSenses.get(tid) && !d.distinction) {
-        ERR(rid || tid, `'${db.terms[tid].names.ko}'(${tid}) 에는 이미 뜻이 있음 (${ix0.termSenses.get(tid).map((x) => `${x}: ${ix0.senses.get(x).text.slice(0, 20)}…`).join(' / ')}) — 고치려면 기존 번호를, 새 뜻이면 distinction 에 차이를 적을 것`);
+        ERR(rid || tid, `'${db.terms[tid].names.ko}'(${tid}) 에는 이미 뜻이 있음 (${ix0.termSenses.get(tid).join(', ')}) — 고치려면 기존 번호를, 새 뜻이면 distinction 에 차이를 적을 것`);
         continue;
       }
       d.term = tid;
@@ -572,7 +891,7 @@
       if (rid) report.idmap[rid] = id;
       db.senses[id] = d; report.added.push(id); touched.push([id, d]);
     }
-    // 3. 기전 단계
+    // 3. 단계
     const touchedSteps = [];
     for (const raw of arr(patchIn.steps)) {
       if (!isObj(raw)) { ERR('steps', '단계 항목이 객체가 아님'); continue; }
@@ -584,61 +903,98 @@
       } else { id = alloc('S'); if (rid) report.idmap[rid] = id; report.added.push(id); }
       db.steps[id] = st; touchedSteps.push([id, st]);
     }
-    // 4. 참조 매핑
+    // 4. 참조·어휘 매핑
     const ix = index(db);
     const ref = (r, where) => {
+      if (!r) return r;
       if (report.idmap[r]) return report.idmap[r];
       const x = resolveRef(ix, r);
       if (x.error) { ERR(where, x.error); return r; }
       if (x.via !== 'id') MAP(r, x.id, x.via);
       return x.id;
     };
-    for (const [id, d] of touched) {
-      d.links.forEach((l, i) => { l.to = ref(l.to, `${id} 연결 ${i + 1}`); });
-      for (const s of d.states) s.bound = s.bound.map((b) => ref(b, `${id}@${s.key} 결합 분자`));
-    }
-    // 5. 상태 추가·수정 (패치의 states 구역)
-    for (const [r, list] of Object.entries(isObj(patchIn.states) ? patchIn.states : {})) {
-      const id = ref(r, `상태 대상 '${r}'`), d = db.senses[id];
-      if (!d) continue;
-      for (const s of arr(list).filter(isObj).map(normState)) {
-        s.bound = s.bound.map((b) => ref(b, `${id}@${s.key} 결합 분자`));
-        const i = d.states.findIndex((y) => y.key === s.key);
-        if (i >= 0) d.states[i] = s; else d.states.push(s);
-      }
-      touched.push([id, d]);
-      if (!report.added.includes(id) && !report.updated.includes(id)) report.updated.push(id);
-    }
-    // 6. 어휘 매핑
-    const voc = (table, value, where, set) => {
+    const voc = (table, value, where) => {
+      if (value == null || value === '') return value;
       const m = mapVocab(table, value);
-      if (m.error) ERR(where, m.error);
-      else { if (m.mapped) MAP(value, m.key, VNAME[table]); set(m.key); }
+      if (m.error) { ERR(where, m.error); return value; }
+      if (m.mapped) MAP(value, m.key, VNAME[table]);
+      return m.key;
     };
+    const ctx = (c, w) => { for (const [k, t] of [['species', 'taxa'], ['tissue', 'tissues'], ['cell', 'cells']]) if (c[k]) c[k] = voc(t, c[k], w); };
     for (const [id, d] of new Map(touched)) {
-      voc('kinds', d.kind, id, (k) => { d.kind = k; });
-      voc('fields', d.field, id, (k) => { d.field = k; });
-      for (const s of d.states) {
-        voc('activity', s.activity, `${id}@${s.key}`, (k) => { s.activity = k; });
-        for (const m of s.modifications) voc('modifications', m.type, `${id}@${s.key}`, (k) => { m.type = k; });
+      d.kind = voc('kinds', d.kind, id);
+      if (d.reference_species) d.reference_species = voc('taxa', d.reference_species, id);
+      else if (V.kinds[d.kind] && V.kinds[d.kind].species === 'required' && !d._given.reference_species) d.reference_species = V.defaultReferenceSpecies;
+      if (d.membrane) {
+        d.membrane.association = voc('associations', d.membrane.association, id);
+        if (d.membrane.location) d.membrane.location = voc('locations', d.membrane.location, id);
+        if (d.membrane.side) d.membrane.side = voc('faces', d.membrane.side, id);
       }
+      for (const c of d.components) c.ref = ref(c.ref, `${id} 구성 요소`);
+      d.desc.forEach((ds, i) => {
+        const w = `${id}/desc/${i + 1}`;
+        ds.field = voc('fields', ds.field, w);
+        ctx(ds.context, w);
+        ds.links.forEach((l, j) => { l.to = ref(l.to, `${w} 연결 ${j + 1}`); });
+        if (ds.genus) ds.genus = ref(ds.genus, `${w} genus`);
+        ds.evidence.level = voc('evidenceLevels', ds.evidence.level, w);
+      });
+      for (const [k, s] of Object.entries(d.site)) {
+        const w = `${id}/site/${k}`;
+        s.type = voc('siteTypes', s.type, w);
+        s.features = s.features.map((f) => voc('features', f, w));
+        if (s.face) s.face = voc('faces', s.face, w);
+        if (s.on) s.on = ref(s.on, `${w} on`);
+        if (s.ligand) s.ligand = ref(s.ligand, `${w} ligand`);
+        if (s.numbering) s.numbering = Object.fromEntries(Object.entries(s.numbering).map(([t, r]) => [voc('taxa', t, w), r]));
+        if (s.taxa) s.taxa = s.taxa.map((t) => voc('taxa', t, w));
+      }
+      for (const r of d.rule) {
+        const w = `${id}/rule/${r.id}`;
+        r.evidence.level = voc('evidenceLevels', r.evidence.level, w);
+        if (r.taxa) r.taxa = r.taxa.map((t) => voc('taxa', t, w));
+        if (r.type === 'meaning') {
+          r.activity = voc('activity', r.activity, w);
+          r.when = Object.fromEntries(Object.entries(r.when).map(([s, f]) => [s, voc('features', f, w)]));
+          continue;
+        }
+        r.action = voc('actions', r.action, w);
+        const e = r.effect;
+        for (const k of ['target', 'partner', 'complex']) if (e[k]) e[k] = ref(e[k], `${w} ${k}`);
+        for (const k of ['consumes', 'produces']) if (e[k]) e[k] = e[k].map((x) => ref(x, `${w} ${k}`));
+        for (const k of ['add', 'remove']) if (e[k]) e[k] = e[k].map((f) => voc('features', f, w));
+        for (const k of ['from', 'to']) if (e[k]) e[k] = voc('locations', e[k], w);
+        if (e.partner_site) e.partner_site.component = ref(e.partner_site.component, `${w} partner_site`);
+        if (r.via_component) r.via_component = ref(r.via_component, `${w} via_component`);
+        if (r.with) { r.with.consumes = r.with.consumes.map((x) => ref(x, w)); r.with.produces = r.with.produces.map((x) => ref(x, w)); }
+        for (const g of r.regulators) { g.ref = ref(g.ref, `${w} 조절자`); g.effect = voc('effects', g.effect, w); }
+        if (r.where) r.where = r.where.map((l) => voc('locations', l, w));
+      }
+      d.obs.forEach((b, i) => {
+        const w = `${id}/obs/${i + 1}`;
+        b.property = voc('obsProperties', b.property, w);
+        ctx(b.context, w);
+        if (V.obsProperties[b.property] && V.obsProperties[b.property].value === 'location') b.value = voc('locations', b.value, w);
+        b.evidence.level = voc('evidenceLevels', b.evidence.level, w);
+      });
     }
     for (const [id, st] of touchedSteps) {
-      voc('actions', st.action, id, (k) => { st.action = k; });
-      voc('compartments', st.compartment, id, (k) => { st.compartment = k; });
-      for (const p of st.regulators) voc('effects', p.effect, id, (k) => { p.effect = k; });
-      st.part_of = st.part_of.map((p) => ref(p, `${id} 소속 경로`));
-      for (const p of [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators]) {
-        p.ref = ref(p.ref, `${id} 참여자`);
-        if (!ix.senses.has(p.ref)) continue;
-        for (const f of ['state', 'after']) if (p[f]) {
-          const m = resolveState(ix, p.ref, p[f]);
-          if (m.error) ERR(id, m.error);
-          else { if (m.mapped) MAP(p[f], m.key, `${ix.label(p.ref)} 상태`); p[f] = m.key; }
+      const m = st.rule.match(/^(.*)\/rule\/(.+)$/);
+      if (!m) ERR(id, `규칙 참조 '${st.rule}' 형식 — 'D…/rule/키' 또는 { owner, id }`);
+      else st.rule = `${ref(m[1], `${id} 규칙 소유자`)}/rule/${m[2]}`;
+      for (const k of ['agents', 'inputs', 'outputs', 'regulators']) for (const p of st[k]) {
+        if (p.b) {
+          const b = parseBundle(p.b);
+          if (!b.error) { b.base = ref(b.base, `${id} 묶음`); b.location = voc('locations', b.location, id); b.features = b.features.map((f) => ({ site: f.site, feature: voc('features', f.feature, id) })); p.b = bundleKey(b); }
+          continue;
         }
+        const raw = p.raw; delete p.raw;
+        const feats = raw.features.map((f) => { const i = f.indexOf(':'); return i > 0 ? { site: f.slice(0, i), feature: voc('features', f.slice(i + 1), id) } : (ERR(id, `특징 '${f}' 형식 — '부위:특징'`), null); }).filter(Boolean);
+        p.b = bundleKey({ base: ref(raw.ref, `${id} 참여자`), features: feats, location: voc('locations', raw.location, id) });
       }
+      st.part_of = st.part_of.map((p) => ref(p, `${id} 소속 경로`));
     }
-    // 7. 삭제 (번호는 다시 쓰지 않는다)
+    // 5. 삭제 (번호 재사용 금지)
     const gone = new Set();
     for (const r of arr(patchIn.remove).map(str)) {
       if (db.steps[r]) { delete db.steps[r]; report.removed.push(r); continue; }
@@ -654,12 +1010,10 @@
       }
       ERR(r, '삭제 대상 없음 (번호로 지정할 것)');
     }
-    // 삭제된 정의항을 가리키는 연결은 정리한다. 단계·상태가 가리키면 검사에서 오류로 드러난다.
-    if (gone.size) for (const d of Object.values(db.senses)) d.links = d.links.filter((l) => !gone.has(l.to));
+    if (gone.size) for (const d of Object.values(db.senses)) for (const ds of d.desc) ds.links = ds.links.filter((l) => !gone.has(l.to));
     return { db, report };
   }
 
-  // ===== 관문: 매핑·검사 오류가 하나라도 있거나 새 경고가 생기면 거부 (allowWarnings 일 때만 경고 통과) =====
   function gate(dbBefore, result, opt) {
     const before = validate(normalize(dbBefore)), after = validate(result.db);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
@@ -671,33 +1025,33 @@
     return { ok, changed, errors, warnings, preexisting: before.errors.length };
   }
 
-  // ===== 매핑 현황 =====
+  // ===== 매핑·채움 현황 =====
   function audit(db) {
     db = normalize(db);
     const ix = index(db);
-    const byKind = {}, unmapped = [], asserted = [], verified = [], unusedStates = [], fingerprints = { with: 0, without: [] };
-    const used = new Set();
-    for (const r of ix.steps.values()) for (const u of [...r.uses, ...r.makes]) used.add(u.key);
+    const a = { byKind: {}, unmapped: [], asserted: [], verified: [], noFingerprint: [], unknownResidues: [], complexNoComponents: [], evidence: {} };
     for (const [id, d] of ix.senses) {
-      byKind[d.kind] = (byKind[d.kind] || 0) + 1;
-      if (d.unmapped) unmapped.push({ id, label: ix.label(id), kind: d.kind, reason: d.unmapped });
-      for (const x of d.xrefs) (x.status === 'verified' ? verified : asserted).push({ id, label: ix.label(id), xref: xrefLabel(x) });
-      for (const s of d.states) if (!used.has(id + '@' + s.key)) unusedStates.push(`${id}@${s.key}`);
-      const canFp = Object.values(V.fingerprints).some((f) => f.kinds.includes(d.kind));
-      if (d.fingerprint) fingerprints.with++; else if (canFp) fingerprints.without.push(`${id}(${ix.label(id)})`);
+      a.byKind[d.kind] = (a.byKind[d.kind] || 0) + 1;
+      if (d.unmapped) a.unmapped.push(`${id} ${ix.label(id)} [${d.kind}]: ${d.unmapped}`);
+      for (const x of d.xrefs) (x.status === 'verified' ? a.verified : a.asserted).push(`${id} ${ix.label(id)} — ${xrefLabel(x)}`);
+      if (!d.fingerprint && Object.values(V.fingerprints).some((f) => f.kinds.includes(d.kind))) a.noFingerprint.push(`${id} ${ix.label(id)}`);
+      for (const [k, s] of Object.entries(d.site)) if (s.residue_unknown) a.unknownResidues.push(`${id}/site/${k} ${ix.label(id)}`);
+      if (d.kind === 'complex' && !d.components.length) a.complexNoComponents.push(`${id} ${ix.label(id)}`);
+      for (const x of [...d.desc, ...d.rule, ...d.obs]) a.evidence[x.evidence.level] = (a.evidence[x.evidence.level] || 0) + 1;
     }
-    return { byKind, unmapped, asserted, verified, unusedStates, fingerprints };
+    return a;
   }
   function auditText(db) {
-    const a = audit(db);
+    const a = audit(db), list = (t, xs) => [`${t} ${xs.length}`, ...xs.map((x) => '  - ' + x)];
     return [
       '종류별 정의항: ' + Object.entries(a.byKind).sort().map(([k, n]) => `${k} ${n}`).join(', '),
+      '근거 수준(설명·규칙·관찰): ' + Object.entries(a.evidence).map(([k, n]) => `${k} ${n}`).join(', '),
       `외부 ID: 원본과 대조됨 ${a.verified.length}, 대조 안 됨(asserted) ${a.asserted.length}`,
-      ...a.asserted.map((x) => `  ? ${x.id} ${x.label} — ${x.xref}`),
-      `미매핑(unmapped) ${a.unmapped.length}`,
-      ...a.unmapped.map((x) => `  - ${x.id} ${x.label} [${x.kind}]: ${x.reason}`),
-      `구조 지문: 있음 ${a.fingerprints.with}, 지문을 가질 수 있는데 없음 ${a.fingerprints.without.length}` + (a.fingerprints.without.length ? ` (${a.fingerprints.without.join(', ')})` : ''),
-      `단계에 쓰이지 않은 상태 ${a.unusedStates.length}` + (a.unusedStates.length ? ': ' + a.unusedStates.join(', ') : ''),
+      ...a.asserted.map((x) => '  ? ' + x),
+      ...list('미매핑(unmapped)', a.unmapped),
+      ...list('잔기 번호 모름(residue_unknown)', a.unknownResidues),
+      ...list('구성 요소 없는 복합체', a.complexNoComponents),
+      `구조 지문이 비어 있는 분자 ${a.noFingerprint.length}` + (a.noFingerprint.length ? ` (도구로 계산해 채울 것)` : ''),
     ].join('\n');
   }
   function mapText(db, query) {
@@ -706,51 +1060,42 @@
     if (r.error) return r.error;
     const d = ix.senses.get(r.id), t = db.terms[d.term];
     return [`${query} → ${r.id}  (${r.via})`,
-      `  ${ix.label(r.id)}  개념 ${d.term} · 뜻 ${d.n} [${d.kind} · ${d.field}] ${d.text}`,
+      `  ${ix.label(r.id)}  개념 ${d.term} · 뜻 ${d.n} [${d.kind}${d.reference_species ? ' · 기준 종 ' + vlabel('taxa', d.reference_species) : ''}] ${d.desc[0] ? d.desc[0].text : ''}`,
       `  이름: ${t.names.ko}${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' · 별칭 ' + t.aliases.join(', ') : ''}`,
       d.xrefs.length ? '  외부 ID: ' + d.xrefs.map((y) => `${xrefLabel(y)}(${y.status})`).join(', ') : '',
-      d.fingerprint ? `  지문: ${d.fingerprint.scheme} ${d.fingerprint.value} (${d.fingerprint.status})` : '',
       d.unmapped ? '  미매핑: ' + d.unmapped : '',
-      d.states.length ? '  상태: ' + d.states.map((s) => `${s.key}=${s.label}[${s.activity}]`).join(', ') : ''].filter(Boolean).join('\n');
+      Object.keys(d.site).length ? '  부위: ' + Object.entries(d.site).map(([k, s]) => `${ix.siteLabel(r.id, k)}[${s.features.join('/')}]`).join(', ') : '',
+      d.rule.length ? '  규칙: ' + d.rule.map((x) => `${x.id}(${x.label})`).join(', ') : ''].filter(Boolean).join('\n');
   }
-
-  // ===== 이전 형식(bionote v3 개념) 변환 — kind·field·context 는 비워 두므로 병합 전에 채워야 한다 =====
-  const V3_ROLE = { '상위범주': 'is_a', '구성요소': 'has_part', '조건': 'requires', '대비': 'contrasts', '기능': 'refers', '미정': 'refers' };
-  function fromBionote(items) {
-    const list = [];
-    const walk = (o) => { if (!isObj(o)) return; if (o.kind === 'bundle') (o.items || []).forEach(walk); else if (o.title && (o.kind === 'concept' || !o.kind)) list.push(o); };
-    (Array.isArray(items) ? items : [items]).forEach(walk);
-    const patch = { format: PATCH_FORMAT, version: VERSION, terms: [], senses: [] };
-    list.forEach((c, ci) => {
-      const tid = `T+${ci + 1}`;
-      patch.terms.push({ id: tid, names: { ko: str(c.title) }, note: (c.axioms || []).map((a) => '공리: ' + a.text).join('\n') || undefined });
-      (c.defs || []).forEach((d) => patch.senses.push({
-        term: tid, kind: '', field: '', context: '', text: str(d.text).replace(/\[\[([^\]]+)\]\]/g, '$1'),
-        links: (d.links || []).map((l) => ({ to: str(l.to), rel: V3_ROLE[l.role] || 'refers', span: str(d.text).includes(l.to) ? str(l.to) : undefined, note: str(l.note) || undefined })),
-        examples: (d.examples || []).map((e) => e.text), source: 'bionote v3 변환',
-      }));
-    });
-    return patch;
-  }
-  const looksBionote = (o) => isObj(o) && (o.kind === 'bundle' || o.kind === 'concept' || (o.title && Array.isArray(o.defs)));
-  function ingest(db, obj) { return merge(db, looksBionote(obj) || Array.isArray(obj) ? fromBionote(obj) : obj); }
 
   // ===== 사람/AI 가 읽는 텍스트 =====
   function line(ix, id) {
     const d = ix.senses.get(id);
     if (!d) return `[${id}] (없음)`;
-    return `[${id} ${ix.label(id)}] ${d.text} 〈${d.field}${d.context && d.context !== d.field ? ' · ' + d.context : ''}〉 {${d.kind}}`;
+    const ds = d.desc[0] || { text: '', field: '', context: {} };
+    return `[${id} ${ix.label(id)}] ${ds.text} 〈${ds.field}${ds.context.scope && ds.context.scope !== ds.field ? ' · ' + ds.context.scope : ''}〉 {${d.kind}}`;
+  }
+  function ruleLine(ix, owner, r) {
+    if (r.type === 'meaning') return `${owner}/rule/${r.id} 「${r.label}」 상태 의미: ${Object.entries(r.when).map(([s, f]) => `${ix.siteLabel(owner, s)}:${vlabel('features', f)}`).join(' ∧ ') || '(기본)'} → ${vlabel('activity', r.activity)}`;
+    const e = r.effect, L = ix.label;
+    let eff = '';
+    if (e.type === 'modify') eff = `${L(e.target || owner)}.${ix.siteLabel(e.target || owner, e.site)} ${(e.remove || []).map((f) => '−' + vlabel('features', f)).join(' ')} ${(e.add || []).map((f) => '+' + vlabel('features', f)).join(' ')}${e.partner ? ` (상대 ${L(e.partner)} 흡수)` : ''}`;
+    if (e.type === 'convert') eff = `${(e.consumes || []).map(L).join(' + ')} → ${(e.produces || []).map(L).join(' + ')}`;
+    if (e.type === 'dissociate') eff = `${L(e.complex || owner)} → 구성 요소로 해리${e.partner ? ` (${L(e.partner)} 결합)` : ''}`;
+    if (e.type === 'associate') eff = `구성 요소 → ${L(e.complex || owner)}`;
+    if (e.type === 'transport') eff = `${L(e.target || owner)}: ${vlabel('locations', e.from)} → ${vlabel('locations', e.to)}`;
+    return `${owner}/rule/${r.id} 「${r.label}」 [${r.action}${r.agent ? ', 행위자 ' + L(owner) + (r.via_site ? '.' + r.via_site : '') : ''}] ${eff.trim()}`
+      + (r.where ? ` 〈${r.where.map((l) => vlabel('locations', l)).join('·')}에서만〉` : '')
+      + (r.regulators.length ? ` | 조절: ${r.regulators.map((g) => `${vlabel('effects', g.effect)} ${L(g.ref)}`).join(', ')}` : '');
   }
   function stepLine(ix, id) {
     const r = ix.steps.get(id);
     if (!r) return `${id} (없음)`;
-    const st = r.step, P = (p) => ix.partName(p) + (p.minor ? '*' : '');
-    const ag = st.agents.map((a) => P(a) + (a.after && a.after !== (a.state || '') ? ` ⟹ ${ix.partName({ ref: a.ref, state: a.after })}` : '')).join(', ');
-    const rg = st.regulators.map((p) => `${(V.effects[p.effect] || {}).label || p.effect} ${P(p)}`).join(', ');
-    return `${id} 「${st.label}」 [${st.action}]${ag ? ` 행위자 ${ag} |` : ''} ${st.inputs.map(P).join(' + ') || '∅'} → ${st.outputs.map(P).join(' + ') || '∅'}`
-      + `${rg ? ` | 조절: ${rg}` : ''} 〈${st.compartment}${st.cell ? ' · ' + st.cell : ''}〉`;
+    const st = r.step, rule = ix.ruleOf(st.rule) || { label: st.rule, action: '?' };
+    const P = (p) => (p.n > 1 ? p.n + '× ' : '') + ix.bundleLabel(p.b) + (p.minor ? '*' : '');
+    return `${id} 「${rule.label}」 [${rule.action}]${st.agents.length ? ` 행위자 ${st.agents.map(P).join(', ')} |` : ''} ${st.inputs.map(P).join(' + ') || '∅'} → ${st.outputs.map(P).join(' + ') || '∅'}`
+      + (st.regulators.length ? ` | 조절: ${st.regulators.map(P).join(', ')}` : '');
   }
-  // 대상(번호·이름·"이름#n"·외부 ID)을 정의항 번호 목록으로
   function targets(ix, target) {
     if (ix.senses.has(target)) return { ids: [target] };
     if (ix.db.terms[target]) return { ids: ix.termSenses.get(target) };
@@ -764,18 +1109,21 @@
     db = normalize(db);
     const ix = index(db), tg = targets(ix, target);
     if (tg.error) return tg.error;
-    const out = [];
+    const out = [], L = ix.label;
     for (const id of tg.ids) {
       const d = ix.senses.get(id), t = db.terms[d.term];
       out.push(line(ix, id));
-      out.push(`  개념 ${d.term}: ${t.names.ko}${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' · 별칭 ' + t.aliases.join(', ') : ''}`);
+      out.push(`  개념 ${d.term}: ${t.names.ko}${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' · 별칭 ' + t.aliases.join(', ') : ''}${d.reference_species ? ` · 기준 종 ${vlabel('taxa', d.reference_species)}` : ''}`);
       if (d.xrefs.length) out.push('  외부 ID: ' + d.xrefs.map((y) => `${xrefLabel(y)}${y.status === 'verified' ? '' : '(미대조)'}`).join(', '));
       if (d.fingerprint) out.push(`  지문: ${d.fingerprint.scheme} ${d.fingerprint.value}`);
       if (d.unmapped) out.push('  미매핑: ' + d.unmapped);
-      for (const s of d.states) out.push(`  ◇ 상태 ${id}@${s.key} = ${s.label} [${V.activity[s.activity] ? V.activity[s.activity].label : s.activity}]`
-        + (s.modifications.length ? ' 수식: ' + s.modifications.map((m) => (V.modifications[m.type] || {}).label + (m.site ? ' ' + m.site : '')).join(', ') : '')
-        + (s.bound.length ? ' 결합: ' + s.bound.map(ix.label).join(', ') : ''));
-      if (d.examples.length) out.push('  예: ' + d.examples.join(' / '));
+      // 구조 (지식 해상도)
+      if (d.membrane) out.push(`  ▣ 막 위상: ${vlabel('associations', d.membrane.association)}${d.membrane.location ? ' · ' + vlabel('locations', d.membrane.location) : ''}${d.membrane.side ? ' · ' + vlabel('faces', d.membrane.side) : ''}`);
+      for (const c of d.components) out.push(`  ▣ 구성 요소: ${L(c.ref)} (${c.ref}) ×${c.n}${c.role ? ' · ' + c.role : ''}`);
+      for (const [k, s] of Object.entries(d.site)) out.push(`  ◇ 부위 ${id}/site/${k}: ${vlabel('siteTypes', s.type)}${s.numbering ? ' ' + Object.entries(s.numbering).map(([tx, r]) => `${vlabel('taxa', tx)} ${r}`).join(', ') : ''}${s.residue_unknown ? ' (잔기 모름)' : ''}${s.on ? ' · 구성 요소 ' + L(s.on) : ''}${s.face ? ' · ' + vlabel('faces', s.face) : ''}${s.ligand ? ' · 리간드 ' + L(s.ligand) : ''} · 특징 ${s.features.map((f) => vlabel('features', f)).join('/')}`);
+      for (const r of d.rule) out.push('  ⚖ ' + ruleLine(ix, id, r));
+      d.desc.forEach((ds, i) => { if (i > 0) out.push(`  ✎ 설명 ${i + 1}: ${ds.text} 〈${ds.field} · ${ds.context.scope}〉`); });
+      for (const b of d.obs) out.push(`  ☉ 관찰 ${vlabel('obsProperties', b.property)} = ${b.value}${b.unit ? ' ' + b.unit : ''} 〈${[b.context.species && vlabel('taxa', b.context.species), b.context.tissue && vlabel('tissues', b.context.tissue), b.context.cell && vlabel('cells', b.context.cell), b.context.condition].filter(Boolean).join(' · ')}〉 [${b.evidence.level}]`);
       const climb = (n, depth, pad, seen) => {
         if (depth >= opt.up) return;
         for (const e of ix.parents(n)) {
@@ -795,7 +1143,7 @@
         if (e.from === id) out.push(`  ↔ ${rr.label || e.rel}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, e.target)}`);
         else out.push(`  ↔ ${rr.inverse || e.rel}: ${line(ix, e.from)}`);
       }
-      for (const ro of ix.roles(id)) out.push(`  ⚙ ${ROLE[ro.role]}${ro.p.state ? ` [${ix.partName(ro.p)}]` : ''}: ${stepLine(ix, ro.id)}`);
+      for (const ro of ix.roles(id)) out.push(`  ⚙ ${ROLE[ro.role]} [${ix.bundleLabel(ro.p.b)}]: ${stepLine(ix, ro.id)}`);
       const inPath = ix.stepsIn(id);
       if (inPath.length) out.push(`  ⚙ 이 경로에 속한 기전 단계 ${inPath.length}개 — mechanism 으로 순서대로 보기`);
       out.push('');
@@ -808,18 +1156,19 @@
     const ix = index(db);
     if (isStepId(target)) {
       if (!ix.steps.has(target)) return `'${target}' 단계가 없습니다.`;
-      const out = [], st = ix.steps.get(target).step;
+      const out = [], st = ix.steps.get(target).step, rule = ix.ruleOf(st.rule);
       const walk = (id, depth, pad, dir, seen) => {
         if (depth >= (dir === 'next' ? opt.down : opt.up)) return;
         for (const n of ix[dir](id)) {
-          out.push(`${pad}${dir === 'next' ? '↓' : '↑'} (${ix.keyName(n.via)}) ${stepLine(ix, n.id)}`);
+          out.push(`${pad}${dir === 'next' ? '↓' : '↑'} (${ix.bundleLabel(n.via)}) ${stepLine(ix, n.id)}`);
           if (!seen.has(n.id)) walk(n.id, depth + 1, pad + '   ', dir, new Set([...seen, n.id]));
         }
       };
       walk(target, 0, '  ', 'prev', new Set([target]));
       const ups = out.splice(0);
       walk(target, 0, '  ', 'next', new Set([target]));
-      return [...(ups.length ? ['앞 단계:', ...ups] : []), '▶ ' + stepLine(ix, target), ...(st.text ? ['  ' + st.text] : []),
+      return [...(ups.length ? ['앞 단계:', ...ups] : []), '▶ ' + stepLine(ix, target),
+        ...(rule ? ['  규칙: ' + ruleLine(ix, ix.ruleOwner(st.rule), rule), ...(rule.text ? ['  ' + rule.text] : [])] : []),
         '  소속: ' + st.part_of.map((p) => `${p} ${ix.label(p)}`).join(', '), ...(out.length ? ['다음 단계:', ...out] : [])].join('\n');
     }
     const tg = targets(ix, target);
@@ -832,7 +1181,7 @@
       list.forEach((sid, i) => {
         out.push(`  ${i + 1}. ${stepLine(ix, sid)}`);
         const nx = ix.next(sid);
-        if (nx.length) out.push(`       → ${nx.map((n) => `${n.id} (${ix.keyName(n.via)})`).join(', ')}`);
+        if (nx.length) out.push(`       → ${uniq(nx.map((n) => n.id)).join(', ')}`);
       });
       out.push('');
     }
@@ -840,7 +1189,7 @@
   }
 
   // ===== AI 에게 줄 작성 지침 =====
-  const vocabList = (table, withLabel) => Object.entries(V[table]).map(([k, v]) => (withLabel && v.label ? `${k}(${v.label})` : k)).join(', ');
+  const vlist = (table, withLabel) => Object.entries(V[table]).map(([k, v]) => (withLabel && v.label ? `${k}(${v.label})` : k)).join(', ');
   function promptText(db, opt) {
     db = normalize(db);
     opt = opt || {};
@@ -849,82 +1198,82 @@
     for (const [tid, t] of Object.entries(db.terms).sort((a, b) => a[1].names.ko.localeCompare(b[1].names.ko))) {
       const nm = `${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' (별칭: ' + t.aliases.join(', ') + ')' : ''}`;
       for (const id of ix.termSenses.get(tid)) {
-        const d = ix.senses.get(id);
-        const st = d.states.length ? ` | 상태: ${d.states.map((s) => `${s.key}=${s.label}`).join(', ')}` : '';
-        idx.push(`${id} ${ix.label(id)}${nm} | ${tid} | ${d.kind} | ${d.field} · ${d.context} | ${d.text.length > 50 ? d.text.slice(0, 50) + '…' : d.text}${st}`);
+        const d = ix.senses.get(id), ds = d.desc[0] || { text: '', field: '', context: {} };
+        const extra = [Object.keys(d.site).length && '부위 ' + Object.entries(d.site).map(([k, s]) => `${k}[${s.features.join('/')}]`).join(', '),
+          d.rule.length && '규칙 ' + d.rule.map((r) => r.id).join(', '), d.membrane && d.membrane.association !== 'soluble' && '막 ' + d.membrane.location,
+          d.components.length && '구성 ' + d.components.map((c) => `${c.ref}×${c.n}`).join('+')].filter(Boolean).join(' | ');
+        idx.push(`${id} ${ix.label(id)}${nm} | ${d.kind} | ${ds.field} · ${ds.context.scope} | ${ds.text.length > 40 ? ds.text.slice(0, 40) + '…' : ds.text}${extra ? ' | ' + extra : ''}`);
       }
     }
-    const kinds = Object.entries(V.kinds).map(([k, v]) => `  - ${k}: ${v.label}${v.participant ? ' [참여자·상태 가능]' : ''}`
-      + `${(v.xref.required || []).length ? ` [필수 ID: ${v.xref.required.join(', ')}]` : ''}${v.xref.allowed.length ? ` (허용 ID: ${v.xref.allowed.join(', ')})` : ''}`).join('\n');
-    const rules = Object.entries(V.relationRules).map(([rel, r]) => (typeof r === 'string' ? `  - ${rel}: ${r.slice(1)} 와 같음`
-      : `  - ${rel}: ` + Object.entries(r).map(([k, v]) => `${k}→${v.map((x) => (x === '=' ? '같은 kind' : x === '@molecular' ? '분자 종류' : x)).join('/')}`).join('; '))).join('\n');
-    const stepIdx = [...ix.steps.keys()].map((id) => stepLine(ix, id));
-    return `너는 "맥락 보존형 생명과학 데이터베이스"에 항목을 추가하는 작성자다. 아래 자료를 읽고 패치 JSON 하나만 출력하라.
+    const kinds = Object.entries(V.kinds).map(([k, v]) => `  - ${k}: ${v.label}${v.participant ? ' [기전 참여]' : ''}${v.species === 'required' ? ' [기준 종 필수]' : v.species === 'forbidden' ? ' [종 없음]' : ''}${(v.xref.required || []).length ? ` [필수 ID: ${v.xref.required.join(', ')}]` : ''}`).join('\n');
+    const actions = Object.entries(V.actions).map(([k, v]) => `${k}→${v.effects.join('/')}${v.adds ? ` +${v.adds}` : ''}${v.removes ? ` −${v.removes}` : ''}`).join('; ');
+    const locs = Object.entries(V.locations).map(([k, v]) => `${k}(${v.label}, ${v.dim}${v.parent ? ', ⊂' + v.parent : ''})`).join(', ');
+    return `너는 "맥락 보존형 생명과학 데이터베이스"(형식 v${VERSION})에 항목을 추가하는 작성자다. 아래 자료를 읽고 패치 JSON 하나만 출력하라.
 규칙은 엄격하게 검사되며, 하나라도 어기면 패치 전체가 거부된다.
 
+## 두 해상도
+- 정의항(D, 원천): 가능한 가장 높은 구조적 진실. 구성 요소(소단위·보조인자)를 빠뜨리지 말고, 막 위상·부위·규칙을 정의항이 소유한다.
+  모르는 값(잔기 번호, 외부 ID, 서열)은 지어내지 말고 residue_unknown / unmapped 로 명시한다.
+- 묶음·단계(결과): 의미 있는 변화만. 묶음 = "D번호|부위:특징|…|위치", 단계 = "원천의 전이 규칙이 이 묶음들에 적용됨". 라벨·설명을 넣지 않는다.
+
 ## 식별자
-- 모든 항목은 의미 없는 고정 번호를 가진다: 개념 T000001, 정의항(뜻) D000001, 기전 단계 S000001, 상태는 D000001@키.
-- 새 항목은 id 를 비우거나 임시 번호("T+1", "D+1", "S+1", "D+gp" 등)를 쓴다. 병합 때 실제 번호가 배정되고, 패치 안의 임시 번호 참조도 함께 바뀐다.
-- 참조(to, ref, term, part_of, bound)는 아래 색인의 번호를 쓰는 것이 원칙이다. 이름, "이름#뜻번호"(예: 효소#2), 외부 ID(CHEBI:15422)로 써도 번호로 매핑되지만, 뜻이 여러 개인 이름은 거부된다.
+- 개념 T…, 정의항 D…, 단계 S…. 새 항목은 임시 번호("T+1", "D+pka_c", "S+1"). 패치 안의 임시 번호 참조는 함께 바뀐다.
+- 참조(term, to, ref, target, partner, consumes, produces, on, ligand, part_of)는 번호가 원칙. 이름·"이름#뜻번호"·외부 ID 도 매핑되지만 뜻이 여러 개면 거부.
 
-## 데이터 모델
-- terms: [{ id, names: { ko, en }, aliases, note }] — 개념. ko 필수, en 권장. 기존 개념을 고칠 때만 기존 T 번호.
-- senses: [{ id, term, kind, field, text, context, links, xrefs, unmapped, states, distinction, examples, note, source, by, at }] — 뜻 하나.
-  - term: 개념 번호(T…), 같은 패치의 임시 번호, 또는 이름(없는 이름이면 그 이름으로 개념이 새로 생김).
-  - kind·field 필수(아래 어휘), text 는 정의 문장 하나, context 는 이 정의가 성립하는 범위(필수).
-  - links: [{ to, rel, span, note }] — span 은 정의 문장 속 근거 구절(원문 그대로).
-  - xrefs: [{ db, id }] — 확실히 아는 것만. 추측 금지. 형식: ChEBI "CHEBI:15422", UniProt "P06737", EC "EC 2.7.11.11", GO "GO:0007165".
-  - unmapped: kind 가 필수 ID 를 요구하는데 확실한 ID 를 모를 때 그 사유.
-  - states: 분자 종류만. [{ key, label, aliases, activity, modifications:[{type, site}], bound:[정의항 참조], note }]
-  - distinction: 이미 뜻이 있는 개념에 새 뜻을 더할 때 필수 — 기존 뜻과의 차이.
-  - 기존 정의항을 고칠 때만 기존 D 번호 (정의항 전체 교체 — 연결·예시도 다시 적을 것. states·xrefs·unmapped 는 생략하면 유지).
-- states: { "정의항 참조": [상태…] } — 기존 분자에 상태만 추가·교체.
-- steps: [{ id, label, action, compartment, cell, text, agents:[{ref, state, after}], inputs/outputs:[{ref, state, minor}], regulators:[{ref, state, effect}], part_of:[경로 정의항] }]
-  - state·after 는 그 정의항에 정의된 상태(키 또는 이름). 상태가 정의된 분자는 state 필수(minor 부산물 제외).
-  - 한 단계의 출력(정의항+상태)이 다른 단계의 입력·행위자·조절자와 같으면 자동으로 이어진다.
-  - part_of 대상은 kind 가 pathway 인 정의항.
-- remove: [번호…]
+## 정의항 필드 (senses 항목)
+- kind, reference_species(단백질·핵산 필수, 기본 9606), xrefs, unmapped, fingerprint(도구로 계산한 값만)
+- membrane: { association: ${vlist('associations')}, location: 막(2D 위치), side: 막 면(peripheral·lipid_anchored) }
+- components: [{ ref, n, role }] — 복합체(complex)의 구성 요소 전부
+- desc: [{ text, field, context:{ scope, species, tissue, cell, condition }, genus, links:[{ to, rel, span, note }], evidence, examples }]
+- site: { 키: { type, features:[…], numbering:{ "9606": "Ser14" } 또는 residue_unknown: true, on: 구성 요소, face, ligand, taxa } }
+- rule: [ 상태 의미 { id, type:"meaning", label, when:{ 부위: 특징 }, activity } — 위에서부터 첫 번째로 맞는 규칙, when 이 비면 기본값
+          전이 { id, type:"transition", label, action, agent: true|false, via_site, via_component, effect, with:{consumes,produces}, regulators:[{ref, effect, note}], where:[위치], taxa, text, evidence } ]
+  - effect: { type:"modify", target, site, add:[특징], remove:[특징], partner } | { type:"convert", consumes:[D], produces:[D] }
+            | { type:"dissociate"|"associate", complex, partner, partner_site:{component, sites:[부위]} } | { type:"transport", target, from, to }
+- obs: [{ property, value, unit, context:{ species …}, evidence }] — 종에 따라 달라지는 값은 context.species 필수
+- evidence: { level: curated(출처 source 필수)|computed(도구 tool 필수)|asserted|predicted(confidence 필수) }
+- 기존 정의항을 고칠 때는 고칠 최상위 필드만 적는다(적지 않은 필드는 유지).
 
-## 어휘 (이 값만 허용)
+## 단계 (steps 항목)
+{ id, rule: "D…/rule/키", agents:[묶음], inputs:[묶음], outputs:[묶음], regulators:[묶음], part_of:[경로 정의항] }
+- 묶음: "D000044|reg_phos:phosphorylated|cytosol" 또는 { ref, features:["부위:특징"], location, n, minor }
+- 검사: 행위자 활성(원천 상태 의미 규칙), 변화량 = 규칙 효과, 위치 조건(where), 공간 접촉(막 면·인접), 수송 외 위치 변화 금지, 해리 시 구성 요소 개수.
+
+## 어휘
 - kind:
 ${kinds}
-- field: ${vocabList('fields')}
-- action: ${vocabList('actions')}
-- compartment: ${vocabList('compartments')}
-- activity: ${vocabList('activity', true)}
-- modification type: ${vocabList('modifications', true)} (site 는 Ser14 처럼 세 글자 약어+번호)
-- effect: ${vocabList('effects', true)}
-- 관계 rel: ${Object.entries(REL).map(([k, r]) => `${k}(${r.label})`).join(', ')}
-- 관계의 kind 제약 (원천 kind → 대상 kind):
-${rules}
+- field: ${vlist('fields')}
+- 위치: ${locs}
+- 막 면: ${vlist('faces')}
+- 특징: ${vlist('features')}
+- 부위 종류: ${vlist('siteTypes')}
+- action→허용 효과: ${actions}
+- 활성: ${vlist('activity')} · 조절 효과: ${vlist('effects')}
+- 종: ${Object.entries(V.taxa).map(([k, v]) => `${k}(${v.label})`).join(', ')}
+- 조직: ${vlist('tissues', true)} · 세포: ${vlist('cells', true)}
+- 관찰 속성: ${vlist('obsProperties')}
+- 관계 rel: ${Object.keys(REL).join(', ')}
 
 ## 엄격 규칙
-1. 색인에 있는 개념은 새로 만들지 말고 그 번호를 쓴다. 이름(ko·en·별칭)이 기존 것과 겹치면 기존 개념으로 합쳐지거나 거부된다
-   (띄어쓰기·하이픈·괄호·대소문자·그리스 문자 차이는 같은 이름으로 본다).
-2. 같은 외부 ID 를 두 정의항에 붙일 수 없다.
-3. 인산화형·활성형 같은 변화는 새 개념이 아니라 상태(state)로 표현한다.
-4. 정의 문장에 쓰인 핵심 개념이 색인에 없으면 같은 패치에서 만들고 임시 번호로 연결한다.
-5. 자료에 없는 내용을 지어내지 말고, 불확실하면 note 에 적는다.
-6. 출력은 JSON 하나만.
+1. 색인에 있는 개념은 새로 만들지 말고 그 번호를 쓴다. 이름이 겹치면 합쳐지거나 거부된다.
+2. 인산화형·활성형 같은 변화는 새 개념이 아니라 묶음의 부위:특징으로, 활성은 원천의 상태 의미 규칙으로 표현한다.
+3. 외부 ID·잔기 번호·서열은 확실한 것만. 추측 금지.
+4. 출력은 JSON 하나만.
 
 ## 출력 형식
-{ "format": "definition-db-patch", "version": ${VERSION},
-  "terms": [ { "id": "T+1", "names": { "ko": "", "en": "" }, "aliases": [] } ],
-  "senses": [ { "id": "D+1", "term": "T+1", "kind": "", "field": "", "text": "", "context": "", "links": [], "xrefs": [], "states": [] } ],
-  "states": {}, "steps": [], "remove": [] }
+{ "format": "definition-db-patch", "version": ${VERSION}, "terms": [], "senses": [], "steps": [], "remove": [] }
 
-## 현재 색인 (정의항 번호 꼬리표 / 영문 (별칭) | 개념 번호 | kind | 분야·맥락 | 정의 앞부분 | 상태)
+## 현재 색인 (정의항 꼬리표 / 영문 (별칭) | kind | 분야·범위 | 정의 앞부분 | 구조)
 ${idx.length ? idx.join('\n') : '(비어 있음)'}
 
 ## 기존 기전 단계 (* = 부산물)
-${stepIdx.length ? stepIdx.join('\n') : '(없음)'}
+${[...ix.steps.keys()].map((id) => stepLine(ix, id)).join('\n') || '(없음)'}
 
 ## 자료
 ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 `;
   }
 
-  // AI 응답에서 JSON 만 꺼낸다(코드 펜스나 앞뒤 설명이 붙어 와도 처리)
   function parseLoose(text) {
     const s = String(text).trim();
     try { return JSON.parse(s); } catch (_) { /* 아래에서 다시 시도 */ }
@@ -934,8 +1283,9 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     if (a >= 0 && b > a) return JSON.parse(s.slice(a, b + 1));
     throw new Error('JSON 을 찾을 수 없음');
   }
+  const ingest = (db, obj) => merge(db, obj);
 
   return { FORMAT, PATCH_FORMAT, VERSION, VOCAB: V, REL, AXIS_UP, AXIS_DOWN, ROLE, emptyDB, normalize, normName, index, validate, merge, gate, ingest,
-    fromBionote, resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, promptText, parseLoose, isStepId, isId,
-    xrefKey, xrefLabel };
+    resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
+    xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel };
 });

@@ -7,12 +7,11 @@
 //   node dbtool.mjs merge     <patch.json...> [--dry] [--allow-warnings]
 //                                                           매핑 → 검사 → 관문 통과 시 저장, 적용한 패치는 data/patches/ 에 기록
 //   node dbtool.mjs map       <번호|이름|이름#n|외부ID|지문>   참조가 어느 정의항(D…)으로 매핑되는지
-//   node dbtool.mjs audit                                   매핑 현황 (외부 ID 대조 여부, 미매핑, 안 쓰인 상태)
-//   node dbtool.mjs vocab     [표 이름]                     통제 어휘 보기 (kinds, fields, actions, compartments …)
+//   node dbtool.mjs audit                                   매핑·채움 현황 (외부 ID 대조 여부, 미매핑, 잔기 모름, 구조 지문)
+//   node dbtool.mjs vocab     [표 이름]                     통제 어휘 보기 (kinds, locations, features, actions …)
 //   node dbtool.mjs context   <번호|이름|이름#n> [--up N] [--down N]
 //   node dbtool.mjs mechanism <S…|경로 번호·이름> [--up N] [--down N]
 //   node dbtool.mjs prompt    [자료.txt]                     AI 에게 줄 작성 지침 + 현재 색인
-//   node dbtool.mjs migrate   <bionote-v3.json...>          v3 개념 파일 → 패치 JSON (kind·field 는 채워야 병합됨)
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative } from 'node:path';
@@ -41,9 +40,10 @@ const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace('T', '
 switch (cmd) {
   case 'status': {
     const db = loadDB(), senses = Object.values(db.senses);
-    const links = senses.reduce((n, d) => n + d.links.length, 0), states = senses.reduce((n, d) => n + d.states.length, 0);
+    const sum = (f) => senses.reduce((n, d) => n + f(d), 0);
+    const links = sum((d) => d.desc.reduce((m, x) => m + x.links.length, 0)), sites = sum((d) => Object.keys(d.site).length), rules = sum((d) => d.rule.length);
     const r = DefDB.validate(db), nx = db.meta.next;
-    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 상태 ${states}, 기전 단계 ${Object.keys(db.steps).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
+    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 부위 ${sites}, 규칙 ${rules}, 관찰 ${sum((d) => d.obs.length)}, 기전 단계 ${Object.keys(db.steps).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
     console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')}`);
     break;
   }
@@ -92,11 +92,11 @@ switch (cmd) {
     break;
   }
   case 'vocab': {
-    const V = DefDB.VOCAB, tables = args.length ? args : ['kinds', 'fields', 'actions', 'compartments', 'activity', 'modifications', 'effects', 'xrefs'];
+    const V = DefDB.VOCAB, tables = args.length ? args : ['kinds', 'fields', 'locations', 'faces', 'associations', 'siteTypes', 'features', 'actions', 'activity', 'effects', 'taxa', 'obsProperties', 'evidenceLevels', 'xrefs'];
     for (const t of tables) {
       if (!V[t]) die(`어휘 표 '${t}' 없음`);
       console.log(`## ${t}`);
-      for (const [k, v] of Object.entries(V[t])) console.log(`  ${k}${v.label ? ` — ${v.label}` : ''}${v.aliases && v.aliases.length ? `  (별칭: ${v.aliases.join(', ')})` : ''}${v.pattern ? `  형식: ${v.pattern}` : ''}`);
+      for (const [k, v] of Object.entries(V[t])) console.log(`  ${k}${v.label ? ` — ${v.label}` : ''}${v.aliases && v.aliases.length ? `  (별칭: ${v.aliases.join(', ')})` : ''}${v.pattern ? `  형식: ${v.pattern}` : ''}${v.dim ? `  [${v.dim}${v.parent ? ' ⊂' + v.parent : ''}${v.sides ? ' 면: ' + Object.entries(v.sides).map(([f, l]) => f + '→' + l).join(', ') : ''}]` : ''}${v.effects ? `  [효과 ${v.effects.join('/')}${v.adds ? ' +' + v.adds : ''}${v.removes ? ' −' + v.removes : ''}]` : ''}${v.name ? `  ${v.name}` : ''}`);
     }
     break;
   }
@@ -114,11 +114,6 @@ switch (cmd) {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));
     break;
   }
-  case 'migrate': {
-    if (!args.length) die('사용법: migrate <bionote-v3.json...>');
-    console.log(JSON.stringify(DefDB.fromBionote(args.map(readJSON)), null, 2));
-    break;
-  }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | prompt | migrate  (파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }

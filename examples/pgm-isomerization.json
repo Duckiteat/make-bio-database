@@ -1,0 +1,51 @@
+{
+  "format": "definition-db-patch",
+  "version": 4,
+  "_설명": "형식 v4 예시 — 포스포글루코뮤테이스가 포도당-1-인산을 포도당-6-인산으로 바꾸는 단계. 참조를 일부러 이름·영문명·별칭·어휘 별칭으로 써서 병합 때 번호·표준 값으로 매핑되는 것을 보여 준다. 원천(정의항)이 규칙을 소유하고, 단계는 규칙 참조와 묶음만 가진다. 저장소에는 병합하지 않은 예시다 (node dbtool.mjs merge examples/pgm-isomerization.json --dry).",
+  "terms": [
+    { "id": "T+g6p", "names": { "ko": "포도당-6-인산", "en": "glucose 6-phosphate" }, "aliases": ["G6P"] },
+    { "id": "T+pgm", "names": { "ko": "포스포글루코뮤테이스", "en": "phosphoglucomutase" }, "aliases": ["PGM"] }
+  ],
+  "senses": [
+    {
+      "id": "D+g6p", "term": "T+g6p", "kind": "small molecule",
+      "unmapped": "ChEBI 항목(α/β-D-포도당 6-인산 등) 선택·번호 미확인",
+      "desc": [{
+        "text": "포도당의 6번 탄소에 인산기가 붙은 분자로, 해당 과정과 글리코겐 대사가 만나는 지점의 대사물",
+        "field": "biochemistry", "context": { "scope": "생화학" },
+        "links": [{ "to": "glucose", "rel": "refers", "span": "포도당" }]
+      }]
+    },
+    {
+      "id": "D+pgm", "term": "T+pgm", "kind": "molecule_class",
+      "xrefs": [{ "db": "EC", "id": "EC 5.4.2.2" }],
+      "desc": [{
+        "text": "포도당-1-인산과 포도당-6-인산 사이에서 인산기의 위치를 옮기는 효소",
+        "field": "biochemistry", "context": { "scope": "생화학 (글리코겐 대사)" },
+        "links": [
+          { "to": "효소#1", "rel": "is_a", "span": "효소" },
+          { "to": "포도당-1-인산", "rel": "refers", "span": "포도당-1-인산" },
+          { "to": "D+g6p", "rel": "refers", "span": "포도당-6-인산" }
+        ]
+      }],
+      "rule": [
+        { "id": "basal", "type": "meaning", "label": "기본 — 활성", "when": {}, "activity": "활성" },
+        { "id": "isomerize", "type": "transition", "label": "포도당-1-인산 이성질화", "action": "isomerization", "agent": true,
+          "effect": { "type": "convert", "consumes": ["포도당-1-인산"], "produces": ["D+g6p"] },
+          "text": "글리코겐에서 떨어진 포도당-1-인산이 포도당-6-인산이 되어 해당 과정이나 (간에서) 포도당 방출로 이어진다." }
+      ],
+      "note": "근육·간 등 조직별 아형이 있어 분자 부류로 둔다."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S+1",
+      "rule": { "owner": "D+pgm", "id": "isomerize" },
+      "agents": [{ "ref": "phosphoglucomutase", "location": "cytoplasm" }],
+      "inputs": [{ "ref": "포도당-1-인산", "location": "세포질" }],
+      "outputs": [{ "ref": "G6P", "location": "cytosol" }],
+      "part_of": ["에피네프린에 의한 글리코겐 분해"]
+    }
+  ],
+  "remove": []
+}
