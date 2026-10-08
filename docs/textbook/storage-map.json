@@ -14,7 +14,7 @@
     "config": { "label": "설정", "rule": "저장소 도구 설정." }
   },
   "files": [
-    { "path": "data/db.json", "class": "source", "format": "JSON (형식 버전은 version 필드, 지금 6)", "writer": "node dbtool.mjs merge (core.js merge → gate 통과 시)", "readers": "dbtool.mjs 모든 명령, viewer.html, tests", "interpret": "terms(T)·senses(D)·steps(S)·limitations(L) 네 표와 meta.next(다음 번호). 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장." },
+    { "path": "data/db.json", "class": "source", "format": "JSON (형식 버전은 version 필드, 지금 7)", "writer": "node dbtool.mjs merge (core.js merge → gate 통과 시)", "readers": "dbtool.mjs 모든 명령, viewer.html, tests", "interpret": "terms(T)·senses(D)·steps(S)·limitations(L) 네 표와 meta.next(다음 번호). 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장." },
     { "path": "data/patches/*.json", "class": "log", "format": "JSON — 패치 원문 + applied_at + result(added·updated·removed·mapped)", "writer": "node dbtool.mjs merge (--dry 가 아닐 때)", "readers": "사람·AI (이력 추적)", "interpret": "파일 이름 = 병합 시각-원래 이름. result.mapped 로 이름 → 번호가 어떻게 바뀌었는지 볼 수 있다." },
     { "path": "vocab.js", "class": "law", "format": "UMD JavaScript 객체 (브라우저·Node 공용)", "writer": "사람이 검토 후 (AI 는 사용자 요청이 있을 때만)", "readers": "core.js", "interpret": "통제 어휘 — 이 목록에 없는 값은 거부된다. 별칭은 병합 때 표준 키로 바뀐다. 9장 부록에 현재 값 전부." },
     { "path": "core.js", "class": "law", "format": "UMD JavaScript (브라우저 DefDB / Node require)", "writer": "사람·AI (사용자 요청 시, 테스트 필수)", "readers": "dbtool.mjs, viewer.html, tests, migrations", "interpret": "정규화·매핑·검사·관문·색인·시뮬레이션·감사의 유일한 구현. 4장이 함수별 설명." },
@@ -30,12 +30,12 @@
     { "path": "README.md", "class": "spec", "format": "Markdown", "writer": "사람·AI", "readers": "사람 (첫 화면)", "interpret": "개요와 빠른 사용법." },
     { "path": "DESIGN-v4.md", "class": "history", "format": "Markdown", "writer": "(동결)", "readers": "사람·AI", "interpret": "v4 설계 배경 — 원천 중심 소유, 위치 의존 기전, 종." },
     { "path": "FEATURES.md", "class": "history", "format": "Markdown", "writer": "(대부분 동결)", "readers": "사람·AI", "interpret": "특징 층·가설 층 설계. 특징은 v4 에서 부위·규칙·관찰로 구현됨, 가설 층은 미구현." },
-    { "path": "migrations/*.mjs", "class": "migration", "format": "Node ESM", "writer": "형식을 올릴 때 한 번", "readers": "(실행 기록)", "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도." },
+    { "path": "migrations/*.mjs", "class": "migration", "format": "Node ESM", "writer": "형식을 올릴 때 한 번", "readers": "(실행 기록)", "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도, 006 v6→7 생애 주기·대사물 저장소." },
     { "path": "migrations/002-id-map.json", "class": "migration", "format": "JSON", "writer": "migration 002", "readers": "옛 패치 기록을 읽을 때", "interpret": "v2 이름 ID → v3 고정 번호 대응표." },
     { "path": "tests/rules.test.mjs", "class": "verification", "format": "node:test", "writer": "사람·AI (규칙을 바꿀 때 거부 테스트 추가)", "readers": "node --test tests/*.test.mjs, CI", "interpret": "규칙이 실제로 거부하는지, 시뮬레이션·감사가 기대대로인지." },
     { "path": ".github/workflows/check.yml", "class": "verification", "format": "GitHub Actions YAML", "writer": "사람·AI", "readers": "GitHub", "interpret": "푸시마다: 테스트, validate, limitations --check, textbook --check, index.html = viewer.html." },
     { "path": "examples/*.json", "class": "scenario", "format": "패치 JSON", "writer": "사람·AI", "readers": "사람·AI (작성 예), tests", "interpret": "병합되지 않은 예시 패치. pgm-isomerization.json 은 이름·별칭 매핑을 보여 준다." },
-    { "path": "examples/scenarios/*.json", "class": "scenario", "format": "시나리오 JSON (volumes·amounts·kinetics)", "writer": "사람·AI", "readers": "simulate --rate, audit-run, tests", "interpret": "hypothetical: true 면 가상 값 — 엔진 시험용. 결론·데이터베이스에 쓰지 않는다." },
+    { "path": "examples/scenarios/*.json", "class": "scenario", "format": "시나리오 JSON (volumes·amounts·reservoirs·kinetics, 선택: reservoir_mode·stochastic·seed)", "writer": "사람·AI", "readers": "simulate --rate, audit-run, tests", "interpret": "hypothetical: true 면 가상 값 — 엔진 시험용. 결론·데이터베이스에 쓰지 않는다. lps-hypothetical(LPS 경로 + 저장소·공급·mRNA 분해), camp-competition(감사 시험), gtp-exhaustion / gtp-regeneration(공급 유무로 기질 고갈 대 순환 재생)." },
     { "path": ".gitignore", "class": "config", "format": "gitignore", "writer": "사람·AI", "readers": "git", "interpret": "" }
   ]
 }

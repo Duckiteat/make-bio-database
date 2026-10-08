@@ -82,6 +82,13 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - **속도 기반 시뮬레이션** `simulate --rate`: 규칙의 `kinetics`(binding·michaelis_menten·mass_action)를 농도 × 부피로 적분. 시험용 값은 가상 시나리오(`examples/scenarios/`)에만.
 - **감사** `audit-run`: 질량 보존·해상도 일관성·속도 무결성 위반을 Audit Error 로 내고, 한계 등록부에서 교정 제안을 찾는다. 예: Gs 를 AC 의 리간드와 행위자로 두 번 센 단순화를 질량 감사가 찾아 L000018 로 등록.
 
+### 생애 주기와 대사물 저장소 (형식 v7)
+- **유한 대사물 저장소**: ATP·GTP·뉴클레오타이드·아미노산 같은 보조 기질은 구획마다 하나의 유한한 풀. 단계가 소비하면 줄고, 바닥나면 그 단계가 멈춘다(기질 고갈 — 오류가 아니라 결과).
+- **공급 규칙 (Metabolic_Supply_Rule)**: NDPK(GDP + ATP → GTP + ADP)·ATP 재생(ADP + Pi → ATP)·아데닐산 키네이스·PPase·뉴클레오타이드 공급. 켜지면 GTP–GDP·ATP–ADP 순환이 닫힌다(순환 재생, 자원 순환 성분으로 보고).
+- **분해 규칙 (Degradation_Rule)**: 1차 k_deg(또는 반감기), 산물은 소실(lost) 또는 구성 단위로 재활용(recycled — 화학량은 서열 길이 관찰). 결정론 또는 `--stochastic --seed`.
+- **매 Δt 질량 감사**: 단계 국소 수지(첫 발화 시각) + 전역 합계 = 시작 + 원장(분해·재활용·공급). 원자 대신 부분 구조(`moieties`: 아데노신·구아노신·인산기 단위)를 센다 — 이 검사가 AC 고리화의 피로인산, 유비퀴틴 활성화의 피로인산, 프로테아좀의 Pi 누락을 찾아 데이터를 고쳤다.
+- 시험: `node dbtool.mjs simulate "에피네프린에 의한 글리코겐 분해" --rate --scenario examples/scenarios/gtp-exhaustion-hypothetical.json` 대 `gtp-regeneration-hypothetical.json` (가상 값).
+
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
 
@@ -125,7 +132,7 @@ node dbtool.mjs simulate <경로> --until D… --from D…   # 규칙대로 발�
 node dbtool.mjs limitations [--open|--write|--detect]  # 한계 등록부
 node dbtool.mjs pattern <경로|상위 개념>              # 상위 패턴·사례 경로
 node dbtool.mjs resolution <경로>                     # 혼합 해상도 계획 (R0·R1·R2, 전환 문턱)
-node dbtool.mjs simulate <경로> --rate --scenario s.json   # 속도 기반 시뮬레이션
+node dbtool.mjs simulate <경로> --rate --scenario s.json [--reservoirs finite|infinite] [--stochastic --seed N]   # 속도 기반 시뮬레이션 (저장소·공급·분해)
 node dbtool.mjs audit-run <경로> [--scenario s.json]  # 감사 (Audit Error + 교정 제안)
 node dbtool.mjs textbook [--write|--check]             # 교과서 부록 생성·검사 (파일 분류 포함)
 node dbtool.mjs audit                           # 매핑·채움 현황 (미매핑, 잔기 모름, 지문 없음)
@@ -137,7 +144,7 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 
 | 경로 | 내용 |
 |---|---|
-| `data/db.json` | 데이터베이스 원본 (형식 v6) |
+| `data/db.json` | 데이터베이스 원본 (형식 v7) |
 | `examples/scenarios/` | 속도 기반 시뮬레이션용 가상 시나리오 (지식이 아님) |
 | `limitations.md` | 한계 등록부 (data/db.json 에서 생성, 직접 고치지 않음) |
 | `data/patches/` | 병합된 패치 기록 |

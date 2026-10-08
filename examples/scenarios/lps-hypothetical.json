@@ -1,7 +1,7 @@
 {
   "name": "LPS 가상 시나리오 (엔진 시험용)",
   "hypothetical": true,
-  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 속도 기반 엔진·감사가 작동하는지 보기 위한 크기 정도(order of magnitude) 값만 둔다.",
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 속도 기반 엔진·감사가 작동하는지 보기 위한 크기 정도(order of magnitude) 값만 둔다. v7: 대사물 저장소(reservoirs)는 유한 — 시작량·공급·분해 속도도 모두 가상 값.",
   "cell": "macrophage",
   "volumes": {
     "extracellular": {
@@ -36,7 +36,7 @@
   "kinetics": {
     "D000065/rule/lps_binding": {
       "law": "binding",
-      "k_on": 1000000.0,
+      "k_on": 1000000,
       "k_off": 0.001,
       "evidence": {
         "level": "predicted",
@@ -46,7 +46,7 @@
     "D000085/rule/ikba_s32": {
       "law": "michaelis_menten",
       "kcat": 1,
-      "Km": 1e-07,
+      "Km": 1e-7,
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -55,7 +55,7 @@
     "D000085/rule/ikba_s36": {
       "law": "michaelis_menten",
       "kcat": 1,
-      "Km": 1e-07,
+      "Km": 1e-7,
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -64,7 +64,7 @@
     "D000098/rule/ikba_degradation": {
       "law": "michaelis_menten",
       "kcat": 0.5,
-      "Km": 1e-07,
+      "Km": 1e-7,
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -81,12 +81,65 @@
     },
     "D000100/rule/kb_binding": {
       "law": "binding",
-      "k_on": 10000000.0,
+      "k_on": 10000000,
       "k_off": 0.01,
       "evidence": {
         "level": "predicted",
         "confidence": 0
       }
+    },
+    "D000126/rule/atp_supply": {
+      "law": "mass_action",
+      "k": 1000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000124/rule/amp_recharge": {
+      "law": "mass_action",
+      "k": 1000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000125/rule/ppi_hydrolysis": {
+      "law": "mass_action",
+      "k": 10,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000127/rule/nt_supply": {
+      "law": "zero_order",
+      "k": 1e-9,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000101/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1800,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
     }
+  },
+  "reservoirs": {
+    "D000032|cytosol": 100000000,
+    "D000033|cytosol": 10000000,
+    "D000034|cytosol": 1000000,
+    "D000037|cytosol": 100000000,
+    "D000122|cytosol": 0,
+    "D000077|cytosol": 1000000,
+    "D000013|nucleoplasm": 100000
   }
 }

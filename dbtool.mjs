@@ -16,10 +16,11 @@
 //                                                           한계 등록부: 출력 / limitations.md 생성 / 최신인지 검사 / 미등록 후보 찾기
 //   node dbtool.mjs pattern   <경로|상위 개념>              경로에서 상위 패턴(모티프) 찾기, 또는 상위 개념이 나타나는 경로
 //   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(R0 위상·R1 부위·R2 구조)와 전환 문턱
-//   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001]
+//   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N]
 //                                                           감사: 스키마·해상도 일관성·속도 무결성·질량 보존 (Audit Error 가 있으면 종료 코드 1)
 //   node dbtool.mjs textbook  [--write | --check]            교과서 부록(docs/textbook/90-부록-자동생성.md) 생성 / 최신·파일 분류 검사
-//   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001]   속도 기반 시뮬레이션
+//   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N]
+//                                                           속도 기반 시뮬레이션 (유한 대사물 저장소·공급·분해·매 Δt 질량 감사)
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
@@ -45,6 +46,9 @@ const printIssues = (errors, warnings) => {
   for (const w of warnings) console.log(`경고  ${w.where}: ${w.msg}`);
 };
 const die = (m) => { console.error(m); process.exit(1); };
+// 속도 기반 시뮬레이션·감사 공용 옵션
+const rateOpt = () => ({ scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3),
+  reservoirs: typeof flags.reservoirs === 'string' ? flags.reservoirs : undefined, stochastic: flags.stochastic ? true : undefined, seed: flags.seed != null ? +flags.seed : undefined });
 const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15);
 
 switch (cmd) {
@@ -167,8 +171,9 @@ switch (cmd) {
     break;
   }
   case 'audit-run': {
+    // (rateOpt 는 아래 simulate 와 공용)
     if (!args[0]) die('사용법: audit-run <경로> [--scenario s.json]');
-    const list = DefDB.auditRun(loadDB(), args[0], { scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3) });
+    const list = DefDB.auditRun(loadDB(), args[0], rateOpt());
     for (const a of list) console.log(`[${a.code}] ${a.where}: ${a.msg}\n    → 교정 제안: ${a.suggestion}`);
     console.log(`— Audit Error ${list.length}건`);
     process.exit(list.length ? 1 : 0);
@@ -176,7 +181,7 @@ switch (cmd) {
   case 'simulate': {
     if (flags.rate) {
       if (!args[0]) die('사용법: simulate <경로> --rate [--scenario s.json]');
-      console.log(DefDB.simulateRateText(loadDB(), args[0], { scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3) }));
+      console.log(DefDB.simulateRateText(loadDB(), args[0], rateOpt()));
       break;
     }
     if (!args[0]) die('사용법: simulate <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]');
@@ -261,7 +266,8 @@ function textbookAppendix(db, map) {
   ]), '');
   out.push('### 감사 코드', '', ...T(['코드', '뜻'], [
     ['AUDIT_SCHEMA', '저장소 검사(validate) 오류'], ['AUDIT_RESOLUTION', '필요 해상도 > 갖춘 해상도, 또는 2D 를 3D 농도로 환산'], ['AUDIT_KINETIC', '속도 무결성(법칙·상수·Kd=k_off/k_on·차수·평형) 위반'],
-    ['AUDIT_KINETIC_GAP', '속도 상수가 없어 즉시(사건 기반)로 처리한 단계'], ['AUDIT_CONCENTRATION', '반응 부피를 몰라 농도 계산 불가'], ['AUDIT_MASS', '질량·동일성 보존 위반 (대사물 풀 출입 반영)'],
+    ['AUDIT_KINETIC_GAP', '속도 상수가 없어 즉시(사건 기반)로 처리한 단계'], ['AUDIT_CONCENTRATION', '반응 부피를 몰라 농도 계산 불가'], ['AUDIT_MASS', '질량·동일성·부분 구조 보존 위반 — 단계 국소(첫 발화 시각)·매 Δt 전역 (분해·재활용·공급 원장, 무한 풀이면 교환 반영)'],
+    ['AUDIT_RESOURCE', '재생 경로 없는 저장소(소비만), 재활용 화학량(서열 길이)을 모름'],
   ]), '');
   // 7. 명령
   const cmds = readFileSync(join(HERE, 'dbtool.mjs'), 'utf8').split('\n').filter((l) => l.startsWith('//   node dbtool.mjs') || /^\/\/\s{20,}\S/.test(l)).map((l) => l.replace(/^\/\/\s?/, ''));

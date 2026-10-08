@@ -194,6 +194,7 @@
     ortholog_xref: { label: '다른 종의 대응 외부 ID', value: 'xref', speciesRequired: true },
     copy_number:   { label: '세포당 분자 수', value: 'number', unit: true, speciesRequired: true },
     compartment_volume: { label: '구획 부피 (세포 유형·위치별)', value: 'number', unit: true, speciesRequired: true },
+    sequence_length: { label: '서열 길이 (아미노산·뉴클레오타이드 수 — 재활용 화학량의 근거)', value: 'number', unit: true, speciesRequired: true },
   },
 
   // ===== 반응 속도 법칙 (Kinetic) — 값은 SI 정준 단위: k_on M⁻¹s⁻¹, k_off·kcat s⁻¹, Kd·Km M, mass_action k 는 M^(1-order)·s⁻¹ =====
@@ -202,6 +203,25 @@
     mass_action:      { label: '질량 작용', required: ['k', 'order'], aliases: ['mass action'] },
     binding:          { label: '가역 결합 (k_on·k_off·Kd)', required: ['k_on|Kd', 'k_off|Kd'], aliases: ['reversible binding'] },
     michaelis_menten: { label: '미카엘리스–멘텐', required: ['kcat', 'Km'], aliases: ['MM', 'michaelis-menten'] },
+    zero_order:       { label: '0차 (일정한 공급 속도, k 는 M·s⁻¹)', required: ['k'], aliases: ['zero order', 'constant supply'] },
+  },
+
+  // ===== 생애 주기 (Lifecycle) — 정의항의 lifecycle 필드 (형식 v7) =====
+  // k_deg (s⁻¹, 1차 분해) 또는 half_life (s), k_syn (분자/s/세포, 0차 합성). fate: 분해 산물이 어디로 가나.
+  lifecycleFates: {
+    lost:     { label: '소실 (계 밖으로 — 질량 감사에서 소실 원장에 기록)', aliases: ['lost', '소실'] },
+    recycled: { label: '재활용 (구성 단위가 대사물 저장소로 돌아감 — recycle_to)', aliases: ['recycled', '재활용'] },
+  },
+  // 대사물 저장소 (Metabolic Reservoir): 시뮬레이션에서 유한한 전역 풀. 공급 규칙(supply)이 채우고 단계가 소비한다.
+  reservoirModes: {
+    finite:   { label: '유한 저장소 (기본) — 소비하면 줄고, 공급 규칙·재활용이 채운다. 바닥나면 단계가 멈춘다(고갈).' },
+    infinite: { label: '무한 풀 (v6 동작) — 양이 변하지 않음. 질량 감사는 풀과의 교환을 원장에 적는다.' },
+  },
+  // 규칙 종류: meaning(상태 의미) · transition(전이, 단계가 적용) · supply(대사물 공급 — 시뮬레이터가 전역으로 적용)
+  ruleTypes: {
+    meaning:    { label: '상태 의미 규칙 (부위:특징 조합 → 활성)' },
+    transition: { label: '전이 규칙 (단계가 적용하는 변화)' },
+    supply:     { label: '대사물 공급 규칙 (Metabolic_Supply_Rule — 저장소의 소비·생성, 예: ADP + Pi → ATP)' },
   },
 
   // ===== 혼합 해상도 (Hybrid-Resolution) — 전환 문턱 =====

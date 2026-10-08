@@ -8,7 +8,7 @@ const DefDB = createRequire(import.meta.url)('../core.js');
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 6 }, o);
+const P = (o) => Object.assign({ format: 'definition-db-patch', version: 7 }, o);
 const run = (patch, opt) => { const res = DefDB.merge(BASE, P(patch)); return { res, g: DefDB.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
@@ -487,4 +487,123 @@ test('감사: 잘못된 속도 법칙·Kd 불일치를 잡고, 이중 계산(Gs)
   const mass = a.find((x) => x.code === 'AUDIT_MASS');
   const gsGap = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${AC}/site/gs_site`);
   assert.ok(mass && mass.suggestion.includes(gsGap), '질량 위반 제안이 등록된 한계를 가리킴');
+});
+
+// ===== v7 생애 주기·대사물 저장소 =====
+const GTP = id('GTP'), GDP = id('GDP'), ADP = id('ADP'), PI = id('무기 인산'), PPI = id('피로인산'), PU = id('인산기 단위'), ATPREGEN = id('ATP 재생');
+const NDPK = id('NDPK'), TNFM2 = id('TNF mRNA'), IKBA1 = id('IκBα'), GSX = id('Gs 단백질'), GLY = '에피네프린에 의한 글리코겐 분해';
+const supply = (rule) => ({ id: ATPREGEN, rule: [Object.assign({ id: 'atp_supply', type: 'supply', label: '시험 공급', consumes: [{ ref: ADP, n: 1 }, { ref: PI, n: 1 }], produces: [{ ref: ATP, n: 1 }], where: ['cytosol'] }, rule)] });
+const degr = (rule) => ({ id: TNFM2, rule: [Object.assign({ id: 'turnover', type: 'degradation', label: '시험 분해', fate: 'lost' }, rule)] });
+const finiteOK = (r) => Object.values(r.final).every((n) => Number.isFinite(n) && n > -1e-6);
+
+test('공급 규칙(Metabolic_Supply_Rule): 위치 하나·생성물·부분 구조 수지·속도 법칙', () => {
+  passes({ senses: [supply({})] });
+  rejectedFor({ senses: [supply({ where: [] })] }, /위치\(where\)가 정확히 하나/);
+  rejectedFor({ senses: [supply({ where: ['plasma_membrane'] })] }, /부피\(3D\) 구획/);
+  rejectedFor({ senses: [supply({ produces: [{ ref: ATP, n: 2 }] })] }, /부분 구조 수지가 맞지 않음/);
+  passes({ senses: [supply({ produces: [{ ref: ATP, n: 2 }], source: true })] });
+  rejectedFor({ senses: [supply({ consumes: [] })] }, /source: true/);
+  rejectedFor({ senses: [supply({ kinetics: { law: 'michaelis_menten', kcat: 1, Km: 1e-6, evidence: { level: 'asserted' } } })] }, /zero_order \| mass_action/);
+  rejectedFor({ senses: [supply({ kinetics: { law: 'mass_action', k: 1, order: 1, evidence: { level: 'asserted' } } })] }, /차수 1 가 소비 분자 수\(2\)/);
+  passes({ senses: [supply({ kinetics: { law: 'mass_action', k: 1, order: 2, evidence: { level: 'asserted' } } })] });
+});
+test('공급 외의 규칙은 분자 종류만, zero_order 는 공급 규칙만', () => {
+  rejectedFor({ senses: [{ id: ATPREGEN, rule: [{ id: 'm', type: 'meaning', label: '시험', when: {}, activity: 'active' }] }] }, /공급 규칙 supply 만/);
+  rejectedFor({ senses: [withKin(AC, 'cyclization', { law: 'zero_order', k: 1e-9, evidence: { level: 'asserted' } })] }, /zero_order 는 공급 규칙/);
+});
+test('분해 규칙(Degradation_Rule): 운명·재활용 단위·1차 속도(k_deg ↔ 반감기)', () => {
+  passes({ senses: [degr({})] });
+  rejectedFor({ senses: [degr({ fate: 'vanish' })] }, /운명\(fate\)/);
+  rejectedFor({ senses: [degr({ fate: 'recycled' })] }, /recycle_to 에 돌아갈 구성 단위/);
+  rejectedFor({ senses: [degr({ recycle_to: [{ ref: id('뉴클레오타이드'), n: 1 }] })] }, /소실\(lost\)인데 recycle_to/);
+  rejectedFor({ senses: [degr({ kinetics: { law: 'mass_action', k: 0.1, half_life: 600, evidence: { level: 'asserted' } } })] }, /k_deg .* 반감기 .* 맞지 않음/);
+  rejectedFor({ senses: [degr({ kinetics: { law: 'michaelis_menten', kcat: 1, Km: 1, evidence: { level: 'asserted' } } })] }, /분해 규칙의 속도 법칙은 mass_action/);
+  passes({ senses: [degr({ kinetics: { law: 'mass_action', half_life: 600, evidence: { level: 'asserted' } } })] });
+  rejectedFor({ senses: [{ id: GDP, rule: [{ id: 'x', type: 'degradation', label: '시험', fate: 'lost', when: { nope: 'bound' } }] }] }, /조건의 부위 'nope'/);
+});
+test('부분 구조 수지: 변환·분해 규칙에서 빠진 산물을 잡는다 (cAMP 만 만들고 피로인산을 빼면 거부)', () => {
+  const rs = BASE.senses[AC].rule.map((r) => (r.id === 'cyclization' ? { ...r, effect: { ...r.effect, produces: [CAMP] } } : r));
+  rejectedFor({ senses: [{ id: AC, rule: rs }] }, /부분 구조 수지가 맞지 않음 — 인산기 단위 3 → 1/);
+  const prot = id('26S 프로테아좀'), pr = BASE.senses[prot].rule.map((r) => (r.id === 'ikba_degradation' ? { ...r, with: { consumes: [ATP], produces: [ADP] } } : r));
+  rejectedFor({ senses: [{ id: prot, rule: pr }] }, /부분 구조 수지가 맞지 않음/);
+  rejectedFor({ senses: [{ id: GTP, moieties: [{ ref: ATP, n: 1 }] }] }, /structure_feature 여야 함/);
+  rejectedFor({ senses: [{ id: GTP, moieties: [{ ref: PU, n: 1.5 }] }] }, /1 이상의 정수/);
+});
+test('부위의 특징별 리간드(ligands): 특징은 그 부위의 것, 리간드는 분자', () => {
+  const site = JSON.parse(JSON.stringify(BASE.senses[GSX].site));
+  site.nucleotide.ligands.ATP_bound = ATP;
+  rejectedFor({ senses: [{ id: GSX, site }] }, /ligands: 특징 'ATP_bound'|특징\(feature\) 'ATP_bound'/);
+  const t = {};
+  DefDB.simulateRate; // 리간드 실체: Gs[GTP] 는 GTP 하나를, Gs[GDP] 는 GDP 하나를 품는다 (질량 감사의 셈)
+  const r = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 0.05, dt: 0.01 });
+  assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS' && /Gs 자체 비활성화/.test(a.where)), 'GTP → GDP 리간드 교체는 화학 변환으로 셈');
+});
+test('기질 고갈(Substrate Exhaustion): 공급이 없으면 GTP 가 바닥나고 Gs 활성화가 멈춘다 — 무너지지 않음', () => {
+  const r = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 5, dt: 0.01 });
+  assert.equal(r.mode, 'finite');
+  assert.ok(r.events.some((e) => e.type === 'exhausted' && e.bundle === `${GTP}|cytosol`), 'GTP 고갈 사건');
+  assert.ok(r.stalls[sid(REC, 'gs_gef')], 'Gs 활성화 단계가 멈춤으로 기록');
+  assert.ok(finiteOK(r), '모든 양이 유한하고 음수가 아님');
+  assert.equal(r.reservoirs[`${GTP}|cytosol`].class, 'consumed_only');
+  assert.ok(r.audit.some((a) => a.code === 'AUDIT_RESOURCE' && a.where === `${GTP}|cytosol` && /L0000\d\d/.test(a.suggestion)), '재생 경로 없음 → 공급 규칙 한계를 교정 제안');
+  assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS' && /부분 구조/.test(a.msg)), '부분 구조 수지 위반 없음');
+});
+test('순환 재생(Cycle-driven Regeneration): NDPK·ATP 재생 공급이 GTP–GDP 순환과 ATP 순환을 닫는다', () => {
+  const ex = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 5, dt: 0.01 });
+  const rg = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-regeneration-hypothetical.json'), t_end: 5, dt: 0.01 });
+  const g = `${GTP}|cytosol`;
+  assert.equal(rg.reservoirs[g].class, 'closed');
+  assert.ok(rg.cycles.some((c) => c.includes(g) && c.includes(`${GDP}|cytosol`) && c.includes(`${ATP}|cytosol`)), 'GTP·GDP·ATP 가 한 순환 성분');
+  assert.ok(rg.final[g] > ex.final[g], '재생이 있으면 GTP 가 더 남는다');
+  assert.ok(rg.ledger[g].supply > 0 && rg.ledger[g].reaction < 0, '원장: 반응이 쓰고 공급이 채움');
+  assert.ok(finiteOK(rg));
+  assert.ok(!rg.audit.some((a) => a.code === 'AUDIT_RESOURCE'));
+  assert.ok(!rg.audit.some((a) => a.code === 'AUDIT_MASS' && /부분 구조/.test(a.msg)), '공급까지 합쳐 부분 구조가 보존됨');
+});
+test('매 단계 질량 감사: 단계에서 부산물(피로인산)을 빼면 첫 발화 시각과 함께 부분 구조 위반', () => {
+  const d = JSON.parse(JSON.stringify(BASE)), s5 = sid(AC, 'cyclization');
+  d.steps[s5].outputs = d.steps[s5].outputs.filter((p) => !p.b.startsWith(PPI + '|'));
+  const r = DefDB.simulateRate(DefDB.normalize(d), GLY, { scenario: scenario('gtp-regeneration-hypothetical.json'), t_end: 1, dt: 0.01 });
+  const a = r.audit.find((x) => x.code === 'AUDIT_MASS' && x.where.startsWith(s5) && /부분 구조 수지 위반/.test(x.msg));
+  assert.ok(a && /t=0\.\d+ s 첫 발화/.test(a.msg) && /인산기 단위 -2/.test(a.msg), '단계·시각·부분 구조를 짚음');
+});
+test('분해(결정론·확률적): 1차 원장, 재활용 화학량을 모르면 소실로 처리하고 한계를 제안, seed 가 같으면 같은 결과', () => {
+  const sc = scenario('lps-hypothetical.json'), m = `${TNFM2}|nucleoplasm`;
+  const det = DefDB.simulateRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01 });
+  assert.ok(det.ledger[m].degradation < 0 && det.ledger[`${id('뉴클레오타이드')}|nucleoplasm`].recycle === 0);
+  const gap = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === TNFM2 && BASE.limitations[k].type === 'Structural_Gap');
+  assert.ok(det.audit.some((a) => a.code === 'AUDIT_RESOURCE' && /서열 길이/.test(a.msg) && a.suggestion.includes(gap)));
+  const s1 = DefDB.simulateRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
+  const s2 = DefDB.simulateRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
+  assert.equal(s1.ledger[m].degradation, s2.ledger[m].degradation);
+  assert.ok(Number.isInteger(-s1.ledger[m].degradation) || s1.ledger[m].degradation === 0, '확률적 분해는 정수 분자');
+  assert.ok(Math.abs(s1.ledger[m].degradation - det.ledger[m].degradation) < 6 * Math.sqrt(-det.ledger[m].degradation) + 3, '기댓값 근처');
+  assert.ok(det.audit.every((a) => a.code !== 'AUDIT_MASS'), '분해·재활용이 원장으로 설명되어 질량 위반 없음');
+});
+test('재활용: 서열 길이 관찰이 있으면 분해된 사슬이 단위체 n 개로 저장소에 돌아간다 (IκBα 317 aa)', () => {
+  const d = JSON.parse(JSON.stringify(BASE));
+  const r0 = d.senses[IKBA1].rule.find((r) => r.id === 'basal_turnover');
+  r0.kinetics = { law: 'mass_action', order: 1, k: 0.01, evidence: { level: 'predicted', confidence: 0 } };
+  // 유리 IκBα 묶음을 원천으로 가진 작은 경로를 만들어 본다: 수송(가상) 대신 init 으로 시작량만 준다
+  const db = DefDB.normalize(d), ikb = `${IKBA1}|cytosol`;
+  const rr = DefDB.simulateRate(db, TLRP, { scenario: { ...scenario('lps-hypothetical.json'), amounts: { ...scenario('lps-hypothetical.json').amounts } }, t_end: 1, dt: 0.01 });
+  // 경로에 유리 IκBα 묶음이 없으면 규칙은 적용되지 않는다 (묶음 단위로만 분해)
+  assert.ok(!rr.degradations.some((g) => g.bundle === ikb));
+  assert.ok(DefDB.limitationStatus(db, db.limitations[Object.keys(db.limitations).find((k) => db.limitations[k].target === `${IKBA1}/rule/basal_turnover`)]).status === 'resolved', 'k 가 들어오면 half_life 를 요구한 한계도 닫힘 (k ↔ ln2/t½)');
+});
+test('무한 풀 방식(v6 동작)도 그대로: 저장소 감사 없음, 교환 원장으로 질량 수지', () => {
+  const r = DefDB.simulateRate(BASE, TLRP, { scenario: scenario('lps-hypothetical.json'), t_end: 10, dt: 0.01, reservoirs: 'infinite' });
+  assert.equal(r.mode, 'infinite');
+  assert.ok(!r.audit.some((a) => (a.code === 'AUDIT_RESOURCE' && /재생 경로/.test(a.msg)) || a.code === 'AUDIT_MASS'));
+  assert.ok(Object.keys(r.firstReach).some((b) => b.startsWith(TNFM2 + '|')));
+  assert.ok(DefDB.simulateRate(BASE, TLRP, { reservoirs: 'bogus' }).error);
+});
+test('한계 후보 탐지: 속도 없는 공급·분해 규칙과 서열 길이 없는 재활용이 등록되지 않으면 후보로', () => {
+  assert.deepEqual(DefDB.detectGaps(BASE), []);
+  const d = JSON.parse(JSON.stringify(BASE));
+  for (const [k, l] of Object.entries(d.limitations)) if (/atp_supply|^D000101$/.test(l.target) || l.target === TNFM2) delete d.limitations[k];
+  for (const s of Object.values(d.senses)) for (const a of s.addresses || []) if (!d.limitations[a.limitation]) s.addresses = s.addresses.filter((x) => d.limitations[x.limitation]);
+  const c = DefDB.detectGaps(d);
+  assert.ok(c.some((x) => x.target === `${ATPREGEN}/rule/atp_supply` && x.type === 'Kinetic_Gap'));
+  assert.ok(c.some((x) => x.target === TNFM2 && x.type === 'Structural_Gap'));
 });

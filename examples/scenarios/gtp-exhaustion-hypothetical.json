@@ -1,0 +1,69 @@
+{
+  "name": "GTP 고갈 가상 시나리오 (공급 없음)",
+  "_설명": "가상 값. 공급 규칙에 속도를 주지 않아 GTP 저장소가 Gs 순환에 소비만 되고 고갈된다 — 엔진이 고갈을 멈춤(stall)으로 처리하고 무너지지 않는지 본다. data/db.json 에 들어가지 않는다.",
+  "hypothetical": true,
+  "cell": "hepatocyte",
+  "volumes": {
+    "cytosol": {
+      "value": 4000,
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000027|extracellular": 2000,
+    "D000030|plasma_membrane": 1000,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+    "D000031|plasma_membrane": 1000
+  },
+  "reservoirs": {
+    "D000035|cytosol": 20000,
+    "D000036|cytosol": 0,
+    "D000032|cytosol": 2000000,
+    "D000033|cytosol": 200000,
+    "D000034|cytosol": 0,
+    "D000037|cytosol": 2000000,
+    "D000122|cytosol": 0
+  },
+  "kinetics": {
+    "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": 100000000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": 0.5,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  }
+}

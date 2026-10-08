@@ -15,7 +15,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 6;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 7;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -73,10 +73,10 @@
 
   // ===== 통제 어휘 매핑 =====
   const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
-    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws'];
+    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates'];
   const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
     locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
-    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙' };
+    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)' };
   const VIX = {};
   for (const table of VTABLES) {
     const m = new Map();
@@ -195,6 +195,8 @@
     if (isObj(s.numbering)) { o.numbering = {}; for (const [t, r] of Object.entries(s.numbering)) if (str(r)) o.numbering[str(t)] = str(r); }
     if (s.residue_unknown) o.residue_unknown = true;
     for (const k of ['on', 'face', 'ligand', 'note']) if (str(s[k])) o[k] = str(s[k]);
+    // 특징마다 다른 리간드 (예: Gs 뉴클레오타이드 부위 GDP_bound → GDP, GTP_bound → GTP) — 질량 감사가 리간드를 실체로 센다
+    if (isObj(s.ligands)) { o.ligands = {}; for (const [f, x] of Object.entries(s.ligands)) if (str(x)) o.ligands[str(f)] = str(x); }
     if (arr(s.taxa).length) o.taxa = arr(s.taxa).map(str);
     // 고해상도 반응 중심: 3차원 구조 참조 (좌표는 저장하지 않고 구조 데이터베이스를 가리킨다)
     if (isObj(s.structure)) { o.structure = { db: str(s.structure.db) || 'PDB', id: str(s.structure.id) }; for (const k of ['chain', 'residues', 'note']) if (str(s.structure[k])) o.structure[k] = str(s.structure[k]); }
@@ -202,7 +204,23 @@
   }
   function normRule(r) {
     const o = { id: str(r.id), type: str(r.type) || (r.effect ? 'transition' : 'meaning'), label: str(r.label) };
-    if (o.type === 'meaning') {
+    const qty = (x) => (isObj(x) ? (() => { const q = { ref: str(x.ref), n: x.n === 'sequence_length' ? 'sequence_length' : Number(x.n == null ? 1 : x.n) }; if (str(x.location)) q.location = str(x.location); return q; })() : { ref: str(x), n: 1 });
+    if (o.type === 'supply') {
+      // 대사물 공급 규칙: 저장소의 consumes → produces (where 한 곳에서). source: 계 밖에서 들어오는 공급(부분 수지 불균형 허용)
+      o.consumes = arr(r.consumes).map(qty).filter((q) => q.ref);
+      o.produces = arr(r.produces).map(qty).filter((q) => q.ref);
+      o.where = arr(r.where).map(str).filter(Boolean);
+      if (r.source) o.source = true;
+      if (str(r.text)) o.text = str(r.text);
+    } else if (o.type === 'degradation') {
+      // 분해 규칙: 소유 정의항의 묶음이 1차 속도(k_deg)로 분해된다. fate lost | recycled (recycle_to 의 구성 단위가 저장소로)
+      o.fate = str(r.fate);
+      o.recycle_to = arr(r.recycle_to).map(qty).filter((q) => q.ref);
+      o.when = {};
+      if (isObj(r.when)) for (const [s, f] of Object.entries(r.when)) o.when[str(s)] = str(f);
+      if (arr(r.where).length) o.where = arr(r.where).map(str);
+      if (str(r.text)) o.text = str(r.text);
+    } else if (o.type === 'meaning') {
       o.when = {};
       if (isObj(r.when)) for (const [s, f] of Object.entries(r.when)) o.when[str(s)] = str(f);
       o.activity = str(r.activity);
@@ -237,14 +255,14 @@
     o.evidence = normEvidence(k.evidence);
     return o;
   }
-  const KIN_FIELDS = ['k', 'k_r', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km'];
+  const KIN_FIELDS = ['k', 'k_r', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km', 'half_life'];
   function normObs(b) {
     const o = { property: str(b.property), value: typeof b.value === 'number' ? b.value : str(b.value), context: normContext(b.context), evidence: normEvidence(b.evidence) };
     if (str(b.unit)) o.unit = str(b.unit);
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
-  const SENSE_FIELDS = ['kind', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note'];
+  const SENSE_FIELDS = ['kind', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note'];
   function normSense(d) {
     const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
     if (str(d.reference_species)) o.reference_species = str(d.reference_species);
@@ -253,6 +271,8 @@
     if (str(d.unmapped)) o.unmapped = str(d.unmapped);
     if (isObj(d.fingerprint) && str(d.fingerprint.value)) o.fingerprint = { scheme: str(d.fingerprint.scheme), value: str(d.fingerprint.value), status: str(d.fingerprint.status) || 'asserted' };
     o.components = arr(d.components).filter(isObj).map((c) => { const x = { ref: str(c.ref), n: parseInt(c.n, 10) || 1 }; if (str(c.role)) x.role = str(c.role); return x; });
+    // 화학 부분 구조(moiety) 수: 질량 수지를 원자 대신 보존되는 부분 구조(아데노신·인산기 …)로 센다
+    if (arr(d.moieties).length) o.moieties = arr(d.moieties).filter(isObj).map((m) => ({ ref: str(m.ref), n: Number(m.n == null ? 1 : m.n) }));
     o.desc = arr(d.desc).filter(isObj).map(normDesc);
     o.site = {};
     if (isObj(d.site)) for (const [k, s] of Object.entries(d.site)) if (isObj(s)) o.site[str(k)] = normSite(s);
@@ -319,7 +339,9 @@
     if (n.kind === 'xref') { const d = db.senses[n.on]; return !!d && d.xrefs.some((x) => x.db === n.db); }
     if (n.kind === 'kinetics') {
       const t = parseTarget(n.rule), d = t && db.senses[t.base], r = d && d.rule.find((x) => x.id === t.key);
-      return !!(r && r.kinetics && (n.params || []).every((f) => r.kinetics[f] > 0));
+      // 분해 규칙은 k(k_deg) 와 half_life 가 서로를 대신한다 (k = ln2 / t½)
+      const alt = (f) => r.type === 'degradation' && (f === 'k' || f === 'half_life') ? r.kinetics.k > 0 || r.kinetics.half_life > 0 : false;
+      return !!(r && r.kinetics && (n.params || []).every((f) => r.kinetics[f] > 0 || alt(f)));
     }
     return false; // manual: resolution 으로만 닫힘
   }
@@ -661,6 +683,10 @@
       }
       if (s.on && !d.components.some((c) => c.ref === s.on)) E(sw, `부위가 있는 구성 요소 '${s.on}' 는 이 복합체의 구성 요소가 아님`);
       if (s.ligand) { const x = db.senses[s.ligand]; if (!x) E(sw, `리간드 '${s.ligand}' 없음`); else if (!MOLECULAR.has(x.kind)) E(sw, `리간드 '${L(s.ligand)}' 는 분자 종류가 아님`); }
+      for (const [f, g] of Object.entries(s.ligands || {})) {
+        if (!s.features.includes(f)) E(sw, `ligands: 특징 '${f}' 는 이 부위의 특징이 아님`);
+        const x = db.senses[g]; if (!x) E(sw, `ligands: 리간드 '${g}' 없음`); else if (!MOLECULAR.has(x.kind)) E(sw, `ligands: 리간드 '${L(g)}' 는 분자 종류가 아님`);
+      }
       for (const t of s.taxa || []) if (!V.taxa[t]) E(sw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
       if (s.structure) {
         if (s.structure.db !== 'PDB' || !new RegExp(V.xrefs.PDB.pattern).test(s.structure.id)) E(sw, `구조 참조는 PDB ID 여야 함 ('${s.structure.db}:${s.structure.id}')`);
@@ -675,10 +701,12 @@
       if (ruleIds.has(r.id)) E(rw, '규칙 id 중복');
       ruleIds.add(r.id);
       if (!r.label) E(rw, '규칙 이름(label) 없음');
-      if (!participant) E(rw, '규칙은 분자 종류 정의항만 가질 수 있음');
+      if (!participant && r.type !== 'supply') E(rw, '규칙은 분자 종류 정의항만 가질 수 있음 (경로·과정·원리는 공급 규칙 supply 만)');
       checkEvidence(r.evidence, rw, E);
       for (const t of r.taxa || []) if (!V.taxa[t]) E(rw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
       if (r.kinetics) { for (const m of kineticIssues(r, null)) E(rw, m); checkEvidence(r.kinetics.evidence, rw + ' 속도', E); if (r.kinetics.context) checkContext(r.kinetics.context, rw, E); }
+      if (r.type === 'supply') { validateSupply(db, ix, id, d, r, rw, E, W); continue; }
+      if (r.type === 'degradation') { validateDegradation(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'meaning') {
         if (!V.activity[r.activity]) E(rw, `활성 '${r.activity}' 은(는) 어휘에 없음`);
         for (const [s, f] of Object.entries(r.when)) {
@@ -687,7 +715,7 @@
         }
         continue;
       }
-      if (r.type !== 'transition') { E(rw, `규칙 종류 '${r.type}' — meaning | transition`); continue; }
+      if (r.type !== 'transition') { E(rw, `규칙 종류 '${r.type}' — ${Object.keys(V.ruleTypes).join(' | ')}`); continue; }
       const A = V.actions[r.action], e = r.effect;
       if (!A) E(rw, `변화 종류 '${r.action}' 은(는) 어휘에 없음`);
       if (!EFFECT_TYPES.includes(e.type)) { E(rw, `효과 종류 '${e.type}' — ${EFFECT_TYPES.join(' | ')}`); continue; }
@@ -745,6 +773,13 @@
         for (const x of e.produces || []) need(x, '분해 산물');
         if (!(e.produces || []).length) E(rw, 'degrade 효과는 분해 산물(produces)이 필요함 — 질량이 사라지지 않게');
       }
+      // 부분 구조 수지: 화학 변환(convert)·분해(degrade)는 보조 기질까지 합쳐 부분 구조(moiety)가 보존되어야 함
+      if (e.type === 'convert' || e.type === 'degrade') {
+        const lhs = [...(e.consumes || []), ...(e.type === 'degrade' ? [e.component] : []), ...(r.with ? r.with.consumes : [])].map((x) => ({ ref: x, n: 1 }));
+        const rhs = [...(e.produces || []), ...(r.with ? r.with.produces : [])].map((x) => ({ ref: x, n: 1 }));
+        const bad = moietyImbalance(db, lhs, rhs);
+        if (bad) E(rw, `부분 구조 수지가 맞지 않음 — ${bad} (빠진 산물·보조 기질을 정의하고 규칙에 적을 것)`);
+      }
       for (const q of e.requires || []) {
         const ref = q.ref || e.target || e.complex || id, x = db.senses[ref];
         if (!x) { E(rw, `전제 조건의 대상 '${ref}' 없음`); continue; }
@@ -763,6 +798,14 @@
       if (!db.limitations[a.limitation]) E(where, `addresses: 한계 '${a.limitation}' 없음`);
       if (!a.how) E(where, `addresses: 한계 ${a.limitation} 를 어떻게 해결하는지(how) 없음`);
     }
+    // 부분 구조
+    for (const m of d.moieties || []) {
+      const x = db.senses[m.ref];
+      if (!MOLECULAR.has(d.kind)) E(where, '부분 구조(moieties)는 분자 종류만 가질 수 있음');
+      if (!x) E(where, `부분 구조 '${m.ref}' 없음`);
+      else if (x.kind !== 'structure_feature') E(where, `부분 구조 '${L(m.ref)}' 는 kind structure_feature 여야 함`);
+      if (!(Number.isInteger(m.n) && m.n >= 1)) E(where, `부분 구조 '${m.ref}' 의 개수는 1 이상의 정수`);
+    }
     // 관찰
     d.obs.forEach((b, i) => {
       const ow = `${id}/obs/${i + 1}`, P = V.obsProperties[b.property];
@@ -776,6 +819,61 @@
       if (Array.isArray(P.value) && !P.value.includes(b.value)) E(ow, `값은 ${P.value.join(' | ')} 중 하나`);
       if (P.value === 'xref') { const x = parseXref(b.value); if (!V.xrefs[x.db] || !new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(ow, `외부 ID '${b.value}' 형식 틀림`); }
     });
+  }
+
+  // 부분 구조 계산: 정의항 → { moiety: 개수 } (복합체는 구성 요소를 펼쳐서)
+  function moietyOf(db, ref, mult, out, depth) {
+    const d = db.senses[ref];
+    if (!d || (depth || 0) > 20) return out;
+    for (const m of d.moieties || []) out[m.ref] = (out[m.ref] || 0) + m.n * mult;
+    for (const c of d.components) moietyOf(db, c.ref, mult * c.n, out, (depth || 0) + 1);
+    return out;
+  }
+  // lhs/rhs: [{ref, n}] → 불균형 설명 문자열 또는 null. 어느 쪽에도 부분 구조가 없으면 검사하지 않음(null)
+  function moietyImbalance(db, lhs, rhs) {
+    const a = {}, b = {};
+    for (const q of lhs) if (typeof q.n === 'number') moietyOf(db, q.ref, q.n, a);
+    for (const q of rhs) if (typeof q.n === 'number') moietyOf(db, q.ref, q.n, b);
+    const keys = uniq([...Object.keys(a), ...Object.keys(b)]);
+    const bad = keys.filter((k) => Math.abs((a[k] || 0) - (b[k] || 0)) > 1e-9);
+    if (!bad.length) return null;
+    const lab = (k) => { const x = db.senses[k]; return x && db.terms[x.term] ? (db.terms[x.term].names.ko || db.terms[x.term].names.en || k) : k; };
+    return bad.map((k) => `${lab(k)} ${a[k] || 0} → ${b[k] || 0}`).join(', ');
+  }
+  // 대사물 공급 규칙 (Metabolic_Supply_Rule)
+  function validateSupply(db, ix, id, d, r, rw, E, W) {
+    const L = ix.label;
+    if (!r.produces.length) E(rw, '공급 규칙은 생성물(produces)이 필요함');
+    if (!r.consumes.length && !r.source) E(rw, '소비하는 것이 없는 공급은 계 밖에서 들어오는 것 — source: true 로 명시할 것');
+    if (r.where.length !== 1) E(rw, '공급 규칙은 위치(where)가 정확히 하나 (저장소 묶음 = 정의항|위치)');
+    for (const l of r.where) if (!V.locations[l]) E(rw, `위치 '${l}' 은(는) 위치 어휘에 없음`); else if (V.locations[l].dim !== '3D') E(rw, `공급 위치 '${vlabel('locations', l)}' 는 부피(3D) 구획이어야 함`);
+    for (const q of [...r.consumes, ...r.produces]) {
+      const x = db.senses[q.ref];
+      if (!x) E(rw, `저장소 분자 '${q.ref}' 없음`);
+      else if (!isParticipantKind(x.kind)) E(rw, `저장소 분자 '${L(q.ref)}' 는 분자 종류가 아님`);
+      if (!(typeof q.n === 'number' && q.n > 0)) E(rw, `'${L(q.ref)}' 의 화학량 n 은 양수`);
+    }
+    if (r.kinetics && !['zero_order', 'mass_action'].includes(r.kinetics.law)) E(rw, `공급 규칙의 속도 법칙은 zero_order | mass_action (지금 ${r.kinetics.law})`);
+    if (r.kinetics && r.kinetics.law === 'mass_action' && r.kinetics.order != null) { const n = r.consumes.reduce((t, q) => t + (typeof q.n === 'number' ? q.n : 0), 0); if (n !== r.kinetics.order) E(rw, `질량 작용 차수 ${r.kinetics.order} 가 소비 분자 수(${n})와 다름`); }
+    if (r.kinetics && r.kinetics.law === 'mass_action' && !r.consumes.length) E(rw, '소비하는 것이 없는 공급은 zero_order 로');
+    const bad = moietyImbalance(db, r.consumes, r.produces);
+    if (bad && !r.source) E(rw, `부분 구조 수지가 맞지 않음 — ${bad} (계 밖에서 들어오는 공급이면 source: true)`);
+  }
+  // 분해 규칙 (Degradation_Rule)
+  function validateDegradation(db, ix, id, d, r, rw, E, W) {
+    const L = ix.label;
+    if (!V.lifecycleFates[r.fate]) E(rw, `분해 산물의 운명(fate) '${r.fate}' — ${Object.keys(V.lifecycleFates).join(' | ')}`);
+    if (r.fate === 'recycled' && !r.recycle_to.length) E(rw, '재활용(recycled)이면 recycle_to 에 돌아갈 구성 단위가 필요함');
+    if (r.fate === 'lost' && r.recycle_to.length) E(rw, '소실(lost)인데 recycle_to 가 있음');
+    for (const q of r.recycle_to) {
+      const x = db.senses[q.ref];
+      if (!x) E(rw, `재활용 단위 '${q.ref}' 없음`); else if (!isParticipantKind(x.kind)) E(rw, `재활용 단위 '${L(q.ref)}' 는 분자 종류가 아님`);
+      if (q.n === 'sequence_length') { /* 관찰이 없으면 detectGaps 가 Structural_Gap 후보로 잡는다 */ }
+      else if (!(q.n > 0)) E(rw, `재활용 단위 '${L(q.ref)}' 의 화학량 n 은 양수 또는 'sequence_length'`);
+      if (q.location && !V.locations[q.location]) E(rw, `위치 '${q.location}' 은(는) 위치 어휘에 없음`);
+    }
+    for (const [s, f] of Object.entries(r.when)) { if (!d.site[s]) E(rw, `조건의 부위 '${s}' 가 이 정의항에 없음`); else if (!d.site[s].features.includes(f)) E(rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`); }
+    for (const l of r.where || []) if (!V.locations[l]) E(rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
   }
 
   // 묶음 하나 검사: 바탕 정의항·부위·특징·위치·막 위상
@@ -815,9 +913,10 @@
     }
     for (const [s, f] of feats) {
       const site = d.site[s];
-      if (!site || !site.ligand || !f) continue;
+      const lig = site && f ? (site.ligands && site.ligands[f]) || (f === 'bound' || !site.ligands ? site.ligand : null) : null;
+      if (!lig) continue;
       const on = site.on ? d.components.find((c) => c.ref === site.on) : null;
-      entityTally(db, site.ligand, new Map(), mult * (on ? on.n : 1), out, null); // 리간드가 복합체면 그 구성 요소로
+      entityTally(db, lig, new Map(), mult * (on ? on.n : 1), out, null); // 리간드가 복합체면 그 구성 요소로
     }
   }
 
@@ -1164,6 +1263,7 @@
         if (d.membrane.side) d.membrane.side = voc('faces', d.membrane.side, id);
       }
       for (const c of d.components) c.ref = ref(c.ref, `${id} 구성 요소`);
+      for (const m of d.moieties || []) m.ref = ref(m.ref, `${id} 부분 구조`);
       d.desc.forEach((ds, i) => {
         const w = `${id}/desc/${i + 1}`;
         ds.field = voc('fields', ds.field, w);
@@ -1179,6 +1279,7 @@
         if (s.face) s.face = voc('faces', s.face, w);
         if (s.on) s.on = ref(s.on, `${w} on`);
         if (s.ligand) s.ligand = ref(s.ligand, `${w} ligand`);
+        if (s.ligands) s.ligands = Object.fromEntries(Object.entries(s.ligands).map(([f, x]) => [voc('features', f, w), ref(x, `${w} ligands`)]));
         if (s.numbering) s.numbering = Object.fromEntries(Object.entries(s.numbering).map(([t, r]) => [voc('taxa', t, w), r]));
         if (s.taxa) s.taxa = s.taxa.map((t) => voc('taxa', t, w));
       }
@@ -1189,6 +1290,14 @@
         if (r.type === 'meaning') {
           r.activity = voc('activity', r.activity, w);
           r.when = Object.fromEntries(Object.entries(r.when).map(([s, f]) => [s, voc('features', f, w)]));
+          continue;
+        }
+        if (r.type === 'supply' || r.type === 'degradation') {
+          if (r.kinetics) { r.kinetics.law = voc('kineticLaws', r.kinetics.law, w); r.kinetics.evidence.level = voc('evidenceLevels', r.kinetics.evidence.level, w); if (r.kinetics.context) ctx(r.kinetics.context, w); }
+          for (const k of ['consumes', 'produces', 'recycle_to']) for (const q of r[k] || []) { q.ref = ref(q.ref, `${w} ${k}`); if (q.location) q.location = voc('locations', q.location, w); }
+          if (r.where) r.where = r.where.map((l) => voc('locations', l, w));
+          if (r.fate) r.fate = voc('lifecycleFates', r.fate, w);
+          if (r.when) r.when = Object.fromEntries(Object.entries(r.when).map(([s, f]) => [s, voc('features', f, w)]));
           continue;
         }
         r.action = voc('actions', r.action, w);
@@ -1334,6 +1443,10 @@
     return `[${id} ${ix.label(id)}] ${ds.text} 〈${ds.field}${ds.context.scope && ds.context.scope !== ds.field ? ' · ' + ds.context.scope : ''}〉 {${d.kind}}`;
   }
   function ruleLine(ix, owner, r) {
+    const kn = r.kinetics ? ` 〈${r.kinetics.law} ${KIN_FIELDS.filter((f) => r.kinetics[f] != null).map((f) => `${f}=${r.kinetics[f]}`).join(' ')}〉` : ' 〈속도 상수 없음〉';
+    const qs = (xs) => xs.map((q) => `${q.n === 1 ? '' : q.n + ' '}${ix.label(q.ref)}`).join(' + ') || '∅';
+    if (r.type === 'supply') return `${owner}/rule/${r.id} 「${r.label}」 공급${r.source ? '(계 밖)' : ''}: ${qs(r.consumes)} → ${qs(r.produces)} @${r.where.map((l) => vlabel('locations', l)).join('·')}${kn}`;
+    if (r.type === 'degradation') return `${owner}/rule/${r.id} 「${r.label}」 분해: ${ix.label(owner)}${Object.keys(r.when).length ? '[' + Object.entries(r.when).map(([s, f]) => `${s}:${vlabel('features', f)}`).join(',') + ']' : ''} → ${r.fate === 'recycled' ? '재활용 ' + qs(r.recycle_to) : '소실'}${kn}`;
     if (r.type === 'meaning') return `${owner}/rule/${r.id} 「${r.label}」 상태 의미: ${Object.entries(r.when).map(([s, f]) => `${ix.siteLabel(owner, s)}:${vlabel('features', f)}`).join(' ∧ ') || '(기본)'} → ${vlabel('activity', r.activity)}`;
     const e = r.effect, L = ix.label;
     let eff = '';
@@ -1656,9 +1769,15 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
   function detectGaps(db) {
     db = normalize(db);
     const ix = index(db), covered = new Set();
-    for (const l of Object.values(db.limitations)) { covered.add(l.target); for (const n of l.requirement.needs) if (n.site) covered.add(n.site); }
+    for (const l of Object.values(db.limitations)) { covered.add(l.target); for (const n of l.requirement.needs) { if (n.site) covered.add(n.site); if (n.rule) covered.add(n.rule); if (n.kind === 'obs' && n.on) covered.add(`${n.on}#${n.property}`); } }
     const out = [];
     for (const [id, d] of ix.senses) for (const [k, st] of Object.entries(d.site)) if (st.residue_unknown && !covered.has(`${id}/site/${k}`)) out.push({ target: `${id}/site/${k}`, type: 'Structural_Gap', why: `${ix.label(id)} 의 부위 ${k} 잔기 번호 모름` });
+    // 생애 주기·저장소: 속도 상수가 없는 공급·분해 규칙, 서열 길이를 모르는 재활용 화학량
+    for (const [id, d] of ix.senses) for (const r of d.rule) {
+      const ref = `${id}/rule/${r.id}`;
+      if ((r.type === 'supply' || r.type === 'degradation') && !r.kinetics && !covered.has(ref)) out.push({ target: ref, type: 'Kinetic_Gap', why: `${ix.label(id)} 의 ${r.type === 'supply' ? '공급' : '분해'} 규칙 '${r.label}' 에 속도 상수가 없어 시뮬레이터가 적용하지 않음` });
+      if (r.type === 'degradation' && r.recycle_to.some((q) => q.n === 'sequence_length') && !d.obs.some((o) => o.property === 'sequence_length') && !covered.has(`${id}#sequence_length`)) out.push({ target: id, type: 'Structural_Gap', why: `${ix.label(id)} 의 서열 길이(sequence_length)를 몰라 재활용 화학량을 정할 수 없음` });
+    }
     return out;
   }
 
@@ -1712,7 +1831,12 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       for (const p of [...st.agents, ...st.inputs]) {
         if (origin.has(p.b)) continue;
         const bulk = bulkSet.has(p.b);
-        if (bulk) { seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : opt.bulk); source[p.b] = opt.init[p.b] != null ? 'init' : 'bulk'; }
+        if (bulk) {
+          // 대사물 저장소: 시작량은 지정값 → 데이터(copy_number·농도×부피) → 기본값(bulk, 농도 공백)
+          const x = opt.init[p.b] == null ? fromData(p.b) : null;
+          seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : x ? x.n : opt.bulk);
+          source[p.b] = opt.init[p.b] != null ? 'init' : x ? 'data: ' + x.how : 'bulk';
+        }
         else if (!made.has(p.b)) seed(p.b, amountFor(p.b));
       }
     }
@@ -1814,6 +1938,16 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
   function kineticIssues(r, st, kin) {
     const k = kin || r.kinetics, out = [], L = V.kineticLaws[k.law];
     if (!L) return [`반응 속도 법칙 '${k.law}' — ${Object.keys(V.kineticLaws).join(' | ')}`];
+    if (r.type === 'degradation') {
+      // 분해는 1차: k = k_deg (s⁻¹) 또는 half_life (s). 둘 다 있으면 k = ln2 / half_life 가 10% 안에서 맞아야 함
+      if (k.law !== 'mass_action') out.push(`분해 규칙의 속도 법칙은 mass_action (1차, k = k_deg) — 지금 ${k.law}`);
+      if (k.order != null && k.order !== 1) out.push(`분해 규칙은 1차 (order 1) — 지금 ${k.order}`);
+      if (!(k.k > 0) && !(k.half_life > 0)) out.push('분해 규칙은 k(k_deg, s⁻¹) 또는 half_life(s) 가 필요함');
+      if (k.k > 0 && k.half_life > 0) { const ratio = k.k * k.half_life / Math.LN2; if (ratio < 0.9 || ratio > 1.1) out.push(`k_deg ${k.k} s⁻¹ 와 반감기 ${k.half_life} s 가 맞지 않음 (ln2/t½ = ${(Math.LN2 / k.half_life).toExponential(3)})`); }
+      for (const f of KIN_FIELDS) if (k[f] != null && !(Number.isFinite(k[f]) && k[f] > 0)) out.push(`${f} 값이 양수가 아님`);
+      return out;
+    }
+    if (k.law === 'zero_order' && r.type !== 'supply') out.push('zero_order 는 공급 규칙(supply)에만');
     for (const f of L.required) if (!(f.split('|').some((g) => k[g] > 0))) out.push(`${k.law} 는 ${f.split('|').join(' 또는 ')} 가 필요함 (양수, SI 정준 단위)`);
     for (const f of KIN_FIELDS) if (k[f] != null && !(Number.isFinite(k[f]) && (f === 'order' ? k[f] >= 0 : k[f] > 0))) out.push(`${f} 값이 양수가 아님`);
     if (k.law === 'binding' && k.Kd > 0 && k.k_on > 0 && k.k_off > 0) {
@@ -1886,20 +2020,41 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     return out.join('\n');
   }
 
-  // ===== 속도 기반 시뮬레이션 (Rate-based) =====
-  // 농도 = 분자 수 / (N_A × 반응 부피). 속도 법칙: mass_action · binding(가역) · michaelis_menten.
+  // ===== 속도 기반 시뮬레이션 (Rate-based) + 생애 주기·대사물 저장소 (형식 v7) =====
+  // 농도 = 분자 수 / (N_A × 반응 부피). 속도 법칙: mass_action · binding(가역) · michaelis_menten · zero_order(공급).
   // 속도 상수가 없는 단계는 '즉시'(사건 기반)로 처리하고 Kinetic_Gap 으로 표시한다.
-  // scenario: { name, hypothetical, cell, volumes: { 위치: { value, unit } }, amounts: { 묶음키: 수 }, kinetics: { 'D…/rule/키': {…} } }
+  // 대사물 저장소(Metabolic Reservoir): 보조 기질·부산물·만들어지지 않는 변환 기질 = 위치마다 하나의 유한한 전역 풀(기본, reservoirs 'finite').
+  //   단계가 소비하면 줄고, 공급 규칙(supply)·분해 규칙의 재활용(recycled)이 채운다. 바닥나면 그 단계는 멈춘다(고갈) — 오류가 아니라 결과.
+  // 분해 규칙(degradation): 소유 정의항의 묶음이 1차(k_deg)로 분해 — 결정론 N(1−e^{−kΔt}) 또는 확률적(이항, seed 고정).
+  // 매 Δt 질량 감사: ① 단계가 일어날 때마다 국소 수지(실체·부분 구조) ② 전역 합계 = 시작 + 원장(분해·재활용·공급·교환).
+  // scenario: { name, hypothetical, cell, volumes, amounts, reservoirs: { 'D…|위치': 수 }, kinetics: { 'D…/rule/키': {…} }, reservoir_mode, stochastic, seed }
   const NA = 6.02214076e23, VOL = { fL: 1e-15, pL: 1e-12, nL: 1e-9, 'µL': 1e-6, uL: 1e-6, L: 1 };
+  function rngOf(seed) { let a = (seed >>> 0) || 1; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function binomial(rand, n, p) {
+    if (n <= 0 || p <= 0) return 0;
+    if (p >= 1) return n;
+    if (n <= 60) { let x = 0; for (let i = 0; i < n; i++) if (rand() < p) x++; return x; }
+    const m = n * p, sd = Math.sqrt(m * (1 - p)), u = Math.max(rand(), 1e-12), g = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rand());
+    return Math.max(0, Math.min(n, Math.round(m + sd * g)));
+  }
+  function supplyRules(db) {
+    const out = [];
+    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'supply') out.push({ ref: `${id}/rule/${r.id}`, owner: id, rule: r });
+    return out;
+  }
   function simulateRate(db, target, opt) {
     db = normalize(db);
-    opt = Object.assign({ t_end: 60, dt: 1e-3, scenario: null, amount: 10 }, opt || {});
+    opt = Object.assign({ t_end: 60, dt: 1e-3, scenario: null, amount: 10, bulk: 1000 }, opt || {});
     const sc = opt.scenario || {}, ix = index(db), tg = targets(ix, target);
     if (tg.error) return { error: tg.error };
-    const base = simulate(db, target, { rounds: 0, init: sc.amounts || {}, cell: sc.cell, amount: opt.amount });
+    const mode = opt.reservoirs || sc.reservoir_mode || 'finite';
+    if (!V.reservoirModes[mode]) return { error: `저장소 방식 '${mode}' — ${Object.keys(V.reservoirModes).join(' | ')}` };
+    const finite = mode === 'finite', stochastic = opt.stochastic != null ? !!opt.stochastic : !!sc.stochastic, rand = rngOf(opt.seed != null ? opt.seed : sc.seed != null ? sc.seed : 1);
+    const base = simulate(db, target, { rounds: 0, init: Object.assign({}, sc.reservoirs || {}, sc.amounts || {}), cell: sc.cell, amount: opt.amount, bulk: opt.bulk });
     if (base.error) return base;
-    const ids = base.ids, cell = base.cell, audit = [], kineticGaps = [], approx = new Set();
+    const ids = base.ids, cell = base.cell, audit = [], kineticGaps = [], approx = new Set(), events = [], seen = new Set();
     const AE = (code, where, msg, sug) => audit.push({ code, where, msg, suggestion: sug });
+    const once = (key, f) => { if (!seen.has(key)) { seen.add(key); f(); } };
     // 부피: 시나리오 → 구획 농도 모델 관찰 → 없음
     const volOf = (loc) => {
       const v = (sc.volumes || {})[loc];
@@ -1907,13 +2062,57 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       const o = Object.values(db.senses).flatMap((x) => x.obs).find((b) => b.property === 'compartment_volume' && b.context.location === loc && (!cell || !b.context.cell || b.context.cell === cell));
       return o && VOL[o.unit] ? { L: o.value * VOL[o.unit], src: 'data' } : null;
     };
-    const N = new Map(Object.entries(base.origin)), bulk = new Set(base.bulkSet);
-    for (const sid of ids) for (const p of db.steps[sid].outputs) if (!N.has(p.b)) N.set(p.b, 0);
-    const kinOf = (sid) => { const ref = db.steps[sid].rule; return (sc.kinetics || {})[ref] ? { ...normKinetics(sc.kinetics[ref]), src: 'scenario' } : ix.ruleOf(ref).kinetics ? { ...ix.ruleOf(ref).kinetics, src: 'data' } : null; };
+    const N = new Map(Object.entries(base.origin)), res = new Set(base.bulkSet), srcOf = Object.assign({}, base.source);
+    const resAmount = (b) => { const v = (sc.reservoirs || {})[b] != null ? sc.reservoirs[b] : (sc.amounts || {})[b]; if (v != null) { srcOf[b] = 'init'; return v; } srcOf[b] = 'bulk'; return opt.bulk; };
+    const addRes = (b) => { if (!N.has(b)) { N.set(b, resAmount(b)); res.add(b); } };
+    for (const sid of ids) for (const p of db.steps[sid].outputs) if (!N.has(p.b)) { if (res.has(p.b)) addRes(p.b); else N.set(p.b, 0); }
+    for (const b of res) { const v = (sc.reservoirs || {})[b] != null ? sc.reservoirs[b] : (sc.amounts || {})[b]; if (v != null) { N.set(b, v); srcOf[b] = 'init'; } else if (!srcOf[b] || srcOf[b] === 'default') srcOf[b] = 'bulk'; }
+    const kinOf = (ref) => (sc.kinetics || {})[ref] ? { ...normKinetics(sc.kinetics[ref]), src: 'scenario' } : ix.ruleOf(ref) && ix.ruleOf(ref).kinetics ? { ...ix.ruleOf(ref).kinetics, src: 'data' } : null;
     const locOf = (b) => b.split('|').pop();
+    const featsOf = (b) => new Map(parseBundle(b).features.map((f) => [f.site, f.feature]));
+    // --- 분해 규칙: 범위 안 묶음마다 (부위 조건·위치 조건이 맞는 것)
+    const degr = [];
+    for (const b of [...N.keys()]) {
+      const bd = db.senses[b.split('|')[0]];
+      if (!bd) continue;
+      const fs = featsOf(b);
+      for (const r of bd.rule) {
+        if (r.type !== 'degradation' || !Object.entries(r.when).every(([s, f]) => fs.get(s) === f) || (r.where && !r.where.includes(locOf(b)))) continue;
+        const ref = `${b.split('|')[0]}/rule/${r.id}`, k = kinOf(ref), kd = k ? (k.k > 0 ? k.k : k.half_life > 0 ? Math.LN2 / k.half_life : 0) : 0;
+        const loc3 = V.locations[locOf(b)] && V.locations[locOf(b)].dim === '3D' ? locOf(b) : 'cytosol';
+        const rec = [];
+        for (const q of r.recycle_to) {
+          let n = q.n;
+          if (n === 'sequence_length') { const o = bd.obs.find((x) => x.property === 'sequence_length'); n = o ? o.value : null; }
+          const rb = `${q.ref}|${q.location || loc3}`;
+          if (n == null) { once('seqlen' + ref, () => AE('AUDIT_RESOURCE', ref, `${ix.label(b.split('|')[0])} 재활용 화학량(서열 길이)을 모름 — 이 단위는 소실로 처리함`, gapSuggest(db, ix, b.split('|')[0], 'Structural_Gap', /서열 길이|sequence_length|재활용/))); continue; }
+          addRes(rb); rec.push({ b: rb, n });
+        }
+        if (!k) kineticGaps.push(ref);
+        else for (const m of kineticIssues(r, null, k)) AE('AUDIT_KINETIC', ref, m, gapSuggest(db, ix, b.split('|')[0], 'Kinetic_Gap'));
+        degr.push({ b, ref, rule: r, k: kd, kin: k, rec });
+      }
+    }
+    // --- 공급 규칙: 시뮬레이션 안의 묶음(저장소 포함)에 닿는 것을 닫힌 집합이 될 때까지 켠다
+    const sup = [], supAll = supplyRules(db), keysOf = (s) => [...s.rule.consumes, ...s.rule.produces].map((q) => `${q.ref}|${s.rule.where[0]}`);
+    for (let grew = true; grew;) {
+      grew = false;
+      for (const s of supAll) {
+        if (sup.includes(s) || !s.rule.where.length || !keysOf(s).some((b) => N.has(b))) continue;
+        sup.push(s); grew = true;
+        for (const b of keysOf(s)) addRes(b);
+      }
+    }
+    for (const s of sup) {
+      const k = kinOf(s.ref), vol = volOf(s.rule.where[0]);
+      s.k = k; s.V = vol ? vol.L : null; s.loc = s.rule.where[0];
+      if (!k) kineticGaps.push(s.ref);
+      else { for (const m of kineticIssues(s.rule, null, k)) AE('AUDIT_KINETIC', s.ref, m, gapSuggest(db, ix, s.owner, 'Kinetic_Gap')); if (!vol) AE('AUDIT_CONCENTRATION', s.ref, `공급 위치(${vlabel('locations', s.loc)}) 부피를 모름 — 공급을 적용하지 못함`, gapSuggest(db, ix, tg.ids[0], 'Concentration_Gap')); }
+    }
+    // --- 반응 단계
     const react = new Map();
     for (const sid of ids) {
-      const st = db.steps[sid], rule = ix.ruleOf(st.rule), k = kinOf(sid);
+      const st = db.steps[sid], rule = ix.ruleOf(st.rule), k = kinOf(st.rule);
       const parts = [...st.agents, ...st.inputs, ...st.outputs].filter((p) => !p.minor);
       const loc3 = parts.map((p) => locOf(p.b)).find((l) => V.locations[l] && V.locations[l].dim === '3D');
       if (parts.some((p) => V.locations[locOf(p.b)] && V.locations[locOf(p.b)].dim === '2D')) approx.add(sid);
@@ -1921,68 +2120,224 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       if (k) { for (const m of kineticIssues(rule, st, k)) AE('AUDIT_KINETIC', `${sid} ${rule.label}`, m, gapSuggest(db, ix, st.rule.split('/')[0], 'Kinetic_Gap')); }
       else kineticGaps.push(sid);
       if (k && !vol) AE('AUDIT_CONCENTRATION', `${sid} ${rule.label}`, `반응 부피(${loc3 ? vlabel('locations', loc3) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tg.ids[0], 'Concentration_Gap'));
-      react.set(sid, { st, rule, k: k && vol ? k : null, V: vol ? vol.L : null, loc: loc3 });
+      // 유한 저장소면 저장소도 입력·출력으로 센다(소비하면 준다). 무한 풀이면 v6 처럼 빼고 교환 원장에 적는다.
+      const inc = (p) => finite || !res.has(p.b);
+      const ins = new Map(), outs = new Map();
+      for (const p of st.inputs) if (inc(p)) ins.set(p.b, (ins.get(p.b) || 0) + (p.n || 1));
+      for (const p of st.outputs) if (inc(p)) outs.set(p.b, (outs.get(p.b) || 0) + (p.n || 1));
+      const lawIns = new Map([...ins].filter(([b]) => st.inputs.some((p) => p.b === b && !p.minor)));
+      const lawOuts = new Map([...outs].filter(([b]) => st.outputs.some((p) => p.b === b && !p.minor)));
+      const own = new Map([...ins].filter(([b]) => !res.has(b)));
+      react.set(sid, { st, rule, k: k && vol ? k : null, V: vol ? vol.L : null, loc: loc3, ins, outs, lawIns, lawOuts, own });
     }
-    const conc = (b, Vr) => (N.get(b) || 0) / (NA * Vr);
-    const tally = () => { const t = {}; for (const [b, n] of N) if (!bulk.has(b) && n) entityTally(db, b.split('|')[0], new Map(parseBundle(b).features.map((f) => [f.site, f.feature])), n, t, null); return t; };
-    // 화학 변환이 일어나는 실체(변환 기질·산물, 분해되는 구성 요소)는 보존 검사에서 뺀다
+    const conc = (b, Vr) => Math.max(0, N.get(b) || 0) / (NA * Vr);
+    // --- 질량 감사 준비: 묶음 → 기본 실체 벡터, 실체 → 부분 구조
+    const vecCache = new Map();
+    const vec = (b) => { if (!vecCache.has(b)) { const t = {}; entityTally(db, b.split('|')[0], featsOf(b), 1, t, null); vecCache.set(b, t); } return vecCache.get(b); };
+    const moiCache = new Map();
+    const moiOfEntity = (e) => { if (!moiCache.has(e)) moiCache.set(e, moietyOf(db, e, 1, {})); return moiCache.get(e); };
+    const addVec = (into, b, n) => { for (const [e, c] of Object.entries(vec(b))) into[e] = (into[e] || 0) + c * n; };
+    const toMoi = (ent) => { const m = {}; for (const [e, c] of Object.entries(ent)) for (const [x, k] of Object.entries(moiOfEntity(e))) m[x] = (m[x] || 0) + c * k; return m; };
+    // 화학 실체: 변환 기질·산물, 분해 구성 요소, 보조 기질, 그리고 수식 부위에서 특징과 함께 바뀌는 리간드(예: Gs 의 GTP → GDP)
+    const ligSwitch = (rule, owner) => { const e = rule.effect || {}; if (e.type !== 'modify') return []; const T = db.senses[e.target || owner], site = T && T.site[e.site]; if (!site || !site.ligands) return []; const a = (e.add || []).map((f) => site.ligands[f]), r = (e.remove || []).map((f) => site.ligands[f]); return a.join() === r.join() ? [] : [...a, ...r].filter(Boolean); };
+    const chemOf = (rule, owner) => { const e = rule.effect || {}, out = new Set(); for (const x of [...(e.consumes || []), ...(e.produces || []), ...(e.component ? [e.component] : []), ...(rule.with ? [...rule.with.consumes, ...rule.with.produces] : []), ...ligSwitch(rule, owner)]) { const t = {}; entityTally(db, x, new Map(), 1, t, null); for (const y of Object.keys(t)) out.add(y); out.add(x); } return out; };
     const changing = new Set();
-    for (const sid of ids) { const ru = react.get(sid).rule, e = ru.effect || {}; for (const x of [...(e.consumes || []), ...(e.produces || []), ...(e.component ? [e.component] : []), ...(ru.with ? [...ru.with.consumes, ...ru.with.produces] : [])]) { const t = {}; entityTally(db, x, new Map(), 1, t, null); for (const y of Object.keys(t)) changing.add(y); changing.add(x); } }
-    const t0 = tally(), exIn = {}, exOut = {}; // 대사물 풀(열린 저장소)과 주고받은 실체
-    const exchange = (b, n, into) => entityTally(db, b.split('|')[0], new Map(parseBundle(b).features.map((f) => [f.site, f.feature])), n, into, null);
-    const series = [], firstReach = {};
-    const record = (t) => series.push({ t, N: Object.fromEntries([...N].filter(([b]) => !bulk.has(b))) });
+    for (const sid of ids) for (const x of chemOf(react.get(sid).rule, ix.ruleOwner(db.steps[sid].rule))) changing.add(x);
+    for (const s of sup) for (const q of [...s.rule.consumes, ...s.rule.produces]) { const t = {}; entityTally(db, q.ref, new Map(), 1, t, null); for (const y of Object.keys(t)) changing.add(y); changing.add(q.ref); }
+    // 국소 수지(단계 한 번): 실체 Δ (그 규칙의 화학 실체 제외) · 부분 구조 Δ (공유 결합 수식이면 '공유 결합' 경로로 기록)
+    for (const sid of ids) {
+      const x = react.get(sid), st = x.st, rule = x.rule, e = rule.effect || {}, chem = chemOf(rule, ix.ruleOwner(st.rule));
+      const dE = {};
+      for (const p of st.outputs) addVec(dE, p.b, p.n || 1);
+      for (const p of st.inputs) addVec(dE, p.b, -(p.n || 1));
+      x.unitEnt = Object.fromEntries(Object.entries(dE).filter(([en, v]) => Math.abs(v) > 1e-9 && !chem.has(en)));
+      x.unitMoi = Object.fromEntries(Object.entries(toMoi(dE)).filter(([, v]) => Math.abs(v) > 1e-9));
+      const T = e.type === 'modify' ? db.senses[e.target || ix.ruleOwner(st.rule)] : null, site = T && T.site[e.site];
+      x.covalent = e.type === 'modify' && !(site && (site.ligand || site.ligands));
+    }
+    const ent0 = {}, moi0 = {};
+    const totals = () => { const t = {}; for (const [b, n] of N) if (n && (finite || !res.has(b))) addVec(t, b, n); return t; };
+    Object.assign(ent0, totals()); Object.assign(moi0, toMoi(ent0));
+    // 원장: 묶음별 Δ (반응·공급·분해·재활용), 실체별 생성·소멸(분해·재활용·교환), 부분 구조 경로(공유 결합·계 밖 공급·소실·재활용)
+    const ledger = {}, created = {}, destroyed = {}, chan = { covalent: {}, source: {}, lost: {}, recycle: {}, violation: {} };
+    const L1 = (b, k, v) => { const l = ledger[b] || (ledger[b] = { reaction: 0, supply: 0, degradation: 0, recycle: 0 }); l[k] += v; };
+    const addTo = (o, src, f) => { for (const [k, v] of Object.entries(src)) o[k] = (o[k] || 0) + v * f; };
+    const exIn = {}, exOut = {};
+    const series = [], firstReach = {}, resStat = {};
+    for (const b of res) if (N.has(b)) resStat[b] = { start: N.get(b), min: N.get(b), max: N.get(b), state: (N.get(b) || 0) >= 1 ? 'ok' : 'empty', source: srcOf[b] || 'bulk', consumers: [], producers: [] };
+    const record = (t) => series.push({ t, N: Object.fromEntries([...N].filter(([b]) => finite || !res.has(b))) });
+    const ev = (e) => { if (events.length < 200) events.push(e); };
+    const stalls = {};
     record(0);
-    const steps = Math.ceil(opt.t_end / opt.dt), every = Math.max(1, Math.floor(steps / 200));
+    const steps = Math.ceil(opt.t_end / opt.dt), every = Math.max(1, Math.floor(steps / 200)), TOL = 1e-6;
+    let massFirst = null, moiFirst = null;
     for (let i = 1; i <= steps; i++) {
+      const t = +(i * opt.dt).toFixed(9);
+      // ① 반응 단계
       for (const sid of ids) {
-        const { st, k, V: Vr } = react.get(sid);
-        const ins = new Map(); for (const p of st.inputs) if (!bulk.has(p.b)) ins.set(p.b, (ins.get(p.b) || 0) + (p.n || 1));
-        const outs = new Map(); for (const p of st.outputs) if (!bulk.has(p.b)) outs.set(p.b, (outs.get(p.b) || 0) + (p.n || 1));
+        const x = react.get(sid), { st, k, V: Vr, ins, outs, lawIns, lawOuts, own } = x;
         if (!st.agents.every((p) => (N.get(p.b) || 0) > 0)) continue;
-        let xi; // 이번 dt 의 반응 진행량 (분자 사건 수)
-        // 속도 상수 없음 → 즉시: 입력이 허락하는 만큼 이번 dt 안에 끝냄. 입력이 모두 대사물 풀이면 행위자 수만큼(0차)
-        if (!k) { xi = ins.size ? Math.min(...[...ins].map(([b, n]) => (N.get(b) || 0) / n)) : st.agents.length ? Math.min(...st.agents.map((p) => N.get(p.b) || 0)) : 0; }
-        else {
-          const prodIn = [...ins].reduce((a, [b, n]) => a * conc(b, Vr) ** n, 1), prodOut = [...outs].reduce((a, [b, n]) => a * conc(b, Vr) ** n, 1);
+        let xi; // 이번 Δt 의 반응 진행량 (분자 사건 수)
+        if (!k) {
+          // 즉시: 자기 입력(저장소 아닌 것)이 허락하는 만큼. 그것이 없으면 행위자 수만큼(0차). 저장소는 아래에서 한도로만.
+          xi = own.size ? Math.min(...[...own].map(([b, n]) => (N.get(b) || 0) / n)) : st.agents.length ? Math.min(...st.agents.map((p) => N.get(p.b) || 0)) : 0;
+          if (!finite && !own.size && ins.size) xi = Math.min(...[...ins].map(([b, n]) => (N.get(b) || 0) / n));
+        } else {
+          const prodIn = [...lawIns].reduce((a, [b, n]) => a * conc(b, Vr) ** n, 1), prodOut = [...lawOuts].reduce((a, [b, n]) => a * conc(b, Vr) ** n, 1);
           const agentC = st.agents.reduce((a, p) => a * conc(p.b, Vr), 1);
           let v = 0; // M/s
           if (k.law === 'mass_action') v = k.k * prodIn * agentC - (k.reversible && k.k_r ? k.k_r * prodOut : 0);
           else if (k.law === 'binding') { const kon = k.k_on || (k.k_off && k.Kd ? k.k_off / k.Kd : 0), koff = k.k_off || (k.k_on && k.Kd ? k.k_on * k.Kd : 0); v = kon * prodIn - koff * prodOut; }
-          else if (k.law === 'michaelis_menten') { const S = [...ins][0]; const s0 = S ? conc(S[0], Vr) : 1; v = k.kcat * agentC * s0 / (k.Km + s0); }
+          else if (k.law === 'michaelis_menten') { const S = [...lawIns][0]; const s0 = S ? conc(S[0], Vr) : 1; v = k.kcat * agentC * s0 / (k.Km + s0); }
           xi = v * NA * Vr * opt.dt;
         }
-        if (xi > 0) xi = Math.min(xi, ...[...ins].map(([b, n]) => (N.get(b) || 0) / n));
-        else if (xi < 0) xi = -Math.min(-xi, ...[...outs].map(([b, n]) => (N.get(b) || 0) / n));
+        const want = xi;
+        if (xi > 0) xi = Math.min(xi, ...[...ins].map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
+        else if (xi < 0) xi = -Math.min(-xi, ...[...outs].map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
+        // 고갈: 하고 싶었지만 저장소가 모자라 못 한 것
+        if (finite && want > 0 && xi < want * (1 - 1e-9)) {
+          const by = [...ins].filter(([b, n]) => res.has(b) && (N.get(b) || 0) / n <= xi + 1e-12).map(([b]) => b);
+          if (by.length) { if (!stalls[sid]) stalls[sid] = { t, by }; once(`stall:${sid}:${by.join()}:${resStat[by[0]] ? resStat[by[0]].episodes || 0 : 0}`, () => ev({ t, type: 'stalled', step: sid, by })); }
+        }
         if (!xi) continue;
-        for (const p of st.inputs) if (bulk.has(p.b)) exchange(p.b, (p.n || 1) * xi, xi > 0 ? exIn : exOut);
-        for (const p of st.outputs) if (bulk.has(p.b)) exchange(p.b, (p.n || 1) * xi, xi > 0 ? exOut : exIn);
-        for (const [b, n] of ins) N.set(b, (N.get(b) || 0) - n * xi);
-        for (const [b, n] of outs) { N.set(b, (N.get(b) || 0) + n * xi); if (xi > 0 && (N.get(b) >= 1) && firstReach[b] == null) firstReach[b] = i * opt.dt; }
+        if (!finite) {
+          for (const p of st.inputs) if (res.has(p.b)) addVec(xi > 0 ? exIn : exOut, p.b, (p.n || 1) * Math.abs(xi));
+          for (const p of st.outputs) if (res.has(p.b)) addVec(xi > 0 ? exOut : exIn, p.b, (p.n || 1) * Math.abs(xi));
+        }
+        for (const [b, n] of ins) { N.set(b, (N.get(b) || 0) - n * xi); L1(b, 'reaction', -n * xi); }
+        for (const [b, n] of outs) { N.set(b, (N.get(b) || 0) + n * xi); L1(b, 'reaction', n * xi); if (xi > 0 && N.get(b) >= 1 && firstReach[b] == null) firstReach[b] = t; }
+        // 국소 질량 감사 (단계가 일어날 때마다)
+        if (Object.keys(x.unitEnt).length) once('loc:' + sid, () => AE('AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 국소 수지 위반 — 한 번 일어날 때마다 ${Object.entries(x.unitEnt).map(([en, v]) => `${ix.label(en)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (보존되어야 할 실체가 생기거나 사라짐)`, massSuggest(db, ix, Object.keys(x.unitEnt)[0])));
+        if (finite && Object.keys(x.unitMoi).length) {
+          if (x.covalent) addTo(chan.covalent, x.unitMoi, xi);
+          else { addTo(chan.violation, x.unitMoi, xi); once('moi:' + sid, () => AE('AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 부분 구조 수지 위반 — 한 번에 ${Object.entries(x.unitMoi).map(([m, v]) => `${ix.label(m)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (단계의 부산물·보조 기질 묶음이 빠졌거나 규칙이 불완전)`, `단계 ${sid} 의 입력·출력에 빠진 부산물(minor)을 넣거나 규칙 ${x.st.rule} 의 효과·with 를 고칠 것`)); }
+        }
       }
-      if (i % every === 0 || i === steps) record(+(i * opt.dt).toFixed(6));
+      // ② 공급 규칙 (대사물 저장소 재생·합성)
+      for (const s of sup) {
+        if (!s.k || !s.V) continue;
+        const cons = s.rule.consumes.map((q) => [`${q.ref}|${s.loc}`, q.n]), prods = s.rule.produces.map((q) => [`${q.ref}|${s.loc}`, q.n]);
+        let v = s.k.law === 'zero_order' ? s.k.k : s.k.law === 'mass_action' ? s.k.k * cons.reduce((a, [b, n]) => a * conc(b, s.V) ** n, 1) : 0;
+        let xi = v * NA * s.V * opt.dt;
+        if (cons.length) xi = Math.min(xi, ...cons.map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
+        if (!(xi > 0)) continue;
+        for (const [b, n] of cons) { N.set(b, N.get(b) - n * xi); L1(b, 'supply', -n * xi); }
+        for (const [b, n] of prods) { N.set(b, (N.get(b) || 0) + n * xi); L1(b, 'supply', n * xi); if (N.get(b) >= 1 && firstReach[b] == null && !res.has(b)) firstReach[b] = t; }
+        // 실체: 공급의 화학 실체는 changing. 공급이 만든 비화학 실체(합성된 단백질 등)는 생성 원장에
+        const dE = {}; for (const [b, n] of prods) addVec(dE, b, n * xi); for (const [b, n] of cons) addVec(dE, b, -n * xi);
+        for (const [en, val] of Object.entries(dE)) if (!changing.has(en)) { if (val > 0) created[en] = (created[en] || 0) + val; else destroyed[en] = (destroyed[en] || 0) - val; }
+        if (s.rule.source && finite) addTo(chan.source, toMoi(dE), 1);
+      }
+      // ③ 분해 규칙 (1차, 결정론 또는 확률적)
+      for (const g of degr) {
+        if (!(g.k > 0)) continue;
+        const n = Math.max(0, N.get(g.b) || 0), p = 1 - Math.exp(-g.k * opt.dt);
+        if (!n) continue;
+        const whole = Math.floor(n), frac = n - whole;
+        const x = stochastic ? binomial(rand, whole, p) + (frac > 0 && rand() < p ? frac : 0) : n * p;
+        if (!(x > 0)) continue;
+        N.set(g.b, n - x); L1(g.b, 'degradation', -x);
+        const gone = {}; addVec(gone, g.b, x); addTo(destroyed, gone, 1);
+        const back = {};
+        for (const q of g.rec) { N.set(q.b, (N.get(q.b) || 0) + q.n * x); L1(q.b, 'recycle', q.n * x); addVec(back, q.b, q.n * x); }
+        addTo(created, back, 1);
+        if (finite) { if (g.rule.fate === 'lost') addTo(chan.lost, toMoi(gone), -1); else { addTo(chan.recycle, toMoi(back), 1); addTo(chan.recycle, toMoi(gone), -1); } }
+      }
+      // ④ 매 Δt 전역 질량 감사: 실체(화학 변환 실체 제외) · 부분 구조
+      const now = totals();
+      if (!massFirst) for (const en of uniq([...Object.keys(ent0), ...Object.keys(now), ...Object.keys(created), ...Object.keys(destroyed), ...Object.keys(exIn), ...Object.keys(exOut)])) {
+        if (changing.has(en)) continue;
+        const want = (ent0[en] || 0) + (created[en] || 0) - (destroyed[en] || 0) + (exIn[en] || 0) - (exOut[en] || 0), got = now[en] || 0;
+        if (Math.abs(want - got) > TOL * Math.max(1, Math.abs(want))) { massFirst = { t, en, want, got }; break; }
+      }
+      if (finite && !moiFirst) {
+        const m = toMoi(now);
+        for (const k of uniq([...Object.keys(moi0), ...Object.keys(m)])) {
+          const want = (moi0[k] || 0) + ['covalent', 'source', 'lost', 'recycle'].reduce((a, c) => a + (chan[c][k] || 0), 0), got = m[k] || 0;
+          if (Math.abs(want - got) > TOL * Math.max(1, Math.abs(want))) { moiFirst = { t, k, want, got, viol: chan.violation[k] || 0 }; break; }
+        }
+      }
+      // ⑤ 고갈·재생 사건 (유한 저장소)
+      if (finite) for (const [b, r] of Object.entries(resStat)) {
+        const n = N.get(b) || 0;
+        if (n < -1e-9) once('neg:' + b, () => AE('AUDIT_MASS', b, `t=${t} s 에 저장소 ${ix.bundleLabel(b)} 가 음수(${n}) — 엔진 오류`, '엔진 버그: 보고할 것'));
+        r.min = Math.min(r.min, n); r.max = Math.max(r.max, n);
+        if (r.state === 'ok' && n < 1) { r.state = 'exhausted'; r.episodes = (r.episodes || 0) + 1; r.firstExhausted = r.firstExhausted != null ? r.firstExhausted : t; ev({ t, type: 'exhausted', bundle: b }); }
+        else if (r.state === 'exhausted' && n >= Math.max(2, 0.01 * r.start)) { r.state = 'ok'; r.regenerated = (r.regenerated || 0) + 1; ev({ t, type: 'regenerated', bundle: b }); }
+        else if (r.state === 'empty' && n >= 1) r.state = 'ok'; // 처음부터 비어 있던 산물 저장소가 채워짐 (재생 사건 아님)
+      }
+      if (i % every === 0 || i === steps) record(t);
     }
-    // 질량·동일성 보존 (변환되는 실체 제외)
-    const t1 = tally();
-    for (const e of uniq([...Object.keys(t0), ...Object.keys(t1), ...Object.keys(exIn), ...Object.keys(exOut)])) {
-      if (changing.has(e)) continue;
-      const a = (t0[e] || 0) + (exIn[e] || 0) - (exOut[e] || 0), b = t1[e] || 0;
-      if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) AE('AUDIT_MASS', e, `${ix.label(e)}: 시작 ${(t0[e] || 0).toFixed(3)} + 풀에서 들어옴 ${(exIn[e] || 0).toFixed(3)} − 풀로 나감 ${(exOut[e] || 0).toFixed(3)} ≠ 끝 ${b.toFixed(3)} — 보존되어야 하는 실체가 사라지거나 생김`, massSuggest(db, ix, e));
-    }
-    // 평형 일치: 결합 단계의 Q 와 Kd (순속도가 거의 0 인데 어긋나면 적분 오류)
+    if (massFirst) AE('AUDIT_MASS', massFirst.en, `${ix.label(massFirst.en)}: t=${massFirst.t} s 에 처음 어긋남 — 시작 ${(ent0[massFirst.en] || 0).toFixed(3)} + 생성 ${(created[massFirst.en] || 0).toFixed(3)} − 소멸 ${(destroyed[massFirst.en] || 0).toFixed(3)}${finite ? '' : ` + 풀에서 들어옴 ${(exIn[massFirst.en] || 0).toFixed(3)} − 풀로 나감 ${(exOut[massFirst.en] || 0).toFixed(3)}`} = ${massFirst.want.toFixed(3)} ≠ 실제 ${massFirst.got.toFixed(3)} — 보존되어야 하는 실체가 원장 밖에서 사라지거나 생김`, massSuggest(db, ix, massFirst.en));
+    if (moiFirst) AE('AUDIT_MASS', moiFirst.k, `부분 구조 ${ix.label(moiFirst.k)}: t=${moiFirst.t} s 에 처음 어긋남 — 기대 ${moiFirst.want.toFixed(3)} ≠ 실제 ${moiFirst.got.toFixed(3)} (원장 밖 변화 ${moiFirst.viol.toFixed(3)} 는 위 국소 수지 위반 단계에서 옴)`, '국소 수지 위반 단계를 먼저 고칠 것');
+    // 평형 일치: 결합 단계의 Q 와 Kd
     for (const sid of ids) {
       const { st, k, V: Vr } = react.get(sid);
       if (!k || k.law !== 'binding') continue;
       const Kd = k.Kd || (k.k_off && k.k_on ? k.k_off / k.k_on : null);
-      const ins = st.inputs.filter((p) => !p.minor && !bulk.has(p.b)), outs = st.outputs.filter((p) => !p.minor && !bulk.has(p.b));
+      const ins = st.inputs.filter((p) => !p.minor && !res.has(p.b)), outs = st.outputs.filter((p) => !p.minor && !res.has(p.b));
       if (!Kd || ins.length !== 2 || outs.length !== 1) continue;
-      if (ids.some((o) => o !== sid && [...db.steps[o].inputs, ...db.steps[o].agents].some((p) => p.b === outs[0].b && !p.minor))) continue; // 산물이 하류로 빠지면 평형이 아님
+      if (ids.some((o) => o !== sid && [...db.steps[o].inputs, ...db.steps[o].agents].some((p) => p.b === outs[0].b && !p.minor))) continue;
+      if (degr.some((g) => g.k > 0 && [ins[0].b, ins[1].b, outs[0].b].includes(g.b))) continue; // 분해가 끼면 평형이 아님
       const Q = conc(ins[0].b, Vr) * conc(ins[1].b, Vr) / Math.max(conc(outs[0].b, Vr), 1e-30);
       if (conc(ins[0].b, Vr) > 0 && conc(ins[1].b, Vr) > 0 && Math.abs(Math.log10(Q / Kd)) > 1) AE('AUDIT_KINETIC', `${sid} ${react.get(sid).rule.label}`, `끝 시점의 [A][B]/[AB] = ${Q.toExponential(2)} M 가 Kd ${Kd.toExponential(2)} M 와 10배 이상 다름 — 아직 평형 전이거나 dt 가 너무 큼`, `t_end 를 늘리거나 dt 를 줄여 다시 실행 (지금 dt ${opt.dt} s)`);
     }
-    if (kineticGaps.length) AE('AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${kineticGaps.length}개를 즉시(사건 기반)로 처리함: ${kineticGaps.join(', ')}`, gapSuggest(db, ix, tg.ids[0], 'Kinetic_Gap'));
+    // 자원 순환 (Cycle-awareness): 저장소마다 누가 소비·생성하나 → closed(순환) · consumed_only(고갈 위험) · produced_only(축적) · idle
+    for (const sid of ids) { const { st } = react.get(sid); for (const p of st.inputs) if (resStat[p.b]) resStat[p.b].consumers.push(sid); for (const p of st.outputs) if (resStat[p.b]) resStat[p.b].producers.push(sid); }
+    for (const s of sup) { for (const q of s.rule.consumes) { const b = `${q.ref}|${s.loc}`; if (resStat[b]) resStat[b].consumers.push(s.ref); } for (const q of s.rule.produces) { const b = `${q.ref}|${s.loc}`; if (resStat[b]) resStat[b].producers.push(s.ref); } }
+    for (const g of degr) for (const q of g.rec) if (resStat[q.b]) resStat[q.b].producers.push(g.ref);
+    const active = (ref) => { if (react.has(ref)) return true; const s = sup.find((x) => x.ref === ref); if (s) return !!(s.k && s.V); const g = degr.find((x) => x.ref === ref); return !!(g && g.k > 0); };
+    for (const [b, r] of Object.entries(resStat)) {
+      r.consumers = uniq(r.consumers); r.producers = uniq(r.producers);
+      const c = r.consumers.some(active), p = r.producers.some(active);
+      r.class = c && p ? 'closed' : c ? 'consumed_only' : p ? 'produced_only' : 'idle';
+      r.end = N.get(b);
+    }
+    // 저장소 분자 사이의 순환(예: GTP → GDP → GTP): 반응·공급의 소비 → 생성 그래프의 강하게 연결된 성분
+    const G = new Map(), edge = (a, b) => { if (a === b) return; if (!G.has(a)) G.set(a, new Set()); G.get(a).add(b); };
+    for (const sid of ids) { const { st } = react.get(sid); for (const a of st.inputs) for (const b of st.outputs) if (res.has(a.b) && res.has(b.b)) edge(a.b, b.b); }
+    for (const s of sup) if (s.k && s.V) for (const a of s.rule.consumes) for (const b of s.rule.produces) edge(`${a.ref}|${s.loc}`, `${b.ref}|${s.loc}`);
+    const cycles = sccs(G).filter((c) => c.length > 1);
+    if (finite) {
+      for (const [b, r] of Object.entries(resStat)) {
+        if (r.class === 'consumed_only') once('res:' + b, () => AE('AUDIT_RESOURCE', b, `저장소 ${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (소비: ${r.consumers.join(', ')})${r.firstExhausted != null ? ` — t=${r.firstExhausted} s 에 고갈` : ''}`, gapSuggest(db, ix, b.split('|')[0], 'Kinetic_Gap', /공급|재생|supply/)));
+        if (r.source === 'bulk' && r.consumers.some(active)) once('resamt:' + b, () => AE('AUDIT_CONCENTRATION', b, `저장소 ${ix.bundleLabel(b)} 의 시작량이 기본값(${opt.bulk}) — 고갈 시각은 질적 의미만`, gapSuggest(db, ix, b.split('|')[0], 'Concentration_Gap', /저장소|대사물|뉴클레오타이드|reservoir/)));
+      }
+    }
+    const gaps = kineticGaps.filter((x) => !/\/rule\//.test(x) || react.has(x));
+    const sgaps = kineticGaps.filter((x) => /\/rule\//.test(x));
+    if (gaps.length) AE('AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${gaps.length}개를 즉시(사건 기반)로 처리함: ${gaps.join(', ')}`, gapSuggest(db, ix, tg.ids[0], 'Kinetic_Gap'));
+    if (sgaps.length) AE('AUDIT_KINETIC_GAP', target, `속도 상수가 없는 공급·분해 규칙 ${sgaps.length}개는 적용하지 않음: ${sgaps.join(', ')}`, sgaps.map((x) => gapSuggest(db, ix, x.split('/')[0], 'Kinetic_Gap')).filter((x, i, a) => a.indexOf(x) === i).join(' / '));
     if (approx.size) AE('AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${approx.size}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${[...approx].join(', ')}`, gapSuggest(db, ix, tg.ids[0], 'Concentration_Gap', /2D|면적/));
-    return { ids, cell, scenario: sc.name || null, hypothetical: !!sc.hypothetical, series, firstReach, final: Object.fromEntries(N), audit, kineticGaps, react, ix, t_end: opt.t_end, dt: opt.dt };
+    return { ids, cell, mode, stochastic, scenario: sc.name || null, hypothetical: !!sc.hypothetical, series, firstReach, final: Object.fromEntries(N), audit, kineticGaps, react, ix, t_end: opt.t_end, dt: opt.dt,
+      reservoirs: resStat, ledger, events, stalls, cycles, supplies: sup.map((s) => ({ ref: s.ref, active: !!(s.k && s.V), law: s.k ? s.k.law : null, src: s.k ? s.k.src : null, kin: s.k })),
+      degradations: degr.map((g) => ({ bundle: g.b, ref: g.ref, k_deg: g.k, fate: g.rule.fate, src: g.kin ? g.kin.src : null })), created, destroyed, channels: chan };
+  }
+  // 강하게 연결된 성분 (Tarjan, 반복형)
+  function sccs(G) {
+    const idx = new Map(), low = new Map(), on = new Set(), stack = [], out = [];
+    let n = 0;
+    const nodes = uniq([...G.keys(), ...[...G.values()].flatMap((s) => [...s])]);
+    for (const s of nodes) {
+      if (idx.has(s)) continue;
+      const work = [[s, 0]];
+      while (work.length) {
+        const [v, i] = work[work.length - 1];
+        if (i === 0) { idx.set(v, n); low.set(v, n); n++; stack.push(v); on.add(v); }
+        const nb = [...(G.get(v) || [])];
+        if (i < nb.length) {
+          work[work.length - 1][1]++;
+          const w = nb[i];
+          if (!idx.has(w)) work.push([w, 0]);
+          else if (on.has(w)) low.set(v, Math.min(low.get(v), idx.get(w)));
+          continue;
+        }
+        work.pop();
+        if (work.length) { const u = work[work.length - 1][0]; low.set(u, Math.min(low.get(u), low.get(v))); }
+        if (low.get(v) === idx.get(v)) { const c = []; let w; do { w = stack.pop(); on.delete(w); c.push(w); } while (w !== v); out.push(c.reverse()); }
+      }
+    }
+    return out;
   }
   // 감사 오류에 붙일 교정 제안: 한계 등록부에서 대상·종류가 맞는 열린 한계를 찾는다
   function gapSuggest(db, ix, base, type, hint) {
@@ -2003,13 +2358,24 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
   function simulateRateText(db, target, opt) {
     const r = simulateRate(db, target, opt);
     if (r.error) return r.error;
-    const ix = r.ix, out = [`속도 기반 시뮬레이션: ${target} — ${r.t_end} s, dt ${r.dt} s${r.cell ? ', 세포 ' + vlabel('cells', r.cell) : ''}${r.scenario ? `, 시나리오 '${r.scenario}'` : ''}`];
+    const ix = r.ix, out = [`속도 기반 시뮬레이션: ${target} — ${r.t_end} s, dt ${r.dt} s${r.cell ? ', 세포 ' + vlabel('cells', r.cell) : ''}${r.scenario ? `, 시나리오 '${r.scenario}'` : ''} · 저장소 ${r.mode}${r.stochastic ? ' · 확률적 분해' : ''}`];
     if (r.hypothetical) out.push('  ⚠ 가상 시나리오 값 — 지식이 아니라 엔진 시험용 (data/db.json 에 저장되지 않음)');
     out.push('단계별 속도 법칙:');
     for (const sid of r.ids) { const x = r.react.get(sid); out.push(`  ${sid} ${ix.label(sid)}: ${x.k ? `${x.k.law} [${x.k.src}] ${KIN_FIELDS.filter((f) => x.k[f] != null).map((f) => `${f}=${x.k[f]}`).join(' ')}` : '속도 상수 없음 → 즉시'}${x.V ? ` · 부피 ${(x.V / 1e-15).toPrecision(3)} fL` : ''}`); }
+    const kinTxt = (k) => `${k.law} [${k.src}] ${KIN_FIELDS.filter((f) => k[f] != null).map((f) => `${f}=${k[f]}`).join(' ')}`;
+    if (r.supplies.length) out.push('공급 규칙 (Metabolic_Supply_Rule):', ...r.supplies.map((x) => `  ${x.active ? '●' : '○'} ${ruleLine(ix, x.ref.split('/')[0], ix.ruleOf(x.ref)).replace(/ 〈[^〉]*〉$/, '')}${x.kin ? ' · ' + kinTxt(x.kin) : ''}${x.active ? '' : ' — 적용 안 함 (속도 상수·부피 없음)'}`));
+    if (r.degradations.length) out.push('분해 규칙 (Degradation_Rule):', ...r.degradations.map((x) => `  ${x.k_deg > 0 ? '●' : '○'} ${ix.bundleLabel(x.bundle)} ← ${x.ref} ${vlabel('lifecycleFates', x.fate)}${x.k_deg > 0 ? ` k_deg=${x.k_deg.toExponential(3)} s⁻¹ [${x.src}]` : ' — 적용 안 함 (속도 상수 없음)'}`));
     const keys = Object.keys(r.firstReach).sort((a, b) => r.firstReach[a] - r.firstReach[b]);
     out.push('처음 1분자 이상이 된 시각:', ...keys.map((b) => `  t=${r.firstReach[b].toFixed(3)} s  ${ix.bundleLabel(b)}`));
-    out.push('끝 시점 분자 수 (0 아님, 보조 기질 제외):', ...Object.entries(r.final).filter(([b, n]) => n > 1e-9 && n < 900).map(([b, n]) => `  ${n.toFixed(2)}× ${ix.bundleLabel(b)}`));
+    out.push('끝 시점 분자 수 (0 아님, 저장소 제외):', ...Object.entries(r.final).filter(([b, n]) => n > 1e-9 && !r.reservoirs[b] && (r.mode === 'finite' || n < 900)).map(([b, n]) => `  ${n.toFixed(2)}× ${ix.bundleLabel(b)}`));
+    const fmt = (n) => (Math.abs(n) >= 1e5 ? n.toExponential(3) : n.toFixed(2));
+    const CL = { closed: '순환(소비·재생)', consumed_only: '소비만 — 고갈 위험', produced_only: '생성만 — 축적', idle: '쓰이지 않음' };
+    out.push(`대사물 저장소 (${vlabel('reservoirModes', r.mode)}):`);
+    for (const [b, x] of Object.entries(r.reservoirs)) out.push(`  ${ix.bundleLabel(b)}: 시작 ${fmt(x.start)} → 끝 ${fmt(x.end)} (최소 ${fmt(x.min)}) · ${CL[x.class]}${x.source === 'bulk' ? ' · 시작량 기본값(농도 공백)' : x.source.startsWith('data') ? ' · ' + x.source : ''}${x.episodes ? ` · 고갈 ${x.episodes}회` : ''}${x.regenerated ? ` · 재생 ${x.regenerated}회` : ''}`);
+    if (r.cycles.length) out.push('자원 순환 (저장소 분자 사이의 닫힌 소비·생성 고리 — 강하게 연결된 성분):', ...r.cycles.map((c) => '  ⟲ ' + c.map((b) => ix.bundleLabel(b)).join(' · ')));
+    if (r.events.length) out.push('고갈·재생 사건:', ...r.events.slice(0, 30).map((e) => `  t=${e.t} s ${e.type === 'exhausted' ? '고갈 ' + ix.bundleLabel(e.bundle) : e.type === 'regenerated' ? '재생 ' + ix.bundleLabel(e.bundle) : `멈춤 ${e.step} ${ix.label(e.step)} ← ${e.by.map((b) => ix.bundleLabel(b)).join(', ')} 부족`}`), ...(r.events.length > 30 ? [`  … ${r.events.length - 30}건 더`] : []));
+    const led = Object.entries(r.ledger).filter(([, l]) => l.supply || l.degradation || l.recycle);
+    if (led.length) out.push('변화량 원장 Δ (반응 · 공급 · 분해 · 재활용):', ...led.map(([b, l]) => `  ${ix.bundleLabel(b)}: ${fmt(l.reaction)} · ${fmt(l.supply)} · ${fmt(l.degradation)} · ${fmt(l.recycle)}`));
     out.push(r.audit.length ? `감사 (Audit) — ${r.audit.length}건:` : '감사 (Audit): 위반 없음');
     for (const a of r.audit) out.push(`  [${a.code}] ${a.where}: ${a.msg}`, `      → 교정 제안: ${a.suggestion}`);
     return out.join('\n');

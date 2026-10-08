@@ -6,9 +6,9 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 3 | 0 | 3 |
+| Kinetic_Gap | 10 | 0 | 10 |
 | Concentration_Gap | 5 | 0 | 5 |
-| Structural_Gap | 10 | 0 | 10 |
+| Structural_Gap | 12 | 0 | 12 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
 
@@ -18,7 +18,14 @@
 |---|---|---|---|---|---|---|
 | L000004 | D000100/rule/kb_binding (TNF 유전자 · kb_binding) | Kinetic_Gap | NF-κB 가 여러 프로모터의 κB 자리를 두고 경쟁하는데 결합 친화도가 없어 누가 먼저 차지하는지 단계 순서로 정해진다<br>발견: 재사용 시연(NFKBIA 표적 추가) | ✗ 속도 상수 Kd @ D000100/rule/kb_binding | open (0/1) | D000107 막–핵 신호 연쇄<br>D000115 핵 이동 후 전사 활성화<br>D000117 반응 속도 모델 |
 | L000005 | D000049/rule/camp_hydrolysis (포스포다이에스터레이스 · camp_hydrolysis) | Kinetic_Gap | cAMP 를 PKA 활성화와 PDE 분해가 나눠 갖는 비율 — 이산 시뮬레이션은 촉매 수로만 정한다<br>발견: 첫 시뮬레이션: 한 라운드 1회 발화에서 PDE 가 cAMP 를 먼저 다 분해해 PKA 가 켜지지 않음 → 촉매 수만큼 발화로 우회 | ✗ 속도 상수 kcat·Km @ D000049/rule/camp_hydrolysis<br>✗ 속도 상수 Kd @ D000042/rule/camp_release | open (0/2) | D000112 2차 전령 증폭<br>D000117 반응 속도 모델 |
-| L000006 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Kinetic_Gap | 단계에 시간이 없다 — 신호의 지속·종료(IκBα 재합성, 탈인산화)와 진동을 다룰 수 없다<br>발견: 2026-10-08 LPS→NF-κB 스트레스 시험 | ✗ 속도 상수 kcat·Km @ D000085/rule/ikba_s32<br>✗ 속도 상수 kcat·Km @ D000098/rule/ikba_degradation<br>✗ 속도 상수 k·order @ D000089/rule/nuclear_import | open (0/3) | D000106 수용체 매개 신호 연쇄<br>D000111 키네이스 연쇄<br>D000113 GTPase 타이머<br>D000117 반응 속도 모델 |
+| L000006 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Kinetic_Gap | 단계에 시간이 없다 — 신호의 지속·종료(IκBα 재합성, 탈인산화)와 진동을 다룰 수 없다<br>발견: 2026-10-08 LPS→NF-κB 스트레스 시험 | ✗ 속도 상수 kcat·Km @ D000085/rule/ikba_s32<br>✗ 속도 상수 kcat·Km @ D000098/rule/ikba_degradation<br>✗ 속도 상수 k·order @ D000089/rule/nuclear_import | open (0/3) | D000106 수용체 매개 신호 연쇄<br>D000111 키네이스 연쇄<br>D000113 GTPase 타이머<br>D000117 반응 속도 모델<br>D000128 생애 주기 모델 |
+| L000019 | D000126/rule/atp_supply (ATP 재생 · atp_supply) | Kinetic_Gap | 세포질 ATP 재생 속도(세포 유형별) — 없으면 ATP 저장소는 소비만 되고 재생 경로가 꺼져 고갈된다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 k @ D000126/rule/atp_supply | open (0/1) | D000129 대사물 저장소 모델 |
+| L000020 | D000123/rule/gtp_regeneration (뉴클레오사이드 이인산 키네이스 · gtp_regeneration) | Kinetic_Gap | NDPK 의 GDP → GTP 재생 속도 — 없으면 GTP–GDP 순환이 닫히지 않는다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 k @ D000123/rule/gtp_regeneration | open (0/1) | — |
+| L000021 | D000124/rule/amp_recharge (아데닐산 키네이스 · amp_recharge) | Kinetic_Gap | 아데닐산 키네이스의 AMP 재충전 속도 — 없으면 AMP 가 쌓이기만 한다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 k @ D000124/rule/amp_recharge | open (0/1) | — |
+| L000022 | D000125/rule/ppi_hydrolysis (무기 피로인산가수분해효소 · ppi_hydrolysis) | Kinetic_Gap | 무기 피로인산가수분해효소의 PPi 가수분해 속도 — 없으면 PPi 가 쌓이기만 한다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 k @ D000125/rule/ppi_hydrolysis | open (0/1) | — |
+| L000023 | D000127/rule/nt_supply (뉴클레오타이드 공급 · nt_supply) | Kinetic_Gap | 핵질 뉴클레오타이드 공급 속도(합성·재활용) — 없으면 전사가 뉴클레오타이드 저장소를 바닥낸다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 k @ D000127/rule/nt_supply | open (0/1) | — |
+| L000024 | D000101/rule/turnover (TNF mRNA · turnover) | Kinetic_Gap | TNF mRNA 반감기(대식세포, LPS 자극 조건) — 없으면 mRNA 가 분해되지 않고 쌓인다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 half_life @ D000101/rule/turnover | open (0/1) | — |
+| L000025 | D000086/rule/basal_turnover (IκBα · basal_turnover) | Kinetic_Gap | 유리 IκBα 의 기저 분해 반감기 — 없으면 유리 IκBα 가 분해되지 않는다<br>발견: v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE) | ✗ 속도 상수 half_life @ D000086/rule/basal_turnover | open (0/1) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 
@@ -27,7 +34,7 @@
 | ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |
 |---|---|---|---|---|---|---|
 | L000001 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | 대식세포의 분자별 세포당 분자 수 — 지금 시작량은 기본값 10이라, NF-κB 를 두고 TNF·NFKBIA 프로모터가 경쟁한 결과가 단계 순서에 좌우된다<br>발견: 재사용 시연(NFKBIA 표적 추가): 기본 시작량에서 TNF 유전자 10개가 핵 NF-κB 10개를 다 차지해 NFKBIA 가 전사되지 못함 | ✗ 관찰 copy_number @ D000090 NF-κB–IκBα 복합체 · 대식세포 · 세포질<br>✗ 관찰 copy_number @ D000069 TLR4–MD-2 복합체 · 대식세포 · 세포막<br>✓ 관찰 copy_number @ D000100 TNF 유전자 · 대식세포 · 핵질 | open (1/3) | D000116 구획 농도 모델 |
-| L000002 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | ATP·뉴클레오타이드 같은 대사물을 무한 풀(1000)로 둠 — 실제 농도와 구획 부피가 있어야 유한 풀이 된다<br>발견: 시뮬레이터에서 뉴클레오타이드 10개가 TNF 전사에 다 쓰여 두 번째 표적이 막힌 문제를 무한 풀로 우회함 | ✗ 관찰 concentration @ D000032 ATP · 대식세포 · 세포질<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 대식세포 · 세포질<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 대식세포 · 핵질 | open (0/3) | D000116 구획 농도 모델 |
+| L000002 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | ATP·뉴클레오타이드 같은 대사물을 무한 풀(1000)로 둠 — 실제 농도와 구획 부피가 있어야 유한 풀이 된다<br>발견: 시뮬레이터에서 뉴클레오타이드 10개가 TNF 전사에 다 쓰여 두 번째 표적이 막힌 문제를 무한 풀로 우회함 | ✗ 관찰 concentration @ D000032 ATP · 대식세포 · 세포질<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 대식세포 · 세포질<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 대식세포 · 핵질 | open (0/3) | D000116 구획 농도 모델<br>D000129 대사물 저장소 모델 |
 | L000003 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | K63·K48 폴리유비퀴틴 사슬을 유비퀴틴 1 단위로 셈 — 질량 수지가 사슬 길이만큼 틀린다<br>발견: 2026-10-08 LPS→NF-κB 스트레스 시험 | ✗ 수동: 사슬 길이(유비퀴틴 개수) 분포 데이터와, 그것을 담을 특징·관찰 어휘 | open (0/1) | D000114 억제자 분해에 의한 전사 인자 방출 |
 | L000016 | D000051 (에피네프린에 의한 글리코겐 분해) | Concentration_Gap | 간세포의 분자별 세포당 분자 수 — 시작량이 기본값 10이라 증폭 정도(수용체 하나당 cAMP·인산화효소 수)를 말할 수 없다<br>발견: 2026-10-08 simulate 의 농도 공백 경고 (등록되지 않은 경로) | ✗ 관찰 copy_number @ D000030 β-아드레날린 수용체 · 간세포 · 세포막<br>✗ 관찰 copy_number @ D000042 단백질 키네이스 A · 간세포 · 세포질<br>✗ 관찰 copy_number @ D000044 글리코겐 인산화효소 · 간세포 · 세포질 | open (0/3) | D000116 구획 농도 모델 |
 | L000017 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | 막(2D) 분자가 낀 반응을 인접 3D 구획 부피의 농도로 환산함 — 면적 농도(분자/µm²)와 막 면적이 없다<br>발견: 2026-10-08 속도 기반 시뮬레이터(simulate --rate)의 AUDIT_RESOLUTION | ✗ 수동: 세포막 면적(세포 유형별)과 면적 농도 모델 — 2D 반응 속도(k_on 단위 µm²/s)를 담을 어휘 | open (0/1) | — |
@@ -48,3 +55,5 @@
 | L000014 | D000100/site/kb_site (TNF 유전자 · kb_site) | Structural_Gap | Collart et al. 1990 이 보고한 κB 유사 모티프 네 개를 하나로 묶었고 프로모터 위 위치가 없다<br>발견: 2026-10-08 LPS→NF-κB 스트레스 시험 | ✗ 수동: κB 자리별 프로모터 좌표(뉴클레오타이드 위치)와 그것을 담을 핵산 좌표 어휘 | open (0/1) | D000115 핵 이동 후 전사 활성화 |
 | L000015 | D000029 (Gs 단백질) | Structural_Gap | 활성화 때 Gαs(GTP)와 Gβγ 가 갈라지는 것을 표현하지 않고 삼량체를 한 단위로 둠<br>발견: 형식 v4 변환(migration 003) | ✗ 수동: Gαs–Gβγ 해리 규칙·단계와 그 구조 근거 | open (0/1) | — |
 | L000018 | D000031/site/gs_site (아데닐산 고리화효소 · gs_site) | Structural_Gap | Gs 가 AC 활성화 단계(S000003)에서 행위자로 풀에 남으면서 AC 의 gs_site 리간드로도 세어져 Gαs·Gβ·Gγ 가 두 번 계산된다 — 실제로는 GTP 결합 Gαs 가 AC 에 붙고 Gβγ 가 떨어지며, GTP 가수분해로 Gαs 가 풀려난다<br>발견: 2026-10-08 audit-run 에피네프린 경로 (속도 기반 시뮬레이션의 AUDIT_MASS: Gαs·Gβ·Gγ 10 → 20) | ✗ 수동: Gαs·GTP 가 AC 에 흡수되는 결합 단계(partner)와, GTP 가수분해로 Gαs·GDP 가 풀려나 Gβγ 와 다시 모이는 단계·규칙 — L000015 의 Gs 해리 모델과 함께 | open (0/1) | — |
+| L000026 | D000101 (TNF mRNA) | Structural_Gap | TNF mRNA 의 서열 길이(뉴클레오타이드 수, 사람) — 없으면 분해 때 뉴클레오타이드 몇 개가 돌아가는지 몰라 재활용분을 소실로 처리한다<br>발견: TNF mRNA 분해 규칙(recycle_to n: sequence_length)에 관찰이 없음 | ✗ 관찰 sequence_length @ D000101 TNF mRNA | open (0/1) | D000128 생애 주기 모델 |
+| L000027 | D000098/rule/ikba_degradation (26S 프로테아좀 · ikba_degradation) | Structural_Gap | 프로테아좀이 기질 하나를 분해할 때 쓰는 ATP 수 — 지금은 1 분자(ATP → ADP + Pi)로 둔 단순화라 ATP 저장소 소비가 실제보다 적다<br>발견: v7 부분 구조 수지 검사가 ATP → ADP 에서 빠진 Pi 를 잡아 규칙을 고치면서 화학량 단순화가 드러남 | ✗ 수동: 26S 프로테아좀의 기질당 ATP 가수분해 화학량을 문헌에서 확인해 with 화학량(단계 n)에 반영 | open (0/1) | — |

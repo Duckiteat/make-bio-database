@@ -1,0 +1,105 @@
+{
+  "name": "GTP 재생 가상 시나리오 (공급 있음)",
+  "_설명": "가상 값. 고갈 시나리오와 같고, NDPK(GDP + ATP → GTP + ADP)·ATP 재생(ADP + Pi → ATP)·아데닐산 키네이스·PPase 공급 규칙에 가상 속도를 주어 GTP–GDP 순환과 ATP 순환이 닫히는지 본다.",
+  "hypothetical": true,
+  "cell": "hepatocyte",
+  "volumes": {
+    "cytosol": {
+      "value": 4000,
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000027|extracellular": 2000,
+    "D000030|plasma_membrane": 1000,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+    "D000031|plasma_membrane": 1000
+  },
+  "reservoirs": {
+    "D000035|cytosol": 20000,
+    "D000036|cytosol": 0,
+    "D000032|cytosol": 2000000,
+    "D000033|cytosol": 200000,
+    "D000034|cytosol": 0,
+    "D000037|cytosol": 2000000,
+    "D000122|cytosol": 0
+  },
+  "kinetics": {
+    "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": 100000000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": 0.5,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000123/rule/gtp_regeneration": {
+      "law": "mass_action",
+      "k": 1000000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000126/rule/atp_supply": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000124/rule/amp_recharge": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000125/rule/ppi_hydrolysis": {
+      "law": "mass_action",
+      "k": 10,
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  }
+}

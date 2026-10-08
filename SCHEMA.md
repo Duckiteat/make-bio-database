@@ -251,6 +251,68 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
   - `AUDIT_SCHEMA` 저장소 검사 · `AUDIT_RESOLUTION` 필요 해상도 > 갖춘 해상도, 2D 환산 · `AUDIT_KINETIC` 속도 무결성, 평형(닫힌 결합에서 [A][B]/[AB] ≈ Kd) · `AUDIT_KINETIC_GAP` 속도 상수 없음 · `AUDIT_CONCENTRATION` 반응 부피 없음 · `AUDIT_MASS` 질량·동일성 보존(대사물 풀과 주고받은 양까지 계산; 변환·분해되는 실체 제외)
   - 모든 감사 오류는 한계 등록부에서 찾은 교정 제안을 단다. 맞는 한계가 없으면 등록할 형식을 제안한다. 감사 오류가 있으면 종료 코드 1.
 
+## 8E. 생애 주기와 대사물 저장소 — 형식 v7
+
+물질은 만들어지고, 소비되고, 분해되고, 돌아온다. v7 은 이것을 규칙 두 종류와 부분 구조 수지로 표현하고, 시뮬레이터가 매 Δt 질량을 감사한다.
+
+### 규칙 종류 (`vocab.js` 의 `ruleTypes`)
+| `type` | 소유자 | 무엇 | 누가 적용 |
+|---|---|---|---|
+| `meaning` | 분자 종류 | 부위:특징 조합 → 활성 | 행위자 검사·화면 |
+| `transition` | 분자 종류 | 변화 (효과 7종) | 단계(S)가 참조 |
+| `supply` (**Metabolic_Supply_Rule**) | 아무 정의항 (경로·과정·효소 부류 …) | 저장소의 소비 → 생성 | 시뮬레이터가 전역으로, 매 Δt |
+| `degradation` (**Degradation_Rule**) | 분자 종류 (분해되는 쪽) | 그 정의항의 묶음이 1차로 분해 | 시뮬레이터가 묶음마다, 매 Δt |
+
+경로·과정·원리 정의항은 `supply` 규칙만 가질 수 있다. 단계는 `transition` 규칙만 참조한다.
+
+### 공급 규칙
+```json
+{ "id": "gtp_regeneration", "type": "supply", "label": "GTP 재생",
+  "consumes": [{ "ref": "GDP", "n": 1 }, { "ref": "ATP", "n": 1 }], "produces": [{ "ref": "GTP", "n": 1 }, { "ref": "ADP", "n": 1 }],
+  "where": ["cytosol"], "kinetics": { "law": "mass_action", "k": …, "order": 2, "evidence": { … } }, "evidence": { … } }
+```
+- `where` 는 부피(3D) 위치 정확히 하나 — 저장소 묶음 = `정의항|위치`.
+- 속도 법칙은 `zero_order`(k, M·s⁻¹ — 소비가 없는 공급) 또는 `mass_action`(차수 = 소비 분자 수). `zero_order` 는 공급 규칙에만.
+- 소비가 없거나 부분 구조가 맞지 않는 공급(계 밖에서 들어오는 원료)은 `source: true` 로 명시해야 한다.
+
+### 분해 규칙
+```json
+{ "id": "turnover", "type": "degradation", "label": "TNF mRNA 분해", "fate": "recycled",
+  "recycle_to": [{ "ref": "뉴클레오타이드", "n": "sequence_length", "location": "nucleoplasm" }],
+  "when": { "부위": "특징" }, "where": ["nucleoplasm"],
+  "kinetics": { "law": "mass_action", "order": 1, "half_life": 1800, "evidence": { … } } }
+```
+- `fate` (`lifecycleFates`): `lost` 계 밖으로(질량 감사의 소실 원장) · `recycled` 구성 단위가 저장소로(`recycle_to` 필수).
+- `recycle_to[].n` 은 양수 또는 `"sequence_length"` (그 정의항의 `sequence_length` 관찰을 읽음 — 없으면 시뮬레이터가 그 단위를 소실로 처리하고 감사에 보고).
+- 속도는 1차(`mass_action`, order 1): `k`(= k_deg, s⁻¹) 또는 `half_life`(s). 둘 다 있으면 k = ln2 / t½ 가 10% 안에서 맞아야 한다. 한계 해결 경로에서 `k` 와 `half_life` 는 서로를 대신한다.
+- `when` 이 있으면 그 부위:특징을 가진 묶음만, `where` 가 있으면 그 위치의 묶음만 분해된다. 복합체 안의 구성 요소는 분해되지 않는다(묶음의 바탕이 소유자일 때만).
+
+### 부분 구조 `moieties` 와 특징별 리간드 `site.ligands`
+- 정의항 `moieties: [{ ref: 구조 요소(structure_feature) 정의항, n: 정수 }]` — 원자 대신 반응에서 깨지지 않는 부분(아데노신·구아노신·인산기 단위)을 센다. 분자 종류만.
+- **부분 구조 수지 (검사)**: `convert`·`degrade` 효과는 보조 기질(`with`)까지 합쳐, `supply` 규칙은 소비·생성 사이에서 부분 구조가 같아야 한다 (예: ATP → cAMP 만으로는 인산기 3 → 1 — 피로인산을 산물에 적어야 통과). 어느 쪽에도 부분 구조가 선언되지 않은 분자는 0 으로 센다.
+- 부위 `ligands: { 특징: 정의항 }` — 특징마다 다른 리간드(예: Gs 뉴클레오타이드 부위 GDP_bound → GDP, GTP_bound → GTP). 질량 감사는 채워진 부위의 리간드를 실체로 센다. 수식 규칙이 리간드를 바꾸면(GTP → GDP) 그 리간드는 화학 변환 실체로 본다.
+
+### 대사물 저장소 (Metabolic Reservoir)
+- 보조 기질·부산물(minor)·`with`·만들어지지 않는 변환 기질 묶음, 그리고 켜진 공급 규칙·재활용이 닿는 묶음 = 저장소.
+- 방식(`reservoirModes`): `finite`(기본) — 단계가 소비하면 줄고, 공급·재활용이 채운다. 바닥나면 그 단계는 멈춘다(오류가 아니라 결과). `infinite` — v6 동작(양 고정, 교환 원장).
+- 시작량: 시나리오 `reservoirs` / `amounts` → 데이터(copy_number, 또는 concentration × compartment_volume) → 기본값(1000, 농도 공백 표시).
+- 공급 규칙은 시뮬레이션의 묶음에 닿으면 켜지고, 그 규칙의 다른 분자도 저장소가 된다(닫힌 집합이 될 때까지). 속도 상수나 부피가 없으면 적용하지 않고 보고한다.
+
+### 속도 기반 시뮬레이션 (v7) — 매 Δt 순서
+1. 반응 단계 (유한 저장소면 저장소 입력도 화학량대로 소비; 비가산 입력은 속도 법칙에, minor 입력은 한도로만)
+2. 공급 규칙
+3. 분해 규칙 — 결정론 N(1 − e^{−kΔt}) 또는 `--stochastic` 이항 분포(`--seed` 고정)
+4. 전역 질량 감사 — 실체: 시작 + 생성 − 소멸(분해·재활용·공급 합성) (+ 무한 풀이면 교환) = 지금, 부분 구조: 시작 + 공유 결합 수식·계 밖 공급·소실·재활용 = 지금
+5. 고갈·재생 사건 — 저장소가 1 분자 아래로 내려가면 `exhausted`, 다시 올라오면 `regenerated`; 저장소 때문에 덜 일어난 단계는 `stalled`
+
+단계마다 국소 수지도 첫 발화 때 검사한다: 단계 한 번의 실체 Δ(그 규칙의 화학 실체 제외)와 부분 구조 Δ(공유 결합 수식이면 공유 결합 경로로 기록). 결과에는 묶음별 원장 Δ(반응·공급·분해·재활용), 저장소 표(시작·끝·최소·분류 closed | consumed_only | produced_only | idle), 저장소 분자 사이의 순환 성분(강하게 연결된 성분)이 붙는다.
+
+### 감사 코드 (v7 추가·변경)
+- `AUDIT_MASS` — 국소(단계·첫 발화 시각) · 전역(실체·부분 구조, 처음 어긋난 시각) · 음수 저장소(엔진 오류)
+- `AUDIT_RESOURCE` — 소비만 되고 재생 경로가 없는 저장소(켜진 공급·재활용 없음), 재활용 화학량(서열 길이)을 모름
+- `AUDIT_CONCENTRATION` — 저장소 시작량이 기본값
+- `AUDIT_KINETIC_GAP` — 속도 상수가 없어 적용하지 않은 공급·분해 규칙도 보고
+
 ## 9. 외부 ID
 
 | kind | 필수 | 허용 |
@@ -317,6 +379,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 7 | 생애 주기·대사물 저장소: 규칙 종류 `supply`(Metabolic_Supply_Rule)·`degradation`(Degradation_Rule, fate lost/recycled, recycle_to, sequence_length), 정의항 `moieties`(부분 구조)와 부분 구조 수지 검사, 부위 `ligands`(특징별 리간드), 속도 법칙 `zero_order`, 속도 필드 `half_life`, 관찰 `sequence_length`, 어휘 `lifecycleFates`·`reservoirModes`·`ruleTypes`. 시뮬레이터: 유한 저장소(기본)·공급·분해(결정론/확률적)·매 Δt 질량 감사(국소·전역, 실체·부분 구조)·고갈/재생 사건·원장 Δ·자원 순환, 감사 코드 `AUDIT_RESOURCE`. 데이터: 부분 구조 3개·피로인산, ATP·ADP·AMP·cAMP·GTP·GDP·Pi·G1P 부분 구조, Gs 특징별 리간드, AC·E1·프로테아좀 규칙의 빠진 산물(피로인산·Pi) 교정, 공급 규칙 5개(NDPK·아데닐산 키네이스·PPase·ATP 재생·뉴클레오타이드 공급), 분해 규칙 2개(TNF mRNA·IκBα), 원리 2개(생애 주기 모델·대사물 저장소 모델), 한계 9건 (`migrations/006-v6-to-v7-lifecycle.mjs`) |
 | 2026-10-08 | 6 | 혼합 해상도(R0 위상·R1 부위·R2 구조, 전환 문턱 T1–T3, 부위 구조 참조 `site.structure`), 반응 속도(`rule.kinetics`, 법칙 3종, SI 정준 단위, 속도 무결성 검사), 한계 해결 경로 `kinetics`, 속도 기반 시뮬레이터·시나리오 층, 감사 명령(`audit-run`). 데이터: 혼합 해상도 모델·반응 속도 모델 원리, 3FXI 구조 참조, Kinetic_Gap 해결 경로 교정, 한계 2건 추가(2D 환산, Gs–AC 이중 계산) (`migrations/005-v5-to-v6-hybrid-kinetics.mjs`) |
 | 2026-10-08 | 5 | 한계 등록부 `limitations`(L…, `[Target | Type | Requirement]`, 계산되는 상태, `limitations.md` 생성·CI 검사), 상위 개념 `motif`·`addresses`·`gap_review`, 패턴 검출기(`pattern`), 구획 농도 모델(시작량을 copy_number 또는 농도 × 구획 부피에서), 관찰 맥락 `location`, 관찰 속성 copy_number·compartment_volume, 어휘 gapTypes. 한계 16건·상위 개념 10개·구획 농도 모델 등록 (`migrations/004-v4-to-v5-limitations.mjs`) |
 | 2026-10-08 | 4 (확장) | LPS → TLR4 → NF-κB 스트레스 시험으로 엔진 확장: 효과 `transfer`·`degrade`, 전제 조건 `requires`, 동일성 보존 검사, 수송 대상의 접촉 검사 예외, 근거 `sources[{db,id,citation}]`·`basis`·근거 수준 `abstracted`, 시뮬레이터(`simulate`). 어휘: 변화 종류 전달·유비퀴틴화·단백질 분해·전사, 특징 K48/K63 폴리유비퀴틴, 분야 면역학, 세포 대식세포·단핵구. 데이터 형식 버전은 그대로(기존 데이터에 curated 근거가 없어 변환 불필요) |

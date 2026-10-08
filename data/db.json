@@ -1,12 +1,12 @@
 {
   "format": "definition-db",
-  "version": 6,
+  "version": 7,
   "meta": {
     "next": {
-      "T": 117,
-      "D": 119,
+      "T": 128,
+      "D": 130,
       "S": 31,
-      "L": 19
+      "L": 28
     }
   },
   "terms": {
@@ -923,6 +923,103 @@
       "names": {
         "ko": "혼합 해상도 모델",
         "en": "hybrid-resolution model"
+      },
+      "aliases": []
+    },
+    "T000117": {
+      "names": {
+        "ko": "아데노신 부분",
+        "en": "adenosine moiety"
+      },
+      "aliases": []
+    },
+    "T000118": {
+      "names": {
+        "ko": "구아노신 부분",
+        "en": "guanosine moiety"
+      },
+      "aliases": []
+    },
+    "T000119": {
+      "names": {
+        "ko": "인산기 단위",
+        "en": "phosphoryl unit"
+      },
+      "aliases": [
+        "인산 단위"
+      ]
+    },
+    "T000120": {
+      "names": {
+        "ko": "피로인산",
+        "en": "diphosphate"
+      },
+      "aliases": [
+        "PPi",
+        "이인산",
+        "pyrophosphate"
+      ]
+    },
+    "T000121": {
+      "names": {
+        "ko": "뉴클레오사이드 이인산 키네이스",
+        "en": "nucleoside-diphosphate kinase"
+      },
+      "aliases": [
+        "NDPK",
+        "NDK"
+      ]
+    },
+    "T000122": {
+      "names": {
+        "ko": "아데닐산 키네이스",
+        "en": "adenylate kinase"
+      },
+      "aliases": [
+        "AK",
+        "마이오키네이스"
+      ]
+    },
+    "T000123": {
+      "names": {
+        "ko": "무기 피로인산가수분해효소",
+        "en": "inorganic diphosphatase"
+      },
+      "aliases": [
+        "PPase",
+        "무기 피로포스파테이스"
+      ]
+    },
+    "T000124": {
+      "names": {
+        "ko": "ATP 재생",
+        "en": "ATP regeneration"
+      },
+      "aliases": [
+        "ADP 인산화",
+        "에너지 대사의 ATP 재생"
+      ]
+    },
+    "T000125": {
+      "names": {
+        "ko": "뉴클레오타이드 공급",
+        "en": "nucleotide supply"
+      },
+      "aliases": [
+        "뉴클레오타이드 합성·재활용"
+      ]
+    },
+    "T000126": {
+      "names": {
+        "ko": "생애 주기 모델",
+        "en": "lifecycle model"
+      },
+      "aliases": []
+    },
+    "T000127": {
+      "names": {
+        "ko": "대사물 저장소 모델",
+        "en": "metabolic reservoir model"
       },
       "aliases": []
     }
@@ -1957,7 +2054,11 @@
           ],
           "on": "D000053",
           "face": "cytosolic",
-          "note": "α 소단위의 뉴클레오타이드 결합 부위"
+          "note": "α 소단위의 뉴클레오타이드 결합 부위",
+          "ligands": {
+            "GDP_bound": "D000036",
+            "GTP_bound": "D000035"
+          }
         }
       },
       "rule": [
@@ -2286,11 +2387,12 @@
               "D000032"
             ],
             "produces": [
-              "D000039"
+              "D000039",
+              "D000122"
             ]
           },
           "regulators": [],
-          "text": "활성 아데닐산 고리화효소가 ATP 를 cAMP 와 피로인산으로 바꾼다(피로인산 정의항은 아직 없음). 효소 하나가 많은 cAMP 를 만들어 신호가 증폭된다.",
+          "text": "활성 아데닐산 고리화효소가 ATP 를 cAMP 와 피로인산으로 바꾼다. 효소 하나가 많은 cAMP 를 만들어 신호가 증폭된다.",
           "evidence": {
             "level": "asserted"
           }
@@ -2311,6 +2413,16 @@
         }
       ],
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000119",
+          "n": 1
+        },
+        {
+          "ref": "D000121",
+          "n": 3
+        }
+      ],
       "desc": [
         {
           "text": "아데노신에 인산기 3개가 결합한 뉴클레오타이드로 세포의 에너지 화폐",
@@ -2349,6 +2461,16 @@
         }
       ],
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000119",
+          "n": 1
+        },
+        {
+          "ref": "D000121",
+          "n": 2
+        }
+      ],
       "desc": [
         {
           "text": "ATP에서 인산기 하나가 떨어져 나간, 인산기 2개를 가진 뉴클레오타이드",
@@ -2392,6 +2514,16 @@
         }
       ],
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000119",
+          "n": 1
+        },
+        {
+          "ref": "D000121",
+          "n": 1
+        }
+      ],
       "desc": [
         {
           "text": "아데노신에 인산기 1개가 결합한 뉴클레오타이드",
@@ -2430,6 +2562,16 @@
         }
       ],
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000120",
+          "n": 1
+        },
+        {
+          "ref": "D000121",
+          "n": 3
+        }
+      ],
       "desc": [
         {
           "text": "구아노신에 인산기 3개가 결합한 뉴클레오타이드",
@@ -2468,6 +2610,16 @@
         }
       ],
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000120",
+          "n": 1
+        },
+        {
+          "ref": "D000121",
+          "n": 2
+        }
+      ],
       "desc": [
         {
           "text": "구아노신에 인산기 2개가 결합한 뉴클레오타이드",
@@ -2501,6 +2653,12 @@
       "xrefs": [],
       "unmapped": "Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음",
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000121",
+          "n": 1
+        }
+      ],
       "desc": [
         {
           "text": "유기 분자에 결합하지 않은 인산 이온",
@@ -2565,6 +2723,16 @@
         }
       ],
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000119",
+          "n": 1
+        },
+        {
+          "ref": "D000121",
+          "n": 1
+        }
+      ],
       "desc": [
         {
           "text": "ATP로부터 만들어지는 고리형 AMP로, 대표적인 2차 전령",
@@ -3140,6 +3308,12 @@
       "xrefs": [],
       "unmapped": "ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인",
       "components": [],
+      "moieties": [
+        {
+          "ref": "D000121",
+          "n": 1
+        }
+      ],
       "desc": [
         {
           "text": "포도당의 1번 탄소에 인산기가 붙은 분자로, 글리코겐 분해의 직접 산물",
@@ -5090,7 +5264,8 @@
               "D000032"
             ],
             "produces": [
-              "D000034"
+              "D000034",
+              "D000122"
             ]
           },
           "regulators": [],
@@ -6093,8 +6268,42 @@
           "ligand": "D000077"
         }
       },
-      "rule": [],
-      "obs": []
+      "rule": [
+        {
+          "id": "basal_turnover",
+          "type": "degradation",
+          "label": "유리 IκBα 기저 분해",
+          "fate": "recycled",
+          "recycle_to": [
+            {
+              "ref": "D000007",
+              "n": "sequence_length",
+              "location": "cytosol"
+            }
+          ],
+          "when": {},
+          "text": "NF-κB 에 붙지 않은 IκBα 의 기저 분해. 분해된 사슬은 아미노산으로 돌아간다(화학량 = 서열 길이).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 분해 산물이 아미노산으로 재활용된다는 일반 원리를 유리 IκBα 에 적용"
+          }
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 317,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "asserted",
+            "note": "UniProt P25963 표준 서열 길이 — 판매처·2차 자료(creativebiomart, iPTMnet P25963 항목)에서 확인, UniProt 원본은 직접 대조 못 함"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000087": {
       "term": "T000085",
@@ -6665,7 +6874,8 @@
               "D000032"
             ],
             "produces": [
-              "D000034"
+              "D000034",
+              "D000122"
             ]
           },
           "regulators": [],
@@ -6855,7 +7065,8 @@
               "D000032"
             ],
             "produces": [
-              "D000033"
+              "D000033",
+              "D000037"
             ]
           },
           "regulators": [],
@@ -7120,7 +7331,27 @@
         }
       ],
       "site": {},
-      "rule": [],
+      "rule": [
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "TNF mRNA 분해",
+          "fate": "recycled",
+          "recycle_to": [
+            {
+              "ref": "D000013",
+              "n": "sequence_length",
+              "location": "nucleoplasm"
+            }
+          ],
+          "when": {},
+          "text": "mRNA 는 분해되어 뉴클레오타이드로 돌아간다. 화학량은 서열 길이(뉴클레오타이드 수)이고, 위치(세포질 이동·분해 장소)는 단순화.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "RNA 분해 산물이 뉴클레오타이드라는 일반 원리를 TNF mRNA 에 적용"
+          }
+        }
+      ],
       "obs": []
     },
     "D000102": {
@@ -7886,6 +8117,580 @@
         }
       ],
       "note": "전환 문턱(vocab.js resolutionThresholds): T1 부위 사건 → R1, T2 구성 요소 화학량 → R1, T3 경쟁 → 속도 상수가 있으면 R1, 없으면 R2. 하향 전환(반응 중심 → 풀)은 바뀐 부위가 묶음 키에 남아 무손실."
+    },
+    "D000119": {
+      "term": "T000117",
+      "n": 1,
+      "kind": "structure_feature",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "아데닌 염기와 리보스로 이루어진 부분 구조로, ATP·ADP·AMP·cAMP 에 하나씩 들어 있다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "note": "부분 구조 수지(moiety balance)의 셈 단위. 원자 수지 대신 반응에서 깨지지 않는 부분을 센다."
+    },
+    "D000120": {
+      "term": "T000118",
+      "n": 1,
+      "kind": "structure_feature",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "구아닌 염기와 리보스로 이루어진 부분 구조로, GTP·GDP 에 하나씩 들어 있다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [
+            {
+              "to": "D000035",
+              "rel": "refers",
+              "span": "GTP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000121": {
+      "term": "T000119",
+      "n": 1,
+      "kind": "structure_feature",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "인산 하나에 해당하는 부분 구조로, 인산 무수 결합·에스터 결합·자유 인산 어디에 있든 하나로 센다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [
+            {
+              "to": "D000037",
+              "rel": "refers",
+              "span": "자유 인산"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000122": {
+      "term": "T000120",
+      "n": 1,
+      "kind": "ion",
+      "xrefs": [],
+      "unmapped": "pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함",
+      "components": [],
+      "moieties": [
+        {
+          "ref": "D000121",
+          "n": 2
+        }
+      ],
+      "desc": [
+        {
+          "text": "인산 두 개가 무수 결합으로 이어진 이온으로, ATP 가 AMP 가 되거나 cAMP 가 만들어질 때 떨어져 나온다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000123": {
+      "term": "T000121",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 2.7.4.6",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "ATP 의 말단 인산을 다른 뉴클레오사이드 이인산에 옮겨 삼인산으로 만드는 효소 부류로, GDP 를 GTP 로 되돌린다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000036",
+              "rel": "refers",
+              "span": "GDP"
+            },
+            {
+              "to": "D000035",
+              "rel": "refers",
+              "span": "GTP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "gtp_regeneration",
+          "type": "supply",
+          "label": "GTP 재생 (GDP + ATP → GTP + ADP)",
+          "consumes": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "G 단백질 순환이 쓴 GDP 를 ATP 의 인산으로 GTP 로 되돌린다 — GTP–GDP 순환을 닫는 공급.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000124": {
+      "term": "T000122",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 2.7.4.3",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "ATP 와 AMP 에서 ADP 두 분자를 만드는 효소 부류로, AMP 를 다시 인산화 가능한 형태로 되돌린다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000034",
+              "rel": "refers",
+              "span": "AMP"
+            },
+            {
+              "to": "D000033",
+              "rel": "refers",
+              "span": "ADP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.3 항목(IUBMB/ExplorEnz)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "amp_recharge",
+          "type": "supply",
+          "label": "AMP 재충전 (AMP + ATP → 2 ADP)",
+          "consumes": [
+            {
+              "ref": "D000034",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000033",
+              "n": 2
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "유비퀴틴 활성화·cAMP 분해가 남긴 AMP 를 ADP 로 되돌려 ATP 재생 경로에 넣는다.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.3 항목(IUBMB/ExplorEnz)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000125": {
+      "term": "T000123",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 3.6.1.1",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "피로인산을 물로 가수분해해 무기 인산 두 개로 만드는 효소 부류",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000122",
+              "rel": "refers",
+              "span": "피로인산"
+            },
+            {
+              "to": "D000037",
+              "rel": "refers",
+              "span": "무기 인산"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 3.6.1.1 항목(https://iubmb.qmul.ac.uk/enzyme/EC3/6/1/1.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "ppi_hydrolysis",
+          "type": "supply",
+          "label": "피로인산 가수분해 (PPi → 2 Pi)",
+          "consumes": [
+            {
+              "ref": "D000122",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000037",
+              "n": 2
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "물 분자는 부분 구조를 갖지 않으므로 수지에 나타나지 않는다.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 3.6.1.1 항목(https://iubmb.qmul.ac.uk/enzyme/EC3/6/1/1.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000126": {
+      "term": "T000124",
+      "n": 1,
+      "kind": "process",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "해당 과정의 기질 수준 인산화와 산화적 인산화가 ADP 와 무기 인산으로 ATP 를 다시 만드는 과정을 한 덩어리로 본 것",
+          "field": "생화학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 세포질 ATP 공급"
+          },
+          "links": [
+            {
+              "to": "D000033",
+              "rel": "refers",
+              "span": "ADP"
+            },
+            {
+              "to": "D000037",
+              "rel": "refers",
+              "span": "무기 인산"
+            },
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "atp_supply",
+          "type": "supply",
+          "label": "ATP 재생 (ADP + Pi → ATP)",
+          "consumes": [
+            {
+              "ref": "D000033",
+              "n": 1
+            },
+            {
+              "ref": "D000037",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "포도당·산소 같은 원료와 미토콘드리아는 모델 밖에 둔다 — 이 공급의 속도가 그 모든 것을 대신한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "해당 과정·산화적 인산화의 순 반응(ADP + Pi → ATP)을 원료를 생략하고 하나의 공급으로 묶음"
+          }
+        }
+      ],
+      "obs": [],
+      "note": "단순화: 원료(포도당·NADH·O₂)를 모델 밖에 두므로 부분 구조(아데노신·인산)만 보존되고 에너지원은 무한으로 가정된다."
+    },
+    "D000127": {
+      "term": "T000125",
+      "n": 1,
+      "kind": "process",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "새로 합성하거나 분해된 RNA 에서 되찾은 뉴클레오타이드가 핵의 전사용 풀을 채우는 과정",
+          "field": "분자생물학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 핵질 뉴클레오타이드 공급"
+          },
+          "links": [
+            {
+              "to": "D000013",
+              "rel": "refers",
+              "span": "뉴클레오타이드"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "nt_supply",
+          "type": "supply",
+          "label": "핵질 뉴클레오타이드 공급 (계 밖)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000013",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "source": true,
+          "text": "합성 경로(퓨린·피리미딘 생합성)를 모델 밖에 두므로 계 밖에서 들어오는 공급(source)이다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "뉴클레오타이드 생합성·재활용 경로 전체를 0차 공급 하나로 생략"
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000128": {
+      "term": "T000126",
+      "n": 1,
+      "kind": "principle",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "분자는 만들어지고 분해되며, 분해 산물은 계 밖으로 사라지거나 구성 단위로 저장소에 돌아간다는 모델 원리",
+          "field": "생화학",
+          "context": {
+            "scope": "시뮬레이션 엔진 — 분해 규칙(Degradation_Rule)"
+          },
+          "links": [
+            {
+              "to": "D000129",
+              "rel": "refers",
+              "span": "저장소"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "엔진 설계: 분해 규칙의 1차 속도(k_deg)와 운명(lost|recycled)을 원장으로 질량 감사에 연결"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "addresses": [
+        {
+          "limitation": "L000006",
+          "how": "분해 규칙(1차 k_deg)이 신호 분자의 소멸 시간을 엔진에 넣는다 — 확인된 반감기가 kinetics 에 들어오면 신호의 지속·종료가 시간으로 계산된다(부분 해결)"
+        },
+        {
+          "limitation": "L000026",
+          "how": "recycle_to 의 n: sequence_length 가 서열 길이 관찰을 읽어 재활용 화학량을 정한다 — 관찰이 들어오면 자동 해결"
+        }
+      ]
+    },
+    "D000129": {
+      "term": "T000127",
+      "n": 1,
+      "kind": "principle",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "ATP·GTP·뉴클레오타이드·아미노산 같은 대사물은 구획마다 하나의 유한한 전역 풀이며, 단계가 소비하고 공급 규칙과 재활용이 채운다는 모델 원리",
+          "field": "생화학",
+          "context": {
+            "scope": "시뮬레이션 엔진 — 공급 규칙(Metabolic_Supply_Rule)"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000035",
+              "rel": "refers",
+              "span": "GTP"
+            },
+            {
+              "to": "D000013",
+              "rel": "refers",
+              "span": "뉴클레오타이드"
+            },
+            {
+              "to": "D000007",
+              "rel": "refers",
+              "span": "아미노산"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "엔진 설계: v6 의 무한 풀(bulk)을 유한 저장소 + 공급 규칙 + 부분 구조 수지로 대체"
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "addresses": [
+        {
+          "limitation": "L000002",
+          "how": "저장소가 유한해져 소비·고갈·재생이 계산된다. 시작량은 concentration × compartment_volume 관찰에서 읽으므로 L000002 의 관찰이 들어오면 기본값 표시가 사라진다"
+        },
+        {
+          "limitation": "L000019",
+          "how": "공급 규칙 atp_supply 에 확인된 속도가 들어오면 ATP 재생이 시간으로 계산된다"
+        }
+      ]
     }
   },
   "steps": {
@@ -7999,6 +8804,10 @@
       "outputs": [
         {
           "b": "D000039|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000122|cytosol"
         }
       ],
       "regulators": [],
@@ -8389,6 +9198,10 @@
         {
           "b": "D000034|cytosol",
           "minor": true
+        },
+        {
+          "minor": true,
+          "b": "D000122|cytosol"
         }
       ],
       "regulators": [],
@@ -8572,6 +9385,10 @@
         {
           "b": "D000034|cytosol",
           "minor": true
+        },
+        {
+          "minor": true,
+          "b": "D000122|cytosol"
         }
       ],
       "regulators": [],
@@ -8609,6 +9426,10 @@
         {
           "b": "D000033|cytosol",
           "minor": true
+        },
+        {
+          "minor": true,
+          "b": "D000037|cytosol"
         }
       ],
       "regulators": [],
@@ -9069,6 +9890,154 @@
       "note": "사건 기반 검사(validate)는 결합 상대(partner)가 있는 modify 만 보존을 검사해서 이 경우를 놓쳤다 — 속도 기반 감사의 실체 집계에서 드러남.",
       "by": "Claude",
       "at": "2026-10-08"
+    },
+    "L000019": {
+      "target": "D000126/rule/atp_supply",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "세포질 ATP 재생 속도(세포 유형별) — 없으면 ATP 저장소는 소비만 되고 재생 경로가 꺼져 고갈된다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000126/rule/atp_supply",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000020": {
+      "target": "D000123/rule/gtp_regeneration",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NDPK 의 GDP → GTP 재생 속도 — 없으면 GTP–GDP 순환이 닫히지 않는다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000123/rule/gtp_regeneration",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000021": {
+      "target": "D000124/rule/amp_recharge",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "아데닐산 키네이스의 AMP 재충전 속도 — 없으면 AMP 가 쌓이기만 한다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000124/rule/amp_recharge",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000022": {
+      "target": "D000125/rule/ppi_hydrolysis",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "무기 피로인산가수분해효소의 PPi 가수분해 속도 — 없으면 PPi 가 쌓이기만 한다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000125/rule/ppi_hydrolysis",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000023": {
+      "target": "D000127/rule/nt_supply",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "핵질 뉴클레오타이드 공급 속도(합성·재활용) — 없으면 전사가 뉴클레오타이드 저장소를 바닥낸다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000127/rule/nt_supply",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000024": {
+      "target": "D000101/rule/turnover",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "TNF mRNA 반감기(대식세포, LPS 자극 조건) — 없으면 mRNA 가 분해되지 않고 쌓인다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000101/rule/turnover",
+            "params": [
+              "half_life"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000025": {
+      "target": "D000086/rule/basal_turnover",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "유리 IκBα 의 기저 분해 반감기 — 없으면 유리 IκBα 가 분해되지 않는다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000086/rule/basal_turnover",
+            "params": [
+              "half_life"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    "L000026": {
+      "target": "D000101",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "TNF mRNA 의 서열 길이(뉴클레오타이드 수, 사람) — 없으면 분해 때 뉴클레오타이드 몇 개가 돌아가는지 몰라 재활용분을 소실로 처리한다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "sequence_length",
+            "on": "D000101"
+          }
+        ]
+      },
+      "found_in": "TNF mRNA 분해 규칙(recycle_to n: sequence_length)에 관찰이 없음"
+    },
+    "L000027": {
+      "target": "D000098/rule/ikba_degradation",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "프로테아좀이 기질 하나를 분해할 때 쓰는 ATP 수 — 지금은 1 분자(ATP → ADP + Pi)로 둔 단순화라 ATP 저장소 소비가 실제보다 적다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "26S 프로테아좀의 기질당 ATP 가수분해 화학량을 문헌에서 확인해 with 화학량(단계 n)에 반영"
+          }
+        ]
+      },
+      "found_in": "v7 부분 구조 수지 검사가 ATP → ADP 에서 빠진 Pi 를 잡아 규칙을 고치면서 화학량 단순화가 드러남"
     }
   }
 }
