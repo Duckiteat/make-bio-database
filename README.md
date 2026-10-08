@@ -99,6 +99,10 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 ### 실행 층 P3
 - `node tests/p3_end_to_end.js` — 3차원 FV 영역(T3) + 규칙 노드(T2, SSA + τ-도약/CLE)를 Parallel-DEVS 로 결합해 10,000 단계, 원장·경계 버퍼 질량 보존을 콘솔에 출력 (`engine/devs_scheduler.js`, `engine/fv_solver.js`).
 
+### 실행 층 P4
+- `node tests/p4_benchmark.js` — 스펙트럼 신경 연산자 대리 모델(FV 궤적에서 학습, O(N log N), Δt 무관) 대 P3 FV 의 속도·L2 오차. 강성 영역(FV 부분 단계 ≳ 70)에서 11–56×, 비강성에서는 더 느림.
+- `node tests/p4_end_to_end.js [--fallback worker]` — 대리 모델 영역 + T2 노드 10,000 단계, 디랙 충격을 같은 단계에서 탐지해 FV(인라인/일꾼)로 대체, |ΔN| = 0.
+
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
 

@@ -93,23 +93,25 @@
     return moved;
   }
 
-  // 한 거시 단계: 부분 단계로 수송·반응 → 원장 닻 (종 사이 반응은 정수 지역 거래로 원장에 반영한 뒤 재척도)
-  // ledger: { state, domainId, moieties } (HMSE 원장 상태를 감싼 가변 핸들). 반환: { substeps, reactionTx }
-  function step(region, dt, ledger) {
+  // 한 거시 단계 = integrate(장만 진행, 원장 무관 — 비동기 일꾼에서도 돌 수 있음) + reconcile(반응량 정수화 → 지역 거래 → 원장 닻)
+  function integrate(region, dt) {
     const ns = substepsFor(region, dt), sdt = dt / ns, movedTot = {};
     for (let s = 0; s < ns; s++) {
       for (const key of Object.keys(region.fields)) transport(region, key, sdt);
       for (const [k, v] of Object.entries(react(region, sdt))) movedTot[k] = (movedTot[k] || 0) + v;
     }
     region.stats.substeps += ns;
-    // 반응량 정수화: 원장 대비 실수 목표를 최대 나머지 반올림 (부분 구조 보존: from −m, to +m)
+    return { substeps: ns, moved: movedTot };
+  }
+  // 반응량 정수화: 실수 반응량 + 이월을 내림하고 나머지는 이월 (부분 구조 보존: from −m, to +m), 원장보다 많이 바꿀 수 없음
+  function reconcile(region, movedTot, ledger) {
     const L = ledger.state.ledgers[ledger.domainId].counts, deltas = {};
+    region.carry = region.carry || {};
     for (const r of region.spec.reactions || []) {
       const key = `${r.from}>${r.to}`;
-      region.carry = region.carry || {};
       const want = (movedTot[key] || 0) + (region.carry[key] || 0);
       let m = Math.floor(want); region.carry[key] = want - m;
-      m = Math.min(m, (L[r.from] || 0) + (deltas[r.from] || 0)); // 원장보다 많이 바꿀 수 없음
+      m = Math.min(m, (L[r.from] || 0) + (deltas[r.from] || 0));
       if (m > 0) { deltas[r.from] = (deltas[r.from] || 0) - m; deltas[r.to] = (deltas[r.to] || 0) + m; }
     }
     let reactionTx = null;
@@ -119,7 +121,11 @@
       ledger.state = res.state; reactionTx = deltas;
     }
     anchor(region, ledger);
-    return { substeps: ns, reactionTx };
+    return reactionTx;
+  }
+  function step(region, dt, ledger) {
+    const r = integrate(region, dt);
+    return { substeps: r.substeps, reactionTx: reconcile(region, r.moved, ledger) };
   }
 
   // 원장 닻 (불변식 1): ∫Ω C dΩ = Σ 칸 분자 수 = N_ledger — 모양은 유지하고 크기만 맞춘다
@@ -143,5 +149,5 @@
   }
   function totals(region) { const t = {}; for (const [k, f] of Object.entries(region.fields)) { let s = 0; for (const p of region.active) s += f[p]; t[k] = s; } return t; }
 
-  return { templateMask, createRegion, substepsFor, transport, react, step, anchor, interfaceAmount, applyInterfaceTransfer, totals, minmod };
+  return { templateMask, createRegion, substepsFor, transport, react, integrate, reconcile, step, anchor, interfaceAmount, applyInterfaceTransfer, totals, minmod };
 });

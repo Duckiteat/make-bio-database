@@ -866,3 +866,68 @@ test('P3 강성 정체 방지: 매우 빠른 통로도 시간축이 멈추지 �
   assert.ok(node.stats.cle > 0, 'CLE 경로 사용');
   const c = handle.state.ledgers.n.counts; assert.equal(c.A + c.B, 2000000); assert.ok(Math.abs(c.B / c.A - 1) < 0.02);
 });
+
+// ===== Phase P4: 스펙트럼 신경 연산자 대리 모델 + OOD 탐지 + 비동기 FV 대체 =====
+const FNOS = createRequire(import.meta.url)('../engine/fno_surrogate.js'), OODS = createRequire(import.meta.url)('../engine/ood_detector.js'), AFS = createRequire(import.meta.url)('../engine/async_fallback_worker.js');
+const P4 = createRequire(import.meta.url)('./p4_end_to_end.js'), P4B = createRequire(import.meta.url)('./p4_benchmark.js');
+const boxSpec = (n = 16) => ({ n, h_m: 1e-7, template: 'box', species: { A: { D: 1e-12 }, B: { D: 5e-13 } }, reactions: [{ from: 'A', to: 'B', k: 5 }, { from: 'B', to: 'A', k: 2 }] });
+test('P4 DCT: 직접 합과 일치하고 정확히 되돌아옴 (O(n log n) Makhoul), 3차원 분리형도 왕복', () => {
+  for (const n of [8, 16, 32]) {
+    const d = FNOS.makeDCT(n), x = Float64Array.from({ length: n }, (_, i) => Math.cos(2.3 * i) + 1.5), X = new Float64Array(n), y = new Float64Array(n);
+    d.forward(x, X); d.inverse(X, y);
+    for (let k = 0; k < n; k++) { let r = 0; for (let j = 0; j < n; j++) r += x[j] * Math.cos(Math.PI * k * (2 * j + 1) / (2 * n)); assert.ok(Math.abs(r - X[k]) < 1e-11); }
+    assert.ok(x.every((v, i) => Math.abs(v - y[i]) < 1e-12));
+  }
+  const f = Float64Array.from({ length: 4096 }, (_, i) => Math.sin(i * 0.37) + 2), dd = FNOS.makeDCT(16), back = FNOS.dct3(FNOS.dct3(f, 16, dd, false), 16, dd, true);
+  assert.ok(f.every((v, i) => Math.abs(v - back[i]) < 1e-10));
+  assert.throws(() => FNOS.makeDCT(12), /2 의 거듭제곱/);
+});
+test('P4 학습: P3 FV 궤적에서 모드별 이득을 최소 제곱으로 — FV 확산 연산자 재현(잔차 < 1e-12), 반응 포함 100 단계 L2 < 2%', () => {
+  const a = FVS.createRegion(boxSpec(), {}), b = FVS.createRegion(boxSpec(), {});
+  for (const R of [a, b]) for (let p = 0; p < 4096; p++) { R.fields.A[p] = 100 * (1 + 0.7 * Math.cos(Math.PI * Math.floor(p / 256) / 16)); R.fields.B[p] = 5; }
+  const sur = FNOS.createSurrogate(b, 1e-3), tr = FNOS.calibrate(sur, b);
+  assert.ok(tr.residual.A < 1e-12 && tr.residual.B < 1e-12);
+  for (let i = 0; i < 100; i++) { FVS.integrate(a, 1e-3); FNOS.integrate(sur, b); }
+  for (const k of ['A', 'B']) { let num = 0, den = 0; for (let p = 0; p < 4096; p++) { num += (a.fields[k][p] - b.fields[k][p]) ** 2; den += a.fields[k][p] ** 2; } assert.ok(Math.sqrt(num / den) < 0.02, `${k} L2 ${Math.sqrt(num / den)}`); }
+  const t = FVS.totals(b); assert.ok(Math.abs(t.A + t.B - FVS.totals(a).A - FVS.totals(a).B) < 1e-6, '스펙트럼 단계도 종 총량(직류 모드) 보존');
+  assert.throws(() => FNOS.createSurrogate(FVS.createRegion({ ...boxSpec(8), template: 'sphere' }, {}), 1e-3), /box 에서만/);
+  assert.throws(() => FNOS.createSurrogate(FVS.createRegion({ ...boxSpec(8), species: { A: {}, B: {}, C: {} }, reactions: [{ from: 'A', to: 'B', k: 1 }, { from: 'B', to: 'C', k: 1 }] }, {}), 1e-3), /반응 쌍이 겹침/);
+});
+test('P4 질량 조정 연산자: max(0,·) 투영 → Σ = N_ledger 재척도, Σ = 0 이면 균일 정수 분배', () => {
+  const R = FVS.createRegion(boxSpec(8), { A: 100 });
+  R.fields.A.fill(0); R.fields.A[0] = -5; R.fields.A[1] = 3; R.fields.A[2] = 1;
+  FNOS.reconcileMass(R, 'A', 1000); assert.ok(R.fields.A[0] === 0 && Math.abs(R.fields.A[1] - 750) < 1e-9 && Math.abs(FVS.totals(R).A - 1000) < 1e-9);
+  R.fields.A.fill(-1); FNOS.reconcileMass(R, 'A', 777); assert.equal(FVS.totals(R).A, 777);
+});
+test('P4 OOD 탐지: 디랙 스파이크·수치 비정상·분포 밖 구성(구·이류·겹친 반응·열역학 표류)은 즉시, 매끄러운 장은 통과', () => {
+  const R = FVS.createRegion(boxSpec(), {}); for (let p = 0; p < 4096; p++) { R.fields.A[p] = 100 + 20 * Math.cos(Math.PI * (p % 16) / 16); R.fields.B[p] = 50; }
+  const sur = FNOS.createSurrogate(R, 1e-3); FNOS.calibrate(sur, R); const det = OODS.createDetector(); OODS.train(det, [R.fields.A, R.fields.B], 16, R.mask);
+  assert.equal(OODS.evaluate(det, R, sur, 'pre').ood, false);
+  const spike = { A: Float64Array.from(R.fields.A), B: R.fields.B }; spike.A[2000] += 0.3 * FVS.totals(R).A;
+  const e = OODS.evaluate(det, R, sur, 'pre', { fields: spike }); assert.ok(e.ood && e.score > 10 && e.components.E_spec > det.ref.E, `spike score ${e.score}`);
+  const nan = { A: Float64Array.from(R.fields.A), B: R.fields.B }; nan.A[5] = NaN; assert.deepEqual(OODS.evaluate(det, R, sur, 'post', { fields: nan }).reasons, ['non_finite']);
+  const neg = { A: Float64Array.from(R.fields.A).map((v, i) => (i % 2 ? -v : v)), B: R.fields.B }; assert.ok(OODS.evaluate(det, R, sur, 'post', { fields: neg }).reasons.includes('negative_mass'));
+  for (const [mod, why] of [[{ template: 'sphere' }, 'template'], [{ velocity: [1e-6, 0, 0] }, 'advection']]) { const R2 = { ...R, spec: { ...R.spec, ...mod } }; assert.ok(OODS.evaluate(det, R2, sur, 'pre').reasons.includes(why)); }
+  const RT = 8.314462618 * 310.15, good = { ...R, spec: { ...R.spec, reactions: [{ from: 'A', to: 'B', k: 5, dG0: -RT * Math.log(2.5) }, { from: 'B', to: 'A', k: 2 }] } }, bad = { ...R, spec: { ...R.spec, reactions: [{ from: 'A', to: 'B', k: 5, dG0: +5000 }, { from: 'B', to: 'A', k: 2 }] } };
+  assert.ok(OODS.thermoDrift(good.spec.reactions) < 1e-12 && OODS.evaluate(det, good, sur, 'pre').ood === false);
+  assert.ok(OODS.evaluate(det, bad, sur, 'pre').ood, '미시적 가역성에서 벗어난 속도 집합은 대리 모델 금지 (불변식 5)');
+});
+test('P4 종단: 10,000 단계 |ΔN| = 0, 충격 탐지 지연 ≤ 1 단계, 대부분 대리 모델, 분포 안 오탐 0', () => {
+  const r = P4.run({ quiet: true, steps: 10000 });
+  assert.ok(r.pass, JSON.stringify({ ...r, final: undefined }));
+  assert.equal(r.massError, 0); assert.equal(r.worstMoiety, 0); assert.ok(r.worstFieldLedger < 1e-6);
+  assert.ok(r.latencySteps <= 1 && r.firstFlag.step === r.shockAt, '충격 단계에서 바로 탐지');
+  assert.ok(r.surrogateSteps > 9000 && r.fallbacks < 100 && r.fallbacks === r.lockWindows);
+  assert.ok(r.firstFlag && r.firstFlag.step >= 5000, '충격 전 오탐 없음');
+});
+test('P4 비동기 대체: worker_threads 일꾼 결과 = inline 결과 (원장 정확히 같음), 분포 밖 모양(구)은 대리 없이 FV 로 보존', () => {
+  const a = P4.run({ quiet: true, steps: 5300, fallback: 'inline' }), b = P4.run({ quiet: true, steps: 5300, fallback: 'worker' });
+  assert.ok(a.pass && b.pass); assert.deepEqual(a.final, b.final); assert.equal(b.executor.mode, 'worker'); assert.equal(b.executor.joined, b.fallbacks);
+  const s = P4.run({ quiet: true, steps: 400, shock: -1, template: 'sphere', n: 8, warmup: 50 });
+  assert.ok(s.massError === 0 && s.surrogateSteps === 0 && /box 에서만/.test(s.unsupported), '구는 분포 밖 → FV');
+});
+test('P4 속도·정확도: FV 가 안정 조건으로 부분 단계를 많이 쓰는 강성 영역에서 ≥ 10× (Δt 와 무관한 O(N log N)), 모든 경우 L2 < 2%', () => {
+  const rows = P4B.run({ quick: true, quiet: true }), stiff = rows.find((r) => r.ns >= 70 && r.n === 16);
+  assert.ok(stiff.speedup >= 10, `강성 영역 속도 향상 ${stiff.speedup.toFixed(1)}×`);
+  assert.ok(rows.every((r) => r.l2 < 0.02 && r.flagged === 0));
+});

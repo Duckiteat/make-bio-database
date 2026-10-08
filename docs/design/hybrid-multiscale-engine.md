@@ -1,6 +1,6 @@
 # Hybrid Multi-Scale Simulation Engine — 3-Tier Architecture & Specification (format v8)
 
-> Status (2026-10-08): **format v8 implemented** (data fields, thermodynamic checks, migration 007), **runtime reference layer implemented** (`engine/hmse.js`: integer ledger + adjacent boundary transactions, transfer sampling, domain score/hysteresis, conservative projection, integer distribution), **interfaces specified** (`engine/interfaces/hmse.hpp`, `engine/interfaces/hmse.py`), wire schemas `schemas/v8/*.schema.json`. **P3 implemented**: Parallel-DEVS scheduler (`engine/devs_scheduler.js`), 3D FV solver (`engine/fv_solver.js`), τ-leap/CLE for stiff channels, end-to-end test (`tests/p3_end_to_end.js`). **Not implemented**: FNO surrogate, async worker fallback (single-threaded today: FV *is* the T3 solver), GPR elevation, dynamic promote/demote in the loop (P4–P5, §5).
+> Status (2026-10-08): **format v8 implemented** (data fields, thermodynamic checks, migration 007), **runtime reference layer implemented** (`engine/hmse.js`: integer ledger + adjacent boundary transactions, transfer sampling, domain score/hysteresis, conservative projection, integer distribution), **interfaces specified** (`engine/interfaces/hmse.hpp`, `engine/interfaces/hmse.py`), wire schemas `schemas/v8/*.schema.json`. **P3 implemented**: Parallel-DEVS scheduler (`engine/devs_scheduler.js`), 3D FV solver (`engine/fv_solver.js`), τ-leap/CLE for stiff channels, end-to-end test (`tests/p3_end_to_end.js`). **P4 implemented**: spectral neural-operator surrogate (`engine/fno_surrogate.js`), OOD/stability detector (`engine/ood_detector.js`), conservative async FV fallback (`engine/async_fallback_worker.js`, inline or `worker_threads`), tests `tests/p4_end_to_end.js`, `tests/p4_benchmark.js`. **Not implemented**: GPR elevation, dynamic promote/demote in the loop, deep/nonlinear FNO layers (P5).
 > Terms in `[brackets]` are existing v7 concepts that are reused.
 
 ## A. Three tiers
@@ -285,6 +285,25 @@ function BoundaryEngine.onPacket(p):                              // routed by s
 | P3 ✅ | Parallel-DEVS coordinator (deterministic (source, target, species) packet order, safeTime check, time-reversal = error), BoundaryEngine (fixed-point 1e-9 remainders, pending carry, version-retry ABT), T3 region model on masked FV (central-difference diffusion, MUSCL/minmod-limited advection, first-order reactions, ledger-anchored rescaling, integer reaction reconciliation via moiety-checked local tx), T2 node model (SSA + adaptive τ-leap ε=0.03, CLE when μ>10³, Δt_min floor). 10⁴-step test: |ΔN| = 0 | `engine/devs_scheduler.js`, `engine/fv_solver.js`, `tests/p3_end_to_end.js` |
 
 **P3 measured (hypothetical scenario, residual mode)**: 10,000 region steps (t = 10 s), ~45k DEVS events (~6k simultaneous), ~3.4k ABT commits, 0 retries; N_initial = N_final = 20500 (A 20000, R 500); worst |∫C dΩ − N_ledger| ≈ 5e-12; max residual < 1, pending 0; steady state reproduces k-ratios (Ax/A ≈ 1.25, B/A ≈ 2.5) and, with zero advection, equal region/interface/node concentrations (≤ 3 %).
+
+| P4 ✅ | Surrogate = one linear FNO layer in the cosine basis: per-mode gain g_s(k) **learned by least squares from P3 FV trajectories** (on a closed box the FV Laplacian is exactly DCT-II-diagonal, so the learned operator reproduces FV diffusion to ~1e-16), Strang-split exact matrix exponential for first-order reaction pairs, Makhoul DCT via radix-2 FFT → O(N log N) per macro-step, independent of Δt. Mass operator: max(0,·) → rescale to N_ledger (uniform integer distribution if ∫ = 0). OOD: S = w₁E_spec/E_ref + w₂V_grad/V_ref + w₃ΔG_drift/ln1.1, τ = 1, refs = 1.5 × max over warmup FV snapshots; hard OOD for non-box template, advection, overlapping reaction pairs, non-finite or >1 % negative output. Pre- and post-checks happen in the same step (pre reuses the surrogate's input spectrum) → latency 0 steps. Fallback: inline FV or worker thread on SharedArrayBuffer, joined (Atomics.wait) at the region's next event; region lookahead window [t, t+Δt] locks influencers, ledger reconciled only at join | `engine/fno_surrogate.js`, `engine/ood_detector.js`, `engine/async_fallback_worker.js` |
+
+**P4 measured** (`node tests/p4_benchmark.js`; JS single thread; same initial field, L2 after K steps):
+
+| n (N) | Δt | FV substeps | FV ms/step | surrogate+detector ms/step | speedup | rel. L2 |
+|---|---|---|---|---|---|---|
+| 16 (4096) | 1e-3 | 2 | 0.84 | 2.60 | 0.3× | 3.6e-4 |
+| 16 | 1e-2 | 16 | 9.1 | 2.0 | 4.5× | 7.9e-4 |
+| 16 | 5e-2 | 76 | 25.4 | 1.7 | **15.3×** | 8.6e-4 |
+| 16 | 2e-1 | 301 | 90.2 | 1.6 | **55.8×** | 8.7e-4 |
+| 32 (32768) | 1e-3 | 2 | 5.1 | 16.2 | 0.3× | 8.1e-5 |
+| 32 | 5e-2 | 76 | 189 | 16.8 | **11.2×** | 7.8e-4 |
+| 32 | 2e-1 | 301 | 812 | 20.4 | **39.8×** | 2.5e-3 |
+
+Reading: the ≥10× target holds where FV is stability-limited (substeps ≳ 70, i.e. D·Δt/h² ≳ 12); at FV's non-stiff point (2 substeps) the surrogate is ~3× *slower* in JS (4 DCTs + checks vs 2 explicit sweeps). FV cost per macro-step is O(N·n_sub) with n_sub ∝ DΔt/h² (not O(N³)); surrogate cost is flat in Δt and scales N log N (n 16→32: ~8–10×).
+End-to-end (`tests/p4_end_to_end.js`, 10⁴ steps, Δt 1e-3): |ΔN| = 0; 9,780 surrogate / 220 FV steps (200 warmup + 20 fallback); Dirac shock at step 5000 flagged in the same step (S_ood ≈ 1.4×10³), surrogate resumes after 20 FV steps; 0 false positives before the shock (in-distribution S_ood ≈ 0.03); worker and inline fallbacks give identical ledgers.
+
+**P4 scope (honest)**: the surrogate's distribution is *linear* physics — box geometry, no advection, first-order reaction pairs. Inside it, a single learned spectral layer is exact up to splitting error, so no deep network was trained; nonlinear kinetics, advection and other templates are OOD by construction and run on FV. A deep/nonlinear FNO (P5) would plug into the same `createSurrogate/calibrate/integrate` interface and detector.
 
 **P3 known limits**: explicit FV (sub-stepping by 0.4·h²/6D and Courant 0.4 — stiff diffusion is slow); interface conductance uses a single h_int; region reactions reconciled to integers by carry (rescale deviation per step ≲ 1 %, absorbed by anchoring, never by the ledger); single-threaded — async fallback windows (Invariant 4) still interface-only.
 | P4 | Surrogate service (PyTorch FNO/DeepONet) behind `SurrogateClient` gRPC; trained against P3 solver outputs; ErrorEstimator gates every step | external repo / service |

@@ -84,22 +84,69 @@
     return { add, run, safeTime, models, boundary, log };
   }
 
-  // ===== 원자 모델: Tier 3 영역 (FV) =====
-  // cfg: { id, node(인접 노드 id), dt_macro, region(FV.createRegion 결과), D_iface, h_iface_m, nodeVolume_m3, iface_species: [키] }
+  // ===== 원자 모델: Tier 3 영역 (FV, 또는 P4 대리 모델 + OOD 대체) =====
+  // cfg: { id, node(인접 노드 id), dt_macro, region(FV.createRegion 결과), D_iface, h_iface_m, nodeVolume_m3, iface_species: [키],
+  //        solver?: { mode: 'fv' | 'surrogate', warmup: 단계 수(FV 로 돌며 탐지기 학습 자료 수집), executor(async_fallback_worker), detector 옵션, beforeStep(m, R) 훅 } }
   function regionModel(handle, cfg) {
     const R = cfg.region, A = R.iface.length * R.spec.h_m ** 2, ledger = { get state() { return handle.state; }, set state(v) { handle.state = v; }, domainId: cfg.id, moieties: cfg.moieties };
-    const m = { id: cfg.id, lookahead: cfg.dt_macro, steps: 0, lastFlux: {},
-      ta: () => cfg.dt_macro,
-      output: (t) => cfg.iface_species.map((sp) => {
-        // 지난 거시 단계 동안의 기대 이동 분자 수 (양방향 분리 — 잡음 보존): μ = D·A/h_int · c · Δt
-        const cFace = FV.interfaceAmount(R, sp) / (R.iface.length * R.vox_m3), cNode = (handle.state.ledgers[cfg.node].counts[sp] || 0) / cfg.nodeVolume_m3;
-        const g = cfg.D_iface * A / cfg.h_iface_m * cfg.dt_macro;
-        return { source: cfg.id, target: cfg.node, species: sp, mu_out: g * cFace, mu_in: g * cNode };
-      }),
-      deltaInt: (t) => { FV.step(R, cfg.dt_macro, ledger); m.steps++; },
-      deltaExt: (t, e, inp) => { for (const c of inp) { FV.applyInterfaceTransfer(R, c.species, c.net); m.lastFlux[c.species] = c.net; } FV.anchor(R, ledger); },
-      deltaConf: (t, inp) => { m.deltaExt(t, 0, inp); m.deltaInt(t); },
+    const sv = Object.assign({ mode: 'fv', warmup: 200 }, cfg.solver || {});
+    const P4 = sv.mode === 'surrogate' ? { FNO: require('./fno_surrogate.js'), OOD: require('./ood_detector.js') } : null;
+    const m = { id: cfg.id, lookahead: cfg.dt_macro, steps: 0, lastFlux: {}, pending: null,
+      p4: { surrogateSteps: 0, fvSteps: 0, fallbacks: 0, flaggedAt: [], lockWindows: 0, snapshots: [], sur: null, det: null, lastScore: null, maxScore: 0, ready: false } };
+    const fvNow = (t) => { // 대체: 실행기(inline 이면 즉시, worker 면 다음 사건에서 join) — 잠금 창 [t, t+Δt]
+      if (sv.executor) { m.pending = sv.executor.submit(R, cfg.dt_macro, cfg.id); m.p4.lockWindows++; if (m.pending.done) finishPending(); }
+      else FV.step(R, cfg.dt_macro, ledger);
+      m.p4.fvSteps++;
     };
+    function finishPending() { const r = sv.executor.join(m.pending); m.pending = null; FV.reconcile(R, r.moved, ledger); }
+    // 대리 한 단계: 추론 → 같은 단계 안에서 사전(입력)·사후(원 출력) 탐지 — 어느 쪽이든 OOD 면 출력을 버리고 FV (지연 0 단계).
+    //   사전 검사를 추론 뒤에 하는 것은 대리 모델이 이미 계산한 입력 스펙트럼을 재사용하기 위해서다 (추가 변환 없음, 판단 시점은 같은 단계).
+    function surrogateStep(t) {
+      const p = m.p4, backup = Object.fromEntries(Object.entries(R.fields).map(([k, f]) => [k, Float64Array.from(f)]));
+      const res = P4.FNO.integrate(p.sur, R), sp = p.sur.lastSpectra;
+      const pre = P4.OOD.evaluate(p.det, R, p.sur, 'pre', { fields: backup, E: Object.fromEntries(Object.entries(sp).map(([k, v]) => [k, v.E_in])) });
+      const post = pre.ood ? pre : P4.OOD.evaluate(p.det, R, p.sur, 'post', { E: Object.fromEntries(Object.entries(sp).map(([k, v]) => [k, v.E_out])) });
+      p.lastScore = Math.max(pre.score, post.score); if (Number.isFinite(p.lastScore) && !pre.ood && !post.ood) p.maxScore = Math.max(p.maxScore, p.lastScore);
+      if (!pre.ood && !post.ood) {
+        for (const f of Object.values(R.fields)) for (const q of R.active) if (!(f[q] > 0)) f[q] = 0; // 비음수 투영 (재척도는 reconcile 의 anchor)
+        FV.reconcile(R, res.moved, ledger); p.surrogateSteps++; return;
+      }
+      for (const [k, f] of Object.entries(backup)) R.fields[k].set(f); // 대리 출력 폐기
+      p.fallbacks++; p.flaggedAt.push({ step: m.steps, t, score: p.lastScore, phase: pre.ood ? 'pre' : 'post', reasons: (pre.ood ? pre : post).reasons, components: (pre.ood ? pre : post).components });
+      fvNow(t);
+    }
+    function stepNow(t) {
+      if (sv.beforeStep) sv.beforeStep(m, R);
+      if (!P4) { FV.step(R, cfg.dt_macro, ledger); return; }
+      const p = m.p4;
+      if (!p.ready && m.steps < sv.warmup) { // 학습 단계: FV 로 진행하며 스냅숏 수집
+        FV.step(R, cfg.dt_macro, ledger); p.fvSteps++;
+        if (m.steps % Math.max(1, Math.floor(sv.warmup / 20)) === 0) for (const f of Object.values(R.fields)) p.snapshots.push(Float64Array.from(f));
+        return;
+      }
+      if (!p.ready) {
+        try { p.sur = P4.FNO.createSurrogate(R, cfg.dt_macro); P4.FNO.calibrate(p.sur, R); } catch (e) { p.sur = null; p.unsupported = e.message; }
+        p.det = P4.OOD.createDetector(sv.detector); if (p.sur) P4.OOD.train(p.det, p.snapshots, R.n, R.mask);
+        p.ready = true; p.snapshots = [];
+      }
+      if (!p.sur) { p.fallbacks++; fvNow(t); return; } // 분포 밖 모양(구·이류 …): 대리 모델 없이 FV
+      surrogateStep(t);
+    }
+    Object.assign(m, {
+      ta: () => cfg.dt_macro,
+      output: (t) => {
+        if (m.pending) finishPending(); // 비동기 대체 결과를 먼저 합침 (원장 정수화) — 잠금 해제
+        return cfg.iface_species.map((sp) => {
+          // 지난 거시 단계 동안의 기대 이동 분자 수 (양방향 분리 — 잡음 보존): μ = D·A/h_int · c · Δt
+          const cFace = FV.interfaceAmount(R, sp) / (R.iface.length * R.vox_m3), cNode = (handle.state.ledgers[cfg.node].counts[sp] || 0) / cfg.nodeVolume_m3;
+          const g = cfg.D_iface * A / cfg.h_iface_m * cfg.dt_macro;
+          return { source: cfg.id, target: cfg.node, species: sp, mu_out: g * cFace, mu_in: g * cNode };
+        });
+      },
+      deltaInt: (t) => { stepNow(t); m.steps++; },
+      deltaExt: (t, e, inp) => { if (m.pending) finishPending(); for (const c of inp) { FV.applyInterfaceTransfer(R, c.species, c.net); m.lastFlux[c.species] = c.net; } FV.anchor(R, ledger); },
+      deltaConf: (t, inp) => { m.deltaExt(t, 0, inp); m.deltaInt(t); },
+    });
     return m;
   }
 
