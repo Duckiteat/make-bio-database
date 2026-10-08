@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>정의 데이터베이스</title>
+<title>Bio Database</title>
 <style>
 :root{--bg:#fff;--fg:#212529;--mute:#6c757d;--side:#f1f3f5;--line:#dee2e6;--acc:#4c6ef5;--accbg:#edf2ff;--up:#4c6ef5;--down:#2b8a3e;--side2:#f08c00;--warn:#e8590c;--err:#c92a2a;--hl:#fff3bf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1b1e;--fg:#e9ecef;--mute:#909296;--side:#25262b;--line:#373a40;--acc:#748ffc;--accbg:#2c2e4a;--up:#748ffc;--down:#69db7c;--side2:#ffa94d;--warn:#ff922b;--err:#ff6b6b;--hl:#5c4a00}}
@@ -51,6 +51,7 @@ h4{margin:14px 0 4px;font-size:13px;color:var(--mute)}
 .state b{color:var(--side2)}
 .act-active{color:var(--down)}.act-inactive{color:var(--mute)}.act-partial{color:var(--warn)}.err.mk{font-weight:bold}
 ol.steps{padding-left:22px;margin:4px 0}
+.idt{font-family:ui-monospace,monospace;font-size:11px;color:var(--mute)}
 pre{white-space:pre-wrap;background:var(--side);padding:8px;border-radius:6px;font-size:13px}
 #ov{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:5}
 #box{background:var(--bg);padding:14px;border-radius:10px;width:min(720px,94vw);max-height:90vh;overflow:auto}
@@ -74,7 +75,7 @@ pre{white-space:pre-wrap;background:var(--side);padding:8px;border-radius:6px;fo
   <button id="chk" onclick="showIssues()">검사</button>
  </div>
  <input type="file" id="f" accept=".json,application/json" multiple hidden onchange="loadFiles(this.files)">
- <input id="search" placeholder="피정의항·별칭·정의 검색" oninput="renderList()">
+ <input id="search" placeholder="이름·영문명·별칭·번호·정의 검색" oninput="renderList()">
  <div id="list"></div>
 </div>
 <div id="main"></div>
@@ -84,21 +85,23 @@ pre{white-space:pre-wrap;background:var(--side);padding:8px;border-radius:6px;fo
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KEY='definition-db-v'+DefDB.VERSION;
+const KEY='definition-db-v'+DefDB.VERSION, V=DefDB.VOCAB;
 let db=DefDB.emptyDB(),ix=null,cur=null,depthUp=3,depthDown=1,chainUp=3,chainDown=3;
+// cur: 개념 번호(T…) 또는 단계 번호(S…)
 
 // ===== 저장소 =====
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(db));}catch(_){}}
 function restore(){try{const s=localStorage.getItem(KEY);if(s)db=DefDB.normalize(JSON.parse(s));}catch(_){}}
 function saveDB(){const a=document.createElement('a');
  a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)+'\n'],{type:'application/json'}));
- a.download='definition-db.json';a.click();}
+ a.download='db.json';a.click();}
 function loadFiles(files){let n=files.length;const msgs=[];
  for(const file of files){const r=new FileReader();
   r.onload=e=>{try{const o=DefDB.parseLoose(e.target.result);
-    // 완전한 DB 파일 하나만 불러오면 교체, 나머지(패치·v3·여러 파일)는 병합
-    if(files.length==1&&o.format===DefDB.FORMAT&&!Object.keys(db.terms).length)db=DefDB.normalize(o);
-    else{const {db:next,report}=DefDB.ingest(db,o);db=next;msgs.push(`${file.name}: 추가 ${report.added.length}, 수정 ${report.updated.length}`);}
+    if(o.format===DefDB.FORMAT){const x=DefDB.normalize(o);if(x._version)msgs.push(`${file.name}: 형식 v${x._version} — 변환 필요`);else db=x;}
+    else{const res=DefDB.ingest(db,o),g=DefDB.gate(db,res);
+     if(g.ok){db=res.db;msgs.push(`${file.name}: 추가 ${res.report.added.length}, 수정 ${res.report.updated.length}`);}
+     else msgs.push(`${file.name}: 거부 — ${[...g.errors,...g.warnings].slice(0,3).map(i=>i.msg).join(' / ')}`);}
    }catch(x){msgs.push(file.name+' 읽기 실패: '+x.message);}
    if(--n==0){changed();if(msgs.length)alert(msgs.join('\n'));}};
   r.readAsText(file);}
@@ -109,17 +112,18 @@ function reloadStore(){
   .then(o=>{db=DefDB.normalize(o);cur=null;changed();},()=>alert('data/db.json 을 읽지 못했습니다. 파일로 열었다면 "불러오기"로 data/db.json 을 선택하세요.'));}
 function changed(){ix=DefDB.index(db);persist();renderList();render();}
 
-// ===== 이동 =====
+// ===== 이동: 개념(T)·정의항(D)·상태(D@키)·단계(S) 번호 =====
 function go(node,flash){
  if(!node)return;
+ node=node.split('@')[0];
  if(DefDB.isStepId(node)){
-  if(!ix.steps.has(node)){alert(`'${node}' 단계가 없습니다.`);return;}
+  if(!ix.steps.has(node)){alert(`단계 ${node} 없음`);return;}
   cur=node;renderList();render();if(window.innerWidth<=700)$('side').classList.add('closed');$('main').scrollTop=0;return;}
- const term=node.startsWith('@')?node.slice(1):DefDB.termOfId(node);
- if(!db.terms[term]){alert(`'${term}' 은(는) 아직 데이터베이스에 없습니다.`);return;}
+ const term=db.terms[node]?node:db.senses[node]?db.senses[node].term:null;
+ if(!term){alert(`${node} 은(는) 데이터베이스에 없습니다.`);return;}
  cur=term;renderList();render();
  if(window.innerWidth<=700)$('side').classList.add('closed');
- const el=document.querySelector(`[data-def="${CSS.escape(node)}"]`);
+ const el=db.senses[node]&&document.querySelector(`[data-def="${node}"]`);
  if(el){el.scrollIntoView({block:'start'});if(flash){el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');}}
  else $('main').scrollTop=0;
 }
@@ -127,86 +131,86 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-go]');if(t
 
 // ===== 목록 =====
 function renderList(){
- const q=$('search').value.trim().toLowerCase();
- const terms=Object.values(db.terms).filter(t=>!q||t.label.toLowerCase().includes(q)||t.aliases.some(a=>a.toLowerCase().includes(q))||t.definientia.some(d=>d.text.toLowerCase().includes(q)||d.context.toLowerCase().includes(q)))
-  .sort((a,b)=>a.label.localeCompare(b.label));
- $('list').innerHTML=terms.map(t=>`<div class="item ${t.label==cur?'on':''}" data-go="@${esc(t.label)}"><span>${esc(t.label)}</span><span class="n">${[...new Set(t.definientia.map(d=>d.kind))].map(esc).join(', ')}</span></div>`).join('')
+ const q=$('search').value.trim().toLowerCase(),has=x=>String(x||'').toLowerCase().includes(q);
+ const terms=Object.entries(db.terms).filter(([tid,t])=>!q||has(tid)||has(t.names.ko)||has(t.names.en)||t.aliases.some(has)
+   ||(ix.termSenses.get(tid)||[]).some(d=>has(d)||has(db.senses[d].text)||has(db.senses[d].context)))
+  .sort((a,b)=>a[1].names.ko.localeCompare(b[1].names.ko));
+ $('list').innerHTML=terms.map(([tid,t])=>`<div class="item ${tid==cur?'on':''}" data-go="${tid}"><span>${esc(t.names.ko)}</span><span class="n">${[...new Set((ix.termSenses.get(tid)||[]).map(d=>db.senses[d].kind))].map(esc).join(', ')}</span></div>`).join('')
   ||'<p class="tag">항목이 없습니다. "AI 결과 반영"으로 채우세요.</p>';
- const steps=Object.values(db.steps).filter(st=>!q||[st.label,st.action,st.text,st.context||'',st.cell||''].some(x=>x.toLowerCase().includes(q)));
- if(steps.length)$('list').innerHTML+=`<h4>기전 단계</h4>`+steps.map(st=>`<div class="item ${st.id==cur?'on':''}" data-go="${esc(st.id)}"><span>${esc(st.label||st.action)}</span><span class="n">${esc(st.action)}</span></div>`).join('');
+ const steps=Object.entries(db.steps).filter(([sid,st])=>!q||[sid,st.label,st.action,st.text,st.cell].some(has));
+ if(steps.length)$('list').innerHTML+=`<h4>기전 단계</h4>`+steps.map(([sid,st])=>`<div class="item ${sid==cur?'on':''}" data-go="${sid}"><span>${esc(st.label)}</span><span class="n">${esc(st.action)}</span></div>`).join('');
  const v=DefDB.validate(db);
  $('chk').textContent=`검사 ${v.errors.length?'⛔'+v.errors.length:''}${v.warnings.length?' ⚠'+v.warnings.length:''}`.trim();
 }
 
-// ===== 노드 표시 =====
-function nodeHTML(node,showText){
- const x=ix.defs.get(node);
- if(!x)return `<span class="bad">${esc(node)} (없음)</span>`;
- return `<span class="ref" data-go="${esc(node)}">${esc(x.term)}</span><span class="tag">#${esc(node.split('#').pop())} · ${esc(x.def.field)}</span>${showText?` — ${esc(x.def.text)}`:''}`;
+// ===== 정의항 표시 =====
+const L=id=>ix.label(id);
+function nodeHTML(id,showText){
+ const d=db.senses[id];
+ if(!d)return `<span class="bad">${esc(id)} (없음)</span>`;
+ return `<span class="ref" data-go="${id}">${esc(L(id))}</span> <span class="idt">${id}</span> <span class="tag">${esc(d.field)}</span>${showText?` — ${esc(d.text)}`:''}`;
 }
 const why=e=>`${e.link.span?` <span class="tag">근거 “${esc(e.link.span)}”</span>`:''}${e.link.note?` <span class="why">${esc(e.link.note)}</span>`:''}`;
-const V=DefDB.VOCAB;
-function xrefHTML(x){const src=V.xrefs[x.db],u=src&&src.url.replace('{id}',encodeURIComponent(x.id));
- return `<a class="xref ${x.status}" href="${esc(u)}" target="_blank" rel="noopener" title="${x.status=='verified'?'원본과 대조됨':'원본과 대조 안 됨'}">${esc(DefDB.xrefLabel(x))}</a>`;}
-function statesHTML(d){
- if(!d.states.length)return'';
- return `<div class="states">${d.states.map(s=>`<span class="state" title="${esc(s.note||'')}"><b>${esc(s.key)}</b> ${esc(s.label)} <span class="act-${s.activity}">● ${esc(V.activity[s.activity]?V.activity[s.activity].label:s.activity)}</span>${s.modifications.map(m=>` · ${esc((V.modifications[m.type]||{}).label||m.type)}${m.site?' '+esc(m.site):''}`).join('')}${s.bound.map(b=>` · 결합 <span class="ref" data-go="${esc(b)}">${esc(DefDB.termOfId(b))}</span>`).join('')}</span>`).join('')}</div>`;
-}
 function upTree(node,depth,seen){
  const ps=ix.parents(node);if(!ps.length||depth<=0)return'';
- return '<ul class="tree">'+ps.map(e=>{const p=e.parent;
-  return `<li><span class="tag">${DefDB.AXIS_UP[e.axis]}</span> ${nodeHTML(p,true)}${why(e)}${seen.has(p)?' <span class="err">(순환)</span>':upTree(p,depth-1,new Set([...seen,p]))}</li>`;}).join('')+'</ul>';
+ return '<ul class="tree">'+ps.map(e=>`<li><span class="tag">${DefDB.AXIS_UP[e.axis]}</span> ${nodeHTML(e.parent,true)}${why(e)}${seen.has(e.parent)?' <span class="err">(순환)</span>':upTree(e.parent,depth-1,new Set([...seen,e.parent]))}</li>`).join('')+'</ul>';
 }
 function downTree(node,depth,seen){
  const cs=ix.children(node);if(!cs.length||depth<=0)return'';
- return '<ul class="tree">'+cs.map(e=>{const c=e.child;
-  return `<li><span class="tag">${DefDB.AXIS_DOWN[e.axis]}</span> ${nodeHTML(c,true)}${why(e)}${seen.has(c)?'':downTree(c,depth-1,new Set([...seen,c]))}</li>`;}).join('')+'</ul>';
+ return '<ul class="tree">'+cs.map(e=>`<li><span class="tag">${DefDB.AXIS_DOWN[e.axis]}</span> ${nodeHTML(e.child,true)}${why(e)}${seen.has(e.child)?'':downTree(e.child,depth-1,new Set([...seen,e.child]))}</li>`).join('')+'</ul>';
 }
+function xrefHTML(x){const src=V.xrefs[x.db],u=src&&src.url.replace('{id}',encodeURIComponent(x.id));
+ return `<a class="xref ${x.status}" href="${esc(u)}" target="_blank" rel="noopener" title="${x.status=='verified'?'원본과 대조됨':'원본과 대조 안 됨'}">${esc(DefDB.xrefLabel(x))}</a>`;}
+function statesHTML(id,d){
+ if(!d.states.length)return'';
+ return `<div class="states">${d.states.map(s=>`<span class="state" title="${esc(id+'@'+s.key)}${s.note?' — '+esc(s.note):''}"><b>${esc(s.key)}</b> ${esc(s.label)} <span class="act-${s.activity}">● ${esc(V.activity[s.activity]?V.activity[s.activity].label:s.activity)}</span>${s.modifications.map(m=>` · ${esc((V.modifications[m.type]||{}).label||m.type)}${m.site?' '+esc(m.site):''}`).join('')}${s.bound.map(b=>` · 결합 <span class="ref" data-go="${b}">${esc(L(b))}</span>`).join('')}</span>`).join('')}</div>`;
+}
+// 정의 문장 안의 근거 구절을 강조하고, 누르면 연결 대상으로 이동
+function textHTML(d){
+ const ranges=[];
+ for(const l of d.links){if(!l.span)continue;const i=d.text.indexOf(l.span);if(i<0||ranges.some(r=>i<r.e&&i+l.span.length>r.s))continue;
+  ranges.push({s:i,e:i+l.span.length,to:l.to,rel:l.rel});}
+ ranges.sort((a,b)=>a.s-b.s);let h='',p=0;
+ for(const r of ranges){h+=esc(d.text.slice(p,r.s))+`<span class="span" data-go="${r.to}" title="${esc(r.rel)} → ${esc(L(r.to))} (${r.to})">${esc(d.text.slice(r.s,r.e))}</span>`;p=r.e;}
+ return h+esc(d.text.slice(p));
+}
+
 // ===== 기전 표시 =====
-const stepName=id=>{const r=ix.steps.get(id);return r?(r.step.label||r.step.action):id;};
-const keyName=k=>ix.keyName(k);
+const stepName=id=>{const r=ix.steps.get(id);return r?r.step.label:id;};
 const stateLabel=(ref,key)=>{const s=ix.stateOf(ref,key);return s?s.label:key;};
 function chip(p){
- const ok=ix.defs.has(p.ref);
- return `<span class="chip ${p.minor?'minor':''} ${ok?'':'bad'}" ${ok?`data-go="${esc(p.ref)}"`:''} ${p.note?`title="${esc(p.note)}"`:''}>${esc(DefDB.termOfId(p.ref))}${p.state?`<i>${esc(stateLabel(p.ref,p.state))}</i>`:''}</span>`;
+ const ok=!!db.senses[p.ref];
+ return `<span class="chip ${p.minor?'minor':''} ${ok?'':'bad'}" ${ok?`data-go="${p.ref}"`:''} title="${esc(p.ref+(p.state?'@'+p.state:''))}${p.note?' — '+esc(p.note):''}">${esc(ok?L(p.ref):p.ref)}${p.state?`<i>${esc(stateLabel(p.ref,p.state))}</i>`:''}</span>`;
 }
 function flowHTML(st){
  const ag=st.agents.map(a=>chip(a)+(a.after&&a.after!==(a.state||'')?` <span class="tag">→ 행위자는 ${esc(stateLabel(a.ref,a.after))}</span>`:'')).join(' ');
  return `<div class="flow">${ag?`${ag} <span class="arrow">⚙</span> `:''}${st.inputs.map(chip).join(' + ')||'∅'} <span class="arrow">⟶</span> ${st.outputs.map(chip).join(' + ')||'∅'}</div>`
  +(st.regulators.length?`<div class="flow"><span class="tag">조절</span> ${st.regulators.map(r=>`<span class="${r.effect=='inhibits'?'err mk':'ok'}">${r.effect=='inhibits'?'⊣ 억제':'⊕ 활성화'}</span> ${chip(r)}${r.note?` <span class="why">${esc(r.note)}</span>`:''}`).join(' ')}</div>`:'');
 }
+const where=st=>`${esc(st.compartment)}${st.cell?' · '+esc(st.cell):''}`;
 const uniqIds=a=>[...new Map(a.map(n=>[n.id,n])).values()];
 function stepHTML(id){
  const st=ix.steps.get(id).step,nx=uniqIds(ix.next(id));
- return `<div class="step" data-def="${esc(id)}"><div class="dhead"><span class="ref" data-go="${esc(id)}"><b>${esc(st.label||st.action)}</b></span><span class="ctx">${esc(st.action)}</span><span>${esc(st.compartment)}${st.cell?' · '+esc(st.cell):''}</span></div>
+ return `<div class="step" data-def="${id}"><div class="dhead"><span class="ref" data-go="${id}"><b>${esc(st.label)}</b></span><span class="idt">${id}</span><span class="ctx">${esc(st.action)}</span><span>${where(st)}</span></div>
  ${flowHTML(st)}${st.text?`<div class="why">${esc(st.text)}</div>`:''}
- ${nx.length?`<div class="tag">다음 → ${nx.map(n=>`<span class="ref" data-go="${esc(n.id)}">${esc(stepName(n.id))}</span>`).join(', ')}</div>`:''}</div>`;
+ ${nx.length?`<div class="tag">다음 → ${nx.map(n=>`<span class="ref" data-go="${n.id}">${esc(stepName(n.id))}</span>`).join(', ')}</div>`:''}</div>`;
 }
 function chainTree(id,dir,depth,seen){
  const ns=ix[dir](id);if(!ns.length||depth<=0)return'';
- return '<ul class="tree">'+ns.map(n=>`<li><span class="tag">${esc(keyName(n.via))} ${dir=='next'?'→':'←'}</span> <span class="ref" data-go="${esc(n.id)}">${esc(stepName(n.id))}</span> <span class="tag">[${esc(ix.steps.get(n.id).step.action)}]</span>${seen.has(n.id)?' <span class="tag">(순환 — 위에 있음)</span>':chainTree(n.id,dir,depth-1,new Set([...seen,n.id]))}</li>`).join('')+'</ul>';
+ return '<ul class="tree">'+ns.map(n=>`<li><span class="tag">${esc(ix.keyName(n.via))} ${dir=='next'?'→':'←'}</span> <span class="ref" data-go="${n.id}">${esc(stepName(n.id))}</span> <span class="idt">${n.id}</span> <span class="tag">[${esc(ix.steps.get(n.id).step.action)}]</span>${seen.has(n.id)?' <span class="tag">(순환 — 위에 있음)</span>':chainTree(n.id,dir,depth-1,new Set([...seen,n.id]))}</li>`).join('')+'</ul>';
 }
+const sel=(v,opts,fn)=>`<select style="width:auto" onchange="${fn}=+this.value;render()">${opts.map(n=>`<option ${n==v?'selected':''}>${n}</option>`).join('')}</select>`;
+const meta=o=>[o.source&&'출처: '+esc(o.source),o.by&&'작성: '+esc(o.by),o.at&&esc(o.at)].filter(Boolean).join(' · ');
 function renderStep(id){
- const st=ix.steps.get(id).step,depthSel=(v,fn)=>`<select style="width:auto" onchange="${fn}=+this.value;render()">${[1,2,3,5,8].map(n=>`<option ${n==v?'selected':''}>${n}</option>`).join('')}</select>`;
+ const st=ix.steps.get(id).step;
  const prev=chainTree(id,'prev',chainUp,new Set([id])),next=chainTree(id,'next',chainDown,new Set([id]));
- $('main').innerHTML=`<h2>${esc(st.label||st.action)}</h2><div class="alias">${esc(id)} · 기전 단계</div>
- <div class="def" style="border-left-color:var(--side2)"><div class="dhead"><span class="ctx">${esc(st.action)}</span><span>${esc(st.compartment)}${st.cell?' · '+esc(st.cell):''}${st.context?' · '+esc(st.context):''}</span></div>
+ $('main').innerHTML=`<h2>${esc(st.label)}</h2><div class="alias"><span class="idt">${id}</span> · 기전 단계</div>
+ <div class="def" style="border-left-color:var(--side2)"><div class="dhead"><span class="ctx">${esc(st.action)}</span><span>${where(st)}${st.context?' · '+esc(st.context):''}</span></div>
   ${flowHTML(st)}${st.text?`<div class="text" style="font-size:15px">${esc(st.text)}</div>`:''}
   ${st.part_of.length?`<div class="sec"><b>소속 경로</b> ${st.part_of.map(p=>nodeHTML(p)).join(' · ')}</div>`:''}
-  <div class="meta">${[st.source&&'출처: '+esc(st.source),st.by&&'작성: '+esc(st.by),st.at&&esc(st.at)].filter(Boolean).join(' · ')}
-   <button style="float:right;padding:2px 8px;font-size:12px" data-ctx="${esc(id)}" onclick="showContext(this.dataset.ctx)">기전 텍스트</button></div></div>
- <div class="sec up"><b>앞 단계</b> <span class="tag">펼침 ${depthSel(chainUp,'chainUp')}</span>${prev||'<div class="tag">이 단계의 입력을 만드는 단계가 없습니다 (출발점).</div>'}</div>
- <div class="sec down"><b>다음 단계</b> <span class="tag">펼침 ${depthSel(chainDown,'chainDown')}</span>${next||'<div class="tag">이 단계의 출력을 쓰는 단계가 없습니다 (끝점).</div>'}</div>`;
-}
-// 정의 문장 안의 근거 구절을 강조하고, 누르면 연결 대상으로 이동
-function textHTML(d){
- const ranges=[];
- for(const l of d.links){if(!l.span)continue;const i=d.text.indexOf(l.span);if(i<0)continue;
-  if(ranges.some(r=>i<r.e&&i+l.span.length>r.s))continue;
-  ranges.push({s:i,e:i+l.span.length,to:l.to,rel:l.rel});}
- ranges.sort((a,b)=>a.s-b.s);let h='',p=0;
- for(const r of ranges){h+=esc(d.text.slice(p,r.s))+`<span class="span" data-go="${esc(r.to)}" title="${esc(r.rel)} → ${esc(r.to)}">${esc(d.text.slice(r.s,r.e))}</span>`;p=r.e;}
- return h+esc(d.text.slice(p));
+  <div class="meta">${meta(st)}<button style="float:right;padding:2px 8px;font-size:12px" data-ctx="${id}" onclick="showContext(this.dataset.ctx)">기전 텍스트</button></div></div>
+ <div class="sec up"><b>앞 단계</b> <span class="tag">펼침 ${sel(chainUp,[1,2,3,5,8],'chainUp')}</span>${prev||'<div class="tag">이 단계의 입력을 만드는 단계가 없습니다 (출발점).</div>'}</div>
+ <div class="sec down"><b>다음 단계</b> <span class="tag">펼침 ${sel(chainDown,[1,2,3,5,8],'chainDown')}</span>${next||'<div class="tag">이 단계의 출력을 쓰는 단계가 없습니다 (끝점).</div>'}</div>`;
 }
 
 // ===== 본문 =====
@@ -214,38 +218,36 @@ function render(){
  const m=$('main');
  if(cur&&DefDB.isStepId(cur)&&ix.steps.has(cur))return renderStep(cur);
  if(!cur||!db.terms[cur]){
-  const n=Object.keys(db.terms).length;
   m.innerHTML=`<h2>Duckiteat's make bio database</h2>
-  <p>저장 단위는 메모가 아니라 <b>정의항</b>입니다. 상위·하위 연결은 피정의항끼리가 아니라 <b>정의항끼리</b> 이어져서,
-  같은 말이라도 어느 뜻에서 어느 개념 아래에 있는지가 보존됩니다.</p>
-  <p>입력은 AI가 합니다: <b>AI 지침</b>을 복사해 자료와 함께 AI에게 주고 → 받은 JSON을 <b>AI 결과 반영</b>에 붙여 넣으세요.</p>
-  <p class="tag">현재 피정의항 ${n}개 · 브라우저에 자동 보관되며, "저장"으로 파일을 내려받을 수 있습니다.</p>`;return;}
+  <p>모든 항목은 고정 번호를 가집니다 — 개념 <span class="idt">T…</span>, 뜻(정의항) <span class="idt">D…</span>, 상태 <span class="idt">D…@키</span>, 기전 단계 <span class="idt">S…</span>.
+  연결은 번호끼리 걸리므로 이름을 바꿔도 끊기지 않습니다.</p>
+  <p>입력은 AI가 합니다: <b>AI 지침</b>을 복사해 자료와 함께 AI에게 주고 → 받은 JSON을 <b>AI 결과 반영</b>에 붙여 넣으세요. 규칙을 어기면 반영되지 않습니다.</p>
+  <p class="tag">개념 ${Object.keys(db.terms).length} · 정의항 ${Object.keys(db.senses).length} · 기전 단계 ${Object.keys(db.steps).length}</p>`;return;}
  const t=db.terms[cur];
- let h=`<h2>${esc(t.label)}</h2>${t.aliases.length?`<div class="alias">${t.aliases.map(esc).join(' · ')}</div>`:''}
+ let h=`<h2>${esc(t.names.ko)}${t.names.en?` <span class="alias">${esc(t.names.en)}</span>`:''}</h2>
+ <div class="alias"><span class="idt">${cur}</span>${t.aliases.length?' · 별칭 '+t.aliases.map(esc).join(' · '):''}</div>
  ${t.note?`<pre>${esc(t.note)}</pre>`:''}
- <div class="tag" style="margin-top:6px">위로 펼칠 단계 <select style="width:auto" onchange="depthUp=+this.value;render()">${[1,2,3,4,6,8].map(n=>`<option ${n==depthUp?'selected':''}>${n}</option>`).join('')}</select>
- 아래로 <select style="width:auto" onchange="depthDown=+this.value;render()">${[1,2,3].map(n=>`<option ${n==depthDown?'selected':''}>${n}</option>`).join('')}</select></div>`;
- if(!t.definientia.length)h+=`<p class="bad">아직 정의항이 없습니다. 다른 정의에서 이 말을 가리키고 있어 자리만 있습니다.</p>`;
- for(const d of t.definientia){
-  const up=upTree(d.id,depthUp,new Set([d.id])),down=downTree(d.id,depthDown,new Set([d.id]));
-  const sides=ix.sides(d.id),inPath=ix.stepsIn(d.id),roles=ix.roles(d.id);
-  h+=`<div class="def" data-def="${esc(d.id)}">
-  <div class="dhead"><b>${esc(d.id)}</b><span class="kind" title="${esc((V.kinds[d.kind]||{}).label||'')}">${esc(d.kind)}</span><span class="ctx">${esc(d.field)}${d.context&&d.context!==d.field?' · '+esc(d.context):''}</span>
-   ${d.xrefs.map(xrefHTML).join('')}${d.unmapped?`<span class="bad" title="${esc(d.unmapped)}">미매핑</span>`:''}</div>
+ <div class="tag" style="margin-top:6px">위로 펼칠 단계 ${sel(depthUp,[1,2,3,4,6,8],'depthUp')} 아래로 ${sel(depthDown,[1,2,3],'depthDown')}</div>`;
+ for(const id of ix.termSenses.get(cur)){
+  const d=db.senses[id];
+  const up=upTree(id,depthUp,new Set([id])),down=downTree(id,depthDown,new Set([id]));
+  const sides=ix.sides(id),inPath=ix.stepsIn(id),roles=ix.roles(id);
+  h+=`<div class="def" data-def="${id}">
+  <div class="dhead"><b>${esc(L(id))}</b><span class="idt">${id}</span><span class="kind" title="${esc((V.kinds[d.kind]||{}).label||'')}">${esc(d.kind)}</span><span class="ctx">${esc(d.field)}${d.context&&d.context!==d.field?' · '+esc(d.context):''}</span>
+   ${d.xrefs.map(xrefHTML).join('')}${d.fingerprint?`<span class="idt" title="구조 지문 (${esc(d.fingerprint.status)})">${esc(d.fingerprint.scheme)} ${esc(d.fingerprint.value.slice(0,16))}…</span>`:''}${d.unmapped?`<span class="bad" title="${esc(d.unmapped)}">미매핑</span>`:''}</div>
   <div class="text">${textHTML(d)}</div>
   ${d.distinction?`<div class="why">다른 뜻과의 차이: ${esc(d.distinction)}</div>`:''}
   ${d.note?`<div class="why">${esc(d.note)}</div>`:''}
-  ${statesHTML(d)}
+  ${statesHTML(id,d)}
   ${up?`<div class="sec up"><b>상위 맥락</b>${up}</div>`:''}
   ${down?`<div class="sec down"><b>하위 개념</b>${down}</div>`:''}
   ${sides.length?`<div class="sec rel"><b>관련</b><ul class="tree">${sides.map(e=>{const r=DefDB.REL[e.rel]||{};
-    return e.from==d.id?`<li><span class="tag">${esc(r.label||e.rel)}</span> ${nodeHTML(e.target)}${why(e)}</li>`
+    return e.from==id?`<li><span class="tag">${esc(r.label||e.rel)}</span> ${nodeHTML(e.target)}${why(e)}</li>`
      :`<li><span class="tag">${esc(r.inverse||e.rel)}</span> ${nodeHTML(e.from)}${why(e)}</li>`;}).join('')}</ul></div>`:''}
-  ${inPath.length?`<div class="sec mech"><b>기전 ${inPath.length}단계 (이어지는 순서)</b><ol class="steps">${inPath.map(id=>`<li>${stepHTML(id)}</li>`).join('')}</ol></div>`:''}
-  ${roles.length?`<div class="sec mech"><b>기전 참여</b><ul class="tree">${roles.map(r=>`<li><span class="tag">${esc(DefDB.ROLE[r.role])}${r.p.state?` · <b>${esc(stateLabel(r.p.ref,r.p.state))}</b>`:''}${r.p.minor?' · 부산물':''}</span> <span class="ref" data-go="${esc(r.id)}">${esc(stepName(r.id))}</span> <span class="tag">[${esc(ix.steps.get(r.id).step.action)}]</span></li>`).join('')}</ul></div>`:''}
+  ${inPath.length?`<div class="sec mech"><b>기전 ${inPath.length}단계 (이어지는 순서)</b><ol class="steps">${inPath.map(s=>`<li>${stepHTML(s)}</li>`).join('')}</ol></div>`:''}
+  ${roles.length?`<div class="sec mech"><b>기전 참여</b><ul class="tree">${roles.map(r=>`<li><span class="tag">${esc(DefDB.ROLE[r.role])}${r.p.state?` · <b>${esc(stateLabel(r.p.ref,r.p.state))}</b>`:''}${r.p.minor?' · 부산물':''}</span> <span class="ref" data-go="${r.id}">${esc(stepName(r.id))}</span> <span class="tag">[${esc(ix.steps.get(r.id).step.action)}]</span></li>`).join('')}</ul></div>`:''}
   ${d.examples.length?`<div class="sec"><b>예</b> ${d.examples.map(esc).join(' · ')}</div>`:''}
-  <div class="meta">${[d.source&&'출처: '+esc(d.source),d.by&&'작성: '+esc(d.by),d.at&&esc(d.at)].filter(Boolean).join(' · ')}
-   <button style="float:right;padding:2px 8px;font-size:12px" data-ctx="${esc(d.id)}" onclick="showContext(this.dataset.ctx)">맥락 텍스트</button></div>
+  <div class="meta">${meta(d)}<button style="float:right;padding:2px 8px;font-size:12px" data-ctx="${id}" onclick="showContext(this.dataset.ctx)">맥락 텍스트</button></div>
   </div>`;}
  m.innerHTML=h;
 }
@@ -257,18 +259,17 @@ function copy(id){const el=$(id);(navigator.clipboard?navigator.clipboard.writeT
 function showContext(id){
  const txt=DefDB.isStepId(id)?DefDB.mechanismText(db,id,{up:chainUp,down:chainDown})
   :DefDB.contextText(db,id,{up:depthUp,down:depthDown})+(ix.stepsIn(id).length?'\n\n'+DefDB.mechanismText(db,id):'');
- box(`<h3>맥락 텍스트 — ${esc(id)}</h3><p class="tag">AI 대화에 붙여 넣으면 이 정의가 어느 맥락 위에 있는지 그대로 전달됩니다.</p>
+ box(`<h3>맥락 텍스트 — ${esc(id)}</h3><p class="tag">AI 대화에 붙여 넣으면 이 항목이 어느 맥락 위에 있는지 번호와 함께 그대로 전달됩니다.</p>
  <textarea id="ctxt" rows="14" readonly>${esc(txt)}</textarea>
  <p><button class="pri" onclick="copy('ctxt')">복사</button> <button onclick="closeBox()">닫기</button></p>`);}
 function openPrompt(){
- box(`<h3>AI 작성 지침</h3><p class="tag">정리할 자료를 아래에 넣고 복사해서 AI에게 주세요. 현재 데이터베이스 색인이 함께 들어가 AI가 기존 정의항에 연결합니다.</p>
+ box(`<h3>AI 작성 지침</h3><p class="tag">정리할 자료를 아래에 넣고 복사해서 AI에게 주세요. 규칙·어휘·현재 색인(번호 포함)이 함께 들어갑니다.</p>
  <textarea id="mat" rows="5" placeholder="자료(교재 문단, 강의 메모 등)" oninput="$('pt').value=DefDB.promptText(db,{material:this.value})"></textarea>
  <textarea id="pt" rows="12" readonly style="margin-top:6px">${esc(DefDB.promptText(db))}</textarea>
  <p><button class="pri" onclick="copy('pt')">지침 복사</button> <button onclick="closeBox()">닫기</button></p>`);}
-let pending=null;
-let allowW=false;
+let pending=null,allowW=false;
 function openPaste(){pending=null;allowW=false;
- box(`<h3>AI 결과 반영</h3><p class="tag">AI가 준 JSON(패치)을 그대로 붙여 넣으세요. 코드 블록 표시가 섞여 있어도 됩니다. 이전 bionote v3 파일 내용도 받습니다.</p>
+ box(`<h3>AI 결과 반영</h3><p class="tag">AI가 준 JSON(패치)을 그대로 붙여 넣으세요. 코드 블록 표시가 섞여 있어도 됩니다.</p>
  <textarea id="pin" rows="12" oninput="preview()"></textarea><div id="prev"></div>
  <label class="tag"><input type="checkbox" style="width:auto" onchange="allowW=this.checked;preview()"> 새 경고가 있어도 반영 (권장하지 않음)</label>
  <p><button class="pri" id="apply" disabled onclick="applyPending()">반영</button> <button onclick="closeBox()">취소</button></p>`);}
@@ -276,10 +277,10 @@ function preview(){
  const out=$('prev'),txt=$('pin').value.trim();pending=null;$('apply').disabled=true;
  if(!txt){out.innerHTML='';return;}
  let res;try{res=DefDB.ingest(db,DefDB.parseLoose(txt));}catch(x){out.innerHTML=`<p class="err">읽기 실패: ${esc(x.message)}</p>`;return;}
- const {report}=res,g=DefDB.gate(db,res,{allowWarnings:allowW});
+ const {report}=res,g=DefDB.gate(db,res,{allowWarnings:allowW}),RL=id=>{try{return DefDB.index(res.db).label(id);}catch(_){return id;}};
  out.innerHTML=`<p>추가 <b>${report.added.length}</b> · 수정 <b>${report.updated.length}</b> · 삭제 <b>${report.removed.length}</b></p>
- ${report.added.length?`<div class="tag">추가: ${report.added.map(esc).join(', ')}</div>`:''}
- ${report.updated.length?`<div class="tag">수정(기존 항목 교체): ${report.updated.map(esc).join(', ')}</div>`:''}
+ ${report.added.length?`<div class="tag">추가: ${report.added.map(i=>`${i} ${esc(RL(i))}`).join(', ')}</div>`:''}
+ ${report.updated.length?`<div class="tag">수정: ${report.updated.map(i=>`${i} ${esc(RL(i))}`).join(', ')}</div>`:''}
  ${report.mapped.length?`<div class="tag">매핑: ${report.mapped.map(m=>`${esc(m.from)} → ${esc(m.to)}`).join(', ')}</div>`:''}
  ${g.errors.map(i=>`<div class="err">⛔ ${esc(i.where)}: ${esc(i.msg)}</div>`).join('')}
  ${g.warnings.map(i=>`<div class="bad">⚠ ${esc(i.where)}: ${esc(i.msg)}</div>`).join('')}
@@ -289,8 +290,8 @@ function preview(){
 }
 function applyPending(){if(!pending)return;db=pending.db;const first=pending.report.added[0]||pending.report.updated[0];pending=null;closeBox();changed();if(first)go(first,true);}
 function showIssues(){const v=DefDB.validate(db);
- const target=w=>{const id=w.split(' ')[0].split('@')[0];return ix.defs.has(id)||DefDB.isStepId(id)?id:db.terms[id]?'@'+id:'';};
- const row=(i,cls,mark)=>{const t=target(i.where);return `<div class="${cls}">${mark} ${t?`<span class="ref" data-go="${esc(t)}" onclick="closeBox()">${esc(i.where)}</span>`:esc(i.where)}: ${esc(i.msg)}</div>`;};
+ const target=w=>{const m=String(w).match(/[TDS]\d{6}/);return m&&(db.terms[m[0]]||db.senses[m[0]]||db.steps[m[0]])?m[0]:'';};
+ const row=(i,cls,mark)=>{const t=target(i.where);return `<div class="${cls}">${mark} ${t?`<span class="ref" data-go="${t}" onclick="closeBox()">${esc(i.where)}</span>`:esc(i.where)}: ${esc(i.msg)}</div>`;};
  box(`<h3>검사 결과</h3>${v.errors.map(i=>row(i,'err','⛔')).join('')}${v.warnings.map(i=>row(i,'bad','⚠')).join('')}
  ${!v.errors.length&&!v.warnings.length?'<p>규칙 위반 없음</p>':''}
  <h3>매핑 현황</h3><pre>${esc(DefDB.auditText(db))}</pre><p><button onclick="closeBox()">닫기</button></p>`);}

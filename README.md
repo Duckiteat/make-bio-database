@@ -5,13 +5,18 @@
 옵시디언·노션처럼 "메모 한 장 = 노드"가 아니라 **정의항(뜻) 하나 = 노드**이고,
 분자의 **상태**와 상태를 바꾸는 **기전 단계**가 그 위에 얹힌다. 모든 입력은 엄격한 매핑 규칙([`SCHEMA.md`](SCHEMA.md))을 통과해야 저장된다.
 
-## 층 구조
+## 층 구조와 고정 번호
 
 ```
-개념  정의항          무엇인가                효소#1 "…촉매 역할을 하는 단백질" 〈생명과학 교육〉 {molecule_class}
-상태  정의항@키        같은 분자의 다른 형태     글리코겐 인산화효소#1@a = a형(인산화, Ser14) ● 활성
-기전  step:N          무엇이 무엇을 바꾸나      인산화효소 키네이스@phos ⚙ 글리코겐 인산화효소@b → @a
+개념  T000009          말·개념            효소 / enzyme
+뜻    D000009          정의항 하나         효소#1 "…촉매 역할을 하는 단백질" 〈생명과학 교육〉 {molecule_class}
+상태  D000044@a        같은 분자의 다른 형태  글리코겐 인산화효소 a형(인산화, Ser14) ● 활성
+기전  S000009          무엇이 무엇을 바꾸나   인산화효소 키네이스@phos ⚙ 글리코겐 인산화효소@b → @a
 ```
+
+모든 연결은 의미 없는 고정 번호로만 걸린다. 이름은 번호에 붙은 꼬리표(ko·en·별칭)라서 바꿔도 연결이 끊기지 않고,
+지운 번호는 다시 쓰지 않는다. 사람과 AI 는 `글리코겐 인산화효소`, `효소#2`, `CHEBI:15422` 처럼 불러도 되고 병합 때 번호로 바뀐다.
+분자의 정체성은 이름이 아니라 **구조 지문**(InChIKey·서열 해시)으로 확인하도록 자리를 마련해 두었다.
 
 ### 정의항끼리 잇는 이유
 `[[효소]]` 같은 링크는 *말*만 가리키고 **어느 뜻**인지는 잃는다. 여기서는 연결이 정의항 id 끼리 걸린다.
@@ -37,13 +42,14 @@
 
 - **통제 어휘** (`vocab.js`): kind·분야·변화 종류·세포 내 위치·활성·수식·조절 효과는 목록의 값만. 별칭은 표준 값으로 바뀐다.
 - **이름 하나 = 개념 하나**: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키면 오류. 새 이름이 기존 별칭과 같으면 기존 개념으로 합쳐진다.
-- **참조는 id 로 저장**: 패치에서 이름·영문명·`CHEBI:…` 로 가리켜도 병합 때 정의항 id 로 바뀐다. 뜻이 여러 개인 이름은 거부.
-- **외부 ID**: kind 별 필수·허용 데이터베이스와 형식 검사, 같은 ID 중복 금지. 모르면 지어내지 말고 `unmapped` 에 사유.
+- **참조는 번호로 저장**: 패치에서 이름·영문명·`이름#n`·`CHEBI:…`·지문으로 가리켜도 병합 때 정의항 번호로 바뀐다. 뜻이 여러 개인 이름은 거부.
+- **번호 재사용 금지**: 지운 번호는 영구 결번. 이름을 바꾸면 옛 이름은 별칭으로 남는다.
+- **외부 ID·구조 지문**: kind 별 필수·허용 데이터베이스와 형식 검사, 같은 ID·같은 지문 중복 금지. 모르면 지어내지 말고 `unmapped` 에 사유.
 - **상태는 정의된 것만**: 단계 참여자의 상태는 그 분자에 정의된 키여야 하고, 상태가 있는 분자는 상태를 꼭 지정한다.
 - **kind 제약**: 개념은 단계에 참여할 수 없고, 단계는 pathway 에만 묶이며, `is_a`·`part_of` 는 허용된 kind 조합만.
 - **관문**: 오류가 하나라도 있거나 패치가 새 경고를 만들면 패치 전체 거부. 통과한 패치는 `data/patches/` 에 매핑 결과와 함께 기록.
 
-규칙은 `tests/rules.test.mjs`(26개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
+규칙은 `tests/rules.test.mjs`(32개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
 
 ## 사용법
 
@@ -59,14 +65,14 @@
 ### 명령줄 (Node 18+) — AI 에이전트용
 
 ```sh
-node dbtool.mjs status                          # 규모·오류 수
-node dbtool.mjs map "adenylyl cyclase" CHEBI:15422   # 이름·외부 ID → 정의항 id
+node dbtool.mjs status                          # 규모·오류 수·다음 번호
+node dbtool.mjs map "adenylyl cyclase" 효소#2 CHEBI:15422   # 이름·외부 ID → 정의항 번호
 node dbtool.mjs prompt [자료.txt]                # AI 작성 지침
 node dbtool.mjs merge patch.json --dry          # 관문 통과 여부만 확인
 node dbtool.mjs merge patch.json                # 병합 + data/patches/ 기록
 node dbtool.mjs context 효소                     # 정의 맥락·상태·기전 참여
 node dbtool.mjs mechanism "에피네프린에 의한 글리코겐 분해"
-node dbtool.mjs mechanism step:9 --up 3 --down 3
+node dbtool.mjs mechanism S000009 --up 3 --down 3
 node dbtool.mjs audit                           # 매핑 현황
 node dbtool.mjs vocab actions                   # 통제 어휘 보기
 node --test tests/*.test.mjs                    # 규칙 테스트
@@ -76,19 +82,22 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 
 | 경로 | 내용 |
 |---|---|
-| `data/db.json` | 데이터베이스 원본 (형식 v2) |
+| `data/db.json` | 데이터베이스 원본 (형식 v3) |
 | `data/patches/` | 병합된 패치 기록 |
 | `vocab.js` | 통제 어휘·외부 ID 형식·관계의 kind 제약 |
 | `core.js` | 매핑·검사·관문·색인 (브라우저와 Node 공용) |
 | `dbtool.mjs` | 명령줄 도구 |
 | `viewer.html`, `index.html` | 화면 |
 | `SCHEMA.md` | 규칙 명세와 변경 기록 |
-| `migrations/` | 형식 변환 스크립트 |
+| `migrations/` | 형식 변환 스크립트, 옛 ID ↔ 번호 대응표 |
 | `tests/` | 규칙 테스트 |
-| `examples/` | 패치 예시 (`pp1-dephosphorylation.json`: 이름·별칭·상태 이름으로 쓴 참조가 매핑되는 예) |
+| `examples/` | 패치 예시 (`pp1-dephosphorylation.json`: 이름·별칭·상태 이름으로 쓴 참조가 번호로 매핑되는 예) |
+| `FEATURES.md` | 특징 층·가설 층 설계 (아직 구현 전) |
 
 ## 아직 안 된 것
 
 - **외부 ID 원본 대조**: 지금 ID 는 모두 `asserted`. UniProt·ChEBI 등에 접속해 확인하고 `verified` 로 바꾸는 명령은 아직 없다.
-- **구조 층**: 단백질 구조 참조·도메인·결합 부위, 결합·충돌 관찰 결과와 원리 — 다음 단계.
+- **구조 지문 계산**: 필드와 검사는 있지만 값은 아직 없음. RDKit 등으로 계산하는 도구가 필요하다.
+- **특징 층·가설 층**: [`FEATURES.md`](FEATURES.md) 에 설계만 있음.
+- **구조 층**: 단백질 구조 참조·도메인·결합 부위, 결합·충돌 관찰 결과와 원리.
 - **저장 방식**: 지금은 JSON 파일 하나. 구조 데이터가 들어오면 SQLite 로 옮길 계획.

@@ -136,4 +136,15 @@
   },
   // asserted: 작성자(AI)가 적었지만 원본과 대조하지 않음, verified: 원본 데이터베이스와 대조함
   xrefStatus: ['asserted', 'verified'],
+
+  // ===== 구조 지문 (fingerprint) =====
+  // 구조에서 계산되는 정체성 키. 참조에는 쓰지 않고(참조는 고정 ID) 중복 차단·정확 일치 검색에 쓴다.
+  // kinds: 이 지문을 가질 수 있는 정의항 종류. 같은 지문은 정의항 하나에만 붙는다.
+  fingerprints: {
+    InChIKey:    { pattern: '^[A-Z]{14}-[A-Z]{10}-[A-Z]$', kinds: ['small_molecule', 'ion', 'macromolecule'], note: '표준 InChIKey (같은 개체로 볼 범위는 SCHEMA.md 의 지문 규칙)' },
+    SEQ_SHA256:  { pattern: '^[0-9a-f]{64}$', kinds: ['protein', 'nucleic_acid'], note: '정규 서열(대문자, 공백 제거)의 SHA-256' },
+    COMPLEX:     { pattern: '^CPX\\(([0-9a-zA-Z_-]+x[0-9]+)(\\+[0-9a-zA-Z_-]+x[0-9]+)*\\)$', kinds: ['complex'], note: '구성 정의항 지문(또는 ID)×개수를 정렬해 이은 것' },
+  },
+  // computed: 도구로 구조에서 계산함, asserted: 적었지만 계산·대조 안 함, verified: 원본과 대조함
+  fingerprintStatus: ['computed', 'asserted', 'verified'],
 });

@@ -1,38 +1,42 @@
 {
   "format": "definition-db-patch",
-  "version": 2,
-  "terms": {
-    "단백질 인산가수분해효소 1": {
-      "aliases": ["PP1", "protein phosphatase 1", "단백질 탈인산화효소 1"],
-      "definientia": [{
-        "id": "단백질 인산가수분해효소 1#+1",
-        "kind": "molecule_class",
-        "field": "biochemistry",
-        "text": "단백질의 인산화된 세린·트레오닌에서 인산기를 떼어 내는 효소로, 글리코겐 대사 효소들의 인산화를 되돌린다",
-        "context": "글리코겐 대사 조절",
-        "links": [
-          { "to": "효소#1", "rel": "is_a", "span": "효소" },
-          { "to": "인산화", "rel": "refers", "span": "인산화", "note": "이름으로 연결 — 병합 때 인산화#1 로 매핑됨" }
-        ],
-        "xrefs": [{ "db": "EC", "id": "EC 3.1.3.16" }],
-        "note": "촉매 소단위는 여러 아형(α·β·γ)이 있어 분자 부류로 둔다.",
-        "by": "Claude", "at": "2026-10-08"
-      }]
+  "version": 3,
+  "_설명": "PP1 탈인산화 단계를 넣은 패치 (형식 v3 예시). 참조를 일부러 이름·별칭·영문명·상태 이름·어휘 별칭으로 써서 매핑을 보여 준다. 이미 저장소에 들어가 있으므로 다시 병합하면 '이미 뜻이 있음'으로 거부된다 — 중복 차단의 예이기도 하다.",
+  "terms": [
+    { "id": "T+pp1", "names": { "ko": "단백질 인산가수분해효소 1", "en": "protein phosphatase 1" }, "aliases": ["PP1", "단백질 탈인산화효소 1"] }
+  ],
+  "senses": [
+    {
+      "id": "D+pp1",
+      "term": "T+pp1",
+      "kind": "molecule_class",
+      "field": "biochemistry",
+      "text": "단백질의 인산화된 세린·트레오닌에서 인산기를 떼어 내는 효소로, 글리코겐 대사 효소들의 인산화를 되돌린다",
+      "context": "글리코겐 대사 조절",
+      "links": [
+        { "to": "효소#1", "rel": "is_a", "span": "효소" },
+        { "to": "인산화", "rel": "refers", "span": "인산화" }
+      ],
+      "xrefs": [{ "db": "EC", "id": "EC 3.1.3.16" }],
+      "note": "촉매 소단위는 여러 아형(α·β·γ)이 있어 분자 부류로 둔다.",
+      "by": "Claude", "at": "2026-10-08"
     }
-  },
-  "steps": [{
-    "id": "step:+1",
-    "label": "포스포릴레이스 비활성화",
-    "action": "dephosphorylation",
-    "compartment": "cytosol",
-    "cell": "간세포",
-    "text": "PP1 이 a형 글리코겐 인산화효소에서 인산기를 떼어 b형으로 되돌린다. 포도당이 a형에 결합하면 PP1 이 작용하기 쉬운 구조가 된다.",
-    "agents": [{ "ref": "PP1" }],
-    "inputs": [{ "ref": "포스포릴레이스", "state": "포스포릴레이스 a" }],
-    "outputs": [{ "ref": "포스포릴레이스", "state": "b형(비인산화)" }, { "ref": "무기 인산", "minor": true }],
-    "regulators": [{ "ref": "glucose", "effect": "촉진", "note": "a형에 결합해 탈인산화를 쉽게 만든다" }],
-    "part_of": ["에피네프린에 의한 글리코겐 분해#1"],
-    "by": "Claude", "at": "2026-10-08"
-  }],
+  ],
+  "steps": [
+    {
+      "id": "S+1",
+      "label": "포스포릴레이스 비활성화",
+      "action": "dephosphorylation",
+      "compartment": "cytosol",
+      "cell": "간세포",
+      "text": "PP1 이 a형 글리코겐 인산화효소에서 인산기를 떼어 b형으로 되돌린다. 포도당이 a형에 결합하면 PP1 이 작용하기 쉬운 구조가 된다.",
+      "agents": [{ "ref": "D+pp1" }],
+      "inputs": [{ "ref": "포스포릴레이스", "state": "포스포릴레이스 a" }],
+      "outputs": [{ "ref": "glycogen phosphorylase", "state": "b형(비인산화)" }, { "ref": "무기 인산", "minor": true }],
+      "regulators": [{ "ref": "glucose", "effect": "촉진", "note": "a형에 결합해 탈인산화를 쉽게 만든다" }],
+      "part_of": ["에피네프린에 의한 글리코겐 분해"],
+      "by": "Claude", "at": "2026-10-08"
+    }
+  ],
   "remove": []
 }

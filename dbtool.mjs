@@ -6,11 +6,11 @@
 //   node dbtool.mjs validate                                전체 검사 (오류 있으면 종료 코드 1)
 //   node dbtool.mjs merge     <patch.json...> [--dry] [--allow-warnings]
 //                                                           매핑 → 검사 → 관문 통과 시 저장, 적용한 패치는 data/patches/ 에 기록
-//   node dbtool.mjs map       <이름|별칭|외부ID|정의항id>     참조가 어느 정의항으로 매핑되는지
+//   node dbtool.mjs map       <번호|이름|이름#n|외부ID|지문>   참조가 어느 정의항(D…)으로 매핑되는지
 //   node dbtool.mjs audit                                   매핑 현황 (외부 ID 대조 여부, 미매핑, 안 쓰인 상태)
 //   node dbtool.mjs vocab     [표 이름]                     통제 어휘 보기 (kinds, fields, actions, compartments …)
-//   node dbtool.mjs context   <피정의항|정의항id> [--up N] [--down N]
-//   node dbtool.mjs mechanism <step:N | 경로> [--up N] [--down N]
+//   node dbtool.mjs context   <번호|이름|이름#n> [--up N] [--down N]
+//   node dbtool.mjs mechanism <S…|경로 번호·이름> [--up N] [--down N]
 //   node dbtool.mjs prompt    [자료.txt]                     AI 에게 줄 작성 지침 + 현재 색인
 //   node dbtool.mjs migrate   <bionote-v3.json...>          v3 개념 파일 → 패치 JSON (kind·field 는 채워야 병합됨)
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -40,10 +40,11 @@ const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace('T', '
 
 switch (cmd) {
   case 'status': {
-    const db = loadDB(), defs = [...DefDB.index(db).defs.values()];
-    const links = defs.reduce((n, x) => n + x.def.links.length, 0), states = defs.reduce((n, x) => n + x.def.states.length, 0);
-    const r = DefDB.validate(db);
-    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 피정의항 ${Object.keys(db.terms).length}, 정의항 ${defs.length}, 연결 ${links}, 상태 ${states}, 기전 단계 ${Object.keys(db.steps).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
+    const db = loadDB(), senses = Object.values(db.senses);
+    const links = senses.reduce((n, d) => n + d.links.length, 0), states = senses.reduce((n, d) => n + d.states.length, 0);
+    const r = DefDB.validate(db), nx = db.meta.next;
+    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 상태 ${states}, 기전 단계 ${Object.keys(db.steps).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
+    console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')}`);
     break;
   }
   case 'validate': {
@@ -81,7 +82,7 @@ switch (cmd) {
     break;
   }
   case 'map': {
-    if (!args.length) die('사용법: map <이름|별칭|외부ID|정의항id>');
+    if (!args.length) die('사용법: map <번호|이름|이름#n|외부ID|지문>');
     const db = loadDB();
     for (const q of args) console.log(DefDB.mapText(db, q));
     break;
@@ -100,12 +101,12 @@ switch (cmd) {
     break;
   }
   case 'context': {
-    if (!args[0]) die('사용법: context <피정의항|정의항id> [--up N] [--down N]');
+    if (!args[0]) die('사용법: context <번호|이름|이름#n> [--up N] [--down N]');
     console.log(DefDB.contextText(loadDB(), args[0], { up: +(flags.up || 4), down: +(flags.down || 1) }));
     break;
   }
   case 'mechanism': {
-    if (!args[0]) die('사용법: mechanism <step:N | 경로 피정의항 | 경로 정의항id> [--up N] [--down N]');
+    if (!args[0]) die('사용법: mechanism <S…|경로 번호·이름> [--up N] [--down N]');
     console.log(DefDB.mechanismText(loadDB(), args[0], { up: +(flags.up || 3), down: +(flags.down || 3) }));
     break;
   }
@@ -115,7 +116,7 @@ switch (cmd) {
   }
   case 'migrate': {
     if (!args.length) die('사용법: migrate <bionote-v3.json...>');
-    console.log(JSON.stringify(DefDB.fromV3(args.map(readJSON)), null, 2));
+    console.log(JSON.stringify(DefDB.fromBionote(args.map(readJSON)), null, 2));
     break;
   }
   default:
