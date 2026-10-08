@@ -6,11 +6,12 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 17 | 0 | 17 |
-| Concentration_Gap | 7 | 0 | 7 |
-| Structural_Gap | 13 | 0 | 13 |
-| Resource_Gap | 4 | 0 | 4 |
-| Identity_Gap | 7 | 0 | 7 |
+| Kinetic_Gap | 19 | 0 | 19 |
+| Concentration_Gap | 8 | 0 | 8 |
+| Structural_Gap | 17 | 0 | 17 |
+| Resource_Gap | 6 | 0 | 6 |
+| Regulatory_Gap | 8 | 0 | 8 |
+| Identity_Gap | 10 | 0 | 10 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
 
@@ -35,6 +36,8 @@
 | L000045 | D000089 (NF-κB p50–p65 이량체) | Kinetic_Gap | NF-κB p50–p65 이량체의 세포질·핵질 확산 계수 — 핵 이동 전후 공간 기울기를 Tier 3 로 풀 때 필요<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 diffusion_coefficient @ D000089 NF-κB p50–p65 이량체 · 세포질<br>✗ 관찰 diffusion_coefficient @ D000089 NF-κB p50–p65 이량체 · 핵질 | open (0/2) | — |
 | L000046 | D000032 (ATP) | Kinetic_Gap | ATP 의 세포질 확산 계수 — Tier 1 연속 장의 청산 시간 상수<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 diffusion_coefficient @ D000032 ATP · 세포질 | open (0/1) | — |
 | L000048 | D000148 (시트르산 회로) | Kinetic_Gap | 시트르산 회로 여덟 단계의 표준 반응 자유 에너지 ΔG°′ (J/mol) — 없으면 역반응 속도를 미시적 가역성으로 정할 수 없고 고리 열역학 검사가 비어 있다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 속도 상수 dG0 @ D000149/rule/condense<br>✗ 속도 상수 dG0 @ D000150/rule/isomerize<br>✗ 속도 상수 dG0 @ D000151/rule/oxdecarb<br>✗ 속도 상수 dG0 @ D000152/rule/oxdecarb<br>✗ 속도 상수 dG0 @ D000153/rule/slp<br>✗ 속도 상수 dG0 @ D000154/rule/oxidize<br>✗ 속도 상수 dG0 @ D000155/rule/hydrate<br>✗ 속도 상수 dG0 @ D000156/rule/oxidize | open (0/8) | — |
+| L000057 | D000165/rule/synthesis (T-bet · synthesis) | Kinetic_Gap | T-bet·Eomes 의 기본 합성 속도와 반감기(활성 CD8 T 세포) — 없으면 운명 층의 느린 시간 척도(결정 시각)가 가상 값으로 정해진다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 k @ D000165/rule/synthesis<br>✗ 속도 상수 k @ D000166/rule/synthesis<br>✗ 속도 상수 half_life @ D000165/rule/turnover<br>✗ 속도 상수 half_life @ D000166/rule/turnover | open (0/4) | — |
+| L000063 | D000170/rule/aerobic_glycolysis (해당과정 · aerobic_glycolysis) | Kinetic_Gap | T 세포 해당과정·젖산 발효·β-산화·ATP 소비·젖산 배출의 속도 상수 — 없으면 운명 층의 빠른 시간 척도가 가상 값으로 정해진다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 k @ D000170/rule/aerobic_glycolysis<br>✗ 속도 상수 k @ D000171/rule/pyruvate_reduction<br>✗ 속도 상수 k @ D000172/rule/palmitoyl_oxidation<br>✗ 속도 상수 k @ D000173/rule/atp_hydrolysis_load<br>✗ 속도 상수 k @ D000168/rule/export<br>✗ 속도 상수 k @ D000148/rule/lumped_oxidation | open (0/6) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 
@@ -49,6 +52,7 @@
 | L000017 | D000102 (LPS–TLR4–NF-κB 신호 전달) | Concentration_Gap | 막(2D) 분자가 낀 반응을 인접 3D 구획 부피의 농도로 환산함 — 면적 농도(분자/µm²)와 막 면적이 없다<br>발견: 2026-10-08 속도 기반 시뮬레이터(simulate --rate)의 AUDIT_RESOLUTION | ✗ 수동: 세포막 면적(세포 유형별)과 면적 농도 모델 — 2D 반응 속도(k_on 단위 µm²/s)를 담을 어휘 | open (0/1) | — |
 | L000039 | D000148 (시트르산 회로) | Concentration_Gap | 미토콘드리아 기질 부피와 아세틸-CoA·NAD⁺·옥살로아세트산 농도 — 없으면 소진 시각·완료 바퀴 수가 기본값·가상 시작량에 좌우된다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000134 아세틸-CoA · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000144 NAD⁺ · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000136 옥살로아세트산 · 미토콘드리아 기질 | open (0/4) | — |
 | L000047 | D000116 (구획 농도 모델) | Concentration_Gap | 구획별 pH 와 상대 유전율(세포질·미토콘드리아 기질·핵질) — 없으면 Tier 1 환경 보정 ΔG_env 가 0 (기준 환경)으로 계산된다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 pH @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 핵질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 핵질 | open (0/6) | — |
+| L000062 | D000174 (활성화된 CD8 T 세포) | Concentration_Gap | 활성 CD8 T 세포의 구획 부피(세포질·핵질·미토콘드리아 기질)와 포도당·팔미토일-CoA·보조 인자 시작량 — 없으면 시나리오 값(가상)으로 시작한다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 세포질<br>✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 핵질<br>✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 미토콘드리아 기질 | open (0/3) | — |
 
 ## Structural_Gap — 구조·위상·해상도 공백
 
@@ -69,6 +73,10 @@
 | L000026 | D000101 (TNF mRNA) | Structural_Gap | TNF mRNA 의 서열 길이(뉴클레오타이드 수, 사람) — 없으면 분해 때 뉴클레오타이드 몇 개가 돌아가는지 몰라 재활용분을 소실로 처리한다<br>발견: TNF mRNA 분해 규칙(recycle_to n: sequence_length)에 관찰이 없음 | ✗ 관찰 sequence_length @ D000101 TNF mRNA | open (0/1) | D000128 생애 주기 모델 |
 | L000027 | D000098/rule/ikba_degradation (26S 프로테아좀 · ikba_degradation) | Structural_Gap | 프로테아좀이 기질 하나를 분해할 때 쓰는 ATP 수 — 지금은 1 분자(ATP → ADP + Pi)로 둔 단순화라 ATP 저장소 소비가 실제보다 적다<br>발견: v7 부분 구조 수지 검사가 ATP → ADP 에서 빠진 Pi 를 잡아 규칙을 고치면서 화학량 단순화가 드러남 | ✗ 수동: 26S 프로테아좀의 기질당 ATP 가수분해 화학량을 문헌에서 확인해 with 화학량(단계 n)에 반영 | open (0/1) | — |
 | L000040 | D000154/rule/oxidize (석신산 탈수소효소 · oxidize) | Structural_Gap | 석신산 탈수소효소는 내막 복합체 II 이고 FAD 가 공유 결합한 보결분자단이며 전자는 유비퀴논으로 간다 — 지금은 기질의 자유 FAD 저장소로 단순화<br>발견: 시트르산 회로를 넣으면서 | ✗ 수동: 복합체 II 를 소단위·막 위상(내막, 기질 면)·공유 결합 FAD 부위를 가진 복합체로 정의하고 유비퀴논 풀(내막 2D 저장소)을 전자 수용체로 | open (0/1) | — |
+| L000058 | D000165 (T-bet) | Structural_Gap | 전사 인자 합성을 source(계 밖 원료)로 둠 — 번역의 아미노산·ATP·GTP 화학량(서열 길이 × 결합당 비용)을 몰라 합성이 대사 저장소를 소비하지 않는다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 관찰 sequence_length @ D000165 T-bet<br>✗ 관찰 sequence_length @ D000166 Eomes<br>✗ 수동: 번역 비용(펩타이드 결합당 ATP·GTP)과 아미노산 저장소 | open (0/3) | — |
+| L000059 | D000170/rule/aerobic_glycolysis (해당과정 · aerobic_glycolysis) | Structural_Gap | 포도당·피루브산·젖산에 탄소 골격 단위가 선언되지 않아 해당과정·젖산 발효의 탄소 수지를 검사하지 못함 (포도당은 글리코겐 경로에서 리간드로도 쓰여 함께 고쳐야 함)<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 수동: 포도당 6·피루브산 3·젖산 3 탄소 골격 단위 선언과 글리코겐 경로(포도당-1-인산) 수지 정리 | open (0/1) | — |
+| L000060 | D000172/rule/palmitoyl_oxidation (지방산 β-산화 · palmitoyl_oxidation) | Structural_Gap | 지방산 활성화(아실-CoA 합성효소, ATP → AMP + PPi)와 CPT1/CPT2 유입을 상류로 묶고 기질을 팔미토일-CoA 로 둠 — 세포질 ATP 비용과 막 수송이 빠졌다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 수동: 아실-CoA 합성효소·CPT1A·CPT2·카르니틴 정의항과 수송 단계 | open (0/1) | — |
+| L000061 | D000148/rule/lumped_oxidation (시트르산 회로 · lumped_oxidation) | Structural_Gap | 세포 운명 층은 회로를 순 반응으로(석시닐-CoA 합성효소의 GTP 생산 생략), NADH·FADH₂ 재산화를 ATP 생산과 짝짓지 않고 다룸 — P/O 비와 기질 ATP 생산(산화적 인산화)이 없어 기억 세포의 ATP 공급을 계산하지 못한다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 수동: 산화적 인산화(ATP 생성효소) 공급 규칙과 NADH 재산화와의 짝(P/O 비) | open (0/1) | — |
 
 ## Resource_Gap — 자원(저장소) 공백
 
@@ -80,6 +88,23 @@
 | L000035 | D000157/rule/nad_regen (NADH 재산화 (전자 전달계) · nad_regen) | Resource_Gap | 전자 전달계의 NADH 재산화 속도 — 없으면 회로 한 바퀴마다 NAD⁺ 3 분자가 NADH 로 쌓이고 NAD⁺ 고갈로 멈춘다 (NAD⁺ 시작량 ÷ 3 바퀴)<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 k @ D000157/rule/nad_regen | open (0/1) | — |
 | L000036 | D000158/rule/fad_regen (FADH₂ 재산화 · fad_regen) | Resource_Gap | FADH₂ 재산화 속도 — 없으면 바퀴마다 FAD 1 분자가 소비되어 FAD 고갈로 석신산 산화가 멈춘다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 속도 상수 k @ D000158/rule/fad_regen | open (0/1) | — |
 | L000042 | D000123/rule/gdp_regeneration_matrix (뉴클레오사이드 이인산 키네이스 · gdp_regeneration_matrix) | Resource_Gap | 미토콘드리아 기질의 GTP → GDP 재생 속도 (NDPK 기질 쪽 아형 또는 석시닐-CoA 합성효소의 ADP 형 아형 비율) — 없으면 석시닐-CoA 합성효소가 기질 GDP 를 다 써서 회로가 GDP 고갈로 멈춘다 (GDP 시작량 = 최대 바퀴 수)<br>발견: 시트르산 회로 소진 시험 3(가상)의 사후 분석: 기질 GTP 를 GDP 로 되돌리는 경로가 없어 GDP 저장소가 정확히 그 수만큼의 바퀴 뒤 고갈 | ✗ 속도 상수 k @ D000123/rule/gdp_regeneration_matrix | open (0/1) | — |
+| L000067 | D000046 (포도당) | Resource_Gap | 세포 밖 포도당의 흡수(GLUT1 수송)와 배지 포도당 양 — 없으면 운명 층은 세포질 포도당을 완충 저장소(농도 고정·총량 유한)로 두고, 그것이 바닥나면 해당 흐름이 끊겨 효과기 분화가 멈춘다(사후 분석의 제한 요인)<br>발견: 세포 운명 엔진 스트레스 시험 — IL-12 + 포도당 결핍(가상 시나리오) 사후 분석 | ✗ 수동: GLUT1(SLC2A1) 정의항과 세포막 수송 단계(세포 밖 → 세포질)<br>✗ 관찰 concentration @ D000046 포도당 · 세포 밖 | open (0/2) | — |
+| L000068 | D000169 (팔미토일-CoA) | Resource_Gap | 지방산의 흡수·지질 방울 분해와 활성화(아실-CoA 합성효소)·CPT1 유입 — 없으면 운명 층은 기질 팔미토일-CoA 를 완충 저장소로 두고, 그것이 바닥나면 β-산화가 끊겨 기억 전구 분화가 멈춘다<br>발견: 세포 운명 엔진 스트레스 시험 — IL-15 + 지방산 결핍(가상 시나리오) 사후 분석 | ✗ 수동: CD36·지질 방울 지방분해·아실-CoA 합성효소·CPT1A 정의항과 단계 | open (0/1) | — |
+
+## Regulatory_Gap — 조절 연결 공백 (신호 전달·유전자 조절)
+
+신호 → 대사, 대사 → 유전자 조절의 매개 단계(수용체·STAT·mTORC1·염색질)를 단계로 풀지 않고 조절 규칙 하나로 묶었거나, 조절 상수(K·n·fmax)를 모르는 곳 (형식 v9).
+
+| ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |
+|---|---|---|---|---|---|---|
+| L000049 | D000163/rule/glycolysis_induction (IL-12 · glycolysis_induction) | Regulatory_Gap | IL-12 → 해당과정 사이의 IL-12 수용체·STAT4·mTORC1 단계가 풀리지 않았고 힐 상수(K·n·fmax)를 모름 — 신호 세기와 해당 흐름의 관계가 가상 시나리오 값에 기댄다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000163/rule/glycolysis_induction<br>✗ 수동: IL-12 수용체(IL12RB1·IL12RB2)·STAT4·mTORC1 정의항과 단계 | open (0/2) | — |
+| L000050 | D000163/rule/tbet_induction (IL-12 · tbet_induction) | Regulatory_Gap | IL-12 → T-bet 유도의 힐 상수(용량-반응)를 모름<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000163/rule/tbet_induction | open (0/1) | — |
+| L000051 | D000163/rule/eomes_repression (IL-12 · eomes_repression) | Regulatory_Gap | IL-12 ⊣ Eomes 억제의 힐 상수를 모르고, 억제 매개(STAT4·T-bet·염색질)가 풀리지 않음<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n @ D000163/rule/eomes_repression<br>✗ 수동: 억제 매개 분자의 정의항과 단계 | open (0/2) | — |
+| L000052 | D000164/rule/fao_induction (IL-15 · fao_induction) | Regulatory_Gap | IL-15 → STAT5 → CPT1A 단계가 풀리지 않았고 힐 상수를 모름<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000164/rule/fao_induction<br>✗ 수동: IL-2/IL-15Rβ·공통 γ 사슬·STAT5·CPT1A 정의항과 단계 | open (0/2) | — |
+| L000053 | D000165/rule/eomes_antagonism (T-bet · eomes_antagonism) | Regulatory_Gap | T-bet ⊣ Eomes · Eomes ⊣ T-bet 상호 억제와 두 자기 활성화는 추론(abstracted)이다 — 실제 조절 회로(공동 결합 부위·염색질)와 상수가 없어 쌍안정성의 위치(분리선)가 가상 값으로 정해진다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n @ D000165/rule/eomes_antagonism<br>✗ 속도 상수 K·n @ D000166/rule/tbet_antagonism<br>✗ 속도 상수 K·n·fmax @ D000165/rule/tbet_autoactivation<br>✗ 속도 상수 K·n·fmax @ D000166/rule/eomes_autoactivation<br>✗ 수동: T-bet·Eomes 프로모터·인핸서 결합 근거 | open (0/5) | — |
+| L000054 | D000167/rule/tbet_licensing (피루브산 · tbet_licensing) | Regulatory_Gap | 해당 흐름 → 효과기 프로그램 허가를 피루브산 농도로 대신함 — 실제 매개(GAPDH 의 IFN-γ mRNA 번역 조절, 포도당 유래 아세틸-CoA 의 히스톤 아세틸화)가 없다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000167/rule/tbet_licensing<br>✗ 수동: GAPDH 번역 조절·ACLY·히스톤 아세틸화 단계 | open (0/2) | — |
+| L000055 | D000134/rule/eomes_licensing (아세틸-CoA · eomes_licensing) | Regulatory_Gap | 지방산 산화 → 기억 프로그램 허가를 기질 아세틸-CoA 농도로 대신함 — 실제 매개(미토콘드리아 여분 호흡 능력·AMPK)가 없다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000134/rule/eomes_licensing<br>✗ 수동: 여분 호흡 능력·AMPK 매개의 정의항과 단계 | open (0/2) | — |
+| L000056 | D000165/rule/glycolysis_maintenance (T-bet · glycolysis_maintenance) | Regulatory_Gap | 결정된 프로그램이 대사를 유지하는 되먹임(T-bet → 해당, Eomes → β-산화)은 추론이며 상수를 모름<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000165/rule/glycolysis_maintenance<br>✗ 속도 상수 K·n·fmax @ D000166/rule/fao_maintenance | open (0/2) | — |
 
 ## Identity_Gap — 정체성(외부 ID) 공백
 
@@ -94,3 +119,6 @@
 | L000032 | D000122 (피로인산) | Identity_Gap | 피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000122 피로인산 | open (0/1) | — |
 | L000033 | D000101 (TNF mRNA) | Identity_Gap | TNF mRNA 전사체 ID — 외부 ID 어휘에 RefSeq(NM_)·Ensembl 전사체 체계가 없어 정체성을 외부 ID 로 고정하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ 수동: vocab.js xrefs 에 전사체 ID 체계(RefSeq NM_ 또는 Ensembl ENST)를 사람이 검토해 추가한 뒤, 원본에서 확인한 TNF 표준 전사체 ID 를 등록 | open (0/1) | — |
 | L000041 | D000148 (시트르산 회로) | Identity_Gap | 시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped<br>발견: 시트르산 회로를 넣으면서 (Identity_Gap) | ✗ ChEBI ID @ D000134 아세틸-CoA<br>✗ ChEBI ID @ D000135 조효소 A<br>✗ ChEBI ID @ D000136 옥살로아세트산<br>✗ ChEBI ID @ D000137 시트르산<br>✗ ChEBI ID @ D000138 아이소시트르산<br>✗ ChEBI ID @ D000139 2-옥소글루타르산<br>✗ ChEBI ID @ D000140 석시닐-CoA<br>✗ ChEBI ID @ D000141 석신산<br>✗ ChEBI ID @ D000142 푸마르산<br>✗ ChEBI ID @ D000143 말산<br>✗ ChEBI ID @ D000160 이산화탄소<br>✗ ChEBI ID @ D000144 NAD⁺<br>✗ ChEBI ID @ D000145 NADH<br>✗ ChEBI ID @ D000146 FAD<br>✗ ChEBI ID @ D000147 FADH₂ | open (0/15) | — |
+| L000064 | D000167 (피루브산) | Identity_Gap | 피루브산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ ChEBI ID @ D000167 피루브산 | open (0/1) | — |
+| L000065 | D000168 (젖산) | Identity_Gap | L-젖산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ ChEBI ID @ D000168 젖산 | open (0/1) | — |
+| L000066 | D000169 (팔미토일-CoA) | Identity_Gap | 팔미토일-CoA ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ ChEBI ID @ D000169 팔미토일-CoA | open (0/1) | — |

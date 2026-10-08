@@ -25,6 +25,8 @@
     structure_feature: { label: '구조 요소 (부위·도메인 개념)', aliases: ['domain', 'site', '도메인'], participant: false, species: 'optional', xref: { allowed: ['InterPro', 'PDB'] } },
     principle:      { label: '원리', aliases: ['법칙', 'principle'], participant: false, species: 'forbidden', xref: { allowed: [] } },
     concept:        { label: '일반 개념', aliases: ['개념'], participant: false, species: 'optional', xref: { allowed: [] } },
+    // 형식 v9 — 세포 운명: 세포 상태·계통(분화 단계). 분자가 아니라 표지 서명(signature)·대사 프로그램(metabolome)·전이(transitions)로 정의되는 상태
+    cell_state:     { label: '세포 상태·계통 (분화 단계 — 표지·대사 프로그램으로 정의)', aliases: ['cell state', 'cell type', '세포 유형', '계통', 'lineage'], participant: false, species: 'optional', xref: { allowed: ['CL'] } },
   },
 
   // ===== 관계의 종류 제약 (원천 kind → 대상 kind) =====
@@ -35,6 +37,7 @@
       molecule_class: ['molecule_class'],
       pathway: ['pathway', 'process'], process: ['process', 'concept'],
       structure_feature: ['structure_feature', 'concept'], principle: ['principle', 'concept'], concept: ['concept'],
+      cell_state: ['cell_state', 'concept'],
     },
     part_of: {
       protein: ['@molecular'], complex: ['@molecular'], nucleic_acid: ['@molecular'], small_molecule: ['@molecular'],
@@ -86,6 +89,7 @@
     cardiomyocyte: { label: '심근세포', tissue: 'heart' }, adipocyte: { label: '지방세포', tissue: 'adipose' },
     neuron: { label: '신경세포', tissue: 'brain', aliases: ['뉴런'] }, erythrocyte: { label: '적혈구', tissue: 'blood' },
     macrophage: { label: '대식세포', aliases: ['macrophage'] }, monocyte: { label: '단핵구', tissue: 'blood', aliases: ['monocyte'] },
+    cd8_t_cell: { label: 'CD8 T 세포', aliases: ['CD8+ T cell', 'CD8 T cell', '세포독성 T 세포'] },
   },
 
   // ===== 위치 — 계층·차원·인접 =====
@@ -211,6 +215,8 @@
     binding:          { label: '가역 결합 (k_on·k_off·Kd)', required: ['k_on|Kd', 'k_off|Kd'], aliases: ['reversible binding'] },
     michaelis_menten: { label: '미카엘리스–멘텐', required: ['kcat', 'Km'], aliases: ['MM', 'michaelis-menten'] },
     zero_order:       { label: '0차 (일정한 공급 속도, k 는 M·s⁻¹)', required: ['k'], aliases: ['zero order', 'constant supply'] },
+    // 형식 v9 — 조절 규칙 전용: 조절자 농도 s(M)에 대한 무차원 배율. 활성화 f = 1 + (fmax − 1)·sⁿ/(Kⁿ + sⁿ), 억제 f = fmin + (1 − fmin)·Kⁿ/(Kⁿ + sⁿ)
+    hill:             { label: '힐 조절 배율 (K M, n, fmax | fmin — 조절 규칙에만)', required: ['K', 'n'], aliases: ['Hill'] },
   },
 
   // ===== 3 층 다중 규모 엔진 (형식 v8) — docs/design/hybrid-multiscale-engine.md =====
@@ -240,6 +246,17 @@
     meaning:    { label: '상태 의미 규칙 (부위:특징 조합 → 활성)' },
     transition: { label: '전이 규칙 (단계가 적용하는 변화)' },
     supply:     { label: '대사물 공급 규칙 (Metabolic_Supply_Rule — 저장소의 소비·생성, 예: ADP + Pi → ATP)' },
+    degradation:{ label: '분해 규칙 (Degradation_Rule — 소유자의 묶음이 1차로 분해, lost | recycled)' },
+    modulation: { label: '조절 규칙 (Signal-to-Metabolism / 유전자 조절 — 소유자(조절자) 농도가 다른 규칙의 속도를 힐 배율로 바꿈, 형식 v9)' },
+  },
+  // ===== 세포 운명 (형식 v9) — 세포 상태의 표지 서명·대사 프로그램·결정 기준 =====
+  signatureLevels: {
+    high: { label: '높음 (문턱 이상)', aliases: ['high', '고발현'] },
+    low:  { label: '낮음 (문턱 이하)', aliases: ['low', '저발현', 'absent'] },
+  },
+  commitmentCriteria: {
+    withdrawal: { label: '신호 철회 시험 — 그 시각에 모든 신호를 끊어도 목표 상태로 수렴하면 결정(비가역)된 것. 결정 시점 = 처음으로 이 시험을 통과한 시각' },
+    threshold:  { label: '표지 문턱 — 목표 상태의 모든 표지가 문턱을 넘으면 도달 (가역일 수 있음)' },
   },
 
   // ===== 혼합 해상도 (Hybrid-Resolution) — 전환 문턱 =====
@@ -262,6 +279,7 @@
     Concentration_Gap: { label: '농도·부피·질량 수지 공백', aliases: ['concentration'], note: '몰 농도, 세포당 분자 수, 구획 부피, 질량 수지가 없어 시작량을 기본값·무한 풀로 둔 곳.' },
     Structural_Gap:    { label: '구조·위상·해상도 공백', aliases: ['structural'], note: '3차원 좌표, 잔기 번호, 화학량(구성 비), 막 위상을 모르거나 다른 분자에서 빌려 온 곳.' },
     Resource_Gap:      { label: '자원(저장소) 공백', aliases: ['resource'], note: '재생·공급 경로나 그 속도가 없어 저장소가 고갈되고 경로가 멈추는 곳 — 사후 분석(post-mortem)이 제한 요인으로 지목한 저장소. 공급 규칙의 속도·시작량이 들어오면 닫힌다.' },
+    Regulatory_Gap:    { label: '조절 연결 공백 (신호 전달·유전자 조절)', aliases: ['regulatory', 'signaling'], note: '신호 → 대사, 대사 → 유전자 조절의 매개 단계(수용체·STAT·mTORC1·염색질)를 단계로 풀지 않고 조절 규칙 하나로 묶었거나, 조절 상수(K·n·fmax)를 모르는 곳 (형식 v9).' },
     Identity_Gap:      { label: '정체성(외부 ID) 공백', aliases: ['identity', 'unmapped'], note: '필수 외부 ID(ChEBI·UniProt …)를 원본과 대조하지 못해 unmapped 에 사유만 둔 곳. 확인된 ID 가 들어오면 닫힌다.' },
   },
 
@@ -285,6 +303,7 @@
     Reactome: { pattern: '^R-[A-Z]{3}-[0-9]+$', url: 'https://reactome.org/content/detail/{id}' },
     KEGG:     { pattern: '^(map|ko|hsa)[0-9]{5}$', url: 'https://www.kegg.jp/entry/{id}' },
     NCBIGene: { pattern: '^[0-9]+$', url: 'https://www.ncbi.nlm.nih.gov/gene/{id}' },
+    CL:       { pattern: '^CL:[0-9]{7}$', url: 'https://www.ebi.ac.uk/ols4/ontologies/cl/classes?obo_id={id}' },
     InterPro: { pattern: '^IPR[0-9]{6}$', url: 'https://www.ebi.ac.uk/interpro/entry/InterPro/{id}' },
     PMID:     { pattern: '^[0-9]+$', url: 'https://pubmed.ncbi.nlm.nih.gov/{id}' },
     DOI:      { pattern: '^10\\.[0-9]{4,}/\\S+$', url: 'https://doi.org/{id}' },

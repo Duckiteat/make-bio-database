@@ -8,7 +8,7 @@ const DefDB = createRequire(import.meta.url)('../core.js');
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 8 }, o);
+const P = (o) => Object.assign({ format: 'definition-db-patch', version: 9 }, o);
 const run = (patch, opt) => { const res = DefDB.merge(BASE, P(patch)); return { res, g: DefDB.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
@@ -440,7 +440,8 @@ const TNFG = id('TNF 유전자'), PKAR = id('PKA'), PDE = id('포스포다이에
 const withKin = (owner, rid, kinetics) => ({ id: owner, rule: BASE.senses[owner].rule.map((r) => (r.id === rid ? { ...r, kinetics } : r)) });
 const pred = { level: 'predicted', confidence: 0 };
 test('속도 무결성: 법칙·필수 상수·Kd = k_off/k_on·두 분자 결합·효소 규칙', () => {
-  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'hill', evidence: pred })] }, /반응 속도 법칙 'hill'/);
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'monod', evidence: pred })] }, /반응 속도 법칙 'monod'/);
+  rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'hill', K: 1e-9, n: 1, fmax: 2, evidence: pred })] }, /hill 법칙은 조절 규칙\(modulation\)에만/);
   rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', k_on: 1e6, evidence: pred })] }, /k_off 또는 Kd/);
   rejectedFor({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', k_on: 1e6, k_off: 1, Kd: 1e-9, evidence: pred })] }, /Kd 와 k_off\/k_on 이 맞지 않음/);
   rejectedFor({ senses: [withKin(PKAR, 'camp_release', { law: 'binding', Kd: 1e-7, k_on: 1e7, evidence: pred })] }, /두 분자 결합.*5분자/);
@@ -998,4 +999,61 @@ test('P5 종단: 10,000 동적 단계 |ΔN| = 0, 장–원장 ≤ 1e-15, 음수 
   assert.equal(r.massError, 0); assert.ok(r.moietyExact && r.fieldParity <= 1e-15 && r.negatives === 0 && r.maxL2 < 0.02);
   assert.ok(r.shockDemote.step === r.shockAt && r.repromote.step >= r.shockAt + 21);
   assert.equal(r.flipsHystPromoted + r.flipsAdversarial + r.flipsHystDemoted, 0);
+});
+
+// ===== 형식 v9: 세포 운명 층 =====
+const FATE = createRequire(import.meta.url)('../engine/fate_engine.js'), FSUITE = createRequire(import.meta.url)('./fate_suite.js');
+const TBETD = id('T-bet'), EOMESD = id('Eomes'), IL12D = id('IL-12'), IL15D = id('IL-15'), ACTD = id('활성화된 CD8 T 세포'), EFFD = id('효과기 CD8 T 세포');
+const withRules = (sid, f) => { const d = JSON.parse(JSON.stringify(BASE.senses[sid])); f(d.rule); return { senses: [{ id: sid, rule: d.rule }] }; };
+const hillK = (o) => Object.assign({ law: 'hill', K: 1e-9, n: 1, evidence: { level: 'predicted', confidence: 0 } }, o);
+test('v9 조절 규칙: 대상은 속도가 있는 규칙, 조절자 위치는 3D, 활성화 fmax > 1 · 억제 0 ≤ fmin < 1, hill 은 조절에만', () => {
+  rejectedFor(withRules(IL12D, (r) => { r[0].target = `${TBETD}/rule/없는규칙`; }), /조절 대상 규칙 .* 없음/);
+  rejectedFor(withRules(IL12D, (r) => { r[0].target = `${id('IKK 복합체')}/rule/active`; }), /조절 대상은 속도가 있는 규칙/);
+  rejectedFor(withRules(IL12D, (r) => { r[0].at = 'plasma_membrane'; }), /부피\(3D\) 구획이어야 함/);
+  rejectedFor(withRules(IL12D, (r) => { r[0].kinetics = hillK({ fmax: 1 }); }), /fmax > 1|fmax 는 1 보다 커야 함/);
+  rejectedFor(withRules(IL12D, (r) => { r[2].kinetics = hillK({ fmin: 1.5 }); }), /fmin 은 0 ≤ fmin < 1|0 ≤ fmin < 1/);
+  rejectedFor(withRules(IL12D, (r) => { r[2].kinetics = hillK({ fmax: 3 }); }), /억제 조절에는 fmax 를 두지 않음|억제 조절은 0 ≤ fmin/);
+  rejectedFor(withRules(IL12D, (r) => { r[0].kinetics = { law: 'mass_action', k: 1, order: 1, evidence: { level: 'predicted', confidence: 0 } }; }), /조절 규칙의 속도 법칙은 hill/);
+  rejectedFor(withRules(IL12D, (r) => { r[0].via = ['없는분자']; }), /없는분자/);
+  passes(withRules(IL12D, (r) => { r[0].kinetics = hillK({ fmax: 5 }); r[2].kinetics = hillK({ fmin: 0.5 }); }));
+});
+test('v9 세포 상태: 서명 필수(분자·수준·3D 위치), 대사 프로그램은 공급 규칙, 전이는 cell_state·신호·결정 기준, 다른 kind 는 못 씀', () => {
+  const cs = (f) => { const d = JSON.parse(JSON.stringify(BASE.senses[ACTD])); f(d); return { senses: [{ id: ACTD, signature: d.signature, metabolome: d.metabolome, transitions: d.transitions }] }; };
+  rejectedFor(cs((d) => { d.signature = []; }), /표지 서명\(signature\)이 필요함/);
+  rejectedFor(cs((d) => { d.signature[0].ref = id('해당과정'); }), /분자 종류가 아님/);
+  rejectedFor(cs((d) => { d.signature[0].level = 'medium'; }), /수준 'medium'/);
+  rejectedFor(cs((d) => { d.signature[0].location = 'plasma_membrane'; }), /부피\(3D\) 위치/);
+  rejectedFor(cs((d) => { d.metabolome[0].ref = `${TBETD}/rule/turnover`; }), /대사 프로그램은 공급 규칙\(supply\)만/);
+  rejectedFor(cs((d) => { d.transitions[0].to = TBETD; }), /cell_state 가 아님/);
+  rejectedFor(cs((d) => { d.transitions[0].signals = []; }), /신호\(signals\)가 없음/);
+  rejectedFor(cs((d) => { d.transitions[0].commitment.criterion = 'vibes'; }), /결정 기준 'vibes'/);
+  rejectedFor({ senses: [{ id: TBETD, signature: [{ ref: EOMESD, level: 'high', location: 'nucleoplasm' }] }] }, /kind cell_state 만/);
+});
+test('v9 포화 보조 기질: 화학량대로 소비하지만 질량 작용 차수에서 빠짐, 생성물에는 못 씀, 모두 포화면 거부', () => {
+  const G = id('해당과정');
+  rejectedFor(withRules(G, (r) => { r[0].kinetics = { law: 'mass_action', k: 1e-3, order: 7, evidence: { level: 'predicted', confidence: 0 } }; }), /차수 7 가 소비 분자 수\(1, saturating 제외\)/);
+  passes(withRules(G, (r) => { r[0].kinetics = { law: 'mass_action', k: 1e-3, order: 1, evidence: { level: 'predicted', confidence: 0 } }; }));
+  rejectedFor(withRules(G, (r) => { r[0].produces[0].saturating = true; }), /saturating 은 소비\(consumes\)에만/);
+  rejectedFor(withRules(G, (r) => { for (const q of r[0].consumes) q.saturating = true; }), /모든 소비가 saturating/);
+});
+test('v9 힐 배율: 활성화 1 → fmax, 억제 1 → fmin, s = K 에서 절반', () => {
+  const k = { K: 2e-9, n: 2, fmax: 5 }, ki = { K: 2e-9, n: 2, fmin: 0.2 };
+  assert.equal(DefDB.hillFactor('activates', k, 0), 1);
+  assert.ok(Math.abs(DefDB.hillFactor('activates', k, 2e-9) - 3) < 1e-12 && DefDB.hillFactor('activates', k, 1) > 4.999);
+  assert.equal(DefDB.hillFactor('inhibits', ki, 0), 1);
+  assert.ok(Math.abs(DefDB.hillFactor('inhibits', ki, 2e-9) - 0.6) < 1e-12 && DefDB.hillFactor('inhibits', ki, 1) < 0.2001);
+});
+test('v9 계 조립: 상태 전이로 닿는 세 상태, 빠른 층(대사)·느린 층(표지 합성·분해), 조절 12 개, 신호 묶음', () => {
+  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8'));
+  const A = FATE.assemble(BASE, ACTD, sc);
+  assert.deepEqual(A.states, [ACTD, EFFD, id('기억 전구 CD8 T 세포')]);
+  assert.equal(A.rules.filter((r) => r.slow).length, 4);
+  assert.ok(A.rules.filter((r) => !r.slow).length >= 9);
+  assert.equal(A.rules.reduce((t, r) => t + r.mods.length, 0), 12);
+  assert.ok(A.signals.includes(`${IL12D}|extracellular`) && A.signals.includes(`${IL15D}|extracellular`));
+  assert.ok(FATE.simulateFate(BASE, TBETD, { scenario: sc }).error, '세포 상태가 아니면 오류');
+});
+test('v9 Fate-Test: 계통 충실도·경쟁·결정 비가역성(관문 충격 강등)·분화 정지 사후 분석·다른 운명·다중 규모 정확도·질량', () => {
+  const r = FSUITE.run({ quiet: true, quick: true });
+  assert.ok(r.pass, r.checks.filter((c) => !c.ok).map((c) => `${c.group} ${c.name}: ${c.detail}`).join('\n'));
 });

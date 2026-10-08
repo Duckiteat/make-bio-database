@@ -23,6 +23,8 @@
 //   node dbtool.mjs textbook  [--write | --check]            교과서 부록(docs/textbook/90-부록-자동생성.md) 생성 / 최신·파일 분류 검사
 //   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N] [--until-death] [--window s] [--death-frac f]
 //                                                           속도 기반 시뮬레이션 (유한 대사물 저장소·공급·분해·매 Δt 질량 감사·정지까지 실행·사후 분석)
+//   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]
+//                                                           세포 운명 (v9): 신호 → 대사 → 전사 인자 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
@@ -209,12 +211,23 @@ switch (cmd) {
     if (opt.until && (/✗/.test(txt))) process.exit(1);
     break;
   }
+  case 'fate': {
+    if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]');
+    const db = loadDB(), x = DefDB.resolveRef(DefDB.index(db), args[0]);
+    if (x.error) die(x.error);
+    const FATE = createRequire(import.meta.url)('./engine/fate_engine.js');
+    const scenario = JSON.parse(readFileSync(flags.scenario, 'utf8'));
+    if (flags.t) scenario.t_end = +flags.t * 3600;
+    const r = FATE.simulateFateText(db, x.id, { scenario, mode: flags.fine ? 'fine' : undefined, commitment: flags['no-commitment'] ? false : undefined });
+    console.log(r.text);
+    process.exit(r.code);
+  }
   case 'prompt': {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

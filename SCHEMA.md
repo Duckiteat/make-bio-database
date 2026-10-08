@@ -1,4 +1,4 @@
-# 스키마와 매핑 규칙 (형식 버전 6)
+# 스키마와 매핑 규칙 (형식 버전 9)
 
 이 데이터베이스는 AI가 채운다. 규칙 없이 쌓이면 같은 개념이 여러 이름으로 생기고, 값이 제각각이 되어 연결이 끊긴다.
 그래서 **모든 입력은 패치 → 매핑 → 검사 → 관문**을 거치고, 하나라도 어기면 패치 전체가 거부된다.
@@ -336,6 +336,25 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - `audit-run`: **AUDIT_THERMO** — 경로의 단계 순환 중 순 화학량이 0 인 닫힌 고리에서 ΣdG0 ≠ 0 (허용 `vocab.thermo.loop_tolerance` J/mol) — Wegscheider 조건 위반.
 - 실행 상태(영역·원장·경계 거래·영역 점수)는 데이터베이스가 아니라 시나리오 `domains`(domain-config 스키마)와 실행 층(`engine/hmse.js`)에 둔다 — 지식과 실행 상태를 섞지 않는다.
 
+## 8G. 세포 운명 층 — 형식 v9
+
+설계: `docs/design/cell-fate-engine.md`. 실행: `engine/fate_engine.js` (`node dbtool.mjs fate <세포 상태> --scenario s.json`). "운명 = 상태 전이": 세포 상태는 표지 서명으로 정의되고, 신호 → 대사 → 전사 인자 사슬(조절 규칙)이 상태를 옮긴다.
+
+| 필드 | 위치 | 규칙 |
+|---|---|---|
+| kind `cell_state` | 정의항 | 분자가 아닌 상태 — 규칙·부위·부분 구조·구성 요소·층 없음. `signature` 필수. 외부 ID 는 `CL`(Cell Ontology, `CL:0000000`)만 |
+| `signature: [{ ref, level, location }]` | cell_state | 표지 분자(분자 종류) · 수준 `high | low`(`signatureLevels`) · 부피(3D) 위치. 같은 묶음 두 번 금지. 문턱 값(분자 수)은 시나리오 `thresholds[묶음] = { high, low }` |
+| `metabolome: [{ ref: "D…/rule/키", level }]` | cell_state | 그 상태의 대사 프로그램 — 공급 규칙(supply)만. 수준은 기록용(속도는 조절 규칙과 시나리오가 정함) |
+| `transitions: [{ to, signals, commitment: { criterion }, text, evidence }]` | cell_state | `to` 는 cell_state, `signals` 는 분자 종류(하나 이상), `criterion` = `withdrawal`(신호 철회 시험 — 비가역 결정) \| `threshold`(표지 문턱 도달) (`commitmentCriteria`) |
+| 규칙 `type: modulation` | 분자 종류 정의항 (조절자) | `{ target: "D…/rule/키", effect: activates | inhibits, at: 3D 위치, via: [D…], kinetics: { law: hill, K, n, fmax | fmin } }`. 대상은 supply · transition · degradation, 자기 자신 금지. 조절자 묶음 = `소유자|at`, 배율: 활성화 f = 1 + (fmax − 1)·sⁿ/(Kⁿ + sⁿ) (fmax > 1), 억제 f = fmin + (1 − fmin)·Kⁿ/(Kⁿ + sⁿ) (0 ≤ fmin < 1). 여러 조절은 곱한다. `via` 는 생략한 매개 분자(출처) |
+| 속도 법칙 `hill` | kinetics | 조절 규칙에만, 조절 규칙은 hill 만. `K`(M) > 0, `n` > 0. 활성화에 fmin, 억제에 fmax 를 두지 않음 |
+| 공급 소비 `saturating: true` | supply 의 consumes 항목 | 포화 보조 기질 — 화학량대로 소비(수지·원장)하지만 질량 작용 차수에서 빠진다. 속도에는 c/(c + K_sat) (K_sat 기본 1 µM, 시나리오 `saturation_K`) — 바닥날 때 속도를 끄는 수치 정칙화. 생성물에는 못 쓰고, 모든 소비가 포화일 수는 없음 |
+| 한계 종류 `Regulatory_Gap` | 한계 | 신호 전달·유전자 조절 매개를 조절 규칙 하나로 묶었거나 힐 상수를 모르는 곳. `detectGaps` 가 힐 상수 없는 조절 규칙을 후보로 잡는다 |
+
+- `simulateRate`(경로 시뮬레이션)도 조절 규칙을 적용한다 — 단계·공급·분해의 속도에 배율을 곱하고, 힐 상수가 없으면 배율 1 로 두고 `modulationGaps` 로 보고.
+- 운명 엔진(시나리오 층, 데이터베이스 밖): `volumes` · `amounts` · `buffered[묶음] = { conc_M, total }`(완충 저장소 — 남은 양이 한 구획분 이상이면 농도 고정, 질량은 정확히 줄어듦 — 배지 + 수송체 근사) · `signals[묶음] = [{ t, n }]`(경계 조건 — 질량 감사 밖) · `thresholds` · `kinetics` · `dt_slow` · `t_end` · `gate`(P5 K_up/K_down/M/W) · `shock_threshold` · `explicit_fraction` · `commitment { horizon, coarse }` · `arrest_window` · `target`.
+- 감사: `AUDIT_FATE`(목표 상태 도달 실패 — 사후 분석 원인 resource_exhaustion | signal_insufficient | antagonist_dominance | alternative_fate | kinetic_stall, 제한 묶음, 교정 제안), `AUDIT_MASS`(부분 구조 원장 — 매 느린 단계), `AUDIT_RESOURCE`(소비만 되는 저장소), `AUDIT_CONCENTRATION`(부피·문턱 없음).
+
 ## 9. 외부 ID
 
 | kind | 필수 | 허용 |
@@ -409,6 +428,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 9 | 세포 운명 층: kind `cell_state`(signature · metabolome · transitions), 규칙 종류 `modulation`(대상 규칙의 힐 배율 — 신호 → 대사, 대사 → 유전자 조절), 속도 법칙 `hill`, 공급 소비 `saturating`, 외부 ID `CL`, 한계 종류 `Regulatory_Gap`, 어휘 `signatureLevels`·`commitmentCriteria`·세포 `cd8_t_cell`(그리고 `ruleTypes` 에 빠져 있던 degradation). `simulateRate` 가 조절 배율을 적용. 실행 층 `engine/fate_engine.js`(다중 속도 적분·P5 관문·결정 탐침·분화 정지 사후 분석). 데이터: CD8 T 세포 효과기/기억 전구 프로그램(정의항 16·조절 규칙 12·공급 규칙 6·분해 규칙 3·세포 상태 3), 회로 순 반응, 한계 20건(L000049–L000068) (`migrations/008-v8-to-v9-cell-fate.mjs`) |
 | 2026-10-08 | 8 | 3 층 다중 규모 엔진: 정의항 `tier`(T1/T2, 마이그레이션이 kind·쓰임으로 배정: T1 32, T2 86), 관찰 diffusion_coefficient·pH·ionic_strength·relative_permittivity(위치 필수, SI), kinetics k0·dG_act·dG0·env(전이 상태 이론·미시적 가역성 검사), `rateAt`·`thermoLoops`·AUDIT_THERMO, 시뮬레이터의 구획 환경 반영, 어휘 tiers·thermo. 실행 층 `engine/hmse.js`(정수 원장·인접 경계 거래·이동량 표본·영역 점수·히스테리시스·보존적 투영), 스키마 `schemas/v8`, 인터페이스 `engine/interfaces/hmse.{hpp,py}`. 데이터: 한계 5건(L000044–L000048) (`migrations/007-v7-to-v8-three-tier.mjs`) |
 | 2026-10-08 | 7 (확장 2) | Survival-to-Exhaustion: 단계 순환·완료 바퀴 수, 정지 감지(`until_death`·`window`·`death_frac`), 사후 분석(`postMortem`), 적분 안정성 감사, 한계 종류 `Resource_Gap`, 변화 종류 축합·수화, Patch Report 하류에 공급 규칙의 저장소 도달 포함. 데이터: 시트르산 회로(경로 1·효소 8·단계 8·대사물 15·부분 구조 4·재생 경로 3·CO₂ 배출), 기질 NDPK 공급 규칙, 한계 10건(L000034–L000043). 형식 버전 그대로 |
 | 2026-10-08 | 7 (확장) | Traceable Evolution Protocol: 패치 `why` 필수, Patch Report(`patchReport`·`patchReportText`, 기록의 `report`, `dbtool report`), 미등록 한계 후보가 있으면 병합 거부. 한계 종류 `Identity_Gap`(unmapped 외부 ID — `detectGaps` 가 후보로 잡음). 데이터: Identity_Gap 6건(L000028–L000033). 형식 버전은 그대로 (`CHANGES.md` 도입) |

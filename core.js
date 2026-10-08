@@ -15,7 +15,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 8;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 9;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -73,10 +73,10 @@
 
   // ===== 통제 어휘 매핑 =====
   const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
-    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates', 'tiers'];
+    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates', 'tiers', 'signatureLevels', 'commitmentCriteria'];
   const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
     locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
-    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)', tiers: '층(tier)' };
+    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)', tiers: '층(tier)', signatureLevels: '표지 수준(level)', commitmentCriteria: '결정 기준(criterion)' };
   const VIX = {};
   for (const table of VTABLES) {
     const m = new Map();
@@ -204,7 +204,7 @@
   }
   function normRule(r) {
     const o = { id: str(r.id), type: str(r.type) || (r.effect ? 'transition' : 'meaning'), label: str(r.label) };
-    const qty = (x) => (isObj(x) ? (() => { const q = { ref: str(x.ref), n: x.n === 'sequence_length' ? 'sequence_length' : Number(x.n == null ? 1 : x.n) }; if (str(x.location)) q.location = str(x.location); return q; })() : { ref: str(x), n: 1 });
+    const qty = (x) => (isObj(x) ? (() => { const q = { ref: str(x.ref), n: x.n === 'sequence_length' ? 'sequence_length' : Number(x.n == null ? 1 : x.n) }; if (str(x.location)) q.location = str(x.location); if (x.saturating) q.saturating = true; return q; })() : { ref: str(x), n: 1 });
     if (o.type === 'supply') {
       // 대사물 공급 규칙: 저장소의 consumes → produces (where 한 곳에서). source: 계 밖에서 들어오는 공급(부분 수지 불균형 허용)
       o.consumes = arr(r.consumes).map(qty).filter((q) => q.ref);
@@ -219,6 +219,13 @@
       o.when = {};
       if (isObj(r.when)) for (const [s, f] of Object.entries(r.when)) o.when[str(s)] = str(f);
       if (arr(r.where).length) o.where = arr(r.where).map(str);
+      if (str(r.text)) o.text = str(r.text);
+    } else if (o.type === 'modulation') {
+      // 조절 규칙 (v9): 소유자(조절자)의 묶음 '소유자|at' 농도가 대상 규칙(target)의 속도를 힐 배율로 바꾼다. via = 생략한 매개 분자(출처 기록)
+      o.target = str(r.target);
+      o.effect = str(r.effect) || 'activates';
+      o.at = str(r.at);
+      o.via = arr(r.via).map(str).filter(Boolean);
       if (str(r.text)) o.text = str(r.text);
     } else if (o.type === 'meaning') {
       o.when = {};
@@ -257,8 +264,8 @@
     o.evidence = normEvidence(k.evidence);
     return o;
   }
-  const KIN_FIELDS = ['k', 'k_r', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km', 'half_life', 'k0', 'dG_act', 'dG0'];
-  const SIGNED_KIN = new Set(['dG_act', 'dG0']); // 자유 에너지(J/mol)는 음수일 수 있음 (dG_act 는 음수면 오류)
+  const KIN_FIELDS = ['k', 'k_r', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km', 'half_life', 'k0', 'dG_act', 'dG0', 'K', 'n', 'fmax', 'fmin'];
+  const SIGNED_KIN = new Set(['dG_act', 'dG0', 'fmin']); // 자유 에너지(J/mol)는 음수일 수 있음 (dG_act 는 음수면 오류)
   const ENV_FIELDS = ['pH_ref', 'dG_dpH', 'eps_ref', 'dG_dinv_eps'];
   function normObs(b) {
     const o = { property: str(b.property), value: typeof b.value === 'number' ? b.value : str(b.value), context: normContext(b.context), evidence: normEvidence(b.evidence) };
@@ -266,7 +273,7 @@
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
-  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note'];
+  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note', 'signature', 'metabolome', 'transitions'];
   function normSense(d) {
     const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
     if (str(d.tier)) o.tier = str(d.tier);
@@ -287,6 +294,15 @@
     if (str(d.motif)) o.motif = str(d.motif);
     if (arr(d.addresses).length) o.addresses = arr(d.addresses).filter(isObj).map((a) => ({ limitation: str(a.limitation), how: str(a.how) }));
     for (const k of ['gap_review', 'distinction', 'note']) if (str(d[k])) o[k] = str(d[k]);
+    // 세포 상태 (v9): 표지 서명 · 대사 프로그램(공급 규칙과 그 수준) · 다른 상태로의 전이(신호·결정 기준)
+    if (arr(d.signature).length) o.signature = arr(d.signature).filter(isObj).map((m) => ({ ref: str(m.ref), level: str(m.level), location: str(m.location) }));
+    if (arr(d.metabolome).length) o.metabolome = arr(d.metabolome).filter(isObj).map((m) => ({ ref: str(m.ref), level: str(m.level) }));
+    if (arr(d.transitions).length) o.transitions = arr(d.transitions).filter(isObj).map((t) => {
+      const x = { to: str(t.to), signals: arr(t.signals).map(str).filter(Boolean), commitment: { criterion: str(isObj(t.commitment) ? t.commitment.criterion : t.commitment) } };
+      if (str(t.text)) x.text = str(t.text);
+      x.evidence = normEvidence(t.evidence);
+      return x;
+    });
     Object.defineProperty(o, '_given', { value: Object.fromEntries(SENSE_FIELDS.map((k) => [k, k in d])) });
     return o;
   }
@@ -715,11 +731,13 @@
       ruleIds.add(r.id);
       if (!r.label) E(rw, '규칙 이름(label) 없음');
       if (!participant && r.type !== 'supply') E(rw, '규칙은 분자 종류 정의항만 가질 수 있음 (경로·과정·원리는 공급 규칙 supply 만)');
+      if (r.kinetics && (r.kinetics.law === 'hill') !== (r.type === 'modulation')) E(rw, r.type === 'modulation' ? `조절 규칙의 속도 법칙은 hill (지금 ${r.kinetics.law})` : 'hill 법칙은 조절 규칙(modulation)에만');
       checkEvidence(r.evidence, rw, E);
       for (const t of r.taxa || []) if (!V.taxa[t]) E(rw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
       if (r.kinetics) { for (const m of kineticIssues(r, null)) E(rw, m); checkEvidence(r.kinetics.evidence, rw + ' 속도', E); if (r.kinetics.context) checkContext(r.kinetics.context, rw, E); }
       if (r.type === 'supply') { validateSupply(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'degradation') { validateDegradation(db, ix, id, d, r, rw, E, W); continue; }
+      if (r.type === 'modulation') { validateModulation(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'meaning') {
         if (!V.activity[r.activity]) E(rw, `활성 '${r.activity}' 은(는) 어휘에 없음`);
         for (const [s, f] of Object.entries(r.when)) {
@@ -811,6 +829,7 @@
       if (!db.limitations[a.limitation]) E(where, `addresses: 한계 '${a.limitation}' 없음`);
       if (!a.how) E(where, `addresses: 한계 ${a.limitation} 를 어떻게 해결하는지(how) 없음`);
     }
+    validateCellState(db, ix, id, d, where, E, W);
     // 부분 구조
     for (const m of d.moieties || []) {
       const x = db.senses[m.ref];
@@ -877,7 +896,11 @@
       if (!(typeof q.n === 'number' && q.n > 0)) E(rw, `'${L(q.ref)}' 의 화학량 n 은 양수`);
     }
     if (r.kinetics && !['zero_order', 'mass_action'].includes(r.kinetics.law)) E(rw, `공급 규칙의 속도 법칙은 zero_order | mass_action (지금 ${r.kinetics.law})`);
-    if (r.kinetics && r.kinetics.law === 'mass_action' && r.kinetics.order != null) { const n = r.consumes.reduce((t, q) => t + (typeof q.n === 'number' ? q.n : 0), 0); if (n !== r.kinetics.order) E(rw, `질량 작용 차수 ${r.kinetics.order} 가 소비 분자 수(${n})와 다름`); }
+    // 포화 보조 기질 (v9, saturating): 화학량대로 소비하지만 속도 법칙의 차수에서는 빠진다 (포화 가정, 바닥나면 c/(c + K_sat) 로 꺼짐)
+    for (const q of r.produces) if (q.saturating) E(rw, `saturating 은 소비(consumes)에만 — 생성물 '${L(q.ref)}'`);
+    const lawN = r.consumes.filter((q) => !q.saturating).reduce((t, q) => t + (typeof q.n === 'number' ? q.n : 0), 0);
+    if (r.consumes.length && r.consumes.every((q) => q.saturating)) E(rw, '모든 소비가 saturating 이면 속도 법칙의 기질이 없음 — 하나 이상은 속도를 정하는 기질로');
+    if (r.kinetics && r.kinetics.law === 'mass_action' && r.kinetics.order != null && lawN !== r.kinetics.order) E(rw, `질량 작용 차수 ${r.kinetics.order} 가 소비 분자 수(${lawN}${r.consumes.some((q) => q.saturating) ? ', saturating 제외' : ''})와 다름`);
     if (r.kinetics && r.kinetics.law === 'mass_action' && !r.consumes.length) E(rw, '소비하는 것이 없는 공급은 zero_order 로');
     const bad = moietyImbalance(db, r.consumes, r.produces);
     if (bad && !r.source) E(rw, `부분 구조 수지가 맞지 않음 — ${bad} (계 밖에서 들어오는 공급이면 source: true)`);
@@ -897,6 +920,56 @@
     }
     for (const [s, f] of Object.entries(r.when)) { if (!d.site[s]) E(rw, `조건의 부위 '${s}' 가 이 정의항에 없음`); else if (!d.site[s].features.includes(f)) E(rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`); }
     for (const l of r.where || []) if (!V.locations[l]) E(rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
+  }
+
+  // 조절 규칙 (v9): 조절자(소유자) → 대상 규칙의 속도 배율
+  function validateModulation(db, ix, id, d, r, rw, E, W) {
+    const L = ix.label, t = parseTarget(r.target), owner = t && db.senses[t.base], tr = owner && owner.rule.find((x) => x.id === t.key);
+    if (!t || t.sub !== 'rule') E(rw, `조절 대상 '${r.target}' — 'D…/rule/키' 형식의 규칙이어야 함`);
+    else if (!tr) E(rw, `조절 대상 규칙 '${r.target}' 없음`);
+    else if (!['supply', 'transition', 'degradation'].includes(tr.type)) E(rw, `조절 대상은 속도가 있는 규칙(supply · transition · degradation) — '${L(t.base)}' 의 '${tr.id}' 는 ${tr.type}`);
+    if (tr && t.base === id && tr.id === r.id) E(rw, '자기 자신을 조절할 수 없음');
+    if (!V.effects[r.effect]) E(rw, `조절 효과 '${r.effect}' — ${Object.keys(V.effects).join(' | ')}`);
+    if (!V.locations[r.at]) E(rw, `조절자 위치(at) '${r.at}' 은(는) 위치 어휘에 없음 — 조절자 묶음 = 소유자|at`);
+    else if (V.locations[r.at].dim !== '3D') E(rw, `조절자 위치 '${vlabel('locations', r.at)}' 는 부피(3D) 구획이어야 함 (농도로 배율을 계산)`);
+    for (const v of r.via) { const x = db.senses[v]; if (!x) E(rw, `매개 분자(via) '${v}' 없음`); else if (!isParticipantKind(x.kind)) E(rw, `매개 분자 '${L(v)}' 는 분자 종류가 아님`); }
+    const k = r.kinetics;
+    if (k && k.law === 'hill') {
+      if (r.effect === 'activates' && !(k.fmax > 1)) E(rw, '활성화 조절은 fmax > 1 (최대 배율)이 필요함');
+      if (r.effect === 'inhibits' && !(k.fmin >= 0 && k.fmin < 1)) E(rw, '억제 조절은 0 ≤ fmin < 1 (최소 배율)이 필요함');
+      if (r.effect === 'activates' && k.fmin != null) E(rw, '활성화 조절에는 fmin 을 두지 않음');
+      if (r.effect === 'inhibits' && k.fmax != null) E(rw, '억제 조절에는 fmax 를 두지 않음');
+    }
+  }
+  // 세포 상태 (v9): signature · metabolome · transitions 는 kind cell_state 만, cell_state 는 분자 필드를 갖지 않음
+  function validateCellState(db, ix, id, d, where, E, W) {
+    const L = ix.label, has = (d.signature || []).length || (d.metabolome || []).length || (d.transitions || []).length;
+    if (d.kind !== 'cell_state') { if (has) E(where, '표지 서명·대사 프로그램·전이(signature · metabolome · transitions)는 kind cell_state 만'); return; }
+    if (!(d.signature || []).length) E(where, '세포 상태는 표지 서명(signature)이 필요함 — 어떤 분자가 높고 낮은지로 상태를 정의');
+    if (d.rule.length || Object.keys(d.site).length || d.moieties || d.components.length) E(where, '세포 상태는 분자가 아님 — 규칙·부위·부분 구조·구성 요소를 두지 않음');
+    const seen = new Set();
+    for (const m of d.signature || []) {
+      const x = db.senses[m.ref];
+      if (!x) E(where, `표지 '${m.ref}' 없음`); else if (!isParticipantKind(x.kind)) E(where, `표지 '${L(m.ref)}' 는 분자 종류가 아님`);
+      if (!V.signatureLevels[m.level]) E(where, `표지 '${L(m.ref)}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
+      if (!V.locations[m.location] || V.locations[m.location].dim !== '3D') E(where, `표지 '${L(m.ref)}' 의 위치는 부피(3D) 위치 어휘여야 함 (지금 '${m.location}')`);
+      const key = `${m.ref}|${m.location}`; if (seen.has(key)) E(where, `표지 '${L(m.ref)}' 가 같은 위치에 두 번`); seen.add(key);
+    }
+    for (const m of d.metabolome || []) {
+      const t = parseTarget(m.ref), o = t && db.senses[t.base], r = o && o.rule.find((x) => x.id === t.key);
+      if (!r) E(where, `대사 프로그램의 규칙 '${m.ref}' 없음 — 'D…/rule/키'`);
+      else if (r.type !== 'supply') E(where, `대사 프로그램은 공급 규칙(supply)만 — '${m.ref}' 는 ${r.type}`);
+      if (!V.signatureLevels[m.level]) E(where, `대사 프로그램 '${m.ref}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
+    }
+    for (const tr of d.transitions || []) {
+      const x = db.senses[tr.to];
+      if (!x) E(where, `전이 대상 상태 '${tr.to}' 없음`); else if (x.kind !== 'cell_state') E(where, `전이 대상 '${L(tr.to)}' 는 cell_state 가 아님`);
+      if (tr.to === id) E(where, '자기 자신으로의 전이');
+      if (!tr.signals.length) E(where, `'${L(tr.to)}' 로의 전이에 신호(signals)가 없음 — 무엇이 분화를 일으키는지`);
+      for (const g of tr.signals) { const y = db.senses[g]; if (!y) E(where, `신호 '${g}' 없음`); else if (!isParticipantKind(y.kind)) E(where, `신호 '${L(g)}' 는 분자 종류가 아님`); }
+      if (!V.commitmentCriteria[tr.commitment.criterion]) E(where, `결정 기준 '${tr.commitment.criterion}' — ${Object.keys(V.commitmentCriteria).join(' | ')}`);
+      checkEvidence(tr.evidence, `${where} 전이 → ${tr.to}`, E);
+    }
   }
 
   // 묶음 하나 검사: 바탕 정의항·부위·특징·위치·막 위상
@@ -1317,6 +1390,13 @@
           r.when = Object.fromEntries(Object.entries(r.when).map(([s, f]) => [s, voc('features', f, w)]));
           continue;
         }
+        if (r.type === 'modulation') {
+          if (r.kinetics) { r.kinetics.law = voc('kineticLaws', r.kinetics.law, w); r.kinetics.evidence.level = voc('evidenceLevels', r.kinetics.evidence.level, w); if (r.kinetics.context) ctx(r.kinetics.context, w); }
+          r.effect = voc('effects', r.effect, w);
+          if (r.at) r.at = voc('locations', r.at, w);
+          r.via = r.via.map((x) => ref(x, `${w} via`));
+          continue; // target(규칙 참조)은 아래에서 — 임시 번호의 규칙도 풀린다
+        }
         if (r.type === 'supply' || r.type === 'degradation') {
           if (r.kinetics) { r.kinetics.law = voc('kineticLaws', r.kinetics.law, w); r.kinetics.evidence.level = voc('evidenceLevels', r.kinetics.evidence.level, w); if (r.kinetics.context) ctx(r.kinetics.context, w); }
           for (const k of ['consumes', 'produces', 'recycle_to']) for (const q of r[k] || []) { q.ref = ref(q.ref, `${w} ${k}`); if (q.location) q.location = voc('locations', q.location, w); }
@@ -1339,6 +1419,9 @@
         for (const g of r.regulators) { g.ref = ref(g.ref, `${w} 조절자`); g.effect = voc('effects', g.effect, w); }
         if (r.where) r.where = r.where.map((l) => voc('locations', l, w));
       }
+      for (const m of d.signature || []) { m.ref = ref(m.ref, `${id} 표지`); m.level = voc('signatureLevels', m.level, id); if (m.location) m.location = voc('locations', m.location, id); }
+      for (const m of d.metabolome || []) m.level = voc('signatureLevels', m.level, id);
+      for (const t of d.transitions || []) { t.to = ref(t.to, `${id} 전이 대상`); t.signals = t.signals.map((x) => ref(x, `${id} 신호`)); t.commitment.criterion = voc('commitmentCriteria', t.commitment.criterion, id); t.evidence.level = voc('evidenceLevels', t.evidence.level, id); }
       d.obs.forEach((b, i) => {
         const w = `${id}/obs/${i + 1}`;
         b.property = voc('obsProperties', b.property, w);
@@ -1385,6 +1468,11 @@
       }
     }
     for (const [id, d] of new Map(touched)) for (const a of d.addresses || []) if (report.idmap[a.limitation]) a.limitation = report.idmap[a.limitation];
+    // 규칙 참조 (v9): 조절 대상, 세포 상태의 대사 프로그램 — 'D…/rule/키' (임시 번호·이름 머리도 풀림)
+    for (const [id, d] of new Map(touched)) {
+      for (const r of d.rule) if (r.type === 'modulation' && r.target) r.target = target(r.target, `${id}/rule/${r.id} 조절 대상`);
+      for (const m of d.metabolome || []) m.ref = target(m.ref, `${id} 대사 프로그램`);
+    }
     // 5. 삭제 (번호 재사용 금지)
     const gone = new Set();
     for (const r of arr(patchIn.remove).map(str)) {
@@ -1428,6 +1516,7 @@
     for (const g of r.regulators || []) out.push(g.ref);
     if (r.via_component) out.push(r.via_component);
     for (const k of ['consumes', 'produces', 'recycle_to']) for (const q of r[k] || []) out.push(q.ref);
+    if (r.type === 'modulation') { out.push(String(r.target || '').split('/')[0], ...(r.via || [])); }
     return out;
   }
   function patchReport(dbBefore, result, patch, gateResult) {
@@ -1548,6 +1637,7 @@
     const qs = (xs) => xs.map((q) => `${q.n === 1 ? '' : q.n + ' '}${ix.label(q.ref)}`).join(' + ') || '∅';
     if (r.type === 'supply') return `${owner}/rule/${r.id} 「${r.label}」 공급${r.source ? '(계 밖)' : ''}: ${qs(r.consumes)} → ${qs(r.produces)} @${r.where.map((l) => vlabel('locations', l)).join('·')}${kn}`;
     if (r.type === 'degradation') return `${owner}/rule/${r.id} 「${r.label}」 분해: ${ix.label(owner)}${Object.keys(r.when).length ? '[' + Object.entries(r.when).map(([s, f]) => `${s}:${vlabel('features', f)}`).join(',') + ']' : ''} → ${r.fate === 'recycled' ? '재활용 ' + qs(r.recycle_to) : '소실'}${kn}`;
+    if (r.type === 'modulation') return `${owner}/rule/${r.id} 「${r.label}」 조절: ${ix.label(owner)}@${vlabel('locations', r.at)} ${r.effect === 'inhibits' ? '⊣' : '→'} ${r.target}${(r.via || []).length ? ` (매개 ${r.via.map(ix.label).join('·')})` : ''}${r.kinetics ? ` 〈hill ${['K', 'n', 'fmax', 'fmin'].filter((f) => r.kinetics[f] != null).map((f) => `${f}=${r.kinetics[f]}`).join(' ')}〉` : ' 〈힐 상수 없음〉'}`;
     if (r.type === 'meaning') return `${owner}/rule/${r.id} 「${r.label}」 상태 의미: ${Object.entries(r.when).map(([s, f]) => `${ix.siteLabel(owner, s)}:${vlabel('features', f)}`).join(' ∧ ') || '(기본)'} → ${vlabel('activity', r.activity)}`;
     const e = r.effect, L = ix.label;
     let eff = '';
@@ -1597,6 +1687,11 @@
       for (const c of d.components) out.push(`  ▣ 구성 요소: ${L(c.ref)} (${c.ref}) ×${c.n}${c.role ? ' · ' + c.role : ''}`);
       for (const [k, s] of Object.entries(d.site)) out.push(`  ◇ 부위 ${id}/site/${k}: ${vlabel('siteTypes', s.type)}${s.numbering ? ' ' + Object.entries(s.numbering).map(([tx, r]) => `${vlabel('taxa', tx)} ${r}`).join(', ') : ''}${s.residue_unknown ? ' (잔기 모름)' : ''}${s.on ? ' · 구성 요소 ' + L(s.on) : ''}${s.face ? ' · ' + vlabel('faces', s.face) : ''}${s.ligand ? ' · 리간드 ' + L(s.ligand) : ''} · 특징 ${s.features.map((f) => vlabel('features', f)).join('/')}`);
       for (const r of d.rule) out.push('  ⚖ ' + ruleLine(ix, id, r));
+      // 세포 상태 (v9)
+      if ((d.signature || []).length) out.push('  ◎ 표지 서명: ' + d.signature.map((m) => `${L(m.ref)}@${vlabel('locations', m.location)} ${m.level === 'high' ? '높음' : '낮음'}`).join(' · '));
+      for (const m of d.metabolome || []) out.push(`  ◎ 대사 프로그램 ${m.level === 'high' ? '높음' : '낮음'}: ${m.ref} ${L(m.ref.split('/')[0])}`);
+      for (const tr of d.transitions || []) out.push(`  ⇒ 전이 → ${L(tr.to)} (${tr.to}) · 신호 ${tr.signals.map(L).join(', ')} · 결정 기준 ${tr.commitment.criterion}${tr.text ? ' — ' + tr.text : ''} [${tr.evidence.level}]`);
+      for (const [mid, md] of ix.senses) for (const r of md.rule) if (r.type === 'modulation' && String(r.target).startsWith(id + '/rule/')) out.push(`  ⇐ 조절받음 ${r.target.split('/').pop()}: ${L(mid)} ${r.effect === 'inhibits' ? '⊣' : '→'} (${mid}/rule/${r.id})`);
       d.desc.forEach((ds, i) => { if (i > 0) out.push(`  ✎ 설명 ${i + 1}: ${ds.text} 〈${ds.field} · ${ds.context.scope}〉`); });
       for (const b of d.obs) out.push(`  ☉ 관찰 ${vlabel('obsProperties', b.property)} = ${b.value}${b.unit ? ' ' + b.unit : ''} 〈${[b.context.species && vlabel('taxa', b.context.species), b.context.tissue && vlabel('tissues', b.context.tissue), b.context.cell && vlabel('cells', b.context.cell), b.context.condition].filter(Boolean).join(' · ')}〉 [${b.evidence.level}]`);
       const climb = (n, depth, pad, seen) => {
@@ -1880,6 +1975,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     // 생애 주기·저장소: 속도 상수가 없는 공급·분해 규칙, 서열 길이를 모르는 재활용 화학량
     for (const [id, d] of ix.senses) for (const r of d.rule) {
       const ref = `${id}/rule/${r.id}`;
+      if (r.type === 'modulation' && !r.kinetics && !covered.has(ref)) out.push({ target: ref, type: 'Regulatory_Gap', why: `${ix.label(id)} 의 조절 규칙 '${r.label}' 에 힐 상수(K·n·fmax|fmin)가 없어 시뮬레이터가 배율 1 로 둠` });
       if ((r.type === 'supply' || r.type === 'degradation') && !r.kinetics && !covered.has(ref)) out.push({ target: ref, type: 'Kinetic_Gap', why: `${ix.label(id)} 의 ${r.type === 'supply' ? '공급' : '분해'} 규칙 '${r.label}' 에 속도 상수가 없어 시뮬레이터가 적용하지 않음` });
       if (r.type === 'degradation' && r.recycle_to.some((q) => q.n === 'sequence_length') && !d.obs.some((o) => o.property === 'sequence_length') && !covered.has(`${id}#sequence_length`)) out.push({ target: id, type: 'Structural_Gap', why: `${ix.label(id)} 의 서열 길이(sequence_length)를 몰라 재활용 화학량을 정할 수 없음` });
     }
@@ -2102,6 +2198,15 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       out.push(...thermoIssues(k));
       return out;
     }
+    if (k.law === 'hill' || r.type === 'modulation') {
+      // 조절 배율: K (M) > 0, n > 0, 활성화 fmax > 1 · 억제 0 ≤ fmin < 1 (validateModulation 이 효과와 대조)
+      if (k.law !== 'hill') return [`조절 규칙의 속도 법칙은 hill — 지금 ${k.law}`];
+      for (const f of ['K', 'n']) if (!(Number.isFinite(k[f]) && k[f] > 0)) out.push(`hill 은 ${f} 가 필요함 (양수${f === 'K' ? ', M' : ''})`);
+      if (k.fmax != null && !(k.fmax > 1)) out.push('fmax 는 1 보다 커야 함');
+      if (k.fmin != null && !(k.fmin >= 0 && k.fmin < 1)) out.push('fmin 은 0 ≤ fmin < 1');
+      for (const f of ['k', 'order', 'k_on', 'k_off', 'Kd', 'kcat', 'Km', 'half_life']) if (k[f] != null) out.push(`hill 배율에는 ${f} 를 두지 않음`);
+      return out;
+    }
     if (k.law === 'zero_order' && r.type !== 'supply') out.push('zero_order 는 공급 규칙(supply)에만');
     for (const f of L.required) if (!(f.split('|').some((g) => k[g] > 0))) out.push(`${k.law} 는 ${f.split('|').join(' 또는 ')} 가 필요함 (양수, SI 정준 단위)`);
     for (const f of KIN_FIELDS) if (k[f] != null && !SIGNED_KIN.has(f) && !(Number.isFinite(k[f]) && (f === 'order' ? k[f] >= 0 : k[f] > 0))) out.push(`${f} 값이 양수가 아님`);
@@ -2198,6 +2303,18 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'supply') out.push({ ref: `${id}/rule/${r.id}`, owner: id, rule: r });
     return out;
   }
+  // 조절 규칙 색인 (v9): 대상 규칙 참조 → [{ owner, rule, ref }]
+  function modulationIndex(db) {
+    const m = new Map();
+    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'modulation' && r.target) { if (!m.has(r.target)) m.set(r.target, []); m.get(r.target).push({ owner: id, rule: r, ref: `${id}/rule/${r.id}` }); }
+    return m;
+  }
+  // 힐 배율: 활성화 1 + (fmax − 1)·sⁿ/(Kⁿ + sⁿ), 억제 fmin + (1 − fmin)·Kⁿ/(Kⁿ + sⁿ). s = 조절자 농도 (M)
+  const SAT_K = 1e-6; // 포화 보조 기질의 수치 포화 상수 (M) — 생물 상수가 아니라 바닥날 때 속도를 매끄럽게 끄는 정칙화 (시나리오 saturation_K 로 바꿈)
+  function hillFactor(effect, k, s) {
+    const x = s > 0 ? Math.pow(s / k.K, k.n) : 0, occ = x / (1 + x);
+    return effect === 'inhibits' ? (k.fmin || 0) + (1 - (k.fmin || 0)) * (1 - occ) : 1 + ((k.fmax || 1) - 1) * occ;
+  }
   function simulateRate(db, target, opt) {
     db = normalize(db);
     opt = Object.assign({ t_end: 60, dt: 1e-3, scenario: null, amount: 10, bulk: 1000 }, opt || {});
@@ -2228,6 +2345,21 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     const kinOf = (ref) => (sc.kinetics || {})[ref] ? { ...normKinetics(sc.kinetics[ref]), src: 'scenario' } : ix.ruleOf(ref) && ix.ruleOf(ref).kinetics ? { ...ix.ruleOf(ref).kinetics, src: 'data' } : null;
     const locOf = (b) => b.split('|').pop();
     const featsOf = (b) => new Map(parseBundle(b).features.map((f) => [f.site, f.feature]));
+    // --- 조절 규칙 (v9): 대상 규칙 → 조절자 묶음(소유자|at) 농도의 힐 배율. 속도 상수가 없으면 배율 1 (보고)
+    const modIndex = modulationIndex(db), modGaps = new Set();
+    for (const list of modIndex.values()) for (const m of list) {
+      const b = `${m.owner}|${m.rule.at}`, v = (sc.amounts || {})[b] != null ? sc.amounts[b] : (sc.reservoirs || {})[b];
+      if (!N.has(b) && v != null) { N.set(b, v); srcOf[b] = 'init'; }
+    }
+    const modFactor = (ref) => {
+      let f = 1;
+      for (const m of modIndex.get(ref) || []) {
+        const k = kinOf(m.ref); if (!k) { modGaps.add(m.ref); continue; }
+        const vol = volOf(m.rule.at), n = N.get(`${m.owner}|${m.rule.at}`) || 0;
+        f *= hillFactor(m.rule.effect, k, vol ? Math.max(0, n) / (NA * vol.L) : 0);
+      }
+      return f;
+    };
     // --- 분해 규칙: 범위 안 묶음마다 (부위 조건·위치 조건이 맞는 것)
     const degr = [];
     for (const b of [...N.keys()]) {
@@ -2257,6 +2389,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       grew = false;
       for (const s of supAll) {
         if (sup.includes(s) || !s.rule.where.length || !keysOf(s).some((b) => N.has(b))) continue;
+        if (tg.ids.includes(s.owner)) continue; // 시뮬레이션하는 경로 자신의 순 반응 공급 규칙(다중 규모 층용)은 단계와 이중으로 세지 않음
         sup.push(s); grew = true;
         for (const b of keysOf(s)) addRes(b);
       }
@@ -2364,7 +2497,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
           if (k.law === 'mass_action') v = k.k * prodIn * agentC - (k.reversible && k.k_r ? k.k_r * prodOut : 0);
           else if (k.law === 'binding') { const kon = k.k_on || (k.k_off && k.Kd ? k.k_off / k.Kd : 0), koff = k.k_off || (k.k_on && k.Kd ? k.k_on * k.Kd : 0); v = kon * prodIn - koff * prodOut; }
           else if (k.law === 'michaelis_menten') { const S = [...lawIns][0]; const s0 = S ? conc(S[0], Vr) : 1; v = k.kcat * agentC * s0 / (k.Km + s0); }
-          xi = v * NA * Vr * opt.dt;
+          xi = v * modFactor(st.rule) * NA * Vr * opt.dt;
         }
         const want = xi;
         // 적분 안정성: 속도 법칙 단계가 한 Δt 에 소비하려 한 입력의 비율 (오일러 적분은 이 비율이 작아야 믿을 수 있음)
@@ -2395,8 +2528,9 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       for (const s of sup) {
         if (!s.k || !s.V) continue;
         const cons = s.rule.consumes.map((q) => [`${q.ref}|${s.loc}`, q.n]), prods = s.rule.produces.map((q) => [`${q.ref}|${s.loc}`, q.n]);
-        let v = s.k.law === 'zero_order' ? s.k.k : s.k.law === 'mass_action' ? s.k.k * cons.reduce((a, [b, n]) => a * conc(b, s.V) ** n, 1) : 0;
-        let xi = v * NA * s.V * opt.dt;
+        const Ksat = sc.saturation_K || SAT_K;
+        let v = s.k.law === 'zero_order' ? s.k.k : s.k.law === 'mass_action' ? s.k.k * s.rule.consumes.reduce((a, q) => { const c = conc(`${q.ref}|${s.loc}`, s.V); return a * (q.saturating ? c / (c + Ksat) : c ** q.n); }, 1) : 0;
+        let xi = v * modFactor(s.ref) * NA * s.V * opt.dt;
         if (cons.length) xi = Math.min(xi, ...cons.map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
         if (!(xi > 0)) continue;
         for (const [b, n] of cons) { N.set(b, N.get(b) - n * xi); L1(b, 'supply', -n * xi); }
@@ -2409,7 +2543,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       // ③ 분해 규칙 (1차, 결정론 또는 확률적)
       for (const g of degr) {
         if (!(g.k > 0)) continue;
-        const n = Math.max(0, N.get(g.b) || 0), p = 1 - Math.exp(-g.k * opt.dt);
+        const n = Math.max(0, N.get(g.b) || 0), p = 1 - Math.exp(-g.k * modFactor(g.ref) * opt.dt);
         if (!n) continue;
         const whole = Math.floor(n), frac = n - whole;
         const x = stochastic ? binomial(rand, whole, p) + (frac > 0 && rand() < p ? frac : 0) : n * p;
@@ -2541,7 +2675,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     if (approx.size) AE('AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${approx.size}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${[...approx].join(', ')}`, gapSuggest(db, ix, tg.ids[0], 'Concentration_Gap', /2D|면적/));
     return { ids, cell, mode, stochastic, scenario: sc.name || null, hypothetical: !!sc.hypothetical, series, firstReach, final: Object.fromEntries(N), audit, kineticGaps, react, ix, t_end: opt.t_end, dt: opt.dt,
       reservoirs: resStat, ledger, events, stalls, cycles, supplies: sup.map((s) => ({ ref: s.ref, active: !!(s.k && s.V), law: s.k ? s.k.law : null, src: s.k ? s.k.src : null, kin: s.k })),
-      degradations: degr.map((g) => ({ bundle: g.b, ref: g.ref, k_deg: g.k, fate: g.rule.fate, src: g.kin ? g.kin.src : null })), created, destroyed, channels: chan, stepCycles, postMortem: pm };
+      degradations: degr.map((g) => ({ bundle: g.b, ref: g.ref, k_deg: g.k, fate: g.rule.fate, src: g.kin ? g.kin.src : null })), created, destroyed, channels: chan, stepCycles, postMortem: pm, modulationGaps: [...modGaps] };
   }
   // 강하게 연결된 성분 (Tarjan, 반복형)
   function sccs(G) {
@@ -2652,5 +2786,6 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
     xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
     MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget,
-    kineticIssues, rateAt, envShift, thermoLoops, defaultTier, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS };
+    kineticIssues, rateAt, envShift, thermoLoops, defaultTier, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS,
+    modulationIndex, hillFactor, SAT_K, moietyOf, moietyImbalance, entityTally, supplyRules, rngOf, binomial, gapSuggest, NA, VOL };
 });
