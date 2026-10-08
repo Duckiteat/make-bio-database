@@ -56,6 +56,7 @@
     '생리학':      { aliases: ['physiology'] },
     '유전학':      { aliases: ['고전 유전학', 'genetics'] },
     '구조생물학':  { aliases: ['structural biology'] },
+    '면역학':      { aliases: ['immunology'] },
     '생명과학 교육': { aliases: ['고등학교 생명과학', '교과', '교과서'] },
   },
 
@@ -84,6 +85,7 @@
     hepatocyte: { label: '간세포', tissue: 'liver' }, myocyte: { label: '골격근 세포', tissue: 'skeletal_muscle', aliases: ['근육세포'] },
     cardiomyocyte: { label: '심근세포', tissue: 'heart' }, adipocyte: { label: '지방세포', tissue: 'adipose' },
     neuron: { label: '신경세포', tissue: 'brain', aliases: ['뉴런'] }, erythrocyte: { label: '적혈구', tissue: 'blood' },
+    macrophage: { label: '대식세포', aliases: ['macrophage'] }, monocyte: { label: '단핵구', tissue: 'blood', aliases: ['monocyte'] },
   },
 
   // ===== 위치 — 계층·차원·인접 =====
@@ -134,6 +136,8 @@
     acetylated:     { label: '아세틸화됨' },
     methylated:     { label: '메틸화됨' },
     ubiquitinated:  { label: '유비퀴틴화됨' },
+    K48_polyubiquitinated: { label: 'K48 폴리유비퀴틴화됨 (분해 표지)', aliases: ['K48-ubiquitinated', 'K48 유비퀴틴'] },
+    K63_polyubiquitinated: { label: 'K63 폴리유비퀴틴화됨 (신호 발판)', aliases: ['K63-ubiquitinated', 'K63 유비퀴틴'] },
     glycosylated:   { label: '당화됨' },
     cleaved:        { label: '절단됨' },
   },
@@ -142,6 +146,7 @@
 
   // ===== 규칙 =====
   // 규칙 효과 종류: modify(대상 부위의 특징 변화) · convert(기질 → 생성물) · dissociate(복합체 → 구성 요소) · associate(구성 요소 → 복합체) · transport(위치 변화)
+  //               transfer(리간드를 원천의 부위에서 대상의 부위로 넘김) · degrade(복합체의 한 구성 요소를 분해하고 나머지를 풀어 줌)
   // actions[k].effects: 이 변화 종류에 허용되는 효과, adds/removes: modify 일 때 반드시 추가/제거되어야 하는 특징
   actions: {
     '결합':         { aliases: ['binding', '알로스테릭 결합'], effects: ['modify', 'associate'] },
@@ -157,7 +162,11 @@
     '환원':         { aliases: ['reduction'], effects: ['convert', 'modify'] },
     '이성질화':     { aliases: ['isomerization'], effects: ['convert'] },
     '기 전이':      { aliases: ['group transfer', '전이'], effects: ['convert', 'modify'] },
-    '수송':         { aliases: ['transport', '이동', '자리옮김'], effects: ['transport'] },
+    '수송':         { aliases: ['transport', '이동', '자리옮김', 'translocation'], effects: ['transport'] },
+    '전달':         { aliases: ['ligand transfer', '리간드 전달', '넘겨줌'], effects: ['transfer'] },
+    '유비퀴틴화':   { aliases: ['ubiquitination', 'ubiquitylation'], effects: ['modify'] },
+    '단백질 분해':  { aliases: ['proteasomal degradation', '프로테아좀 분해', 'degradation'], effects: ['degrade'] },
+    '전사':         { aliases: ['transcription'], effects: ['convert'] },
     '구조 변화':    { aliases: ['conformational change', '형태 변화'], effects: ['modify'] },
   },
   activity: {
@@ -188,6 +197,7 @@
   // ===== 근거 수준 =====
   evidenceLevels: {
     curated:   { label: '문헌·큐레이션 근거', requires: 'source' },
+    abstracted:{ label: '[Abstracted Logic: Derived from the inferred mechanistic flow]', requires: 'basis', aliases: ['abstracted logic', '추론'] },
     computed:  { label: '도구로 계산', requires: 'tool' },
     asserted:  { label: '출처 없이 적음' },
     predicted: { label: '예측 모델 출력', requires: 'confidence' },

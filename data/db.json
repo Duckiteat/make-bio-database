@@ -3,9 +3,9 @@
   "version": 4,
   "meta": {
     "next": {
-      "T": 61,
-      "D": 63,
-      "S": 12
+      "T": 104,
+      "D": 106,
+      "S": 31
     }
   },
   "terms": {
@@ -474,6 +474,365 @@
       "aliases": [
         "PLP"
       ]
+    },
+    "T000061": {
+      "names": {
+        "ko": "병원체 연관 분자 패턴",
+        "en": "pathogen-associated molecular pattern"
+      },
+      "aliases": [
+        "PAMP",
+        "PAMPs"
+      ]
+    },
+    "T000062": {
+      "names": {
+        "ko": "지질다당류",
+        "en": "lipopolysaccharide"
+      },
+      "aliases": [
+        "LPS",
+        "내독소",
+        "endotoxin"
+      ]
+    },
+    "T000063": {
+      "names": {
+        "ko": "LPS 결합 단백질",
+        "en": "lipopolysaccharide-binding protein"
+      },
+      "aliases": [
+        "LBP"
+      ]
+    },
+    "T000064": {
+      "names": {
+        "ko": "CD14",
+        "en": "monocyte differentiation antigen CD14"
+      },
+      "aliases": []
+    },
+    "T000065": {
+      "names": {
+        "ko": "TLR4",
+        "en": "Toll-like receptor 4"
+      },
+      "aliases": [
+        "톨 유사 수용체 4"
+      ]
+    },
+    "T000066": {
+      "names": {
+        "ko": "MD-2",
+        "en": "lymphocyte antigen 96"
+      },
+      "aliases": [
+        "LY96"
+      ]
+    },
+    "T000067": {
+      "names": {
+        "ko": "TLR4–MD-2 복합체",
+        "en": "TLR4–MD-2 complex"
+      },
+      "aliases": []
+    },
+    "T000068": {
+      "names": {
+        "ko": "LPS–TLR4–MD-2 다량체",
+        "en": "LPS–TLR4–MD-2 multimer"
+      },
+      "aliases": [
+        "활성 TLR4 수용체 복합체"
+      ]
+    },
+    "T000069": {
+      "names": {
+        "ko": "TIRAP",
+        "en": "TIR domain-containing adapter protein"
+      },
+      "aliases": [
+        "Mal"
+      ]
+    },
+    "T000070": {
+      "names": {
+        "ko": "MyD88",
+        "en": "myeloid differentiation primary response protein 88"
+      },
+      "aliases": []
+    },
+    "T000071": {
+      "names": {
+        "ko": "IRAK4",
+        "en": "interleukin-1 receptor-associated kinase 4"
+      },
+      "aliases": []
+    },
+    "T000072": {
+      "names": {
+        "ko": "IRAK1",
+        "en": "interleukin-1 receptor-associated kinase 1"
+      },
+      "aliases": []
+    },
+    "T000073": {
+      "names": {
+        "ko": "마이도솜",
+        "en": "Myddosome"
+      },
+      "aliases": [
+        "MyD88–IRAK4–IRAK 복합체"
+      ]
+    },
+    "T000074": {
+      "names": {
+        "ko": "TRAF6",
+        "en": "TNF receptor-associated factor 6"
+      },
+      "aliases": []
+    },
+    "T000075": {
+      "names": {
+        "ko": "유비퀴틴",
+        "en": "ubiquitin"
+      },
+      "aliases": [
+        "Ub"
+      ]
+    },
+    "T000076": {
+      "names": {
+        "ko": "TAK1",
+        "en": "mitogen-activated protein kinase kinase kinase 7"
+      },
+      "aliases": [
+        "MAP3K7"
+      ]
+    },
+    "T000077": {
+      "names": {
+        "ko": "TAB1",
+        "en": "TAK1-binding protein 1"
+      },
+      "aliases": []
+    },
+    "T000078": {
+      "names": {
+        "ko": "TAB2",
+        "en": "TAK1-binding protein 2"
+      },
+      "aliases": []
+    },
+    "T000079": {
+      "names": {
+        "ko": "TAK1 복합체",
+        "en": "TAK1 complex"
+      },
+      "aliases": [
+        "TAK1–TAB1–TAB2"
+      ]
+    },
+    "T000080": {
+      "names": {
+        "ko": "IKKα",
+        "en": "inhibitor of nuclear factor kappa-B kinase subunit alpha"
+      },
+      "aliases": [
+        "CHUK",
+        "IKK1"
+      ]
+    },
+    "T000081": {
+      "names": {
+        "ko": "IKKβ",
+        "en": "inhibitor of nuclear factor kappa-B kinase subunit beta"
+      },
+      "aliases": [
+        "IKBKB",
+        "IKK2"
+      ]
+    },
+    "T000082": {
+      "names": {
+        "ko": "NEMO",
+        "en": "NF-kappa-B essential modulator"
+      },
+      "aliases": [
+        "IKKγ",
+        "IKBKG"
+      ]
+    },
+    "T000083": {
+      "names": {
+        "ko": "IKK 복합체",
+        "en": "IκB kinase complex"
+      },
+      "aliases": [
+        "IκB 키네이스 복합체"
+      ]
+    },
+    "T000084": {
+      "names": {
+        "ko": "IκBα",
+        "en": "NF-kappa-B inhibitor alpha"
+      },
+      "aliases": [
+        "NFKBIA"
+      ]
+    },
+    "T000085": {
+      "names": {
+        "ko": "RelA",
+        "en": "transcription factor p65"
+      },
+      "aliases": [
+        "p65",
+        "NF-κB p65"
+      ]
+    },
+    "T000086": {
+      "names": {
+        "ko": "NF-κB p50",
+        "en": "NF-kappa-B p50 subunit"
+      },
+      "aliases": [
+        "p50",
+        "NFKB1"
+      ]
+    },
+    "T000087": {
+      "names": {
+        "ko": "NF-κB p50–p65 이량체",
+        "en": "NF-κB p50–p65 heterodimer"
+      },
+      "aliases": [
+        "NF-κB"
+      ]
+    },
+    "T000088": {
+      "names": {
+        "ko": "NF-κB–IκBα 복합체",
+        "en": "NF-κB–IκBα complex"
+      },
+      "aliases": []
+    },
+    "T000089": {
+      "names": {
+        "ko": "βTrCP",
+        "en": "beta-transducin repeat containing E3 ubiquitin protein ligase"
+      },
+      "aliases": [
+        "BTRC"
+      ]
+    },
+    "T000090": {
+      "names": {
+        "ko": "SKP1",
+        "en": "S-phase kinase-associated protein 1"
+      },
+      "aliases": []
+    },
+    "T000091": {
+      "names": {
+        "ko": "CUL1",
+        "en": "cullin-1"
+      },
+      "aliases": [
+        "컬린 1"
+      ]
+    },
+    "T000092": {
+      "names": {
+        "ko": "RBX1",
+        "en": "E3 ubiquitin-protein ligase RBX1"
+      },
+      "aliases": [
+        "ROC1"
+      ]
+    },
+    "T000093": {
+      "names": {
+        "ko": "SCF–βTrCP 유비퀴틴 연결효소",
+        "en": "SCF–βTrCP ubiquitin ligase"
+      },
+      "aliases": [
+        "SCF–βTrCP"
+      ]
+    },
+    "T000094": {
+      "names": {
+        "ko": "20S 프로테아좀 핵심 입자",
+        "en": "20S proteasome core particle"
+      },
+      "aliases": []
+    },
+    "T000095": {
+      "names": {
+        "ko": "19S 조절 입자",
+        "en": "19S regulatory particle"
+      },
+      "aliases": []
+    },
+    "T000096": {
+      "names": {
+        "ko": "26S 프로테아좀",
+        "en": "26S proteasome"
+      },
+      "aliases": [
+        "프로테아좀"
+      ]
+    },
+    "T000097": {
+      "names": {
+        "ko": "펩타이드",
+        "en": "peptide"
+      },
+      "aliases": [
+        "펩티드"
+      ]
+    },
+    "T000098": {
+      "names": {
+        "ko": "TNF 유전자",
+        "en": "TNF gene"
+      },
+      "aliases": []
+    },
+    "T000099": {
+      "names": {
+        "ko": "TNF mRNA",
+        "en": "TNF mRNA"
+      },
+      "aliases": []
+    },
+    "T000100": {
+      "names": {
+        "ko": "LPS–TLR4–NF-κB 신호 전달",
+        "en": "LPS–TLR4–NF-κB signaling"
+      },
+      "aliases": []
+    },
+    "T000101": {
+      "names": {
+        "ko": "LPS 인식과 TLR4 활성화",
+        "en": "LPS recognition and TLR4 activation"
+      },
+      "aliases": []
+    },
+    "T000102": {
+      "names": {
+        "ko": "MyD88 의존 신호 연쇄",
+        "en": "MyD88-dependent signaling cascade"
+      },
+      "aliases": []
+    },
+    "T000103": {
+      "names": {
+        "ko": "NF-κB 활성화와 표적 유전자 전사",
+        "en": "NF-κB activation and target gene transcription"
+      },
+      "aliases": []
     }
   },
   "senses": {
@@ -3457,6 +3816,3397 @@
       "site": {},
       "rule": [],
       "obs": []
+    },
+    "D000063": {
+      "term": "T000061",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "병원체에 널리 보존되어 있어 숙주의 패턴 인식 수용체가 인식하는 분자 구조",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000025",
+              "rel": "refers",
+              "span": "수용체"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000064": {
+      "term": "T000062",
+      "n": 1,
+      "kind": "macromolecule",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16412",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "그람 음성균 외막의 주요 성분으로, 지질 A 부분이 숙주의 TLR4–MD-2 에 인식되는 PAMP",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000063",
+              "rel": "is_a",
+              "span": "PAMP"
+            },
+            {
+              "to": "D000069",
+              "rel": "refers",
+              "span": "TLR4–MD-2"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830",
+                "citation": "Park et al., 2009"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "note": "ChEBI:16412 는 지질다당류 부류 항목. 세균 종마다 지질 A 의 아실 사슬 수가 달라 활성도 다르다."
+    },
+    "D000065": {
+      "term": "T000063",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P18428",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "혈장에 있는 단백질로, LPS 의 지질 A 부분에 결합해 LPS 를 CD14 로 넘겨 준다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000064",
+              "rel": "refers",
+              "span": "LPS"
+            },
+            {
+              "to": "D000066",
+              "rel": "refers",
+              "span": "CD14"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.2402637",
+                "citation": "Schumann et al., 1990"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1698311",
+                "citation": "Wright et al., 1990"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "lps_site": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000064",
+          "note": "지질 A 결합 자리"
+        }
+      },
+      "rule": [
+        {
+          "id": "lps_binding",
+          "type": "transition",
+          "label": "LBP 의 LPS 결합",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "lps_site",
+            "partner": "D000064",
+            "add": [
+              "bound"
+            ]
+          },
+          "regulators": [],
+          "where": [
+            "extracellular"
+          ],
+          "text": "혈장(세포 밖)에서 LBP 가 LPS 의 지질 A 에 결합한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.2402637",
+                "citation": "Schumann et al., 1990"
+              }
+            ]
+          }
+        },
+        {
+          "id": "lps_transfer",
+          "type": "transition",
+          "label": "LPS 를 CD14 로 전달",
+          "action": "전달",
+          "agent": false,
+          "effect": {
+            "type": "transfer",
+            "target": "D000066",
+            "site": "lps_site",
+            "partner": "D000064",
+            "from_site": "lps_site"
+          },
+          "regulators": [],
+          "text": "LBP 가 붙잡은 LPS 를 세포막 바깥면의 CD14 로 넘기고, 빈 LBP 는 다시 LPS 를 붙잡을 수 있다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1698311",
+                "citation": "Wright et al., 1990"
+              }
+            ],
+            "note": "Wright 1990 은 CD14 가 LPS–LBP 복합체의 수용체임을 보였다. LBP 가 다시 쓰인다는 부분은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000066": {
+      "term": "T000064",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "membrane": {
+        "association": "lipid_anchored",
+        "location": "plasma_membrane",
+        "side": "extracellular"
+      },
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P08571",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "단핵구·대식세포 표면에 GPI 로 고정된 단백질로, LBP 가 가져온 LPS 를 받아 TLR4–MD-2 로 넘긴다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000065",
+              "rel": "refers",
+              "span": "LBP"
+            },
+            {
+              "to": "D000064",
+              "rel": "refers",
+              "span": "LPS"
+            },
+            {
+              "to": "D000069",
+              "rel": "refers",
+              "span": "TLR4–MD-2"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1698311",
+                "citation": "Wright et al., 1990"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "lps_site": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "face": "extracellular",
+          "ligand": "D000064",
+          "note": "LPS 결합 주머니 (N 말단)"
+        }
+      },
+      "rule": [
+        {
+          "id": "lps_transfer",
+          "type": "transition",
+          "label": "LPS 를 TLR4–MD-2 로 전달",
+          "action": "전달",
+          "agent": false,
+          "effect": {
+            "type": "transfer",
+            "target": "D000069",
+            "site": "lps_pocket",
+            "partner": "D000064",
+            "from_site": "lps_site"
+          },
+          "regulators": [],
+          "text": "CD14 가 LPS 를 세포막 바깥면에서 TLR4–MD-2 의 MD-2 소수성 주머니로 넘긴다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "MD-2 가 TLR4 의 LPS 반응성에 필요하고(Shimazu et al., 1999, DOI 10.1084/jem.189.11.1777), LPS 가 MD-2 주머니에 결합함(Park et al., 2009, DOI 10.1038/nature07830). CD14 → MD-2 직접 전달을 보인 문헌은 이번 세션에서 확인하지 못함."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000067": {
+      "term": "T000065",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "membrane": {
+        "association": "integral",
+        "location": "plasma_membrane"
+      },
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O00206",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "LPS 신호를 세포 안으로 전달하는 막관통 수용체로, 세포 밖 LRR 도메인과 세포질 쪽 TIR 도메인을 가진다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000025",
+              "rel": "is_a",
+              "span": "수용체"
+            },
+            {
+              "to": "D000064",
+              "rel": "refers",
+              "span": "LPS"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.282.5396.2085",
+                "citation": "Poltorak et al., 1998"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "ecd": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "face": "extracellular",
+          "ligand": "D000068",
+          "note": "류신 반복(LRR) 세포 밖 도메인 — MD-2 가 붙는 곳"
+        },
+        "tir": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "face": "cytosolic",
+          "ligand": "D000071",
+          "note": "TIR 도메인 — 어댑터가 붙는 곳"
+        }
+      },
+      "rule": [],
+      "obs": [],
+      "note": "Poltorak et al. (1998) 은 LPS 무반응 생쥐(C3H/HeJ 등)의 원인이 Tlr4 변이임을 밝혔다."
+    },
+    "D000068": {
+      "term": "T000066",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y6Y9",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "TLR4 의 세포 밖 도메인에 붙어 LPS 의 지질 A 를 소수성 주머니에 받아들이는 분비 단백질",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000067",
+              "rel": "refers",
+              "span": "TLR4"
+            },
+            {
+              "to": "D000064",
+              "rel": "refers",
+              "span": "LPS"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1084/jem.189.11.1777",
+                "citation": "Shimazu et al., 1999"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830",
+                "citation": "Park et al., 2009"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "lps_pocket": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000064",
+          "note": "지질 A 의 아실 사슬이 들어가는 큰 소수성 주머니 (Park et al., 2009)"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000069": {
+      "term": "T000067",
+      "n": 1,
+      "kind": "complex",
+      "membrane": {
+        "association": "integral",
+        "location": "plasma_membrane"
+      },
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000067",
+          "n": 1,
+          "role": "막관통 수용체"
+        },
+        {
+          "ref": "D000068",
+          "n": 1,
+          "role": "LPS 결합 소단위"
+        }
+      ],
+      "desc": [
+        {
+          "text": "TLR4 와 MD-2 가 1:1 로 결합한 세포막의 LPS 수용체 단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000067",
+              "rel": "refers",
+              "span": "TLR4"
+            },
+            {
+              "to": "D000068",
+              "rel": "refers",
+              "span": "MD-2"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1084/jem.189.11.1777",
+                "citation": "Shimazu et al., 1999"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830",
+                "citation": "Park et al., 2009"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "lps_pocket": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "on": "D000068",
+          "face": "extracellular",
+          "ligand": "D000064",
+          "note": "MD-2 의 소수성 주머니"
+        },
+        "tir": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "on": "D000067",
+          "face": "cytosolic",
+          "note": "TLR4 의 TIR 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000070": {
+      "term": "T000068",
+      "n": 1,
+      "kind": "complex",
+      "membrane": {
+        "association": "integral",
+        "location": "plasma_membrane"
+      },
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000069",
+          "n": 2,
+          "role": "LPS 를 결합한 TLR4–MD-2 단위"
+        }
+      ],
+      "desc": [
+        {
+          "text": "LPS 를 결합한 TLR4–MD-2 두 단위가 LPS 를 다리로 삼아 이룬 대칭 다량체로, 세포질 쪽 TIR 도메인이 서로 가까워져 신호를 시작한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000069",
+              "rel": "refers",
+              "span": "TLR4–MD-2"
+            },
+            {
+              "to": "D000064",
+              "rel": "refers",
+              "span": "LPS"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830",
+                "citation": "Park et al., 2009"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "lps_pocket": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "on": "D000069",
+          "face": "extracellular",
+          "ligand": "D000064",
+          "note": "단위마다 LPS 1분자 (Park et al., 2009, m 자 모양 다량체)"
+        },
+        "tir": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "on": "D000069",
+          "face": "cytosolic",
+          "ligand": "D000071",
+          "note": "가까워진 TIR 도메인이 만든 어댑터 결합 발판 — 단위마다 TIRAP 1분자로 둠"
+        }
+      },
+      "rule": [
+        {
+          "id": "signaling",
+          "type": "meaning",
+          "label": "TIRAP 결합 — 신호 가능",
+          "when": {
+            "tir": "bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Kagan & Medzhitov, 2006, Cell 125(5):943 — TIRAP 이 MyD88 을 활성 TLR4 로 데려온다는 보고. DOI/PMID 는 이번 세션에서 확인하지 못함."
+          }
+        },
+        {
+          "id": "primed",
+          "type": "meaning",
+          "label": "LPS 결합만 — MyD88 을 아직 모으지 못함",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "위와 같음: TIRAP 없이 MyD88 이 TLR4 로 오지 않는다는 흐름에서 추론"
+          }
+        },
+        {
+          "id": "dimerize",
+          "type": "transition",
+          "label": "TLR4–MD-2 다량체화",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "associate",
+            "requires": [
+              {
+                "site": "lps_pocket",
+                "feature": "bound",
+                "ref": "D000069"
+              }
+            ]
+          },
+          "regulators": [],
+          "text": "LPS 를 결합한 TLR4–MD-2 두 단위가 LPS 를 매개로 대칭 다량체를 이룬다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830",
+                "citation": "Park et al., 2009"
+              }
+            ]
+          }
+        },
+        {
+          "id": "tirap_recruit",
+          "type": "transition",
+          "label": "TIRAP 모집",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "tir",
+            "partner": "D000071",
+            "add": [
+              "bound"
+            ],
+            "requires": [
+              {
+                "site": "lps_pocket",
+                "feature": "bound"
+              }
+            ]
+          },
+          "regulators": [],
+          "text": "세포막 안쪽(PIP2)에 머무르던 TIRAP 이 다량체의 TIR 발판에 결합한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Kagan & Medzhitov, 2006, Cell 125(5):943 (식별자 미확인). TIRAP 이 단위마다 하나씩 붙는다는 화학량은 추론."
+          }
+        },
+        {
+          "id": "myddosome_nucleation",
+          "type": "transition",
+          "label": "마이도솜 조립",
+          "action": "결합",
+          "agent": true,
+          "via_site": "tir",
+          "effect": {
+            "type": "associate",
+            "complex": "D000075"
+          },
+          "regulators": [],
+          "text": "TIRAP 이 붙은 수용체 다량체의 세포질 쪽에서 MyD88 6, IRAK4 4, IRAK1 4 분자가 나선형 죽음 도메인 복합체(마이도솜)로 조립된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature09121",
+                "citation": "Lin, Lo & Wu, 2010"
+              }
+            ],
+            "note": "Lin et al. 2010 의 결정 구조는 MyD88 6 : IRAK4 4 : IRAK2 4. MyD88–IRAK4 가 IRAK2 또는 IRAK1 을 모은다고 보고했으며, 여기서 IRAK2 자리에 IRAK1 을 둔 것은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000071": {
+      "term": "T000069",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "membrane": {
+        "association": "peripheral",
+        "location": "plasma_membrane",
+        "side": "cytosolic"
+      },
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P58753",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "PIP2 에 결합해 세포막 안쪽에 머무르며 활성 TLR4 에 MyD88 을 데려오는 TIR 도메인 어댑터 단백질",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000067",
+              "rel": "refers",
+              "span": "TLR4"
+            },
+            {
+              "to": "D000072",
+              "rel": "refers",
+              "span": "MyD88"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Kagan & Medzhitov, 2006, Cell 125(5):943 — 식별자 미확인"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "tir": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "face": "cytosolic",
+          "ligand": "D000072",
+          "note": "TIR 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000072": {
+      "term": "T000070",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q99836",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "죽음 도메인과 TIR 도메인을 가진 어댑터 단백질로, TLR 신호에서 IRAK4 를 모은다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000073",
+              "rel": "refers",
+              "span": "IRAK4"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature09121",
+                "citation": "Lin, Lo & Wu, 2010"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "dd": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000073",
+          "note": "죽음 도메인(DD)"
+        },
+        "tir": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000071",
+          "note": "TIR 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000073": {
+      "term": "T000071",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9NWZ3",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "MyD88 에 죽음 도메인으로 결합해 IRAK1·IRAK2 를 인산화하는 단백질 키네이스",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000072",
+              "rel": "refers",
+              "span": "MyD88"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature09121",
+                "citation": "Lin, Lo & Wu, 2010"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "dd": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000072",
+          "note": "죽음 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000074": {
+      "term": "T000072",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P51617",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "IRAK4 에 의해 인산화되어 활성화되고 TRAF6 를 끌어들이는 단백질 키네이스",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000073",
+              "rel": "refers",
+              "span": "IRAK4"
+            },
+            {
+              "to": "D000076",
+              "rel": "refers",
+              "span": "TRAF6"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "14625308",
+                "citation": "Kollewe et al., 2004"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "t209": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Thr209"
+          },
+          "note": "첫 인산화 — 키네이스 도메인 구조 변화 (Kollewe et al., 2004)"
+        },
+        "t387": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Thr387"
+          },
+          "note": "활성화 고리 — 완전 활성 (Kollewe et al., 2004)"
+        },
+        "traf6_site": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000076",
+          "note": "TRAF6 결합 모티프 — 잔기 범위 미기록"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000075": {
+      "term": "T000073",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000072",
+          "n": 6,
+          "role": "어댑터"
+        },
+        {
+          "ref": "D000073",
+          "n": 4,
+          "role": "상류 키네이스"
+        },
+        {
+          "ref": "D000074",
+          "n": 4,
+          "role": "하류 키네이스"
+        }
+      ],
+      "desc": [
+        {
+          "text": "MyD88·IRAK4·IRAK 죽음 도메인이 나선형으로 쌓인 신호 복합체로, 키네이스 도메인을 가까이 모아 서로 인산화하게 한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000072",
+              "rel": "refers",
+              "span": "MyD88"
+            },
+            {
+              "to": "D000073",
+              "rel": "refers",
+              "span": "IRAK4"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature09121",
+                "citation": "Lin, Lo & Wu, 2010"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "irak1_t209": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Thr209"
+          },
+          "on": "D000074",
+          "note": "IRAK1 Thr209"
+        },
+        "traf6": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000076",
+          "note": "인산화된 IRAK1 의 TRAF6 결합 자리 — TRAF6 화학량은 1 로 둠 [Abstracted Logic]"
+        },
+        "k63_ub": {
+          "type": "modification_site",
+          "features": [
+            "K63_polyubiquitinated"
+          ],
+          "residue_unknown": true,
+          "ligand": "D000077",
+          "note": "결합한 TRAF6 의 자가 K63 폴리유비퀴틴 사슬 — 사슬을 유비퀴틴 1 단위로 셈 [Abstracted Logic]"
+        }
+      },
+      "rule": [
+        {
+          "id": "signaling",
+          "type": "meaning",
+          "label": "K63 사슬 발판 형성 — 신호 활성",
+          "when": {
+            "k63_ub": "K63_polyubiquitinated"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "11057907",
+                "citation": "Deng et al., 2000"
+              }
+            ]
+          }
+        },
+        {
+          "id": "assembling",
+          "type": "meaning",
+          "label": "발판 미형성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "K63 사슬이 IKK 활성화에 필요하다는 보고(Deng et al., 2000)에서 추론"
+          }
+        },
+        {
+          "id": "irak1_phos",
+          "type": "transition",
+          "label": "IRAK1 인산화",
+          "action": "인산화",
+          "agent": false,
+          "via_component": "D000073",
+          "effect": {
+            "type": "modify",
+            "site": "irak1_t209",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "마이도솜 안에서 가까워진 IRAK4 가 IRAK1 의 Thr209 를 인산화한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Lin et al., 2010 (DOI 10.1038/nature09121): 조립이 키네이스 도메인을 모아 인산화를 가능하게 함 + Kollewe et al., 2004 (PMID 14625308): Thr209 가 첫 인산화 자리. 두 결과를 이어 IRAK4 → IRAK1 Thr209 로 둔 것은 추론."
+          }
+        },
+        {
+          "id": "traf6_binding",
+          "type": "transition",
+          "label": "TRAF6 모집",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "traf6",
+            "partner": "D000076",
+            "add": [
+              "bound"
+            ],
+            "requires": [
+              {
+                "site": "irak1_t209",
+                "feature": "phosphorylated"
+              }
+            ]
+          },
+          "regulators": [],
+          "text": "인산화된 IRAK1 이 TRAF6 를 끌어들인다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "IRAK1 이 TRAF6 를 모은다는 흐름에서 추론 — 이번 세션에서 직접 문헌을 확인하지 못함"
+          }
+        },
+        {
+          "id": "traf6_k63",
+          "type": "transition",
+          "label": "TRAF6 K63 자가 유비퀴틴화",
+          "action": "유비퀴틴화",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "k63_ub",
+            "partner": "D000077",
+            "add": [
+              "K63_polyubiquitinated"
+            ],
+            "requires": [
+              {
+                "site": "traf6",
+                "feature": "bound"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000034"
+            ]
+          },
+          "regulators": [],
+          "text": "TRAF6 가 E2 인 Ubc13–Uev1A 와 함께 K63 결합 폴리유비퀴틴 사슬을 만든다. 유비퀴틴 활성화(E1)에서 ATP 가 AMP 로 쓰인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "11057907",
+                "citation": "Deng et al., 2000"
+              }
+            ],
+            "note": "E1·E2(Ubc13–Uev1A)는 정의항으로 두지 않았다. ATP→AMP 는 E1 반응을 합친 것 [Abstracted Logic]."
+          }
+        },
+        {
+          "id": "tak1_activation",
+          "type": "transition",
+          "label": "TAK1 활성화",
+          "action": "인산화",
+          "agent": true,
+          "effect": {
+            "type": "modify",
+            "target": "D000081",
+            "site": "tak1_act",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "K63 사슬 발판에 TAB2 가 결합하면서 TAK1 이 활성화 고리를 자가 인산화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ],
+            "note": "Wang et al. 2001: TAK1 은 TRAF6·Ubc13–Uev1A 에 의존하는 유비퀴틴 의존 키네이스. 발판(마이도솜)을 행위자로 둔 것은 [Abstracted Logic]."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000076": {
+      "term": "T000074",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y4K3",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "RING 도메인을 가진 E3 유비퀴틴 연결효소로, Ubc13–Uev1A 와 함께 K63 결합 폴리유비퀴틴 사슬을 만든다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000077",
+              "rel": "refers",
+              "span": "유비퀴틴"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "11057907",
+                "citation": "Deng et al., 2000"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "ring": {
+          "type": "catalytic_site",
+          "features": [
+            "bound"
+          ],
+          "note": "RING 도메인 — E2 결합"
+        },
+        "k63": {
+          "type": "modification_site",
+          "features": [
+            "K63_polyubiquitinated"
+          ],
+          "residue_unknown": true,
+          "ligand": "D000077",
+          "note": "자가 유비퀴틴화 자리 — 사람 번호 미확인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000077": {
+      "term": "T000075",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "76개 아미노산으로 된 작은 단백질로, 다른 단백질의 라이신에 공유 결합해 사슬을 이루며 분해 표지(K48) 또는 신호 발판(K63)으로 쓰인다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000005",
+              "rel": "is_a",
+              "span": "단백질"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "note": "UBB·UBC·RPS27A·UBA52 네 유전자가 만들어 하나의 UniProt 항목으로 정하지 않고 분자 부류로 둔다."
+    },
+    "D000078": {
+      "term": "T000076",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O43318",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "TAB1·TAB2 와 복합체를 이루고 K63 유비퀴틴 사슬에 의해 활성화되어 IKKβ 를 인산화하는 단백질 키네이스",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000083",
+              "rel": "refers",
+              "span": "IKKβ"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "act": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "residue_unknown": true,
+          "note": "활성화 고리의 자가 인산화 트레오닌 — 사람 번호 미확인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000079": {
+      "term": "T000077",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q15750",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "TAK1 에 결합해 TAK1 의 활성화를 돕는 어댑터 단백질",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000078",
+              "rel": "refers",
+              "span": "TAK1"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000080": {
+      "term": "T000078",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9NYJ8",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "K63 결합 폴리유비퀴틴 사슬에 결합해 TAK1 을 TRAF6 신호 복합체에 연결하는 어댑터 단백질",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000078",
+              "rel": "refers",
+              "span": "TAK1"
+            },
+            {
+              "to": "D000076",
+              "rel": "refers",
+              "span": "TRAF6"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "nzf": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000077",
+          "note": "NZF 유비퀴틴 결합 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000081": {
+      "term": "T000079",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000078",
+          "n": 1,
+          "role": "키네이스"
+        },
+        {
+          "ref": "D000079",
+          "n": 1,
+          "role": "활성화 보조"
+        },
+        {
+          "ref": "D000080",
+          "n": 1,
+          "role": "유비퀴틴 사슬 결합"
+        }
+      ],
+      "desc": [
+        {
+          "text": "TAK1·TAB1·TAB2 로 된 키네이스 복합체로, K63 사슬에 의해 활성화되어 IKK 를 인산화한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000078",
+              "rel": "refers",
+              "span": "TAK1"
+            },
+            {
+              "to": "D000085",
+              "rel": "refers",
+              "span": "IKK"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "tak1_act": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "residue_unknown": true,
+          "on": "D000078",
+          "note": "TAK1 활성화 고리"
+        }
+      },
+      "rule": [
+        {
+          "id": "active",
+          "type": "meaning",
+          "label": "활성화 고리 인산화 — 활성",
+          "when": {
+            "tak1_act": "phosphorylated"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "비인산화 — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          }
+        },
+        {
+          "id": "ikkb_s177",
+          "type": "transition",
+          "label": "IKKβ Ser177 인산화",
+          "action": "인산화",
+          "agent": true,
+          "via_component": "D000078",
+          "effect": {
+            "type": "modify",
+            "target": "D000085",
+            "site": "ikkb_s177",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 TAK1 이 IKKβ 활성화 고리의 Ser177 을 인산화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              }
+            ],
+            "note": "Delhase 1999 초록은 활성화 고리의 두 자리를 말하며, 번호 Ser177·Ser181 은 이차 문헌에서 확인함."
+          }
+        },
+        {
+          "id": "ikkb_s181",
+          "type": "transition",
+          "label": "IKKβ Ser181 인산화",
+          "action": "인산화",
+          "agent": true,
+          "via_component": "D000078",
+          "effect": {
+            "type": "modify",
+            "target": "D000085",
+            "site": "ikkb_s181",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 TAK1 이 IKKβ 활성화 고리의 Ser181 을 인산화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              }
+            ],
+            "note": "Ser177 다음에 Ser181 로 둔 순서는 [Abstracted Logic] — 두 자리는 독립 규칙이다."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000082": {
+      "term": "T000080",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O15111",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "IKK 복합체를 이루는 단백질 키네이스로, 염증 자극에 의한 IKK 활성화에는 필요하지 않다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000085",
+              "rel": "refers",
+              "span": "IKK"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "s176": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser176"
+          }
+        },
+        "s180": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser180"
+          }
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000083": {
+      "term": "T000081",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O14920",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "활성화 고리의 두 세린이 인산화되면 활성화되어 IκBα 를 인산화하는 단백질 키네이스로, IKK 복합체의 주 촉매 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000086",
+              "rel": "refers",
+              "span": "IκBα"
+            },
+            {
+              "to": "D000085",
+              "rel": "refers",
+              "span": "IKK"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "s177": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser177"
+          }
+        },
+        "s181": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser181"
+          }
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000084": {
+      "term": "T000082",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y6K9",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "IKK 복합체의 조절 소단위로, 폴리유비퀴틴 사슬에 결합해 IKK 를 신호 복합체로 모은다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000085",
+              "rel": "refers",
+              "span": "IKK"
+            },
+            {
+              "to": "D000077",
+              "rel": "refers",
+              "span": "유비퀴틴"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "uban": {
+          "type": "domain",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000077",
+          "note": "유비퀴틴 결합(UBAN) 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000085": {
+      "term": "T000083",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000082",
+          "n": 1,
+          "role": "촉매 소단위 α"
+        },
+        {
+          "ref": "D000083",
+          "n": 1,
+          "role": "촉매 소단위 β"
+        },
+        {
+          "ref": "D000084",
+          "n": 2,
+          "role": "조절 소단위"
+        }
+      ],
+      "desc": [
+        {
+          "text": "IKKα·IKKβ 와 조절 소단위 NEMO 로 된 키네이스 복합체로, IκBα 를 인산화해 분해되게 한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000086",
+              "rel": "refers",
+              "span": "IκBα"
+            },
+            {
+              "to": "D000084",
+              "rel": "refers",
+              "span": "NEMO"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              },
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "ikkb_s177": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser177"
+          },
+          "on": "D000083"
+        },
+        "ikkb_s181": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser181"
+          },
+          "on": "D000083"
+        }
+      },
+      "rule": [
+        {
+          "id": "active",
+          "type": "meaning",
+          "label": "IKKβ 활성화 고리 두 자리 인산화 — 활성",
+          "when": {
+            "ikkb_s177": "phosphorylated",
+            "ikkb_s181": "phosphorylated"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "그 밖 — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.284.5412.309",
+                "citation": "Delhase et al., 1999"
+              }
+            ],
+            "note": "두 자리 모두 필요하다는 보고에 따라 하나만 인산화된 상태도 비활성으로 둠"
+          }
+        },
+        {
+          "id": "ikba_s32",
+          "type": "transition",
+          "label": "IκBα Ser32 인산화",
+          "action": "인산화",
+          "agent": true,
+          "via_component": "D000083",
+          "effect": {
+            "type": "modify",
+            "target": "D000090",
+            "site": "ikba_s32",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 IKK 가 NF-κB 에 붙은 IκBα 의 Ser32 를 인산화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.7878466",
+                "citation": "Brown et al., 1995"
+              },
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          }
+        },
+        {
+          "id": "ikba_s36",
+          "type": "transition",
+          "label": "IκBα Ser36 인산화",
+          "action": "인산화",
+          "agent": true,
+          "via_component": "D000083",
+          "effect": {
+            "type": "modify",
+            "target": "D000090",
+            "site": "ikba_s36",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 IKK 가 NF-κB 에 붙은 IκBα 의 Ser36 을 인산화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.7878466",
+                "citation": "Brown et al., 1995"
+              },
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ],
+            "note": "Ser32 다음 Ser36 으로 둔 순서는 [Abstracted Logic]."
+          }
+        }
+      ],
+      "obs": [],
+      "note": "NEMO 의 화학량(2)은 이량체로 둔 추론값 [Abstracted Logic]. NEMO 가 K63 사슬에 결합해 IKK 를 TAK1 곁으로 모으는 단계는 아직 따로 두지 않았다."
+    },
+    "D000086": {
+      "term": "T000084",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P25963",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "NF-κB 이량체에 결합해 핵 이동을 막는 억제 단백질로, Ser32·Ser36 이 인산화되면 유비퀴틴화되어 분해된다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000089",
+              "rel": "refers",
+              "span": "NF-κB"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.7878466",
+                "citation": "Brown et al., 1995"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.92.24.11259",
+                "citation": "Scherer et al., 1995"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "s32": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser32"
+          }
+        },
+        "s36": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser36"
+          }
+        },
+        "k21": {
+          "type": "modification_site",
+          "features": [
+            "K48_polyubiquitinated"
+          ],
+          "numbering": {
+            "9606": "Lys21"
+          },
+          "ligand": "D000077"
+        },
+        "k22": {
+          "type": "modification_site",
+          "features": [
+            "K48_polyubiquitinated"
+          ],
+          "numbering": {
+            "9606": "Lys22"
+          },
+          "ligand": "D000077"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000087": {
+      "term": "T000085",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q04206",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "Rel 상동 도메인과 전사 활성화 도메인을 가진 NF-κB 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000089",
+              "rel": "refers",
+              "span": "NF-κB"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "nls": {
+          "type": "motif",
+          "features": [
+            "bound"
+          ],
+          "note": "핵 위치 신호 — IκBα 가 결합하면 가려진다 (위치 미기록)"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000088": {
+      "term": "T000086",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P19838",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "p105 전구체에서 가공되어 생기는 NF-κB 소단위로, Rel 상동 도메인으로 DNA 의 κB 자리에 결합한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000089",
+              "rel": "refers",
+              "span": "NF-κB"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "note": "UniProt P19838 은 p105 전구체 항목. p50 은 그 N 말단 부분이다."
+    },
+    "D000089": {
+      "term": "T000087",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000087",
+          "n": 1,
+          "role": "전사 활성화 소단위"
+        },
+        {
+          "ref": "D000088",
+          "n": 1,
+          "role": "DNA 결합 소단위"
+        }
+      ],
+      "desc": [
+        {
+          "text": "p50 과 RelA(p65) 가 이룬 전사 인자로, IκBα 에서 풀려나면 핵으로 들어가 표적 유전자의 κB 자리에 결합한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000086",
+              "rel": "refers",
+              "span": "IκBα"
+            },
+            {
+              "to": "D000087",
+              "rel": "refers",
+              "span": "RelA"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "free",
+          "type": "meaning",
+          "label": "풀려난 이량체 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          }
+        },
+        {
+          "id": "nuclear_import",
+          "type": "transition",
+          "label": "NF-κB 핵 이동",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "cytosol",
+            "to": "nucleoplasm"
+          },
+          "regulators": [],
+          "text": "IκBα 에서 풀려난 p50–p65 의 핵 위치 신호를 임포틴 α3·α4 가 인식해 핵공을 거쳐 핵질로 옮긴다 (임포틴은 정의항으로 두지 않음).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Fagerlund et al., 2005, J Biol Chem 280(16) \"NF-κB is transported into the nucleus by importin α3 and importin α4\" — 서지는 확인했으나 DOI/PMID 는 이번 세션에서 확인하지 못함"
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000090": {
+      "term": "T000088",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000089",
+          "n": 1,
+          "role": "전사 인자"
+        },
+        {
+          "ref": "D000086",
+          "n": 1,
+          "role": "억제 소단위"
+        }
+      ],
+      "desc": [
+        {
+          "text": "IκBα 가 NF-κB 이량체에 결합해 세포질에 붙잡아 둔 비활성 복합체",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000086",
+              "rel": "refers",
+              "span": "IκBα"
+            },
+            {
+              "to": "D000089",
+              "rel": "refers",
+              "span": "NF-κB"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "ikba_s32": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser32"
+          },
+          "on": "D000086"
+        },
+        "ikba_s36": {
+          "type": "modification_site",
+          "features": [
+            "phosphorylated"
+          ],
+          "numbering": {
+            "9606": "Ser36"
+          },
+          "on": "D000086"
+        },
+        "ikba_ub": {
+          "type": "modification_site",
+          "features": [
+            "K48_polyubiquitinated"
+          ],
+          "numbering": {
+            "9606": "Lys21"
+          },
+          "on": "D000086",
+          "ligand": "D000077",
+          "note": "Lys21·Lys22 (Scherer et al., 1995) — 하나의 유비퀴틴화 부위로 묶고 사슬을 유비퀴틴 1 단위로 셈 [Abstracted Logic]"
+        }
+      },
+      "rule": [
+        {
+          "id": "held",
+          "type": "meaning",
+          "label": "IκBα 결합 — 세포질에 붙잡힘",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000091": {
+      "term": "T000089",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y297",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "F-box 와 WD40 도메인을 가진 단백질로, 인산화된 IκBα 를 인식하는 SCF 유비퀴틴 연결효소의 기질 수용 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [
+            {
+              "to": "D000086",
+              "rel": "refers",
+              "span": "IκBα"
+            },
+            {
+              "to": "D000095",
+              "rel": "refers",
+              "span": "SCF"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/25159",
+                "citation": "Yaron et al., 1998"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "wd40": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "note": "인산화된 DSGxxS 서열(IκBα Ser32·Ser36)을 인식하는 WD40 도메인"
+        }
+      },
+      "rule": [],
+      "obs": []
+    },
+    "D000092": {
+      "term": "T000090",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P63208",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "SCF 유비퀴틴 연결효소에서 F-box 단백질을 CUL1 에 잇는 어댑터 단백질",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000093",
+              "rel": "refers",
+              "span": "CUL1"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000093": {
+      "term": "T000091",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q13616",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "SCF 유비퀴틴 연결효소의 뼈대가 되는 컬린 단백질",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000095",
+              "rel": "refers",
+              "span": "SCF"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000094": {
+      "term": "T000092",
+      "n": 1,
+      "kind": "protein",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P62877",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "SCF 유비퀴틴 연결효소에서 E2 를 끌어들이는 RING 단백질",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000095",
+              "rel": "refers",
+              "span": "SCF"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000095": {
+      "term": "T000093",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [],
+      "components": [
+        {
+          "ref": "D000092",
+          "n": 1,
+          "role": "어댑터"
+        },
+        {
+          "ref": "D000093",
+          "n": 1,
+          "role": "뼈대"
+        },
+        {
+          "ref": "D000094",
+          "n": 1,
+          "role": "RING (E2 결합)"
+        },
+        {
+          "ref": "D000091",
+          "n": 1,
+          "role": "기질 수용"
+        }
+      ],
+      "desc": [
+        {
+          "text": "SKP1·CUL1·RBX1 과 F-box 단백질 βTrCP 로 된 E3 유비퀴틴 연결효소로, 인산화된 IκBα 에 K48 결합 폴리유비퀴틴 사슬을 붙인다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000091",
+              "rel": "refers",
+              "span": "βTrCP"
+            },
+            {
+              "to": "D000086",
+              "rel": "refers",
+              "span": "IκBα"
+            },
+            {
+              "to": "D000077",
+              "rel": "refers",
+              "span": "유비퀴틴"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/25159",
+                "citation": "Yaron et al., 1998"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "ikba_k48",
+          "type": "transition",
+          "label": "IκBα K48 유비퀴틴화",
+          "action": "유비퀴틴화",
+          "agent": true,
+          "via_component": "D000091",
+          "effect": {
+            "type": "modify",
+            "target": "D000090",
+            "site": "ikba_ub",
+            "partner": "D000077",
+            "add": [
+              "K48_polyubiquitinated"
+            ],
+            "requires": [
+              {
+                "site": "ikba_s32",
+                "feature": "phosphorylated"
+              },
+              {
+                "site": "ikba_s36",
+                "feature": "phosphorylated"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000034"
+            ]
+          },
+          "regulators": [],
+          "text": "βTrCP 가 인산화된 Ser32·Ser36 을 인식하고, SCF 가 IκBα 의 Lys21·Lys22 에 K48 폴리유비퀴틴 사슬을 붙인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/25159",
+                "citation": "Yaron et al., 1998"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.92.24.11259",
+                "citation": "Scherer et al., 1995"
+              }
+            ],
+            "note": "E1·E2 는 정의항으로 두지 않았다. ATP→AMP 는 E1 반응을 합친 것 [Abstracted Logic]."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000096": {
+      "term": "T000094",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "α·β 고리가 쌓인 통 모양의 단백질 분해 핵심 입자로, 안쪽 β 소단위가 펩타이드 결합을 자른다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000099",
+              "rel": "refers",
+              "span": "펩타이드"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "note": "28개 소단위(α1–7, β1–7 두 벌)는 아직 정의항으로 나누지 않았다."
+    },
+    "D000097": {
+      "term": "T000095",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "폴리유비퀴틴 사슬을 인식하고 ATP 를 써서 기질을 펴 20S 핵심 입자 안으로 밀어 넣는 프로테아좀 조절 입자",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000077",
+              "rel": "refers",
+              "span": "유비퀴틴"
+            },
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": [],
+      "note": "구성 소단위는 아직 정의항으로 나누지 않았다."
+    },
+    "D000098": {
+      "term": "T000096",
+      "n": 1,
+      "kind": "complex",
+      "xrefs": [
+        {
+          "db": "GO",
+          "id": "GO:0000502",
+          "status": "asserted"
+        }
+      ],
+      "components": [
+        {
+          "ref": "D000096",
+          "n": 1,
+          "role": "핵심 입자"
+        },
+        {
+          "ref": "D000097",
+          "n": 2,
+          "role": "조절 입자 (양 끝)"
+        }
+      ],
+      "desc": [
+        {
+          "text": "20S 핵심 입자 양 끝에 19S 조절 입자가 붙은 단백질 분해 복합체로, K48 폴리유비퀴틴화된 단백질을 펩타이드로 분해한다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000096",
+              "rel": "refers",
+              "span": "20S 핵심 입자"
+            },
+            {
+              "to": "D000099",
+              "rel": "refers",
+              "span": "펩타이드"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "ikba_degradation",
+          "type": "transition",
+          "label": "IκBα 분해",
+          "action": "단백질 분해",
+          "agent": true,
+          "effect": {
+            "type": "degrade",
+            "complex": "D000090",
+            "component": "D000086",
+            "produces": [
+              "D000099"
+            ],
+            "requires": [
+              {
+                "site": "ikba_ub",
+                "feature": "K48_polyubiquitinated"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "26S 프로테아좀이 K48 폴리유비퀴틴화된 IκBα 만 골라 펩타이드로 분해하고, NF-κB 이량체는 풀어 준다. 유비퀴틴은 떼어져 다시 쓰인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ],
+            "note": "유비퀴틴이 재활용된다는 부분과 IκBα 만 분해된다는 표현은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000099": {
+      "term": "T000097",
+      "n": 1,
+      "kind": "molecule_class",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "아미노산 여러 개가 펩타이드 결합으로 이어진 짧은 사슬",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000007",
+              "rel": "refers",
+              "span": "아미노산"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000100": {
+      "term": "T000098",
+      "n": 1,
+      "kind": "nucleic_acid",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "NCBIGene",
+          "id": "7124",
+          "status": "asserted"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "종양 괴사 인자(TNF)를 암호화하는 유전자로, 프로모터의 κB 자리에 NF-κB 가 결합하면 전사가 활성화된다",
+          "field": "분자생물학",
+          "context": {
+            "scope": "분자생물학"
+          },
+          "links": [
+            {
+              "to": "D000017",
+              "rel": "is_a",
+              "span": "유전자"
+            },
+            {
+              "to": "D000089",
+              "rel": "refers",
+              "span": "NF-κB"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1128/mcb.10.4.1498",
+                "citation": "Collart, Baeuerle & Vassalli, 1990"
+              }
+            ],
+            "note": "생쥐 대식세포의 Tnf 프로모터 연구 — 사람 TNF 에 그대로 옮긴 것은 [Abstracted Logic]"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {
+        "kb_site": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "ligand": "D000089",
+          "note": "κB 자리 — Collart et al. 1990 은 κB 유사 모티프 네 개를 보고(생쥐). 여기서는 하나로 묶음 [Abstracted Logic]"
+        }
+      },
+      "rule": [
+        {
+          "id": "on",
+          "type": "meaning",
+          "label": "NF-κB 결합 — 전사 활성",
+          "when": {
+            "kb_site": "bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1128/mcb.10.4.1498",
+                "citation": "Collart, Baeuerle & Vassalli, 1990"
+              }
+            ]
+          }
+        },
+        {
+          "id": "off",
+          "type": "meaning",
+          "label": "기본 — 전사 꺼짐",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1128/mcb.10.4.1498",
+                "citation": "Collart, Baeuerle & Vassalli, 1990"
+              }
+            ]
+          }
+        },
+        {
+          "id": "kb_binding",
+          "type": "transition",
+          "label": "NF-κB 의 κB 자리 결합",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "kb_site",
+            "partner": "D000089",
+            "add": [
+              "bound"
+            ]
+          },
+          "regulators": [],
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "핵 안의 NF-κB 이량체가 TNF 프로모터의 κB 자리에 결합한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1128/mcb.10.4.1498",
+                "citation": "Collart, Baeuerle & Vassalli, 1990"
+              }
+            ],
+            "note": "생쥐 대식세포 근거 — 사람 프로모터로 옮긴 것은 [Abstracted Logic]"
+          }
+        },
+        {
+          "id": "transcription",
+          "type": "transition",
+          "label": "TNF 전사",
+          "action": "전사",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000013"
+            ],
+            "produces": [
+              "D000101"
+            ]
+          },
+          "regulators": [],
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "NF-κB 가 결합한 TNF 유전자가 전사되어 TNF mRNA 가 만들어진다 (RNA 중합효소 II·기본 전사 인자는 아직 정의항으로 두지 않음).",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1128/mcb.10.4.1498",
+                "citation": "Collart, Baeuerle & Vassalli, 1990"
+              }
+            ],
+            "note": "유전자를 행위자(주형)로 두고 RNA 중합효소를 생략한 표현은 [Abstracted Logic]"
+          }
+        }
+      ],
+      "obs": []
+    },
+    "D000101": {
+      "term": "T000099",
+      "n": 1,
+      "kind": "nucleic_acid",
+      "reference_species": "9606",
+      "xrefs": [],
+      "unmapped": "전사체 ID(RefSeq NM_) 체계가 외부 ID 어휘에 없음 — 유전자 ID(NCBIGene 7124)는 TNF 유전자 정의항에 있음",
+      "components": [],
+      "desc": [
+        {
+          "text": "TNF 유전자가 전사되어 만들어진 전령 RNA",
+          "field": "분자생물학",
+          "context": {
+            "scope": "분자생물학"
+          },
+          "links": [
+            {
+              "to": "D000008",
+              "rel": "is_a",
+              "span": "RNA"
+            },
+            {
+              "to": "D000100",
+              "rel": "refers",
+              "span": "TNF 유전자"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "asserted"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000102": {
+      "term": "T000100",
+      "n": 1,
+      "kind": "pathway",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "세균의 LPS 가 TLR4 를 활성화해 MyD88 의존 연쇄를 거쳐 NF-κB 를 핵으로 보내고 염증 유전자의 전사를 활성화하는 신호 전달 경로",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "macrophage"
+          },
+          "links": [
+            {
+              "to": "D000024",
+              "rel": "is_a",
+              "span": "신호 전달 경로"
+            },
+            {
+              "to": "D000064",
+              "rel": "refers",
+              "span": "LPS"
+            },
+            {
+              "to": "D000067",
+              "rel": "refers",
+              "span": "TLR4"
+            },
+            {
+              "to": "D000089",
+              "rel": "refers",
+              "span": "NF-κB"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.282.5396.2085",
+                "citation": "Poltorak et al., 1998"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000103": {
+      "term": "T000101",
+      "n": 1,
+      "kind": "pathway",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "LPS–TLR4–NF-κB 신호 전달의 첫 부분으로, LBP·CD14 가 LPS 를 TLR4–MD-2 에 전달해 수용체 다량체가 생기고 TIRAP 이 모이는 과정",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "macrophage"
+          },
+          "links": [
+            {
+              "to": "D000102",
+              "rel": "part_of",
+              "span": "LPS–TLR4–NF-κB 신호 전달"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1698311",
+                "citation": "Wright et al., 1990"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830",
+                "citation": "Park et al., 2009"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000104": {
+      "term": "T000102",
+      "n": 1,
+      "kind": "pathway",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "LPS–TLR4–NF-κB 신호 전달의 가운데 부분으로, 마이도솜 조립에서 TRAF6 의 K63 사슬, TAK1 을 거쳐 IKK 가 활성화되는 과정",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "macrophage"
+          },
+          "links": [
+            {
+              "to": "D000102",
+              "rel": "part_of",
+              "span": "LPS–TLR4–NF-κB 신호 전달"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature09121",
+                "citation": "Lin, Lo & Wu, 2010"
+              },
+              {
+                "db": "PMID",
+                "id": "11057907",
+                "citation": "Deng et al., 2000"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
+    },
+    "D000105": {
+      "term": "T000103",
+      "n": 1,
+      "kind": "pathway",
+      "xrefs": [],
+      "components": [],
+      "desc": [
+        {
+          "text": "LPS–TLR4–NF-κB 신호 전달의 끝부분으로, IκBα 가 인산화·유비퀴틴화·분해되고 풀려난 NF-κB 가 핵으로 들어가 TNF 유전자의 전사를 켜는 과정",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "macrophage"
+          },
+          "links": [
+            {
+              "to": "D000102",
+              "rel": "part_of",
+              "span": "LPS–TLR4–NF-κB 신호 전달"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.7878466",
+                "citation": "Brown et al., 1995"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/25159",
+                "citation": "Yaron et al., 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "obs": []
     }
   },
   "steps": {
@@ -3748,6 +7498,504 @@
       ],
       "part_of": [
         "D000051"
+      ]
+    },
+    "S000012": {
+      "rule": "D000065/rule/lps_binding",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000064|extracellular"
+        },
+        {
+          "b": "D000065|extracellular"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000065|lps_site:bound|extracellular"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000103"
+      ]
+    },
+    "S000013": {
+      "rule": "D000065/rule/lps_transfer",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000065|lps_site:bound|extracellular"
+        },
+        {
+          "b": "D000066|plasma_membrane"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000065|extracellular"
+        },
+        {
+          "b": "D000066|lps_site:bound|plasma_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000103"
+      ]
+    },
+    "S000014": {
+      "rule": "D000066/rule/lps_transfer",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000066|lps_site:bound|plasma_membrane"
+        },
+        {
+          "b": "D000069|plasma_membrane"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000066|plasma_membrane"
+        },
+        {
+          "b": "D000069|lps_pocket:bound|plasma_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000103"
+      ]
+    },
+    "S000015": {
+      "rule": "D000070/rule/dimerize",
+      "agents": [],
+      "inputs": [
+        {
+          "n": 2,
+          "b": "D000069|lps_pocket:bound|plasma_membrane"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000070|lps_pocket:bound|plasma_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000103"
+      ]
+    },
+    "S000016": {
+      "rule": "D000070/rule/tirap_recruit",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000070|lps_pocket:bound|plasma_membrane"
+        },
+        {
+          "n": 2,
+          "b": "D000071|plasma_membrane"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000070|lps_pocket:bound|tir:bound|plasma_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000103"
+      ]
+    },
+    "S000017": {
+      "rule": "D000070/rule/myddosome_nucleation",
+      "agents": [
+        {
+          "b": "D000070|lps_pocket:bound|tir:bound|plasma_membrane"
+        }
+      ],
+      "inputs": [
+        {
+          "n": 6,
+          "b": "D000072|cytosol"
+        },
+        {
+          "n": 4,
+          "b": "D000073|cytosol"
+        },
+        {
+          "n": 4,
+          "b": "D000074|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000075|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000018": {
+      "rule": "D000075/rule/irak1_phos",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000075|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000019": {
+      "rule": "D000075/rule/traf6_binding",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|cytosol"
+        },
+        {
+          "b": "D000076|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|traf6:bound|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000020": {
+      "rule": "D000075/rule/traf6_k63",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|traf6:bound|cytosol"
+        },
+        {
+          "b": "D000077|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|k63_ub:K63_polyubiquitinated|traf6:bound|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000034|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000021": {
+      "rule": "D000075/rule/tak1_activation",
+      "agents": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|k63_ub:K63_polyubiquitinated|traf6:bound|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000081|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000081|tak1_act:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000022": {
+      "rule": "D000081/rule/ikkb_s177",
+      "agents": [
+        {
+          "b": "D000081|tak1_act:phosphorylated|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000085|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000085|ikkb_s177:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000023": {
+      "rule": "D000081/rule/ikkb_s181",
+      "agents": [
+        {
+          "b": "D000081|tak1_act:phosphorylated|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000085|ikkb_s177:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000085|ikkb_s177:phosphorylated|ikkb_s181:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    "S000024": {
+      "rule": "D000085/rule/ikba_s32",
+      "agents": [
+        {
+          "b": "D000085|ikkb_s177:phosphorylated|ikkb_s181:phosphorylated|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000090|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    "S000025": {
+      "rule": "D000085/rule/ikba_s36",
+      "agents": [
+        {
+          "b": "D000085|ikkb_s177:phosphorylated|ikkb_s181:phosphorylated|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    "S000026": {
+      "rule": "D000095/rule/ikba_k48",
+      "agents": [
+        {
+          "b": "D000095|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|cytosol"
+        },
+        {
+          "b": "D000077|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|ikba_ub:K48_polyubiquitinated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000034|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    "S000027": {
+      "rule": "D000098/rule/ikba_degradation",
+      "agents": [
+        {
+          "b": "D000098|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|ikba_ub:K48_polyubiquitinated|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000089|cytosol"
+        },
+        {
+          "b": "D000099|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000077|cytosol"
+        },
+        {
+          "minor": true,
+          "b": "D000033|cytosol"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    "S000028": {
+      "rule": "D000089/rule/nuclear_import",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000089|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000089|nucleoplasm"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    "S000029": {
+      "rule": "D000100/rule/kb_binding",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000100|nucleoplasm"
+        },
+        {
+          "b": "D000089|nucleoplasm"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000100|kb_site:bound|nucleoplasm"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    "S000030": {
+      "rule": "D000100/rule/transcription",
+      "agents": [
+        {
+          "b": "D000100|kb_site:bound|nucleoplasm"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000013|nucleoplasm"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000101|nucleoplasm"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
       ]
     }
   }

@@ -139,7 +139,10 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 연결의 `span` 은 그 설명 문장 속 구절을 원문 그대로. 문장에 없으면 오류, 없으면 경고(`contrasts`·`requires` 제외).
 
 ### 근거 `evidence`
-- curated(출처 `source` 필수, 예 `{db:"PMID", id:"…"}`) | computed(도구 `tool` 필수) | asserted | predicted(0–1 `confidence` 필수).
+- `{ level, sources: [{ db: "DOI"|"PMID", id, citation: "저자, 연도" }], basis, tool, confidence, note }`
+- **curated**: 실제로 확인한 문헌만. DOI 또는 PMID + citation 필수. **인용을 지어내지 않는다** — 식별자를 확인하지 못하면 curated 로 쓰지 않는다.
+- **abstracted** = `[Abstracted Logic: Derived from the inferred mechanistic flow]`: 문헌이 직접 말하지 않고 기전 흐름에서 추론한 주장. 무엇에서 추론했는지 `basis` 필수.
+- computed(도구 `tool` 필수) | asserted(출처 없이 적은 일반 지식) | predicted(0–1 `confidence` 필수).
 
 ## 7. 규칙 (두 해상도의 다리)
 
@@ -157,7 +160,11 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 | `modify` | `target`(생략하면 소유자), `site`, `add`, `remove`, `partner` | 대상 부위의 특징 변화 (각각 하나까지). `partner` 는 그 부위에 흡수되는 결합 상대 |
 | `convert` | `consumes`, `produces` | 기질 → 생성물 |
 | `dissociate` / `associate` | `complex`(생략하면 소유자), `partner`, `partner_site: { component, sites }` | 복합체 ⇄ 구성 요소. 결합 상대가 흡수되는 구성 요소의 부위들 |
-| `transport` | `target`, `from`, `to` | 위치 변화 |
+| `transport` | `target`, `from`, `to` | 위치 변화 — 위치를 바꾸는 유일한 방법 |
+| `transfer` | `partner`(리간드), `from_site`(소유자 부위), `target`, `site` | 리간드를 소유자의 부위에서 대상의 부위로 넘김 (LBP → CD14 → MD-2) |
+| `degrade` | `complex`, `component`, `produces` | 복합체의 한 구성 요소를 분해 산물로 바꾸고 나머지 구성 요소를 풀어 줌 (IκBα 분해 → NF-κB) |
+
+- `effect.requires: [{ ref, site, feature }]` — 전제 조건. 입력 묶음(ref 생략 = 대상/복합체)이 이미 그 특징을 가져야 한다 (예: Ser32·Ser36 인산화된 IκBα 만 βTrCP 가 유비퀴틴화).
 
 - `action` 은 어휘의 허용 효과만 쓸 수 있고, `adds`·`removes` 가 정해진 action(인산화 +phosphorylated, 탈인산화 −phosphorylated, 뉴클레오타이드 교환 −GDP_bound +GTP_bound)은 그 특징을 반드시 더하거나 뺀다.
 - `with`: 보조 기질·생성물(ATP→ADP 등). `regulators`: `[{ ref, effect, note }]` — 단계의 조절자는 여기 정의된 것만. `where`: 규칙이 작동하는 위치(부모 위치에서 성립해도 특수 위치로 자동 상속되지 않음).
@@ -174,7 +181,16 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
   4. 위치: 수송이 아닌 단계에서 대상의 위치가 바뀌면 오류. 수송은 `from → to` 와 일치, 특징은 그대로.
   5. 위치 조건(`where`)과 **공간 접촉**: 반응 중심(행위자, 없으면 대상)과 모든 참여자가 맞닿을 수 있어야 한다. 3D–3D 는 같은 부피(또는 부모·자식), 2D–3D 는 그 막 면이 맞닿은 부피(작용 부위의 `face` 로 판정), 2D–2D 는 같은 막이면서 작용 면과 붙은 면이 같아야 한다.
   6. 보조 기질·생성물, 조절자는 규칙에 정의된 것만.
+  7. **동일성 보존**: 결합(상대 흡수)·해리·결합체 형성·전달·분해·수송 단계는 입력과 출력의 실체가 같아야 한다. 묶음은 복합체 → 구성 요소(재귀), 리간드가 정해진 부위가 채워져 있으면 그 리간드(부위가 구성 요소 위면 그 개수만큼, 리간드가 복합체면 그 구성 요소)로 펼쳐 센다. 행위자와 보조 기질(`with`)은 빼고, 분해는 분해된 구성 요소와 분해 산물을 뺀다.
 - **사슬 연결**: 한 단계의 출력 묶음 키가 다른 단계의 입력·행위자·조절자 묶음 키와 같으면 이어진다. `minor`(부산물)는 잇지 않는다.
+
+## 8A. 시뮬레이션 (`node dbtool.mjs simulate <경로> --until D… --from D…`)
+
+- 경로의 단계를 규칙 그대로 발화시켜 묶음 풀의 변화를 따라간다. 단계 순서대로, 한 라운드에 행위자(촉매) 수만큼·입력이 허락하는 만큼 발화.
+- 시작 풀: 어떤 단계도 만들지 않는 묶음(원천)은 `--amount`(기본 10), 부산물·보조 기질로 쓰이는 묶음(ATP 등)은 넉넉히. 순환 안에서만 만들어지는 휴지 상태(Gs[GDP], 빈 LBP …)는 가장 상류의 순환부터 하나씩 자동 보충하고 출력에 밝힌다.
+- 목표(`--until`)에 도달하면 그 묶음을 처음 만든 단계에서 거꾸로 유도 경로와 뿌리(원천 묶음)를 찾고, `--from` 이 뿌리에 있는지 확인한다. 도달하지 못하거나 유도되지 않으면 종료 코드 1.
+- `--init "묶음키=N;…"` 으로 시작 양을 바꾼다 (음성 대조: `--init "D000064|extracellular=0"` → LPS 없으면 TNF 전사 없음).
+- 속도·농도는 다루지 않는 이산(토큰) 시뮬레이션이다.
 
 ## 9. 외부 ID
 
@@ -242,6 +258,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-08 | 4 (확장) | LPS → TLR4 → NF-κB 스트레스 시험으로 엔진 확장: 효과 `transfer`·`degrade`, 전제 조건 `requires`, 동일성 보존 검사, 수송 대상의 접촉 검사 예외, 근거 `sources[{db,id,citation}]`·`basis`·근거 수준 `abstracted`, 시뮬레이터(`simulate`). 어휘: 변화 종류 전달·유비퀴틴화·단백질 분해·전사, 특징 K48/K63 폴리유비퀴틴, 분야 면역학, 세포 대식세포·단핵구. 데이터 형식 버전은 그대로(기존 데이터에 curated 근거가 없어 변환 불필요) |
 | 2026-10-08 | 4 | 두 해상도 구조. 정의항이 원천으로 설명(desc)·막 위상·구성 요소·부위(종별 잔기 번호, 면, 리간드)·규칙(상태 의미·전이)·관찰(obs)을 소유. 상태(states) 폐지 → 묶음 키 `D|부위:특징|위치`. 단계는 규칙 참조 + 묶음만, 위치는 묶음마다. 위치 계층·막 면·공간 접촉 검사, 기준 종, 근거 수준. 어휘: compartments·modifications → locations·faces·associations·siteTypes·features·taxa·tissues·cells·obsProperties·evidenceLevels. 소단위·보조인자 정의항 10개 추가 (`migrations/003-v3-to-v4.mjs`) |
 | 2026-10-08 | 3 | 이름이 곧 ID 이던 것을 고정 번호(T/D/S)로 교체, 이름은 names {ko, en} + 별칭, 번호 재사용 금지(meta.next), `이름#n` 주소, 구조 지문 필드 (`migrations/002-v2-to-v3-stable-ids.mjs`) |
 | 2026-10-08 | 2 | 상태를 객체로 승격, kind·field·외부 ID·unmapped 추가, 단계 위치를 compartment/cell 로 분리, 통제 어휘·이름 매핑·관문 도입 (`migrations/001-v1-to-v2.mjs`) |

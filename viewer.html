@@ -169,6 +169,13 @@ function downTree(node,depth,seen){
 function xrefHTML(x){const src=V.xrefs[x.db],u=src&&src.url.replace('{id}',encodeURIComponent(x.id));
  return `<a class="xref ${x.status}" href="${esc(u)}" target="_blank" rel="noopener" title="${x.status=='verified'?'원본과 대조됨':'원본과 대조 안 됨'}">${esc(DefDB.xrefLabel(x))}</a>`;}
 const vl=(t,k)=>DefDB.vlabel(t,k);
+// 근거: 확인한 문헌(DOI·PMID 링크) / 추론 표시([Abstracted Logic]) / 출처 없음
+function evHTML(e){
+ if(!e)return'';
+ const src=(e.sources||[]).map(x=>{const u=V.xrefs[x.db]&&V.xrefs[x.db].url.replace('{id}',x.id);return `<a class="xref" href="${esc(u)}" target="_blank" rel="noopener">${esc(x.citation||'')} ${esc(x.db)}:${esc(x.id)}</a>`;}).join(' ');
+ const lv=e.level=='abstracted'?`<span class="bad">${esc(vl('evidenceLevels','abstracted'))}</span>`:esc(vl('evidenceLevels',e.level));
+ return `<span class="tag">근거: ${lv}${src?' '+src:''}${e.basis?` — <span class="why">${esc(e.basis)}</span>`:''}${e.note?` <span class="why">(${esc(e.note)})</span>`:''}</span>`;
+}
 const actHTML=a=>`<span class="act-${a}">● ${esc(vl('activity',a))}</span>`;
 // 지식 해상도: 정의항이 소유한 구조 (막 위상·구성 요소·부위·규칙·관찰)
 function structureHTML(id,d){
@@ -180,7 +187,7 @@ function structureHTML(id,d){
  if(sites.length)rows.push(`<span class="lbl">부위</span>${sites.map(([k,x])=>`<span class="site" title="${esc(id+'/site/'+k)}${x.note?' — '+esc(x.note):''}"><b>${esc(k)}</b> ${esc(vl('siteTypes',x.type))}${x.numbering?' '+Object.entries(x.numbering).map(([t,r])=>`${esc(r)}<span class="tag">(${esc(vl('taxa',t))})</span>`).join(' '):''}${x.residue_unknown?' <span class="bad">잔기 모름</span>':''}${x.on?` · <span class="ref" data-go="${x.on}">${esc(L(x.on))}</span>`:''}${x.face?' · '+esc(vl('faces',x.face)):''}${x.ligand?` · 리간드 <span class="ref" data-go="${x.ligand}">${esc(L(x.ligand))}</span>`:''} <span class="tag">[${x.features.map(f=>esc(vl('features',f))).join('/')}]</span></span>`).join('')}`);
  for(const r of d.rule)rows.push(`<div class="rule"><span class="lbl">${r.type=='meaning'?'상태 의미':'전이 규칙'}</span>${r.type=='meaning'
    ?`${Object.entries(r.when).map(([k,f])=>`<b>${esc(ix.siteLabel(id,k))}</b>:${esc(vl('features',f))}`).join(' ∧ ')||'<span class="tag">(기본)</span>'} → ${actHTML(r.activity)} <span class="tag">${esc(r.label)}</span>`
-   :`<b>${esc(r.label)}</b> <span class="tag">${esc(DefDB.ruleLine(ix,id,r).replace(/^.*?」\s*/,''))}</span>${ix.stepsOfRule(id+'/rule/'+r.id).map(s=>` <span class="ref" data-go="${s}">${s}</span>`).join('')}${r.text?`<div class="why">${esc(r.text)}</div>`:''}`}</div>`);
+   :`<b>${esc(r.label)}</b> <span class="tag">${esc(DefDB.ruleLine(ix,id,r).replace(/^.*?」\s*/,''))}</span>${ix.stepsOfRule(id+'/rule/'+r.id).map(s=>` <span class="ref" data-go="${s}">${s}</span>`).join('')}${r.text?`<div class="why">${esc(r.text)}</div>`:''}<div>${evHTML(r.evidence)}</div>`}</div>`);
  for(const o of d.obs)rows.push(`<span class="lbl">관찰</span>${esc(vl('obsProperties',o.property))} = ${esc(o.value)}${o.unit?' '+esc(o.unit):''} <span class="tag">${[o.context.species&&vl('taxa',o.context.species),o.context.tissue&&vl('tissues',o.context.tissue),o.context.cell&&vl('cells',o.context.cell),o.context.condition].filter(Boolean).map(esc).join(' · ')} [${esc(o.evidence.level)}]</span>`);
  return rows.length?`<div class="struct">${rows.map(r=>r.startsWith('<div')?r:`<div>${r}</div>`).join('')}</div>`:'';
 }
@@ -223,13 +230,13 @@ function chainTree(sid,dir,depth,seen){
  return '<ul class="tree">'+ns.map(n=>`<li><span class="tag">${esc(ix.bundleLabel(n.via))} ${dir=='next'?'→':'←'}</span> <span class="ref" data-go="${n.id}">${esc(stepName(n.id))}</span> <span class="idt">${n.id}</span> <span class="tag">[${esc(ruleOf(n.id).action)}]</span>${seen.has(n.id)?' <span class="tag">(순환 — 위에 있음)</span>':chainTree(n.id,dir,depth-1,new Set([...seen,n.id]))}</li>`).join('')+'</ul>';
 }
 const sel=(v,opts,fn)=>`<select style="width:auto" onchange="${fn}=+this.value;render()">${opts.map(n=>`<option ${n==v?'selected':''}>${n}</option>`).join('')}</select>`;
-const meta=o=>[o.evidence&&'근거: '+esc(vl('evidenceLevels',o.evidence.level)),o.source&&'출처: '+esc(o.source),o.by&&'작성: '+esc(o.by),o.at&&esc(o.at)].filter(Boolean).join(' · ');
+const meta=o=>[o.evidence&&evHTML(o.evidence),o.by&&'작성: '+esc(o.by),o.at&&esc(o.at)].filter(Boolean).join(' · ');
 function renderStep(sid){
  const st=db.steps[sid],rule=ruleOf(sid);
  const prev=chainTree(sid,'prev',chainUp,new Set([sid])),next=chainTree(sid,'next',chainDown,new Set([sid]));
  $('main').innerHTML=`<h2>${esc(rule.label)}</h2><div class="alias"><span class="idt">${sid}</span> · 기전 단계 = 원천 규칙의 한 번 적용</div>
  <div class="def" style="border-left-color:var(--side2)"><div class="dhead"><span class="ctx">${esc(rule.action)}</span><span>규칙 ${ruleRef(sid)}</span></div>
-  ${flowHTML(sid)}${rule.text?`<div class="text" style="font-size:15px">${esc(rule.text)}</div>`:''}
+  ${flowHTML(sid)}${rule.text?`<div class="text" style="font-size:15px">${esc(rule.text)}</div>`:''}<div>${evHTML(rule.evidence)}</div>
   ${rule.where?`<div class="tag">작동 위치: ${rule.where.map(l=>esc(vl('locations',l))).join(', ')}</div>`:''}
   ${st.part_of.length?`<div class="sec"><b>소속 경로</b> ${st.part_of.map(p=>nodeHTML(p)).join(' · ')}</div>`:''}
   <div class="meta"><button style="float:right;padding:2px 8px;font-size:12px" data-ctx="${sid}" onclick="showContext(this.dataset.ctx)">기전 텍스트</button>&nbsp;</div></div>

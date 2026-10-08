@@ -32,7 +32,9 @@
   const AXIS_UP = { kind: '상위 범주', part: '전체', instance: '유형' };
   const AXIS_DOWN = { kind: '하위 범주', part: '구성요소', instance: '사례' };
   const ROLE = { agent: '촉매/행위자', input: '소비(입력)', output: '생성(출력)', regulator: '조절자' };
-  const EFFECT_TYPES = ['modify', 'convert', 'dissociate', 'associate', 'transport'];
+  const EFFECT_TYPES = ['modify', 'convert', 'dissociate', 'associate', 'transport', 'transfer', 'degrade'];
+  // 동일성 보존을 검사하는 효과 (화학 변환이 없는 물리적 변화)
+  const CONSERVING = new Set(['dissociate', 'associate', 'transport', 'transfer', 'degrade']);
 
   const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/ };
   const fmtId = (p, n) => p + String(n).padStart(6, '0');
@@ -157,7 +159,11 @@
   const normEvidence = (e) => {
     if (!isObj(e)) return { level: str(e) || 'asserted' };
     const o = { level: str(e.level) || 'asserted' };
-    if (e.source) o.source = parseXref(e.source);
+    // 출처: { db: DOI|PMID, id, citation: "저자, 연도" } 하나 또는 여러 개
+    const src = arr(e.sources || e.source).filter(Boolean).map((x) => { const r = parseXref(x), c = isObj(x) ? str(x.citation) : ''; return c ? { db: r.db, id: r.id, citation: c } : { db: r.db, id: r.id }; });
+    if (src.length) o.sources = src;
+    if (str(e.basis)) o.basis = str(e.basis);
+    if (str(e.note)) o.note = str(e.note);
     if (str(e.tool)) o.tool = str(e.tool);
     if (e.confidence != null && e.confidence !== '') o.confidence = Number(e.confidence);
     return o;
@@ -204,8 +210,10 @@
       if (str(r.via_component)) o.via_component = str(r.via_component);
       const e = isObj(r.effect) ? r.effect : {};
       o.effect = { type: str(e.type) };
-      for (const k of ['target', 'site', 'partner', 'from', 'to', 'complex']) if (str(e[k])) o.effect[k] = str(e[k]);
+      for (const k of ['target', 'site', 'partner', 'from', 'to', 'complex', 'from_site', 'component']) if (str(e[k])) o.effect[k] = str(e[k]);
       for (const k of ['add', 'remove', 'consumes', 'produces']) if (arr(e[k]).length) o.effect[k] = arr(e[k]).map(str);
+      // 전제 조건: 입력 묶음이 이 특징을 이미 가져야 함 (ref 생략 = 대상/복합체)
+      if (arr(e.requires).length) o.effect.requires = arr(e.requires).filter(isObj).map((q) => { const x = { site: str(q.site), feature: str(q.feature) }; if (str(q.ref)) x.ref = str(q.ref); return x; });
       if (isObj(e.partner_site)) o.effect.partner_site = { component: str(e.partner_site.component), sites: uniq(arr(e.partner_site.sites || e.partner_site.site).map(str).filter(Boolean)) };
       if (isObj(r.with)) o.with = { consumes: arr(r.with.consumes).map(str), produces: arr(r.with.produces).map(str) };
       o.regulators = arr(r.regulators).filter(isObj).map((g) => { const x = { ref: str(g.ref), effect: str(g.effect) || 'activates' }; if (str(g.note)) x.note = str(g.note); return x; });
@@ -388,12 +396,19 @@
   function checkEvidence(e, where, E) {
     const lv = V.evidenceLevels[e.level];
     if (!lv) { E(where, `근거 수준 '${e.level}' 은(는) 어휘에 없음 (${Object.keys(V.evidenceLevels).join(', ')})`); return; }
-    if (lv.requires === 'source' && !e.source) E(where, `근거 수준 curated 는 출처(source)가 필요함 — 없으면 asserted`);
+    const srcs = e.sources || [];
+    if (lv.requires === 'source') {
+      if (!srcs.length) E(where, `근거 수준 curated 는 출처(source: DOI 또는 PMID)가 필요함 — 출처가 없으면 asserted, 추론이면 abstracted`);
+      for (const x of srcs) if (!x.citation) E(where, `출처 ${x.db}:${x.id} 에 citation("저자, 연도")이 없음`);
+    }
+    if (lv.requires === 'basis' && !e.basis) E(where, `${lv.label} 은(는) 무엇에서 추론했는지(basis)를 적어야 함`);
     if (lv.requires === 'tool' && !e.tool) E(where, `근거 수준 computed 는 도구(tool)가 필요함`);
     if (lv.requires === 'confidence' && !(e.confidence >= 0 && e.confidence <= 1)) E(where, `근거 수준 predicted 는 0–1 의 confidence 가 필요함`);
     if (e.confidence != null && e.level !== 'predicted') E(where, 'confidence 는 predicted 에만');
-    if (e.source && V.xrefs[e.source.db] && !new RegExp(V.xrefs[e.source.db].pattern).test(e.source.id)) E(where, `출처 ${e.source.db} '${e.source.id}' 형식 틀림`);
-    if (e.source && !V.xrefs[e.source.db]) E(where, `출처 종류 '${e.source.db}' 없음`);
+    for (const x of srcs) {
+      if (!['DOI', 'PMID'].includes(x.db)) E(where, `출처 종류 '${x.db}' — 문헌 출처는 DOI 또는 PMID`);
+      else if (!new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(where, `출처 ${x.db} '${x.id}' 형식 틀림`);
+    }
   }
   function checkContext(c, where, E) {
     if (c.species && !V.taxa[c.species]) E(where, `종 '${c.species}' 은(는) 종 어휘에 없음`);
@@ -604,6 +619,26 @@
       } else if (e.type === 'transport') {
         need(e.target || id, '대상');
         if (!V.locations[e.from] || !V.locations[e.to]) E(rw, '수송 효과는 위치 어휘의 from/to 가 필요함');
+      } else if (e.type === 'transfer') {
+        // 리간드(partner)를 소유자의 from_site 에서 대상의 site 로 넘긴다
+        const fs = d.site[e.from_site];
+        if (!fs || !fs.features.includes('bound')) E(rw, `넘겨줄 부위 from_site '${e.from_site || ''}' 가 이 정의항에 없거나 'bound' 를 받지 않음`);
+        else if (fs.ligand && e.partner && fs.ligand !== e.partner) E(rw, `from_site '${e.from_site}' 의 리간드와 넘기는 상대(partner)가 다름`);
+        if (!e.partner) E(rw, 'transfer 효과는 넘기는 리간드(partner)가 필요함'); else need(e.partner, '리간드');
+        const T = e.target && need(e.target, '대상');
+        if (!e.target) E(rw, 'transfer 효과는 받는 대상(target)이 필요함');
+        if (T) { const ts = T.site[e.site]; if (!ts || !ts.features.includes('bound')) E(rw, `대상 '${L(e.target)}' 에 'bound' 를 받는 부위 '${e.site || ''}' 가 없음`); else if (ts.ligand && ts.ligand !== e.partner) E(rw, `대상 부위 '${e.site}' 의 리간드와 넘기는 상대가 다름`); }
+      } else if (e.type === 'degrade') {
+        const C = need(e.complex || id, '복합체');
+        if (C && !C.components.some((c) => c.ref === e.component)) E(rw, `분해할 구성 요소 '${e.component || ''}' 는 '${L(e.complex || id)}' 의 구성 요소가 아님`);
+        for (const x of e.produces || []) need(x, '분해 산물');
+        if (!(e.produces || []).length) E(rw, 'degrade 효과는 분해 산물(produces)이 필요함 — 질량이 사라지지 않게');
+      }
+      for (const q of e.requires || []) {
+        const ref = q.ref || e.target || e.complex || id, x = db.senses[ref];
+        if (!x) { E(rw, `전제 조건의 대상 '${ref}' 없음`); continue; }
+        if (!x.site[q.site]) E(rw, `전제 조건의 부위 '${q.site}' 가 '${L(ref)}' 에 없음`);
+        else if (!x.site[q.site].features.includes(q.feature)) E(rw, `전제 조건: 부위 '${q.site}' 는 특징 '${q.feature}' 를 가질 수 없음`);
       }
     }
     // 관찰
@@ -647,6 +682,23 @@
     return { ...b, d };
   }
 
+  // 묶음을 기본 실체로 펼친다: 복합체 → 구성 요소(재귀), 리간드가 정해진 부위가 채워져 있으면 그 리간드
+  //   (부위가 구성 요소 위에 있으면 그 구성 요소의 개수만큼). skip: 분해되어 사라지는 구성 요소
+  function entityTally(db, base, feats, mult, out, skip) {
+    const d = db.senses[base];
+    if (!d) return;
+    if (base !== skip) {
+      if (d.components.length) for (const c of d.components) entityTally(db, c.ref, new Map(), mult * c.n, out, skip);
+      else out[base] = (out[base] || 0) + mult;
+    }
+    for (const [s, f] of feats) {
+      const site = d.site[s];
+      if (!site || !site.ligand || !f) continue;
+      const on = site.on ? d.components.find((c) => c.ref === site.on) : null;
+      entityTally(db, site.ligand, new Map(), mult * (on ? on.n : 1), out, null); // 리간드가 복합체면 그 구성 요소로
+    }
+  }
+
   // 단계 검사: 단계는 규칙의 한 번 적용이다. 변화량·위치·접촉·행위자 활성이 규칙과 맞아야 한다.
   function validateStep(db, ix, id, st, E, W) {
     const L = ix.label, where = `${id}`;
@@ -681,7 +733,7 @@
       }
     } else if (B.agents.length) E(w, '행위자가 없는 규칙인데 agents 가 있음');
     const inF = (x) => new Map(x.features.map((f) => [f.site, f.feature]));
-    let targetIn = null;
+    let targetIn = null, moved = null;
     if (e.type === 'modify') {
       const T = e.target || owner, tin = findOne(B.inputs, T, '입력'), tout = findOne(B.outputs, T, '출력');
       if (tin && tout) {
@@ -725,16 +777,62 @@
     } else if (e.type === 'transport') {
       const T = e.target || owner, tin = findOne(B.inputs, T, '입력'), tout = findOne(B.outputs, T, '출력');
       if (tin && tout) {
-        targetIn = tin;
+        targetIn = tin; moved = tout;
         if (tin.location !== e.from || tout.location !== e.to) E(w, `수송 규칙은 ${vlabel('locations', e.from)} → ${vlabel('locations', e.to)} (실제 ${vlabel('locations', tin.location)} → ${vlabel('locations', tout.location)})`);
         if (JSON.stringify([...inF(tin)].sort()) !== JSON.stringify([...inF(tout)].sort())) E(w, '수송 단계에서 특징이 바뀜');
       }
+    } else if (e.type === 'transfer') {
+      const din = findOne(B.inputs, owner, '입력'), dout = findOne(B.outputs, owner, '출력');
+      const tin = findOne(B.inputs, e.target, '입력'), tout = findOne(B.outputs, e.target, '출력');
+      const same = (a, b, skip, what) => { for (const k of uniq([...a.keys(), ...b.keys()])) if (k !== skip && a.get(k) !== b.get(k)) E(w, `${what}의 규칙이 바꾸지 않는 부위 '${k}' 가 바뀜`); };
+      if (din && dout) {
+        if (inF(din).get(e.from_site) !== 'bound') E(w, `넘겨주는 '${L(owner)}' 입력의 부위 '${e.from_site}' 는 'bound' 여야 함`);
+        if (inF(dout).get(e.from_site)) E(w, `넘겨준 뒤 '${L(owner)}' 의 부위 '${e.from_site}' 는 빈 상태여야 함`);
+        same(inF(din), inF(dout), e.from_site, '넘겨주는 쪽');
+        if (din.location !== dout.location) E(w, '수송이 아닌 단계에서 위치가 바뀜');
+        center = { b: din, face: (db.senses[owner].site[e.from_site] || {}).face };
+      }
+      if (tin && tout) {
+        targetIn = tin;
+        if (inF(tin).get(e.site)) E(w, `받는 '${L(e.target)}' 입력의 부위 '${e.site}' 는 빈 상태여야 함`);
+        if (inF(tout).get(e.site) !== 'bound') E(w, `받은 뒤 '${L(e.target)}' 의 부위 '${e.site}' 는 'bound' 여야 함`);
+        same(inF(tin), inF(tout), e.site, '받는 쪽');
+        if (tin.location !== tout.location) E(w, '수송이 아닌 단계에서 위치가 바뀜');
+      }
+      if ([...B.inputs, ...B.outputs].some((x) => x.base === e.partner && major(x))) E(w, `리간드 '${L(e.partner)}' 는 부위 안에서 넘겨지므로 따로 입력·출력에 두지 않음`);
+    } else if (e.type === 'degrade') {
+      const C = e.complex || owner, cd = db.senses[C], cx = findOne(B.inputs, C, '입력');
+      if (cx && cd) {
+        targetIn = cx;
+        for (const c of cd.components) {
+          const got = B.outputs.filter((x) => x.base === c.ref && major(x)).reduce((t, x) => t + x.n, 0);
+          const want = c.ref === e.component ? 0 : c.n * cx.n;
+          if (got !== want) E(w, c.ref === e.component ? `분해된 구성 요소 '${L(c.ref)}' 가 출력에 남아 있음` : `출력의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${want}개`);
+        }
+        for (const x of B.outputs) if (x.location !== cx.location && major(x)) E(w, '분해 단계에서 위치가 바뀜');
+      }
+      for (const x of e.produces || []) if (!B.outputs.some((y) => y.base === x)) E(w, `분해 산물 '${L(x)}' 묶음이 출력에 없음`);
+    }
+    // 전제 조건: 대상(또는 지정한 정의항)의 입력 묶음이 이미 그 특징을 가져야 함
+    for (const q of e.requires || []) {
+      const ref = q.ref || e.target || e.complex || owner, xs = B.inputs.filter((x) => x.base === ref && major(x));
+      if (!xs.length) E(w, `전제 조건의 대상 '${L(ref)}' 묶음이 입력에 없음`);
+      for (const x of xs) if (inF(x).get(q.site) !== q.feature) E(w, `전제 조건 불충족: ${ix.bundleLabel(x.key)} 의 부위 '${q.site}' 는 '${vlabel('features', q.feature)}' 여야 함`);
     }
     if (rule.with) {
       for (const x of rule.with.consumes) if (!B.inputs.some((y) => y.base === x)) E(w, `보조 기질 '${L(x)}' 가 입력에 없음`);
       for (const x of rule.with.produces) if (!B.outputs.some((y) => y.base === x)) E(w, `보조 생성물 '${L(x)}' 가 출력에 없음`);
     }
     for (const g of B.regulators) if (!rule.regulators.some((r) => r.ref === g.base)) E(w, `'${L(g.base)}' 는 규칙 '${rule.label}' 에 정의된 조절자가 아님`);
+    // 동일성 보존: 물리적 변화(결합·해리·전달·분해·수송)에서는 입력과 출력의 구성 실체가 같아야 한다
+    if (CONSERVING.has(e.type) || (e.type === 'modify' && e.partner)) {
+      const cos = new Set(rule.with ? [...rule.with.consumes, ...rule.with.produces] : []);
+      const tIn = {}, tOut = {};
+      for (const x of B.inputs) if (!cos.has(x.base)) entityTally(db, x.base, inF(x), x.n, tIn, e.type === 'degrade' ? e.component : null);
+      for (const x of B.outputs) if (!cos.has(x.base) && !(e.type === 'degrade' && (e.produces || []).includes(x.base))) entityTally(db, x.base, inF(x), x.n, tOut, null);
+      const diff = uniq([...Object.keys(tIn), ...Object.keys(tOut)]).filter((k) => (tIn[k] || 0) !== (tOut[k] || 0));
+      if (diff.length) E(w, `동일성 보존 위반: ${diff.map((k) => `${L(k)} 입력 ${tIn[k] || 0} ≠ 출력 ${tOut[k] || 0}`).join(', ')}`);
+    }
     // 위치 조건
     if (!center && targetIn) center = { b: targetIn, face: e.site ? (targetIn.d.site[e.site] || {}).face : null };
     if (center && rule.where && !rule.where.includes(center.b.location)) E(w, `규칙 '${rule.label}' 은(는) ${rule.where.map((l) => vlabel('locations', l)).join(', ')}에서만 작동 — 실제 ${vlabel('locations', center.b.location)}`);
@@ -742,7 +840,7 @@
     if (center) {
       const cb = center.b, cDim = (V.locations[cb.location] || {}).dim;
       for (const role of ['agents', 'inputs', 'outputs', 'regulators']) for (const x of B[role]) {
-        if (x === cb) continue;
+        if (x === cb || x === moved) continue; // 수송된 대상은 새 위치에 있는 것이 정상
         const xDim = (V.locations[x.location] || {}).dim;
         let face = null;
         if (cDim === '2D' && xDim === '3D') {
@@ -960,7 +1058,8 @@
         }
         r.action = voc('actions', r.action, w);
         const e = r.effect;
-        for (const k of ['target', 'partner', 'complex']) if (e[k]) e[k] = ref(e[k], `${w} ${k}`);
+        for (const k of ['target', 'partner', 'complex', 'component']) if (e[k]) e[k] = ref(e[k], `${w} ${k}`);
+        for (const q of e.requires || []) { if (q.ref) q.ref = ref(q.ref, `${w} requires`); q.feature = voc('features', q.feature, w); }
         for (const k of ['consumes', 'produces']) if (e[k]) e[k] = e[k].map((x) => ref(x, `${w} ${k}`));
         for (const k of ['add', 'remove']) if (e[k]) e[k] = e[k].map((f) => voc('features', f, w));
         for (const k of ['from', 'to']) if (e[k]) e[k] = voc('locations', e[k], w);
@@ -1084,6 +1183,9 @@
     if (e.type === 'dissociate') eff = `${L(e.complex || owner)} → 구성 요소로 해리${e.partner ? ` (${L(e.partner)} 결합)` : ''}`;
     if (e.type === 'associate') eff = `구성 요소 → ${L(e.complex || owner)}`;
     if (e.type === 'transport') eff = `${L(e.target || owner)}: ${vlabel('locations', e.from)} → ${vlabel('locations', e.to)}`;
+    if (e.type === 'transfer') eff = `${L(e.partner)}: ${L(owner)}.${e.from_site} → ${L(e.target)}.${e.site}`;
+    if (e.type === 'degrade') eff = `${L(e.complex || owner)} 의 ${L(e.component)} 분해 → ${(e.produces || []).map(L).join(' + ')}, 나머지 구성 요소 방출`;
+    if ((e.requires || []).length) eff += ` 〔전제: ${e.requires.map((q) => `${q.ref ? L(q.ref) + '.' : ''}${q.site}:${vlabel('features', q.feature)}`).join(' ∧ ')}〕`;
     return `${owner}/rule/${r.id} 「${r.label}」 [${r.action}${r.agent ? ', 행위자 ' + L(owner) + (r.via_site ? '.' + r.via_site : '') : ''}] ${eff.trim()}`
       + (r.where ? ` 〈${r.where.map((l) => vlabel('locations', l)).join('·')}에서만〉` : '')
       + (r.regulators.length ? ` | 조절: ${r.regulators.map((g) => `${vlabel('effects', g.effect)} ${L(g.ref)}`).join(', ')}` : '');
@@ -1230,8 +1332,13 @@
           전이 { id, type:"transition", label, action, agent: true|false, via_site, via_component, effect, with:{consumes,produces}, regulators:[{ref, effect, note}], where:[위치], taxa, text, evidence } ]
   - effect: { type:"modify", target, site, add:[특징], remove:[특징], partner } | { type:"convert", consumes:[D], produces:[D] }
             | { type:"dissociate"|"associate", complex, partner, partner_site:{component, sites:[부위]} } | { type:"transport", target, from, to }
+            | { type:"transfer", partner: 리간드, from_site: 소유자 부위, target, site } | { type:"degrade", complex, component, produces:[분해 산물] }
+  - effect.requires: [{ ref, site, feature }] — 입력 묶음이 이미 가져야 하는 특징 (ref 생략 = 대상/복합체)
+  - 결합·해리·전달·분해·수송 단계는 동일성 보존 검사: 복합체는 구성 요소로, 채워진 부위는 그 리간드로 펼쳐 입력과 출력이 같아야 함
 - obs: [{ property, value, unit, context:{ species …}, evidence }] — 종에 따라 달라지는 값은 context.species 필수
-- evidence: { level: curated(출처 source 필수)|computed(도구 tool 필수)|asserted|predicted(confidence 필수) }
+- evidence: { level: curated|abstracted|computed|asserted|predicted, sources:[{ db:"DOI"|"PMID", id, citation:"저자, 연도" }], basis, tool, confidence, note }
+  - curated: 실제로 확인한 문헌만(DOI/PMID + 저자·연도). 인용을 지어내지 않는다.
+  - abstracted: 문헌이 아니라 기전 흐름에서 추론한 주장 → "[Abstracted Logic: Derived from the inferred mechanistic flow]", basis 에 무엇에서 추론했는지 적음
 - 기존 정의항을 고칠 때는 고칠 최상위 필드만 적는다(적지 않은 필드는 유지).
 
 ## 단계 (steps 항목)
@@ -1274,6 +1381,123 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 `;
   }
 
+  // ===== 시뮬레이션: 단계를 규칙대로 실제로 발화시켜 묶음 풀(pool)이 어떻게 바뀌는지 본다 =====
+  // 시작 풀 = 경로 안에서 어떤 단계도 만들지 않는 묶음(원천 묶음). 보조 기질(부산물·with)은 넉넉히(bulk), 나머지는 amount 개.
+  // 한 라운드에 단계 순서대로 각 단계를 최대 한 번 발화: 행위자 ≥1, 입력이 n 개 이상 있으면 입력을 소비하고 출력을 만든다.
+  function simulate(db, target, opt) {
+    db = normalize(db);
+    opt = Object.assign({ amount: 10, bulk: 1000, rounds: 60, init: {}, maxFire: 1000 }, opt || {});
+    const ix = index(db), tg = targets(ix, target);
+    if (tg.error) return { error: tg.error };
+    const ids = uniq(tg.ids.flatMap((d) => ix.stepsIn(d)));
+    if (!ids.length) return { error: `'${target}' 에 속한 단계가 없음` };
+    const made = new Set(ids.flatMap((sid) => db.steps[sid].outputs.map((p) => p.b)));
+    const pool = new Map(), origin = new Map(), producer = new Map(), trace = [];
+    const seed = (b, n) => { origin.set(b, n); pool.set(b, n); };
+    // 어느 단계에서든 부산물(minor)이거나 보조 기질(with)인 묶음은 대사물 풀로 보고 넉넉히 둔다 (ATP 등)
+    const bulkSet = new Set();
+    for (const sid of ids) {
+      const st = db.steps[sid], rule = ix.ruleOf(st.rule) || {}, cos = new Set(rule.with ? [...rule.with.consumes, ...rule.with.produces] : []);
+      for (const p of [...st.agents, ...st.inputs, ...st.outputs]) if (p.minor || cos.has(p.b.split('|')[0])) bulkSet.add(p.b);
+    }
+    for (const sid of ids) {
+      const st = db.steps[sid];
+      for (const p of [...st.agents, ...st.inputs]) {
+        if (origin.has(p.b)) continue;
+        const bulk = bulkSet.has(p.b);
+        if (bulk) seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : opt.bulk);
+        else if (!made.has(p.b)) seed(p.b, opt.init[p.b] != null ? opt.init[p.b] : opt.amount);
+      }
+    }
+    // 순환 안에서만 만들어지는 휴지 상태(예: Gs[GDP] 는 자체 비활성화 단계의 출력)는 순환을 시작할 수 없다.
+    // 묶음 의존 그래프(입력·행위자 → 출력)의 순환마다, 막힌 단계가 필요로 하는 묶음 중 특징이 가장 적은 것 하나만 보충한다.
+    const succ = new Map();
+    for (const sid of ids) { const st = db.steps[sid]; for (const p of [...st.agents, ...st.inputs]) for (const o of st.outputs) { if (!succ.has(p.b)) succ.set(p.b, new Set()); succ.get(p.b).add(o.b); } }
+    const comp = new Map(), compRank = new Map(); { let idx = 0, done = 0; const ind = new Map(), low = new Map(), stk = [], on = new Set();
+      const dfs = (v) => { ind.set(v, idx); low.set(v, idx); idx++; stk.push(v); on.add(v);
+        for (const w of succ.get(v) || []) { if (!ind.has(w)) { dfs(w); low.set(v, Math.min(low.get(v), low.get(w))); } else if (on.has(w)) low.set(v, Math.min(low.get(v), ind.get(w))); }
+        if (low.get(v) === ind.get(v)) { const c = []; let w; do { w = stk.pop(); on.delete(w); c.push(w); } while (w !== v); const cyc = c.length > 1 || (succ.get(v) || new Set()).has(v); for (const x of c) comp.set(x, cyc ? v : null); compRank.set(v, done++); } };
+      for (const v of succ.keys()) if (!ind.has(v)) dfs(v); }
+    const cycleSeeds = [];
+    for (;;) {
+      const avail = new Set(origin.keys()), live = new Set();
+      for (let grew = true; grew;) {
+        grew = false;
+        for (const sid of ids) if (!live.has(sid)) {
+          const st = db.steps[sid];
+          if ([...st.agents, ...st.inputs].every((p) => avail.has(p.b))) { live.add(sid); grew = true; for (const p of st.outputs) avail.add(p.b); }
+        }
+      }
+      const missing = uniq(ids.filter((sid) => !live.has(sid)).flatMap((sid) => [...db.steps[sid].agents, ...db.steps[sid].inputs].map((p) => p.b)).filter((b) => !avail.has(b) && comp.get(b)));
+      if (!missing.length) break;
+      // 가장 상류의 순환 하나만 (Tarjan 은 하류부터 끝내므로 완료 순번이 클수록 상류) — 보충 뒤 다시 계산
+      const top = Math.max(...missing.map((b) => compRank.get(comp.get(b))));
+      const pick = missing.filter((b) => compRank.get(comp.get(b)) === top).sort((a, b) => parseBundle(a).features.length - parseBundle(b).features.length)[0];
+      seed(pick, opt.init[pick] != null ? opt.init[pick] : opt.amount); cycleSeeds.push(pick);
+    }
+    for (const [k, n] of Object.entries(opt.init)) if (!origin.has(k)) { origin.set(k, n); pool.set(k, n); }
+    const has = (b) => pool.get(b) || 0, reachedBy = () => opt.until ? [...pool].find(([k, n]) => n > 0 && k.split('|')[0] === opt.until) : null;
+    let round = 0, reached = null;
+    while (round < opt.rounds && !(reached = reachedBy())) {
+      round++;
+      let fired = false;
+      for (const sid of ids) {
+        const st = db.steps[sid];
+        const need = new Map();
+        for (const p of st.inputs) need.set(p.b, (need.get(p.b) || 0) + (p.n || 1));
+        // 한 라운드에 행위자(촉매) 수만큼, 입력이 허락하는 만큼 발화
+        let k = st.agents.length ? Math.min(...st.agents.map((p) => has(p.b))) : opt.maxFire;
+        for (const [b, n] of need) k = Math.min(k, Math.floor(has(b) / n));
+        k = Math.min(k, opt.maxFire);
+        if (!(k >= 1)) continue;
+        for (const [b, n] of need) pool.set(b, has(b) - n * k);
+        for (const p of st.outputs) { pool.set(p.b, has(p.b) + (p.n || 1) * k); if (!producer.has(p.b)) producer.set(p.b, sid); }
+        trace.push({ round, step: sid, times: k });
+        fired = true;
+        if ((reached = reachedBy())) break;
+      }
+      if (!fired) break;
+    }
+    // 유도 경로: 목표 묶음을 처음 만든 단계에서 거꾸로, 그 단계가 쓴 묶음을 만든 단계를 따라간다
+    let derivation = null;
+    if (reached) {
+      const steps = new Set(), roots = new Set(), seen = new Set(), stack = [reached[0]];
+      while (stack.length) {
+        const b = stack.pop();
+        if (seen.has(b)) continue;
+        seen.add(b);
+        const sid = producer.get(b);
+        if (!sid) { roots.add(b); continue; }
+        steps.add(sid);
+        const st = db.steps[sid];
+        for (const p of [...st.agents, ...st.inputs]) if (!p.minor) stack.push(p.b);
+      }
+      derivation = { target: reached[0], steps: ix.order([...steps]), roots: [...roots] };
+    }
+    return { ids, origin: Object.fromEntries(origin), cycleSeeds, pool: Object.fromEntries(pool), trace, rounds: round, reached: reached ? reached[0] : null, derivation, ix };
+  }
+  function simulateText(db, target, opt) {
+    const r = simulate(db, target, opt);
+    if (r.error) return r.error;
+    const ix = r.ix, out = [`시뮬레이션: ${target} — 단계 ${r.ids.length}개, ${r.rounds} 라운드, 발화 ${r.trace.length}회`];
+    out.push('시작 풀(원천 묶음):', ...Object.entries(r.origin).filter(([, n]) => n < (opt && opt.bulk || 1000)).map(([k, n]) => `  ${n}× ${ix.bundleLabel(k)}`));
+    if (r.cycleSeeds.length) out.push('  (순환의 휴지 상태라 자동 보충: ' + r.cycleSeeds.map((b) => ix.bundleLabel(b)).join(', ') + ')');
+    out.push('발화 순서:');
+    let last = 0;
+    for (const t of r.trace) { if (t.round !== last) { out.push(`  [라운드 ${t.round}]`); last = t.round; } out.push(`    ${t.times > 1 ? '×' + t.times + ' ' : ''}` + stepLine(ix, t.step)); }
+    if (opt && opt.until) {
+      if (!r.reached) out.push(`✗ 목표 '${ix.label(opt.until)}' 에 도달하지 못함`);
+      else {
+        const d = r.derivation;
+        out.push(`✓ 목표 도달: ${ix.bundleLabel(d.target)} (라운드 ${r.rounds})`, `유도 경로 (${d.steps.length}단계):`, ...d.steps.map((sid, i) => `  ${i + 1}. ${stepLine(ix, sid)}`));
+        out.push('유도의 뿌리(원천 묶음):', ...d.roots.map((b) => `  ${ix.bundleLabel(b)}`));
+        if (opt.from) out.push(d.roots.some((b) => b.split('|')[0] === opt.from) ? `✓ 출력이 입력 '${ix.label(opt.from)}' 에서 유도됨` : `✗ 출력의 유도 경로에 '${ix.label(opt.from)}' 이(가) 없음`);
+      }
+    }
+    out.push('끝 풀(0 이 아닌 묶음, 보조 기질 제외):', ...Object.entries(r.pool).filter(([k, n]) => n > 0 && n < 900).map(([k, n]) => `  ${n}× ${ix.bundleLabel(k)}`));
+    return out.join('\n');
+  }
+
   function parseLoose(text) {
     const s = String(text).trim();
     try { return JSON.parse(s); } catch (_) { /* 아래에서 다시 시도 */ }
@@ -1287,5 +1511,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 
   return { FORMAT, PATCH_FORMAT, VERSION, VOCAB: V, REL, AXIS_UP, AXIS_DOWN, ROLE, emptyDB, normalize, normName, index, validate, merge, gate, ingest,
     resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, ruleLine, promptText, parseLoose, isStepId, isId,
-    xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel };
+    xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText };
 });

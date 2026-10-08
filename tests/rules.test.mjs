@@ -170,10 +170,17 @@ test('지문: 형식·kind 검사, 중복 거부, 지문으로 찾기', () => {
   assert.ok(DefDB.validate(res2.db).errors.some((e) => /구조 지문/.test(e.msg)));
 });
 test('근거 수준: curated 는 출처, computed 는 도구, predicted 는 confidence 필요', () => {
-  rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'curated' } }) }), /출처\(source\)/);
+  rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'curated' } }) }), /출처\(source/);
   rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'computed' } }) }), /도구\(tool\)/);
   rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'predicted', confidence: 2 } }) }), /confidence/);
-  passes(one('테스트', { desc: desc('t', { evidence: { level: 'curated', source: { db: 'PMID', id: '12345' } } }) }));
+  rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'curated', source: { db: 'PMID', id: '12345' } } }) }), /citation/);
+  rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'curated', source: { db: 'UniProt', id: 'P12345', citation: 'X, 2000' } } }) }), /DOI 또는 PMID/);
+  passes(one('테스트', { desc: desc('t', { evidence: { level: 'curated', source: { db: 'PMID', id: '12345', citation: 'Kim et al., 2000' } } }) }));
+});
+test('추론은 [Abstracted Logic] 으로 표시하고 무엇에서 추론했는지(basis) 필수', () => {
+  assert.equal(DefDB.VOCAB.evidenceLevels.abstracted.label, '[Abstracted Logic: Derived from the inferred mechanistic flow]');
+  rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'abstracted' } }) }), /basis/);
+  passes(one('테스트', { desc: desc('t', { evidence: { level: 'abstracted logic', basis: '앞 단계의 출력에서 추론' } }) }));
 });
 
 // ===== 관계 =====
@@ -308,4 +315,60 @@ test('행위자 활성은 원천 규칙으로 계산 (첫 번째로 맞는 규�
   assert.equal(IX.activityOf(`${GP}|cytosol`), 'partial');
   assert.equal(IX.activityOf(`${id('Gs 단백질')}|nucleotide:GDP_bound|plasma_membrane`), 'inactive');
   assert.equal(IX.bundleLabel(`${GP}|reg_phos:phosphorylated|cytosol`), '글리코겐 인산화효소[reg_phos(Ser14):인산화됨]@세포질');
+});
+
+// ===== LPS → TLR4 → NF-κB 스트레스 시험 (전달·분해·전제 조건·동일성 보존·수송·시뮬레이션) =====
+const LPS = id('LPS'), LBP = id('LBP'), CD14 = id('CD14'), TM = id('TLR4–MD-2 복합체'), RCX = id('LPS–TLR4–MD-2 다량체');
+const NI = id('NF-κB–IκBα 복합체'), NFKB = id('NF-κB p50–p65 이량체'), IKBA = id('IκBα'), UB = id('유비퀴틴'), TNFM = id('TNF mRNA');
+const SCF = id('SCF–βTrCP 유비퀴틴 연결효소'), PROT = id('26S 프로테아좀'), TLRP = 'LPS–TLR4–NF-κB 신호 전달';
+const sid = (owner, r) => Object.keys(BASE.steps).find((k) => BASE.steps[k].rule === `${owner}/rule/${r}`);
+test('공간 제약: LPS 는 세포 밖에서만 LBP 와 결합 (세포질 LPS 거부)', () => {
+  failsWith((d) => { const s = d.steps[sid(LBP, 'lps_binding')]; s.inputs = s.inputs.map((p) => (p.b.startsWith(LPS) ? { b: `${LPS}|cytosol` } : p)); }, /공간 접촉 불가|세포 밖에서만/);
+  failsWith((d) => { const s = d.steps[sid(LBP, 'lps_binding')]; s.inputs = s.inputs.map((p) => ({ b: p.b.replace('extracellular', 'cytosol') })); s.outputs = s.outputs.map((p) => ({ b: p.b.replace('extracellular', 'cytosol') })); }, /세포 밖에서만 작동/);
+});
+test('전달(transfer): 넘겨주는 쪽은 결합 → 빈 상태, 받는 쪽은 빈 상태 → 결합, 리간드는 따로 나타나지 않음', () => {
+  const S2 = sid(LBP, 'lps_transfer');
+  failsWith((d) => { d.steps[S2].inputs[0].b = `${LBP}|extracellular`; }, /'bound' 여야/);
+  failsWith((d) => { d.steps[S2].outputs.push({ b: `${LPS}|extracellular` }); }, /따로 입력·출력에 두지 않음/);
+  failsWith((d) => { d.steps[S2].outputs[1].b = `${CD14}|plasma_membrane`; }, /받은 뒤/);
+});
+test('전제 조건(requires): Ser32·Ser36 이 인산화되지 않은 IκBα 는 βTrCP 가 유비퀴틴화하지 못함', () => {
+  const S = sid(SCF, 'ikba_k48');
+  failsWith((d) => { d.steps[S].inputs[0].b = `${NI}|ikba_s32:phosphorylated|cytosol`; d.steps[S].outputs[0].b = `${NI}|ikba_s32:phosphorylated|ikba_ub:K48_polyubiquitinated|cytosol`; }, /전제 조건 불충족: .*ikba_s36/);
+  failsWith((d) => { d.senses[SCF].rule.find((r) => r.id === 'ikba_k48').effect.requires.push({ site: 'nope', feature: 'phosphorylated' }); }, /전제 조건의 부위 'nope'/);
+});
+test('분해(degrade): 분해된 IκBα 는 출력에 남지 않고, 나머지 구성 요소와 분해 산물이 나와야 함', () => {
+  const S = sid(PROT, 'ikba_degradation');
+  failsWith((d) => { d.steps[S].outputs.push({ b: `${IKBA}|cytosol` }); }, /분해된 구성 요소 'IκBα' 가 출력에 남아/);
+  failsWith((d) => { d.steps[S].outputs = d.steps[S].outputs.filter((p) => !p.b.startsWith(NFKB)); }, /구성 요소 'NF-κB p50–p65 이량체' 개수 0/);
+  failsWith((d) => { d.steps[S].outputs = d.steps[S].outputs.filter((p) => !p.b.startsWith(id('펩타이드'))); }, /분해 산물 '펩타이드'/);
+  failsWith((d) => { d.steps[S].inputs[0].b = `${NI}|ikba_s32:phosphorylated|ikba_s36:phosphorylated|cytosol`; }, /전제 조건 불충족/);
+});
+test('동일성 보존: 결합·해리·전달·분해에서 실체(구성 요소·부위의 리간드)가 사라지거나 생기면 거부', () => {
+  failsWith((d) => { d.steps[sid(RCX, 'dimerize')].outputs[0].b = `${RCX}|plasma_membrane`; }, /동일성 보존 위반: 지질다당류 입력 2 ≠ 출력 0/);
+  failsWith((d) => { const s = d.steps[sid(RCX, 'tirap_recruit')]; s.inputs.find((p) => !p.b.startsWith(RCX)).n = 1; }, /동일성 보존 위반: TIRAP 입력 1 ≠ 출력 2/);
+  failsWith((d) => { d.steps[sid(PROT, 'ikba_degradation')].outputs = d.steps[sid(PROT, 'ikba_degradation')].outputs.filter((p) => !p.b.startsWith(UB + '|')); }, /동일성 보존 위반: 유비퀴틴 입력 1 ≠ 출력 0/);
+});
+test('수송: 위치를 바꾸는 유일한 방법 — 출발·도착 위치가 규칙과 맞아야 하고, 도착한 대상은 접촉 검사에서 빠짐', () => {
+  const S = sid(NFKB, 'nuclear_import');
+  assert.ok(BASE.steps[S].outputs[0].b.endsWith('|nucleoplasm'));
+  failsWith((d) => { d.steps[S].outputs[0].b = `${NFKB}|extracellular`; }, /수송 규칙은 세포질 → 핵질/);
+  failsWith((d) => { d.steps[sid(id('TNF 유전자'), 'kb_binding')].inputs.find((p) => p.b.startsWith(NFKB)).b = `${NFKB}|cytosol`; }, /공간 접촉 불가|입력에 없음/);
+});
+test('시뮬레이션: LPS 에서 시작해 TNF mRNA 까지 도달하고, 유도 경로의 뿌리에 LPS 가 있음', () => {
+  const r = DefDB.simulate(BASE, TLRP, { until: TNFM });
+  assert.ok(r.reached && r.reached.startsWith(TNFM + '|nucleoplasm'), '도달해야 함');
+  assert.ok(r.derivation.roots.some((b) => b.startsWith(LPS + '|extracellular')), 'LPS 에서 유도되어야 함');
+  assert.equal(r.derivation.steps.length, 19);
+  assert.deepEqual(r.cycleSeeds.map((b) => b.split('|')[0]).sort(), [LBP, CD14].sort(), '자동 보충은 순환의 휴지 상태(LBP·CD14)만');
+});
+test('시뮬레이션 음성 대조: LPS 가 없으면 TNF 전사에 이르지 못함', () => {
+  const r = DefDB.simulate(BASE, TLRP, { until: TNFM, init: { [`${LPS}|extracellular`]: 0 } });
+  assert.equal(r.reached, null);
+  assert.ok(!r.trace.some((t) => BASE.steps[t.step].rule.endsWith('/rule/transcription')));
+});
+test('시뮬레이션: 기존 경로도 에피네프린에서 포도당-1-인산까지 유도됨', () => {
+  const r = DefDB.simulate(BASE, '에피네프린에 의한 글리코겐 분해', { until: id('포도당-1-인산') });
+  assert.ok(r.reached);
+  assert.ok(r.derivation.roots.some((b) => b.startsWith(EPI + '|')));
 });

@@ -12,6 +12,8 @@
 //   node dbtool.mjs context   <번호|이름|이름#n> [--up N] [--down N]
 //   node dbtool.mjs mechanism <S…|경로 번호·이름> [--up N] [--down N]
 //   node dbtool.mjs prompt    [자료.txt]                     AI 에게 줄 작성 지침 + 현재 색인
+//   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
+//                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative } from 'node:path';
@@ -110,10 +112,21 @@ switch (cmd) {
     console.log(DefDB.mechanismText(loadDB(), args[0], { up: +(flags.up || 3), down: +(flags.down || 3) }));
     break;
   }
+  case 'simulate': {
+    if (!args[0]) die('사용법: simulate <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]');
+    const db = loadDB(), ix = DefDB.index(db), id = (r) => { if (!r || r === true) return undefined; const x = DefDB.resolveRef(ix, r); if (x.error) die(x.error); return x.id; };
+    const init = {};
+    for (const kv of String(flags.init || '').split(';').filter(Boolean)) { const i = kv.lastIndexOf('='); init[kv.slice(0, i).trim()] = +kv.slice(i + 1); }
+    const opt = { until: id(flags.until), from: id(flags.from), amount: +(flags.amount || 10), rounds: +(flags.rounds || 60), init };
+    const txt = DefDB.simulateText(db, args[0], opt);
+    console.log(txt);
+    if (opt.until && (/✗/.test(txt))) process.exit(1);
+    break;
+  }
   case 'prompt': {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }

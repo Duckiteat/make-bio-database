@@ -62,6 +62,16 @@
  cAMP → AMP (신호 종료)            Gs[GTP] → Gs 자체 비활성화 → Gs[GDP]
 ```
 
+### 스트레스 시험: LPS → TLR4 → NF-κB (19단계, 정의항 43개)
+```
+LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주머니로 전달 → (TLR4–MD-2)₂ 다량체 → TIRAP 모집
+ → 마이도솜 조립 (MyD88 6 · IRAK4 4 · IRAK1 4) → IRAK1 Thr209 인산화 → TRAF6 모집 → K63 사슬 → TAK1 활성화
+ → IKKβ Ser177·Ser181 → IκBα Ser32·Ser36 → SCF–βTrCP 의 K48 유비퀴틴화 → 26S 프로테아좀이 IκBα 만 분해
+ → NF-κB p50–p65 핵 이동(수송) → TNF 유전자 κB 자리 결합 → TNF mRNA 전사
+```
+`node dbtool.mjs simulate "LPS–TLR4–NF-κB 신호 전달" --until "TNF mRNA" --from LPS` 로 실제로 발화시켜 확인한다 (LPS 를 0 으로 두면 전사에 이르지 못함).
+문헌 근거는 서지(저자·연도·DOI/PMID)를 확인한 것만 curated, 추론은 `[Abstracted Logic: Derived from the inferred mechanistic flow]` 로 표시된다.
+
 ## 매핑 규칙 요약 (자세히는 SCHEMA.md)
 
 - **통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막 결합 방식·부위 종류·특징·변화 종류·활성·종(NCBI)·조직·세포·관찰 속성·근거 수준은 목록의 값만. 별칭은 표준 값으로 바뀐다.
@@ -74,7 +84,7 @@
 - **단계는 규칙의 적용**: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.
 - **관문**: 오류가 하나라도 있거나 패치가 새 경고를 만들면 패치 전체 거부. 통과한 패치는 `data/patches/` 에 매핑 결과와 함께 기록.
 
-규칙은 `tests/rules.test.mjs`(50개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
+규칙은 `tests/rules.test.mjs`(60개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
 
 ## 사용법
 
@@ -98,6 +108,7 @@ node dbtool.mjs merge patch.json                # 병합 + data/patches/ 기록
 node dbtool.mjs context PKA                      # 정의 맥락·구조(구성 요소·부위·규칙)·기전 참여
 node dbtool.mjs mechanism "에피네프린에 의한 글리코겐 분해"
 node dbtool.mjs mechanism S000009 --up 3 --down 3
+node dbtool.mjs simulate <경로> --until D… --from D…   # 규칙대로 발화시켜 도달·유도 확인
 node dbtool.mjs audit                           # 매핑·채움 현황 (미매핑, 잔기 모름, 지문 없음)
 node dbtool.mjs vocab locations actions         # 통제 어휘 보기
 node --test tests/*.test.mjs                    # 규칙 테스트
