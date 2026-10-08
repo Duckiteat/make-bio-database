@@ -15,10 +15,10 @@
 | 층 | 번호 | 갖는 것 | 갖지 않는 것 |
 |---|---|---|---|
 | 피정의항 | `T000001` | names{ko,en}, aliases | 그 밖의 모든 속성 |
-| 정의항(원천) | `D000001` | 정체성(kind, fingerprint, xrefs), 막 위상, 하위 객체(아래) | – |
+| 정의항(원천) | `D000001` | 정체성(kind, fingerprint, xrefs, 기준 종), 막 위상, 하위 객체(아래) | – |
 | └ 설명 | `D…/desc/n` | 문장, field, 구조화된 context, genus, links, 근거 | |
-| └ 부위 | `D…/site/키` | 잔기·범위, 부위 종류, 막에서 향하는 면(face), 허용 특징 | |
-| └ 규칙 | `D…/rule/n` | 상태 의미 규칙, 촉매·결합 규칙, 적용 위치 조건, 설명, 근거 | |
+| └ 부위 | `D…/site/키` | 부위 종류, 종별 잔기 번호, 막에서 향하는 면(face), 허용 특징, 종 조건(`taxa`) | |
+| └ 규칙 | `D…/rule/n` | 상태 의미 규칙, 촉매·결합 규칙, 적용 위치 조건(`where`)·종 조건(`taxa`), 설명, 근거 | |
 | └ 관찰 | `D…/obs/n` | 속성·값·단위·맥락·근거 (위치 분포, 발현, Km …) | |
 | 특징 유형 | 어휘 `F` | phosphorylation, GTP-bound … (공유 정의) | |
 | 위치 | 어휘 `L` | 위치 계층, 3D/2D 구분, 인접 관계 | |
@@ -31,7 +31,7 @@
 ```json
 "D000030": {
   "term": "T000028", "n": 1, "kind": "molecule_class",
-  "xrefs": [], "fingerprint": null,
+  "xrefs": [], "fingerprint": null, "reference_species": "9606",
   "membrane": { "association": "integral", "location": "L:plasma_membrane" },
   "desc":  [ { "text": "에피네프린과 결합하면 Gs 단백질을 활성화하는 세포막 수용체", "field": "세포생물학",
                "context": { "scope": "간·근육 세포", "species": null, "tissue": null, "cell": null, "condition": null },
@@ -91,7 +91,7 @@ site.face            : extracellular | cytosolic | lumenal | transmembrane   (�
 ### 3.3 묶음의 위치
 
 ```
-묶음 키 = D000044 | Ser14:phosphorylated | L:cytosol
+묶음 키 = D000044 | reg_phos:phosphorylated | L:cytosol
 ```
 
 - 위치는 묶음 키에 반드시 들어간다.
@@ -115,6 +115,52 @@ site.face            : extracellular | cytosolic | lumenal | transmembrane   (�
 
 "이 단백질이 간세포에서는 주로 세포질에 있다" 같은 분포 정보는 묶음이 아니라 원천의 관찰(`D…/obs/n`, 맥락 포함)이다.
 묶음의 위치는 "이 단계에서 이 풀(pool)이 어디 있었나" 이고, 관찰은 "실험에서 어디서 보였나" 다.
+
+## 3A. 종(species) 규칙
+
+종마다 정의항을 따로 만들면 데이터가 파편화된다. 그래서 **정의항은 기준 종 하나로 세우고, 종별 차이는 그 정의항 안에 기록**한다.
+
+### 3A.1 기준 종 — 하나로 고정
+
+- 단백질·핵산 정의항은 `reference_species` 가 필수다(기본값 *Homo sapiens*, NCBI Taxonomy 9606).
+  구조 지문(서열 해시), 필수 UniProt ID, 부위의 잔기 번호는 모두 **기준 종의 정규 서열**을 가리킨다.
+  "포유류" 처럼 모호한 기준은 잔기 번호가 가리킬 서열이 없어서 허용하지 않는다.
+- 분자 부류(molecule_class) 정의항은 서열이 없으므로 분류군(예: Mammalia)을 범위로 가질 수 있다.
+- 저분자·이온은 종과 무관하다(ATP 는 어느 종이든 같다). 종 필드를 두지 않는다.
+
+### 3A.2 종 차이의 세 단계
+
+| 차이의 크기 | 어디에 기록하나 | 예 |
+|---|---|---|
+| **값**이 다르다 | `D…/obs/n`, `context.species` 필수 | 종별 Km, 발현량, 활성 정도 |
+| **기전 일부**가 다르다 | 같은 정의항의 규칙·부위에 `taxa` 조건 (위치의 `where` 와 같은 방식) | 어떤 종에만 있는 조절 부위, 일부 종에만 있는 되먹임 조절 |
+| **정체성**이 다르다 | 새 정의항 | 다른 반응을 촉매함, 도메인 구성이 다름, 이름만 같은 다른 단백질 |
+
+### 3A.3 부위 키와 종별 잔기 번호
+
+같은 부위라도 종마다 잔기 번호가 다를 수 있다. 그래서 부위 키는 **의미 있는 이름**으로 하고, 잔기 번호는 종별로 기록한다.
+
+```json
+"site": { "reg_phos": { "type": "modification_site", "modification": "phosphorylation",
+                        "numbering": { "9606": "Ser14" } } }
+```
+
+다른 종의 번호는 확인된 것만 추가한다(지어내지 않는다). 묶음 키는 부위 키를 쓰므로(`D000044|reg_phos:phosphorylated|L:cytosol`) 종이 바뀌어도 기전이 그대로 이어진다.
+
+### 3A.4 종 어휘
+
+NCBI Taxonomy 번호와 계층(사람 ⊂ 포유류 ⊂ 척추동물 …)을 작은 어휘 표로 둔다. 위치 어휘처럼 사람이 검토해 늘린다.
+`taxa: ["40674"]`(포유류)인 규칙은 사람(9606)·생쥐(10090) 모두에 적용된다.
+
+### 3A.5 다른 종의 외부 ID
+
+다른 종의 오솔로그 UniProt ID 는 정체성 xrefs 가 아니라 `obs` 에 `context.species` 와 함께 둔다(property `ortholog_xref`).
+정체성 xrefs 의 필수 ID 는 기준 종의 것이다. 같은 외부 ID 는 여전히 데이터베이스 전체에서 한 곳에만 붙는다.
+
+### 3A.6 시뮬레이션에서
+
+시뮬레이션은 종을 하나 고르고 시작한다. 그 종에 적용되는 규칙(`taxa` 조건 통과)과 그 종의 관찰값을 쓴다.
+그 종의 값이 없으면 기준 종 값을 쓰되, **"다른 종 값 사용"** 표시를 결과에 남긴다(조용히 섞지 않는다).
 
 ## 4. 단계 (S) 형식
 
@@ -154,7 +200,7 @@ site.face            : extracellular | cytosolic | lumenal | transmembrane   (�
 | AC inactive / active | gs_binding | gs_binding:bound → active | `D031|L:pm`, `D031|gs_binding:bound|L:pm` |
 | PKA R2C2 / C_free | (복합체 해리) | 아래 주의 | `D042|L:cytosol`, `D042|dissociated|L:cytosol` |
 | PhK unphos / phos | 잔기 미상 | phosphorylated → active | `D043|unspecified:phosphorylated|L:cytosol` |
-| GP b / a | Ser14 | Ser14:phosphorylated → active, 없으면 partial | `D044|L:cytosol`, `D044|Ser14:phosphorylated|L:cytosol` |
+| GP b / a | reg_phos (사람 Ser14) | reg_phos:phosphorylated → active, 없으면 partial | `D044|L:cytosol`, `D044|reg_phos:phosphorylated|L:cytosol` |
 
 - **잔기를 모르는 인산화**(PhK)는 `unspecified` 부위로 명시한다. 잔기를 지어내지 않는다.
 - **PKA 주의**: 활성화는 조절 소단위와 촉매 소단위가 갈라지는 해리다. 엄밀하게는 홀로효소(복합체)·조절 소단위·촉매 소단위가
@@ -191,10 +237,12 @@ site.face            : extracellular | cytosolic | lumenal | transmembrane   (�
 5. 묶음 특징은 그 원천의 부위에 정의된 허용 특징만. 같은 부위에 특징 둘 금지.
 6. 단계: 규칙 존재, 변화량 = 규칙의 change, action 일치, 위치 조건(`where`), 공간 접촉(3.4-1), 수송 외 위치 변화 금지(3.4-3).
 7. 활성 등 상태 의미는 묶음에 쓰지 않고 원천 규칙으로 계산. 묶음에 붙은 관찰이 규칙의 계산과 어긋나면 경고(이상 탐지 — 발견의 단서).
+8. 종: 단백질·핵산 정의항은 `reference_species` 필수, 저분자·이온은 종 필드 금지. 종에 따라 달라지는 관찰(Km·발현·활성 …)은 `context.species` 필수.
+   `taxa`·`species` 는 종 어휘의 값만. 부위의 기준 종 잔기 번호 필수, 형식 검사(`Ser14`).
 
 ## 7. 구현 순서
 
-1. 어휘: 위치 계층(L)·특징 유형(F)·막 위상·face·tissue·cell 표 추가
+1. 어휘: 위치 계층(L)·특징 유형(F)·막 위상·face·tissue·cell·종(NCBI Taxonomy 계층) 표 추가
 2. core: 정의항 하위 객체, 묶음 키 파생, 단계 변화량 계산, 6절 검사, 이름·상태 이름 → 묶음 키 매핑
 3. `migrations/003-v3-to-v4.mjs`: 5절 표대로 변환 (막 위상·부위·규칙은 변환 스크립트에 명시한 표로)
 4. 테스트: 6절 각 규칙의 거부 테스트 + 공간 접촉 사례(에피네프린→PKA 직접 반응 거부 등)
@@ -203,6 +251,6 @@ site.face            : extracellular | cytosolic | lumenal | transmembrane   (�
 
 ## 8. 정할 것
 
-- **종(species)**: context 에 넣을 종의 기본값을 사람으로 둘지, 비워 두고 필수로 할지.
+- ~~종(species)~~ → 3A 절로 결정됨 (기준 종 하나 + 종별 차이는 obs / taxa 조건 / 정체성이 다를 때만 새 정의항).
 - **위치 어휘 범위**: 3.1 표로 시작하고 필요할 때 늘린다(사람이 검토해 추가) — 이 방식으로 괜찮은지.
 - **PKA 소단위 분리**: 1차 변환에서 바로 소단위 정의항까지 만들지, 경고로 남기고 다음 패치로 고칠지.
