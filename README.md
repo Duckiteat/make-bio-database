@@ -93,6 +93,7 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 | `tests/` | 규칙 테스트 |
 | `examples/` | 패치 예시 (`pp1-dephosphorylation.json`: 이름·별칭·상태 이름으로 쓴 참조가 번호로 매핑되는 예) |
 | `FEATURES.md` | 특징 층·가설 층 설계 (아직 구현 전) |
+| `DESIGN-v4.md` | 형식 v4 설계: 원천(정의항) 중심 소유, 위치가 묶음의 정체성에 들어가는 위치 의존 기전 (아직 구현 전) |
 
 ## 아직 안 된 것
 

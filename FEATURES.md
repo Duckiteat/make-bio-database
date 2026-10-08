@@ -1,5 +1,20 @@
 # 특징 층 · 가설 층 설계 (초안 — 아직 구현 전)
 
+> **v4 정렬 (2026-10-08)**: 원천 중심 소유 원칙([`DESIGN-v4.md`](DESIGN-v4.md))에 따라, 아래의 독립 특징 레코드(`F000001`, `subject` 필드)는
+> 만들지 않는다. 특징은 그것을 가진 **정의항이 하위 번호로 소유**하고, `F` 는 특징 *유형* 어휘(phosphorylation, GTP-bound …)가 된다.
+> 근거 수준(3절)·가설 층(4절)·추론 규칙(5절)·특징 카드(7절)·시뮬레이션 다리(8절)의 내용은 그대로 유효하고, 대상 번호만 아래처럼 바뀐다.
+>
+> | 이 문서의 특징 종류 | v4 에서 사는 곳 |
+> |---|---|
+> | catalytic_activity, substrate_specificity | `D…/rule/n` (촉매 규칙: 행위 · 대상 부위 조건 · 변화) + EC/GO 는 정체성 xrefs |
+> | molecular_function | 정체성 xrefs (GO) |
+> | domain, sequence_motif, binding_site, modification_site | `D…/site/키` (부위 종류 · 범위 · 막 면 · 허용 특징) |
+> | structure_ref | 정체성(구조 참조), 형태별이면 상태 의미 규칙과 연결 |
+> | localization, expression, quantity | `D…/obs/n` (맥락 필수) — 단, 단계 안에서 풀이 어디 있는지는 묶음 키의 위치 |
+> | 상태 수준 특징 (`D…@키`) | 묶음 키 `D | site:feature … | L:위치` + 원천의 상태 의미 규칙 |
+>
+> 가설의 `fired` 는 이 하위 번호들(`D…/site/…`, `D…/rule/…`, `D…/obs/…`)을 가리킨다.
+
 ## 0. 목적
 
 특징(feature)은 검색용 꼬리표가 아니라 **AI 추론과 시뮬레이션의 입력 신호**다.
