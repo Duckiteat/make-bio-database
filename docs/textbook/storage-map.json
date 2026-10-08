@@ -184,6 +184,14 @@
       "interpret": "특징 층·가설 층 설계. 특징은 v4 에서 부위·규칙·관찰로 구현됨, 가설 층은 미구현."
     },
     {
+      "path": "docs/design/*.md",
+      "class": "history",
+      "format": "Markdown",
+      "writer": "사람·AI (설계 제안)",
+      "readers": "사람·AI",
+      "interpret": "아직 구현되지 않은 설계 제안. 현재 규칙이 아니다 — 구현되면 SCHEMA.md·교과서로 옮기고 CHANGES.md 에 기록. hybrid-multiscale-engine.md: v8 공간 층(FNO 대리 모델·DEVS·경계 보존·GPR 승격) 제안."
+    },
+    {
       "path": "migrations/*.mjs",
       "class": "migration",
       "format": "Node ESM",
