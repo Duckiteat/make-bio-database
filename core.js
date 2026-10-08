@@ -1,61 +1,151 @@
-// 맥락 보존형 정의 데이터베이스 — 공용 로직 (브라우저 viewer.html 과 Node dbtool.mjs 가 함께 사용)
+// 맥락 보존형 생명과학 데이터베이스 — 공용 로직 (브라우저 viewer.html 과 Node dbtool.mjs 가 함께 사용)
 //
-// 저장 단위는 "메모"가 아니라 정의항(definiens)이다.
-//   피정의항(term)  : 정의되는 말. 여러 개의 정의항을 가질 수 있다(다의어·분야별 정의).
-//   정의항(definiens): 하나의 정의 문장 + 그 정의가 성립하는 맥락 + 다른 정의항으로 가는 연결.
-//   연결(link)       : 정의항 → 정의항. "A의 이 정의에서 A는 B의 *이* 정의의 하위 개념이다"를 표현한다.
-// 같은 피정의항이라도 정의항마다 상위/하위가 다를 수 있으므로, 연결은 피정의항이 아니라 정의항 ID 끼리 잇는다.
+// 층 구조
+//   피정의항(term)    : 정의되는 말. 여러 정의항(뜻)을 가질 수 있다.
+//   정의항(definiens) : 뜻 하나. kind(종류)·field(분야)·정의 문장·맥락·연결·외부 ID·상태를 가진다.
+//   연결(link)        : 정의항 → 정의항. 같은 말이라도 어느 뜻이 어느 뜻 아래에 있는지가 보존된다.
+//   상태(state)       : 분자 정의항의 형태(인산화형, GTP 결합형 …). "정의항id@키" 로 가리킨다.
+//   기전 단계(step)   : 행위자(상태)가 입력(상태)을 출력(상태)으로 바꾸는 사건. 출력이 다른 단계의 입력·행위자·조절자와
+//                       같은 "정의항@상태" 이면 두 단계는 자동으로 이어진다. 단계는 경로(pathway) 정의항에 part_of 로 묶인다.
 //
-// 기전 단계(step): "행위자(효소, 어떤 상태)가 입력(어떤 상태)을 출력(어떤 상태)으로 바꾼다" 하나.
-//   한 단계의 출력(분자+상태)이 다른 단계의 입력·행위자·조절자로 쓰이면 두 단계는 자동으로 이어진다.
-//   단계는 경로(정의항)에 part_of 로 속하고, 경로는 다시 더 큰 경로의 part_of 가 될 수 있다.
+// 매핑 규칙 (SCHEMA.md 참고)
+//   - 저장된 데이터의 모든 참조는 정확한 정의항 id 여야 한다. 이름·별칭·외부 ID 로 들어온 참조는 병합 때 id 로 바뀐다.
+//   - 모든 이름(피정의항 label + 별칭)은 정규화했을 때 데이터베이스 전체에서 하나의 피정의항만 가리켜야 한다.
+//   - 같은 외부 ID 는 하나의 정의항에만 붙는다.
+//   - kind·field·action·위치·활성·수식·효과는 vocab.js 의 값만 쓴다.
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.DefDB = factory();
-})(typeof self !== 'undefined' ? self : this, function () {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./vocab.js'));
+  else root.DefDB = factory(root.DefDBVocab);
+})(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 1;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 2;
 
-  // 관계 종류. axis 가 있는 관계는 위계(상위/하위)를 만들고, dir 은 연결을 가진 정의항 기준 방향이다.
   const REL = {
-    is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종',       up: '상위 범주', down: '하위 범주' },
+    is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
     has_kind:     { axis: 'kind',     dir: 'down', label: '하위 종류로 ~를 가짐' },
-    part_of:      { axis: 'part',     dir: 'up',   label: '~의 구성요소',   up: '전체',     down: '구성요소' },
+    part_of:      { axis: 'part',     dir: 'up',   label: '~의 구성요소' },
     has_part:     { axis: 'part',     dir: 'down', label: '구성요소로 ~를 가짐' },
-    instance_of:  { axis: 'instance', dir: 'up',   label: '~의 사례',       up: '유형',     down: '사례' },
+    instance_of:  { axis: 'instance', dir: 'up',   label: '~의 사례' },
     has_instance: { axis: 'instance', dir: 'down', label: '사례로 ~를 가짐' },
     requires:     { axis: null, label: '조건/전제',  inverse: '이를 전제로 하는 정의' },
     contrasts:    { axis: null, label: '대비',       inverse: '대비' },
     refers:       { axis: null, label: '정의에 사용', inverse: '이 개념을 사용하는 정의' },
   };
+  const UP_OF = { has_kind: 'is_a', has_part: 'part_of', has_instance: 'instance_of' };
   const AXIS_UP = { kind: '상위 범주', part: '전체', instance: '유형' };
   const AXIS_DOWN = { kind: '하위 범주', part: '구성요소', instance: '사례' };
+  const ROLE = { agent: '촉매/행위자', agent_after: '행위자 상태 변화로 생김', input: '소비(입력)', output: '생성(출력)', activator: '활성화 조절', inhibitor: '억제 조절' };
 
   const isObj = (o) => o && typeof o === 'object' && !Array.isArray(o);
   const clone = (o) => JSON.parse(JSON.stringify(o));
-  const str = (s) => (s == null ? '' : String(s)).trim();
+  const str = (s) => (s == null ? '' : String(s)).normalize('NFC').trim();
+  const arr = (a) => (Array.isArray(a) ? a : a == null || a === '' ? [] : [a]);
+  const uniq = (a) => [...new Set(a)];
   const isTempId = (id) => !id || /#\+/.test(id);
   const isStepId = (id) => /^step:/.test(String(id));
   const isTempStep = (id) => !id || /^step:\+/.test(id);
-  const EFFECT = { activates: '활성화', inhibits: '억제' };
-  const termOfId = (id) => { const i = String(id).lastIndexOf('#'); return i < 0 ? String(id) : String(id).slice(0, i); };
+  const termOfId = (id) => { const s = String(id), i = s.lastIndexOf('#'); return i < 0 ? s : s.slice(0, i); };
+  const RESERVED = /[#@|]/;
+  const KEY_RE = new RegExp(V.stateKeyPattern), RES_RE = new RegExp(V.residuePattern);
+  const MOLECULAR = new Set(V.groups.molecular);
+  const isParticipantKind = (k) => !!(V.kinds[k] && V.kinds[k].participant);
 
+  // ===== 이름 정규화: 띄어쓰기·하이픈·괄호·대소문자·그리스 문자 차이를 없앤다 =====
+  const GREEK = { 'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'ε': 'epsilon', 'κ': 'kappa', 'μ': 'mu' };
+  function normName(s) {
+    return String(s || '').normalize('NFKC').toLowerCase()
+      .replace(/[αβγδεκμ]/g, (c) => GREEK[c])
+      .replace(/[\s\-_·•.,'’"()[\]{}/:]/g, '');
+  }
+  function lev(a, b) {
+    if (Math.abs(a.length - b.length) > 3) return 99;
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  function similar(query, names, n) {
+    const q = normName(query);
+    return names.map((x) => ({ x, s: q && (normName(x).includes(q) || q.includes(normName(x))) ? 0 : lev(q, normName(x)) }))
+      .filter((o) => o.s <= 2).sort((a, b) => a.s - b.s).slice(0, n || 5).map((o) => o.x);
+  }
+
+  // ===== 통제 어휘 매핑 =====
+  const VIX = {};
+  for (const table of ['kinds', 'fields', 'compartments', 'actions', 'activity', 'modifications', 'effects']) {
+    const m = new Map();
+    for (const [key, v] of Object.entries(V[table])) for (const n of [key, v.label, ...(v.aliases || [])]) if (n) m.set(normName(n), key);
+    VIX[table] = m;
+  }
+  const VNAME = { kinds: 'kind', fields: '분야(field)', compartments: '세포 내 위치(compartment)', actions: '변화 종류(action)', activity: '활성(activity)', modifications: '수식(modification)', effects: '조절 효과(effect)' };
+  function mapVocab(table, value) {
+    const v = str(value);
+    if (!v) return { error: `${VNAME[table]} 없음` };
+    if (V[table][v]) return { key: v };
+    const key = VIX[table].get(normName(v));
+    if (key) return { key, mapped: true };
+    const sug = similar(v, Object.keys(V[table]));
+    return { error: `${VNAME[table]} '${v}' 은(는) 어휘 목록에 없음 — 가능한 값: ${(sug.length ? sug : Object.keys(V[table])).join(', ')}` };
+  }
+  function parseXref(x) {
+    if (isObj(x)) return { db: str(x.db), id: str(x.id), status: str(x.status) || 'asserted', note: str(x.note) || undefined };
+    const s = str(x);
+    for (const [db, v] of Object.entries(V.xrefs)) if (new RegExp(v.pattern).test(s)) return { db, id: s, status: 'asserted' };
+    const i = s.indexOf(':');
+    return i > 0 ? { db: s.slice(0, i), id: s.slice(i + 1), status: 'asserted' } : { db: '', id: s, status: 'asserted' };
+  }
+  const xrefKey = (x) => `${x.db}:${x.id}`;
+  // 화면용: ID 자체에 접두어가 있으면(CHEBI:…, GO:…, EC …) 그대로, 없으면 "UniProt:P06737"
+  const xrefLabel = (x) => (/^[A-Z]+[: ]/.test(x.id) ? x.id : `${x.db}:${x.id}`);
+
+  // ===== 정규화 =====
   function emptyDB() { return { format: FORMAT, version: VERSION, terms: {}, steps: {} }; }
-
-  // 느슨한 입력을 표준 형태로 맞춘다(필드 누락 보충, 문자열 정리). 원본은 건드리지 않는다.
   function normalize(input) {
     const db = emptyDB();
     if (!isObj(input)) return db;
+    if (input.version != null && Number(input.version) !== VERSION) Object.defineProperty(db, '_version', { value: Number(input.version) });
     for (const [key, t] of Object.entries(isObj(input.terms) ? input.terms : {})) {
       const label = str(key);
-      if (!label || !isObj(t)) continue;
-      db.terms[label] = normTerm(label, t);
+      if (label && isObj(t)) db.terms[label] = normTerm(label, t);
     }
     for (const st of stepList(input)) if (st.id && !isTempStep(st.id)) db.steps[st.id] = st;
     return db;
   }
-  // 단계 목록: 데이터베이스에서는 {id: 단계} 객체, 패치에서는 배열도 허용.
+  function normTerm(label, t) {
+    const out = { label, aliases: uniq(arr(t.aliases).map(str).filter(Boolean)), definientia: [] };
+    if (str(t.note)) out.note = str(t.note);
+    for (const d of arr(t.definientia)) if (isObj(d)) out.definientia.push(normDef(d));
+    return out;
+  }
+  function normDef(d) {
+    const o = { id: str(d.id), kind: str(d.kind), field: str(d.field), text: str(d.text), context: str(d.context), links: [] };
+    for (const l of arr(d.links)) {
+      if (!isObj(l)) continue;
+      const nl = { to: str(l.to), rel: str(l.rel) };
+      if (str(l.span)) nl.span = str(l.span);
+      if (str(l.note)) nl.note = str(l.note);
+      o.links.push(nl);
+    }
+    o.xrefs = arr(d.xrefs).map(parseXref).map((x) => (x.note ? x : { db: x.db, id: x.id, status: x.status }));
+    if (str(d.unmapped)) o.unmapped = str(d.unmapped);
+    o.states = arr(d.states).filter(isObj).map(normState);
+    o.examples = arr(d.examples).map(str).filter(Boolean);
+    for (const k of ['distinction', 'note', 'source', 'by', 'at']) if (str(d[k])) o[k] = str(d[k]);
+    // 패치에서 생략된 필드는 기존 값을 유지하기 위해 표시해 둔다 (JSON 으로 저장되지 않음)
+    Object.defineProperty(o, '_given', { value: { states: 'states' in d, xrefs: 'xrefs' in d, unmapped: 'unmapped' in d } });
+    return o;
+  }
+  function normState(s) {
+    const o = {
+      key: str(s.key), label: str(s.label), aliases: uniq(arr(s.aliases).map(str).filter(Boolean)), activity: str(s.activity) || 'unknown',
+      modifications: arr(s.modifications).filter(isObj).map((m) => (str(m.site) ? { type: str(m.type), site: str(m.site) } : { type: str(m.type) })),
+      bound: arr(s.bound).map(str).filter(Boolean),
+    };
+    if (str(s.note)) o.note = str(s.note);
+    return o;
+  }
   function stepList(input) {
     if (!isObj(input)) return [];
     const raw = Array.isArray(input.steps) ? input.steps
@@ -71,71 +161,55 @@
     return o;
   }
   function normStep(st) {
-    const arr = (a) => (Array.isArray(a) ? a : a ? [a] : []);
     const o = {
-      id: str(st.id), label: str(st.label), action: str(st.action), text: str(st.text), context: str(st.context),
+      id: str(st.id), label: str(st.label), action: str(st.action), compartment: str(st.compartment), cell: str(st.cell),
+      text: str(st.text), context: str(st.context),
       agents: arr(st.agents).map((a) => { const x = normPart(a); if (isObj(a) && str(a.after)) x.after = str(a.after); return x; }).filter((x) => x.ref),
       inputs: arr(st.inputs).map(normPart).filter((x) => x.ref),
       outputs: arr(st.outputs).map(normPart).filter((x) => x.ref),
       regulators: arr(st.regulators).map((r) => { const x = normPart(r); x.effect = str(isObj(r) && r.effect) || 'activates'; return x; }).filter((x) => x.ref),
       part_of: arr(st.part_of).map(str).filter(Boolean),
     };
+    if (!o.cell) delete o.cell;
+    if (!o.context) delete o.context;
     for (const k of ['source', 'by', 'at']) if (str(st[k])) o[k] = str(st[k]);
     return o;
   }
-  function normTerm(label, t) {
-    const out = { label, aliases: [...new Set((t.aliases || []).map(str).filter(Boolean))], definientia: [] };
-    if (str(t.note)) out.note = str(t.note);
-    for (const d of t.definientia || []) if (isObj(d)) out.definientia.push(normDef(d));
-    return out;
-  }
-  function normDef(d) {
-    const out = { id: str(d.id), text: str(d.text), context: str(d.context), links: [], examples: [] };
-    for (const l of d.links || []) {
-      if (!isObj(l)) continue;
-      const nl = { to: str(l.to), rel: str(l.rel) };
-      if (str(l.span)) nl.span = str(l.span);
-      if (str(l.note)) nl.note = str(l.note);
-      out.links.push(nl);
-    }
-    out.examples = (d.examples || []).map(str).filter(Boolean);
-    for (const k of ['note', 'source', 'by', 'at']) if (str(d[k])) out[k] = str(d[k]);
-    return out;
-  }
 
   // ===== 색인 =====
-  // 그래프 노드: 정의항 ID("효소#1") 또는 감각이 정해지지 않은 피정의항("@효소").
   function index(db) {
-    const defs = new Map();          // id -> {term, def}
-    for (const t of Object.values(db.terms)) for (const d of t.definientia) defs.set(d.id, { term: t.label, def: d });
-    const edges = [];
-    for (const { term, def } of defs.values()) {
-      def.links.forEach((link, i) => {
-        const tgt = resolve(db, defs, link.to);
-        const r = REL[link.rel] || {};
-        const e = { from: def.id, fromTerm: term, link, i, target: tgt.node, status: tgt.status, rel: link.rel, axis: r.axis || null };
-        if (r.axis) { e.child = r.dir === 'up' ? def.id : tgt.node; e.parent = r.dir === 'up' ? tgt.node : def.id; }
-        edges.push(e);
-      });
-    }
-    const up = new Map(), down = new Map(), side = new Map();
+    const defs = new Map(), names = new Map(), xrefs = new Map();
     const push = (m, k, v) => { if (!m.has(k)) m.set(k, []); m.get(k).push(v); };
+    for (const t of Object.values(db.terms)) {
+      push(names, normName(t.label), { term: t.label, name: t.label });
+      for (const a of t.aliases) push(names, normName(a), { term: t.label, name: a });
+      for (const d of t.definientia) {
+        defs.set(d.id, { term: t.label, def: d });
+        for (const x of d.xrefs) push(xrefs, xrefKey(x), d.id);
+      }
+    }
+    const edges = [];
+    for (const { term, def } of defs.values()) def.links.forEach((link, i) => {
+      const r = REL[link.rel] || {};
+      const e = { from: def.id, fromTerm: term, link, i, target: link.to, status: defs.has(link.to) ? 'ok' : 'missing', rel: link.rel, axis: r.axis || null };
+      if (r.axis) { e.child = r.dir === 'up' ? def.id : link.to; e.parent = r.dir === 'up' ? link.to : def.id; }
+      edges.push(e);
+    });
+    const up = new Map(), down = new Map(), side = new Map();
     for (const e of edges) {
       if (e.axis) { push(up, e.child, e); push(down, e.parent, e); }
       else { push(side, e.from, e); if (e.target !== e.from) push(side, e.target, e); }
     }
-    // "@효소"(감각 미정)로 연결된 것은 효소의 모든 정의항에서도 보이게 한다.
-    const at = (node) => { const id = String(node); return id.startsWith('@') ? [] : ['@' + termOfId(id)]; };
-    const get = (m, node) => [...(m.get(node) || []), ...at(node).flatMap((k) => m.get(k) || [])];
-    const parents = (node) => get(up, node), children = (node) => get(down, node);
-    return Object.assign({ defs, edges, parents, children, sides: (node) => get(side, node) }, mechIndex(db, defs, children));
+    const children = (n) => down.get(n) || [];
+    const stateOf = (id, key) => { const x = defs.get(id); return x ? x.def.states.find((s) => s.key === key) || null : null; };
+    return Object.assign({ defs, names, xrefs, edges, stateOf, parents: (n) => up.get(n) || [], children, sides: (n) => side.get(n) || [] },
+      mechIndex(db, children, stateOf));
   }
+  const lookupName = (ix, name) => uniq((ix.names.get(normName(name)) || []).map((h) => h.term));
 
-  // ===== 기전 색인 =====
-  // 참여자 열쇠 = "정의항id|상태". 같은 분자라도 상태(인산화형/비인산화형 등)가 다르면 다른 열쇠다.
-  function mechIndex(db, defs, children) {
-    const node = (ref) => resolve(db, defs, ref).node;
-    const K = (ref, state) => node(ref) + '|' + (state || '');
+  // ===== 기전 색인: 참여자 열쇠 = "정의항id@상태키" =====
+  function mechIndex(db, children, stateOf) {
+    const K = (ref, state) => ref + '@' + (state || '');
     const steps = new Map(), byKey = new Map(), byNode = new Map();
     const push = (m, k, v) => { if (!m.has(k)) m.set(k, []); m.get(k).push(v); };
     for (const st of Object.values(db.steps || {})) {
@@ -150,7 +224,7 @@
       steps.set(st.id, { step: st, uses, makes });
       for (const u of [...uses, ...makes]) {
         push(byKey, u.key, { id: st.id, role: u.role, p: u.p });
-        push(byNode, u.key.split('|')[0], { id: st.id, role: u.role, p: u.p, key: u.key });
+        push(byNode, u.p.ref, { id: st.id, role: u.role, p: u.p, key: u.key });
       }
     }
     const major = (x) => !x.p.minor;
@@ -192,56 +266,106 @@
     const stepsIn = (defId) => {
       const scope = new Set([defId]), queue = [defId];
       while (queue.length) for (const e of children(queue.shift())) if (e.axis === 'part' && !scope.has(e.child)) { scope.add(e.child); queue.push(e.child); }
-      const ids = [];
-      for (const r of steps.values()) if (r.step.part_of.some((p) => scope.has(node(p)))) ids.push(r.step.id);
-      return order(ids);
+      return order([...steps.values()].filter((r) => r.step.part_of.some((p) => scope.has(p))).map((r) => r.step.id));
     };
-    // 어떤 정의항(분자)이 참여하는 단계
-    const roles = (defId) => [...(byNode.get(defId) || []), ...(byNode.get('@' + termOfId(defId)) || [])];
-    return { steps, stepNode: node, next, prev, stepsIn, order, roles };
-  }
-  // link.to 해석: "단백질#1" → 정의항, "단백질" → 정의항이 하나뿐이면 그것, 여러 개면 "@단백질"(감각 미정).
-  function resolve(db, defs, to) {
-    if (!to) return { node: '@', status: 'missing' };
-    if (to.includes('#')) return defs.has(to) ? { node: to, status: 'ok' } : { node: to, status: 'missing' };
-    const t = db.terms[to];
-    if (!t) return { node: '@' + to, status: 'missing' };
-    if (t.definientia.length === 1) return { node: t.definientia[0].id, status: 'auto' };
-    return { node: '@' + to, status: 'ambiguous' };
+    const roles = (defId) => byNode.get(defId) || [];
+    const partName = (p) => {
+      const s = p.state ? stateOf(p.ref, p.state) : null;
+      return termOfId(p.ref) + (p.state ? `(${s ? s.label : p.state})` : '');
+    };
+    const keyName = (k) => { const i = k.lastIndexOf('@'); return partName({ ref: k.slice(0, i), state: k.slice(i + 1) }); };
+    return { steps, next, prev, stepsIn, order, roles, partName, keyName };
   }
 
   // ===== 검사 =====
+  function kindAllowed(rel, srcKind, tgtKind) {
+    let rules = V.relationRules[UP_OF[rel] || rel];
+    if (typeof rules === 'string') rules = V.relationRules[rules.slice(1)];
+    if (!rules) return true;
+    const allowed = rules[srcKind];
+    if (!allowed) return false;
+    return allowed.some((a) => a === tgtKind || (a === '=' && srcKind === tgtKind) || (a.startsWith('@') && (V.groups[a.slice(1)] || []).includes(tgtKind)));
+  }
   function validate(db) {
     const errors = [], warnings = [];
     const E = (where, msg) => errors.push({ where, msg }), W = (where, msg) => warnings.push({ where, msg });
+    if (db._version) E('데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
+    const ix = index(db);
+    // 이름 충돌: 정규화한 이름 하나가 두 피정의항을 가리키면 중복 개념일 가능성 → 오류
+    for (const hits of ix.names.values()) {
+      const terms = uniq(hits.map((h) => h.term));
+      if (terms.length > 1) E(terms.join(' / '), `이름 충돌 '${hits.map((h) => h.name).join("' ≈ '")}' — 같은 개념이면 하나로 합치고, 다른 개념이면 이름을 구별해야 함`);
+    }
+    for (const [k, ids] of ix.xrefs) if (uniq(ids).length > 1) E(uniq(ids).join(' / '), `외부 ID ${k.slice(k.indexOf(':') + 1)} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
     const seen = new Set();
     for (const [key, t] of Object.entries(db.terms)) {
       if (key !== t.label) E(key, `피정의항 키와 label 이 다름 (${t.label})`);
-      if (!t.definientia.length) W(key, '정의항이 없는 피정의항 (빈 자리)');
+      if (RESERVED.test(key) || isStepId(key)) E(key, "피정의항 이름에 # @ | 를 쓸 수 없고 'step:' 으로 시작할 수 없음");
+      for (const a of t.aliases) if (RESERVED.test(a)) E(key, `별칭 '${a}' 에 # @ | 를 쓸 수 없음`);
+      if (!t.definientia.length) E(key, '정의항이 없는 피정의항');
       for (const d of t.definientia) {
         const where = d.id || key;
-        if (!d.id) E(key, '정의항 id 없음');
-        else if (termOfId(d.id) !== key) E(where, `id 의 앞부분이 피정의항(${key})과 다름`);
-        if (seen.has(d.id)) E(where, '중복 id'); seen.add(d.id);
+        if (!d.id) { E(key, '정의항 id 없음'); continue; }
+        if (termOfId(d.id) !== key || !/^\d+$/.test(d.id.slice(key.length + 1))) E(where, `id 는 '${key}#번호' 형식이어야 함`);
+        if (seen.has(d.id)) E(where, '중복 id');
+        seen.add(d.id);
         if (!d.text) E(where, '정의 문장(text) 없음');
-        if (!d.context) W(where, '맥락(context) 없음 — 어느 분야/관점의 정의인지 적어야 함');
+        if (!d.context) E(where, '맥락(context) 없음');
+        if (!V.kinds[d.kind]) E(where, `kind '${d.kind}' 은(는) 어휘 목록에 없음`);
+        if (!V.fields[d.field]) E(where, `field '${d.field}' 은(는) 어휘 목록에 없음`);
+        const K = V.kinds[d.kind];
+        // 외부 ID
+        const dbs = new Set();
+        for (const x of d.xrefs) {
+          const src = V.xrefs[x.db];
+          if (!src) { E(where, `외부 ID 종류 '${x.db}' 없음`); continue; }
+          if (!new RegExp(src.pattern).test(x.id)) E(where, `${x.db} ID '${x.id}' 형식이 틀림`);
+          if (K && !K.xref.allowed.includes(x.db)) E(where, `kind '${d.kind}' 에는 ${x.db} ID 를 붙일 수 없음 (허용: ${K.xref.allowed.join(', ') || '없음'})`);
+          if (!V.xrefStatus.includes(x.status)) E(where, `외부 ID 상태 '${x.status}' — ${V.xrefStatus.join(' | ')}`);
+          dbs.add(x.db);
+        }
+        if (K) for (const req of K.xref.required || []) if (!dbs.has(req) && !d.unmapped)
+          E(where, `kind '${d.kind}' 는 ${req} ID 가 필요함 — 확실한 ID 를 모르면 unmapped 에 사유를 적을 것 (추측 금지)`);
+        // 상태
+        if (d.states.length && K && !K.participant) E(where, `kind '${d.kind}' 는 상태를 가질 수 없음 (분자 종류만)`);
+        const sk = new Map();
+        for (const s of d.states) {
+          const sw = `${d.id}@${s.key}`;
+          if (!KEY_RE.test(s.key)) E(sw, '상태 키는 영문·숫자·한글·_- 만');
+          if (!s.label) E(sw, '상태 이름(label) 없음');
+          if (!V.activity[s.activity]) E(sw, `활성 '${s.activity}' 은(는) 어휘 목록에 없음`);
+          for (const n of uniq([s.key, s.label, ...s.aliases].map(normName))) {
+            if (sk.has(n) && sk.get(n) !== s.key) E(sw, `상태 이름이 상태 '${sk.get(n)}' 와 겹침`);
+            sk.set(n, s.key);
+          }
+          for (const m of s.modifications) {
+            if (!V.modifications[m.type]) E(sw, `수식 '${m.type}' 은(는) 어휘 목록에 없음`);
+            if (m.site && !RES_RE.test(m.site)) E(sw, `잔기 '${m.site}' 형식 틀림 (예: Ser14)`);
+          }
+          for (const b of s.bound) {
+            const x = ix.defs.get(b);
+            if (!x) E(sw, `결합 분자 '${b}' 가 없음`);
+            else if (!MOLECULAR.has(x.def.kind)) E(sw, `결합 분자 '${b}' 는 분자 종류가 아님`);
+          }
+        }
+        // 연결
         d.links.forEach((l, i) => {
-          if (!REL[l.rel]) E(where, `연결 ${i + 1}: 알 수 없는 관계 '${l.rel}'`);
-          if (!l.to) E(where, `연결 ${i + 1}: 대상(to) 없음`);
-          if (l.to === d.id || l.to === key) E(where, `연결 ${i + 1}: 자기 자신을 가리킴`);
-          if (l.span && !d.text.includes(l.span)) W(where, `연결 ${i + 1}: 근거 구절 '${l.span}' 이 정의 문장에 없음`);
-          if (!l.span && REL[l.rel] && l.rel !== 'contrasts') W(where, `연결 ${i + 1}(→${l.to}): 근거 구절(span) 없음`);
+          const lw = `${where} 연결 ${i + 1}`;
+          if (!REL[l.rel]) { E(lw, `알 수 없는 관계 '${l.rel}'`); return; }
+          if (l.to === d.id) E(lw, '자기 자신을 가리킴');
+          const tg = ix.defs.get(l.to);
+          if (!tg) { E(lw, `대상 '${l.to}' 가 정의항 id 가 아니거나 없음`); return; }
+          const down = !!UP_OF[l.rel];
+          if (V.kinds[d.kind] && V.kinds[tg.def.kind] && !(down ? kindAllowed(l.rel, tg.def.kind, d.kind) : kindAllowed(l.rel, d.kind, tg.def.kind)))
+            E(lw, `${l.rel}: kind '${d.kind}' → '${tg.def.kind}' 는 허용되지 않음 (vocab.js relationRules)`);
+          if (l.span && !d.text.includes(l.span)) E(lw, `근거 구절 '${l.span}' 이 정의 문장에 없음`);
+          if (!l.span && !['contrasts', 'requires'].includes(l.rel)) W(lw, `(→${l.to}) 근거 구절(span) 없음`);
         });
       }
     }
-    const ix = index(db);
-    for (const e of ix.edges) {
-      if (e.status === 'missing') W(e.from, `→ '${e.link.to}' 가 데이터베이스에 없음`);
-      if (e.status === 'ambiguous') W(e.from, `→ '${e.link.to}' 의 정의항이 여러 개라 어느 뜻인지 불명확 (예: ${e.link.to}#1)`);
-    }
-    // 위계 순환 검사 (상위로 올라가다 자기 자신으로 돌아오면 오류)
+    // 위계 순환
     const parentsOf = new Map();
-    for (const e of ix.edges) if (e.axis) { if (!parentsOf.has(e.child)) parentsOf.set(e.child, []); parentsOf.get(e.child).push(e.parent); }
+    for (const e of ix.edges) if (e.axis && e.status === 'ok') { if (!parentsOf.has(e.child)) parentsOf.set(e.child, []); parentsOf.get(e.child).push(e.parent); }
     const state = new Map();
     const dfs = (n, path) => {
       if (state.get(n) === 1) { E(n, '위계 순환: ' + [...path.slice(path.indexOf(n)), n].join(' → ')); return; }
@@ -253,96 +377,260 @@
     for (const n of parentsOf.keys()) dfs(n, []);
     // 기전 단계
     for (const [id, st] of Object.entries(db.steps || {})) {
-      if (!isStepId(id)) E(id, "단계 id 는 'step:' 으로 시작해야 함");
-      if (!st.label) W(id, '단계 이름(label) 없음');
-      if (!st.action) E(id, '변화 종류(action) 없음 — 예: 인산화, 결합, 가수분해');
-      if (!st.context) W(id, '맥락(context) 없음 — 조직·세포 위치·조건');
+      if (!/^step:\d+$/.test(id)) E(id, "단계 id 는 'step:번호' 형식");
+      if (!st.label) E(id, '단계 이름(label) 없음');
+      if (!V.actions[st.action]) E(id, `변화 종류 '${st.action}' 은(는) 어휘 목록에 없음`);
+      if (!V.compartments[st.compartment]) E(id, `세포 내 위치 '${st.compartment}' 은(는) 어휘 목록에 없음`);
       if (!st.inputs.length && !st.outputs.length && !st.agents.some((a) => a.after)) E(id, '입력·출력이 없음');
-      if (!st.part_of.length) W(id, 'part_of 없음 — 어느 경로/기전에 속하는지 적어야 묶임');
-      const chk = (ref, what) => {
-        const r = resolve(db, ix.defs, ref);
-        if (r.status === 'missing') W(id, `${what} '${ref}' 가 데이터베이스에 없음`);
-        if (r.status === 'ambiguous') W(id, `${what} '${ref}' 의 뜻이 여러 개 — 정의항 id 로 지정`);
+      if (!st.part_of.length) E(id, 'part_of 없음 — 어느 경로에 속하는지 적어야 함');
+      for (const p of st.part_of) {
+        const x = ix.defs.get(p);
+        if (!x) E(id, `소속 경로 '${p}' 가 정의항 id 가 아니거나 없음`);
+        else if (x.def.kind !== 'pathway') E(id, `소속 '${p}' 의 kind 가 pathway 가 아님 (${x.def.kind})`);
+      }
+      const chkPart = (p, what) => {
+        const x = ix.defs.get(p.ref);
+        if (!x) { E(id, `${what} '${p.ref}' 가 정의항 id 가 아니거나 없음`); return; }
+        if (!isParticipantKind(x.def.kind)) E(id, `${what} '${p.ref}' 의 kind '${x.def.kind}' 는 참여자가 될 수 없음`);
+        for (const [k, label] of [[p.state, '상태'], [p.after, '단계 뒤 상태']]) if (k && !ix.stateOf(p.ref, k))
+          E(id, `${what} '${p.ref}' 에 ${label} '${k}' 가 정의되지 않음 (있는 상태: ${x.def.states.map((s) => s.key).join(', ') || '없음'})`);
+        if (!p.state && x.def.states.length && !p.minor) E(id, `${what} '${p.ref}' 는 상태가 정의된 분자 — state 를 지정해야 함 (${x.def.states.map((s) => s.key).join(', ')})`);
       };
-      st.agents.forEach((p) => chk(p.ref, '행위자'));
-      st.inputs.forEach((p) => chk(p.ref, '입력'));
-      st.outputs.forEach((p) => chk(p.ref, '출력'));
-      st.regulators.forEach((p) => { chk(p.ref, '조절자'); if (!EFFECT[p.effect]) E(id, `조절 효과 '${p.effect}' — activates 또는 inhibits`); });
-      st.part_of.forEach((p) => chk(p, '소속 경로'));
+      st.agents.forEach((p) => chkPart(p, '행위자'));
+      st.inputs.forEach((p) => chkPart(p, '입력'));
+      st.outputs.forEach((p) => chkPart(p, '출력'));
+      st.regulators.forEach((p) => { chkPart(p, '조절자'); if (!V.effects[p.effect]) E(id, `조절 효과 '${p.effect}' 은(는) 어휘 목록에 없음`); });
     }
     return { errors, warnings };
   }
 
-  // ===== 병합 (AI 가 만든 패치를 데이터베이스에 반영) =====
-  // 패치 형식: { format:"definition-db-patch", terms:{ 피정의항:{aliases, definientia:[...]}}, remove:["효소#2"] }
-  //  - 같은 id 의 정의항은 통째로 교체(수정), 새 정의항은 id 를 비우거나 "효소#+1" 같은 임시 id 사용.
-  //  - 임시 id 는 다음 빈 번호로 바뀌고, 패치 안에서 그 임시 id 를 가리키던 연결도 함께 바뀐다.
+  // ===== 참조 매핑: 이름·별칭·외부 ID → 정의항 id =====
+  function resolveRef(ix, ref) {
+    const r = str(ref);
+    if (!r) return { error: '참조가 비어 있음' };
+    if (ix.defs.has(r)) return { id: r, via: 'id' };
+    if (isTempId(r)) return { error: `임시 id '${r}' 가 이 패치 안에 없음` };
+    if (r.includes('#')) {
+      const tp = termOfId(r), hit = lookupName(ix, tp);
+      if (hit.length === 1 && ix.defs.has(hit[0] + r.slice(tp.length))) return { id: hit[0] + r.slice(tp.length), via: `별칭 '${tp}'` };
+      return { error: `'${r}' 정의항 없음` + suggest(ix, tp) };
+    }
+    const x = parseXref(r);
+    if (x.db && ix.xrefs.has(xrefKey(x))) return { id: ix.xrefs.get(xrefKey(x))[0], via: `외부 ID ${xrefLabel(x)}` };
+    const hit = lookupName(ix, r);
+    if (hit.length === 1) {
+      const ds = [...ix.defs.values()].filter((v) => v.term === hit[0]);
+      if (ds.length === 1) return { id: ds[0].def.id, via: `이름 '${r}'` };
+      return { error: `'${r}' 은(는) 뜻이 여러 개 — 정의항 id 로 지정할 것: ${ds.map((v) => `${v.def.id}(${v.def.context})`).join(', ')}` };
+    }
+    return { error: `'${r}' 은(는) 데이터베이스에 없음` + suggest(ix, r) };
+  }
+  function suggest(ix, name) {
+    const all = uniq([...ix.names.values()].flat().map((h) => h.name));
+    const s = similar(name, all, 4);
+    return s.length ? ` — 비슷한 이름: ${s.join(', ')}` : ' — 새 개념이면 같은 패치에서 만들고 임시 id 로 가리킬 것';
+  }
+  function resolveState(def, value) {
+    const v = str(value), n = normName(v);
+    const s = def.states.find((x) => x.key === v) || def.states.find((x) => [x.key, x.label, ...x.aliases].some((y) => normName(y) === n));
+    return s ? { key: s.key, mapped: s.key !== v } : { error: `'${def.id}' 에 상태 '${v}' 없음 — 있는 상태: ${def.states.map((x) => `${x.key}(${x.label})`).join(', ') || '없음'}` };
+  }
+
+  // ===== 병합 =====
+  // 패치: { format, terms:{ 이름:{aliases, note, definientia:[…]} }, states:{ 정의항참조:[상태…] }, steps:[…], remove:[id…] }
+  // report.errors 가 비어 있지 않으면 패치를 거부해야 한다(gate 참고).
   function merge(dbIn, patchIn) {
     const db = normalize(clone(dbIn));
-    const p = normalize(patchIn);
-    const report = { added: [], updated: [], removed: [], idmap: {}, problems: [] };
-    const touched = [];
-    for (const [key, pt] of Object.entries(p.terms)) {
+    const report = { added: [], updated: [], removed: [], idmap: {}, mapped: [], errors: [] };
+    const ERR = (where, msg) => report.errors.push({ where, msg });
+    const MAP = (from, to, via) => report.mapped.push({ from, to, via });
+    if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }
+    const ix0 = index(db);
+    const touched = [], touchedSteps = [];
+    // 1. 피정의항: 이미 있는 이름·별칭이면 그 피정의항으로 매핑 (중복 개념 방지)
+    for (const [rawKey, rawT] of Object.entries(isObj(patchIn.terms) ? patchIn.terms : {})) {
+      if (!isObj(rawT)) { ERR(rawKey, '피정의항 내용이 객체가 아님'); continue; }
+      let key = str(rawKey);
+      if (!db.terms[key]) {
+        const hit = lookupName(ix0, key);
+        if (hit.length === 1) { MAP(rawKey, hit[0], '같은 이름·별칭의 기존 피정의항'); key = hit[0]; }
+        else if (hit.length > 1) { ERR(rawKey, `이름이 여러 피정의항과 겹침: ${hit.join(', ')}`); continue; }
+      }
+      const pt = normTerm(key, rawT);
+      for (const a of pt.aliases) {
+        const hit = lookupName(ix0, a).filter((x) => x !== key);
+        if (hit.length) ERR(key, `별칭 '${a}' 은(는) 이미 '${hit.join(', ')}' 의 이름 — 같은 개념이면 그 피정의항을 쓸 것`);
+      }
       const t = db.terms[key] || (db.terms[key] = { label: key, aliases: [], definientia: [] });
-      t.aliases = [...new Set([...t.aliases, ...pt.aliases])].filter((a) => a !== key);
+      t.aliases = uniq([...t.aliases, ...pt.aliases]).filter((a) => a !== key);
       if (pt.note) t.note = pt.note;
       for (const d of pt.definientia) {
         if (isTempId(d.id)) {
+          if (t.definientia.length && !d.distinction) {
+            ERR(d.id || key, `'${key}' 에는 이미 정의항(${t.definientia.map((x) => x.id).join(', ')})이 있음 — 고치려면 기존 id 를, 새 뜻이면 distinction 에 기존 뜻과의 차이를 적을 것`);
+            continue;
+          }
           const nid = key + '#' + nextNum(t);
           if (d.id) report.idmap[d.id] = nid;
           d.id = nid; t.definientia.push(d); report.added.push(nid);
-        } else if (termOfId(d.id) !== key) {
-          report.problems.push(`${d.id}: '${key}' 아래에 있지만 id 가 다른 피정의항을 가리킴 — 건너뜀`); continue;
         } else {
+          const tp = termOfId(d.id);
+          if (tp !== key) {
+            if (lookupName(ix0, tp).includes(key)) { MAP(d.id, key + d.id.slice(tp.length), `별칭 '${tp}'`); d.id = key + d.id.slice(tp.length); }
+            else { ERR(d.id, `'${key}' 아래 정의항인데 id 가 다른 피정의항을 가리킴`); continue; }
+          }
           const i = t.definientia.findIndex((x) => x.id === d.id);
-          if (i >= 0) { t.definientia[i] = d; report.updated.push(d.id); } else { t.definientia.push(d); report.added.push(d.id); }
+          if (i < 0) { ERR(d.id, '없는 id — 새 정의항은 임시 id(피정의항#+1)를 쓸 것'); continue; }
+          const old = t.definientia[i];
+          for (const k of ['states', 'xrefs', 'unmapped']) if (!d._given[k] && old[k] !== undefined) d[k] = old[k];
+          t.definientia[i] = d; report.updated.push(d.id);
         }
         touched.push(d);
       }
     }
-    const touchedSteps = [];
+    // 2. 기전 단계
     for (const st of stepList(patchIn)) {
       if (isTempStep(st.id)) {
         const nid = 'step:' + nextStepNum(db);
         if (st.id) report.idmap[st.id] = nid;
         st.id = nid; report.added.push(nid);
-      } else if (!isStepId(st.id)) { report.problems.push(`${st.id}: 단계 id 는 'step:' 으로 시작해야 함 — 건너뜀`); continue; }
-      else (db.steps[st.id] ? report.updated : report.added).push(st.id);
+      } else if (!db.steps[st.id]) { ERR(st.id, '없는 단계 id — 새 단계는 step:+1 같은 임시 id 를 쓸 것'); continue; }
+      else report.updated.push(st.id);
       db.steps[st.id] = st; touchedSteps.push(st);
     }
-    const remap = (x) => report.idmap[x] || x;
-    for (const d of touched) for (const l of d.links) l.to = remap(l.to);
-    for (const st of touchedSteps) {
-      for (const p of [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators]) p.ref = remap(p.ref);
-      st.part_of = st.part_of.map(remap);
+    // 3. 참조 매핑 (임시 id → 실제 id, 이름·별칭·외부 ID → id)
+    const ix = index(db);
+    const ref = (r, where) => {
+      if (report.idmap[r]) return report.idmap[r];
+      const x = resolveRef(ix, r);
+      if (x.error) { ERR(where, x.error); return r; }
+      if (x.via !== 'id') MAP(r, x.id, x.via);
+      return x.id;
+    };
+    for (const d of touched) {
+      d.links.forEach((l, i) => { l.to = ref(l.to, `${d.id} 연결 ${i + 1}`); });
+      for (const s of d.states) s.bound = s.bound.map((b) => ref(b, `${d.id}@${s.key} 결합 분자`));
     }
-    for (const id of (Array.isArray(patchIn && patchIn.remove) ? patchIn.remove : []).map(str)) {
-      if (isStepId(id)) {
-        if (db.steps[id]) { delete db.steps[id]; report.removed.push(id); } else report.problems.push(`삭제 대상 ${id} 없음`);
-        continue;
+    // 4. 상태 추가·수정 (패치의 states 구역): 같은 키면 교체, 새 키면 추가
+    for (const [r, list] of Object.entries(isObj(patchIn.states) ? patchIn.states : {})) {
+      const id = ref(r, `상태 대상 '${r}'`);
+      const x = ix.defs.get(id);
+      if (!x) continue;
+      for (const s of arr(list).filter(isObj).map(normState)) {
+        s.bound = s.bound.map((b) => ref(b, `${id}@${s.key} 결합 분자`));
+        const i = x.def.states.findIndex((y) => y.key === s.key);
+        if (i >= 0) x.def.states[i] = s; else x.def.states.push(s);
       }
+      touched.push(x.def);
+      if (!report.added.includes(id) && !report.updated.includes(id)) report.updated.push(id);
+    }
+    // 5. 어휘 매핑 (별칭 → 표준 키)
+    const voc = (table, value, where, set) => {
+      const m = mapVocab(table, value);
+      if (m.error) ERR(where, m.error);
+      else { if (m.mapped) MAP(value, m.key, VNAME[table]); set(m.key); }
+    };
+    for (const d of uniq(touched)) {
+      voc('kinds', d.kind, d.id, (k) => { d.kind = k; });
+      voc('fields', d.field, d.id, (k) => { d.field = k; });
+      for (const s of d.states) {
+        voc('activity', s.activity, `${d.id}@${s.key}`, (k) => { s.activity = k; });
+        for (const m of s.modifications) voc('modifications', m.type, `${d.id}@${s.key}`, (k) => { m.type = k; });
+      }
+    }
+    for (const st of touchedSteps) {
+      voc('actions', st.action, st.id, (k) => { st.action = k; });
+      voc('compartments', st.compartment, st.id, (k) => { st.compartment = k; });
+      for (const p of st.regulators) voc('effects', p.effect, st.id, (k) => { p.effect = k; });
+      st.part_of = st.part_of.map((p) => ref(p, `${st.id} 소속 경로`));
+      // 참여자: 참조 → id, 상태 이름·별칭 → 상태 키
+      for (const p of [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators]) {
+        p.ref = ref(p.ref, `${st.id} 참여자`);
+        const x = ix.defs.get(p.ref);
+        if (!x) continue;
+        for (const f of ['state', 'after']) if (p[f]) {
+          const m = resolveState(x.def, p[f]);
+          if (m.error) ERR(st.id, m.error);
+          else { if (m.mapped) MAP(p[f], m.key, `${p.ref} 상태`); p[f] = m.key; }
+        }
+      }
+    }
+    // 6. 삭제
+    for (const id of arr(patchIn.remove).map(str)) {
+      if (isStepId(id)) { if (db.steps[id]) { delete db.steps[id]; report.removed.push(id); } else ERR(id, '삭제 대상 없음'); continue; }
       const t = db.terms[termOfId(id)];
       const n = t ? t.definientia.length : 0;
       if (t) t.definientia = t.definientia.filter((d) => d.id !== id);
-      if (t && t.definientia.length < n) report.removed.push(id); else report.problems.push(`삭제 대상 ${id} 없음`);
+      if (t && t.definientia.length < n) { report.removed.push(id); if (!t.definientia.length) delete db.terms[t.label]; }
+      else ERR(id, '삭제 대상 없음');
     }
-    // 삭제된 정의항을 가리키는 연결은 남겨 두면 끊어진 링크가 되므로 정리한다.
+    // 삭제된 정의항을 가리키는 연결은 정리한다. 단계·상태가 가리키면 검사에서 오류로 드러난다.
     if (report.removed.length) for (const t of Object.values(db.terms)) for (const d of t.definientia)
       d.links = d.links.filter((l) => !report.removed.includes(l.to));
     return { db, report };
-  }
-  function nextStepNum(db) {
-    let m = 0;
-    for (const id of Object.keys(db.steps)) { const n = parseInt(id.slice(5), 10); if (n > m) m = n; }
-    return m + 1;
   }
   function nextNum(t) {
     let m = 0;
     for (const d of t.definientia) { const n = parseInt(String(d.id).split('#').pop(), 10); if (n > m) m = n; }
     return m + 1;
   }
+  function nextStepNum(db) {
+    let m = 0;
+    for (const id of Object.keys(db.steps)) { const n = parseInt(id.slice(5), 10); if (n > m) m = n; }
+    return m + 1;
+  }
 
-  // ===== 이전 형식(bionote v3 개념) 변환 =====
+  // ===== 관문: 병합 결과를 받아들일지 판단 =====
+  // 매핑 오류·검사 오류가 하나라도 있으면 거부. 패치가 새로 만든 경고도 거부(allowWarnings 일 때만 통과).
+  function gate(dbBefore, result, opt) {
+    const before = validate(normalize(dbBefore)), after = validate(result.db);
+    const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i)))];
+    const warnings = after.warnings.filter((i) => !old.has(key(i)));
+    const r = result.report;
+    const changed = r.added.length + r.updated.length + r.removed.length > 0;
+    const ok = changed && !errors.length && (!warnings.length || !!(opt && opt.allowWarnings));
+    return { ok, changed, errors, warnings, preexisting: before.errors.length };
+  }
+
+  // ===== 매핑 현황 =====
+  function audit(db) {
+    db = normalize(db);
+    const ix = index(db);
+    const byKind = {}, unmapped = [], asserted = [], verified = [], unusedStates = [];
+    const used = new Set();
+    for (const r of ix.steps.values()) for (const u of [...r.uses, ...r.makes]) used.add(u.key);
+    for (const { def } of ix.defs.values()) {
+      byKind[def.kind] = (byKind[def.kind] || 0) + 1;
+      if (def.unmapped) unmapped.push({ id: def.id, kind: def.kind, reason: def.unmapped });
+      for (const x of def.xrefs) (x.status === 'verified' ? verified : asserted).push({ id: def.id, xref: xrefLabel(x) });
+      for (const s of def.states) if (!used.has(def.id + '@' + s.key)) unusedStates.push(def.id + '@' + s.key);
+    }
+    return { byKind, unmapped, asserted, verified, unusedStates };
+  }
+  function auditText(db) {
+    const a = audit(db);
+    return [
+      '종류별 정의항: ' + Object.entries(a.byKind).sort().map(([k, n]) => `${k} ${n}`).join(', '),
+      `외부 ID: 원본과 대조됨 ${a.verified.length}, 대조 안 됨(asserted) ${a.asserted.length}`,
+      ...a.asserted.map((x) => `  ? ${x.id} — ${x.xref}`),
+      `미매핑(unmapped) ${a.unmapped.length}`,
+      ...a.unmapped.map((x) => `  - ${x.id} [${x.kind}]: ${x.reason}`),
+      `단계에 쓰이지 않은 상태 ${a.unusedStates.length}` + (a.unusedStates.length ? ': ' + a.unusedStates.join(', ') : ''),
+    ].join('\n');
+  }
+  function mapText(db, query) {
+    db = normalize(db);
+    const ix = index(db), r = resolveRef(ix, query);
+    if (r.error) return r.error;
+    const x = ix.defs.get(r.id), d = x.def;
+    return [`${query} → ${r.id}  (${r.via})`, `  ${x.term} [${d.kind} · ${d.field}] ${d.text}`,
+      d.xrefs.length ? '  외부 ID: ' + d.xrefs.map((y) => `${xrefLabel(y)}(${y.status})`).join(', ') : '',
+      d.unmapped ? '  미매핑: ' + d.unmapped : '',
+      d.states.length ? '  상태: ' + d.states.map((s) => `${s.key}=${s.label}[${s.activity}]`).join(', ') : ''].filter(Boolean).join('\n');
+  }
+
+  // ===== 이전 형식(bionote v3 개념) 변환 — kind·field·context 는 비워 두므로 병합 전에 채워야 한다 =====
   const V3_ROLE = { '상위범주': 'is_a', '구성요소': 'has_part', '조건': 'requires', '대비': 'contrasts', '기능': 'refers', '미정': 'refers' };
   function fromV3(items) {
     const list = [];
@@ -353,12 +641,10 @@
       const key = str(c.title);
       patch.terms[key] = {
         definientia: (c.defs || []).map((d, i) => ({
-          id: key + '#' + (i + 1),
+          id: key + '#+' + (i + 1), kind: '', field: '', context: '',
           text: str(d.text).replace(/\[\[([^\]]+)\]\]/g, '$1'),
-          context: '',
           links: (d.links || []).map((l) => ({ to: str(l.to), rel: V3_ROLE[l.role] || 'refers', span: str(d.text).includes(l.to) ? str(l.to) : undefined, note: str(l.note) || undefined })),
-          examples: (d.examples || []).map((e) => e.text),
-          source: 'bionote v3 변환',
+          examples: (d.examples || []).map((e) => e.text), source: 'bionote v3 변환',
         })),
         note: (c.axioms || []).map((a) => '공리: ' + a.text).join('\n') || undefined,
       };
@@ -366,45 +652,82 @@
     return patch;
   }
   const looksV3 = (o) => isObj(o) && (o.kind === 'bundle' || o.kind === 'concept' || (o.title && Array.isArray(o.defs)));
+  function ingest(db, obj) { return merge(db, looksV3(obj) || Array.isArray(obj) ? fromV3(obj) : obj); }
 
-  // ===== 맥락 출력 (사람/AI 가 읽는 텍스트) =====
-  function line(ix, db, node) {
-    if (String(node).startsWith('@')) {
-      const t = db.terms[node.slice(1)];
-      return `[${node.slice(1)}] (뜻 미지정${t ? `, 정의항 ${t.definientia.length}개` : ', 데이터베이스에 없음'})`;
-    }
-    const x = ix.defs.get(node);
-    if (!x) return `[${node}] (데이터베이스에 없음)`;
-    return `[${node}] ${x.term} := ${x.def.text}${x.def.context ? ` 〈${x.def.context}〉` : ''}`;
+  // ===== 사람/AI 가 읽는 텍스트 =====
+  function line(ix, id) {
+    const x = ix.defs.get(id);
+    if (!x) return `[${id}] (없음)`;
+    return `[${id}] ${x.term} := ${x.def.text} 〈${x.def.field}${x.def.context && x.def.context !== x.def.field ? ' · ' + x.def.context : ''}〉 {${x.def.kind}}`;
   }
-  const ROLE = { agent: '촉매/행위자', agent_after: '행위자 상태 변화로 생김', input: '소비(입력)', output: '생성(출력)', activator: '활성화 조절', inhibitor: '억제 조절' };
-  function partName(ix, p) {
-    const n = ix.stepNode(p.ref);
-    return (n.startsWith('@') ? n.slice(1) : termOfId(n)) + (p.state ? `(${p.state})` : '');
-  }
-  // 단계 한 줄: step:7 「이름」 [인산화] 행위자 A(활성) | B(비인산화) + ATP* → B(인산화) + ADP*   (* = 부산물)
   function stepLine(ix, id) {
     const r = ix.steps.get(id);
     if (!r) return `${id} (없음)`;
-    const st = r.step, P = (p) => partName(ix, p) + (p.minor ? '*' : '');
-    const ag = st.agents.map((a) => P(a) + (a.after && a.after !== (a.state || '') ? ` ⟹ ${a.after}` : '')).join(', ');
-    const rg = st.regulators.map((p) => `${EFFECT[p.effect] || p.effect} ${P(p)}`).join(', ');
-    return `${id} 「${st.label || st.action}」 [${st.action}]${ag ? ` 행위자 ${ag} |` : ''} ${st.inputs.map(P).join(' + ') || '∅'} → ${st.outputs.map(P).join(' + ') || '∅'}`
-      + `${rg ? ` | 조절: ${rg}` : ''}${st.context ? ` 〈${st.context}〉` : ''}`;
+    const st = r.step, P = (p) => ix.partName(p) + (p.minor ? '*' : '');
+    const ag = st.agents.map((a) => P(a) + (a.after && a.after !== (a.state || '') ? ` ⟹ ${ix.partName({ ref: a.ref, state: a.after })}` : '')).join(', ');
+    const rg = st.regulators.map((p) => `${(V.effects[p.effect] || {}).label || p.effect} ${P(p)}`).join(', ');
+    return `${id} 「${st.label}」 [${st.action}]${ag ? ` 행위자 ${ag} |` : ''} ${st.inputs.map(P).join(' + ') || '∅'} → ${st.outputs.map(P).join(' + ') || '∅'}`
+      + `${rg ? ` | 조절: ${rg}` : ''} 〈${st.compartment}${st.cell ? ' · ' + st.cell : ''}〉`;
   }
-  // 단계 id → 앞뒤로 이어지는 사슬, 경로(피정의항/정의항) → 속한 단계를 이어지는 순서대로
+  function contextText(db, target, opt) {
+    opt = Object.assign({ up: 4, down: 1 }, opt || {});
+    db = normalize(db);
+    const ix = index(db);
+    let ids;
+    if (ix.defs.has(target)) ids = [target];
+    else if (db.terms[target]) ids = db.terms[target].definientia.map((d) => d.id);
+    else {
+      const hit = lookupName(ix, target);
+      if (hit.length === 1) ids = db.terms[hit[0]].definientia.map((d) => d.id);
+      else { const r = resolveRef(ix, target); if (r.error) return r.error; ids = [r.id]; }
+    }
+    const out = [];
+    for (const id of ids) {
+      const d = ix.defs.get(id).def;
+      out.push(line(ix, id));
+      if (d.xrefs.length) out.push('  외부 ID: ' + d.xrefs.map((y) => `${xrefLabel(y)}${y.status === 'verified' ? '' : '(미대조)'}`).join(', '));
+      if (d.unmapped) out.push('  미매핑: ' + d.unmapped);
+      for (const s of d.states) out.push(`  ◇ 상태 ${s.key} = ${s.label} [${V.activity[s.activity] ? V.activity[s.activity].label : s.activity}]`
+        + (s.modifications.length ? ' 수식: ' + s.modifications.map((m) => (V.modifications[m.type] || {}).label + (m.site ? ' ' + m.site : '')).join(', ') : '')
+        + (s.bound.length ? ' 결합: ' + s.bound.map(termOfId).join(', ') : ''));
+      if (d.examples.length) out.push('  예: ' + d.examples.join(' / '));
+      const climb = (n, depth, pad, seen) => {
+        if (depth >= opt.up) return;
+        for (const e of ix.parents(n)) {
+          out.push(`${pad}↑ ${AXIS_UP[e.axis]}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, e.parent)}`);
+          if (seen.has(e.parent)) { out.push(pad + '   (순환)'); continue; }
+          climb(e.parent, depth + 1, pad + '   ', new Set([...seen, e.parent]));
+        }
+      };
+      climb(id, 0, '  ', new Set([id]));
+      const sink = (n, depth, pad) => {
+        if (depth >= opt.down) return;
+        for (const e of ix.children(n)) { out.push(`${pad}↓ ${AXIS_DOWN[e.axis]}: ${line(ix, e.child)}`); sink(e.child, depth + 1, pad + '   '); }
+      };
+      sink(id, 0, '  ');
+      for (const e of ix.sides(id)) {
+        const rr = REL[e.rel] || {};
+        if (e.from === id) out.push(`  ↔ ${rr.label || e.rel}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, e.target)}`);
+        else out.push(`  ↔ ${rr.inverse || e.rel}: ${line(ix, e.from)}`);
+      }
+      for (const ro of ix.roles(id)) out.push(`  ⚙ ${ROLE[ro.role]}${ro.p.state ? ` [${ix.partName(ro.p)}]` : ''}: ${stepLine(ix, ro.id)}`);
+      const inPath = ix.stepsIn(id);
+      if (inPath.length) out.push(`  ⚙ 이 경로에 속한 기전 단계 ${inPath.length}개 — mechanism 으로 순서대로 보기`);
+      out.push('');
+    }
+    return out.join('\n').trimEnd();
+  }
   function mechanismText(db, target, opt) {
     opt = Object.assign({ up: 3, down: 3 }, opt || {});
     db = normalize(db);
     const ix = index(db);
-    const keyName = (k) => { const i = k.lastIndexOf('|'); return partName(ix, { ref: k.slice(0, i), state: k.slice(i + 1) }); };
     if (isStepId(target)) {
       if (!ix.steps.has(target)) return `'${target}' 단계가 없습니다.`;
       const out = [], st = ix.steps.get(target).step;
       const walk = (id, depth, pad, dir, seen) => {
         if (depth >= (dir === 'next' ? opt.down : opt.up)) return;
         for (const n of ix[dir](id)) {
-          out.push(`${pad}${dir === 'next' ? '↓' : '↑'} (${keyName(n.via)}) ${stepLine(ix, n.id)}`);
+          out.push(`${pad}${dir === 'next' ? '↓' : '↑'} (${ix.keyName(n.via)}) ${stepLine(ix, n.id)}`);
           if (!seen.has(n.id)) walk(n.id, depth + 1, pad + '   ', dir, new Set([...seen, n.id]));
         }
       };
@@ -412,173 +735,105 @@
       const ups = out.splice(0);
       walk(target, 0, '  ', 'next', new Set([target]));
       return [...(ups.length ? ['앞 단계:', ...ups] : []), '▶ ' + stepLine(ix, target), ...(st.text ? ['  ' + st.text] : []),
-        ...(st.part_of.length ? ['  소속: ' + st.part_of.join(', ')] : []), ...(out.length ? ['다음 단계:', ...out] : [])].join('\n');
+        '  소속: ' + st.part_of.join(', '), ...(out.length ? ['다음 단계:', ...out] : [])].join('\n');
     }
-    const ids = target.includes('#') ? [target] : (db.terms[target] ? db.terms[target].definientia.map((d) => d.id) : []);
+    let ids = ix.defs.has(target) ? [target] : db.terms[target] ? db.terms[target].definientia.map((d) => d.id) : [];
+    if (!ids.length) { const hit = lookupName(ix, target); if (hit.length === 1) ids = db.terms[hit[0]].definientia.map((d) => d.id); }
     const out = [];
     for (const id of ids) {
       const list = ix.stepsIn(id);
       if (!list.length) continue;
-      out.push(line(ix, db, id));
+      out.push(line(ix, id));
       list.forEach((sid, i) => {
         out.push(`  ${i + 1}. ${stepLine(ix, sid)}`);
         const nx = ix.next(sid);
-        if (nx.length) out.push(`       → ${nx.map((n) => `${n.id} (${keyName(n.via)})`).join(', ')}`);
+        if (nx.length) out.push(`       → ${nx.map((n) => `${n.id} (${ix.keyName(n.via)})`).join(', ')}`);
       });
       out.push('');
     }
     return out.length ? out.join('\n').trimEnd() : `'${target}' 에 속한 기전 단계가 없습니다.`;
   }
-  function relName(e, dirUp) { return dirUp ? AXIS_UP[e.axis] : AXIS_DOWN[e.axis]; }
-  function contextText(db, target, opt) {
-    opt = Object.assign({ up: 4, down: 1 }, opt || {});
-    db = normalize(db);
-    const ix = index(db);
-    const ids = target.includes('#') ? [target] : (db.terms[target] ? db.terms[target].definientia.map((d) => d.id) : []);
-    if (!ids.length) return `'${target}' 은(는) 데이터베이스에 없습니다.`;
-    const out = [];
-    for (const id of ids) {
-      out.push(line(ix, db, id));
-      const x = ix.defs.get(id);
-      if (x && x.def.examples.length) out.push('  예: ' + x.def.examples.join(' / '));
-      const ups = [];
-      const climb = (n, depth, pad, seen) => {
-        if (depth >= opt.up) return;
-        for (const e of ix.parents(n)) {
-          const p = e.parent;
-          ups.push(`${pad}↑ ${relName(e, true)}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, db, p)}`);
-          if (seen.has(p)) { ups.push(pad + '   (순환)'); continue; }
-          climb(p, depth + 1, pad + '   ', new Set([...seen, p]));
-        }
-      };
-      climb(id, 0, '  ', new Set([id]));
-      if (ups.length) out.push(...ups);
-      const downs = [];
-      const sink = (n, depth, pad) => {
-        if (depth >= opt.down) return;
-        for (const e of ix.children(n)) { downs.push(`${pad}↓ ${relName(e, false)}: ${line(ix, db, e.child)}`); sink(e.child, depth + 1, pad + '   '); }
-      };
-      sink(id, 0, '  ');
-      if (downs.length) out.push(...downs);
-      for (const e of ix.sides(id)) {
-        const r = REL[e.rel] || {};
-        if (e.from === id) out.push(`  ↔ ${r.label || e.rel}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, db, e.target)}`);
-        else out.push(`  ↔ ${r.inverse || e.rel}: ${line(ix, db, e.from)}`);
-      }
-      for (const r of ix.roles(id)) out.push(`  ⚙ ${ROLE[r.role]}${r.p.state ? ` [${r.p.state}]` : ''}: ${stepLine(ix, r.id)}`);
-      const inPath = ix.stepsIn(id);
-      if (inPath.length) out.push(`  ⚙ 이 경로에 속한 기전 단계 ${inPath.length}개 — mechanism 으로 순서대로 보기`);
-      out.push('');
-    }
-    return out.join('\n').trimEnd();
-  }
 
-  // ===== AI 에게 줄 작성 지침 + 현재 색인 =====
+  // ===== AI 에게 줄 작성 지침 =====
+  const vocabList = (table, withLabel) => Object.entries(V[table]).map(([k, v]) => (withLabel && v.label ? `${k}(${v.label})` : k)).join(', ');
   function promptText(db, opt) {
     db = normalize(db);
     opt = opt || {};
+    const ix = index(db);
     const idx = [];
-    for (const t of Object.values(db.terms).sort((a, b) => a.label.localeCompare(b.label)))
-      for (const d of t.definientia) idx.push(`${d.id} | ${d.context || '-'} | ${d.text.length > 60 ? d.text.slice(0, 60) + '…' : d.text}`);
-    for (const t of Object.values(db.terms)) if (!t.definientia.length) idx.push(`${t.label} | (정의항 없음 — 자리만 있음)`);
-    const rels = Object.entries(REL).map(([k, r]) => `  - ${k}: ${r.label}`).join('\n');
-    // 이미 쓰인 상태 이름 — AI 가 같은 상태를 같은 글자로 적어야 단계가 이어진다
-    const stateMap = new Map();
-    for (const st of Object.values(db.steps)) for (const p of [...st.agents, ...st.inputs, ...st.outputs, ...st.regulators]) {
-      if (!stateMap.has(p.ref)) stateMap.set(p.ref, new Set());
-      if (p.state) stateMap.get(p.ref).add(p.state);
-      if (p.after) stateMap.get(p.ref).add(p.after);
+    for (const t of Object.values(db.terms).sort((a, b) => a.label.localeCompare(b.label))) {
+      const al = t.aliases.length ? ` (별칭: ${t.aliases.join(', ')})` : '';
+      for (const d of t.definientia) {
+        const st = d.states.length ? ` | 상태: ${d.states.map((s) => `${s.key}=${s.label}`).join(', ')}` : '';
+        idx.push(`${d.id}${al} | ${d.kind} | ${d.field} · ${d.context} | ${d.text.length > 50 ? d.text.slice(0, 50) + '…' : d.text}${st}`);
+      }
     }
-    const ixs = index(db);
-    const stateIdx = [...stateMap].filter(([, s]) => s.size).map(([r, s]) => `${r}: ${[...s].join(' / ')}`);
-    const stepIdx = [...ixs.steps.keys()].map((id) => stepLine(ixs, id));
-    return `너는 "맥락 보존형 정의 데이터베이스"에 항목을 추가하는 작성자다. 아래 자료를 읽고 패치 JSON 하나만 출력하라.
+    const kinds = Object.entries(V.kinds).map(([k, v]) => `  - ${k}: ${v.label}${v.participant ? ' [참여자·상태 가능]' : ''}`
+      + `${(v.xref.required || []).length ? ` [필수 ID: ${v.xref.required.join(', ')}]` : ''}${v.xref.allowed.length ? ` (허용 ID: ${v.xref.allowed.join(', ')})` : ''}`).join('\n');
+    const rules = Object.entries(V.relationRules).map(([rel, r]) => (typeof r === 'string' ? `  - ${rel}: ${r.slice(1)} 와 같음`
+      : `  - ${rel}: ` + Object.entries(r).map(([k, v]) => `${k}→${v.map((x) => (x === '=' ? '같은 kind' : x === '@molecular' ? '분자 종류' : x)).join('/')}`).join('; '))).join('\n');
+    const stepIdx = [...ix.steps.keys()].map((id) => stepLine(ix, id));
+    return `너는 "맥락 보존형 생명과학 데이터베이스"에 항목을 추가하는 작성자다. 아래 자료를 읽고 패치 JSON 하나만 출력하라.
+규칙은 엄격하게 검사되며, 하나라도 어기면 패치 전체가 거부된다.
 
 ## 데이터 모델
-- 피정의항(term): 정의되는 말. JSON 의 terms 키.
-- 정의항(definiens): 피정의항의 정의 하나. 같은 말이라도 분야·관점이 다르면 정의항을 따로 만든다.
-  - id: "피정의항#번호". 새 정의항은 "피정의항#+1", "피정의항#+2" 같은 임시 id 를 쓴다(병합 때 실제 번호로 바뀜).
-  - text: 정의 문장 하나(유개념 + 종차 형태 권장: "B 중에서 ~한 것").
-  - context: 이 정의가 성립하는 분야/관점/범위 (예: "생화학", "고등학교 생명과학 교과 수준").
-  - links: 이 정의 문장 속 개념을 다른 정의항에 잇는다. { to, rel, span, note }
-    - to: 반드시 정의항 id("단백질#1"). 아래 색인에 있으면 그 id, 없으면 같은 패치 안에서 새로 만든 임시 id.
-    - span: 정의 문장 안에서 이 연결의 근거가 되는 구절(원문 그대로 부분 문자열).
-    - note: 왜 이 연결인지 한 줄 (선택).
-  - note: 이 정의에 대한 보충 설명, 다른 정의항과의 구별점 (선택).
-  - examples: 예시 (선택), source: 출처 (선택), by: 작성한 AI 이름, at: 작성 날짜(YYYY-MM-DD).
-- rel 종류:
-${rels}
+- 피정의항(terms 의 키): 정의되는 말. 별칭(aliases)에 영어·다른 표기를 넣는다.
+- 정의항(definientia): 뜻 하나. 같은 말이라도 분야·관점이 다르면 정의항을 따로 둔다.
+  - id: 새 정의항은 "피정의항#+1" 같은 임시 id. 기존 정의항을 고칠 때만 기존 id (정의항 전체가 교체됨 — 연결·예시도 다시 적을 것. states·xrefs·unmapped 는 생략하면 유지).
+  - kind (필수, 아래 목록), field (필수, 아래 목록), text (정의 문장 하나), context (이 정의가 성립하는 범위, 필수)
+  - links: [{ to, rel, span, note }] — to 는 정의항 id 또는 같은 패치의 임시 id. span 은 정의 문장 속 근거 구절(원문 그대로).
+  - xrefs: [{ db, id }] 외부 ID. 확실히 아는 것만 — 추측 금지. 형식: ChEBI "CHEBI:15422", UniProt "P06737", EC "EC 2.7.11.11", GO "GO:0007165".
+  - unmapped: kind 가 필수 ID 를 요구하는데 확실한 ID 를 모르면 그 사유.
+  - states: 분자 종류만. [{ key, label, aliases, activity, modifications:[{type, site}], bound:[정의항 id], note }]
+  - distinction: 이미 정의항이 있는 피정의항에 새 뜻을 추가할 때 필수 — 기존 뜻과 무엇이 다른지.
+  - examples, note, source, by(작성 AI), at(YYYY-MM-DD)
+- 기전 단계(steps): 행위자가 입력을 출력으로 바꾸는 사건 하나.
+  - id "step:+1" …, label, action(목록), compartment(목록), cell(세포 종류, 선택), text(설명)
+  - agents [{ ref, state, after }], inputs / outputs [{ ref, state, minor }], regulators [{ ref, state, effect }], part_of [경로 정의항 id]
+  - ref 는 정의항 id. state·after 는 그 정의항에 정의된 상태 키. 상태가 정의된 분자를 쓸 때는 state 필수 (minor 부산물 제외).
+  - 한 단계의 출력(정의항+상태)이 다른 단계의 입력·행위자·조절자와 같으면 자동으로 이어진다.
+  - part_of 대상은 kind 가 pathway 인 정의항. 작은 경로는 큰 경로와 part_of/has_part 로 잇는다.
+- 기존 분자에 상태만 추가할 때는 패치의 "states" 구역: { "정의항id": [상태…] } (같은 키면 교체).
 
-## 규칙
-1. 연결은 피정의항이 아니라 "그 뜻의 정의항"에 건다. 대상 개념의 뜻이 여러 개면 지금 정의 문맥에 맞는 하나를 고른다.
-2. 정의 문장에 쓰인 핵심 개념이 색인에 없으면, 그 개념의 피정의항과 정의항도 함께 만들어 연결한다.
-3. 상위/하위는 is_a(일종), part_of(구성요소), instance_of(사례) 중 의미에 맞는 것을 쓰고 순환을 만들지 않는다.
-4. 기존 정의항을 고칠 때만 기존 id 를 쓴다(그 정의항 전체가 교체됨). 지울 정의항은 "remove": ["id"] 에 넣는다.
+## 어휘 (이 값만 허용)
+- kind:
+${kinds}
+- field: ${vocabList('fields')}
+- action: ${vocabList('actions')}
+- compartment: ${vocabList('compartments')}
+- activity: ${vocabList('activity', true)}
+- modification type: ${vocabList('modifications', true)} (site 는 Ser14 처럼 세 글자 약어+번호)
+- effect: ${vocabList('effects', true)}
+- 관계 rel: ${Object.entries(REL).map(([k, r]) => `${k}(${r.label})`).join(', ')}
+- 관계의 kind 제약 (원천 kind → 대상 kind):
+${rules}
+
+## 엄격 규칙
+1. 아래 색인에 있는 개념은 새로 만들지 말고 그 id 를 쓴다. 이름·별칭이 기존 것과 겹치는 새 피정의항은 기존 것으로 합쳐지거나 거부된다
+   (띄어쓰기·하이픈·괄호·대소문자·그리스 문자 차이는 같은 이름으로 본다).
+2. 같은 외부 ID 를 두 정의항에 붙일 수 없다.
+3. 인산화형·활성형 같은 변화는 새 피정의항이 아니라 상태(state)로 표현한다.
+4. 정의 문장에 쓰인 핵심 개념이 색인에 없으면 같은 패치에서 만들고 임시 id 로 연결한다.
 5. 자료에 없는 내용을 지어내지 말고, 불확실하면 note 에 적는다.
-6. 출력은 JSON 하나만. 설명 문장, 코드 펜스 밖 텍스트 금지.
-
-## 기전 단계 (자료가 반응·신호 전달·조절 과정을 설명할 때)
-- steps: 배열. 단계 하나 = "행위자가 입력을 출력으로 바꾸는 사건" 하나.
-  - id: 새 단계는 "step:+1", "step:+2" … (병합 때 번호가 매겨짐). 기존 단계를 고칠 때만 기존 id.
-  - label: 짧은 이름, action: 변화 종류(인산화, 탈인산화, 결합, 해리, 가수분해, 절단, GDP-GTP 교환 등), text: 설명 한두 문장.
-  - agents: 효소·수용체 등 행위자 [{ ref, state, after }]. after = 단계 뒤 행위자의 상태(바뀌지 않으면 생략).
-  - inputs / outputs: [{ ref, state, minor }]. minor:true = ATP·ADP·물처럼 사슬을 잇지 않는 부산물/보조 기질.
-  - regulators: 이 단계를 조절하는 것 [{ ref, state, effect: "activates" | "inhibits" }].
-  - context: 조직·세포 내 위치·조건. part_of: 이 단계가 속한 경로 정의항 id 목록.
-- ref 는 정의항 id. 분자·효소 자체는 정의항(피정의항)으로 만들고, 인산화형·활성형 같은 변화는 정의항을 새로 만들지 말고 state 로 적는다.
-- 사슬은 자동으로 이어진다: 한 단계의 출력(ref+state)이 다른 단계의 입력·행위자·조절자(같은 ref+같은 state)면 연결된다.
-  그러니 같은 상태는 반드시 같은 글자로 적는다(아래 "쓰인 상태" 목록을 재사용).
-- 경로(묶는 개념)는 보통 정의항으로 만든다 — 예: "글리코겐 분해 조절" is_a "신호 전달 경로". 작은 경로는 큰 경로에 part_of 로 건다.
-  단계는 가장 가까운 경로에 part_of 하면 큰 경로에서도 함께 보인다.
-- 예:
-  { "id": "step:+1", "label": "포스포릴레이스 활성화", "action": "인산화",
-    "agents": [{ "ref": "인산화효소 키네이스#1", "state": "인산화·활성" }],
-    "inputs": [{ "ref": "글리코겐 인산화효소#1", "state": "b형(비인산화)" }, { "ref": "ATP#1", "minor": true }],
-    "outputs": [{ "ref": "글리코겐 인산화효소#1", "state": "a형(인산화)" }, { "ref": "ADP#1", "minor": true }],
-    "context": "간세포 세포질", "part_of": ["글리코겐 분해 조절#1"] }
+6. 출력은 JSON 하나만.
 
 ## 출력 형식
-{
-  "format": "definition-db-patch",
-  "version": 1,
-  "terms": {
-    "효소": {
-      "aliases": ["enzyme"],
-      "definientia": [
-        {
-          "id": "효소#+1",
-          "text": "생체 내 화학 반응의 활성화 에너지를 낮추는 단백질성 촉매",
-          "context": "생화학",
-          "links": [
-            { "to": "촉매#1", "rel": "is_a", "span": "촉매" },
-            { "to": "활성화 에너지#+1", "rel": "refers", "span": "활성화 에너지" }
-          ],
-          "examples": ["아밀레이스"],
-          "by": "AI 이름", "at": "YYYY-MM-DD"
-        }
-      ]
-    },
-    "활성화 에너지": { "definientia": [ { "id": "활성화 에너지#+1", "text": "…", "context": "화학", "links": [] } ] }
-  },
-  "steps": [],
-  "remove": []
-}
+{ "format": "definition-db-patch", "version": ${VERSION},
+  "terms": { "이름": { "aliases": [], "definientia": [ { "id": "이름#+1", "kind": "", "field": "", "text": "", "context": "", "links": [], "xrefs": [], "states": [] } ] } },
+  "states": {}, "steps": [], "remove": [] }
 
-## 현재 데이터베이스 색인 (id | 맥락 | 정의 앞부분)
+## 현재 색인 (id | kind | 분야·맥락 | 정의 앞부분 | 상태)
 ${idx.length ? idx.join('\n') : '(비어 있음)'}
 
 ## 기존 기전 단계 (* = 부산물)
 ${stepIdx.length ? stepIdx.join('\n') : '(없음)'}
-
-## 쓰인 상태 (재사용할 것)
-${stateIdx.length ? stateIdx.join('\n') : '(없음)'}
 
 ## 자료
 ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 `;
   }
 
-  // AI 응답에서 JSON 만 꺼낸다(코드 펜스나 앞뒤 설명이 붙어 와도 처리).
+  // AI 응답에서 JSON 만 꺼낸다(코드 펜스나 앞뒤 설명이 붙어 와도 처리)
   function parseLoose(text) {
     const s = String(text).trim();
     try { return JSON.parse(s); } catch (_) { /* 아래에서 다시 시도 */ }
@@ -589,12 +844,6 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     throw new Error('JSON 을 찾을 수 없음');
   }
 
-  // 어떤 입력이든(데이터베이스 / 패치 / v3) 패치로 바꿔 병합한다.
-  function ingest(db, obj) {
-    if (looksV3(obj) || Array.isArray(obj)) return merge(db, fromV3(obj));
-    return merge(db, obj);
-  }
-
-  return { FORMAT, PATCH_FORMAT, VERSION, REL, AXIS_UP, AXIS_DOWN, EFFECT, ROLE, emptyDB, normalize, index, validate, merge, ingest, fromV3,
-    contextText, mechanismText, stepLine, partName, promptText, parseLoose, termOfId, isStepId };
+  return { FORMAT, PATCH_FORMAT, VERSION, VOCAB: V, REL, AXIS_UP, AXIS_DOWN, ROLE, emptyDB, normalize, normName, index, validate, merge, gate, ingest, fromV3,
+    resolveRef, mapVocab, audit, auditText, mapText, contextText, mechanismText, stepLine, promptText, parseLoose, termOfId, isStepId, xrefKey, xrefLabel };
 });
