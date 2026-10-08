@@ -17,6 +17,8 @@ jobs:
       - run: node dbtool.mjs limitations --check
       - name: 미등록 한계 후보 0 (unmapped 포함)
         run: node dbtool.mjs limitations --detect
+      - name: P3 종단 시험 (영역 10,000 단계 질량 보존)
+        run: node tests/p3_end_to_end.js --every 2500
       - name: v8 인터페이스 — Python 자체 시험·C++ 구문
         run: |
           python3 engine/interfaces/hmse.py --selftest

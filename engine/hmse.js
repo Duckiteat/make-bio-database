@@ -105,6 +105,42 @@
     return { k, residual: r, pending };
   }
 
+  // ===== 고정 소수점 이동량 (P3, 표류 방지): 나머지를 정수(1e-9 단위)로 들고 다녀 부동 소수 누적 오차가 생기지 않음 =====
+  // mu 는 한 번 1e-9 로 양자화되고(모델 해상도), 그 뒤의 이월·차감은 모두 정수 산술 — 10^k 단계 뒤에도 Σk 와 Σmu_q 의 차는 정확히 rFP/1e9 < 1.
+  const FP = 1e9;
+  function sampleTransferFixed(mu, residualFP, mode, rand, available) {
+    const muFP = Math.round(Math.max(mu, 0) * FP);
+    let k, rFP = residualFP || 0;
+    if (mode === 'residual') { const tot = muFP + rFP; k = Math.floor(tot / FP); rFP = tot - k * FP; }
+    else { k = poisson(rand, muFP / FP); rFP = 0; }
+    let pending = 0;
+    if (available != null && k > available) { pending = k - available; k = available; }
+    return { k, residualFP: rFP, pending, muFP };
+  }
+
+  // ===== 영역 안 지역 거래 (P3): 한 원장 안에서 종이 바뀌는 반응 — 부분 구조(moiety) 정수 보존을 검사하고 그 원장만 잠근다 =====
+  // tx = { domain, base_version, deltas: { 묶음키: 정수 }, cause }, moieties = { 묶음키: { moietyId: 정수 } }
+  function applyLocalTx(state, tx, moieties) {
+    const L = state.ledgers[tx.domain];
+    if (!L) return { status: 'invalid', errors: ['없는 영역'], state };
+    if (L.version !== tx.base_version) return { status: 'conflict', state };
+    const bal = {};
+    for (const [k, dn] of Object.entries(tx.deltas)) {
+      if (!isInt(dn)) return { status: 'invalid', errors: [`${k}: 정수가 아님`], state };
+      for (const [m, w] of Object.entries((moieties || {})[k] || { [k]: 1 })) bal[m] = (bal[m] || 0) + w * dn;
+    }
+    const bad = Object.entries(bal).filter(([, v]) => v !== 0);
+    if (bad.length) return { status: 'invalid', errors: [`부분 구조가 보존되지 않음: ${bad.map(([m, v]) => `${m} ${v > 0 ? '+' : ''}${v}`).join(', ')}`], state };
+    const c = Object.assign({}, L.counts);
+    for (const [k, dn] of Object.entries(tx.deltas)) { c[k] = (c[k] || 0) + dn; if (c[k] < 0) return { status: 'infeasible', errors: [`${k}: 음수`], state }; }
+    return { status: 'committed', state: { ...state, ledgers: Object.assign({}, state.ledgers, { [tx.domain]: { version: L.version + 1, counts: c } }) } };
+  }
+  function moietyTotals(state, moieties) {
+    const t = {};
+    for (const l of Object.values(state.ledgers)) for (const [k, n] of Object.entries(l.counts)) for (const [m, w] of Object.entries((moieties || {})[k] || { [k]: 1 })) t[m] = (t[m] || 0) + w * n;
+    return t;
+  }
+
   // ===== 영역 점수 (§2.1 v8): S = w1·⟨|∇²C|⟩ + w2·∂S_spatial/∂t =====
   // field: Float64Array(n³) 농도, h: 격자 간격(m). 정규화: |∇²C| 는 평균 농도·h² 로 나눠 무차원.
   function laplacianMeanAbs(field, n, h) {
@@ -157,6 +193,6 @@
     return out;
   }
 
-  return { TIERS, TEMPLATES, pairKey, validateDomainConfig, makeLedgerState, validateLedgerTx, applyLedgerTx, ledgerTotals, rngOf, poisson, sampleTransfer,
+  return { TIERS, TEMPLATES, pairKey, validateDomainConfig, makeLedgerState, validateLedgerTx, applyLedgerTx, ledgerTotals, rngOf, poisson, sampleTransfer, FP, sampleTransferFixed, applyLocalTx, moietyTotals,
     laplacianMeanAbs, spatialEntropy, domainScore, decideTransition, conservativeProject, distributeCounts };
 });

@@ -96,6 +96,22 @@
       "interpret": "3 층 엔진의 실행 층 참조 구현 — 정수 원장·인접 경계 거래·이동량 표본·영역 점수·히스테리시스·보존적 투영. 지식(core.js)과 분리. 다른 언어 구현은 이 함수들과 같은 결과를 내야 한다."
     },
     {
+      "path": "engine/devs_scheduler.js",
+      "class": "law",
+      "format": "UMD JavaScript",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "tests/p3_end_to_end.js, tests",
+      "interpret": "Phase P3 Parallel-DEVS 스케줄러·경계 엔진·원자 모델(T3 영역, T2 SSA/τ-도약 노드). 결정론적 동시 사건 정렬, 보수적 동기화, 정수 원장 거래."
+    },
+    {
+      "path": "engine/fv_solver.js",
+      "class": "law",
+      "format": "UMD JavaScript",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/devs_scheduler.js, tests",
+      "interpret": "Phase P3 3차원 유한 체적 반응·확산·이류 풀이기 — 기준 경계 마스크, 보존형 면 유속, 원장 닻 재척도."
+    },
+    {
       "path": "engine/interfaces/hmse.hpp",
       "class": "spec",
       "format": "C++20 헤더 (인터페이스만)",
@@ -246,6 +262,14 @@
       "writer": "사람·AI (규칙을 바꿀 때 거부 테스트 추가)",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "규칙이 실제로 거부하는지, 시뮬레이션·감사가 기대대로인지."
+    },
+    {
+      "path": "tests/p3_end_to_end.js",
+      "class": "verification",
+      "format": "Node CommonJS 스크립트 (+ module.exports.run)",
+      "writer": "사람·AI",
+      "readers": "사람(콘솔 출력), tests/rules.test.mjs, CI",
+      "interpret": "T3 영역 + T2 노드 10,000 단계 종단 시험 — 단계별 상태와 질량 보존 지표를 콘솔에, 실패하면 종료 코드 1. 가상 값."
     },
     {
       "path": ".github/workflows/check.yml",

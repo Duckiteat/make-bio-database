@@ -96,6 +96,9 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - 정의항마다 기본 층 `tier`(T1 연속 장 / T2 규칙 행위자), Tier 1 환경(pH·유전율)과 전이 상태 이론 k(r), ΔG° 로 정해지는 역 상수(미시적 가역성), 닫힌 고리 ΣΔG° = 0 감사(AUDIT_THERMO).
 - 실행 층 `engine/hmse.js`: 정수 원장·인접 경계 거래(두 원장만 잠금)·이동량 표본(포아송·나머지 이월)·영역 점수와 히스테리시스. 인터페이스 `engine/interfaces/hmse.{hpp,py}`, 스키마 `schemas/v8/`, 설계 `docs/design/hybrid-multiscale-engine.md`.
 
+### 실행 층 P3
+- `node tests/p3_end_to_end.js` — 3차원 FV 영역(T3) + 규칙 노드(T2, SSA + τ-도약/CLE)를 Parallel-DEVS 로 결합해 10,000 단계, 원장·경계 버퍼 질량 보존을 콘솔에 출력 (`engine/devs_scheduler.js`, `engine/fv_solver.js`).
+
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
 

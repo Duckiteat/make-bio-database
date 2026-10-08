@@ -798,3 +798,71 @@ test('v8 스키마 파일: 파싱되고 참조 구현의 필수 필드와 일치
   assert.deepEqual(sch('domain-config.schema.json').properties.domains.items.properties.geometry_template.enum, HMSE.TEMPLATES);
   for (const f of ['boundary-flux-packet.schema.json', 'domain-metrics.schema.json']) assert.ok(sch(f).$schema.includes('2020-12'));
 });
+
+// ===== Phase P3: Parallel-DEVS + 3차원 FV + 정수 원장 =====
+const FVS = createRequire(import.meta.url)('../engine/fv_solver.js'), DEVSS = createRequire(import.meta.url)('../engine/devs_scheduler.js'), P3 = createRequire(import.meta.url)('./p3_end_to_end.js');
+test('P3 종단: T3 영역 + T2 노드 10,000 단계 — |N_initial − N_final| < 1, 부분 구조 정수 불변, 장 = 원장', () => {
+  const r = P3.run({ quiet: true, steps: 10000 });
+  assert.ok(r.pass, JSON.stringify(r));
+  assert.equal(r.massError, 0); assert.equal(r.worstMoiety, 0); assert.ok(r.worstFieldLedger < 1e-6);
+  assert.ok(r.tx > 1000 && r.committedOut > 0 && r.committedIn > 0, '양방향 경계 이동이 실제로 일어남');
+  assert.ok(r.nodeStats.fast.includes('activate') && r.nodeStats.leaps > 0, '강성 통로는 τ-도약');
+  assert.ok(r.buffers.maxResidual < 1 && r.buffers.pending === 0);
+  assert.ok(Math.abs(r.final.node.Ax / r.final.node.A - 1.25) < 0.05 && Math.abs(r.final.reg.B / r.final.reg.A - 2.5) < 0.05, '정상 상태 비 = 속도 상수 비');
+  const s = P3.run({ quiet: true, steps: 2000, mode: 'stochastic' }); assert.ok(s.massError === 0 && s.worstMoiety === 0, '확률적 이동도 정확히 보존');
+});
+test('P3 계면 평형: 이류가 없으면 영역·인터페이스·노드 농도가 같아진다', () => {
+  const f = P3.run({ quiet: true, steps: 10000, velocity: [0, 0, 0] }).final, cr = f.reg.A / f.regVolume_m3, cn = f.node.A / f.nodeVolume_m3;
+  assert.ok(Math.abs(cr / cn - 1) < 0.03, `${cr} vs ${cn}`);
+});
+test('P3 FV: 다섯 기준 경계 모두 보존(확산·제한된 이류·반응), 음수 없음, 기준 경계 밖 모양은 거부', () => {
+  for (const tpl of HMSE.TEMPLATES) {
+    const R = FVS.createRegion({ n: 8, h_m: 1e-7, template: tpl, velocity: [3e-5, -1e-5, 0], species: { A: { D: 1e-12 }, B: { D: 1e-13 } }, reactions: [{ from: 'A', to: 'B', k: 3 }] }, { A: 5000, B: 0 });
+    // 원장 없이 수송·반응만: 총량(A+B) 은 부동 소수 오차 안에서 보존
+    for (let i = 0; i < 200; i++) { const ns = FVS.substepsFor(R, 1e-3); for (let s = 0; s < ns; s++) { FVS.transport(R, 'A', 1e-3 / ns); FVS.transport(R, 'B', 1e-3 / ns); FVS.react(R, 1e-3 / ns); } }
+    const T = FVS.totals(R); assert.ok(Math.abs(T.A + T.B - 5000) < 1e-6, `${tpl}: ${T.A + T.B}`);
+    assert.ok([...R.fields.A].every((x) => x >= 0) && [...R.fields.A].every((x, p) => R.mask[p] || x === 0), `${tpl}: 음수·마스크 밖 질량 없음`);
+  }
+  assert.throws(() => FVS.templateMask('blob', 8), /기준 경계가 아님/);
+  assert.equal(FVS.minmod(1, 2), 1); assert.equal(FVS.minmod(-1, 2), 0);
+});
+test('P3 스케줄러: 동시 패킷 결정론적 정렬, 보수적 동기화 위반·시간 역행은 오류, 충돌 재시도', () => {
+  const cfg = { domains: [{ id: 'a', tier: 'T2', location: 'cytosol', volume_fL: 1 }, { id: 'b', tier: 'T2', location: 'cytosol', volume_fL: 1 }, { id: 'c', tier: 'T2', location: 'cytosol', volume_fL: 1 }], adjacency: [['a', 'b'], ['a', 'c']] };
+  const handle = { state: HMSE.makeLedgerState(cfg, { a: { X: 100, Y: 100 }, b: {}, c: {} }) };
+  const order = [], mk = (id, outs, look = 1) => ({ id, lookahead: look, ta: () => 1, output: () => outs, deltaInt() {}, deltaExt() {}, deltaConf() {} });
+  const sched = DEVSS.createScheduler(handle, { mode: 'residual' });
+  const orig = sched.boundary.apply; sched.boundary.apply = (p) => { order.push(`${p.source}>${p.target}|${p.species}`); return orig(p); };
+  sched.add(mk('z', [{ source: 'a', target: 'c', species: 'X', mu_out: 3, mu_in: 0 }, { source: 'a', target: 'b', species: 'Y', mu_out: 2, mu_in: 0 }]), []);
+  sched.add(mk('y', [{ source: 'a', target: 'b', species: 'X', mu_out: 1, mu_in: 0 }]), []);
+  sched.run(1);
+  assert.deepEqual(order, ['a>b|X', 'a>b|Y', 'a>c|X'], '(source, target, species) 순서');
+  assert.equal(HMSE.ledgerTotals(handle.state).X, 100);
+  const s2 = DEVSS.createScheduler({ state: HMSE.makeLedgerState(cfg, {}) }, {});
+  s2.add(mk('p', [], 0.1), []); s2.add({ ...mk('q', []), ta: () => 5 }, ['p']);
+  s2.models.get('p').ta = () => 10; s2.models.get('p').tn = 10;
+  assert.throws(() => s2.run(20), /보수적 동기화 위반/);
+  // 충돌 재시도: 커밋 직전 다른 거래로 버전을 올려도 경계 엔진이 다시 읽고 성공
+  const h3 = { state: HMSE.makeLedgerState(cfg, { a: { X: 10 } }) }, be = DEVSS.makeBoundaryEngine(h3, {});
+  const r = be.commit('a', 'b', [{ key: 'X', dn: 2 }], 0, 't'); assert.equal(r.status, 'committed'); assert.equal(h3.state.ledgers.b.counts.X, 2);
+});
+test('P3 고정 소수점 나머지: 10^6 번 이월해도 Σk 와 Σμ_q 의 차가 정확히 r/1e9 (< 1), 표류 없음', () => {
+  let r = 0, sumK = 0, sumMuFP = 0; const rand = HMSE.rngOf(5);
+  for (let i = 0; i < 1e6; i++) { const o = HMSE.sampleTransferFixed(rand() * 0.37, r, 'residual', null); r = o.residualFP; sumK += o.k; sumMuFP += o.muFP; }
+  assert.equal(sumMuFP - sumK * HMSE.FP, r, '정수 산술로 정확히 같음');
+  assert.ok(r >= 0 && r < HMSE.FP);
+  const st = HMSE.makeLedgerState({ domains: [{ id: 'n' }], adjacency: [] }, { n: { A: 5, R: 5, AR: 0 } });
+  const mo = { A: { A: 1 }, R: { R: 1 }, AR: { A: 1, R: 1 } };
+  assert.equal(HMSE.applyLocalTx(st, { domain: 'n', base_version: 0, deltas: { A: -1, R: -1, AR: 1 } }, mo).status, 'committed');
+  assert.equal(HMSE.applyLocalTx(st, { domain: 'n', base_version: 0, deltas: { A: -1, AR: 1 } }, mo).status, 'invalid', 'R 단위가 생겨나는 반응은 거부');
+});
+test('P3 강성 정체 방지: 매우 빠른 통로도 시간축이 멈추지 않고(Δt_min) 큰 수에서는 CLE, 평형 비 유지', () => {
+  const cfg = { domains: [{ id: 'n' }], adjacency: [] };
+  const handle = { state: HMSE.makeLedgerState(cfg, { n: { A: 2000000, B: 0 } }) };
+  const sched = DEVSS.createScheduler(handle, {});
+  const node = DEVSS.nodeModel(handle, { id: 'n', moieties: { A: { X: 1 }, B: { X: 1 } }, dt_min: 1e-3, leap_threshold: 1, seed: 3, reactions: [{ id: 'f', reactants: { A: 1 }, products: { B: 1 }, k: 1e6 }, { id: 'r', reactants: { B: 1 }, products: { A: 1 }, k: 1e6 }] });
+  sched.add(node, []);
+  const out = sched.run(0.05);
+  assert.ok(out.log.events <= 0.05 / 1e-3 + 2, `사건 수 ${out.log.events} — a0 → ∞ 이어도 Δt_min 간격`);
+  assert.ok(node.stats.cle > 0, 'CLE 경로 사용');
+  const c = handle.state.ledgers.n.counts; assert.equal(c.A + c.B, 2000000); assert.ok(Math.abs(c.B / c.A - 1) < 0.02);
+});

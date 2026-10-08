@@ -1,6 +1,6 @@
 # Hybrid Multi-Scale Simulation Engine — 3-Tier Architecture & Specification (format v8)
 
-> Status (2026-10-08): **format v8 implemented** (data fields, thermodynamic checks, migration 007), **runtime reference layer implemented** (`engine/hmse.js`: integer ledger + adjacent boundary transactions, transfer sampling, domain score/hysteresis, conservative projection, integer distribution), **interfaces specified** (`engine/interfaces/hmse.hpp`, `engine/interfaces/hmse.py`), wire schemas `schemas/v8/*.schema.json`. **Not implemented**: DEVS scheduler, FNO surrogate, 3D FV solver, GPR elevation, CLE integrator (phases P3–P5, §5).
+> Status (2026-10-08): **format v8 implemented** (data fields, thermodynamic checks, migration 007), **runtime reference layer implemented** (`engine/hmse.js`: integer ledger + adjacent boundary transactions, transfer sampling, domain score/hysteresis, conservative projection, integer distribution), **interfaces specified** (`engine/interfaces/hmse.hpp`, `engine/interfaces/hmse.py`), wire schemas `schemas/v8/*.schema.json`. **P3 implemented**: Parallel-DEVS scheduler (`engine/devs_scheduler.js`), 3D FV solver (`engine/fv_solver.js`), τ-leap/CLE for stiff channels, end-to-end test (`tests/p3_end_to_end.js`). **Not implemented**: FNO surrogate, async worker fallback (single-threaded today: FV *is* the T3 solver), GPR elevation, dynamic promote/demote in the loop (P4–P5, §5).
 > Terms in `[brackets]` are existing v7 concepts that are reused.
 
 ## A. Three tiers
@@ -282,7 +282,11 @@ function BoundaryEngine.onPacket(p):                              // routed by s
 |---|---|---|
 | P1 | Spec (this file) + gap registration once data fields exist | `docs/design/` |
 | P2 ✅ | Format v8 (migration 007): sense `tier` (T1/T2), obs `diffusion_coefficient`/`pH`/`ionic_strength`/`relative_permittivity`, kinetics `k0`/`dG_act`/`dG0`/`env`, microscopic-reversibility + Wegscheider checks, env-aware rates; runtime ledger/transfer/score layer + schemas + interfaces | `vocab.js`, `core.js`, `engine/`, `schemas/v8/` |
-| P3 | JS reference implementation: DEVS scheduler + BoundaryEngine + DomainManager with a **finite-volume** diffusion solver (no ML) — establishes the conservation test-suite | `core.js` (or `engine/`), `tests/` |
+| P3 ✅ | Parallel-DEVS coordinator (deterministic (source, target, species) packet order, safeTime check, time-reversal = error), BoundaryEngine (fixed-point 1e-9 remainders, pending carry, version-retry ABT), T3 region model on masked FV (central-difference diffusion, MUSCL/minmod-limited advection, first-order reactions, ledger-anchored rescaling, integer reaction reconciliation via moiety-checked local tx), T2 node model (SSA + adaptive τ-leap ε=0.03, CLE when μ>10³, Δt_min floor). 10⁴-step test: |ΔN| = 0 | `engine/devs_scheduler.js`, `engine/fv_solver.js`, `tests/p3_end_to_end.js` |
+
+**P3 measured (hypothetical scenario, residual mode)**: 10,000 region steps (t = 10 s), ~45k DEVS events (~6k simultaneous), ~3.4k ABT commits, 0 retries; N_initial = N_final = 20500 (A 20000, R 500); worst |∫C dΩ − N_ledger| ≈ 5e-12; max residual < 1, pending 0; steady state reproduces k-ratios (Ax/A ≈ 1.25, B/A ≈ 2.5) and, with zero advection, equal region/interface/node concentrations (≤ 3 %).
+
+**P3 known limits**: explicit FV (sub-stepping by 0.4·h²/6D and Courant 0.4 — stiff diffusion is slow); interface conductance uses a single h_int; region reactions reconciled to integers by carry (rescale deviation per step ≲ 1 %, absorbed by anchoring, never by the ledger); single-threaded — async fallback windows (Invariant 4) still interface-only.
 | P4 | Surrogate service (PyTorch FNO/DeepONet) behind `SurrogateClient` gRPC; trained against P3 solver outputs; ErrorEstimator gates every step | external repo / service |
 | P5 | HPC: regions sharded by MPI rank, scheduler per rank, cross-rank boundary packets = same proto | external |
 
