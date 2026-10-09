@@ -2,6 +2,7 @@
 // 0단계 기준선 측정 (docs/design/engine-port-roadmap.md §0) — Rust/WASM 이식과 기호 야코비안의 이득을 판정할 기준.
 //   운명 엔진: 본 실행 대 결정 탐침 시간 · 뉴턴 반복 · 유한차분 잔차 비중(반복마다 잔차 1 + 빠른 규칙 수 nF) · 뉴턴 실패 → 명시 대체 부분 단계
 //   (0.5단계의 유한차분 대 해석적 비교 결과는 docs/design/engine-port-roadmap.md §4 에 기록 — 유한차분 경로는 판정 뒤 제거)
+//   1단계: JS 기준 구현 대 Rust/WASM (본 실행·전체)
 //   simulateRate: 준비(정규화·색인·조립) 대 적분 루프
 // 실행: node tests/bench_engine.js [--repeat 3]   (쓰기 없음 — 표를 콘솔에)
 'use strict';
@@ -27,6 +28,15 @@ function fateRows() {
   }
   return rows;
 }
+// 1단계: JS 기준 구현 대 Rust/WASM (같은 IR·같은 알고리즘) — 본 실행과 결정 탐침 포함 전체
+function engineRows() {
+  const rows = [];
+  for (const name of ['effector-il12', 'memory-il15', 'effector-glucose-withheld', 'mixed-optimal']) {
+    const sc = scen(`fate-${name}-hypothetical.json`), t = (engine, commitment) => best(() => F.simulateFate(db, 'D000174', { scenario: sc, engine, commitment })).ms;
+    rows.push({ name, jsMain: t('js', false), rsMain: t('rust', false), jsFull: t('js', undefined), rsFull: t('rust', undefined) });
+  }
+  return rows;
+}
 function rateRows() {
   const rows = [];
   const pid = (re) => Object.keys(db.senses).find((k) => db.senses[k].kind === 'pathway' && re.test(db.terms[db.senses[k].term].names.ko));
@@ -44,11 +54,16 @@ function run() {
   console.log('| 시나리오 | 본 실행 ms | 전체 ms | 탐침 비중 | 탐침 | 뉴턴 반복 | 반복/단계 | nF | 잔차/반복 | 뉴턴 실패 | 명시 부분 단계 |');
   console.log('|---|---|---|---|---|---|---|---|---|---|---|');
   for (const r of fr) console.log(`| ${r.name} | ${f(r.mainMs)} | ${f(r.fullMs)} | ${f(r.probeShare * 100)}% | ${r.probes} | ${r.newton} | ${f(r.perStep, 1)} | ${r.nF} | ${f(r.residPerIter, 1)} | ${r.fail} | ${r.substeps} |`);
+  const er = engineRows();
+  console.log('\n1단계 — JS 기준 구현 대 Rust/WASM (ms, 최솟값)');
+  console.log('| 시나리오 | 본 실행 JS → Rust | 배수 | 전체(탐침 포함) JS → Rust | 배수 |');
+  console.log('|---|---|---|---|---|');
+  for (const r of er) console.log(`| ${r.name} | ${f(r.jsMain)} → ${f(r.rsMain)} | ${f(r.jsMain / r.rsMain, 1)}× | ${f(r.jsFull)} → ${f(r.rsFull)} | ${f(r.jsFull / r.rsFull, 1)}× |`);
   console.log('\nsimulateRate');
   console.log('| 경로 | Δt 단계 | 준비 ms | 루프 ms | 단계당 µs |');
   console.log('|---|---|---|---|---|');
   for (const r of rr) console.log(`| ${r.label} | ${r.steps} | ${f(r.setupMs, 1)} | ${f(r.loopMs, 1)} | ${f(r.perStepUs, 2)} |`);
-  return { fate: fr, rate: rr };
+  return { fate: fr, engines: er, rate: rr };
 }
 if (require.main === module) run();
 module.exports = { run };

@@ -34,7 +34,8 @@ function runFate(db, sid, opt) {
   opt = opt || {};
   const ir = opt.ir || IRB.buildFateIR(db, sid, opt.scenario || {}, opt.coupling);
   if (ir.error) return ir;
-  const raw = F.simulateFate(db, sid, Object.assign({}, opt, { ir }));
+  // 행정부 백엔드: 기본 'rust'(engine/rust WASM, 1단계 완료 조건 통과) — 'js' 는 기준 구현(오라클)으로 대조할 때
+  const raw = F.simulateFate(db, sid, Object.assign({ engine: 'rust' }, opt, { ir }));
   if (raw.error) return raw;
   return FA.judgeFate(db, raw, { scenario: opt.scenario || {}, ir });
 }

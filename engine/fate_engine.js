@@ -94,9 +94,13 @@ function simulateFate(db, sourceId, opt) {
   const moiTotDD = (N, lo) => { const t = Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])); keys.forEach((b, i) => { if (isSignal[i]) return; for (const [k, c] of Object.entries(moi(b))) { const [p, e] = twoProd(c, N[i]); ddAdd(t[k], p, e + c * lo[i]); } }); return t; };
   const moiTot = (N, lo) => Object.fromEntries(Object.entries(moiTotDD(N, lo || new Float64Array(nB))).map(([k, v]) => [k, v[0] + v[1]]));
   for (const R of rules) { R.dM = {}; const add = (b, n) => { for (const [k, c] of Object.entries(moi(b))) R.dM[k] = (R.dM[k] || 0) + c * n; }; for (const q of R.prods) add(q.b, q.n); for (const q of R.cons) add(q.b, -q.n); R.dMe = Object.entries(R.dM).filter(([, c]) => c); } // 균형 잡힌 규칙은 빈 목록 — 원장 경로를 건너뜀
-  const chanDD = { lost: Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])), source: Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])), violation: Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])) };
-  const chanAdd = (ch, k, c, x) => { const [p, e] = twoProd(c, x); ddAdd(chanDD[ch][k], p, e); };
-  const chan = new Proxy({}, { get: (_, ch) => Object.fromEntries(Object.entries(chanDD[ch]).map(([k, v]) => [k, v[0] + v[1]])) });
+  // 부분 구조 경로 장부 (판정 아님): 끝의 규칙별 누적 진행량 X 로 — 소실 = −Σ ΔM·X (분해), 계 밖 공급 = Σ ΔM·X (source), 규칙 밖 = 나머지 (두 백엔드 공통)
+  const chanFrom = (X) => {
+    const out = { lost: {}, source: {}, violation: {} };
+    for (const ch of Object.keys(out)) for (const k of moiKeys) out[ch][k] = [0, 0];
+    rules.forEach((R, j) => { const ch = R.lost ? 'lost' : R.source ? 'source' : 'violation'; for (const [k, c] of R.dMe) { const [p, e] = twoProd(R.lost ? -c : c, X[2 * j]); ddAdd(out[ch][k], p, e + (R.lost ? -c : c) * X[2 * j + 1]); } });
+    return Object.fromEntries(Object.entries(out).map(([ch, o]) => [ch, Object.fromEntries(Object.entries(o).map(([k, v]) => [k, v[0] + v[1]]))]));
+  };
   // 규칙별 누적 진행량 (double-double) — 무결성 재생 검사: 모든 저장소 = 시작 + Σ 화학량 × 누적 진행량 (규칙 밖 변경이 없음을 증명)
   rules.forEach((R, k) => { R.idx = k; });
   let CUM = new Float64Array(2 * rules.length);
@@ -108,9 +112,6 @@ function simulateFate(db, sourceId, opt) {
     cumAdd(R, xi);
     for (const q of R.ci) addProdN(N, q.i, -q.n, xi);
     for (const q of R.pi) addProdN(N, q.i, q.n, xi);
-    if (!xi || !R.dMe.length) return;
-    const ch = R.lost ? 'lost' : R.source ? 'source' : 'violation';
-    for (const [k, c] of R.dMe) chanAdd(ch, k, R.lost ? -c : c, xi);
   };
   // --- 빠른 층: 명시 부분 단계 (기준 경로)
   const lambda = (N, F) => { // 진행이 입력을 다 쓰는 속도 (1/s)의 최댓값 — 강성 지표
@@ -195,9 +196,8 @@ function simulateFate(db, sourceId, opt) {
     // 원장: 합성(계 밖 공급)·분해(소실) 진행량으로 기록
     slow.forEach((R) => {
       if (R.kind === 'degradation') { const i = R.ci[0].i, lost = before[i] + (made[i] || 0) - N[i], share = kd[i] ? R.kdeg * modF(R, before) / kd[i] : 0;
-        if (degCount[i] === 1) { cumAdd(R, made[i] || 0); cumAdd(R, -(applied[i] || 0)); } else cumAdd(R, lost * share); // 소실 = 생성 − 적용된 변화 (정확히 두 항으로)
-        for (const [k, c] of Object.entries(R.dM)) chanAdd('lost', k, -c, lost * share); }
-      else { cumAdd(R, R._r * h); for (const [k, c] of Object.entries(R.dM)) chanAdd(R.source ? 'source' : 'violation', k, c, R._r * h); }
+        if (degCount[i] === 1) { cumAdd(R, made[i] || 0); cumAdd(R, -(applied[i] || 0)); } else cumAdd(R, lost * share); } // 소실 = 생성 − 적용된 변화 (정확히 두 항으로)
+      else cumAdd(R, R._r * h);
     });
     return F;
   };
@@ -222,13 +222,13 @@ function simulateFate(db, sourceId, opt) {
   const signalAt = (t, override) => sched.map((s) => { if (override) return override(s, t); let v = 0; for (const e of s.list) if (e.t <= t + 1e-9) v = e.n; return v; });
   // ===== 한 번의 적분 (본 실행과 결정 탐침이 공유) =====
   const gateOpt = CP.gate, shockMax = CP.shock_threshold;
+  const reservoirs = keys.map((b, i) => i).filter((i) => !isSignal[i] && !isMarker[i] && rules.some((R) => R.ci.some((q) => q.i === i)));
   function run(Nstart, t0, t1, ctl) {
     LO = ctl.lo ? Float64Array.from(ctl.lo) : new Float64Array(nB);
     CUM = new Float64Array(2 * rules.length);
     const N = Float64Array.from(Nstart), gate = GATE.createGate(gateOpt); gate.gammaMax = shockMax;
     const mode = ctl.mode || 'dynamic', series = [], events = [], resv = new Map();
     let prevSig = null, step = 0, exhaustedNow = false;
-    const reservoirs = keys.map((b, i) => i).filter((i) => !isSignal[i] && !isMarker[i] && rules.some((R) => R.ci.some((q) => q.i === i)));
     for (const i of reservoirs) resv.set(i, { start: N[i], min: N[i], state: N[i] >= 1 ? 'ok' : 'empty', watch: N[i] >= 1 });
     const path = { fv: 0, surrogate: 0, fv_shock: 0 }, nsubs = [];
     for (let t = t0; t < t1 - 1e-9; t += dt, step++) {
@@ -239,7 +239,7 @@ function simulateFate(db, sourceId, opt) {
       prevSig = sig; exhaustedNow = false;
       // 느린 층의 상태로 빠른 층 배율 고정
       const F = fast.map((R) => modF(R, N));
-      const lam = lambda(N, F), nsub = Math.max(1, Math.ceil(lam * dt / CP.explicit_fraction));
+      const lam = lambda(N, F), nsub = Math.max(1, Math.ceil(lam * dt / CP.explicit_fraction * (1 - CP.nsub_margin))); // 여유: 정수 경계의 반올림 잡음에 둔감
       nsubs.push(nsub);
       let p;
       if (mode === 'fine') p = { path: 'fv' };
@@ -260,14 +260,24 @@ function simulateFate(db, sourceId, opt) {
       if (ctl.snapshots) ctl.snapshots.push({ t: t + dt, N: Float64Array.from(N) });
       if (ctl.onStep) ctl.onStep(t + dt, N);
     }
-    return { N, lo: LO, cum: CUM, series, events, gate, path, nsubs, resv };
+    return { N, lo: LO, cum: CUM, series, events, gate, path, nsub: { min: Math.min(...nsubs), max: Math.max(...nsubs) }, resv };
   }
   // ===== 본 실행 =====
   const M0DD = moiTotDD(N0, new Float64Array(nB)), M0 = Object.fromEntries(Object.entries(M0DD).map(([k, v]) => [k, v[0] + v[1]]));
-  const snapshots = [];
+  // ===== 적분 백엔드: 'js'(기준 구현·오라클, 위 run) | 'rust'(engine/rust — 같은 알고리즘, IR 테이프만 해석, WASM) =====
   // 질량 수지·재생 검사는 하지 않는다 — 기록점마다 N·LO·누적 진행량(double-double)을 내보내 사법부가 독립적으로 다시 계산한다
-  const main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots, mode: opt.mode });
-  const chanMain = Object.fromEntries(['lost', 'source', 'violation'].map((ch) => [ch, chan[ch]])); // 결정 탐침이 원장을 더 쓰기 전에 본 실행의 원장을 고정
+  const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
+  let main, snapshots, probeEnd, backendStats;
+  if ((opt.engine || 'js') === 'rust') {
+    const be = require('./fate_rust.js').open({ IR, N0, isMarker, sched, reservoirs, dt, tEnd, horizon, mode: opt.mode, CP, recordEvery: sc.record_every || 1 });
+    main = be.main(); snapshots = be.snapshots(); probeEnd = (k) => be.probe(k); backendStats = () => be.stats();
+  } else {
+    snapshots = [];
+    main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots, mode: opt.mode });
+    probeEnd = (k) => { const s = snapshots[k]; return run(s.N, s.t, s.t + horizon, { mode: opt.mode, signal: () => 0 }).N; };
+    backendStats = () => stats;
+  }
+  const chanMain = chanFrom(main.cum);
   // 궤적에서 상태·거리
   const traj = main.series.map((s) => ({ t: s.t, d: Object.fromEntries(states.map((x) => [x, distance(s.N, x)])), cls: classify(s.N), path: s.path, nsub: s.nsub, gate: s.gate }));
   const final = classify(main.N);
@@ -276,11 +286,7 @@ function simulateFate(db, sourceId, opt) {
   const sigOn = new Set(sched.filter((s) => s.list.some((e) => e.n > 0)).map((s) => keys[s.i].split('|')[0]));
   const transitions = (db.senses[sourceId].transitions || []).map((tr) => ({ to: tr.to, signals: tr.signals, criterion: tr.commitment.criterion, driven: tr.signals.some((g) => sigOn.has(g)) }));
   // ===== 결정 시점 (신호 철회 시험) =====
-  const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
-  const probe = (k) => { // k = 스냅숏 번호 → 그 시각 이후 신호 0 으로 horizon 동안
-    const s = snapshots[k]; const r = run(s.N, s.t, s.t + horizon, { mode: opt.mode, signal: () => 0 });
-    return classify(r.N).state;
-  };
+  const probe = (k) => classify(probeEnd(k)).state; // k = 스냅숏 번호 → 그 시각 이후 신호 0 으로 horizon 동안
   const commitment = [];
   let probes = 0;
   for (const tr of transitions) {
@@ -305,7 +311,7 @@ function simulateFate(db, sourceId, opt) {
     rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.effect, active: !!m.k })) })),
     final: { state: final.state, nearest: final.nearest || null, d: final.d, N: Object.fromEntries(keys.map((b, i) => [b, main.N[i]])) },
     trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target,
-    gate: { ...main.gate.stats, transitions: main.gate.stats.transitions.length, log: main.gate.stats.transitions, path: main.path, nsub: { min: Math.min(...main.nsubs), max: Math.max(...main.nsubs) } },
+    gate: { ...main.gate.stats, transitions: main.gate.stats.transitions.length, log: main.gate.stats.transitions, path: main.path, nsub: main.nsub },
     // 엔진의 장부 (판정 아님): 부분 구조 시작·끝 합계와 경로별 누적 — 사법부는 이것을 믿지 않고 원자료로 다시 센다
     mass: { moieties: moiKeys, start: M0, end: moiTot(main.N, main.lo), channels: chanMain },
     reservoirs: Object.fromEntries([...main.resv].map(([i, r]) => [keys[i], { start: r.start, min: r.min, end: main.N[i], state: r.state, watched: r.watch, buffered: buf.has(i) }])),
@@ -317,7 +323,7 @@ function simulateFate(db, sourceId, opt) {
       ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
     },
     irHash: IR.hash, // 먹은 IR 의 해시 — 사법부가 조정자에게서 받은 IR 과 맞춘다
-    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...stats, probes }, ix,
+    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...backendStats(), probes }, engine: opt.engine || 'js', ix,
   };
 }
 

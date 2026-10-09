@@ -338,10 +338,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs fate, tests",
-      "interpret": "[행정] 형식 v9 세포 운명 엔진 — 상태 집합 조립, 빠른 층(진행량, P5 관문: 명시 부분 단계 ↔ 역방향 오일러) + 느린 층(표지 지수 해), 결정 탐침(신호 철회). 원자료만: 기록점마다 N·LO·누적 진행량(double-double)·사건·사실(facts). 감사·사후 분석·질량 판정은 사법부.",
-      "node": "EXECUTIVE_FATE_SOLVER",
+      "interpret": "[행정] 운명 엔진 공통 앞단 + JS 기준 백엔드 — IR 만 먹는다. engine: rust 면 engine/fate_rust.js 백엔드. 원자료만(궤적·N·LO·누적 진행량·사건·탐침 결과). 판정·쓰기 없음.",
+      "node": "EXECUTIVE_FATE_FRONTEND",
       "governance": "Executive",
-      "refactor_strategy": "IR 만 먹는 기준 구현(JS 오라클) — 최적화하지 않는다. 적분기 개선(1.5단계 Rosenbrock·적응 단계)은 솔버 안에서, 바깥 잘라내기 래퍼 금지. Rust 엔진(engine/rust/)이 같은 계약으로 대체."
+      "refactor_strategy": "공통 앞단(설정·분류·결정 탐침 탐색·원자료 조립) + JS 백엔드(run, 기준 구현·오라클 — 최적화하지 않음). 알고리즘을 바꾸면 Rust 솔버(EXECUTIVE_SOLVER)와 같은 커밋에서 맞춘다."
     },
     {
       "path": "engine/coupling.js",
@@ -353,6 +353,103 @@
       "node": "COUPLING_REGISTRY",
       "governance": "Shared",
       "refactor_strategy": "수치 결합점의 유일한 출처. 범위 지정 해석(규칙·시간 척도)은 규칙별 강성 측정으로 근거가 나올 때 IMEX 분할과 함께."
+    },
+    {
+      "path": "engine/fate_rust.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/fate_engine.js (engine: 'rust'), tests",
+      "interpret": "[행정] Rust/WASM 백엔드 어댑터 — IR·시작 상태·신호 일정을 평평한 f64 덩어리로(pack), WASM 인스턴스에서 본 실행·탐침, 결과를 JS 백엔드와 같은 모양으로. 판정·쓰기 없음.",
+      "node": "EXECUTIVE_RUST_ADAPTER",
+      "governance": "Executive",
+      "refactor_strategy": "pack 순서는 engine/rust/src/engine.rs Engine::new 와 한 쌍 — 바꾸면 둘을 같이. 결과 모양은 JS 백엔드(run)와 같게."
+    },
+    {
+      "path": "engine/rust/src/engine.rs",
+      "class": "law",
+      "format": "Rust 2021",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/rust/src/lib.rs, fate_cli",
+      "interpret": "[행정] Rust 운명 솔버 — JS 기준 구현과 같은 알고리즘(관문·명시 부분 단계·역방향 오일러 + 해석적 J·느린 층 지수 해·double-double 원장·탐침). 모든 버퍼를 Engine::new 에서 한 번 할당.",
+      "node": "EXECUTIVE_SOLVER",
+      "governance": "Executive",
+      "refactor_strategy": "적분기 개선(1.5단계)은 이 파일 안에서 — 바깥 잘라내기·대체 래퍼 금지. 루프 안 할당 금지(tests/rust_engine.test.mjs ③⑤). 바꾸면 JS 기준 구현과의 동등 시험(②)이 통과하거나, 알고리즘 변경이면 compare 판정."
+    },
+    {
+      "path": "engine/rust/src/tape.rs",
+      "class": "law",
+      "format": "Rust 2021",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/rust/src/engine.rs",
+      "interpret": "[행정] 테이프 해석기 — compiler/tape.js 명령표와 같은 의미. 법칙 코드는 Rust 에 없다.",
+      "node": "EXECUTIVE_TAPE",
+      "governance": "Executive",
+      "refactor_strategy": "명령을 더하면 compiler/tape.js·judicial/derivative.js 해석기와 같은 커밋에서."
+    },
+    {
+      "path": "engine/rust/src/lib.rs",
+      "class": "interface",
+      "format": "Rust 2021 (C-ABI 내보내기)",
+      "writer": "사람·AI",
+      "readers": "engine/fate_rust.js (WASM), 네이티브 C-FFI 사용자",
+      "interpret": "fe_stage·fe_init·fe_run_main·fe_probe·fe_ptr·fe_len — 전역 엔진 하나(인스턴스마다 자기 메모리)."
+    },
+    {
+      "path": "engine/rust/src/bin/fate_cli.rs",
+      "class": "verification",
+      "format": "Rust 실행 파일",
+      "writer": "사람·AI",
+      "readers": "tests/rust_engine.test.mjs ⑤",
+      "interpret": "네이티브 대조: 표준 입력 IR 덩어리 → 표준 출력 원자료 + 본 실행·탐침 동안의 힙 할당 횟수(계수 할당기)."
+    },
+    {
+      "path": "engine/rust/Cargo.toml",
+      "class": "config",
+      "format": "TOML",
+      "writer": "사람·AI",
+      "readers": "cargo",
+      "interpret": "크레이트 fate_core (cdylib + rlib), 의존 libm(순수 Rust 수학 — 네이티브·WASM 비트 일치), release: lto·codegen-units 1·panic abort."
+    },
+    {
+      "path": "engine/rust/Cargo.lock",
+      "class": "config",
+      "format": "TOML (cargo 생성)",
+      "writer": "cargo",
+      "readers": "cargo, tests (소스 해시)",
+      "interpret": "의존 버전 고정 — 재현 빌드."
+    },
+    {
+      "path": "engine/rust/.gitignore",
+      "class": "config",
+      "format": "gitignore",
+      "writer": "사람·AI",
+      "readers": "git",
+      "interpret": "target/ (빌드 산출물)."
+    },
+    {
+      "path": "engine/rust/build.sh",
+      "class": "interface",
+      "format": "POSIX sh",
+      "writer": "사람·AI",
+      "readers": "사람, CI",
+      "interpret": "WASM·네이티브 빌드, pkg/fate_core.wasm 복사, 소스·WASM sha256 을 pkg/fate_core.wasm.json 에."
+    },
+    {
+      "path": "engine/rust/pkg/fate_core.wasm",
+      "class": "generated",
+      "format": "WebAssembly (wasm32-unknown-unknown)",
+      "writer": "engine/rust/build.sh",
+      "readers": "engine/fate_rust.js",
+      "interpret": "Rust 운명 엔진 WASM — 손으로 고치지 않음. 소스와 맞는지는 tests/rust_engine.test.mjs ① 이 해시로 검사."
+    },
+    {
+      "path": "engine/rust/pkg/fate_core.wasm.json",
+      "class": "generated",
+      "format": "JSON",
+      "writer": "engine/rust/build.sh",
+      "readers": "tests/rust_engine.test.mjs",
+      "interpret": "src_sha256·wasm_sha256·rustc·target·profile."
     },
     {
       "path": "engine/interfaces/hmse.hpp",
@@ -521,6 +618,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "삼권 분립 시험 — 쓰기는 서기만, 행정부에 판정·verified 없음, 사법부는 엔진 실행·쓰기 없음, 도장 없는·변조·위조 verified 거부, 서기의 봉인 검사, 원자료 변조 탐지, 결합점 해석 순서."
+    },
+    {
+      "path": "tests/rust_engine.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "1단계 — WASM 최신성(해시)·JS 기준 구현과 동등(궤적 ≤ 1e-9, 운명·도달·결정·사건·관문·N_sub·뉴턴 같음)·byteLength 불변·결정론·네이티브 = WASM 비트·네이티브 루프 할당 0·사법부 판정 PASS."
     },
     {
       "path": "tests/p3_end_to_end.js",

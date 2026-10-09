@@ -15,6 +15,7 @@
   const REGISTRY = [
     { key: 'saturation_K', scenario: 'saturation_K', default: M.SAT_K, unit: 'M', meaning: '포화 보조 기질의 정칙화 상수 c/(c+K) — 생물 상수 아님', layer: 'numerics' },
     { key: 'explicit_fraction', scenario: 'explicit_fraction', default: 0.1, unit: '1', meaning: '명시 부분 단계가 한 번에 쓸 입력 비율 (N_sub = ⌈λΔ/이 값⌉)', layer: 'numerics' },
+    { key: 'nsub_margin', scenario: 'nsub_margin', default: 1e-12, unit: '1', meaning: 'N_sub = ⌈x·(1 − 이 값)⌉ — 정수 경계에 구조적으로 걸린 x(예: 정확히 1200)가 마지막 ulp 차이로 올림이 갈리지 않게 하는 상대 여유 (엔진 간 결정론)', layer: 'numerics' },
     { key: 'shock_threshold', scenario: 'shock_threshold', default: 0.2, unit: '1', meaning: 'P5 사전 필터 γ_max — 신호 상대 변화가 이보다 크면 같은 단계 강등', layer: 'gate' },
     { key: 'gate.K_up', scenario: 'gate.K_up', default: 15, unit: 'N_sub', meaning: 'P5 승격 문턱', layer: 'gate' },
     { key: 'gate.K_down', scenario: 'gate.K_down', default: 8, unit: 'N_sub', meaning: 'P5 강등 문턱', layer: 'gate' },

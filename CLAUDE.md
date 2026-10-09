@@ -15,6 +15,7 @@
 - **컴파일러(`compiler/`)는 공유 순수 층.** db + 시나리오 → 불변 IR(정수 번호·화학량·속도식·기호 도함수 테이프·희소 패턴·해시). 쓰기·판정·엔진·권력 모듈 호출 없음. 엔진은 IR 만 먹고 원자료에 `irHash` 를 적으며, 조정자는 같은 IR 을 사법부에 넘겨 `judicial/derivative.js` 가 법칙 충실도·자동미분 대비 도함수(≤ 1e-14)를 검증한다. 속도 법칙을 바꾸면 컴파일러·테이프 명세·사법부 법칙 재구성을 같은 커밋에서 맞춘다.
 - **결함은 태그대로 고친다 (`judicial/fault.js`).** 모든 감사 항목에 `fault` 가 있다: `FINDING`(결과 — 고치지 않음) · `DATA_GAP`(한계 등록, 확인된 값만) · `DOMAIN_CONFLICT`(근거와 함께 데이터 패치) · `NUMERICAL`(결합점·솔버 — **db.json 의 생물 상수를 바꾸지 않는다**) · `ENGINE_DEFECT`(엔진 코드) · `COMPILER_DEFECT`(`compiler/`). 수치 문제를 데이터로 맞추거나 결과(고갈·정지)를 결함으로 고치지 않는다.
 - **군더더기 금지.** 결함은 `storage-map.json` 의 아키텍처 노드(`node`·`governance`·`refactor_strategy`) 안에서 고친다 — 래퍼·임시 대체 플래그·사후 잘라내기로 덮지 않는다. 비교용으로 남긴 경로는 판정이 나면 지운다.
+- **Rust 엔진 (`engine/rust/`, 1단계).** 운명 엔진의 기본 백엔드는 Rust/WASM(`engine: 'rust'`), JS(`engine/fate_engine.js` 의 `run`)는 기준 구현(오라클)이다. Rust 에는 법칙 코드가 없다(테이프 해석기만). Rust 소스를 바꾸면 `sh engine/rust/build.sh` 로 `pkg/fate_core.wasm`·`.json` 을 다시 만들어 같은 커밋에 넣고, `tests/rust_engine.test.mjs`(JS 와 동등·byteLength 불변·네이티브 = WASM 비트·루프 할당 0)가 통과해야 한다. 알고리즘을 바꾸면 두 백엔드를 같은 커밋에서 맞춘다.
 - 이 분리를 바꾸는 변경은 `node --test tests/*.test.mjs`(특히 `tests/governance.test.mjs`) 통과가 조건이다.
 
 ## 데이터를 넣을 때

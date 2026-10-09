@@ -10,6 +10,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Rust 도구 사슬 (1단계 엔진 — 네이티브 = WASM 대조)
+        run: |
+          rustup toolchain install stable --profile minimal
+          cd engine/rust && cargo test --release && cargo build --release --bin fate_cli
+          # 커밋된 WASM 이 지금 소스로 빌드됐는지는 tests/rust_engine.test.mjs ① 이 소스 해시로 검사 (rustc 버전마다 WASM 바이트는 다를 수 있어 다시 빌드해 비교하지 않음)
       - name: 규칙 테스트
         run: node --test tests/*.test.mjs
       - name: 저장소 전체 검사
@@ -27,6 +32,8 @@ jobs:
         run: node tests/p5_dynamic_promotion.js --every 5000
       - name: Fate-Test (세포 운명 — 충실도·비가역성·분화 정지·다른 운명·질량)
         run: node tests/fate_suite.js --quick
+      - name: Fate-Test (Rust 엔진)
+        run: node tests/fate_suite.js --quick --engine rust
       - name: v8 인터페이스 — Python 자체 시험·C++ 구문
         run: |
           python3 engine/interfaces/hmse.py --selftest

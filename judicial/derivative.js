@@ -98,7 +98,7 @@ const rel = (a, b) => { const m = Math.max(Math.abs(a), Math.abs(b)); return m =
 
 function verifyIR(db, ir, sc, opt) {
   db = M.normalize(db); sc = sc || {}; opt = Object.assign({ samples: 6, seed: 20261009 }, opt || {});
-  const out = { tolerance: TOL, fdTolerance: FD_TOL, problems: [], rateWorst: 0, derivWorst: 0, factorWorst: 0, fdWorst: 0, missingDeps: [], samples: opt.samples, checked: 0 };
+  const out = { tolerance: TOL, fdTolerance: FD_TOL, boundarySamples: 0, problems: [], rateWorst: 0, derivWorst: 0, factorWorst: 0, fdWorst: 0, missingDeps: [], samples: opt.samples, checked: 0 };
   const { hash, ...rest } = ir;
   out.hashOK = crypto.createHash('sha256').update(canon(rest)).digest('hex') === hash;
   if (!out.hashOK) out.problems.push('IR 해시가 내용과 다름 — 컴파일 뒤 바뀜(변조)');
@@ -108,6 +108,8 @@ function verifyIR(db, ir, sc, opt) {
   let s = opt.seed >>> 0; const rnd = () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; };
   const base = ir.keys.map((b) => { const a = (sc.amounts || {})[b], bf = (sc.buffered || {})[b]; return a > 0 ? a : bf ? bf.total : 1e6; });
   const smin = ir.coupling.hill_s_floor;
+  // 상태점: 무작위 표본 + 꺾인 곳 경계 표본(완충 상한 바로 아래·위 — 한쪽 도함수가 테이프 명세와 맞는지; 한계 표 §5 #3)
+  const states = [];
   for (let n = 0; n < opt.samples; n++) {
     const N = Float64Array.from(base, (b) => Math.max(1, b * Math.pow(10, rnd() * 3 - 2)));
     for (let i = 0; i < N.length; i++) {
@@ -116,6 +118,13 @@ function verifyIR(db, ir, sc, opt) {
       if (Number.isFinite(sp.buf[i]) && Math.abs(c / sp.buf[i] - 1) < 0.2) N[i] *= c < sp.buf[i] ? 0.5 : 2;
       if (N[i] / (M.NA * V) < 1e3 * smin) N[i] = 1e3 * smin * M.NA * V * (1 + rnd());
     }
+    states.push({ N, boundary: false });
+  }
+  for (let i = 0; i < ir.keys.length; i++) if (Number.isFinite(sp.buf[i]) && sp.V[i] > 0 && states.length) for (const side of [1 - 1e-6, 1 + 1e-6]) {
+    const N = Float64Array.from(states[0].N); N[i] = sp.buf[i] * side * M.NA * sp.V[i]; states.push({ N, boundary: true });
+  }
+  out.boundarySamples = states.filter((x) => x.boundary).length;
+  for (const { N, boundary } of states) {
     for (let j = 0; j < ir.rules.length; j++) {
       const L = laws[j], f = 0.5 + 1.5 * rnd();
       const r0 = rateDual(L, N, f, sp, Ksat, -1).v, rt = runTape(ir.jac.rate[j], N, f, sp);
@@ -128,6 +137,7 @@ function verifyIR(db, ir, sc, opt) {
         out.derivWorst = Math.max(out.derivWorst, rel(ad, tv)); out.checked++;
         // 중심 유한차분 (사법부 속도식)
         // 간격 h = ε^(1/3)·N (중심 차분의 반올림·절단 오차가 맞먹는 최적점), 오차 척도 = max(|도함수|, |rate|/N) (도함수의 자연 크기)
+        if (boundary) continue; // 경계 바로 옆에서는 중심 차분이 꺾인 곳을 걸침 — 한쪽 도함수는 위의 자동미분 대비로 검사
         const h = 6.055454e-6 * Math.max(1, Math.abs(N[i])), Np = Float64Array.from(N), Nm = Float64Array.from(N); Np[i] += h; Nm[i] -= h;
         const fd = (rateDual(L, Np, f, sp, Ksat, -1).v - rateDual(L, Nm, f, sp, Ksat, -1).v) / (2 * h);
         const scale = Math.max(Math.abs(ad), Math.abs(r0) / Math.max(1, Math.abs(N[i])));

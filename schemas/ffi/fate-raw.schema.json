@@ -792,6 +792,13 @@
       "type": "string",
       "pattern": "^[0-9a-f]{64}$",
       "description": "엔진이 먹은 IR(compiler/ir_builder.js)의 sha256 — 사법부가 조정자의 IR 과 맞춘다"
+    },
+    "engine": {
+      "enum": [
+        "js",
+        "rust"
+      ],
+      "description": "적분 백엔드 — js(기준 구현·오라클) | rust(engine/rust, WASM). 둘 다 같은 계약"
     }
   },
   "x-dimensions": [

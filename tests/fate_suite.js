@@ -5,7 +5,7 @@
 //   D 스트레스 분화 정지 (포도당·지방산 결핍 → 고갈 저장소까지 사후 분석)  E 스트레스 다른 운명 (IL-12 + IL-15 + 포도당 결핍 → 기억 전구)
 //   F 다중 규모 정확도 (P5 관문 동적 경로 대 명시 기준 경로: 표지 궤적 L2 < 2%, 같은 최종 상태, 속도 향상)
 //   G 질량 (모든 실행에서 부분 구조 원장 상대 편차 ≤ 1e-14 — ΣIn = ΣOut, 음수 없음)
-// 실행: node tests/fate_suite.js [--quick]   (시나리오 examples/scenarios/fate-*-hypothetical.json — 가상 값, 엔진 시험용)
+// 실행: node tests/fate_suite.js [--quick] [--engine js|rust]   (시나리오 examples/scenarios/fate-*-hypothetical.json — 가상 값, 엔진 시험용)
 'use strict';
 const { readFileSync } = require('fs');
 const path = require('path');
@@ -23,12 +23,13 @@ const scen = (name, over) => Object.assign(JSON.parse(readFileSync(path.join(ROO
 const h = (s) => (s == null ? '—' : `${(s / 3600).toFixed(2)} h`);
 
 function run(opt) {
-  opt = Object.assign({ quiet: false, quick: false }, opt || {});
+  opt = Object.assign({ quiet: false, quick: false, engine: 'js' }, opt || {}); // engine: 'js'(기준 구현) | 'rust'(engine/rust WASM)
+  const E = { engine: opt.engine };
   const say = (...a) => { if (!opt.quiet) console.log(...a); };
   const checks = [], runs = {};
   const check = (group, name, ok, detail) => { checks.push({ group, name, ok: !!ok, detail }); };
   const names = {};
-  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const sc = scen(name, over), ir = IRB.buildFateIR(db, SRC, sc), raw = F.simulateFate(db, SRC, Object.assign({ scenario: sc, ir }, o || {})); const ms = Number(process.hrtime.bigint() - t0) / 1e6; const r = FA.judgeFate(db, raw, { scenario: sc, ir }); r.ms = ms; runs[key] = r; names[key] = name; return r; };
+  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const sc = scen(name, over), ir = IRB.buildFateIR(db, SRC, sc), raw = F.simulateFate(db, SRC, Object.assign({ scenario: sc, ir }, E, o || {})); const ms = Number(process.hrtime.bigint() - t0) / 1e6; const r = FA.judgeFate(db, raw, { scenario: sc, ir }); r.ms = ms; runs[key] = r; names[key] = name; return r; };
   const massOK = (r) => r.mass.worst <= 1e-14 && !r.audit.some((a) => a.code === 'AUDIT_MASS') && Object.values(r.final.N).every((v) => v > -1e-6);
 
   say('Fate-Test — 활성화된 CD8 T 세포 (D000174) → 효과기 (D000175) | 기억 전구 (D000176) · 가상 시나리오');
@@ -68,9 +69,9 @@ function run(opt) {
   const timed = (f) => { const t0 = process.hrtime.bigint(), r = f(); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; return r; };
   for (const [name, hours] of opt.quick ? [['memory-il15', 6]] : [['memory-il15', 12], ['effector-il12', 2.5]]) {
     const over = { t_end: hours * 3600 };
-    const ref = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, { ...over, explicit_fraction: 0.01 }), commitment: false, mode: 'fine' }));
-    const coarse = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false, mode: 'fine' }));
-    const a = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false }));
+    const ref = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, { ...over, explicit_fraction: 0.01 }), commitment: false, mode: 'fine', ...E }));
+    const coarse = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false, mode: 'fine', ...E }));
+    const a = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false, ...E }));
     const row = { name, hours, l2: l2Of(a, ref), l2Coarse: l2Of(coarse, ref), same: a.final.state === ref.final.state, reachDyn: a.firstReach, reachRef: ref.firstReach, msD: a.ms, msF: ref.ms, msC: coarse.ms, speedup: ref.ms / a.ms, nsub: a.gate.nsub, path: a.gate.path, promotions: a.gate.promotions, massDyn: vw(a), massFine: vw(ref) };
     acc.push(row);
     check('F 다중 규모 정확도', `${name} ${hours} h: 표지 궤적 상대 L2 < 2% (수렴 기준 대비), 같은 최종 상태`, row.l2 < 0.02 && row.same, `L2 ${row.l2.toExponential(2)} (명시 10% 경로 ${row.l2Coarse.toExponential(2)}), ${a.final.state} = ${ref.final.state}`);
@@ -84,7 +85,7 @@ function run(opt) {
   const reports = {};
   for (const [k, r] of Object.entries(runs)) {
     const scText = readFileSync(path.join(ROOT, `examples/scenarios/fate-${names[k]}-hypothetical.json`), 'utf8');
-    const again = F.simulateFate(db, SRC, { scenario: JSON.parse(scText), commitment: false });
+    const again = F.simulateFate(db, SRC, { scenario: JSON.parse(scText), commitment: false, ...E });
     const rep = PR.processReport(r, { scenario: JSON.parse(scText), scenarioText: scText, rerunHash: FA.trajectoryHash(again) });
     reports[k] = rep;
     check('H 과정 보고서', `${k}: 무결성 증명서 PASS (${rep.checks.length} 확인)`, rep.pass && rep.checks.every((c) => c.ok === true), rep.checks.filter((c) => c.ok !== true).map((c) => c.name).join(', ') || `원장 ${r.mass.worst.toExponential(1)} · 재생 ${r.mass.replayWorst.toExponential(1)}`);
@@ -111,5 +112,5 @@ function run(opt) {
   say(pass ? `\n✓ PASS — Fate-Test ${checks.length}/${checks.length}` : `\n✗ FAIL — ${checks.filter((c) => !c.ok).length}/${checks.length} 실패`);
   return { pass, checks, runs, acc, reports };
 }
-if (require.main === module) process.exit(run({ quick: process.argv.includes('--quick') }).pass ? 0 : 1);
+if (require.main === module) process.exit(run({ quick: process.argv.includes('--quick'), engine: process.argv.includes('--engine') ? process.argv[process.argv.indexOf('--engine') + 1] : 'js' }).pass ? 0 : 1);
 module.exports = { run };

@@ -20,7 +20,7 @@ const BASE = C.normalize(JSON.parse(readFileSync(join(ROOT, 'data/db.json'), 'ut
 const FIX = join(ROOT, 'tests/fixtures/augment');
 
 // 저장소의 코드 파일 (테스트·node_modules·.git 제외)
-const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'tests'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
+const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'tests', 'target'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
 const CODE = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p));
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`\\])\/\/[^\n]*/g, '$1'); // 주석 제거 (문자열 속 // 는 대부분 URL 이라 보존)
 const src = (p) => strip(readFileSync(join(ROOT, p), 'utf8'));
@@ -31,6 +31,9 @@ test('① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migra
   assert.deepEqual(writers.filter((p) => p !== 'legislative/clerk.mjs' && !p.startsWith('migrations/')), [], '서기 밖의 쓰기');
   assert.ok(writers.includes('legislative/clerk.mjs'));
   assert.ok(!/execFileSync|child_process/.test(src('dbtool.mjs')), 'dbtool 은 받기(curl)도 서기에게');
+  // Rust 행정부: 파일 쓰기 없음 (fate_cli 는 표준 출력만)
+  const rs = readdirSync(join(ROOT, 'engine/rust/src'), { recursive: true }).filter((f) => f.endsWith('.rs'));
+  for (const f of rs) assert.ok(!/std::fs|File::create|OpenOptions|fs::write/.test(readFileSync(join(ROOT, 'engine/rust/src', f), 'utf8')), `engine/rust/src/${f}: 파일 쓰기`);
 });
 
 test('② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코드·verified 선언이 없다', () => {
