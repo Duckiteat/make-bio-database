@@ -65,12 +65,12 @@ function compare(dbA, dbB, state, scA, scB, opt) {
   return CMP.compare(dbA, dbB, runVariant(dbA, state, scA, opt), runVariant(dbB, state, scB, opt), opt);
 }
 
-// ----- 확률 앙상블 (4단계 ④): 궤적 i 는 (시나리오 seed, i) — 같은 입력이면 같은 궤적. 실행은 행정부, 판정은 사법부 -----
+// ----- 확률 앙상블 (4단계 ④·⑤): 궤적 i 는 (시나리오 seed, i) — 같은 입력이면 같은 궤적. 실행은 행정부(기본 Rust/WASM, 'js' 는 기준 구현), 판정은 사법부 -----
 function runEnsemble(db, state, sc, n, opt) {
   opt = opt || {};
   if (!sc.stochastic) return { error: '앙상블에는 시나리오 stochastic { seed } 가 필요함' };
   const raws = [];
-  for (let i = 0; i < n; i++) { const r = F.simulateFate(db, state, Object.assign({ engine: 'js' }, opt, { scenario: sc, trajectory: (opt.first || 0) + i })); if (r.error) return r; raws.push(r); }
+  for (let i = 0; i < n; i++) { const r = F.simulateFate(db, state, Object.assign({ engine: 'rust' }, opt, { scenario: sc, trajectory: (opt.first || 0) + i })); if (r.error) return r; raws.push(r); }
   return raws;
 }
 // 부피 Ω 배: 부피·시작량·완충 총량·신호·문턱을 Ω 배 — 농도·속도 상수는 그대로 (분자 수만 커져 상대 요동 ∝ 1/√Ω)
@@ -87,7 +87,7 @@ function scaleScenario(sc, omega) {
 function ensembleLimit(db, state, sc, omegas, n, bundles, opt) {
   const rows = omegas.map((omega) => {
     const s = scaleScenario(sc, omega), { stochastic, ...det } = s;
-    return { omega, raws: runEnsemble(db, state, s, n, Object.assign({ commitment: false }, opt)), det: F.simulateFate(db, state, Object.assign({ engine: 'js', commitment: false }, opt, { scenario: det })) };
+    return { omega, raws: runEnsemble(db, state, s, n, Object.assign({ commitment: false }, opt)), det: F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: det })) };
   });
   return SA.limitTrend(rows, bundles);
 }

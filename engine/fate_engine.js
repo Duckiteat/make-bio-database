@@ -359,13 +359,15 @@ function simulateFate(db, sourceId, opt) {
   const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
   // 백엔드가 주는 것: 본 실행 · 스냅숏 상태 snapN(k) · 탐침 probeStarts([{ t0, N }]) · 다시 적분 advance(t0, N, t1) (신호 일정대로)
   let main, snapshots, snapN, probeStarts, advance, backendStats, lanes = 1;
-  if (STO && (opt.engine || 'js') === 'rust') return { error: '확률 층(scenario.stochastic)은 아직 JS 기준 구현만 — engine: \'js\' (4단계 ⑤ 에서 Rust)' };
   if ((opt.engine || 'js') === 'rust') {
-    const args = { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery: sc.record_every || 1 };
+    // 4단계 ⑤: 확률 실행이면 seed·궤적·상태별 도달 표지를 덩어리에 (JS reachG 와 같은 표지·문턱)
+    const sto = STO ? { seed: STO.seed, trajectory: STO.trajectory, reach: states.map((sid) => db.senses[sid].signature.map((m) => ({ i: at.get(`${m.ref}|${m.location}`), t: thr[`${m.ref}|${m.location}`], high: m.level === 'high' })).filter((m) => m.t)) } : null;
+    const args = { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery: sc.record_every || 1, sto };
     const be = require('./fate_rust.js').open(args);
     main = be.main(); snapshots = be.snapshots(); backendStats = () => be.stats();
-    // 2단계: 결정 탐침은 워커마다 독립 WASM 인스턴스로 (engine/probe_pool.js) — lanes 는 결과에 영향이 없다
-    const pp = require('./probe_pool.js').attach(be, args, opt.workers);
+    if (STO) main.reach = Object.fromEntries(states.map((sid, q) => [sid, main.sto.reach[q]]).filter(([, t]) => !Number.isNaN(t)));
+    // 2단계: 결정 탐침은 워커마다 독립 WASM 인스턴스로 (engine/probe_pool.js) — lanes 는 결과에 영향이 없다 (확률 실행은 탐침이 없어 풀을 열지 않음)
+    const pp = STO ? { lanes: 1, probeMany: () => [] } : require('./probe_pool.js').attach(be, args, opt.workers);
     lanes = pp.lanes;
     snapN = (k) => be.snapState(k); probeStarts = (starts) => pp.probeMany(starts); advance = (t0, N, t1) => be.advance(t0, N, t1);
   } else {
@@ -466,7 +468,10 @@ function simulateFate(db, sourceId, opt) {
     },
     irHash: IR.hash, // 먹은 IR 의 해시 — 사법부가 조정자에게서 받은 IR 과 맞춘다
     // 확률 실행의 원자료 (4단계 ④): seed·궤적 번호·규칙별 발화 수(정수)·끝 방식·분할 전환·난수 소비 — 판정은 사법부
-    ...(STO ? { stochastic: { seed: STO.seed, trajectory: STO.trajectory, method: 'hybrid: ssa (modified next reaction) · tau-leap (Cao) · rodas3', draws: rng ? rng.draws() : 0, ...stoStats,
+    ...(STO ? { stochastic: main.sto ? { seed: STO.seed, trajectory: STO.trajectory, method: 'hybrid: ssa (modified next reaction) · tau-leap (Cao) · rodas3', draws: main.sto.stats.draws,
+      switches: main.sto.stats.switches, ssaFires: main.sto.stats.ssaFires, ssaBlocked: main.sto.stats.ssaBlocked, leapRejects: main.sto.stats.leapRejects, rootEvals: main.sto.stats.rootEvals,
+      rules: act.map((j, k) => ({ ref: rules[j].ref, mode: ['ode', 'leap', 'ssa'][main.sto.mode[k]], ssa: main.sto.firedSsa[k], leap: main.sto.firedLeap[k] })) }
+      : { seed: STO.seed, trajectory: STO.trajectory, method: 'hybrid: ssa (modified next reaction) · tau-leap (Cao) · rodas3', draws: rng ? rng.draws() : 0, ...stoStats,
       rules: act.map((j, k) => ({ ref: rules[j].ref, mode: ['ode', 'leap', 'ssa'][mode[k]], ssa: firedSsa[k], leap: firedLeap[k] })) } } : {}),
     events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...backendStats(), probes, probeRounds: rounds, probeLanes: lanes, refineProbes, eventEvals }, engine: opt.engine || 'js', ix,
   };

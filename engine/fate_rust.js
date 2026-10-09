@@ -11,14 +11,14 @@ const path = require('path');
 const WASM = path.join(__dirname, 'rust', 'pkg', 'fate_core.wasm');
 let compiled = null;
 const wasmModule = () => compiled || (compiled = new WebAssembly.Module(fs.readFileSync(WASM)));
-const BUF = { recT: 0, recN: 1, recLO: 2, recCum: 3, recSig: 4, recMeta: 5, snapT: 6, events: 7, stats: 8, runInfo: 9, resOut: 10, probeN: 11, finN: 12, finLO: 13, finCum: 14, snapN: 15, probeIn: 16 };
+const BUF = { recT: 0, recN: 1, recLO: 2, recCum: 3, recSig: 4, recMeta: 5, snapT: 6, events: 7, stats: 8, runInfo: 9, resOut: 10, probeN: 11, finN: 12, finLO: 13, finCum: 14, snapN: 15, probeIn: 16, stoStats: 17, firedSsa: 18, firedLeap: 19, reachT: 20, modeOut: 21 };
 
 function pack(a) {
-  const { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery } = a;
+  const { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery, sto } = a;
   const nB = IR.keys.length, nR = IR.rules.length, nA = IR.jac.active.length, out = [];
   const P = (...x) => { for (const v of x) out.push(+v); };
   const tapes = (list) => { P(list.length); for (const x of list) P(x.i, x.t.length, ...x.t); };
-  P(3, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, 6.02214076e23, recordEvery);
+  P(4, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, 6.02214076e23, recordEvery);
   for (let i = 0; i < nB; i++) P(N0[i]);
   for (const s of IR.species) P(s.V);
   for (const s of IR.species) P(s.buf == null ? Infinity : s.buf);
@@ -37,6 +37,10 @@ function pack(a) {
   const SC = IR.jac.scatter, LU = IR.jac.lu;
   for (let k = 0; k < nA; k++) { P(SC.diag[k]); for (const lists of [SC.rate[k], SC.factor[k]]) for (const l of lists) P(l.length / 2, ...l); }
   P(LU.nnz, ...LU.perm, ...LU.rowPtr, ...LU.col, ...LU.diagPos);
+  // 4단계 ⑤ 확률 블록: 켬, seed, 궤적, 결합점 7, 상태별 도달 표지 [(묶음, high, 문턱 high, 문턱 low)] — 확률이 꺼져 있으면 상태 0 개
+  P(sto ? 1 : 0, sto ? sto.seed : 0, sto ? sto.trajectory : 0, CP.sto_ssa_max, CP.sto_ode_min, CP.sto_fast, CP.sto_hyst, CP.leap_eps, CP.sto_atol, CP.ssa_tol);
+  const reach = sto ? sto.reach : [];
+  P(reach.length); for (const ms of reach) { P(ms.length); for (const m of ms) P(m.i, m.high ? 1 : 0, m.t.high, m.t.low); }
   return Float64Array.from(out);
 }
 
@@ -66,8 +70,12 @@ function open(a) {
       const ri = copy(BUF.runInfo);
       const ro = copy(BUF.resOut), resv = new Map();
       a.reservoirs.forEach((i, r) => resv.set(i, { start: ro[5 * r], min: ro[5 * r + 1], state: ro[5 * r + 3] ? 'ok' : 'empty', watch: !!ro[5 * r + 4] }));
+      const sto = a.sto ? (() => {
+        const st = copy(BUF.stoStats), fs = copy(BUF.firedSsa), fl = copy(BUF.firedLeap), md = copy(BUF.modeOut), rt = copy(BUF.reachT);
+        return { stats: { switches: st[0], ssaFires: st[1], ssaBlocked: st[2], leapRejects: st[3], rootEvals: st[4], draws: st[5], eventOverflow: st[6] }, firedSsa: fs, firedLeap: fl, mode: md, reach: rt };
+      })() : null;
       const integrator = { method: 'rodas3', rtol: a.CP.rtol, atol: a.CP.atol, steps: ri[0], rejected: ri[1], rejectedNeg: ri[2], hMinHits: ri[3], h: { min: ri[4], max: ri[5] }, perInterval: { min: ri[6], max: ri[7] } };
-      return { N: copy(BUF.finN), lo: copy(BUF.finLO), cum: copy(BUF.finCum), series, events, integrator, resv };
+      return { N: copy(BUF.finN), lo: copy(BUF.finLO), cum: copy(BUF.finCum), series, events, integrator, resv, sto };
     },
     snapshots() { return Array.from(copy(BUF.snapT), (t) => ({ t })); },
     probe(k) { if (ex.fe_probe(k) !== 0) throw new Error(`탐침 스냅숏 ${k} 없음`); return copy(BUF.probeN); },

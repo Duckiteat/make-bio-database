@@ -6,6 +6,7 @@
 
 pub mod engine;
 pub mod tape;
+pub mod rng;
 
 use engine::Engine;
 
@@ -74,6 +75,11 @@ fn buf(id: u32) -> (*const f64, usize) {
         14 => &e.fin_cum[..],
         15 => &e.snap_n[..e.n_snap * e.nb],
         16 => &e.probe_in[..],
+        17 => &e.sto_stats[..],
+        18 => &e.fired_ssa[..],
+        19 => &e.fired_leap[..],
+        20 => &e.reach_t[..],
+        21 => &e.mode_out[..],
         _ => &[],
     };
     (s.as_ptr(), s.len())

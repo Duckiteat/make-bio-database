@@ -442,7 +442,7 @@
       "interpret": "[행정] 4단계 ④ — 엔진 난수 xoshiro256++ (splitmix64 로 (seed, 궤적) 초기화), 균등·지수·포아송(곱셈법 μ < 10, PTRS). 확률 층의 모든 무작위는 여기서만 — 사법부는 쓰지 않는다.",
       "node": "EXECUTIVE_RNG",
       "governance": "Executive",
-      "refactor_strategy": "Rust(engine/rust/src/rng.rs, 4단계 ⑤)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다 — 해석해 시험(tests/stochastic.test.mjs ①)과 두 백엔드 사건열 동등을 함께 맞춘다."
+      "refactor_strategy": "Rust(engine/rust/src/rng.rs)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다 — 해석해 시험(tests/stochastic.test.mjs ①)과 출생–사멸 JS = Rust 비트(tests/rust_engine.test.mjs ⑧)를 함께 맞춘다."
     },
     {
       "path": "engine/fate_rust.js",
@@ -480,7 +480,7 @@
       "format": "Rust 2021",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/rust/src/lib.rs, fate_cli",
-      "interpret": "[행정] Rust 운명 솔버 — JS 기준 구현과 같은 알고리즘(두 층·조절 배율을 묶은 진행량 좌표 결합 Rodas3 + 해석적 J(∂f/∂s 포함)·오차 추정·단계 거부(양수성)·double-double 원장·탐침). 모든 버퍼를 Engine::new 에서 한 번 할당.",
+      "interpret": "[행정] Rust 운명 솔버 — JS 기준 구현과 같은 알고리즘(두 층·조절 배율을 묶은 진행량 좌표 결합 Rodas3 + 해석적 J(∂f/∂s 포함)·오차 추정·단계 거부(양수성)·double-double 원장·탐침). 모든 버퍼를 Engine::new 에서 한 번 할당 · 4단계 ③ advance · ⑤ 혼성 확률 층(분할·Cao·SSA 근 찾기·τ-도약·승격·단계마다 사건/도달 — JS integrateSto 와 같은 순서, 덩어리 v4 확률 블록).",
       "node": "EXECUTIVE_SOLVER",
       "governance": "Executive",
       "refactor_strategy": "적분기 변경은 이 파일 안에서 — 바깥 잘라내기·대체 래퍼 금지(1.5단계에서 관문·명시·뉴턴 경로는 판정 뒤 제거). 루프 안 할당 금지(tests/rust_engine.test.mjs ③⑤). 바꾸면 JS 기준 구현과의 동등 시험(②)이 통과하거나, 알고리즘 변경이면 compare 판정."
@@ -495,6 +495,17 @@
       "node": "EXECUTIVE_TAPE",
       "governance": "Executive",
       "refactor_strategy": "명령을 더하면 compiler/tape.js·judicial/derivative.js 해석기와 같은 커밋에서."
+    },
+    {
+      "path": "engine/rust/src/rng.rs",
+      "class": "law",
+      "format": "Rust",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/rust/src/engine.rs (확률 층)",
+      "interpret": "[행정] 4단계 ⑤ — 엔진 난수 xoshiro256++ · 포아송 PTRS (engine/rng.js 와 같은 알고리즘·산술 순서, 순수 Rust libm). 할당 없음.",
+      "node": "EXECUTIVE_RNG_RUST",
+      "governance": "Executive",
+      "refactor_strategy": "engine/rng.js 와 같은 커밋에서 맞춘다 — 출생–사멸 시나리오에서 JS = Rust 궤적 비트 일치(tests/rust_engine.test.mjs ⑧)가 지켜져야 한다."
     },
     {
       "path": "engine/rust/src/lib.rs",

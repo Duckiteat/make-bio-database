@@ -5,8 +5,11 @@
 //! 법칙은 모두 IR 테이프로 해석한다(tape.rs). 판정·파일 쓰기 없음. 모든 버퍼는 `Engine::new` 에서 한 번 잡는다(루프 안 할당 0).
 //! 연산 순서(J 를 쌓는 순서·희소 LU·단 계산·오차 노름)는 JS 와 같게 둔다 — 엔진 사이 차이를 libm 마지막 ulp 로만 남기려고.
 //! 선형 단: 컴파일러가 정한 희소 패턴(최소 차수 순서·채움)의 값 배열 LU (3단계) — 밀집 nA³ 대신 패턴만큼.
+//! 4단계 ③ advance(사건 근 찾기의 다시 적분), ⑤ 혼성 확률 층(정확 SSA·τ-도약·Rodas3 — JS 기준 구현 integrateSto 와 같은 순서, 난수 rng.rs).
+//!   확률이 꺼져 있으면 가림(disc)이 모두 0 이라 결정론 경로의 산술이 그대로다.
 
 use crate::tape;
+use crate::rng::Rng;
 
 // Rodas3 (Sandu 외 1997, KPP 형식): γ, 새 함수 값 여부, A, C, M, E
 const GAMMA: f64 = 0.5;
@@ -26,6 +29,9 @@ struct Rule {
 }
 
 struct Signal { idx: usize, ev: Vec<(f64, f64)> }
+
+// 혼성 확률 층 결합점 (4단계 ⑤ — engine/coupling.js 의 sto_*·leap_eps·ssa_tol)
+struct StoParams { ssa_max: f64, ode_min: f64, fast: f64, hyst: f64, leap_eps: f64, atol: f64, ssa_tol: f64 }
 
 // 단계 제어 (결합점 등록부 값)
 struct Ctl { rtol: f64, atol: f64, h0: f64, h_min: f64, safety: f64, fac_min: f64, fac_max: f64, neg_shrink: f64, pivot_rel: f64 }
@@ -57,6 +63,14 @@ pub struct Engine {
     res_start: Vec<f64>, res_min: Vec<f64>, res_ok: Vec<bool>, res_watch: Vec<bool>,
     // 구간 사이 단계 제어 상태
     h: f64, iv_steps: f64, iv_rej: f64, iv_hmin: f64, iv_hmax: f64,
+    // 4단계 ⑤ 확률 층 (sto = false 면 모두 쓰이지 않음 — disc 는 0)
+    sto: bool, stp: StoParams, rng: Rng,
+    disc: Vec<u8>, mode: Vec<u8>, tq: Vec<f64>, pq: Vec<f64>, pub fired_ssa: Vec<f64>, pub fired_leap: Vec<f64>,
+    col_of: Vec<usize>, spec: Vec<Vec<(usize, f64)>>, is_sig: Vec<bool>, mu: Vec<f64>, s2: Vec<f64>,
+    save_n: Vec<f64>, save_lo: Vec<f64>, save_t: Vec<f64>, save_cum: Vec<f64>, kl: Vec<f64>, nc: Vec<f64>, n_leap: usize,
+    /// switches, ssaFires, ssaBlocked, leapRejects, rootEvals, draws, 사건 버퍼 넘침
+    pub sto_stats: [f64; 7],
+    reach_def: Vec<Vec<(usize, bool, f64, f64)>>, pub reach_t: Vec<f64>, pub mode_out: Vec<f64>,
     // 출력 (본 실행)
     pub rec_t: Vec<f64>, pub rec_n: Vec<f64>, pub rec_lo: Vec<f64>, pub rec_cum: Vec<f64>, pub rec_sig: Vec<f64>, pub rec_meta: Vec<f64>,
     pub snap_t: Vec<f64>, pub snap_n: Vec<f64>,
@@ -89,7 +103,7 @@ impl Engine {
     /// IR 직렬 덩어리(engine/fate_rust.js pack)에서 엔진을 만든다. 모든 할당은 여기서 끝난다.
     pub fn new(blob: &[f64]) -> Result<Engine, &'static str> {
         let mut c = Cursor { d: blob, p: 0 };
-        if c.f() != 3.0 { return Err("blob version"); }
+        if c.f() != 4.0 { return Err("blob version"); }
         let (nb, nr, na_, nsig, nres) = (c.u(), c.u(), c.u(), c.u(), c.u());
         let (dt, t_end, horizon) = (c.f(), c.f(), c.f());
         let ctl = Ctl { rtol: c.f(), atol: c.f(), h0: c.f(), h_min: c.f(), safety: c.f(), fac_min: c.f(), fac_max: c.f(), neg_shrink: c.f(), pivot_rel: c.f() };
@@ -127,11 +141,26 @@ impl Engine {
         sp.col = (0..nnz).map(|_| c.u()).collect();
         sp.diag = (0..na_).map(|_| c.u()).collect();
         if sp.row_ptr[na_] != nnz || sp.diag_of.iter().any(|&p| p >= nnz) { return Err("lu pattern"); }
+        // 4단계 ⑤: 확률 블록 — 켬, seed, 궤적, 결합점 7, 상태별 도달 표지 [(묶음, high, 문턱 high, 문턱 low)]
+        let sto = c.f() != 0.0;
+        let (seed, traj) = (c.f(), c.f());
+        let stp = StoParams { ssa_max: c.f(), ode_min: c.f(), fast: c.f(), hyst: c.f(), leap_eps: c.f(), atol: c.f(), ssa_tol: c.f() };
+        let ns = c.u();
+        let reach_def: Vec<Vec<(usize, bool, f64, f64)>> = (0..ns).map(|_| { let m = c.u(); (0..m).map(|_| { let i = c.u(); let hi = c.f() != 0.0; let th = c.f(); let tl = c.f(); (i, hi, th, tl) }).collect() }).collect();
         if c.p != blob.len() { return Err("blob length"); }
+        let mut is_sig = vec![false; nb]; for s in &signals { is_sig[s.idx] = true; }
+        // 규칙별 참여 분자(신호 제외)의 알짜 화학량 — JS SPEC 과 같은 순서(소비 다음 생성, 처음 나온 자리)
+        let spec: Vec<Vec<(usize, f64)>> = act.iter().map(|&j| {
+            let mut m: Vec<(usize, f64)> = Vec::new();
+            for &(i, n) in &rules[j].cons { match m.iter_mut().find(|x| x.0 == i) { Some(x) => x.1 -= n, None => m.push((i, -n)) } }
+            for &(i, n) in &rules[j].prods { match m.iter_mut().find(|x| x.0 == i) { Some(x) => x.1 += n, None => m.push((i, n)) } }
+            m.into_iter().filter(|x| !is_sig[x.0]).collect()
+        }).collect();
+        let col_of: Vec<usize> = sp.col.iter().map(|&cc| sp.perm[cc]).collect();
         // 관찰 격자 수: JS 와 같은 누적 t 루프로 센다
         let mut n_steps = 0usize; { let mut t = 0.0; while t < t_end - 1e-9 { n_steps += 1; t += dt; } }
         let n_rec_max = (n_steps + record_every - 1) / record_every;
-        let max_ev = n_steps * nres.max(1);
+        let max_ev = if sto { n_steps * nres.max(1) * 8 + 64 } else { n_steps * nres.max(1) };
         let h0 = ctl.h0;
         Ok(Engine {
             nb, nr, na_, nsig, nres, dt, t_end, horizon, ctl, na, record_every, n_steps, n_rec_max,
@@ -147,6 +176,11 @@ impl Engine {
             snap_t: vec![0.0; n_steps], snap_n: vec![0.0; n_steps * nb],
             events: vec![0.0; 3 * max_ev], res_out: vec![0.0; 5 * nres],
             n_rec: 0, n_snap: 0, n_events: 0, stats: [0.0; 7], run_info: [0.0; 8], probe_n: vec![0.0; nb], probe_in: vec![0.0; nb], fin_n: vec![0.0; nb], fin_lo: vec![0.0; nb], fin_cum: vec![0.0; 2 * nr],
+            sto, stp, rng: Rng::new(seed, traj),
+            disc: vec![0; na_], mode: vec![0; na_], tq: vec![0.0; na_], pq: vec![0.0; na_], fired_ssa: vec![0.0; na_], fired_leap: vec![0.0; na_],
+            col_of, spec, is_sig, mu: vec![0.0; nb], s2: vec![0.0; nb],
+            save_n: vec![0.0; nb], save_lo: vec![0.0; nb], save_t: vec![0.0; na_], save_cum: vec![0.0; 2 * nr], kl: vec![0.0; na_], nc: vec![0.0; nb], n_leap: 0,
+            sto_stats: [0.0; 7], reach_t: vec![f64::NAN; ns], reach_def, mode_out: vec![0.0; na_],
         })
     }
 
@@ -188,11 +222,11 @@ impl Engine {
             let g = tape::eval(&self.rules[j].rate, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
             for d in 0..self.rules[j].drate.len() {
                 let val = tape::eval(&self.rules[j].drate[d].1, &self.n, f, &self.v, &self.buf, self.na, &mut self.stack);
-                if val != 0.0 { for q in 0..self.sp.rate[k][d].len() { let (p, co) = self.sp.rate[k][d][q]; self.vals[p] -= val * co; } }
+                if val != 0.0 { for q in 0..self.sp.rate[k][d].len() { let (p, co) = self.sp.rate[k][d][q]; if self.disc[self.col_of[p]] == 0 { self.vals[p] -= val * co; } } }
             }
             for d in 0..self.rules[j].dfactor.len() {
                 let val = tape::eval(&self.rules[j].dfactor[d].1, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack) * g;
-                if val != 0.0 { for q in 0..self.sp.factor[k][d].len() { let (p, co) = self.sp.factor[k][d][q]; self.vals[p] -= val * co; } }
+                if val != 0.0 { for q in 0..self.sp.factor[k][d].len() { let (p, co) = self.sp.factor[k][d][q]; if self.disc[self.col_of[p]] == 0 { self.vals[p] -= val * co; } } }
             }
         }
         let d0 = 1.0 / (GAMMA * h);
@@ -222,7 +256,7 @@ impl Engine {
     fn plus_s(&mut self, which: u8) {
         for i in 0..self.nb {
             let mut v = self.n[i];
-            for s in 0..self.s_act[i].len() { let (k, c) = self.s_act[i][s]; v += c * if which == 0 { self.xs[k] } else { self.xn[k] }; }
+            for s in 0..self.s_act[i].len() { let (k, c) = self.s_act[i][s]; if self.disc[k] == 0 { v += c * if which == 0 { self.xs[k] } else { self.xn[k] }; } }
             if which == 0 { self.y[i] = v; } else { self.yn[i] = v; }
         }
     }
@@ -250,12 +284,14 @@ impl Engine {
         let (mut err, mut neg) = (0.0, false);
         for i in 0..self.nb {
             let mut e = 0.0;
-            for s in 0..self.s_act[i].len() { let (k, c) = self.s_act[i][s]; e += c * self.xe[k]; }
+            for s in 0..self.s_act[i].len() { let (k, c) = self.s_act[i][s]; if self.disc[k] == 0 { e += c * self.xe[k]; } }
             if self.yn[i] < 0.0 { neg = true; }
             let w = self.ctl.atol + self.ctl.rtol * fmax(self.n[i].abs(), self.yn[i].abs());
             let r = e.abs() / w;
             if r > err { err = r; }
         }
+        // 이산 규칙의 성분은 적분 성향 — 그 오차도 노름에
+        if self.sto { for k in 0..na_ { if self.disc[k] != 0 { let r = self.xe[k].abs() / (self.stp.atol + self.ctl.rtol * self.xn[k].abs()); if r > err { err = r; } } } }
         if neg { -1.0 } else { err }
     }
     /// 구간 [t0, t1] 적분 (h 는 구간 사이에 이어짐)
@@ -281,6 +317,135 @@ impl Engine {
         }
         self.h = h;
     }
+    // ----- 4단계 ⑤ 혼성 확률 층 (JS integrateSto·partition·caoTau·promote·ssaOver 와 같은 순서) -----
+    #[inline]
+    fn rate_at(&mut self, k: usize) -> f64 {
+        let j = self.act[k];
+        let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
+        tape::eval(&self.rules[j].rate, &self.n, f, &self.v, &self.buf, self.na, &mut self.stack)
+    }
+    #[inline]
+    fn count(&self, k: usize) -> f64 { let mut c = f64::INFINITY; for &(i, _) in &self.spec[k] { c = fmin(c, self.n[i]); } c }
+    fn partition(&mut self, first: bool) {
+        self.rhs(false, true);
+        let h = self.stp.hyst; self.n_leap = 0;
+        for k in 0..self.na_ {
+            let cnt = self.count(k); let a = self.f0[k].abs(); let cur = self.mode[k];
+            let coarse = |x: f64| cnt >= self.stp.ode_min * x || a >= self.stp.fast * x;
+            let m: u8 = if first || cur == 0 { if coarse(1.0) { 0 } else if cnt < self.stp.ssa_max { 2 } else { 1 } }
+                else if coarse(h) { 0 } else if cur == 1 { if cnt < self.stp.ssa_max { 2 } else { 1 } }
+                else if cnt >= self.stp.ssa_max * h { 1 } else { 2 };
+            if m != cur || first { if !first { self.sto_stats[0] += 1.0; } if m == 2 { self.tq[k] = 0.0; self.pq[k] = self.rng.exp1(); } }
+            self.mode[k] = m; self.disc[k] = if m > 0 { 1 } else { 0 }; if m == 1 { self.n_leap += 1; }
+        }
+    }
+    fn cao_tau(&mut self) -> f64 {
+        for i in 0..self.nb { self.mu[i] = 0.0; self.s2[i] = 0.0; }
+        for k in 0..self.na_ {
+            if self.mode[k] != 1 { continue; }
+            let a = fmax(0.0, self.rate_at(k));
+            for q in 0..self.spec[k].len() { let (i, v) = self.spec[k][q]; self.mu[i] += v * a; self.s2[i] += v * v * a; }
+        }
+        let mut tau = f64::INFINITY;
+        for i in 0..self.nb {
+            if self.s2[i] == 0.0 { continue; }
+            let b = fmax(self.stp.leap_eps * self.n[i], 1.0);
+            if self.mu[i] != 0.0 { tau = fmin(tau, b / self.mu[i].abs()); }
+            tau = fmin(tau, (b * b) / self.s2[i]);
+        }
+        tau
+    }
+    fn promote(&mut self) {
+        for k in 0..self.na_ {
+            if self.disc[k] == 0 { continue; }
+            let cnt = self.count(k); let a = self.rate_at(k).abs();
+            if cnt >= self.stp.ode_min * self.stp.hyst || a >= self.stp.fast * self.stp.hyst { if self.mode[k] == 1 { self.n_leap -= 1; } self.mode[k] = 0; self.disc[k] = 0; self.sto_stats[0] += 1.0; }
+        }
+    }
+    #[inline]
+    fn ssa_over(&self) -> f64 { let mut m = f64::NEG_INFINITY; for k in 0..self.na_ { if self.mode[k] == 2 { m = fmax(m, self.tq[k] + self.xn[k] - self.pq[k]); } } m }
+    fn reach_g(&self, s: usize) -> f64 {
+        if self.reach_def[s].is_empty() { return f64::INFINITY; }
+        let mut g = f64::NEG_INFINITY;
+        for &(i, hi, th, tl) in &self.reach_def[s] { let x = fmax(self.n[i], 1e-9); g = fmax(g, if hi { libm::log(th / x) } else { libm::log(x / tl) }); }
+        g
+    }
+    /// 확률 실행의 단계마다: 저장소 고갈·재생 사건과 상태 도달 (본 실행만)
+    fn on_step(&mut self, tt: f64) {
+        for r in 0..self.nres {
+            let i = self.res_idx[r]; let x = self.n[i];
+            self.res_min[r] = fmin(self.res_min[r], x);
+            if !self.res_watch[r] { continue; }
+            let ty = if self.res_ok[r] && x < 1.0 { self.res_ok[r] = false; 0.0 } else if !self.res_ok[r] && x >= 1.0 { self.res_ok[r] = true; 1.0 } else { -1.0 };
+            if ty >= 0.0 {
+                let k = self.n_events;
+                if 3 * k + 2 < self.events.len() { self.events[3 * k] = tt; self.events[3 * k + 1] = ty; self.events[3 * k + 2] = i as f64; self.n_events += 1; } else { self.sto_stats[6] += 1.0; }
+            }
+        }
+        for s in 0..self.reach_t.len() { if self.reach_t[s].is_nan() && self.reach_g(s) <= 0.0 { self.reach_t[s] = tt; } }
+    }
+    fn integrate_sto(&mut self, t0: f64, t1: f64, main: bool) {
+        let na_ = self.na_;
+        let mut tt = t0; let mut h = self.h; let mut last_rej = false;
+        self.iv_steps = 0.0; self.iv_rej = 0.0;
+        while tt < t1 {
+            let mut clip = h >= t1 - tt; let mut hu = if clip { t1 - tt } else { h };
+            if self.n_leap > 0 { let tl = fmax(self.cao_tau(), self.ctl.h_min); if tl < hu { hu = tl; clip = false; } }
+            let mut err = self.try_step(hu);
+            let ok = err >= 0.0 && err <= 1.0;
+            if !ok && hu > self.ctl.h_min {
+                self.stats[3] += 1.0; self.iv_rej += 1.0; if err < 0.0 { self.stats[4] += 1.0; }
+                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(err, -1.0 / 3.0)) };
+                h = fmax(self.ctl.h_min, hu * sh); last_rej = true; continue;
+            }
+            if !ok { self.stats[5] += 1.0; }
+            // SSA: 이 단계 안에서 다음 발화에 닿으면 그 단계 길이를 근 찾기(Illinois)로
+            let mut fire: isize = -1; let over = self.ssa_over();
+            if over > 0.0 {
+                let (mut a, mut fa, mut b, mut fb, mut side) = (0.0, f64::NEG_INFINITY, hu, over, 0i32);
+                for k in 0..na_ { if self.mode[k] == 2 { fa = fmax(fa, self.tq[k] - self.pq[k]); } }
+                let mut it = 0;
+                while it < 100 && fb > self.stp.ssa_tol && b - a > 1e-12 * fmax(1.0, tt) {
+                    let mut c = b - (fb * (b - a)) / (fb - fa);
+                    if !(c > a && c < b) { c = (a + b) / 2.0; }
+                    self.try_step(c); self.sto_stats[4] += 1.0; let fc = self.ssa_over();
+                    if fc >= 0.0 { b = c; fb = fc; if side == -1 { fa /= 2.0; } side = -1; } else { a = c; fa = fc; if side == 1 { fb /= 2.0; } side = 1; }
+                    it += 1;
+                }
+                hu = b; clip = false; err = self.try_step(hu);
+                let mut best = f64::NEG_INFINITY;
+                for k in 0..na_ { if self.mode[k] == 2 && self.tq[k] + self.xn[k] - self.pq[k] > best { best = self.tq[k] + self.xn[k] - self.pq[k]; fire = k as isize; } }
+            }
+            if self.n_leap > 0 { self.save_n.copy_from_slice(&self.n); self.save_lo.copy_from_slice(&self.lo); self.save_t.copy_from_slice(&self.tq); self.save_cum.copy_from_slice(&self.cum); }
+            for k in 0..na_ { if self.disc[k] == 0 { let x = self.xn[k]; if x != 0.0 { let j = self.act[k]; self.apply_extent(j, x); } } else { self.tq[k] += self.xn[k]; } }
+            if self.n_leap > 0 {
+                self.nc.copy_from_slice(&self.n);
+                for k in 0..na_ { self.kl[k] = 0.0; if self.mode[k] == 1 { let kk = self.rng.poisson(self.xn[k]); if kk != 0.0 { let j = self.act[k]; self.apply_extent(j, kk); self.kl[k] = kk; } } }
+                let mut neg = false;
+                for i in 0..self.nb { if !self.is_sig[i] && self.n[i] < 0.0 && self.n[i] < self.nc[i] { neg = true; break; } }
+                if neg {
+                    self.n.copy_from_slice(&self.save_n); self.lo.copy_from_slice(&self.save_lo); self.tq.copy_from_slice(&self.save_t); self.cum.copy_from_slice(&self.save_cum);
+                    self.sto_stats[3] += 1.0; self.stats[3] += 1.0; self.iv_rej += 1.0; h = fmax(self.ctl.h_min, hu / 2.0); last_rej = true; continue;
+                }
+                for k in 0..na_ { self.fired_leap[k] += self.kl[k]; }
+            }
+            if fire >= 0 {
+                let k = fire as usize; let j = self.act[k];
+                let mut avail = true;
+                for q in 0..self.rules[j].cons.len() { let (i, n) = self.rules[j].cons[q]; if !(self.is_sig[i] || self.n[i] >= n) { avail = false; break; } }
+                if avail { self.apply_extent(j, 1.0); self.fired_ssa[k] += 1.0; self.sto_stats[1] += 1.0; } else { self.sto_stats[2] += 1.0; }
+                self.pq[k] += self.rng.exp1();
+            }
+            self.promote();
+            self.stats[2] += 1.0; self.iv_steps += 1.0; self.iv_hmin = fmin(self.iv_hmin, hu); self.iv_hmax = fmax(self.iv_hmax, hu);
+            tt = if clip { t1 } else { tt + hu };
+            let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(fmax(err, 1e-10), -1.0 / 3.0)));
+            let hn = hu * fac; h = if clip { fmax(h, hn) } else { hn }; last_rej = false;
+            if main { self.on_step(tt); }
+        }
+        self.h = h;
+        self.sto_stats[5] = self.rng.draws;
+    }
     fn signal_at(&mut self, t: f64, zero: bool) {
         for q in 0..self.nsig {
             let mut v = 0.0;
@@ -299,16 +464,17 @@ impl Engine {
         let (mut per_min, mut per_max) = (f64::INFINITY, 0.0);
         let mut step = 0usize; let mut t = t0;
         if main { self.n_rec = 0; self.n_snap = 0; self.n_events = 0; }
+        if self.sto && main { for s in 0..self.reach_t.len() { self.reach_t[s] = if self.reach_g(s) <= 0.0 { t0 } else { f64::NAN }; } }
         while t < t1 - 1e-9 {
             self.signal_at(t, zero_signal);
             for q in 0..self.nsig { let i = self.signals[q].idx; self.n[i] = self.sig[q]; }
             let te = if t1 - t < self.dt - 1e-9 { t1 } else { t + self.dt }; // 마지막 구간이 Δ 보다 짧으면 t1 에서 (사건 근 찾기의 다시 적분 — 격자 정렬 실행은 그대로)
-            self.integrate(t, te);
+            if self.sto { self.partition(step == 0); self.integrate_sto(t, te, main); } else { self.integrate(t, te); }
             per_min = fmin(per_min, self.iv_steps); per_max = fmax(per_max, self.iv_steps);
             for r in 0..self.nres {
                 let i = self.res_idx[r]; let x = self.n[i];
                 self.res_min[r] = fmin(self.res_min[r], x);
-                if !self.res_watch[r] { continue; }
+                if !self.res_watch[r] || self.sto { continue; } // 확률 실행은 단계마다 (on_step)
                 if self.res_ok[r] && x < 1.0 { self.res_ok[r] = false; if main { let k = self.n_events; self.events[3 * k] = t + self.dt; self.events[3 * k + 1] = 0.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
                 else if !self.res_ok[r] && x >= 1.0 { self.res_ok[r] = true; if main { let k = self.n_events; self.events[3 * k] = t + self.dt; self.events[3 * k + 1] = 1.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
             }
@@ -331,6 +497,7 @@ impl Engine {
         if main {
             self.run_info = [self.stats[2] - s0[2], self.stats[3] - s0[3], self.stats[4] - s0[4], self.stats[5] - s0[5], self.iv_hmin, self.iv_hmax, per_min, per_max];
             self.fin_n.copy_from_slice(&self.n); self.fin_lo.copy_from_slice(&self.lo); self.fin_cum.copy_from_slice(&self.cum);
+            for k in 0..self.na_ { self.mode_out[k] = self.mode[k] as f64; }
             for r in 0..self.nres { let i = self.res_idx[r]; self.res_out[5 * r] = self.res_start[r]; self.res_out[5 * r + 1] = self.res_min[r]; self.res_out[5 * r + 2] = self.n[i]; self.res_out[5 * r + 3] = if self.res_ok[r] { 1.0 } else { 0.0 }; self.res_out[5 * r + 4] = if self.res_watch[r] { 1.0 } else { 0.0 }; }
         }
     }

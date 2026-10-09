@@ -129,3 +129,36 @@ test('⑥ 사법부는 Rust 원자료도 같은 기준으로 판정 — 계약·
     assert.ok(!v.audit.some((a) => ['ENGINE_DEFECT', 'COMPILER_DEFECT'].includes(a.fault)), f);
   }
 });
+
+test('⑧ 확률 층 (4단계 ⑤): 출생–사멸은 JS = Rust 비트 · 운명 프로그램은 같은 분포 · 네이티브 = WASM 비트 · 루프 할당 0', (t) => {
+  const SA = req('../judicial/stoch_audit.js');
+  const BD = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/stochastic-birth-death-hypothetical.json'), 'utf8'));
+  const leap = { ...BD, amounts: { 'D000165|nucleoplasm': 1000 }, kinetics: { ...BD.kinetics, 'D000165/rule/synthesis': { ...BD.kinetics['D000165/rule/synthesis'], k: BD.kinetics['D000165/rule/synthesis'].k * 40 } } };
+  // 연속 부분이 자명한 계: 같은 (seed, 궤적) → 두 백엔드의 발화·궤적이 비트 단위로 같다
+  for (const sc of [BD, leap]) for (const trajectory of [0, 1, 2]) {
+    const a = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'js', trajectory }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust', trajectory });
+    assert.equal(FA.trajectoryHash(b), FA.trajectoryHash(a));
+    assert.deepEqual(b.stochastic, a.stochastic);
+  }
+  // 운명 프로그램: 결정론 부분의 libm 마지막 ulp 차이가 도약 한계·추첨으로 증폭되어 경로는 갈라진다 — 동등성은 분포로 (두 표본 검정)
+  const sc = { ...SC.find((x) => /mixed-optimal/.test(x.f)).sc, t_end: 6 * 3600, stochastic: { seed: 5 } };
+  const js = Array.from({ length: 30 }, (_, i) => F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'js', trajectory: i }));
+  const rs = Array.from({ length: 30 }, (_, i) => F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust', trajectory: 100 + i }));
+  const v = SA.compareMethods(js, rs, js[0].markers, { perm: 300 });
+  assert.ok(v.ok, `JS 대 Rust 분포가 다름: ${JSON.stringify(v.tests.map((x) => x.p))}, 운명 ${v.fate.p}`);
+  for (const r of rs) assert.ok(!SA.auditTrajectory(BASE, r, { scenario: sc }).audit.some((x) => x.fault === 'ENGINE_DEFECT'));
+  // 네이티브 = WASM (같은 덩어리, 확률 블록 포함) · 루프 할당 0
+  const cargo = spawnSync('cargo', ['--version']);
+  if (cargo.status !== 0) { t.skip('cargo 없음'); return; }
+  execFileSync('cargo', ['build', '--release', '--quiet', '--bin', 'fate_cli'], { cwd: RUST });
+  const ir = IRB.buildFateIR(BASE, 'D000174', sc), raw = rs[0], at = new Map(raw.keys.map((b, i) => [b, i]));
+  const args = { IR: ir, N0: raw.process.N0, sched: raw.process.schedule.map((s) => ({ i: at.get(s.bundle), list: s.list })), reservoirs: Object.keys(raw.reservoirs).map((b) => at.get(b)), dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, CP: ir.coupling, recordEvery: 1,
+    sto: { seed: 5, trajectory: 7, reach: raw.states.map((sid) => BASE.senses[sid].signature.map((m) => ({ i: at.get(`${m.ref}|${m.location}`), t: sc.thresholds[`${m.ref}|${m.location}`], high: m.level === 'high' })).filter((m) => m.t)) } };
+  const out = new Float64Array(new Uint8Array(execFileSync(join(RUST, 'target/release/fate_cli'), ['--threads', '1'], { input: Buffer.from(RB.pack(args).buffer), maxBuffer: 1 << 28 })).buffer);
+  const parts = []; for (let p = 0; p < out.length;) { const n = out[p]; parts.push(out.subarray(p + 1, p + 1 + n)); p += 1 + n; }
+  const be = RB.open(args), m = be.main(), same = (x, y) => x.length === y.length && x.every((q, i) => Object.is(q, y[i]));
+  assert.ok(same(Array.from(parts[1]), m.series.flatMap((x) => Array.from(x.N))) && same(Array.from(parts[5]), Array.from(m.N)), '확률 궤적 네이티브 = WASM (비트)');
+  assert.equal(parts[7][0], 0, `확률 본 실행 동안 힙 할당 ${parts[7][0]}회`);
+  assert.ok(m.sto.stats.draws > 0 && m.sto.firedLeap.some((x) => x > 0));
+});
+

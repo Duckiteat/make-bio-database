@@ -70,7 +70,8 @@ test('⑤ 결정론 경로: stochastic 이 없으면 확률 원자료가 없고 
   assert.ok(!('stochastic' in d));
   const s = F.simulateFate(BASE, 'D000174', { scenario: { ...sc, t_end: 3 * 3600, stochastic: { seed: 1 } }, engine: 'js' });
   assert.ok(s.stochastic && s.commitment.every((c) => c.skipped));
-  assert.match(F.simulateFate(BASE, 'D000174', { scenario: { ...sc, stochastic: { seed: 1 } }, engine: 'rust' }).error, /JS 기준 구현만/);
+  const sr = F.simulateFate(BASE, 'D000174', { scenario: { ...sc, t_end: 3 * 3600, stochastic: { seed: 1 } }, engine: 'rust' }); // 4단계 ⑤: Rust 도 확률 층
+  assert.ok(sr.stochastic && sr.commitment.every((c) => c.skipped) && sr.stats.probes === 0);
 });
 
 test('⑥ 구간 안 승격: 0 에서 시작해 구간 안에서 빨라지는 이산 규칙이 결정론으로 올라감 (SSA 폭주 없음)', () => {

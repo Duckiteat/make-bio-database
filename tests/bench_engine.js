@@ -85,11 +85,22 @@ function run() {
   console.log('|---|---|---|---|---|---|---|');
   console.log(`| 운명 IR (mixed-optimal) | ${irL.perm.length} | ${irL.nnzA} | ${irL.nnz} | ${irL.flops} | ${irL.denseFlops} | ${f(irL.denseFlops / irL.flops)}× |`);
   for (const n of [50, 200, 800]) { const rows = Array.from({ length: n }, (_, k) => [...new Set([k, k > 0 ? k - 1 : k, k + 1 < n ? k + 1 : k, (k * 7 + 3) % n])].sort((a, b) => a - b)); const L = SLU.symbolic(n, rows); console.log(`| 합성 (사슬 + 되먹임) | ${n} | ${L.nnzA} | ${L.nnz} | ${L.flops} | ${L.denseFlops} | ${f(L.denseFlops / L.flops)}× |`); }
+  // 4단계 ④·⑤: 혼성 확률 궤적 하나 (48 h, 결정 탐침 없음) — JS 기준 구현 대 Rust/WASM, 결정론 본 실행 대비
+  const sto = ['fate-mixed-optimal-hypothetical.json', 'fate-memory-il15-hypothetical.json', 'fate-effector-glucose-withheld-hypothetical.json'].map((file) => {
+    const sc = { ...scen(file), stochastic: { seed: 11 } }, t = (engine) => { const t0 = process.hrtime.bigint(), r = F.simulateFate(db, 'D000174', { scenario: sc, engine, trajectory: 0 }); return { ms: Number(process.hrtime.bigint() - t0) / 1e6, r }; };
+    const js = t('js'), rs = t('rust'), det = (() => { const t0 = process.hrtime.bigint(); F.simulateFate(db, 'D000174', { scenario: scen(file), engine: 'rust', commitment: false }); return Number(process.hrtime.bigint() - t0) / 1e6; })();
+    const m = rs.r.stochastic.rules.reduce((o, x) => ((o[x.mode] = (o[x.mode] || 0) + 1), o), {});
+    return { name: file.replace(/^fate-|-hypothetical\.json$/g, ''), js: js.ms, rs: rs.ms, det, steps: rs.r.integrator.steps, draws: rs.r.stochastic.draws, ssa: rs.r.stochastic.ssaFires, modes: `${m.ode || 0}/${m.leap || 0}/${m.ssa || 0}` };
+  });
+  console.log('\n4단계 — 혼성 확률 궤적 하나 (48 h, seed 11; ms)');
+  console.log('| 시나리오 | JS | Rust/WASM | 배수 | 결정론 Rust (탐침 없음) | 받아들인 단계 | 난수 | SSA 발화 | 끝 방식 ode/leap/ssa |');
+  console.log('|---|---|---|---|---|---|---|---|---|');
+  for (const r of sto) console.log(`| ${r.name} | ${f(r.js)} | ${f(r.rs)} | ${f(r.js / r.rs, 1)}× | ${f(r.det)} | ${r.steps} | ${r.draws} | ${r.ssa} | ${r.modes} |`);
   console.log('\nsimulateRate');
   console.log('| 경로 | Δt 단계 | 준비 ms | 루프 ms | 단계당 µs |');
   console.log('|---|---|---|---|---|');
   for (const r of rr) console.log(`| ${r.label} | ${r.steps} | ${f(r.setupMs, 1)} | ${f(r.loopMs, 1)} | ${f(r.perStepUs, 2)} |`);
-  return { fate: fr, engines: er, lanes: lr, rate: rr };
+  return { fate: fr, engines: er, lanes: lr, rate: rr, stochastic: sto };
 }
 if (require.main === module) run();
 module.exports = { run };

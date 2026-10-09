@@ -1,6 +1,6 @@
 {
-  "src_sha256": "9fe07cd36bbe9d22526b5cd9b672a6dc70ebf5884526785601058507882f0bcb",
-  "wasm_sha256": "ca9c5f10431a0e86623a9bcbe4573bb06a0bcfb39b3a4d4c3562f75fc4742ca3",
+  "src_sha256": "2619e1fcd452a2847465b63834ce65b160822b11506fe6c339cc80a26e36281b",
+  "wasm_sha256": "5e6c83f8e85a9363eb03b6fcd7befe8cd6ac9ba271aff1338f0e6a05aa6c0397",
   "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
   "target": "wasm32-unknown-unknown",
   "profile": "release (lto, codegen-units 1, panic abort)"
