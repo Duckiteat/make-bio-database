@@ -13,9 +13,10 @@ const crypto = require('crypto');
 const M = require('../model.js');
 const COUPLING = require('../engine/coupling.js');
 const { OP } = require('./tape.js');
+const SLU = require('./sparse_lu.js');
 
 const V = M.VOCAB;
-const FORMAT = 'definition-db-fate-ir', IR_VERSION = 2; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분
+const FORMAT = 'definition-db-fate-ir', IR_VERSION = 3; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분 · 3: 희소 LU 기호 분석(jac.lu)·J 항의 값 위치(jac.scatter)
 
 // ===== 계 조립: 상태들 → 규칙·묶음 =====
 function assemble(db, sourceId, sc) {
@@ -186,10 +187,17 @@ function buildFateIR(db, sourceId, sc, params) {
   const S = keys.map(() => []); // 묶음 i → [[활성 규칙 위치 k, 화학량]]
   active.forEach((j, k) => { for (const q of rules[j].cons) S[q.i].push([k, -q.n]); for (const q of rules[j].prods) S[q.i].push([k, q.n]); });
   const nnz = active.reduce((t, j) => { const cols = new Set(); for (const i of new Set([...jac.dep[j], ...jac.dFactor[j].map((d) => d.i)])) for (const [k] of S[i]) cols.add(k); return t + cols.size; }, 0);
+  // 희소 LU (3단계): M = I/(γh) − J 의 패턴 → 최소 차수 순서·채움 (compiler/sparse_lu.js). 엔진은 값 배열만 다룬다.
+  const rowsM = active.map((j, k) => { const cols = new Set([k]); for (const d of [...jac.dRate[j], ...jac.dFactor[j]]) for (const [c] of S[d.i]) cols.add(c); return [...cols].sort((a, b) => a - b); });
+  const L = SLU.symbolic(active.length, rowsM);
+  // J 항의 값 위치: 활성 규칙 k 의 도함수 항 d(묶음 i)마다 [위치, 화학량, …] — 엔진은 vals[위치] −= ∂·화학량 (예전 밀집 조립과 같은 순서)
+  const scat = (k, list) => list.map((d) => S[d.i].flatMap(([c, co]) => [L.posOf(k, c), co]));
+  const scatter = { rate: active.map((j, k) => scat(k, jac.dRate[j])), factor: active.map((j, k) => scat(k, jac.dFactor[j])), diag: active.map((j, k) => L.diagPos[L.iperm[k]]) };
+  const lu = { perm: L.perm, iperm: L.iperm, rowPtr: L.rowPtr, col: L.col, diagPos: L.diagPos, nnz: L.nnz, nnzA: L.nnzA, flops: L.flops, solveFlops: L.solveFlops, denseFlops: L.denseFlops };
   const ir = {
     format: FORMAT, version: IR_VERSION, source: sourceId, states: A.states, keys, markers: [...A.markers.keys()], signals: A.signals,
     species, rules, gaps: A.gaps, modGaps: A.modGaps, facts: A.facts, coupling: CP,
-    jac: Object.assign(jac, { active, S, nnz, sizes: { nB: keys.length, nR: rules.length, nA: active.length } }),
+    jac: Object.assign(jac, { active, S, nnz, lu, scatter, sizes: { nB: keys.length, nR: rules.length, nA: active.length } }),
   };
   ir.hash = irHash(ir);
   return ir;

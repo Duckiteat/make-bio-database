@@ -3,7 +3,8 @@
 //!   + 내장 2차 오차 추정·단계 거부(오차 > 1 또는 음수 상태)로 푼다. 야코비안 J = (∂rate/∂N)·S, ∂rate_j/∂N_i = f_j·∂g_j/∂N_i + g_j·∂f_j/∂N_i (IR 테이프).
 //!   원장: 상태 N(hi)+LO, 규칙별 누적 진행량(double-double). 받아들인 진행량만 원장에 적용한다.
 //! 법칙은 모두 IR 테이프로 해석한다(tape.rs). 판정·파일 쓰기 없음. 모든 버퍼는 `Engine::new` 에서 한 번 잡는다(루프 안 할당 0).
-//! 연산 순서(J 를 쌓는 순서·LU·단 계산·오차 노름)는 JS 와 같게 둔다 — 엔진 사이 차이를 libm 마지막 ulp 로만 남기려고.
+//! 연산 순서(J 를 쌓는 순서·희소 LU·단 계산·오차 노름)는 JS 와 같게 둔다 — 엔진 사이 차이를 libm 마지막 ulp 로만 남기려고.
+//! 선형 단: 컴파일러가 정한 희소 패턴(최소 차수 순서·채움)의 값 배열 LU (3단계) — 밀집 nA³ 대신 패턴만큼.
 
 use crate::tape;
 
@@ -27,7 +28,15 @@ struct Rule {
 struct Signal { idx: usize, ev: Vec<(f64, f64)> }
 
 // 단계 제어 (결합점 등록부 값)
-struct Ctl { rtol: f64, atol: f64, h0: f64, h_min: f64, safety: f64, fac_min: f64, fac_max: f64, neg_shrink: f64 }
+struct Ctl { rtol: f64, atol: f64, h0: f64, h_min: f64, safety: f64, fac_min: f64, fac_max: f64, neg_shrink: f64, pivot_rel: f64 }
+
+// 희소 LU (3단계, compiler/sparse_lu.js 가 정한 순서·채움): 값 배열 위치 목록과 패턴
+struct Sparse {
+    diag_of: Vec<usize>,                 // 활성 규칙 k → 대각 값 위치
+    rate: Vec<Vec<Vec<(usize, f64)>>>,   // k → dRate 항 d → [(위치, 화학량)]
+    factor: Vec<Vec<Vec<(usize, f64)>>>, // k → dFactor 항 d → [(위치, 화학량)]
+    perm: Vec<usize>, row_ptr: Vec<usize>, col: Vec<usize>, diag: Vec<usize>,
+}
 
 pub struct Engine {
     // 차원·설정
@@ -38,11 +47,12 @@ pub struct Engine {
     pub n0: Vec<f64>, v: Vec<f64>, buf: Vec<f64>,
     rules: Vec<Rule>, act: Vec<usize>,
     s_act: Vec<Vec<(usize, f64)>>, // 묶음 → [(활성 규칙 위치, 화학량)]
+    sp: Sparse,
     signals: Vec<Signal>, res_idx: Vec<usize>,
     // 작업 버퍼
     n: Vec<f64>, pub lo: Vec<f64>, pub cum: Vec<f64>,
     f0: Vec<f64>, fy: Vec<f64>, kst: Vec<f64>, xs: Vec<f64>, xn: Vec<f64>, xe: Vec<f64>, bv: Vec<f64>,
-    y: Vec<f64>, yn: Vec<f64>, lu: Vec<f64>, piv: Vec<usize>,
+    y: Vec<f64>, yn: Vec<f64>, vals: Vec<f64>, wrk: Vec<f64>, ys: Vec<f64>,
     stack: Vec<f64>, sig: Vec<f64>,
     res_start: Vec<f64>, res_min: Vec<f64>, res_ok: Vec<bool>, res_watch: Vec<bool>,
     // 구간 사이 단계 제어 상태
@@ -79,10 +89,10 @@ impl Engine {
     /// IR 직렬 덩어리(engine/fate_rust.js pack)에서 엔진을 만든다. 모든 할당은 여기서 끝난다.
     pub fn new(blob: &[f64]) -> Result<Engine, &'static str> {
         let mut c = Cursor { d: blob, p: 0 };
-        if c.f() != 2.0 { return Err("blob version"); }
+        if c.f() != 3.0 { return Err("blob version"); }
         let (nb, nr, na_, nsig, nres) = (c.u(), c.u(), c.u(), c.u(), c.u());
         let (dt, t_end, horizon) = (c.f(), c.f(), c.f());
-        let ctl = Ctl { rtol: c.f(), atol: c.f(), h0: c.f(), h_min: c.f(), safety: c.f(), fac_min: c.f(), fac_max: c.f(), neg_shrink: c.f() };
+        let ctl = Ctl { rtol: c.f(), atol: c.f(), h0: c.f(), h_min: c.f(), safety: c.f(), fac_min: c.f(), fac_max: c.f(), neg_shrink: c.f(), pivot_rel: c.f() };
         let (na, record_every) = (c.f(), c.u().max(1));
         let n0 = c.vecf(nb); let v = c.vecf(nb); let buf = c.vecf(nb);
         let mut rules = Vec::with_capacity(nr);
@@ -102,6 +112,21 @@ impl Engine {
         let mut signals = Vec::with_capacity(nsig);
         for _ in 0..nsig { let idx = c.u(); let ne = c.u(); let mut ev = Vec::with_capacity(ne); for _ in 0..ne { let t = c.f(); let n = c.f(); ev.push((t, n)); } signals.push(Signal { idx, ev }); }
         let res_idx: Vec<usize> = (0..nres).map(|_| c.u()).collect();
+        let mut sp = Sparse { diag_of: Vec::with_capacity(na_), rate: Vec::with_capacity(na_), factor: Vec::with_capacity(na_), perm: Vec::new(), row_ptr: Vec::new(), col: Vec::new(), diag: Vec::new() };
+        for k in 0..na_ {
+            sp.diag_of.push(c.u());
+            let j = act[k];
+            let list = |m: usize, c: &mut Cursor| -> Vec<Vec<(usize, f64)>> { (0..m).map(|_| { let l = c.u(); (0..l).map(|_| { let p = c.u(); let s = c.f(); (p, s) }).collect() }).collect() };
+            let (nd, nf) = (rules[j].drate.len(), rules[j].dfactor.len());
+            let r = list(nd, &mut c); sp.rate.push(r);
+            let f = list(nf, &mut c); sp.factor.push(f);
+        }
+        let nnz = c.u();
+        sp.perm = (0..na_).map(|_| c.u()).collect();
+        sp.row_ptr = (0..na_ + 1).map(|_| c.u()).collect();
+        sp.col = (0..nnz).map(|_| c.u()).collect();
+        sp.diag = (0..na_).map(|_| c.u()).collect();
+        if sp.row_ptr[na_] != nnz || sp.diag_of.iter().any(|&p| p >= nnz) { return Err("lu pattern"); }
         if c.p != blob.len() { return Err("blob length"); }
         // 관찰 격자 수: JS 와 같은 누적 t 루프로 센다
         let mut n_steps = 0usize; { let mut t = 0.0; while t < t_end - 1e-9 { n_steps += 1; t += dt; } }
@@ -110,10 +135,10 @@ impl Engine {
         let h0 = ctl.h0;
         Ok(Engine {
             nb, nr, na_, nsig, nres, dt, t_end, horizon, ctl, na, record_every, n_steps, n_rec_max,
-            n0, v, buf, rules, act, s_act, signals, res_idx,
+            n0, v, buf, rules, act, s_act, sp, signals, res_idx,
             n: vec![0.0; nb], lo: vec![0.0; nb], cum: vec![0.0; 2 * nr],
             f0: vec![0.0; na_], fy: vec![0.0; na_], kst: vec![0.0; 4 * na_], xs: vec![0.0; na_], xn: vec![0.0; na_], xe: vec![0.0; na_], bv: vec![0.0; na_],
-            y: vec![0.0; nb], yn: vec![0.0; nb], lu: vec![0.0; na_ * na_], piv: vec![0; na_],
+            y: vec![0.0; nb], yn: vec![0.0; nb], vals: vec![0.0; nnz], wrk: vec![0.0; na_], ys: vec![0.0; na_],
             stack: vec![0.0; 64], sig: vec![0.0; nsig],
             res_start: vec![0.0; nres], res_min: vec![0.0; nres], res_ok: vec![false; nres], res_watch: vec![false; nres],
             h: h0, iv_steps: 0.0, iv_rej: 0.0, iv_hmin: f64::INFINITY, iv_hmax: 0.0,
@@ -152,51 +177,46 @@ impl Engine {
             if to_f0 { self.f0[k] = r; } else { self.fy[k] = r; }
         }
     }
-    /// LU ← I/(γh) − J(N), 부분 피벗 제자리 분해. 특이하면 false.
+    /// M = I/(γh) − J(N) 를 희소 패턴의 값 배열에 조립하고 제자리 LU (피벗 교환 없음, IR 순서). 대각이 작으면(pivot_rel) false — JS 와 같은 순서.
     fn build_m(&mut self, h: f64) -> bool {
         self.stats[1] += 1.0;
         let na_ = self.na_;
-        for x in self.lu.iter_mut() { *x = 0.0; }
+        for x in self.vals.iter_mut() { *x = 0.0; }
         for k in 0..na_ {
             let j = self.act[k];
             let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
             let g = tape::eval(&self.rules[j].rate, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
             for d in 0..self.rules[j].drate.len() {
-                let i = self.rules[j].drate[d].0;
                 let val = tape::eval(&self.rules[j].drate[d].1, &self.n, f, &self.v, &self.buf, self.na, &mut self.stack);
-                if val != 0.0 { for s in 0..self.s_act[i].len() { let (c, co) = self.s_act[i][s]; self.lu[k * na_ + c] -= val * co; } }
+                if val != 0.0 { for q in 0..self.sp.rate[k][d].len() { let (p, co) = self.sp.rate[k][d][q]; self.vals[p] -= val * co; } }
             }
             for d in 0..self.rules[j].dfactor.len() {
-                let i = self.rules[j].dfactor[d].0;
                 let val = tape::eval(&self.rules[j].dfactor[d].1, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack) * g;
-                if val != 0.0 { for s in 0..self.s_act[i].len() { let (c, co) = self.s_act[i][s]; self.lu[k * na_ + c] -= val * co; } }
+                if val != 0.0 { for q in 0..self.sp.factor[k][d].len() { let (p, co) = self.sp.factor[k][d][q]; self.vals[p] -= val * co; } }
             }
         }
         let d0 = 1.0 / (GAMMA * h);
-        for k in 0..na_ { self.lu[k * na_ + k] += d0; }
-        for c in 0..na_ {
-            let mut p = c;
-            for r in (c + 1)..na_ { if self.lu[r * na_ + c].abs() > self.lu[p * na_ + c].abs() { p = r; } }
-            self.piv[c] = p;
-            if p != c { for k in 0..na_ { self.lu.swap(c * na_ + k, p * na_ + k); } }
-            let dg = self.lu[c * na_ + c];
-            if dg.abs() < 1e-300 { return false; }
-            for r in (c + 1)..na_ {
-                let fr = self.lu[r * na_ + c] / dg; self.lu[r * na_ + c] = fr;
-                if fr != 0.0 { for k in (c + 1)..na_ { self.lu[r * na_ + k] -= fr * self.lu[c * na_ + k]; } }
+        for k in 0..na_ { let p = self.sp.diag_of[k]; self.vals[p] += d0; }
+        for r in 0..na_ {
+            let (a, b) = (self.sp.row_ptr[r], self.sp.row_ptr[r + 1]);
+            let mut rmax = 0.0;
+            for p in a..b { let c = self.sp.col[p]; self.wrk[c] = self.vals[p]; rmax = fmax(rmax, self.vals[p].abs()); }
+            for p in a..b {
+                let k = self.sp.col[p]; if k >= r { break; }
+                let l = self.wrk[k] / self.vals[self.sp.diag[k]]; self.wrk[k] = l;
+                if l != 0.0 { for q in (self.sp.diag[k] + 1)..self.sp.row_ptr[k + 1] { let c = self.sp.col[q]; self.wrk[c] -= l * self.vals[q]; } }
             }
+            for p in a..b { self.vals[p] = self.wrk[self.sp.col[p]]; }
+            if !(self.vals[self.sp.diag[r]].abs() >= self.ctl.pivot_rel * rmax) { return false; }
         }
         true
     }
     fn lu_solve(&mut self) {
         let na_ = self.na_;
-        for c in 0..na_ { let p = self.piv[c]; if p != c { self.bv.swap(c, p); } }
-        for c in 0..na_ { let v = self.bv[c]; if v != 0.0 { for r in (c + 1)..na_ { self.bv[r] -= self.lu[r * na_ + c] * v; } } }
-        for c in (0..na_).rev() {
-            let mut s = self.bv[c];
-            for k in (c + 1)..na_ { s -= self.lu[c * na_ + k] * self.bv[k]; }
-            self.bv[c] = s / self.lu[c * na_ + c];
-        }
+        for r in 0..na_ { self.ys[r] = self.bv[self.sp.perm[r]]; }
+        for r in 0..na_ { let mut s = self.ys[r]; for p in self.sp.row_ptr[r]..self.sp.diag[r] { s -= self.vals[p] * self.ys[self.sp.col[p]]; } self.ys[r] = s; }
+        for r in (0..na_).rev() { let mut s = self.ys[r]; for p in (self.sp.diag[r] + 1)..self.sp.row_ptr[r + 1] { s -= self.vals[p] * self.ys[self.sp.col[p]]; } self.ys[r] = s / self.vals[self.sp.diag[r]]; }
+        for r in 0..na_ { self.bv[self.sp.perm[r]] = self.ys[r]; }
     }
     /// out = N + S·x (which: 0 = xs → y, 1 = xn → yn)
     fn plus_s(&mut self, which: u8) {

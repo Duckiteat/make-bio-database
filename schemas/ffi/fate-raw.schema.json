@@ -550,7 +550,8 @@
         "safety",
         "fac_min",
         "fac_max",
-        "neg_shrink"
+        "neg_shrink",
+        "pivot_rel"
       ]
     },
     "process": {

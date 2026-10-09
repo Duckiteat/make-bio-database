@@ -94,33 +94,42 @@ function simulateFate(db, sourceId, opt) {
   const tctx = { NA, V: Float64Array.from(IR.species, (x) => x.V), buf: Float64Array.from(IR.species, (x) => (x.buf == null ? Infinity : x.buf)), stack: new Float64Array(64) };
   const stats = { rhs: 0, jac: 0, steps: 0, rejected: 0, rejectedNeg: 0, hMinHits: 0, singular: 0 };
   const fy = new Float64Array(nA), f0 = new Float64Array(nA), Kst = Array.from({ length: 4 }, () => new Float64Array(nA)), xs = new Float64Array(nA), xn = new Float64Array(nA), xe = new Float64Array(nA), bv = new Float64Array(nA);
-  const Y = new Float64Array(nB), Yn = new Float64Array(nB), Ev = new Float64Array(nB), LU = new Float64Array(nA * nA), piv = new Int32Array(nA);
+  const Y = new Float64Array(nB), Yn = new Float64Array(nB);
   const rhs = (N, out) => { stats.rhs++; for (let k = 0; k < nA; k++) { const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx); out[k] = TAPE.evalTape(IR.jac.rate[j], N, f, tctx); } };
-  // LU ← I/(γh) − J (J 를 쌓는 순서: 규칙마다 dRate 다음 dFactor, 묶음마다 S 순서 — Rust 와 같은 순서)
+  // M = I/(γh) − J 를 희소 패턴(IR jac.lu — 최소 차수 순서·채움, compiler/sparse_lu.js)의 값 배열에 조립하고 제자리 LU (3단계).
+  //   조립: 규칙마다 dRate 다음 dFactor, 항마다 IR 이 준 [위치, 화학량] 순서 — Rust 와 같은 순서. 대각 1/(γh) 은 마지막에.
+  //   분해: 행 단위, 피벗 교환 없음 — 행을 밀집 작업 벡터로 흩뿌리고 앞 행들의 U 로 소거한 뒤 모은다. |u_rr| < pivot_rel × 행 최대면 특이(단계 거부).
+  const LUP = IR.jac.lu, SCR = IR.jac.scatter, nnzLU = LUP.nnz, RP = LUP.rowPtr, CL = LUP.col, DP = LUP.diagPos, PERM = LUP.perm;
+  const VAL = new Float64Array(nnzLU), WRK = new Float64Array(nA), YS = new Float64Array(nA);
   const buildM = (N, h) => {
     stats.jac++;
-    LU.fill(0);
+    VAL.fill(0);
     for (let k = 0; k < nA; k++) {
       const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), g = TAPE.evalTape(IR.jac.rate[j], N, 1, tctx);
-      for (const d of IR.jac.dRate[j]) { const v = TAPE.evalTape(d.t, N, f, tctx); if (v) for (const [c, sc_] of SA[d.i]) LU[k * nA + c] -= v * sc_; }
-      for (const d of IR.jac.dFactor[j]) { const v = TAPE.evalTape(d.t, N, 1, tctx) * g; if (v) for (const [c, sc_] of SA[d.i]) LU[k * nA + c] -= v * sc_; }
+      IR.jac.dRate[j].forEach((d, di) => { const v = TAPE.evalTape(d.t, N, f, tctx); if (v) { const sl = SCR.rate[k][di]; for (let q = 0; q < sl.length; q += 2) VAL[sl[q]] -= v * sl[q + 1]; } });
+      IR.jac.dFactor[j].forEach((d, di) => { const v = TAPE.evalTape(d.t, N, 1, tctx) * g; if (v) { const sl = SCR.factor[k][di]; for (let q = 0; q < sl.length; q += 2) VAL[sl[q]] -= v * sl[q + 1]; } });
     }
     const d0 = 1 / (ROD.g * h);
-    for (let k = 0; k < nA; k++) LU[k * nA + k] += d0;
-    // 부분 피벗 LU (제자리)
-    for (let c = 0; c < nA; c++) {
-      let p = c; for (let r = c + 1; r < nA; r++) if (Math.abs(LU[r * nA + c]) > Math.abs(LU[p * nA + c])) p = r;
-      piv[c] = p;
-      if (p !== c) for (let k = 0; k < nA; k++) { const t = LU[c * nA + k]; LU[c * nA + k] = LU[p * nA + k]; LU[p * nA + k] = t; }
-      const dg = LU[c * nA + c]; if (Math.abs(dg) < 1e-300) return false;
-      for (let r = c + 1; r < nA; r++) { const fr = LU[r * nA + c] / dg; LU[r * nA + c] = fr; if (fr !== 0) for (let k = c + 1; k < nA; k++) LU[r * nA + k] -= fr * LU[c * nA + k]; }
+    for (let k = 0; k < nA; k++) VAL[SCR.diag[k]] += d0;
+    for (let r = 0; r < nA; r++) {
+      const a = RP[r], b = RP[r + 1];
+      let rmax = 0;
+      for (let p = a; p < b; p++) { WRK[CL[p]] = VAL[p]; rmax = Math.max(rmax, Math.abs(VAL[p])); }
+      for (let p = a; p < b; p++) {
+        const k = CL[p]; if (k >= r) break;
+        const l = WRK[k] / VAL[DP[k]]; WRK[k] = l;
+        if (l !== 0) for (let q = DP[k] + 1; q < RP[k + 1]; q++) WRK[CL[q]] -= l * VAL[q];
+      }
+      for (let p = a; p < b; p++) VAL[p] = WRK[CL[p]];
+      if (!(Math.abs(VAL[DP[r]]) >= CP.pivot_rel * rmax)) return false;
     }
     return true;
   };
   const luSolve = (x) => {
-    for (let c = 0; c < nA; c++) { const p = piv[c]; if (p !== c) { const t = x[c]; x[c] = x[p]; x[p] = t; } }
-    for (let c = 0; c < nA; c++) { const v = x[c]; if (v !== 0) for (let r = c + 1; r < nA; r++) x[r] -= LU[r * nA + c] * v; }
-    for (let c = nA - 1; c >= 0; c--) { let s = x[c]; for (let k = c + 1; k < nA; k++) s -= LU[c * nA + k] * x[k]; x[c] = s / LU[c * nA + c]; }
+    for (let r = 0; r < nA; r++) YS[r] = x[PERM[r]];
+    for (let r = 0; r < nA; r++) { let s = YS[r]; for (let p = RP[r]; p < DP[r]; p++) s -= VAL[p] * YS[CL[p]]; YS[r] = s; }
+    for (let r = nA - 1; r >= 0; r--) { let s = YS[r]; for (let p = DP[r] + 1; p < RP[r + 1]; p++) s -= VAL[p] * YS[CL[p]]; YS[r] = s / VAL[DP[r]]; }
+    for (let r = 0; r < nA; r++) x[PERM[r]] = YS[r];
   };
   const plusS = (N, x, out) => { for (let i = 0; i < nB; i++) { let v = N[i]; for (const [k, c] of SA[i]) v += c * x[k]; out[i] = v; } };
   // 시도 단계 하나: 성공하면 오차 노름(≤ 1), 실패하면 -1(음수) 또는 오차 노름(> 1), 특이 행렬은 Infinity — xn 에 진행량

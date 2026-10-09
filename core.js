@@ -5,9 +5,9 @@
 //   시뮬레이션은 원자료(raw facts)만 내고, 감사·사후 분석·판정은 사법부(judicial/)가, 병합·기록은 입법부(legislative/)가 한다.
 //   공유 형식·정규화·색인은 model.js 에서 읽는다.
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./vocab.js'), require('./model.js'));
-  else root.DefDB = factory(root.DefDBVocab, root.DefDBModel);
-})(typeof self !== 'undefined' ? self : this, function (V, M) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./vocab.js'), require('./model.js'), require('./compiler/rate_ir.js'));
+  else root.DefDB = factory(root.DefDBVocab, root.DefDBModel, root.DefDBRateIR);
+})(typeof self !== 'undefined' ? self : this, function (V, M, RIR) {
   'use strict';
   const {
     NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
@@ -530,7 +530,6 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       const own = new Map([...ins].filter(([b]) => !res.has(b)));
       react.set(sid, { st, rule, k: k && vol ? k : null, kin0: k, V: vol ? vol.L : null, loc: loc3, ins, outs, lawIns, lawOuts, own });
     }
-    const conc = (b, Vr) => Math.max(0, N.get(b) || 0) / (NA * Vr);
     // --- 질량 감사 준비: 묶음 → 기본 실체 벡터, 실체 → 부분 구조
     const vecCache = new Map();
     const vec = (b) => { if (!vecCache.has(b)) { const t = {}; entityTally(db, b.split('|')[0], featsOf(b), 1, t, null); vecCache.set(b, t); } return vecCache.get(b); };
@@ -560,124 +559,173 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     Object.assign(ent0, totals()); Object.assign(moi0, toMoi(ent0));
     // 원장: 묶음별 Δ (반응·공급·분해·재활용), 실체별 생성·소멸(분해·재활용·교환), 부분 구조 경로(공유 결합·계 밖 공급·소실·재활용)
     const ledger = {}, created = {}, destroyed = {}, chan = { covalent: {}, source: {}, lost: {}, recycle: {}, violation: {} };
-    const L1 = (b, k, v) => { const l = ledger[b] || (ledger[b] = { reaction: 0, supply: 0, degradation: 0, recycle: 0 }); l[k] += v; };
-    const addTo = (o, src, f) => { for (const [k, v] of Object.entries(src)) o[k] = (o[k] || 0) + v * f; };
-    const exIn = {}, exOut = {};
     const series = [], firstReach = {}, resStat = {};
     for (const b of res) if (N.has(b)) resStat[b] = { start: N.get(b), min: N.get(b), max: N.get(b), state: (N.get(b) || 0) >= 1 ? 'ok' : 'empty', source: srcOf[b] || 'bulk', consumers: [], producers: [] };
-    // 기록점마다 상태와 누적 원장의 사본 — 사법부가 이것으로 질량 수지를 독립적으로 다시 계산한다
+    // ===== IR (3단계, compiler/rate_ir.js): 조립한 계를 정수 번호 표로 — 루프는 Float64Array 상태 위에서 같은 산술 순서로 돈다 =====
+    const modsOf = (ref) => (modIndex.get(ref) || []).map((m) => { const vol = volOf(m.rule.at); return { b: `${m.owner}|${m.rule.at}`, effect: m.rule.effect, kin: kinOf(m.ref), V: vol ? vol.L : null, ref: m.ref }; });
+    const IR = RIR.lowerRate({
+      keys: [...N.keys()], nInit: N.size, res,
+      steps: ids.map((sid) => { const x = react.get(sid); return { sid, agents: x.st.agents.map((p) => p.b), ins: x.ins, outs: x.outs, lawIns: x.lawIns, lawOuts: x.lawOuts, own: x.own, law: x.k ? x.k.law : null, k: x.k, V: x.V, mods: x.k ? modsOf(x.st.rule) : [] }; }),
+      sups: sup.map((s) => ({ ref: s.ref, active: !!(s.k && s.V), law: s.k ? s.k.law : null, k: s.k, V: s.V, source: !!s.rule.source, cons: s.rule.consumes.map((q) => ({ b: `${q.ref}|${s.loc}`, n: q.n, sat: q.saturating })), prods: s.rule.produces.map((q) => ({ b: `${q.ref}|${s.loc}`, n: q.n })), mods: modsOf(s.ref) })),
+      degrs: degr.map((g) => ({ ref: g.ref, b: g.b, k: g.k, lost: g.rule.fate === 'lost', rec: g.rec, mods: modsOf(g.ref) })),
+    });
+    const KEYS = IR.keys, nB = KEYS.length, isRes = IR.isRes;
+    const NN = new Float64Array(nB), present = new Uint8Array(nB), order = [];
+    for (let i = 0; i < IR.nInit; i++) { NN[i] = N.get(KEYS[i]) || 0; present[i] = 1; order.push(i); }
+    const setN = (i, v) => { NN[i] = v; if (!present[i]) { present[i] = 1; order.push(i); } }; // Map 의 삽입 순서를 그대로 (기록·끝 상태의 키 순서)
+    const cN = (i, Vr) => Math.max(0, NN[i]) / (NA * Vr);
+    const modF = (mods) => { let f = 1; for (const m of mods) { if (!m.kin) { modGaps.add(m.ref); continue; } f *= hillFactor(m.effect, m.kin, m.V ? Math.max(0, NN[m.i]) / (NA * m.V) : 0); } return f; };
+    // 묶음별 Δ 원장: 표 4 칸(반응·공급·분해·재활용) — 처음 건드린 순서를 적어 두었다가 끝에 같은 키 순서의 객체로
+    const LED = new Float64Array(4 * nB), ledTouched = new Uint8Array(nB), ledOrder = [];
+    const L1 = (i, k, v) => { if (!ledTouched[i]) { ledTouched[i] = 1; ledOrder.push(i); } LED[4 * i + k] += v; };
+    const reached = new Uint8Array(nB);
+    const reach = (i, t) => { if (!reached[i]) { reached[i] = 1; if (firstReach[KEYS[i]] == null) firstReach[KEYS[i]] = t; } };
+    const addTo = (o, src, f) => { for (const [k, v] of Object.entries(src)) o[k] = (o[k] || 0) + v * f; };
+    const exIn = {}, exOut = {};
     const snap = (o) => Object.assign({}, o);
-    const record = (t) => series.push({ t, N: Object.fromEntries([...N].filter(([b]) => finite || !res.has(b))),
-      ledger: { created: snap(created), destroyed: snap(destroyed), exIn: snap(exIn), exOut: snap(exOut), covalent: snap(chan.covalent), source: snap(chan.source), lost: snap(chan.lost), recycle: snap(chan.recycle), violation: snap(chan.violation) } });
+    const record = (t) => { const o = {}; for (const i of order) if (finite || !isRes[i]) o[KEYS[i]] = NN[i]; series.push({ t, N: o,
+      ledger: { created: snap(created), destroyed: snap(destroyed), exIn: snap(exIn), exOut: snap(exOut), covalent: snap(chan.covalent), source: snap(chan.source), lost: snap(chan.lost), recycle: snap(chan.recycle), violation: snap(chan.violation) } }); };
     const ev = (e) => { if (events.length < 200) events.push(e); };
-    const stalls = {}, stiff = {};
+    const stalls = {}, stiffA = new Float64Array(ids.length), stiffOrder = [];
     record(0);
     const steps = Math.ceil(opt.t_end / opt.dt), every = opt.trace === 'full' ? 1 : Math.max(1, Math.floor(steps / 200));
     // 단계 순환(예: 시트르산 회로): 저장소가 아닌 비가산 묶음으로 한 단계의 출력이 다음 단계의 입력이 되는 고리 — 강하게 연결된 성분
     const SG = new Map();
     for (const a of ids) for (const b of ids) if (a !== b && react.get(a).st.outputs.some((p) => !p.minor && !res.has(p.b) && react.get(b).st.inputs.some((q) => !q.minor && q.b === p.b))) { if (!SG.has(a)) SG.set(a, new Set()); SG.get(a).add(b); }
     const stepCycles = sccs(SG).filter((c) => c.length > 1).map((c) => ids.filter((x) => c.includes(x)));
-    const cum = {}; // 단계별 누적 진행량 (정방향 − 역방향)
-    const turns = (c) => Math.min(...c.map((sid) => cum[sid] || 0)); // 회로 한 바퀴 = 모든 단계가 한 번씩
-    const cycleSteps = new Set(stepCycles.flat()), watch = cycleSteps.size ? cycleSteps : new Set(ids);
+    const sidAt = new Map(ids.map((s, j) => [s, j]));
+    const cumA = new Float64Array(ids.length), fired = new Uint8Array(ids.length); // 단계별 누적 진행량 (정방향 − 역방향)
+    const cycJ = stepCycles.map((c) => c.map((s) => sidAt.get(s)));
+    const cycleSteps = new Set(stepCycles.flat()), watch = cycleSteps.size ? cycleSteps : new Set(ids), watchJ = [...watch].map((s) => sidAt.get(s));
     // 소멸(정지) 감지: 창(window) 동안 회로가 1 바퀴도(회로가 없으면 단계 진행량 합이 1 분자도) 돌지 못하면 정지. until_death 면 그때 멈춘다.
     const untilDeath = opt.until_death != null ? !!opt.until_death : !!sc.until_death;
     const winN = Math.max(1, Math.round((opt.window || sc.window || 1) / opt.dt));
-    const progress = () => (stepCycles.length ? Math.max(...stepCycles.map(turns)) : [...watch].reduce((a, sid) => a + Math.abs(cum[sid] || 0), 0));
-    const hist = [], peak = { rate: 0 }, zeroAt = {}, seenOK = new Set();
+    const progress = () => {
+      if (cycJ.length) { let best = -Infinity; for (const c of cycJ) { let m = Infinity; for (const j of c) m = Math.min(m, cumA[j]); best = Math.max(best, m); } return best; } // 회로 한 바퀴 = 모든 단계가 한 번씩
+      let a = 0; for (const j of watchJ) a = a + Math.abs(cumA[j]); return a;
+    };
+    const ring = new Float64Array(winN + 1); let hN = 0, hHead = 0; // 진행 기록 (창 길이 + 1 개) — 고리 버퍼
+    const peak = { rate: 0 }, zeroAtT = new Float64Array(nB).fill(NaN), zeroSeq = new Float64Array(nB), seenOK = new Uint8Array(nB);
+    let zSeq = 0;
+    const watchSteps = watchJ.map((j) => IR.steps[j]);
+    const resList = Object.keys(resStat).map((b) => [IR.keys.indexOf(b), b, resStat[b]]);
+    const rMin = Float64Array.from(resList, (x) => x[2].min), rMax = Float64Array.from(resList, (x) => x[2].max); // 최솟값·최댓값은 표에서, 끝에 객체로
     const deathFrac = opt.death_frac != null ? +opt.death_frac : +(sc.death_frac || 0); // 0 이면 '창 동안 1 바퀴 미만'만, >0 이면 '최고 속도의 그 비율 미만'도 정지
     let lastTurn = { n: 0, t: 0 }; // 마지막으로 바퀴(또는 분자) 수가 정수로 늘어난 시각 = 정지 시각의 정밀 값
     let death = null;
+    const Ksat = sc.saturation_K || SAT_K;
+    const stepX = ids.map((sid) => react.get(sid));
+    const unitMoiE = stepX.map((x) => (Object.keys(x.unitMoi).length ? Object.entries(x.unitMoi) : null));
+    const addPairs = (o, list, f) => { for (let q = 0; q < list.length; q++) { const k = list[q][0]; o[k] = (o[k] || 0) + list[q][1] * f; } };
+    // 공급의 실체 Δ 를 미리 펼친 표: dE[e] 를 쌓는 순서(생성 묶음 → 소비 묶음, 묶음마다 실체 순서)와 부분 구조 환산 순서를 그대로 적어 둔다
+    const supE = IR.sups.map((s) => {
+      const slot = new Map(), names = [], ops = [];
+      const put = (b, n, sign) => { for (const [e, c] of Object.entries(vec(KEYS[b]))) { if (!slot.has(e)) { slot.set(e, names.length); names.push(e); } ops.push([slot.get(e), c, n, sign]); } };
+      for (const [b, n] of s.prods) put(b, n, 1);
+      for (const [b, n] of s.cons) put(b, n, -1);
+      const mslot = new Map(), mnames = [], mops = [];
+      names.forEach((e, si) => { for (const [x, k] of Object.entries(moiOfEntity(e))) { if (!mslot.has(x)) { mslot.set(x, mnames.length); mnames.push(x); } mops.push([si, mslot.get(x), k]); } });
+      return { names, chg: names.map((e) => changing.has(e)), oq: Int32Array.from(ops, (o) => o[0]), oc: Float64Array.from(ops, (o) => o[1]), on: Float64Array.from(ops, (o) => o[2]), os: Int8Array.from(ops, (o) => o[3]), val: new Float64Array(names.length), mnames, mops, mval: new Float64Array(mnames.length) };
+    });
     for (let i = 1; i <= steps; i++) {
       const t = +(i * opt.dt).toFixed(9);
       // ① 반응 단계
-      for (const sid of ids) {
-        const x = react.get(sid), { st, k, V: Vr, ins, outs, lawIns, lawOuts, own } = x;
-        if (!st.agents.every((p) => (N.get(p.b) || 0) > 0)) continue;
+      for (let j = 0; j < IR.steps.length; j++) {
+        const S = IR.steps[j], k = S.k, Vr = S.V;
+        const AG = S.agentsB, IB = S.insB, IN = S.insN, OB = S.outsB, ON = S.outsN;
+        let ok = true; for (let q = 0; q < AG.length; q++) if (!(NN[AG[q]] > 0)) { ok = false; break; }
+        if (!ok) continue;
         let xi; // 이번 Δt 의 반응 진행량 (분자 사건 수)
         if (!k) {
           // 즉시: 자기 입력(저장소 아닌 것)이 허락하는 만큼. 그것이 없으면 행위자 수만큼(0차). 저장소는 아래에서 한도로만.
-          xi = own.size ? Math.min(...[...own].map(([b, n]) => (N.get(b) || 0) / n)) : st.agents.length ? Math.min(...st.agents.map((p) => N.get(p.b) || 0)) : 0;
-          if (!finite && !own.size && ins.size) xi = Math.min(...[...ins].map(([b, n]) => (N.get(b) || 0) / n));
+          const WB = S.ownB, WN = S.ownN;
+          if (WB.length) { xi = Infinity; for (let q = 0; q < WB.length; q++) xi = Math.min(xi, NN[WB[q]] / WN[q]); }
+          else if (AG.length) { xi = Infinity; for (let q = 0; q < AG.length; q++) xi = Math.min(xi, NN[AG[q]]); }
+          else xi = 0;
+          if (!finite && !WB.length && IB.length) { xi = Infinity; for (let q = 0; q < IB.length; q++) xi = Math.min(xi, NN[IB[q]] / IN[q]); }
         } else {
-          const prodIn = [...lawIns].reduce((a, [b, n]) => a * conc(b, Vr) ** n, 1), prodOut = [...lawOuts].reduce((a, [b, n]) => a * conc(b, Vr) ** n, 1);
-          const agentC = st.agents.reduce((a, p) => a * conc(p.b, Vr), 1);
+          let prodIn = 1, prodOut = 1, agentC = 1;
+          for (let q = 0; q < S.lawInsB.length; q++) prodIn = prodIn * cN(S.lawInsB[q], Vr) ** S.lawInsN[q];
+          for (let q = 0; q < S.lawOutsB.length; q++) prodOut = prodOut * cN(S.lawOutsB[q], Vr) ** S.lawOutsN[q];
+          for (let q = 0; q < AG.length; q++) agentC = agentC * cN(AG[q], Vr);
           let v = 0; // M/s
           if (k.law === 'mass_action') v = k.k * prodIn * agentC - (k.reversible && k.k_r ? k.k_r * prodOut : 0);
           else if (k.law === 'binding') { const kon = k.k_on || (k.k_off && k.Kd ? k.k_off / k.Kd : 0), koff = k.k_off || (k.k_on && k.Kd ? k.k_on * k.Kd : 0); v = kon * prodIn - koff * prodOut; }
-          else if (k.law === 'michaelis_menten') { const S = [...lawIns][0]; const s0 = S ? conc(S[0], Vr) : 1; v = k.kcat * agentC * s0 / (k.Km + s0); }
-          xi = v * modFactor(st.rule) * NA * Vr * opt.dt;
+          else if (k.law === 'michaelis_menten') { const s0 = S.lawInsB.length ? cN(S.lawInsB[0], Vr) : 1; v = k.kcat * agentC * s0 / (k.Km + s0); }
+          xi = v * modF(S.mods) * NA * Vr * opt.dt;
         }
         const want = xi;
         // 적분 안정성: 속도 법칙 단계가 한 Δt 에 소비하려 한 입력의 비율 (오일러 적분은 이 비율이 작아야 믿을 수 있음)
-        if (k && xi > 0 && ins.size) { const f = Math.max(...[...ins].map(([b, n]) => (n * xi) / Math.max(N.get(b) || 0, 1e-12))); if (f > (stiff[sid] || 0)) stiff[sid] = f; }
-        if (xi > 0) xi = Math.min(xi, ...[...ins].map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
-        else if (xi < 0) xi = -Math.min(-xi, ...[...outs].map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
+        if (k && xi > 0 && IB.length) { let f = -Infinity; for (let q = 0; q < IB.length; q++) f = Math.max(f, (IN[q] * xi) / Math.max(NN[IB[q]], 1e-12)); if (f > stiffA[j]) { if (!stiffA[j]) stiffOrder.push(j); stiffA[j] = f; } }
+        if (xi > 0) { for (let q = 0; q < IB.length; q++) xi = Math.min(xi, Math.max(0, NN[IB[q]]) / IN[q]); }
+        else if (xi < 0) { let m = -xi; for (let q = 0; q < OB.length; q++) m = Math.min(m, Math.max(0, NN[OB[q]]) / ON[q]); xi = -m; }
         // 고갈: 하고 싶었지만 저장소가 모자라 못 한 것
         if (finite && want > 0 && xi < want * (1 - 1e-9)) {
-          const by = [...ins].filter(([b, n]) => res.has(b) && (N.get(b) || 0) / n <= xi + 1e-12).map(([b]) => b);
-          if (by.length) { if (!stalls[sid]) stalls[sid] = { t, by }; once(`stall:${sid}:${by.join()}:${resStat[by[0]] ? resStat[by[0]].episodes || 0 : 0}`, () => ev({ t, type: 'stalled', step: sid, by })); }
+          const by = S.ins.filter(([b, n]) => isRes[b] && NN[b] / n <= xi + 1e-12).map(([b]) => KEYS[b]);
+          if (by.length) { const sid = S.sid; if (!stalls[sid]) stalls[sid] = { t, by }; once(`stall:${sid}:${by.join()}:${resStat[by[0]] ? resStat[by[0]].episodes || 0 : 0}`, () => ev({ t, type: 'stalled', step: sid, by })); }
         }
         if (!xi) continue;
+        const x = stepX[j], st = x.st;
         if (!finite) {
           for (const p of st.inputs) if (res.has(p.b)) addVec(xi > 0 ? exIn : exOut, p.b, (p.n || 1) * Math.abs(xi));
           for (const p of st.outputs) if (res.has(p.b)) addVec(xi > 0 ? exOut : exIn, p.b, (p.n || 1) * Math.abs(xi));
         }
-        for (const [b, n] of ins) { N.set(b, (N.get(b) || 0) - n * xi); L1(b, 'reaction', -n * xi); }
-        for (const [b, n] of outs) { N.set(b, (N.get(b) || 0) + n * xi); L1(b, 'reaction', n * xi); if (xi > 0 && N.get(b) >= 1 && firstReach[b] == null) firstReach[b] = t; }
-        cum[sid] = (cum[sid] || 0) + xi;
-        if (firstFire[sid] == null) firstFire[sid] = t; // 첫 발화 시각 (국소 수지 판정은 사법부가 이 시각과 화학량으로)
+        for (let q = 0; q < IB.length; q++) { const b = IB[q], n = IN[q]; setN(b, NN[b] - n * xi); L1(b, 0, -n * xi); }
+        for (let q = 0; q < OB.length; q++) { const b = OB[q], n = ON[q]; setN(b, NN[b] + n * xi); L1(b, 0, n * xi); if (xi > 0 && NN[b] >= 1) reach(b, t); }
+        cumA[j] = cumA[j] + xi;
+        if (!fired[j]) { fired[j] = 1; firstFire[S.sid] = t; } // 첫 발화 시각 (국소 수지 판정은 사법부가 이 시각과 화학량으로)
         // 부분 구조 원장: 공유 결합 수식은 '공유 결합' 경로, 그 밖의 한 번당 변화는 '규칙 밖' 경로에 적는다 (판정 아님 — 장부)
-        if (finite && Object.keys(x.unitMoi).length) addTo(x.covalent ? chan.covalent : chan.violation, x.unitMoi, xi);
+        if (finite && unitMoiE[j]) addPairs(x.covalent ? chan.covalent : chan.violation, unitMoiE[j], xi);
       }
       // ② 공급 규칙 (대사물 저장소 재생·합성)
-      for (const s of sup) {
-        if (!s.k || !s.V) continue;
-        const cons = s.rule.consumes.map((q) => [`${q.ref}|${s.loc}`, q.n]), prods = s.rule.produces.map((q) => [`${q.ref}|${s.loc}`, q.n]);
-        const Ksat = sc.saturation_K || SAT_K;
-        let v = s.k.law === 'zero_order' ? s.k.k : s.k.law === 'mass_action' ? s.k.k * s.rule.consumes.reduce((a, q) => { const c = conc(`${q.ref}|${s.loc}`, s.V); return a * (q.saturating ? c / (c + Ksat) : c ** q.n); }, 1) : 0;
-        let xi = v * modFactor(s.ref) * NA * s.V * opt.dt;
-        if (cons.length) xi = Math.min(xi, ...cons.map(([b, n]) => Math.max(0, N.get(b) || 0) / n));
+      for (let si = 0; si < IR.sups.length; si++) {
+        const s = IR.sups[si];
+        if (!s.active) continue;
+        let v = 0;
+        if (s.law === 'zero_order') v = s.k.k;
+        else if (s.law === 'mass_action') { let p = 1; for (let q = 0; q < s.consB.length; q++) { const c = cN(s.consB[q], s.V); p = p * (s.consSat[q] ? c / (c + Ksat) : c ** s.consN[q]); } v = s.k.k * p; }
+        let xi = v * modF(s.mods) * NA * s.V * opt.dt;
+        for (let q = 0; q < s.consB.length; q++) xi = Math.min(xi, Math.max(0, NN[s.consB[q]]) / s.consN[q]);
         if (!(xi > 0)) continue;
-        for (const [b, n] of cons) { N.set(b, N.get(b) - n * xi); L1(b, 'supply', -n * xi); }
-        for (const [b, n] of prods) { N.set(b, (N.get(b) || 0) + n * xi); L1(b, 'supply', n * xi); if (N.get(b) >= 1 && firstReach[b] == null && !res.has(b)) firstReach[b] = t; }
+        for (let q = 0; q < s.consB.length; q++) { const b = s.consB[q], n = s.consN[q]; setN(b, NN[b] - n * xi); L1(b, 1, -n * xi); }
+        for (let q = 0; q < s.prodsB.length; q++) { const b = s.prodsB[q], n = s.prodsN[q]; setN(b, NN[b] + n * xi); L1(b, 1, n * xi); if (NN[b] >= 1 && !isRes[b]) reach(b, t); }
         // 실체: 공급의 화학 실체는 changing. 공급이 만든 비화학 실체(합성된 단백질 등)는 생성 원장에
-        const dE = {}; for (const [b, n] of prods) addVec(dE, b, n * xi); for (const [b, n] of cons) addVec(dE, b, -n * xi);
-        for (const [en, val] of Object.entries(dE)) if (!changing.has(en)) { if (val > 0) created[en] = (created[en] || 0) + val; else destroyed[en] = (destroyed[en] || 0) - val; }
-        if (s.rule.source && finite) addTo(chan.source, toMoi(dE), 1);
+        const E = supE[si], val = E.val; val.fill(0);
+        for (let o = 0; o < E.oq.length; o++) val[E.oq[o]] = val[E.oq[o]] + E.oc[o] * (E.os[o] > 0 ? E.on[o] * xi : -E.on[o] * xi);
+        for (let q = 0; q < val.length; q++) if (!E.chg[q]) { const en = E.names[q], v = val[q]; if (v > 0) created[en] = (created[en] || 0) + v; else destroyed[en] = (destroyed[en] || 0) - v; }
+        if (s.source && finite) { const mv = E.mval; mv.fill(0); for (const [q, m, k] of E.mops) mv[m] = mv[m] + val[q] * k; for (let m = 0; m < mv.length; m++) { const x = E.mnames[m]; chan.source[x] = (chan.source[x] || 0) + mv[m] * 1; } }
       }
       // ③ 분해 규칙 (1차, 결정론 또는 확률적)
-      for (const g of degr) {
+      for (const g of IR.degrs) {
         if (!(g.k > 0)) continue;
-        const n = Math.max(0, N.get(g.b) || 0), p = 1 - Math.exp(-g.k * modFactor(g.ref) * opt.dt);
+        const n = Math.max(0, NN[g.b]), p = 1 - Math.exp(-g.k * modF(g.mods) * opt.dt);
         if (!n) continue;
         const whole = Math.floor(n), frac = n - whole;
         const x = stochastic ? binomial(rand, whole, p) + (frac > 0 && rand() < p ? frac : 0) : n * p;
         if (!(x > 0)) continue;
-        N.set(g.b, n - x); L1(g.b, 'degradation', -x);
-        const gone = {}; addVec(gone, g.b, x); addTo(destroyed, gone, 1);
+        setN(g.b, n - x); L1(g.b, 2, -x);
+        const gone = {}; addVec(gone, KEYS[g.b], x); addTo(destroyed, gone, 1);
         const back = {};
-        for (const q of g.rec) { N.set(q.b, (N.get(q.b) || 0) + q.n * x); L1(q.b, 'recycle', q.n * x); addVec(back, q.b, q.n * x); }
+        for (const [b, m] of g.rec) { setN(b, NN[b] + m * x); L1(b, 3, m * x); addVec(back, KEYS[b], m * x); }
         addTo(created, back, 1);
-        if (finite) { if (g.rule.fate === 'lost') addTo(chan.lost, toMoi(gone), -1); else { addTo(chan.recycle, toMoi(back), 1); addTo(chan.recycle, toMoi(gone), -1); } }
+        if (finite) { if (g.lost) addTo(chan.lost, toMoi(gone), -1); else { addTo(chan.recycle, toMoi(back), 1); addTo(chan.recycle, toMoi(gone), -1); } }
       }
       // ⑤ 고갈·재생 사건 (유한 저장소)
-      if (finite) for (const [b, r] of Object.entries(resStat)) {
-        const n = N.get(b) || 0;
+      if (finite) for (let q = 0; q < resList.length; q++) {
+        const [ri, b, r] = resList[q], n = NN[ri];
         if (n < -1e-9 && negatives[b] == null) negatives[b] = { t, n };
-        r.min = Math.min(r.min, n); r.max = Math.max(r.max, n);
+        rMin[q] = Math.min(rMin[q], n); rMax[q] = Math.max(rMax[q], n);
         if (r.state === 'ok' && n < 1) { r.state = 'exhausted'; r.episodes = (r.episodes || 0) + 1; r.firstExhausted = r.firstExhausted != null ? r.firstExhausted : t; r.lastExhausted = t; ev({ t, type: 'exhausted', bundle: b }); }
         else if (r.state === 'exhausted' && n >= Math.max(2, 0.01 * r.start)) { r.state = 'ok'; r.regenerated = (r.regenerated || 0) + 1; ev({ t, type: 'regenerated', bundle: b }); }
         else if (r.state === 'empty' && n >= 1) r.state = 'ok'; // 처음부터 비어 있던 산물 저장소가 채워짐 (재생 사건 아님)
       }
       // ⑥ 정지 감지: 창 길이 동안의 진행이 1 바퀴(또는 1 분자) 미만. 감시 단계의 입력이 1 분자 아래로 처음 내려간 시각도 기록
-      for (const sid of watch) for (const [b, n] of react.get(sid).ins) { const v = N.get(b) || 0; if (v >= n) { seenOK.add(b); delete zeroAt[b]; } else if (seenOK.has(b) && zeroAt[b] == null) zeroAt[b] = t; } // 지금도 0 인 것만 남는다 (일시적 0 은 지움)
+      for (const S of watchSteps) for (let q = 0; q < S.insB.length; q++) { const b = S.insB[q], n = S.insN[q], v = NN[b]; if (v >= n) { seenOK[b] = 1; zeroAtT[b] = NaN; } else if (seenOK[b] && Number.isNaN(zeroAtT[b])) { zeroAtT[b] = t; zeroSeq[b] = ++zSeq; } } // 지금도 0 인 것만 남는다 (일시적 0 은 지움)
       const pg = progress();
       if (Math.floor(pg + 1e-9) > lastTurn.n) lastTurn = { n: Math.floor(pg + 1e-9), t };
-      hist.push(pg);
-      if (hist.length > winN + 1) hist.shift();
-      if (hist.length > winN) {
-        const moved = hist[hist.length - 1] - hist[0], rate = moved / (winN * opt.dt);
+      ring[(hHead + hN) % (winN + 1)] = pg; if (hN < winN + 1) hN++; else hHead = (hHead + 1) % (winN + 1);
+      if (hN > winN) {
+        const moved = ring[(hHead + hN - 1) % (winN + 1)] - ring[hHead], rate = moved / (winN * opt.dt);
         peak.rate = Math.max(peak.rate, rate);
         // 시동 중(아직 창당 1 바퀴도 돈 적 없음)에는 정지로 보지 않는다
         const stalled = peak.rate * winN * opt.dt >= 1 && (moved < 1 || (deathFrac > 0 && rate < deathFrac * peak.rate));
@@ -690,12 +738,21 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       if (i % every === 0 || i === steps) record(t);
       if (untilDeath && death) { if (i % every !== 0) record(t); break; }
     }
+    // 표 → 원자료의 이름 키 객체 (키 순서는 예전 Map·객체와 같게)
+    N.clear(); for (const i of order) N.set(KEYS[i], NN[i]);
+    resList.forEach(([, , r], q) => { r.min = rMin[q]; r.max = rMax[q]; });
+    for (const i of ledOrder) ledger[KEYS[i]] = { reaction: LED[4 * i], supply: LED[4 * i + 1], degradation: LED[4 * i + 2], recycle: LED[4 * i + 3] };
+    const conc = (b, Vr) => Math.max(0, N.get(b) || 0) / (NA * Vr);
+    const cum = {}; for (const sid of Object.keys(firstFire)) cum[sid] = cumA[sidAt.get(sid)];
+    const stiff = {}; for (const j of stiffOrder) stiff[ids[j]] = stiffA[j];
+    const zeroAt = {}; for (const i of [...Array(nB).keys()].filter((i) => !Number.isNaN(zeroAtT[i])).sort((a, b) => zeroSeq[a] - zeroSeq[b])) zeroAt[KEYS[i]] = zeroAtT[i];
     // 끝 시점 감시 단계의 정·역 흐름 (사후 분석의 평형 판단 재료)
     const endFlux = {};
     for (const sid of watch) { const x = react.get(sid), k = x.k; if (!k || k.law !== 'mass_action' || !k.reversible || !k.k_r) continue; endFlux[sid] = { f: k.k * [...x.lawIns].reduce((a, [b2, n]) => a * conc(b2, x.V) ** n, 1) * x.st.agents.reduce((a, p2) => a * conc(p2.b, x.V), 1), r: k.k_r * [...x.lawOuts].reduce((a, [b2, n]) => a * conc(b2, x.V) ** n, 1) }; }
     for (const [b, r] of Object.entries(resStat)) r.end = N.get(b);
     return { ids, cell, mode, finite, stochastic, scenario: sc.name || null, hypothetical: !!sc.hypothetical, series, firstReach, firstFire, final: Object.fromEntries(N), facts, kineticGaps, kinUsed, react, ix, t_end: opt.t_end, dt: opt.dt, bulk: opt.bulk,
       reservoirSet: [...res], reservoirs: resStat, ledger, events, stalls, negatives, stiff, endFlux, targets: tg.ids,
+      irHash: IR.hash, // 먹은 IR(compiler/rate_ir.js)의 해시
       supplies: sup.map((s) => ({ ref: s.ref, owner: s.owner, loc: s.loc, V: s.V, active: !!(s.k && s.V), law: s.k ? s.k.law : null, src: s.k ? s.k.src : null, kin: s.k, consumes: s.rule.consumes.map((q) => `${q.ref}|${s.loc}`), produces: s.rule.produces.map((q) => `${q.ref}|${s.loc}`) })),
       degradations: degr.map((g) => ({ bundle: g.b, ref: g.ref, k_deg: g.k, fate: g.rule.fate, src: g.kin ? g.kin.src : null, recycle: g.rec.map((q) => q.b) })),
       created, destroyed, exIn, exOut, channels: chan, chemical: [...changing], stepCycles, cum, watch: [...watch], zeroAt, lastTurn, death, peakRate: peak.rate, deathFrac, approx: [...approx], modulationGaps: [...modGaps] };

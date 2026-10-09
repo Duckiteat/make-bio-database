@@ -25,6 +25,7 @@
     { key: 'safety', scenario: 'integrator.safety', default: 0.9, unit: '1', meaning: '단계 갱신 h·safety·err^(−1/3) 의 안전 계수', layer: 'numerics' },
     { key: 'fac_min', scenario: 'integrator.fac_min', default: 0.2, unit: '1', meaning: '한 번에 줄이는 단계 배율 하한', layer: 'numerics' },
     { key: 'fac_max', scenario: 'integrator.fac_max', default: 5, unit: '1', meaning: '한 번에 늘리는 단계 배율 상한 (거부 직후에는 1)', layer: 'numerics' },
+    { key: 'pivot_rel', scenario: 'integrator.pivot_rel', default: 1e-12, unit: '1', meaning: '희소 LU 정적 피벗 문턱 — |u_rr| < 이 값 × 행 최대 |M| 이면 특이로 보고 단계 거부 (h 가 줄어 대각 1/(γh) 이 커짐)', layer: 'numerics' },
     { key: 'neg_shrink', scenario: 'integrator.neg_shrink', default: 0.25, unit: '1', meaning: '음수 상태로 거부된 단계의 축소 배율 (양수성)', layer: 'numerics' },
   ];
 

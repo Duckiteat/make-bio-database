@@ -90,7 +90,7 @@
   - 포화 정칙화 `saturation_K`
   - 결정 탐침 horizon/coarse
   - 힐 기울기 하한 `hill_s_floor`
-  - 결합 Rodas3 단계 제어 `integrator.*` (rtol·atol·h0·h_min·안전 계수·배율 한계·음수 축소)
+  - 결합 Rodas3 단계 제어 `integrator.*` (rtol·atol·h0·h_min·안전 계수·배율 한계·음수 축소·희소 LU 피벗 문턱)
 - 엔진은 `COUPLING.resolve(scenario, params)` 의 결과만 읽는다. 해석 순서는 시나리오 → 데이터(params) → 기본값이다.
 - 데이터 층으로 옮길 때는 조정자가 `simulateFate(db, id, { coupling: params })` 로 넘기면 되고, 엔진 코드는 바뀌지 않는다.
 - 시험(⑥)이 엔진에 기본값이 박혀 있지 않은지 본다.

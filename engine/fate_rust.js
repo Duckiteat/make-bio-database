@@ -18,7 +18,7 @@ function pack(a) {
   const nB = IR.keys.length, nR = IR.rules.length, nA = IR.jac.active.length, out = [];
   const P = (...x) => { for (const v of x) out.push(+v); };
   const tapes = (list) => { P(list.length); for (const x of list) P(x.i, x.t.length, ...x.t); };
-  P(2, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, 6.02214076e23, recordEvery);
+  P(3, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, 6.02214076e23, recordEvery);
   for (let i = 0; i < nB; i++) P(N0[i]);
   for (const s of IR.species) P(s.V);
   for (const s of IR.species) P(s.buf == null ? Infinity : s.buf);
@@ -33,6 +33,10 @@ function pack(a) {
   for (let i = 0; i < nB; i++) { const s = IR.jac.S[i]; P(s.length); for (const [k, c] of s) P(k, c); }
   for (const s of sched) { P(s.i, s.list.length); for (const e of s.list) P(e.t, e.n); }
   P(...reservoirs);
+  // 3단계 희소 LU: 활성 규칙마다 대각 위치와 도함수 항별 [위치, 화학량] 목록, 그다음 패턴(순서·행 시작·열·대각 위치)
+  const SC = IR.jac.scatter, LU = IR.jac.lu;
+  for (let k = 0; k < nA; k++) { P(SC.diag[k]); for (const lists of [SC.rate[k], SC.factor[k]]) for (const l of lists) P(l.length / 2, ...l); }
+  P(LU.nnz, ...LU.perm, ...LU.rowPtr, ...LU.col, ...LU.diagPos);
   return Float64Array.from(out);
 }
 

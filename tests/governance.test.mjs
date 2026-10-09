@@ -51,6 +51,7 @@ test('② 행정부 결과에는 판결 필드가 없다 (원자료만)', () => 
   const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/lps-hypothetical.json'), 'utf8'));
   const pid = Object.keys(BASE.senses).find((k) => BASE.senses[k].kind === 'pathway' && /TLR4|LPS/.test(JSON.stringify(BASE.terms[BASE.senses[k].term])));
   const r = C.simulateRate(BASE, pid, { scenario: sc, t_end: 1, dt: 0.01 });
+  assert.match(r.irHash, /^[0-9a-f]{64}$/, '경로 시뮬레이션도 IR(compiler/rate_ir.js) 위에서 돈다');
   for (const k of ['audit', 'postMortem', 'cycles']) assert.ok(!(k in r), `simulateRate.${k}`);
   assert.ok(Array.isArray(r.facts) && r.series[1].ledger, '원자료: 사실·기록점 원장');
   const fsc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json'), 'utf8')); fsc.t_end = 2 * 3600;
@@ -179,6 +180,11 @@ test('⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사�
   const bad = JSON.parse(JSON.stringify(ir)); const t = bad.jac.dRate[bad.jac.active.find((j) => bad.jac.dRate[j].length)][0].t; t[1] = t[1] * (1 + 1e-9); bad.hash = IRB.irHash(bad);
   const vb = DV.verifyIR(BASE, bad, sc);
   assert.ok(vb.hashOK && !vb.ok && vb.derivWorst > 1e-14, '조작된 도함수는 잡힌다');
+  // 희소 LU (3단계): 패턴 검사 통과 · 값 위치를 하나 바꾸면 해시를 다시 맞춰도 사법부가 잡는다 · 밀집보다 연산이 적다
+  assert.ok(v.lu.problems.length === 0 && v.lu.checked > 0 && ir.jac.lu.flops < ir.jac.lu.denseFlops, JSON.stringify(v.lu));
+  const badLU = JSON.parse(JSON.stringify(ir)); const sl = badLU.jac.scatter.rate.find((x) => x.length && x[0].length)[0]; sl[0] = (sl[0] + 1) % badLU.jac.lu.nnz; badLU.hash = IRB.irHash(badLU);
+  const vl = DV.verifyIR(BASE, badLU, sc);
+  assert.ok(vl.hashOK && !vl.ok && vl.lu.problems.some((m) => /값 위치/.test(m)), JSON.stringify(vl.lu));
   // 해시를 다시 계산하지 않은 변조 → 해시 불일치
   const bad2 = JSON.parse(JSON.stringify(ir)); bad2.rules[0].Vr *= 2;
   assert.ok(!DV.verifyIR(BASE, bad2, sc).hashOK);

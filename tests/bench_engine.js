@@ -77,6 +77,14 @@ function run() {
   console.log('| 시나리오 | 본 실행 | 탐침 1 → N lanes | 배수 | 전체 1 → N lanes | 배수 | 탐침 수 | 라운드 1 → N | 결정 시각 같음 |');
   console.log('|---|---|---|---|---|---|---|---|---|');
   for (const r of lr) console.log(`| ${r.name} | ${f(r.main)} | ${f(r.probe1)} → ${f(r.probeN)} | ${f(r.probe1 / r.probeN, 1)}× | ${f(r.full1)} → ${f(r.fullN)} | ${f(r.full1 / r.fullN, 1)}× | ${r.probes} | ${r.rounds1} → ${r.roundsN} | ${r.same} |`);
+  // 3단계: 희소 LU 연산 수 (기호 분석이 세는 값 — 운명 IR 실제 패턴, 그리고 같은 구조를 키운 합성 패턴: 사슬 + 띄엄띄엄 되먹임)
+  const SLU = require('../compiler/sparse_lu.js'), IRB = require('../compiler/ir_builder.js');
+  const irL = IRB.buildFateIR(db, 'D000174', scen('fate-mixed-optimal-hypothetical.json')).jac.lu;
+  console.log('\n3단계 — 희소 LU (Rodas3 선형 단, 분해 한 번의 곱셈·덧셈 수)');
+  console.log('| 패턴 | nA | 0 아닌 칸 | LU 뒤 칸 (채움) | 희소 분해 | 밀집 분해 | 배수 |');
+  console.log('|---|---|---|---|---|---|---|');
+  console.log(`| 운명 IR (mixed-optimal) | ${irL.perm.length} | ${irL.nnzA} | ${irL.nnz} | ${irL.flops} | ${irL.denseFlops} | ${f(irL.denseFlops / irL.flops)}× |`);
+  for (const n of [50, 200, 800]) { const rows = Array.from({ length: n }, (_, k) => [...new Set([k, k > 0 ? k - 1 : k, k + 1 < n ? k + 1 : k, (k * 7 + 3) % n])].sort((a, b) => a - b)); const L = SLU.symbolic(n, rows); console.log(`| 합성 (사슬 + 되먹임) | ${n} | ${L.nnzA} | ${L.nnz} | ${L.flops} | ${L.denseFlops} | ${f(L.denseFlops / L.flops)}× |`); }
   console.log('\nsimulateRate');
   console.log('| 경로 | Δt 단계 | 준비 ms | 루프 ms | 단계당 µs |');
   console.log('|---|---|---|---|---|');

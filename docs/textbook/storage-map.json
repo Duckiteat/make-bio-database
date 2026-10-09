@@ -116,6 +116,28 @@
       "refactor_strategy": "순수 함수 유지. 도함수는 기호 미분으로만(수치 섭동 금지). 속도 법칙을 바꾸면 tape 명세·judicial/derivative.js 의 법칙 재구성을 같은 커밋에서."
     },
     {
+      "path": "compiler/rate_ir.js",
+      "class": "law",
+      "format": "UMD JavaScript",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "core.js simulateRate",
+      "interpret": "[공유·컴파일러] 3단계 — 경로 속도 시뮬레이션의 조립 결과(단계·공급·분해·조절·저장소)를 정수 번호 표(평평한 형식 배열)로 낮춘다. 원자료 irHash 의 출처. 쓰기·판정 없음.",
+      "node": "COMPILER_RATE_IR",
+      "governance": "Shared",
+      "refactor_strategy": "묶음 번호의 앞 nInit 개는 시작 상태의 키 순서 그대로(원자료 키 순서). 표를 바꾸면 simulateRate 결과가 이전과 비트 단위로 같은지(감사 코드·사후 분석 포함) 확인한다."
+    },
+    {
+      "path": "compiler/sparse_lu.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "compiler/ir_builder.js, tests/bench_engine.js",
+      "interpret": "[공유·컴파일러] 3단계 — 결합 Rodas3 선형 단 M = I/(γh) − J 의 희소 LU 기호 분석: 최소 차수 순서·행 소거 채움·값 위치·연산 수. 엔진(JS·Rust)은 이 패턴의 값 배열만 다룬다.",
+      "node": "COMPILER_SPARSE_LU",
+      "governance": "Shared",
+      "refactor_strategy": "결정론 유지(같은 차수면 작은 번호). 패턴을 바꾸면 judicial/derivative.js checkLU(순열·대각·채움 닫힘·값 위치)가 통과해야 한다. 피벗 교환은 없다 — 작은 대각은 엔진이 단계 거부로 처리."
+    },
+    {
       "path": "compiler/tape.js",
       "class": "law",
       "format": "UMD JavaScript",

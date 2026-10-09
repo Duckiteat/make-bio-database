@@ -96,6 +96,31 @@ function factorDual(L, N, sp, seed) {
 }
 const rel = (a, b) => { const m = Math.max(Math.abs(a), Math.abs(b)); return m === 0 ? 0 : Math.abs(a - b) / m; };
 
+function checkLU(ir) {
+  const J = ir.jac, L = J.lu, n = J.active.length, problems = [];
+  if (!L || !J.scatter) return { checked: 0, problems: ['IR 에 희소 LU 패턴(jac.lu·jac.scatter)이 없음'] };
+  const seen = new Set(L.perm); if (L.perm.length !== n || seen.size !== n || L.perm.some((k) => !(k >= 0 && k < n)) || L.perm.some((k, r) => L.iperm[k] !== r)) problems.push('희소 LU 순서가 순열이 아님');
+  const rowOf = (pos) => { let r = 0; while (L.rowPtr[r + 1] <= pos) r++; return r; };
+  const cols = Array.from({ length: n }, (_, r) => L.col.slice(L.rowPtr[r], L.rowPtr[r + 1]));
+  let checked = 0;
+  for (let r = 0; r < n; r++) {
+    if (cols[r][L.diagPos[r] - L.rowPtr[r]] !== r) problems.push(`희소 LU 행 ${r} 의 대각 위치가 틀림`);
+    if (cols[r].some((c, q) => q && c <= cols[r][q - 1])) problems.push(`희소 LU 행 ${r} 의 열이 정렬되지 않음`);
+    const set = new Set(cols[r]);
+    for (const k of cols[r]) if (k < r) for (const c of cols[k]) if (c > k && !set.has(c)) problems.push(`희소 LU 채움 누락: 행 ${r} 이 행 ${k} 의 열 ${c} 를 받아야 함`);
+  }
+  // 값 위치: 활성 규칙 k(원래 번호)의 도함수 항(묶음 i)마다 S[i] 의 (열 c, 화학량) 이 순서대로 (행 iperm[k], 열 iperm[c]) 자리를 가리켜야 한다
+  J.active.forEach((j, k) => {
+    for (const [kind, list] of [['rate', J.dRate[j]], ['factor', J.dFactor[j]]]) list.forEach((d, di) => {
+      const sl = J.scatter[kind][k][di], want = J.S[d.i];
+      if (!sl || sl.length !== 2 * want.length) { problems.push(`값 위치 목록 길이 틀림 (규칙 ${k} ${kind} ${di})`); return; }
+      want.forEach(([c, co], q) => { const pos = sl[2 * q]; checked++; if (sl[2 * q + 1] !== co || rowOf(pos) !== L.iperm[k] || L.col[pos] !== L.iperm[c]) problems.push(`값 위치 틀림 (규칙 ${k} ${kind} ${di} 열 ${c})`); });
+    });
+    const dp = J.scatter.diag[k]; checked++; if (rowOf(dp) !== L.iperm[k] || L.col[dp] !== L.iperm[k]) problems.push(`대각 값 위치 틀림 (규칙 ${k})`);
+  });
+  return { checked, nnz: L.nnz, flops: L.flops, denseFlops: L.denseFlops, problems: problems.slice(0, 10) };
+}
+
 function verifyIR(db, ir, sc, opt) {
   db = M.normalize(db); sc = sc || {}; opt = Object.assign({ samples: 6, seed: 20261009 }, opt || {});
   const out = { tolerance: TOL, fdTolerance: FD_TOL, boundarySamples: 0, problems: [], rateWorst: 0, derivWorst: 0, factorWorst: 0, fdWorst: 0, missingDeps: [], samples: opt.samples, checked: 0 };
@@ -148,6 +173,9 @@ function verifyIR(db, ir, sc, opt) {
     }
   }
   out.missingDeps = [...new Set(out.missingDeps)];
+  // 희소 LU 패턴 (3단계): 순서가 순열인지, 모든 J 항의 값 위치가 그 (행, 열) 자리인지, 채움이 행 소거에 닫혀 있는지 — 엔진이 믿는 구조를 따로 확인
+  out.lu = checkLU(ir);
+  for (const m of out.lu.problems) out.problems.push(m);
   out.ok = out.hashOK && !out.problems.length && !out.missingDeps.length && out.rateWorst <= TOL && out.derivWorst <= TOL && out.factorWorst <= TOL && out.fdWorst <= FD_TOL;
   return out;
 }
