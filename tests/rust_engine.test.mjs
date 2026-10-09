@@ -36,9 +36,13 @@ test('② JS 기준 구현과 동등 — 8 시나리오 (결정 탐침 포함)',
     assert.equal(b.engine, 'rust');
     assert.ok(relWorst(a, b) <= a.coupling.rtol, `${f}: 궤적 상대 차 ${relWorst(a, b)} > rtol ${a.coupling.rtol}`);
     assert.equal(b.final.state, a.final.state, f);
-    assert.deepEqual(b.firstReach, a.firstReach, f);
-    assert.deepEqual(b.commitment.map((c) => c.t), a.commitment.map((c) => c.t), f);
-    assert.deepEqual(b.events, a.events, f);
+    // 4단계 ③: 사건 시각은 근 찾기(다시 적분) — 두 백엔드의 차는 근 찾기 폭(event_tol)·결정 이분 폭(commitment_tol) 안
+    const near = (x, y, tol) => (x == null && y == null) || Math.abs(x - y) <= tol;
+    assert.deepEqual(Object.keys(b.firstReach).sort(), Object.keys(a.firstReach).sort(), f);
+    for (const s of Object.keys(a.firstReach)) assert.ok(near(b.firstReach[s], a.firstReach[s], a.coupling.event_tol), `${f}: 도달 ${s} ${a.firstReach[s]} ↔ ${b.firstReach[s]}`);
+    a.commitment.forEach((c, i) => assert.ok(near(b.commitment[i].t, c.t, a.coupling.commitment_tol), `${f}: 결정 ${c.t} ↔ ${b.commitment[i].t}`));
+    assert.deepEqual(b.events.map((e) => [e.type, e.bundle]), a.events.map((e) => [e.type, e.bundle]), f);
+    a.events.forEach((e, i) => assert.ok(near(b.events[i].t, e.t, a.coupling.event_tol), `${f}: 사건 ${e.t} ↔ ${b.events[i].t}`));
     // 받아들임·거부 결정이 libm 마지막 ulp 로 갈리면 단계 순서가 달라질 수 있다 — 그 차이는 단계 제어 허용 오차 안이어야 한다
     assert.ok(Math.abs(b.integrator.steps - a.integrator.steps) <= 0.01 * a.integrator.steps, `${f}: 단계 ${a.integrator.steps} ↔ ${b.integrator.steps}`);
     assert.equal(b.stats.hMinHits, a.stats.hMinHits, f);
@@ -57,6 +61,7 @@ test('③ 할당 0 — WASM 선형 메모리가 실행·탐침 동안 자라지 
   const m = be.main();
   for (const k of [0, 50, 100, 500, m.series.length - 1]) be.probe(k);
   for (const k of [7, 900]) be.probeFrom(m.series[k].t, be.snapState(k)); // 2단계 경로(넘겨받은 시작 상태)도 자라지 않음
+  for (const k of [7, 900]) be.advance(m.series[k].t, be.snapState(k), m.series[k].t + 37.5); // 4단계 ③ 다시 적분(격자 사이 끝)도 자라지 않음
   assert.equal(be.memory.bytes(), before, `byteLength ${before} → ${be.memory.bytes()}`);
   assert.equal(before, be.memory.initBytes);
   // 같은 백엔드 결과 = 앞단을 거친 결과

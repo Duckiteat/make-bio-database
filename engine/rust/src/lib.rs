@@ -49,6 +49,10 @@ pub extern "C" fn fe_probe(k: u32) -> i32 { if eng().probe(k as usize) { 0 } els
 #[no_mangle]
 pub extern "C" fn fe_probe_from(t0: f64) { eng().probe_from(t0); }
 
+/// 4단계 ③: 버퍼 16(probe_in)의 상태에서 t0 → t1 을 신호 일정대로 다시 적분 — 결과는 버퍼 11(probe_n)
+#[no_mangle]
+pub extern "C" fn fe_advance(t0: f64, t1: f64) { eng().advance(t0, t1); }
+
 // 출력 버퍼 번호 → (주소, 길이)
 fn buf(id: u32) -> (*const f64, usize) {
     let e = eng();

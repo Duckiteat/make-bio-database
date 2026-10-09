@@ -1,0 +1,92 @@
+{
+  "applied_at": "2026-10-09T18:03:42.573Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000070"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000070"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000070": [
+          "resolution"
+        ]
+      }
+    },
+    "why": "엔진 이식 4단계 ③: 운명 엔진의 사건 시각(문턱 도달·저장소 고갈·재생)과 결정 시각을 관찰 격자에 묶지 않고 근 찾기·연속 이분 탐색으로 정밀화 — L000070(관찰 격자 양자화)의 해결 근거를 기록",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000070",
+          "before": "open",
+          "after": "resolved_manual"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000070",
+          "before": "open",
+          "after": "resolved_manual"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 60
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "엔진 이식 4단계 ③: 운명 엔진의 사건 시각(문턱 도달·저장소 고갈·재생)과 결정 시각을 관찰 격자에 묶지 않고 근 찾기·연속 이분 탐색으로 정밀화 — L000070(관찰 격자 양자화)의 해결 근거를 기록",
+  "limitations": [
+    {
+      "target": "D000174",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "운명 결과의 시각 해상도 — 적분 오차는 허용 오차(rtol 1e-6) 안이지만, 표지 문턱 도달·결정(신호 철회 시험)·저장소 고갈 시각은 관찰 격자 Δ(기본 60 s)의 점에서만 판정한다. 보고된 시각은 실제 교차 뒤 첫 격자점이라 최대 Δ 늦다 (효과기 2 h 펄스: 실제 ≈ 119.8 분 → 보고 120 분). 결정 시각은 탐침 스냅숏 격자 위의 이분 탐색이라 같은 해상도.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "Rodas3 연속 확장(밀집 출력) + 문턱 교차 근 찾기로 도달·고갈 시각을 격자 사이에서 보간, 결정 탐침은 격자 사이 시작점 허용 — 그때까지 시각을 Δ 단위보다 정밀하게 해석하지 말 것"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 1.5단계 — 결합 Rodas3 의 Δ 수렴 시험 (fate-effector-pulse-long·effector-glucose-withheld·memory-il15, 가상 시나리오)",
+      "id": "L000070",
+      "resolution": {
+        "note": "4단계 ③(2026-10-09): 사건은 관찰 격자에서 감지한 뒤, 직전 스냅숏 상태에서 같은 결합 Rodas3 로 다시 적분하며 사건 함수(문턱까지 남은 로그 거리의 최대 · 저장소 N − 1)의 근을 Illinois 할선법으로 찾는다(event_tol 0.01 s, 결합점 등록부). 결정 시각은 격자 위 이분 탐색이 찾은 구간 안에서, 앞 격자점에서 τ 까지 다시 적분한 상태로 탐침하는 연속 이분 탐색(commitment_tol 1 s, lanes 와 무관하게 직렬과 같은 경로). Rust 에 advance(t0, t1)(구간 끝 자르기 — 격자 정렬 실행은 그대로) 추가. Δ 30·60·120·300 s 에서 도달 시각 차 ≤ 0.01 s(효과기 2 h 펄스 7186.8 s = 119.78 분, 기억 전구 IL-15 24566.9 s), 결정 시각 차 ≤ 0.2 s, 고갈 시각 차 ≤ 0.2 s(적분 허용 오차). 시각은 이제 격자 Δ 가 아니라 적분 허용 오차(rtol 1e-6)와 commitment_tol 이 정한다.",
+        "evidence": {
+          "level": "computed",
+          "tool": "tests/rust_engine.test.mjs ②(JS ↔ Rust 사건 시각 ≤ event_tol·commitment_tol) · tests/fate_suite.js 54/54 · docs/design/engine-port-roadmap.md §10 ③ 결과(Δ 격자 불변 시험)"
+        }
+      }
+    }
+  ]
+}

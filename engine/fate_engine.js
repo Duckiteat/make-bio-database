@@ -7,7 +7,9 @@
 //     관찰 격자 Δ(dt_slow)는 신호(경계 조건)·기록·탐침 스냅숏의 간격일 뿐 적분 오차를 정하지 않는다 (예전 연산자 분할 + 배율 고정 1차 오차 L000069 를 없앰).
 //     강성은 L-안정 암시 단계가 흡수하므로 경로 선택 관문(P5)은 이 엔진에서 쓰지 않는다 (P5 모듈은 P3·P4 층에 그대로).
 //   결정(commitment, criterion withdrawal): 그 시각의 상태에서 모든 신호를 끊고 horizon 동안 돌려도 목표 상태로 끝나면 결정된 것.
-//     거친 격자 검사 + 이분 탐색으로 처음 통과한 관찰 격자점을 찾는다 (격자에서 단조성도 확인).
+//     거친 격자 검사 + 이분 탐색으로 처음 통과한 관찰 격자점을 찾고, 그 격자 구간 안에서 연속 이분 탐색으로 commitment_tol 까지 좁힌다 (4단계 ③).
+//   사건 시각 (4단계 ③, L000070): 문턱 도달·저장소 고갈·재생은 격자에서 감지한 뒤, 직전 스냅숏 상태에서 같은 적분기로 다시 적분하며
+//     사건 함수의 근을 찾는다(Illinois 할선법, event_tol 까지). 보고 시각은 격자에 묶이지 않는다 — 정확도는 적분 허용 오차가 정한다.
 //   분화 정지(Differentiation Arrest): 목표에 도달하지 못하고 거리(distance)가 창(window) 동안 좋아지지 않으면 정지. 사후 분석이
 //     실패한 표지 → 그 합성 규칙의 조절 배율 → 가장 모자란 활성화 인자 → (대사물이면) 그것을 만드는 빠른 규칙의 고갈 저장소까지 따라간다.
 //
@@ -213,7 +215,7 @@ function simulateFate(db, sourceId, opt) {
       // 신호 (경계 조건 — 질량 감사 밖)
       const sig = signalAt(t, ctl.signal);
       sched.forEach((s, j) => { N[s.i] = sig[j]; });
-      integrate(N, t, t + dt);
+      integrate(N, t, t1 - t < dt - 1e-9 ? t1 : t + dt); // 마지막 구간이 Δ 보다 짧으면 t1 에서 끊는다 (사건 근 찾기의 다시 적분 — 격자 정렬 실행은 그대로)
       perMin = Math.min(perMin, ival.steps); perMax = Math.max(perMax, ival.steps);
       // 저장소 고갈·재생 사건
       for (const [i, r] of resv) {
@@ -233,7 +235,8 @@ function simulateFate(db, sourceId, opt) {
   // ===== 적분 백엔드: 'js'(기준 구현·오라클, 위 run) | 'rust'(engine/rust — 같은 알고리즘, IR 테이프만 해석, WASM) =====
   // 질량 수지·재생 검사는 하지 않는다 — 기록점마다 N·LO·누적 진행량(double-double)을 내보내 사법부가 독립적으로 다시 계산한다
   const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
-  let main, snapshots, probeMany, backendStats, lanes = 1;
+  // 백엔드가 주는 것: 본 실행 · 스냅숏 상태 snapN(k) · 탐침 probeStarts([{ t0, N }]) · 다시 적분 advance(t0, N, t1) (신호 일정대로)
+  let main, snapshots, snapN, probeStarts, advance, backendStats, lanes = 1;
   if ((opt.engine || 'js') === 'rust') {
     const args = { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery: sc.record_every || 1 };
     const be = require('./fate_rust.js').open(args);
@@ -241,18 +244,44 @@ function simulateFate(db, sourceId, opt) {
     // 2단계: 결정 탐침은 워커마다 독립 WASM 인스턴스로 (engine/probe_pool.js) — lanes 는 결과에 영향이 없다
     const pp = require('./probe_pool.js').attach(be, args, opt.workers);
     lanes = pp.lanes;
-    probeMany = (ks) => pp.probeMany(ks.map((k) => ({ t0: snapshots[k].t, N: be.snapState(k) })));
+    snapN = (k) => be.snapState(k); probeStarts = (starts) => pp.probeMany(starts); advance = (t0, N, t1) => be.advance(t0, N, t1);
   } else {
     snapshots = [];
     main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots });
-    probeMany = (ks) => ks.map((k) => { const s = snapshots[k]; return run(s.N, s.t, s.t + horizon, { signal: () => 0 }).N; }); // 기준 구현: 직렬
+    snapN = (k) => snapshots[k].N;
+    probeStarts = (starts) => starts.map((s) => run(s.N, s.t0, s.t0 + horizon, { signal: () => 0 }).N); // 기준 구현: 직렬
+    advance = (t0, N, t1) => run(N, t0, t1, {}).N;
     backendStats = () => stats;
   }
+  const probeMany = (ks) => probeStarts(ks.map((k) => ({ t0: snapshots[k].t, N: snapN(k) })));
+  const before = (k) => (k < 0 ? { t: 0, N: N0 } : { t: snapshots[k].t, N: snapN(k) }); // 스냅숏 k 의 상태 (k = −1 이면 시작)
+  // ===== 사건 시각 (4단계 ③): 사건 함수 g(N) ≤ 0 이 처음 참이 된 스냅숏 kHit 와 그 앞 사이에서 근 찾기 =====
+  //   g 는 그 앞 스냅숏 상태에서 같은 적분기로 τ 까지 다시 적분해 잰다(Illinois 할선법). 보고는 브래킷의 오른쪽 끝(참인 쪽) — event_tol 안.
+  let eventEvals = 0;
+  const locate = (g, kHit) => {
+    const P = before(kHit - 1);
+    let a = P.t, ga = g(P.N), b = snapshots[kHit].t, gb = g(snapN(kHit)), side = 0;
+    if (!(ga > 0)) return a; // 앞 점에서 이미 참 (시작부터)
+    for (let it = 0; it < 100 && b - a > CP.event_tol; it++) {
+      let c = b - (gb * (b - a)) / (gb - ga);
+      if (!(c > a && c < b)) c = (a + b) / 2;
+      const gc = g(advance(P.t, P.N, c)); eventEvals++;
+      if (gc <= 0) { b = c; gb = gc; if (side === -1) ga /= 2; side = -1; } else { a = c; ga = gc; if (side === 1) gb /= 2; side = 1; }
+    }
+    return b;
+  };
+  const snapAt = (t) => { let lo = 0, hi = snapshots.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (snapshots[m].t < t - 1e-6) lo = m + 1; else hi = m; } return lo; };
+  // 상태 s 의 문턱 사건 함수: 서명 표지마다 문턱까지 남은 로그 거리 중 최대 (≤ 0 ⇔ 거리 0)
+  const reachG = (sid) => { const ms = db.senses[sid].signature.map((m) => ({ i: at.get(`${m.ref}|${m.location}`), t: thr[`${m.ref}|${m.location}`], high: m.level === 'high' })).filter((m) => m.t);
+    return (N) => ms.reduce((g, m) => { const x = Math.max(N[m.i], 1e-9); return Math.max(g, m.high ? Math.log(m.t.high / x) : Math.log(x / m.t.low)); }, -Infinity); };
+  main.events = main.events.map((e) => { const i = at.get(e.bundle); return { ...e, t: locate(e.type === 'exhausted' ? (N) => N[i] - 1 : (N) => 1 - N[i], snapAt(e.t)) }; }).sort((x, y) => x.t - y.t);
   const chanMain = chanFrom(main.cum);
   // 궤적에서 상태·거리
   const traj = main.series.map((s) => ({ t: s.t, d: Object.fromEntries(states.map((x) => [x, distance(s.N, x)])), cls: classify(s.N), steps: s.steps, rejects: s.rejects }));
   const final = classify(main.N);
   const firstReach = {}; for (const r of traj) if (r.cls.state && firstReach[r.cls.state] == null) firstReach[r.cls.state] = r.t;
+  // 기록 격자에서 찾은 도달을 스냅숏(모든 격자점)으로 앞당겨 첫 점을 찾고, 그 구간에서 근 찾기
+  for (const s of Object.keys(firstReach)) { const kR = snapAt(firstReach[s]); let k = 0; while (k < kR && classify(snapN(k)).state !== s) k++; firstReach[s] = locate(reachG(s), k); }
   // 기대 목표: 신호가 한 번이라도 켜진 전이의 대상
   const sigOn = new Set(sched.filter((s) => s.list.some((e) => e.n > 0)).map((s) => keys[s.i].split('|')[0]));
   const transitions = (db.senses[sourceId].transitions || []).map((tr) => ({ to: tr.to, signals: tr.signals, criterion: tr.commitment.criterion, driven: tr.signals.some((g) => sigOn.has(g)) }));
@@ -278,11 +307,21 @@ function simulateFate(db, sourceId, opt) {
     runRound(active.flatMap((S) => tree(S.lo, S.hi, depth, [])));
     for (const S of active) for (let d = 0; d < depth && S.hi - S.lo > 1; d++) { const mid = (S.lo + S.hi) >> 1; if (cls.get(mid) === S.tr.to) S.hi = mid; else S.lo = mid; }
   }
+  // 격자 구간 안 연속 이분 탐색 (4단계 ③): 탐침 시작 상태는 앞 격자점에서 τ 까지 다시 적분한 상태 — 같은 결정 트리 선행으로 lanes 와 무관하게 직렬과 같은 경로
+  const ccls = new Map(), ckey = (S, tau) => `${S.idx}|${tau}`;
+  const ctree = (a, b, d, out) => { if (!d || b - a <= CP.commitment_tol) return out; const m = (a + b) / 2; out.push(m); ctree(a, m, d - 1, out); return ctree(m, b, d - 1, out); };
+  let refineProbes = 0;
+  for (const S of searches.filter((x) => x && x.first >= 0)) { S.idx = searches.indexOf(S); S.base = before(S.lo); S.a = S.base.t; S.b = snapshots[S.hi].t; }
+  for (let active = searches.filter((S) => S && S.first >= 0 && S.b - S.a > CP.commitment_tol); active.length; active = active.filter((S) => S.b - S.a > CP.commitment_tol)) {
+    const need = active.flatMap((S) => ctree(S.a, S.b, depth, []).filter((tau) => !ccls.has(ckey(S, tau))).map((tau) => ({ S, tau })));
+    if (need.length) { rounds++; probes += need.length; refineProbes += need.length; probeStarts(need.map(({ S, tau }) => ({ t0: tau, N: advance(S.base.t, S.base.N, tau) }))).forEach((N, j) => ccls.set(ckey(need[j].S, need[j].tau), classify(N).state)); }
+    for (const S of active) for (let d = 0; d < depth && S.b - S.a > CP.commitment_tol; d++) { const m = (S.a + S.b) / 2; if (ccls.get(ckey(S, m)) === S.tr.to) S.b = m; else S.a = m; }
+  }
   const commitment = transitions.map((tr, i) => {
     if (opt.commitment === false) return { to: tr.to, criterion: tr.criterion, driven: tr.driven, t: null, skipped: true };
     if (!searches[i]) return { to: tr.to, criterion: tr.criterion, driven: tr.driven, t: tr.criterion === 'threshold' ? firstReach[tr.to] || null : null };
     const S = searches[i], kC = S.first >= 0 ? S.hi : null;
-    return { to: tr.to, criterion: 'withdrawal', driven: true, t: kC == null ? null : snapshots[kC].t, step: kC, monotone: S.monotone, grid: grid.map((k, j) => ({ t: snapshots[k].t, pass: S.res[j] })), horizon };
+    return { to: tr.to, criterion: 'withdrawal', driven: true, t: kC == null ? null : S.b, t_grid: kC == null ? null : snapshots[kC].t, step: kC, tol: CP.commitment_tol, monotone: S.monotone, grid: grid.map((k, j) => ({ t: snapshots[k].t, pass: S.res[j] })), horizon };
   });
   // 분화 정지·사후 분석·소비만 되는 저장소 판정은 사법부(judicial/fate_audit.js)가 아래 원자료로 한다
   const target = (sc.target && sc.target) || (transitions.find((t) => t.driven) || {}).to || null;
@@ -303,7 +342,7 @@ function simulateFate(db, sourceId, opt) {
       ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
     },
     irHash: IR.hash, // 먹은 IR 의 해시 — 사법부가 조정자에게서 받은 IR 과 맞춘다
-    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...backendStats(), probes, probeRounds: rounds, probeLanes: lanes }, engine: opt.engine || 'js', ix,
+    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...backendStats(), probes, probeRounds: rounds, probeLanes: lanes, refineProbes, eventEvals }, engine: opt.engine || 'js', ix,
   };
 }
 

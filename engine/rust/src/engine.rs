@@ -302,7 +302,8 @@ impl Engine {
         while t < t1 - 1e-9 {
             self.signal_at(t, zero_signal);
             for q in 0..self.nsig { let i = self.signals[q].idx; self.n[i] = self.sig[q]; }
-            self.integrate(t, t + self.dt);
+            let te = if t1 - t < self.dt - 1e-9 { t1 } else { t + self.dt }; // 마지막 구간이 Δ 보다 짧으면 t1 에서 (사건 근 찾기의 다시 적분 — 격자 정렬 실행은 그대로)
+            self.integrate(t, te);
             per_min = fmin(per_min, self.iv_steps); per_max = fmax(per_max, self.iv_steps);
             for r in 0..self.nres {
                 let i = self.res_idx[r]; let x = self.n[i];
@@ -354,6 +355,13 @@ impl Engine {
     pub fn probe_from(&mut self, t0: f64) {
         self.n.copy_from_slice(&self.probe_in);
         self.probe_run(t0);
+    }
+    /// 다시 적분 (4단계 ③ 사건 근 찾기·결정 시각 정밀화): probe_in 상태에서 t0 → t1, 신호는 선언된 일정대로 — 결과는 probe_n.
+    /// 탐침처럼 (시작 상태, t0, t1) 만의 순수 함수 (원장·단계 제어 상태를 run 이 새로 잡음). 본 실행의 기록·스냅숏은 건드리지 않는다.
+    pub fn advance(&mut self, t0: f64, t1: f64) {
+        self.n.copy_from_slice(&self.probe_in);
+        self.run(t0, t1, false, false);
+        self.probe_n.copy_from_slice(&self.n);
     }
     fn probe_run(&mut self, t0: f64) {
         let h = self.horizon;

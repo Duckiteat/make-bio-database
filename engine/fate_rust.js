@@ -74,6 +74,8 @@ function open(a) {
     // 2단계: 스냅숏 k 의 시작 상태(본 실행 뒤) · 넘겨받은 시작 상태에서 탐침 (다른 인스턴스 — 워커가 쓴다)
     snapState(k) { return Float64Array.from(view(BUF.snapN).subarray(k * nB, (k + 1) * nB)); },
     probeFrom(t0, N) { view(BUF.probeIn).set(N); ex.fe_probe_from(t0); return copy(BUF.probeN); },
+    // 4단계 ③: 사건 근 찾기·결정 시각 정밀화 — 넘겨받은 상태에서 t0 → t1 (신호 일정대로)
+    advance(t0, N, t1) { view(BUF.probeIn).set(N); ex.fe_advance(t0, t1); return copy(BUF.probeN); },
     stats() { const s = copy(BUF.stats); return { rhs: s[0], jac: s[1], steps: s[2], rejected: s[3], rejectedNeg: s[4], hMinHits: s[5], singular: s[6] }; },
   };
 }

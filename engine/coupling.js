@@ -16,6 +16,8 @@
     { key: 'saturation_K', scenario: 'saturation_K', default: M.SAT_K, unit: 'M', meaning: '포화 보조 기질의 정칙화 상수 c/(c+K) — 생물 상수 아님', layer: 'numerics' },
     { key: 'commitment_horizon', scenario: 'commitment.horizon', default: 24 * 3600, unit: 's', meaning: '신호 철회 탐침의 관찰 길이', layer: 'commitment' },
     { key: 'commitment_coarse', scenario: 'commitment.coarse', default: 7200, unit: 's', meaning: '결정 탐침의 거친 격자 간격 (이분 탐색 전)', layer: 'commitment' },
+    { key: 'commitment_tol', scenario: 'commitment.tol', default: 1, unit: 's', meaning: '결정 시각의 격자 구간 안 연속 이분 탐색을 멈추는 폭 (4단계 ③)', layer: 'commitment' },
+    { key: 'event_tol', scenario: 'event_tol', default: 0.01, unit: 's', meaning: '사건(문턱 도달·고갈·재생) 시각 근 찾기를 멈추는 폭 — 실제 정확도는 적분 허용 오차가 정한다 (4단계 ③)', layer: 'numerics' },
     { key: 'hill_s_floor', scenario: 'hill_s_floor', default: 1e-12, unit: 'M', meaning: '힐 n < 1 일 때 s → 0 에서 기울기를 자르는 농도 하한 (도함수 발산 방지) — 생물 상수 아님', layer: 'numerics' },
     // 결합 Rosenbrock(Rodas3) 단계 제어 — engine-port-roadmap 1.5단계. 오차 = max_i |e_i| / (atol + rtol·max(|N_i|, |N_i'|))
     { key: 'rtol', scenario: 'integrator.rtol', default: 1e-6, unit: '1', meaning: '국소 오차 상대 허용 (내장 2차 추정 대비)', layer: 'numerics' },

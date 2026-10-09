@@ -238,7 +238,8 @@
       "type": "object",
       "additionalProperties": {
         "type": "number"
-      }
+      },
+      "description": "상태별 첫 도달 시각 — 기록 격자에서 감지한 뒤 스냅숏 사이 근 찾기로 정밀화 (4단계 ③). 시작부터 도달해 있으면 0"
     },
     "transitions": {
       "type": "array",
@@ -332,6 +333,17 @@
                 }
               }
             }
+          },
+          "t_grid": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "격자 위 이분 탐색이 찾은 첫 통과 스냅숏 시각 (t 는 그 구간 안에서 commitment_tol 까지 좁힌 시각)"
+          },
+          "tol": {
+            "type": "number",
+            "description": "결정 시각 연속 이분 탐색의 폭 (결합점 commitment_tol)"
           }
         }
       }
@@ -551,7 +563,9 @@
         "fac_min",
         "fac_max",
         "neg_shrink",
-        "pivot_rel"
+        "pivot_rel",
+        "commitment_tol",
+        "event_tol"
       ]
     },
     "process": {
@@ -758,7 +772,8 @@
             "$ref": "#/$defs/bundle"
           }
         }
-      }
+      },
+      "description": "저장소 고갈·재생 사건. t 는 격자에서 감지한 뒤 직전 스냅숏에서 다시 적분해 근을 찾은 시각 (event_tol 안, 4단계 ③)"
     },
     "facts": {
       "type": "array",
