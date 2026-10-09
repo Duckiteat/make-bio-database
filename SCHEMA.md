@@ -353,7 +353,8 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 | 한계 종류 `Regulatory_Gap` | 한계 | 신호 전달·유전자 조절 매개를 조절 규칙 하나로 묶었거나 힐 상수를 모르는 곳. `detectGaps` 가 힐 상수 없는 조절 규칙을 후보로 잡는다 |
 
 - `simulateRate`(경로 시뮬레이션)도 조절 규칙을 적용한다 — 단계·공급·분해의 속도에 배율을 곱하고, 힐 상수가 없으면 배율 1 로 두고 `modulationGaps` 로 보고.
-- 운명 엔진(시나리오 층, 데이터베이스 밖): `volumes` · `amounts` · `buffered[묶음] = { conc_M, total }`(완충 저장소 — 남은 양이 한 구획분 이상이면 농도 고정, 질량은 정확히 줄어듦 — 배지 + 수송체 근사) · `signals[묶음] = [{ t, n }]`(경계 조건 — 질량 감사 밖) · `thresholds` · `kinetics` · `dt_slow` · `t_end` · `gate`(P5 K_up/K_down/M/W) · `shock_threshold` · `explicit_fraction` · `commitment { horizon, coarse }` · `arrest_window` · `target`.
+- 운명 엔진(시나리오 층, 데이터베이스 밖): `volumes` · `amounts` · `buffered[묶음] = { conc_M, total }`(완충 저장소 — 남은 양이 한 구획분 이상이면 농도 고정, 질량은 정확히 줄어듦 — 배지 + 수송체 근사) · `signals[묶음] = [{ t, n }]`(경계 조건 — 질량 감사 밖) · `thresholds` · `kinetics` · `dt_slow` · `t_end` · `gate`(P5 K_up/K_down/M/W) · `shock_threshold` · `explicit_fraction` · `commitment { horizon, coarse }` · `arrest_window` · `target` · `expect { final, limiting, commit_before_h }`(실행 전에 적은 가설 — 과정 보고서가 관찰과 대조) · `report { ratios: [[묶음, 묶음]] }`(시계열에 함께 보일 비율; 경쟁 계통 표지 비율은 자동).
+- **과정 분석 보고서** (`engine/process_report.js`, `dbtool fate` 의 기본 출력): 엔진이 매 느린 단계 기록하는 원자료 — 부분 구조 원장 편차·저장소 재생 편차(모든 묶음 = 시작 + Σ 화학량 × 규칙 누적 진행량, double-double)·신호 값·규칙 누적 진행량·관문 사건·궤적 해시 — 로 변곡점·구간·무결성 증명서(원장·재생 ≤ 1e-14 매 단계, 신호 = 일정, 결정론, 매개변수 출처, 음수 없음)·인과 추적·예측과의 차이를 만든다.
 - **부분 구조 수지 허용 오차**: 규칙 검사(`moietyImbalance`)와 운명 엔진 원장 모두 상대 1e-14 (`MASS_REL_TOL`). 운명 엔진은 상태·원장·합계를 보상 산술(TwoSum·TwoProduct, double-double)로 셈해 실제 편차는 ≈ 1e-27.
 - **정제 점검 `refineCheck`**: duplicate_rule(같은 화학량·위치의 공급 / 같은 소유자·대상·효과·위치의 조절 — 참조 없는 쪽을 지우는 리팩터링 패치 제안) · lumped_contradiction(경로가 가진 공급 규칙 ↔ 그 경로 단계들의 화학량 합; 그 규칙을 대상으로 한 열린 Structural_Gap 이 있으면 known). `validate <patch>`·`augment apply` 는 새로 생긴 duplicate 나 known 이 아닌 모순이 있으면 거부.
 - **비교 검토 `engine/compare.js`** (`dbtool compare`): 판정 Optimization-Negative(비용 ↑, 수치 이득 < 1e-5 또는 궤적 차 < 1e-5) · Optimization-Positive · Neutral · Trade-off · Behavior-Changing(결과가 바뀜 — 관찰로 고름).
@@ -433,6 +434,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-09 | 9 (확장 3) | 과정 분석 보고서: 운명 엔진이 매 단계 저장소 재생 편차·부분 구조 원장 편차·신호·규칙 누적 진행량·궤적 해시를 기록, `engine/process_report.js`, 시나리오 `expect`·`report.ratios`. 형식 버전 그대로 |
 | 2026-10-09 | 9 (확장 2) | 구조 요소 `elements`(원자 수, 화학식 대조를 엔진 코드에서 데이터로), 어휘 `defaultVolumeLocation`, 부분 구조 수지 허용 오차 상대 1e-14, 운명 엔진 보상 산술 원장, 정제 점검 `refineCheck`, 비교 검토 `engine/compare.js`, `validate <patch>`, `augment apply <patch>`. 데이터: 부분 구조 7개의 elements, L000054·L000055 비교 검토 메모. 형식 버전 그대로 |
 | 2026-10-08 | 9 (확장) | 자동 보강 고리: xref `note` 에 원본 출처(조회 날짜·수신함 파일·sha256), 확인 규칙(번호·종·이름·중복·화학식 ↔ 부분 구조 원자 수), 수신함 `data/fetched/`, Patch Report 의 자동 보강 후보 수. 형식 버전 그대로 |
 | 2026-10-08 | 9 | 세포 운명 층: kind `cell_state`(signature · metabolome · transitions), 규칙 종류 `modulation`(대상 규칙의 힐 배율 — 신호 → 대사, 대사 → 유전자 조절), 속도 법칙 `hill`, 공급 소비 `saturating`, 외부 ID `CL`, 한계 종류 `Regulatory_Gap`, 어휘 `signatureLevels`·`commitmentCriteria`·세포 `cd8_t_cell`(그리고 `ruleTypes` 에 빠져 있던 degradation). `simulateRate` 가 조절 배율을 적용. 실행 층 `engine/fate_engine.js`(다중 속도 적분·P5 관문·결정 탐침·분화 정지 사후 분석). 데이터: CD8 T 세포 효과기/기억 전구 프로그램(정의항 16·조절 규칙 12·공급 규칙 6·분해 규칙 3·세포 상태 3), 회로 순 반응, 한계 20건(L000049–L000068) (`migrations/008-v8-to-v9-cell-fate.mjs`) |

@@ -434,6 +434,14 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "dbtool.mjs compare, tests",
       "interpret": "비교 검토 — 두 변형(패치·시나리오)의 복잡도·수치 L2(수렴 기준)·결과·궤적 차와 판정(Optimization-Negative/Positive/Neutral/Trade-off/Behavior-Changing). 생물 이름을 모른다."
+    },
+    {
+      "path": "engine/process_report.js",
+      "class": "interface",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool.mjs fate, tests/fate_suite.js, tests",
+      "interpret": "과정 분석 보고서 — 운명 엔진의 매 단계 원자료로 변곡점·시계열·구간·무결성 증명서(원장·재생 ≤ 1e-14, 신호 = 일정, 결정론, 출처)·인과 추적·예측과의 차이를 Markdown 으로. 생물 이름을 모른다."
     }
   ]
 }

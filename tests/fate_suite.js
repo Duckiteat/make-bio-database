@@ -10,6 +10,7 @@
 const { readFileSync } = require('fs');
 const path = require('path');
 const F = require('../engine/fate_engine.js');
+const PR = require('../engine/process_report.js');
 const ROOT = path.join(__dirname, '..');
 const db = JSON.parse(readFileSync(path.join(ROOT, 'data/db.json'), 'utf8'));
 const SRC = 'D000174', EFF = 'D000175', MEM = 'D000176';
@@ -22,7 +23,8 @@ function run(opt) {
   const say = (...a) => { if (!opt.quiet) console.log(...a); };
   const checks = [], runs = {};
   const check = (group, name, ok, detail) => { checks.push({ group, name, ok: !!ok, detail }); };
-  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const r = F.simulateFate(db, SRC, Object.assign({ scenario: scen(name, over) }, o || {})); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; runs[key] = r; return r; };
+  const names = {};
+  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const r = F.simulateFate(db, SRC, Object.assign({ scenario: scen(name, over) }, o || {})); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; runs[key] = r; names[key] = name; return r; };
   const massOK = (r) => r.mass.worst <= 1e-14 && !r.audit.some((a) => a.code === 'AUDIT_MASS') && Object.values(r.final.N).every((v) => v > -1e-6);
 
   say('Fate-Test — 활성화된 CD8 T 세포 (D000174) → 효과기 (D000175) | 기억 전구 (D000176) · 가상 시나리오');
@@ -74,6 +76,18 @@ function run(opt) {
   // G 질량
   for (const [k, r] of Object.entries(runs)) check('G 질량', `${k}: 부분 구조 원장 ≤ 1e-14, 음수 없음`, massOK(r), r.mass.worst.toExponential(2));
 
+  // H 과정 분석 보고서: 모든 실행이 무결성 증명서 PASS (원장·재생 매 단계 ≤ 1e-14, 신호 = 일정, 결정론, 출처) + 실행 전에 적은 예측(expect)과 일치
+  const reports = {};
+  for (const [k, r] of Object.entries(runs)) {
+    const scText = readFileSync(path.join(ROOT, `examples/scenarios/fate-${names[k]}-hypothetical.json`), 'utf8');
+    const again = F.simulateFate(db, SRC, { scenario: JSON.parse(scText), commitment: false });
+    const rep = PR.processReport(r, { scenario: JSON.parse(scText), scenarioText: scText, rerunHash: again.process.hash });
+    reports[k] = rep;
+    check('H 과정 보고서', `${k}: 무결성 증명서 PASS (${rep.checks.length} 확인)`, rep.pass && rep.checks.every((c) => c.ok === true), rep.checks.filter((c) => c.ok !== true).map((c) => c.name).join(', ') || `원장 ${r.mass.worst.toExponential(1)} · 재생 ${r.mass.replayWorst.toExponential(1)}`);
+    check('H 과정 보고서', `${k}: 실행 전 예측(expect)과 관찰이 같음`, !rep.disc.length, rep.disc.join(' / ') || '차이 없음');
+    const cover = rep.phases.length && rep.phases[0].t0 === 0 && rep.phases[rep.phases.length - 1].t1 === r.t_end && rep.phases.every((p, q) => !q || p.t0 === rep.phases[q - 1].t1);
+    check('H 과정 보고서', `${k}: 구간이 0 – 끝을 빈틈없이 덮고 변곡점 ≥ 3 (끝 상태만이 아님)`, cover && rep.infl.length >= 3, `구간 ${rep.phases.length}, 변곡점 ${rep.infl.length}`);
+  }
   // 보고
   say('\n| 실행 | 최종 상태 | 도달 | 결정 (철회 시험) | 원인 · 제한 | P5 관문 경로 | 질량 편차 | ms |');
   say('|---|---|---|---|---|---|---|---|');
@@ -91,7 +105,7 @@ function run(opt) {
   for (const c of checks) say(`${c.ok ? '✓' : '✗'} [${c.group}] ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
   const pass = checks.every((c) => c.ok);
   say(pass ? `\n✓ PASS — Fate-Test ${checks.length}/${checks.length}` : `\n✗ FAIL — ${checks.filter((c) => !c.ok).length}/${checks.length} 실패`);
-  return { pass, checks, runs, acc };
+  return { pass, checks, runs, acc, reports };
 }
 if (require.main === module) process.exit(run({ quick: process.argv.includes('--quick') }).pass ? 0 : 1);
 module.exports = { run };

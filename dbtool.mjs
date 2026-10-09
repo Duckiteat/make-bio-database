@@ -29,8 +29,9 @@
 //   node dbtool.mjs compare   --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]
 //                                                           비교 검토: 복잡도·수치 L2(수렴 기준)·결과·판정 (Optimization-Negative 이면 종료 코드 1)
 //   node dbtool.mjs validate  <patch.json>                  패치 검사: 관문 미리 보기 + 정제 점검(중복 규칙·화학량 모순)
-//   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]
-//                                                           세포 운명 (v9): 신호 → 대사 → 전사 인자 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석
+//   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment] [--brief] [--report 파일.md] [--numerics h]
+//                                                           세포 운명 (v9) + 과정 분석 보고서: 요약 · 변곡점·시계열·구간 · 무결성 증명서(원장·재생·신호·결정론·출처) · 인과 추적 · 부록
+//                                                           (무결성 FAIL 이면 종료 코드 1; --brief 는 짧은 요약)
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
@@ -299,16 +300,33 @@ switch (cmd) {
     process.exit(r.verdict === 'Optimization-Negative' ? 1 : 0);
   }
   case 'fate': {
-    if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]');
+    if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment] [--brief] [--report 파일.md] [--numerics 시간(h), 0 이면 끔]');
     const db = loadDB(), x = DefDB.resolveRef(DefDB.index(db), args[0]);
     if (x.error) die(x.error);
-    const FATE = createRequire(import.meta.url)('./engine/fate_engine.js');
-    const scenario = JSON.parse(readFileSync(flags.scenario, 'utf8'));
+    const FATE = createRequire(import.meta.url)('./engine/fate_engine.js'), PR = createRequire(import.meta.url)('./engine/process_report.js');
+    const scenarioText = readFileSync(flags.scenario, 'utf8'), scenario = JSON.parse(scenarioText);
     if (flags.t) scenario.t_end = +flags.t * 3600;
-    const r = FATE.simulateFateText(db, x.id, { scenario, mode: flags.fine ? 'fine' : undefined, commitment: flags['no-commitment'] ? false : undefined });
-    console.log(r.text);
+    const opt = { scenario, mode: flags.fine ? 'fine' : undefined, commitment: flags['no-commitment'] ? false : undefined };
+    if (flags.brief) { const r = FATE.simulateFateText(db, x.id, opt); console.log(r.text); console.log(DefDB.refineText(db).text); process.exit(r.code); }
+    const r = FATE.simulateFate(db, x.id, opt);
+    if (r.error) die(r.error);
+    // 결정론: 같은 입력으로 본 실행을 다시 (결정 탐침 없이 — 본 실행 궤적은 탐침과 무관)
+    const again = FATE.simulateFate(db, x.id, { ...opt, scenario: JSON.parse(scenarioText), commitment: false });
+    // 수치 확인: 처음 h 시간을 수렴 기준(명시 부분 단계 소비 1%)과 비교
+    const nh = flags.numerics != null && flags.numerics !== true ? +flags.numerics : 1;
+    let numerics = null;
+    if (nh > 0) {
+      const s2 = { ...JSON.parse(scenarioText), t_end: Math.min(r.t_end, nh * 3600) }, t0 = Date.now();
+      const ref = FATE.simulateFate(db, x.id, { scenario: { ...s2, explicit_fraction: 0.01 }, mode: 'fine', commitment: false }), refMs = Date.now() - t0;
+      let worst = 0; for (const b of r.markers) { const i = r.keys.indexOf(b); let n = 0, d = 0; for (let j = 0; j < ref.series.length; j++) { n += (r.series[j][i] - ref.series[j][i]) ** 2; d += ref.series[j][i] ** 2; } worst = Math.max(worst, d ? Math.sqrt(n / d) : 0); }
+      numerics = { hours: s2.t_end / 3600, l2: worst, refMs };
+    }
+    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again.process.hash, numerics });
+    const md = PR.processReportMarkdown(rep);
+    console.log(md);
     console.log(DefDB.refineText(db).text);
-    process.exit(r.code);
+    if (flags.report && flags.report !== true) { writeFileSync(flags.report, md); console.log('보고서: ' + flags.report); }
+    process.exit(rep.pass ? 0 : 1);
   }
   case 'prompt': {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));

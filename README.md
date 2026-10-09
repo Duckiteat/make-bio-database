@@ -115,6 +115,7 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 
 ### 세포 운명 (v9)
 - `node dbtool.mjs fate "활성화된 CD8 T 세포" --scenario examples/scenarios/fate-effector-il12-hypothetical.json` — 신호(IL-12/IL-15) → 대사(해당과정/β-산화) → 전사 인자(T-bet/Eomes) 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석. 시나리오 8개(`fate-*-hypothetical.json`, 가상 값).
+- `node dbtool.mjs fate <상태> --scenario s.json --report 보고서.md` — 과정 분석 보고서 (요약·변곡점·시계열·구간·무결성 증명서·인과 추적·부록). 무결성 FAIL 이면 종료 코드 1.
 - `node tests/fate_suite.js` — Fate-Test 30 검사: 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준 대비 L2·속도 향상, 질량. 설계 `docs/design/cell-fate-engine.md`.
 
 ### 교과서
