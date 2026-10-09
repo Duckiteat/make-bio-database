@@ -18,6 +18,14 @@
     { key: 'commitment_coarse', scenario: 'commitment.coarse', default: 7200, unit: 's', meaning: '결정 탐침의 거친 격자 간격 (이분 탐색 전)', layer: 'commitment' },
     { key: 'commitment_tol', scenario: 'commitment.tol', default: 1, unit: 's', meaning: '결정 시각의 격자 구간 안 연속 이분 탐색을 멈추는 폭 (4단계 ③)', layer: 'commitment' },
     { key: 'event_tol', scenario: 'event_tol', default: 0.01, unit: 's', meaning: '사건(문턱 도달·고갈·재생) 시각 근 찾기를 멈추는 폭 — 실제 정확도는 적분 허용 오차가 정한다 (4단계 ③)', layer: 'numerics' },
+    // 혼성 확률 층 (4단계 ④, 시나리오 stochastic 이 있을 때만) — 규칙마다 방식: 정확 SSA(적은 분자 수) · τ-도약(중간) · Rodas3(많거나 빠름)
+    { key: 'sto_ssa_max', scenario: 'stochastic.ssa_max', default: 100, unit: '분자', meaning: '규칙의 참여 분자 수(신호·완충 제외 최솟값)가 이보다 적으면 정확 SSA (수정 다음 반응법)', layer: 'stochastic' },
+    { key: 'sto_ode_min', scenario: 'stochastic.ode_min', default: 1e4, unit: '분자', meaning: '참여 분자 수가 이 이상이면 결정론(Rodas3) — 상대 요동 ≲ 1/√N = 1 %', layer: 'stochastic' },
+    { key: 'sto_fast', scenario: 'stochastic.fast', default: 1, unit: '1/s', meaning: '성향이 이 이상인 빠른 규칙은 분자 수와 무관하게 결정론 (Haseltine–Rawlings 빠른 부분 — 요동을 평균으로 근사). 기본 1 s⁻¹ = 표지 반응(0.04–0.2 s⁻¹, 가상 시나리오)보다 5–25 배 빠름 — 작은 풀이 빠르게 회전하면(고갈 뒤 ATP 등) SSA 발화가 수백만 번 쌓이는 것을 막는다', layer: 'stochastic' },
+    { key: 'sto_hyst', scenario: 'stochastic.hysteresis', default: 2, unit: '1', meaning: '더 거친 방식으로 올라갈 때 문턱에 곱하는 히스테리시스 (분할은 관찰 격자점마다)', layer: 'stochastic' },
+    { key: 'leap_eps', scenario: 'stochastic.leap_eps', default: 0.03, unit: '1', meaning: 'τ-도약 단계 한계 (Cao 2006): 한 단계에서 참여 분자 수의 기대 변화·표준 편차 ≤ ε·N', layer: 'stochastic' },
+    { key: 'sto_atol', scenario: 'stochastic.atol', default: 1e-3, unit: '발화', meaning: '적분 성향 ∫a dt 의 절대 허용 오차 (Rodas3 오차 노름에 함께)', layer: 'stochastic' },
+    { key: 'ssa_tol', scenario: 'stochastic.ssa_tol', default: 1e-9, unit: '발화', meaning: 'SSA 발화 시각 근 찾기 — 적분 성향이 다음 발화 내부 시각에 닿는 폭', layer: 'stochastic' },
     { key: 'hill_s_floor', scenario: 'hill_s_floor', default: 1e-12, unit: 'M', meaning: '힐 n < 1 일 때 s → 0 에서 기울기를 자르는 농도 하한 (도함수 발산 방지) — 생물 상수 아님', layer: 'numerics' },
     // 결합 Rosenbrock(Rodas3) 단계 제어 — engine-port-roadmap 1.5단계. 오차 = max_i |e_i| / (atol + rtol·max(|N_i|, |N_i'|))
     { key: 'rtol', scenario: 'integrator.rtol', default: 1e-6, unit: '1', meaning: '국소 오차 상대 허용 (내장 2차 추정 대비)', layer: 'numerics' },

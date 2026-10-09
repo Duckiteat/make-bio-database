@@ -16,6 +16,7 @@ const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const OC = require('./judicial/obs_compare.js');
+const SA = require('./judicial/stoch_audit.js');
 
 // ----- 사건 기반·속도 시뮬레이션 -----
 const pools = (db, target) => { const s = C.simulate(db, target, { rounds: 0 }); return s.error ? undefined : { source: s.source }; };
@@ -64,11 +65,41 @@ function compare(dbA, dbB, state, scA, scB, opt) {
   return CMP.compare(dbA, dbB, runVariant(dbA, state, scA, opt), runVariant(dbB, state, scB, opt), opt);
 }
 
+// ----- 확률 앙상블 (4단계 ④): 궤적 i 는 (시나리오 seed, i) — 같은 입력이면 같은 궤적. 실행은 행정부, 판정은 사법부 -----
+function runEnsemble(db, state, sc, n, opt) {
+  opt = opt || {};
+  if (!sc.stochastic) return { error: '앙상블에는 시나리오 stochastic { seed } 가 필요함' };
+  const raws = [];
+  for (let i = 0; i < n; i++) { const r = F.simulateFate(db, state, Object.assign({ engine: 'js' }, opt, { scenario: sc, trajectory: (opt.first || 0) + i })); if (r.error) return r; raws.push(r); }
+  return raws;
+}
+// 부피 Ω 배: 부피·시작량·완충 총량·신호·문턱을 Ω 배 — 농도·속도 상수는 그대로 (분자 수만 커져 상대 요동 ∝ 1/√Ω)
+function scaleScenario(sc, omega) {
+  const x = JSON.parse(JSON.stringify(sc)), mul = (o, f) => { for (const k of Object.keys(o || {})) o[k] = f(o[k]); };
+  mul(x.volumes, (v) => ({ ...v, value: v.value * omega }));
+  mul(x.amounts, (n) => n * omega);
+  mul(x.buffered, (b) => ({ ...b, total: b.total * omega }));
+  mul(x.signals, (list) => list.map((e) => ({ ...e, n: e.n * omega })));
+  mul(x.thresholds, (t) => ({ low: t.low * omega, high: t.high * omega }));
+  return x;
+}
+// 결정론 극한: Ω 마다 확률 앙상블과 결정론 실행 → 사법부 limitTrend
+function ensembleLimit(db, state, sc, omegas, n, bundles, opt) {
+  const rows = omegas.map((omega) => {
+    const s = scaleScenario(sc, omega), { stochastic, ...det } = s;
+    return { omega, raws: runEnsemble(db, state, s, n, Object.assign({ commitment: false }, opt)), det: F.simulateFate(db, state, Object.assign({ engine: 'js', commitment: false }, opt, { scenario: det })) };
+  });
+  return SA.limitTrend(rows, bundles);
+}
+
 // ----- 관찰 판정 (4단계 ②): 행정부 실행 → 관찰 연산자(컴파일러)로 측정량 → 사법부 판정. 엔진은 관찰을 보지 않는다 -----
-// 시나리오 A (필수)·B (선택 — 경쟁 가설). 지금은 결정론 실행 하나씩 — 앙상블은 확률 층(④)에서 같은 자리로 들어온다
+// 시나리오 A (필수)·B (선택 — 경쟁 가설). 시나리오에 stochastic 이 있으면 앙상블(opt.n 궤적, 기본 50) — 생물 변이(퍼짐)까지 판정
 function observeFate(db, o, state, scA, scB, opt) {
   opt = opt || {};
-  const runs = (sc) => { const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r]; };
+  const runs = (sc) => {
+    if (sc.stochastic) { const rs = runEnsemble(db, state, sc, opt.n || 50, { commitment: false }); if (rs.error) throw new Error(rs.error); return rs; }
+    const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r];
+  };
   try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, opt); }
   catch (e) { return { error: e.message }; }
 }
@@ -86,4 +117,4 @@ function validateWithRegistry(db, root, opt) {
   return Object.assign(J.validate(C.normalize(db), { attestations: v.keys }), { attestations: v });
 }
 
-module.exports = { observeFate, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+module.exports = { observeFate, runEnsemble, scaleScenario, ensembleLimit, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };

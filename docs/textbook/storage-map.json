@@ -288,6 +288,17 @@
       "refactor_strategy": "기준은 \"너무 시끄러운가\"가 아니라 \"가를 수 있는가\" — 판정 규칙을 바꾸면 세 판정 시험(tests/stats.test.mjs ④)을 같이 고친다. 예측은 조정자가 관찰 연산자로 만들어 넘긴다 — 엔진을 부르지 않는다."
     },
     {
+      "path": "judicial/stoch_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js (ensembleLimit), tests",
+      "interpret": "[사법] 4단계 ④ — 확률 감사·앙상블 판정: 궤적(계약·원장 = judgeFate, 발화 수 정수, seed 재현 해시), 앙상블 요약(운명 비율 Wilson 구간·도달 시각 분포·표지 평균·sd·Fano), 방식 비교(SSA 대 τ-도약 — 이산 AD 두 표본·분할표, Bonferroni), 결정론 극한(Ω 계열의 상대 차가 줄어듦). 엔진을 부르지 않는다.",
+      "node": "JUDICIAL_STOCH_AUDIT",
+      "governance": "Judicial",
+      "refactor_strategy": "실패의 결함 태그: 발화·재현·원장 → ENGINE_DEFECT, 방식·극한 → NUMERICAL(결합점 leap_eps·분할 문턱 — 생물 상수를 바꾸지 않음). 판정 문턱은 judicial/stats.js 의 α."
+    },
+    {
       "path": "judicial/identity.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -406,7 +417,7 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs fate, tests",
-      "interpret": "[행정] 운명 엔진 공통 앞단 + JS 기준 백엔드(결합 Rodas3) — IR 만 먹는다. engine: rust 면 engine/fate_rust.js 백엔드. 원자료만(궤적·N·LO·누적 진행량·사건·탐침 결과). 판정·쓰기 없음.",
+      "interpret": "[행정] 운명 엔진 공통 앞단 + JS 기준 백엔드(결합 Rodas3) — IR 만 먹는다. engine: rust 면 engine/fate_rust.js 백엔드. 원자료만(궤적·N·LO·누적 진행량·사건·탐침 결과). 판정·쓰기 없음 · 4단계 ③ 사건 시각 근 찾기(다시 적분)·결정 시각 연속 이분 탐색 · 4단계 ④ 혼성 확률 층(시나리오 stochastic — 규칙마다 정확 SSA·τ-도약·Rodas3, 격자점 분할 + 구간 안 승격, 결정론 경로 비트 불변).",
       "node": "EXECUTIVE_FATE_FRONTEND",
       "governance": "Executive",
       "refactor_strategy": "공통 앞단(설정·분류·결정 탐침 탐색·원자료 조립) + JS 백엔드(run, 기준 구현·오라클 — 최적화하지 않음). 알고리즘을 바꾸면 Rust 솔버(EXECUTIVE_SOLVER)와 같은 커밋에서 맞춘다."
@@ -421,6 +432,17 @@
       "node": "COUPLING_REGISTRY",
       "governance": "Shared",
       "refactor_strategy": "수치 결합점의 유일한 출처. 범위 지정 해석(규칙·시간 척도)은 규칙별 강성 측정으로 근거가 나올 때 IMEX 분할과 함께."
+    },
+    {
+      "path": "engine/rng.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/fate_engine.js (확률 층)",
+      "interpret": "[행정] 4단계 ④ — 엔진 난수 xoshiro256++ (splitmix64 로 (seed, 궤적) 초기화), 균등·지수·포아송(곱셈법 μ < 10, PTRS). 확률 층의 모든 무작위는 여기서만 — 사법부는 쓰지 않는다.",
+      "node": "EXECUTIVE_RNG",
+      "governance": "Executive",
+      "refactor_strategy": "Rust(engine/rust/src/rng.rs, 4단계 ⑤)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다 — 해석해 시험(tests/stochastic.test.mjs ①)과 두 백엔드 사건열 동등을 함께 맞춘다."
     },
     {
       "path": "engine/fate_rust.js",
@@ -730,6 +752,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "사법부 통계·관찰 판정 — 특수 함수 알려진 값, 귀무 기각률 ≈ α(χ²·분할표·AD 두 표본·KS), 검정력 공식 = 모의, 관찰 3 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백, 관찰 연산자(운명 원자료 → 분자 수·농도·비율·도달 시각)."
+    },
+    {
+      "path": "tests/stochastic.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "혼성 확률 층 — 출생–사멸 해석해(정확 SSA·τ-도약 영역, χ²·이산 AD), SSA 대 τ-도약 두 표본, 결정론 극한(Ω 1·4·16), 재현·정수 발화·원장, 결정론 경로(확률 원자료 없음·탐침), 구간 안 승격(폭주 방지)."
     },
     {
       "path": "tests/rust_engine.test.mjs",
