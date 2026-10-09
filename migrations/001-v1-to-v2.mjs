@@ -124,7 +124,7 @@ for (const [id, st] of Object.entries(v1.steps || {})) {
 }
 
 const db = DefDB.normalize(v2);
-const r = DefDB.validate(db);
+const r = createRequire(import.meta.url)('../judicial/judicial.js').validate(db) /* 검사는 사법부 (삼권 분립) */;
 for (const e of r.errors) console.log(`오류  ${e.where}: ${e.msg}`);
 for (const w of r.warnings) console.log(`경고  ${w.where}: ${w.msg}`);
 if (r.errors.length) { console.error(`오류 ${r.errors.length} — 저장하지 않음`); process.exit(1); }

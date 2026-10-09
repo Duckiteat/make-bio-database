@@ -138,7 +138,7 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 ## 사용법
 
 ### 화면
-`index.html`(= `viewer.html`), `vocab.js`, `core.js` 를 같은 폴더에 두고 브라우저로 연다.
+`index.html`(= `viewer.html`), `vocab.js`, `model.js`, `core.js`, `judicial/judicial.js`, `legislative/legislative.js` 를 같은 배치로 두고 브라우저로 연다.
 웹 서버로 열면 `data/db.json` 을 자동으로 읽고, 파일로 열었다면 **불러오기**로 고른다.
 
 1. **AI 지침**: 자료를 넣고 복사 → AI 에게 준다. 규칙·어휘·현재 색인(부위·규칙·구성 요소 포함)·기존 단계가 함께 들어간다.
@@ -178,7 +178,12 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 | `limitations.md` | 한계 등록부 (data/db.json 에서 생성, 직접 고치지 않음) |
 | `data/patches/` | 병합된 패치 기록 |
 | `vocab.js` | 통제 어휘(위치·특징·종 …)·외부 ID 형식·관계의 kind 제약 |
-| `core.js` | 매핑·검사·관문·색인 (브라우저와 Node 공용) |
+| `model.js` | [공유] 형식·정규화·색인·참조·속도 법칙 정의 (브라우저와 Node 공용) |
+| `core.js` | [행정] 읽기·질의·시뮬레이션 — 원자료만 |
+| `judicial/` | [사법] 검사·관문·감사·독립 질량 검증·운명 판정·보고서·신원 확인·증명 도장 |
+| `legislative/` | [입법] merge·패치 초안, `clerk.mjs` = 유일한 파일 쓰기 |
+| `orchestrator.js` | 조정자 (행정 실행 → 사법 판정) |
+| `attestations/registry.json` | 증명 도장 (verified 의 근거, 서기만 씀) — 설계 `docs/design/tripartite-governance.md` |
 | `dbtool.mjs` | 명령줄 도구 |
 | `viewer.html`, `index.html` | 화면 |
 | `SCHEMA.md` | 규칙 명세와 변경 기록 |

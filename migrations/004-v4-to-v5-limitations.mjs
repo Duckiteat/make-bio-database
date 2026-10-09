@@ -10,7 +10,7 @@ const path = process.argv[2] || 'data/db.json';
 const v4 = JSON.parse(readFileSync(path, 'utf8'));
 if (v4.version !== 4) { console.error(`버전 ${v4.version} — 4 가 아니라 변환하지 않음`); process.exit(1); }
 const db = DefDB.normalize({ ...v4, version: 5, meta: { next: { ...v4.meta.next, L: 1 } }, limitations: {} });
-const { errors, warnings } = DefDB.validate(db);
+const { errors, warnings } = createRequire(import.meta.url)('../judicial/judicial.js').validate(db) /* 검사는 사법부 (삼권 분립) */;
 for (const e of errors) console.error('오류', e.where, e.msg);
 if (errors.length) process.exit(1);
 writeFileSync(path, JSON.stringify(db, null, 2) + '\n');

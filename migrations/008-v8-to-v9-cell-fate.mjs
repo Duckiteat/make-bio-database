@@ -11,7 +11,7 @@ const path = process.argv[2] || 'data/db.json';
 const v8 = JSON.parse(readFileSync(path, 'utf8'));
 if (v8.version !== 8) { console.error(`버전 ${v8.version} — 8 이 아니라 변환하지 않음`); process.exit(1); }
 const db = DefDB.normalize({ ...v8, version: 9 });
-const { errors } = DefDB.validate(db);
+const { errors } = createRequire(import.meta.url)('../judicial/judicial.js').validate(db) /* 검사는 사법부 (삼권 분립) */;
 for (const e of errors) console.error('오류', e.where, e.msg);
 if (errors.length) process.exit(1);
 writeFileSync(path, JSON.stringify(db, null, 2) + '\n');

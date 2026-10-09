@@ -4,12 +4,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
-const DefDB = createRequire(import.meta.url)('../core.js');
+// 삼권 분립: 행정부(core.js — 읽기·시뮬레이션), 사법부(judicial/ — 검사·관문·감사), 입법부(legislative/ — 병합), 조정자(orchestrator.js)
+const req = createRequire(import.meta.url);
+const DefDB = req('../core.js'), J = req('../judicial/judicial.js'), LEG = req('../legislative/legislative.js'), ORCH = req('../orchestrator.js'), ATT = req('../judicial/attestation.js');
+const ROOT = new URL('..', import.meta.url).pathname;
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
 const P = (o) => Object.assign({ format: 'definition-db-patch', version: 9 }, o);
-const run = (patch, opt) => { const res = DefDB.merge(BASE, P(patch)); return { res, g: DefDB.gate(BASE, res, opt) }; };
+const run = (patch, opt) => { const res = LEG.merge(BASE, P(patch)); return { res, g: J.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
 const rejectedFor = (patch, re) => {
@@ -26,7 +29,7 @@ const one = (name, sense, termExtra) => ({
 });
 const findText = (db, text) => Object.values(db.senses).find((d) => d.desc.some((x) => x.text === text));
 // 저장소 사본을 고쳐 직접 검사 (단계·구조 검사용)
-const probe = (f) => { const d = JSON.parse(JSON.stringify(BASE)); f(d); return DefDB.validate(DefDB.normalize(d)); };
+const probe = (f) => { const d = JSON.parse(JSON.stringify(BASE)); f(d); return J.validate(DefDB.normalize(d)); };
 const failsWith = (f, re) => {
   const r = probe(f);
   assert.ok(r.errors.some((e) => re.test(e.msg)), `기대한 오류(${re})가 없음:\n` + r.errors.map((e) => `${e.where}: ${e.msg}`).join('\n'));
@@ -36,12 +39,12 @@ const CAMP = id('cAMP'), ATP = id('ATP'), EPI = id('에피네프린');
 const stepOf = (db, ruleRef) => Object.values(db.steps).find((s) => s.rule === ruleRef);
 
 test('현재 저장소는 오류·경고 없음', () => {
-  const r = DefDB.validate(BASE);
+  const r = J.validate(BASE);
   assert.deepEqual([r.errors, r.warnings], [[], []]);
 });
 test('예시 패치는 관문을 통과', () => {
   const patch = JSON.parse(readFileSync(new URL('../examples/pgm-isomerization.json', import.meta.url), 'utf8'));
-  const res = DefDB.merge(BASE, patch), g = DefDB.gate(BASE, res);
+  const res = LEG.merge(BASE, patch), g = J.gate(BASE, res);
   assert.ok(g.ok, msgs(g));
 });
 
@@ -60,7 +63,7 @@ test('삭제한 번호는 다시 쓰지 않음', () => {
   const last = 'S' + String(BASE.meta.next.S - 1).padStart(6, '0'), next = 'S' + String(BASE.meta.next.S).padStart(6, '0');
   const res = passes({ remove: [last] });
   const st = { ...BASE.steps[last], id: 'S+1' };
-  const res2 = DefDB.merge(res.db, P({ steps: [st] }));
+  const res2 = LEG.merge(res.db, P({ steps: [st] }));
   assert.ok(!res2.db.steps[last], `${last} 는 재사용되면 안 됨`);
   assert.ok(res2.db.steps[next]);
 });
@@ -84,7 +87,7 @@ test('이전 형식 패치(v2·v3)는 거부', () => {
   rejectedFor({ states: { '에너지': [] } }, /이전 형식/);
 });
 test('저장소 형식 버전이 다르면 오류', () => {
-  const r = DefDB.validate(DefDB.normalize({ ...JSON.parse(JSON.stringify(BASE)), version: 3 }));
+  const r = J.validate(DefDB.normalize({ ...JSON.parse(JSON.stringify(BASE)), version: 3 }));
   assert.ok(r.errors.some((e) => /형식 버전 3/.test(e.msg)));
 });
 
@@ -166,8 +169,8 @@ test('지문: 형식·kind 검사, 중복 거부, 지문으로 찾기', () => {
   const res = passes(one('테스트 분자', { kind: 'small_molecule', unmapped: 't', fingerprint: fp }));
   const r = DefDB.resolveRef(DefDB.index(res.db), fp.value);
   assert.ok(r.id && r.via.startsWith('지문'));
-  const res2 = DefDB.merge(res.db, P(one('다른 분자', { kind: 'small_molecule', unmapped: 't', fingerprint: fp })));
-  assert.ok(DefDB.validate(res2.db).errors.some((e) => /구조 지문/.test(e.msg)));
+  const res2 = LEG.merge(res.db, P(one('다른 분자', { kind: 'small_molecule', unmapped: 't', fingerprint: fp })));
+  assert.ok(J.validate(res2.db).errors.some((e) => /구조 지문/.test(e.msg)));
 });
 test('근거 수준: curated 는 출처, computed 는 도구, predicted 는 confidence 필요', () => {
   rejectedFor(one('테스트', { desc: desc('t', { evidence: { level: 'curated' } }) }), /출처\(source/);
@@ -392,19 +395,19 @@ test('한계: [Target | Type | Requirement] — 대상·종류·해결 경로가
 });
 test('한계는 저장된 상태가 아니라 계산된 상태 — 필요한 데이터가 들어오면 자동으로 resolved', () => {
   const L1 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].requirement.needs.some((n) => n.property === 'copy_number' && n.cell === 'hepatocyte'));
-  assert.equal(DefDB.limitationStatus(BASE, BASE.limitations[L1]).status, 'open');
+  assert.equal(J.limitationStatus(BASE, BASE.limitations[L1]).status, 'open');
   const cn = (location) => [{ property: 'copy_number', value: 1000, unit: 'copies/cell', context: { species: '9606', cell: 'hepatocyte', location }, evidence: { level: 'predicted', confidence: 0.1 } }];
   const res = passes({ senses: [{ id: REC, obs: cn('plasma_membrane') }, { id: PKA, obs: cn('cytosol') }, { id: GP, obs: cn('cytosol') }] });
-  assert.equal(DefDB.limitationStatus(res.db, res.db.limitations[L1]).status, 'resolved');
+  assert.equal(J.limitationStatus(res.db, res.db.limitations[L1]).status, 'resolved');
   assert.equal(DefDB.simulate(res.db, '에피네프린에 의한 글리코겐 분해', {}).origin[`${GP}|cytosol`], 1000, '관찰이 시작량이 됨');
   const R = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${id('TAK1')}/site/act`);
   const res2 = passes({ senses: [{ id: id('TAK1'), site: { act: { type: 'modification_site', features: ['phosphorylated'], numbering: { 9606: 'Thr187' } } } },
     { id: id('TAK1 복합체'), site: { tak1_act: { type: 'modification_site', features: ['phosphorylated'], on: id('TAK1'), numbering: { 9606: 'Thr187' } } } }] });
-  assert.equal(DefDB.limitationStatus(res2.db, res2.db.limitations[R]).status, 'resolved', '잔기 번호가 들어오면 Structural_Gap 해결');
+  assert.equal(J.limitationStatus(res2.db, res2.db.limitations[R]).status, 'resolved', '잔기 번호가 들어오면 Structural_Gap 해결');
 });
 test('limitations.md 는 data/db.json 에서 생성된 최신 상태여야 함', () => {
-  assert.equal(readFileSync(new URL('../limitations.md', import.meta.url), 'utf8'), DefDB.limitationsMarkdown(BASE));
-  assert.deepEqual(DefDB.detectGaps(BASE), [], '잔기 모름 부위는 모두 등록되어 있어야 함');
+  assert.equal(readFileSync(new URL('../limitations.md', import.meta.url), 'utf8'), J.limitationsMarkdown(BASE));
+  assert.deepEqual(J.detectGaps(BASE), [], '잔기 모름 부위는 모두 등록되어 있어야 함');
 });
 test('상위 개념(motif): kind process 만, 한계 검토(addresses 또는 gap_review) 필수, 없는 한계를 가리키면 거부', () => {
   const c = (sense) => one('테스트 패턴', Object.assign({ kind: 'process', motif: 'kinase_cascade' }, sense));
@@ -452,9 +455,9 @@ test('속도 무결성: 법칙·필수 상수·Kd = k_off/k_on·두 분자 결�
 });
 test('한계 해결 경로 kinetics: 규칙에 속도 상수가 들어오면 Kinetic_Gap 이 자동으로 resolved', () => {
   const L4 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${TNFG}/rule/kb_binding`);
-  assert.equal(DefDB.limitationStatus(BASE, BASE.limitations[L4]).status, 'open');
+  assert.equal(J.limitationStatus(BASE, BASE.limitations[L4]).status, 'open');
   const res = passes({ senses: [withKin(TNFG, 'kb_binding', { law: 'binding', Kd: 1e-9, k_on: 1e7, evidence: pred })] });
-  assert.equal(DefDB.limitationStatus(res.db, res.db.limitations[L4]).status, 'resolved');
+  assert.equal(J.limitationStatus(res.db, res.db.limitations[L4]).status, 'resolved');
 });
 test('반응 중심 구조(R2): PDB 만, 정의항 xrefs 에도 같은 구조가 있어야 함 — 3FXI 는 LPS 주머니에', () => {
   assert.equal(BASE.senses[RCX].site.lps_pocket.structure.id, '3FXI');
@@ -462,16 +465,16 @@ test('반응 중심 구조(R2): PDB 만, 정의항 xrefs 에도 같은 구조가
   failsWith((d) => { d.senses[RCX].site.tir.structure = { db: 'PDB', id: 'XYZ' }; }, /PDB ID 여야/);
 });
 test('혼합 해상도 계획: LPS 경로는 3차원 0단계, 글리코겐 경로는 cAMP 경쟁(T3) 두 단계만 R2 — 속도 상수가 들어오면 R1 로 해결', () => {
-  const lps = DefDB.resolutionPlan(BASE, TLRP), gly = DefDB.resolutionPlan(BASE, '에피네프린에 의한 글리코겐 분해');
+  const lps = ORCH.resolutionPlan(BASE, TLRP), gly = ORCH.resolutionPlan(BASE, '에피네프린에 의한 글리코겐 분해');
   assert.equal(lps.rows.filter((r) => r.need === 2).length, 0);
   assert.ok(lps.rows.find((r) => r.sid === sid(NFKB, 'nuclear_import')).need === 0, '수송은 R0(위상)');
   assert.deepEqual(gly.rows.filter((r) => r.need === 2).map((r) => r.sid).sort(), [sid(PKAR, 'camp_release'), sid(PDE, 'camp_hydrolysis')].sort());
   assert.ok(gly.rows.some((r) => !r.ok));
   const res = passes({ senses: [withKin(PKAR, 'camp_release', { law: 'mass_action', k: 1e20, order: 5, evidence: pred }), withKin(PDE, 'camp_hydrolysis', { law: 'michaelis_menten', kcat: 5, Km: 1e-6, evidence: pred })] });
-  assert.ok(DefDB.resolutionPlan(res.db, '에피네프린에 의한 글리코겐 분해').rows.every((r) => r.ok), '속도 상수로 T3 해결');
+  assert.ok(ORCH.resolutionPlan(res.db, '에피네프린에 의한 글리코겐 분해').rows.every((r) => r.ok), '속도 상수로 T3 해결');
 });
 test('속도 기반 시뮬레이션(가상 시나리오): TNF mRNA 에 시간 순서대로 도달, 질량 보존 위반 없음', () => {
-  const r = DefDB.simulateRate(BASE, TLRP, { scenario: scenario('lps-hypothetical.json'), t_end: 60, dt: 0.01 });
+  const r = ORCH.runRate(BASE, TLRP, { scenario: scenario('lps-hypothetical.json'), t_end: 60, dt: 0.01 });
   const t = (b) => r.firstReach[b];
   const mrna = Object.keys(r.firstReach).find((b) => b.startsWith(TNFM + '|'));
   assert.ok(mrna && t(mrna) > 0, 'TNF mRNA 도달');
@@ -481,7 +484,7 @@ test('속도 기반 시뮬레이션(가상 시나리오): TNF mRNA 에 시간 �
   assert.ok(r.audit.some((a) => a.code === 'AUDIT_KINETIC_GAP'));
 });
 test('감사: 잘못된 속도 법칙·Kd 불일치를 잡고, 이중 계산(Gs)은 한계 등록부의 교정 제안으로 연결', () => {
-  const a = DefDB.auditRun(BASE, '에피네프린에 의한 글리코겐 분해', { scenario: scenario('camp-competition-hypothetical.json'), t_end: 10, dt: 0.01 });
+  const a = ORCH.auditRun(BASE, '에피네프린에 의한 글리코겐 분해', { scenario: scenario('camp-competition-hypothetical.json'), t_end: 10, dt: 0.01 });
   assert.ok(a.some((x) => x.code === 'AUDIT_KINETIC' && /두 분자 결합/.test(x.msg)));
   assert.ok(a.some((x) => x.code === 'AUDIT_KINETIC' && /Kd 와 k_off\/k_on/.test(x.msg)));
   assert.ok(a.some((x) => x.code === 'AUDIT_RESOLUTION' && /T3 경쟁/.test(x.msg)));
@@ -535,12 +538,12 @@ test('부위의 특징별 리간드(ligands): 특징은 그 부위의 것, 리�
   site.nucleotide.ligands.ATP_bound = ATP;
   rejectedFor({ senses: [{ id: GSX, site }] }, /ligands: 특징 'ATP_bound'|특징\(feature\) 'ATP_bound'/);
   const t = {};
-  DefDB.simulateRate; // 리간드 실체: Gs[GTP] 는 GTP 하나를, Gs[GDP] 는 GDP 하나를 품는다 (질량 감사의 셈)
-  const r = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 0.05, dt: 0.01 });
+  ORCH.runRate; // 리간드 실체: Gs[GTP] 는 GTP 하나를, Gs[GDP] 는 GDP 하나를 품는다 (질량 감사의 셈)
+  const r = ORCH.runRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 0.05, dt: 0.01 });
   assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS' && /Gs 자체 비활성화/.test(a.where)), 'GTP → GDP 리간드 교체는 화학 변환으로 셈');
 });
 test('기질 고갈(Substrate Exhaustion): 공급이 없으면 GTP 가 바닥나고 Gs 활성화가 멈춘다 — 무너지지 않음', () => {
-  const r = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 5, dt: 0.01 });
+  const r = ORCH.runRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 5, dt: 0.01 });
   assert.equal(r.mode, 'finite');
   assert.ok(r.events.some((e) => e.type === 'exhausted' && e.bundle === `${GTP}|cytosol`), 'GTP 고갈 사건');
   assert.ok(r.stalls[sid(REC, 'gs_gef')], 'Gs 활성화 단계가 멈춤으로 기록');
@@ -550,8 +553,8 @@ test('기질 고갈(Substrate Exhaustion): 공급이 없으면 GTP 가 바닥나
   assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS' && /부분 구조/.test(a.msg)), '부분 구조 수지 위반 없음');
 });
 test('순환 재생(Cycle-driven Regeneration): NDPK·ATP 재생 공급이 GTP–GDP 순환과 ATP 순환을 닫는다', () => {
-  const ex = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 5, dt: 0.01 });
-  const rg = DefDB.simulateRate(BASE, GLY, { scenario: scenario('gtp-regeneration-hypothetical.json'), t_end: 5, dt: 0.01 });
+  const ex = ORCH.runRate(BASE, GLY, { scenario: scenario('gtp-exhaustion-hypothetical.json'), t_end: 5, dt: 0.01 });
+  const rg = ORCH.runRate(BASE, GLY, { scenario: scenario('gtp-regeneration-hypothetical.json'), t_end: 5, dt: 0.01 });
   const g = `${GTP}|cytosol`;
   assert.equal(rg.reservoirs[g].class, 'closed');
   assert.ok(rg.cycles.some((c) => c.includes(g) && c.includes(`${GDP}|cytosol`) && c.includes(`${ATP}|cytosol`)), 'GTP·GDP·ATP 가 한 순환 성분');
@@ -564,18 +567,18 @@ test('순환 재생(Cycle-driven Regeneration): NDPK·ATP 재생 공급이 GTP�
 test('매 단계 질량 감사: 단계에서 부산물(피로인산)을 빼면 첫 발화 시각과 함께 부분 구조 위반', () => {
   const d = JSON.parse(JSON.stringify(BASE)), s5 = sid(AC, 'cyclization');
   d.steps[s5].outputs = d.steps[s5].outputs.filter((p) => !p.b.startsWith(PPI + '|'));
-  const r = DefDB.simulateRate(DefDB.normalize(d), GLY, { scenario: scenario('gtp-regeneration-hypothetical.json'), t_end: 1, dt: 0.01 });
+  const r = ORCH.runRate(DefDB.normalize(d), GLY, { scenario: scenario('gtp-regeneration-hypothetical.json'), t_end: 1, dt: 0.01 });
   const a = r.audit.find((x) => x.code === 'AUDIT_MASS' && x.where.startsWith(s5) && /부분 구조 수지 위반/.test(x.msg));
   assert.ok(a && /t=0\.\d+ s 첫 발화/.test(a.msg) && /인산기 단위 -2/.test(a.msg), '단계·시각·부분 구조를 짚음');
 });
 test('분해(결정론·확률적): 1차 원장, 재활용 화학량을 모르면 소실로 처리하고 한계를 제안, seed 가 같으면 같은 결과', () => {
   const sc = scenario('lps-hypothetical.json'), m = `${TNFM2}|nucleoplasm`;
-  const det = DefDB.simulateRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01 });
+  const det = ORCH.runRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01 });
   assert.ok(det.ledger[m].degradation < 0 && det.ledger[`${id('뉴클레오타이드')}|nucleoplasm`].recycle === 0);
   const gap = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === TNFM2 && BASE.limitations[k].type === 'Structural_Gap');
   assert.ok(det.audit.some((a) => a.code === 'AUDIT_RESOURCE' && /서열 길이/.test(a.msg) && a.suggestion.includes(gap)));
-  const s1 = DefDB.simulateRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
-  const s2 = DefDB.simulateRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
+  const s1 = ORCH.runRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
+  const s2 = ORCH.runRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
   assert.equal(s1.ledger[m].degradation, s2.ledger[m].degradation);
   assert.ok(Number.isInteger(-s1.ledger[m].degradation) || s1.ledger[m].degradation === 0, '확률적 분해는 정수 분자');
   assert.ok(Math.abs(s1.ledger[m].degradation - det.ledger[m].degradation) < 6 * Math.sqrt(-det.ledger[m].degradation) + 3, '기댓값 근처');
@@ -587,24 +590,24 @@ test('재활용: 서열 길이 관찰이 있으면 분해된 사슬이 단위체
   r0.kinetics = { law: 'mass_action', order: 1, k: 0.01, evidence: { level: 'predicted', confidence: 0 } };
   // 유리 IκBα 묶음을 원천으로 가진 작은 경로를 만들어 본다: 수송(가상) 대신 init 으로 시작량만 준다
   const db = DefDB.normalize(d), ikb = `${IKBA1}|cytosol`;
-  const rr = DefDB.simulateRate(db, TLRP, { scenario: { ...scenario('lps-hypothetical.json'), amounts: { ...scenario('lps-hypothetical.json').amounts } }, t_end: 1, dt: 0.01 });
+  const rr = ORCH.runRate(db, TLRP, { scenario: { ...scenario('lps-hypothetical.json'), amounts: { ...scenario('lps-hypothetical.json').amounts } }, t_end: 1, dt: 0.01 });
   // 경로에 유리 IκBα 묶음이 없으면 규칙은 적용되지 않는다 (묶음 단위로만 분해)
   assert.ok(!rr.degradations.some((g) => g.bundle === ikb));
-  assert.ok(DefDB.limitationStatus(db, db.limitations[Object.keys(db.limitations).find((k) => db.limitations[k].target === `${IKBA1}/rule/basal_turnover`)]).status === 'resolved', 'k 가 들어오면 half_life 를 요구한 한계도 닫힘 (k ↔ ln2/t½)');
+  assert.ok(J.limitationStatus(db, db.limitations[Object.keys(db.limitations).find((k) => db.limitations[k].target === `${IKBA1}/rule/basal_turnover`)]).status === 'resolved', 'k 가 들어오면 half_life 를 요구한 한계도 닫힘 (k ↔ ln2/t½)');
 });
 test('무한 풀 방식(v6 동작)도 그대로: 저장소 감사 없음, 교환 원장으로 질량 수지', () => {
-  const r = DefDB.simulateRate(BASE, TLRP, { scenario: scenario('lps-hypothetical.json'), t_end: 10, dt: 0.01, reservoirs: 'infinite' });
+  const r = ORCH.runRate(BASE, TLRP, { scenario: scenario('lps-hypothetical.json'), t_end: 10, dt: 0.01, reservoirs: 'infinite' });
   assert.equal(r.mode, 'infinite');
   assert.ok(!r.audit.some((a) => (a.code === 'AUDIT_RESOURCE' && /재생 경로/.test(a.msg)) || a.code === 'AUDIT_MASS'));
   assert.ok(Object.keys(r.firstReach).some((b) => b.startsWith(TNFM2 + '|')));
-  assert.ok(DefDB.simulateRate(BASE, TLRP, { reservoirs: 'bogus' }).error);
+  assert.ok(ORCH.runRate(BASE, TLRP, { reservoirs: 'bogus' }).error);
 });
 test('한계 후보 탐지: 속도 없는 공급·분해 규칙과 서열 길이 없는 재활용이 등록되지 않으면 후보로', () => {
-  assert.deepEqual(DefDB.detectGaps(BASE), []);
+  assert.deepEqual(J.detectGaps(BASE), []);
   const d = JSON.parse(JSON.stringify(BASE));
   for (const [k, l] of Object.entries(d.limitations)) if (/atp_supply|^D000101$/.test(l.target) || l.target === TNFM2) delete d.limitations[k];
   for (const s of Object.values(d.senses)) for (const a of s.addresses || []) if (!d.limitations[a.limitation]) s.addresses = s.addresses.filter((x) => d.limitations[x.limitation]);
-  const c = DefDB.detectGaps(d);
+  const c = J.detectGaps(d);
   assert.ok(c.some((x) => x.target === `${ATPREGEN}/rule/atp_supply` && x.type === 'Kinetic_Gap'));
   assert.ok(c.some((x) => x.target === TNFM2 && x.type === 'Structural_Gap'));
 });
@@ -612,7 +615,7 @@ test('한계 후보 탐지: 속도 없는 공급·분해 규칙과 서열 길이
 // ===== Patch Report (Scope · Why · Impact · Verification) =====
 test('Patch Report: 바뀐 필드·하류 규칙·단계·경로·한계 상태 변화를 계산한다', () => {
   const patch = P({ why: '시험: AC 고리화 속도 상수', senses: [withKin(AC, 'cyclization', { law: 'michaelis_menten', kcat: 1, Km: 1e-4, evidence: { level: 'predicted', confidence: 0 } })] });
-  const res = DefDB.merge(BASE, patch), g = DefDB.gate(BASE, res), rep = DefDB.patchReport(BASE, res, patch, g);
+  const res = LEG.merge(BASE, patch), g = J.gate(BASE, res), rep = J.patchReport(BASE, res, patch, g);
   assert.equal(rep.why, '시험: AC 고리화 속도 상수');
   assert.deepEqual(rep.scope.updated.senses, [AC]);
   assert.deepEqual(rep.scope.fields[AC], ['rule']);
@@ -620,24 +623,24 @@ test('Patch Report: 바뀐 필드·하류 규칙·단계·경로·한계 상태 
   assert.ok(rep.impact.pathways.includes(id('에피네프린에 의한 글리코겐 분해')));
   assert.ok(rep.impact.rules.includes(`${id('Gs 단백질')}/rule/ac_activation`), 'AC 를 대상으로 하는 다른 정의항의 규칙');
   assert.equal(rep.verification.gate, 'pass');
-  assert.ok(/\| Why \| 시험/.test(DefDB.patchReportText(rep, DefDB.index(res.db))));
+  assert.ok(/\| Why \| 시험/.test(J.patchReportText(rep, DefDB.index(res.db))));
   // 한계를 닫는 데이터 → 상태 변화가 보고되고 limitations.md 재생성이 요구됨
   const lid = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${ATPREGEN}/rule/atp_supply`);
   const p2 = P({ why: '시험', senses: [{ id: ATPREGEN, rule: BASE.senses[ATPREGEN].rule.map((r) => ({ ...r, kinetics: { law: 'mass_action', k: 1, order: 2, evidence: { level: 'predicted', confidence: 0 } } })) }] });
-  const r2 = DefDB.merge(BASE, p2), rep2 = DefDB.patchReport(BASE, r2, p2, DefDB.gate(BASE, r2));
+  const r2 = LEG.merge(BASE, p2), rep2 = J.patchReport(BASE, r2, p2, J.gate(BASE, r2));
   assert.ok(rep2.impact.limitation_status_changed.some((l) => l.id === lid && l.before === 'open' && l.after === 'resolved'));
   assert.ok(rep2.impact.regenerate.includes('limitations.md'));
-  assert.equal(DefDB.patchReport(BASE, r2, { senses: [] }, null).why, '', 'why 가 없으면 빈 값 (dbtool merge 가 거부)');
+  assert.equal(J.patchReport(BASE, r2, { senses: [] }, null).why, '', 'why 가 없으면 빈 값 (dbtool merge 가 거부)');
 });
 test('Identity_Gap: unmapped 외부 ID 는 한계로 등록되어야 하고, 확인된 ID 가 들어오면 닫힌다', () => {
   const d = JSON.parse(JSON.stringify(BASE)), pi = id('무기 인산');
   const lid = Object.keys(d.limitations).find((k) => d.limitations[k].target === pi && d.limitations[k].type === 'Identity_Gap');
   assert.ok(lid);
   delete d.limitations[lid];
-  assert.ok(DefDB.detectGaps(d).some((x) => x.target === pi && x.type === 'Identity_Gap'));
+  assert.ok(J.detectGaps(d).some((x) => x.target === pi && x.type === 'Identity_Gap'));
   const e = JSON.parse(JSON.stringify(BASE));
   e.senses[pi].xrefs.push({ db: 'ChEBI', id: 'CHEBI:1', status: 'asserted' });
-  assert.equal(DefDB.limitationStatus(DefDB.normalize(e), DefDB.normalize(e).limitations[lid]).status, 'resolved');
+  assert.equal(J.limitationStatus(DefDB.normalize(e), DefDB.normalize(e).limitations[lid]).status, 'resolved');
 });
 
 // ===== 소진 시험 (Survival-to-Exhaustion): 시트르산 회로 =====
@@ -650,7 +653,7 @@ test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복�
   rejectedFor({ senses: [{ id: IDH, rule: rs2 }] }, /니코틴아마이드 뉴클레오타이드 부분 1 → 0/);
 });
 test('소진 시험 1: 아세틸-CoA 1000 → 정확히 1000 바퀴 뒤 아세틸-CoA 고갈로 정지, CO₂ 2000·GTP 1000 축적', () => {
-  const r = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-acetylcoa-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 });
+  const r = ORCH.runRate(BASE, TCA, { scenario: scenario('tca-acetylcoa-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 });
   const pm = r.postMortem;
   assert.equal(r.stepCycles.length, 1);
   assert.equal(r.stepCycles[0].length, 8);
@@ -666,16 +669,16 @@ test('소진 시험 1: 아세틸-CoA 1000 → 정확히 1000 바퀴 뒤 아세�
   assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS'), '탄소·CoA·NAD 수지 위반 없음');
 });
 test('소진 시험 2: NAD⁺ 3002 → 1000 바퀴 + 부분 바퀴 뒤 NAD⁺ 고갈, NADH 3002 축적 (바퀴당 NAD⁺ 3)', () => {
-  const r = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-nad-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 }), pm = r.postMortem;
+  const r = ORCH.runRate(BASE, TCA, { scenario: scenario('tca-nad-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 }), pm = r.postMortem;
   assert.ok(pm.cause === 'exhaustion' && pm.limiting.bundle === mx(NADP));
   assert.equal(pm.cycles[0].completed, 1000);
   assert.ok(pm.limiting.starved.length === 3, 'NAD⁺ 를 쓰는 세 탈수소효소가 굶음');
   assert.ok(Math.abs(r.final[mx(NADH)] - 3002) < 1e-6 && Math.abs(pm.waste.find((w) => w.bundle === mx(CO2)).accumulated - 2002) < 1e-6, '부분 바퀴: IDH·KGDH 가 한 번 더');
 });
 test('소진 시험 3: 기질이 남아도 CO₂ 축적이 가역 IDH 를 평형에 묶어 정지 — 병목과 역/정 비를 보고', () => {
-  const r = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-co2-equilibrium-hypothetical.json'), t_end: 3600, dt: 0.005 }), pm = r.postMortem;
+  const r = ORCH.runRate(BASE, TCA, { scenario: scenario('tca-co2-equilibrium-hypothetical.json'), t_end: 3600, dt: 0.005 }), pm = r.postMortem;
   assert.ok(!r.audit.some((a) => /Δt .* 너무 큼/.test(a.msg)), '수렴하는 Δt');
-  const coarse = DefDB.simulateRate(BASE, TCA, { scenario: scenario('tca-co2-equilibrium-hypothetical.json'), t_end: 300, dt: 0.1 });
+  const coarse = ORCH.runRate(BASE, TCA, { scenario: scenario('tca-co2-equilibrium-hypothetical.json'), t_end: 300, dt: 0.1 });
   assert.ok(coarse.audit.some((a) => a.code === 'AUDIT_KINETIC' && /Δt 0.1 s 가 너무 큼/.test(a.msg)), '큰 Δt 는 적분 안정성 감사');
   assert.ok(pm.dead && pm.cause === 'equilibrium');
   assert.equal(pm.bottleneck.sid, Object.keys(BASE.steps).find((k) => BASE.steps[k].rule === `${IDH}/rule/oxdecarb`));
@@ -687,11 +690,11 @@ test('소진 시험 3: 기질이 남아도 CO₂ 축적이 가역 IDH 를 평형
 test('재생이 있으면 죽지 않는다: 아세틸-CoA 공급을 켜면 정지 없이 계속 돈다 · 시동 중에는 정지로 보지 않음', () => {
   const sc = scenario('tca-acetylcoa-exhaustion-hypothetical.json');
   sc.kinetics['D000159/rule/accoa_supply'] = { law: 'mass_action', k: 100, order: 1, evidence: { level: 'predicted', confidence: 0 } };
-  const r = DefDB.simulateRate(BASE, TCA, { scenario: sc, t_end: 5, dt: 0.01 });
+  const r = ORCH.runRate(BASE, TCA, { scenario: sc, t_end: 5, dt: 0.01 });
   assert.ok(r.postMortem.alive && r.postMortem.cycles[0].completed > 1000);
   const slow = scenario('tca-co2-equilibrium-hypothetical.json');
   for (const k of Object.keys(slow.kinetics)) if (slow.kinetics[k].k) slow.kinetics[k].k /= 1e6;
-  assert.ok(DefDB.simulateRate(BASE, TCA, { scenario: slow, t_end: 30, dt: 0.05 }).postMortem.alive, '한 바퀴도 못 돈 시동 단계는 정지가 아님');
+  assert.ok(ORCH.runRate(BASE, TCA, { scenario: slow, t_end: 30, dt: 0.05 }).postMortem.alive, '한 바퀴도 못 돈 시동 단계는 정지가 아님');
 });
 
 // ===== 형식 v8: 3 층 엔진 =====
@@ -732,7 +735,7 @@ test('v8 Tier 1: 환경(pH·ε)이 장벽을 옮겨도 k_f/k_r 는 exp(−ΔG°/
   const sc = scenario('tca-co2-equilibrium-hypothetical.json');
   sc.kinetics[`${IDH}/rule/oxdecarb`] = { law: 'mass_action', order: 2, k0: 1e20, dG_act: 50000, dG0: -10000, evidence: { level: 'predicted', confidence: 0 } };
   sc.environment = { mito_matrix: { pH: 7.8, relative_permittivity: 80 } };
-  const r = DefDB.simulateRate(BASE, TCA, { scenario: sc, t_end: 0.1, dt: 0.005 }), x = r.react.get(Object.keys(BASE.steps).find((k) => BASE.steps[k].rule === `${IDH}/rule/oxdecarb`));
+  const r = ORCH.runRate(BASE, TCA, { scenario: sc, t_end: 0.1, dt: 0.005 }), x = r.react.get(Object.keys(BASE.steps).find((k) => BASE.steps[k].rule === `${IDH}/rule/oxdecarb`));
   assert.ok(x.k.reversible && Math.abs(Math.log(x.k.k / x.k.k_r) - 10000 / RTv) < 1e-9);
 });
 test('v8 Wegscheider: 닫힌 고리의 ΣΔG° ≠ 0 이면 AUDIT_THERMO', () => {
@@ -744,12 +747,12 @@ test('v8 Wegscheider: 닫힌 고리의 ΣΔG° ≠ 0 이면 AUDIT_THERMO', () =>
     steps: [['S+1', 'ab', 'D+a', 'D+b'], ['S+2', 'bc', 'D+b', 'D+c'], ['S+3', 'ca', 'D+c', 'D+a']].map(([sidn, rid, s, p]) => ({ id: sidn, rule: { owner: 'D+e', id: rid }, agents: [{ ref: 'D+e', location: 'cytosol' }], inputs: [{ ref: s, location: 'cytosol' }], outputs: [{ ref: p, location: 'cytosol' }], part_of: ['D+p'] })) });
   const bad = passes(mk([-1000, -2000, -3000])).db, good = passes(mk([-1000, -2000, 3000])).db;
   const pth = Object.keys(bad.senses).find((k) => bad.terms[bad.senses[k].term].names.ko === '시험 고리');
-  const lb = DefDB.thermoLoops(bad, pth).loops, lg = DefDB.thermoLoops(good, pth).loops;
+  const lb = J.thermoLoops(bad, pth).loops, lg = J.thermoLoops(good, pth).loops;
   assert.ok(lb.length === 1 && lb[0].closed && !lb[0].ok && lb[0].sum === -6000);
   assert.ok(lg[0].ok);
-  assert.ok(DefDB.auditRun(bad, pth, { t_end: 0.01, dt: 0.01 }).some((a) => a.code === 'AUDIT_THERMO'));
-  assert.ok(!DefDB.auditRun(good, pth, { t_end: 0.01, dt: 0.01 }).some((a) => a.code === 'AUDIT_THERMO'));
-  assert.ok(DefDB.thermoLoops(BASE, TCA).loops.every((l) => !l.closed), '시트르산 회로는 열린 고리(아세틸-CoA 가 몰아감) — Wegscheider 대상 아님');
+  assert.ok(ORCH.auditRun(bad, pth, { t_end: 0.01, dt: 0.01 }).some((a) => a.code === 'AUDIT_THERMO'));
+  assert.ok(!ORCH.auditRun(good, pth, { t_end: 0.01, dt: 0.01 }).some((a) => a.code === 'AUDIT_THERMO'));
+  assert.ok(J.thermoLoops(BASE, TCA).loops.every((l) => !l.closed), '시트르산 회로는 열린 고리(아세틸-CoA 가 몰아감) — Wegscheider 대상 아님');
 });
 const CFG = { domains: [{ id: 'cyt', tier: 'T1', location: 'cytosol', volume_fL: 1000 }, { id: 'nodeA', tier: 'T2', location: 'cytosol', volume_fL: 10 }, { id: 'reg3', tier: 'T3', location: 'cytosol', volume_fL: 5, geometry_template: 'box', grid: { n: 8, h_m: 2e-7 } }],
   adjacency: [['cyt', 'nodeA'], ['nodeA', 'reg3']], metrics: { w1: 1, w2: 1, tau_high: 0.5, tau_low: 0.1, t_min: 1 }, solver: { epsilon_max: 0.05, fallback: 'fv3d', window_min_s: 0.01 } };
@@ -1059,14 +1062,14 @@ test('v9 Fate-Test: 계통 충실도·경쟁·결정 비가역성(관문 충격 
 });
 
 // ===== 자동 보강 고리 (UniProt·ChEBI) — 합성 시험 자료 tests/fixtures/augment =====
-const AUG = createRequire(import.meta.url)('../engine/augment.js');
+const AUG = req('../judicial/identity.js'); // 사법부: 과제·해석·신원 확인 (패치 초안은 legislative/augment_draft.js, 묶음은 ORCH.augmentBuild)
 const FIX = new URL('./fixtures/augment', import.meta.url).pathname;
 test('자동 보강 plan: unmapped → 이름 검색, asserted UniProt·ChEBI → 직접 조회, 서열 길이 한계 연결, 막히면 수동 수집 과제', () => {
   const t = AUG.plan(BASE, { dir: '/nonexistent' });
   const k = (kind, key) => t.find((x) => x.kind === kind && x.key === key);
   assert.ok(k('uniprot_entry', 'Q9UL17') && k('uniprot_entry', 'Q9UL17').gaps.includes('L000058'));
   assert.ok(k('chebi_entity', 'CHEBI:15422') && k('chebi_search', id('피루브산')) && !t.some((x) => x.kind === 'chebi_search' && x.sense === id('ATP')));
-  assert.equal(DefDB.augmentCandidates(BASE), new Set(t.map((x) => x.sense)).size);
+  assert.equal(J.augmentCandidates(BASE), new Set(t.map((x) => x.sense)).size);
   const md = AUG.retrievalTasksMarkdown(t, [], '2026-10-08');
   assert.ok(md.includes('rest.uniprot.org/uniprotkb/Q9UL17.json') && md.includes('/nonexistent/uniprot/Q9UL17.json') && md.split('\n').filter((l) => /^\| \d+ \|/.test(l)).length === t.length);
 });
@@ -1083,14 +1086,19 @@ test('자동 보강 해석: UniProt JSON·FASTA·평문, ChEBI 단순·OLS·중�
   assert.equal(AUG.formulaCheck(BASE, id('ATP'), 'C10H16N5O13P2').status, 'mismatch');
 });
 test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, 종·번호·이름·화학식·중복 위반은 거부, 모호하면 unmapped 유지 + 후보 메모, asserted 는 덮어쓰지 않음', () => {
-  const b = AUG.build(BASE, { dir: FIX, date: '2026-10-08' }), out = (s, kind) => b.rows.find((r) => r.sense === id(s) && (!kind || r.kind === kind)).outcome;
+  const b = ORCH.augmentBuild(BASE, { dir: FIX, date: '2026-10-08' }), out = (s, kind) => b.rows.find((r) => r.sense === id(s) && (!kind || r.kind === kind)).outcome;
   assert.equal(out('T-bet'), 'verified'); assert.equal(out('IL-15'), 'verified');
   assert.equal(out('Eomes'), 'rejected', '종 불일치 (생쥐)');
   assert.equal(out('IL-12 p35'), 'rejected', '번호 불일치 — sync 없이는 바꾸지 않음');
   assert.equal(out('ADP', 'chebi_entity'), 'rejected', '화학식 P3 ≠ 부분 구조 P2');
   assert.equal(out('에피네프린', 'chebi_entity'), 'rejected', '이름 불일치 + 이미 ATP 에 있는 번호');
   assert.equal(out('젖산'), 'ambiguous');
-  const res = DefDB.merge(BASE, b.patch), g = DefDB.gate(BASE, res, {});
+  const res = LEG.merge(BASE, b.patch);
+  // 'verified' 는 사법부 도장으로만: 도장 없이 관문에 넣으면 거부, 도장(재확인 통과)과 함께면 통과
+  const g0 = J.gate(BASE, res, { attestations: [] });
+  assert.ok(!g0.ok && g0.errors.some((e) => /사법부 증명/.test(e.msg)), '도장 없는 verified 는 거부');
+  const keys = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: ROOT })), g = J.gate(BASE, res, { attestations: keys.filter((v) => v.ok).map((v) => v.key) });
+  assert.ok(keys.every((v) => v.ok), keys.filter((v) => !v.ok).map((v) => v.key + ' ' + v.reasons).join('\n'));
   assert.ok(g.ok, msgs(g));
   const T = res.db.senses[id('T-bet')], up = T.xrefs.find((x) => x.db === 'UniProt');
   assert.ok(up.status === 'verified' && /UniProtKB json 조회 2026-10-08/.test(up.note) && /sha256:/.test(up.note));
@@ -1098,31 +1106,33 @@ test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, �
   assert.equal(res.db.senses[id('IL-12 p35')].xrefs[0].id, 'P29459', 'asserted 값 유지');
   const P = res.db.senses[id('피루브산')];
   assert.ok(!P.unmapped && P.xrefs.some((x) => x.db === 'ChEBI' && x.id === 'CHEBI:15361' && x.status === 'verified'));
-  assert.equal(DefDB.limitationStatus(res.db, res.db.limitations.L000064).status, 'resolved');
+  assert.equal(J.limitationStatus(res.db, res.db.limitations.L000064).status, 'resolved');
   assert.ok(res.db.senses[id('젖산')].unmapped && /모호/.test(res.db.limitations.L000065.note));
   assert.ok(res.db.senses[id('팔미토일-CoA')].xrefs.some((x) => x.id === 'CHEBI:15525'), 'OLS 형식 + 부분 구조 원자 수 일치 (C37 N7 P3 S1)');
-  assert.ok(DefDB.augmentCandidates(res.db) < DefDB.augmentCandidates(BASE));
-  const s = AUG.build(BASE, { dir: FIX, date: '2026-10-08', sync: true });
+  assert.ok(J.augmentCandidates(res.db) < J.augmentCandidates(BASE));
+  const s = ORCH.augmentBuild(BASE, { dir: FIX, date: '2026-10-08', sync: true });
   assert.notEqual(s.rows.find((r) => r.sense === id('IL-12 p35')).outcome, 'verified', 'sync 여도 이름·종 확인은 그대로 (번호만 바뀐 응답은 이름 확인이 없으면 거부)');
 });
 
 // ===== 비교 검토·정제 점검 (Comparative Optimization) =====
-const CMP = createRequire(import.meta.url)('../engine/compare.js');
+const CMP = req('../judicial/compare.js'); // 판정만 — 변형 실행은 ORCH.compare
 test('정제 점검: 경로 순 반응 ↔ 단계 화학량 차이는 등록된 Structural_Gap 이 있으면 known, 중복 조절·공급은 잡고 참조 없는 쪽을 지우는 리팩터링 패치', () => {
-  const r = DefDB.refineCheck(BASE);
+  const r = J.refineCheck(BASE);
   const lump = r.issues.find((x) => x.type === 'lumped_contradiction');
   assert.ok(lump && lump.known.includes('L000061') && lump.diff.length === 3, '회로 순 반응은 GDP + Pi → GTP 를 뺀 알려진 단순화');
   assert.equal(r.unresolved, 0);
   const d = JSON.parse(JSON.stringify(BASE)), dup = { ...d.senses[IL12D].rule[0], id: 'dup_copy' };
   d.senses[IL12D].rule.push(dup); d.senses[id('세포 ATP 소비')].rule.push({ ...d.senses[id('세포 ATP 소비')].rule[0], id: 'load_copy' });
-  const r2 = DefDB.refineCheck(d);
+  const r2 = J.refineCheck(d);
   assert.equal(r2.issues.filter((x) => x.type === 'duplicate_rule').length, 2);
-  assert.ok(r2.refactor && r2.refactor.senses.every((s) => !s.rule.some((x) => /copy/.test(x.id))));
-  const after = JSON.parse(JSON.stringify(d)); for (const s of r2.refactor.senses) after.senses[s.id].rule = s.rule;
-  assert.equal(DefDB.refineCheck(after).issues.filter((x) => x.type === 'duplicate_rule').length, 0);
+  const refactor = LEG.draftRefactor(d, r2.issues); // 리팩터링 패치 초안은 입법부가 판결(issues)로 쓴다
+  assert.ok(refactor && refactor.senses.every((s) => !s.rule.some((x) => /copy/.test(x.id))));
+  assert.ok(!('refactor' in r2), '사법부 판결에는 패치가 없다');
+  const after = JSON.parse(JSON.stringify(d)); for (const s of refactor.senses) after.senses[s.id].rule = s.rule;
+  assert.equal(J.refineCheck(after).issues.filter((x) => x.type === 'duplicate_rule').length, 0);
   // 단계 화학량을 고쳐 차이가 생기면(등록 안 된 모순) unresolved
   const e = JSON.parse(JSON.stringify(BASE)); e.senses[id('시트르산 회로')].rule[0].produces.push({ ref: ATP, n: 1 });
-  assert.ok(DefDB.refineCheck(e).issues.some((x) => x.type === 'lumped_contradiction'));
+  assert.ok(J.refineCheck(e).issues.some((x) => x.type === 'lumped_contradiction'));
 });
 test('원자 수(elements)는 구조 요소만·원소 기호·0 이상 정수, 부분 구조 수지는 상대 1e-14', () => {
   rejectedFor({ senses: [{ id: ATP, elements: { C: 10 } }] }, /구조 요소\) 만|structure_feature\) 만|kind structure_feature\)만/);
@@ -1130,23 +1140,23 @@ test('원자 수(elements)는 구조 요소만·원소 기호·0 이상 정수, 
   rejectedFor({ senses: [{ id: id('인산기 단위'), elements: { P: 1.5 } }] }, /0 이상의 정수/);
   rejectedFor(withRules(id('세포 ATP 소비'), (r) => { r[0].produces[0].n = 1 + 1e-12; }), /부분 구조 수지가 맞지 않음/);
   assert.ok(Object.values(BASE.senses).filter((d) => d.kind === 'structure_feature' && d.elements).length >= 7, '부분 구조 원자 수는 데이터에');
-  assert.ok(!/coenzyme A moiety|nicotinamide/.test(readFileSync(new URL('../engine/augment.js', import.meta.url), 'utf8')), '엔진은 생물 이름을 모른다');
+  assert.ok(!/coenzyme A moiety|nicotinamide/.test(readFileSync(new URL('../judicial/identity.js', import.meta.url), 'utf8')), '엔진은 생물 이름을 모른다');
 });
 test('비교 검토: 같은 조절을 하나 더 넣는 패치는 결과가 같고 복잡도만 늘어 Optimization-Negative (질량 ≤ 1e-14)', () => {
   const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8')); sc.t_end = 3 * 3600; sc.commitment = { horizon: 3 * 3600, coarse: 3600 };
   const d = JSON.parse(JSON.stringify(BASE)); d.senses[IL12D].rule.push({ ...d.senses[IL12D].rule[0], id: 'dup_copy' });
-  const r = CMP.compare(BASE, d, ACTD, sc, sc, { refHours: 0.5 });
+  const r = ORCH.compare(BASE, d, ACTD, sc, sc, { refHours: 0.5 });
   assert.equal(r.verdict, 'Optimization-Negative', r.why);
   assert.ok(r.between === 0 && !r.outcomeChanged && r.b.complexity.modulations === r.a.complexity.modulations + 1);
   assert.ok(r.a.mass <= 1e-14 && r.b.mass <= 1e-14);
 });
 
 // ===== 과정 분석 보고서 (Process-Oriented Fate Analysis & Integrity Reporting) =====
-const PRP = createRequire(import.meta.url)('../engine/process_report.js');
+const PRP = req('../judicial/process_report.js'), FA = req('../judicial/fate_audit.js');
 test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차·운명 전환)·구간 [기간|원인|우세 표지|비용]·무결성 증명서·인과 추적, 원장은 매 단계 ≤ 1e-14', () => {
   const txt = readFileSync(new URL('../examples/scenarios/fate-mixed-glucose-withheld-hypothetical.json', import.meta.url), 'utf8'), sc = JSON.parse(txt);
-  const r = FATE.simulateFate(BASE, ACTD, { scenario: sc, commitment: false });
-  const again = FATE.simulateFate(BASE, ACTD, { scenario: JSON.parse(txt), commitment: false });
+  const r = FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: sc, commitment: false }), { scenario: sc });
+  const again = FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: JSON.parse(txt), commitment: false }), { scenario: sc });
   assert.equal(r.process.hash, again.process.hash, '결정론');
   assert.ok(r.mass.series.length === r.process.times.length && r.mass.series.every((v) => v <= 1e-14) && r.mass.replaySeries.every((v) => v <= 1e-14));
   const rep = PRP.processReport(r, { scenario: sc, scenarioText: txt, rerunHash: again.process.hash });
@@ -1160,7 +1170,7 @@ test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차�
 });
 test('과정 보고서: 규칙 밖 개입은 FAIL — 저장소를 몰래 바꾸면 재생 검사가, 신호를 일정 밖에서 바꾸면 신호 검사가, 해시가 다르면 결정론이 잡는다', () => {
   const txt = readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8'), sc = JSON.parse(txt); sc.t_end = 3 * 3600;
-  const r = FATE.simulateFate(BASE, ACTD, { scenario: sc, commitment: false });
+  const r = FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: sc, commitment: false }), { scenario: sc });
   // 기록된 원자료를 변조해 보고서가 FAIL 하는지 (엔진 원장 대신 기록을 바꾼 '개입' 흉내)
   const tampered = { ...r, mass: { ...r.mass, replaySeries: r.mass.replaySeries.map((v, j) => (j === 50 ? 1e-9 : v)) } };
   assert.equal(PRP.processReport(tampered, { scenario: sc, rerunHash: r.process.hash }).pass, false);

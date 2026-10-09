@@ -271,7 +271,7 @@ v4.steps = steps;
 
 // ----- 5. 검사 후 저장 -----
 const db = DefDB.normalize(v4);
-const { errors, warnings } = DefDB.validate(db);
+const { errors, warnings } = createRequire(import.meta.url)('../judicial/judicial.js').validate(db) /* 검사는 사법부 (삼권 분립) */;
 for (const e of errors) console.error('오류', e.where, e.msg);
 for (const w of warnings) console.error('경고', w.where, w.msg);
 if (errors.length) { console.error(`오류 ${errors.length}개 — 저장하지 않음`); process.exit(1); }

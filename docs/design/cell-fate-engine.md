@@ -1,5 +1,7 @@
 # Cell Fate Engine — Lineage Commitment as a State Transition (format v9)
 
+> 삼권 분립 이후(2026-10-09, `docs/design/tripartite-governance.md`): 이 문서의 '사후 분석·분화 정지·질량 감사·과정 보고서' 는 엔진이 아니라 사법부(`judicial/fate_audit.js`·`judicial/verifier.js`·`judicial/process_report.js`)가 엔진 원자료로 판정한다. 엔진은 궤적·원장(N·LO·누적 진행량)·사건·결정 탐침 결과만 내고, 수치 결합점은 `engine/coupling.js` 에서 읽는다.
+
 > Status (2026-10-08): **implemented**: format v9 (`cell_state`, `modulation` rules, `hill` law, `saturating` cofactors, `Regulatory_Gap`), runtime `engine/fate_engine.js`, command `node dbtool.mjs fate`, Fate-Test suite `tests/fate_suite.js` (30 checks), first lineage program (activated CD8 T cell → short-lived effector | memory precursor). Every rate, volume, threshold and Hill constant in the runs below is **hypothetical** (`examples/scenarios/fate-*-hypothetical.json`). They were chosen so the regulatory circuit is bistable, not measured. The results show what the mechanism *can* do and which fate is reached. They are not quantitative predictions.
 
 ## 1. Mission and scope

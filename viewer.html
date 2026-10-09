@@ -88,8 +88,13 @@ pre{white-space:pre-wrap;background:var(--side);padding:8px;border-radius:6px;fo
 <div id="main"></div>
 <div id="ov" onclick="if(event.target===this)closeBox()"><div id="box"></div></div>
 <script src="vocab.js"></script>
+<script src="model.js"></script>
 <script src="core.js"></script>
+<script src="judicial/judicial.js"></script>
+<script src="legislative/legislative.js"></script>
 <script>
+// 삼권 분립: 읽기·시뮬레이션 = DefDB(행정), 검사·관문·한계 상태·감사 = J(사법), 병합 = LEG(입법). 파일 저장은 사용자가 내려받기로 한다.
+const J=DefDBJudicial,LEG=DefDBLegislative;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='definition-db-v'+DefDB.VERSION, V=DefDB.VOCAB;
@@ -106,7 +111,7 @@ function loadFiles(files){let n=files.length;const msgs=[];
  for(const file of files){const r=new FileReader();
   r.onload=e=>{try{const o=DefDB.parseLoose(e.target.result);
     if(o.format===DefDB.FORMAT){const x=DefDB.normalize(o);if(x._version)msgs.push(`${file.name}: 형식 v${x._version} — migrations/ 로 v${DefDB.VERSION} 변환 필요`);else db=x;}
-    else{const res=DefDB.ingest(db,o),g=DefDB.gate(db,res);
+    else{const res=LEG.ingest(db,o),g=J.gate(db,res);
      if(g.ok){db=res.db;msgs.push(`${file.name}: 추가 ${res.report.added.length}, 수정 ${res.report.updated.length}`);}
      else msgs.push(`${file.name}: 거부 — ${[...g.errors,...g.warnings].slice(0,3).map(i=>i.msg).join(' / ')}`);}
    }catch(x){msgs.push(file.name+' 읽기 실패: '+x.message);}
@@ -146,7 +151,7 @@ function renderList(){
   ||'<p class="tag">항목이 없습니다. "AI 결과 반영"으로 채우세요.</p>';
  const steps=Object.keys(db.steps).filter(sid=>{const r=ruleOf(sid);return !q||[sid,r.label,r.action,r.text].some(has);});
  if(steps.length)$('list').innerHTML+=`<h4>기전 단계</h4>`+steps.map(sid=>`<div class="item ${sid==cur?'on':''}" data-go="${sid}"><span>${esc(ruleOf(sid).label)}</span><span class="n">${esc(ruleOf(sid).action)}</span></div>`).join('');
- const v=DefDB.validate(db);
+ const v=J.validate(db);
  $('chk').textContent=`검사 ${v.errors.length?'⛔'+v.errors.length:''}${v.warnings.length?' ⚠'+v.warnings.length:''}`.trim();
 }
 
@@ -315,8 +320,8 @@ function openPaste(){pending=null;allowW=false;
 function preview(){
  const out=$('prev'),txt=$('pin').value.trim();pending=null;$('apply').disabled=true;
  if(!txt){out.innerHTML='';return;}
- let res;try{res=DefDB.ingest(db,DefDB.parseLoose(txt));}catch(x){out.innerHTML=`<p class="err">읽기 실패: ${esc(x.message)}</p>`;return;}
- const {report}=res,g=DefDB.gate(db,res,{allowWarnings:allowW}),RL=id=>{try{return DefDB.index(res.db).label(id);}catch(_){return id;}};
+ let res;try{res=LEG.ingest(db,DefDB.parseLoose(txt));}catch(x){out.innerHTML=`<p class="err">읽기 실패: ${esc(x.message)}</p>`;return;}
+ const {report}=res,g=J.gate(db,res,{allowWarnings:allowW}),RL=id=>{try{return DefDB.index(res.db).label(id);}catch(_){return id;}};
  out.innerHTML=`<p>추가 <b>${report.added.length}</b> · 수정 <b>${report.updated.length}</b> · 삭제 <b>${report.removed.length}</b></p>
  ${report.added.length?`<div class="tag">추가: ${report.added.map(i=>`${i} ${esc(RL(i))}`).join(', ')}</div>`:''}
  ${report.updated.length?`<div class="tag">수정: ${report.updated.map(i=>`${i} ${esc(RL(i))}`).join(', ')}</div>`:''}
@@ -329,7 +334,7 @@ function preview(){
 }
 function applyPending(){if(!pending)return;db=pending.db;const first=pending.report.added[0]||pending.report.updated[0];pending=null;closeBox();changed();if(first)go(first,true);}
 // 한계 등록부: 이 정의항(또는 그 부위·규칙)을 대상으로 한 한계
-function limRow(lid){const l=db.limitations[lid],st=DefDB.limitationStatus(db,l),t=DefDB.parseTarget(l.target);
+function limRow(lid){const l=db.limitations[lid],st=J.limitationStatus(db,l),t=DefDB.parseTarget(l.target);
  return `<li><span class="idt">${lid}</span> <b class="${st.status=='open'?'bad':'ok'}">${esc(l.type)}</b> <span class="tag">${esc(st.status)} ${st.done}/${st.total}</span> ${t?`<span class="ref" data-go="${t.base}">${esc(L(t.base))}</span>${t.sub?` <span class="idt">${esc(t.sub+'/'+t.key)}</span>`:''}`:''} — ${esc(l.requirement.text)}${ix.addressedBy(lid).length?` <span class="tag">다루는 개념: ${ix.addressedBy(lid).map(x=>`<span class="ref" data-go="${x}">${esc(L(x))}</span>`).join(', ')}</span>`:''}</li>`;}
 function limitsHTML(id){const ls=ix.limitsOf(id);return ls.length?`<div class="sec"><b class="bad">한계 ${ls.length}</b><ul class="tree">${ls.map(limRow).join('')}</ul></div>`:'';}
 // 상위 개념: motif 로 계산한 사례 경로 + 다루는 한계
@@ -343,17 +348,17 @@ function conceptHTML(id,d){
  return h+'</div>';
 }
 function showLimits(){
- const ids=Object.keys(db.limitations),open=ids.filter(k=>DefDB.limitationStatus(db,db.limitations[k]).status=='open');
+ const ids=Object.keys(db.limitations),open=ids.filter(k=>J.limitationStatus(db,db.limitations[k]).status=='open');
  box(`<h3>한계 등록부 — 열림 ${open.length} / ${ids.length}</h3><p class="tag">[Target | Type | Requirement]. 해결 경로의 데이터가 들어오면 자동으로 resolved.</p>
  ${Object.keys(V.gapTypes).map(t=>`<h4>${esc(t)} — ${esc(V.gapTypes[t].label)}</h4><ul class="tree">${ids.filter(k=>db.limitations[k].type==t).map(limRow).join('')}</ul>`).join('')}
  <p><button onclick="closeBox()">닫기</button></p>`);
  document.querySelectorAll('#box [data-go]').forEach(e=>e.addEventListener('click',closeBox));}
-function showIssues(){const v=DefDB.validate(db);
+function showIssues(){const v=J.validate(db);
  const target=w=>{const m=String(w).match(/[TDS]\d{6}/);return m&&(db.terms[m[0]]||db.senses[m[0]]||db.steps[m[0]])?m[0]:'';};
  const row=(i,cls,mark)=>{const t=target(i.where);return `<div class="${cls}">${mark} ${t?`<span class="ref" data-go="${t}" onclick="closeBox()">${esc(i.where)}</span>`:esc(i.where)}: ${esc(i.msg)}</div>`;};
  box(`<h3>검사 결과</h3>${v.errors.map(i=>row(i,'err','⛔')).join('')}${v.warnings.map(i=>row(i,'bad','⚠')).join('')}
  ${!v.errors.length&&!v.warnings.length?'<p>규칙 위반 없음</p>':''}
- <h3>매핑 현황</h3><pre>${esc(DefDB.auditText(db))}</pre><p><button onclick="closeBox()">닫기</button></p>`);}
+ <h3>매핑 현황</h3><pre>${esc(J.auditText(db))}</pre><p><button onclick="closeBox()">닫기</button></p>`);}
 
 // 브라우저 보관본이 없으면 저장소(data/db.json)를 읽는다. 웹 서버(GitHub Pages 등)로 열었을 때만 동작.
 restore();changed();

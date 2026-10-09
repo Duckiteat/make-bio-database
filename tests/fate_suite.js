@@ -10,7 +10,10 @@
 const { readFileSync } = require('fs');
 const path = require('path');
 const F = require('../engine/fate_engine.js');
-const PR = require('../engine/process_report.js');
+const PR = require('../judicial/process_report.js');
+const FA = require('../judicial/fate_audit.js');
+const VER = require('../judicial/verifier.js'); // 원자료 실행(정확도 비교용)의 질량은 사법부 검증기로
+const vw = (x) => { const v = VER.verifyFate(db, x); return v.pass ? Math.max(v.worst, v.replayWorst) : Infinity; }; // 사법부: 원자료 → 판결된 보기 (감사·정지·사후 분석·독립 질량 검증)
 const ROOT = path.join(__dirname, '..');
 const db = JSON.parse(readFileSync(path.join(ROOT, 'data/db.json'), 'utf8'));
 const SRC = 'D000174', EFF = 'D000175', MEM = 'D000176';
@@ -24,7 +27,7 @@ function run(opt) {
   const checks = [], runs = {};
   const check = (group, name, ok, detail) => { checks.push({ group, name, ok: !!ok, detail }); };
   const names = {};
-  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const r = F.simulateFate(db, SRC, Object.assign({ scenario: scen(name, over) }, o || {})); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; runs[key] = r; names[key] = name; return r; };
+  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const sc = scen(name, over), raw = F.simulateFate(db, SRC, Object.assign({ scenario: sc }, o || {})); const ms = Number(process.hrtime.bigint() - t0) / 1e6; const r = FA.judgeFate(db, raw, { scenario: sc }); r.ms = ms; runs[key] = r; names[key] = name; return r; };
   const massOK = (r) => r.mass.worst <= 1e-14 && !r.audit.some((a) => a.code === 'AUDIT_MASS') && Object.values(r.final.N).every((v) => v > -1e-6);
 
   say('Fate-Test — 활성화된 CD8 T 세포 (D000174) → 효과기 (D000175) | 기억 전구 (D000176) · 가상 시나리오');
@@ -67,7 +70,7 @@ function run(opt) {
     const ref = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, { ...over, explicit_fraction: 0.01 }), commitment: false, mode: 'fine' }));
     const coarse = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false, mode: 'fine' }));
     const a = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false }));
-    const row = { name, hours, l2: l2Of(a, ref), l2Coarse: l2Of(coarse, ref), same: a.final.state === ref.final.state, reachDyn: a.firstReach, reachRef: ref.firstReach, msD: a.ms, msF: ref.ms, msC: coarse.ms, speedup: ref.ms / a.ms, nsub: a.gate.nsub, path: a.gate.path, promotions: a.gate.promotions, massDyn: a.mass.worst, massFine: ref.mass.worst };
+    const row = { name, hours, l2: l2Of(a, ref), l2Coarse: l2Of(coarse, ref), same: a.final.state === ref.final.state, reachDyn: a.firstReach, reachRef: ref.firstReach, msD: a.ms, msF: ref.ms, msC: coarse.ms, speedup: ref.ms / a.ms, nsub: a.gate.nsub, path: a.gate.path, promotions: a.gate.promotions, massDyn: vw(a), massFine: vw(ref) };
     acc.push(row);
     check('F 다중 규모 정확도', `${name} ${hours} h: 표지 궤적 상대 L2 < 2% (수렴 기준 대비), 같은 최종 상태`, row.l2 < 0.02 && row.same, `L2 ${row.l2.toExponential(2)} (명시 10% 경로 ${row.l2Coarse.toExponential(2)}), ${a.final.state} = ${ref.final.state}`);
     check('F 다중 규모 정확도', `${name} ${hours} h: 강성(N_sub ≥ K_up)에서 승격, 수렴 기준보다 빠름`, row.nsub.max >= 15 && row.promotions >= 1 && row.speedup > 1, `N_sub ${row.nsub.min}–${row.nsub.max}, ${row.speedup.toFixed(1)}×`);
@@ -81,7 +84,7 @@ function run(opt) {
   for (const [k, r] of Object.entries(runs)) {
     const scText = readFileSync(path.join(ROOT, `examples/scenarios/fate-${names[k]}-hypothetical.json`), 'utf8');
     const again = F.simulateFate(db, SRC, { scenario: JSON.parse(scText), commitment: false });
-    const rep = PR.processReport(r, { scenario: JSON.parse(scText), scenarioText: scText, rerunHash: again.process.hash });
+    const rep = PR.processReport(r, { scenario: JSON.parse(scText), scenarioText: scText, rerunHash: FA.trajectoryHash(again) });
     reports[k] = rep;
     check('H 과정 보고서', `${k}: 무결성 증명서 PASS (${rep.checks.length} 확인)`, rep.pass && rep.checks.every((c) => c.ok === true), rep.checks.filter((c) => c.ok !== true).map((c) => c.name).join(', ') || `원장 ${r.mass.worst.toExponential(1)} · 재생 ${r.mass.replayWorst.toExponential(1)}`);
     check('H 과정 보고서', `${k}: 실행 전 예측(expect)과 관찰이 같음`, !rep.disc.length, rep.disc.join(' / ') || '차이 없음');

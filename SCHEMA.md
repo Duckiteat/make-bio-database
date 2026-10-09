@@ -354,10 +354,10 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 - `simulateRate`(경로 시뮬레이션)도 조절 규칙을 적용한다 — 단계·공급·분해의 속도에 배율을 곱하고, 힐 상수가 없으면 배율 1 로 두고 `modulationGaps` 로 보고.
 - 운명 엔진(시나리오 층, 데이터베이스 밖): `volumes` · `amounts` · `buffered[묶음] = { conc_M, total }`(완충 저장소 — 남은 양이 한 구획분 이상이면 농도 고정, 질량은 정확히 줄어듦 — 배지 + 수송체 근사) · `signals[묶음] = [{ t, n }]`(경계 조건 — 질량 감사 밖) · `thresholds` · `kinetics` · `dt_slow` · `t_end` · `gate`(P5 K_up/K_down/M/W) · `shock_threshold` · `explicit_fraction` · `commitment { horizon, coarse }` · `arrest_window` · `target` · `expect { final, limiting, commit_before_h }`(실행 전에 적은 가설 — 과정 보고서가 관찰과 대조) · `report { ratios: [[묶음, 묶음]] }`(시계열에 함께 보일 비율; 경쟁 계통 표지 비율은 자동).
-- **과정 분석 보고서** (`engine/process_report.js`, `dbtool fate` 의 기본 출력): 엔진이 매 느린 단계 기록하는 원자료 — 부분 구조 원장 편차·저장소 재생 편차(모든 묶음 = 시작 + Σ 화학량 × 규칙 누적 진행량, double-double)·신호 값·규칙 누적 진행량·관문 사건·궤적 해시 — 로 변곡점·구간·무결성 증명서(원장·재생 ≤ 1e-14 매 단계, 신호 = 일정, 결정론, 매개변수 출처, 음수 없음)·인과 추적·예측과의 차이를 만든다.
+- **과정 분석 보고서** (`judicial/process_report.js`, `dbtool fate` 의 기본 출력): 엔진이 매 느린 단계 기록하는 원자료(사법부 `judicial/verifier.js` 가 독립 재계산) — 부분 구조 원장 편차·저장소 재생 편차(모든 묶음 = 시작 + Σ 화학량 × 규칙 누적 진행량, double-double)·신호 값·규칙 누적 진행량·관문 사건·궤적 해시 — 로 변곡점·구간·무결성 증명서(원장·재생 ≤ 1e-14 매 단계, 신호 = 일정, 결정론, 매개변수 출처, 음수 없음)·인과 추적·예측과의 차이를 만든다.
 - **부분 구조 수지 허용 오차**: 규칙 검사(`moietyImbalance`)와 운명 엔진 원장 모두 상대 1e-14 (`MASS_REL_TOL`). 운명 엔진은 상태·원장·합계를 보상 산술(TwoSum·TwoProduct, double-double)로 셈해 실제 편차는 ≈ 1e-27.
 - **정제 점검 `refineCheck`**: duplicate_rule(같은 화학량·위치의 공급 / 같은 소유자·대상·효과·위치의 조절 — 참조 없는 쪽을 지우는 리팩터링 패치 제안) · lumped_contradiction(경로가 가진 공급 규칙 ↔ 그 경로 단계들의 화학량 합; 그 규칙을 대상으로 한 열린 Structural_Gap 이 있으면 known). `validate <patch>`·`augment apply` 는 새로 생긴 duplicate 나 known 이 아닌 모순이 있으면 거부.
-- **비교 검토 `engine/compare.js`** (`dbtool compare`): 판정 Optimization-Negative(비용 ↑, 수치 이득 < 1e-5 또는 궤적 차 < 1e-5) · Optimization-Positive · Neutral · Trade-off · Behavior-Changing(결과가 바뀜 — 관찰로 고름).
+- **비교 검토 `judicial/compare.js`** (`dbtool compare`, 변형 실행은 `orchestrator.js`): 판정 Optimization-Negative(비용 ↑, 수치 이득 < 1e-5 또는 궤적 차 < 1e-5) · Optimization-Positive · Neutral · Trade-off · Behavior-Changing(결과가 바뀜 — 관찰로 고름).
 - 감사: `AUDIT_FATE`(목표 상태 도달 실패 — 사후 분석 원인 resource_exhaustion | signal_insufficient | antagonist_dominance | alternative_fate | kinetic_stall, 제한 묶음, 교정 제안), `AUDIT_MASS`(부분 구조 원장 — 매 느린 단계), `AUDIT_RESOURCE`(소비만 되는 저장소), `AUDIT_CONCENTRATION`(부피·문턱 없음).
 
 ## 9. 외부 ID
@@ -373,8 +373,9 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 - 형식은 `vocab.js` 의 정규식으로 검사한다. 같은 외부 ID 는 정의항 하나에만 붙는다.
 - **추측 금지**: 필수 ID 를 확실히 모르면 `unmapped` 에 사유를 적는다. 사유가 있으면 통과하고 `audit` 목록에 남는다.
-- `status`: `asserted`(적었지만 원본과 대조 안 함) / `verified`(원본과 대조함).
-- **원본 대조 = 자동 보강 고리** (`node dbtool.mjs augment plan | fetch | build | apply`, `engine/augment.js`): 원본 응답을 `data/fetched/` 에 그대로 두고, 번호·종(기준 종)·이름(개념 이름·별칭)·중복·화학식(C·N·P·S 원자 수 = 선언된 부분 구조의 원자 수)을 확인한 것만 `verified` 로 올리며 `note` 에 조회 날짜·파일·sha256 을 적는다. 함께 넣는 것: 단백질 `sequence_length` 관찰(근거 computed)·`SEQ_SHA256` 지문(computed), 저분자 InChIKey(verified). 이름 검색은 이름이 정확히 하나로 맞을 때만 고르고, 아니면 unmapped 를 두고 Identity_Gap 의 `note` 에 후보를 적는다. 다른 값의 asserted 는 `--sync` 없이는 바꾸지 않는다. 네트워크가 막히면 `data/fetched/RETRIEVAL_TASKS.md`(수동 수집 과제). 모든 Patch Report 의 Verification 에 '자동 보강 후보' 수가 나온다.
+- `status`: `asserted`(적었지만 원본과 대조 안 함) / `verified`(원본과 대조함 — **사법부 증명 도장 필수**: `attestations/registry.json` 에 그 정의항·DB·번호의 유효한 도장이 없으면 `validate(db, { attestations })` 오류. 지문의 `status: verified` 도 같다).
+- **증명 등록부** `attestations/registry.json` = `{ format: 'definition-db-attestations', version: 1, stamps: [{ subject: { sense, field: 'xref'|'fingerprint', ns, value }, claim: 'verified', evidence: { kind, key, file, sha256 }, checks, issuer: { module, code_sha256 }, issued_at, digest }] }` — digest = 나머지의 정준 JSON sha256. 검증 = digest · 증거 파일 sha256 · 같은 확인 재실행. 쓰기는 입법 서기만 (`docs/design/tripartite-governance.md` §3).
+- **원본 대조 = 자동 보강 고리** (`node dbtool.mjs augment plan | fetch | build | apply` — 확인 `judicial/identity.js`, 초안 `legislative/augment_draft.js`, 받기·저장 `legislative/clerk.mjs`): 원본 응답을 `data/fetched/` 에 그대로 두고, 번호·종(기준 종)·이름(개념 이름·별칭)·중복·화학식(C·N·P·S 원자 수 = 선언된 부분 구조의 원자 수)을 확인한 것만 `verified` 로 올리며 `note` 에 조회 날짜·파일·sha256 을 적는다. 함께 넣는 것: 단백질 `sequence_length` 관찰(근거 computed)·`SEQ_SHA256` 지문(computed), 저분자 InChIKey(verified). 이름 검색은 이름이 정확히 하나로 맞을 때만 고르고, 아니면 unmapped 를 두고 Identity_Gap 의 `note` 에 후보를 적는다. 다른 값의 asserted 는 `--sync` 없이는 바꾸지 않는다. 네트워크가 막히면 `data/fetched/RETRIEVAL_TASKS.md`(수동 수집 과제). 모든 Patch Report 의 Verification 에 '자동 보강 후보' 수가 나온다.
 - 효소 번호는 활성을 가진 정의항에 둔다(예: PKA 의 EC 는 전효소가 아니라 촉매 소단위에).
 
 ## 10. 구조 지문 (fingerprint)
@@ -434,6 +435,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-09 | 9 (확장 4) | 삼권 분립: `model.js`(공유 헌법 층) · `core.js`(행정 — 원자료만) · `judicial/`(검증·증명) · `legislative/`(병합·초안, 쓰기는 서기 `clerk.mjs` 만). xref·지문의 `status: verified` 는 증명 등록부 `attestations/registry.json` 의 유효한 도장이 있어야 통과(새 검사 규칙). `simulateRate` 결과에서 `audit`·`postMortem` 이 빠지고 원자료(`facts`·`kinUsed`·`firstFire`·기록점 원장)가 들어감 — 판정은 `judicial.auditRate`. 운명 엔진 결과에서 `audit`·`postMortem`·`arrest`·`mass.worst/series` 가 빠지고 `process.lo`·`process.cumDD` 가 들어감 — 판정은 `judicial/fate_audit.js`. 수치 결합점 등록부 `engine/coupling.js`. db.json 형식 변화 없음(지금 verified 0 건 — 마이그레이션 불필요). |
 | 2026-10-09 | 9 (확장 3) | 과정 분석 보고서: 운명 엔진이 매 단계 저장소 재생 편차·부분 구조 원장 편차·신호·규칙 누적 진행량·궤적 해시를 기록, `engine/process_report.js`, 시나리오 `expect`·`report.ratios`. 형식 버전 그대로 |
 | 2026-10-09 | 9 (확장 2) | 구조 요소 `elements`(원자 수, 화학식 대조를 엔진 코드에서 데이터로), 어휘 `defaultVolumeLocation`, 부분 구조 수지 허용 오차 상대 1e-14, 운명 엔진 보상 산술 원장, 정제 점검 `refineCheck`, 비교 검토 `engine/compare.js`, `validate <patch>`, `augment apply <patch>`. 데이터: 부분 구조 7개의 elements, L000054·L000055 비교 검토 메모. 형식 버전 그대로 |
 | 2026-10-08 | 9 (확장) | 자동 보강 고리: xref `note` 에 원본 출처(조회 날짜·수신함 파일·sha256), 확인 규칙(번호·종·이름·중복·화학식 ↔ 부분 구조 원자 수), 수신함 `data/fetched/`, Patch Report 의 자동 보강 후보 수. 형식 버전 그대로 |

@@ -26,6 +26,7 @@
 //   node dbtool.mjs augment   plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync] | apply <초안 patch.json>
 //                                                           자동 보강 고리: unmapped·Identity_Gap·asserted 외부 ID → UniProt·ChEBI 원본(data/fetched/) → 확인 → 패치 → 관문 → CHANGES.md
 //                                                           네트워크가 막히면 data/fetched/RETRIEVAL_TASKS.md 에 수동 수집 과제를 쓴다
+//   node dbtool.mjs attest    [--quick]                     증명 등록부 검사: 도장마다 digest·증거 sha256·같은 확인 재실행 (무효 도장이 있으면 종료 코드 1)
 //   node dbtool.mjs compare   --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]
 //                                                           비교 검토: 복잡도·수치 L2(수렴 기준)·결과·판정 (Optimization-Negative 이면 종료 코드 1)
 //   node dbtool.mjs validate  <patch.json>                  패치 검사: 관문 미리 보기 + 정제 점검(중복 규칙·화학량 모순)
@@ -34,14 +35,19 @@
 //                                                           (무결성 FAIL 이면 종료 코드 1; --brief 는 짧은 요약)
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
+//
+// 삼권 분립 (docs/design/tripartite-governance.md): 이 도구는 조정만 한다 — 행정부(core.js·engine/)를 부르고, 판정은 사법부(judicial/)에,
+//   파일 쓰기는 입법 서기(legislative/clerk.mjs)에 맡긴다. 이 파일 안에는 파일을 쓰는 코드가 없다.
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import * as CLERK from './legislative/clerk.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const DefDB = createRequire(import.meta.url)('./core.js');
+const req = createRequire(import.meta.url);
+const DefDB = req('./core.js'), J = req('./judicial/judicial.js'), LEG = req('./legislative/legislative.js'), ORCH = req('./orchestrator.js'), ATT = req('./judicial/attestation.js');
 const [cmd, ...rest] = process.argv.slice(2);
 const flags = {}, args = [];
 for (let i = 0; i < rest.length; i++) {
@@ -62,64 +68,63 @@ const die = (m) => { console.error(m); process.exit(1); };
 const rateOpt = () => ({ scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3),
   reservoirs: typeof flags.reservoirs === 'string' ? flags.reservoirs : undefined, stochastic: flags.stochastic ? true : undefined, seed: flags.seed != null ? +flags.seed : undefined,
   until_death: flags['until-death'] ? true : undefined, window: flags.window != null ? +flags.window : undefined, death_frac: flags['death-frac'] != null ? +flags['death-frac'] : undefined });
-const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15);
+// 사법부가 검증한 증명 도장 열쇠 (validate·관문에 넘김)
+const attestations = (db) => ATT.validStamps(db, ATT.readRegistry(HERE), { root: HERE });
 
 switch (cmd) {
   case 'status': {
     const db = loadDB(), senses = Object.values(db.senses);
     const sum = (f) => senses.reduce((n, d) => n + f(d), 0);
     const links = sum((d) => d.desc.reduce((m, x) => m + x.links.length, 0)), sites = sum((d) => Object.keys(d.site).length), rules = sum((d) => d.rule.length);
-    const r = DefDB.validate(db), nx = db.meta.next;
+    const r = ORCH.validateWithRegistry(db, HERE), nx = db.meta.next;
     console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 부위 ${sites}, 규칙 ${rules}, 관찰 ${sum((d) => d.obs.length)}, 기전 단계 ${Object.keys(db.steps).length}, 한계 ${Object.keys(db.limitations).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
     console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')} L${String(nx.L).padStart(6, '0')}`);
     break;
   }
   case 'validate': {
     if (args[0]) { // 패치 검사: 관문 미리 보기 + 부분 구조 수지(ΣIn = ΣOut, 상대 1e-14 — validate 규칙) + 정제 점검의 새 문제
-      const db = loadDB(), patch = readJSON(args[0]), res = DefDB.ingest(db, patch), g = DefDB.gate(db, res, {});
+      const db = loadDB(), patch = readJSON(args[0]), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys });
       printIssues(g.errors, g.warnings);
-      const before = DefDB.refineCheck(db).issues.map((x) => x.type + x.where), ref = DefDB.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
+      const before = J.refineCheck(db).issues.map((x) => x.type + x.where), ref = J.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
       for (const x of fresh) console.log(`  △ [${x.type}] ${x.msg}`);
-      if (ref.refactor && fresh.some((x) => x.type === 'duplicate_rule')) console.log(`  → 리팩터링 패치 제안: ${ref.refactor.why}`);
+      const refactor = LEG.draftRefactor(res.db, ref.issues);
+      if (refactor && fresh.some((x) => x.type === 'duplicate_rule')) console.log(`  → 리팩터링 패치 제안 (입법 초안): ${refactor.why}`);
       const bad = fresh.filter((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length));
       console.log(`— 패치 ${args[0]}: 관문 ${g.ok ? '통과' : '거부'} (새 오류 ${g.errors.length}, 새 경고 ${g.warnings.length}) · 정제 점검 새 문제 ${fresh.length} (차단 ${bad.length})`);
       process.exit(g.ok && !bad.length ? 0 : 1);
     }
-    const r = DefDB.validate(loadDB());
+    const r = ORCH.validateWithRegistry(loadDB(), HERE);
     printIssues(r.errors, r.warnings);
-    console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
+    for (const f of r.attestations.failed) console.log(`오류  증명 ${f.key}: ${f.reasons.join(' · ')}`);
+    console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}`);
+    if (r.attestations.failed.length) process.exit(1);
     process.exit(r.errors.length ? 1 : 0);
   }
   case 'merge': {
     if (!args.length) die('사용법: merge <patch.json...> [--dry] [--allow-warnings]');
-    let db = loadDB();
-    const applied = [];
+    let db = loadDB(), seal = null;
+    const applied = [], att = attestations(db).keys;
     for (const p of args) {
       const patch = readJSON(p);
-      const res = DefDB.ingest(db, patch), g = DefDB.gate(db, res, { allowWarnings: !!flags['allow-warnings'] }), r = res.report;
+      const res = LEG.ingest(db, patch), g = J.gate(db, res, { allowWarnings: !!flags['allow-warnings'], attestations: att }), r = res.report;
       console.log(`${p}: 추가 ${r.added.length}, 수정 ${r.updated.length}, 삭제 ${r.removed.length}`);
       for (const [a, b] of Object.entries(r.idmap)) console.log(`  id   ${a} → ${b}`);
       for (const m of r.mapped) console.log(`  매핑 ${m.from} → ${m.to}  (${m.via})`);
       printIssues(g.errors, g.warnings);
-      const rep = DefDB.patchReport(db, res, patch, g);
-      console.log(DefDB.patchReportText(rep, DefDB.index(res.db)));
+      const rep = J.patchReport(db, res, patch, g);
+      console.log(J.patchReportText(rep, DefDB.index(res.db)));
       if (g.ok && !rep.why && !flags.dry) die('Patch Report: patch.why(변경 이유) 가 없음 — 거부했습니다. 패치 최상위에 "why": "…" 를 적으세요.');
       if (g.ok && rep.verification.undetected_gaps && !flags.dry) die(`Patch Report: 등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — limitations --detect 를 보고 같은 패치에 등록하세요.`);
       if (!g.ok) die(!g.changed ? '바뀐 것이 없음 — 저장하지 않았습니다.'
         : g.errors.length ? `오류 ${g.errors.length} — 패치를 거부했습니다. 위 메시지대로 패치를 고치세요.`
         : `패치가 새 경고 ${g.warnings.length}개를 만듦 — 거부했습니다. 고치거나 --allow-warnings 로 명시적으로 허용하세요.`);
-      applied.push({ name: basename(p), patch, result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep });
-      db = res.db;
+      applied.push({ name: basename(p), record: { result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...patch } });
+      db = res.db; seal = ATT.sealVerdict(g, db); // 사법부 판결 봉인 — 서기는 이 봉인의 db 만 쓴다
     }
     if (flags.dry) { console.log('관문 통과 (--dry: 저장하지 않음)'); break; }
-    mkdirSync(PATCH_DIR, { recursive: true });
-    for (const a of applied) {
-      const out = join(PATCH_DIR, `${stamp()}-${a.name}`);
-      writeFileSync(out, JSON.stringify({ applied_at: new Date().toISOString(), result: a.result, report: a.report, ...a.patch }, null, 2) + '\n');
-      console.log('기록: ' + rel(out));
-    }
-    writeFileSync(DB_PATH, JSON.stringify(db, null, 2) + '\n');
-    console.log('저장: ' + rel(DB_PATH));
+    const w = CLERK.commitMerge({ dbPath: DB_PATH, db, records: applied, seal });
+    for (const f of w.records) console.log('기록: ' + rel(f));
+    console.log('저장 (입법 서기): ' + rel(DB_PATH));
     break;
   }
   case 'report': {
@@ -127,7 +132,7 @@ switch (cmd) {
     if (!args[0]) die('사용법: report <data/patches/….json>');
     const rec = readJSON(args[0]);
     if (!rec.report) die('이 기록에는 Patch Report 가 없음 (report 도입 이전 병합)');
-    console.log(DefDB.patchReportText(rec.report, DefDB.index(loadDB())));
+    console.log(J.patchReportText(rec.report, DefDB.index(loadDB())));
     break;
   }
   case 'map': {
@@ -137,7 +142,7 @@ switch (cmd) {
     break;
   }
   case 'audit': {
-    console.log(DefDB.auditText(loadDB()));
+    console.log(J.auditText(loadDB()));
     break;
   }
   case 'vocab': {
@@ -160,8 +165,8 @@ switch (cmd) {
     break;
   }
   case 'limitations': {
-    const db = loadDB(), md = DefDB.limitationsMarkdown(db), file = join(HERE, 'limitations.md');
-    if (flags.write) { writeFileSync(file, md); console.log('저장: ' + rel(file)); break; }
+    const db = loadDB(), md = J.limitationsMarkdown(db), file = CLERK.derivedPath('limitations', HERE);
+    if (flags.write) { CLERK.writeDerived('limitations', md, HERE); console.log('저장 (입법 서기): ' + rel(file)); break; }
     if (flags.check) {
       const cur = existsSync(file) ? readFileSync(file, 'utf8') : '';
       if (cur !== md) die('limitations.md 가 data/db.json 과 다름 — node dbtool.mjs limitations --write');
@@ -169,11 +174,11 @@ switch (cmd) {
       break;
     }
     if (flags.detect) {
-      const c = DefDB.detectGaps(db);
+      const c = J.detectGaps(db);
       console.log(c.length ? '등록되지 않은 한계 후보:\n' + c.map((x) => `  [${x.target} | ${x.type}] ${x.why}`).join('\n') : '등록되지 않은 한계 후보 없음');
       process.exit(c.length ? 1 : 0); // CI: 미등록 공백(unmapped·속도 없는 공급/분해 …)이 있으면 실패
     }
-    console.log(DefDB.limitationsText(db, { open: !!flags.open }));
+    console.log(J.limitationsText(db, { open: !!flags.open }));
     break;
   }
   case 'pattern': {
@@ -191,7 +196,7 @@ switch (cmd) {
     const unclassified = walk(HERE).filter((p) => !pats.some((x) => x.re.test(p)));
     for (const f of map.files) if (!map.classes[f.class]) die(`storage-map: '${f.path}' 의 분류 '${f.class}' 가 classes 에 없음`);
     const md = textbookAppendix(loadDB(), map);
-    if (flags.write) { mkdirSync(dir, { recursive: true }); writeFileSync(file, md); console.log('저장: ' + rel(file)); }
+    if (flags.write) { CLERK.writeDerived('textbook', md, HERE); console.log('저장 (입법 서기): ' + rel(file)); }
     if (unclassified.length) die('storage-map.json 에 분류되지 않은 파일:\n' + unclassified.map((p) => '  ' + p).join('\n'));
     if (flags.check) {
       if ((existsSync(file) ? readFileSync(file, 'utf8') : '') !== md) die('교과서 부록이 현재 코드·데이터와 다름 — node dbtool.mjs textbook --write');
@@ -202,13 +207,13 @@ switch (cmd) {
   }
   case 'resolution': {
     if (!args[0]) die('사용법: resolution <경로>');
-    console.log(DefDB.resolutionText(loadDB(), args[0]));
+    console.log(ORCH.resolutionText(loadDB(), args[0]));
     break;
   }
   case 'audit-run': {
     // (rateOpt 는 아래 simulate 와 공용)
     if (!args[0]) die('사용법: audit-run <경로> [--scenario s.json]');
-    const list = DefDB.auditRun(loadDB(), args[0], rateOpt());
+    const list = ORCH.auditRun(loadDB(), args[0], rateOpt());
     for (const a of list) console.log(`[${a.code}] ${a.where}: ${a.msg}\n    → 교정 제안: ${a.suggestion}`);
     console.log(`— Audit Error ${list.length}건`);
     process.exit(list.length ? 1 : 0);
@@ -216,8 +221,8 @@ switch (cmd) {
   case 'simulate': {
     if (flags.rate) {
       if (!args[0]) die('사용법: simulate <경로> --rate [--scenario s.json]');
-      console.log(DefDB.simulateRateText(loadDB(), args[0], rateOpt()));
-      console.log(DefDB.refineText(loadDB()).text);
+      console.log(ORCH.simulateRateText(loadDB(), args[0], rateOpt()));
+      console.log(J.refineText(loadDB()).text);
       break;
     }
     if (!args[0]) die('사용법: simulate <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]');
@@ -225,77 +230,90 @@ switch (cmd) {
     const init = {};
     for (const kv of String(flags.init || '').split(';').filter(Boolean)) { const i = kv.lastIndexOf('='); init[kv.slice(0, i).trim()] = +kv.slice(i + 1); }
     const opt = { until: id(flags.until), from: id(flags.from), amount: +(flags.amount || 10), rounds: +(flags.rounds || 60), init, cell: flags.cell && flags.cell !== true ? flags.cell : undefined };
-    const txt = DefDB.simulateText(db, args[0], opt);
+    const txt = ORCH.simulateText(db, args[0], opt);
     console.log(txt);
     if (opt.until && (/✗/.test(txt))) process.exit(1);
     break;
   }
   case 'augment': {
-    const AUG = createRequire(import.meta.url)('./engine/augment.js');
-    const sub = args[0] || 'plan', date = new Date().toISOString().slice(0, 10), dir = flags.dir && flags.dir !== true ? flags.dir : AUG.INBOX;
-    const tasksMd = join(HERE, dir, 'RETRIEVAL_TASKS.md');
+    // 자동 보강: 과제·신원 판결·도장은 사법부(judicial/identity.js·attestation.js), 패치 초안은 입법부(legislative/augment_draft.js),
+    //   받기·병합·등록부·CHANGES·파생 문서 쓰기는 입법 서기(legislative/clerk.mjs)
+    const ID = req('./judicial/identity.js'), DRAFT = req('./legislative/augment_draft.js');
+    const sub = args[0] || 'plan', date = new Date().toISOString().slice(0, 10), dir = flags.dir && flags.dir !== true ? flags.dir : ID.INBOX;
     const table = (tasks) => { for (const t of tasks) console.log(`  ${t.present ? '✓' : '·'} ${t.sense} ${t.label} — ${t.kind} ${t.key}: ${t.why}${t.gaps.length ? ` [${t.gaps.join(', ')}]` : ''}`); };
     if (sub === 'plan' || sub === 'fetch') {
-      let tasks = AUG.plan(loadDB(), { dir });
+      let tasks = ID.plan(loadDB(), { dir });
       console.log(`자동 보강 과제 ${tasks.length}개 (수신함 ${dir}: 있음 ${tasks.filter((t) => t.present).length})`);
       let results = null;
       if (sub === 'fetch') {
-        results = AUG.fetchTasks(tasks, { refetch: !!flags.refetch });
+        results = CLERK.fetchToInbox(tasks, { refetch: !!flags.refetch });
         const ok = results.filter((r) => r.ok && !r.cached).length, bad = results.filter((r) => !r.ok);
         console.log(`받음 ${ok} · 이미 있음 ${results.filter((r) => r.cached).length} · 실패 ${bad.length}${bad.length ? ` (${[...new Set(bad.map((r) => r.error))].join(' · ')})` : ''}`);
-        tasks = AUG.plan(loadDB(), { dir }); // 검색 결과가 생기면 다음 단계 과제가 늘어난다
+        tasks = ID.plan(loadDB(), { dir }); // 검색 결과가 생기면 다음 단계 과제가 늘어난다
       }
       table(tasks);
-      if (flags.write || sub === 'fetch') { mkdirSync(dirname(tasksMd), { recursive: true }); writeFileSync(tasksMd, AUG.retrievalTasksMarkdown(tasks, results, date)); console.log('수동 수집 과제: ' + rel(tasksMd) + (tasks.some((t) => !t.present) ? ` — 원본에 닿지 못한 ${tasks.filter((t) => !t.present).length}개는 이 파일대로 받아 수신함에 두고 'augment build'` : '')); }
+      if (flags.write || sub === 'fetch') { const f = CLERK.writeRetrievalTasks(join(HERE, dir), ID.retrievalTasksMarkdown(tasks, results, date)); console.log('수동 수집 과제 (입법 서기): ' + rel(f) + (tasks.some((t) => !t.present) ? ` — ${tasks.filter((t) => !t.present).length}개를 사람이 받아 두어야 함 (UniProt·ChEBI 에 닿지 못함)` : '')); }
       break;
     }
     if (sub === 'build' || sub === 'apply') {
       const db = loadDB(), drafted = args[1] ? readJSON(args[1]) : null;
-      const b = drafted ? { patch: drafted, rows: [], empty: false } : AUG.build(db, { dir, sync: !!flags.sync, date });
+      const b = drafted ? { patch: drafted, rows: [], stamps: [], empty: false } : ORCH.augmentBuild(db, { dir, sync: !!flags.sync, date });
       if (drafted && !drafted.why) die('초안 패치에 why 가 없음');
       const mark = { verified: '✓', rejected: '✗', ambiguous: '?', candidate: '→', missing: '·', unreadable: '!' };
       for (const r of b.rows) console.log(`  ${mark[r.outcome] || ' '} ${r.sense} ${r.label} [${r.kind} ${r.key}] ${r.outcome}: ${r.detail}`);
       if (b.empty) { console.log('바꿀 것이 없음 — 수신함 파일을 더하거나 (augment plan --write) 과제를 확인할 것'); process.exit(b.rows.some((r) => r.outcome === 'rejected') ? 1 : 0); }
       const out = flags.out && flags.out !== true ? flags.out : join(tmpdir(), `augment-${date}.json`);
-      writeFileSync(out, JSON.stringify(b.patch, null, 2) + '\n');
-      const res = DefDB.ingest(db, b.patch), g = DefDB.gate(db, res, {}), rep = DefDB.patchReport(db, res, b.patch, g);
+      CLERK.writeDraft(out, b.patch);
+      const res = LEG.ingest(db, b.patch);
+      // 새 도장: 사법부가 병합 뒤 데이터로 다시 확인한 것만 관문에 넘긴다 (데이터는 스스로 verified 를 만들 수 없음)
+      const fresh = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: HERE })), badSt = fresh.filter((v) => !v.ok);
+      for (const v of badSt) console.log(`  ✗ 도장 ${v.key}: ${v.reasons.join(' · ')}`);
+      const att = [...attestations(db).keys, ...fresh.filter((v) => v.ok).map((v) => v.key)];
+      const g = J.gate(db, res, { attestations: att }), rep = J.patchReport(db, res, b.patch, g);
       printIssues(g.errors, g.warnings);
-      console.log(DefDB.patchReportText(rep, DefDB.index(res.db)));
-      console.log('패치: ' + out);
-      // 정제 점검: 이 패치가 만든 중복·등록되지 않은 화학량 모순은 병합을 막는다 (리팩터링 패치를 함께 제안)
-      const before = DefDB.refineCheck(db).issues.map((x) => x.type + x.where), ref = DefDB.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
-      console.log(fresh.length ? ['정제 점검 — 이 패치가 만든 문제:', ...fresh.map((x) => `  △ [${x.type}] ${x.msg}`)].join('\n') : DefDB.refineText(res.db).text);
-      if (fresh.some((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length))) {
-        if (ref.refactor) { const rp = join(tmpdir(), `refactor-${date}.json`); writeFileSync(rp, JSON.stringify(ref.refactor, null, 2) + '\n'); console.log('리팩터링 패치 제안: ' + rp); }
+      console.log(J.patchReportText(rep, DefDB.index(res.db)));
+      console.log(`패치 초안 (입법 서기): ${out} · 증명 도장 ${b.stamps.length} (유효 ${fresh.length - badSt.length})`);
+      // 정제 점검: 이 패치가 만든 중복·등록되지 않은 화학량 모순은 병합을 막는다 (리팩터링 패치 초안을 함께 제안)
+      const before = J.refineCheck(db).issues.map((x) => x.type + x.where), ref = J.refineCheck(res.db), freshI = ref.issues.filter((x) => !before.includes(x.type + x.where));
+      console.log(freshI.length ? ['정제 점검 — 이 패치가 만든 문제:', ...freshI.map((x) => `  △ [${x.type}] ${x.msg}`)].join('\n') : J.refineText(res.db).text);
+      if (freshI.some((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length))) {
+        const refactor = LEG.draftRefactor(res.db, ref.issues);
+        if (refactor) { const rp = join(tmpdir(), `refactor-${date}.json`); CLERK.writeDraft(rp, refactor); console.log('리팩터링 패치 제안 (입법 초안): ' + rp); }
         die('정제 점검 — 중복 복잡도 또는 등록되지 않은 화학량 모순: 저장하지 않음 (Optimization-Negative)');
       }
-      if (!g.ok) die('관문 거부 — 패치를 저장하지 않음');
+      if (!g.ok || badSt.length) die('관문 거부 — 패치를 저장하지 않음');
       if (rep.verification.undetected_gaps) die(`등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — 저장하지 않음`);
       if (sub === 'build') { console.log(`관문 통과 — 병합하려면: node dbtool.mjs augment apply${flags.sync ? ' --sync' : ''}`); break; }
-      mkdirSync(PATCH_DIR, { recursive: true });
-      const recPath = join(PATCH_DIR, `${stamp()}-${drafted ? basename(args[1]).replace(/\.json$/, '') : 'auto-augmentation'}.json`), r = res.report;
-      writeFileSync(recPath, JSON.stringify({ applied_at: new Date().toISOString(), result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch }, null, 2) + '\n');
-      writeFileSync(DB_PATH, JSON.stringify(res.db, null, 2) + '\n');
-      const ch = join(HERE, 'CHANGES.md'), txt = readFileSync(ch, 'utf8'), anchor = '|---|---|---|---|---|\n', i = txt.indexOf(anchor) + anchor.length;
-      writeFileSync(ch, txt.slice(0, i) + AUG.changesRow(rel(recPath), rep, b.rows, date, !!drafted) + txt.slice(i));
+      const r = res.report, name = drafted ? basename(args[1]).replace(/\.json$/, '') : 'auto-augmentation';
+      const w = CLERK.commitMerge({ dbPath: DB_PATH, db: res.db, records: [{ name, record: { result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch } }], seal: ATT.sealVerdict(g, res.db) });
+      if (b.stamps.length) console.log('증명 등록부 (입법 서기): ' + rel(CLERK.appendAttestations({ root: HERE, stamps: b.stamps, db: res.db })));
+      CLERK.insertChangesRow(DRAFT.changesRow(rel(w.records[0]), rep, b.rows, date, !!drafted), HERE);
       // 생성물 자동 갱신: limitations.md · 교과서 부록
-      writeFileSync(join(HERE, 'limitations.md'), DefDB.limitationsMarkdown(res.db));
-      const tdir = join(HERE, 'docs', 'textbook'); writeFileSync(join(tdir, '90-부록-자동생성.md'), textbookAppendix(res.db, readJSON(join(tdir, 'storage-map.json'))));
-      console.log(`기록: ${rel(recPath)}\n저장: ${rel(DB_PATH)}\nCHANGES.md 에 한 행 추가 · limitations.md · 교과서 부록 갱신`);
+      CLERK.writeDerived('limitations', J.limitationsMarkdown(res.db), HERE);
+      CLERK.writeDerived('textbook', textbookAppendix(res.db, readJSON(join(HERE, 'docs', 'textbook', 'storage-map.json'))), HERE);
+      console.log(`기록: ${rel(w.records[0])}\n저장 (입법 서기): ${rel(DB_PATH)}\nCHANGES.md 에 한 행 추가 · limitations.md · 교과서 부록 갱신`);
       break;
     }
     die('사용법: augment plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync] | apply <초안 patch.json>');
   }
+  case 'attest': {
+    // 증명 등록부 검사: 도장마다 digest(변조)·증거 파일 sha256·같은 확인 재실행 — 사법부 판정만, 쓰기 없음
+    const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
+    for (const k of v.keys) console.log(`  ✓ ${k}`);
+    for (const f of v.failed) console.log(`  ✗ ${f.key}: ${f.reasons.join(' · ')}`);
+    console.log(`— 증명 도장 ${reg.stamps.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}`);
+    process.exit(v.failed.length ? 1 : 0);
+  }
   case 'compare': {
-    // 비교 검토 (프로토콜 §5): 기준(A) 대 제안(B = 패치 적용 db 와/또는 다른 시나리오)
+    // 비교 검토 (프로토콜 §5): 기준(A) 대 제안(B = 패치 적용 db 와/또는 다른 시나리오) — 실행은 조정자가, 판정은 사법부(judicial/compare.js)
     if (!flags.state || !flags.scenario) die('사용법: compare --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]');
-    const CMP = createRequire(import.meta.url)('./engine/compare.js');
+    const CMP = req('./judicial/compare.js');
     const dbA = loadDB(), x = DefDB.resolveRef(DefDB.index(dbA), flags.state); if (x.error) die(x.error);
     let dbB = dbA;
-    if (flags.patch) { const res = DefDB.ingest(dbA, readJSON(flags.patch)), g = DefDB.gate(dbA, res, {}); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
+    if (flags.patch) { const res = LEG.ingest(dbA, readJSON(flags.patch)), g = J.gate(dbA, res, { attestations: attestations(dbA).keys }); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
     const scA = readJSON(flags.scenario), scB = flags['scenario-b'] ? readJSON(flags['scenario-b']) : JSON.parse(JSON.stringify(scA));
     if (flags.hours) { scA.t_end = +flags.hours * 3600; scB.t_end = +flags.hours * 3600; }
-    const r = CMP.compare(dbA, dbB, x.id, scA, scB, { refHours: +(flags['ref-hours'] || 3) });
+    const r = ORCH.compare(dbA, dbB, x.id, scA, scB, { refHours: +(flags['ref-hours'] || 3) });
     console.log(CMP.compareText(r));
     process.exit(r.verdict === 'Optimization-Negative' ? 1 : 0);
   }
@@ -303,29 +321,28 @@ switch (cmd) {
     if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment] [--brief] [--report 파일.md] [--numerics 시간(h), 0 이면 끔]');
     const db = loadDB(), x = DefDB.resolveRef(DefDB.index(db), args[0]);
     if (x.error) die(x.error);
-    const FATE = createRequire(import.meta.url)('./engine/fate_engine.js'), PR = createRequire(import.meta.url)('./engine/process_report.js');
+    const FATE = req('./engine/fate_engine.js'), FA = req('./judicial/fate_audit.js'), PR = req('./judicial/process_report.js');
     const scenarioText = readFileSync(flags.scenario, 'utf8'), scenario = JSON.parse(scenarioText);
     if (flags.t) scenario.t_end = +flags.t * 3600;
     const opt = { scenario, mode: flags.fine ? 'fine' : undefined, commitment: flags['no-commitment'] ? false : undefined };
-    if (flags.brief) { const r = FATE.simulateFateText(db, x.id, opt); console.log(r.text); console.log(DefDB.refineText(db).text); process.exit(r.code); }
-    const r = FATE.simulateFate(db, x.id, opt);
+    if (flags.brief) { const r = ORCH.fateBrief(db, x.id, opt); console.log(r.text); console.log(J.refineText(db).text); process.exit(r.code); }
+    const r = ORCH.runFate(db, x.id, opt); // 행정부 원자료 → 사법부 판결된 보기
     if (r.error) die(r.error);
-    // 결정론: 같은 입력으로 본 실행을 다시 (결정 탐침 없이 — 본 실행 궤적은 탐침과 무관)
-    const again = FATE.simulateFate(db, x.id, { ...opt, scenario: JSON.parse(scenarioText), commitment: false });
+    // 결정론: 같은 입력으로 본 실행을 다시 (결정 탐침 없이 — 본 실행 궤적은 탐침과 무관) — 해시는 사법부가 계산
+    const again = FA.trajectoryHash(FATE.simulateFate(db, x.id, { ...opt, scenario: JSON.parse(scenarioText), commitment: false }));
     // 수치 확인: 처음 h 시간을 수렴 기준(명시 부분 단계 소비 1%)과 비교
     const nh = flags.numerics != null && flags.numerics !== true ? +flags.numerics : 1;
     let numerics = null;
     if (nh > 0) {
       const s2 = { ...JSON.parse(scenarioText), t_end: Math.min(r.t_end, nh * 3600) }, t0 = Date.now();
       const ref = FATE.simulateFate(db, x.id, { scenario: { ...s2, explicit_fraction: 0.01 }, mode: 'fine', commitment: false }), refMs = Date.now() - t0;
-      let worst = 0; for (const b of r.markers) { const i = r.keys.indexOf(b); let n = 0, d = 0; for (let j = 0; j < ref.series.length; j++) { n += (r.series[j][i] - ref.series[j][i]) ** 2; d += ref.series[j][i] ** 2; } worst = Math.max(worst, d ? Math.sqrt(n / d) : 0); }
-      numerics = { hours: s2.t_end / 3600, l2: worst, refMs };
+      numerics = { hours: s2.t_end / 3600, l2: FA.markerL2(r, ref), refMs };
     }
-    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again.process.hash, numerics });
+    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again, numerics });
     const md = PR.processReportMarkdown(rep);
     console.log(md);
-    console.log(DefDB.refineText(db).text);
-    if (flags.report && flags.report !== true) { writeFileSync(flags.report, md); console.log('보고서: ' + flags.report); }
+    console.log(J.refineText(db).text);
+    if (flags.report && flags.report !== true) { CLERK.writeReport(flags.report, md); console.log('보고서 (입법 서기): ' + flags.report); }
     process.exit(rep.pass ? 0 : 1);
   }
   case 'prompt': {
@@ -333,7 +350,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | compare | augment | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | compare | augment | attest | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====
@@ -345,7 +362,7 @@ function textbookAppendix(db, map) {
   const senses = Object.values(db.senses), rules = senses.flatMap((d) => d.rule), sites = senses.flatMap((d) => Object.values(d.site));
   const byKind = {}; for (const d of senses) byKind[d.kind] = (byKind[d.kind] || 0) + 1;
   const ev = {}; for (const d of senses) for (const x of [...d.desc, ...d.rule, ...d.obs]) ev[x.evidence.level] = (ev[x.evidence.level] || 0) + 1;
-  const lim = Object.values(db.limitations).map((l) => [l.type, DefDB.limitationStatus(db, l).status]);
+  const lim = Object.values(db.limitations).map((l) => [l.type, J.limitationStatus(db, l).status]);
   out.push('## 9.1 규모', '', ...T(['항목', '값'], [
     ['형식 버전', db.version], ['개념 T', Object.keys(db.terms).length], ['정의항 D', senses.length], ['기전 단계 S', Object.keys(db.steps).length], ['한계 L', lim.length],
     ['다음 번호 (meta.next)', Object.entries(db.meta.next).map(([k, v]) => `${k}${String(v).padStart(6, '0')}`).join(' ')],
@@ -362,7 +379,7 @@ function textbookAppendix(db, map) {
   const prow = [];
   for (const [pid, d] of ix.senses) if (d.kind === 'pathway') {
     const st = ix.stepsIn(pid); if (!st.length) continue;
-    const m = DefDB.findMotifs(db, pid, ix), rp = DefDB.resolutionPlan(db, pid);
+    const m = DefDB.findMotifs(db, pid, ix), rp = ORCH.resolutionPlan(db, pid);
     const need = [0, 1, 2].map((n) => rp.rows.filter((r) => r.need === n).length);
     prow.push([`${pid} ${ix.label(pid)}`, st.length, m.trajectory.join(' → '), Object.keys(m.found).join(', '), `R0 ${need[0]} · R1 ${need[1]} · R2 ${need[2]}`]);
   }
@@ -392,13 +409,15 @@ function textbookAppendix(db, map) {
   }
   out.push('### 외부 ID 형식 (`xrefs`)', '', ...T(['종류', '형식(정규식)'], Object.entries(V.xrefs).map(([k, v]) => [k, '`' + v.pattern + '`'])), '');
   // 6. 엔진 상수
-  out.push('## 9.6 엔진 상수 (core.js)', '', ...T(['이름', '값'], [
+  out.push('## 9.6 엔진 상수 (model.js·core.js)', '', ...T(['이름', '값'], [
     ['효과 종류 EFFECT_TYPES', DefDB.EFFECT_TYPES.join(', ')], ['동일성 보존 검사 효과 CONSERVING', [...DefDB.CONSERVING].join(', ') + ' (+ partner 가 있는 modify)'],
     ['속도 상수 필드 KIN_FIELDS', DefDB.KIN_FIELDS.join(', ')], ['정의항 필드 SENSE_FIELDS', DefDB.SENSE_FIELDS.join(', ')],
     ['관계 REL', Object.entries(DefDB.REL).map(([k, v]) => `${k}(${v.label})`).join(', ')],
     ['패턴 MOTIFS', Object.entries(DefDB.MOTIFS).map(([k, v]) => `${k}(${v.label})`).join(', ')],
   ]), '');
-  out.push('### 감사 코드', '', ...T(['코드', '뜻'], [
+  const CPL = req('./engine/coupling.js');
+  out.push('### 수치 결합점 (engine/coupling.js — 시나리오 → 데이터(params) → 기본값)', '', ...T(['열쇠', '시나리오 경로', '기본값', '단위', '층', '뜻'], CPL.REGISTRY.map((e) => [e.key, e.scenario, e.default, e.unit, e.layer, e.meaning])), '');
+  out.push('### 감사 코드 (사법부가 판정 — judicial/)', '', ...T(['코드', '뜻'], [
     ['AUDIT_SCHEMA', '저장소 검사(validate) 오류'], ['AUDIT_RESOLUTION', '필요 해상도 > 갖춘 해상도, 또는 2D 를 3D 농도로 환산'], ['AUDIT_KINETIC', '속도 무결성(법칙·상수·Kd=k_off/k_on·차수·평형) 위반'],
     ['AUDIT_KINETIC_GAP', '속도 상수가 없어 즉시(사건 기반)로 처리한 단계'], ['AUDIT_CONCENTRATION', '반응 부피를 몰라 농도 계산 불가'], ['AUDIT_MASS', '질량·동일성·부분 구조 보존 위반 — 단계 국소(첫 발화 시각)·매 Δt 전역 (분해·재활용·공급 원장, 무한 풀이면 교환 반영)'],
     ['AUDIT_RESOURCE', '재생 경로 없는 저장소(소비만), 재활용 화학량(서열 길이)을 모름, 사후 분석(정지 원인·제한 요인)'],

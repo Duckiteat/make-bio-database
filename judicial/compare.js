@@ -5,31 +5,26 @@
 //   ④ 판정: 결과가 같고 복잡도만 늘면 Optimization-Negative (거부), 줄면 Optimization-Positive, 결과가 바뀌면 Behavior-Changing —
 //      그때는 수치 기준이 모형을 고를 수 없다(두 모형 모두 자기 기준에는 수렴) — 관찰 데이터(obs·kinetics)가 필요하다.
 // 이 파일은 생물 이름을 모른다: 상태 번호·시나리오·패치만 받는다.
+// 삼권 분립: 이 파일은 사법부다 — 엔진을 돌리지 않는다. 변형마다의 실행(본 실행·수렴 기준·시간 측정)은
+//   orchestrator.js 가 행정부로 돌려 원자료로 넘기고, 여기서는 수치 L2·질량 검증·판정만 한다.
 'use strict';
-const C = require('../core.js');
-const F = require('./fate_engine.js');
-
-const timed = (f) => { const t0 = process.hrtime.bigint(), r = f(); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; return r; };
+const { verifyFate } = require('./verifier.js');
 const l2 = (a, b, idx) => { let worst = 0; for (const i of idx) { let n = 0, d = 0; const m = Math.min(a.length, b.length); for (let j = 0; j < m; j++) { n += (a[j][i] - b[j][i]) ** 2; d += b[j][i] ** 2; } worst = Math.max(worst, d ? Math.sqrt(n / d) : 0); } return worst; };
 
-function variant(db, state, sc, opt) {
-  const A = F.assemble(C.normalize(db), state, sc);
-  if (A.error) return { error: A.error };
-  const run = timed(() => F.simulateFate(db, state, { scenario: sc }));
-  if (run.error) return { error: run.error };
-  const refSc = { ...sc, t_end: opt.refHours * 3600 };
-  const dyn = F.simulateFate(db, state, { scenario: refSc, commitment: false });
-  const ref = timed(() => F.simulateFate(db, state, { scenario: { ...refSc, explicit_fraction: 0.01 }, commitment: false, mode: 'fine' }));
+// raw = orchestrator.runVariant 의 결과 { complexity, run, dyn, ref, ms, refMs } (모두 행정부 원자료)
+function variant(db, raw) {
+  if (raw.error) return { error: raw.error };
+  const { run, dyn, ref } = raw;
   const idx = run.markers.map((b) => run.keys.indexOf(b));
   return {
-    complexity: { rules: A.rules.length, modulations: A.rules.reduce((t, r) => t + r.mods.length, 0), fast: A.rules.filter((r) => !r.slow).length, slow: A.rules.filter((r) => r.slow).length, bundles: A.bundles.length, units: A.rules.length + A.rules.reduce((t, r) => t + r.mods.length, 0) },
-    ms: run.ms, nsub: run.gate.nsub, final: run.final.state, firstReach: run.firstReach, commitment: run.commitment.filter((c) => c.driven).map((c) => ({ to: c.to, t: c.t })),
-    numericalL2: l2(dyn.series, ref.series, idx), refMs: ref.ms, mass: run.mass.worst, run,
+    complexity: raw.complexity,
+    ms: raw.ms, nsub: run.gate.nsub, final: run.final.state, firstReach: run.firstReach, commitment: run.commitment.filter((c) => c.driven).map((c) => ({ to: c.to, t: c.t })),
+    numericalL2: l2(dyn.series, ref.series, idx), refMs: raw.refMs, mass: ((v) => Math.max(v.worst, v.replayWorst))(verifyFate(db, run)), run,
   };
 }
-function compare(dbA, dbB, state, scA, scB, opt) {
-  opt = Object.assign({ refHours: 3, negligible: 1e-5 }, opt || {});
-  const a = variant(dbA, state, scA, opt), b = variant(dbB, state, scB, opt);
+function compare(dbA, dbB, rawA, rawB, opt) {
+  opt = Object.assign({ negligible: 1e-5 }, opt || {});
+  const a = variant(dbA, rawA), b = variant(dbB, rawB);
   if (a.error || b.error) return { error: a.error || b.error };
   const markers = a.run.markers.filter((m) => b.run.markers.includes(m));
   // 시간으로 맞춘 궤적 차 (느린 단계 Δ 가 다르면 표본 시각이 다르다 — A 의 시각마다 B 의 같은 시각, 없으면 선형 보간)

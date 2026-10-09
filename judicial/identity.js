@@ -1,22 +1,16 @@
-// 자동 보강 고리 (Auto-Augmentation Loop) — Identity_Gap·unmapped·대조 안 된(asserted) 외부 ID 를 권위 있는 원본(UniProt·ChEBI)에서
-// 가져와 확인하고 패치로 만든다. 데이터베이스는 언제나 패치 → merge(관문)로만 바뀐다.
+// 사법부 — 외부 ID 신원 확인 (Identity Verification). docs/design/tripartite-governance.md §2·§3
 //
-//   ① plan    : 데이터에서 과제를 찾는다 — unmapped/Identity_Gap(이름 검색 → 번호), asserted UniProt·ChEBI(번호 직접 조회 → 대조).
-//   ② fetch   : curl(프록시 설정을 따름)로 받아 data/fetched/ 수신함에 원본 그대로 저장. 막히면 '수동 수집 과제'(RETRIEVAL_TASKS.md)를 쓴다.
-//   ③ build   : 수신함 파일을 읽어(JSON·FASTA·평문만 해석, 실행하지 않음) 확인한다 —
-//               단백질: 번호 일치 · 종(taxon) = 기준 종 · 유전자/단백질 이름이 개념 이름·별칭과 일치 · 다른 정의항과 중복 없음
-//               저분자: 이름 일치(검색이면 정확히 하나) · 화학식의 C·N·P·S 원자 수 = 선언된 부분 구조의 원자 수(엔진 질량 수지와 대조) · 중복 없음
-//               통과 → status 'verified' + 출처 메모, 서열 길이 관찰(sequence_length)·서열 지문(SEQ_SHA256, 도구 계산)·InChIKey 를 더한다.
-//               실패·모호 → 바꾸지 않고(unmapped 유지) 보고, 검색 후보는 그 Identity_Gap 의 note 로.
-//   ④ apply   : 패치를 관문에 통과시켜 병합하고 CHANGES.md 맨 위에 한 행(Scope·Why·Impact·Verification)을 더한다.
-// 안전 규칙: 이미 적힌 asserted 값을 다른 값으로 덮어쓰지 않는다 (sync 를 명시했을 때만). 같은 값이면 status 만 verified 로 올린다.
+// 자동 보강 고리의 판결 쪽: ① 과제 찾기(대조 안 된 주장) ② 수신함 원본 해석(JSON·FASTA·평문만, 실행하지 않음) ③ 확인 —
+//   단백질: 번호 일치 · 종(taxon) = 기준 종 · 유전자/단백질 이름이 개념 이름·별칭과 일치 · 다른 정의항과 중복 없음
+//   저분자: 이름 일치(검색이면 정확히 하나) · 화학식의 C·N·P·S 원자 수 = 선언된 부분 구조의 원자 수 · 중복 없음
+// 통과한 행에 사실·증거(파일 sha256)를 붙여 낸다. 'verified' 는 judicial/attestation.js 가 이 행으로 발급하는 증명으로만 성립한다.
+// 이 파일은 받기(네트워크)·쓰기를 하지 않는다 — 받기와 수신함 저장은 입법 서기(legislative/clerk.mjs)가 한다.
 'use strict';
-const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const C = require('../core.js');
-const V = C.VOCAB;
+const M = require('../model.js');
+const V = M.VOCAB;
 
 const INBOX = 'data/fetched';
 const URLS = {
@@ -30,8 +24,8 @@ const fileOf = (kind, key) => ({ uniprot_entry: `uniprot/${key}`, uniprot_search
 // ===== ① 과제 =====
 function namesOf(db, id) { const d = db.senses[id], t = d && db.terms[d.term]; return t ? [t.names.ko, t.names.en, ...t.aliases].filter(Boolean) : []; }
 function plan(db, opt) {
-  db = C.normalize(db); opt = opt || {};
-  const ix = C.index(db), tasks = [], dir = opt.dir || INBOX;
+  db = M.normalize(db); opt = opt || {};
+  const ix = M.index(db), tasks = [], dir = opt.dir || INBOX;
   const gapOf = (id) => Object.entries(db.limitations).filter(([, l]) => l.type === 'Identity_Gap' && (l.target === id || l.requirement.needs.some((n) => n.on === id))).map(([lid]) => lid);
   const seqGap = (id) => Object.entries(db.limitations).filter(([, l]) => l.requirement.needs.some((n) => n.kind === 'obs' && n.property === 'sequence_length' && n.on === id)).map(([lid]) => lid);
   const add = (t) => { t.file = path.join(dir, fileOf(t.kind, t.key)); t.present = present(t.file); tasks.push(t); };
@@ -58,25 +52,6 @@ function plan(db, opt) {
 // 수신함: 확장자는 받아 본 형식으로 (.json · .fasta · .txt)
 function present(base) { for (const ext of ['.json', '.fasta', '.txt']) if (fs.existsSync(base + ext)) return base + ext; return null; }
 
-// ===== ② 받기 =====
-function fetchTasks(tasks, opt) {
-  opt = Object.assign({ timeout: 20 }, opt || {});
-  const out = [];
-  for (const t of tasks) {
-    if (t.present && !opt.refetch) { out.push({ task: t, ok: true, cached: true, file: t.present }); continue; }
-    let res = null;
-    for (const url of t.urls) {
-      const ext = /\.fasta$/.test(url) ? '.fasta' : /\.txt$/.test(url) ? '.txt' : '.json', dest = t.file + ext, tmp = dest + '.part';
-      fs.mkdirSync(path.dirname(dest), { recursive: true });
-      try {
-        execFileSync('curl', ['-sS', '-f', '-L', '-m', String(opt.timeout), '-o', tmp, url], { stdio: ['ignore', 'ignore', 'pipe'] });
-        fs.renameSync(tmp, dest); res = { task: t, ok: true, file: dest, url }; break;
-      } catch (e) { try { fs.unlinkSync(tmp); } catch (_) { /* 없음 */ } res = { task: t, ok: false, url, error: String(e.stderr || e.message).trim().split('\n').pop() }; }
-    }
-    out.push(res);
-  }
-  return out;
-}
 // 수동 수집 과제 (네트워크가 막혔을 때 사람에게 넘기는 목록)
 function retrievalTasksMarkdown(tasks, results, date) {
   const failed = new Map((results || []).filter((r) => !r.ok).map((r) => [r.task, r.error]));
@@ -168,7 +143,7 @@ function parseChEBISearch(text) {
 function parseUniProtSearch(text) { const j = JSON.parse(text); return { candidates: (j.results || []).map((r) => ({ accession: r.primaryAccession, taxon: r.organism && String(r.organism.taxonId), genes: (r.genes || []).map((g) => g.geneName && g.geneName.value).filter(Boolean) })).filter((r) => r.accession) }; }
 
 // ===== ③ 확인 =====
-const nn = (s) => C.normName(String(s || ''));
+const nn = (s) => M.normName(String(s || ''));
 function nameHit(db, id, cands) { const mine = new Set(namesOf(db, id).map(nn)); return cands.filter(Boolean).find((c) => mine.has(nn(c))) || null; }
 // 검색 후보 고르기: 이름(정규화)이 개념 이름·별칭과 같은 후보가 정확히 하나일 때만
 function pickCandidate(db, id, data) {
@@ -195,18 +170,21 @@ function formulaCheck(db, id, formula) {
   return bad.length ? { status: 'mismatch', note: `원자 수 불일치 ${bad.map((e) => `${e}: 부분 구조 ${want[e] || 0} ≠ 화학식 ${el[e] || 0}`).join(', ')}`, elements: el, want } : { status: 'ok', note: `C${want.C || 0} N${want.N || 0} P${want.P || 0} S${want.S || 0} 일치`, elements: el, want };
 }
 
-// ===== 패치 만들기 =====
-function build(db, opt) {
-  db = C.normalize(db); opt = Object.assign({ dir: INBOX, sync: false, date: new Date().toISOString().slice(0, 10) }, opt || {});
-  const ix = C.index(db), tasks = plan(db, { dir: opt.dir }), rows = [], upd = new Map(), limUpd = new Map();
-  const S = (id) => { if (!upd.has(id)) { const d = db.senses[id]; upd.set(id, { id, _xrefs: d.xrefs.map((x) => ({ ...x })), _obs: d.obs.map((o) => JSON.parse(JSON.stringify(o))), _fp: d.fingerprint, _unmapped: d.unmapped, _changed: new Set() }); } return upd.get(id); };
+// ===== ③ 확인 (판결) =====
+// 수신함 원본마다 판결 행을 낸다: verified · rejected · ambiguous · candidate · missing · unreadable.
+// verified 행에는 확인한 사실(facts)과 증거(evidence: 파일·sha256)가 붙는다 — 이것으로 사법부가 증명(attestation)을 발급하고,
+// 입법부(legislative/augment_draft.js)가 패치 초안을 쓴다. 여기서는 데이터를 바꾸지도, 패치를 만들지도 않는다.
+function verifyIdentity(db, opt) {
+  db = M.normalize(db); opt = Object.assign({ dir: INBOX, sync: false }, opt || {});
+  const ix = M.index(db), tasks = plan(db, { dir: opt.dir }), rows = [];
   const holder = (db_, id) => [...ix.xrefs.get(`${db_}:${id}`) || []];
-  const row = (t, outcome, detail, extra) => rows.push(Object.assign({ sense: t.sense, label: t.label, kind: t.kind, key: t.key, outcome, detail }, extra || {}));
+  const row = (t, outcome, detail, extra) => rows.push(Object.assign({ sense: t.sense, label: t.label, kind: t.kind, key: t.key, gaps: t.gaps, outcome, detail }, extra || {}));
   for (const t of tasks) {
     const got = readTask(t);
     if (!got) { row(t, 'missing', `수신함에 없음 — ${t.file}.json`); continue; }
     if (!got.ok) { row(t, 'unreadable', got.error, { file: got.file }); continue; }
-    const src = `${path.relative(process.cwd(), got.file) || got.file} · sha256:${got.sha.slice(0, 12)}`;
+    const evidence = { file: path.relative(process.cwd(), got.file) || got.file, sha256: got.sha };
+    const src = `${evidence.file} · sha256:${got.sha.slice(0, 12)}`;
     if (t.kind === 'uniprot_entry') {
       const u = got.data, d = db.senses[t.sense], fails = [];
       if (u.accession !== t.key && !(u.secondary || []).includes(t.key)) fails.push(`번호 ${u.accession} ≠ ${t.key}`);
@@ -217,22 +195,9 @@ function build(db, opt) {
       if (others.length) fails.push(`${u.accession} 는 이미 ${others.join(', ')} 에 있음`);
       if (u.accession !== t.key && !opt.sync) fails.push(`asserted 번호 ${t.key} 를 ${u.accession} 로 바꾸려면 sync`);
       if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file }); continue; }
-      const s = S(t.sense), x = s._xrefs.find((y) => y.db === 'UniProt' && y.id === t.key);
-      x.id = u.accession; x.status = 'verified'; x.note = `UniProtKB ${u.format} 조회 ${opt.date} (${u.reviewed ? 'Swiss-Prot' : 'TrEMBL'}${u.entryVersion ? `, 항목 v${u.entryVersion}` : ''}${u.sequenceVersion ? `, 서열 v${u.sequenceVersion}` : ''}) · 이름 일치 '${hit}' · ${src}`;
-      s._changed.add('xrefs');
-      const notes = [`검증 (이름 '${hit}', 종 ${u.taxon})`];
-      if (u.sequence && u.length) {
-        const tool = `dbtool augment — UniProtKB ${u.accession}${u.sequenceVersion ? ` 서열 v${u.sequenceVersion}` : ''} (${src})`;
-        const old = s._obs.find((o) => o.property === 'sequence_length' && o.context.species === u.taxon);
-        if (!old) { s._obs.push({ property: 'sequence_length', value: u.length, unit: 'aa', context: { species: u.taxon }, evidence: { level: 'computed', tool } }); s._changed.add('obs'); notes.push(`서열 길이 ${u.length} aa`); }
-        else if (old.value !== u.length) { if (opt.sync) { old.value = u.length; old.evidence = { level: 'computed', tool }; s._changed.add('obs'); notes.push(`서열 길이 ${old.value} 로 동기화`); } else notes.push(`서열 길이 충돌 (있음 ${old.value}, 원본 ${u.length}) — 그대로 둠`); }
-        if (u.sequence.length === u.length) {
-          const h = crypto.createHash('sha256').update(u.sequence.toUpperCase()).digest('hex');
-          if (!s._fp) { s._fp = { scheme: 'SEQ_SHA256', value: h, status: 'computed' }; s._changed.add('fingerprint'); notes.push('서열 지문 SEQ_SHA256 (도구 계산)'); }
-          else if (s._fp.scheme === 'SEQ_SHA256' && s._fp.value !== h) notes.push(`서열 지문 충돌 — 그대로 둠${opt.sync ? ' (sync 는 지문을 바꾸지 않음)' : ''}`);
-        }
-      }
-      row(t, 'verified', notes.join(' · '), { file: got.file, id: u.accession });
+      const seqHash = u.sequence && u.length && u.sequence.length === u.length ? crypto.createHash('sha256').update(u.sequence.toUpperCase()).digest('hex') : null;
+      row(t, 'verified', `검증 (이름 '${hit}', 종 ${u.taxon})`, { file: got.file, id: u.accession, evidence, src,
+        facts: { db: 'UniProt', id: u.accession, from: t.key, format: u.format, reviewed: u.reviewed, entryVersion: u.entryVersion, sequenceVersion: u.sequenceVersion, taxon: u.taxon, name: hit, length: u.sequence ? u.length : null, seqHash } });
     } else if (t.kind === 'chebi_entity') {
       const c = got.data, fails = [];
       if (c.id !== t.key) fails.push(`번호 ${c.id} ≠ ${t.key}`);
@@ -245,25 +210,13 @@ function build(db, opt) {
       const s0 = db.senses[t.sense], existing = s0.xrefs.find((y) => y.db === 'ChEBI');
       if (existing && existing.id !== c.id && !opt.sync) fails.push(`asserted ${existing.id} 를 ${c.id} 로 바꾸려면 sync`);
       if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file, formula: fc }); continue; }
-      const s = S(t.sense);
-      let x = s._xrefs.find((y) => y.db === 'ChEBI');
-      if (!x) { x = { db: 'ChEBI', id: c.id }; s._xrefs.push(x); }
-      x.id = c.id; x.status = 'verified'; x.note = `ChEBI 조회 ${opt.date} · 이름 일치 '${hit}' · 화학식 ${c.formula || '없음'}${c.charge != null ? ` (전하 ${c.charge})` : ''} · 부분 구조 대조 ${fc.status}${fc.status === 'ok' ? ` (${fc.note})` : ''} · ${src}`;
-      s._changed.add('xrefs');
-      if (s._unmapped) { s._unmapped = undefined; s._changed.add('unmapped'); }
-      const notes = [`검증 (이름 '${hit}', ${fc.status === 'ok' ? '부분 구조 원자 수 일치' : fc.note})`];
-      if (c.inchikey && !s._fp && V.fingerprints.InChIKey.kinds.includes(s0.kind)) {
-        const dup = Object.entries(db.senses).find(([oid, o]) => oid !== t.sense && o.fingerprint && o.fingerprint.value === c.inchikey);
-        if (dup) notes.push(`InChIKey 가 이미 ${dup[0]} 에 — 넣지 않음`); else { s._fp = { scheme: 'InChIKey', value: c.inchikey, status: 'verified' }; s._changed.add('fingerprint'); notes.push('InChIKey (ChEBI 원본)'); }
-      }
-      row(t, 'verified', notes.join(' · '), { file: got.file, id: c.id, formula: fc });
+      const ikOK = c.inchikey && V.fingerprints.InChIKey.kinds.includes(s0.kind);
+      const dupIK = ikOK ? Object.entries(db.senses).find(([oid, o]) => oid !== t.sense && o.fingerprint && o.fingerprint.value === c.inchikey) : null;
+      row(t, 'verified', `검증 (이름 '${hit}', ${fc.status === 'ok' ? '부분 구조 원자 수 일치' : fc.note})`, { file: got.file, id: c.id, formula: fc, evidence, src,
+        facts: { db: 'ChEBI', id: c.id, from: existing ? existing.id : null, name: hit, formula: c.formula, charge: c.charge, formulaCheck: fc, inchikey: ikOK && !dupIK ? c.inchikey : null, inchikeyDuplicateOf: dupIK ? dupIK[0] : null } });
     } else if (t.kind === 'chebi_search') {
       const pick = pickCandidate(db, t.sense, got.data);
-      if (!pick.id) {
-        row(t, 'ambiguous', `${pick.reason}${pick.candidates.length ? ` — 후보 ${pick.candidates.slice(0, 5).map((c) => `${c.id}(${c.name || '?'})`).join(', ')}` : ''}`, { file: got.file });
-        for (const lid of t.gaps) { const l = JSON.parse(JSON.stringify(db.limitations[lid])); l.note = `자동 보강 ${opt.date}: ${pick.reason}. 검색 후보 ${pick.candidates.slice(0, 5).map((c) => `${c.id}${c.name ? ' ' + c.name : ''}${c.formula ? ' ' + c.formula : ''}`).join('; ') || '없음'} — 이름이 정확히 하나로 맞을 때만 고른다`; limUpd.set(lid, { id: lid, ...l }); }
-        continue;
-      }
+      if (!pick.id) { row(t, 'ambiguous', `${pick.reason}${pick.candidates.length ? ` — 후보 ${pick.candidates.slice(0, 5).map((c) => `${c.id}(${c.name || '?'})`).join(', ')}` : ''}`, { file: got.file, reason: pick.reason, candidates: pick.candidates.slice(0, 5) }); continue; }
       const entity = tasks.find((x) => x.kind === 'chebi_entity' && x.sense === t.sense && x.key === pick.id);
       row(t, 'candidate', `이름이 맞는 후보 ${pick.id} (${pick.name}) — ${entity && entity.present ? '항목 파일로 확인' : `항목 조회 과제 생성 (${fileOf('chebi_entity', pick.id)}.json)`}`, { file: got.file, id: pick.id });
     } else if (t.kind === 'uniprot_search') {
@@ -271,32 +224,7 @@ function build(db, opt) {
       row(t, c.length === 1 ? 'candidate' : 'ambiguous', c.length === 1 ? `후보 ${c[0].accession} — 항목 조회 후 확인하려면 xrefs 에 asserted 로 넣고 다시 build` : `종·유전자 이름이 맞는 후보 ${c.length}개`, { file: got.file });
     }
   }
-  // 패치
-  const senses = [];
-  for (const s of upd.values()) {
-    if (!s._changed.size) continue;
-    const o = { id: s.id };
-    if (s._changed.has('xrefs')) o.xrefs = s._xrefs;
-    if (s._changed.has('obs')) o.obs = s._obs;
-    if (s._changed.has('fingerprint')) o.fingerprint = s._fp;
-    if (s._changed.has('unmapped')) o.unmapped = '';
-    senses.push(o);
-  }
-  const count = (k) => rows.filter((r) => r.outcome === k).length;
-  const patch = { format: C.PATCH_FORMAT, version: C.VERSION,
-    why: `자동 보강 고리 (${opt.date}): 원본(UniProt·ChEBI)에서 받은 ${rows.filter((r) => r.file).length}개 파일로 외부 ID 확인 — 검증 ${count('verified')}, 거부 ${count('rejected')}, 모호 ${count('ambiguous')}, 수신함에 없음 ${count('missing')}. 검증된 것만 status verified·출처 메모·서열 길이·지문을 더하고, asserted 값은 ${opt.sync ? 'sync 요청에 따라 동기화' : '바꾸지 않음'}`,
-    senses, limitations: [...limUpd.values()] };
-  return { patch, rows, tasks, empty: !senses.length && !limUpd.size };
+  return { rows, tasks };
 }
 
-// ===== ④ CHANGES.md 한 행 =====
-function changesRow(rec, rep, rows, date, drafted) {
-  const lim = (rep.impact.limitation_status_changed || []).filter((l) => l.after !== l.before);
-  const scope = `\`data/db.json\`·\`${rec}\` — ${Object.entries(rep.scope.added || {}).map(([k, v]) => `추가 ${k} ${v.join(' ')}`).concat(Object.entries(rep.scope.updated || {}).map(([k, v]) => `수정 ${k} ${v.join(' ')}`)).join(' · ') || '—'} (바뀐 필드 ${Object.entries(rep.scope.fields || {}).map(([id, f]) => `${id}{${f.join(',')}}`).join(' ') || '—'})`;
-  const verify = `관문 ${rep.verification.gate} · 오류 ${rep.verification.errors} · 경고 ${rep.verification.warnings} · 미등록 한계 후보 ${rep.verification.undetected_gaps} · 정제 점검 새 문제 0`;
-  if (drafted) return `| ${date} · 데이터 패치 (augment apply) | ${scope} | ${rep.why} | 한계 상태 ${lim.map((l) => `${l.id} ${l.before}→${l.after}`).join(', ') || '변화 없음'} · 하류 규칙 ${(rep.impact.rules || []).length}·단계 ${(rep.impact.steps || []).length}·경로 ${(rep.impact.pathways || []).join(' ') || '—'} | ${verify} |\n`;
-  const v = rows.filter((r) => r.outcome === 'verified');
-  return `| ${date} · 자동 보강 (Auto-Augmentation) | ${scope} | ${rep.why} | 외부 ID verified ${v.length}건 (${v.map((r) => `${r.sense} ${r.id}`).join(', ') || '—'}) · 한계 상태 ${lim.map((l) => `${l.id} ${l.before}→${l.after}`).join(', ') || '변화 없음'} · 거부 ${rows.filter((r) => r.outcome === 'rejected').length}·모호 ${rows.filter((r) => r.outcome === 'ambiguous').length}·없음 ${rows.filter((r) => r.outcome === 'missing').length} | ${verify} |\n`;
-}
-
-module.exports = { INBOX, URLS, plan, fetchTasks, retrievalTasksMarkdown, readTask, parseUniProt, parseChEBI, parseChEBISearch, parseUniProtSearch, parseFormula, formulaCheck, pickCandidate, build, changesRow };
+module.exports = { INBOX, URLS, fileOf, plan, present, retrievalTasksMarkdown, readTask, parseUniProt, parseChEBI, parseChEBISearch, parseUniProtSearch, parseFormula, formulaCheck, pickCandidate, nameHit, namesOf, verifyIdentity };

@@ -4,6 +4,15 @@
 모든 항목은 고정 번호(개념 T…, 뜻 D…, 단계 S…)로 식별되고 연결도 번호로만 건다. 정의항의 하위 항목은 `D…/site/키`·`D…/rule/키`, 묶음은 `D…|부위:특징|위치`.
 규칙 전체는 `SCHEMA.md`, 구조·저장·알고리즘·상호작용의 설명은 교과서 `docs/textbook/00-목차.md`. 명령은 저장소 최상위에서 실행한다.
 
+## 삼권 분립 (반드시 — 어기면 무결성 규약 위반, `docs/design/tripartite-governance.md`)
+
+- **행정부(`core.js`·`engine/*`)는 읽기·시뮬레이션만.** 규칙과 초기 상태의 순수 함수로 원자료만 낸다 — 파일·db.json 쓰기, 검사·승인, `'verified'` 선언, 감사 코드(`AUDIT_*`)·사후 분석·질량 판정을 엔진에 넣지 않는다. 엔진이 사법·입법·조정자 모듈을 부르지 않는다.
+- **입법부(`legislative/`)는 데이터 정의·수정만.** `merge`·패치 초안(보강·리팩터링)은 순수 함수, **파일 쓰기는 입법 서기 `legislative/clerk.mjs` 만** — db.json·patches 는 사법부 관문 봉인(통과 + 같은 db sha256)이 있을 때만, 증명 등록부는 도장 재검증 뒤에만. 다른 파일에 `writeFileSync` 같은 쓰기를 더하지 않는다(`dbtool.mjs` 포함).
+- **사법부(`judicial/`)는 검증·증명만.** validate·관문·Patch Report·정제 점검·한계 상태·감사(`auditRate`)·독립 질량 검증(`verifier.js`)·운명 판정(`fate_audit.js`)·보고서·비교 판정·신원 확인·증명 도장. 엔진을 실행하지 않고(원자료를 입력으로 받음) 데이터·엔진을 고치지 않는다 — 오류는 판결·보고서로만 내고, 고치는 것은 에이전트가 새 패치로 한다(읽기 전용 되먹임).
+- **`'verified'` 는 사법부 도장으로만.** `attestations/registry.json` 의 유효한 도장(digest·증거 sha256·같은 확인 재실행) 없이 status `verified` 를 패치에 쓰면 관문이 거부한다. 도장은 `augment apply` 가 판결과 함께 발급하고 서기가 기록한다. `node dbtool.mjs attest` 로 재검증.
+- 엔진 실행이 필요한 감사(audit-run·해상도 계획·비교 검토·운명 보고서)는 조정자 `orchestrator.js` 가 행정부로 원자료를 만들고 사법부에 넘긴다. 엔진의 수치 선택(정칙화·관문 문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만 읽는다 — 엔진에 기본값을 박지 않는다.
+- 이 분리를 바꾸는 변경은 `node --test tests/*.test.mjs`(특히 `tests/governance.test.mjs`) 통과가 조건이다.
+
 ## 데이터를 넣을 때
 
 `data/db.json` 을 직접 편집하지 않는다. 항상 패치 → `merge` 경로를 쓴다.
@@ -49,7 +58,7 @@
 - **운명은 상태 전이다 (v9).** 계통 결정은 `cell_state`(표지 서명·대사 프로그램·전이)와 `modulation` 규칙의 사슬(신호 → 대사 공급 규칙 → 대사물 → 전사 인자 합성)로 넣는다 — 표지를 데이터에 직접 올리지 않는다. 매개 단계를 조절 규칙 하나로 묶으면 `Regulatory_Gap` 을 등록하고(힐 상수 포함), 힐 상수·합성 속도·문턱은 확인한 값만 데이터에, 나머지는 `hypothetical` 시나리오에. 운명 결과를 보고할 때는 결정 시점(신호 철회 시험)·분화 정지 원인(사후 분석의 고갈 저장소·시각)과 함께 "상수는 가상" 을 밝히고, 운명 층을 바꾸면 `node tests/fate_suite.js` 통과가 조건이다. 생리적이지 않은 계통 경로(예: B 세포 → NKT 세포)는 근거 사슬 없이 만들지 않는다.
 - **엔진은 이름을 모른다.** `core.js`·`engine/*` 에 분자·위치·부분 구조 이름을 쓰지 않는다 — 화학·생물 사실(부분 구조의 원자 수 `elements`, 기본 위치 `defaultVolumeLocation` …)은 데이터나 어휘에 두고 엔진은 번호·부분 구조·속도 상수로만 계산한다. 부분 구조 수지 ΣIn = ΣOut 은 규칙 검사와 운명 엔진 원장 모두 상대 1e-14.
 - **비교 검토 없이 더하지 않는다 (Comparative Optimization).** 새 규칙·경로·수식·수치 선택은 `node dbtool.mjs compare --state … --scenario A [--scenario-b B | --patch p]` 로 지금 구현과 나란히 돌려 판정을 본다: 결과가 같고 비용(규칙·조절 수, 시간 +5% 초과)만 늘며 수치 이득 < 1e-5 이면 **Optimization-Negative — 넣지 않는다**. 결과가 바뀌면(Behavior-Changing) 수치로는 고를 수 없으니 관찰 데이터로 고르고, 없으면 그 선택을 Kinetic_Gap/Regulatory_Gap 의 note 로 남긴다. 이미 있는 supply·modulation 으로 표현할 수 있으면 새 규칙 종류를 만들지 않는다.
-- **정제 점검은 자동이다.** `augment build/apply`, `simulate --rate`, `fate`, `validate <patch>` 가 `refineCheck` 를 돌린다 — 중복 규칙(같은 화학량·위치의 공급, 같은 조절자·대상·효과·위치의 조절)과 경로 순 반응 ↔ 단계 화학량 합의 모순. 패치가 새로 만든 중복이나 등록 안 된 모순은 병합을 막고 리팩터링 패치(참조 없는 중복 제거)를 제안한다. 의도한 단순화면 그 규칙을 대상으로 Structural_Gap 을 등록한다(→ known).
+- **정제 점검은 자동이다.** `augment build/apply`, `simulate --rate`, `fate`, `validate <patch>` 가 `refineCheck`(사법부, 판결만) 를 돌린다 — 중복 규칙(같은 화학량·위치의 공급, 같은 조절자·대상·효과·위치의 조절)과 경로 순 반응 ↔ 단계 화학량 합의 모순. 패치가 새로 만든 중복이나 등록 안 된 모순은 병합을 막고, 입법부(`legislative.draftRefactor`)가 리팩터링 패치 초안(참조 없는 중복 제거)을 저장소 밖에 쓴다 — 적용은 에이전트가 새 패치로. 의도한 단순화면 그 규칙을 대상으로 Structural_Gap 을 등록한다(→ known).
 - **운명 결과는 과정 보고서로만 보고한다.** `node dbtool.mjs fate <상태> --scenario s.json [--report 파일.md]` 가 만드는 보고서(1 요약 · 2 변곡점·시계열·구간 [기간 | 주된 원인 | 우세 표지 | 대사 비용] · 3 무결성 증명서 · 4 인과 추적 · 5 기술 부록)를 근거로 쓰고, 끝 상태만 말하지 않는다. 무결성 증명서가 FAIL(원장·재생이 어느 한 단계라도 1e-14 초과, 신호가 선언된 일정과 다름, 다시 돌린 궤적 해시가 다름, 쓰인 상수가 입력과 다름)이면 그 결과는 실패로 보고하고 결론에 쓰지 않는다. 예측은 실행 전에 시나리오 `expect` 에 적는다(입력 해시에 들어감) — 실행 뒤 바꾸지 않는다.
 - 데이터 패치 절차: 초안(스크래치) → `node dbtool.mjs validate <patch.json>`(관문 미리 보기 + 정제 점검) → `node dbtool.mjs augment apply <patch.json>`(병합 + 기록 + CHANGES.md 행 + limitations.md·교과서 부록 갱신).
 - **부분 구조 수지를 지킨다.** 부분이 옮겨 다니는 분자에는 `moieties` 를 달고, 변환·분해·공급 규칙의 빠진 산물(피로인산·Pi …)은 규칙과 단계(minor)에 함께 넣는다. 원료가 모델 밖이면 `source: true` — 수지 검사를 피하려고 쓰지 않는다. 반감기·공급 속도·서열 길이는 확인한 값만.
@@ -70,7 +79,7 @@
 
 ## 규칙·코드를 바꿀 때
 
-- 통제 어휘(`vocab.js`)나 규칙(`core.js`)은 사용자 요청이 있을 때만 바꾼다. 데이터를 통과시키려고 규칙을 느슨하게 하지 않는다.
+- 통제 어휘(`vocab.js`)나 규칙(`model.js`·`core.js`·`judicial/`·`legislative/`)은 사용자 요청이 있을 때만 바꾼다. 데이터를 통과시키려고 규칙을 느슨하게 하지 않는다.
 - 바꾼 뒤 `node --test tests/*.test.mjs` 와 `node dbtool.mjs validate` 가 모두 통과해야 한다. 새 규칙에는 거부 테스트를 추가한다.
 - 형식이 바뀌면 `migrations/` 에 변환 스크립트를 추가하고 `SCHEMA.md` 변경 기록을 갱신한다.
 - `index.html` 은 `viewer.html` 의 복사본이다. 화면을 고치면 둘 다 맞춘다.

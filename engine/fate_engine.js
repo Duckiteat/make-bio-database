@@ -12,9 +12,14 @@
 //     거친 격자 검사 + 이분 탐색으로 처음 통과한 느린 단계를 찾는다 (격자에서 단조성도 확인).
 //   분화 정지(Differentiation Arrest): 목표에 도달하지 못하고 거리(distance)가 창(window) 동안 좋아지지 않으면 정지. 사후 분석이
 //     실패한 표지 → 그 합성 규칙의 조절 배율 → 가장 모자란 활성화 인자 → (대사물이면) 그것을 만드는 빠른 규칙의 고갈 저장소까지 따라간다.
+//
+//   삼권 분립 (docs/design/tripartite-governance.md): 이 엔진은 행정부다 — 원자료(궤적·원장·진행량·사건·탐침 결과)만 낸다.
+//     질량 수지·재생 검사·분화 정지·사후 분석·감사는 사법부(judicial/fate_audit.js·judicial/verifier.js)가 이 원자료로 판정한다.
+//     엔진은 판정·'verified' 선언·파일 쓰기를 하지 않는다. 수치 결합점(기본값)은 engine/coupling.js 에서 읽는다.
 'use strict';
 const C = require('../core.js');
 const GATE = require('./p5_dynamic_gate.js');
+const COUPLING = require('./coupling.js');
 const V = C.VOCAB, NA = C.NA, VOL = C.VOL;
 
 const loc3 = (l) => V.locations[l] && V.locations[l].dim === '3D';
@@ -34,12 +39,11 @@ function assemble(db, sourceId, sc) {
   for (const base of new Set(markers.values())) for (const r of db.senses[base].rule) if (r.type === 'supply') ruleRefs.add(`${base}/rule/${r.id}`);
   for (const r of sc.extra_rules || []) ruleRefs.add(r);
   const kinOf = (ref) => (sc.kinetics || {})[ref] ? { ...sc.kinetics[ref], src: 'scenario' } : ix.ruleOf(ref) && ix.ruleOf(ref).kinetics ? { ...ix.ruleOf(ref).kinetics, src: 'data' } : null;
-  const rules = [], gaps = [], audit = [];
-  const AE = (code, where, msg, suggestion) => audit.push({ code, where, msg, suggestion });
+  const rules = [], gaps = [], facts = []; // facts: 관찰된 사실 (판정은 사법부)
   const bundles = new Set(markers.keys());
   for (const ref of ruleRefs) {
     const r = ix.ruleOf(ref);
-    if (!r || r.type !== 'supply') { AE('AUDIT_SCHEMA', ref, '공급 규칙이 아님 — 계에서 뺌'); continue; }
+    if (!r || r.type !== 'supply') { facts.push({ kind: 'not_supply', ref }); continue; }
     const loc = r.where[0], k = kinOf(ref);
     const cons = r.consumes.map((q) => ({ b: `${q.ref}|${loc}`, n: q.n, sat: !!q.saturating })), prods = r.produces.map((q) => ({ b: `${q.ref}|${loc}`, n: q.n }));
     for (const q of [...cons, ...prods]) bundles.add(q.b);
@@ -54,7 +58,7 @@ function assemble(db, sourceId, sc) {
       if (r.type !== 'degradation' || Object.keys(r.when).length || (r.where && !r.where.includes(loc))) continue;
       const ref = `${base}/rule/${r.id}`, k = kinOf(ref);
       if (!k) gaps.push(ref);
-      if (r.recycle_to.length) AE('AUDIT_SCHEMA', ref, '재활용 분해는 운명 층에서 아직 다루지 않음 — 소실로 처리');
+      if (r.recycle_to.length) facts.push({ kind: 'recycle_ignored', ref });
       rules.push({ ref, kind: 'degradation', rule: r, loc, k, cons: [{ b, n: 1 }], prods: [], lost: true });
     }
   }
@@ -71,7 +75,7 @@ function assemble(db, sourceId, sc) {
   const signals = new Set(Object.keys(sc.signals || {}));
   for (const b of bundles) if (signalBases.has(b.split('|')[0])) signals.add(b);
   for (const b of signals) bundles.add(b);
-  return { ix, states, markers, rules, bundles: [...bundles], signals: [...signals], gaps: [...new Set(gaps)], modGaps: [...new Set(modGaps)], audit, kinOf };
+  return { ix, states, markers, rules, bundles: [...bundles], signals: [...signals], gaps: [...new Set(gaps)], modGaps: [...new Set(modGaps)], facts, kinOf };
 }
 
 // ===== 시뮬레이션 =====
@@ -83,12 +87,12 @@ function simulateFate(db, sourceId, opt) {
   if (A.error) return A;
   const { ix, states, markers, rules, signals } = A;
   const dt = opt.dt_slow || sc.dt_slow || 60, tEnd = opt.t_end || sc.t_end || 48 * 3600;
-  const Ksat = sc.saturation_K || C.SAT_K;
+  const CP = COUPLING.resolve(sc, opt.coupling), Ksat = CP.saturation_K;
   // 부피 (시나리오 → 없음)
   const volL = {};
   for (const [l, v] of Object.entries(sc.volumes || {})) if (VOL[v.unit]) volL[l] = v.value * VOL[v.unit];
-  const audit = A.audit.slice(), AE = (code, where, msg, suggestion) => audit.push({ code, where, msg, suggestion });
-  for (const b of A.bundles) { const l = b.split('|').pop(); if (!volL[l]) AE('AUDIT_CONCENTRATION', b, `구획 ${l} 부피를 모름 — 농도 0 으로 계산`, C.gapSuggest(db, ix, sourceId, 'Concentration_Gap')); }
+  const facts = A.facts.slice();
+  for (const b of A.bundles) { const l = b.split('|').pop(); if (!volL[l]) facts.push({ kind: 'volume_unknown', bundle: b, location: l }); }
   // 상태 벡터
   const keys = A.bundles, at = new Map(keys.map((b, i) => [b, i])), nB = keys.length;
   const N0 = new Float64Array(nB);
@@ -194,11 +198,11 @@ function simulateFate(db, sourceId, opt) {
     // 초기 추정: 명시 한 단계의 진행량 (입력 한도 안)
     for (let j = 0; j < nF; j++) { let x = h * rate(fast[j], N0v, F[j]); for (const q of fast[j].ci) x = Math.min(x, Math.max(0, N0v[q.i]) / q.n); xi[j] = Math.max(0, x); }
     let ok = false;
-    for (let it = 0; it < 50; it++) {
+    for (let it = 0; it < CP.newton_iters; it++) {
       stats.newton++;
       resid(N0v, xi, F, h, r0);
       const norm = Math.max(...r0.map((v, j) => Math.abs(v) / (Math.abs(xi[j]) + 1)));
-      if (norm < 1e-10) { ok = true; break; }
+      if (norm < CP.newton_tol) { ok = true; break; }
       const J = [];
       for (let c = 0; c < nF; c++) { const d = Math.max(1e-7 * Math.abs(xi[c]), 1e-6); xi[c] += d; resid(N0v, xi, F, h, r1); xi[c] -= d; J.push(r1.map((v, j) => (v - r0[j]) / d)); }
       const Jt = r0.map((_, j) => J.map((col) => col[j]));
@@ -238,7 +242,7 @@ function simulateFate(db, sourceId, opt) {
   };
   // ===== 거리·상태 =====
   const thr = sc.thresholds || {};
-  for (const b of markers.keys()) if (!thr[b]) AE('AUDIT_CONCENTRATION', b, '표지 문턱(thresholds[묶음] = { high, low })이 없음 — 상태를 판정할 수 없음', C.gapSuggest(db, ix, sourceId, 'Concentration_Gap'));
+  for (const b of markers.keys()) if (!thr[b]) facts.push({ kind: 'threshold_missing', bundle: b });
   const distance = (N, sid) => {
     let s = 0, n = 0;
     for (const m of db.senses[sid].signature) {
@@ -256,8 +260,7 @@ function simulateFate(db, sourceId, opt) {
   const sched = Object.entries(sc.signals || {}).map(([b, list]) => ({ i: at.get(b), list: [...list].sort((a, z) => a.t - z.t) }));
   const signalAt = (t, override) => sched.map((s) => { if (override) return override(s, t); let v = 0; for (const e of s.list) if (e.t <= t + 1e-9) v = e.n; return v; });
   // ===== 한 번의 적분 (본 실행과 결정 탐침이 공유) =====
-  const gateOpt = Object.assign({ K_up: 15, K_down: 8, M: 5, W: 20 }, sc.gate || {});
-  const shockMax = sc.shock_threshold != null ? sc.shock_threshold : 0.2;
+  const gateOpt = CP.gate, shockMax = CP.shock_threshold;
   function run(Nstart, t0, t1, ctl) {
     LO = ctl.lo ? Float64Array.from(ctl.lo) : new Float64Array(nB);
     CUM = new Float64Array(2 * rules.length);
@@ -275,7 +278,7 @@ function simulateFate(db, sourceId, opt) {
       prevSig = sig; exhaustedNow = false;
       // 느린 층의 상태로 빠른 층 배율 고정
       const F = fast.map((R) => modF(R, N));
-      const lam = lambda(N, F), nsub = Math.max(1, Math.ceil(lam * dt / (sc.explicit_fraction || 0.1)));
+      const lam = lambda(N, F), nsub = Math.max(1, Math.ceil(lam * dt / CP.explicit_fraction));
       nsubs.push(nsub);
       let p;
       if (mode === 'fine') p = { path: 'fv' };
@@ -292,7 +295,7 @@ function simulateFate(db, sourceId, opt) {
         if (r.state === 'ok' && N[i] < 1) { r.state = 'empty'; events.push({ t: t + dt, type: 'exhausted', bundle: keys[i] }); exhaustedNow = true; }
         else if (r.state === 'empty' && N[i] >= 1) { r.state = 'ok'; events.push({ t: t + dt, type: 'regenerated', bundle: keys[i] }); }
       }
-      if (ctl.record && (step % (ctl.every || 1) === 0)) series.push({ t: t + dt, N: Float64Array.from(N), path: p.path, nsub, gate: gate.state, event: p.event || null, sig, cum: Float64Array.from({ length: rules.length }, (_, k) => CUM[2 * k] + CUM[2 * k + 1]) });
+      if (ctl.record && (step % (ctl.every || 1) === 0)) series.push({ t: t + dt, N: Float64Array.from(N), path: p.path, nsub, gate: gate.state, event: p.event || null, sig, lo: Float64Array.from(LO), cumDD: Float64Array.from(CUM), cum: Float64Array.from({ length: rules.length }, (_, k) => CUM[2 * k] + CUM[2 * k + 1]) });
       if (ctl.snapshots) ctl.snapshots.push({ t: t + dt, N: Float64Array.from(N) });
       if (ctl.onStep) ctl.onStep(t + dt, N);
     }
@@ -300,40 +303,9 @@ function simulateFate(db, sourceId, opt) {
   }
   // ===== 본 실행 =====
   const M0DD = moiTotDD(N0, new Float64Array(nB)), M0 = Object.fromEntries(Object.entries(M0DD).map(([k, v]) => [k, v[0] + v[1]]));
-  const MASS_TOL = 1e-14; // 상대 — ΣIn = ΣOut (프로토콜 불변식)
-  let worstMass = 0, worstReplay = 0;
-  const massSeries = [], replaySeries = [];
   const snapshots = [];
-  // 재생 검사: (N + LO) − (N₀ + Σ S·X) 를 double-double 로 — 규칙 진행량으로 설명되지 않는 변경(수동 개입·숨은 갱신)이 있으면 0 이 아니다
-  const replayDev = (N) => {
-    let worst = 0;
-    for (let i = 0; i < nB; i++) {
-      if (isSignal[i]) continue;
-      const acc = [N[i], LO[i]]; ddAdd(acc, -N0[i], 0);
-      for (const [k, c] of stoich[i]) { const [p1, e1] = twoProd(c, CUM[2 * k]); ddAdd(acc, -p1, -e1 - c * CUM[2 * k + 1]); }
-      const dev = Math.abs(acc[0] + acc[1]) / Math.max(1, Math.abs(N0[i]), Math.abs(N[i]));
-      if (dev > worst) worst = dev;
-    }
-    return worst;
-  };
-  const main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots, mode: opt.mode, onStep: (t, N) => {
-    const now = moiTotDD(N, LO);
-    let stepWorst = 0;
-    for (const k of moiKeys) {
-      const e = [M0DD[k][0], M0DD[k][1]];
-      for (const [ch, sg] of [['source', 1], ['lost', -1], ['violation', 1]]) { ddAdd(e, sg * chanDD[ch][k][0], sg * chanDD[ch][k][1]); }
-      const dev = Math.abs((now[k][0] - e[0]) + (now[k][1] - e[1])) / Math.max(1, Math.abs(M0[k]));
-      if (dev > stepWorst) stepWorst = dev;
-    }
-    const rd = replayDev(N);
-    massSeries.push(stepWorst); replaySeries.push(rd);
-    if (stepWorst > worstMass) worstMass = stepWorst;
-    if (rd > worstReplay) worstReplay = rd;
-  } });
-  for (const k of moiKeys) if (Math.abs(chan.violation[k]) > 1e-6 * Math.max(1, Math.abs(M0[k]))) AE('AUDIT_MASS', k, `부분 구조 ${ix.label(k)} 가 균형 잡히지 않은 규칙으로 ${chan.violation[k].toExponential(3)} 만큼 바뀜`, '규칙의 소비·생성을 고치거나 source/소실로 명시');
-  if (worstReplay > MASS_TOL) AE('AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${worstReplay.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
-  if (worstMass > MASS_TOL) AE('AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${worstMass.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
-  for (const i of keys.keys()) if (main.N[i] < -1e-6) AE('AUDIT_MASS', keys[i], `음수 양 ${main.N[i]}`, '엔진 오류');
+  // 질량 수지·재생 검사는 하지 않는다 — 기록점마다 N·LO·누적 진행량(double-double)을 내보내 사법부가 독립적으로 다시 계산한다
+  const main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots, mode: opt.mode });
   const chanMain = Object.fromEntries(['lost', 'source', 'violation'].map((ch) => [ch, chan[ch]])); // 결정 탐침이 원장을 더 쓰기 전에 본 실행의 원장을 고정
   // 궤적에서 상태·거리
   const traj = main.series.map((s) => ({ t: s.t, d: Object.fromEntries(states.map((x) => [x, distance(s.N, x)])), cls: classify(s.N), path: s.path, nsub: s.nsub, gate: s.gate }));
@@ -343,7 +315,7 @@ function simulateFate(db, sourceId, opt) {
   const sigOn = new Set(sched.filter((s) => s.list.some((e) => e.n > 0)).map((s) => keys[s.i].split('|')[0]));
   const transitions = (db.senses[sourceId].transitions || []).map((tr) => ({ to: tr.to, signals: tr.signals, criterion: tr.commitment.criterion, driven: tr.signals.some((g) => sigOn.has(g)) }));
   // ===== 결정 시점 (신호 철회 시험) =====
-  const horizon = (sc.commitment || {}).horizon || 24 * 3600, coarse = Math.max(1, Math.round(((sc.commitment || {}).coarse || 7200) / dt));
+  const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
   const probe = (k) => { // k = 스냅숏 번호 → 그 시각 이후 신호 0 으로 horizon 동안
     const s = snapshots[k]; const r = run(s.N, s.t, s.t + horizon, { mode: opt.mode, signal: () => 0 });
     return classify(r.N).state;
@@ -365,142 +337,26 @@ function simulateFate(db, sourceId, opt) {
     }
     commitment.push({ to: tr.to, criterion: 'withdrawal', driven: true, t: tC, step: kC, monotone, grid: grid.map((k, j) => ({ t: snapshots[k].t, pass: res[j] })), horizon });
   }
-  // ===== 분화 정지 감지와 사후 분석 =====
+  // 분화 정지·사후 분석·소비만 되는 저장소 판정은 사법부(judicial/fate_audit.js)가 아래 원자료로 한다
   const target = (sc.target && sc.target) || (transitions.find((t) => t.driven) || {}).to || null;
-    let arrest = null;
-  if (target && !firstReach[target]) {
-    // 정지 시점 = 그 뒤로 목표 쪽 진전(잘리지 않은 로그 거리)이 0.01 이하로만 남고, 그 상태가 창(window) 이상 이어진 첫 시각
-    const d = main.series.map((s) => rawDistance(s.N, target)), suf = new Float64Array(d.length);
-    for (let i = d.length - 1; i >= 0; i--) suf[i] = Math.min(d[i], i + 1 < d.length ? suf[i + 1] : Infinity);
-    const tLast = traj[traj.length - 1].t;
-    for (let i = 0; i < d.length; i++) if (d[i] - suf[i] < 0.01) { if (tLast - traj[i].t >= (sc.arrest_window || 6 * 3600)) arrest = { t: traj[i].t, d: traj[i].d[target], raw: d[i] }; break; }
-    if (!arrest) arrest = { t: null, d: traj[traj.length - 1].d[target], note: '창 안에서 아직 움직이는 중 — t_end 를 늘려 확인' };
-  }
-  const pm = target && !firstReach[target] ? postMortem(db, ix, { target, final, main, keys, at, rules, slow, fast, concAt, thr, states, distance, firstReach, sigOn, M0 }) : null;
-  if (pm) AE('AUDIT_FATE', target, `분화 정지 — ${ix.label(target)} 에 도달하지 못함 (원인 ${pm.cause}${pm.limiting ? ', 제한 ' + pm.limiting.label : ''})`, pm.suggestion);
-  // 소비만 되는 저장소 (재생 경로 없음)
-  for (const [i, r] of main.resv) { const prod = rules.some((R) => R.pi.some((q) => q.i === i)); if (!prod && !buf.has(i)) AE('AUDIT_RESOURCE', keys[i], `${ix.bundleLabel(keys[i])} 는 소비만 되고 재생 경로가 없음 (시작 ${+r.start.toPrecision(4)}, 끝 ${+main.N[i].toPrecision(4)})`, fateSuggest(db, ix, keys[i], 'Resource_Gap', rules)); }
   return {
     source: sourceId, states, scenario: sc.name || null, hypothetical: !!sc.hypothetical, dt, t_end: tEnd, keys, markers: [...markers.keys()], signals,
     rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.rule.effect, active: !!m.k })) })),
     final: { state: final.state, nearest: final.nearest || null, d: final.d, N: Object.fromEntries(keys.map((b, i) => [b, main.N[i]])) },
-    trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target, arrest, postMortem: pm,
+    trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target,
     gate: { ...main.gate.stats, transitions: main.gate.stats.transitions.length, log: main.gate.stats.transitions, path: main.path, nsub: { min: Math.min(...main.nsubs), max: Math.max(...main.nsubs) } },
-    mass: { moieties: moiKeys, start: M0, end: moiTot(main.N, main.lo), channels: chanMain, worst: worstMass, tolerance: MASS_TOL, series: massSeries, replayWorst: worstReplay, replaySeries },
-    process: { // 과정 보고서(engine/process_report.js)가 읽는 원자료 — 이름 없이 번호·묶음만
+    // 엔진의 장부 (판정 아님): 부분 구조 시작·끝 합계와 경로별 누적 — 사법부는 이것을 믿지 않고 원자료로 다시 센다
+    mass: { moieties: moiKeys, start: M0, end: moiTot(main.N, main.lo), channels: chanMain },
+    reservoirs: Object.fromEntries([...main.resv].map(([i, r]) => [keys[i], { start: r.start, min: r.min, end: main.N[i], state: r.state, watched: r.watch, buffered: buf.has(i) }])),
+    volumes: volL, buffered: sc.buffered || {}, coupling: CP,
+    process: { // 과정 보고서(judicial/process_report.js)·검증기(judicial/verifier.js)가 읽는 원자료 — 이름 없이 번호·묶음만
+      lo: main.series.map((x) => x.lo), cumDD: main.series.map((x) => x.cumDD),
       times: main.series.map((x) => x.t), sig: main.series.map((x) => x.sig), cum: main.series.map((x) => x.cum), gateEvents: main.series.map((x) => x.event),
       schedule: sched.map((x) => ({ bundle: keys[x.i], list: x.list })), signalIdx: sched.map((x) => x.i), thresholds: thr, N0: Float64Array.from(N0),
       ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
-      factorsAt: (N) => rules.map((R) => R.mi.map((m) => C.hillFactor(m.eff, m.k, concAt(N, m.i)))),
-      rawDistance: (N, sid) => rawDistance(N, sid), distance: (N, sid) => distance(N, sid),
-      hash: require('crypto').createHash('sha256').update(Buffer.concat(main.series.map((x) => Buffer.from(x.N.buffer)))).digest('hex'),
     },
-    events: main.events, audit, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...stats, probes }, ix,
+    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...stats, probes }, ix,
   };
 }
 
-// 사후 분석: 실패한 표지 → 합성 규칙의 조절 배율 → 가장 모자란 활성화 인자 → 대사물이면 그 생산 규칙의 고갈 저장소
-function postMortem(db, ix, c) {
-  const { target, final, main, keys, at, rules, concAt, thr, firstReach } = c;
-  const N = main.N, fails = [];
-  for (const m of db.senses[target].signature) {
-    const b = `${m.ref}|${m.location}`, t = thr[b], x = N[at.get(b)];
-    if (!t) continue;
-    if (m.level === 'high' && x < t.high) fails.push({ bundle: b, level: 'high', value: x, need: t.high });
-    if (m.level === 'low' && x > t.low) fails.push({ bundle: b, level: 'low', value: x, need: t.low });
-  }
-  const alt = final.state && final.state !== target && final.state !== c.states[0] ? final.state : null; // 시작 상태에 머문 것은 다른 운명이 아님 (정지)
-  const out = { target, reached: false, final: final.state, alternative: alt, failing: fails, drivers: [], cause: null, limiting: null, chain: [] };
-  // 높아야 하는 표지의 합성 규칙: 조절 인자별 배율 (활성화는 fmax 대비 점유율, 억제는 남은 배율)
-  for (const f of fails.filter((x) => x.level === 'high')) {
-    const syn = rules.find((R) => R.slow && R.kind === 'supply' && R.pi.some((q) => q.i === at.get(f.bundle)));
-    if (!syn) continue;
-    for (const m of syn.mi) {
-      const s = concAt(N, m.i), fac = C.hillFactor(m.eff, m.k, s);
-      const occ = m.eff === 'activates' ? (fac - 1) / ((m.k.fmax || 1) - 1) : (1 - fac) / (1 - (m.k.fmin || 0));
-      out.drivers.push({ marker: f.bundle, modulator: keys[m.i], effect: m.eff, factor: fac, occupancy: occ, ref: m.ref });
-    }
-  }
-  const acts = out.drivers.filter((d) => d.effect === 'activates').sort((a, z) => a.occupancy - z.occupancy);
-  const reps = out.drivers.filter((d) => d.effect === 'inhibits').sort((a, z) => z.occupancy - a.occupancy);
-  const weakest = acts[0], strongestRep = reps[0];
-  const label = (b) => ix.bundleLabel(b);
-  // 사슬 따라가기 (너비 우선): 약한 활성화 인자를 만드는 빠른 규칙의 입력 중 바닥난 저장소 — 가까운 층부터, 이미 본 묶음은 건너뜀
-  const trace = (b0) => {
-    const seen = new Set([b0]); let level = [b0];
-    for (let depth = 0; depth < 5 && level.length; depth++) {
-      const next = [], hits = [];
-      for (const b of level) for (const R of rules.filter((x) => !x.slow && x.pi.some((q) => q.i === at.get(b)))) for (const q of R.ci) {
-        const kb = keys[q.i]; if (seen.has(kb)) continue; seen.add(kb);
-        const r = main.resv.get(q.i);
-        out.chain.push({ from: kb, via: R.ref, to: b, amount: N[q.i], start: r ? r.start : null });
-        if (r && r.start >= 1 && (N[q.i] < 1 || N[q.i] < 1e-3 * r.start)) hits.push({ bundle: kb, rule: R.ref, start: r.start, end: N[q.i] });
-        next.push(kb);
-      }
-      if (hits.length) return hits.sort((a, z) => a.end / a.start - z.end / z.start)[0];
-      level = next;
-    }
-    return null;
-  };
-  const exhausted = main.events.filter((e) => e.type === 'exhausted').map((e) => e.bundle);
-  if (alt && strongestRep && strongestRep.occupancy > 0.5) { out.cause = 'alternative_fate'; out.limiting = { bundle: strongestRep.modulator, label: label(strongestRep.modulator), role: 'antagonist', factor: strongestRep.factor }; }
-  if (weakest && weakest.occupancy < 0.5) {
-    const isSig = c.sigOn.has(weakest.modulator.split('|')[0]) || /extracellular$/.test(weakest.modulator);
-    const res = !isSig ? trace(weakest.modulator) : null;
-    if (res) { const ev = main.events.find((e) => e.type === 'exhausted' && e.bundle === res.bundle); if (ev) res.t_exhausted = ev.t; out.cause = alt ? 'alternative_fate' : 'resource_exhaustion'; out.resource = res; out.limiting = { bundle: res.bundle, label: label(res.bundle), role: 'reservoir', via: weakest.modulator }; }
-    else if (!out.cause) { out.cause = isSig ? 'signal_insufficient' : 'kinetic_stall'; out.limiting = { bundle: weakest.modulator, label: label(weakest.modulator), role: isSig ? 'signal' : 'activator', occupancy: weakest.occupancy }; }
-    out.weakest = weakest;
-  }
-  if (!out.cause && strongestRep) { out.cause = alt ? 'alternative_fate' : 'antagonist_dominance'; out.limiting = { bundle: strongestRep.modulator, label: label(strongestRep.modulator), role: 'antagonist', factor: strongestRep.factor }; }
-  if (!out.cause) out.cause = exhausted.length ? 'resource_exhaustion' : 'kinetic_stall';
-  out.exhausted = exhausted;
-  const lb = out.limiting ? out.limiting.bundle : target;
-  out.suggestion = out.cause === 'resource_exhaustion' || (out.resource && out.cause === 'alternative_fate')
-    ? fateSuggest(db, ix, lb, 'Resource_Gap', rules) + ' — 또는 이 저장소를 채우는 공급 규칙(type: supply)을 상태의 대사 프로그램에'
-    : out.cause === 'signal_insufficient' ? '신호 세기·지속 시간을 늘리거나 ' + fateSuggest(db, ix, out.weakest ? out.weakest.ref : lb, 'Regulatory_Gap', rules)
-    : fateSuggest(db, ix, out.weakest ? out.weakest.ref : out.limiting ? lb : target, 'Regulatory_Gap', rules);
-  return out;
-}
-
-// 교정 제안: 그 묶음·규칙을 대상으로 하거나 해결 경로에 둔 열린 한계 → 없으면 그 묶음을 만드는 규칙의 한계 → 없으면 등록 형식
-function fateSuggest(db, ix, refOrBundle, type, rules) {
-  const base = String(refOrBundle).split('|')[0].split('/')[0], isRule = /\/rule\//.test(refOrBundle);
-  const makers = rules ? rules.filter((R) => R.pi.some((q) => q.b === refOrBundle) || R.ci.some((q) => q.b === refOrBundle)).map((R) => R.ref) : [];
-  const want = new Set([refOrBundle, base, ...makers]);
-  const open = Object.entries(db.limitations).filter(([, l]) => C.limitationStatus(db, l).status === 'open');
-  const hit = open.filter(([, l]) => l.type === type).filter(([, l]) => want.has(l.target) || (isRule ? false : want.has((C.parseTarget(l.target) || {}).base)) || l.requirement.needs.some((n) => want.has(n.rule) || want.has(n.on)));
-  if (hit.length) return hit.slice(0, 3).map(([id, l]) => `${id} [${l.type}] ${l.requirement.text}`).join(' / ');
-  return `한계 등록부에 등록할 것: [${refOrBundle} | ${type} | 필요한 데이터·규칙]`;
-}
-
-// ===== 텍스트 보고 =====
-function simulateFateText(db, sourceId, opt) {
-  const r = simulateFate(db, sourceId, opt);
-  if (r.error) return { text: '오류: ' + r.error, code: 1, result: r };
-  const L = r.ix.label, BL = r.ix.bundleLabel, h = (s) => s == null ? '—' : `${(s / 3600).toFixed(2)} h`;
-  const lines = [];
-  lines.push(`세포 운명 시뮬레이션 — 시작 ${r.source} ${L(r.source)} · 상태 ${r.states.map((s) => `${s} ${L(s)}`).join(', ')}${r.scenario ? ` · 시나리오 "${r.scenario}"` : ''}${r.hypothetical ? ' [가상 값 — 엔진 시험용]' : ''}`);
-  lines.push(`  느린 단계 Δ ${r.dt} s, ${h(r.t_end)} · 빠른 층 규칙 ${r.rules.filter((x) => x.layer === 'fast').length} · 느린 층 ${r.rules.filter((x) => x.layer === 'slow').length} · 조절 ${r.rules.reduce((a, x) => a + x.modulators.length, 0)}`);
-  lines.push(`  최종 상태: ${r.final.state ? `${r.final.state} ${L(r.final.state)}` : `미결정 (가장 가까운 ${r.final.nearest} ${L(r.final.nearest)}, 거리 ${r.final.d.toFixed(3)})`}`);
-  for (const [s, t] of Object.entries(r.firstReach)) lines.push(`  도달 ${s} ${L(s)} @ ${h(t)}`);
-  for (const c of r.commitment) lines.push(`  결정 ${c.to} ${L(c.to)} [${c.criterion}${c.driven ? '' : ', 신호 없음'}]: ${c.t != null ? h(c.t) : '없음'}${c.monotone === false ? ' (격자에서 단조 아님!)' : ''}${c.horizon ? ` · 철회 후 ${h(c.horizon)} 관찰` : ''}`);
-  if (r.arrest) lines.push(`  분화 정지: ${r.arrest.t != null ? h(r.arrest.t) : '판정 보류'} · 목표 거리 ${r.arrest.d.toFixed(3)}${r.arrest.note ? ' — ' + r.arrest.note : ''}`);
-  if (r.postMortem) {
-    const p = r.postMortem;
-    lines.push(`  사후 분석: 원인 ${p.cause}${p.alternative ? ` · 대신 ${p.alternative} ${L(p.alternative)}` : ''}${p.limiting ? ` · 제한 ${p.limiting.label} (${p.limiting.role})` : ''}`);
-    for (const f of p.failing) lines.push(`    실패 표지 ${BL(f.bundle)}: ${+f.value.toPrecision(4)} (${f.level === 'high' ? '≥' : '≤'} ${f.need})`);
-    for (const d of p.drivers) lines.push(`    조절 ${BL(d.modulator)} ${d.effect === 'activates' ? '→' : '⊣'} 배율 ${d.factor.toFixed(3)} (점유 ${(d.occupancy * 100).toFixed(1)}%)`);
-    if (p.resource) lines.push(`    고갈 저장소 ${BL(p.resource.bundle)}: ${+p.resource.start.toPrecision(4)} → ${+Math.max(0, p.resource.end).toPrecision(4)} (규칙 ${p.resource.rule})${p.resource.t_exhausted != null ? ` — 고갈 시각 ${h(p.resource.t_exhausted)} (실패 지점)` : ''}`);
-    lines.push(`    교정: ${p.suggestion}`);
-  }
-  for (const e of r.events) lines.push(`  사건 ${h(e.t)} ${e.type} ${BL(e.bundle)}`);
-  const g = r.gate;
-  lines.push(`  P5 관문: 승격 ${g.promotions}, 강등 ${g.demotions} (강제 ${g.forced}), 냉각 ${g.cooldownSteps} · 경로 ${JSON.stringify(g.path)} · N_sub ${g.nsub.min}–${g.nsub.max} · 뉴턴 ${r.stats.newton} (실패 ${r.stats.newtonFail}) · 결정 탐침 ${r.stats.probes}`);
-  lines.push(`  질량: 부분 구조 원장 최대 상대 편차 ${r.mass.worst.toExponential(2)} · ${r.mass.moieties.map((k) => `${L(k)} ${+r.mass.start[k].toPrecision(6)} → ${+r.mass.end[k].toPrecision(6)} (소실 ${+r.mass.channels.lost[k].toPrecision(4)})`).join(' · ')}`);
-  if (r.kineticGaps.length) lines.push(`  속도 상수 없음(적용 안 함): ${r.kineticGaps.join(', ')}`);
-  if (r.modulationGaps.length) lines.push(`  힐 상수 없음(배율 1): ${r.modulationGaps.join(', ')}`);
-  for (const a of r.audit) lines.push(`  [${a.code}] ${a.where}: ${a.msg}${a.suggestion ? ' → ' + a.suggestion : ''}`);
-  return { text: lines.join('\n'), code: r.audit.some((a) => a.code === 'AUDIT_MASS') ? 1 : 0, result: r };
-}
-
-module.exports = { simulateFate, simulateFateText, assemble, postMortem };
+module.exports = { simulateFate, assemble };
