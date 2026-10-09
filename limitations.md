@@ -11,6 +11,7 @@
 | Structural_Gap | 18 | 1 | 19 |
 | Resource_Gap | 6 | 0 | 6 |
 | Regulatory_Gap | 8 | 0 | 8 |
+| Observation_Gap | 0 | 0 | 0 |
 | Identity_Gap | 10 | 0 | 10 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백

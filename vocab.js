@@ -282,7 +282,40 @@
     Structural_Gap:    { label: '구조·위상·해상도 공백', aliases: ['structural'], note: '3차원 좌표, 잔기 번호, 화학량(구성 비), 막 위상을 모르거나 다른 분자에서 빌려 온 곳.' },
     Resource_Gap:      { label: '자원(저장소) 공백', aliases: ['resource'], note: '재생·공급 경로나 그 속도가 없어 저장소가 고갈되고 경로가 멈추는 곳 — 사후 분석(post-mortem)이 제한 요인으로 지목한 저장소. 공급 규칙의 속도·시작량이 들어오면 닫힌다.' },
     Regulatory_Gap:    { label: '조절 연결 공백 (신호 전달·유전자 조절)', aliases: ['regulatory', 'signaling'], note: '신호 → 대사, 대사 → 유전자 조절의 매개 단계(수용체·STAT·mTORC1·염색질)를 단계로 풀지 않고 조절 규칙 하나로 묶었거나, 조절 상수(K·n·fmax)를 모르는 곳 (형식 v9).' },
+    Observation_Gap:   { label: '관찰 공백 (가를 수 없음)', aliases: ['observation'], note: '관찰의 오차 막대로 경쟁 가설(compare 의 Behavior-Changing 쌍)을 가를 수 없거나, 판정할 관찰이 없는 곳 (형식 v10). requirement 에 필요한 정밀도를 적는다.' },
     Identity_Gap:      { label: '정체성(외부 ID) 공백', aliases: ['identity', 'unmapped'], note: '필수 외부 ID(ChEBI·UniProt …)를 원본과 대조하지 못해 unmapped 에 사유만 둔 곳. 확인된 ID 가 들어오면 닫힌다.' },
+  },
+
+  // ===== 관찰 기록 (형식 v10, observations O…) — docs/design/observation-port.md =====
+  // 측정한 것은 모델 표현이 아니라 "무엇을 쟀는가"로 저장한다. 값은 SI 정준 단위, 불확도·반복 수·조건·출처와 함께.
+  //   target: 'bundle' 묶음 키 | 'cell_state' 세포 상태 정의항 | 'rule' D…/rule/키 (param 필수)
+  observables: {
+    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule' },
+    concentration:    { label: '농도', target: 'bundle', unit: 'M' },
+    fraction:         { label: '세포 상태에 있는 세포의 비율 (0–1)', target: 'cell_state', unit: '1' },
+    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's' },
+    kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param' },
+  },
+  // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)
+  kineticUnits: { k_on: 'M^-1 s^-1', k_off: 's^-1', kcat: 's^-1', Kd: 'M', Km: 'M', K: 'M', half_life: 's', n: '1', fmax: '1', fmin: '1', dG_act: 'J/mol', dG0: 'J/mol' },
+  uncertaintyKinds: {
+    measurement: { label: '측정 잡음 (장비·분석)' },
+    biological:  { label: '생물학적 변이 (개체·세포 간)' },
+    combined:    { label: '둘을 가르지 않은 합산' },
+  },
+  noiseModels: {
+    normal:    { label: '정규 (sd = 표준 편차, 같은 단위)' },
+    lognormal: { label: '로그정규 (sd = ln 값의 표준 편차, 무차원) — 값 > 0', positive: true },
+    poisson:   { label: '계수 (분자 수에만, sd 는 √값을 넘지 않는 추가 측정 잡음)', observables: ['amount'] },
+  },
+  calibrationKinds: {
+    identity: { label: '보정 없음 (값 = 읽은 값)' },
+    linear:   { label: '선형 (값 = a·raw + b)' },
+    table:    { label: '보정 표 (raw 오름차순 점 사이 선형 보간)' },
+  },
+  obsUses: {
+    estimation: { label: '상수 추정용 — kinetics.from 이 참조할 수 있음, 판정에 쓰지 않음' },
+    validation: { label: '검증용 — 사법부 관찰 비교만, 상수 추정에 쓰지 않음' },
   },
 
   // ===== 근거 수준 =====

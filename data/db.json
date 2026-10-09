@@ -1,12 +1,13 @@
 {
   "format": "definition-db",
-  "version": 9,
+  "version": 10,
   "meta": {
     "next": {
       "T": 175,
       "D": 177,
       "S": 39,
-      "L": 71
+      "L": 71,
+      "O": 1
     }
   },
   "terms": {
@@ -14507,5 +14508,6 @@
       },
       "found_in": "엔진 이식 1.5단계 — 결합 Rodas3 의 Δ 수렴 시험 (fate-effector-pulse-long·effector-glucose-withheld·memory-il15, 가상 시나리오)"
     }
-  }
+  },
+  "observations": {}
 }

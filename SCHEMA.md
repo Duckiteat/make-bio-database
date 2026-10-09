@@ -360,6 +360,31 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - **비교 검토 `judicial/compare.js`** (`dbtool compare`, 변형 실행은 `orchestrator.js`): 판정 Optimization-Negative(비용 ↑, 수치 이득 < 1e-5 또는 궤적 차 < 1e-5) · Optimization-Positive · Neutral · Trade-off · Behavior-Changing(결과가 바뀜 — 관찰로 고름).
 - 감사: `AUDIT_FATE`(목표 상태 도달 실패 — 사후 분석 원인 resource_exhaustion | signal_insufficient | antagonist_dominance | alternative_fate | kinetic_stall, 제한 묶음, 교정 제안), `AUDIT_MASS`(부분 구조 원장 — 매 느린 단계), `AUDIT_RESOURCE`(소비만 되는 저장소), `AUDIT_CONCENTRATION`(부피·문턱 없음).
 
+## 8H. 관찰 기록 — 형식 v10
+
+실측값은 모델 표현이 아니라 **무엇을 쟀는가**로 저장한다. 표현(묶음 나열 → 규칙 기반, 매개 단계 세분)이 바뀌어도 다시 잴 필요가 없게 하기 위해서다. 설계와 원칙은 `docs/design/observation-port.md` 에 있다.
+
+- **최상위 `observations`**: `{ O000001: {...} }`. 번호는 `meta.next.O` 로만 배정하고, 패치에서는 임시 번호 `O+1` 을 쓴다.
+- **필드**
+  - `observable { kind, target, param? }`: 측정량(`vocab.observables`). 대상은 종류에 따라 다름 — amount·concentration 은 묶음 키, fraction·event_time 은 cell_state 정의항, kinetic_constant 는 `D…/rule/키` 와 `param`.
+  - `value`·`unit`: SI 정준 단위만. 단위는 molecule · M · 1 · s, 속도 상수는 `vocab.kineticUnits` 를 따르고 k·k0·k_r 은 `M^(1−order) s^-1`.
+  - `uncertainty { kind: measurement | biological | combined, model: normal | lognormal | poisson, sd ≥ 0 }`: 필수. 값만 있는 관찰은 받지 않는다. poisson 은 amount 에만, lognormal 은 값 > 0 에만.
+  - `replicates`(1 이상의 정수), `precision`·`detection_limit`(선택, 0 이상).
+  - `condition { species(필수), location, cell, temperature_K, pH, time_s, states:[묶음 키] }`.
+  - `calibration { kind: identity | linear(a, b) | table(points) }` + `raw`: 값은 `compiler/obs_operator.js` 로 다시 계산되어 `value` 와 같아야 한다(상대 1e-12). 표의 범위 밖이면 거부.
+  - `provenance.sha256`(원본 파일), `method`, `note`.
+  - `use: estimation | validation`: 추정에 쓴 관찰을 검증에 쓰지 않는다.
+  - `evidence`: curated(문헌) 또는 computed(포트 변환 도구)만.
+- **합성 관찰 금지**: `hypothetical: true` 는 거부한다. 합성 관찰은 `examples/observations/` 에만 둔다.
+- **변경 불가**: 관찰 기록은 바꾸거나 지울 수 없다. 기존 번호에 할 수 있는 것은 `retracted { note, evidence }` 를 한 번 더하는 것뿐이다. 관문(`judicial.observationImmutability`)이 병합 결과 전체를 비교해서 입법부를 우회한 변경도 잡는다.
+- **실측 상수 = 관찰의 파생값 (`rule.kinetics.from: [{ param, obs }]`)**
+  - 참조한 관찰은 같은 규칙·같은 칸을 같은 값으로 잰 `estimation` 용도의 철회되지 않은 기록이어야 한다.
+  - 근거가 curated 인 속도 상수는 order 를 뺀 모든 칸에 `from` 이 있어야 한다.
+  - `lumped: true`(매개 단계를 생략해 맞춘 상수)는 원 관찰 참조(`from`)가 필수이고, 값 대조는 하지 않는다. 기전을 세분하면 다시 재는 것이 아니라 원 관찰에서 다시 계산한다.
+- **계약**: 포트 입력의 모양은 `schemas/obs/observation.schema.json`(`judicial/contract.js checkObservation`)이 검사하고, 의미는 관문(`judicial.validateObservation`)이 검사한다.
+- **한계 종류 `Observation_Gap`**: 오차 막대로 경쟁 가설을 가를 수 없거나 판정할 관찰이 없는 곳.
+- 정의항의 `obs`(D…/obs/n — 서열 길이·국재 같은 정의 속성)는 그대로 둔다. 엔진·사법부가 쓰는 수치 측정은 관찰 기록으로 넣는다.
+
 ## 9. 외부 ID
 
 | kind | 필수 | 허용 |
@@ -435,6 +460,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-09 | 10 | 관찰 기록: 최상위 `observations`(O…, 측정량·SI 값·불확도·반복 수·조건·보정·출처·용도), `meta.next.O`, `kinetics.from`·`kinetics.lumped`(실측 상수 = 관찰의 파생값), 한계 종류 `Observation_Gap`, 어휘 observables·kineticUnits·uncertaintyKinds·noiseModels·calibrationKinds·obsUses, 계약 `schemas/obs/observation.schema.json`, 관찰 연산자 `compiler/obs_operator.js`. 관찰 기록은 바뀌지 않음(철회 표시만), 추정용과 검증용 관찰 분리. 데이터: 관찰 0건(실측값 없음 — 지어내지 않음), 규칙 kinetics 0건이라 이행할 상수 없음 (`migrations/009-v9-to-v10-observations.mjs`, 무손실) |
 | 2026-10-09 | 9 (확장 4) | 삼권 분립: `model.js`(공유 헌법 층) · `core.js`(행정 — 원자료만) · `judicial/`(검증·증명) · `legislative/`(병합·초안, 쓰기는 서기 `clerk.mjs` 만). xref·지문의 `status: verified` 는 증명 등록부 `attestations/registry.json` 의 유효한 도장이 있어야 통과(새 검사 규칙). `simulateRate` 결과에서 `audit`·`postMortem` 이 빠지고 원자료(`facts`·`kinUsed`·`firstFire`·기록점 원장)가 들어감 — 판정은 `judicial.auditRate`. 운명 엔진 결과에서 `audit`·`postMortem`·`arrest`·`mass.worst/series` 가 빠지고 `process.lo`·`process.cumDD` 가 들어감 — 판정은 `judicial/fate_audit.js`. 수치 결합점 등록부 `engine/coupling.js`. db.json 형식 변화 없음(지금 verified 0 건 — 마이그레이션 불필요). |
 | 2026-10-09 | 9 (확장 3) | 과정 분석 보고서: 운명 엔진이 매 단계 저장소 재생 편차·부분 구조 원장 편차·신호·규칙 누적 진행량·궤적 해시를 기록, `engine/process_report.js`, 시나리오 `expect`·`report.ratios`. 형식 버전 그대로 |
 | 2026-10-09 | 9 (확장 2) | 구조 요소 `elements`(원자 수, 화학식 대조를 엔진 코드에서 데이터로), 어휘 `defaultVolumeLocation`, 부분 구조 수지 허용 오차 상대 1e-14, 운명 엔진 보상 산술 원장, 정제 점검 `refineCheck`, 비교 검토 `engine/compare.js`, `validate <patch>`, `augment apply <patch>`. 데이터: 부분 구조 7개의 elements, L000054·L000055 비교 검토 메모. 형식 버전 그대로 |

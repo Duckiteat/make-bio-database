@@ -3,65 +3,78 @@
   "classes": {
     "source": {
       "label": "원천 데이터",
-      "rule": "지식의 유일한 원본. 사람·AI 모두 직접 편집하지 않고 패치 → merge 로만 바뀐다. 다른 모든 생성물·출력은 여기서 계산된다."
+      "rule": "지식의 유일한 원본. 사람·AI 모두 직접 편집하지 않고 패치 → merge 로만 바뀐다. 다른 모든 생성물·출력은 여기서 계산된다.",
+      "zone": "ore"
     },
     "log": {
       "label": "기록 (추가만)",
-      "rule": "병합이 성공할 때마다 하나씩 늘어나는 기록. 고치거나 지우지 않는다. 당시 형식·번호로 적혀 있으므로 지금 형식으로 다시 읽지 않는다 (옛 ID 는 migrations/002-id-map.json)."
+      "rule": "병합이 성공할 때마다 하나씩 늘어나는 기록. 고치거나 지우지 않는다. 당시 형식·번호로 적혀 있으므로 지금 형식으로 다시 읽지 않는다 (옛 ID 는 migrations/002-id-map.json).",
+      "zone": "log"
     },
     "law": {
       "label": "규칙 정의 (코드가 곧 법)",
-      "rule": "무엇이 허용되는지를 정한다. 사용자 요청이 있을 때만 바꾸고, 바꾸면 테스트·검사·SCHEMA 변경 기록·교과서를 함께 고친다. 삼권 분립(docs/design/tripartite-governance.md): 해석의 [공유]·[행정]·[사법]·[입법] 표시가 그 파일의 권한 — 행정은 읽기·시뮬레이션만, 사법은 판정·증명만(쓰기·엔진 실행 없음), 입법은 병합·초안, 파일 쓰기는 입법 서기만."
+      "rule": "무엇이 허용되는지를 정한다. 사용자 요청이 있을 때만 바꾸고, 바꾸면 테스트·검사·SCHEMA 변경 기록·교과서를 함께 고친다. 삼권 분립(docs/design/tripartite-governance.md): 해석의 [공유]·[행정]·[사법]·[입법] 표시가 그 파일의 권한 — 행정은 읽기·시뮬레이션만, 사법은 판정·증명만(쓰기·엔진 실행 없음), 입법은 병합·초안, 파일 쓰기는 입법 서기만.",
+      "zone": "furnace"
     },
     "interface": {
       "label": "도구·화면",
-      "rule": "원천 데이터를 읽고(화면은 브라우저 안에서만 바꿈) 병합을 실행하는 입구. 규칙은 core.js 에만 있고 여기에는 없다."
+      "rule": "원천 데이터를 읽고(화면은 브라우저 안에서만 바꿈) 병합을 실행하는 입구. 규칙은 core.js 에만 있고 여기에는 없다.",
+      "zone": "furnace"
     },
     "generated": {
       "label": "생성물 (손으로 고치지 않음)",
-      "rule": "명령으로 만들어지는 파일. 고칠 일이 있으면 원천이나 생성기를 고치고 다시 만든다. CI 가 최신인지 검사한다."
+      "rule": "명령으로 만들어지는 파일. 고칠 일이 있으면 원천이나 생성기를 고치고 다시 만든다. CI 가 최신인지 검사한다.",
+      "zone": "product"
     },
     "spec": {
       "label": "명세·안내 문서",
-      "rule": "현재 규칙과 사용법을 사람·AI 가 읽게 쓴 문서. 코드와 어긋나면 코드가 맞고 문서를 고친다."
+      "rule": "현재 규칙과 사용법을 사람·AI 가 읽게 쓴 문서. 코드와 어긋나면 코드가 맞고 문서를 고친다.",
+      "zone": "design"
     },
     "history": {
       "label": "설계 기록",
-      "rule": "결정의 배경. 지금 규칙의 근거가 아니다 — 현재 규칙은 SCHEMA.md 와 이 교과서."
+      "rule": "결정의 배경. 지금 규칙의 근거가 아니다 — 현재 규칙은 SCHEMA.md 와 이 교과서.",
+      "zone": "design"
     },
     "migration": {
       "label": "형식 변환 (1회성)",
-      "rule": "형식 버전을 올릴 때 한 번 실행한 스크립트. 다시 실행하지 않고 기록으로 보관한다."
+      "rule": "형식 버전을 올릴 때 한 번 실행한 스크립트. 다시 실행하지 않고 기록으로 보관한다.",
+      "zone": "log"
     },
     "verification": {
       "label": "검증",
-      "rule": "규칙이 느슨해지면 실패하도록 만든 테스트와 CI. 새 규칙에는 거부 테스트를 더한다."
+      "rule": "규칙이 느슨해지면 실패하도록 만든 테스트와 CI. 새 규칙에는 거부 테스트를 더한다.",
+      "zone": "furnace"
     },
     "scenario": {
       "label": "예시·시나리오 (지식 아님)",
-      "rule": "엔진을 시험하거나 패치 작성법을 보여 주는 파일. 데이터베이스에 들어가지 않는다. hypothetical: true 인 값은 결론에 쓰지 않는다."
+      "rule": "엔진을 시험하거나 패치 작성법을 보여 주는 파일. 데이터베이스에 들어가지 않는다. hypothetical: true 인 값은 결론에 쓰지 않는다.",
+      "zone": "furnace"
     },
     "config": {
       "label": "설정",
-      "rule": "저장소 도구 설정."
+      "rule": "저장소 도구 설정.",
+      "zone": "furnace"
     },
     "evidence": {
       "label": "외부 원본 사본 (수신함)",
-      "rule": "권위 있는 원본(UniProt·ChEBI)에서 받은 응답을 그대로 둔 사본. 해석만 하고 실행하지 않으며 고치지 않는다. 패치의 xref note 가 파일 경로와 sha256 으로 가리킨다 — 지우면 출처 추적이 끊긴다."
+      "rule": "권위 있는 원본(UniProt·ChEBI)에서 받은 응답을 그대로 둔 사본. 해석만 하고 실행하지 않으며 고치지 않는다. 패치의 xref note 가 파일 경로와 sha256 으로 가리킨다 — 지우면 출처 추적이 끊긴다.",
+      "zone": "ore"
     },
     "attestation": {
       "label": "증명 등록부 (사법부 도장)",
-      "rule": "'verified' 의 유일한 근거. 사법부(judicial/attestation.js)가 발급한 도장을 입법 서기만 기록한다. 도장마다 digest·증거 파일 sha256·같은 확인 재실행으로 검증되며, 데이터는 스스로 verified 를 선언할 수 없다. 손으로 고치면 digest 가 깨져 무효가 된다."
+      "rule": "'verified' 의 유일한 근거. 사법부(judicial/attestation.js)가 발급한 도장을 입법 서기만 기록한다. 도장마다 digest·증거 파일 sha256·같은 확인 재실행으로 검증되며, 데이터는 스스로 verified 를 선언할 수 없다. 손으로 고치면 digest 가 깨져 무효가 된다.",
+      "zone": "product"
     }
   },
   "files": [
     {
       "path": "data/db.json",
       "class": "source",
-      "format": "JSON (형식 버전은 version 필드, 지금 8)",
+      "format": "JSON (형식 버전은 version 필드, 지금 10)",
       "writer": "node dbtool.mjs merge (core.js merge → gate 통과 시)",
       "readers": "dbtool.mjs 모든 명령, viewer.html, tests",
-      "interpret": "terms(T)·senses(D)·steps(S)·limitations(L) 네 표와 meta.next(다음 번호). 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장."
+      "interpret": "terms(T)·senses(D)·steps(S)·limitations(L)·observations(O) 다섯 표와 meta.next(다음 번호). 관찰 기록(v10)은 한 번 들어오면 바뀌지 않는다(철회 표시만) — 실측 상수는 kinetics.from 으로 관찰을 참조하는 파생값. 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장."
     },
     {
       "path": "data/patches/*.json",
@@ -136,6 +149,17 @@
       "node": "COMPILER_SPARSE_LU",
       "governance": "Shared",
       "refactor_strategy": "결정론 유지(같은 차수면 작은 번호). 패턴을 바꾸면 judicial/derivative.js checkLU(순열·대각·채움 닫힘·값 위치)가 통과해야 한다. 피벗 교환은 없다 — 작은 대각은 엔진이 단계 거부로 처리."
+    },
+    {
+      "path": "compiler/obs_operator.js",
+      "class": "law",
+      "format": "UMD JavaScript",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/judicial.js (관문 — 보정 재계산), 사법부 관찰 비교(4단계 ②), viewer",
+      "interpret": "[공유·컴파일러] 4단계 — 관찰 연산자: 보정(identity·linear·table)으로 읽은 값 → SI 값, 보정의 정준 해시. 측정 장치의 성질을 엔진 밖에서 흡수한다 — 엔진은 부르지 않는다(엔진은 관찰을 모른다). 쓰기·판정 없음.",
+      "node": "COMPILER_OBS_OPERATOR",
+      "governance": "Shared",
+      "refactor_strategy": "보정 종류를 늘리면 vocab.calibrationKinds·관찰 스키마·관문 검사를 같은 커밋에서 맞춘다. 같은 원본·같은 보정은 같은 값·같은 해시 — 결과가 바뀌는 수정은 이미 저장된 관찰 기록을 깨므로 하지 않는다(새 보정 종류로)."
     },
     {
       "path": "compiler/tape.js",
@@ -525,6 +549,14 @@
       "interpret": "행정부 → 사법부 원자료 계약 (FFI 경계). fate-raw: 운명 엔진 원자료의 형·필드·배열 길이 관계·묶음 참조. 판결 필드는 금지. JS·Rust 어느 엔진이든 같은 계약 (docs/design/engine-port-roadmap.md)."
     },
     {
+      "path": "schemas/obs/*.schema.json",
+      "class": "spec",
+      "format": "JSON Schema 2020-12",
+      "writer": "사람·AI (관찰 형식을 바꿀 때, 테스트 필수)",
+      "readers": "judicial/contract.js checkObservation, 관찰 포트 구현자(파서), tests",
+      "interpret": "관찰 포트 입력 계약 — [값, 불확도(크기·유형·잡음 모형), 정밀도, 반복 수, 조건, 보정, 출처, 용도]. 모양만; 의미 검사는 관문(judicial.validateObservation). docs/design/observation-port.md."
+    },
+    {
       "path": "viewer.html",
       "class": "interface",
       "format": "단일 HTML (vocab.js·core.js 를 불러 씀)",
@@ -546,7 +578,8 @@
       "format": "Markdown 표",
       "writer": "node dbtool.mjs limitations --write",
       "readers": "AI (새 개념 설계 전 필독), 사람",
-      "interpret": "data/db.json 의 limitations 에서 생성. ✓/✗ 는 해결 경로 데이터가 있는지, 상태는 계산값. CI: limitations --check."
+      "interpret": "data/db.json 의 limitations 에서 생성. ✓/✗ 는 해결 경로 데이터가 있는지, 상태는 계산값. CI: limitations --check.",
+      "zone": "slag"
     },
     {
       "path": "docs/textbook/90-부록-자동생성.md",
@@ -634,7 +667,7 @@
       "format": "Node ESM",
       "writer": "형식을 올릴 때 한 번",
       "readers": "(실행 기록)",
-      "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도, 006 v6→7 생애 주기·대사물 저장소, 007 v7→8 3 층(tier 배정)."
+      "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도, 006 v6→7 생애 주기·대사물 저장소, 007 v7→8 3 층(tier 배정), 008 v8→9 세포 운명 층, 009 v9→10 관찰 기록(무손실 — 관찰 밖 필드가 바뀌면 변환하지 않음)."
     },
     {
       "path": "migrations/002-id-map.json",
@@ -659,6 +692,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "삼권 분립 시험 — 쓰기는 서기만, 행정부에 판정·verified 없음, 사법부는 엔진 실행·쓰기 없음, 도장 없는·변조·위조 verified 거부, 서기의 봉인 검사, 원자료 변조 탐지, 결합점 해석 순서."
+    },
+    {
+      "path": "tests/observations.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "관찰 기록(v10) — 계약 모양, 관문 의미 검사(불확도·SI 단위·보정 재계산·합성 거부), 실측 상수 = 관찰의 파생값(from·lumped·추정/검증 용도 분리), 변경 불가(바꿈·지움 거부, 철회만), 무손실(정규화 멱등)."
     },
     {
       "path": "tests/rust_engine.test.mjs",
@@ -741,6 +782,14 @@
       "interpret": "hypothetical: true 면 가상 값 — 엔진 시험용. 결론·데이터베이스에 쓰지 않는다. lps-hypothetical(LPS 경로 + 저장소·공급·mRNA 분해), camp-competition(감사 시험), gtp-exhaustion / gtp-regeneration(공급 유무로 기질 고갈 대 순환 재생). tca-acetylcoa-exhaustion / tca-nad-exhaustion / tca-co2-equilibrium(시트르산 회로 소진 시험: 자원 고갈 2종과 산물 축적 평형)."
     },
     {
+      "path": "examples/observations/*.json",
+      "class": "scenario",
+      "format": "관찰 JSON (schemas/obs/observation.schema.json)",
+      "writer": "사람·AI",
+      "readers": "tests/observations.test.mjs, 사법부 관찰 비교 시험",
+      "interpret": "hypothetical: true 인 합성 관찰 — 포트 계약·관문·판정 시험용. 데이터베이스에 넣으면 관문이 거부한다(실측값을 지어내지 않음)."
+    },
+    {
       "path": ".gitignore",
       "class": "config",
       "format": "gitignore",
@@ -806,5 +855,16 @@
       "Orchestration"
     ],
     "rule": "node 가 있는 항목은 아키텍처 노드 — 고칠 때 그 노드의 refactor_strategy 를 따른다. 래퍼·임시 대체 플래그로 덮지 말고 노드 안의 논리를 고친다 (docs/design/engine-port-roadmap.md §5)."
+  },
+  "zones": {
+    "_설명": "용광로 비유의 저장 구역 (4단계 합의, engine-port-roadmap.md §10). 분류(class)마다 zone 하나, 파일은 zone 으로 덮어쓸 수 있다. 정본은 원료·설계 두 곳, 나머지는 거기서 계산되거나 쌓인다.",
+    "enum": {
+      "ore": "원료 — 넣는 것: 지식 정본(db.json)·관찰 기록·외부 원본 사본. 관문을 지나야 들어온다",
+      "furnace": "노 — 돌리는 것: 법(코드)·엔진·컴파일러·도구·시험·시험용 장입물(가상 시나리오)",
+      "log": "노 기록 — 무엇을 넣고 어떻게 돌렸는지: 병합 기록·형식 변환. 추가만",
+      "slag": "슬래그 — 무엇이 모자란지: 한계(정본은 db.json, 이것은 그 투영)",
+      "product": "제품 — 통과한 것: 생성 문서·보고서·증명 도장",
+      "design": "설계실 — 사람이 쓴 의도: 설계·명세·작업 규칙. 생성물과 섞지 않는다"
+    }
   }
 }

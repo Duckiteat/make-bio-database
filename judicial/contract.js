@@ -12,7 +12,7 @@ const path = require('path');
 
 const SCHEMA_DIR = path.join(__dirname, '..', 'schemas', 'ffi');
 const cache = new Map();
-const loadSchema = (name) => { if (!cache.has(name)) cache.set(name, JSON.parse(fs.readFileSync(path.join(SCHEMA_DIR, name), 'utf8'))); return cache.get(name); };
+const loadSchema = (name, dir) => { const f = path.join(dir || SCHEMA_DIR, name); if (!cache.has(f)) cache.set(f, JSON.parse(fs.readFileSync(f, 'utf8'))); return cache.get(f); };
 
 const isArr = (v) => Array.isArray(v) || (ArrayBuffer.isView(v) && !(v instanceof DataView));
 const typeOf = (v) => (v === null ? 'null' : isArr(v) ? 'array' : typeof v === 'number' ? (Number.isInteger(v) ? 'integer' : 'number') : typeof v);
@@ -78,4 +78,11 @@ function checkFateRaw(r) {
   return { ok: !out.length, violations: out.slice(0, 50), schema: schema.$id };
 }
 
-module.exports = { checkFateRaw, check, loadSchema, dimensionsFate };
+// 관찰 포트 입력 계약 (4단계, schemas/obs/observation.schema.json): 모양만 — 의미는 관문(judicial.validateObservation)
+function checkObservation(o) {
+  const schema = loadSchema('observation.schema.json', path.join(__dirname, '..', 'schemas', 'obs')), out = [];
+  check(o, schema, schema, '$', out);
+  return { ok: !out.length, violations: out.slice(0, 50), schema: schema.$id };
+}
+
+module.exports = { checkFateRaw, checkObservation, check, loadSchema, dimensionsFate };

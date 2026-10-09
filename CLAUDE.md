@@ -53,6 +53,7 @@
 - 시뮬레이션 결과를 보고할 때는 "농도 공백" 표시(기본값·무한 풀)를 함께 밝힌다 — 그 결과는 도달 여부만 말한다.
 - **3차원을 무작정 늘리지 않는다.** `node dbtool.mjs resolution <경로>` 로 단계마다 필요한 해상도(R0 위상·R1 부위·R2 구조)를 보고, R2 는 경쟁(T3)을 속도 상수로 가를 수 없는 반응 중심에만 둔다. 경쟁은 먼저 속도 상수(Kd·kcat·Km)로 푼다.
 - **속도 상수는 규칙의 `kinetics` 에 SI 정준 단위로, 근거와 함께.** 확인하지 못한 값은 넣지 않는다 — 엔진 시험용 값은 `examples/scenarios/` 의 `hypothetical: true` 시나리오에만 둔다.
+- **실측값은 관찰 기록으로 (v10, `docs/design/observation-port.md`).** 측정한 수치는 모델 표현이 아니라 "무엇을 쟀는가"로 `observations`(O+1)에 넣는다. 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처·용도(`estimation | validation`)가 필수다. 문헌 속도 상수는 그 관찰을 `kinetics.from` 으로 참조하는 파생값이고, 묶은 상수(`lumped`)도 원 관찰을 참조한다. 관찰 기록은 바꾸거나 지우지 않는다 — 잘못이면 `retracted` 만 더한다. 추정에 쓴 관찰을 검증에 쓰지 않는다. 합성 관찰은 `examples/observations/` 에만 둔다. 측정값은 손으로 옮기지 말고 포트(계약 `schemas/obs/`)로 넣는다 — 지식(개념·기전)은 직접 패치, 측정은 포트.
 - **모든 시뮬레이션·갱신 뒤 `node dbtool.mjs audit-run <경로>` 를 돌린다.** Audit Error 는 오류로 넘기지 말고, 교정 제안의 한계를 채우거나 새 한계로 등록한다.
 - **물질은 무한하지 않다 (v7).** 대사물은 유한 저장소이고, 재생은 공급 규칙(`type: supply`)으로, 소멸은 분해 규칙(`type: degradation`, lost | recycled)으로만 표현한다. 고갈(AUDIT_RESOURCE·stalled)은 결과로 보고하고, 재생 경로가 없으면 공급 규칙을 정의하거나 Kinetic_Gap 으로 등록한다.
 - **유한 계는 결국 멈춘다.** 회로·경로를 넣으면 `simulate --rate --until-death` 로 정지까지 돌리고, 사후 분석의 제한 요인(고갈 → Resource_Gap, 평형·속도 → Kinetic_Gap)을 등록한다. 적분 안정성 감사(Δt 너무 큼)가 나오면 Δt 를 줄여 결과가 수렴할 때만 보고한다.

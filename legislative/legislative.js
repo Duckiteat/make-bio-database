@@ -15,7 +15,7 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION,
   } = M;
 
@@ -142,6 +142,23 @@
         id = rid; report.updated.push(id);
       } else { id = alloc('L'); if (rid) report.idmap[rid] = id; report.added.push(id); }
       db.limitations[id] = l; touchedLimits.push([id, l]);
+    }
+    // 3c. 관찰 기록 (v10, docs/design/observation-port.md) — 새 기록만. 기존 번호에는 철회 표시(retracted)만 더할 수 있다
+    const touchedObs = [];
+    for (const raw of arr(patchIn.observations)) {
+      if (!isObj(raw)) { ERR('observations', '관찰 항목이 객체가 아님'); continue; }
+      const rid = str(raw.id);
+      if (rid && !isTemp('O', rid)) {
+        const o = db.observations[rid];
+        if (!o) { ERR(rid, '없는 관찰 번호 — 새 관찰은 임시 번호(O+1)를 쓸 것'); continue; }
+        const extra = Object.keys(raw).filter((k) => !['id', 'retracted'].includes(k));
+        if (extra.length || !isObj(raw.retracted)) { ERR(rid, `관찰 기록은 바꿀 수 없음 — 기존 번호에는 retracted 만 (적은 필드: ${extra.join(', ') || '없음'})`); continue; }
+        db.observations[rid] = { ...o, retracted: normObservation({ retracted: raw.retracted }).retracted };
+        report.updated.push(rid);
+        continue;
+      }
+      const id = alloc('O'); if (rid) report.idmap[rid] = id; report.added.push(id);
+      db.observations[id] = normObservation(raw); touchedObs.push([id, db.observations[id]]);
     }
     // 4. 참조·어휘 매핑
     const ix = index(db);
@@ -280,6 +297,23 @@
       }
     }
     for (const [id, d] of new Map(touched)) for (const a of d.addresses || []) if (report.idmap[a.limitation]) a.limitation = report.idmap[a.limitation];
+    // 관찰 기록의 대상(묶음 키·세포 상태·규칙)과 어휘, 속도 상수의 출처 관찰 번호
+    for (const [id, o] of touchedObs) {
+      const ob = o.observable;
+      ob.kind = voc('observables', ob.kind, id);
+      const tk = V.observables[ob.kind] && V.observables[ob.kind].target;
+      if (tk === 'bundle' && ob.target) { const parts = ob.target.split('|'); parts[0] = report.idmap[parts[0]] || ref(parts[0], `${id} 측정 대상`); ob.target = parts.join('|'); }
+      else if (tk === 'cell_state') ob.target = ref(ob.target, `${id} 측정 대상`);
+      else if (tk === 'rule') ob.target = target(ob.target, `${id} 측정 대상`);
+      o.uncertainty.kind = voc('uncertaintyKinds', o.uncertainty.kind, id);
+      o.uncertainty.model = voc('noiseModels', o.uncertainty.model, id);
+      if (o.calibration) o.calibration.kind = voc('calibrationKinds', o.calibration.kind, id);
+      o.use = voc('obsUses', o.use, id);
+      if (o.condition.location) o.condition.location = voc('locations', o.condition.location, id);
+      o.condition.states = o.condition.states && o.condition.states.map((b) => { const parts = b.split('|'); parts[0] = report.idmap[parts[0]] || ref(parts[0], `${id} 조건 상태`); return parts.join('|'); });
+      if (!o.condition.states) delete o.condition.states;
+    }
+    for (const [, d] of new Map(touched)) for (const r of d.rule) for (const f of (r.kinetics && r.kinetics.from) || []) if (report.idmap[f.obs]) f.obs = report.idmap[f.obs];
     // 규칙 참조 (v9): 조절 대상, 세포 상태의 대사 프로그램 — 'D…/rule/키' (임시 번호·이름 머리도 풀림)
     for (const [id, d] of new Map(touched)) {
       for (const r of d.rule) if (r.type === 'modulation' && r.target) r.target = target(r.target, `${id}/rule/${r.id} 조절 대상`);
@@ -290,6 +324,7 @@
     for (const r of arr(patchIn.remove).map(str)) {
       if (db.steps[r]) { delete db.steps[r]; report.removed.push(r); continue; }
       if (db.limitations[r]) { delete db.limitations[r]; report.removed.push(r); continue; }
+      if (db.observations[r]) { ERR(r, '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시'); continue; }
       if (db.terms[r]) {
         for (const [sid, s] of Object.entries(db.senses)) if (s.term === r) { delete db.senses[sid]; gone.add(sid); report.removed.push(sid); }
         delete db.terms[r]; report.removed.push(r); continue;

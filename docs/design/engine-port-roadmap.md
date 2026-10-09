@@ -472,3 +472,18 @@ L2 는 독립 기준(Rodas3 rtol 1e-10) 대비 표지 궤적이다. 결합 Rodas
 | 관찰 포트 | 계약·연산자·3 판정 — `docs/design/observation-port.md` | 실측 하드웨어 없음 → 포트는 만들고 시험은 합성 관찰로만 |
 | 범위 밖 | 관찰에 맞춘 상수 적합, 정교한 잡음 모형·장비별 파서, Rust 확장 | 실데이터 없는 과설계는 군더더기 · 적합은 순환 오류 위험 |
 
+### 4단계 작업 목록과 순서 (2026-10-09 합의)
+
+결정: 관찰은 `db.json` 안의 모음(O…, 원본 파일은 sha256 으로만), 확률 적용 대상은 운명 엔진만, 기본 모드는 결정론(시나리오 `stochastic` 이 있을 때만 확률).
+
+| 커밋 | 묶음 | 내용 | 완료 조건 |
+|---|---|---|---|
+| ① 형식 토대 | A1–A5 · F4 | 관찰 계약·`observations` 모음(형식 v10)·`kinetics.from`/`lumped`·추정/검증 분리·변경 불가·무손실 이행·저장 구역 표시 · 관찰 연산자(보정)를 앞당김 | `tests/observations.test.mjs`, validate, 이행 왕복 — **완료** |
+| ② 판정 쪽 | B1 · E1 · E3 · E4 | 관찰 연산자의 원자료 → 측정량 대응, `judicial/stats.js`(χ²·이산 AD·다항·KS, p값·검정력), 관찰 비교 3 판정(CONSISTENT·CONFLICT·INDISTINGUISHABLE → Observation_Gap), `checkLU` 행 표 O(nnz) | 알려진 분포 검정, 합성 관찰로 세 판정 |
+| ③ 사건 시각 | C1 | Rodas3 조밀 출력 + 근 찾기 (JS·Rust) | 격자 불변, Fate-Test 54/54, L000070 |
+| ④ 확률 오라클 | B2 · C2–C6 · D1–D2 · E2 | IR v4(의존 그래프·정수 화학량), xoshiro256++, 다음 반응법 SSA, τ-도약(Cao), 혼성 결합(∫a dt 근 찾기), 계약 확장, 앙상블·결정론 극한 실행, 확률 감사 | 해석해, SSA 대 τ, 결정론 극한, 정수 원장, 결정론 모드 비트 불변 |
+| ⑤ Rust | C7 | ④ 를 Rust/WASM 으로 | 같은 seed 에서 JS = Rust 사건열, 네이티브 = WASM, 할당 0, 벤치 |
+| ⑥ 통합 | E5 · F1–F3 · F5–F6 | 과정 보고서 분포 절·증명서, 한계 패치(L000070·조합 폭발 Structural_Gap), 가상 확률 시나리오, `fate --ensemble`·`observe`, 문서, 거버넌스 시험(엔진은 관찰을 읽지 않음) | 전체 검사 묶음 |
+
+범위 밖: 관찰에 맞춘 상수 적합, 장비별 파서, 정교한 잡음 모형, simulateRate 확률화·Rust 통합, AMD, T2 규칙 기반 이행.
+

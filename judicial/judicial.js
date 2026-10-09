@@ -5,9 +5,9 @@
 //   시뮬레이션 감사는 행정부가 낸 원자료(raw)를 입력으로 받는다 — 여기서 simulate·simulateRate 를 부르지 않는다.
 //   오류를 찾으면 판결(보고서)만 낸다. 고치는 것은 별도 과정(에이전트 → 새 패치 → 입법 서기 → 재검증)이다.
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'));
-  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel);
-})(typeof self !== 'undefined' ? self : this, function (V, M) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'));
+  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp);
+})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP) {
   'use strict';
   const {
     NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
@@ -16,7 +16,7 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION,
   } = M;
 
@@ -82,7 +82,7 @@
     const E = (where, msg) => errors.push({ where, msg }), W = (where, msg) => warnings.push({ where, msg });
     if (db._version) E('데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
-    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations]]) {
+    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations]]) {
       const max = Math.max(0, ...Object.keys(table).map((id) => parseInt(id.slice(1), 10) || 0));
       if (db.meta.next[p] <= max) E('meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
     }
@@ -114,6 +114,7 @@
     for (const n of parentsOf.keys()) dfs(n, []);
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
+    for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W);
     checkAttestations(db, opt, E, W);
     return { errors, warnings };
   }
@@ -131,6 +132,98 @@
     for (const c of claims) if (!have.has(c.key)) E(c.where, "status 'verified' 인데 사법부 증명(attestations/registry.json 의 유효한 도장)이 없음 — 데이터는 스스로 verified 를 선언할 수 없음 (augment apply 가 판결과 함께 도장을 발급)");
   }
 
+  // ===== 관찰 기록 (v10, docs/design/observation-port.md) =====
+  const REL_EQ = 1e-12;
+  const near = (a, b) => Math.abs(a - b) <= REL_EQ * Math.max(Math.abs(a), Math.abs(b), Number.MIN_VALUE);
+  // 측정량의 SI 정준 단위 (kinetic_constant 는 칸마다, k·k0·k_r 은 차수에서)
+  function obsUnit(db, o) {
+    const ov = V.observables[o.observable.kind];
+    if (!ov) return null;
+    if (ov.unit !== 'param') return ov.unit;
+    const p = o.observable.param;
+    if (V.kineticUnits[p]) return V.kineticUnits[p];
+    if (['k', 'k0', 'k_r'].includes(p)) {
+      const t = parseTarget(o.observable.target), r = t && db.senses[t.base] && db.senses[t.base].rule.find((x) => x.id === t.key);
+      const order = r && r.kinetics && r.kinetics.order;
+      if (p === 'k' && r && r.kinetics && r.kinetics.law === 'zero_order') return 'M s^-1';
+      return order != null ? `M^${1 - order} s^-1`.replace('M^0 ', '').replace('M^1 ', 'M ') : null;
+    }
+    return null;
+  }
+  function validateObservation(db, ix, id, o, E, W) {
+    const w = id, ob = o.observable, ov = V.observables[ob.kind];
+    if (!isId('O', id)) E(id, "관찰 번호는 'O' + 숫자 6자리");
+    if (o.hypothetical) E(w, '합성(hypothetical) 관찰은 데이터베이스에 넣지 않음 — examples/observations/ 에만 (실측값을 지어내지 않음)');
+    if (!ov) E(w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
+    else if (ov.target === 'bundle') checkBundle(db, ix, ob.target, `${w} 측정 대상`, E);
+    else if (ov.target === 'cell_state') { const d = db.senses[ob.target]; if (!d || d.kind !== 'cell_state') E(w, `측정 대상 '${ob.target}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
+    else if (ov.target === 'rule') {
+      const t = parseTarget(ob.target);
+      if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `측정 대상 규칙 '${ob.target}' 없음 — D…/rule/키`);
+      if (!KIN_FIELDS.includes(ob.param) || ob.param === 'order') E(w, `속도 상수 칸 '${ob.param || ''}' — ${KIN_FIELDS.filter((f) => f !== 'order').join(', ')}`);
+    }
+    if (!Number.isFinite(o.value)) E(w, '값(value)이 수가 아님');
+    const want = ov && obsUnit(db, o);
+    if (ov && want && o.unit !== want) E(w, `단위 '${o.unit}' — 이 측정량의 SI 정준 단위는 '${want}' (값은 SI 로 환산해 저장)`);
+    if (ov && !want) E(w, '이 측정량의 단위를 정할 수 없음 (대상 규칙의 kinetics.order 필요)');
+    if (ob.kind === 'fraction' && !(o.value >= 0 && o.value <= 1)) E(w, '비율은 0–1');
+    if (['amount', 'concentration', 'event_time'].includes(ob.kind) && !(o.value >= 0)) E(w, '분자 수·농도·시각은 0 이상');
+    const u = o.uncertainty, nm = V.noiseModels[u.model];
+    if (!V.uncertaintyKinds[u.kind]) E(w, `불확도 유형 '${u.kind}' — ${Object.keys(V.uncertaintyKinds).join(' | ')} (값만 있는 관찰은 받지 않음)`);
+    if (!nm) E(w, `잡음 모형 '${u.model}' — ${Object.keys(V.noiseModels).join(' | ')}`);
+    else {
+      if (nm.observables && !nm.observables.includes(ob.kind)) E(w, `잡음 모형 ${u.model} 은(는) ${nm.observables.join('·')} 에만`);
+      if (nm.positive && !(o.value > 0)) E(w, `잡음 모형 ${u.model} 은(는) 값 > 0 에만`);
+    }
+    if (!(u.sd >= 0 && Number.isFinite(u.sd))) E(w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
+    if (!(Number.isInteger(o.replicates) && o.replicates >= 1)) E(w, '반복 수(replicates)는 1 이상의 정수');
+    for (const k of ['precision', 'detection_limit']) if (o[k] != null && !(o[k] >= 0)) E(w, `${k} 는 0 이상`);
+    const c = o.condition;
+    if (!c.species) E(w, '조건에 종(condition.species)이 없음');
+    checkContext(c, w + ' 조건', E);
+    if (c.temperature_K != null && !(c.temperature_K > 0)) E(w, '온도(K)는 0 보다 커야 함');
+    if (c.pH != null && !(c.pH >= 0 && c.pH <= 14)) E(w, 'pH 는 0–14');
+    if (c.time_s != null && !(c.time_s >= 0)) E(w, '시각(time_s)은 0 이상');
+    for (const b of c.states || []) checkBundle(db, ix, b, `${w} 조건 상태`, E);
+    const cal = o.calibration;
+    if (cal) {
+      if (!V.calibrationKinds[cal.kind]) E(w, `보정 종류 '${cal.kind}' — ${Object.keys(V.calibrationKinds).join(' | ')}`);
+      else if (cal.kind !== 'identity') {
+        if (!Number.isFinite(o.raw)) E(w, `보정 ${cal.kind} 에는 읽은 값(raw)이 필요함 — 값은 보정으로 다시 계산되어야 함`);
+        if (cal.kind === 'linear' && !(Number.isFinite(cal.a) && Number.isFinite(cal.b))) E(w, '선형 보정에는 a·b');
+        if (cal.kind === 'table' && !((cal.points || []).length >= 2 && cal.points.every((q, i) => q.length === 2 && q.every(Number.isFinite) && (!i || q[0] > cal.points[i - 1][0])))) E(w, '보정 표는 raw 오름차순 [raw, 값] 점 두 개 이상');
+        else if (Number.isFinite(o.raw)) {
+          const v = OBSOP.calibrate(cal, o.raw);
+          if (!Number.isFinite(v)) E(w, `읽은 값 ${o.raw} 이(가) 보정 범위 밖`);
+          else if (!near(v, o.value)) E(w, `값 ${o.value} 이(가) 보정 결과 ${v} 와 다름 — 관찰 값은 보정으로 다시 계산되어야 함`);
+        }
+      }
+    }
+    if (o.provenance && !/^[0-9a-f]{64}$/.test(o.provenance.sha256)) E(w, '원본 sha256 형식 틀림 (16진 64자리)');
+    if (!V.obsUses[o.use]) E(w, `용도 '${o.use}' — estimation | validation (추정에 쓴 관찰을 검증에 쓰지 않음)`);
+    checkEvidence(o.evidence, w, E);
+    if (!['curated', 'computed'].includes(o.evidence.level)) E(w, `관찰 근거는 curated(문헌) | computed(포트 변환 도구) — 지금 ${o.evidence.level}`);
+    if (o.retracted) { if (!o.retracted.note) E(w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
+  }
+  // 실측 상수 = 관찰 기록의 파생값: kinetics.from 의 관찰이 같은 규칙·같은 칸을 같은 값으로 쟀어야 한다 (lumped 는 원 관찰 참조만)
+  function checkKineticsFrom(db, ref, k, rw, E) {
+    const from = k.from || [];
+    for (const f of from) {
+      const o = db.observations[f.obs], fw = `${rw} 속도 출처 ${f.obs}`;
+      if (!o) { E(fw, '관찰 기록 없음'); continue; }
+      if (o.use !== 'estimation') E(fw, `용도가 ${o.use} 인 관찰은 상수 추정에 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
+      if (o.retracted) E(fw, '철회된 관찰을 참조함');
+      if (k.lumped) continue;
+      if (o.observable.kind !== 'kinetic_constant' || o.observable.target !== ref || o.observable.param !== f.param) E(fw, `관찰이 이 규칙(${ref})의 '${f.param}' 을(를) 잰 것이 아님`);
+      else if (!near(o.value, k[f.param])) E(fw, `'${f.param}' 값 ${k[f.param]} 이(가) 관찰 값 ${o.value} 와 다름 — 실측 상수는 관찰에서 그대로`);
+    }
+    if (k.lumped && !from.length) E(rw, '묶은 상수(lumped)에는 원 관찰 참조(from)가 필요함 — 기전을 세분할 때 다시 재지 않고 다시 계산하려고');
+    if (k.evidence.level === 'curated' && !k.lumped) {
+      const have = new Set(from.map((f) => f.param));
+      const miss = KIN_FIELDS.filter((p) => p !== 'order' && k[p] != null && !have.has(p));
+      if (miss.length) E(rw, `문헌(curated) 속도 상수 ${miss.join('·')} 에 관찰 기록(kinetics.from)이 없음 — 실측값은 관찰 기록으로 넣고 상수는 그것을 참조 (observation-port.md §1)`);
+    }
+  }
   function validateLimitation(db, ix, id, l, E, W) {
     const w = `${id}`;
     if (!isId('L', id)) E(id, "한계 번호는 'L' + 숫자 6자리");
@@ -299,7 +392,7 @@
       if (r.kinetics && (r.kinetics.law === 'hill') !== (r.type === 'modulation')) E(rw, r.type === 'modulation' ? `조절 규칙의 속도 법칙은 hill (지금 ${r.kinetics.law})` : 'hill 법칙은 조절 규칙(modulation)에만');
       checkEvidence(r.evidence, rw, E);
       for (const t of r.taxa || []) if (!V.taxa[t]) E(rw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
-      if (r.kinetics) { for (const m of kineticIssues(r, null)) E(rw, m); checkEvidence(r.kinetics.evidence, rw + ' 속도', E); if (r.kinetics.context) checkContext(r.kinetics.context, rw, E); }
+      if (r.kinetics) { for (const m of kineticIssues(r, null)) E(rw, m); checkEvidence(r.kinetics.evidence, rw + ' 속도', E); if (r.kinetics.context) checkContext(r.kinetics.context, rw, E); checkKineticsFrom(db, `${id}/rule/${r.id}`, r.kinetics, rw, E); }
       if (r.type === 'supply') { validateSupply(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'degradation') { validateDegradation(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'modulation') { validateModulation(db, ix, id, d, r, rw, E, W); continue; }
@@ -718,12 +811,25 @@
     const vo = opt && opt.attestations ? { attestations: opt.attestations } : undefined;
     const before = validate(normalize(dbBefore), vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
-    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i)))];
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(normalize(dbBefore), result.db)];
     const warnings = after.warnings.filter((i) => !old.has(key(i)));
     const r = result.report;
     const changed = r.added.length + r.updated.length + r.removed.length > 0;
     const ok = changed && !errors.length && (!warnings.length || !!(opt && opt.allowWarnings));
     return { ok, changed, errors, warnings, preexisting: before.errors.length };
+  }
+
+  // 관찰 기록은 한 번 들어오면 바뀌지 않는다 — 지울 수 없고, 바꿀 수 있는 것은 철회 표시(retracted) 하나 (실측값을 다시 잴 일이 없게)
+  function observationImmutability(before, after) {
+    const out = [];
+    for (const [id, o] of Object.entries(before.observations || {})) {
+      const a = (after.observations || {})[id];
+      if (!a) { out.push({ where: id, msg: '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시' }); continue; }
+      const strip = (x) => { const { retracted, ...rest } = x; return JSON.stringify(rest); };
+      if (strip(a) !== strip(o)) out.push({ where: id, msg: '관찰 기록은 바꿀 수 없음 — 새 측정은 새 관찰(O+1), 잘못된 관찰은 retracted 로 표시' });
+      if (o.retracted && JSON.stringify(a.retracted) !== JSON.stringify(o.retracted)) out.push({ where: id, msg: '철회 표시는 바꾸거나 지울 수 없음' });
+    }
+    return out;
   }
 
   // ===== 패치 보고서 (Patch Report: Scope · Why · Impact · Verification) =====
@@ -742,7 +848,7 @@
   }
   function patchReport(dbBefore, result, patch, gateResult) {
     const before = normalize(dbBefore), after = result.db, r = result.report, ix = index(after);
-    const kindOf = (id) => ({ T: 'terms', D: 'senses', S: 'steps', L: 'limitations' })[String(id)[0]];
+    const kindOf = (id) => ({ T: 'terms', D: 'senses', S: 'steps', L: 'limitations', O: 'observations' })[String(id)[0]];
     const group = (ids) => { const o = {}; for (const id of ids) (o[kindOf(id)] = o[kindOf(id)] || []).push(id); return o; };
     // 수정된 정의항의 바뀐 최상위 필드
     const fields = {};
@@ -1289,7 +1395,7 @@
   }
 
   return Object.freeze({ auditRate, checkAttestations,
-    needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
+    needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, refsOfRule, patchReport, refineCheck, refineText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });

@@ -77,8 +77,8 @@ switch (cmd) {
     const sum = (f) => senses.reduce((n, d) => n + f(d), 0);
     const links = sum((d) => d.desc.reduce((m, x) => m + x.links.length, 0)), sites = sum((d) => Object.keys(d.site).length), rules = sum((d) => d.rule.length);
     const r = ORCH.validateWithRegistry(db, HERE), nx = db.meta.next;
-    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 부위 ${sites}, 규칙 ${rules}, 관찰 ${sum((d) => d.obs.length)}, 기전 단계 ${Object.keys(db.steps).length}, 한계 ${Object.keys(db.limitations).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
-    console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')} L${String(nx.L).padStart(6, '0')}`);
+    console.log(`저장소 ${rel(DB_PATH)} (형식 v${DefDB.VERSION}): 개념 ${Object.keys(db.terms).length}, 정의항 ${senses.length}, 연결 ${links}, 부위 ${sites}, 규칙 ${rules}, 관찰 ${sum((d) => d.obs.length)}, 기전 단계 ${Object.keys(db.steps).length}, 한계 ${Object.keys(db.limitations).length}, 관찰 기록 ${Object.keys(db.observations).length}, 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
+    console.log(`다음 번호: T${String(nx.T).padStart(6, '0')} D${String(nx.D).padStart(6, '0')} S${String(nx.S).padStart(6, '0')} L${String(nx.L).padStart(6, '0')} O${String(nx.O).padStart(6, '0')}`);
     break;
   }
   case 'validate': {
@@ -195,6 +195,10 @@ switch (cmd) {
     const pats = map.files.map((f) => ({ f, re: re(f.path) }));
     const unclassified = walk(HERE).filter((p) => !pats.some((x) => x.re.test(p)));
     for (const f of map.files) if (!map.classes[f.class]) die(`storage-map: '${f.path}' 의 분류 '${f.class}' 가 classes 에 없음`);
+    // 저장 구역 (용광로): 분류마다 구역 하나, 파일의 덮어쓰기도 열거값 안
+    const zones = (map.zones || {}).enum || {};
+    for (const [k, c] of Object.entries(map.classes)) if (!zones[c.zone]) die(`storage-map: 분류 '${k}' 의 구역 '${c.zone}' 가 zones 에 없음`);
+    for (const f of map.files) if (f.zone && !zones[f.zone]) die(`storage-map: '${f.path}' 의 구역 '${f.zone}' 가 zones 에 없음`);
     // 아키텍처 노드: 이름 하나에 파일 하나, 권한은 열거값, 경로는 실제 파일
     const nodeNames = new Set();
     for (const f of map.files.filter((x) => x.node)) {
@@ -396,21 +400,23 @@ function textbookAppendix(db, map) {
   out.push(...T(['경로', '단계', '위치 궤적', '찾은 패턴', '필요 해상도'], prow), '');
   // 3. 저장 지도
   out.push('## 9.3 저장 지도 (docs/textbook/storage-map.json)', '');
+  const Z = (map.zones || {}).enum || {}, zoneOf = (f) => f.zone || map.classes[f.class].zone;
+  out.push('### 저장 구역 (용광로)', '', (map.zones || {})._설명 || '', '', ...T(['구역', '뜻', '분류', '덮어쓴 파일'], Object.entries(Z).map(([z, t]) => [z, t, Object.entries(map.classes).filter(([, c]) => c.zone === z).map(([k]) => `\`${k}\``).join(' · ') || '—', map.files.filter((f) => f.zone === z).map((f) => `\`${f.path}\``).join(' · ') || '—'])), '');
   for (const [k, c] of Object.entries(map.classes)) {
     const fs = map.files.filter((f) => f.class === k); if (!fs.length) continue;
-    out.push(`### ${c.label} (\`${k}\`)`, '', c.rule, '', ...T(['경로', '형식', '쓰는 쪽', '읽는 쪽', '해석'], fs.map((f) => [`\`${f.path}\``, f.format, f.writer, f.readers, f.interpret])), '');
+    out.push(`### ${c.label} (\`${k}\` · 구역 ${c.zone})`, '', c.rule, '', ...T(['경로', '형식', '쓰는 쪽', '읽는 쪽', '해석'], fs.map((f) => [`\`${f.path}\`${f.zone ? ` (구역 ${zoneOf(f)})` : ''}`, f.format, f.writer, f.readers, f.interpret])), '');
   }
   out.push('### 아키텍처 노드 (삼권 분립 — 고칠 때 노드의 전략을 따른다)', '', (map.governance || {}).rule || '', '', ...T(['노드', '경로', '권한', '고치는 전략'], map.files.filter((f) => f.node).map((f) => [f.node, `\`${f.path}\``, f.governance, f.refactor_strategy])), '');
   // 4. 식별자
   out.push('## 9.4 식별자 문법', '', ...T(['형태', '예', '뜻'], [
-    ['T + 6자리', 'T000042', '개념(피정의항, 이름 묶음)'], ['D + 6자리', 'D000044', '정의항(뜻, 원천)'], ['S + 6자리', 'S000009', '기전 단계'], ['L + 6자리', 'L000004', '한계'],
+    ['T + 6자리', 'T000042', '개념(피정의항, 이름 묶음)'], ['D + 6자리', 'D000044', '정의항(뜻, 원천)'], ['S + 6자리', 'S000009', '기전 단계'], ['L + 6자리', 'L000004', '한계'], ['O + 6자리', 'O000001', '관찰 기록 (v10 — 바뀌지 않음, 철회 표시만)'],
     ['D…/site/키', 'D000044/site/reg_phos', '정의항이 소유한 부위'], ['D…/rule/키', 'D000085/rule/ikba_s32', '정의항이 소유한 규칙'], ['D…/desc/n · D…/obs/n', 'D000044/desc/1', '설명·관찰 (1부터)'],
     ['D…|부위:특징|…|위치', 'D000044|reg_phos:phosphorylated|cytosol', '묶음 — 번호가 아닌 파생 키, 부위 이름순 정렬'],
-    ['임시 번호 (패치 안에서만)', 'T+1, D+gp, S+1, L+1', '병합 때 실제 번호로 바뀜'], ['이름 주소', '효소#2', '개념 안 뜻 번호'],
+    ['임시 번호 (패치 안에서만)', 'T+1, D+gp, S+1, L+1, O+1', '병합 때 실제 번호로 바뀜'], ['이름 주소', '효소#2', '개념 안 뜻 번호'],
   ]), '', `예약 문자(이름에 금지): \`# @ | /\` · 부위·규칙 키 형식: \`${V.siteKeyPattern}\` · 잔기 형식: \`${V.residuePattern}\``, '');
   // 5. 어휘
   out.push('## 9.5 통제 어휘 (vocab.js)', '');
-  const vt = { kinds: 'kind', fields: '분야', locations: '위치', faces: '막 면', associations: '막 결합 방식', siteTypes: '부위 종류', features: '특징', actions: '변화 종류', activity: '활성', effects: '조절 효과', taxa: '종', tissues: '조직', cells: '세포', obsProperties: '관찰 속성', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', resolutionLevels: '해상도', resolutionThresholds: '전환 문턱' };
+  const vt = { kinds: 'kind', fields: '분야', locations: '위치', faces: '막 면', associations: '막 결합 방식', siteTypes: '부위 종류', features: '특징', actions: '변화 종류', activity: '활성', effects: '조절 효과', taxa: '종', tissues: '조직', cells: '세포', obsProperties: '관찰 속성', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', resolutionLevels: '해상도', resolutionThresholds: '전환 문턱', observables: '측정량 (관찰 기록 v10)', uncertaintyKinds: '불확도 유형', noiseModels: '잡음 모형', calibrationKinds: '보정 종류', obsUses: '관찰 용도' };
   for (const [t, name] of Object.entries(vt)) {
     out.push(`### ${name} (\`${t}\`)`, '', ...T(['키', '이름', '세부'], Object.entries(V[t]).map(([k, v]) => [k, v.label || v.name || '', [
       v.aliases && v.aliases.length ? '별칭 ' + v.aliases.join(', ') : '', v.dim ? `${v.dim}${v.parent ? ' ⊂' + v.parent : ''}${v.sides ? ' 면 ' + Object.entries(v.sides).map(([a, b]) => a + '→' + b).join(', ') : ''}` : '',

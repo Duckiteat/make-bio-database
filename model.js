@@ -18,7 +18,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 9;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 10;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -39,7 +39,7 @@
   // 동일성 보존을 검사하는 효과 (화학 변환이 없는 물리적 변화)
   const CONSERVING = new Set(['dissociate', 'associate', 'transport', 'transfer', 'degrade']);
 
-  const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/, L: /^L\d{6}$/ };
+  const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/, L: /^L\d{6}$/, O: /^O\d{6}$/ };
   const fmtId = (p, n) => p + String(n).padStart(6, '0');
   const isId = (p, id) => ID_RE[p].test(String(id));
   const isTemp = (p, id) => !id || new RegExp('^' + p + '\\+').test(String(id));
@@ -76,10 +76,12 @@
 
   // ===== 통제 어휘 매핑 =====
   const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
-    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates', 'tiers', 'signatureLevels', 'commitmentCriteria'];
+    'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates', 'tiers', 'signatureLevels', 'commitmentCriteria',
+    'observables', 'uncertaintyKinds', 'noiseModels', 'calibrationKinds', 'obsUses'];
   const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
     locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
-    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)', tiers: '층(tier)', signatureLevels: '표지 수준(level)', commitmentCriteria: '결정 기준(criterion)' };
+    tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)', tiers: '층(tier)', signatureLevels: '표지 수준(level)', commitmentCriteria: '결정 기준(criterion)',
+    observables: '측정량(observable)', uncertaintyKinds: '불확도 유형', noiseModels: '잡음 모형', calibrationKinds: '보정 종류', obsUses: '관찰 용도(use)' };
   const VIX = {};
   for (const table of VTABLES) {
     const m = new Map();
@@ -140,17 +142,18 @@
   const bundleKey = (b) => [b.base, ...b.features.map((f) => `${f.site}:${f.feature}`).sort(), b.location].join('|');
 
   // ===== 정규화 =====
-  function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1, L: 1 } }, terms: {}, senses: {}, steps: {}, limitations: {} }; }
+  function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1, L: 1, O: 1 } }, terms: {}, senses: {}, steps: {}, limitations: {}, observations: {} }; }
   function normalize(input) {
     const db = emptyDB();
     if (!isObj(input)) return db;
     if (input.version != null && Number(input.version) !== VERSION) Object.defineProperty(db, '_version', { value: Number(input.version) });
     const nx = isObj(input.meta) && isObj(input.meta.next) ? input.meta.next : {};
-    for (const p of ['T', 'D', 'S', 'L']) db.meta.next[p] = Math.max(1, parseInt(nx[p], 10) || 1);
+    for (const p of ['T', 'D', 'S', 'L', 'O']) db.meta.next[p] = Math.max(1, parseInt(nx[p], 10) || 1);
     for (const [id, t] of Object.entries(isObj(input.terms) ? input.terms : {})) if (isObj(t)) db.terms[id] = normTerm(t);
     for (const [id, d] of Object.entries(isObj(input.senses) ? input.senses : {})) if (isObj(d)) db.senses[id] = normSense(d);
     for (const [id, st] of Object.entries(isObj(input.steps) ? input.steps : {})) if (isObj(st)) db.steps[id] = normStep(st);
     for (const [id, l] of Object.entries(isObj(input.limitations) ? input.limitations : {})) if (isObj(l)) db.limitations[id] = normLimitation(l);
+    for (const [id, o] of Object.entries(isObj(input.observations) ? input.observations : {})) if (isObj(o)) db.observations[id] = normObservation(o);
     return db;
   }
   function normTerm(t) {
@@ -264,6 +267,9 @@
     // v8: 환경 보정 ΔG_env = dG_dpH·(pH − pH_ref) + dG_dinv_eps·(1/ε − 1/eps_ref)
     if (isObj(k.env)) { o.env = {}; for (const f of ENV_FIELDS) if (k.env[f] != null && k.env[f] !== '') o.env[f] = Number(k.env[f]); }
     if (isObj(k.context)) o.context = normContext(k.context);
+    // v10: 실측 상수는 관찰 기록의 파생값 — from: [{ param, obs: O… }]. lumped: 매개 단계를 생략해 맞춘 상수(원 관찰 참조 필수, 값 대조 없음)
+    if (arr(k.from).length) o.from = arr(k.from).filter(isObj).map((f) => ({ param: str(f.param), obs: str(f.obs) }));
+    if (k.lumped) o.lumped = true;
     o.evidence = normEvidence(k.evidence);
     return o;
   }
@@ -346,6 +352,38 @@
     const o = { target: str(l.target), type: str(l.type), requirement: { text: str(r.text), needs: arr(r.needs).map(normNeed) } };
     for (const k of ['found_in', 'note', 'by', 'at']) if (str(l[k])) o[k] = str(l[k]);
     if (isObj(l.resolution)) o.resolution = { note: str(l.resolution.note), evidence: normEvidence(l.resolution.evidence) };
+    return o;
+  }
+  // 관찰 기록 (v10, docs/design/observation-port.md): 실측값은 모델 표현이 아니라 "무엇을 쟀는가"로 — 한 번 들어오면 바뀌지 않는다(철회 표시만)
+  const num = (x) => (x == null || x === '' ? undefined : Number(x));
+  function normObservation(b) {
+    const ob = isObj(b.observable) ? b.observable : {};
+    const o = { observable: { kind: str(ob.kind), target: str(ob.target) } };
+    if (str(ob.param)) o.observable.param = str(ob.param);
+    o.value = num(b.value);
+    o.unit = str(b.unit);
+    const u = isObj(b.uncertainty) ? b.uncertainty : {};
+    o.uncertainty = { kind: str(u.kind), model: str(u.model), sd: num(u.sd) };
+    for (const k of ['precision', 'detection_limit', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
+    o.replicates = num(b.replicates);
+    const c = isObj(b.condition) ? b.condition : {};
+    o.condition = { species: str(c.species) };
+    for (const k of ['location', 'cell']) if (str(c[k])) o.condition[k] = str(c[k]);
+    for (const k of ['temperature_K', 'pH', 'time_s']) if (num(c[k]) !== undefined) o.condition[k] = num(c[k]);
+    if (arr(c.states).length) o.condition.states = arr(c.states).map(str);
+    if (isObj(b.calibration)) {
+      const cal = { kind: str(b.calibration.kind) };
+      for (const k of ['a', 'b']) if (num(b.calibration[k]) !== undefined) cal[k] = num(b.calibration[k]);
+      if (arr(b.calibration.points).length) cal.points = arr(b.calibration.points).map((q) => arr(q).map(Number));
+      o.calibration = cal;
+    }
+    if (str(b.method)) o.method = str(b.method);
+    if (isObj(b.provenance) && str(b.provenance.sha256)) o.provenance = { sha256: str(b.provenance.sha256).toLowerCase() };
+    o.use = str(b.use);
+    o.evidence = normEvidence(b.evidence);
+    if (b.hypothetical) o.hypothetical = true; // 관문이 거부 — 합성 관찰은 examples/ 에만
+    if (str(b.note)) o.note = str(b.note);
+    if (isObj(b.retracted)) o.retracted = { note: str(b.retracted.note), evidence: normEvidence(b.retracted.evidence) };
     return o;
   }
   // 대상 문자열 → { base: D/S 번호, sub: 'site'|'rule'|null, key }
@@ -680,6 +718,6 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION });
 });
