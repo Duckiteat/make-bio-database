@@ -77,13 +77,6 @@
     "coarse": 7200
   },
   "arrest_window": 21600,
-  "gate": {
-    "K_up": 15,
-    "K_down": 8,
-    "M": 5,
-    "W": 20
-  },
-  "shock_threshold": 0.2,
   "kinetics": {
     "D000170/rule/aerobic_glycolysis": {
       "law": "mass_action",

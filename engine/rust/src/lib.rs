@@ -1,7 +1,7 @@
-//! fate_core — 행정부 운명 엔진 (Rust · 네이티브 C-FFI · WASM). docs/design/engine-port-roadmap.md 1단계
+//! fate_core — 행정부 운명 엔진 (Rust · 네이티브 C-FFI · WASM). docs/design/engine-port-roadmap.md 1·1.5단계 (결합 Rodas3)
 //!
 //! 입력: 컴파일러 IR 을 평평하게 직렬화한 f64 덩어리 (engine/fate_rust.js packIR). 법칙 코드 없음 — 테이프만 해석한다.
-//! 출력: 원자료 버퍼 (기록점 N·LO·누적 진행량·신호·경로, 스냅숏, 관문 로그, 사건, 통계). 판정·파일 쓰기 없음.
+//! 출력: 원자료 버퍼 (기록점 N·LO·누적 진행량·신호·Δ 당 단계 수, 스냅숏, 사건, 통계). 판정·파일 쓰기 없음.
 //! 메모리: `fe_init` 에서 모든 버퍼를 한 번 잡는다 — 이후 `fe_run_main`·`fe_probe` 는 할당하지 않는다(WASM byteLength 불변).
 
 pub mod engine;
@@ -54,17 +54,16 @@ fn buf(id: u32) -> (*const f64, usize) {
         2 => &e.rec_lo[..e.n_rec * e.nb],
         3 => &e.rec_cum[..e.n_rec * 2 * e.nr],
         4 => &e.rec_sig[..e.n_rec * e.nsig],
-        5 => &e.rec_meta[..e.n_rec * 4],
+        5 => &e.rec_meta[..e.n_rec * 2],
         6 => &e.snap_t[..e.n_snap],
-        7 => &e.gate_log[..e.n_log * 3],
-        8 => &e.events[..e.n_events * 3],
-        9 => &e.stats[..],
-        10 => &e.run_info[..],
-        11 => &e.res_out[..],
-        12 => &e.probe_n[..],
-        13 => &e.fin_n[..],
-        14 => &e.fin_lo[..],
-        15 => &e.fin_cum[..],
+        7 => &e.events[..e.n_events * 3],
+        8 => &e.stats[..],
+        9 => &e.run_info[..],
+        10 => &e.res_out[..],
+        11 => &e.probe_n[..],
+        12 => &e.fin_n[..],
+        13 => &e.fin_lo[..],
+        14 => &e.fin_cum[..],
         _ => &[],
     };
     (s.as_ptr(), s.len())

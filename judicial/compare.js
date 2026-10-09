@@ -1,6 +1,6 @@
 // 비교 검토 (Comparative Review, 프로토콜 §5) — 새 규칙·경로·수식(패치 또는 시나리오 변형)을 지금 구현과 나란히 돌려
-//   ① 복잡도: 조립된 규칙·조절 수, 빠른 층 강성 N_sub, 실행 시간 (P5 관문 경로)
-//   ② 수치 정확도: 각 변형을 자기 수렴 기준(명시 부분 단계 소비 1%)과 비교한 표지 궤적 상대 L2
+//   ① 복잡도: 조립된 규칙·조절 수, 결합 적분 단계 수(Rodas3), 실행 시간
+//   ② 수치 정확도: 각 변형을 자기 수렴 기준(같은 적분기, 허용 오차 1/1000 — 조정자 refScenario)과 비교한 표지 궤적 상대 L2
 //   ③ 결과: 최종 상태·도달·결정 시점, 두 변형 사이 표지 궤적 L2
 //   ④ 판정: 결과가 같고 복잡도만 늘면 Optimization-Negative (거부), 줄면 Optimization-Positive, 결과가 바뀌면 Behavior-Changing —
 //      그때는 수치 기준이 모형을 고를 수 없다(두 모형 모두 자기 기준에는 수렴) — 관찰 데이터(obs·kinetics)가 필요하다.
@@ -18,7 +18,7 @@ function variant(db, raw) {
   const idx = run.markers.map((b) => run.keys.indexOf(b));
   return {
     complexity: raw.complexity,
-    ms: raw.ms, nsub: run.gate.nsub, final: run.final.state, firstReach: run.firstReach, commitment: run.commitment.filter((c) => c.driven).map((c) => ({ to: c.to, t: c.t })),
+    ms: raw.ms, steps: run.integrator.steps, final: run.final.state, firstReach: run.firstReach, commitment: run.commitment.filter((c) => c.driven).map((c) => ({ to: c.to, t: c.t })),
     numericalL2: l2(dyn.series, ref.series, idx), refMs: raw.refMs, mass: ((v) => Math.max(v.worst, v.replayWorst))(verifyFate(db, run)), run,
   };
 }
@@ -27,7 +27,7 @@ function compare(dbA, dbB, rawA, rawB, opt) {
   const a = variant(dbA, rawA), b = variant(dbB, rawB);
   if (a.error || b.error) return { error: a.error || b.error };
   const markers = a.run.markers.filter((m) => b.run.markers.includes(m));
-  // 시간으로 맞춘 궤적 차 (느린 단계 Δ 가 다르면 표본 시각이 다르다 — A 의 시각마다 B 의 같은 시각, 없으면 선형 보간)
+  // 시간으로 맞춘 궤적 차 (관찰 격자 Δ 가 다르면 표본 시각이 다르다 — A 의 시각마다 B 의 같은 시각, 없으면 선형 보간)
   const tA = a.run.trajectory.map((x) => x.t), tB = b.run.trajectory.map((x) => x.t);
   const atB = (t, ib) => { let k = 0; while (k < tB.length - 1 && tB[k + 1] <= t + 1e-9) k++; if (Math.abs(tB[k] - t) < 1e-9 || k === tB.length - 1) return b.run.series[k][ib]; const w = (t - tB[k]) / (tB[k + 1] - tB[k]); return b.run.series[k][ib] * (1 - w) + b.run.series[k + 1][ib] * w; };
   let worst = 0;
@@ -51,8 +51,8 @@ function compare(dbA, dbB, rawA, rawB, opt) {
 function compareText(r) {
   if (r.error) return '오류: ' + r.error;
   const L = r.ix.label, h = (s) => (s == null ? '—' : `${(s / 3600).toFixed(2)} h`);
-  const row = (k, x) => `| ${k} | ${x.complexity.rules} 규칙 + ${x.complexity.modulations} 조절 (빠른 ${x.complexity.fast}·느린 ${x.complexity.slow}) | ${x.nsub.min}–${x.nsub.max} | ${x.ms.toFixed(0)} | ${x.numericalL2.toExponential(2)} | ${x.final ? L(x.final) : '미결정'} | ${x.commitment.map((c) => `${L(c.to)} ${h(c.t)}`).join(', ') || '—'} | ${x.mass.toExponential(1)} |`;
-  return ['| 변형 | 복잡도 | N_sub | 시간 ms | 수치 L2 (수렴 기준) | 최종 상태 | 결정 | 질량 편차 |', '|---|---|---|---|---|---|---|---|', row('A 기준', r.a), row('B 제안', r.b),
+  const row = (k, x) => `| ${k} | ${x.complexity.rules} 규칙 + ${x.complexity.modulations} 조절 (빠른 ${x.complexity.fast}·느린 ${x.complexity.slow}) | ${x.steps} | ${x.ms.toFixed(0)} | ${x.numericalL2.toExponential(2)} | ${x.final ? L(x.final) : '미결정'} | ${x.commitment.map((c) => `${L(c.to)} ${h(c.t)}`).join(', ') || '—'} | ${x.mass.toExponential(1)} |`;
+  return ['| 변형 | 복잡도 | 적분 단계 | 시간 ms | 수치 L2 (수렴 기준) | 최종 상태 | 결정 | 질량 편차 |', '|---|---|---|---|---|---|---|---|', row('A 기준', r.a), row('B 제안', r.b),
     '', `두 변형 사이 표지 궤적 L2 ${r.between.toExponential(2)} · 복잡도 ${(r.dUnits * 100).toFixed(1)}% · 시간 ${(r.dMs * 100).toFixed(1)}%`, `판정: **${r.verdict}** — ${r.why}`].join('\n');
 }
 module.exports = { compare, compareText, variant };

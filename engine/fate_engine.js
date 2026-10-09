@@ -2,14 +2,12 @@
 //   "운명 = 상태 전이": 세포 상태(cell_state)는 표지 서명(signature)으로 정의되고, 신호(조절 규칙) → 대사(공급 규칙) → 전사 인자(합성·분해) 사슬이
 //   한 상태에서 다른 상태로 옮긴다. 데이터베이스의 규칙만 쓰고, 상수·시작량은 시나리오(가상이면 hypothetical)에서 덧씌운다.
 //
-//   두 시간 척도 (다중 속도 적분):
-//     빠른 층 = 대사 공급·분해 규칙 (초) — 반응 진행량(extent) ξ 로 적분하므로 원장과 부분 구조 수지가 구성상 맞는다.
-//     느린 층 = 표지(전사 인자)의 합성·분해 (시간) — 느린 단계 Δ 마다 조절 배율을 고정하고 정확한 지수 해로 갱신.
-//   P5 동적 관문 재사용 (engine/p5_dynamic_gate.js): 느린 단계마다 빠른 층의 강성 N_sub = ⌈λ_max·Δ / 0.1⌉ (명시 오일러 부분 단계 수).
-//     FV_ONLY ↔ 명시 부분 단계 N_sub 번 (기준·비싼 경로), PROMOTED ↔ 역방향 오일러 한 번 (진행량에 대한 뉴턴 — 무조건 안정, 빠른 층의 준정상 상태).
-//     히스테리시스 K_up/K_down/M, 신호 급변·저장소 고갈 = 충격(γ) → 같은 단계 강등 + W 냉각.
+//   결합 적분 (engine-port-roadmap 1.5단계): 대사(공급·분해, 초)와 표지(전사 인자 합성·분해, 시간)를 조절 배율까지 한 계로,
+//     반응 진행량(extent) ξ 좌표의 Rodas3(Rosenbrock, 3차, L-안정) + 내장 오차 추정·단계 거부(양수성)로 푼다 — 원장과 부분 구조 수지가 구성상 맞는다.
+//     관찰 격자 Δ(dt_slow)는 신호(경계 조건)·기록·탐침 스냅숏의 간격일 뿐 적분 오차를 정하지 않는다 (예전 연산자 분할 + 배율 고정 1차 오차 L000069 를 없앰).
+//     강성은 L-안정 암시 단계가 흡수하므로 경로 선택 관문(P5)은 이 엔진에서 쓰지 않는다 (P5 모듈은 P3·P4 층에 그대로).
 //   결정(commitment, criterion withdrawal): 그 시각의 상태에서 모든 신호를 끊고 horizon 동안 돌려도 목표 상태로 끝나면 결정된 것.
-//     거친 격자 검사 + 이분 탐색으로 처음 통과한 느린 단계를 찾는다 (격자에서 단조성도 확인).
+//     거친 격자 검사 + 이분 탐색으로 처음 통과한 관찰 격자점을 찾는다 (격자에서 단조성도 확인).
 //   분화 정지(Differentiation Arrest): 목표에 도달하지 못하고 거리(distance)가 창(window) 동안 좋아지지 않으면 정지. 사후 분석이
 //     실패한 표지 → 그 합성 규칙의 조절 배율 → 가장 모자란 활성화 인자 → (대사물이면) 그것을 만드는 빠른 규칙의 고갈 저장소까지 따라간다.
 //
@@ -18,7 +16,6 @@
 //     엔진은 판정·'verified' 선언·파일 쓰기를 하지 않는다. 수치 결합점(기본값)은 engine/coupling.js 에서 읽는다.
 'use strict';
 const C = require('../core.js');
-const GATE = require('./p5_dynamic_gate.js');
 const IRB = require('../compiler/ir_builder.js'); // IR (컴파일러 — 순수): 조립·정수 번호·기호 도함수 테이프
 const TAPE = require('../compiler/tape.js');
 const V = C.VOCAB, NA = C.NA, VOL = C.VOL;
@@ -36,7 +33,7 @@ function simulateFate(db, sourceId, opt) {
   const rules = IR.rules.map((R) => ({ ...R, cons: R.cons.map((q) => ({ ...q })), prods: R.prods.map((q) => ({ ...q })), mods: R.mods.map((m) => ({ ...m })) })); // IR 은 불변 — 사본에 색인을 단다
   const A = { bundles: IR.keys, facts: IR.facts, gaps: IR.gaps, modGaps: IR.modGaps };
   const dt = opt.dt_slow || sc.dt_slow || 60, tEnd = opt.t_end || sc.t_end || 48 * 3600;
-  const CP = IR.coupling, Ksat = CP.saturation_K;
+  const CP = IR.coupling;
   // 부피 (시나리오 → 없음)
   const volL = {};
   for (const [l, v] of Object.entries(sc.volumes || {})) if (VOL[v.unit]) volL[l] = v.value * VOL[v.unit];
@@ -52,28 +49,12 @@ function simulateFate(db, sourceId, opt) {
   const isMarker = new Uint8Array(nB); for (const b of markers.keys()) isMarker[at.get(b)] = 1;
   // 완충 저장소: 남은 양이 '한 구획분'(c0·N_A·V) 이상이면 농도 c0 로 고정, 그 아래로는 남은 양만큼 — 배지 + 수송체의 근사 (질량은 정확히 줄어든다)
   const buf = new Map(Object.entries(sc.buffered || {}).map(([b, v]) => [at.get(b), v.conc_M]));
-  const volOfIdx = Float64Array.from(keys, (b) => volL[b.split('|').pop()] || 0);
-  const concAt = (N, i) => { const Vv = volOfIdx[i]; if (!Vv) return 0; const c = Math.max(0, N[i]) / (NA * Vv); return buf.has(i) ? Math.min(buf.get(i), c) : c; };
-  // 규칙 → 색인
+  // 규칙 → 색인 (원자료 ruleInfo·저장소 목록용)
   for (const R of rules) {
     R.ci = R.cons.map((q) => ({ i: at.get(q.b), n: q.n, sat: q.sat }));
     R.pi = R.prods.map((q) => ({ i: at.get(q.b), n: q.n }));
-    R.Vr = volL[R.loc] || 0;
     R.mi = R.mods.filter((m) => m.k).map((m) => ({ i: at.get(m.b), eff: m.effect, k: m.k, ref: m.ref, owner: m.owner }));
-    R.kdeg = R.kind === 'degradation' && R.k ? (R.k.k > 0 ? R.k.k : R.k.half_life > 0 ? Math.LN2 / R.k.half_life : 0) : 0;
   }
-  const fast = rules.filter((R) => !R.slow && R.k), slow = rules.filter((R) => R.slow && R.k);
-  const modF = (R, N) => { let f = 1; for (const m of R.mi) f *= C.hillFactor(m.eff, m.k, concAt(N, m.i)); return f; };
-  // 진행 속도 (분자/s)
-  const rate = (R, N, f) => {
-    if (R.kind === 'degradation') return R.kdeg * Math.max(0, N[R.ci[0].i]) * f;
-    if (!R.Vr) return 0;
-    const k = R.k;
-    let v = 0;
-    if (k.law === 'zero_order') v = k.k;
-    else if (k.law === 'mass_action') { v = k.k; for (const q of R.ci) { const c = concAt(N, q.i); v *= q.sat ? c / (c + Ksat) : c ** q.n; } }
-    return v * f * NA * R.Vr;
-  };
   // 원장: 묶음별 생성·소비, 부분 구조 경로(소실·계 밖 공급)
   const moiOf = new Map();
   const moi = (b) => { if (!moiOf.has(b)) moiOf.set(b, C.moietyOf(db, b.split('|')[0], 1, {})); return moiOf.get(b); };
@@ -90,7 +71,6 @@ function simulateFate(db, sourceId, opt) {
     N[i] = s1; LO[i] += ((a - (s1 - bb)) + (p - bb)) + e;
   };
   const ddAdd = (acc, x, e) => { const [s1, e1] = twoSum(acc[0], x); acc[0] = s1; acc[1] += e1 + (e || 0); };
-  const addN = (N, i, d) => { const [s1, e1] = twoSum(N[i], d); N[i] = s1; LO[i] += e1; };
   const moiTotDD = (N, lo) => { const t = Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])); keys.forEach((b, i) => { if (isSignal[i]) return; for (const [k, c] of Object.entries(moi(b))) { const [p, e] = twoProd(c, N[i]); ddAdd(t[k], p, e + c * lo[i]); } }); return t; };
   const moiTot = (N, lo) => Object.fromEntries(Object.entries(moiTotDD(N, lo || new Float64Array(nB))).map(([k, v]) => [k, v[0] + v[1]]));
   for (const R of rules) { R.dM = {}; const add = (b, n) => { for (const [k, c] of Object.entries(moi(b))) R.dM[k] = (R.dM[k] || 0) + c * n; }; for (const q of R.prods) add(q.b, q.n); for (const q of R.cons) add(q.b, -q.n); R.dMe = Object.entries(R.dM).filter(([, c]) => c); } // 균형 잡힌 규칙은 빈 목록 — 원장 경로를 건너뜀
@@ -102,104 +82,94 @@ function simulateFate(db, sourceId, opt) {
     return Object.fromEntries(Object.entries(out).map(([ch, o]) => [ch, Object.fromEntries(Object.entries(o).map(([k, v]) => [k, v[0] + v[1]]))]));
   };
   // 규칙별 누적 진행량 (double-double) — 무결성 재생 검사: 모든 저장소 = 시작 + Σ 화학량 × 누적 진행량 (규칙 밖 변경이 없음을 증명)
-  rules.forEach((R, k) => { R.idx = k; });
   let CUM = new Float64Array(2 * rules.length);
-  const cumAdd = (R, x) => { const a = CUM[2 * R.idx], s1 = a + x, bb = s1 - a; CUM[2 * R.idx] = s1; CUM[2 * R.idx + 1] += (a - (s1 - bb)) + (x - bb); };
-  const degCount = new Int32Array(nB); for (const R of rules) if (R.kind === 'degradation' && R.slow) degCount[R.ci[0].i]++;
-  const stoich = Array.from({ length: nB }, () => []); // 묶음 i → [[규칙 번호, 화학량]]
-  for (const R of rules) { for (const q of R.ci) stoich[q.i].push([R.idx, -q.n]); for (const q of R.pi) stoich[q.i].push([R.idx, q.n]); }
-  const applyExtent = (R, N, xi) => {
-    cumAdd(R, xi);
-    for (const q of R.ci) addProdN(N, q.i, -q.n, xi);
-    for (const q of R.pi) addProdN(N, q.i, q.n, xi);
-  };
-  // --- 빠른 층: 명시 부분 단계 (기준 경로)
-  const lambda = (N, F) => { // 진행이 입력을 다 쓰는 속도 (1/s)의 최댓값 — 강성 지표
-    let lam = 0;
-    fast.forEach((R, j) => { const r = rate(R, N, F[j]); if (!(r > 0)) return; for (const q of R.ci) lam = Math.max(lam, q.n * r / Math.max(N[q.i], 1)); });
-    return lam;
-  };
-  const explicitFast = (N, F, h, nsub) => {
-    for (let s = 0; s < nsub; s++) for (let j = 0; j < fast.length; j++) {
-      const R = fast[j];
-      let xi = R.kind === 'degradation' ? Math.max(0, N[R.ci[0].i]) * (1 - Math.exp(-R.kdeg * F[j] * h)) : rate(R, N, F[j]) * h;
-      for (const q of R.ci) xi = Math.min(xi, Math.max(0, N[q.i]) / q.n);
-      if (xi > 0) applyExtent(R, N, xi);
-    }
-  };
-  // --- 빠른 층: 역방향 오일러 (진행량 뉴턴, 관문이 승격했을 때)
-  const nF = fast.length, tmp = new Float64Array(nB);
-  const stateAt = (N0v, xi) => { tmp.set(N0v); for (let j = 0; j < nF; j++) { const R = fast[j]; for (const q of R.ci) tmp[q.i] -= q.n * xi[j]; for (const q of R.pi) tmp[q.i] += q.n * xi[j]; } return tmp; };
-  const resid = (N0v, xi, F, h, out) => { stats.residEvals++; const Nn = stateAt(N0v, xi); for (let j = 0; j < nF; j++) out[j] = xi[j] - h * rate(fast[j], Nn, F[j]); return Nn; };
-  const solve = (M, b) => { // 가우스 소거 (부분 피벗)
-    const n = b.length, a = M.map((r) => r.slice()), x = b.slice();
-    for (let c = 0; c < n; c++) {
-      let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(a[r][c]) > Math.abs(a[p][c])) p = r;
-      [a[c], a[p]] = [a[p], a[c]]; [x[c], x[p]] = [x[p], x[c]];
-      if (Math.abs(a[c][c]) < 1e-300) return null;
-      for (let r = c + 1; r < n; r++) { const f = a[r][c] / a[c][c]; if (!f) continue; for (let k = c; k < n; k++) a[r][k] -= f * a[c][k]; x[r] -= f * x[c]; }
-    }
-    for (let c = n - 1; c >= 0; c--) { let s = x[c]; for (let k = c + 1; k < n; k++) s -= a[c][k] * x[k]; x[c] = s / a[c][c]; }
-    return x;
-  };
-  const stats = { newton: 0, newtonFail: 0, substeps: 0, implicitSteps: 0, explicitSteps: 0, residEvals: 0, jacEvals: 0 };
-  // 해석적 야코비안 (IR 기호 도함수): J[j][k] = δ_jk − h · Σ_i ∂rate_j/∂N_i · S_ik  — 빠른 규칙 j 가 의존하는 묶음 i 만 (희소)
-  //   테이프는 같은 규칙의 고정 배율 f_j 를 FAC 로 받는다. 꺾인 곳(max(0,·)·완충 상한)은 현재 반복점의 가지 도함수 (잔차는 그대로).
+  const cumAdd = (j, x) => { const a = CUM[2 * j], s1 = a + x, bb = s1 - a; CUM[2 * j] = s1; CUM[2 * j + 1] += (a - (s1 - bb)) + (x - bb); };
+  // ===== 결합 적분: Rodas3 (Rosenbrock 4 단, 3차, L-안정, 내장 2차 오차 추정) — 진행량 좌표 dξ/dt = rate(N₀ + S·ξ) =====
+  //   두 층(대사·표지)과 조절 배율을 한 계로 푼다 (분할·배율 고정 없음). 야코비안은 IR 기호 도함수: ∂rate_j/∂N_i = f_j·∂g_j/∂N_i + g_j·∂f_j/∂N_i,
+  //   J_ξ = (∂rate/∂N)·S. 단 k: (I/(γh) − J)·K_k = rate(N + S·Σ A_kq K_q) + Σ (C_kq/h)·K_q, ξ' = Σ M_k K_k, 오차 = Σ E_k K_k (Sandu 외 1997, KPP 형식).
+  //   단계 거부: 오차 > 1 또는 음수 상태 (양수성). 받아들인 진행량만 규칙마다 원장에 적용 — 상태와 원장은 언제나 같은 진행량으로 바뀐다.
+  //   알고리즘 상수는 여기와 engine/rust/src/engine.rs 에 같게 — 단계 제어 값은 결합점 등록부.
+  const ROD = { g: 0.5, newF: [1, 0, 1, 1], A: [[], [0], [2, 0], [2, 0, 1]], C: [[], [4], [1, -1], [1, -1, -8 / 3]], M: [2, 0, 1, 1], E: [0, 0, 0, 1] };
+  const act = IR.jac.active, nA = act.length, SA = IR.jac.S;
   const tctx = { NA, V: Float64Array.from(IR.species, (x) => x.V), buf: Float64Array.from(IR.species, (x) => (x.buf == null ? Infinity : x.buf)), stack: new Float64Array(64) };
-  const JD = IR.jac.fast.map((j) => IR.jac.dRate[j]), JS = IR.jac.S;
-  if (JD.length !== nF) throw new Error('IR 빠른 층과 엔진 빠른 층이 다름 — IR 과 db·시나리오가 맞지 않음');
-  const Jt = Array.from({ length: nF }, () => new Float64Array(nF));
-  const analyticJ = (Nn, F, h) => {
-    stats.jacEvals++;
-    for (let j = 0; j < nF; j++) { Jt[j].fill(0); Jt[j][j] = 1; }
-    for (let j = 0; j < nF; j++) for (const d of JD[j]) {
-      const v = TAPE.evalTape(d.t, Nn, F[j], tctx);
-      if (v) for (const [k, c] of JS[d.i]) Jt[j][k] -= h * v * c;
+  const stats = { rhs: 0, jac: 0, steps: 0, rejected: 0, rejectedNeg: 0, hMinHits: 0, singular: 0 };
+  const fy = new Float64Array(nA), f0 = new Float64Array(nA), Kst = Array.from({ length: 4 }, () => new Float64Array(nA)), xs = new Float64Array(nA), xn = new Float64Array(nA), xe = new Float64Array(nA), bv = new Float64Array(nA);
+  const Y = new Float64Array(nB), Yn = new Float64Array(nB), Ev = new Float64Array(nB), LU = new Float64Array(nA * nA), piv = new Int32Array(nA);
+  const rhs = (N, out) => { stats.rhs++; for (let k = 0; k < nA; k++) { const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx); out[k] = TAPE.evalTape(IR.jac.rate[j], N, f, tctx); } };
+  // LU ← I/(γh) − J (J 를 쌓는 순서: 규칙마다 dRate 다음 dFactor, 묶음마다 S 순서 — Rust 와 같은 순서)
+  const buildM = (N, h) => {
+    stats.jac++;
+    LU.fill(0);
+    for (let k = 0; k < nA; k++) {
+      const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), g = TAPE.evalTape(IR.jac.rate[j], N, 1, tctx);
+      for (const d of IR.jac.dRate[j]) { const v = TAPE.evalTape(d.t, N, f, tctx); if (v) for (const [c, sc_] of SA[d.i]) LU[k * nA + c] -= v * sc_; }
+      for (const d of IR.jac.dFactor[j]) { const v = TAPE.evalTape(d.t, N, 1, tctx) * g; if (v) for (const [c, sc_] of SA[d.i]) LU[k * nA + c] -= v * sc_; }
     }
-    return Jt;
-  };
-  const implicitFast = (N, F, h) => {
-    const N0v = Float64Array.from(N), xi = new Array(nF).fill(0), r0 = new Array(nF);
-    // 초기 추정: 명시 한 단계의 진행량 (입력 한도 안)
-    for (let j = 0; j < nF; j++) { let x = h * rate(fast[j], N0v, F[j]); for (const q of fast[j].ci) x = Math.min(x, Math.max(0, N0v[q.i]) / q.n); xi[j] = Math.max(0, x); }
-    let ok = false;
-    for (let it = 0; it < CP.newton_iters; it++) {
-      stats.newton++;
-      const Nn = resid(N0v, xi, F, h, r0);
-      const norm = Math.max(...r0.map((v, j) => Math.abs(v) / (Math.abs(xi[j]) + 1)));
-      if (norm < CP.newton_tol) { ok = true; break; }
-      const dx = solve(analyticJ(Nn, F, h).map((row) => Array.from(row)), r0.map((v) => -v));
-      if (!dx) break;
-      let lam = 1; // 감쇠: 음수 상태·음수 진행 금지
-      for (let tries = 0; tries < 40; tries++) { const cand = xi.map((v, j) => v + lam * dx[j]); const Nn = stateAt(N0v, cand); if (cand.every((v) => v >= -1e-9) && Nn.every((v, i) => v >= -1e-6 * Math.max(1, N0v[i]))) { for (let j = 0; j < nF; j++) xi[j] = Math.max(0, cand[j]); break; } lam /= 2; }
+    const d0 = 1 / (ROD.g * h);
+    for (let k = 0; k < nA; k++) LU[k * nA + k] += d0;
+    // 부분 피벗 LU (제자리)
+    for (let c = 0; c < nA; c++) {
+      let p = c; for (let r = c + 1; r < nA; r++) if (Math.abs(LU[r * nA + c]) > Math.abs(LU[p * nA + c])) p = r;
+      piv[c] = p;
+      if (p !== c) for (let k = 0; k < nA; k++) { const t = LU[c * nA + k]; LU[c * nA + k] = LU[p * nA + k]; LU[p * nA + k] = t; }
+      const dg = LU[c * nA + c]; if (Math.abs(dg) < 1e-300) return false;
+      for (let r = c + 1; r < nA; r++) { const fr = LU[r * nA + c] / dg; LU[r * nA + c] = fr; if (fr !== 0) for (let k = c + 1; k < nA; k++) LU[r * nA + k] -= fr * LU[c * nA + k]; }
     }
-    if (!ok) { stats.newtonFail++; return false; } // 수렴하지 않으면 아무것도 바꾸지 않고 명시 경로로 (호출자가 대체)
-    for (let j = 0; j < nF; j++) applyExtent(fast[j], N, xi[j]);
     return true;
   };
-  // --- 느린 층: 표지 합성·분해 — 배율 고정, 정확한 지수 해 (생성 s·Δ, 소실 = 시작 + 생성 − 끝)
-  const slowStep = (N, h) => {
-    const F = slow.map((R) => modF(R, N));
-    const prod = new Float64Array(nB), kd = new Float64Array(nB);
-    slow.forEach((R, j) => {
-      if (R.kind === 'degradation') kd[R.ci[0].i] += R.kdeg * F[j];
-      else { const r = rate(R, N, F[j]); for (const q of R.pi) prod[q.i] += q.n * r; R._r = r; }
-    });
-    const before = Float64Array.from(N), made = {}, applied = {};
-    for (let i = 0; i < nB; i++) {
-      if (!prod[i] && !kd[i]) continue;
-      const k = kd[i], s = prod[i];
-      const v = k > 0 ? N[i] * Math.exp(-k * h) + (s / k) * (1 - Math.exp(-k * h)) : N[i] + s * h;
-      const d = v - N[i]; addN(N, i, d); applied[i] = d;
-      made[i] = s * h;
+  const luSolve = (x) => {
+    for (let c = 0; c < nA; c++) { const p = piv[c]; if (p !== c) { const t = x[c]; x[c] = x[p]; x[p] = t; } }
+    for (let c = 0; c < nA; c++) { const v = x[c]; if (v !== 0) for (let r = c + 1; r < nA; r++) x[r] -= LU[r * nA + c] * v; }
+    for (let c = nA - 1; c >= 0; c--) { let s = x[c]; for (let k = c + 1; k < nA; k++) s -= LU[c * nA + k] * x[k]; x[c] = s / LU[c * nA + c]; }
+  };
+  const plusS = (N, x, out) => { for (let i = 0; i < nB; i++) { let v = N[i]; for (const [k, c] of SA[i]) v += c * x[k]; out[i] = v; } };
+  // 시도 단계 하나: 성공하면 오차 노름(≤ 1), 실패하면 -1(음수) 또는 오차 노름(> 1), 특이 행렬은 Infinity — xn 에 진행량
+  const tryStep = (N, h) => {
+    rhs(N, f0);
+    if (!buildM(N, h)) { stats.singular++; return Infinity; }
+    for (let s = 0; s < 4; s++) {
+      if (s === 0) fy.set(f0);
+      else if (ROD.newF[s]) { for (let k = 0; k < nA; k++) { let v = 0; for (let q = 0; q < s; q++) v += ROD.A[s][q] * Kst[q][k]; xs[k] = v; } plusS(N, xs, Y); rhs(Y, fy); }
+      for (let k = 0; k < nA; k++) { let v = fy[k]; for (let q = 0; q < s; q++) v += (ROD.C[s][q] / h) * Kst[q][k]; bv[k] = v; }
+      luSolve(bv); Kst[s].set(bv);
     }
-    // 원장: 합성(계 밖 공급)·분해(소실) 진행량으로 기록
-    slow.forEach((R) => {
-      if (R.kind === 'degradation') { const i = R.ci[0].i, lost = before[i] + (made[i] || 0) - N[i], share = kd[i] ? R.kdeg * modF(R, before) / kd[i] : 0;
-        if (degCount[i] === 1) { cumAdd(R, made[i] || 0); cumAdd(R, -(applied[i] || 0)); } else cumAdd(R, lost * share); } // 소실 = 생성 − 적용된 변화 (정확히 두 항으로)
-      else cumAdd(R, R._r * h);
-    });
-    return F;
+    for (let k = 0; k < nA; k++) { let a = 0, e = 0; for (let s = 0; s < 4; s++) { a += ROD.M[s] * Kst[s][k]; e += ROD.E[s] * Kst[s][k]; } xn[k] = a; xe[k] = e; }
+    plusS(N, xn, Yn);
+    let err = 0, neg = false;
+    for (let i = 0; i < nB; i++) {
+      let e = 0; for (const [k, c] of SA[i]) e += c * xe[k];
+      if (Yn[i] < 0) neg = true;
+      const w = CP.atol + CP.rtol * Math.max(Math.abs(N[i]), Math.abs(Yn[i])), r = Math.abs(e) / w;
+      if (r > err) err = r;
+    }
+    return neg ? -1 : err;
+  };
+  // 구간 [t0, t1] 을 적분한다 (h 는 구간 사이에 이어짐). 받아들인 단계 수·거부 수를 돌려준다.
+  const ival = { h: 0, steps: 0, rej: 0, hMin: Infinity, hMax: 0 };
+  const integrate = (N, t0, t1) => {
+    let tt = t0, h = ival.h, lastRej = false; ival.steps = 0; ival.rej = 0;
+    while (tt < t1) {
+      const clip = h >= t1 - tt, hu = clip ? t1 - tt : h;
+      const err = tryStep(N, hu);
+      if (err >= 0 && err <= 1 || hu <= CP.h_min) {
+        if (!(err >= 0 && err <= 1)) stats.hMinHits++;
+        for (let k = 0; k < nA; k++) if (xn[k] !== 0) applyExtent(act[k], N, xn[k]);
+        stats.steps++; ival.steps++; ival.hMin = Math.min(ival.hMin, hu); ival.hMax = Math.max(ival.hMax, hu);
+        tt = clip ? t1 : tt + hu;
+        const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * Math.pow(Math.max(err, 1e-10), -1 / 3)));
+        const hn = hu * fac; h = clip ? Math.max(h, hn) : hn; lastRej = false;
+      } else {
+        stats.rejected++; ival.rej++; if (err < 0) stats.rejectedNeg++;
+        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * Math.pow(err, -1 / 3)))); lastRej = true;
+      }
+    }
+    ival.h = h;
+  };
+  const applyExtent = (j, N, xi) => {
+    cumAdd(j, xi);
+    const R = rules[j];
+    for (const q of R.ci) addProdN(N, q.i, -q.n, xi);
+    for (const q of R.pi) addProdN(N, q.i, q.n, xi);
   };
   // ===== 거리·상태 =====
   const thr = sc.thresholds || {};
@@ -220,47 +190,34 @@ function simulateFate(db, sourceId, opt) {
   // ===== 신호 일정 =====
   const sched = Object.entries(sc.signals || {}).map(([b, list]) => ({ i: at.get(b), list: [...list].sort((a, z) => a.t - z.t) }));
   const signalAt = (t, override) => sched.map((s) => { if (override) return override(s, t); let v = 0; for (const e of s.list) if (e.t <= t + 1e-9) v = e.n; return v; });
-  // ===== 한 번의 적분 (본 실행과 결정 탐침이 공유) =====
-  const gateOpt = CP.gate, shockMax = CP.shock_threshold;
+  // ===== 한 번의 적분 (본 실행과 결정 탐침이 공유) — 관찰 격자 Δ 마다 신호(경계 조건)를 놓고 결합 적분, 기록·사건 =====
   const reservoirs = keys.map((b, i) => i).filter((i) => !isSignal[i] && !isMarker[i] && rules.some((R) => R.ci.some((q) => q.i === i)));
   function run(Nstart, t0, t1, ctl) {
     LO = ctl.lo ? Float64Array.from(ctl.lo) : new Float64Array(nB);
     CUM = new Float64Array(2 * rules.length);
-    const N = Float64Array.from(Nstart), gate = GATE.createGate(gateOpt); gate.gammaMax = shockMax;
-    const mode = ctl.mode || 'dynamic', series = [], events = [], resv = new Map();
-    let prevSig = null, step = 0, exhaustedNow = false;
+    const N = Float64Array.from(Nstart), series = [], events = [], resv = new Map();
+    ival.h = CP.h0; ival.hMin = Infinity; ival.hMax = 0;
+    const steps0 = stats.steps, rej0 = stats.rejected, neg0 = stats.rejectedNeg, hit0 = stats.hMinHits;
+    let step = 0, perMin = Infinity, perMax = 0;
     for (const i of reservoirs) resv.set(i, { start: N[i], min: N[i], state: N[i] >= 1 ? 'ok' : 'empty', watch: N[i] >= 1 });
-    const path = { fv: 0, surrogate: 0, fv_shock: 0 }, nsubs = [];
     for (let t = t0; t < t1 - 1e-9; t += dt, step++) {
       // 신호 (경계 조건 — 질량 감사 밖)
       const sig = signalAt(t, ctl.signal);
       sched.forEach((s, j) => { N[s.i] = sig[j]; });
-      const gamma = prevSig ? Math.max(exhaustedNow ? 1 : 0, ...sig.map((v, j) => Math.abs(v - prevSig[j]) / (Math.max(v, prevSig[j]) + 1e-12))) : 0;
-      prevSig = sig; exhaustedNow = false;
-      // 느린 층의 상태로 빠른 층 배율 고정
-      const F = fast.map((R) => modF(R, N));
-      const lam = lambda(N, F), nsub = Math.max(1, Math.ceil(lam * dt / CP.explicit_fraction * (1 - CP.nsub_margin))); // 여유: 정수 경계의 반올림 잡음에 둔감
-      nsubs.push(nsub);
-      let p;
-      if (mode === 'fine') p = { path: 'fv' };
-      else if (mode === 'implicit') p = { path: 'surrogate' };
-      else p = GATE.decide(gate, step, nsub, () => gamma);
-      if (p.path === 'surrogate' && implicitFast(N, F, dt)) { path.surrogate++; stats.implicitSteps++; }
-      else if (p.path === 'surrogate') { explicitFast(N, F, dt / nsub, nsub); path.fv_newton = (path.fv_newton || 0) + 1; stats.explicitSteps++; stats.substeps += nsub; } // 뉴턴 실패 → 같은 단계 명시 대체
-      else { explicitFast(N, F, dt / nsub, nsub); path[p.event === 'demote_prefilter' ? 'fv_shock' : 'fv']++; stats.explicitSteps++; stats.substeps += nsub; }
-      slowStep(N, dt);
+      integrate(N, t, t + dt);
+      perMin = Math.min(perMin, ival.steps); perMax = Math.max(perMax, ival.steps);
       // 저장소 고갈·재생 사건
       for (const [i, r] of resv) {
         r.min = Math.min(r.min, N[i]);
         if (!r.watch) continue; // 처음부터 비어 있던 중간 산물(젖산·CO₂ …)은 고갈·재생 사건을 내지 않음
-        if (r.state === 'ok' && N[i] < 1) { r.state = 'empty'; events.push({ t: t + dt, type: 'exhausted', bundle: keys[i] }); exhaustedNow = true; }
+        if (r.state === 'ok' && N[i] < 1) { r.state = 'empty'; events.push({ t: t + dt, type: 'exhausted', bundle: keys[i] }); }
         else if (r.state === 'empty' && N[i] >= 1) { r.state = 'ok'; events.push({ t: t + dt, type: 'regenerated', bundle: keys[i] }); }
       }
-      if (ctl.record && (step % (ctl.every || 1) === 0)) series.push({ t: t + dt, N: Float64Array.from(N), path: p.path, nsub, gate: gate.state, event: p.event || null, sig, lo: Float64Array.from(LO), cumDD: Float64Array.from(CUM), cum: Float64Array.from({ length: rules.length }, (_, k) => CUM[2 * k] + CUM[2 * k + 1]) });
+      if (ctl.record && (step % (ctl.every || 1) === 0)) series.push({ t: t + dt, N: Float64Array.from(N), steps: ival.steps, rejects: ival.rej, sig, lo: Float64Array.from(LO), cumDD: Float64Array.from(CUM), cum: Float64Array.from({ length: rules.length }, (_, k) => CUM[2 * k] + CUM[2 * k + 1]) });
       if (ctl.snapshots) ctl.snapshots.push({ t: t + dt, N: Float64Array.from(N) });
-      if (ctl.onStep) ctl.onStep(t + dt, N);
     }
-    return { N, lo: LO, cum: CUM, series, events, gate, path, nsub: { min: Math.min(...nsubs), max: Math.max(...nsubs) }, resv };
+    const integ = { method: 'rodas3', rtol: CP.rtol, atol: CP.atol, steps: stats.steps - steps0, rejected: stats.rejected - rej0, rejectedNeg: stats.rejectedNeg - neg0, hMinHits: stats.hMinHits - hit0, h: { min: ival.hMin, max: ival.hMax }, perInterval: { min: perMin, max: perMax } };
+    return { N, lo: LO, cum: CUM, series, events, integrator: integ, resv };
   }
   // ===== 본 실행 =====
   const M0DD = moiTotDD(N0, new Float64Array(nB)), M0 = Object.fromEntries(Object.entries(M0DD).map(([k, v]) => [k, v[0] + v[1]]));
@@ -269,17 +226,17 @@ function simulateFate(db, sourceId, opt) {
   const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
   let main, snapshots, probeEnd, backendStats;
   if ((opt.engine || 'js') === 'rust') {
-    const be = require('./fate_rust.js').open({ IR, N0, isMarker, sched, reservoirs, dt, tEnd, horizon, mode: opt.mode, CP, recordEvery: sc.record_every || 1 });
+    const be = require('./fate_rust.js').open({ IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery: sc.record_every || 1 });
     main = be.main(); snapshots = be.snapshots(); probeEnd = (k) => be.probe(k); backendStats = () => be.stats();
   } else {
     snapshots = [];
-    main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots, mode: opt.mode });
-    probeEnd = (k) => { const s = snapshots[k]; return run(s.N, s.t, s.t + horizon, { mode: opt.mode, signal: () => 0 }).N; };
+    main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots });
+    probeEnd = (k) => { const s = snapshots[k]; return run(s.N, s.t, s.t + horizon, { signal: () => 0 }).N; };
     backendStats = () => stats;
   }
   const chanMain = chanFrom(main.cum);
   // 궤적에서 상태·거리
-  const traj = main.series.map((s) => ({ t: s.t, d: Object.fromEntries(states.map((x) => [x, distance(s.N, x)])), cls: classify(s.N), path: s.path, nsub: s.nsub, gate: s.gate }));
+  const traj = main.series.map((s) => ({ t: s.t, d: Object.fromEntries(states.map((x) => [x, distance(s.N, x)])), cls: classify(s.N), steps: s.steps, rejects: s.rejects }));
   const final = classify(main.N);
   const firstReach = {}; for (const r of traj) if (r.cls.state && firstReach[r.cls.state] == null) firstReach[r.cls.state] = r.t;
   // 기대 목표: 신호가 한 번이라도 켜진 전이의 대상
@@ -311,14 +268,14 @@ function simulateFate(db, sourceId, opt) {
     rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.effect, active: !!m.k })) })),
     final: { state: final.state, nearest: final.nearest || null, d: final.d, N: Object.fromEntries(keys.map((b, i) => [b, main.N[i]])) },
     trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target,
-    gate: { ...main.gate.stats, transitions: main.gate.stats.transitions.length, log: main.gate.stats.transitions, path: main.path, nsub: main.nsub },
+    integrator: main.integrator, // 본 실행의 단계 제어 기록 (받아들인·거부한 단계, 단계 크기 범위, Δ 당 단계 수)
     // 엔진의 장부 (판정 아님): 부분 구조 시작·끝 합계와 경로별 누적 — 사법부는 이것을 믿지 않고 원자료로 다시 센다
     mass: { moieties: moiKeys, start: M0, end: moiTot(main.N, main.lo), channels: chanMain },
     reservoirs: Object.fromEntries([...main.resv].map(([i, r]) => [keys[i], { start: r.start, min: r.min, end: main.N[i], state: r.state, watched: r.watch, buffered: buf.has(i) }])),
     volumes: volL, buffered: sc.buffered || {}, coupling: CP,
     process: { // 과정 보고서(judicial/process_report.js)·검증기(judicial/verifier.js)가 읽는 원자료 — 이름 없이 번호·묶음만
       lo: main.series.map((x) => x.lo), cumDD: main.series.map((x) => x.cumDD),
-      times: main.series.map((x) => x.t), sig: main.series.map((x) => x.sig), cum: main.series.map((x) => x.cum), gateEvents: main.series.map((x) => x.event),
+      times: main.series.map((x) => x.t), sig: main.series.map((x) => x.sig), cum: main.series.map((x) => x.cum),
       schedule: sched.map((x) => ({ bundle: keys[x.i], list: x.list })), signalIdx: sched.map((x) => x.i), thresholds: thr, N0: Float64Array.from(N0),
       ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
     },

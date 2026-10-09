@@ -30,7 +30,7 @@
 //   node dbtool.mjs compare   --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]
 //                                                           비교 검토: 복잡도·수치 L2(수렴 기준)·결과·판정 (Optimization-Negative 이면 종료 코드 1)
 //   node dbtool.mjs validate  <patch.json>                  패치 검사: 관문 미리 보기 + 정제 점검(중복 규칙·화학량 모순)
-//   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment] [--brief] [--report 파일.md] [--numerics h] [--engine rust|js]
+//   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--no-commitment] [--brief] [--report 파일.md] [--numerics h] [--engine rust|js]
 //                                                           세포 운명 (v9) + 과정 분석 보고서: 요약 · 변곡점·시계열·구간 · 무결성 증명서(원장·재생·신호·결정론·출처) · 인과 추적 · 부록
 //                                                           (무결성 FAIL 이면 종료 코드 1; --brief 는 짧은 요약)
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
@@ -328,24 +328,24 @@ switch (cmd) {
     process.exit(r.verdict === 'Optimization-Negative' ? 1 : 0);
   }
   case 'fate': {
-    if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment] [--brief] [--report 파일.md] [--numerics 시간(h), 0 이면 끔]');
+    if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--no-commitment] [--brief] [--report 파일.md] [--numerics 시간(h), 0 이면 끔]');
     const db = loadDB(), x = DefDB.resolveRef(DefDB.index(db), args[0]);
     if (x.error) die(x.error);
     const FATE = req('./engine/fate_engine.js'), FA = req('./judicial/fate_audit.js'), PR = req('./judicial/process_report.js');
     const scenarioText = readFileSync(flags.scenario, 'utf8'), scenario = JSON.parse(scenarioText);
     if (flags.t) scenario.t_end = +flags.t * 3600;
-    const opt = { scenario, mode: flags.fine ? 'fine' : undefined, commitment: flags['no-commitment'] ? false : undefined, engine: flags.engine && flags.engine !== true ? flags.engine : 'rust' };
+    const opt = { scenario, commitment: flags['no-commitment'] ? false : undefined, engine: flags.engine && flags.engine !== true ? flags.engine : 'rust' };
     if (flags.brief) { const r = ORCH.fateBrief(db, x.id, opt); console.log(r.text); console.log(J.refineText(db).text); process.exit(r.code); }
     const r = ORCH.runFate(db, x.id, opt); // 행정부 원자료 → 사법부 판결된 보기
     if (r.error) die(r.error);
     // 결정론: 같은 입력으로 본 실행을 다시 (결정 탐침 없이 — 본 실행 궤적은 탐침과 무관) — 해시는 사법부가 계산
     const again = FA.trajectoryHash(FATE.simulateFate(db, x.id, { ...opt, scenario: JSON.parse(scenarioText), commitment: false })); // 같은 엔진으로 다시
-    // 수치 확인: 처음 h 시간을 수렴 기준(명시 부분 단계 소비 1%)과 비교
+    // 수치 확인: 처음 h 시간을 수렴 기준(같은 적분기, 허용 오차 1/1000 — 조정자 refScenario)과 비교
     const nh = flags.numerics != null && flags.numerics !== true ? +flags.numerics : 1;
     let numerics = null;
     if (nh > 0) {
       const s2 = { ...JSON.parse(scenarioText), t_end: Math.min(r.t_end, nh * 3600) }, t0 = Date.now();
-      const ref = FATE.simulateFate(db, x.id, { scenario: { ...s2, explicit_fraction: 0.01 }, mode: 'fine', commitment: false, engine: opt.engine }), refMs = Date.now() - t0;
+      const ref = FATE.simulateFate(db, x.id, { scenario: ORCH.refScenario(s2), commitment: false, engine: opt.engine }), refMs = Date.now() - t0;
       numerics = { hours: s2.t_end / 3600, l2: FA.markerL2(r, ref), refMs };
     }
     const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again, numerics });

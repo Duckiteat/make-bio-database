@@ -1,0 +1,123 @@
+{
+  "applied_at": "2026-10-09T13:58:55.931Z",
+  "result": {
+    "added": [
+      "L000070"
+    ],
+    "updated": [
+      "L000069"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000070"
+        ]
+      },
+      "updated": {
+        "limitations": [
+          "L000069"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000069": [
+          "resolution"
+        ]
+      }
+    },
+    "why": "엔진 이식 1.5단계: 운명 엔진의 분할 적분(연산자 분할 + 배율 고정 + 빠른 층 역방향 오일러)을 결합 Rodas3 적응 적분으로 바꿔 L000069 의 분할 오차를 없앰 — 해결 근거를 기록하고, 남는 관찰 격자 양자화(도달·결정·고갈 시각이 Δ 격자로 보고됨)를 새 한계로 등록",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000069",
+          "before": "open",
+          "after": "resolved_manual"
+        },
+        {
+          "id": "L000070",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000069",
+          "before": "open",
+          "after": "resolved_manual"
+        },
+        {
+          "id": "L000070",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 60
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "엔진 이식 1.5단계: 운명 엔진의 분할 적분(연산자 분할 + 배율 고정 + 빠른 층 역방향 오일러)을 결합 Rodas3 적응 적분으로 바꿔 L000069 의 분할 오차를 없앰 — 해결 근거를 기록하고, 남는 관찰 격자 양자화(도달·결정·고갈 시각이 Δ 격자로 보고됨)를 새 한계로 등록",
+  "limitations": [
+    {
+      "id": "L000069",
+      "target": "D000174",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "운명 시뮬레이션의 시간 적분 단순화 — 느린 층(표지 합성·분해)의 조절 배율을 느린 단계 Δ(기본 60 s) 동안 고정하고, 빠른 층(대사)은 승격 시 Δ 당 역방향 오일러 한 번(1차, 조절 배율 고정)으로 푼다. Δ 반감 수렴 시험(가상 시나리오, 기준 Δ = 7.5 s): 표지 궤적 상대 L2 = 2.5e-3 (효과기·기억 전구) / 4.5e-4 (포도당 결핍), 1차 수렴(Δ 30 s: 1.1e-3, 15 s: 3.4e-4), 도달 시각 차 60–135 s, 최종 상태 같음. 결과 보고의 '수치 확인'(같은 Δ 의 명시 기준)은 이 분할 오차를 재지 않는다 — 결정·도달 시각을 1 분 단위보다 정밀하게 해석하지 말 것.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "고차 적응 적분(Rosenbrock + 오차 추정·거부 기반 양수성) 또는 Δ 반감 수렴 시험을 운명 보고서의 수치 확인에 포함 — docs/design/engine-port-roadmap.md 1.5단계"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 로드맵 한계 정리 — Δ 반감 수렴 시험 (fate-effector-il12·memory-il15·effector-glucose-withheld, 가상 시나리오)",
+      "resolution": {
+        "note": "1.5단계(2026-10-09): 두 층과 조절 배율을 한 계로 묶은 진행량 좌표 Rodas3(3차, L-안정, 내장 오차 추정·단계 거부로 양수성, rtol 1e-6) — 분할·배율 고정·뉴턴 대체가 없어짐. 독립 기준(Rodas3 rtol 1e-10, ROS2 와 1e-8 안에서 일치) 대비 표지 궤적 상대 L2: 옛 엔진 6.0e-4–1.0e-2 (등록 당시 2.5e-3 은 명시 1% 기준 자체의 ~1e-3 편향 때문에 과소 추정) → 새 엔진 ≤ 8e-9 (8 시나리오). Δ 를 줄이면 옛 엔진의 도달·고갈 시각이 새 엔진 값으로 수렴(효과기 2 h 펄스 도달 134 → 120.5 → 119.9 → 119.8 분, 새 엔진 Δ 60 s 에서 120 분). 최종 상태는 모두 같음. 남는 관찰 격자 양자화는 별도 한계로 등록.",
+        "evidence": {
+          "level": "computed",
+          "tool": "tests/fate_suite.js F(수렴 기준 대비 L2 < 1e-6) · tests/rust_engine.test.mjs · docs/design/engine-port-roadmap.md §7 Δ 수렴 시험"
+        }
+      }
+    },
+    {
+      "id": "L+fate_grid",
+      "target": "D000174",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "운명 결과의 시각 해상도 — 적분 오차는 허용 오차(rtol 1e-6) 안이지만, 표지 문턱 도달·결정(신호 철회 시험)·저장소 고갈 시각은 관찰 격자 Δ(기본 60 s)의 점에서만 판정한다. 보고된 시각은 실제 교차 뒤 첫 격자점이라 최대 Δ 늦다 (효과기 2 h 펄스: 실제 ≈ 119.8 분 → 보고 120 분). 결정 시각은 탐침 스냅숏 격자 위의 이분 탐색이라 같은 해상도.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "Rodas3 연속 확장(밀집 출력) + 문턱 교차 근 찾기로 도달·고갈 시각을 격자 사이에서 보간, 결정 탐침은 격자 사이 시작점 허용 — 그때까지 시각을 Δ 단위보다 정밀하게 해석하지 말 것"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 1.5단계 — 결합 Rodas3 의 Δ 수렴 시험 (fate-effector-pulse-long·effector-glucose-withheld·memory-il15, 가상 시나리오)"
+    }
+  ]
+}

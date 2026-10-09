@@ -338,7 +338,7 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs fate, tests",
-      "interpret": "[행정] 운명 엔진 공통 앞단 + JS 기준 백엔드 — IR 만 먹는다. engine: rust 면 engine/fate_rust.js 백엔드. 원자료만(궤적·N·LO·누적 진행량·사건·탐침 결과). 판정·쓰기 없음.",
+      "interpret": "[행정] 운명 엔진 공통 앞단 + JS 기준 백엔드(결합 Rodas3) — IR 만 먹는다. engine: rust 면 engine/fate_rust.js 백엔드. 원자료만(궤적·N·LO·누적 진행량·사건·탐침 결과). 판정·쓰기 없음.",
       "node": "EXECUTIVE_FATE_FRONTEND",
       "governance": "Executive",
       "refactor_strategy": "공통 앞단(설정·분류·결정 탐침 탐색·원자료 조립) + JS 백엔드(run, 기준 구현·오라클 — 최적화하지 않음). 알고리즘을 바꾸면 Rust 솔버(EXECUTIVE_SOLVER)와 같은 커밋에서 맞춘다."
@@ -349,7 +349,7 @@
       "format": "UMD JavaScript",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/fate_engine.js, tests",
-      "interpret": "[행정] 수치 결합점 등록부 — 포화 정칙화·명시 비율·충격 문턱·관문 K_up/K_down/M/W·결정 탐침 격자·뉴턴 허용 오차. 해석 순서 시나리오 → 데이터(params) → 기본값 — 엔진을 고치지 않고 데이터 층으로 뗄 수 있다.",
+      "interpret": "[행정] 수치 결합점 등록부 — 포화 정칙화·결정 탐침 격자·힐 기울기 하한·결합 Rodas3 단계 제어(rtol·atol·h0·h_min·안전 계수·배율 한계·음수 축소). 해석 순서 시나리오 → 데이터(params) → 기본값 — 엔진을 고치지 않고 데이터 층으로 뗄 수 있다.",
       "node": "COUPLING_REGISTRY",
       "governance": "Shared",
       "refactor_strategy": "수치 결합점의 유일한 출처. 범위 지정 해석(규칙·시간 척도)은 규칙별 강성 측정으로 근거가 나올 때 IMEX 분할과 함께."
@@ -371,10 +371,10 @@
       "format": "Rust 2021",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/rust/src/lib.rs, fate_cli",
-      "interpret": "[행정] Rust 운명 솔버 — JS 기준 구현과 같은 알고리즘(관문·명시 부분 단계·역방향 오일러 + 해석적 J·느린 층 지수 해·double-double 원장·탐침). 모든 버퍼를 Engine::new 에서 한 번 할당.",
+      "interpret": "[행정] Rust 운명 솔버 — JS 기준 구현과 같은 알고리즘(두 층·조절 배율을 묶은 진행량 좌표 결합 Rodas3 + 해석적 J(∂f/∂s 포함)·오차 추정·단계 거부(양수성)·double-double 원장·탐침). 모든 버퍼를 Engine::new 에서 한 번 할당.",
       "node": "EXECUTIVE_SOLVER",
       "governance": "Executive",
-      "refactor_strategy": "적분기 개선(1.5단계)은 이 파일 안에서 — 바깥 잘라내기·대체 래퍼 금지. 루프 안 할당 금지(tests/rust_engine.test.mjs ③⑤). 바꾸면 JS 기준 구현과의 동등 시험(②)이 통과하거나, 알고리즘 변경이면 compare 판정."
+      "refactor_strategy": "적분기 변경은 이 파일 안에서 — 바깥 잘라내기·대체 래퍼 금지(1.5단계에서 관문·명시·뉴턴 경로는 판정 뒤 제거). 루프 안 할당 금지(tests/rust_engine.test.mjs ③⑤). 바꾸면 JS 기준 구현과의 동등 시험(②)이 통과하거나, 알고리즘 변경이면 compare 판정."
     },
     {
       "path": "engine/rust/src/tape.rs",
@@ -625,7 +625,7 @@
       "format": "node:test",
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
-      "interpret": "1단계 — WASM 최신성(해시)·JS 기준 구현과 동등(궤적 ≤ 1e-9, 운명·도달·결정·사건·관문·N_sub·뉴턴 같음)·byteLength 불변·결정론·네이티브 = WASM 비트·네이티브 루프 할당 0·사법부 판정 PASS."
+      "interpret": "1·1.5단계 — WASM 최신성(해시)·JS 기준 구현과 동등(궤적 ≤ rtol, 운명·도달·결정·사건 같음, 단계 수 ±1%)·byteLength 불변·결정론·네이티브 = WASM 비트·네이티브 루프 할당 0·사법부 판정 PASS."
     },
     {
       "path": "tests/p3_end_to_end.js",
@@ -665,7 +665,7 @@
       "format": "Node CommonJS 스크립트 (+ module.exports.run)",
       "writer": "사람·AI",
       "readers": "사람(콘솔), tests/rules.test.mjs, CI",
-      "interpret": "Fate-Test 모음 — 계통 충실도·경쟁·결정 비가역성·분화 정지·다른 운명·다중 규모 정확도·질량 (30 검사, 가상 시나리오)."
+      "interpret": "Fate-Test 모음 — 계통 충실도·경쟁·결정 비가역성·분화 정지·다른 운명·다중 규모 정확도(수렴 기준 = 허용 오차 1/1000)·질량·과정 보고서 (54 검사, 가상 시나리오)."
     },
     {
       "path": "tests/bench_engine.js",
@@ -673,7 +673,7 @@
       "format": "Node CommonJS 스크립트 (+ module.exports.run)",
       "writer": "사람·AI",
       "readers": "사람(콘솔), 엔진 이식 판정",
-      "interpret": "0단계 기준선 — 운명 엔진 본 실행 대 결정 탐침 시간·뉴턴 반복·유한차분 잔차 비중·뉴턴 실패, simulateRate 준비 대 루프. Rust/기호 야코비안 이득은 이 표와 비교해 보고한다."
+      "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6."
     },
     {
       "path": ".github/workflows/check.yml",

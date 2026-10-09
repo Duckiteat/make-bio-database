@@ -51,7 +51,7 @@ function check(v, s, root, p, out) {
 // x-dimensions (운명 원자료): 길이 관계와 묶음 참조
 function dimensionsFate(r) {
   const out = [], E = (msg) => out.push({ path: 'x-dimensions', msg }), P = r.process || {}, nB = (r.keys || []).length, nR = (P.ruleInfo || []).length, nT = (r.series || []).length;
-  const same = [['trajectory', r.trajectory], ['process.times', P.times], ['process.lo', P.lo], ['process.cumDD', P.cumDD], ['process.cum', P.cum], ['process.sig', P.sig], ['process.gateEvents', P.gateEvents]];
+  const same = [['trajectory', r.trajectory], ['process.times', P.times], ['process.lo', P.lo], ['process.cumDD', P.cumDD], ['process.cum', P.cum], ['process.sig', P.sig]];
   for (const [n, a] of same) if (!a || a.length !== nT) E(`${n} 길이 ${a ? a.length : '없음'} ≠ series 길이 ${nT}`);
   const rowLen = (name, a, want) => { if (!a) return; for (let j = 0; j < a.length; j++) if (!a[j] || a[j].length !== want) { E(`${name}[${j}] 길이 ${a[j] ? a[j].length : '없음'} ≠ ${want}`); return; } };
   rowLen('series', r.series, nB); rowLen('process.lo', P.lo, nB); rowLen('process.cumDD', P.cumDD, 2 * nR); rowLen('process.cum', P.cum, nR); rowLen('process.sig', P.sig, (P.schedule || []).length);

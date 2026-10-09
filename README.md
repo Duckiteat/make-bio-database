@@ -114,9 +114,9 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - `node dbtool.mjs validate <patch.json>` → `node dbtool.mjs augment apply <patch.json>` — 관문 + 정제 점검(중복 규칙·화학량 모순) 후 병합·CHANGES·limitations.md·부록 자동 갱신.
 
 ### 세포 운명 (v9)
-- `node dbtool.mjs fate "활성화된 CD8 T 세포" --scenario examples/scenarios/fate-effector-il12-hypothetical.json` — 신호(IL-12/IL-15) → 대사(해당과정/β-산화) → 전사 인자(T-bet/Eomes) 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석. 시나리오 8개(`fate-*-hypothetical.json`, 가상 값).
+- `node dbtool.mjs fate "활성화된 CD8 T 세포" --scenario examples/scenarios/fate-effector-il12-hypothetical.json` — 신호(IL-12/IL-15) → 대사(해당과정/β-산화) → 전사 인자(T-bet/Eomes) 결합 적분(Rodas3, 두 층·조절 배율을 한 계로), 결정 시점(신호 철회 시험), 분화 정지 사후 분석. 시나리오 8개(`fate-*-hypothetical.json`, 가상 값).
 - `node dbtool.mjs fate <상태> --scenario s.json --report 보고서.md` — 과정 분석 보고서 (요약·변곡점·시계열·구간·무결성 증명서·인과 추적·부록). 무결성 FAIL 이면 종료 코드 1.
-- `node tests/fate_suite.js` — Fate-Test 30 검사: 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준 대비 L2·속도 향상, 질량. 설계 `docs/design/cell-fate-engine.md`.
+- `node tests/fate_suite.js [--engine js|rust]` — Fate-Test 54 검사: 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준(허용 오차 1/1000) 대비 L2·속도 향상, 질량, 과정 보고서. 설계 `docs/design/cell-fate-engine.md`.
 
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
@@ -184,7 +184,7 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 | `legislative/` | [입법] merge·패치 초안, `clerk.mjs` = 유일한 파일 쓰기 |
 | `orchestrator.js` | 조정자 (행정 실행 → 사법 판정) |
 | `compiler/` | [공유] db + 시나리오 → 불변 IR (정수 번호·기호 도함수 테이프) |
-| `engine/rust/` | [행정] Rust/WASM 운명 엔진 (기본 백엔드, 테이프 해석기 — `sh engine/rust/build.sh`) |
+| `engine/rust/` | [행정] Rust/WASM 운명 엔진 (기본 백엔드, 테이프 해석기 + 결합 Rodas3 — `sh engine/rust/build.sh`) |
 | `attestations/registry.json` | 증명 도장 (verified 의 근거, 서기만 씀) — 설계 `docs/design/tripartite-governance.md` |
 | `dbtool.mjs` | 명령줄 도구 |
 | `viewer.html`, `index.html` | 화면 |

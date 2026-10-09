@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Fate-Test 모음 (형식 v9 세포 운명 층): 활성화된 CD8 T 세포 → 효과기 | 기억 전구.
 //   A 계통 충실도 (최적 조건에서 목표 상태 도달·결정)  B 경쟁 (IL-12 + IL-15 → 효과기 우세)
-//   C 결정 비가역성 (결정 전 철회 → 되돌아감, 결정 후 철회 → 유지; 철회 = 충격 → 같은 단계 강등 + 냉각)
+//   C 결정 비가역성 (결정 전 철회 → 되돌아감, 결정 후 철회 → 유지; 철회 = 경계 조건 불연속 → 단계 제어가 흡수)
 //   D 스트레스 분화 정지 (포도당·지방산 결핍 → 고갈 저장소까지 사후 분석)  E 스트레스 다른 운명 (IL-12 + IL-15 + 포도당 결핍 → 기억 전구)
-//   F 다중 규모 정확도 (P5 관문 동적 경로 대 명시 기준 경로: 표지 궤적 L2 < 2%, 같은 최종 상태, 속도 향상)
+//   F 다중 규모 정확도 (결합 Rodas3 기본 허용 오차 대 수렴 기준(허용 오차 1/1000): 표지 궤적 L2 < 1e-6, 같은 최종 상태, 강성 범위, 속도 향상)
 //   G 질량 (모든 실행에서 부분 구조 원장 상대 편차 ≤ 1e-14 — ΣIn = ΣOut, 음수 없음)
 // 실행: node tests/fate_suite.js [--quick] [--engine js|rust]   (시나리오 examples/scenarios/fate-*-hypothetical.json — 가상 값, 엔진 시험용)
 'use strict';
@@ -13,6 +13,7 @@ const F = require('../engine/fate_engine.js');
 const PR = require('../judicial/process_report.js');
 const FA = require('../judicial/fate_audit.js');
 const IRB = require('../compiler/ir_builder.js'); // 컴파일러: 같은 IR 을 엔진과 사법부에
+const ORCH = require('../orchestrator.js'); // 수렴 기준 시나리오 (refScenario)
 const VER = require('../judicial/verifier.js'); // 원자료 실행(정확도 비교용)의 질량은 사법부 검증기로
 const vw = (x) => { const v = VER.verifyFate(db, x); return v.pass ? Math.max(v.worst, v.replayWorst) : Infinity; }; // 사법부: 원자료 → 판결된 보기 (감사·정지·사후 분석·독립 질량 검증)
 const ROOT = path.join(__dirname, '..');
@@ -45,10 +46,12 @@ function run(opt) {
     check('B 경쟁', 'IL-12 + IL-15 + 자원 충분 → 효과기 우세 (IL-12 가 Eomes 를 누름)', r.final.state === EFF && r.final.N[EOMES] < 2000, `최종 ${r.final.state}, Eomes ${r.final.N[EOMES].toFixed(0)}`); }
   // C 결정 비가역성
   const tC = runs.eff.commitment.find((x) => x.to === EFF).t;
-  { const r = sim('short', 'effector-pulse-short'), g = r.gate.log.find((x) => x.ev === 'demote_prefilter');
-    const off = 3600 / r.dt; // 1 h 펄스 → 끄는 느린 단계
+  { const r = sim('short', 'effector-pulse-short');
+    const off = Math.round(3600 / r.dt), tr = r.trajectory; // 1 h 펄스 → 끄는 관찰 구간 (기록 j 는 구간 [jΔ, (j+1)Δ])
+    const ref = F.simulateFate(db, SRC, Object.assign({ scenario: ORCH.refScenario(scen('effector-pulse-short')), commitment: false }, E));
+    const l2 = FA.markerL2(r, ref);
     check('C 결정 비가역성', `결정 전 철회 (1 h < 결정 ${h(tC)}) → 시작 상태로 되돌아감`, tC > 3600 && r.final.state === SRC && r.postMortem && r.postMortem.cause === 'signal_insufficient', `최종 ${r.final.state}, 원인 ${r.postMortem && r.postMortem.cause}`);
-    check('C 결정 비가역성', '철회 = 충격 → 같은 단계 강등, W=20 냉각 뒤 재승격', g && g.step === off && r.gate.cooldownSteps === 20 && r.gate.log.some((x) => x.ev === 'promote' && x.step >= off + 21), `강등 @ 단계 ${g && g.step} (철회 ${off}), 냉각 ${r.gate.cooldownSteps}`); }
+    check('C 결정 비가역성', '철회(경계 조건 불연속) → 단계 제어가 다시 잘게 (철회 구간 단계 > 직전 구간), 수렴 기준과 같은 최종 상태·L2 < 1e-6', tr[off].steps > tr[off - 1].steps && ref.final.state === r.final.state && l2 < 1e-6, `단계 ${tr[off - 1].steps} → ${tr[off].steps} (거부 ${tr[off].rejects}), L2 ${l2.toExponential(2)}`); }
   { const r = sim('long', 'effector-pulse-long');
     check('C 결정 비가역성', `결정 후 철회 (2 h > 결정 ${h(tC)}) → 효과기 유지`, tC < 7200 && r.final.state === EFF, `최종 ${r.final.state}`); }
   // D 스트레스 분화 정지
@@ -62,21 +65,19 @@ function run(opt) {
   { const r = sim('mixw', 'mixed-glucose-withheld'), p = r.postMortem || {};
     check('E 다른 운명', 'IL-12 + IL-15 + 포도당 결핍 → 효과기 대신 기억 전구 (최적 조건과 다른 운명)', runs.mix.final.state === EFF && r.final.state === MEM && p.cause === 'alternative_fate' && p.alternative === MEM, `최적 ${runs.mix.final.state} → 결핍 ${r.final.state}, 원인 ${p.cause}`);
     check('E 다른 운명', '다른 운명의 원인 사슬이 고갈된 포도당까지', p.resource && p.resource.bundle === GLC, `제한 ${p.resource && p.resource.bundle}`); }
-  // F 다중 규모 정확도: 기준 = 명시 부분 단계를 수렴할 만큼 잘게(부분 단계당 소비 1%, explicit_fraction 0.01).
-  //   관문의 명시 경로(소비 10%)도 같은 기준과 비교해 그 자체 오차(순차 분할 편향)를 밝힌다.
+  // F 다중 규모 정확도: 기준 = 같은 결합 적분기를 허용 오차 1/1000 로 (조정자 refScenario — 자기 수렴, 두 차수의 Rosenbrock 이 1e-8 안에서 일치함을 1.5단계에서 확인)
   const acc = [];
   const l2Of = (a, b) => { let worst = 0; for (const k of [TBET, EOMES]) { const i = a.keys.indexOf(k); let num = 0, den = 0; for (let j = 0; j < a.series.length; j++) { num += (a.series[j][i] - b.series[j][i]) ** 2; den += b.series[j][i] ** 2; } worst = Math.max(worst, Math.sqrt(num / den)); } return worst; };
   const timed = (f) => { const t0 = process.hrtime.bigint(), r = f(); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; return r; };
   for (const [name, hours] of opt.quick ? [['memory-il15', 6]] : [['memory-il15', 12], ['effector-il12', 2.5]]) {
     const over = { t_end: hours * 3600 };
-    const ref = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, { ...over, explicit_fraction: 0.01 }), commitment: false, mode: 'fine', ...E }));
-    const coarse = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false, mode: 'fine', ...E }));
+    const ref = timed(() => F.simulateFate(db, SRC, { scenario: ORCH.refScenario(scen(name, over)), commitment: false, ...E }));
     const a = timed(() => F.simulateFate(db, SRC, { scenario: scen(name, over), commitment: false, ...E }));
-    const row = { name, hours, l2: l2Of(a, ref), l2Coarse: l2Of(coarse, ref), same: a.final.state === ref.final.state, reachDyn: a.firstReach, reachRef: ref.firstReach, msD: a.ms, msF: ref.ms, msC: coarse.ms, speedup: ref.ms / a.ms, nsub: a.gate.nsub, path: a.gate.path, promotions: a.gate.promotions, massDyn: vw(a), massFine: vw(ref) };
+    const row = { name, hours, l2: l2Of(a, ref), same: a.final.state === ref.final.state, msD: a.ms, msF: ref.ms, speedup: ref.ms / a.ms, steps: a.integrator.steps, stepsRef: ref.integrator.steps, hRange: a.integrator.h.max / a.integrator.h.min, massDyn: vw(a), massFine: vw(ref) };
     acc.push(row);
-    check('F 다중 규모 정확도', `${name} ${hours} h: 표지 궤적 상대 L2 < 2% (수렴 기준 대비), 같은 최종 상태`, row.l2 < 0.02 && row.same, `L2 ${row.l2.toExponential(2)} (명시 10% 경로 ${row.l2Coarse.toExponential(2)}), ${a.final.state} = ${ref.final.state}`);
-    check('F 다중 규모 정확도', `${name} ${hours} h: 강성(N_sub ≥ K_up)에서 승격, 수렴 기준보다 빠름`, row.nsub.max >= 15 && row.promotions >= 1 && row.speedup > 1, `N_sub ${row.nsub.min}–${row.nsub.max}, ${row.speedup.toFixed(1)}×`);
-    check('G 질량', `${name} 기준 경로(명시): 원장 상대 편차 ≤ 1e-14`, row.massFine <= 1e-14, row.massFine.toExponential(2));
+    check('F 다중 규모 정확도', `${name} ${hours} h: 표지 궤적 상대 L2 < 1e-6 (수렴 기준 대비), 같은 최종 상태`, row.l2 < 1e-6 && row.same, `L2 ${row.l2.toExponential(2)}, ${a.final.state} = ${ref.final.state}`);
+    check('F 다중 규모 정확도', `${name} ${hours} h: 강성(단계 크기 범위 ≥ 10³)을 L-안정 단계가 흡수, 수렴 기준보다 빠름`, row.hRange >= 1e3 && row.speedup > 1, `h ${a.integrator.h.min.toExponential(1)}–${a.integrator.h.max} s, 단계 ${row.steps} (기준 ${row.stepsRef}), ${row.speedup.toFixed(1)}×`);
+    check('G 질량', `${name} 수렴 기준 실행: 원장 상대 편차 ≤ 1e-14`, row.massFine <= 1e-14, row.massFine.toExponential(2));
   }
   // G 질량
   for (const [k, r] of Object.entries(runs)) check('G 질량', `${k}: 부분 구조 원장 ≤ 1e-14, 음수 없음`, massOK(r), r.mass.worst.toExponential(2));
@@ -94,18 +95,18 @@ function run(opt) {
     check('H 과정 보고서', `${k}: 구간이 0 – 끝을 빈틈없이 덮고 변곡점 ≥ 3 (끝 상태만이 아님)`, cover && rep.infl.length >= 3, `구간 ${rep.phases.length}, 변곡점 ${rep.infl.length}`);
   }
   // 보고
-  say('\n| 실행 | 최종 상태 | 도달 | 결정 (철회 시험) | 원인 · 제한 | P5 관문 경로 | 질량 편차 | ms |');
+  say('\n| 실행 | 최종 상태 | 도달 | 결정 (철회 시험) | 원인 · 제한 | 적분 단계 (거부) | 질량 편차 | ms |');
   say('|---|---|---|---|---|---|---|---|');
   const L = runs.eff.ix.label;
   for (const [k, r] of Object.entries(runs)) {
     const c = r.commitment.filter((x) => x.driven).map((x) => `${L(x.to)} ${h(x.t)}`).join(', ') || '—';
     const p = r.postMortem;
-    say(`| ${k} ${r.scenario} | ${r.final.state ? L(r.final.state) : '미결정'} | ${Object.entries(r.firstReach).filter(([s]) => s !== SRC).map(([s, t]) => `${L(s)} ${h(t)}`).join(', ') || '—'} | ${c} | ${p ? `${p.cause}${p.limiting ? ' · ' + p.limiting.label : ''}${p.resource && p.resource.t_exhausted != null ? ` (고갈 ${h(p.resource.t_exhausted)})` : ''}` : '—'} | ${JSON.stringify(r.gate.path)} | ${r.mass.worst.toExponential(1)} | ${r.ms.toFixed(0)} |`);
+    say(`| ${k} ${r.scenario} | ${r.final.state ? L(r.final.state) : '미결정'} | ${Object.entries(r.firstReach).filter(([s]) => s !== SRC).map(([s, t]) => `${L(s)} ${h(t)}`).join(', ') || '—'} | ${c} | ${p ? `${p.cause}${p.limiting ? ' · ' + p.limiting.label : ''}${p.resource && p.resource.t_exhausted != null ? ` (고갈 ${h(p.resource.t_exhausted)})` : ''}` : '—'} | ${r.integrator.steps} (${r.integrator.rejected}) | ${r.mass.worst.toExponential(1)} | ${r.ms.toFixed(0)} |`);
   }
-  say('\n다중 규모 정확도 (기준 = 명시 부분 단계 소비 1% — 수렴, 결정 탐침 없이)');
-  say('| 시나리오 | 시간 | 동적 관문 L2 | 명시 10% 경로 L2 | 최종 같음 | N_sub | 동적 ms | 명시 10% ms | 기준 ms | 속도 향상 (기준/동적) |');
-  say('|---|---|---|---|---|---|---|---|---|---|');
-  for (const a of acc) say(`| ${a.name} | ${a.hours} h | ${a.l2.toExponential(2)} | ${a.l2Coarse.toExponential(2)} | ${a.same} | ${a.nsub.min}–${a.nsub.max} | ${a.msD.toFixed(0)} | ${a.msC.toFixed(0)} | ${a.msF.toFixed(0)} | ${a.speedup.toFixed(1)}× |`);
+  say('\n다중 규모 정확도 (기준 = 같은 적분기, 허용 오차 1/1000 — 결정 탐침 없이)');
+  say('| 시나리오 | 시간 | L2 (기준 대비) | 최종 같음 | 단계 (기준) | h 범위 | ms | 기준 ms | 속도 향상 (기준/기본) |');
+  say('|---|---|---|---|---|---|---|---|---|');
+  for (const a of acc) say(`| ${a.name} | ${a.hours} h | ${a.l2.toExponential(2)} | ${a.same} | ${a.steps} (${a.stepsRef}) | ${a.hRange.toExponential(1)} | ${a.msD.toFixed(0)} | ${a.msF.toFixed(0)} | ${a.speedup.toFixed(1)}× |`);
   say('');
   for (const c of checks) say(`${c.ok ? '✓' : '✗'} [${c.group}] ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
   const pass = checks.every((c) => c.ok);

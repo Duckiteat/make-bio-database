@@ -20,7 +20,7 @@
     "transitions",
     "commitment",
     "target",
-    "gate",
+    "integrator",
     "mass",
     "reservoirs",
     "volumes",
@@ -202,9 +202,8 @@
           "t",
           "d",
           "cls",
-          "path",
-          "nsub",
-          "gate"
+          "steps",
+          "rejects"
         ],
         "properties": {
           "t": {
@@ -219,18 +218,15 @@
           "cls": {
             "type": "object"
           },
-          "path": {
-            "enum": [
-              "fv",
-              "surrogate"
-            ]
-          },
-          "nsub": {
+          "steps": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 1,
+            "description": "이 관찰 구간 Δ 안에서 받아들인 Rodas3 단계 수"
           },
-          "gate": {
-            "type": "string"
+          "rejects": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "이 구간에서 거부한 단계 수 (오차 > 1 또는 음수 상태)"
           }
         }
       }
@@ -350,37 +346,67 @@
         }
       ]
     },
-    "gate": {
+    "integrator": {
       "type": "object",
+      "description": "본 실행의 결합 적분 기록 (engine-port-roadmap 1.5단계) — 판정 아님",
       "required": [
-        "promotions",
-        "demotions",
-        "forced",
-        "cooldownSteps",
-        "transitions",
-        "log",
-        "path",
-        "nsub"
+        "method",
+        "rtol",
+        "atol",
+        "steps",
+        "rejected",
+        "rejectedNeg",
+        "hMinHits",
+        "h",
+        "perInterval"
       ],
+      "additionalProperties": false,
       "properties": {
-        "log": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "step",
-              "ev"
-            ]
-          }
+        "method": {
+          "const": "rodas3"
         },
-        "path": {
+        "rtol": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "atol": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "steps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejectedNeg": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hMinHits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "h": {
           "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "minimum": 0
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
           }
         },
-        "nsub": {
+        "perInterval": {
           "type": "object",
           "required": [
             "min",
@@ -512,15 +538,19 @@
     "coupling": {
       "type": "object",
       "required": [
-        "gate",
         "_source",
         "saturation_K",
-        "explicit_fraction",
-        "shock_threshold",
         "commitment_horizon",
         "commitment_coarse",
-        "newton_tol",
-        "newton_iters"
+        "hill_s_floor",
+        "rtol",
+        "atol",
+        "h0",
+        "h_min",
+        "safety",
+        "fac_min",
+        "fac_max",
+        "neg_shrink"
       ]
     },
     "process": {
@@ -531,7 +561,6 @@
         "times",
         "sig",
         "cum",
-        "gateEvents",
         "schedule",
         "signalIdx",
         "thresholds",
@@ -556,15 +585,6 @@
           "type": "array",
           "items": {
             "type": "number"
-          }
-        },
-        "gateEvents": {
-          "type": "array",
-          "items": {
-            "type": [
-              "string",
-              "null"
-            ]
           }
         },
         "schedule": {
@@ -773,11 +793,13 @@
     "stats": {
       "type": "object",
       "required": [
-        "newton",
-        "newtonFail",
-        "substeps",
-        "implicitSteps",
-        "explicitSteps",
+        "rhs",
+        "jac",
+        "steps",
+        "rejected",
+        "rejectedNeg",
+        "hMinHits",
+        "singular",
         "probes"
       ],
       "additionalProperties": {
@@ -802,7 +824,7 @@
     }
   },
   "x-dimensions": [
-    "series.length == trajectory.length == process.times.length == process.lo.length == process.cumDD.length == process.cum.length == process.sig.length == process.gateEvents.length",
+    "series.length == trajectory.length == process.times.length == process.lo.length == process.cumDD.length == process.cum.length == process.sig.length",
     "series[j].length == process.lo[j].length == process.N0.length == keys.length",
     "process.cumDD[j].length == 2 * process.ruleInfo.length",
     "process.cum[j].length == process.ruleInfo.length == rules.length",

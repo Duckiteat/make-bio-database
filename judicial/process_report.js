@@ -1,7 +1,7 @@
 // 과정 분석 보고서 (Process-Oriented Fate Analysis & Integrity Reporting) — 운명 시뮬레이션 한 번마다 끝 상태가 아니라 과정을 문서로 남긴다.
 //   1 요약 · 2 단계별 전개(변곡점·시계열·구간 [기간 | 주된 원인 | 우세 표지 | 대사 비용]) · 3 무결성 증명서 · 4 인과 추적 · 5 기술 부록
 // 삼권 분립: 이 파일은 사법부다. 입력은 판결된 보기(judicial/fate_audit.js judgeFate — 행정부 원자료 + 사법부 독립 재계산)이며, 엔진을 실행하거나 쓰지 않는다.
-// 무결성 증명서는 사법부 검증기(judicial/verifier.js)가 원자료로 다시 센 값으로만 판정한다 — 매 느린 단계의 부분 구조 원장(≤ 1e-14)·저장소 재생(규칙 진행량 밖 변경 없음)·
+// 무결성 증명서는 사법부 검증기(judicial/verifier.js)가 원자료로 다시 센 값으로만 판정한다 — 매 관찰 격자 단계의 부분 구조 원장(≤ 1e-14)·저장소 재생(규칙 진행량 밖 변경 없음)·
 //   선언된 신호 일정과의 일치·결정론(다시 돌려 같은 궤적 해시)·입력 해시(데이터·시나리오)와 매개변수 출처. 하나라도 어기면 FAIL.
 // 이 파일은 생물 이름을 모른다: 번호·묶음·숫자만 다루고 이름은 데이터베이스 색인(ix.label)으로 표시만 한다.
 'use strict';
@@ -55,7 +55,6 @@ function processReport(r, ctx) {
   // 표지 비율이 1 을 가로지름 (경쟁하는 계통 표지의 우세가 뒤집힘)
   for (const pr of ratios) { let prev = ratioAt(0, pr); for (let j = 1; j < nT; j++) { const x = ratioAt(j, pr); if ((prev - 1) * (x - 1) < 0) add(T[j], 'ratio_cross', `${BL(pr[0]).split('@')[0]}/${BL(pr[1]).split('@')[0]} = 1 을 ${x > prev ? '위로' : '아래로'} 지남${r.markers.includes(pr[0]) && r.markers.includes(pr[1]) ? ' (경쟁 계통 표지의 우세가 뒤집힘)' : ''}`); prev = x; } }
   for (const e of r.events) add(e.t, e.type, `${e.type === 'exhausted' ? '고갈' : '재생'} ${BL(e.bundle)}`);
-  r.gate.log.forEach((g) => add(T[Math.min(g.step, nT - 1)] - dt, 'gate', `P5 관문 ${g.ev} (N_sub ${g.Nsub == null ? '—' : g.Nsub})`));
   if (r.arrest && r.arrest.t != null) add(r.arrest.t, 'arrest', `분화 정지 — ${L(r.target)} 쪽 진전이 창 동안 0.01 미만`);
   infl.sort((a, b) => a.t - b.t);
   // ===== 구간 =====
@@ -102,7 +101,7 @@ function processReport(r, ctx) {
   chk('IR·기호 도함수 — 엔진이 먹은 IR = 조정자 IR, 법칙 충실도·자동미분 대비 도함수 ≤ 1e-14, 유한차분 교차 ≤ 1e-6', ic ? ic.ok : null, ic ? `속도 ${fmt(ic.rateWorst)} · 도함수 ${fmt(ic.derivWorst)} · 배율 ${fmt(ic.factorWorst)} · 유한차분 ${fmt(ic.fdWorst)} (${ic.checked} 항목, 상태점 ${ic.samples})${ic.consumed ? '' : ' · IR 해시 불일치'}${ic.problems.length ? ' · ' + ic.problems.slice(0, 2).join(' · ') : ''}` : 'IR 을 받지 않음');
   const tol = r.mass.tolerance, ms = r.mass.series, rs = r.mass.replaySeries;
   const argmax = (a) => a.reduce((m, v, i) => (v > a[m] ? i : m), 0);
-  chk(`부분 구조 원장 ΣIn = ΣOut — 매 느린 단계 (${ms.length} 단계) 상대 ≤ ${tol}`, ms.every((v) => v <= tol), `최대 ${fmt(Math.max(...ms))} @ ${h(T[argmax(ms)])}, 중앙값 ${fmt([...ms].sort((a, b) => a - b)[ms.length >> 1])}`);
+  chk(`부분 구조 원장 ΣIn = ΣOut — 매 관찰 격자 단계 (${ms.length} 단계) 상대 ≤ ${tol}`, ms.every((v) => v <= tol), `최대 ${fmt(Math.max(...ms))} @ ${h(T[argmax(ms)])}, 중앙값 ${fmt([...ms].sort((a, b) => a - b)[ms.length >> 1])}`);
   chk(`저장소 재생 — 모든 묶음 = 시작 + Σ 화학량 × 규칙 진행량 (규칙 밖 변경 없음), 매 단계 ≤ ${tol}`, rs.every((v) => v <= tol), `최대 ${fmt(Math.max(...rs))} @ ${h(T[argmax(rs)])}`);
   // 신호: 선언된 일정과 매 단계 일치 (본 실행에는 일정 밖 개입이 없음)
   let sigBad = 0; const decl = (s, t) => { let v = 0; for (const e of s.list) if (e.t <= t + 1e-9) v = e.n; return v; };
@@ -174,9 +173,9 @@ function processReportMarkdown(rep) {
   for (const x of rep.infl) out.push(`| ${h(x.t)} | ${x.type} | ${x.what} |`);
   out.push('', '### 2.2 시계열', '');
   const cols = [...r.markers.map((b) => BL(b)), ...rep.ratios.map(([x, y]) => `${BL(x).split('@')[0]}/${BL(y).split('@')[0]}`)];
-  out.push(`| t | ${cols.join(' | ')} | 목표 거리 | 상태 | 관문 |`, `|---|${cols.map(() => '---').join('|')}|---|---|---|`);
+  out.push(`| t | ${cols.join(' | ')} | 목표 거리 | 상태 | 적분 단계 |`, `|---|${cols.map(() => '---').join('|')}|---|---|---|`);
   const grid = [...new Set([...ctx.gridHours.map((x) => x * 3600).filter((t) => t <= r.t_end + 1e-9), r.t_end])];
-  for (const t of grid) { const j = rep.idxAt(t), tr = r.trajectory[j]; out.push(`| ${h(r.process.times[j])} | ${[...r.markers.map((b) => `${fmt(rep.val(j, b))} (${fmt(rep.vel(j, b))}/h)`), ...rep.ratios.map((pr) => fmt(rep.val(j, pr[0]) / Math.max(rep.val(j, pr[1]), 1e-12)))].join(' | ')} | ${r.target ? fmt(tr.d[r.target]) : '—'} | ${tr.cls.state ? L(tr.cls.state) : '전이 중'} | ${tr.path} |`); }
+  for (const t of grid) { const j = rep.idxAt(t), tr = r.trajectory[j]; out.push(`| ${h(r.process.times[j])} | ${[...r.markers.map((b) => `${fmt(rep.val(j, b))} (${fmt(rep.vel(j, b))}/h)`), ...rep.ratios.map((pr) => fmt(rep.val(j, pr[0]) / Math.max(rep.val(j, pr[1]), 1e-12)))].join(' | ')} | ${r.target ? fmt(tr.d[r.target]) : '—'} | ${tr.cls.state ? L(tr.cls.state) : '전이 중'} | ${tr.steps} |`); }
   out.push('', '표지 칸: 분자 수 (log10 변화 속도 /h).', '', '### 2.3 구간 [기간 | 주된 원인 | 우세 표지 | 대사 비용]', '', '| 구간 | 기간 | 주된 원인 | 우세 표지 | 대사 비용 |', '|---|---|---|---|---|');
   for (const p of rep.phases) {
     const drv = p.driver ? `${p.driver.kind}: ${BL(p.driver.m.bundle)} ${p.driver.m.effect === 'activates' ? '→' : '⊣'} ${BL(p.driver.tgt).split('@')[0]} 합성 (배율 ${fmt(p.driver.f0)} → ${fmt(p.driver.f1)})` : '—';
@@ -187,18 +186,17 @@ function processReportMarkdown(rep) {
   for (const c of rep.checks) out.push(`| ${c.name} | ${c.ok === true ? 'PASS' : c.ok === false ? '**FAIL**' : '미실행'} | ${c.detail} |`);
   out.push('', `입력 해시 — 데이터 sha256:${rep.inputs.db ? rep.inputs.db.slice(0, 16) : '—'} · 시나리오 sha256:${rep.inputs.scenario.slice(0, 16)} · 궤적 sha256:${P.hash.slice(0, 16)}`, '');
   out.push(rep.pass
-    ? `**판정: PASS.** 이 실행의 모든 상태 변화는 데이터베이스의 규칙(신호 → 대사 공급 규칙 → 대사물 → 전사 인자 합성·분해)과 위 해시의 입력만으로 만들어졌다. 매 느린 단계에서 부분 구조 원장과 저장소 재생이 상대 ${r.mass.tolerance} 안에서 맞았고, 신호는 선언된 일정 그대로였다. 이 증명서는 계산의 무결성을 증명할 뿐, 가상 상수의 생물학적 타당성을 증명하지 않는다.`
+    ? `**판정: PASS.** 이 실행의 모든 상태 변화는 데이터베이스의 규칙(신호 → 대사 공급 규칙 → 대사물 → 전사 인자 합성·분해)과 위 해시의 입력만으로 만들어졌다. 매 관찰 격자 단계에서 부분 구조 원장과 저장소 재생이 상대 ${r.mass.tolerance} 안에서 맞았고, 신호는 선언된 일정 그대로였다. 이 증명서는 계산의 무결성을 증명할 뿐, 가상 상수의 생물학적 타당성을 증명하지 않는다.`
     : '**판정: FAIL.** 위에서 FAIL 인 항목이 있다 — 이 실행의 결과를 결론으로 쓰지 말 것.');
   out.push('', '## 4. 인과 추적 (Post-mortem / Causal Trace)', '');
   for (const l of rep.trace) out.push(`- ${l}`);
   out.push('', '### 예측과의 차이', '');
   out.push(rep.disc.length ? rep.disc.map((d) => `- ${d}`).join('\n') : `- 없음 — 예측(${ctx.scenario.expect ? '시나리오 expect' : '구동된 전이의 목표'})과 관찰이 같다`);
   out.push('', '## 5. 기술 부록 (Technical Appendix)', '', '| 지표 | 값 |', '|---|---|');
-  out.push(`| 느린 단계 Δ · 기간 | ${r.dt} s · ${h(r.t_end)} (${r.process.times.length} 단계) |`);
+  out.push(`| 관찰 격자 Δ · 기간 | ${r.dt} s · ${h(r.t_end)} (${r.process.times.length} 단계) |`);
   out.push(`| 부분 구조 원장 편차 (최대 · 끝) | ${fmt(r.mass.worst)} · ${fmt(r.mass.series[r.mass.series.length - 1])} (허용 ${r.mass.tolerance}) |`);
   out.push(`| 저장소 재생 편차 (최대) | ${fmt(r.mass.replayWorst)} |`);
-  out.push(`| P5 관문 | 경로 ${JSON.stringify(r.gate.path)} · N_sub ${r.gate.nsub.min}–${r.gate.nsub.max} · 승격 ${r.gate.promotions} · 강등 ${r.gate.demotions} (강제 ${r.gate.forced}) · 냉각 ${r.gate.cooldownSteps} |`);
-  out.push(`| 뉴턴 (역방향 오일러) | 반복 ${r.stats.newton} · 실패 → 명시 대체 ${r.stats.newtonFail} |`);
+  out.push(`| 결합 적분 (Rodas3) | rtol ${r.integrator.rtol} · atol ${r.integrator.atol} 분자 · 받아들인 단계 ${r.integrator.steps} · 거부 ${r.integrator.rejected} (음수 ${r.integrator.rejectedNeg}) · 최소 단계 강제 ${r.integrator.hMinHits} · h ${fmt(r.integrator.h.min)}–${fmt(r.integrator.h.max)} s · Δ 당 ${r.integrator.perInterval.min}–${r.integrator.perInterval.max} 단계 |`);
   out.push(`| 결정 탐침 | ${r.stats.probes} |`);
   if (ctx.numerics) out.push(`| 수치 L2 (수렴 기준 대비, 처음 ${ctx.numerics.hours} h) | ${fmt(ctx.numerics.l2)} (기준 ${fmt(ctx.numerics.refMs)} ms) |`);
   out.push(`| 부분 구조별 (시작 → 끝, 소실) | ${r.mass.moieties.map((k) => `${L(k)} ${fmt(r.mass.start[k])} → ${fmt(r.mass.end[k])} (${fmt(r.mass.channels.lost[k])})`).join('<br>')} |`);

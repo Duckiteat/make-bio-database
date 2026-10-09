@@ -1166,7 +1166,7 @@ test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차�
   const types = new Set(rep.infl.map((x) => x.type));
   for (const t of ['signal', 'exhausted', 'ratio_cross', 'fate_switch', 'reach', 'arrest']) assert.ok(types.has(t), `변곡점 ${t}`);
   assert.ok(rep.phases.some((p) => /다른 운명/.test(p.name)) && rep.phases.every((p) => p.driver && p.dom));
-  assert.ok(rep.trace.some((l) => /고갈 @ t = 1\.38 h/.test(l)), '근본 원인 = 1.38 h 포도당 고갈');
+  assert.ok(rep.trace.some((l) => /고갈 @ t = 1\.23 h/.test(l)), '근본 원인 = 1.23 h 포도당 고갈 (1.5단계 결합 적분 — 분할 엔진은 1.38 h 로 늦게 보고했음)');
   const md = PRP.processReportMarkdown(rep);
   for (const h of ['## 1. 요약', '## 2. 단계별 전개', '## 3. 무결성 증명서', '## 4. 인과 추적', '## 5. 기술 부록']) assert.ok(md.includes(h), h);
 });

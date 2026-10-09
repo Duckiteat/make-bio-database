@@ -63,8 +63,8 @@ function judgeFate(db, r, ctx) {
   if (v.replayWorst > v.tolerance) AE('ENGINE_DEFECT', 'AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${v.replayWorst.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
   if (v.worst > v.tolerance) AE('ENGINE_DEFECT', 'AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${v.worst.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
   for (const x of v.negatives) AE('ENGINE_DEFECT', 'AUDIT_MASS', x.bundle, `음수 양 ${x.value}`, '엔진 오류');
-  // ②-2 수치: 뉴턴이 수렴하지 못해 명시 경로로 대체한 단계 (결과는 유효하지만 적분기가 한계에 닿음 — 결합점·솔버 쪽)
-  if (r.stats.newtonFail > 0) AE('NUMERICAL', 'AUDIT_KINETIC', '수치', `빠른 층 뉴턴 실패 ${r.stats.newtonFail}회 — 그 단계는 명시 부분 단계로 대체됨 (명시 부분 단계 ${r.stats.substeps})`, '결합점(newton_tol·newton_iters·explicit_fraction) 또는 솔버 단계 제어를 조정 — 생물 상수는 바꾸지 않는다');
+  // ②-2 수치: 최소 단계에서도 오차·양수성 시험을 통과하지 못해 그대로 받아들인 단계, 특이 행렬 (원장은 맞지만 적분기가 한계에 닿음 — 결합점·솔버 쪽)
+  if (r.stats.hMinHits > 0 || r.stats.singular > 0) AE('NUMERICAL', 'AUDIT_KINETIC', '수치', `Rodas3 최소 단계(h_min)에서 허용 오차를 넘긴 채 받아들인 단계 ${r.stats.hMinHits}회 · 특이 행렬 ${r.stats.singular}회 (받아들인 ${r.stats.steps}, 거부 ${r.stats.rejected}, 그중 음수 ${r.stats.rejectedNeg})`, '결합점(integrator.rtol·atol·h_min) 또는 솔버 단계 제어를 조정 — 생물 상수는 바꾸지 않는다');
   // ③ 분화 정지
   const target = r.target, traj = r.trajectory;
   let arrest = null;
@@ -174,7 +174,7 @@ function fateText(r) {
   const L = r.ix.label, BL = r.ix.bundleLabel, h = (s) => s == null ? '—' : `${(s / 3600).toFixed(2)} h`;
   const lines = [];
   lines.push(`세포 운명 시뮬레이션 — 시작 ${r.source} ${L(r.source)} · 상태 ${r.states.map((s) => `${s} ${L(s)}`).join(', ')}${r.scenario ? ` · 시나리오 "${r.scenario}"` : ''}${r.hypothetical ? ' [가상 값 — 엔진 시험용]' : ''}`);
-  lines.push(`  느린 단계 Δ ${r.dt} s, ${h(r.t_end)} · 빠른 층 규칙 ${r.rules.filter((x) => x.layer === 'fast').length} · 느린 층 ${r.rules.filter((x) => x.layer === 'slow').length} · 조절 ${r.rules.reduce((a, x) => a + x.modulators.length, 0)}`);
+  lines.push(`  관찰 격자 Δ ${r.dt} s, ${h(r.t_end)} · 빠른 층 규칙 ${r.rules.filter((x) => x.layer === 'fast').length} · 느린 층 ${r.rules.filter((x) => x.layer === 'slow').length} · 조절 ${r.rules.reduce((a, x) => a + x.modulators.length, 0)}`);
   lines.push(`  최종 상태: ${r.final.state ? `${r.final.state} ${L(r.final.state)}` : `미결정 (가장 가까운 ${r.final.nearest} ${L(r.final.nearest)}, 거리 ${r.final.d.toFixed(3)})`}`);
   for (const [s, t] of Object.entries(r.firstReach)) lines.push(`  도달 ${s} ${L(s)} @ ${h(t)}`);
   for (const c of r.commitment) lines.push(`  결정 ${c.to} ${L(c.to)} [${c.criterion}${c.driven ? '' : ', 신호 없음'}]: ${c.t != null ? h(c.t) : '없음'}${c.monotone === false ? ' (격자에서 단조 아님!)' : ''}${c.horizon ? ` · 철회 후 ${h(c.horizon)} 관찰` : ''}`);
@@ -188,8 +188,8 @@ function fateText(r) {
     lines.push(`    교정: ${p.suggestion}`);
   }
   for (const e of r.events) lines.push(`  사건 ${h(e.t)} ${e.type} ${BL(e.bundle)}`);
-  const g = r.gate;
-  lines.push(`  P5 관문: 승격 ${g.promotions}, 강등 ${g.demotions} (강제 ${g.forced}), 냉각 ${g.cooldownSteps} · 경로 ${JSON.stringify(g.path)} · N_sub ${g.nsub.min}–${g.nsub.max} · 뉴턴 ${r.stats.newton} (실패 ${r.stats.newtonFail}) · 결정 탐침 ${r.stats.probes}`);
+  const g = r.integrator;
+  lines.push(`  적분 (Rodas3, rtol ${g.rtol} · atol ${g.atol}): 받아들인 단계 ${g.steps} · 거부 ${g.rejected} (음수 ${g.rejectedNeg}) · h ${+g.h.min.toPrecision(3)}–${+g.h.max.toPrecision(3)} s · Δ 당 ${g.perInterval.min}–${g.perInterval.max} 단계 · 결정 탐침 ${r.stats.probes}`);
   lines.push(`  질량 (사법부 독립 재계산): 부분 구조 원장 최대 상대 편차 ${r.mass.worst.toExponential(2)} · 재생 ${r.mass.replayWorst.toExponential(2)} · ${r.mass.moieties.map((k) => `${L(k)} ${+r.mass.start[k].toPrecision(6)} → ${+r.mass.end[k].toPrecision(6)} (소실 ${+(r.mass.channels.lost[k] || 0).toPrecision(4)})`).join(' · ')}`);
   if (r.kineticGaps.length) lines.push(`  속도 상수 없음(적용 안 함): ${r.kineticGaps.join(', ')}`);
   if (r.modulationGaps.length) lines.push(`  힐 상수 없음(배율 1): ${r.modulationGaps.join(', ')}`);

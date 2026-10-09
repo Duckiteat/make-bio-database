@@ -131,14 +131,14 @@ test('⑤ 독립 검증: 엔진 원자료를 몰래 바꾸면 사법부 검증�
 
 test('⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값, 엔진 코드를 고치지 않고 값이 바뀐다', () => {
   const d = COUPLING.resolve({}, {});
-  assert.equal(d.explicit_fraction, 0.1); assert.equal(d.saturation_K, C.SAT_K); assert.deepEqual([d.gate.K_up, d.gate.K_down, d.gate.M, d.gate.W], [15, 8, 5, 20]);
-  const p = COUPLING.resolve({ shock_threshold: 0.3 }, { shock_threshold: 0.25, explicit_fraction: 0.05 });
-  assert.equal(p.shock_threshold, 0.3); assert.equal(p._source.shock_threshold, 'scenario');
-  assert.equal(p.explicit_fraction, 0.05); assert.equal(p._source.explicit_fraction, 'data');
+  assert.equal(d.rtol, 1e-6); assert.equal(d.saturation_K, C.SAT_K); assert.deepEqual([d.atol, d.h0, d.safety, d.fac_min, d.fac_max], [1e-2, 1, 0.9, 0.2, 5]);
+  const p = COUPLING.resolve({ integrator: { rtol: 1e-8 } }, { rtol: 1e-7, atol: 0.1 });
+  assert.equal(p.rtol, 1e-8); assert.equal(p._source.rtol, 'scenario');
+  assert.equal(p.atol, 0.1); assert.equal(p._source.atol, 'data');
   const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json'), 'utf8')); sc.t_end = 1800;
-  const a = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false, coupling: { explicit_fraction: 0.05 } });
-  assert.ok(b.gate.nsub.max > a.gate.nsub.max, '데이터 쪽 값이 엔진 N_sub 를 바꿈');
-  assert.equal(b.coupling._source.explicit_fraction, 'data');
+  const a = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false, coupling: { rtol: 1e-9 } });
+  assert.ok(b.integrator.steps > a.integrator.steps && b.integrator.rtol === 1e-9, '데이터 쪽 값이 엔진 단계 제어를 바꿈');
+  assert.equal(b.coupling._source.rtol, 'data');
   for (const e of COUPLING.REGISTRY) if (typeof e.default === 'number' && e.key !== 'saturation_K') assert.ok(!new RegExp(`\\b${e.scenario.split('.').pop()}\\b\\s*\\|\\|\\s*${e.default}\\b`).test(src('engine/fate_engine.js')), `엔진에 ${e.key} 기본값이 박혀 있음`);
 });
 
@@ -172,11 +172,11 @@ test('⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사�
   const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8')); sc.t_end = 2 * 3600;
   const ir = IRB.buildFateIR(BASE, 'D000174', sc);
   assert.equal(IRB.buildFateIR(BASE, 'D000174', sc).hash, ir.hash, 'IR 은 결정론적');
-  assert.ok(ir.jac.sizes.nF === ir.jac.fast.length && ir.jac.nnz < ir.jac.sizes.nF ** 2, '희소 패턴');
+  assert.ok(ir.jac.sizes.nA === ir.jac.active.length && ir.jac.nnz < ir.jac.sizes.nA ** 2, '희소 패턴');
   const v = DV.verifyIR(BASE, ir, sc);
   assert.ok(v.ok && v.derivWorst <= 1e-14 && v.rateWorst <= 1e-14 && v.fdWorst <= 1e-6, JSON.stringify(v).slice(0, 300));
   // 변조: 도함수 테이프의 상수 하나를 바꾸고 해시를 다시 계산 → 해시는 맞아도 자동미분 대비 도함수가 어긋남
-  const bad = JSON.parse(JSON.stringify(ir)); const t = bad.jac.dRate[bad.jac.fast[0]][0].t; t[1] = t[1] * (1 + 1e-9); bad.hash = IRB.irHash(bad);
+  const bad = JSON.parse(JSON.stringify(ir)); const t = bad.jac.dRate[bad.jac.active.find((j) => bad.jac.dRate[j].length)][0].t; t[1] = t[1] * (1 + 1e-9); bad.hash = IRB.irHash(bad);
   const vb = DV.verifyIR(BASE, bad, sc);
   assert.ok(vb.hashOK && !vb.ok && vb.derivWorst > 1e-14, '조작된 도함수는 잡힌다');
   // 해시를 다시 계산하지 않은 변조 → 해시 불일치
@@ -190,9 +190,10 @@ test('⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사�
   const other = IRB.buildFateIR(BASE, 'D000174', { ...sc, saturation_K: 2e-6 });
   const jx = FA.judgeFate(BASE, raw, { scenario: sc, ir: other });
   assert.ok(!jx.irCheck.ok && !jx.irCheck.consumed && jx.audit.some((a) => a.code === 'AUDIT_SCHEMA' && /IR/.test(a.msg)));
-  // 해석적 야코비안: 뉴턴 반복마다 잔차 한 번 (유한차분 경로는 판정 뒤 제거 — 군더더기 금지)
-  assert.ok(raw.stats.residEvals === raw.stats.newton && raw.stats.jacEvals > 0);
-  assert.ok(!/jacobian\s*===\s*'fd'|xi\[c\] \+= d/.test(src('engine/fate_engine.js')), '유한차분 대체 경로가 남아 있음');
+  // 결합 Rodas3 (1.5단계): 시도 단계마다 해석적 야코비안 한 번 + 속도 평가 세 번 (유한차분·뉴턴·명시 대체 경로는 판정 뒤 제거 — 군더더기 금지)
+  const tries = raw.stats.steps + raw.stats.rejected;
+  assert.ok(raw.stats.jac === tries && raw.stats.rhs === 3 * tries && raw.stats.singular === 0, JSON.stringify(raw.stats));
+  for (const f of ['engine/fate_engine.js', 'engine/rust/src/engine.rs']) assert.ok(!/jacobian\s*===\s*'fd'|xi\[c\] \+= d|newton|explicit_fast|explicitFast|p5_dynamic_gate/i.test(src(f)), `${f}: 옛 분할 적분(뉴턴·명시 대체·관문) 경로가 남아 있음`);
 });
 
 test('⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 결과는 FINDING, 엔진·컴파일러·수치·데이터 결함은 각자의 층으로', () => {

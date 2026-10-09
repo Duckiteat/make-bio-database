@@ -1,5 +1,5 @@
-// 1단계: Rust/WASM 운명 엔진 (engine/rust) — docs/design/engine-port-roadmap.md
-//   ① WASM 이 소스와 맞음 (빌드 해시)  ② JS 기준 구현과 동등 (같은 IR·같은 알고리즘: 궤적 상대 ≤ 1e-9, 운명·도달·결정·사건·관문·N_sub·뉴턴 횟수 같음)
+// 1·1.5단계: Rust/WASM 운명 엔진 (engine/rust) — docs/design/engine-port-roadmap.md
+//   ① WASM 이 소스와 맞음 (빌드 해시)  ② JS 기준 구현과 동등 (같은 IR·같은 결합 Rodas3: 궤적 상대 ≤ rtol, 운명·도달·결정·사건 같음, 단계 수 ±1%)
 //   ③ 할당 0: WASM byteLength 불변, 네이티브 할당 계수 0   ④ 결정론 (Rust 다시 실행 = 같은 해시)   ⑤ 네이티브 = WASM (비트 단위)
 //   ⑥ 사법부: Rust 원자료도 계약·독립 질량 검증·IR 검사를 통과
 // 실행: node --test tests/*.test.mjs   (네이티브 비교는 cargo 가 있을 때 — CI 는 Rust 를 설치한다)
@@ -33,14 +33,14 @@ test('② JS 기준 구현과 동등 — 8 시나리오 (결정 탐침 포함)',
   for (const { f, sc } of SC) {
     const a = F.simulateFate(BASE, 'D000174', { scenario: sc }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust' });
     assert.equal(b.engine, 'rust');
-    assert.ok(relWorst(a, b) <= 1e-9, `${f}: 궤적 상대 차 ${relWorst(a, b)}`);
+    assert.ok(relWorst(a, b) <= a.coupling.rtol, `${f}: 궤적 상대 차 ${relWorst(a, b)} > rtol ${a.coupling.rtol}`);
     assert.equal(b.final.state, a.final.state, f);
     assert.deepEqual(b.firstReach, a.firstReach, f);
     assert.deepEqual(b.commitment.map((c) => c.t), a.commitment.map((c) => c.t), f);
     assert.deepEqual(b.events, a.events, f);
-    assert.deepEqual(b.gate.path, a.gate.path, f);
-    assert.deepEqual(b.trajectory.map((x) => x.nsub), a.trajectory.map((x) => x.nsub), f);
-    assert.equal(b.stats.newton, a.stats.newton, f); assert.equal(b.stats.newtonFail, a.stats.newtonFail, f);
+    // 받아들임·거부 결정이 libm 마지막 ulp 로 갈리면 단계 순서가 달라질 수 있다 — 그 차이는 단계 제어 허용 오차 안이어야 한다
+    assert.ok(Math.abs(b.integrator.steps - a.integrator.steps) <= 0.01 * a.integrator.steps, `${f}: 단계 ${a.integrator.steps} ↔ ${b.integrator.steps}`);
+    assert.equal(b.stats.hMinHits, a.stats.hMinHits, f);
   }
 });
 
@@ -51,8 +51,7 @@ test('③ 할당 0 — WASM 선형 메모리가 실행·탐침 동안 자라지 
   const keys = raw.keys, at = new Map(keys.map((b, i) => [b, i]));
   const sched = raw.process.schedule.map((s) => ({ i: at.get(s.bundle), list: s.list }));
   const reservoirs = Object.keys(raw.reservoirs).map((b) => at.get(b));
-  const isMarker = Uint8Array.from(keys, (b) => (raw.markers.includes(b) ? 1 : 0));
-  const be = RB.open({ IR: ir, N0: raw.process.N0, isMarker, sched, reservoirs, dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, mode: undefined, CP: ir.coupling, recordEvery: 1 });
+  const be = RB.open({ IR: ir, N0: raw.process.N0, sched, reservoirs, dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, CP: ir.coupling, recordEvery: 1 });
   const before = be.memory.bytes();
   const m = be.main();
   for (const k of [0, 50, 100, 500, m.series.length - 1]) be.probe(k);
@@ -75,7 +74,7 @@ test('⑤ 네이티브 = WASM (비트 단위) · 네이티브 루프 할당 0', 
   const sc = SC.find((x) => /effector-il12/.test(x.f)).sc, ir = IRB.buildFateIR(BASE, 'D000174', sc);
   const raw = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust', ir, commitment: false });
   const keys = raw.keys, at = new Map(keys.map((b, i) => [b, i]));
-  const args = { IR: ir, N0: raw.process.N0, isMarker: Uint8Array.from(keys, (b) => (raw.markers.includes(b) ? 1 : 0)), sched: raw.process.schedule.map((s) => ({ i: at.get(s.bundle), list: s.list })), reservoirs: Object.keys(raw.reservoirs).map((b) => at.get(b)), dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, CP: ir.coupling, recordEvery: 1 };
+  const args = { IR: ir, N0: raw.process.N0, sched: raw.process.schedule.map((s) => ({ i: at.get(s.bundle), list: s.list })), reservoirs: Object.keys(raw.reservoirs).map((b) => at.get(b)), dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, CP: ir.coupling, recordEvery: 1 };
   const blob = RB.pack(args), probes = [10, 77, 120];
   const out = new Float64Array(new Uint8Array(execFileSync(join(RUST, 'target/release/fate_cli'), probes.map(String), { input: Buffer.from(blob.buffer), maxBuffer: 1 << 28 })).buffer);
   const parts = []; for (let p = 0; p < out.length;) { const n = out[p]; parts.push(out.subarray(p + 1, p + 1 + n)); p += 1 + n; }

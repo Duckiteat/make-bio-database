@@ -4,8 +4,9 @@
 //   · 계 조립(assemble): 상태 집합 → 규칙(공급·분해)·조절·묶음·신호 (엔진에서 옮겨 옴, 같은 결과)
 //   · 정수 번호: 묶음 → 0…nB−1, 규칙 → 0…nR−1 (엔진·FFI 는 문자열 키를 다루지 않는다)
 //   · 기호 미분: 규칙마다 속도식 rate_j(N; f_j) 와 그 편도함수 ∂rate_j/∂N_i 를 수식 트리로 미분해 테이프(compiler/tape.js)로 낮춘다.
-//     조절 배율 f_j(힐)는 뉴턴 한 단계 안에서 고정 상수라 ∂rate/∂N 에 들어가지 않는다 — 배율식과 그 도함수(∂f_j/∂s)는 따로 둔다.
-//   · 희소 패턴: 규칙 j 가 의존하는 묶음 목록 → 뉴턴 야코비안 J = I − h·(∂rate/∂N)·S 의 0 아닌 자리
+//     속도 테이프는 조절 배율 f_j(힐)를 FAC 로 받는다 — 배율식과 그 도함수(∂f_j/∂s)는 따로 둔다. 엔진의 전체 도함수는
+//     ∂(f·g)/∂N_i = f·∂g/∂N_i (dRate, FAC = f) + g·∂f/∂N_i (dFactor × 배율 1 의 속도 g) — 1.5단계부터 배율을 고정하지 않는다.
+//   · 희소 패턴: 활성 규칙 j 가 의존하는 묶음 목록 → 결합 Rosenbrock 야코비안 J = (∂rate/∂N)·S (진행량 좌표) 의 0 아닌 자리
 //   · 해시: 정준 JSON 의 sha256 — 무결성 증명서의 입력 해시, 엔진 원자료의 irHash 와 맞춘다.
 'use strict';
 const crypto = require('crypto');
@@ -14,7 +15,7 @@ const COUPLING = require('../engine/coupling.js');
 const { OP } = require('./tape.js');
 
 const V = M.VOCAB;
-const FORMAT = 'definition-db-fate-ir', IR_VERSION = 1;
+const FORMAT = 'definition-db-fate-ir', IR_VERSION = 2; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분
 
 // ===== 계 조립: 상태들 → 규칙·묶음 =====
 function assemble(db, sourceId, sc) {
@@ -180,15 +181,15 @@ function buildFateIR(db, sourceId, sc, params) {
     jac.dFactor.push(df.map((i) => ({ i, t: lower(diff(fe, i)) })));
     jac.show.push(show(re, keys));
   }
-  // 빠른 층(속도 상수가 있는 규칙)과 그 화학량 — 뉴턴 J 의 구조
-  const fast = rules.map((R, j) => j).filter((j) => !rules[j].slow && rules[j].k);
-  const S = keys.map(() => []); // 묶음 i → [[빠른 규칙 위치 k, 화학량]]
-  fast.forEach((j, k) => { for (const q of rules[j].cons) S[q.i].push([k, -q.n]); for (const q of rules[j].prods) S[q.i].push([k, q.n]); });
-  const nnz = fast.reduce((t, j, row) => { const cols = new Set(); for (const i of jac.dep[j]) for (const [k] of S[i]) cols.add(k); cols.add(row); return t + cols.size; }, 0);
+  // 활성 규칙(속도 상수가 있는 규칙 — 두 층 모두)과 그 화학량 — 결합 적분 야코비안 J = (∂rate/∂N)·S 의 구조
+  const active = rules.map((R, j) => j).filter((j) => rules[j].k);
+  const S = keys.map(() => []); // 묶음 i → [[활성 규칙 위치 k, 화학량]]
+  active.forEach((j, k) => { for (const q of rules[j].cons) S[q.i].push([k, -q.n]); for (const q of rules[j].prods) S[q.i].push([k, q.n]); });
+  const nnz = active.reduce((t, j) => { const cols = new Set(); for (const i of new Set([...jac.dep[j], ...jac.dFactor[j].map((d) => d.i)])) for (const [k] of S[i]) cols.add(k); return t + cols.size; }, 0);
   const ir = {
     format: FORMAT, version: IR_VERSION, source: sourceId, states: A.states, keys, markers: [...A.markers.keys()], signals: A.signals,
     species, rules, gaps: A.gaps, modGaps: A.modGaps, facts: A.facts, coupling: CP,
-    jac: Object.assign(jac, { fast, S, nnz, sizes: { nB: keys.length, nR: rules.length, nF: fast.length } }),
+    jac: Object.assign(jac, { active, S, nnz, sizes: { nB: keys.length, nR: rules.length, nA: active.length } }),
   };
   ir.hash = irHash(ir);
   return ir;

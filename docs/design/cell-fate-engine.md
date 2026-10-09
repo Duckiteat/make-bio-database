@@ -2,7 +2,7 @@
 
 > 삼권 분립 이후(2026-10-09, `docs/design/tripartite-governance.md`): 이 문서의 '사후 분석·분화 정지·질량 감사·과정 보고서' 는 엔진이 아니라 사법부(`judicial/fate_audit.js`·`judicial/verifier.js`·`judicial/process_report.js`)가 엔진 원자료로 판정한다. 엔진은 궤적·원장(N·LO·누적 진행량)·사건·결정 탐침 결과만 내고, 수치 결합점은 `engine/coupling.js` 에서 읽는다.
 
-> Status (2026-10-08): **implemented**: format v9 (`cell_state`, `modulation` rules, `hill` law, `saturating` cofactors, `Regulatory_Gap`), runtime `engine/fate_engine.js`, command `node dbtool.mjs fate`, Fate-Test suite `tests/fate_suite.js` (30 checks), first lineage program (activated CD8 T cell → short-lived effector | memory precursor). Every rate, volume, threshold and Hill constant in the runs below is **hypothetical** (`examples/scenarios/fate-*-hypothetical.json`). They were chosen so the regulatory circuit is bistable, not measured. The results show what the mechanism *can* do and which fate is reached. They are not quantitative predictions.
+> Status (2026-10-08): **implemented**: format v9 (`cell_state`, `modulation` rules, `hill` law, `saturating` cofactors, `Regulatory_Gap`), runtime `engine/fate_engine.js`, command `node dbtool.mjs fate`, Fate-Test suite `tests/fate_suite.js` (54 checks), first lineage program (activated CD8 T cell → short-lived effector | memory precursor). Every rate, volume, threshold and Hill constant in the runs below is **hypothetical** (`examples/scenarios/fate-*-hypothetical.json`). They were chosen so the regulatory circuit is bistable, not measured. The results show what the mechanism *can* do and which fate is reached. They are not quantitative predictions.
 
 ## 1. Mission and scope
 
@@ -50,15 +50,15 @@ IL-15 ──modulation──▶ β-oxidation supply rule ──▶ acetyl-CoA �
 
 ## 3. Engine (`engine/fate_engine.js`)
 
-1. **Assembly.** Starting state → closure over `transitions` gives the states. Rules = the states' metabolomes + the supply rules owned by marker molecules + degradation rules of every bundle in the system. Modulations = every `modulation` rule targeting an included rule. Rules that make or remove a marker form the *slow layer*; everything else is the *fast layer*.
-2. **Fast layer, extent formulation.** Unknowns are reaction extents ξ_r. The state is N = N₀ + S·ξ, and the ledger is written from ξ. Moiety conservation therefore holds by construction: the audit compares the moiety totals against start + source − lost at every slow step, with a worst relative deviation of 1e-14.
-3. **P5 gate reuse.** Per slow step Δ = 60 s, the stiffness is N_sub = ⌈λ_max·Δ / 0.1⌉, where λ_max is the fastest per-second consumption fraction of any input.
-   * FV_ONLY → N_sub explicit substeps.
-   * PROMOTED → one backward-Euler step solved by damped Newton on ξ. This is unconditionally stable and equals the fast layer's quasi-steady state.
-   * Hysteresis uses K_up 15, K_down 8, M 5.
-   * A shock (a signal changing by more than 20%, or a reservoir exhausted in the previous step) forces same-step demotion plus a W = 20 cool-down.
-   * Newton non-convergence → that step falls back to explicit, counted as `fv_newton`.
-4. **Slow layer.** Modulation factors are frozen for the step, and each marker is updated with the exact solution N' = N·e^{−kΔ} + (s/k)(1 − e^{−kΔ}).
+1. **Assembly.** Starting state → closure over `transitions` gives the states. Rules = the states' metabolomes + the supply rules owned by marker molecules + degradation rules of every bundle in the system. Modulations = every `modulation` rule targeting an included rule. Rules that make or remove a marker are labelled the *slow layer*; everything else is the *fast layer*. Since engine-port phase 1.5 the layers are only labels for reports and post-mortems; integration treats them as one system.
+2. **Extent formulation.** Unknowns are the reaction extents ξ_r of every active rule. The state is N = N₀ + S·ξ, and the ledger is written from ξ. Moiety conservation therefore holds by construction: the audit compares the moiety totals against start + source − lost at every observation step, with a worst relative deviation of 1e-14.
+3. **Coupled Rodas3 (phase 1.5).** dξ/dt = rate(N₀ + S·ξ) is integrated with Rodas3: a 4-stage, 3rd-order, L-stable Rosenbrock method with an embedded 2nd-order error estimate.
+   * The Jacobian (∂rate/∂N)·S comes from the IR's symbolic derivatives, including the modulation factors' ∂f/∂s. Factors are not frozen.
+   * A step is rejected when the error norm max_i |e_i|/(atol + rtol·max(|N_i|,|N_i'|)) exceeds 1, or when any state goes negative (positivity).
+   * Defaults are rtol 1e-6 and atol 1e-2 molecules, from the coupling registry.
+   * Stiffness is absorbed by the L-stable implicit stages. The h range is 4·10⁻⁴–60 s in the runs below.
+   * The P5 gate is therefore no longer used here. The earlier operator splitting (backward Euler on the fast layer, frozen-factor exponential update on the slow layer, explicit fallback) had a first-order error of 6e-4–1e-2 (L000069) and was removed.
+4. **Observation grid.** Δ = `dt_slow` (60 s) is where signals (boundary conditions) are set, and where records, events and probe snapshots are taken. It does not set the integration error. Reported reach, commitment and exhaustion times are the first grid point after the true crossing (registered limitation).
 5. **States.** The distance to a state is the mean over its markers of the log-shortfall beyond the high/low thresholds, clipped to [0, 1]; 0 means the cell is in that state. Arrest detection uses the unclipped log distance.
 6. **Commitment (withdrawal test).**
    * From a snapshot, set every signal to 0 and integrate for 24 h. The cell is committed if it ends in the target state.
@@ -74,23 +74,27 @@ IL-15 ──modulation──▶ β-oxidation supply rule ──▶ acetyl-CoA �
 
 | Test | Scenario | Result | Commitment (withdrawal) | Post-mortem |
 |---|---|---|---|---|
-| Lineage fidelity | IL-12, glucose ample | effector at 2.02 h | 1.32 h | — |
-| Lineage fidelity | IL-15, fatty acid ample | memory precursor at 6.87 h | 4.28 h | — |
-| Competition | IL-12 + IL-15, ample | effector at 2.03 h (Eomes 234) | 1.33 h | — |
-| Irreversibility | IL-12 pulse 0–1 h (before 1.32 h) | reverts to activated | none | `signal_insufficient` (IL-12) |
-| Irreversibility | IL-12 pulse 0–2 h (after 1.32 h) | effector at 2.23 h, stays | 1.32 h | — |
-| Stress arrest | IL-12, glucose 2·10⁹ molecules | undetermined, T-bet stalls at about 2.7k (< 12k) | none | `resource_exhaustion`: T-bet → pyruvate licensing → glycolysis → **glucose, exhausted at 1.38 h** → L000067 |
+| Lineage fidelity | IL-12, glucose ample | effector at 2.00 h | 1.30 h | — |
+| Lineage fidelity | IL-15, fatty acid ample | memory precursor at 6.83 h | 4.27 h | — |
+| Competition | IL-12 + IL-15, ample | effector at 2.02 h (Eomes 234) | 1.32 h | — |
+| Irreversibility | IL-12 pulse 0–1 h (before 1.30 h) | reverts to activated | none | `signal_insufficient` (IL-12) |
+| Irreversibility | IL-12 pulse 0–2 h (after 1.30 h) | effector at 2.00 h, stays | 1.30 h | — |
+| Stress arrest | IL-12, glucose 2·10⁹ molecules | undetermined, T-bet stalls at about 2.7k (< 12k) | none | `resource_exhaustion`: T-bet → pyruvate licensing → glycolysis → **glucose, exhausted at 1.23 h** → L000067 |
 | Stress arrest | IL-15, palmitoyl-CoA 10⁶ | stays activated | none | `resource_exhaustion`: palmitoyl-CoA, exhausted at 0.02 h → L000068 |
-| Stress mis-differentiation | IL-12 + IL-15, glucose 2·10⁹ | **memory precursor at 21.75 h** (optimal: effector) | memory 12.90 h | `alternative_fate`, root glucose (1.38 h) |
+| Stress mis-differentiation | IL-12 + IL-15, glucose 2·10⁹ | **memory precursor at 21.68 h** (optimal: effector) | memory 12.83 h | `alternative_fate`, root glucose (1.23 h) |
+
+Times are from the coupled Rodas3 engine (phase 1.5) and are quoted at the 60 s observation-grid resolution. The split engine reported 2–14 min later; for example the 2 h pulse reached effector at 2.23 h instead of 2.00 h, and glucose ran out at 1.38 h instead of 1.23 h. Shrinking its Δ moves its times to these values, as shown in `docs/design/engine-port-roadmap.md` §7.
 
 The last row matches the qualitative literature direction (limiting glycolysis favours memory over effector). It is not a quantitative prediction.
 
-Gate and accuracy, with the reference being explicit substeps at 1% consumption per substep (converged):
+Accuracy against a reference that runs the same coupled integrator at 1/1000 of the tolerance (rtol 1e-9). An independent 2nd-order Rosenbrock (ROS2) agrees with this reference to 1e-8. Rust engine:
 
-| Scenario | Dynamic-gate L2 | Explicit 10% path L2 | Same final state | N_sub | Dynamic | Converged reference | Speedup |
+| Scenario | L2 vs reference | Same final state | Steps (reference) | h range | Default | Reference | Speedup |
 |---|---|---|---|---|---|---|---|
-| IL-15, 12 h | 1.1e-3 | 1.3e-2 | yes | 1200 | 58 ms | 15.6 s | 266× |
-| IL-12, 2.5 h | 3.3e-4 | 6.7e-3 | yes | 1200–28617 | 29 ms | 17.1 s | 587× |
+| IL-15, 12 h | 4.4e-9 | yes | 985 (18890) | 1.6·10⁵ | 31 ms | 200 ms | 6.6× |
+| IL-12, 2.5 h | 3.3e-8 | yes | 1465 (30711) | 1.6·10⁵ | 44 ms | 323 ms | 7.3× |
+
+The earlier table (dynamic gate L2 1.1e-3 / 3.3e-4 against explicit 1% substeps) used a reference whose own error was about 1e-3.
 
 Mass: in all eight 48 h runs the moiety ledger deviation was ≤ 6.1e-14 relative with plain float arithmetic. Since 2026-10-09 the state, channels and totals use compensated arithmetic (TwoSum/TwoProduct, double-double), so the deviation is ≤ 1e-27, inside the protocol's 1e-14. It is also faster than before: balanced rules skip the ledger path and the hot loop no longer allocates (dynamic 470 → 440 ms, converged reference 3469 → 1557 ms for the 3 h effector run).
 
@@ -98,7 +102,7 @@ Mass: in all eight 48 h runs the moiety ledger deviation was ≤ 6.1e-14 relativ
 
 * **Constants are hypothetical.** Every number that matters (Hill K/n/fmax, synthesis, half-lives, volumes, thresholds) lives in scenarios and is listed as a limitation. Commitment times (1.3 h effector, 4.3 h memory) are properties of these numbers, not of CD8 T cells.
 * **Abstracted mediators.** Signal transduction (receptors, STATs, mTORC1), chromatin and the T-bet ⊣ Eomes toggle are modulation rules with `abstracted` evidence. They are the first candidates to expand into steps.
-* **The fast layer is always stiff here.** Relative to Δ = 60 s, N_sub ≥ 1200, so the gate stays promoted except in shock windows. Its observable role in this program is shock handling and the Newton fallback. The explicit path at 10% per substep has 0.7–1.3% splitting error, larger than the implicit path's error, and is used only for those windows.
+* **The metabolic layer is stiff.** Step sizes span 4·10⁻⁴–60 s, and a signal withdrawal forces the step down again (3 → 166 steps in the withdrawal interval). The L-stable Rodas3 absorbs this without a separate stiffness gate. Times are resolved to the 60 s observation grid.
 * **One cell, deterministic.** No proliferation, division-linked dilution, asymmetric division or noise. A population or stochastic layer (Gillespie over markers, cell division) is the natural next step, and the P3 node model already provides SSA/τ-leap.
 * **Translation cost is not drawn from reservoirs.** Marker synthesis is `source: true` (L000058), so the regulatory layer does not compete with metabolism for ATP or amino acids yet.
 
