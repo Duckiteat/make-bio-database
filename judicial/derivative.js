@@ -100,7 +100,9 @@ function checkLU(ir) {
   const J = ir.jac, L = J.lu, n = J.active.length, problems = [];
   if (!L || !J.scatter) return { checked: 0, problems: ['IR 에 희소 LU 패턴(jac.lu·jac.scatter)이 없음'] };
   const seen = new Set(L.perm); if (L.perm.length !== n || seen.size !== n || L.perm.some((k) => !(k >= 0 && k < n)) || L.perm.some((k, r) => L.iperm[k] !== r)) problems.push('희소 LU 순서가 순열이 아님');
-  const rowOf = (pos) => { let r = 0; while (L.rowPtr[r + 1] <= pos) r++; return r; };
+  // 값 위치 → 행: 미리 만든 표 (O(nnz)) — 선형 탐색이면 O(nnz·n) 으로 검증이 엔진보다 느려진다 (4단계 ②)
+  const rowAt = new Int32Array(L.col.length).fill(-1); for (let r = 0; r < n; r++) for (let q = L.rowPtr[r]; q < L.rowPtr[r + 1]; q++) rowAt[q] = r;
+  const rowOf = (pos) => (pos >= 0 && pos < rowAt.length ? rowAt[pos] : -1);
   const cols = Array.from({ length: n }, (_, r) => L.col.slice(L.rowPtr[r], L.rowPtr[r + 1]));
   let checked = 0;
   for (let r = 0; r < n; r++) {
@@ -180,4 +182,4 @@ function verifyIR(db, ir, sc, opt) {
   return out;
 }
 
-module.exports = { verifyIR, runTape, TOL, FD_TOL };
+module.exports = { verifyIR, checkLU, runTape, TOL, FD_TOL };

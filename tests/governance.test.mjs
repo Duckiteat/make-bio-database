@@ -3,7 +3,7 @@
 //   ② 행정부(core.js·engine/)는 사법·입법·조정자를 부르지 않고, 감사 코드·'verified' 선언·판결 필드가 없다
 //   ③ 사법부(judicial/)는 엔진을 실행하지 않고 쓰지 않는다 · 입법부 초안(legislative/*.js)은 검사하지 않는다
 //   ④ 증명 등록부: 도장 없는 'verified' 거부, 변조·위조 도장 거부 · 서기는 봉인 없는 쓰기를 거부
-//   ⑤ 독립 검증: 원자료를 몰래 바꾸면 사법부 검증기가 잡는다 · ⑥ 결합점 등록부: 엔진을 고치지 않고 값을 데이터 쪽으로
+//   ②′ 행정부는 관찰을 모른다 (4단계) · ⑤ 독립 검증: 원자료를 몰래 바꾸면 사법부 검증기가 잡는다 · ⑥ 결합점 등록부: 엔진을 고치지 않고 값을 데이터 쪽으로
 // 실행: node --test tests/*.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -45,6 +45,19 @@ test('② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코�
     assert.ok(!/status\s*[:=]\s*['"]verified['"]/.test(s), `${p}: verified 를 선언함`);
     assert.ok(!/\b(validate|gate|patchReport|limitationStatus|gapSuggest|kineticIssues)\s*\(/.test(s), `${p}: 검사·판정 함수를 부름`);
   }
+});
+
+test('② 행정부는 관찰을 모른다: 관찰 기록·관찰 연산자·관찰 판정을 읽지 않음 (4단계 — 관찰에 맞추느라 결함을 덮는 순환 방지)', () => {
+  const exec = ['core.js', ...CODE.filter((p) => p.startsWith('engine/'))];
+  for (const p of exec) {
+    const s = src(p);
+    assert.ok(!/\bobservations\b/.test(s), `${p}: 관찰 기록을 읽음`);
+    assert.ok(!/obs_operator|obs_compare|judicial\/stats/.test(s), `${p}: 관찰 연산자·판정을 부름`);
+  }
+  const rs = readdirSync(join(ROOT, 'engine/rust/src'), { recursive: true }).filter((f) => f.endsWith('.rs'));
+  for (const f of rs) assert.ok(!/observation/.test(readFileSync(join(ROOT, 'engine/rust/src', f), 'utf8')), `engine/rust/src/${f}: 관찰을 읽음`);
+  // 사법부 통계·관찰 판정도 엔진을 부르지 않는다 (예측 표본은 조정자가 넘김)
+  for (const p of ['judicial/stats.js', 'judicial/obs_compare.js', 'compiler/obs_operator.js']) assert.ok(!/require\(['"][./]*(engine|core|orchestrator|legislative)/.test(src(p)), `${p}: 엔진·입법·조정자를 부름`);
 });
 
 test('② 행정부 결과에는 판결 필드가 없다 (원자료만)', () => {

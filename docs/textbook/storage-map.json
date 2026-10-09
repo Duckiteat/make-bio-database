@@ -155,8 +155,8 @@
       "class": "law",
       "format": "UMD JavaScript",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "judicial/judicial.js (관문 — 보정 재계산), 사법부 관찰 비교(4단계 ②), viewer",
-      "interpret": "[공유·컴파일러] 4단계 — 관찰 연산자: 보정(identity·linear·table)으로 읽은 값 → SI 값, 보정의 정준 해시. 측정 장치의 성질을 엔진 밖에서 흡수한다 — 엔진은 부르지 않는다(엔진은 관찰을 모른다). 쓰기·판정 없음.",
+      "readers": "judicial/judicial.js (관문 — 보정 재계산), orchestrator.js observeFate (원자료 → 측정량 예측), viewer",
+      "interpret": "[공유·컴파일러] 4단계 — 관찰 연산자: 보정(identity·linear·table)으로 읽은 값 → SI 값, 보정의 정준 해시, predict(관찰, 원자료들) → 측정량 표본(분자 수는 기록점 사이 선형 보간, 농도 = N/(NA·V), 비율·도달 시각은 firstReach). 측정 장치의 성질과 모델 → 측정량 대응을 엔진 밖에서 흡수한다 — 엔진은 부르지 않는다(엔진은 관찰을 모른다). 쓰기·판정 없음.",
       "node": "COMPILER_OBS_OPERATOR",
       "governance": "Shared",
       "refactor_strategy": "보정 종류를 늘리면 vocab.calibrationKinds·관찰 스키마·관문 검사를 같은 커밋에서 맞춘다. 같은 원본·같은 보정은 같은 값·같은 해시 — 결과가 바뀌는 수정은 이미 저장된 관찰 기록을 깨므로 하지 않는다(새 보정 종류로)."
@@ -264,6 +264,28 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs compare, tests",
       "interpret": "[사법] 비교 검토 판정 — 조정자가 돌린 두 변형의 원자료로 수치 L2(수렴 기준)·결과·궤적 차·질량(검증기)·판정(Optimization-Negative/Positive/Neutral/Trade-off/Behavior-Changing)."
+    },
+    {
+      "path": "judicial/stats.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/obs_compare.js, 확률 감사(4단계 ④), tests",
+      "interpret": "[사법] 4단계 ② — 통계 판정: 특수 함수(lnΓ·불완전 감마·베타·Φ⁻¹·콜모고로프), χ² 적합도·분할표, 이산 Anderson-Darling 한·두 표본(붓스트랩·순열 — 사법부 자신의 난수 xoshiro128**), KS, F, 검정력(비중심 χ²·z). 판정 문턱 α 0.05 · 목표 검정력 0.8. 엔진을 부르지 않는다.",
+      "node": "JUDICIAL_STATS",
+      "governance": "Judicial",
+      "refactor_strategy": "검정을 고치면 귀무 기각률 ≈ α 와 검정력 = 모의 기각률 시험(tests/stats.test.mjs ②③)이 통과해야 한다. 엔진 난수를 빌리지 않는다(판정의 독립성). 문턱을 바꾸면 보고서에 함께 적힌다."
+    },
+    {
+      "path": "judicial/obs_compare.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js observeFate, tests",
+      "interpret": "[사법] 4단계 ② — 관찰 비교: 예측 표본 ⊛ 측정 잡음 모형(정규·로그정규·계수, 측정·생물·합산) ↔ 관찰. 세 판정 CONSISTENT(FINDING)·CONFLICT(DOMAIN_CONFLICT)·INDISTINGUISHABLE(DATA_GAP → Observation_Gap + 필요한 정밀도). 생물 변이는 앙상블일 때만 F 검정. 추정용·철회 관찰은 판정 거부. design(): 관찰 없이 두 가설을 가를 반복 수.",
+      "node": "JUDICIAL_OBS_COMPARE",
+      "governance": "Judicial",
+      "refactor_strategy": "기준은 \"너무 시끄러운가\"가 아니라 \"가를 수 있는가\" — 판정 규칙을 바꾸면 세 판정 시험(tests/stats.test.mjs ④)을 같이 고친다. 예측은 조정자가 관찰 연산자로 만들어 넘긴다 — 엔진을 부르지 않는다."
     },
     {
       "path": "judicial/identity.js",
@@ -700,6 +722,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "관찰 기록(v10) — 계약 모양, 관문 의미 검사(불확도·SI 단위·보정 재계산·합성 거부), 실측 상수 = 관찰의 파생값(from·lumped·추정/검증 용도 분리), 변경 불가(바꿈·지움 거부, 철회만), 무손실(정규화 멱등)."
+    },
+    {
+      "path": "tests/stats.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "사법부 통계·관찰 판정 — 특수 함수 알려진 값, 귀무 기각률 ≈ α(χ²·분할표·AD 두 표본·KS), 검정력 공식 = 모의, 관찰 3 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백, 관찰 연산자(운명 원자료 → 분자 수·농도·비율·도달 시각)."
     },
     {
       "path": "tests/rust_engine.test.mjs",

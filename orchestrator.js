@@ -14,6 +14,8 @@ const ID = require('./judicial/identity.js');
 const ATT = require('./judicial/attestation.js');
 const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
+const OBSOP = require('./compiler/obs_operator.js');
+const OC = require('./judicial/obs_compare.js');
 
 // ----- 사건 기반·속도 시뮬레이션 -----
 const pools = (db, target) => { const s = C.simulate(db, target, { rounds: 0 }); return s.error ? undefined : { source: s.source }; };
@@ -62,6 +64,15 @@ function compare(dbA, dbB, state, scA, scB, opt) {
   return CMP.compare(dbA, dbB, runVariant(dbA, state, scA, opt), runVariant(dbB, state, scB, opt), opt);
 }
 
+// ----- 관찰 판정 (4단계 ②): 행정부 실행 → 관찰 연산자(컴파일러)로 측정량 → 사법부 판정. 엔진은 관찰을 보지 않는다 -----
+// 시나리오 A (필수)·B (선택 — 경쟁 가설). 지금은 결정론 실행 하나씩 — 앙상블은 확률 층(④)에서 같은 자리로 들어온다
+function observeFate(db, o, state, scA, scB, opt) {
+  opt = opt || {};
+  const runs = (sc) => { const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r]; };
+  try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, opt); }
+  catch (e) { return { error: e.message }; }
+}
+
 // ----- 자동 보강: 사법부 신원 판결 → 도장 발급 → 입법부 패치 초안 -----
 function augmentBuild(db, opt) {
   opt = Object.assign({ date: new Date().toISOString().slice(0, 10) }, opt || {});
@@ -75,4 +86,4 @@ function validateWithRegistry(db, root, opt) {
   return Object.assign(J.validate(C.normalize(db), { attestations: v.keys }), { attestations: v });
 }
 
-module.exports = { runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+module.exports = { observeFate, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
