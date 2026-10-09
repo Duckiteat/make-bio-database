@@ -800,7 +800,9 @@
         "rejectedNeg",
         "hMinHits",
         "singular",
-        "probes"
+        "probes",
+        "probeRounds",
+        "probeLanes"
       ],
       "additionalProperties": {
         "type": "integer",

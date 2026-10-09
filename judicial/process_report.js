@@ -197,7 +197,7 @@ function processReportMarkdown(rep) {
   out.push(`| 부분 구조 원장 편차 (최대 · 끝) | ${fmt(r.mass.worst)} · ${fmt(r.mass.series[r.mass.series.length - 1])} (허용 ${r.mass.tolerance}) |`);
   out.push(`| 저장소 재생 편차 (최대) | ${fmt(r.mass.replayWorst)} |`);
   out.push(`| 결합 적분 (Rodas3) | rtol ${r.integrator.rtol} · atol ${r.integrator.atol} 분자 · 받아들인 단계 ${r.integrator.steps} · 거부 ${r.integrator.rejected} (음수 ${r.integrator.rejectedNeg}) · 최소 단계 강제 ${r.integrator.hMinHits} · h ${fmt(r.integrator.h.min)}–${fmt(r.integrator.h.max)} s · Δ 당 ${r.integrator.perInterval.min}–${r.integrator.perInterval.max} 단계 |`);
-  out.push(`| 결정 탐침 | ${r.stats.probes} |`);
+  out.push(`| 결정 탐침 | ${r.stats.probes} (라운드 ${r.stats.probeRounds}, 동시 ${r.stats.probeLanes} — 결과는 동시 수와 무관) |`);
   if (ctx.numerics) out.push(`| 수치 L2 (수렴 기준 대비, 처음 ${ctx.numerics.hours} h) | ${fmt(ctx.numerics.l2)} (기준 ${fmt(ctx.numerics.refMs)} ms) |`);
   out.push(`| 부분 구조별 (시작 → 끝, 소실) | ${r.mass.moieties.map((k) => `${L(k)} ${fmt(r.mass.start[k])} → ${fmt(r.mass.end[k])} (${fmt(r.mass.channels.lost[k])})`).join('<br>')} |`);
   out.push(`| 속도 상수 없음 (적용 안 함) | ${r.kineticGaps.join(', ') || '—'} |`);

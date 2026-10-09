@@ -224,14 +224,19 @@ function simulateFate(db, sourceId, opt) {
   // ===== 적분 백엔드: 'js'(기준 구현·오라클, 위 run) | 'rust'(engine/rust — 같은 알고리즘, IR 테이프만 해석, WASM) =====
   // 질량 수지·재생 검사는 하지 않는다 — 기록점마다 N·LO·누적 진행량(double-double)을 내보내 사법부가 독립적으로 다시 계산한다
   const horizon = CP.commitment_horizon, coarse = Math.max(1, Math.round(CP.commitment_coarse / dt));
-  let main, snapshots, probeEnd, backendStats;
+  let main, snapshots, probeMany, backendStats, lanes = 1;
   if ((opt.engine || 'js') === 'rust') {
-    const be = require('./fate_rust.js').open({ IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery: sc.record_every || 1 });
-    main = be.main(); snapshots = be.snapshots(); probeEnd = (k) => be.probe(k); backendStats = () => be.stats();
+    const args = { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery: sc.record_every || 1 };
+    const be = require('./fate_rust.js').open(args);
+    main = be.main(); snapshots = be.snapshots(); backendStats = () => be.stats();
+    // 2단계: 결정 탐침은 워커마다 독립 WASM 인스턴스로 (engine/probe_pool.js) — lanes 는 결과에 영향이 없다
+    const pp = require('./probe_pool.js').attach(be, args, opt.workers);
+    lanes = pp.lanes;
+    probeMany = (ks) => pp.probeMany(ks.map((k) => ({ t0: snapshots[k].t, N: be.snapState(k) })));
   } else {
     snapshots = [];
     main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots });
-    probeEnd = (k) => { const s = snapshots[k]; return run(s.N, s.t, s.t + horizon, { signal: () => 0 }).N; };
+    probeMany = (ks) => ks.map((k) => { const s = snapshots[k]; return run(s.N, s.t, s.t + horizon, { signal: () => 0 }).N; }); // 기준 구현: 직렬
     backendStats = () => stats;
   }
   const chanMain = chanFrom(main.cum);
@@ -243,24 +248,33 @@ function simulateFate(db, sourceId, opt) {
   const sigOn = new Set(sched.filter((s) => s.list.some((e) => e.n > 0)).map((s) => keys[s.i].split('|')[0]));
   const transitions = (db.senses[sourceId].transitions || []).map((tr) => ({ to: tr.to, signals: tr.signals, criterion: tr.commitment.criterion, driven: tr.signals.some((g) => sigOn.has(g)) }));
   // ===== 결정 시점 (신호 철회 시험) =====
-  const probe = (k) => classify(probeEnd(k)).state; // k = 스냅숏 번호 → 그 시각 이후 신호 0 으로 horizon 동안
-  const commitment = [];
-  let probes = 0;
-  for (const tr of transitions) {
-    if (opt.commitment === false) { commitment.push({ to: tr.to, criterion: tr.criterion, driven: tr.driven, t: null, skipped: true }); continue; }
-    if (tr.criterion !== 'withdrawal' || !tr.driven) { commitment.push({ to: tr.to, criterion: tr.criterion, driven: tr.driven, t: tr.criterion === 'threshold' ? firstReach[tr.to] || null : null }); continue; }
-    const grid = []; for (let k = coarse - 1; k < snapshots.length; k += coarse) grid.push(k);
-    if (grid[grid.length - 1] !== snapshots.length - 1) grid.push(snapshots.length - 1);
-    const res = grid.map((k) => { probes++; return probe(k) === tr.to; });
-    const firstPass = res.indexOf(true), monotone = firstPass < 0 || res.slice(firstPass).every(Boolean);
-    let tC = null, kC = null;
-    if (firstPass >= 0) {
-      let lo = firstPass ? grid[firstPass - 1] : -1, hi = grid[firstPass]; // lo 실패(또는 시작), hi 통과
-      while (hi - lo > 1) { const mid = (lo + hi) >> 1; probes++; if (probe(mid) === tr.to) hi = mid; else lo = mid; }
-      kC = hi; tC = snapshots[hi].t;
-    }
-    commitment.push({ to: tr.to, criterion: 'withdrawal', driven: true, t: tC, step: kC, monotone, grid: grid.map((k, j) => ({ t: snapshots[k].t, pass: res[j] })), horizon });
+  //   탐침 k = 스냅숏 k 의 상태에서 신호를 모두 끊고 horizon 동안 → 끝 상태의 분류. 탐침은 (시작 상태, t0) 의 순수 함수라 결과를 스냅숏마다 한 번만 센다(전이끼리 공유).
+  //   2단계: 탐침을 묶음(라운드)으로 백엔드에 넘긴다 — 모든 전이의 거친 격자를 한 라운드에, 이분 탐색은 결정 트리의 다음 D 층 중점을 미리 한 라운드에.
+  //   그 뒤 직렬 이분 탐색과 똑같은 경로를 따라가므로(단조성과 무관하게) 결정 시각이 직렬과 같다. D = ⌊log₂(lanes + 1)⌋.
+  const cls = new Map();
+  let probes = 0, rounds = 0;
+  const runRound = (ks) => { const need = [...new Set(ks)].filter((k) => !cls.has(k)); if (!need.length) return; rounds++; probes += need.length; probeMany(need).forEach((N, j) => cls.set(need[j], classify(N).state)); };
+  const depth = Math.max(1, Math.floor(Math.log2(lanes + 1)));
+  const tree = (lo, hi, d, out) => { if (!d || hi - lo <= 1) return out; const mid = (lo + hi) >> 1; out.push(mid); tree(lo, mid, d - 1, out); return tree(mid, hi, d - 1, out); };
+  const grid = []; for (let k = coarse - 1; k < snapshots.length; k += coarse) grid.push(k);
+  if (grid[grid.length - 1] !== snapshots.length - 1) grid.push(snapshots.length - 1);
+  const searches = transitions.map((tr) => (opt.commitment !== false && tr.criterion === 'withdrawal' && tr.driven ? { tr } : null));
+  if (searches.some(Boolean)) runRound(grid);
+  for (const S of searches.filter(Boolean)) {
+    S.res = grid.map((k) => cls.get(k) === S.tr.to);
+    S.first = S.res.indexOf(true); S.monotone = S.first < 0 || S.res.slice(S.first).every(Boolean);
+    if (S.first >= 0) { S.lo = S.first ? grid[S.first - 1] : -1; S.hi = grid[S.first]; } // lo 실패(또는 시작), hi 통과
   }
+  for (let active = searches.filter((S) => S && S.first >= 0 && S.hi - S.lo > 1); active.length; active = active.filter((S) => S.hi - S.lo > 1)) {
+    runRound(active.flatMap((S) => tree(S.lo, S.hi, depth, [])));
+    for (const S of active) for (let d = 0; d < depth && S.hi - S.lo > 1; d++) { const mid = (S.lo + S.hi) >> 1; if (cls.get(mid) === S.tr.to) S.hi = mid; else S.lo = mid; }
+  }
+  const commitment = transitions.map((tr, i) => {
+    if (opt.commitment === false) return { to: tr.to, criterion: tr.criterion, driven: tr.driven, t: null, skipped: true };
+    if (!searches[i]) return { to: tr.to, criterion: tr.criterion, driven: tr.driven, t: tr.criterion === 'threshold' ? firstReach[tr.to] || null : null };
+    const S = searches[i], kC = S.first >= 0 ? S.hi : null;
+    return { to: tr.to, criterion: 'withdrawal', driven: true, t: kC == null ? null : snapshots[kC].t, step: kC, monotone: S.monotone, grid: grid.map((k, j) => ({ t: snapshots[k].t, pass: S.res[j] })), horizon };
+  });
   // 분화 정지·사후 분석·소비만 되는 저장소 판정은 사법부(judicial/fate_audit.js)가 아래 원자료로 한다
   const target = (sc.target && sc.target) || (transitions.find((t) => t.driven) || {}).to || null;
   return {
@@ -280,7 +294,7 @@ function simulateFate(db, sourceId, opt) {
       ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
     },
     irHash: IR.hash, // 먹은 IR 의 해시 — 사법부가 조정자에게서 받은 IR 과 맞춘다
-    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...backendStats(), probes }, engine: opt.engine || 'js', ix,
+    events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...backendStats(), probes, probeRounds: rounds, probeLanes: lanes }, engine: opt.engine || 'js', ix,
   };
 }
 

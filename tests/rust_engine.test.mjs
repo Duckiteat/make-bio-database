@@ -2,6 +2,7 @@
 //   ① WASM 이 소스와 맞음 (빌드 해시)  ② JS 기준 구현과 동등 (같은 IR·같은 결합 Rodas3: 궤적 상대 ≤ rtol, 운명·도달·결정·사건 같음, 단계 수 ±1%)
 //   ③ 할당 0: WASM byteLength 불변, 네이티브 할당 계수 0   ④ 결정론 (Rust 다시 실행 = 같은 해시)   ⑤ 네이티브 = WASM (비트 단위)
 //   ⑥ 사법부: Rust 원자료도 계약·독립 질량 검증·IR 검사를 통과
+//   ⑦ 2단계 병렬 탐침: lanes 와 무관하게 결정 시각·격자·탐침 끝 상태가 직렬과 비트 단위로 같음 (WASM 워커 · 네이티브 스레드)
 // 실행: node --test tests/*.test.mjs   (네이티브 비교는 cargo 가 있을 때 — CI 는 Rust 를 설치한다)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -55,6 +56,7 @@ test('③ 할당 0 — WASM 선형 메모리가 실행·탐침 동안 자라지 
   const before = be.memory.bytes();
   const m = be.main();
   for (const k of [0, 50, 100, 500, m.series.length - 1]) be.probe(k);
+  for (const k of [7, 900]) be.probeFrom(m.series[k].t, be.snapState(k)); // 2단계 경로(넘겨받은 시작 상태)도 자라지 않음
   assert.equal(be.memory.bytes(), before, `byteLength ${before} → ${be.memory.bytes()}`);
   assert.equal(before, be.memory.initBytes);
   // 같은 백엔드 결과 = 앞단을 거친 결과
@@ -67,7 +69,7 @@ test('④ 결정론 — Rust 를 다시 돌리면 비트 단위로 같은 궤적
   assert.equal(FA.trajectoryHash(a), FA.trajectoryHash(b));
 });
 
-test('⑤ 네이티브 = WASM (비트 단위) · 네이티브 루프 할당 0', (t) => {
+test('⑤ 네이티브 = WASM (비트 단위) · 네이티브 루프 할당 0 · 네이티브 스레드 병렬 탐침 = 직렬 (비트)', (t) => {
   const cargo = spawnSync('cargo', ['--version']);
   if (cargo.status !== 0) { t.skip('cargo 없음 — CI 는 Rust 를 설치해 이 시험을 돌린다'); return; }
   execFileSync('cargo', ['build', '--release', '--quiet', '--bin', 'fate_cli'], { cwd: RUST });
@@ -75,8 +77,8 @@ test('⑤ 네이티브 = WASM (비트 단위) · 네이티브 루프 할당 0', 
   const raw = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust', ir, commitment: false });
   const keys = raw.keys, at = new Map(keys.map((b, i) => [b, i]));
   const args = { IR: ir, N0: raw.process.N0, sched: raw.process.schedule.map((s) => ({ i: at.get(s.bundle), list: s.list })), reservoirs: Object.keys(raw.reservoirs).map((b) => at.get(b)), dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, CP: ir.coupling, recordEvery: 1 };
-  const blob = RB.pack(args), probes = [10, 77, 120];
-  const out = new Float64Array(new Uint8Array(execFileSync(join(RUST, 'target/release/fate_cli'), probes.map(String), { input: Buffer.from(blob.buffer), maxBuffer: 1 << 28 })).buffer);
+  const blob = RB.pack(args), probes = [10, 77, 120, 300, 700, 1300, 2000];
+  const out = new Float64Array(new Uint8Array(execFileSync(join(RUST, 'target/release/fate_cli'), ['--threads', '3', ...probes.map(String)], { input: Buffer.from(blob.buffer), maxBuffer: 1 << 28 })).buffer);
   const parts = []; for (let p = 0; p < out.length;) { const n = out[p]; parts.push(out.subarray(p + 1, p + 1 + n)); p += 1 + n; }
   const be = RB.open(args), m = be.main();
   const wasm = { t: m.series.map((s) => s.t), N: m.series.flatMap((s) => Array.from(s.N)), lo: m.series.flatMap((s) => Array.from(s.lo)), cum: m.series.flatMap((s) => Array.from(s.cumDD)) };
@@ -86,6 +88,30 @@ test('⑤ 네이티브 = WASM (비트 단위) · 네이티브 루프 할당 0', 
   const pw = probes.flatMap((k) => Array.from(be.probe(k)));
   assert.ok(same(Array.from(parts[6]), pw), '탐침 끝 상태');
   assert.equal(parts[7][0], 0, `네이티브 본 실행·탐침 동안 힙 할당 ${parts[7][0]}회`);
+  assert.ok(same(Array.from(parts[8]), Array.from(parts[6])), '스레드 3 개 병렬 탐침 = 직렬 탐침 (비트)');
+  assert.equal(parts[9][0], 0, `병렬 탐침 루프 동안 스레드 힙 할당 ${parts[9][0]}회`);
+  assert.equal(parts[9][3], 3);
+});
+
+test('⑦ 병렬 탐침 (WASM 워커): lanes 1·2·4 에서 결정 시각·격자·궤적 해시가 같고 탐침 끝 상태가 비트 단위로 같음', () => {
+  const PP = req('../engine/probe_pool.js');
+  for (const { f, sc } of SC.filter((x) => /mixed-optimal|memory-il15/.test(x.f))) {
+    const runs = [1, 2, 4].map((w) => F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust', workers: w }));
+    const key = (r) => JSON.stringify(r.commitment.map((c) => [c.t, c.step, c.monotone, c.grid && c.grid.map((g) => g.pass)]));
+    for (const r of runs.slice(1)) { assert.equal(key(r), key(runs[0]), f); assert.equal(FA.trajectoryHash(r), FA.trajectoryHash(runs[0]), f); }
+    assert.deepEqual(runs.map((r) => r.stats.probeLanes), [1, 2, 4]);
+    assert.ok(runs[2].stats.probeRounds < runs[0].stats.probeRounds, `${f}: 라운드 ${runs[0].stats.probeRounds} → ${runs[2].stats.probeRounds}`);
+  }
+  // 탐침 끝 상태: 워커 인스턴스 = 본 인스턴스 (비트)
+  const sc = SC.find((x) => /effector-il12/.test(x.f)).sc, ir = IRB.buildFateIR(BASE, 'D000174', sc);
+  const raw = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'rust', ir, commitment: false });
+  const at = new Map(raw.keys.map((b, i) => [b, i]));
+  const args = { IR: ir, N0: raw.process.N0, sched: raw.process.schedule.map((s) => ({ i: at.get(s.bundle), list: s.list })), reservoirs: Object.keys(raw.reservoirs).map((b) => at.get(b)), dt: raw.dt, tEnd: raw.t_end, horizon: ir.coupling.commitment_horizon, CP: ir.coupling, recordEvery: 1 };
+  const be = RB.open(args); be.main();
+  const ks = [5, 90, 400, 900, 1500, 2100, 2800], snaps = be.snapshots();
+  const serial = ks.map((k) => be.probe(k));
+  const par = PP.attach(be, args, 4).probeMany(ks.map((k) => ({ t0: snaps[k].t, N: be.snapState(k) })));
+  ks.forEach((k, j) => assert.ok(serial[j].every((v, i) => Object.is(v, par[j][i])), `탐침 ${k}`));
 });
 
 test('⑥ 사법부는 Rust 원자료도 같은 기준으로 판정 — 계약·독립 질량 검증 ≤ 1e-14·IR 검사·증명서 PASS', () => {

@@ -1,4 +1,4 @@
-// 운명 엔진 Rust/WASM 백엔드 어댑터 (행정부). docs/design/engine-port-roadmap.md 1·1.5단계
+// 운명 엔진 Rust/WASM 백엔드 어댑터 (행정부). docs/design/engine-port-roadmap.md 1·1.5·2단계
 //
 // engine/fate_engine.js 의 공통 앞단(설정·분류·결정 탐침 탐색·원자료 조립)이 부르는 백엔드다 — JS 백엔드(run)와 같은 모양을 돌려준다.
 //   pack: IR(컴파일러) + 앞단이 정한 시작 상태·신호 일정·저장소 목록을 평평한 f64 덩어리로 (engine/rust/src/engine.rs Engine::new 와 같은 순서)
@@ -11,7 +11,7 @@ const path = require('path');
 const WASM = path.join(__dirname, 'rust', 'pkg', 'fate_core.wasm');
 let compiled = null;
 const wasmModule = () => compiled || (compiled = new WebAssembly.Module(fs.readFileSync(WASM)));
-const BUF = { recT: 0, recN: 1, recLO: 2, recCum: 3, recSig: 4, recMeta: 5, snapT: 6, events: 7, stats: 8, runInfo: 9, resOut: 10, probeN: 11, finN: 12, finLO: 13, finCum: 14 };
+const BUF = { recT: 0, recN: 1, recLO: 2, recCum: 3, recSig: 4, recMeta: 5, snapT: 6, events: 7, stats: 8, runInfo: 9, resOut: 10, probeN: 11, finN: 12, finLO: 13, finCum: 14, snapN: 15, probeIn: 16 };
 
 function pack(a) {
   const { IR, N0, sched, reservoirs, dt, tEnd, horizon, CP, recordEvery } = a;
@@ -67,6 +67,9 @@ function open(a) {
     },
     snapshots() { return Array.from(copy(BUF.snapT), (t) => ({ t })); },
     probe(k) { if (ex.fe_probe(k) !== 0) throw new Error(`탐침 스냅숏 ${k} 없음`); return copy(BUF.probeN); },
+    // 2단계: 스냅숏 k 의 시작 상태(본 실행 뒤) · 넘겨받은 시작 상태에서 탐침 (다른 인스턴스 — 워커가 쓴다)
+    snapState(k) { return Float64Array.from(view(BUF.snapN).subarray(k * nB, (k + 1) * nB)); },
+    probeFrom(t0, N) { view(BUF.probeIn).set(N); ex.fe_probe_from(t0); return copy(BUF.probeN); },
     stats() { const s = copy(BUF.stats); return { rhs: s[0], jac: s[1], steps: s[2], rejected: s[3], rejectedNeg: s[4], hMinHits: s[5], singular: s[6] }; },
   };
 }

@@ -189,7 +189,7 @@ function fateText(r) {
   }
   for (const e of r.events) lines.push(`  사건 ${h(e.t)} ${e.type} ${BL(e.bundle)}`);
   const g = r.integrator;
-  lines.push(`  적분 (Rodas3, rtol ${g.rtol} · atol ${g.atol}): 받아들인 단계 ${g.steps} · 거부 ${g.rejected} (음수 ${g.rejectedNeg}) · h ${+g.h.min.toPrecision(3)}–${+g.h.max.toPrecision(3)} s · Δ 당 ${g.perInterval.min}–${g.perInterval.max} 단계 · 결정 탐침 ${r.stats.probes}`);
+  lines.push(`  적분 (Rodas3, rtol ${g.rtol} · atol ${g.atol}): 받아들인 단계 ${g.steps} · 거부 ${g.rejected} (음수 ${g.rejectedNeg}) · h ${+g.h.min.toPrecision(3)}–${+g.h.max.toPrecision(3)} s · Δ 당 ${g.perInterval.min}–${g.perInterval.max} 단계 · 결정 탐침 ${r.stats.probes} (라운드 ${r.stats.probeRounds}, 동시 ${r.stats.probeLanes})`);
   lines.push(`  질량 (사법부 독립 재계산): 부분 구조 원장 최대 상대 편차 ${r.mass.worst.toExponential(2)} · 재생 ${r.mass.replayWorst.toExponential(2)} · ${r.mass.moieties.map((k) => `${L(k)} ${+r.mass.start[k].toPrecision(6)} → ${+r.mass.end[k].toPrecision(6)} (소실 ${+(r.mass.channels.lost[k] || 0).toPrecision(4)})`).join(' · ')}`);
   if (r.kineticGaps.length) lines.push(`  속도 상수 없음(적용 안 함): ${r.kineticGaps.join(', ')}`);
   if (r.modulationGaps.length) lines.push(`  힐 상수 없음(배율 1): ${r.modulationGaps.join(', ')}`);

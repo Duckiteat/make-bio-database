@@ -45,6 +45,10 @@ pub extern "C" fn fe_run_main() { eng().run_main(); }
 #[no_mangle]
 pub extern "C" fn fe_probe(k: u32) -> i32 { if eng().probe(k as usize) { 0 } else { -1 } }
 
+/// 2단계: 버퍼 16(probe_in)에 쓴 시작 상태에서 시각 t0 부터 탐침 — 결과는 버퍼 11(probe_n)
+#[no_mangle]
+pub extern "C" fn fe_probe_from(t0: f64) { eng().probe_from(t0); }
+
 // 출력 버퍼 번호 → (주소, 길이)
 fn buf(id: u32) -> (*const f64, usize) {
     let e = eng();
@@ -64,6 +68,8 @@ fn buf(id: u32) -> (*const f64, usize) {
         12 => &e.fin_n[..],
         13 => &e.fin_lo[..],
         14 => &e.fin_cum[..],
+        15 => &e.snap_n[..e.n_snap * e.nb],
+        16 => &e.probe_in[..],
         _ => &[],
     };
     (s.as_ptr(), s.len())

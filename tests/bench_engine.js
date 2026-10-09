@@ -2,7 +2,7 @@
 // 0단계 기준선 측정 (docs/design/engine-port-roadmap.md §0) — Rust/WASM 이식과 기호 야코비안의 이득을 판정할 기준.
 //   운명 엔진 (1.5단계 결합 Rodas3): 본 실행 대 결정 탐침 시간 · 받아들인·거부한 단계 · 속도·야코비안 평가 · 활성 규칙 수 nA
 //   (0단계 분할 엔진 기준선·0.5단계 유한차분 대 해석적·1단계 JS 대 Rust 결과는 docs/design/engine-port-roadmap.md §3·§4·§6 에 기록)
-//   JS 기준 구현 대 Rust/WASM (본 실행·전체)
+//   JS 기준 구현 대 Rust/WASM (본 실행·전체) · 2단계 결정 탐침 병렬 (lanes 1 대 코어 수)
 //   simulateRate: 준비(정규화·색인·조립) 대 적분 루프
 // 실행: node tests/bench_engine.js [--repeat 3]   (쓰기 없음 — 표를 콘솔에)
 'use strict';
@@ -37,6 +37,19 @@ function engineRows() {
   }
   return rows;
 }
+// 2단계: 결정 탐침 병렬 (Rust/WASM, lanes = 본 스레드 + 워커) — 같은 결정 시각, 라운드·시간
+function laneRows() {
+  const os = require('os'), PP = require('../engine/probe_pool.js'), L = PP.defaultLanes(), rows = [];
+  F.simulateFate(db, 'D000174', { scenario: scen('fate-effector-il12-hypothetical.json'), engine: 'rust', workers: L }); // 워커 기동·WASM 컴파일은 첫 호출에만
+  for (const name of ['effector-il12', 'memory-il15', 'effector-glucose-withheld', 'mixed-optimal']) {
+    const sc = scen(`fate-${name}-hypothetical.json`);
+    const main = best(() => F.simulateFate(db, 'D000174', { scenario: sc, engine: 'rust', commitment: false })).ms;
+    const one = best(() => F.simulateFate(db, 'D000174', { scenario: sc, engine: 'rust', workers: 1 })), many = best(() => F.simulateFate(db, 'D000174', { scenario: sc, engine: 'rust', workers: L }));
+    const same = JSON.stringify(one.r.commitment.map((c) => c.t)) === JSON.stringify(many.r.commitment.map((c) => c.t));
+    rows.push({ name, lanes: L, cores: os.cpus().length, main, full1: one.ms, fullN: many.ms, probe1: one.ms - main, probeN: many.ms - main, probes: many.r.stats.probes, rounds1: one.r.stats.probeRounds, roundsN: many.r.stats.probeRounds, same });
+  }
+  return rows;
+}
 function rateRows() {
   const rows = [];
   const pid = (re) => Object.keys(db.senses).find((k) => db.senses[k].kind === 'pathway' && re.test(db.terms[db.senses[k].term].names.ko));
@@ -59,11 +72,16 @@ function run() {
   console.log('| 시나리오 | 본 실행 JS → Rust | 배수 | 전체(탐침 포함) JS → Rust | 배수 |');
   console.log('|---|---|---|---|---|');
   for (const r of er) console.log(`| ${r.name} | ${f(r.jsMain)} → ${f(r.rsMain)} | ${f(r.jsMain / r.rsMain, 1)}× | ${f(r.jsFull)} → ${f(r.rsFull)} | ${f(r.jsFull / r.rsFull, 1)}× |`);
+  const lr = laneRows();
+  console.log(`\n2단계 — 결정 탐침 병렬 (Rust/WASM, lanes ${lr[0].lanes} = 본 스레드 + 워커 ${lr[0].lanes - 1}, 코어 ${lr[0].cores}; ms, 최솟값)`);
+  console.log('| 시나리오 | 본 실행 | 탐침 1 → N lanes | 배수 | 전체 1 → N lanes | 배수 | 탐침 수 | 라운드 1 → N | 결정 시각 같음 |');
+  console.log('|---|---|---|---|---|---|---|---|---|');
+  for (const r of lr) console.log(`| ${r.name} | ${f(r.main)} | ${f(r.probe1)} → ${f(r.probeN)} | ${f(r.probe1 / r.probeN, 1)}× | ${f(r.full1)} → ${f(r.fullN)} | ${f(r.full1 / r.fullN, 1)}× | ${r.probes} | ${r.rounds1} → ${r.roundsN} | ${r.same} |`);
   console.log('\nsimulateRate');
   console.log('| 경로 | Δt 단계 | 준비 ms | 루프 ms | 단계당 µs |');
   console.log('|---|---|---|---|---|');
   for (const r of rr) console.log(`| ${r.label} | ${r.steps} | ${f(r.setupMs, 1)} | ${f(r.loopMs, 1)} | ${f(r.perStepUs, 2)} |`);
-  return { fate: fr, engines: er, rate: rr };
+  return { fate: fr, engines: er, lanes: lr, rate: rr };
 }
 if (require.main === module) run();
 module.exports = { run };

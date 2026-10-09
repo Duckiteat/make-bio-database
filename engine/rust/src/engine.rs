@@ -57,6 +57,7 @@ pub struct Engine {
     // 본 실행: steps, rejected, rejectedNeg, hMinHits, h min, h max, Δ 당 단계 min, max
     pub run_info: [f64; 8],
     pub probe_n: Vec<f64>,
+    pub probe_in: Vec<f64>, // 2단계: 다른 인스턴스(워커·스레드)가 넘긴 탐침 시작 상태
     // 본 실행 끝 상태 (탐침이 작업 버퍼를 덮어쓰기 전에 고정)
     pub fin_n: Vec<f64>, pub fin_lo: Vec<f64>, pub fin_cum: Vec<f64>,
 }
@@ -120,7 +121,7 @@ impl Engine {
             rec_sig: vec![0.0; n_rec_max * nsig], rec_meta: vec![0.0; n_rec_max * 2],
             snap_t: vec![0.0; n_steps], snap_n: vec![0.0; n_steps * nb],
             events: vec![0.0; 3 * max_ev], res_out: vec![0.0; 5 * nres],
-            n_rec: 0, n_snap: 0, n_events: 0, stats: [0.0; 7], run_info: [0.0; 8], probe_n: vec![0.0; nb], fin_n: vec![0.0; nb], fin_lo: vec![0.0; nb], fin_cum: vec![0.0; 2 * nr],
+            n_rec: 0, n_snap: 0, n_events: 0, stats: [0.0; 7], run_info: [0.0; 8], probe_n: vec![0.0; nb], probe_in: vec![0.0; nb], fin_n: vec![0.0; nb], fin_lo: vec![0.0; nb], fin_cum: vec![0.0; 2 * nr],
         })
     }
 
@@ -325,9 +326,18 @@ impl Engine {
         let nb = self.nb;
         let t0 = self.snap_t[k];
         for i in 0..nb { self.n[i] = self.snap_n[k * nb + i]; }
+        self.probe_run(t0);
+        true
+    }
+    /// 결정 탐침 (2단계 병렬): 넘겨받은 시작 상태(probe_in)에서 — 본 실행 없이 다른 인스턴스·스레드가 같은 탐침을 돈다.
+    /// 탐침은 (시작 상태, t0) 만의 순수 함수다(원장·단계 제어 상태를 run 이 새로 잡음) → 어느 인스턴스에서 돌든 비트 단위로 같다.
+    pub fn probe_from(&mut self, t0: f64) {
+        self.n.copy_from_slice(&self.probe_in);
+        self.probe_run(t0);
+    }
+    fn probe_run(&mut self, t0: f64) {
         let h = self.horizon;
         self.run(t0, t0 + h, false, true);
         self.probe_n.copy_from_slice(&self.n);
-        true
     }
 }

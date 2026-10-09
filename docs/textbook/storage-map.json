@@ -366,6 +366,25 @@
       "refactor_strategy": "pack 순서는 engine/rust/src/engine.rs Engine::new 와 한 쌍 — 바꾸면 둘을 같이. 결과 모양은 JS 백엔드(run)와 같게."
     },
     {
+      "path": "engine/probe_pool.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "engine/fate_engine.js (engine: 'rust'), tests/bench_engine.js, tests",
+      "interpret": "[행정] 2단계 결정 탐침 병렬 — 워커마다 독립 WASM 인스턴스, 동기 호출(SharedArrayBuffer + Atomics.wait), 본 스레드도 한 몫. lanes 와 무관하게 결과가 비트 단위로 같다. 판정·쓰기 없음.",
+      "node": "EXECUTIVE_PROBE_POOL",
+      "governance": "Executive",
+      "refactor_strategy": "탐침은 (시작 상태, t0) 의 순수 함수라는 전제 위에서만 — 탐침 사이에 상태를 나누지 않는다. 배정·묶음을 바꿔도 결과가 같아야 한다(tests/rust_engine.test.mjs ⑦)."
+    },
+    {
+      "path": "engine/probe_worker.js",
+      "class": "law",
+      "format": "Node CommonJS (worker_threads)",
+      "writer": "사람·AI",
+      "readers": "engine/probe_pool.js",
+      "interpret": "[행정] 탐침 워커 — load(같은 열기 인자로 WASM 인스턴스) · probe(공유 버퍼의 시작 상태들 → 끝 상태). 끝나면 공유 제어 칸에 1(실패 -1)."
+    },
+    {
       "path": "engine/rust/src/engine.rs",
       "class": "law",
       "format": "Rust 2021",

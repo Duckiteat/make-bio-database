@@ -184,7 +184,7 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 | `legislative/` | [입법] merge·패치 초안, `clerk.mjs` = 유일한 파일 쓰기 |
 | `orchestrator.js` | 조정자 (행정 실행 → 사법 판정) |
 | `compiler/` | [공유] db + 시나리오 → 불변 IR (정수 번호·기호 도함수 테이프) |
-| `engine/rust/` | [행정] Rust/WASM 운명 엔진 (기본 백엔드, 테이프 해석기 + 결합 Rodas3 — `sh engine/rust/build.sh`) |
+| `engine/rust/` | [행정] Rust/WASM 운명 엔진 (기본 백엔드, 테이프 해석기 + 결합 Rodas3 — `sh engine/rust/build.sh`). 결정 탐침은 `engine/probe_pool.js` 가 워커마다 WASM 인스턴스로 병렬 |
 | `attestations/registry.json` | 증명 도장 (verified 의 근거, 서기만 씀) — 설계 `docs/design/tripartite-governance.md` |
 | `dbtool.mjs` | 명령줄 도구 |
 | `viewer.html`, `index.html` | 화면 |
