@@ -116,7 +116,9 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 ### 세포 운명 (v9)
 - `node dbtool.mjs fate "활성화된 CD8 T 세포" --scenario examples/scenarios/fate-effector-il12-hypothetical.json` — 신호(IL-12/IL-15) → 대사(해당과정/β-산화) → 전사 인자(T-bet/Eomes) 결합 적분(Rodas3, 두 층·조절 배율을 한 계로), 결정 시점(신호 철회 시험), 분화 정지 사후 분석. 시나리오 8개(`fate-*-hypothetical.json`, 가상 값).
 - `node dbtool.mjs fate <상태> --scenario s.json --report 보고서.md` — 과정 분석 보고서 (요약·변곡점·시계열·구간·무결성 증명서·인과 추적·부록). 무결성 FAIL 이면 종료 코드 1.
-- `node tests/fate_suite.js [--engine js|rust]` — Fate-Test 54 검사: 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준(허용 오차 1/1000) 대비 L2·속도 향상, 질량, 과정 보고서. 설계 `docs/design/cell-fate-engine.md`.
+- `node dbtool.mjs fate <상태> --scenario examples/scenarios/stochastic-mixed-optimal-hypothetical.json --ensemble 40` — 혼성 확률 층(4단계: 정확 SSA·τ-도약·Rodas3, seed 는 시나리오에) 앙상블: 운명 비율(95% 구간)·도달 시각 분포·표지 퍼짐(Fano), 궤적마다 원장 감사, seed 재현, 결정론 대비.
+- `node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [--scenario-b B.json]` — 관찰 포트 판정: 예측 ⊛ 측정 잡음 ↔ 관찰 → CONSISTENT · CONFLICT · INDISTINGUISHABLE(Observation_Gap + 필요한 정밀도). 관찰 기록(형식 v10 `observations`)은 바뀌지 않고, 실측 상수는 그것을 참조하는 파생값 — `docs/design/observation-port.md`.
+- `node tests/fate_suite.js [--engine js|rust]` — Fate-Test 57 검사 (확률 앙상블 3 포함): 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준(허용 오차 1/1000) 대비 L2·속도 향상, 질량, 과정 보고서. 설계 `docs/design/cell-fate-engine.md`.
 
 ### 교과서
 구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.

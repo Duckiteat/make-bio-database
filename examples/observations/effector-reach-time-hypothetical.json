@@ -1,0 +1,12 @@
+{
+  "hypothetical": true,
+  "note": "합성 관찰 — 포트 계약·관문·사법부 판정 시험용. 실측값이 아니다 (데이터베이스에 넣으면 관문이 거부). 효과기 상태(T-bet 높음·Eomes 낮음) 도달 시각을 3 번 잰 평균이라는 가정.",
+  "observable": { "kind": "event_time", "target": "D000175" },
+  "value": 7300,
+  "unit": "s",
+  "uncertainty": { "kind": "measurement", "model": "normal", "sd": 900 },
+  "replicates": 3,
+  "condition": { "species": "9606", "cell": "cd8_t_cell" },
+  "use": "validation",
+  "evidence": { "level": "computed", "tool": "synthetic fixture" }
+}

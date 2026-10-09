@@ -168,6 +168,7 @@ function processReportMarkdown(rep) {
   out.push(`| 결과 | **${outcome}** · 예측 ${rep.disc.length ? '과 다름 (§4)' : '과 일치'} |`);
   out.push(`| 결정 시점 | ${r.commitment.filter((c) => c.driven).map((c) => `${L(c.to)} ${h(c.t)}`).join(', ') || '—'} |`);
   out.push(`| 무결성 | **${rep.pass ? 'PASS' : 'FAIL'}** (${rep.checks.filter((c) => c.ok === true).length}/${rep.checks.length} 확인${rep.checks.some((c) => c.ok == null) ? `, 미실행 ${rep.checks.filter((c) => c.ok == null).length}` : ''}) |`);
+  if (r.stochastic) out.push(`| 확률 실행 | seed ${r.stochastic.seed} · 궤적 ${r.stochastic.trajectory} — **궤적 하나는 결론이 아니다**: 운명 비율·도달 시각 분포는 앙상블(\`fate --ensemble N\`)로 판정. 결정 탐침 없음 |`);
   out.push(`| 상수 | ${r.hypothetical ? '**가상 값 (hypothetical)** — 결과는 기전이 그 값에서 어떻게 흐르는지를 말할 뿐, 실제 세포의 시각을 예측하지 않는다' : '데이터·시나리오 값'} |`, '');
   out.push('## 2. 단계별 전개 (Phase-wise Evolution)', '', '### 2.1 변곡점', '', '| 시각 | 종류 | 내용 |', '|---|---|---|');
   for (const x of rep.infl) out.push(`| ${h(x.t)} | ${x.type} | ${x.what} |`);
@@ -197,6 +198,7 @@ function processReportMarkdown(rep) {
   out.push(`| 부분 구조 원장 편차 (최대 · 끝) | ${fmt(r.mass.worst)} · ${fmt(r.mass.series[r.mass.series.length - 1])} (허용 ${r.mass.tolerance}) |`);
   out.push(`| 저장소 재생 편차 (최대) | ${fmt(r.mass.replayWorst)} |`);
   out.push(`| 결합 적분 (Rodas3) | rtol ${r.integrator.rtol} · atol ${r.integrator.atol} 분자 · 받아들인 단계 ${r.integrator.steps} · 거부 ${r.integrator.rejected} (음수 ${r.integrator.rejectedNeg}) · 최소 단계 강제 ${r.integrator.hMinHits} · h ${fmt(r.integrator.h.min)}–${fmt(r.integrator.h.max)} s · Δ 당 ${r.integrator.perInterval.min}–${r.integrator.perInterval.max} 단계 |`);
+  if (r.stochastic) { const st = r.stochastic, by = (m) => st.rules.filter((x) => x.mode === m).length; out.push(`| 혼성 확률 층 | ${st.method} · 끝 방식 결정론 ${by('ode')} · 도약 ${by('leap')} · SSA ${by('ssa')} · SSA 발화 ${st.ssaFires} (막힘 ${st.ssaBlocked}) · 도약 발화 ${st.rules.reduce((a, x) => a + x.leap, 0)} (음수로 되돌림 ${st.leapRejects}) · 분할 전환 ${st.switches} · 난수 ${st.draws} |`); }
   out.push(`| 결정 탐침 | ${r.stats.probes} (라운드 ${r.stats.probeRounds}, 동시 ${r.stats.probeLanes} — 결과는 동시 수와 무관) |`);
   if (ctx.numerics) out.push(`| 수치 L2 (수렴 기준 대비, 처음 ${ctx.numerics.hours} h) | ${fmt(ctx.numerics.l2)} (기준 ${fmt(ctx.numerics.refMs)} ms) |`);
   out.push(`| 부분 구조별 (시작 → 끝, 소실) | ${r.mass.moieties.map((k) => `${L(k)} ${fmt(r.mass.start[k])} → ${fmt(r.mass.end[k])} (${fmt(r.mass.channels.lost[k])})`).join('<br>')} |`);

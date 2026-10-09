@@ -5,6 +5,7 @@
 //   D 스트레스 분화 정지 (포도당·지방산 결핍 → 고갈 저장소까지 사후 분석)  E 스트레스 다른 운명 (IL-12 + IL-15 + 포도당 결핍 → 기억 전구)
 //   F 다중 규모 정확도 (결합 Rodas3 기본 허용 오차 대 수렴 기준(허용 오차 1/1000): 표지 궤적 L2 < 1e-6, 같은 최종 상태, 강성 범위, 속도 향상)
 //   G 질량 (모든 실행에서 부분 구조 원장 상대 편차 ≤ 1e-14 — ΣIn = ΣOut, 음수 없음)
+//   I 확률 앙상블 (4단계 ④·⑤): 혼합-최적 + 확률 층 — 운명 비율이 결정론과 맞고, 도달 시각 분포가 결정론 값을 감싸고, 모든 궤적의 원장이 맞음
 // 실행: node tests/fate_suite.js [--quick] [--engine js|rust]   (시나리오 examples/scenarios/fate-*-hypothetical.json — 가상 값, 엔진 시험용)
 'use strict';
 const { readFileSync } = require('fs');
@@ -94,6 +95,14 @@ function run(opt) {
     const cover = rep.phases.length && rep.phases[0].t0 === 0 && rep.phases[rep.phases.length - 1].t1 === r.t_end && rep.phases.every((p, q) => !q || p.t0 === rep.phases[q - 1].t1);
     check('H 과정 보고서', `${k}: 구간이 0 – 끝을 빈틈없이 덮고 변곡점 ≥ 3 (끝 상태만이 아님)`, cover && rep.infl.length >= 3, `구간 ${rep.phases.length}, 변곡점 ${rep.infl.length}`);
   }
+  // I 확률 앙상블 (Rust/WASM, 궤적 20 — 앙상블 판정은 사법부 stoch_audit)
+  const SA = require('../judicial/stoch_audit.js');
+  const stoSc = JSON.parse(readFileSync(path.join(ROOT, 'examples/scenarios/stochastic-mixed-optimal-hypothetical.json'), 'utf8'));
+  const ens = ORCH.runEnsemble(db, SRC, stoSc, opt.quick ? 8 : 20, { commitment: false }), sum = SA.ensembleSummary(ens), det = runs.mix || sim('mix', 'mixed-optimal');
+  const fr = sum.fate[det.final.state] || { k: 0, ci: [0, 0] }, rr = sum.reach[EFF];
+  check('I 확률 앙상블', `혼합-최적: 결정론 끝 상태(${det.final.state})의 앙상블 비율 구간이 1 을 포함`, fr.ci[1] >= 1, `${fr.k}/${sum.n}, 95% ${(fr.ci[0] * 100).toFixed(1)}–${(fr.ci[1] * 100).toFixed(1)}%`);
+  check('I 확률 앙상블', '도달 시각 분포가 결정론 도달 시각을 감쌈 (10–90%)', rr && rr.q10 <= det.firstReach[EFF] && det.firstReach[EFF] <= rr.q90, rr ? `${h(rr.q10)} ≤ ${h(det.firstReach[EFF])} ≤ ${h(rr.q90)} (sd ${h(rr.sd)})` : '도달 없음');
+  check('I 확률 앙상블', '모든 궤적 원장·재생 ≤ 1e-14, 발화 정수, 엔진 결함 없음', ens.every((r) => { const a = SA.auditTrajectory(db, r, { scenario: stoSc }); return !a.error && !a.audit.some((z) => z.fault === 'ENGINE_DEFECT') && a.verdict.mass.worst <= 1e-14; }), `${ens.length} 궤적`);
   // 보고
   say('\n| 실행 | 최종 상태 | 도달 | 결정 (철회 시험) | 원인 · 제한 | 적분 단계 (거부) | 질량 편차 | ms |');
   say('|---|---|---|---|---|---|---|---|');

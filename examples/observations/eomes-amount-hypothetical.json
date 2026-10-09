@@ -1,0 +1,12 @@
+{
+  "hypothetical": true,
+  "note": "합성 관찰 — 세포 30 개의 Eomes 분자 수 평균과 세포 간 퍼짐(생물 변이)이라는 가정. 확률 앙상블이어야 퍼짐을 판정할 수 있다. 실측값이 아니다.",
+  "observable": { "kind": "amount", "target": "D000166|nucleoplasm" },
+  "value": 235,
+  "unit": "molecule",
+  "uncertainty": { "kind": "biological", "model": "normal", "sd": 18 },
+  "replicates": 30,
+  "condition": { "species": "9606", "cell": "cd8_t_cell", "time_s": 172800 },
+  "use": "validation",
+  "evidence": { "level": "computed", "tool": "synthetic fixture" }
+}

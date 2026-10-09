@@ -22,7 +22,7 @@ const halfLife = (o) => Object.assign({ id: 'O+1', observable: { kind: 'kinetic_
 const withKin = (kin) => ({ id: 'D000086', rule: BASE.senses.D000086.rule.map((r) => (r.id === 'basal_turnover' ? { ...r, kinetics: kin } : r)) });
 
 test('① 계약: 합성 예시는 모양을 지키고, 값만 있는 관찰은 모양에서 거부', () => {
-  const ex = JSON.parse(readFileSync(new URL('../examples/observations/marker-amount-hypothetical.json', import.meta.url), 'utf8'));
+  const ex = JSON.parse(readFileSync(new URL('../examples/observations/effector-reach-time-hypothetical.json', import.meta.url), 'utf8'));
   assert.ok(C.checkObservation(ex).ok, JSON.stringify(C.checkObservation(ex).violations));
   const bare = C.checkObservation({ observable: { kind: 'amount', target: BUNDLE }, value: 1, unit: 'molecule' });
   assert.equal(bare.ok, false);

@@ -33,6 +33,12 @@
 //   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--no-commitment] [--brief] [--report 파일.md] [--numerics h] [--engine rust|js] [--workers n]
 //                                                           세포 운명 (v9) + 과정 분석 보고서: 요약 · 변곡점·시계열·구간 · 무결성 증명서(원장·재생·신호·결정론·출처) · 인과 추적 · 부록
 //                                                           (무결성 FAIL 이면 종료 코드 1; --brief 는 짧은 요약)
+//   node dbtool.mjs fate      <세포 상태> --scenario s.json --ensemble N   (시나리오 stochastic { seed } 필요, 4단계 ④·⑤)
+//                                                           확률 앙상블: 운명 비율(Wilson 구간)·도달 시각 분포·표지 퍼짐(Fano) · 궤적마다 원장 감사 · seed 재현 · 결정론 대비
+//                                                           (결함 ENGINE_DEFECT 나 재현 실패면 종료 코드 1)
+//   node dbtool.mjs observe   <O…|관찰.json> --state <세포 상태> --scenario A.json [--scenario-b B.json] [--n 50]
+//                                                           관찰 판정 (4단계 ②): 계약·관문 검사 → 예측(결정론 또는 앙상블) ⊛ 측정 잡음 ↔ 관찰
+//                                                           → CONSISTENT | CONFLICT | INDISTINGUISHABLE(Observation_Gap 후보 + 필요 정밀도). 쓰지 않는다
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
 //                                                           경로의 단계를 규칙대로 발화시켜 목표 도달·유도 경로 확인 (도달 못 하거나 유도 안 되면 종료 코드 1)
 //
@@ -340,6 +346,24 @@ switch (cmd) {
     if (flags.t) scenario.t_end = +flags.t * 3600;
     const opt = { scenario, commitment: flags['no-commitment'] ? false : undefined, engine: flags.engine && flags.engine !== true ? flags.engine : 'rust', workers: flags.workers != null && flags.workers !== true ? +flags.workers : undefined };
     if (flags.brief) { const r = ORCH.fateBrief(db, x.id, opt); console.log(r.text); console.log(J.refineText(db).text); process.exit(r.code); }
+    if (flags.ensemble) { // 4단계 ④·⑤: 확률 앙상블 — 실행은 조정자(행정부), 판정은 사법부(stoch_audit)
+      const SA = req('./judicial/stoch_audit.js'), n = +flags.ensemble;
+      if (!scenario.stochastic) die('--ensemble 에는 시나리오 stochastic { seed } 가 필요함 (seed 는 실행 전에 — 입력 해시)');
+      const raws = ORCH.runEnsemble(db, x.id, scenario, n, { engine: opt.engine, commitment: false });
+      if (raws.error) die(raws.error);
+      const audits = raws.map((r) => SA.auditTrajectory(db, r, { scenario })), bad = audits.flatMap((a, i) => (a.error ? [{ i, msg: a.error }] : a.audit.filter((z) => z.fault === 'ENGINE_DEFECT' || z.fault === 'COMPILER_DEFECT').map((z) => ({ i, msg: `[${z.code}] ${z.where}: ${z.msg}` }))));
+      const rep0 = SA.reproducible(raws[0], ORCH.runEnsemble(db, x.id, scenario, 1, { engine: opt.engine, commitment: false })[0]);
+      const { stochastic, ...detSc } = scenario, det = FATE.simulateFate(db, x.id, { scenario: detSc, engine: opt.engine, commitment: false });
+      const sum = SA.ensembleSummary(raws), L = (s) => { const t = db.terms[(db.senses[s] || {}).term]; return t ? `${s} ${t.names.ko}` : s; };
+      console.log(`# 앙상블 판정 — ${scenario.name || flags.scenario} (seed ${stochastic.seed}, ${n} 궤적, ${opt.engine})`, '');
+      console.log(SA.ensembleText(sum).replace(/\| (D\d{6}) \|/g, (m0, s) => `| ${L(s)} |`), '');
+      console.log('| 무결성 | 결과 |', '|---|---|');
+      console.log(`| 궤적별 원장·재생·음수·발화 정수 (사법부) | ${bad.length ? `**FAIL** ${bad.length}건 — ${bad.slice(0, 3).map((b) => `궤적 ${b.i}: ${b.msg}`).join(' · ')}` : `PASS (${n}/${n})`} |`);
+      console.log(`| seed 재현 (궤적 0 다시) | ${rep0.ok ? 'PASS' : '**FAIL**'} (${rep0.a.slice(0, 12)}) |`);
+      console.log(`| 결정론 대비 | 결정론 끝 상태 ${det.final.state ? L(det.final.state) : '없음'}${Object.entries(det.firstReach).filter(([s]) => s !== det.source).map(([s, t]) => ` · 도달 ${L(s)} ${(t / 3600).toFixed(2)} h`).join('')} |`);
+      console.log(`| 상수 | ${scenario.hypothetical ? '**가상 값** — 분포는 기전이 그 값에서 어떻게 흔들리는지를 말할 뿐 실제 세포의 비율을 예측하지 않는다' : '데이터·시나리오 값'} |`);
+      process.exit(bad.length || !rep0.ok ? 1 : 0);
+    }
     const r = ORCH.runFate(db, x.id, opt); // 행정부 원자료 → 사법부 판결된 보기
     if (r.error) die(r.error);
     // 결정론: 같은 입력으로 본 실행을 다시 (결정 탐침 없이 — 본 실행 궤적은 탐침과 무관) — 해시는 사법부가 계산
@@ -347,7 +371,7 @@ switch (cmd) {
     // 수치 확인: 처음 h 시간을 수렴 기준(같은 적분기, 허용 오차 1/1000 — 조정자 refScenario)과 비교
     const nh = flags.numerics != null && flags.numerics !== true ? +flags.numerics : 1;
     let numerics = null;
-    if (nh > 0) {
+    if (nh > 0 && !scenario.stochastic) { // 확률 실행은 수렴 기준과 경로가 달라 L2 가 의미 없음 — 결정론 극한·방식 비교는 앙상블 판정(stoch_audit)
       const s2 = { ...JSON.parse(scenarioText), t_end: Math.min(r.t_end, nh * 3600) }, t0 = Date.now();
       const ref = FATE.simulateFate(db, x.id, { scenario: ORCH.refScenario(s2), commitment: false, engine: opt.engine }), refMs = Date.now() - t0;
       numerics = { hours: s2.t_end / 3600, l2: FA.markerL2(r, ref), refMs };
@@ -359,12 +383,32 @@ switch (cmd) {
     if (flags.report && flags.report !== true) { CLERK.writeReport(flags.report, md); console.log('보고서 (입법 서기): ' + flags.report); }
     process.exit(rep.pass ? 0 : 1);
   }
+  case 'observe': { // 관찰 포트 (4단계 ②): 판정만 — 관찰을 데이터베이스에 넣는 것은 패치(observations)·관문·서기
+    const db = loadDB(), K = req('./judicial/contract.js'), OC = req('./judicial/obs_compare.js');
+    if (!args[0] || !flags.state || !flags.scenario) die('사용법: observe <O…|관찰.json> --state <세포 상태> --scenario A.json [--scenario-b B.json] [--n 50]');
+    let o;
+    if (/^O\d{6}$/.test(args[0])) { o = db.observations[args[0]]; if (!o) die(`관찰 기록 ${args[0]} 없음`); }
+    else {
+      const rawO = readJSON(args[0]), shape = K.checkObservation(rawO);
+      if (!shape.ok) die('관찰 계약 위반 (schemas/obs/observation.schema.json):\n' + shape.violations.map((v) => `  ${v.path}: ${v.msg}`).join('\n'));
+      o = DefDB.normalize({ ...db, observations: { O999999: rawO } }).observations.O999999;
+      const E = [], ix = DefDB.index(db); J.validateObservation(db, ix, 'O999999', o, (w, msg) => E.push(msg), () => {});
+      const real = E.filter((m) => !/합성\(hypothetical\)/.test(m));
+      if (real.length) die('관찰 의미 검사 실패:\n' + real.map((m) => '  ' + m).join('\n'));
+      if (o.hypothetical) console.log('※ 합성(hypothetical) 관찰 — 판정 시험용. 데이터베이스에는 넣을 수 없다.\n');
+    }
+    const x = DefDB.resolveRef(DefDB.index(db), flags.state); if (x.error) die(x.error);
+    const scA = readJSON(flags.scenario), scB = flags['scenario-b'] && flags['scenario-b'] !== true ? readJSON(flags['scenario-b']) : null;
+    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined });
+    console.log(OC.verdictText(v));
+    process.exit(v.error ? 1 : 0);
+  }
   case 'prompt': {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | compare | augment | attest | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====
