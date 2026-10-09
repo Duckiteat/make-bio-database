@@ -343,8 +343,9 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 | 필드 | 위치 | 규칙 |
 |---|---|---|
 | kind `cell_state` | 정의항 | 분자가 아닌 상태 — 규칙·부위·부분 구조·구성 요소·층 없음. `signature` 필수. 외부 ID 는 `CL`(Cell Ontology, `CL:0000000`)만 |
-| `signature: [{ ref, level, location }]` | cell_state | 표지 분자(분자 종류) · 수준 `high | low`(`signatureLevels`) · 부피(3D) 위치. 같은 묶음 두 번 금지. 문턱 값(분자 수)은 시나리오 `thresholds[묶음] = { high, low }` |
+| `signature: [{ ref, level, location }]` | cell_state | 표지 분자(분자 종류) · 수준 `high | low`(`signatureLevels`) · 위치 — 수용성 분자는 부피(3D), 막 분자는 그 분자가 박힌 막(2D, 예: 세포 표면 펩타이드–MHC). 같은 묶음 두 번 금지. 문턱 값(분자 수)은 시나리오 `thresholds[묶음] = { high, low }` |
 | `metabolome: [{ ref: "D…/rule/키", level }]` | cell_state | 그 상태의 대사 프로그램 — 공급 규칙(supply)만. 수준은 기록용(속도는 조절 규칙과 시나리오가 정함) |
+| `mechanisms: [{ ref }]` | cell_state | 그 상태에서 돌아가는 기전 경로(kind `pathway`) — 그 경로에 속한 단계(S 의 `part_of`)가 운명 엔진의 반응 규칙이 된다. 단계가 없는 경로는 거부 |
 | `transitions: [{ to, signals, commitment: { criterion }, text, evidence }]` | cell_state | `to` 는 cell_state, `signals` 는 분자 종류(하나 이상), `criterion` = `withdrawal`(신호 철회 시험 — 비가역 결정) \| `threshold`(표지 문턱 도달) (`commitmentCriteria`) |
 | 규칙 `type: modulation` | 분자 종류 정의항 (조절자) | `{ target: "D…/rule/키", effect: activates | inhibits, at: 3D 위치, via: [D…], kinetics: { law: hill, K, n, fmax | fmin } }`. 대상은 supply · transition · degradation, 자기 자신 금지. 조절자 묶음 = `소유자|at`, 배율: 활성화 f = 1 + (fmax − 1)·sⁿ/(Kⁿ + sⁿ) (fmax > 1), 억제 f = fmin + (1 − fmin)·Kⁿ/(Kⁿ + sⁿ) (0 ≤ fmin < 1). 여러 조절은 곱한다. `via` 는 생략한 매개 분자(출처) |
 | 속도 법칙 `hill` | kinetics | 조절 규칙에만, 조절 규칙은 hill 만. `K`(M) > 0, `n` > 0. 활성화에 fmin, 억제에 fmax 를 두지 않음 |
@@ -456,10 +457,25 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 형식을 바꿀 때는 `migrations/NNN-설명.mjs` 를 추가하고, 그 스크립트로 저장소를 변환한 뒤 아래 변경 기록에 적는다.
 - `data/patches/` 의 옛 기록은 당시 형식·ID 로 적혀 있다. 옛 ID ↔ 새 번호 대응은 `migrations/002-id-map.json`.
 
+## 8I. 기전 프로그램과 시나리오 맥락 — MHC 실험 (형식 v10 확장)
+
+세포 상태가 표지의 근거를 가지려면 그 표지를 만드는 기전이 같은 계 안에서 돌아야 한다. `mechanisms` 로 경로를 걸면 그 경로의 단계(S)가 결합 적분(Rodas3) IR 의 반응이 된다 — 예전에는 공급·분해 규칙만 들어갔다.
+
+| 항목 | 규칙 |
+|---|---|
+| 단계의 속도 법칙 | `mass_action`(차수대로) · `binding`(정·역 두 채널로 낮춤 — 확률 층의 성향이 음수가 되지 않게) · `michaelis_menten`(행위자 농도 × 포화). 그 밖의 법칙이나 전이 상태 이론 항(`k0`·`dG0`·`env`)이 있으면 단계를 끄고 `step_law_unsupported` 로 보고한다 |
+| 반응 부피 | 참여자(minor 제외) 중 첫 부피(3D) 위치. 그것이 없으면(소포 수송·막 안 조립) 시나리오 `volumes[막]` 을 그 막의 유효 부피로 쓴다. `simulateRate` 는 같은 단계를 '즉시'로 다루므로 두 경로의 궤적을 서로의 수렴 기준으로 쓰지 않는다 (한계 L000081) |
+| 화학량 | 단계의 입력·출력 그대로(minor 포함). 사법부 독립 검증기는 엔진이 적은 번호를 믿지 않고 `db.steps` 에서 다시 센다 |
+| 부위 조건이 있는 분해 | 분해 규칙의 `when`(부위:특징)이 묶음의 특징과 맞을 때만 계에 들어간다 (예: CLIP 이 잘린 불변 사슬만 분해) |
+| 막 공급 규칙 | 공급 위치가 막(2D)이면 모든 생성·소비 분자가 그 막에 박힌 분자여야 한다 (동시 번역 막 삽입) |
+| 막 이동 경로 `membrane.route` | 막 단백질이 분비·섭취 경로에서 거쳐 가는 다른 막들. 묶음·표지의 위치 검사가 이 목록도 허용한다 |
+| 시나리오 `context { role, state, note }` | 이 실행이 무엇을 보이려는 것인지 선언한다 — `cause`(그 상태에 이르는 원인: 전이 신호가 켜져 있고 그 상태에 도달) · `requirement`(필수성: 같은 신호에서 무엇을 끊으면 도달하지 못함) · `baseline`(일반 상황: 시작 상태, 구동된 전이 없음). 입력 해시에 들어가고, 사법부가 선언과 실행의 일관성을 판정한다 — 어긋나면 무결성 증명서 FAIL |
+
 ## 변경 기록
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-09 | 10 (확장) | 기전 프로그램: cell_state `mechanisms`(경로 → 그 경로의 단계가 결합 적분 IR 의 반응), 단계 속도 법칙 세 가지(질량 작용·가역 결합 정·역·미카엘리스–멘텐), 막에서만 일어나는 단계의 유효 부피 규약, 부위 조건이 있는 분해 규칙, 막(2D) 공급 규칙, 표지의 막 위치 허용, `membrane.route`(분비·섭취 경로의 막), 시나리오 `context { role: cause \| requirement \| baseline, state, note }` 와 사법부 맥락 판정, 어휘 세포 `dendritic_cell`. 데이터: MHC I·II 항원 처리·제시(정의항 27·단계 18·수지상 세포 상태 2·한계 9) — 모든 속도 상수는 가상 시나리오 값 (§8I) |
 | 2026-10-09 | 10 | 관찰 기록: 최상위 `observations`(O…, 측정량·SI 값·불확도·반복 수·조건·보정·출처·용도), `meta.next.O`, `kinetics.from`·`kinetics.lumped`(실측 상수 = 관찰의 파생값), 한계 종류 `Observation_Gap`, 어휘 observables·kineticUnits·uncertaintyKinds·noiseModels·calibrationKinds·obsUses, 계약 `schemas/obs/observation.schema.json`, 관찰 연산자 `compiler/obs_operator.js`. 관찰 기록은 바뀌지 않음(철회 표시만), 추정용과 검증용 관찰 분리. 데이터: 관찰 0건(실측값 없음 — 지어내지 않음), 규칙 kinetics 0건이라 이행할 상수 없음 (`migrations/009-v9-to-v10-observations.mjs`, 무손실) |
 | 2026-10-09 | 9 (확장 4) | 삼권 분립: `model.js`(공유 헌법 층) · `core.js`(행정 — 원자료만) · `judicial/`(검증·증명) · `legislative/`(병합·초안, 쓰기는 서기 `clerk.mjs` 만). xref·지문의 `status: verified` 는 증명 등록부 `attestations/registry.json` 의 유효한 도장이 있어야 통과(새 검사 규칙). `simulateRate` 결과에서 `audit`·`postMortem` 이 빠지고 원자료(`facts`·`kinUsed`·`firstFire`·기록점 원장)가 들어감 — 판정은 `judicial.auditRate`. 운명 엔진 결과에서 `audit`·`postMortem`·`arrest`·`mass.worst/series` 가 빠지고 `process.lo`·`process.cumDD` 가 들어감 — 판정은 `judicial/fate_audit.js`. 수치 결합점 등록부 `engine/coupling.js`. db.json 형식 변화 없음(지금 verified 0 건 — 마이그레이션 불필요). |
 | 2026-10-09 | 9 (확장 3) | 과정 분석 보고서: 운명 엔진이 매 단계 저장소 재생 편차·부분 구조 원장 편차·신호·규칙 누적 진행량·궤적 해시를 기록, `engine/process_report.js`, 시나리오 `expect`·`report.ratios`. 형식 버전 그대로 |

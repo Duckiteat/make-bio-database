@@ -33,6 +33,15 @@ function stoichFromDB(db, ix, info) {
     if (r.where && r.where.length && !r.where.includes(b.split('|').pop())) return { error: `분해 위치 ${b.split('|').pop()} 가 규칙 where 밖` };
     return { kind: 'degradation', lost: true, cons: [[b, 1]], prods: [] };
   }
+  // 기전 단계 (MHC 실험): 화학량은 그 단계(S…)의 입력·출력 — 엔진이 적은 번호를 믿지 않고 db.steps 에서 다시 센다. 가역 결합의 역방향은 입력·출력을 뒤집는다
+  if (r.type === 'transition' && info.step) {
+    const st = db.steps[info.step];
+    if (!st) return { error: `단계 ${info.step} 가 데이터베이스에 없음` };
+    if (st.rule !== info.ref) return { error: `단계 ${info.step} 는 규칙 ${st.rule} 을 쓰는데 엔진은 ${info.ref} 라고 함` };
+    const sum = (list) => { const m = new Map(); for (const p of list) m.set(p.b, (m.get(p.b) || 0) + (p.n || 1)); return [...m]; };
+    const ins = sum(st.inputs), outs = sum(st.outputs);
+    return info.dir === 'r' ? { kind: 'step', cons: outs, prods: ins } : { kind: 'step', cons: ins, prods: outs };
+  }
   return { error: `공급·분해 규칙이 아님 (${r.type})` };
 }
 const sameStoich = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());

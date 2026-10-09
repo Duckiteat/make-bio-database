@@ -188,6 +188,7 @@
         d.membrane.association = voc('associations', d.membrane.association, id);
         if (d.membrane.location) d.membrane.location = voc('locations', d.membrane.location, id);
         if (d.membrane.side) d.membrane.side = voc('faces', d.membrane.side, id);
+        if (d.membrane.route) d.membrane.route = d.membrane.route.map((l) => voc('locations', l, id));
       }
       for (const c of d.components) c.ref = ref(c.ref, `${id} 구성 요소`);
       for (const m of d.moieties || []) m.ref = ref(m.ref, `${id} 부분 구조`);
@@ -250,6 +251,7 @@
       }
       for (const m of d.signature || []) { m.ref = ref(m.ref, `${id} 표지`); m.level = voc('signatureLevels', m.level, id); if (m.location) m.location = voc('locations', m.location, id); }
       for (const m of d.metabolome || []) m.level = voc('signatureLevels', m.level, id);
+      for (const m of d.mechanisms || []) m.ref = ref(m.ref, `${id} 기전 프로그램`);
       for (const t of d.transitions || []) { t.to = ref(t.to, `${id} 전이 대상`); t.signals = t.signals.map((x) => ref(x, `${id} 신호`)); t.commitment.criterion = voc('commitmentCriteria', t.commitment.criterion, id); t.evidence.level = voc('evidenceLevels', t.evidence.level, id); }
       d.obs.forEach((b, i) => {
         const w = `${id}/obs/${i + 1}`;

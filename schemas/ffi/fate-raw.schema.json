@@ -101,7 +101,8 @@
           "kind": {
             "enum": [
               "supply",
-              "degradation"
+              "degradation",
+              "step"
             ]
           },
           "layer": {
@@ -149,6 +150,16 @@
                 }
               }
             }
+          },
+          "step": {
+            "type": "string",
+            "pattern": "^S\\d{6}$"
+          },
+          "dir": {
+            "enum": [
+              "f",
+              "r"
+            ]
           }
         }
       }
@@ -686,7 +697,8 @@
               "kind": {
                 "enum": [
                   "supply",
-                  "degradation"
+                  "degradation",
+                  "step"
                 ]
               },
               "layer": {
@@ -742,6 +754,16 @@
                     }
                   }
                 }
+              },
+              "step": {
+                "type": "string",
+                "pattern": "^S\\d{6}$"
+              },
+              "dir": {
+                "enum": [
+                  "f",
+                  "r"
+                ]
               }
             }
           }

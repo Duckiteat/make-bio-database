@@ -1020,12 +1020,14 @@ test('v9 조절 규칙: 대상은 속도가 있는 규칙, 조절자 위치는 3
   rejectedFor(withRules(IL12D, (r) => { r[0].via = ['없는분자']; }), /없는분자/);
   passes(withRules(IL12D, (r) => { r[0].kinetics = hillK({ fmax: 5 }); r[2].kinetics = hillK({ fmin: 0.5 }); }));
 });
-test('v9 세포 상태: 서명 필수(분자·수준·3D 위치), 대사 프로그램은 공급 규칙, 전이는 cell_state·신호·결정 기준, 다른 kind 는 못 씀', () => {
-  const cs = (f) => { const d = JSON.parse(JSON.stringify(BASE.senses[ACTD])); f(d); return { senses: [{ id: ACTD, signature: d.signature, metabolome: d.metabolome, transitions: d.transitions }] }; };
+test('v9 세포 상태: 서명 필수(분자·수준·위치 — 수용성은 3D, 막 분자는 그 막), 대사 프로그램은 공급 규칙, 전이는 cell_state·신호·결정 기준, 다른 kind 는 못 씀', () => {
+  const cs = (f) => { const d = JSON.parse(JSON.stringify(BASE.senses[ACTD])); f(d); return { senses: [{ id: ACTD, signature: d.signature, metabolome: d.metabolome, transitions: d.transitions, ...(d.mechanisms ? { mechanisms: d.mechanisms } : {}) }] }; };
   rejectedFor(cs((d) => { d.signature = []; }), /표지 서명\(signature\)이 필요함/);
   rejectedFor(cs((d) => { d.signature[0].ref = id('해당과정'); }), /분자 종류가 아님/);
   rejectedFor(cs((d) => { d.signature[0].level = 'medium'; }), /수준 'medium'/);
-  rejectedFor(cs((d) => { d.signature[0].location = 'plasma_membrane'; }), /부피\(3D\) 위치/);
+  rejectedFor(cs((d) => { d.signature[0].location = 'plasma_membrane'; }), /막 'plasma_membrane' 에 있을 수 없음/);
+  rejectedFor(cs((d) => { d.signature[0].location = 'nowhere'; }), /위치 어휘에 없음/);
+  rejectedFor(cs((d) => { d.mechanisms = [{ ref: TBETD }]; }), /경로\(pathway\)가 아님/);
   rejectedFor(cs((d) => { d.metabolome[0].ref = `${TBETD}/rule/turnover`; }), /대사 프로그램은 공급 규칙\(supply\)만/);
   rejectedFor(cs((d) => { d.transitions[0].to = TBETD; }), /cell_state 가 아님/);
   rejectedFor(cs((d) => { d.transitions[0].signals = []; }), /신호\(signals\)가 없음/);

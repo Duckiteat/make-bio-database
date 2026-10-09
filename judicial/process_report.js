@@ -6,6 +6,7 @@
 // 이 파일은 생물 이름을 모른다: 번호·묶음·숫자만 다루고 이름은 데이터베이스 색인(ix.label)으로 표시만 한다.
 'use strict';
 const crypto = require('crypto');
+const FA = require('./fate_audit.js');
 
 const sha = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(x)).digest('hex');
 const h = (s) => (s == null ? '—' : `${(s / 3600).toFixed(2)} h`);
@@ -83,7 +84,7 @@ function processReport(r, ctx) {
     let driver = null;
     {
       const fa0 = P.factorsAt(t0 === 0 ? N0 : series[j0]), fa1 = P.factorsAt(series[j1]), fam = P.factorsAt(series[mid]), all = [];
-      P.ruleInfo.forEach((R, k) => { if (R.layer !== 'slow' || R.kind !== 'supply') return; const tgt = (R.prods[0] || [])[0]; R.mods.forEach((m, q) => all.push({ m, tgt, d: Math.log(fa1[k][q]) - Math.log(fa0[k][q]), mean: Math.log(fam[k][q]), f0: fa0[k][q], f1: fa1[k][q] })); });
+      P.ruleInfo.forEach((R, k) => { if (R.layer !== 'slow' || (R.kind !== 'supply' && R.kind !== 'step')) return; const tgt = (R.prods[0] || [])[0]; R.mods.forEach((m, q) => all.push({ m, tgt, d: Math.log(fa1[k][q]) - Math.log(fa0[k][q]), mean: Math.log(fam[k][q]), f0: fa0[k][q], f1: fa1[k][q] })); });
       const ch = [...all].sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0], su = [...all].sort((a, b) => Math.abs(b.mean) - Math.abs(a.mean))[0];
       driver = ch && Math.abs(ch.d) >= 0.05 ? { kind: '변화', ...ch } : su ? { kind: '유지', ...su } : null;
     }
@@ -117,6 +118,10 @@ function processReport(r, ctx) {
   const nData = P.ruleInfo.filter((R) => R.src === 'data').length + P.ruleInfo.reduce((t, R) => t + R.mods.filter((m) => !(sc.kinetics || {})[m.ref] && (r.ix.ruleOf(m.ref) || {}).kinetics).length, 0);
   chk('매개변수 출처 — 쓰인 상수가 모두 해시된 입력(데이터·시나리오)의 값 그대로', kinOK, `시나리오 ${nScen} · 데이터 ${nData}${sc.hypothetical ? ' · 시나리오는 hypothetical (가상 값)' : ''}`);
   chk('엔진 감사에 AUDIT_MASS 없음', !r.audit.some((a) => a.code === 'AUDIT_MASS'), r.audit.filter((a) => a.code === 'AUDIT_MASS').map((a) => a.msg).join(' / ') || '없음');
+  // 시나리오 맥락 (원인 | 일반 상황) — 선언이 실행과 맞지 않으면 보고서의 해석이 거짓이 되므로 FAIL
+  const cx = FA.contextVerdict(r, sc);
+  const ROLE = { cause: '원인', requirement: '필수성', baseline: '일반 상황' };
+  if (cx.declared) chk(`시나리오 맥락 선언 — ${ROLE[cx.role] || cx.role} (${L(cx.state)})`, cx.consistent, cx.consistent ? (cx.role === 'baseline' ? '시작 상태 · 구동된 전이 없음' : '목표 상태로 가는 전이의 신호가 켜져 있음') : cx.problems.join(' · '));
   const pass = checks.every((c) => c.ok !== false);
   // ===== 예측과의 차이 =====
   const expect = sc.expect || {}, disc = [];
@@ -125,6 +130,8 @@ function processReport(r, ctx) {
   if (predicted !== undefined && (r.final.state || null) !== (predicted || null)) disc.push(`최종 상태: 예측 ${predicted ? L(predicted) : '미결정/정지'} ≠ 관찰 ${r.final.state ? L(r.final.state) : '미결정'}`);
   if (expect.limiting && (!r.postMortem || !r.postMortem.resource || r.postMortem.resource.bundle !== expect.limiting)) disc.push(`제한 저장소: 예측 ${BL(expect.limiting)} ≠ 관찰 ${r.postMortem && r.postMortem.resource ? BL(r.postMortem.resource.bundle) : '없음'}`);
   if (expect.commit_before_h != null) for (const c of r.commitment.filter((x) => x.driven && x.to === predicted)) if (!(c.t != null && c.t <= expect.commit_before_h * 3600)) disc.push(`결정 시점: 예측 ≤ ${expect.commit_before_h} h ≠ 관찰 ${h(c.t)}`);
+  if (cx.declared && cx.consistent && !cx.outcome) disc.push(cx.role === 'cause' ? `맥락(원인): ${L(cx.state)} 에 도달하지 못함 — 이 실행은 원인을 보이지 못함`
+    : cx.role === 'requirement' ? `맥락(필수성): ${L(cx.state)} 에 도달함 — 끊은 것이 필수가 아님` : `맥락(일반 상황): ${L(cx.state)} 에 머물지 못함`);
   for (const c of r.commitment) if (c.monotone === false) disc.push(`${L(c.to)} 결정 탐침이 격자에서 단조가 아님 (결정 뒤 되돌아감)`);
   // ===== 인과 추적 =====
   const trace = [];
@@ -139,7 +146,7 @@ function processReport(r, ctx) {
   } else if (predicted && r.final.state === predicted) {
     // 성공 사슬: 목표의 높은 표지 → 합성 조절 중 0 → 도달 사이 ln 배율이 가장 크게 오른 것 → 그것이 대사물이면 그것을 만드는 빠른 규칙의 조절(신호)
     for (const b of highOf(predicted)) {
-      const syn = P.ruleInfo.findIndex((R) => R.layer === 'slow' && R.kind === 'supply' && R.prods.some(([pb]) => pb === b)); if (syn < 0) continue;
+      const syn = P.ruleInfo.findIndex((R) => R.layer === 'slow' && (R.kind === 'supply' || R.kind === 'step') && R.prods.some(([pb]) => pb === b)); if (syn < 0) continue;
       const f0 = P.factorsAt(N0)[syn], f1 = P.factorsAt(series[jE])[syn];
       trace.push(`${BL(b)}: ${fmt(N0[at.get(b)])} (신호 전) → ${fmt(val(jE, b))} (${h(tEnd)}) — 합성 배율 Π ${fmt(f0.reduce((a, x) => a * x, 1))} → ${fmt(f1.reduce((a, x) => a * x, 1))}`);
       P.ruleInfo[syn].mods.map((m, q) => ({ m, d: Math.log(f1[q] / f0[q]), f0: f0[q], f1: f1[q] })).sort((a, z) => Math.abs(z.d) - Math.abs(a.d)).forEach((x) => {
@@ -154,7 +161,7 @@ function processReport(r, ctx) {
     }
     for (const c of r.commitment.filter((x) => x.to === predicted && x.t != null)) trace.push(`결정 ${h(c.t)}: 그 뒤로는 신호를 끊어도 자기 활성화·대사 유지 고리가 상태를 붙든다 (철회 탐침 ${c.grid ? c.grid.length : 0} 격자 + 이분)`);
   } else trace.push('목표 상태가 정해지지 않음 (구동된 전이가 없음) — 인과 추적 생략');
-  return { r, infl, phases, checks, pass, disc, trace, ratios, inputs: { db: ctx.dbText ? sha(ctx.dbText) : null, scenario: ctx.scenarioText ? sha(ctx.scenarioText) : sha(sc) }, ctx, idxAt, highOf, val, vel, BL, L };
+  return { r, cx, infl, phases, checks, pass, disc, trace, ratios, inputs: { db: ctx.dbText ? sha(ctx.dbText) : null, scenario: ctx.scenarioText ? sha(ctx.scenarioText) : sha(sc) }, ctx, idxAt, highOf, val, vel, BL, L };
 }
 
 function processReportMarkdown(rep) {
@@ -165,6 +172,7 @@ function processReportMarkdown(rep) {
   out.push('## 1. 요약 (Executive Summary)', '', '| 항목 | 내용 |', '|---|---|');
   out.push(`| 시작 상태 · 후보 | ${L(r.source)} → ${r.states.filter((s) => s !== r.source).map(L).join(', ')} |`);
   out.push(`| 신호 (선언된 일정) | ${P.schedule.map((s) => `${BL(s.bundle)}: ${s.list.map((e) => `${h(e.t)} → ${fmt(e.n)}`).join(', ')}`).join(' · ') || '없음'} |`);
+  if (rep.cx.declared) out.push(`| 시나리오 맥락 | ${rep.cx.role === 'cause' ? `**원인** — 이 실행은 ${L(rep.cx.state)} 에 이르는 원인을 보이려는 것` : rep.cx.role === 'requirement' ? `**필수성** — 같은 신호에서 무엇을 끊으면 ${L(rep.cx.state)} 에 이르지 못하는지` : rep.cx.role === 'baseline' ? `**일반 상황** — ${L(rep.cx.state)} 의 신호 없는 정상 상태` : rep.cx.role}${rep.cx.note ? ` · ${rep.cx.note}` : ''}${rep.cx.consistent ? '' : ' · **선언이 실행과 맞지 않음 (§3)**'} |`);
   out.push(`| 결과 | **${outcome}** · 예측 ${rep.disc.length ? '과 다름 (§4)' : '과 일치'} |`);
   out.push(`| 결정 시점 | ${r.commitment.filter((c) => c.driven).map((c) => `${L(c.to)} ${h(c.t)}`).join(', ') || '—'} |`);
   out.push(`| 무결성 | **${rep.pass ? 'PASS' : 'FAIL'}** (${rep.checks.filter((c) => c.ok === true).length}/${rep.checks.length} 확인${rep.checks.some((c) => c.ok == null) ? `, 미실행 ${rep.checks.filter((c) => c.ok == null).length}` : ''}) |`);

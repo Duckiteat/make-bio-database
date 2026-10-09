@@ -45,12 +45,39 @@ function assemble(db, sourceId, sc) {
     if (!k) gaps.push(ref);
     rules.push({ ref, kind: 'supply', rule: r, loc, k, cons, prods, source: !!r.source });
   }
-  // 분해 규칙: 계 안 묶음마다 (위치·부위 조건)
+  // 기전 프로그램 (MHC 실험): 상태들의 mechanisms 경로에 속한 단계(part_of) → 반응 규칙. simulateRate 와 같은 법칙·같은 반응 부피 규약
+  //   반응 부피 Vr = 단계 참여자(행위자 → 입력 → 출력, minor 제외) 중 첫 3D 위치의 부피 — 막(2D) 참여자의 농도도 Vr 로 센다 (simulateRate 의 근사와 같음)
+  //   질량 작용 k·Π c(법칙 입력)^n·Π c(행위자) · 가역 결합 k_on·Π c(입력)^n 과 k_off·Π c(출력)^n 을 정·역 두 채널로 (확률 층의 성향 ≥ 0)
+  //   미카엘리스–멘텐 kcat·Π c(행위자)·S/(Km + S) (S = 첫 법칙 입력). 화학량은 minor 를 포함한 입력·출력. 법칙 상수 없는 단계는 꺼짐(Kinetic_Gap)
+  const mechs = new Set(states.flatMap((s) => (db.senses[s].mechanisms || []).map((m) => m.ref)));
+  const stepIds = mechs.size ? Object.keys(db.steps).filter((sid) => (db.steps[sid].part_of || []).some((p) => mechs.has(p))).sort() : [];
+  const volOf = (l) => { const v = (sc.volumes || {})[l]; return v && M.VOL[v.unit] ? v.value * M.VOL[v.unit] : 0; };
+  const agg = (list) => { const m = new Map(); for (const p of list) m.set(p.b, (m.get(p.b) || 0) + (p.n || 1)); return [...m].map(([b, n]) => ({ b, n })); };
+  for (const sid of stepIds) {
+    const st = db.steps[sid], ref = st.rule, r = ix.ruleOf(ref);
+    if (!r) { facts.push({ kind: 'step_rule_missing', ref, step: sid }); continue; }
+    const parts = [...st.agents, ...st.inputs, ...st.outputs].filter((p) => !p.minor);
+    // 반응 부피의 위치: 참여자 중 첫 3D 위치, 없으면(막에서만 일어나는 단계 — 소포 수송·막 안 조립) 첫 참여자의 막 — 그 막의 유효 부피는 시나리오 volumes 가 준다
+    const locs = parts.map((p) => p.b.split('|').pop());
+    const loc = locs.find((l) => V.locations[l] && V.locations[l].dim === '3D') || locs.find((l) => volOf(l) > 0) || locs[0] || null;
+    let k = kinOf(ref);
+    if (k && !['mass_action', 'binding', 'michaelis_menten'].includes(k.law)) { facts.push({ kind: 'step_law_unsupported', ref, step: sid, law: k.law }); k = null; }
+    if (k && k.law === 'mass_action' && (k.k0 > 0 || Number.isFinite(k.dG0) || k.env)) { facts.push({ kind: 'step_law_unsupported', ref, step: sid, law: 'mass_action(TST·ΔG°)' }); k = null; }
+    if (k && !(loc && volOf(loc) > 0)) { facts.push({ kind: 'step_volume_unknown', ref, step: sid, location: loc }); k = null; }
+    if (!k) gaps.push(ref);
+    const cons = agg(st.inputs), prods = agg(st.outputs), agents = st.agents.map((p) => p.b);
+    const lawIns = agg(st.inputs.filter((p) => !p.minor)), lawOuts = agg(st.outputs.filter((p) => !p.minor));
+    for (const b of [...cons, ...prods].map((q) => q.b).concat(agents)) bundles.add(b);
+    rules.push({ ref, step: sid, dir: 'f', kind: 'step', rule: r, loc, k, cons, prods, agents, lawIns, lawOuts });
+    if (k && k.law === 'binding') rules.push({ ref, step: sid, dir: 'r', kind: 'step', rule: r, loc, k, cons: prods, prods: cons, agents, lawIns: lawOuts, lawOuts: lawIns });
+  }
+  // 분해 규칙: 계 안 묶음마다 (위치·부위 조건 — 묶음의 부위:특징이 규칙의 when 과 맞아야 함)
   for (const b of [...bundles]) {
     const [base, loc] = [b.split('|')[0], b.split('|').pop()], d = db.senses[base];
     if (!d) continue;
+    const feats = new Map(M.parseBundle(b).features.map((f) => [f.site, f.feature]));
     for (const r of d.rule) {
-      if (r.type !== 'degradation' || Object.keys(r.when).length || (r.where && !r.where.includes(loc))) continue;
+      if (r.type !== 'degradation' || !Object.entries(r.when).every(([s2, f]) => feats.get(s2) === f) || (r.where && !r.where.includes(loc))) continue;
       const ref = `${base}/rule/${r.id}`, k = kinOf(ref);
       if (!k) gaps.push(ref);
       if (r.recycle_to.length) facts.push({ kind: 'recycle_ignored', ref });
@@ -162,12 +189,20 @@ function buildFateIR(db, sourceId, sc, params) {
     ref: R.ref, kind: R.kind, slow: !!R.slow, loc: R.loc, k: R.k, source: !!R.source, lost: !!R.lost, Vr: volL[R.loc] || 0, kdeg: R.kind === 'degradation' ? kdegOf(R.k) : 0,
     cons: R.cons.map((q) => ({ b: q.b, i: at.get(q.b), n: q.n, sat: !!q.sat })), prods: R.prods.map((q) => ({ b: q.b, i: at.get(q.b), n: q.n })),
     mods: R.mods.map((m) => ({ ref: m.ref, owner: m.owner, b: m.b, i: at.get(m.b), effect: m.rule.effect, k: m.k })),
+    ...(R.kind === 'step' ? { step: R.step, dir: R.dir, Vr: R.loc ? volL[R.loc] || 0 : 0, agents: R.agents.map((b) => at.get(b)), lawIns: R.lawIns.map((q) => ({ i: at.get(q.b), n: q.n })), lawOuts: R.lawOuts.map((q) => ({ i: at.get(q.b), n: q.n })) } : {}),
   }));
   // 속도식 rate_j(N; f) — 엔진 rate() 와 같은 법칙
   const rateExpr = (R) => {
     if (!R.k) return num(0);
     if (R.kind === 'degradation') return R.kdeg > 0 ? mul(num(R.kdeg), { op: 'cnt', i: R.cons[0].i }, { op: 'fac' }) : num(0);
     if (!R.Vr) return num(0);
+    if (R.kind === 'step') {
+      const cr = (i) => mul(num(1 / (M.NA * R.Vr)), { op: 'cnt', i }), K = R.k, scale = M.NA * R.Vr;
+      if (K.law === 'michaelis_menten') return mul(num(K.kcat * scale), { op: 'fac' }, ...R.agents.map(cr), ...(R.lawIns.length ? [{ op: 'sat', x: cr(R.lawIns[0].i), K: K.Km }] : []));
+      let kk = K.k;
+      if (K.law === 'binding') kk = R.dir === 'f' ? K.k_on || (K.k_off && K.Kd ? K.k_off / K.Kd : 0) : K.k_off || (K.k_on && K.Kd ? K.k_on * K.Kd : 0);
+      return mul(num(kk * scale), { op: 'fac' }, ...R.lawIns.map((q) => ({ op: 'pow', x: cr(q.i), n: q.n })), ...(K.law === 'mass_action' ? R.agents.map(cr) : []));
+    }
     if (R.k.law === 'zero_order') return mul(num(R.k.k * M.NA * R.Vr), { op: 'fac' });
     if (R.k.law === 'mass_action') return mul(num(R.k.k * M.NA * R.Vr), { op: 'fac' }, ...R.cons.map((q) => (q.sat ? { op: 'sat', x: { op: 'conc', i: q.i }, K: Ksat } : { op: 'pow', x: { op: 'conc', i: q.i }, n: q.n })));
     return num(0);

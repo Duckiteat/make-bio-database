@@ -773,6 +773,14 @@
       "interpret": "혼성 확률 층 — 출생–사멸 해석해(정확 SSA·τ-도약 영역, χ²·이산 AD), SSA 대 τ-도약 두 표본, 결정론 극한(Ω 1·4·16), 재현·정수 발화·원장, 결정론 경로(확률 원자료 없음·탐침), 구간 안 승격(폭주 방지)."
     },
     {
+      "path": "tests/mhc.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "MHC I·II 기전 시험 — 기전 프로그램(cell_state.mechanisms)의 단계가 결합 적분 IR 로 낮춰지는지(가역 결합은 정·역 두 채널), 사법부가 같은 법칙을 독립으로 다시 세우는지(≤ 1e-14), 원장·재생·맥락 선언·사건 시각 Δ 불변·JS = Rust·확률 재현·0 에서 시작하는 경계 — 8 검사."
+    },
+    {
       "path": "tests/rust_engine.test.mjs",
       "class": "verification",
       "format": "node:test",

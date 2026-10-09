@@ -64,7 +64,24 @@ function lawsFromDB(db, ir, sc) {
     if (!same(k, R.k)) problems.push(`${R.ref}: IR 속도 상수 ≠ db·시나리오`);
     if (r.type === 'supply') { const loc = r.where[0]; L.Vr = volL[loc] || 0; L.cons = r.consumes.map((q) => ({ i: at.get(`${q.ref}|${loc}`), n: q.n, sat: !!q.saturating })); if (L.cons.some((q) => q.i == null)) problems.push(`${R.ref}: 소비 묶음이 IR 에 없음`); }
     else if (r.type === 'degradation') { const b = R.cons[0] && R.cons[0].b; if (!b || b.split('|')[0] !== R.ref.split('/rule/')[0]) problems.push(`${R.ref}: 분해 대상 묶음이 소유자의 것이 아님`); L.i = at.get(b); L.kdeg = k ? (k.k > 0 ? k.k : k.half_life > 0 ? Math.LN2 / k.half_life : 0) : 0; }
-    else problems.push(`${R.ref}: 공급·분해 규칙이 아님`);
+    else if (R.kind === 'step') {
+      // 기전 단계 (MHC 실험): db 의 단계에서 반응 부피·법칙 입력·행위자·화학량을 다시 세움 (컴파일러 코드를 쓰지 않음)
+      const st = db.steps[R.step];
+      if (!st || st.rule !== R.ref) { problems.push(`${R.ref}: 단계 ${R.step} 가 이 규칙을 쓰지 않음`); return L; }
+      L.kind = 'step'; L.dir = R.dir;
+      const locs = [...st.agents, ...st.inputs, ...st.outputs].filter((p) => !p.minor).map((p) => p.b.split('|').pop());
+      // 반응 부피: 첫 3D 위치, 없으면(막에서만 일어나는 단계) 부피가 주어진 첫 막 — 컴파일러의 규약과 같아야 한다
+      const loc = locs.find((l) => M.VOCAB.locations[l] && M.VOCAB.locations[l].dim === '3D') || locs.find((l) => (volL[l] || 0) > 0) || locs[0];
+      L.Vr = loc ? volL[loc] || 0 : 0;
+      const sum = (list) => { const m = new Map(); for (const p of list) m.set(p.b, (m.get(p.b) || 0) + (p.n || 1)); return [...m].map(([b, n]) => ({ i: at.get(b), n, b })); };
+      const ins = sum(st.inputs), outs = sum(st.outputs), want = R.dir === 'r' ? [outs, ins] : [ins, outs];
+      const eq = (a, b) => a.length === b.length && a.every((q, j) => q.b === b[j].b && q.n === b[j].n);
+      if (!eq(want[0], R.cons) || !eq(want[1], R.prods)) problems.push(`${R.ref} (${R.step} ${R.dir}): IR 화학량 ≠ 단계의 입력·출력`);
+      const lawIn = sum(st.inputs.filter((p) => !p.minor)), lawOut = sum(st.outputs.filter((p) => !p.minor));
+      L.lawIns = R.dir === 'r' ? lawOut : lawIn; L.agents = st.agents.map((p) => at.get(p.b));
+      if (k && k.law === 'binding' && !['f', 'r'].includes(R.dir)) problems.push(`${R.ref}: 가역 결합의 방향 표시가 없음`);
+    }
+    else problems.push(`${R.ref}: 공급·분해·단계 규칙이 아님`);
     L.mods = (mods.get(R.ref) || []).map((m) => ({ i: at.get(`${m.owner}|${m.rule.at}`), effect: m.rule.effect, k: kinOf(m.ref) })).filter((m) => m.k);
     return L;
   });
@@ -76,6 +93,16 @@ function rateDual(L, N, f, sp, Ksat, seed) {
   if (!L.k) return D(0);
   if (L.kind === 'degradation') return L.kdeg > 0 ? dmul(D(L.kdeg * f), D(Math.max(0, N[L.i]), L.i === seed && N[L.i] > 0 ? 1 : 0)) : D(0);
   if (!L.Vr) return D(0);
+  if (L.kind === 'step') {
+    const cr = (i) => D(Math.max(0, N[i]) / (M.NA * L.Vr), i === seed && N[i] > 0 ? 1 / (M.NA * L.Vr) : 0), K = L.k;
+    let v;
+    if (K.law === 'michaelis_menten') { v = D(K.kcat * f * M.NA * L.Vr); for (const i of L.agents) v = dmul(v, cr(i)); if (L.lawIns.length) v = dmul(v, dsat(cr(L.lawIns[0].i), K.Km)); return v; }
+    const kk = K.law === 'binding' ? (L.dir === 'r' ? K.k_off || (K.k_on && K.Kd ? K.k_on * K.Kd : 0) : K.k_on || (K.k_off && K.Kd ? K.k_off / K.Kd : 0)) : K.k;
+    v = D(kk * f * M.NA * L.Vr);
+    for (const q of L.lawIns) v = dmul(v, dpowr(cr(q.i), q.n));
+    if (K.law === 'mass_action') for (const i of L.agents) v = dmul(v, cr(i));
+    return v;
+  }
   if (L.k.law === 'zero_order') return D(L.k.k * f * M.NA * L.Vr);
   if (L.k.law !== 'mass_action') return D(0);
   let v = D(L.k.k);

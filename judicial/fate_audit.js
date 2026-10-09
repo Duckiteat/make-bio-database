@@ -52,6 +52,9 @@ function judgeFate(db, r, ctx) {
   // ① 원자료 사실
   for (const f of r.facts) {
     if (f.kind === 'not_supply') AE('DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.ref, '공급 규칙이 아님 — 계에서 뺌');
+    else if (f.kind === 'step_rule_missing') AE('DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.step, `단계의 규칙 ${f.ref} 이 없음 — 계에서 뺌`);
+    else if (f.kind === 'step_law_unsupported') AE('DATA_GAP', 'AUDIT_KINETIC', f.step, `속도 법칙 ${f.law} 는 기전 단계의 결합 적분에서 아직 다루지 않음 — 단계를 끔`, J.gapSuggest(db, ix, f.ref, 'Kinetic_Gap'));
+    else if (f.kind === 'step_volume_unknown') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.step, `반응 부피(${f.location || '3D 참여자 없음'})를 몰라 단계를 끔`, J.gapSuggest(db, ix, f.ref, 'Concentration_Gap'));
     else if (f.kind === 'recycle_ignored') AE('DATA_GAP', 'AUDIT_SCHEMA', f.ref, '재활용 분해는 운명 층에서 아직 다루지 않음 — 소실로 처리');
     else if (f.kind === 'volume_unknown') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, `구획 ${f.location} 부피를 모름 — 농도 0 으로 계산`, J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
     else if (f.kind === 'threshold_missing') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, '표지 문턱(thresholds[묶음] = { high, low })이 없음 — 상태를 판정할 수 없음', J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
@@ -109,7 +112,7 @@ function postMortem(db, ix, r, c) {
   const fin = r.final.state, alt = fin && fin !== target && fin !== r.states[0] ? fin : null; // 시작 상태에 머문 것은 다른 운명이 아님 (정지)
   const out = { target, reached: false, final: fin, alternative: alt, failing: fails, drivers: [], cause: null, limiting: null, chain: [] };
   for (const f of fails.filter((x) => x.level === 'high')) {
-    const syn = rules.find((R) => R.layer === 'slow' && R.kind === 'supply' && R.prods.some((q) => q[0] === f.bundle));
+    const syn = rules.find((R) => R.layer === 'slow' && (R.kind === 'supply' || R.kind === 'step') && R.prods.some((q) => q[0] === f.bundle));
     if (!syn) continue;
     for (const m of syn.mods) {
       const s = concAt(N, at.get(m.bundle)), fac = M.hillFactor(m.effect, m.kin, s);
@@ -197,4 +200,29 @@ function fateText(r) {
   return { text: lines.join('\n'), code: r.audit.some((a) => a.code === 'AUDIT_MASS') ? 1 : 0 };
 }
 
-module.exports = { judgeFate, trajectoryHash, markerL2, postMortem, fateSuggest, fateText, distanceFns, concFns };
+// 시나리오 맥락 (MHC 실험): 이 실행이 어떤 상태에 이르는 원인(cause)을 보이는가, 그 상태의 일반 상황(baseline)을 보이는가.
+//   선언 일관성: cause — 대상 상태가 시작 상태에서 가는 전이의 목표이고, 그 전이의 신호가 일정에서 켜져 있어야 함
+//               requirement — 같은 조건(신호 켜짐)에서 무엇을 끊으면 그 상태에 이르지 못하는지 보이는 실행 (필수성)
+//               baseline — 대상 상태가 시작 상태이고, 어떤 전이도 구동되지 않아야 함
+//   결과: cause 는 대상 상태 도달, requirement 는 도달하지 못함, baseline 은 끝까지 그 상태에 머묾 — 예측과의 차이로만 보고
+function contextVerdict(r, sc) {
+  const c = (sc || {}).context;
+  if (!c) return { declared: false };
+  const role = c.role, state = c.state, out = { declared: true, role, state, note: c.note || null, problems: [] };
+  if (!['cause', 'requirement', 'baseline'].includes(role)) out.problems.push(`맥락 role '${role}' — cause | requirement | baseline`);
+  if (!r.states.includes(state)) out.problems.push(`맥락 상태 '${state}' 가 이 실행의 상태 집합에 없음`);
+  const driven = r.transitions.filter((t) => t.driven);
+  if (role === 'cause' || role === 'requirement') {
+    if (state === r.source) out.problems.push(`${role} 의 대상은 시작 상태가 아니라 전이의 목표여야 함`);
+    else if (!driven.some((t) => t.to === state)) out.problems.push(`'${state}' 로 가는 전이의 신호가 일정에서 켜지지 않음 — ${role === 'cause' ? '원인' : '필수성'}을 보이는 실행이 아님`);
+    out.outcome = role === 'cause' ? r.firstReach[state] != null : r.firstReach[state] == null;
+  } else if (role === 'baseline') {
+    if (state !== r.source) out.problems.push('baseline 의 대상은 시작 상태여야 함');
+    if (driven.length) out.problems.push(`전이 신호가 켜짐 (${driven.map((t) => t.to).join(', ')}) — 일반 상황이 아님`);
+    out.outcome = r.final.state === state && (r.trajectory || []).every((x) => x.cls.state === state || x.cls.state == null);
+  }
+  out.consistent = !out.problems.length;
+  return out;
+}
+
+module.exports = { contextVerdict, judgeFate, trajectoryHash, markerL2, postMortem, fateSuggest, fateText, distanceFns, concFns };

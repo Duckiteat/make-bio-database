@@ -41,7 +41,7 @@ function simulateFate(db, sourceId, opt) {
   const volL = {};
   for (const [l, v] of Object.entries(sc.volumes || {})) if (VOL[v.unit]) volL[l] = v.value * VOL[v.unit];
   const facts = A.facts.slice();
-  for (const b of A.bundles) { const l = b.split('|').pop(); if (!volL[l]) facts.push({ kind: 'volume_unknown', bundle: b, location: l }); }
+  for (const b of A.bundles) { const l = b.split('|').pop(); if (!volL[l] && !(V.locations[l] && V.locations[l].dim === '2D')) facts.push({ kind: 'volume_unknown', bundle: b, location: l }); } // 막(2D) 묶음은 부피가 없다 — 단계의 반응 부피로만 센다
   // 상태 벡터
   const keys = A.bundles, at = new Map(keys.map((b, i) => [b, i])), nB = keys.length;
   const N0 = new Float64Array(nB);
@@ -452,7 +452,7 @@ function simulateFate(db, sourceId, opt) {
   const target = (sc.target && sc.target) || (transitions.find((t) => t.driven) || {}).to || null;
   return {
     source: sourceId, states, scenario: sc.name || null, hypothetical: !!sc.hypothetical, dt, t_end: tEnd, keys, markers: [...markers.keys()], signals,
-    rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.effect, active: !!m.k })) })),
+    rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, ...(R.step ? { step: R.step, dir: R.dir } : {}), layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.effect, active: !!m.k })) })),
     final: { state: final.state, nearest: final.nearest || null, d: final.d, N: Object.fromEntries(keys.map((b, i) => [b, main.N[i]])) },
     trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target,
     integrator: main.integrator, // 본 실행의 단계 제어 기록 (받아들인·거부한 단계, 단계 크기 범위, Δ 당 단계 수)
@@ -464,7 +464,7 @@ function simulateFate(db, sourceId, opt) {
       lo: main.series.map((x) => x.lo), cumDD: main.series.map((x) => x.cumDD),
       times: main.series.map((x) => x.t), sig: main.series.map((x) => x.sig), cum: main.series.map((x) => x.cum),
       schedule: sched.map((x) => ({ bundle: keys[x.i], list: x.list })), signalIdx: sched.map((x) => x.i), thresholds: thr, N0: Float64Array.from(N0),
-      ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
+      ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, ...(R.step ? { step: R.step, dir: R.dir } : {}), layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
     },
     irHash: IR.hash, // 먹은 IR 의 해시 — 사법부가 조정자에게서 받은 IR 과 맞춘다
     // 확률 실행의 원자료 (4단계 ④): seed·궤적 번호·규칙별 발화 수(정수)·끝 방식·분할 전환·난수 소비 — 판정은 사법부

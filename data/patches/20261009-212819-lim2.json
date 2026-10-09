@@ -1,0 +1,126 @@
+{
+  "applied_at": "2026-10-09T21:28:19.381Z",
+  "result": {
+    "added": [
+      "L000081",
+      "L000082"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000081",
+          "L000082"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "MHC 기전을 두 적분 경로에서 돌려 보고 드러난 한계 두 개를 등록한다: (1) 막에서만 일어나는 단계의 반응 부피 규약이 두 경로에서 다르다 — 결합 적분(운명 엔진)은 시나리오가 준 막의 유효 부피로 속도를 정하고, 경로 시뮬레이션(simulateRate)은 3D 부피가 없어 '즉시'로 처리한다. 그래서 두 경로의 수치 결과를 서로의 수렴 기준으로 쓸 수 없다. (2) 확률 층에서 운명 결정 확률을 판정하지 못한다 — 확률 실행은 결정 탐침을 돌리지 않으므로 '요동 아래의 결정'은 앙상블 비율로만 말한다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000081",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000082",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000081",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000082",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 73
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "MHC 기전을 두 적분 경로에서 돌려 보고 드러난 한계 두 개를 등록한다: (1) 막에서만 일어나는 단계의 반응 부피 규약이 두 경로에서 다르다 — 결합 적분(운명 엔진)은 시나리오가 준 막의 유효 부피로 속도를 정하고, 경로 시뮬레이션(simulateRate)은 3D 부피가 없어 '즉시'로 처리한다. 그래서 두 경로의 수치 결과를 서로의 수렴 기준으로 쓸 수 없다. (2) 확률 층에서 운명 결정 확률을 판정하지 못한다 — 확률 실행은 결정 탐침을 돌리지 않으므로 '요동 아래의 결정'은 앙상블 비율로만 말한다.",
+  "terms": [],
+  "senses": [],
+  "steps": [],
+  "remove": [],
+  "limitations": [
+    {
+      "id": "L+mem_conv",
+      "target": "D000178",
+      "type": "Structural_Gap",
+      "found_in": "MHC I·II 기전 실험 (2026-10-09) — 같은 시나리오를 운명 엔진(결합 Rodas3)과 simulateRate 로 돌린 대조",
+      "requirement": {
+        "text": "막에서만 일어나는 단계(소포 수송·막 안 조립)의 반응 부피 규약이 두 적분 경로에서 다르다. 운명 엔진은 시나리오 volumes[막] 을 유효 부피로 써서 속도 법칙을 그대로 적용하고, simulateRate 는 3D 참여자가 없으면 속도 상수를 쓰지 않고 '즉시'로 처리한다(approx 표시). 그래서 MHC 경로에서 두 경로의 궤적을 서로의 수렴 기준(Δt → 0)으로 쓸 수 없고, 지금은 운명 엔진을 허용 오차 1/1000 의 같은 적분기와만 대조한다(상대 L2 2.8e-8). 막 표면 밀도(분자/µm²)와 2D 반응 속도 상수가 들어오면 두 경로를 같은 규약으로 맞출 수 있다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "막(2D) 묶음의 표면 밀도와 2D 속도 상수 단위(µm²·s⁻¹)를 형식에 넣고, simulateRate 와 운명 엔진이 같은 반응 부피·면적 규약을 쓰게 맞춤"
+          },
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D000116",
+            "cell": "dendritic_cell",
+            "location": "er_membrane"
+          }
+        ]
+      }
+    },
+    {
+      "id": "L+sto_commit",
+      "target": "D000202",
+      "type": "Observation_Gap",
+      "found_in": "MHC I·II 기전 실험 (2026-10-09) — 확률 앙상블 24 궤적 (표면 펩타이드–MHC II Fano 0.77)",
+      "requirement": {
+        "text": "확률 실행은 결정 탐침(신호 철회 시험)을 돌리지 않으므로 '요동 아래의 결정 시각'을 판정하지 못한다. 지금 말할 수 있는 것은 앙상블의 끝 상태 비율과 도달 시각 분포뿐이다(가상 상수에서 24/24 성숙, 도달 0.83 ± 0.01 h). 또 미성숙·성숙 수지상 세포의 표면 펩타이드–MHC II 문턱(low·high)을 실측으로 정하지 못해 상태 판정이 가상 문턱에 기댄다 — 세포당 표면 복합체 수를 재면 닫힌다.",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "D000201",
+            "cell": "dendritic_cell",
+            "location": "plasma_membrane"
+          },
+          {
+            "kind": "manual",
+            "text": "확률 실행의 결정 확률 판정(궤적마다 신호 철회 탐침을 돌려 결정 시각의 분포를 내는 방식)"
+          }
+        ]
+      }
+    }
+  ]
+}

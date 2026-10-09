@@ -282,12 +282,12 @@
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
-  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note', 'signature', 'metabolome', 'transitions', 'elements'];
+  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note', 'signature', 'metabolome', 'transitions', 'mechanisms', 'elements'];
   function normSense(d) {
     const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
     if (str(d.tier)) o.tier = str(d.tier);
     if (str(d.reference_species)) o.reference_species = str(d.reference_species);
-    if (isObj(d.membrane)) { o.membrane = { association: str(d.membrane.association) }; for (const k of ['location', 'side']) if (str(d.membrane[k])) o.membrane[k] = str(d.membrane[k]); }
+    if (isObj(d.membrane)) { o.membrane = { association: str(d.membrane.association) }; for (const k of ['location', 'side']) if (str(d.membrane[k])) o.membrane[k] = str(d.membrane[k]); if (arr(d.membrane.route).length) o.membrane.route = arr(d.membrane.route).map(str).filter(Boolean); }
     o.xrefs = arr(d.xrefs).map(parseXref).map((x) => (x.note ? x : { db: x.db, id: x.id, status: x.status }));
     if (str(d.unmapped)) o.unmapped = str(d.unmapped);
     if (isObj(d.fingerprint) && str(d.fingerprint.value)) o.fingerprint = { scheme: str(d.fingerprint.scheme), value: str(d.fingerprint.value), status: str(d.fingerprint.status) || 'asserted' };
@@ -308,6 +308,8 @@
     // 세포 상태 (v9): 표지 서명 · 대사 프로그램(공급 규칙과 그 수준) · 다른 상태로의 전이(신호·결정 기준)
     if (arr(d.signature).length) o.signature = arr(d.signature).filter(isObj).map((m) => ({ ref: str(m.ref), level: str(m.level), location: str(m.location) }));
     if (arr(d.metabolome).length) o.metabolome = arr(d.metabolome).filter(isObj).map((m) => ({ ref: str(m.ref), level: str(m.level) }));
+    // 기전 프로그램 (MHC 실험): 이 상태에서 돌아가는 경로(kind pathway)들 — 그 경로의 단계(S, part_of)가 운명 IR 의 반응이 된다
+    if (arr(d.mechanisms).length) o.mechanisms = arr(d.mechanisms).filter(isObj).map((m) => ({ ref: str(m.ref) }));
     if (arr(d.transitions).length) o.transitions = arr(d.transitions).filter(isObj).map((t) => {
       const x = { to: str(t.to), signals: arr(t.signals).map(str).filter(Boolean), commitment: { criterion: str(isObj(t.commitment) ? t.commitment.criterion : t.commitment) } };
       if (str(t.text)) x.text = str(t.text);

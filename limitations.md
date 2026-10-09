@@ -6,12 +6,12 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 19 | 0 | 19 |
-| Concentration_Gap | 8 | 0 | 8 |
-| Structural_Gap | 19 | 2 | 21 |
+| Kinetic_Gap | 21 | 0 | 21 |
+| Concentration_Gap | 9 | 0 | 9 |
+| Structural_Gap | 23 | 2 | 25 |
 | Resource_Gap | 6 | 0 | 6 |
-| Regulatory_Gap | 8 | 0 | 8 |
-| Observation_Gap | 1 | 0 | 1 |
+| Regulatory_Gap | 9 | 0 | 9 |
+| Observation_Gap | 2 | 0 | 2 |
 | Identity_Gap | 10 | 0 | 10 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
@@ -39,6 +39,8 @@
 | L000048 | D000148 (시트르산 회로) | Kinetic_Gap | 시트르산 회로 여덟 단계의 표준 반응 자유 에너지 ΔG°′ (J/mol) — 없으면 역반응 속도를 미시적 가역성으로 정할 수 없고 고리 열역학 검사가 비어 있다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 속도 상수 dG0 @ D000149/rule/condense<br>✗ 속도 상수 dG0 @ D000150/rule/isomerize<br>✗ 속도 상수 dG0 @ D000151/rule/oxdecarb<br>✗ 속도 상수 dG0 @ D000152/rule/oxdecarb<br>✗ 속도 상수 dG0 @ D000153/rule/slp<br>✗ 속도 상수 dG0 @ D000154/rule/oxidize<br>✗ 속도 상수 dG0 @ D000155/rule/hydrate<br>✗ 속도 상수 dG0 @ D000156/rule/oxidize | open (0/8) | — |
 | L000057 | D000165/rule/synthesis (T-bet · synthesis) | Kinetic_Gap | T-bet·Eomes 의 기본 합성 속도와 반감기(활성 CD8 T 세포) — 없으면 운명 층의 느린 시간 척도(결정 시각)가 가상 값으로 정해진다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 k @ D000165/rule/synthesis<br>✗ 속도 상수 k @ D000166/rule/synthesis<br>✗ 속도 상수 half_life @ D000165/rule/turnover<br>✗ 속도 상수 half_life @ D000166/rule/turnover | open (0/4) | — |
 | L000063 | D000170/rule/aerobic_glycolysis (해당과정 · aerobic_glycolysis) | Kinetic_Gap | T 세포 해당과정·젖산 발효·β-산화·ATP 소비·젖산 배출의 속도 상수 — 없으면 운명 층의 빠른 시간 척도가 가상 값으로 정해진다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 k @ D000170/rule/aerobic_glycolysis<br>✗ 속도 상수 k @ D000171/rule/pyruvate_reduction<br>✗ 속도 상수 k @ D000172/rule/palmitoyl_oxidation<br>✗ 속도 상수 k @ D000173/rule/atp_hydrolysis_load<br>✗ 속도 상수 k @ D000168/rule/export<br>✗ 속도 상수 k @ D000148/rule/lumped_oxidation | open (0/6) | — |
+| L000074 | D000177 (MHC I 항원 처리·제시) | Kinetic_Gap | MHC I 경로의 속도 상수를 하나도 확인하지 못했다 (합성·프로테아좀 절단·TAP 수송·조립·적재·소포 수송·섭취·분해) — 실행은 가상 시나리오 값에만 기댄다. 표면 펩타이드–MHC I 의 수와 시각은 기전의 흐름만 말한다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 속도 상수 k @ D000180/rule/synthesis<br>✗ 속도 상수 k @ D000182/rule/synthesis<br>✗ 속도 상수 k @ D000183/rule/synthesis<br>✗ 속도 상수 kcat·Km @ D000098/rule/antigen_processing<br>✗ 속도 상수 kcat·Km @ D000189/rule/peptide_import<br>✗ 속도 상수 k_on·k_off @ D000189/rule/peptide_loading<br>✗ 속도 상수 k_on·k_off @ D000190/rule/assembly<br>✗ 속도 상수 k @ D000191/rule/er_exit<br>✗ 속도 상수 k @ D000191/rule/surface_delivery<br>✗ 속도 상수 k @ D000191/rule/internalization<br>✗ 속도 상수 half_life @ D000182/rule/free_hc_loss<br>✗ 속도 상수 half_life @ D000190/rule/erad<br>✗ 속도 상수 half_life @ D000191/rule/turnover<br>✗ 속도 상수 half_life @ D000179/rule/peptidase_loss | open (0/14) | — |
+| L000075 | D000178 (MHC II 항원 처리·제시) | Kinetic_Gap | MHC II 경로의 속도 상수를 하나도 확인하지 못했다 (합성·조립·소포 수송·카텝신 S 절단·CLIP 떼기·적재·항원 섭취·분해) — 실행은 가상 시나리오 값에만 기댄다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 속도 상수 k @ D000192/rule/synthesis<br>✗ 속도 상수 k @ D000193/rule/synthesis<br>✗ 속도 상수 k @ D000194/rule/synthesis<br>✗ 속도 상수 k @ D000200/rule/er_exit<br>✗ 속도 상수 k @ D000200/rule/endosomal_sorting<br>✗ 속도 상수 k @ D000181/rule/uptake<br>✗ 속도 상수 k @ D000201/rule/surface_delivery<br>✗ 속도 상수 k @ D000201/rule/internalization<br>✗ 속도 상수 k_on·k_off @ D000199/rule/assembly<br>✗ 속도 상수 k_on·k_off @ D000200/rule/assembly<br>✗ 속도 상수 k_on·k_off @ D000198/rule/peptide_loading<br>✗ 속도 상수 kcat·Km @ D000195/rule/antigen_processing<br>✗ 속도 상수 kcat·Km @ D000195/rule/ii_cleavage<br>✗ 속도 상수 kcat·Km @ D000198/rule/clip_release<br>✗ 속도 상수 half_life @ D000192/rule/free_loss<br>✗ 속도 상수 half_life @ D000193/rule/free_loss<br>✗ 속도 상수 half_life @ D000194/rule/free_loss<br>✗ 속도 상수 half_life @ D000194/rule/clip_turnover<br>✗ 속도 상수 half_life @ D000199/rule/turnover<br>✗ 속도 상수 half_life @ D000201/rule/turnover<br>✗ 속도 상수 half_life @ D000179/rule/endosomal_loss | open (0/21) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 
@@ -54,6 +56,7 @@
 | L000039 | D000148 (시트르산 회로) | Concentration_Gap | 미토콘드리아 기질 부피와 아세틸-CoA·NAD⁺·옥살로아세트산 농도 — 없으면 소진 시각·완료 바퀴 수가 기본값·가상 시작량에 좌우된다<br>발견: 시트르산 회로 소진 시험(가상 시나리오)의 사후 분석이 제한 요인으로 지목 | ✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000134 아세틸-CoA · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000144 NAD⁺ · 미토콘드리아 기질<br>✗ 관찰 concentration @ D000136 옥살로아세트산 · 미토콘드리아 기질 | open (0/4) | — |
 | L000047 | D000116 (구획 농도 모델) | Concentration_Gap | 구획별 pH 와 상대 유전율(세포질·미토콘드리아 기질·핵질) — 없으면 Tier 1 환경 보정 ΔG_env 가 0 (기준 환경)으로 계산된다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 pH @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 핵질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 핵질 | open (0/6) | — |
 | L000062 | D000174 (활성화된 CD8 T 세포) | Concentration_Gap | 활성 CD8 T 세포의 구획 부피(세포질·핵질·미토콘드리아 기질)와 포도당·팔미토일-CoA·보조 인자 시작량 — 없으면 시나리오 값(가상)으로 시작한다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 세포질<br>✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 핵질<br>✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 미토콘드리아 기질 | open (0/3) | — |
+| L000080 | D000179 (항원 펩타이드) | Concentration_Gap | 펩타이드·원천 단백질·MHC 사슬의 세포당 분자 수와 수지상 세포의 구획 부피(소포체·엔도솜·골지체)를 모른다 — 시작량은 가상 시나리오 값이다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 관찰 copy_number @ D000179 항원 펩타이드 · 수지상 세포 · 세포질<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 수지상 세포 · 엔도솜 내강 | open (0/2) | — |
 
 ## Structural_Gap — 구조·위상·해상도 공백
 
@@ -82,6 +85,10 @@
 | L000070 | D000174 (활성화된 CD8 T 세포) | Structural_Gap | 운명 결과의 시각 해상도 — 적분 오차는 허용 오차(rtol 1e-6) 안이지만, 표지 문턱 도달·결정(신호 철회 시험)·저장소 고갈 시각은 관찰 격자 Δ(기본 60 s)의 점에서만 판정한다. 보고된 시각은 실제 교차 뒤 첫 격자점이라 최대 Δ 늦다 (효과기 2 h 펄스: 실제 ≈ 119.8 분 → 보고 120 분). 결정 시각은 탐침 스냅숏 격자 위의 이분 탐색이라 같은 해상도.<br>발견: 엔진 이식 1.5단계 — 결합 Rodas3 의 Δ 수렴 시험 (fate-effector-pulse-long·effector-glucose-withheld·memory-il15, 가상 시나리오) | ✗ 수동: Rodas3 연속 확장(밀집 출력) + 문턱 교차 근 찾기로 도달·고갈 시각을 격자 사이에서 보간, 결정 탐침은 격자 사이 시작점 허용 — 그때까지 시각을 Δ 단위보다 정밀하게 해석하지 말 것 | resolved_manual (0/1) | — |
 | L000071 | D000118 (혼합 해상도 모델) | Structural_Gap | 묶음 키가 부위 상태를 하나씩 나열한다(D…\|부위:특징\|…\|위치). 부위 k 개가 각각 두 상태면 한 단백질에 2^k 묶음, 복합체·위치와 곱해진다 — 지금은 부위가 있는 정의항이 최대 4 부위(글리코겐 인산화효소·IκBα), 단계가 쓰는 묶음 77 개·묶음당 특징 최대 3 이라 드러나지 않지만, 다중 인산화 수용체·스캐폴드를 넣으면 상태 수가 계산보다 먼저 한계가 된다. 엔진(희소 LU·IR)은 수만 종까지 견디지만 상태 나열 자체가 상한이다.<br>발견: 엔진 이식 4단계 확장성 검토 (2026-10-09) — 부품별 규모 한계(희소 LU 기호 분석 n 5000 0.49 s, checkLU, simulateRate 강성, db.json 전체 검사)와 구조적 한계 비교 | ✗ 수동: 상태를 나열하지 않는 규칙 기반 시뮬레이션(BioNetGen·NFsim 계열 네트워크 없는 방식)을 T2 규칙 행위자 층에 — 그 전까지 다중 부위 단백질은 단계가 실제로 쓰는 묶음만 나열하고, 형식 이행 때 관찰 기록(v10)의 condition.states 로 측정값의 부위 상태를 보존한다 | open (0/1) | — |
 | L000072 | D000174 (활성화된 CD8 T 세포) | Structural_Gap | 혼성 확률 층(4단계 ④·⑤)의 근사: ① 성향 = 결정론 속도 법칙을 분자 수로 계산한 값 — 1차·서로 다른 분자의 2차는 정확, 같은 분자 2차는 N² 대 N(N−1) 로 O(1/N), 힐·포화 같은 비기본 법칙은 성향 해석 자체가 근사; ② 빠른 규칙(성향 ≥ sto_fast 1 s⁻¹)과 분자 많은 규칙(≥ sto_ode_min 1e4)은 요동을 평균으로 — 포도당 고갈 뒤 작은 대사 풀의 요동은 없다; ③ 성향 > 0 인데 분자 수 < 화학량인 SSA 발화는 막고 다음을 뽑는다(솎아내기 — 고갈 시나리오에서 ~10⁴ 회); ④ 확률 실행은 결정 탐침(신호 철회 시험)을 하지 않는다 — 요동 아래의 결정 시각·결정 확률은 아직 없다. 운명 비율·도달 시각 분포는 이 근사 위에서만 말한다.<br>발견: 엔진 이식 4단계 ④·⑤ — 해석해·방식 비교·결정론 극한 시험과 실제 운명 프로그램 앙상블 (가상 시나리오) | ✗ 수동: 조절 규칙의 매개 단계를 질량 작용 기본 반응으로 풀어(Regulatory_Gap 해결) 성향을 정확히; 빠른 부분의 요동이 필요하면 sto_fast 를 시나리오에서 올리고 비용과 함께 compare; 결정 확률 = 앙상블 철회 탐침(같은 seed 계열에서 신호를 끊은 궤적들의 목표 도달 비율) | open (0/1) | — |
+| L000077 | D000194/site/clip (불변 사슬 · clip) | Structural_Gap | 불변 사슬 CLIP 부분의 잔기 범위를 모르고, 불변 사슬 삼량체가 αβ 셋과 이루는 아홉 사슬 복합체를 αβ 하나당 하나로 줄였다. 단계적 절단의 중간 산물도 한 단계로 묶었다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 잔기 번호 @ D000194/site/clip<br>✗ 잔기 번호 @ D000200/site/clip<br>✗ 수동: (αβIi)₃ 화학량과 절단 중간 산물 단계 | open (0/3) | — |
+| L000078 | D000189 (펩타이드 적재 복합체) | Structural_Gap | MHC I 적재를 단순화했다: 적재 복합체 구성 비 1 (구조는 편집 모듈 둘), TAP 의 ATP 화학량 없음, ERAP1 다듬기·칼넥신 단계·면역프로테아좀 없음, 원천 단백질 하나당 펩타이드 1, 펩타이드를 한 부류로 묶어 에피토프 경쟁·친화도 편집을 다루지 않음<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 수동: ERAP1·칼넥신·면역프로테아좀 소단위 정의항과 단계, TAP 의 펩타이드당 ATP 화학량, 에피토프별 펩타이드 정의항 | open (0/1) | — |
+| L000079 | D000201 (펩타이드–MHC II 복합체) | Structural_Gap | 막 위 MHC 의 공간을 단순화했다: 막(2D) 참여자의 농도를 단계의 3D 위치 부피로 세고, 막에서의 합성은 시나리오가 준 막의 유효 부피로 속도를 정한다. 소포 수송은 1차 수송 하나이고 재순환 엔도솜·리소좀을 구분하지 않는다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 수동: 막 표면 밀도(분자/µm²)와 2D 반응 속도 상수, 소포 수송 구획 정의항<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 수지상 세포 · 소포체 내강 | open (0/2) | — |
+| L000081 | D000178 (MHC II 항원 처리·제시) | Structural_Gap | 막에서만 일어나는 단계(소포 수송·막 안 조립)의 반응 부피 규약이 두 적분 경로에서 다르다. 운명 엔진은 시나리오 volumes[막] 을 유효 부피로 써서 속도 법칙을 그대로 적용하고, simulateRate 는 3D 참여자가 없으면 속도 상수를 쓰지 않고 '즉시'로 처리한다(approx 표시). 그래서 MHC 경로에서 두 경로의 궤적을 서로의 수렴 기준(Δt → 0)으로 쓸 수 없고, 지금은 운명 엔진을 허용 오차 1/1000 의 같은 적분기와만 대조한다(상대 L2 2.8e-8). 막 표면 밀도(분자/µm²)와 2D 반응 속도 상수가 들어오면 두 경로를 같은 규약으로 맞출 수 있다.<br>발견: MHC I·II 기전 실험 (2026-10-09) — 같은 시나리오를 운명 엔진(결합 Rodas3)과 simulateRate 로 돌린 대조 | ✗ 수동: 막(2D) 묶음의 표면 밀도와 2D 속도 상수 단위(µm²·s⁻¹)를 형식에 넣고, simulateRate 와 운명 엔진이 같은 반응 부피·면적 규약을 쓰게 맞춤<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 수지상 세포 · 소포체 막 | open (0/2) | — |
 
 ## Resource_Gap — 자원(저장소) 공백
 
@@ -110,6 +117,7 @@
 | L000054 | D000167/rule/tbet_licensing (피루브산 · tbet_licensing) | Regulatory_Gap | 해당 흐름 → 효과기 프로그램 허가를 피루브산 농도로 대신함 — 실제 매개(GAPDH 의 IFN-γ mRNA 번역 조절, 포도당 유래 아세틸-CoA 의 히스톤 아세틸화)가 없다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000167/rule/tbet_licensing<br>✗ 수동: GAPDH 번역 조절·ACLY·히스톤 아세틸화 단계 | open (0/2) | — |
 | L000055 | D000134/rule/eomes_licensing (아세틸-CoA · eomes_licensing) | Regulatory_Gap | 지방산 산화 → 기억 프로그램 허가를 기질 아세틸-CoA 농도로 대신함 — 실제 매개(미토콘드리아 여분 호흡 능력·AMPK)가 없다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000134/rule/eomes_licensing<br>✗ 수동: 여분 호흡 능력·AMPK 매개의 정의항과 단계 | open (0/2) | — |
 | L000056 | D000165/rule/glycolysis_maintenance (T-bet · glycolysis_maintenance) | Regulatory_Gap | 결정된 프로그램이 대사를 유지하는 되먹임(T-bet → 해당, Eomes → β-산화)은 추론이며 상수를 모름<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000165/rule/glycolysis_maintenance<br>✗ 속도 상수 K·n·fmax @ D000166/rule/fao_maintenance | open (0/2) | — |
+| L000076 | D000064/rule/mhc2_surface_retention (지질다당류 · mhc2_surface_retention) | Regulatory_Gap | LPS 에 의한 수지상 세포 성숙을 표면 MHC II 섭취 억제 하나로 묶었다 — TLR4 → NF-κB → MARCH1 감소의 매개 단계가 없고 힐 상수(K·n·fmin)를 모른다. 성숙의 다른 변화(MHC II 합성·CIITA, 보조 자극 분자, 섭취 감소, 리소좀 산성화)는 넣지 않았다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 속도 상수 K·n·fmin @ D000064/rule/mhc2_surface_retention<br>✗ 수동: MARCH1 정의항과 β 사슬 꼬리 유비퀴틴화 단계, NF-κB 와 MARCH1 발현을 잇는 조절 규칙 | open (0/2) | — |
 
 ## Observation_Gap — 관찰 공백 (가를 수 없음)
 
@@ -118,6 +126,7 @@
 | ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |
 |---|---|---|---|---|---|---|
 | L000073 | D000174 (활성화된 CD8 T 세포) | Observation_Gap | 운명 프로그램(활성 CD8 T → 효과기 \| 기억 전구)에 검증용(use: validation) 관찰 기록이 하나도 없다 — 도달 시각·운명 비율·T-bet/Eomes 분자 수와 세포 간 퍼짐 모두. 그래서 모든 운명 결과는 가상 상수 위에서 기전이 일관되는지만 말하고, 사법부 관찰 판정(observe)은 합성 관찰로만 시험되었다. 형식 예시(가상 상수): 혼합-최적 대 IL-12 시나리오의 효과기 도달 시각 차는 58 s 라, 3 회 반복 관찰로 가르려면 측정 sd ≤ 36 s 가 필요하다(design).<br>발견: 엔진 이식 4단계 ②·⑥ — 관찰 판정 시험 (합성 관찰 examples/observations/) | ✗ 수동: 관찰 포트(schemas/obs/observation.schema.json)로 효과기·기억 전구 도달 시각(event_time), 운명 비율(fraction), 표지 분자 수(amount — 생물 변이면 반복 = 세포 수)를 검증용으로 넣고 node dbtool.mjs observe 로 판정; 상수 추정에 쓴 관찰은 검증에 쓰지 않는다 | open (0/1) | — |
+| L000082 | D000202 (미성숙 수지상 세포) | Observation_Gap | 확률 실행은 결정 탐침(신호 철회 시험)을 돌리지 않으므로 '요동 아래의 결정 시각'을 판정하지 못한다. 지금 말할 수 있는 것은 앙상블의 끝 상태 비율과 도달 시각 분포뿐이다(가상 상수에서 24/24 성숙, 도달 0.83 ± 0.01 h). 또 미성숙·성숙 수지상 세포의 표면 펩타이드–MHC II 문턱(low·high)을 실측으로 정하지 못해 상태 판정이 가상 문턱에 기댄다 — 세포당 표면 복합체 수를 재면 닫힌다.<br>발견: MHC I·II 기전 실험 (2026-10-09) — 확률 앙상블 24 궤적 (표면 펩타이드–MHC II Fano 0.77) | ✗ 관찰 copy_number @ D000201 펩타이드–MHC II 복합체 · 수지상 세포 · 세포막<br>✗ 수동: 확률 실행의 결정 확률 판정(궤적마다 신호 철회 탐침을 돌려 결정 시각의 분포를 내는 방식) | open (0/2) | — |
 
 ## Identity_Gap — 정체성(외부 ID) 공백
 

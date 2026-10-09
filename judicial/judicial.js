@@ -309,6 +309,8 @@
       else if (m.association !== 'soluble') {
         if (!V.locations[m.location] || V.locations[m.location].dim !== '2D') E(where, `막 결합 분자는 막(2D 위치)을 membrane.location 으로 가져야 함`);
         if (['peripheral', 'lipid_anchored'].includes(m.association) && !(m.side && locSides(m.location)[m.side])) E(where, `${vlabel('associations', m.association)} 분자는 붙어 있는 막 면(membrane.side)이 필요함`);
+        // 막 이동 경로 (MHC 실험): 분비·세포 내 섭취 경로로 옮겨 가는 막 단백질이 거치는 막들. 내강 쪽 면 ↔ 세포 밖 쪽 면은 위상이 같다 (소포 수송)
+        for (const l of m.route || []) if (!V.locations[l] || V.locations[l].dim !== '2D') E(where, `막 이동 경로의 '${l}' 은(는) 막(2D) 위치가 아님`); else if (l === m.location) E(where, `막 이동 경로에 기본 막 '${l}' 을 다시 적음`);
       } else if (m.location || m.side) E(where, '수용성 분자에는 membrane.location/side 를 두지 않음');
     }
     // 구성 요소 (구조 계층)
@@ -536,7 +538,9 @@
     if (!r.produces.length) E(rw, '공급 규칙은 생성물(produces)이 필요함');
     if (!r.consumes.length && !r.source) E(rw, '소비하는 것이 없는 공급은 계 밖에서 들어오는 것 — source: true 로 명시할 것');
     if (r.where.length !== 1) E(rw, '공급 규칙은 위치(where)가 정확히 하나 (저장소 묶음 = 정의항|위치)');
-    for (const l of r.where) if (!V.locations[l]) E(rw, `위치 '${l}' 은(는) 위치 어휘에 없음`); else if (V.locations[l].dim !== '3D') E(rw, `공급 위치 '${vlabel('locations', l)}' 는 부피(3D) 구획이어야 함`);
+    // 공급 위치: 부피(3D) 구획, 또는 막(2D) — 막이면 막 단백질의 동시 번역 삽입처럼 모든 생성·소비 분자가 그 막에 있을 수 있어야 함 (속도의 부피는 시나리오 volumes[막] = 유효 부피)
+    const memOK = (l) => [...r.consumes, ...r.produces].every((q) => { const x = db.senses[q.ref], m = x && x.membrane; return m && m.association !== 'soluble' && [m.location, ...(m.route || [])].some((y) => sameFamily(l, y)); });
+    for (const l of r.where) if (!V.locations[l]) E(rw, `위치 '${l}' 은(는) 위치 어휘에 없음`); else if (V.locations[l].dim !== '3D' && !memOK(l)) E(rw, `공급 위치 '${vlabel('locations', l)}' 는 부피(3D) 구획이어야 함 (막이면 모든 생성·소비 분자가 그 막에 박힌 분자여야 함)`);
     for (const q of [...r.consumes, ...r.produces]) {
       const x = db.senses[q.ref];
       if (!x) E(rw, `저장소 분자 '${q.ref}' 없음`);
@@ -591,8 +595,8 @@
   }
   // 세포 상태 (v9): signature · metabolome · transitions 는 kind cell_state 만, cell_state 는 분자 필드를 갖지 않음
   function validateCellState(db, ix, id, d, where, E, W) {
-    const L = ix.label, has = (d.signature || []).length || (d.metabolome || []).length || (d.transitions || []).length;
-    if (d.kind !== 'cell_state') { if (has) E(where, '표지 서명·대사 프로그램·전이(signature · metabolome · transitions)는 kind cell_state 만'); return; }
+    const L = ix.label, has = (d.signature || []).length || (d.metabolome || []).length || (d.transitions || []).length || (d.mechanisms || []).length;
+    if (d.kind !== 'cell_state') { if (has) E(where, '표지 서명·대사 프로그램·기전 프로그램·전이(signature · metabolome · mechanisms · transitions)는 kind cell_state 만'); return; }
     if (!(d.signature || []).length) E(where, '세포 상태는 표지 서명(signature)이 필요함 — 어떤 분자가 높고 낮은지로 상태를 정의');
     if (d.rule.length || Object.keys(d.site).length || d.moieties || d.components.length) E(where, '세포 상태는 분자가 아님 — 규칙·부위·부분 구조·구성 요소를 두지 않음');
     const seen = new Set();
@@ -600,7 +604,10 @@
       const x = db.senses[m.ref];
       if (!x) E(where, `표지 '${m.ref}' 없음`); else if (!isParticipantKind(x.kind)) E(where, `표지 '${L(m.ref)}' 는 분자 종류가 아님`);
       if (!V.signatureLevels[m.level]) E(where, `표지 '${L(m.ref)}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
-      if (!V.locations[m.location] || V.locations[m.location].dim !== '3D') E(where, `표지 '${L(m.ref)}' 의 위치는 부피(3D) 위치 어휘여야 함 (지금 '${m.location}')`);
+      // 표지 위치: 부피(3D) 또는 막(2D, 예: 세포 표면 펩타이드–MHC) — 문턱은 분자 수라 부피가 없어도 판정된다. 막이면 그 분자가 그 막에 박혀 있어야 함
+      if (!V.locations[m.location]) E(where, `표지 '${L(m.ref)}' 의 위치 '${m.location}' 은(는) 위치 어휘에 없음`);
+      else if (V.locations[m.location].dim === '2D' && x && !(x.membrane && x.membrane.association !== 'soluble' && [x.membrane.location, ...(x.membrane.route || [])].some((l) => sameFamily(m.location, l)))) E(where, `표지 '${L(m.ref)}' 는 막 '${m.location}' 에 있을 수 없음 — 막 위상(membrane)이 그 막이어야 함`);
+      else if (V.locations[m.location].dim === '3D' && x && x.membrane && x.membrane.association !== 'soluble') E(where, `표지 '${L(m.ref)}' 는 막 분자 — 부피(3D) 위치 '${m.location}' 에 있을 수 없음`);
       const key = `${m.ref}|${m.location}`; if (seen.has(key)) E(where, `표지 '${L(m.ref)}' 가 같은 위치에 두 번`); seen.add(key);
     }
     for (const m of d.metabolome || []) {
@@ -608,6 +615,11 @@
       if (!r) E(where, `대사 프로그램의 규칙 '${m.ref}' 없음 — 'D…/rule/키'`);
       else if (r.type !== 'supply') E(where, `대사 프로그램은 공급 규칙(supply)만 — '${m.ref}' 는 ${r.type}`);
       if (!V.signatureLevels[m.level]) E(where, `대사 프로그램 '${m.ref}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
+    }
+    for (const m of d.mechanisms || []) {
+      const x = db.senses[m.ref];
+      if (!x) E(where, `기전 프로그램 '${m.ref}' 없음`); else if (x.kind !== 'pathway') E(where, `기전 프로그램 '${L(m.ref)}' 는 경로(pathway)가 아님`);
+      else if (!Object.values(db.steps).some((st) => (st.part_of || []).includes(m.ref))) E(where, `기전 프로그램 '${L(m.ref)}' 에 속한 단계(part_of)가 없음`);
     }
     for (const tr of d.transitions || []) {
       const x = db.senses[tr.to];
@@ -633,7 +645,7 @@
     else {
       const assoc = d.membrane ? d.membrane.association : 'soluble';
       if (assoc === 'soluble' && L.dim !== '3D') E(where, `${ix.label(b.base)} 은(는) 수용성 — 막(2D) 위치 '${L.label}' 에 있을 수 없음`);
-      if (assoc !== 'soluble' && !(L.dim === '2D' && sameFamily(b.location, d.membrane.location))) E(where, `${ix.label(b.base)} 은(는) ${vlabel('locations', d.membrane.location)}에 박힌 분자 — '${L.label}' 에 있을 수 없음`);
+      if (assoc !== 'soluble' && !(L.dim === '2D' && [d.membrane.location, ...(d.membrane.route || [])].some((l) => sameFamily(b.location, l)))) E(where, `${ix.label(b.base)} 은(는) ${vlabel('locations', d.membrane.location)}에 박힌 분자 — '${L.label}' 에 있을 수 없음`);
     }
     const seen = new Set();
     for (const f of b.features) {
@@ -711,7 +723,9 @@
           if (got !== c.n * cx.n) E(w, `${pName}의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${c.n * cx.n}개`);
         }
         for (const x of parts.filter(major)) if (!cd.components.some((c) => c.ref === x.base) && x.base !== e.partner) E(w, `'${L(x.base)}' 는 '${L(C)}' 의 구성 요소가 아님`);
-        for (const x of parts) if (x.location !== cx.location && major(x)) E(w, '해리·결합 단계에서 위치가 바뀜');
+        // 막 복합체에 수용성 구성 요소가 붙거나 떨어질 때(β2m·펩타이드 → 막의 MHC): 그 3D 위치가 복합체 막의 한 면과 맞닿아 있어야 함
+        const touches = (x) => (V.locations[x.location] || {}).dim === '3D' && (V.locations[cx.location] || {}).dim === '2D' && Object.values(locSides(cx.location)).includes(x.location);
+        for (const x of parts) if (x.location !== cx.location && major(x) && !touches(x)) E(w, '해리·결합 단계에서 위치가 바뀜');
       }
       if (e.partner) {
         if (!B.inputs.some((x) => x.base === e.partner)) E(w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
