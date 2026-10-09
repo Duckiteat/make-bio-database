@@ -78,6 +78,8 @@
     '562':   { label: '대장균', name: 'Escherichia coli', parent: '2', aliases: ['E. coli'] },
   },
   defaultReferenceSpecies: '9606',
+  // 재활용 산물이 2D(막) 묶음에서 나올 때 돌아갈 기본 부피 위치 — 엔진 코드에 위치 이름을 두지 않으려고 여기에
+  defaultVolumeLocation: 'cytosol',
 
   // ===== 조직·세포 =====
   tissues: {

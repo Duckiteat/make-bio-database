@@ -109,6 +109,10 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 ### 외부 ID 원본 대조 (자동 보강 고리)
 - `node dbtool.mjs augment plan | fetch | build | apply` — unmapped·Identity_Gap·대조 안 된 UniProt·ChEBI 를 원본에서 받아(`data/fetched/`) 번호·종·이름·중복·화학식 ↔ 부분 구조로 확인한 것만 verified 로 병합. 네트워크가 막히면 `data/fetched/RETRIEVAL_TASKS.md` (수동 수집 과제).
 
+### 비교 검토·정제 점검
+- `node dbtool.mjs compare --state <세포 상태> --scenario A.json [--scenario-b B.json | --patch p.json]` — 복잡도·수치 L2·결과를 나란히, 판정 Optimization-Negative 이면 종료 코드 1.
+- `node dbtool.mjs validate <patch.json>` → `node dbtool.mjs augment apply <patch.json>` — 관문 + 정제 점검(중복 규칙·화학량 모순) 후 병합·CHANGES·limitations.md·부록 자동 갱신.
+
 ### 세포 운명 (v9)
 - `node dbtool.mjs fate "활성화된 CD8 T 세포" --scenario examples/scenarios/fate-effector-il12-hypothetical.json` — 신호(IL-12/IL-15) → 대사(해당과정/β-산화) → 전사 인자(T-bet/Eomes) 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석. 시나리오 8개(`fate-*-hypothetical.json`, 가상 값).
 - `node tests/fate_suite.js` — Fate-Test 30 검사: 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준 대비 L2·속도 향상, 질량. 설계 `docs/design/cell-fate-engine.md`.

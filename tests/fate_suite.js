@@ -4,7 +4,7 @@
 //   C 결정 비가역성 (결정 전 철회 → 되돌아감, 결정 후 철회 → 유지; 철회 = 충격 → 같은 단계 강등 + 냉각)
 //   D 스트레스 분화 정지 (포도당·지방산 결핍 → 고갈 저장소까지 사후 분석)  E 스트레스 다른 운명 (IL-12 + IL-15 + 포도당 결핍 → 기억 전구)
 //   F 다중 규모 정확도 (P5 관문 동적 경로 대 명시 기준 경로: 표지 궤적 L2 < 2%, 같은 최종 상태, 속도 향상)
-//   G 질량 (모든 실행에서 부분 구조 원장 상대 편차 ≤ 1e-12, 음수 없음)
+//   G 질량 (모든 실행에서 부분 구조 원장 상대 편차 ≤ 1e-14 — ΣIn = ΣOut, 음수 없음)
 // 실행: node tests/fate_suite.js [--quick]   (시나리오 examples/scenarios/fate-*-hypothetical.json — 가상 값, 엔진 시험용)
 'use strict';
 const { readFileSync } = require('fs');
@@ -23,7 +23,7 @@ function run(opt) {
   const checks = [], runs = {};
   const check = (group, name, ok, detail) => { checks.push({ group, name, ok: !!ok, detail }); };
   const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const r = F.simulateFate(db, SRC, Object.assign({ scenario: scen(name, over) }, o || {})); r.ms = Number(process.hrtime.bigint() - t0) / 1e6; runs[key] = r; return r; };
-  const massOK = (r) => r.mass.worst <= 1e-12 && !r.audit.some((a) => a.code === 'AUDIT_MASS') && Object.values(r.final.N).every((v) => v > -1e-6);
+  const massOK = (r) => r.mass.worst <= 1e-14 && !r.audit.some((a) => a.code === 'AUDIT_MASS') && Object.values(r.final.N).every((v) => v > -1e-6);
 
   say('Fate-Test — 활성화된 CD8 T 세포 (D000174) → 효과기 (D000175) | 기억 전구 (D000176) · 가상 시나리오');
   // A 계통 충실도
@@ -69,10 +69,10 @@ function run(opt) {
     acc.push(row);
     check('F 다중 규모 정확도', `${name} ${hours} h: 표지 궤적 상대 L2 < 2% (수렴 기준 대비), 같은 최종 상태`, row.l2 < 0.02 && row.same, `L2 ${row.l2.toExponential(2)} (명시 10% 경로 ${row.l2Coarse.toExponential(2)}), ${a.final.state} = ${ref.final.state}`);
     check('F 다중 규모 정확도', `${name} ${hours} h: 강성(N_sub ≥ K_up)에서 승격, 수렴 기준보다 빠름`, row.nsub.max >= 15 && row.promotions >= 1 && row.speedup > 1, `N_sub ${row.nsub.min}–${row.nsub.max}, ${row.speedup.toFixed(1)}×`);
-    check('G 질량', `${name} 기준 경로(명시): 원장 상대 편차 ≤ 1e-9`, row.massFine <= 1e-9, row.massFine.toExponential(2));
+    check('G 질량', `${name} 기준 경로(명시): 원장 상대 편차 ≤ 1e-14`, row.massFine <= 1e-14, row.massFine.toExponential(2));
   }
   // G 질량
-  for (const [k, r] of Object.entries(runs)) check('G 질량', `${k}: 부분 구조 원장 ≤ 1e-12, 음수 없음`, massOK(r), r.mass.worst.toExponential(2));
+  for (const [k, r] of Object.entries(runs)) check('G 질량', `${k}: 부분 구조 원장 ≤ 1e-14, 음수 없음`, massOK(r), r.mass.worst.toExponential(2));
 
   // 보고
   say('\n| 실행 | 최종 상태 | 도달 | 결정 (철회 시험) | 원인 · 제한 | P5 관문 경로 | 질량 편차 | ms |');

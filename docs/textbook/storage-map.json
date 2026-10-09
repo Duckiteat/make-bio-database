@@ -426,6 +426,14 @@
       "writer": "사람·AI",
       "readers": "tests/rules.test.mjs",
       "interpret": "자동 보강 확인 단계의 경로(검증·거부·모호·화학식 불일치·중복)마다 하나. data/db.json 에 들어가지 않는다."
+    },
+    {
+      "path": "engine/compare.js",
+      "class": "interface",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool.mjs compare, tests",
+      "interpret": "비교 검토 — 두 변형(패치·시나리오)의 복잡도·수치 L2(수렴 기준)·결과·궤적 차와 판정(Optimization-Negative/Positive/Neutral/Trade-off/Behavior-Changing). 생물 이름을 모른다."
     }
   ]
 }

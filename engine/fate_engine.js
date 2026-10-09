@@ -125,15 +125,31 @@ function simulateFate(db, sourceId, opt) {
   const moiOf = new Map();
   const moi = (b) => { if (!moiOf.has(b)) moiOf.set(b, C.moietyOf(db, b.split('|')[0], 1, {})); return moiOf.get(b); };
   const moiKeys = [...new Set(keys.filter((b, i) => !isSignal[i]).flatMap((b) => Object.keys(moi(b))))];
-  const moiTot = (N) => { const t = Object.fromEntries(moiKeys.map((k) => [k, 0])); keys.forEach((b, i) => { if (isSignal[i]) return; for (const [k, c] of Object.entries(moi(b))) t[k] += c * N[i]; }); return t; };
-  for (const R of rules) { R.dM = {}; const add = (b, n) => { for (const [k, c] of Object.entries(moi(b))) R.dM[k] = (R.dM[k] || 0) + c * n; }; for (const q of R.prods) add(q.b, q.n); for (const q of R.cons) add(q.b, -q.n); }
-  const chan = { lost: Object.fromEntries(moiKeys.map((k) => [k, 0])), source: Object.fromEntries(moiKeys.map((k) => [k, 0])), violation: Object.fromEntries(moiKeys.map((k) => [k, 0])) };
+  // 보상 산술 (double-double): 상태 N 은 hi, 반올림 잔여는 LO 에 — 질량 원장을 1e-14 안에서 맞추기 위해 (상태·원장·합계 모두 오차 없는 덧셈 TwoSum·곱셈 TwoProduct)
+  let LO = new Float64Array(nB);
+  const twoSum = (a, b) => { const s = a + b, bb = s - a; return [s, (a - (s - bb)) + (b - bb)]; };
+  const split = (a) => { const c = 134217729 * a, hi = c - (c - a); return [hi, a - hi]; };
+  const twoProd = (a, b) => { const p = a * b, [ah, al] = split(a), [bh, bl] = split(b); return [p, ((ah * bh - p) + ah * bl + al * bh) + al * bl]; };
+  // 뜨거운 경로(진행량 적용)는 배열을 만들지 않는 같은 산술: N[i] += d (d = n·ξ 의 정확한 곱 p + e)
+  const addProdN = (N, i, n, x) => {
+    const p = n * x, c1 = 134217729 * n, nh = c1 - (c1 - n), nl = n - nh, c2 = 134217729 * x, xh = c2 - (c2 - x), xl = x - xh;
+    const e = ((nh * xh - p) + nh * xl + nl * xh) + nl * xl, a = N[i], s1 = a + p, bb = s1 - a;
+    N[i] = s1; LO[i] += ((a - (s1 - bb)) + (p - bb)) + e;
+  };
+  const ddAdd = (acc, x, e) => { const [s1, e1] = twoSum(acc[0], x); acc[0] = s1; acc[1] += e1 + (e || 0); };
+  const addN = (N, i, d) => { const [s1, e1] = twoSum(N[i], d); N[i] = s1; LO[i] += e1; };
+  const moiTotDD = (N, lo) => { const t = Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])); keys.forEach((b, i) => { if (isSignal[i]) return; for (const [k, c] of Object.entries(moi(b))) { const [p, e] = twoProd(c, N[i]); ddAdd(t[k], p, e + c * lo[i]); } }); return t; };
+  const moiTot = (N, lo) => Object.fromEntries(Object.entries(moiTotDD(N, lo || new Float64Array(nB))).map(([k, v]) => [k, v[0] + v[1]]));
+  for (const R of rules) { R.dM = {}; const add = (b, n) => { for (const [k, c] of Object.entries(moi(b))) R.dM[k] = (R.dM[k] || 0) + c * n; }; for (const q of R.prods) add(q.b, q.n); for (const q of R.cons) add(q.b, -q.n); R.dMe = Object.entries(R.dM).filter(([, c]) => c); } // 균형 잡힌 규칙은 빈 목록 — 원장 경로를 건너뜀
+  const chanDD = { lost: Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])), source: Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])), violation: Object.fromEntries(moiKeys.map((k) => [k, [0, 0]])) };
+  const chanAdd = (ch, k, c, x) => { const [p, e] = twoProd(c, x); ddAdd(chanDD[ch][k], p, e); };
+  const chan = new Proxy({}, { get: (_, ch) => Object.fromEntries(Object.entries(chanDD[ch]).map(([k, v]) => [k, v[0] + v[1]])) });
   const applyExtent = (R, N, xi) => {
-    for (const q of R.ci) N[q.i] -= q.n * xi;
-    for (const q of R.pi) N[q.i] += q.n * xi;
-    if (!xi) return;
-    const ch = R.lost ? chan.lost : R.source ? chan.source : chan.violation;
-    for (const [k, c] of Object.entries(R.dM)) if (Math.abs(c) > 1e-12) ch[k] += (R.lost ? -c : c) * xi;
+    for (const q of R.ci) addProdN(N, q.i, -q.n, xi);
+    for (const q of R.pi) addProdN(N, q.i, q.n, xi);
+    if (!xi || !R.dMe.length) return;
+    const ch = R.lost ? 'lost' : R.source ? 'source' : 'violation';
+    for (const [k, c] of R.dMe) chanAdd(ch, k, R.lost ? -c : c, xi);
   };
   // --- 빠른 층: 명시 부분 단계 (기준 경로)
   const lambda = (N, F) => { // 진행이 입력을 다 쓰는 속도 (1/s)의 최댓값 — 강성 지표
@@ -199,13 +215,14 @@ function simulateFate(db, sourceId, opt) {
     for (let i = 0; i < nB; i++) {
       if (!prod[i] && !kd[i]) continue;
       const k = kd[i], s = prod[i];
-      N[i] = k > 0 ? N[i] * Math.exp(-k * h) + (s / k) * (1 - Math.exp(-k * h)) : N[i] + s * h;
+      const v = k > 0 ? N[i] * Math.exp(-k * h) + (s / k) * (1 - Math.exp(-k * h)) : N[i] + s * h;
+      addN(N, i, v - N[i]);
       made[i] = s * h;
     }
     // 원장: 합성(계 밖 공급)·분해(소실) 진행량으로 기록
     slow.forEach((R) => {
-      if (R.kind === 'degradation') { const i = R.ci[0].i, lost = before[i] + (made[i] || 0) - N[i], share = kd[i] ? R.kdeg * modF(R, before) / kd[i] : 0; for (const [k, c] of Object.entries(R.dM)) chan.lost[k] -= c * lost * share; }
-      else for (const [k, c] of Object.entries(R.dM)) (R.source ? chan.source : chan.violation)[k] += c * R._r * h;
+      if (R.kind === 'degradation') { const i = R.ci[0].i, lost = before[i] + (made[i] || 0) - N[i], share = kd[i] ? R.kdeg * modF(R, before) / kd[i] : 0; for (const [k, c] of Object.entries(R.dM)) chanAdd('lost', k, -c, lost * share); }
+      else for (const [k, c] of Object.entries(R.dM)) chanAdd(R.source ? 'source' : 'violation', k, c, R._r * h);
     });
     return F;
   };
@@ -232,6 +249,7 @@ function simulateFate(db, sourceId, opt) {
   const gateOpt = Object.assign({ K_up: 15, K_down: 8, M: 5, W: 20 }, sc.gate || {});
   const shockMax = sc.shock_threshold != null ? sc.shock_threshold : 0.2;
   function run(Nstart, t0, t1, ctl) {
+    LO = ctl.lo ? Float64Array.from(ctl.lo) : new Float64Array(nB);
     const N = Float64Array.from(Nstart), gate = GATE.createGate(gateOpt); gate.gammaMax = shockMax;
     const mode = ctl.mode || 'dynamic', series = [], events = [], resv = new Map();
     let prevSig = null, step = 0, exhaustedNow = false;
@@ -267,20 +285,26 @@ function simulateFate(db, sourceId, opt) {
       if (ctl.snapshots) ctl.snapshots.push({ t: t + dt, N: Float64Array.from(N) });
       if (ctl.onStep) ctl.onStep(t + dt, N);
     }
-    return { N, series, events, gate, path, nsubs, resv };
+    return { N, lo: LO, series, events, gate, path, nsubs, resv };
   }
   // ===== 본 실행 =====
-  const M0 = moiTot(N0);
+  const M0DD = moiTotDD(N0, new Float64Array(nB)), M0 = Object.fromEntries(Object.entries(M0DD).map(([k, v]) => [k, v[0] + v[1]]));
+  const MASS_TOL = 1e-14; // 상대 — ΣIn = ΣOut (프로토콜 불변식)
   let worstMass = 0;
   const snapshots = [];
   const main = run(N0, 0, tEnd, { record: true, every: sc.record_every || 1, snapshots, mode: opt.mode, onStep: (t, N) => {
-    const now = moiTot(N);
-    for (const k of moiKeys) { const expect = M0[k] + chan.source[k] - chan.lost[k] + chan.violation[k], dev = Math.abs(now[k] - expect) / Math.max(1, Math.abs(M0[k])); if (dev > worstMass) worstMass = dev; }
+    const now = moiTotDD(N, LO);
+    for (const k of moiKeys) {
+      const e = [M0DD[k][0], M0DD[k][1]];
+      for (const [ch, sg] of [['source', 1], ['lost', -1], ['violation', 1]]) { ddAdd(e, sg * chanDD[ch][k][0], sg * chanDD[ch][k][1]); }
+      const dev = Math.abs((now[k][0] - e[0]) + (now[k][1] - e[1])) / Math.max(1, Math.abs(M0[k]));
+      if (dev > worstMass) worstMass = dev;
+    }
   } });
   for (const k of moiKeys) if (Math.abs(chan.violation[k]) > 1e-6 * Math.max(1, Math.abs(M0[k]))) AE('AUDIT_MASS', k, `부분 구조 ${ix.label(k)} 가 균형 잡히지 않은 규칙으로 ${chan.violation[k].toExponential(3)} 만큼 바뀜`, '규칙의 소비·생성을 고치거나 source/소실로 명시');
-  if (worstMass > 1e-9) AE('AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${worstMass.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
+  if (worstMass > MASS_TOL) AE('AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${worstMass.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
   for (const i of keys.keys()) if (main.N[i] < -1e-6) AE('AUDIT_MASS', keys[i], `음수 양 ${main.N[i]}`, '엔진 오류');
-  const chanMain = JSON.parse(JSON.stringify(chan)); // 결정 탐침이 원장을 더 쓰기 전에 본 실행의 원장을 고정
+  const chanMain = Object.fromEntries(['lost', 'source', 'violation'].map((ch) => [ch, chan[ch]])); // 결정 탐침이 원장을 더 쓰기 전에 본 실행의 원장을 고정
   // 궤적에서 상태·거리
   const traj = main.series.map((s) => ({ t: s.t, d: Object.fromEntries(states.map((x) => [x, distance(s.N, x)])), cls: classify(s.N), path: s.path, nsub: s.nsub, gate: s.gate }));
   const final = classify(main.N);
@@ -332,7 +356,7 @@ function simulateFate(db, sourceId, opt) {
     final: { state: final.state, nearest: final.nearest || null, d: final.d, N: Object.fromEntries(keys.map((b, i) => [b, main.N[i]])) },
     trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target, arrest, postMortem: pm,
     gate: { ...main.gate.stats, transitions: main.gate.stats.transitions.length, log: main.gate.stats.transitions, path: main.path, nsub: { min: Math.min(...main.nsubs), max: Math.max(...main.nsubs) } },
-    mass: { moieties: moiKeys, start: M0, end: moiTot(main.N), channels: chanMain, worst: worstMass },
+    mass: { moieties: moiKeys, start: M0, end: moiTot(main.N, main.lo), channels: chanMain, worst: worstMass, tolerance: MASS_TOL },
     events: main.events, audit, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...stats, probes }, ix,
   };
 }

@@ -1105,3 +1105,38 @@ test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, �
   const s = AUG.build(BASE, { dir: FIX, date: '2026-10-08', sync: true });
   assert.notEqual(s.rows.find((r) => r.sense === id('IL-12 p35')).outcome, 'verified', 'sync 여도 이름·종 확인은 그대로 (번호만 바뀐 응답은 이름 확인이 없으면 거부)');
 });
+
+// ===== 비교 검토·정제 점검 (Comparative Optimization) =====
+const CMP = createRequire(import.meta.url)('../engine/compare.js');
+test('정제 점검: 경로 순 반응 ↔ 단계 화학량 차이는 등록된 Structural_Gap 이 있으면 known, 중복 조절·공급은 잡고 참조 없는 쪽을 지우는 리팩터링 패치', () => {
+  const r = DefDB.refineCheck(BASE);
+  const lump = r.issues.find((x) => x.type === 'lumped_contradiction');
+  assert.ok(lump && lump.known.includes('L000061') && lump.diff.length === 3, '회로 순 반응은 GDP + Pi → GTP 를 뺀 알려진 단순화');
+  assert.equal(r.unresolved, 0);
+  const d = JSON.parse(JSON.stringify(BASE)), dup = { ...d.senses[IL12D].rule[0], id: 'dup_copy' };
+  d.senses[IL12D].rule.push(dup); d.senses[id('세포 ATP 소비')].rule.push({ ...d.senses[id('세포 ATP 소비')].rule[0], id: 'load_copy' });
+  const r2 = DefDB.refineCheck(d);
+  assert.equal(r2.issues.filter((x) => x.type === 'duplicate_rule').length, 2);
+  assert.ok(r2.refactor && r2.refactor.senses.every((s) => !s.rule.some((x) => /copy/.test(x.id))));
+  const after = JSON.parse(JSON.stringify(d)); for (const s of r2.refactor.senses) after.senses[s.id].rule = s.rule;
+  assert.equal(DefDB.refineCheck(after).issues.filter((x) => x.type === 'duplicate_rule').length, 0);
+  // 단계 화학량을 고쳐 차이가 생기면(등록 안 된 모순) unresolved
+  const e = JSON.parse(JSON.stringify(BASE)); e.senses[id('시트르산 회로')].rule[0].produces.push({ ref: ATP, n: 1 });
+  assert.ok(DefDB.refineCheck(e).issues.some((x) => x.type === 'lumped_contradiction'));
+});
+test('원자 수(elements)는 구조 요소만·원소 기호·0 이상 정수, 부분 구조 수지는 상대 1e-14', () => {
+  rejectedFor({ senses: [{ id: ATP, elements: { C: 10 } }] }, /구조 요소\) 만|structure_feature\) 만|kind structure_feature\)만/);
+  rejectedFor({ senses: [{ id: id('인산기 단위'), elements: { p: 1 } }] }, /원소 기호 'p'/);
+  rejectedFor({ senses: [{ id: id('인산기 단위'), elements: { P: 1.5 } }] }, /0 이상의 정수/);
+  rejectedFor(withRules(id('세포 ATP 소비'), (r) => { r[0].produces[0].n = 1 + 1e-12; }), /부분 구조 수지가 맞지 않음/);
+  assert.ok(Object.values(BASE.senses).filter((d) => d.kind === 'structure_feature' && d.elements).length >= 7, '부분 구조 원자 수는 데이터에');
+  assert.ok(!/coenzyme A moiety|nicotinamide/.test(readFileSync(new URL('../engine/augment.js', import.meta.url), 'utf8')), '엔진은 생물 이름을 모른다');
+});
+test('비교 검토: 같은 조절을 하나 더 넣는 패치는 결과가 같고 복잡도만 늘어 Optimization-Negative (질량 ≤ 1e-14)', () => {
+  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8')); sc.t_end = 3 * 3600; sc.commitment = { horizon: 3 * 3600, coarse: 3600 };
+  const d = JSON.parse(JSON.stringify(BASE)); d.senses[IL12D].rule.push({ ...d.senses[IL12D].rule[0], id: 'dup_copy' });
+  const r = CMP.compare(BASE, d, ACTD, sc, sc, { refHours: 0.5 });
+  assert.equal(r.verdict, 'Optimization-Negative', r.why);
+  assert.ok(r.between === 0 && !r.outcomeChanged && r.b.complexity.modulations === r.a.complexity.modulations + 1);
+  assert.ok(r.a.mass <= 1e-14 && r.b.mass <= 1e-14);
+});

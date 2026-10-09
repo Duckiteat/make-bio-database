@@ -90,7 +90,7 @@ Gate and accuracy, with the reference being explicit substeps at 1% consumption 
 | IL-15, 12 h | 1.1e-3 | 1.3e-2 | yes | 1200 | 58 ms | 15.6 s | 266× |
 | IL-12, 2.5 h | 3.3e-4 | 6.7e-3 | yes | 1200–28617 | 29 ms | 17.1 s | 587× |
 
-Mass: in all eight 48 h runs the moiety ledger deviation is ≤ 6.1e-14 relative, with no negative pools.
+Mass: in all eight 48 h runs the moiety ledger deviation was ≤ 6.1e-14 relative with plain float arithmetic. Since 2026-10-09 the state, channels and totals use compensated arithmetic (TwoSum/TwoProduct, double-double), so the deviation is ≤ 1e-27, inside the protocol's 1e-14. It is also faster than before: balanced rules skip the ledger path and the hot loop no longer allocates (dynamic 470 → 440 ms, converged reference 3469 → 1557 ms for the 3 h effector run).
 
 ## 5. Honest scope
 

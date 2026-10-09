@@ -1,0 +1,164 @@
+{
+  "applied_at": "2026-10-09T07:51:50.707Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "D000130",
+      "D000121",
+      "D000119",
+      "D000120",
+      "D000131",
+      "D000132",
+      "D000133"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "senses": [
+          "D000130",
+          "D000121",
+          "D000119",
+          "D000120",
+          "D000131",
+          "D000132",
+          "D000133"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000130": [
+          "elements"
+        ],
+        "D000121": [
+          "elements"
+        ],
+        "D000119": [
+          "elements"
+        ],
+        "D000120": [
+          "elements"
+        ],
+        "D000131": [
+          "elements"
+        ],
+        "D000132": [
+          "elements"
+        ],
+        "D000133": [
+          "elements"
+        ]
+      }
+    },
+    "why": "리팩터링 패치 (Comparative Optimization §B): 부분 구조의 원자 수(C·N·P·S)를 engine/augment.js 의 하드코딩 표에서 데이터(구조 요소 정의항의 elements)로 옮긴다 — 엔진은 생물·화학 이름을 모르고, 화학식 대조는 데이터에서 읽는다. 값은 각 부분 구조가 이 저장소의 분자 안에서 기여하는 원자 수(아데노신 C10N5, CoA-SH C21H36N7O16P3S, NAD 골격 C21N7P2, FAD 골격 C27N9P2)",
+    "impact": {
+      "rules": [],
+      "senses": [
+        "D000032",
+        "D000033",
+        "D000034",
+        "D000035",
+        "D000036",
+        "D000037",
+        "D000039",
+        "D000048",
+        "D000122",
+        "D000134",
+        "D000135",
+        "D000136",
+        "D000137",
+        "D000138",
+        "D000139",
+        "D000140",
+        "D000141",
+        "D000142",
+        "D000143",
+        "D000144",
+        "D000145",
+        "D000146",
+        "D000147",
+        "D000160",
+        "D000169"
+      ],
+      "steps": [],
+      "pathways": [],
+      "limitations": [],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 60
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "리팩터링 패치 (Comparative Optimization §B): 부분 구조의 원자 수(C·N·P·S)를 engine/augment.js 의 하드코딩 표에서 데이터(구조 요소 정의항의 elements)로 옮긴다 — 엔진은 생물·화학 이름을 모르고, 화학식 대조는 데이터에서 읽는다. 값은 각 부분 구조가 이 저장소의 분자 안에서 기여하는 원자 수(아데노신 C10N5, CoA-SH C21H36N7O16P3S, NAD 골격 C21N7P2, FAD 골격 C27N9P2)",
+  "senses": [
+    {
+      "id": "D000130",
+      "elements": {
+        "C": 1
+      }
+    },
+    {
+      "id": "D000121",
+      "elements": {
+        "P": 1
+      }
+    },
+    {
+      "id": "D000119",
+      "elements": {
+        "C": 10,
+        "N": 5
+      }
+    },
+    {
+      "id": "D000120",
+      "elements": {
+        "C": 10,
+        "N": 5
+      }
+    },
+    {
+      "id": "D000131",
+      "elements": {
+        "C": 21,
+        "N": 7,
+        "P": 3,
+        "S": 1
+      }
+    },
+    {
+      "id": "D000132",
+      "elements": {
+        "C": 21,
+        "N": 7,
+        "P": 2
+      }
+    },
+    {
+      "id": "D000133",
+      "elements": {
+        "C": 27,
+        "N": 9,
+        "P": 2
+      }
+    }
+  ]
+}

@@ -23,9 +23,12 @@
 //   node dbtool.mjs textbook  [--write | --check]            교과서 부록(docs/textbook/90-부록-자동생성.md) 생성 / 최신·파일 분류 검사
 //   node dbtool.mjs simulate  <경로> --rate [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N] [--until-death] [--window s] [--death-frac f]
 //                                                           속도 기반 시뮬레이션 (유한 대사물 저장소·공급·분해·매 Δt 질량 감사·정지까지 실행·사후 분석)
-//   node dbtool.mjs augment   plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync]
+//   node dbtool.mjs augment   plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync] | apply <초안 patch.json>
 //                                                           자동 보강 고리: unmapped·Identity_Gap·asserted 외부 ID → UniProt·ChEBI 원본(data/fetched/) → 확인 → 패치 → 관문 → CHANGES.md
 //                                                           네트워크가 막히면 data/fetched/RETRIEVAL_TASKS.md 에 수동 수집 과제를 쓴다
+//   node dbtool.mjs compare   --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]
+//                                                           비교 검토: 복잡도·수치 L2(수렴 기준)·결과·판정 (Optimization-Negative 이면 종료 코드 1)
+//   node dbtool.mjs validate  <patch.json>                  패치 검사: 관문 미리 보기 + 정제 점검(중복 규칙·화학량 모순)
 //   node dbtool.mjs fate      <세포 상태> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]
 //                                                           세포 운명 (v9): 신호 → 대사 → 전사 인자 다중 속도 적분(P5 관문), 결정 시점(신호 철회 시험), 분화 정지 사후 분석
 //   node dbtool.mjs simulate  <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]
@@ -71,6 +74,16 @@ switch (cmd) {
     break;
   }
   case 'validate': {
+    if (args[0]) { // 패치 검사: 관문 미리 보기 + 부분 구조 수지(ΣIn = ΣOut, 상대 1e-14 — validate 규칙) + 정제 점검의 새 문제
+      const db = loadDB(), patch = readJSON(args[0]), res = DefDB.ingest(db, patch), g = DefDB.gate(db, res, {});
+      printIssues(g.errors, g.warnings);
+      const before = DefDB.refineCheck(db).issues.map((x) => x.type + x.where), ref = DefDB.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
+      for (const x of fresh) console.log(`  △ [${x.type}] ${x.msg}`);
+      if (ref.refactor && fresh.some((x) => x.type === 'duplicate_rule')) console.log(`  → 리팩터링 패치 제안: ${ref.refactor.why}`);
+      const bad = fresh.filter((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length));
+      console.log(`— 패치 ${args[0]}: 관문 ${g.ok ? '통과' : '거부'} (새 오류 ${g.errors.length}, 새 경고 ${g.warnings.length}) · 정제 점검 새 문제 ${fresh.length} (차단 ${bad.length})`);
+      process.exit(g.ok && !bad.length ? 0 : 1);
+    }
     const r = DefDB.validate(loadDB());
     printIssues(r.errors, r.warnings);
     console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length}`);
@@ -203,6 +216,7 @@ switch (cmd) {
     if (flags.rate) {
       if (!args[0]) die('사용법: simulate <경로> --rate [--scenario s.json]');
       console.log(DefDB.simulateRateText(loadDB(), args[0], rateOpt()));
+      console.log(DefDB.refineText(loadDB()).text);
       break;
     }
     if (!args[0]) die('사용법: simulate <경로> [--until D…] [--from D…] [--amount N] [--rounds N] [--init "묶음키=N;…"]');
@@ -235,7 +249,9 @@ switch (cmd) {
       break;
     }
     if (sub === 'build' || sub === 'apply') {
-      const db = loadDB(), b = AUG.build(db, { dir, sync: !!flags.sync, date });
+      const db = loadDB(), drafted = args[1] ? readJSON(args[1]) : null;
+      const b = drafted ? { patch: drafted, rows: [], empty: false } : AUG.build(db, { dir, sync: !!flags.sync, date });
+      if (drafted && !drafted.why) die('초안 패치에 why 가 없음');
       const mark = { verified: '✓', rejected: '✗', ambiguous: '?', candidate: '→', missing: '·', unreadable: '!' };
       for (const r of b.rows) console.log(`  ${mark[r.outcome] || ' '} ${r.sense} ${r.label} [${r.kind} ${r.key}] ${r.outcome}: ${r.detail}`);
       if (b.empty) { console.log('바꿀 것이 없음 — 수신함 파일을 더하거나 (augment plan --write) 과제를 확인할 것'); process.exit(b.rows.some((r) => r.outcome === 'rejected') ? 1 : 0); }
@@ -245,19 +261,42 @@ switch (cmd) {
       printIssues(g.errors, g.warnings);
       console.log(DefDB.patchReportText(rep, DefDB.index(res.db)));
       console.log('패치: ' + out);
+      // 정제 점검: 이 패치가 만든 중복·등록되지 않은 화학량 모순은 병합을 막는다 (리팩터링 패치를 함께 제안)
+      const before = DefDB.refineCheck(db).issues.map((x) => x.type + x.where), ref = DefDB.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
+      console.log(fresh.length ? ['정제 점검 — 이 패치가 만든 문제:', ...fresh.map((x) => `  △ [${x.type}] ${x.msg}`)].join('\n') : DefDB.refineText(res.db).text);
+      if (fresh.some((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length))) {
+        if (ref.refactor) { const rp = join(tmpdir(), `refactor-${date}.json`); writeFileSync(rp, JSON.stringify(ref.refactor, null, 2) + '\n'); console.log('리팩터링 패치 제안: ' + rp); }
+        die('정제 점검 — 중복 복잡도 또는 등록되지 않은 화학량 모순: 저장하지 않음 (Optimization-Negative)');
+      }
       if (!g.ok) die('관문 거부 — 패치를 저장하지 않음');
       if (rep.verification.undetected_gaps) die(`등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — 저장하지 않음`);
       if (sub === 'build') { console.log(`관문 통과 — 병합하려면: node dbtool.mjs augment apply${flags.sync ? ' --sync' : ''}`); break; }
       mkdirSync(PATCH_DIR, { recursive: true });
-      const recPath = join(PATCH_DIR, `${stamp()}-auto-augmentation.json`), r = res.report;
+      const recPath = join(PATCH_DIR, `${stamp()}-${drafted ? basename(args[1]).replace(/\.json$/, '') : 'auto-augmentation'}.json`), r = res.report;
       writeFileSync(recPath, JSON.stringify({ applied_at: new Date().toISOString(), result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch }, null, 2) + '\n');
       writeFileSync(DB_PATH, JSON.stringify(res.db, null, 2) + '\n');
       const ch = join(HERE, 'CHANGES.md'), txt = readFileSync(ch, 'utf8'), anchor = '|---|---|---|---|---|\n', i = txt.indexOf(anchor) + anchor.length;
-      writeFileSync(ch, txt.slice(0, i) + AUG.changesRow(rel(recPath), rep, b.rows, date) + txt.slice(i));
-      console.log(`기록: ${rel(recPath)}\n저장: ${rel(DB_PATH)}\nCHANGES.md 에 한 행 추가 — limitations --write 와 textbook --write 로 생성물을 갱신할 것`);
+      writeFileSync(ch, txt.slice(0, i) + AUG.changesRow(rel(recPath), rep, b.rows, date, !!drafted) + txt.slice(i));
+      // 생성물 자동 갱신: limitations.md · 교과서 부록
+      writeFileSync(join(HERE, 'limitations.md'), DefDB.limitationsMarkdown(res.db));
+      const tdir = join(HERE, 'docs', 'textbook'); writeFileSync(join(tdir, '90-부록-자동생성.md'), textbookAppendix(res.db, readJSON(join(tdir, 'storage-map.json'))));
+      console.log(`기록: ${rel(recPath)}\n저장: ${rel(DB_PATH)}\nCHANGES.md 에 한 행 추가 · limitations.md · 교과서 부록 갱신`);
       break;
     }
-    die('사용법: augment plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync]');
+    die('사용법: augment plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync] | apply <초안 patch.json>');
+  }
+  case 'compare': {
+    // 비교 검토 (프로토콜 §5): 기준(A) 대 제안(B = 패치 적용 db 와/또는 다른 시나리오)
+    if (!flags.state || !flags.scenario) die('사용법: compare --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]');
+    const CMP = createRequire(import.meta.url)('./engine/compare.js');
+    const dbA = loadDB(), x = DefDB.resolveRef(DefDB.index(dbA), flags.state); if (x.error) die(x.error);
+    let dbB = dbA;
+    if (flags.patch) { const res = DefDB.ingest(dbA, readJSON(flags.patch)), g = DefDB.gate(dbA, res, {}); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
+    const scA = readJSON(flags.scenario), scB = flags['scenario-b'] ? readJSON(flags['scenario-b']) : JSON.parse(JSON.stringify(scA));
+    if (flags.hours) { scA.t_end = +flags.hours * 3600; scB.t_end = +flags.hours * 3600; }
+    const r = CMP.compare(dbA, dbB, x.id, scA, scB, { refHours: +(flags['ref-hours'] || 3) });
+    console.log(CMP.compareText(r));
+    process.exit(r.verdict === 'Optimization-Negative' ? 1 : 0);
   }
   case 'fate': {
     if (!args[0] || !flags.scenario) die('사용법: fate <세포 상태 번호|이름> --scenario s.json [--t 시간(h)] [--fine] [--no-commitment]');
@@ -268,6 +307,7 @@ switch (cmd) {
     if (flags.t) scenario.t_end = +flags.t * 3600;
     const r = FATE.simulateFateText(db, x.id, { scenario, mode: flags.fine ? 'fine' : undefined, commitment: flags['no-commitment'] ? false : undefined });
     console.log(r.text);
+    console.log(DefDB.refineText(db).text);
     process.exit(r.code);
   }
   case 'prompt': {
@@ -275,7 +315,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | augment | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | compare | augment | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

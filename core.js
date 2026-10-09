@@ -273,7 +273,7 @@
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
-  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note', 'signature', 'metabolome', 'transitions'];
+  const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note', 'signature', 'metabolome', 'transitions', 'elements'];
   function normSense(d) {
     const o = { term: str(d.term), n: parseInt(d.n, 10) || 0, kind: str(d.kind) };
     if (str(d.tier)) o.tier = str(d.tier);
@@ -294,6 +294,8 @@
     if (str(d.motif)) o.motif = str(d.motif);
     if (arr(d.addresses).length) o.addresses = arr(d.addresses).filter(isObj).map((a) => ({ limitation: str(a.limitation), how: str(a.how) }));
     for (const k of ['gap_review', 'distinction', 'note']) if (str(d[k])) o[k] = str(d[k]);
+    // 부분 구조의 원자 수 (구조 요소 정의항): 화학식 대조용 — 엔진 코드가 아니라 데이터가 화학을 안다
+    if (isObj(d.elements)) { o.elements = {}; for (const [e, n] of Object.entries(d.elements)) o.elements[str(e)] = Number(n); }
     // 세포 상태 (v9): 표지 서명 · 대사 프로그램(공급 규칙과 그 수준) · 다른 상태로의 전이(신호·결정 기준)
     if (arr(d.signature).length) o.signature = arr(d.signature).filter(isObj).map((m) => ({ ref: str(m.ref), level: str(m.level), location: str(m.location) }));
     if (arr(d.metabolome).length) o.metabolome = arr(d.metabolome).filter(isObj).map((m) => ({ ref: str(m.ref), level: str(m.level) }));
@@ -830,6 +832,10 @@
       if (!a.how) E(where, `addresses: 한계 ${a.limitation} 를 어떻게 해결하는지(how) 없음`);
     }
     validateCellState(db, ix, id, d, where, E, W);
+    if (d.elements) {
+      if (d.kind !== 'structure_feature') E(where, '원자 수(elements)는 부분 구조(kind structure_feature)만');
+      for (const [e, n] of Object.entries(d.elements)) { if (!/^[A-Z][a-z]?$/.test(e)) E(where, `원소 기호 '${e}' 형식 틀림 (예: C, N, P, S)`); if (!(Number.isInteger(n) && n >= 0)) E(where, `원소 ${e} 의 개수는 0 이상의 정수`); }
+    }
     // 부분 구조
     for (const m of d.moieties || []) {
       const x = db.senses[m.ref];
@@ -872,12 +878,13 @@
     return out;
   }
   // lhs/rhs: [{ref, n}] → 불균형 설명 문자열 또는 null. 어느 쪽에도 부분 구조가 없으면 검사하지 않음(null)
+  const MASS_REL_TOL = 1e-14;
   function moietyImbalance(db, lhs, rhs) {
     const a = {}, b = {};
     for (const q of lhs) if (typeof q.n === 'number') moietyOf(db, q.ref, q.n, a);
     for (const q of rhs) if (typeof q.n === 'number') moietyOf(db, q.ref, q.n, b);
     const keys = uniq([...Object.keys(a), ...Object.keys(b)]);
-    const bad = keys.filter((k) => Math.abs((a[k] || 0) - (b[k] || 0)) > 1e-9);
+    const bad = keys.filter((k) => Math.abs((a[k] || 0) - (b[k] || 0)) > MASS_REL_TOL * Math.max(1, Math.abs(a[k] || 0), Math.abs(b[k] || 0))); // ΣIn = ΣOut, 상대 1e-14
     if (!bad.length) return null;
     const lab = (k) => { const x = db.senses[k]; return x && db.terms[x.term] ? (db.terms[x.term].names.ko || db.terms[x.term].names.en || k) : k; };
     return bad.map((k) => `${lab(k)} ${a[k] || 0} → ${b[k] || 0}`).join(', ');
@@ -1564,6 +1571,48 @@
       impact: { rules: uniq(rules), senses: uniq(senses), steps, pathways, limitations: limits, limitation_status_changed: statusChanged, regenerate },
       verification: { gate: gateResult ? (gateResult.ok ? 'pass' : 'reject') : null, errors: v.errors.length, warnings: v.warnings.length, new_errors: gateResult ? gateResult.errors.length : null, new_warnings: gateResult ? gateResult.warnings.length : null, undetected_gaps: gaps.length, augment_candidates: augmentCandidates(after) },
     };
+  }
+  // ===== 정제 점검 (Continuous Refinement, 형식 v9 확장) — 더 효율적인 표현·화학량 모순을 찾는다 =====
+  //   duplicate_rule: 같은 화학량·위치의 공급 규칙, 같은 소유자·대상·효과·위치의 조절 규칙 (중복 복잡도)
+  //   lumped_contradiction: 경로가 가진 공급 규칙(순 반응)과 그 경로 단계들의 화학량 합이 다름 — 그 규칙을 대상으로 한 열린 한계가 있으면 known
+  function refineCheck(db) {
+    db = normalize(db);
+    const issues = [], sig = new Map(), ix = index(db);
+    const qs = (xs) => xs.map((q) => `${q.ref}:${q.n}`).sort().join('+');
+    const refCount = (ref) => Object.values(db.steps).filter((st) => st.rule === ref).length + Object.values(db.senses).reduce((t, d) => t + (d.metabolome || []).filter((m) => m.ref === ref).length + d.rule.filter((r) => r.type === 'modulation' && r.target === ref).length, 0);
+    const knownFor = (ref) => Object.entries(db.limitations).filter(([, l]) => l.type === 'Structural_Gap' && (l.target === ref || l.requirement.needs.some((n) => n.rule === ref)) && limitationStatus(db, l).status !== 'resolved').map(([lid]) => lid);
+    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) {
+      const key = r.type === 'supply' ? `S|${r.where.join()}|${qs(r.consumes)}>${qs(r.produces)}` : r.type === 'modulation' ? `M|${id}|${r.target}|${r.effect}|${r.at}` : null;
+      if (!key) continue;
+      const ref = `${id}/rule/${r.id}`;
+      if (sig.has(key)) issues.push({ type: 'duplicate_rule', where: ref, same_as: sig.get(key), msg: `${ref} 는 ${sig.get(key)} 와 같은 ${r.type === 'supply' ? '화학량·위치의 공급' : '조절자·대상·효과·위치의 조절'} — 중복 복잡도`, removable: refCount(ref) === 0 });
+      else sig.set(key, ref);
+    }
+    // 경로의 순 반응 공급 규칙 ↔ 단계 화학량 합 (부피 위치 하나에서)
+    for (const [pid, d] of Object.entries(db.senses)) {
+      if (d.kind !== 'pathway') continue;
+      const steps = Object.values(db.steps).filter((st) => st.part_of.includes(pid));
+      if (!steps.length) continue;
+      for (const r of d.rule.filter((x) => x.type === 'supply')) {
+        const loc = r.where[0], net = {};
+        for (const st of steps) { for (const p of st.outputs) { const b = parseBundle(p.b); if (b.location === loc) net[b.base] = (net[b.base] || 0) + (p.n || 1); } for (const p of st.inputs) { const b = parseBundle(p.b); if (b.location === loc) net[b.base] = (net[b.base] || 0) - (p.n || 1); } }
+        const lump = {}; for (const q of r.produces) lump[q.ref] = (lump[q.ref] || 0) + q.n; for (const q of r.consumes) lump[q.ref] = (lump[q.ref] || 0) - q.n;
+        const diff = uniq([...Object.keys(net), ...Object.keys(lump)]).filter((k) => Math.abs((net[k] || 0) - (lump[k] || 0)) > 1e-12).map((k) => ({ ref: k, steps: net[k] || 0, rule: lump[k] || 0 }));
+        if (!diff.length) continue;
+        const ref = `${pid}/rule/${r.id}`, known = knownFor(ref);
+        issues.push({ type: 'lumped_contradiction', where: ref, known, diff, msg: `${ref} (순 반응) ↔ ${ix.label(pid)} 단계 ${steps.length}개의 화학량 합: ${diff.map((x) => `${ix.label(x.ref)} 단계 ${x.steps > 0 ? '+' : ''}${x.steps} / 규칙 ${x.rule > 0 ? '+' : ''}${x.rule}`).join(', ')}${known.length ? ` — 알려진 단순화 (${known.join(', ')})` : ' — 등록되지 않은 모순'}` });
+      }
+    }
+    // 리팩터링 패치 제안: 참조되지 않는 중복 규칙 제거
+    const rm = issues.filter((x) => x.type === 'duplicate_rule' && x.removable);
+    const byOwner = new Map(); for (const x of rm) { const [o, , k] = x.where.split('/'); if (!byOwner.has(o)) byOwner.set(o, new Set()); byOwner.get(o).add(k); }
+    const refactor = byOwner.size ? { format: PATCH_FORMAT, version: VERSION, why: `리팩터링 패치 (정제 점검): 참조되지 않는 중복 규칙 ${rm.length}개 제거 — ${rm.map((x) => `${x.where} = ${x.same_as}`).join(', ')}`, senses: [...byOwner].map(([o, ks]) => ({ id: o, rule: db.senses[o].rule.filter((r) => !ks.has(r.id)) })) } : null;
+    return { issues, refactor, unresolved: issues.filter((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length)).length };
+  }
+  function refineText(db) {
+    const r = refineCheck(db);
+    if (!r.issues.length) return { text: '정제 점검: 중복 규칙·화학량 모순 없음', result: r };
+    return { text: ['정제 점검 (Continuous Refinement):', ...r.issues.map((x) => `  ${x.type === 'lumped_contradiction' && x.known.length ? '○' : '△'} [${x.type}] ${x.msg}`), ...(r.refactor ? [`  → 리팩터링 패치 제안: ${r.refactor.why}`] : [])].join('\n'), result: r };
   }
   // 자동 보강 후보 (원본 대조 대상): unmapped 필수 외부 ID, 또는 대조 안 된(asserted) UniProt·ChEBI — engine/augment.js 의 plan 과 같은 기준
   function augmentCandidates(db) {
@@ -2375,7 +2424,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       for (const r of bd.rule) {
         if (r.type !== 'degradation' || !Object.entries(r.when).every(([s, f]) => fs.get(s) === f) || (r.where && !r.where.includes(locOf(b)))) continue;
         const ref = `${b.split('|')[0]}/rule/${r.id}`, k = kinOf(ref), kd = k ? (k.k > 0 ? k.k : k.half_life > 0 ? Math.LN2 / k.half_life : 0) : 0;
-        const loc3 = V.locations[locOf(b)] && V.locations[locOf(b)].dim === '3D' ? locOf(b) : 'cytosol';
+        const loc3 = V.locations[locOf(b)] && V.locations[locOf(b)].dim === '3D' ? locOf(b) : V.defaultVolumeLocation;
         const rec = [];
         for (const q of r.recycle_to) {
           let n = q.n;
@@ -2793,5 +2842,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     xrefKey, xrefLabel, parseBundle, bundleKey, locCompatible, vlabel, simulate, simulateText,
     MOTIFS, findMotifs, patternText, limitationStatus, limitationsText, limitationsMarkdown, detectGaps, parseTarget,
     kineticIssues, rateAt, envShift, thermoLoops, defaultTier, resolutionPlan, resolutionText, simulateRate, simulateRateText, auditRun, patchReport, patchReportText, EFFECT_TYPES, CONSERVING, KIN_FIELDS, SENSE_FIELDS,
-    modulationIndex, hillFactor, SAT_K, augmentCandidates, moietyOf, moietyImbalance, entityTally, supplyRules, rngOf, binomial, gapSuggest, NA, VOL };
+    modulationIndex, hillFactor, SAT_K, augmentCandidates, refineCheck, refineText, MASS_REL_TOL, moietyOf, moietyImbalance, entityTally, supplyRules, rngOf, binomial, gapSuggest, NA, VOL };
 });

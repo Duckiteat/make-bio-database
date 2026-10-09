@@ -177,14 +177,7 @@ function pickCandidate(db, id, data) {
   const ids = [...new Set(hits.map((c) => c.id))];
   return ids.length === 1 ? { id: ids[0], name: hits[0].name, candidates: data.candidates } : { id: null, reason: ids.length ? `이름이 맞는 후보 ${ids.length}개 — 모호` : '이름이 맞는 후보 없음', hits, candidates: data.candidates };
 }
-// 부분 구조 → 원자 수 (확인용 화학 상수: 각 부분 구조가 그 분자 안에서 기여하는 C·N·P·S). 데이터를 바꾸지 않고 대조만 한다.
-const MOIETY_ELEMENTS = {
-  'carbon skeleton unit': { C: 1 }, 'phosphoryl unit': { P: 1 },
-  'adenosine moiety': { C: 10, N: 5 }, 'guanosine moiety': { C: 10, N: 5 },
-  'coenzyme A moiety': { C: 21, N: 7, P: 3, S: 1 },          // CoA-SH C21H36N7O16P3S
-  'nicotinamide nucleotide moiety': { C: 21, N: 7, P: 2 },    // NAD⁺/NADH 골격 (이 저장소는 NAD 전체를 한 부분 구조로 셈)
-  'flavin moiety': { C: 27, N: 9, P: 2 },                     // FAD/FADH₂ 골격
-};
+// 부분 구조 → 원자 수는 데이터(구조 요소 정의항의 elements)에서 읽는다 — 이 코드는 생물·화학 이름을 모른다.
 function parseFormula(f) {
   const s = String(f || '').replace(/\s+/g, '');
   if (!s || /[^A-Za-z0-9()]/.test(s) || /\)[nNx]/.test(s) || /R/.test(s.replace(/R[a-z]/g, ''))) return null; // 중합체·R 기는 검사 안 함
@@ -196,8 +189,8 @@ function formulaCheck(db, id, formula) {
   if (!el) return { status: 'skipped', note: `화학식 '${formula || '없음'}' 은 원자 수로 풀 수 없음 (중합체·R 기)` };
   if (!(d.moieties || []).length) return { status: 'no_moieties', note: `부분 구조가 선언되지 않음 — 화학식 C${el.C || 0} 를 보면 탄소 골격 단위 ${el.C || 0} 를 선언할 수 있음 (수지 검사를 켜려면)`, elements: el };
   const want = {}, unknown = [];
-  for (const m of d.moieties) { const x = db.senses[m.ref], en = x && db.terms[x.term].names.en, t = MOIETY_ELEMENTS[en]; if (!t) { unknown.push(en || m.ref); continue; } for (const [e, n] of Object.entries(t)) want[e] = (want[e] || 0) + n * m.n; }
-  if (unknown.length) return { status: 'skipped', note: `원자 수를 모르는 부분 구조: ${unknown.join(', ')}` };
+  for (const m of d.moieties) { const x = db.senses[m.ref], t = x && x.elements; if (!t) { unknown.push(m.ref); continue; } for (const [e, n] of Object.entries(t)) want[e] = (want[e] || 0) + n * m.n; }
+  if (unknown.length) return { status: 'skipped', note: `원자 수(elements)가 없는 부분 구조: ${unknown.join(', ')} — 구조 요소 정의항에 elements 를 넣으면 대조된다` };
   const bad = ['C', 'N', 'P', 'S'].filter((e) => (want[e] || 0) !== (el[e] || 0));
   return bad.length ? { status: 'mismatch', note: `원자 수 불일치 ${bad.map((e) => `${e}: 부분 구조 ${want[e] || 0} ≠ 화학식 ${el[e] || 0}`).join(', ')}`, elements: el, want } : { status: 'ok', note: `C${want.C || 0} N${want.N || 0} P${want.P || 0} S${want.S || 0} 일치`, elements: el, want };
 }
@@ -297,9 +290,13 @@ function build(db, opt) {
 }
 
 // ===== ④ CHANGES.md 한 행 =====
-function changesRow(rec, rep, rows, date) {
-  const v = rows.filter((r) => r.outcome === 'verified'), lim = (rep.impact.limitation_status_changed || []).filter((l) => l.after !== l.before);
-  return `| ${date} · 자동 보강 (Auto-Augmentation) | \`data/db.json\`·\`${rec}\` — 정의항 ${(rep.scope.updated.senses || []).join(' ') || '—'} (바뀐 필드 ${Object.entries(rep.scope.fields || {}).map(([id, f]) => `${id}{${f.join(',')}}`).join(' ') || '—'}) | ${rep.why} | 외부 ID verified ${v.length}건 (${v.map((r) => `${r.sense} ${r.id}`).join(', ') || '—'}) · 한계 상태 ${lim.map((l) => `${l.id} ${l.before}→${l.after}`).join(', ') || '변화 없음'} · 거부 ${rows.filter((r) => r.outcome === 'rejected').length}·모호 ${rows.filter((r) => r.outcome === 'ambiguous').length}·없음 ${rows.filter((r) => r.outcome === 'missing').length} | 관문 ${rep.verification.gate} · 오류 ${rep.verification.errors} · 경고 ${rep.verification.warnings} · 미등록 한계 후보 ${rep.verification.undetected_gaps} |\n`;
+function changesRow(rec, rep, rows, date, drafted) {
+  const lim = (rep.impact.limitation_status_changed || []).filter((l) => l.after !== l.before);
+  const scope = `\`data/db.json\`·\`${rec}\` — ${Object.entries(rep.scope.added || {}).map(([k, v]) => `추가 ${k} ${v.join(' ')}`).concat(Object.entries(rep.scope.updated || {}).map(([k, v]) => `수정 ${k} ${v.join(' ')}`)).join(' · ') || '—'} (바뀐 필드 ${Object.entries(rep.scope.fields || {}).map(([id, f]) => `${id}{${f.join(',')}}`).join(' ') || '—'})`;
+  const verify = `관문 ${rep.verification.gate} · 오류 ${rep.verification.errors} · 경고 ${rep.verification.warnings} · 미등록 한계 후보 ${rep.verification.undetected_gaps} · 정제 점검 새 문제 0`;
+  if (drafted) return `| ${date} · 데이터 패치 (augment apply) | ${scope} | ${rep.why} | 한계 상태 ${lim.map((l) => `${l.id} ${l.before}→${l.after}`).join(', ') || '변화 없음'} · 하류 규칙 ${(rep.impact.rules || []).length}·단계 ${(rep.impact.steps || []).length}·경로 ${(rep.impact.pathways || []).join(' ') || '—'} | ${verify} |\n`;
+  const v = rows.filter((r) => r.outcome === 'verified');
+  return `| ${date} · 자동 보강 (Auto-Augmentation) | ${scope} | ${rep.why} | 외부 ID verified ${v.length}건 (${v.map((r) => `${r.sense} ${r.id}`).join(', ') || '—'}) · 한계 상태 ${lim.map((l) => `${l.id} ${l.before}→${l.after}`).join(', ') || '변화 없음'} · 거부 ${rows.filter((r) => r.outcome === 'rejected').length}·모호 ${rows.filter((r) => r.outcome === 'ambiguous').length}·없음 ${rows.filter((r) => r.outcome === 'missing').length} | ${verify} |\n`;
 }
 
-module.exports = { INBOX, URLS, plan, fetchTasks, retrievalTasksMarkdown, readTask, parseUniProt, parseChEBI, parseChEBISearch, parseUniProtSearch, parseFormula, formulaCheck, pickCandidate, build, changesRow, MOIETY_ELEMENTS };
+module.exports = { INBOX, URLS, plan, fetchTasks, retrievalTasksMarkdown, readTask, parseUniProt, parseChEBI, parseChEBISearch, parseUniProtSearch, parseFormula, formulaCheck, pickCandidate, build, changesRow };
