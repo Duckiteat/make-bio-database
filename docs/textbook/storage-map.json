@@ -96,6 +96,22 @@
       "interpret": "[공유] 헌법 층 — 형식 상수·정규화(normalize)·색인(index)·참조 해석·부분 구조(entityTally·moietyOf)·속도 법칙 정의(hillFactor·SAT_K·NA·VOL)·규칙 한 줄 표기. 시뮬레이션·판정·쓰기를 하지 않는다."
     },
     {
+      "path": "compiler/ir_builder.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js, engine/fate_engine.js, tests",
+      "interpret": "[공유·컴파일러] db + 시나리오 → 불변 운명 IR: 계 조립(assemble)·정수 묶음 번호·화학량 S·속도식과 기호 미분 ∂rate/∂N·조절 배율과 ∂f/∂s·희소 패턴·결합점 값·sha256. 쓰기·판정·엔진 호출 없음."
+    },
+    {
+      "path": "compiler/tape.js",
+      "class": "law",
+      "format": "UMD JavaScript",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "compiler/ir_builder.js, engine/fate_engine.js",
+      "interpret": "[공유·컴파일러] 수식 테이프 명령표(CONST·CONC·DCONC·CNT·FAC·MUL·ADD·POW·SAT·HILL 과 도함수 명령)와 참조 해석기 — Rust/WASM 엔진이 같은 명령표를 해석한다. 할당 없는 스택."
+    },
+    {
       "path": "orchestrator.js",
       "class": "interface",
       "format": "Node CommonJS",
@@ -126,6 +142,14 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "judicial/fate_audit.js, tests",
       "interpret": "[사법] 원자료 계약 검사 — JSON Schema 부분 집합(Float64Array 를 배열로) + x-dimensions. 위반 원자료는 판정하지 않는다 (AUDIT_SCHEMA, 증명서 FAIL)."
+    },
+    {
+      "path": "judicial/derivative.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/fate_audit.js, tests",
+      "interpret": "[사법] IR·기호 도함수 검사 — 해시·엔진이 먹은 IR 과 같은지·db 에서 다시 세운 법칙과 속도 테이프 비교·이중수 자동미분 대비 ∂rate/∂N·∂f/∂s (≤ 1e-14)·빠진 의존성·중심 유한차분 교차(≤ 1e-6). 자기 테이프 해석기(컴파일러 코드 쓰지 않음)."
     },
     {
       "path": "judicial/fate_audit.js",

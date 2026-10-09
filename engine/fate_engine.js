@@ -19,75 +19,24 @@
 'use strict';
 const C = require('../core.js');
 const GATE = require('./p5_dynamic_gate.js');
-const COUPLING = require('./coupling.js');
+const IRB = require('../compiler/ir_builder.js'); // IR (컴파일러 — 순수): 조립·정수 번호·기호 도함수 테이프
+const TAPE = require('../compiler/tape.js');
 const V = C.VOCAB, NA = C.NA, VOL = C.VOL;
 
-const loc3 = (l) => V.locations[l] && V.locations[l].dim === '3D';
-
-// ===== 계 조립: 상태들 → 규칙·묶음 =====
-function assemble(db, sourceId, sc) {
-  const ix = C.index(db), src = db.senses[sourceId];
-  if (!src || src.kind !== 'cell_state') return { error: `'${sourceId}' 는 세포 상태(cell_state) 정의항이 아님` };
-  // 상태: 시작 상태 + 전이로 닿는 상태 (닫힌 집합)
-  const states = [sourceId];
-  for (let i = 0; i < states.length; i++) for (const t of db.senses[states[i]].transitions || []) if (!states.includes(t.to)) states.push(t.to);
-  const markers = new Map(); // 묶음 → 기준 정의항
-  for (const s of states) for (const m of db.senses[s].signature) markers.set(`${m.ref}|${m.location}`, m.ref);
-  // 규칙: 상태들의 대사 프로그램 + 표지 정의항이 가진 공급 규칙 + 시나리오 extra_rules
-  const ruleRefs = new Set();
-  for (const s of states) for (const m of db.senses[s].metabolome || []) ruleRefs.add(m.ref);
-  for (const base of new Set(markers.values())) for (const r of db.senses[base].rule) if (r.type === 'supply') ruleRefs.add(`${base}/rule/${r.id}`);
-  for (const r of sc.extra_rules || []) ruleRefs.add(r);
-  const kinOf = (ref) => (sc.kinetics || {})[ref] ? { ...sc.kinetics[ref], src: 'scenario' } : ix.ruleOf(ref) && ix.ruleOf(ref).kinetics ? { ...ix.ruleOf(ref).kinetics, src: 'data' } : null;
-  const rules = [], gaps = [], facts = []; // facts: 관찰된 사실 (판정은 사법부)
-  const bundles = new Set(markers.keys());
-  for (const ref of ruleRefs) {
-    const r = ix.ruleOf(ref);
-    if (!r || r.type !== 'supply') { facts.push({ kind: 'not_supply', ref }); continue; }
-    const loc = r.where[0], k = kinOf(ref);
-    const cons = r.consumes.map((q) => ({ b: `${q.ref}|${loc}`, n: q.n, sat: !!q.saturating })), prods = r.produces.map((q) => ({ b: `${q.ref}|${loc}`, n: q.n }));
-    for (const q of [...cons, ...prods]) bundles.add(q.b);
-    if (!k) gaps.push(ref);
-    rules.push({ ref, kind: 'supply', rule: r, loc, k, cons, prods, source: !!r.source });
-  }
-  // 분해 규칙: 계 안 묶음마다 (위치·부위 조건)
-  for (const b of [...bundles]) {
-    const [base, loc] = [b.split('|')[0], b.split('|').pop()], d = db.senses[base];
-    if (!d) continue;
-    for (const r of d.rule) {
-      if (r.type !== 'degradation' || Object.keys(r.when).length || (r.where && !r.where.includes(loc))) continue;
-      const ref = `${base}/rule/${r.id}`, k = kinOf(ref);
-      if (!k) gaps.push(ref);
-      if (r.recycle_to.length) facts.push({ kind: 'recycle_ignored', ref });
-      rules.push({ ref, kind: 'degradation', rule: r, loc, k, cons: [{ b, n: 1 }], prods: [], lost: true });
-    }
-  }
-  // 조절: 계 안 규칙을 대상으로 하는 모든 조절 규칙 (조절자 묶음 = 소유자|at)
-  const mods = C.modulationIndex(db), modGaps = [];
-  for (const R of rules) {
-    R.mods = (mods.get(R.ref) || []).map((m) => ({ ...m, b: `${m.owner}|${m.rule.at}`, k: kinOf(m.ref) }));
-    for (const m of R.mods) { bundles.add(m.b); if (!m.k) modGaps.push(m.ref); }
-  }
-  // 층 나누기: 표지를 만들거나 없애는 규칙 = 느린 층, 나머지 = 빠른 층
-  for (const R of rules) R.slow = [...R.cons, ...R.prods].some((q) => markers.has(q.b));
-  // 신호: 상태 전이의 신호 정의항의 묶음 (시나리오 signals 의 키)
-  const signalBases = new Set(states.flatMap((s) => (db.senses[s].transitions || []).flatMap((t) => t.signals)));
-  const signals = new Set(Object.keys(sc.signals || {}));
-  for (const b of bundles) if (signalBases.has(b.split('|')[0])) signals.add(b);
-  for (const b of signals) bundles.add(b);
-  return { ix, states, markers, rules, bundles: [...bundles], signals: [...signals], gaps: [...new Set(gaps)], modGaps: [...new Set(modGaps)], facts, kinOf };
-}
 
 // ===== 시뮬레이션 =====
 function simulateFate(db, sourceId, opt) {
   db = C.normalize(db);
   opt = Object.assign({}, opt || {});
   const sc = opt.scenario || {};
-  const A = assemble(db, sourceId, sc);
-  if (A.error) return A;
-  const { ix, states, markers, rules, signals } = A;
+  // 행정부는 IR 만 먹는다 (조정자가 넘기거나, 없으면 같은 입력으로 컴파일) — 규칙·묶음·결합점 값은 모두 IR 에서
+  const IR = opt.ir || IRB.buildFateIR(db, sourceId, sc, opt.coupling);
+  if (IR.error) return IR;
+  const ix = C.index(db), states = IR.states, markers = new Map(IR.markers.map((b) => [b, b.split('|')[0]])), signals = IR.signals;
+  const rules = IR.rules.map((R) => ({ ...R, cons: R.cons.map((q) => ({ ...q })), prods: R.prods.map((q) => ({ ...q })), mods: R.mods.map((m) => ({ ...m })) })); // IR 은 불변 — 사본에 색인을 단다
+  const A = { bundles: IR.keys, facts: IR.facts, gaps: IR.gaps, modGaps: IR.modGaps };
   const dt = opt.dt_slow || sc.dt_slow || 60, tEnd = opt.t_end || sc.t_end || 48 * 3600;
-  const CP = COUPLING.resolve(sc, opt.coupling), Ksat = CP.saturation_K;
+  const CP = IR.coupling, Ksat = CP.saturation_K;
   // 부피 (시나리오 → 없음)
   const volL = {};
   for (const [l, v] of Object.entries(sc.volumes || {})) if (VOL[v.unit]) volL[l] = v.value * VOL[v.unit];
@@ -110,7 +59,7 @@ function simulateFate(db, sourceId, opt) {
     R.ci = R.cons.map((q) => ({ i: at.get(q.b), n: q.n, sat: q.sat }));
     R.pi = R.prods.map((q) => ({ i: at.get(q.b), n: q.n }));
     R.Vr = volL[R.loc] || 0;
-    R.mi = R.mods.filter((m) => m.k).map((m) => ({ i: at.get(m.b), eff: m.rule.effect, k: m.k, ref: m.ref, owner: m.owner }));
+    R.mi = R.mods.filter((m) => m.k).map((m) => ({ i: at.get(m.b), eff: m.effect, k: m.k, ref: m.ref, owner: m.owner }));
     R.kdeg = R.kind === 'degradation' && R.k ? (R.k.k > 0 ? R.k.k : R.k.half_life > 0 ? Math.LN2 / R.k.half_life : 0) : 0;
   }
   const fast = rules.filter((R) => !R.slow && R.k), slow = rules.filter((R) => R.slow && R.k);
@@ -180,7 +129,7 @@ function simulateFate(db, sourceId, opt) {
   // --- 빠른 층: 역방향 오일러 (진행량 뉴턴, 관문이 승격했을 때)
   const nF = fast.length, tmp = new Float64Array(nB);
   const stateAt = (N0v, xi) => { tmp.set(N0v); for (let j = 0; j < nF; j++) { const R = fast[j]; for (const q of R.ci) tmp[q.i] -= q.n * xi[j]; for (const q of R.pi) tmp[q.i] += q.n * xi[j]; } return tmp; };
-  const resid = (N0v, xi, F, h, out) => { const Nn = stateAt(N0v, xi); for (let j = 0; j < nF; j++) out[j] = xi[j] - h * rate(fast[j], Nn, F[j]); return Nn; };
+  const resid = (N0v, xi, F, h, out) => { stats.residEvals++; const Nn = stateAt(N0v, xi); for (let j = 0; j < nF; j++) out[j] = xi[j] - h * rate(fast[j], Nn, F[j]); return Nn; };
   const solve = (M, b) => { // 가우스 소거 (부분 피벗)
     const n = b.length, a = M.map((r) => r.slice()), x = b.slice();
     for (let c = 0; c < n; c++) {
@@ -192,7 +141,22 @@ function simulateFate(db, sourceId, opt) {
     for (let c = n - 1; c >= 0; c--) { let s = x[c]; for (let k = c + 1; k < n; k++) s -= a[c][k] * x[k]; x[c] = s / a[c][c]; }
     return x;
   };
-  const stats = { newton: 0, newtonFail: 0, substeps: 0, implicitSteps: 0, explicitSteps: 0 };
+  const stats = { newton: 0, newtonFail: 0, substeps: 0, implicitSteps: 0, explicitSteps: 0, residEvals: 0, jacEvals: 0 };
+  // 해석적 야코비안 (IR 기호 도함수): J[j][k] = δ_jk − h · Σ_i ∂rate_j/∂N_i · S_ik  — 빠른 규칙 j 가 의존하는 묶음 i 만 (희소)
+  //   테이프는 같은 규칙의 고정 배율 f_j 를 FAC 로 받는다. 꺾인 곳(max(0,·)·완충 상한)은 현재 반복점의 가지 도함수 (잔차는 그대로).
+  const tctx = { NA, V: Float64Array.from(IR.species, (x) => x.V), buf: Float64Array.from(IR.species, (x) => (x.buf == null ? Infinity : x.buf)), stack: new Float64Array(64) };
+  const JD = IR.jac.fast.map((j) => IR.jac.dRate[j]), JS = IR.jac.S;
+  if (JD.length !== nF) throw new Error('IR 빠른 층과 엔진 빠른 층이 다름 — IR 과 db·시나리오가 맞지 않음');
+  const Jt = Array.from({ length: nF }, () => new Float64Array(nF));
+  const analyticJ = (Nn, F, h) => {
+    stats.jacEvals++;
+    for (let j = 0; j < nF; j++) { Jt[j].fill(0); Jt[j][j] = 1; }
+    for (let j = 0; j < nF; j++) for (const d of JD[j]) {
+      const v = TAPE.evalTape(d.t, Nn, F[j], tctx);
+      if (v) for (const [k, c] of JS[d.i]) Jt[j][k] -= h * v * c;
+    }
+    return Jt;
+  };
   const implicitFast = (N, F, h) => {
     const N0v = Float64Array.from(N), xi = new Array(nF).fill(0), r0 = new Array(nF), r1 = new Array(nF);
     // 초기 추정: 명시 한 단계의 진행량 (입력 한도 안)
@@ -200,13 +164,16 @@ function simulateFate(db, sourceId, opt) {
     let ok = false;
     for (let it = 0; it < CP.newton_iters; it++) {
       stats.newton++;
-      resid(N0v, xi, F, h, r0);
+      const Nn = resid(N0v, xi, F, h, r0);
       const norm = Math.max(...r0.map((v, j) => Math.abs(v) / (Math.abs(xi[j]) + 1)));
       if (norm < CP.newton_tol) { ok = true; break; }
-      const J = [];
-      for (let c = 0; c < nF; c++) { const d = Math.max(1e-7 * Math.abs(xi[c]), 1e-6); xi[c] += d; resid(N0v, xi, F, h, r1); xi[c] -= d; J.push(r1.map((v, j) => (v - r0[j]) / d)); }
-      const Jt = r0.map((_, j) => J.map((col) => col[j]));
-      const dx = solve(Jt, r0.map((v) => -v));
+      let Jm;
+      if (CP.jacobian === 'fd') { // 0.5단계 이전 기준 (비교 검토용): 유한차분 — 잔차 nF 번 더
+        const J = [];
+        for (let c = 0; c < nF; c++) { const d = Math.max(1e-7 * Math.abs(xi[c]), 1e-6); xi[c] += d; resid(N0v, xi, F, h, r1); xi[c] -= d; J.push(r1.map((v, j) => (v - r0[j]) / d)); }
+        Jm = r0.map((_, j) => J.map((col) => col[j]));
+      } else Jm = analyticJ(Nn, F, h).map((row) => Array.from(row));
+      const dx = solve(Jm, r0.map((v) => -v));
       if (!dx) break;
       let lam = 1; // 감쇠: 음수 상태·음수 진행 금지
       for (let tries = 0; tries < 40; tries++) { const cand = xi.map((v, j) => v + lam * dx[j]); const Nn = stateAt(N0v, cand); if (cand.every((v) => v >= -1e-9) && Nn.every((v, i) => v >= -1e-6 * Math.max(1, N0v[i]))) { for (let j = 0; j < nF; j++) xi[j] = Math.max(0, cand[j]); break; } lam /= 2; }
@@ -341,7 +308,7 @@ function simulateFate(db, sourceId, opt) {
   const target = (sc.target && sc.target) || (transitions.find((t) => t.driven) || {}).to || null;
   return {
     source: sourceId, states, scenario: sc.name || null, hypothetical: !!sc.hypothetical, dt, t_end: tEnd, keys, markers: [...markers.keys()], signals,
-    rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.rule.effect, active: !!m.k })) })),
+    rules: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', active: !!R.k, src: R.k ? R.k.src : null, modulators: R.mods.map((m) => ({ ref: m.ref, bundle: m.b, effect: m.effect, active: !!m.k })) })),
     final: { state: final.state, nearest: final.nearest || null, d: final.d, N: Object.fromEntries(keys.map((b, i) => [b, main.N[i]])) },
     trajectory: traj, series: main.series.map((x) => x.N), firstReach, transitions, commitment, target,
     gate: { ...main.gate.stats, transitions: main.gate.stats.transitions.length, log: main.gate.stats.transitions, path: main.path, nsub: { min: Math.min(...main.nsubs), max: Math.max(...main.nsubs) } },
@@ -355,8 +322,9 @@ function simulateFate(db, sourceId, opt) {
       schedule: sched.map((x) => ({ bundle: keys[x.i], list: x.list })), signalIdx: sched.map((x) => x.i), thresholds: thr, N0: Float64Array.from(N0),
       ruleInfo: rules.map((R) => ({ ref: R.ref, kind: R.kind, layer: R.slow ? 'slow' : 'fast', cons: R.cons.map((q) => [q.b, q.n]), prods: R.prods.map((q) => [q.b, q.n]), src: R.k ? R.k.src : null, kin: R.k, mods: R.mi.map((m) => ({ ref: m.ref, bundle: keys[m.i], effect: m.eff, kin: m.k })) })),
     },
+    irHash: IR.hash, // 먹은 IR 의 해시 — 사법부가 조정자에게서 받은 IR 과 맞춘다
     events: main.events, facts, kineticGaps: A.gaps, modulationGaps: A.modGaps, stats: { ...stats, probes }, ix,
   };
 }
 
-module.exports = { simulateFate, assemble };
+module.exports = { simulateFate, assemble: IRB.assemble };

@@ -23,6 +23,8 @@
     { key: 'commitment_horizon', scenario: 'commitment.horizon', default: 24 * 3600, unit: 's', meaning: '신호 철회 탐침의 관찰 길이', layer: 'commitment' },
     { key: 'commitment_coarse', scenario: 'commitment.coarse', default: 7200, unit: 's', meaning: '결정 탐침의 거친 격자 간격 (이분 탐색 전)', layer: 'commitment' },
     { key: 'newton_tol', scenario: 'newton.tol', default: 1e-10, unit: '1', meaning: '역방향 오일러 뉴턴 상대 잔차 허용', layer: 'numerics' },
+    { key: 'jacobian', scenario: 'jacobian', default: 'analytic', unit: '—', meaning: "뉴턴 야코비안: 'analytic'(컴파일러 IR 의 기호 도함수) | 'fd'(유한차분, 0.5단계 이전 기준)", layer: 'numerics' },
+    { key: 'hill_s_floor', scenario: 'hill_s_floor', default: 1e-12, unit: 'M', meaning: '힐 n < 1 일 때 s → 0 에서 기울기를 자르는 농도 하한 (도함수 발산 방지) — 생물 상수 아님', layer: 'numerics' },
     { key: 'newton_iters', scenario: 'newton.iters', default: 50, unit: '회', meaning: '뉴턴 최대 반복', layer: 'numerics' },
   ];
 

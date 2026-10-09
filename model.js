@@ -661,7 +661,20 @@
       + (r.regulators.length ? ` | 조절: ${r.regulators.map((g) => `${vlabel('effects', g.effect)} ${L(g.ref)}`).join(', ')}` : '');
   }
 
-  return Object.freeze({ VOCAB: V, NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE,
+  // 공급 규칙 목록 · 조절 규칙 색인 (v9) — 엔진·컴파일러가 함께 읽는 순수 색인
+  function supplyRules(db) {
+    const out = [];
+    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'supply') out.push({ ref: `${id}/rule/${r.id}`, owner: id, rule: r });
+    return out;
+  }
+  // 조절 규칙 색인 (v9): 대상 규칙 참조 → [{ owner, rule, ref }]
+  function modulationIndex(db) {
+    const m = new Map();
+    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'modulation' && r.target) { if (!m.has(r.target)) m.set(r.target, []); m.get(r.target).push({ owner: id, rule: r, ref: `${id}/rule/${r.id}` }); }
+    return m;
+  }
+
+  return Object.freeze({ VOCAB: V, NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
     FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
     isStepId, isObj, clone, str, arr, uniq, RESERVED, RES_RE, MOLECULAR, isParticipantKind, GREEK, normName,
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,

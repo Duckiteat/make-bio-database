@@ -10,7 +10,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V, M) {
   'use strict';
   const {
-    NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE,
+    NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
     FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
     isStepId, isObj, clone, str, arr, uniq, RESERVED, RES_RE, MOLECULAR, isParticipantKind, GREEK, normName,
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
@@ -420,17 +420,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     const m = n * p, sd = Math.sqrt(m * (1 - p)), u = Math.max(rand(), 1e-12), g = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rand());
     return Math.max(0, Math.min(n, Math.round(m + sd * g)));
   }
-  function supplyRules(db) {
-    const out = [];
-    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'supply') out.push({ ref: `${id}/rule/${r.id}`, owner: id, rule: r });
-    return out;
-  }
-  // 조절 규칙 색인 (v9): 대상 규칙 참조 → [{ owner, rule, ref }]
-  function modulationIndex(db) {
-    const m = new Map();
-    for (const [id, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.type === 'modulation' && r.target) { if (!m.has(r.target)) m.set(r.target, []); m.get(r.target).push({ owner: id, rule: r, ref: `${id}/rule/${r.id}` }); }
-    return m;
-  }
+
   // 힐 배율: 활성화 1 + (fmax − 1)·sⁿ/(Kⁿ + sⁿ), 억제 fmin + (1 − fmin)·Kⁿ/(Kⁿ + sⁿ). s = 조절자 농도 (M)
 
   function simulateRate(db, target, opt) {
@@ -713,5 +703,5 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
 
   return Object.freeze(Object.assign({}, M, {
     mapText, line, ruleLine, contextText, mechanismText, vlist, promptText, motifCtx, findMotifs, patternText, simulate, envShift,
-    rateAt, rngOf, binomial, supplyRules, modulationIndex, simulateRate }));
+    rateAt, rngOf, binomial, simulateRate }));
 });

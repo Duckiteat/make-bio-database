@@ -158,3 +158,37 @@ test('⑦ 원자료 계약 (FFI): 엔진 출력은 schemas/ffi/fate-raw.schema.j
   const v = FA.judgeFate(BASE, raw, { scenario: sc });
   assert.ok(v.contract.ok && v.ix !== raw.ix, '사법부는 자기 색인을 쓴다');
 });
+
+test('⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사법부가 해시·법칙·기호 도함수를 독립 검증', () => {
+  const IRB = req('../compiler/ir_builder.js'), DV = req('../judicial/derivative.js');
+  for (const p of CODE.filter((x) => x.startsWith('compiler/'))) {
+    const s = src(p);
+    assert.ok(!WRITE.test(s), `${p}: 파일을 씀`);
+    assert.ok(!/require\(['"][./]*(judicial|legislative|orchestrator|core\.js|engine\/fate)/.test(s), `${p}: 권력 모듈·엔진을 부름`);
+  }
+  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8')); sc.t_end = 2 * 3600;
+  const ir = IRB.buildFateIR(BASE, 'D000174', sc);
+  assert.equal(IRB.buildFateIR(BASE, 'D000174', sc).hash, ir.hash, 'IR 은 결정론적');
+  assert.ok(ir.jac.sizes.nF === ir.jac.fast.length && ir.jac.nnz < ir.jac.sizes.nF ** 2, '희소 패턴');
+  const v = DV.verifyIR(BASE, ir, sc);
+  assert.ok(v.ok && v.derivWorst <= 1e-14 && v.rateWorst <= 1e-14 && v.fdWorst <= 1e-6, JSON.stringify(v).slice(0, 300));
+  // 변조: 도함수 테이프의 상수 하나를 바꾸고 해시를 다시 계산 → 해시는 맞아도 자동미분 대비 도함수가 어긋남
+  const bad = JSON.parse(JSON.stringify(ir)); const t = bad.jac.dRate[bad.jac.fast[0]][0].t; t[1] = t[1] * (1 + 1e-9); bad.hash = IRB.irHash(bad);
+  const vb = DV.verifyIR(BASE, bad, sc);
+  assert.ok(vb.hashOK && !vb.ok && vb.derivWorst > 1e-14, '조작된 도함수는 잡힌다');
+  // 해시를 다시 계산하지 않은 변조 → 해시 불일치
+  const bad2 = JSON.parse(JSON.stringify(ir)); bad2.rules[0].Vr *= 2;
+  assert.ok(!DV.verifyIR(BASE, bad2, sc).hashOK);
+  // 엔진은 넘겨받은 IR 을 먹고 그 해시를 원자료에 적는다 · 사법부는 다른 IR 과의 불일치를 잡는다
+  const raw = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false, ir });
+  assert.equal(raw.irHash, ir.hash);
+  const j = FA.judgeFate(BASE, raw, { scenario: sc, ir });
+  assert.ok(j.irCheck.ok && j.irCheck.consumed);
+  const other = IRB.buildFateIR(BASE, 'D000174', { ...sc, saturation_K: 2e-6 });
+  const jx = FA.judgeFate(BASE, raw, { scenario: sc, ir: other });
+  assert.ok(!jx.irCheck.ok && !jx.irCheck.consumed && jx.audit.some((a) => a.code === 'AUDIT_SCHEMA' && /IR/.test(a.msg)));
+  // 해석적 야코비안: 유한차분 대비 잔차 계산이 줄고 결과(운명·도달)는 같다
+  const fd = F.simulateFate(BASE, 'D000174', { scenario: { ...sc, jacobian: 'fd' }, commitment: false });
+  assert.ok(raw.stats.residEvals < fd.stats.residEvals / 5 && raw.stats.jacEvals > 0 && fd.stats.jacEvals === 0);
+  assert.equal(raw.final.state, fd.final.state);
+});

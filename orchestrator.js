@@ -13,6 +13,7 @@ const CMP = require('./judicial/compare.js');
 const ID = require('./judicial/identity.js');
 const ATT = require('./judicial/attestation.js');
 const DRAFT = require('./legislative/augment_draft.js');
+const IRB = require('./compiler/ir_builder.js');
 
 // ----- 사건 기반·속도 시뮬레이션 -----
 const pools = (db, target) => { const s = C.simulate(db, target, { rounds: 0 }); return s.error ? undefined : { source: s.source }; };
@@ -28,10 +29,14 @@ const resolutionText = (db, target) => J.resolutionText(db, target, { pools: poo
 const auditRun = (db, target, opt) => J.auditRun(db, target, { pools: pools(db, target), rate: C.simulateRate(db, target, opt) });
 
 // ----- 세포 운명 -----
+// 컴파일(IR) → 행정부 실행(IR 소비) → 사법부 판정(같은 IR 을 독립 검증)
 function runFate(db, sid, opt) {
-  const raw = F.simulateFate(db, sid, opt);
+  opt = opt || {};
+  const ir = opt.ir || IRB.buildFateIR(db, sid, opt.scenario || {}, opt.coupling);
+  if (ir.error) return ir;
+  const raw = F.simulateFate(db, sid, Object.assign({}, opt, { ir }));
   if (raw.error) return raw;
-  return FA.judgeFate(db, raw, { scenario: (opt && opt.scenario) || {} });
+  return FA.judgeFate(db, raw, { scenario: opt.scenario || {}, ir });
 }
 const fateBrief = (db, sid, opt) => { const v = runFate(db, sid, opt); return v.error ? { text: '오류: ' + v.error, code: 1, result: v } : Object.assign(FA.fateText(v), { result: v }); };
 

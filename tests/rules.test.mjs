@@ -1152,11 +1152,13 @@ test('비교 검토: 같은 조절을 하나 더 넣는 패치는 결과가 같�
 });
 
 // ===== 과정 분석 보고서 (Process-Oriented Fate Analysis & Integrity Reporting) =====
-const PRP = req('../judicial/process_report.js'), FA = req('../judicial/fate_audit.js');
+const PRP = req('../judicial/process_report.js'), FA = req('../judicial/fate_audit.js'), IRB = req('../compiler/ir_builder.js');
+// 조정자 흐름: 컴파일(IR) → 엔진(IR 소비) → 사법부(같은 IR 검증)
+const judged = (sc, o) => { const ir = IRB.buildFateIR(BASE, ACTD, sc); return FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: sc, ir, ...(o || {}) }), { scenario: sc, ir }); };
 test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차·운명 전환)·구간 [기간|원인|우세 표지|비용]·무결성 증명서·인과 추적, 원장은 매 단계 ≤ 1e-14', () => {
   const txt = readFileSync(new URL('../examples/scenarios/fate-mixed-glucose-withheld-hypothetical.json', import.meta.url), 'utf8'), sc = JSON.parse(txt);
-  const r = FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: sc, commitment: false }), { scenario: sc });
-  const again = FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: JSON.parse(txt), commitment: false }), { scenario: sc });
+  const r = judged(sc, { commitment: false });
+  const again = judged(JSON.parse(txt), { commitment: false });
   assert.equal(r.process.hash, again.process.hash, '결정론');
   assert.ok(r.mass.series.length === r.process.times.length && r.mass.series.every((v) => v <= 1e-14) && r.mass.replaySeries.every((v) => v <= 1e-14));
   const rep = PRP.processReport(r, { scenario: sc, scenarioText: txt, rerunHash: again.process.hash });
@@ -1170,7 +1172,7 @@ test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차�
 });
 test('과정 보고서: 규칙 밖 개입은 FAIL — 저장소를 몰래 바꾸면 재생 검사가, 신호를 일정 밖에서 바꾸면 신호 검사가, 해시가 다르면 결정론이 잡는다', () => {
   const txt = readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8'), sc = JSON.parse(txt); sc.t_end = 3 * 3600;
-  const r = FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: sc, commitment: false }), { scenario: sc });
+  const r = judged(sc, { commitment: false });
   // 기록된 원자료를 변조해 보고서가 FAIL 하는지 (엔진 원장 대신 기록을 바꾼 '개입' 흉내)
   const tampered = { ...r, mass: { ...r.mass, replaySeries: r.mass.replaySeries.map((v, j) => (j === 50 ? 1e-9 : v)) } };
   assert.equal(PRP.processReport(tampered, { scenario: sc, rerunHash: r.process.hash }).pass, false);

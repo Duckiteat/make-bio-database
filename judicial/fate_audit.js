@@ -9,6 +9,7 @@ const M = require('../model.js');
 const J = require('./judicial.js');
 const { verifyFate } = require('./verifier.js');
 const { checkFateRaw } = require('./contract.js');
+const { verifyIR } = require('./derivative.js');
 
 // 표지 거리 (상태 서명 · 문턱) — 엔진의 분류와 독립적으로 다시 센다
 function distanceFns(db, r) {
@@ -35,6 +36,17 @@ function judgeFate(db, r, ctx) {
   if (!contract.ok) {
     for (const x of contract.violations.slice(0, 10)) AE('AUDIT_SCHEMA', x.path, `원자료 계약 위반: ${x.msg}`, '엔진(행정부) 출력이 FFI 계약과 다름 — 엔진 오류');
     return { error: `원자료 계약 위반 ${contract.violations.length}건 — 판정하지 않음 (${contract.violations.slice(0, 3).map((x) => `${x.path}: ${x.msg}`).join(' · ')})`, audit, contract };
+  }
+  // ⓪-2 IR·기호 도함수 (조정자가 넘긴 IR 이 있을 때): 해시·엔진이 먹은 IR 과 같은지·법칙 충실도·자동미분 대비 도함수
+  let irCheck = null;
+  if (ctx.ir) {
+    irCheck = verifyIR(db, ctx.ir, sc);
+    irCheck.consumed = r.irHash === ctx.ir.hash;
+    irCheck.ruleOrder = ctx.ir.rules.map((x) => x.ref).join() === r.process.ruleInfo.map((x) => x.ref).join();
+    irCheck.ok = irCheck.ok && irCheck.consumed && irCheck.ruleOrder;
+    if (!irCheck.consumed) AE('AUDIT_SCHEMA', 'IR', `엔진이 먹은 IR(${String(r.irHash).slice(0, 12)})이 조정자가 넘긴 IR(${ctx.ir.hash.slice(0, 12)})과 다름`, '같은 IR 로 다시 실행');
+    if (!irCheck.hashOK || irCheck.problems.length || !irCheck.ruleOrder) AE('AUDIT_SCHEMA', 'IR', `IR 충실도 위반: ${[...(irCheck.hashOK ? [] : ['해시']), ...(irCheck.ruleOrder ? [] : ['규칙 순서']), ...irCheck.problems].slice(0, 4).join(' · ')}`, '컴파일러(compiler/ir_builder.js) 오류 또는 IR 변조');
+    if (irCheck.missingDeps.length || irCheck.rateWorst > irCheck.tolerance || irCheck.derivWorst > irCheck.tolerance || irCheck.factorWorst > irCheck.tolerance || irCheck.fdWorst > irCheck.fdTolerance) AE('AUDIT_KINETIC', 'IR', `기호 도함수 검사 실패 — 속도 ${irCheck.rateWorst.toExponential(1)} · 도함수 ${irCheck.derivWorst.toExponential(1)} · 배율 ${irCheck.factorWorst.toExponential(1)} · 유한차분 ${irCheck.fdWorst.toExponential(1)}${irCheck.missingDeps.length ? ` · 빠진 의존 ${irCheck.missingDeps.slice(0, 3).join(', ')}` : ''}`, '컴파일러의 미분 규칙 오류');
   }
   const rules = r.process.ruleInfo, { distance, rawDistance } = distanceFns(db, r), { at, concAt, factorsAt } = concFns(r);
   // ① 원자료 사실
@@ -71,7 +83,7 @@ function judgeFate(db, r, ctx) {
   const hash = trajectoryHash(r);
   return Object.assign({}, r, {
     ix, // 사법부 자기 색인 (엔진이 넘긴 편의 색인을 쓰지 않음)
-    audit, arrest, postMortem: pm, verification: v, contract,
+    audit, arrest, postMortem: pm, verification: v, contract, irCheck,
     mass: Object.assign({}, r.mass, { moieties: v.moieties, start: v.start, end: v.end, worst: v.worst, tolerance: v.tolerance, series: v.series, replayWorst: v.replayWorst, replaySeries: v.replaySeries }),
     process: Object.assign({}, r.process, { factorsAt, rawDistance, distance, hash }),
   });

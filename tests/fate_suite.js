@@ -12,6 +12,7 @@ const path = require('path');
 const F = require('../engine/fate_engine.js');
 const PR = require('../judicial/process_report.js');
 const FA = require('../judicial/fate_audit.js');
+const IRB = require('../compiler/ir_builder.js'); // 컴파일러: 같은 IR 을 엔진과 사법부에
 const VER = require('../judicial/verifier.js'); // 원자료 실행(정확도 비교용)의 질량은 사법부 검증기로
 const vw = (x) => { const v = VER.verifyFate(db, x); return v.pass ? Math.max(v.worst, v.replayWorst) : Infinity; }; // 사법부: 원자료 → 판결된 보기 (감사·정지·사후 분석·독립 질량 검증)
 const ROOT = path.join(__dirname, '..');
@@ -27,7 +28,7 @@ function run(opt) {
   const checks = [], runs = {};
   const check = (group, name, ok, detail) => { checks.push({ group, name, ok: !!ok, detail }); };
   const names = {};
-  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const sc = scen(name, over), raw = F.simulateFate(db, SRC, Object.assign({ scenario: sc }, o || {})); const ms = Number(process.hrtime.bigint() - t0) / 1e6; const r = FA.judgeFate(db, raw, { scenario: sc }); r.ms = ms; runs[key] = r; names[key] = name; return r; };
+  const sim = (key, name, over, o) => { const t0 = process.hrtime.bigint(); const sc = scen(name, over), ir = IRB.buildFateIR(db, SRC, sc), raw = F.simulateFate(db, SRC, Object.assign({ scenario: sc, ir }, o || {})); const ms = Number(process.hrtime.bigint() - t0) / 1e6; const r = FA.judgeFate(db, raw, { scenario: sc, ir }); r.ms = ms; runs[key] = r; names[key] = name; return r; };
   const massOK = (r) => r.mass.worst <= 1e-14 && !r.audit.some((a) => a.code === 'AUDIT_MASS') && Object.values(r.final.N).every((v) => v > -1e-6);
 
   say('Fate-Test — 활성화된 CD8 T 세포 (D000174) → 효과기 (D000175) | 기억 전구 (D000176) · 가상 시나리오');

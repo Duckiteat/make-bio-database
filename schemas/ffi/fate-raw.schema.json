@@ -4,58 +4,795 @@
   "title": "FateRaw — 운명 엔진(행정부) → 사법부 원자료 계약 (FFI 경계, docs/design/engine-port-roadmap.md 0단계)",
   "description": "JS·Rust(네이티브·WASM) 어느 엔진이든 simulateFate 는 이 모양을 낸다. 숫자 배열은 Array 또는 Float64Array 둘 다 허용한다. 판결 필드(audit·postMortem·arrest·mass.worst·process.hash)는 금지 — 사법부가 만든다. 배열 길이의 상호 관계는 x-dimensions 에 적고 judicial/contract.js 가 검사한다.",
   "type": "object",
-  "required": ["source", "states", "dt", "t_end", "keys", "markers", "signals", "rules", "final", "trajectory", "series", "firstReach", "transitions", "commitment", "target", "gate", "mass", "reservoirs", "volumes", "buffered", "coupling", "process", "events", "facts", "kineticGaps", "modulationGaps", "stats"],
+  "required": [
+    "source",
+    "states",
+    "dt",
+    "t_end",
+    "keys",
+    "markers",
+    "signals",
+    "rules",
+    "final",
+    "trajectory",
+    "series",
+    "firstReach",
+    "transitions",
+    "commitment",
+    "target",
+    "gate",
+    "mass",
+    "reservoirs",
+    "volumes",
+    "buffered",
+    "coupling",
+    "process",
+    "events",
+    "facts",
+    "kineticGaps",
+    "modulationGaps",
+    "stats",
+    "irHash"
+  ],
   "additionalProperties": false,
   "properties": {
-    "source": { "$ref": "#/$defs/senseId" },
-    "states": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/senseId" } },
-    "scenario": { "type": ["string", "null"] },
-    "hypothetical": { "type": "boolean" },
-    "dt": { "type": "number", "exclusiveMinimum": 0 },
-    "t_end": { "type": "number", "exclusiveMinimum": 0 },
-    "keys": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/bundle" } },
-    "markers": { "type": "array", "items": { "$ref": "#/$defs/bundle" } },
-    "signals": { "type": "array", "items": { "$ref": "#/$defs/bundle" } },
-    "rules": { "type": "array", "items": { "type": "object", "required": ["ref", "kind", "layer", "active", "modulators"], "additionalProperties": false, "properties": {
-      "ref": { "$ref": "#/$defs/ruleRef" }, "kind": { "enum": ["supply", "degradation"] }, "layer": { "enum": ["fast", "slow"] }, "active": { "type": "boolean" }, "src": { "enum": ["data", "scenario", null] },
-      "modulators": { "type": "array", "items": { "type": "object", "required": ["ref", "bundle", "effect", "active"], "additionalProperties": false, "properties": { "ref": { "$ref": "#/$defs/ruleRef" }, "bundle": { "$ref": "#/$defs/bundle" }, "effect": { "enum": ["activates", "inhibits"] }, "active": { "type": "boolean" } } } } } } },
-    "final": { "type": "object", "required": ["state", "d", "N"], "additionalProperties": false, "properties": {
-      "state": { "anyOf": [{ "$ref": "#/$defs/senseId" }, { "type": "null" }] }, "nearest": { "anyOf": [{ "$ref": "#/$defs/senseId" }, { "type": "null" }] }, "d": { "type": "number", "minimum": 0 },
-      "N": { "type": "object", "additionalProperties": { "type": "number" } } } },
-    "trajectory": { "type": "array", "items": { "type": "object", "required": ["t", "d", "cls", "path", "nsub", "gate"], "properties": { "t": { "type": "number" }, "d": { "type": "object", "additionalProperties": { "type": "number" } }, "cls": { "type": "object" }, "path": { "enum": ["fv", "surrogate"] }, "nsub": { "type": "integer", "minimum": 1 }, "gate": { "type": "string" } } } },
-    "series": { "$ref": "#/$defs/numMatrix" },
-    "firstReach": { "type": "object", "additionalProperties": { "type": "number" } },
-    "transitions": { "type": "array", "items": { "type": "object", "required": ["to", "signals", "criterion", "driven"], "properties": { "to": { "$ref": "#/$defs/senseId" }, "signals": { "type": "array", "items": { "$ref": "#/$defs/senseId" } }, "criterion": { "enum": ["withdrawal", "threshold"] }, "driven": { "type": "boolean" } } } },
-    "commitment": { "type": "array", "items": { "type": "object", "required": ["to", "criterion", "driven"], "properties": { "to": { "$ref": "#/$defs/senseId" }, "criterion": { "enum": ["withdrawal", "threshold"] }, "driven": { "type": "boolean" }, "t": { "type": ["number", "null"] }, "step": { "type": ["integer", "null"] }, "monotone": { "type": "boolean" }, "skipped": { "type": "boolean" }, "horizon": { "type": "number" },
-      "grid": { "type": "array", "items": { "type": "object", "required": ["t", "pass"], "properties": { "t": { "type": "number" }, "pass": { "type": "boolean" } } } } } } },
-    "target": { "anyOf": [{ "$ref": "#/$defs/senseId" }, { "type": "null" }] },
-    "gate": { "type": "object", "required": ["promotions", "demotions", "forced", "cooldownSteps", "transitions", "log", "path", "nsub"], "properties": {
-      "log": { "type": "array", "items": { "type": "object", "required": ["step", "ev"] } }, "path": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
-      "nsub": { "type": "object", "required": ["min", "max"], "properties": { "min": { "type": "integer", "minimum": 1 }, "max": { "type": "integer", "minimum": 1 } } } } },
-    "mass": { "description": "엔진 장부 — 사법부는 믿지 않고 다시 센다. 판정 필드(worst·tolerance·series·replayWorst·replaySeries) 금지.", "type": "object", "required": ["moieties", "start", "end", "channels"], "additionalProperties": false, "properties": {
-      "moieties": { "type": "array", "items": { "$ref": "#/$defs/senseId" } }, "start": { "$ref": "#/$defs/numMap" }, "end": { "$ref": "#/$defs/numMap" },
-      "channels": { "type": "object", "required": ["lost", "source", "violation"], "additionalProperties": false, "properties": { "lost": { "$ref": "#/$defs/numMap" }, "source": { "$ref": "#/$defs/numMap" }, "violation": { "$ref": "#/$defs/numMap" } } } } },
-    "reservoirs": { "type": "object", "additionalProperties": { "type": "object", "required": ["start", "min", "end", "state", "watched", "buffered"], "additionalProperties": false, "properties": { "start": { "type": "number" }, "min": { "type": "number" }, "end": { "type": "number" }, "state": { "enum": ["ok", "empty"] }, "watched": { "type": "boolean" }, "buffered": { "type": "boolean" } } } },
-    "volumes": { "type": "object", "additionalProperties": { "type": "number", "exclusiveMinimum": 0 } },
-    "buffered": { "type": "object", "additionalProperties": { "type": "object", "required": ["conc_M", "total"], "properties": { "conc_M": { "type": "number", "minimum": 0 }, "total": { "type": "number", "minimum": 0 } } } },
-    "coupling": { "type": "object", "required": ["gate", "_source", "saturation_K", "explicit_fraction", "shock_threshold", "commitment_horizon", "commitment_coarse", "newton_tol", "newton_iters"] },
-    "process": { "type": "object", "required": ["lo", "cumDD", "times", "sig", "cum", "gateEvents", "schedule", "signalIdx", "thresholds", "N0", "ruleInfo"], "additionalProperties": false, "properties": {
-      "lo": { "$ref": "#/$defs/numMatrix" }, "cumDD": { "$ref": "#/$defs/numMatrix" }, "cum": { "$ref": "#/$defs/numMatrix" }, "sig": { "$ref": "#/$defs/numMatrix" },
-      "times": { "type": "array", "items": { "type": "number" } }, "gateEvents": { "type": "array", "items": { "type": ["string", "null"] } },
-      "schedule": { "type": "array", "items": { "type": "object", "required": ["bundle", "list"], "properties": { "bundle": { "$ref": "#/$defs/bundle" }, "list": { "type": "array", "items": { "type": "object", "required": ["t", "n"], "properties": { "t": { "type": "number" }, "n": { "type": "number", "minimum": 0 } } } } } } },
-      "signalIdx": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
-      "thresholds": { "type": "object", "additionalProperties": { "type": "object", "required": ["low", "high"], "properties": { "low": { "type": "number" }, "high": { "type": "number" } } } },
-      "N0": { "$ref": "#/$defs/numVec" },
-      "ruleInfo": { "type": "array", "items": { "type": "object", "required": ["ref", "kind", "layer", "cons", "prods", "src", "kin", "mods"], "additionalProperties": false, "properties": {
-        "ref": { "$ref": "#/$defs/ruleRef" }, "kind": { "enum": ["supply", "degradation"] }, "layer": { "enum": ["fast", "slow"] }, "src": { "enum": ["data", "scenario", null] }, "kin": { "type": ["object", "null"] },
-        "cons": { "$ref": "#/$defs/stoich" }, "prods": { "$ref": "#/$defs/stoich" },
-        "mods": { "type": "array", "items": { "type": "object", "required": ["ref", "bundle", "effect", "kin"], "properties": { "ref": { "$ref": "#/$defs/ruleRef" }, "bundle": { "$ref": "#/$defs/bundle" }, "effect": { "enum": ["activates", "inhibits"] }, "kin": { "type": "object" } } } } } } } } },
-    "events": { "type": "array", "items": { "type": "object", "required": ["t", "type", "bundle"], "additionalProperties": false, "properties": { "t": { "type": "number" }, "type": { "enum": ["exhausted", "regenerated"] }, "bundle": { "$ref": "#/$defs/bundle" } } } },
-    "facts": { "type": "array", "items": { "type": "object", "required": ["kind"], "properties": { "kind": { "enum": ["not_supply", "recycle_ignored", "volume_unknown", "threshold_missing"] } } } },
-    "kineticGaps": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
-    "modulationGaps": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
-    "stats": { "type": "object", "required": ["newton", "newtonFail", "substeps", "implicitSteps", "explicitSteps", "probes"], "additionalProperties": { "type": "integer", "minimum": 0 } },
-    "ix": { "description": "JS 어댑터의 편의 필드(색인 객체) — 계약 밖. 사법부는 이것을 쓰지 않고 model.index(db) 로 자기 색인을 만든다. Rust 엔진은 내지 않는다." }
+    "source": {
+      "$ref": "#/$defs/senseId"
+    },
+    "states": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/senseId"
+      }
+    },
+    "scenario": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hypothetical": {
+      "type": "boolean"
+    },
+    "dt": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "t_end": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/bundle"
+      }
+    },
+    "markers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bundle"
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bundle"
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ref",
+          "kind",
+          "layer",
+          "active",
+          "modulators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "$ref": "#/$defs/ruleRef"
+          },
+          "kind": {
+            "enum": [
+              "supply",
+              "degradation"
+            ]
+          },
+          "layer": {
+            "enum": [
+              "fast",
+              "slow"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "src": {
+            "enum": [
+              "data",
+              "scenario",
+              null
+            ]
+          },
+          "modulators": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "ref",
+                "bundle",
+                "effect",
+                "active"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "ref": {
+                  "$ref": "#/$defs/ruleRef"
+                },
+                "bundle": {
+                  "$ref": "#/$defs/bundle"
+                },
+                "effect": {
+                  "enum": [
+                    "activates",
+                    "inhibits"
+                  ]
+                },
+                "active": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "final": {
+      "type": "object",
+      "required": [
+        "state",
+        "d",
+        "N"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/senseId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nearest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/senseId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "d": {
+          "type": "number",
+          "minimum": 0
+        },
+        "N": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "trajectory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "t",
+          "d",
+          "cls",
+          "path",
+          "nsub",
+          "gate"
+        ],
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "d": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "cls": {
+            "type": "object"
+          },
+          "path": {
+            "enum": [
+              "fv",
+              "surrogate"
+            ]
+          },
+          "nsub": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "gate": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "series": {
+      "$ref": "#/$defs/numMatrix"
+    },
+    "firstReach": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "to",
+          "signals",
+          "criterion",
+          "driven"
+        ],
+        "properties": {
+          "to": {
+            "$ref": "#/$defs/senseId"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/senseId"
+            }
+          },
+          "criterion": {
+            "enum": [
+              "withdrawal",
+              "threshold"
+            ]
+          },
+          "driven": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "commitment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "to",
+          "criterion",
+          "driven"
+        ],
+        "properties": {
+          "to": {
+            "$ref": "#/$defs/senseId"
+          },
+          "criterion": {
+            "enum": [
+              "withdrawal",
+              "threshold"
+            ]
+          },
+          "driven": {
+            "type": "boolean"
+          },
+          "t": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "step": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "monotone": {
+            "type": "boolean"
+          },
+          "skipped": {
+            "type": "boolean"
+          },
+          "horizon": {
+            "type": "number"
+          },
+          "grid": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "t",
+                "pass"
+              ],
+              "properties": {
+                "t": {
+                  "type": "number"
+                },
+                "pass": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/senseId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gate": {
+      "type": "object",
+      "required": [
+        "promotions",
+        "demotions",
+        "forced",
+        "cooldownSteps",
+        "transitions",
+        "log",
+        "path",
+        "nsub"
+      ],
+      "properties": {
+        "log": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "step",
+              "ev"
+            ]
+          }
+        },
+        "path": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "nsub": {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "mass": {
+      "description": "엔진 장부 — 사법부는 믿지 않고 다시 센다. 판정 필드(worst·tolerance·series·replayWorst·replaySeries) 금지.",
+      "type": "object",
+      "required": [
+        "moieties",
+        "start",
+        "end",
+        "channels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "moieties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/senseId"
+          }
+        },
+        "start": {
+          "$ref": "#/$defs/numMap"
+        },
+        "end": {
+          "$ref": "#/$defs/numMap"
+        },
+        "channels": {
+          "type": "object",
+          "required": [
+            "lost",
+            "source",
+            "violation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "lost": {
+              "$ref": "#/$defs/numMap"
+            },
+            "source": {
+              "$ref": "#/$defs/numMap"
+            },
+            "violation": {
+              "$ref": "#/$defs/numMap"
+            }
+          }
+        }
+      }
+    },
+    "reservoirs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "start",
+          "min",
+          "end",
+          "state",
+          "watched",
+          "buffered"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "start": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "state": {
+            "enum": [
+              "ok",
+              "empty"
+            ]
+          },
+          "watched": {
+            "type": "boolean"
+          },
+          "buffered": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "volumes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      }
+    },
+    "buffered": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "conc_M",
+          "total"
+        ],
+        "properties": {
+          "conc_M": {
+            "type": "number",
+            "minimum": 0
+          },
+          "total": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "coupling": {
+      "type": "object",
+      "required": [
+        "gate",
+        "_source",
+        "saturation_K",
+        "explicit_fraction",
+        "shock_threshold",
+        "commitment_horizon",
+        "commitment_coarse",
+        "newton_tol",
+        "newton_iters"
+      ]
+    },
+    "process": {
+      "type": "object",
+      "required": [
+        "lo",
+        "cumDD",
+        "times",
+        "sig",
+        "cum",
+        "gateEvents",
+        "schedule",
+        "signalIdx",
+        "thresholds",
+        "N0",
+        "ruleInfo"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "lo": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "cumDD": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "cum": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "sig": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "times": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "gateEvents": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "schedule": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "bundle",
+              "list"
+            ],
+            "properties": {
+              "bundle": {
+                "$ref": "#/$defs/bundle"
+              },
+              "list": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "t",
+                    "n"
+                  ],
+                  "properties": {
+                    "t": {
+                      "type": "number"
+                    },
+                    "n": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "signalIdx": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "low",
+              "high"
+            ],
+            "properties": {
+              "low": {
+                "type": "number"
+              },
+              "high": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "N0": {
+          "$ref": "#/$defs/numVec"
+        },
+        "ruleInfo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "ref",
+              "kind",
+              "layer",
+              "cons",
+              "prods",
+              "src",
+              "kin",
+              "mods"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "ref": {
+                "$ref": "#/$defs/ruleRef"
+              },
+              "kind": {
+                "enum": [
+                  "supply",
+                  "degradation"
+                ]
+              },
+              "layer": {
+                "enum": [
+                  "fast",
+                  "slow"
+                ]
+              },
+              "src": {
+                "enum": [
+                  "data",
+                  "scenario",
+                  null
+                ]
+              },
+              "kin": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "cons": {
+                "$ref": "#/$defs/stoich"
+              },
+              "prods": {
+                "$ref": "#/$defs/stoich"
+              },
+              "mods": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "ref",
+                    "bundle",
+                    "effect",
+                    "kin"
+                  ],
+                  "properties": {
+                    "ref": {
+                      "$ref": "#/$defs/ruleRef"
+                    },
+                    "bundle": {
+                      "$ref": "#/$defs/bundle"
+                    },
+                    "effect": {
+                      "enum": [
+                        "activates",
+                        "inhibits"
+                      ]
+                    },
+                    "kin": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "t",
+          "type",
+          "bundle"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "type": {
+            "enum": [
+              "exhausted",
+              "regenerated"
+            ]
+          },
+          "bundle": {
+            "$ref": "#/$defs/bundle"
+          }
+        }
+      }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "not_supply",
+              "recycle_ignored",
+              "volume_unknown",
+              "threshold_missing"
+            ]
+          }
+        }
+      }
+    },
+    "kineticGaps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ruleRef"
+      }
+    },
+    "modulationGaps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ruleRef"
+      }
+    },
+    "stats": {
+      "type": "object",
+      "required": [
+        "newton",
+        "newtonFail",
+        "substeps",
+        "implicitSteps",
+        "explicitSteps",
+        "probes"
+      ],
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "ix": {
+      "description": "JS 어댑터의 편의 필드(색인 객체) — 계약 밖. 사법부는 이것을 쓰지 않고 model.index(db) 로 자기 색인을 만든다. Rust 엔진은 내지 않는다."
+    },
+    "irHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "엔진이 먹은 IR(compiler/ir_builder.js)의 sha256 — 사법부가 조정자의 IR 과 맞춘다"
+    }
   },
   "x-dimensions": [
     "series.length == trajectory.length == process.times.length == process.lo.length == process.cumDD.length == process.cum.length == process.sig.length == process.gateEvents.length",
@@ -68,12 +805,52 @@
     "모든 묶음 참조(markers·signals·final.N·reservoirs·events·ruleInfo.cons/prods/mods.bundle) ∈ keys"
   ],
   "$defs": {
-    "senseId": { "type": "string", "pattern": "^D\\d{6}$" },
-    "bundle": { "type": "string", "pattern": "^D\\d{6}(\\|[^|]+)+$" },
-    "ruleRef": { "type": "string", "pattern": "^D\\d{6}/rule/[a-z0-9_]+$" },
-    "numVec": { "type": "array", "items": { "type": "number" } },
-    "numMatrix": { "type": "array", "items": { "$ref": "#/$defs/numVec" } },
-    "numMap": { "type": "object", "additionalProperties": { "type": "number" } },
-    "stoich": { "type": "array", "items": { "type": "array", "prefixItems": [{ "$ref": "#/$defs/bundle" }, { "type": "number", "exclusiveMinimum": 0 }], "minItems": 2, "maxItems": 2 } }
+    "senseId": {
+      "type": "string",
+      "pattern": "^D\\d{6}$"
+    },
+    "bundle": {
+      "type": "string",
+      "pattern": "^D\\d{6}(\\|[^|]+)+$"
+    },
+    "ruleRef": {
+      "type": "string",
+      "pattern": "^D\\d{6}/rule/[a-z0-9_]+$"
+    },
+    "numVec": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "numMatrix": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/numVec"
+      }
+    },
+    "numMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "stoich": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "$ref": "#/$defs/bundle"
+          },
+          {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    }
   }
 }
