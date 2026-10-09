@@ -138,3 +138,23 @@ test('⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값,
   assert.equal(b.coupling._source.explicit_fraction, 'data');
   for (const e of COUPLING.REGISTRY) if (typeof e.default === 'number' && e.key !== 'saturation_K') assert.ok(!new RegExp(`\\b${e.scenario.split('.').pop()}\\b\\s*\\|\\|\\s*${e.default}\\b`).test(src('engine/fate_engine.js')), `엔진에 ${e.key} 기본값이 박혀 있음`);
 });
+
+test('⑦ 원자료 계약 (FFI): 엔진 출력은 schemas/ffi/fate-raw.schema.json 을 지키고, 어기면 사법부가 판정하지 않는다', () => {
+  const K = req('../judicial/contract.js');
+  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8')); sc.t_end = 3 * 3600;
+  const raw = F.simulateFate(BASE, 'D000174', { scenario: sc });
+  const ok = K.checkFateRaw(raw);
+  assert.ok(ok.ok, JSON.stringify(ok.violations.slice(0, 3)));
+  const bad = (mut, re) => { const r = mut({ ...raw, process: { ...raw.process } }); const c = K.checkFateRaw(r); assert.ok(!c.ok && c.violations.some((v) => re.test(v.path + ' ' + v.msg)), `${re}: ${JSON.stringify(c.violations.slice(0, 2))}`); return r; };
+  bad((r) => Object.assign(r, { audit: [] }), /\$\.audit.*계약에 없는 필드/); // 엔진이 판결 필드를 내면 거부
+  bad((r) => Object.assign(r, { mass: { ...r.mass, worst: 0 } }), /mass\.worst/);
+  bad((r) => { r.process.cumDD = r.process.cumDD.map((x, j) => (j === 3 ? x.slice(0, 4) : x)); return r; }, /cumDD\[3\] 길이/);
+  bad((r) => Object.assign(r, { events: [...r.events, { t: 1, type: 'exhausted', bundle: 'D999999|cytosol' }] }), /∉ keys/);
+  bad((r) => Object.assign(r, { keys: r.keys.map((k, i) => (i ? k : 'not-a-bundle')) }), /keys\[0\]/);
+  // Float64Array 도 배열로 본다 (WASM 메모리 뷰를 그대로 검사)
+  assert.ok(ArrayBuffer.isView(raw.series[0]) && K.checkFateRaw(raw).ok);
+  const j = FA.judgeFate(BASE, Object.assign({ ...raw }, { audit: [] }), { scenario: sc });
+  assert.ok(j.error && j.audit.every((a) => a.code === 'AUDIT_SCHEMA'), '계약 위반 원자료는 판정·보고서 없이 거부');
+  const v = FA.judgeFate(BASE, raw, { scenario: sc });
+  assert.ok(v.contract.ok && v.ix !== raw.ix, '사법부는 자기 색인을 쓴다');
+});

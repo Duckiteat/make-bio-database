@@ -120,6 +120,14 @@
       "interpret": "[사법] 독립 질량 검증기 — 운명 엔진 원자료(N·LO·누적 진행량)를 데이터베이스 화학량으로 다시 세워 화학량 대조·재생(replay)·부분 구조 원장(상대 1e-14)·규칙 밖 부분 구조·음수를 자체 TwoSum/TwoProduct 로 판정."
     },
     {
+      "path": "judicial/contract.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/fate_audit.js, tests",
+      "interpret": "[사법] 원자료 계약 검사 — JSON Schema 부분 집합(Float64Array 를 배열로) + x-dimensions. 위반 원자료는 판정하지 않는다 (AUDIT_SCHEMA, 증명서 FAIL)."
+    },
+    {
       "path": "judicial/fate_audit.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -286,6 +294,14 @@
       "writer": "사람·AI (형식을 바꿀 때)",
       "readers": "구현자, tests(필수 필드 대조)",
       "interpret": "실행 층 통신 형식 — 원장 거래, 경계 유속 패킷, 영역 구성(시나리오 domains), 영역 점수·전이 기록."
+    },
+    {
+      "path": "schemas/ffi/*.schema.json",
+      "class": "spec",
+      "format": "JSON Schema 2020-12 (+ x-dimensions)",
+      "writer": "사람·AI (엔진 출력 형식을 바꿀 때, 테스트 필수)",
+      "readers": "judicial/contract.js, Rust/WASM 엔진 구현자, tests",
+      "interpret": "행정부 → 사법부 원자료 계약 (FFI 경계). fate-raw: 운명 엔진 원자료의 형·필드·배열 길이 관계·묶음 참조. 판결 필드는 금지. JS·Rust 어느 엔진이든 같은 계약 (docs/design/engine-port-roadmap.md)."
     },
     {
       "path": "viewer.html",
@@ -462,6 +478,14 @@
       "writer": "사람·AI",
       "readers": "사람(콘솔), tests/rules.test.mjs, CI",
       "interpret": "Fate-Test 모음 — 계통 충실도·경쟁·결정 비가역성·분화 정지·다른 운명·다중 규모 정확도·질량 (30 검사, 가상 시나리오)."
+    },
+    {
+      "path": "tests/bench_engine.js",
+      "class": "verification",
+      "format": "Node CommonJS 스크립트 (+ module.exports.run)",
+      "writer": "사람·AI",
+      "readers": "사람(콘솔), 엔진 이식 판정",
+      "interpret": "0단계 기준선 — 운명 엔진 본 실행 대 결정 탐침 시간·뉴턴 반복·유한차분 잔차 비중·뉴턴 실패, simulateRate 준비 대 루프. Rust/기호 야코비안 이득은 이 표와 비교해 보고한다."
     },
     {
       "path": ".github/workflows/check.yml",

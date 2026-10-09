@@ -321,7 +321,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 ## 8F. 3 층 다중 규모 엔진 — 형식 v8
 
-설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`.
+설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고, `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 이식 계획 `docs/design/engine-port-roadmap.md`.
 
 | 필드 | 위치 | 규칙 |
 |---|---|---|

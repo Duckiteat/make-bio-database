@@ -97,6 +97,7 @@ function processReport(r, ctx) {
   // ===== 무결성 =====
   const checks = [];
   const chk = (name, ok, detail) => checks.push({ name, ok: !!ok, detail });
+  chk(`원자료 계약 — ${r.contract ? r.contract.schema : 'schemas/ffi/fate-raw.schema.json'} (형·필드·배열 길이·묶음 참조)`, !!(r.contract && r.contract.ok), r.contract ? (r.contract.ok ? '위반 없음' : r.contract.violations.slice(0, 3).map((x) => `${x.path}: ${x.msg}`).join(' · ')) : '검사 안 함');
   const tol = r.mass.tolerance, ms = r.mass.series, rs = r.mass.replaySeries;
   const argmax = (a) => a.reduce((m, v, i) => (v > a[m] ? i : m), 0);
   chk(`부분 구조 원장 ΣIn = ΣOut — 매 느린 단계 (${ms.length} 단계) 상대 ≤ ${tol}`, ms.every((v) => v <= tol), `최대 ${fmt(Math.max(...ms))} @ ${h(T[argmax(ms)])}, 중앙값 ${fmt([...ms].sort((a, b) => a - b)[ms.length >> 1])}`);

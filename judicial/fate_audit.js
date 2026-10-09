@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const M = require('../model.js');
 const J = require('./judicial.js');
 const { verifyFate } = require('./verifier.js');
+const { checkFateRaw } = require('./contract.js');
 
 // 표지 거리 (상태 서명 · 문턱) — 엔진의 분류와 독립적으로 다시 센다
 function distanceFns(db, r) {
@@ -29,6 +30,12 @@ function judgeFate(db, r, ctx) {
   db = M.normalize(db);
   ctx = ctx || {};
   const ix = M.index(db), sc = ctx.scenario || {}, audit = [], AE = (code, where, msg, suggestion) => audit.push({ code, where, msg, suggestion });
+  // ⓪ 원자료 계약 (schemas/ffi/fate-raw.schema.json) — 어긴 원자료는 판정하지 않는다 (JS·Rust 어느 엔진이든 같은 계약)
+  const contract = checkFateRaw(r);
+  if (!contract.ok) {
+    for (const x of contract.violations.slice(0, 10)) AE('AUDIT_SCHEMA', x.path, `원자료 계약 위반: ${x.msg}`, '엔진(행정부) 출력이 FFI 계약과 다름 — 엔진 오류');
+    return { error: `원자료 계약 위반 ${contract.violations.length}건 — 판정하지 않음 (${contract.violations.slice(0, 3).map((x) => `${x.path}: ${x.msg}`).join(' · ')})`, audit, contract };
+  }
   const rules = r.process.ruleInfo, { distance, rawDistance } = distanceFns(db, r), { at, concAt, factorsAt } = concFns(r);
   // ① 원자료 사실
   for (const f of r.facts) {
@@ -63,7 +70,8 @@ function judgeFate(db, r, ctx) {
   // ⑥ 궤적 해시 (결정론 판정용 지문)
   const hash = trajectoryHash(r);
   return Object.assign({}, r, {
-    audit, arrest, postMortem: pm, verification: v,
+    ix, // 사법부 자기 색인 (엔진이 넘긴 편의 색인을 쓰지 않음)
+    audit, arrest, postMortem: pm, verification: v, contract,
     mass: Object.assign({}, r.mass, { moieties: v.moieties, start: v.start, end: v.end, worst: v.worst, tolerance: v.tolerance, series: v.series, replayWorst: v.replayWorst, replaySeries: v.replaySeries }),
     process: Object.assign({}, r.process, { factorsAt, rawDistance, distance, hash }),
   });

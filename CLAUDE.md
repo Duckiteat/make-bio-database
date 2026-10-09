@@ -11,6 +11,7 @@
 - **사법부(`judicial/`)는 검증·증명만.** validate·관문·Patch Report·정제 점검·한계 상태·감사(`auditRate`)·독립 질량 검증(`verifier.js`)·운명 판정(`fate_audit.js`)·보고서·비교 판정·신원 확인·증명 도장. 엔진을 실행하지 않고(원자료를 입력으로 받음) 데이터·엔진을 고치지 않는다 — 오류는 판결·보고서로만 내고, 고치는 것은 에이전트가 새 패치로 한다(읽기 전용 되먹임).
 - **`'verified'` 는 사법부 도장으로만.** `attestations/registry.json` 의 유효한 도장(digest·증거 sha256·같은 확인 재실행) 없이 status `verified` 를 패치에 쓰면 관문이 거부한다. 도장은 `augment apply` 가 판결과 함께 발급하고 서기가 기록한다. `node dbtool.mjs attest` 로 재검증.
 - 엔진 실행이 필요한 감사(audit-run·해상도 계획·비교 검토·운명 보고서)는 조정자 `orchestrator.js` 가 행정부로 원자료를 만들고 사법부에 넘긴다. 엔진의 수치 선택(정칙화·관문 문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만 읽는다 — 엔진에 기본값을 박지 않는다.
+- **엔진 출력은 원자료 계약을 지킨다.** 운명 엔진(JS·Rust/WASM)의 출력 모양을 바꾸면 `schemas/ffi/fate-raw.schema.json` 을 같은 커밋에서 고친다 — 사법부(`judicial/contract.js`)는 계약을 어긴 원자료를 판정하지 않는다. 엔진 이식은 `docs/design/engine-port-roadmap.md` 의 단계·완료 조건을 따르고, 이득은 `node tests/bench_engine.js` 기준선과 함께 보고한다.
 - 이 분리를 바꾸는 변경은 `node --test tests/*.test.mjs`(특히 `tests/governance.test.mjs`) 통과가 조건이다.
 
 ## 데이터를 넣을 때
