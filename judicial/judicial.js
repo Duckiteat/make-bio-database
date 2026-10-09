@@ -1116,24 +1116,24 @@
   // 시작 + 원장(생성·소멸·교환·경로)과 맞춘다. 사후 분석(정지 원인·제한 요인·폐기물·소비/생산 비)도 여기서 판정한다.
   function auditRate(db, target, raw) {
     db = normalize(db);
-    const ix = index(db), audit = [], AE = (code, where, msg, sug) => audit.push({ code, where, msg, suggestion: sug });
+    const ix = index(db), audit = [], AE = (fault, code, where, msg, sug) => audit.push({ code, fault, where, msg, suggestion: sug }); // fault: judicial/fault.js
     const r = raw, ids = r.ids, react = r.react, finite = r.finite, res = new Set(r.reservoirSet), tgIds = r.targets;
     // ① 원자료 사실
-    for (const f of r.facts) if (f.kind === 'recycle_stoich_unknown') AE('AUDIT_RESOURCE', f.ref, `${ix.label(f.owner)} 재활용 화학량(서열 길이)을 모름 — 이 단위는 소실로 처리함`, gapSuggest(db, ix, f.owner, 'Structural_Gap', /서열 길이|sequence_length|재활용/));
+    for (const f of r.facts) if (f.kind === 'recycle_stoich_unknown') AE('DATA_GAP', 'AUDIT_RESOURCE', f.ref, `${ix.label(f.owner)} 재활용 화학량(서열 길이)을 모름 — 이 단위는 소실로 처리함`, gapSuggest(db, ix, f.owner, 'Structural_Gap', /서열 길이|sequence_length|재활용/));
     // ② 쓰인 속도 상수의 무결성 · 부피 공백
     for (const u of r.kinUsed) {
       const rule = ix.ruleOf(u.ref), st = u.step ? db.steps[u.step] : null;
-      for (const m of kineticIssues(rule, st, u.kin)) AE('AUDIT_KINETIC', u.step ? `${u.step} ${rule.label}` : u.ref, m, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
-      if (!u.step) { const s = r.supplies.find((x) => x.ref === u.ref); if (s && !s.V) AE('AUDIT_CONCENTRATION', s.ref, `공급 위치(${vlabel('locations', s.loc)}) 부피를 모름 — 공급을 적용하지 못함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
-      else { const x = react.get(u.step); if (!x.V) AE('AUDIT_CONCENTRATION', `${u.step} ${rule.label}`, `반응 부피(${x.loc ? vlabel('locations', x.loc) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
+      for (const m of kineticIssues(rule, st, u.kin)) AE('DOMAIN_CONFLICT', 'AUDIT_KINETIC', u.step ? `${u.step} ${rule.label}` : u.ref, m, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
+      if (!u.step) { const s = r.supplies.find((x) => x.ref === u.ref); if (s && !s.V) AE('DATA_GAP', 'AUDIT_CONCENTRATION', s.ref, `공급 위치(${vlabel('locations', s.loc)}) 부피를 모름 — 공급을 적용하지 못함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
+      else { const x = react.get(u.step); if (!x.V) AE('DATA_GAP', 'AUDIT_CONCENTRATION', `${u.step} ${rule.label}`, `반응 부피(${x.loc ? vlabel('locations', x.loc) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
     }
     // ③ 국소 수지: 발화한 단계의 한 번당 실체·부분 구조 변화 (첫 발화 시각)
     for (const sid of ids.filter((s) => r.firstFire[s] != null).sort((a, b) => r.firstFire[a] - r.firstFire[b])) {
       const x = react.get(sid), t = r.firstFire[sid];
-      if (Object.keys(x.unitEnt).length) AE('AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 국소 수지 위반 — 한 번 일어날 때마다 ${Object.entries(x.unitEnt).map(([en, v]) => `${ix.label(en)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (보존되어야 할 실체가 생기거나 사라짐)`, massSuggest(db, ix, Object.keys(x.unitEnt)[0]));
-      if (finite && Object.keys(x.unitMoi).length && !x.covalent) AE('AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 부분 구조 수지 위반 — 한 번에 ${Object.entries(x.unitMoi).map(([m, v]) => `${ix.label(m)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (단계의 부산물·보조 기질 묶음이 빠졌거나 규칙이 불완전)`, `단계 ${sid} 의 입력·출력에 빠진 부산물(minor)을 넣거나 규칙 ${x.st.rule} 의 효과·with 를 고칠 것`);
+      if (Object.keys(x.unitEnt).length) AE('DOMAIN_CONFLICT', 'AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 국소 수지 위반 — 한 번 일어날 때마다 ${Object.entries(x.unitEnt).map(([en, v]) => `${ix.label(en)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (보존되어야 할 실체가 생기거나 사라짐)`, massSuggest(db, ix, Object.keys(x.unitEnt)[0]));
+      if (finite && Object.keys(x.unitMoi).length && !x.covalent) AE('DOMAIN_CONFLICT', 'AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 부분 구조 수지 위반 — 한 번에 ${Object.entries(x.unitMoi).map(([m, v]) => `${ix.label(m)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (단계의 부산물·보조 기질 묶음이 빠졌거나 규칙이 불완전)`, `단계 ${sid} 의 입력·출력에 빠진 부산물(minor)을 넣거나 규칙 ${x.st.rule} 의 효과·with 를 고칠 것`);
     }
-    for (const [b, x] of Object.entries(r.negatives)) AE('AUDIT_MASS', b, `t=${x.t} s 에 저장소 ${ix.bundleLabel(b)} 가 음수(${x.n}) — 엔진 오류`, '엔진 버그: 보고할 것');
+    for (const [b, x] of Object.entries(r.negatives)) AE('ENGINE_DEFECT', 'AUDIT_MASS', b, `t=${x.t} s 에 저장소 ${ix.bundleLabel(b)} 가 음수(${x.n}) — 엔진 오류`, '엔진 버그: 보고할 것');
     // ④ 전역 수지 — 독립 재계산 (기록점마다)
     const TOL = 1e-6, chemical = new Set(r.chemical), vecCache = new Map(), moiCache = new Map();
     const vec = (b) => { if (!vecCache.has(b)) { const t = {}; entityTally(db, b.split('|')[0], new Map(parseBundle(b).features.map((f) => [f.site, f.feature])), 1, t, null); vecCache.set(b, t); } return vecCache.get(b); };
@@ -1157,11 +1157,13 @@
       }
       if (massFirst && (moiFirst || !finite)) break;
     }
-    if (massFirst) { const L = massFirst.L, en = massFirst.en; AE('AUDIT_MASS', en, `${ix.label(en)}: t=${massFirst.t} s 기록점까지 처음 어긋남 — 시작 ${(ent0[en] || 0).toFixed(3)} + 생성 ${(L.created[en] || 0).toFixed(3)} − 소멸 ${(L.destroyed[en] || 0).toFixed(3)}${finite ? '' : ` + 풀에서 들어옴 ${(L.exIn[en] || 0).toFixed(3)} − 풀로 나감 ${(L.exOut[en] || 0).toFixed(3)}`} = ${massFirst.want.toFixed(3)} ≠ 실제 ${massFirst.got.toFixed(3)} — 보존되어야 하는 실체가 원장 밖에서 사라지거나 생김`, massSuggest(db, ix, en)); }
-    if (moiFirst) AE('AUDIT_MASS', moiFirst.k, `부분 구조 ${ix.label(moiFirst.k)}: t=${moiFirst.t} s 기록점까지 처음 어긋남 — 기대 ${moiFirst.want.toFixed(3)} ≠ 실제 ${moiFirst.got.toFixed(3)} (원장 밖 변화 ${moiFirst.viol.toFixed(3)} 는 위 국소 수지 위반 단계에서 옴)`, '국소 수지 위반 단계를 먼저 고칠 것');
+    // 전역 수지 위반의 출처: 국소(한 번당) 수지 위반 단계가 있으면 그 결과(데이터 모순), 없으면 엔진 원장 결함
+    const localViol = audit.some((a) => a.code === 'AUDIT_MASS' && a.fault === 'DOMAIN_CONFLICT');
+    if (massFirst) { const L = massFirst.L, en = massFirst.en; AE(localViol ? 'DOMAIN_CONFLICT' : 'ENGINE_DEFECT', 'AUDIT_MASS', en, `${ix.label(en)}: t=${massFirst.t} s 기록점까지 처음 어긋남 — 시작 ${(ent0[en] || 0).toFixed(3)} + 생성 ${(L.created[en] || 0).toFixed(3)} − 소멸 ${(L.destroyed[en] || 0).toFixed(3)}${finite ? '' : ` + 풀에서 들어옴 ${(L.exIn[en] || 0).toFixed(3)} − 풀로 나감 ${(L.exOut[en] || 0).toFixed(3)}`} = ${massFirst.want.toFixed(3)} ≠ 실제 ${massFirst.got.toFixed(3)} — 보존되어야 하는 실체가 원장 밖에서 사라지거나 생김`, massSuggest(db, ix, en)); }
+    if (moiFirst) AE(localViol ? 'DOMAIN_CONFLICT' : 'ENGINE_DEFECT', 'AUDIT_MASS', moiFirst.k, `부분 구조 ${ix.label(moiFirst.k)}: t=${moiFirst.t} s 기록점까지 처음 어긋남 — 기대 ${moiFirst.want.toFixed(3)} ≠ 실제 ${moiFirst.got.toFixed(3)} (원장 밖 변화 ${moiFirst.viol.toFixed(3)} 는 위 국소 수지 위반 단계에서 옴)`, '국소 수지 위반 단계를 먼저 고칠 것');
     // ⑤ 적분 안정성: 한 Δt 에 입력의 20% 넘게 쓰려 한 속도 법칙 단계
     const stiffSteps = Object.entries(r.stiff).filter(([, f]) => f > 0.2).sort((a, b) => b[1] - a[1]);
-    if (stiffSteps.length) AE('AUDIT_KINETIC', target, `Δt ${r.dt} s 가 너무 큼 — 속도 법칙 단계가 한 Δt 에 입력을 최대 ${stiffSteps.slice(0, 4).map(([sid, f]) => `${sid} ${Math.min(f, 99.99) * 100 > 9999 ? '>9999' : (f * 100).toFixed(0)}%`).join(', ')} 소비하려 함 (오일러 적분 불안정·과도 진동 위험)`, `dt 를 ${(r.dt * 0.2 / stiffSteps[0][1]).toPrecision(2)} s 이하로 줄여 다시 실행하고 결과가 같은지 확인`);
+    if (stiffSteps.length) AE('NUMERICAL', 'AUDIT_KINETIC', target, `Δt ${r.dt} s 가 너무 큼 — 속도 법칙 단계가 한 Δt 에 입력을 최대 ${stiffSteps.slice(0, 4).map(([sid, f]) => `${sid} ${Math.min(f, 99.99) * 100 > 9999 ? '>9999' : (f * 100).toFixed(0)}%`).join(', ')} 소비하려 함 (오일러 적분 불안정·과도 진동 위험)`, `dt 를 ${(r.dt * 0.2 / stiffSteps[0][1]).toPrecision(2)} s 이하로 줄여 다시 실행하고 결과가 같은지 확인`);
     // ⑥ 평형 일치: 결합 단계의 끝 시점 Q 와 Kd
     const conc = (b, Vr) => Math.max(0, r.final[b] || 0) / (NA * Vr);
     for (const sid of ids) {
@@ -1173,7 +1175,7 @@
       if (ids.some((o) => o !== sid && [...db.steps[o].inputs, ...db.steps[o].agents].some((p) => p.b === outs[0].b && !p.minor))) continue;
       if (r.degradations.some((g) => g.k_deg > 0 && [ins[0].b, ins[1].b, outs[0].b].includes(g.bundle))) continue;
       const Q = conc(ins[0].b, Vr) * conc(ins[1].b, Vr) / Math.max(conc(outs[0].b, Vr), 1e-30);
-      if (conc(ins[0].b, Vr) > 0 && conc(ins[1].b, Vr) > 0 && Math.abs(Math.log10(Q / Kd)) > 1) AE('AUDIT_KINETIC', `${sid} ${react.get(sid).rule.label}`, `끝 시점의 [A][B]/[AB] = ${Q.toExponential(2)} M 가 Kd ${Kd.toExponential(2)} M 와 10배 이상 다름 — 아직 평형 전이거나 dt 가 너무 큼`, `t_end 를 늘리거나 dt 를 줄여 다시 실행 (지금 dt ${r.dt} s)`);
+      if (conc(ins[0].b, Vr) > 0 && conc(ins[1].b, Vr) > 0 && Math.abs(Math.log10(Q / Kd)) > 1) AE('NUMERICAL', 'AUDIT_KINETIC', `${sid} ${react.get(sid).rule.label}`, `끝 시점의 [A][B]/[AB] = ${Q.toExponential(2)} M 가 Kd ${Kd.toExponential(2)} M 와 10배 이상 다름 — 아직 평형 전이거나 dt 가 너무 큼`, `t_end 를 늘리거나 dt 를 줄여 다시 실행 (지금 dt ${r.dt} s)`);
     }
     // ⑦ 자원 순환 분류: closed(순환) · consumed_only(고갈 위험) · produced_only(축적) · idle
     const resv = {};
@@ -1192,8 +1194,8 @@
     for (const s of r.supplies) if (s.active) for (const a of s.consumes) for (const b of s.produces) edge(a, b);
     const cycles = sccs(G).filter((c) => c.length > 1);
     if (finite) for (const [b, x] of Object.entries(resv)) {
-      if (x.class === 'consumed_only') AE('AUDIT_RESOURCE', b, `저장소 ${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (소비: ${x.consumers.join(', ')})${x.firstExhausted != null ? ` — t=${x.firstExhausted} s 에 고갈` : ''}`, gapSuggest(db, ix, b.split('|')[0], 'Kinetic_Gap', /공급|재생|supply/));
-      if (x.source === 'bulk' && x.consumers.some(active)) AE('AUDIT_CONCENTRATION', b, `저장소 ${ix.bundleLabel(b)} 의 시작량이 기본값(${r.bulk}) — 고갈 시각은 질적 의미만`, gapSuggest(db, ix, b.split('|')[0], 'Concentration_Gap', /저장소|대사물|뉴클레오타이드|reservoir/));
+      if (x.class === 'consumed_only') AE('DATA_GAP', 'AUDIT_RESOURCE', b, `저장소 ${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (소비: ${x.consumers.join(', ')})${x.firstExhausted != null ? ` — t=${x.firstExhausted} s 에 고갈` : ''}`, gapSuggest(db, ix, b.split('|')[0], 'Kinetic_Gap', /공급|재생|supply/));
+      if (x.source === 'bulk' && x.consumers.some(active)) AE('DATA_GAP', 'AUDIT_CONCENTRATION', b, `저장소 ${ix.bundleLabel(b)} 의 시작량이 기본값(${r.bulk}) — 고갈 시각은 질적 의미만`, gapSuggest(db, ix, b.split('|')[0], 'Concentration_Gap', /저장소|대사물|뉴클레오타이드|reservoir/));
     }
     // ⑧ 사후 분석 (Post-Mortem): 정지 시각·원인·제한 요인·완료한 회로 수·폐기물 축적·소비/생산 비
     const tEnd = r.series[r.series.length - 1].t, watch = r.watch, death = r.death;
@@ -1222,14 +1224,14 @@
       }
       const lb = pm.limiting && pm.limiting.bundle, base0 = lb ? lb.split('|')[0] : (pm.bottleneck ? ix.ruleOwner(db.steps[pm.bottleneck.sid].rule) : tgIds[0]);
       const gtype = pm.cause === 'exhaustion' ? 'Resource_Gap' : 'Kinetic_Gap';
-      AE('AUDIT_RESOURCE', target, `사후 분석: t=${pm.t_death} s 에 정지 (${{ exhaustion: '자원 고갈', equilibrium: '산물 축적으로 평형', intermediate_drained: '중간물 고갈', kinetic_stall: '속도 정지' }[pm.cause]})${lb ? ` — 제한 요인 ${ix.bundleLabel(lb)}${pm.limiting.starved.length ? ` (굶은 단계 ${pm.limiting.starved.join(', ')})` : ''}` : ''}${pm.bottleneck ? ` — 병목 ${pm.bottleneck.sid} (역/정 = ${pm.bottleneck.ratio.toFixed(3)})` : ''} · 완료한 회로 ${turnsDone.map((c) => c.completed).join('/') || '—'}바퀴`,
+      AE('FINDING', 'AUDIT_RESOURCE', target, `사후 분석: t=${pm.t_death} s 에 정지 (${{ exhaustion: '자원 고갈', equilibrium: '산물 축적으로 평형', intermediate_drained: '중간물 고갈', kinetic_stall: '속도 정지' }[pm.cause]})${lb ? ` — 제한 요인 ${ix.bundleLabel(lb)}${pm.limiting.starved.length ? ` (굶은 단계 ${pm.limiting.starved.join(', ')})` : ''}` : ''}${pm.bottleneck ? ` — 병목 ${pm.bottleneck.sid} (역/정 = ${pm.bottleneck.ratio.toFixed(3)})` : ''} · 완료한 회로 ${turnsDone.map((c) => c.completed).join('/') || '—'}바퀴`,
         gapSuggest(db, ix, base0, gtype, gtype === 'Resource_Gap' ? new RegExp(lb ? ix.label(base0).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '고갈') : null));
     }
     // ⑨ 속도 상수 공백 · 해상도 근사
     const gaps = r.kineticGaps.filter((x) => !/\/rule\//.test(x) || react.has(x)), sgaps = r.kineticGaps.filter((x) => /\/rule\//.test(x));
-    if (gaps.length) AE('AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${gaps.length}개를 즉시(사건 기반)로 처리함: ${gaps.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Kinetic_Gap'));
-    if (sgaps.length) AE('AUDIT_KINETIC_GAP', target, `속도 상수가 없는 공급·분해 규칙 ${sgaps.length}개는 적용하지 않음: ${sgaps.join(', ')}`, sgaps.map((x) => gapSuggest(db, ix, x.split('/')[0], 'Kinetic_Gap')).filter((x, i, a) => a.indexOf(x) === i).join(' / '));
-    if (r.approx.length) AE('AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${r.approx.length}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${r.approx.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap', /2D|면적/));
+    if (gaps.length) AE('DATA_GAP', 'AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${gaps.length}개를 즉시(사건 기반)로 처리함: ${gaps.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Kinetic_Gap'));
+    if (sgaps.length) AE('DATA_GAP', 'AUDIT_KINETIC_GAP', target, `속도 상수가 없는 공급·분해 규칙 ${sgaps.length}개는 적용하지 않음: ${sgaps.join(', ')}`, sgaps.map((x) => gapSuggest(db, ix, x.split('/')[0], 'Kinetic_Gap')).filter((x, i, a) => a.indexOf(x) === i).join(' / '));
+    if (r.approx.length) AE('DATA_GAP', 'AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${r.approx.length}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${r.approx.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap', /2D|면적/));
     return { audit, postMortem: pm, reservoirs: resv, cycles };
   }
   function simulateRateText(db, target, raw) {
@@ -1268,7 +1270,7 @@
     if (pm.waste.length) out.push('  축적된 폐기물·산물 (소비되지 않음):', ...pm.waste.slice(0, 8).map((w) => `    +${fmt(w.accumulated)} ${ix.bundleLabel(w.bundle)}`));
     out.push(`  소비/생산 비 (저장소 순소비 ÷ 순생산): ${pm.dp.ratio == null ? '—' : pm.dp.ratio.toFixed(4)} — 소비 ${Object.entries(pm.dp.consumed).map(([b, v]) => `${ix.bundleLabel(b)} ${fmt(v)}`).join(', ') || '—'} / 생산 ${Object.entries(pm.dp.produced).map(([b, v]) => `${ix.bundleLabel(b)} ${fmt(v)}`).join(', ') || '—'}`);
     out.push(r.audit.length ? `감사 (Audit) — ${r.audit.length}건:` : '감사 (Audit): 위반 없음');
-    for (const a of r.audit) out.push(`  [${a.code}] ${a.where}: ${a.msg}`, `      → 교정 제안: ${a.suggestion}`);
+    for (const a of r.audit) out.push(`  [${a.code} · ${a.fault}] ${a.where}: ${a.msg}`, `      → 교정 제안: ${a.suggestion}`);
     return out.join('\n');
   }
   // 전체 감사: 저장소 검사 + 경로마다 해상도·속도 감사
@@ -1277,11 +1279,11 @@
     raws = raws || {};
     db = normalize(db);
     const out = [], v = validate(db);
-    for (const e of v.errors) out.push({ code: 'AUDIT_SCHEMA', where: e.where, msg: e.msg, suggestion: '패치를 고쳐 다시 병합' });
+    for (const e of v.errors) out.push({ code: 'AUDIT_SCHEMA', fault: 'DOMAIN_CONFLICT', where: e.where, msg: e.msg, suggestion: '패치를 고쳐 다시 병합' });
     const p = resolutionPlan(db, target, { pools: raws.pools });
-    if (!p.error) for (const r of p.rows) if (!r.ok) out.push({ code: 'AUDIT_RESOLUTION', where: `${r.sid} ${p.ix.label(r.sid)}`, msg: `필요 ${['R0', 'R1', 'R2'][r.need]} 인데 갖춤 ${['R0', 'R1', 'R2'][r.have]} — ${r.hits.join(', ')}: ${r.comp.map((c) => p.ix.bundleLabel(c.bundle)).join(', ')} 를 두고 ${r.comp.flatMap((c) => c.steps).filter((x, i, a) => a.indexOf(x) === i).join('·')} 가 경쟁하는데 속도 상수도 반응 중심 구조도 없음`, suggestion: gapSuggest(db, p.ix, p.ix.ruleOwner(db.steps[r.sid].rule), 'Kinetic_Gap') });
+    if (!p.error) for (const r of p.rows) if (!r.ok) out.push({ code: 'AUDIT_RESOLUTION', fault: 'DATA_GAP', where: `${r.sid} ${p.ix.label(r.sid)}`, msg: `필요 ${['R0', 'R1', 'R2'][r.need]} 인데 갖춤 ${['R0', 'R1', 'R2'][r.have]} — ${r.hits.join(', ')}: ${r.comp.map((c) => p.ix.bundleLabel(c.bundle)).join(', ')} 를 두고 ${r.comp.flatMap((c) => c.steps).filter((x, i, a) => a.indexOf(x) === i).join('·')} 가 경쟁하는데 속도 상수도 반응 중심 구조도 없음`, suggestion: gapSuggest(db, p.ix, p.ix.ruleOwner(db.steps[r.sid].rule), 'Kinetic_Gap') });
     const th = thermoLoops(db, target);
-    if (!th.error) for (const l of th.loops) if (!l.ok) out.push({ code: 'AUDIT_THERMO', where: l.steps.join('→'), msg: `닫힌 고리의 ΣΔG° = ${l.sum.toFixed(1)} J/mol ≠ 0 (허용 ${V.thermo.loop_tolerance}) — 미시적 가역성 위반: 고리를 한 바퀴 돌면 에너지가 생기거나 사라짐`, suggestion: '고리 단계들의 dG0 를 확인하고 하나를 나머지로부터 정할 것 (Wegscheider 조건)' });
+    if (!th.error) for (const l of th.loops) if (!l.ok) out.push({ code: 'AUDIT_THERMO', fault: 'DOMAIN_CONFLICT', where: l.steps.join('→'), msg: `닫힌 고리의 ΣΔG° = ${l.sum.toFixed(1)} J/mol ≠ 0 (허용 ${V.thermo.loop_tolerance}) — 미시적 가역성 위반: 고리를 한 바퀴 돌면 에너지가 생기거나 사라짐`, suggestion: '고리 단계들의 dG0 를 확인하고 하나를 나머지로부터 정할 것 (Wegscheider 조건)' });
     if (raws.rate && !raws.rate.error) out.push(...auditRate(db, target, raws.rate).audit);
     return out;
   }

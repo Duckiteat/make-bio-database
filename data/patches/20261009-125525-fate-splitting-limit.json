@@ -1,0 +1,81 @@
+{
+  "applied_at": "2026-10-09T12:55:25.950Z",
+  "result": {
+    "added": [
+      "L000069"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000069"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "엔진 이식 1단계 전 한계 정리: 운명 엔진의 시간 적분 단순화(연산자 분할 + 빠른 층 Δ 당 역방향 오일러 1회)를 측정해 등록 — 결과 보고 때 수치 오차를 결과(FINDING)와 구분하기 위해",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000069",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000069",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 60
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "엔진 이식 1단계 전 한계 정리: 운명 엔진의 시간 적분 단순화(연산자 분할 + 빠른 층 Δ 당 역방향 오일러 1회)를 측정해 등록 — 결과 보고 때 수치 오차를 결과(FINDING)와 구분하기 위해",
+  "limitations": [
+    {
+      "id": "L+fate_splitting",
+      "target": "D000174",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "운명 시뮬레이션의 시간 적분 단순화 — 느린 층(표지 합성·분해)의 조절 배율을 느린 단계 Δ(기본 60 s) 동안 고정하고, 빠른 층(대사)은 승격 시 Δ 당 역방향 오일러 한 번(1차, 조절 배율 고정)으로 푼다. Δ 반감 수렴 시험(가상 시나리오, 기준 Δ = 7.5 s): 표지 궤적 상대 L2 = 2.5e-3 (효과기·기억 전구) / 4.5e-4 (포도당 결핍), 1차 수렴(Δ 30 s: 1.1e-3, 15 s: 3.4e-4), 도달 시각 차 60–135 s, 최종 상태 같음. 결과 보고의 '수치 확인'(같은 Δ 의 명시 기준)은 이 분할 오차를 재지 않는다 — 결정·도달 시각을 1 분 단위보다 정밀하게 해석하지 말 것.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "고차 적응 적분(Rosenbrock + 오차 추정·거부 기반 양수성) 또는 Δ 반감 수렴 시험을 운명 보고서의 수치 확인에 포함 — docs/design/engine-port-roadmap.md 1.5단계"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 로드맵 한계 정리 — Δ 반감 수렴 시험 (fate-effector-il12·memory-il15·effector-glucose-withheld, 가상 시나리오)"
+    }
+  ]
+}

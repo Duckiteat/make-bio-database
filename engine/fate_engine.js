@@ -158,7 +158,7 @@ function simulateFate(db, sourceId, opt) {
     return Jt;
   };
   const implicitFast = (N, F, h) => {
-    const N0v = Float64Array.from(N), xi = new Array(nF).fill(0), r0 = new Array(nF), r1 = new Array(nF);
+    const N0v = Float64Array.from(N), xi = new Array(nF).fill(0), r0 = new Array(nF);
     // 초기 추정: 명시 한 단계의 진행량 (입력 한도 안)
     for (let j = 0; j < nF; j++) { let x = h * rate(fast[j], N0v, F[j]); for (const q of fast[j].ci) x = Math.min(x, Math.max(0, N0v[q.i]) / q.n); xi[j] = Math.max(0, x); }
     let ok = false;
@@ -167,13 +167,7 @@ function simulateFate(db, sourceId, opt) {
       const Nn = resid(N0v, xi, F, h, r0);
       const norm = Math.max(...r0.map((v, j) => Math.abs(v) / (Math.abs(xi[j]) + 1)));
       if (norm < CP.newton_tol) { ok = true; break; }
-      let Jm;
-      if (CP.jacobian === 'fd') { // 0.5단계 이전 기준 (비교 검토용): 유한차분 — 잔차 nF 번 더
-        const J = [];
-        for (let c = 0; c < nF; c++) { const d = Math.max(1e-7 * Math.abs(xi[c]), 1e-6); xi[c] += d; resid(N0v, xi, F, h, r1); xi[c] -= d; J.push(r1.map((v, j) => (v - r0[j]) / d)); }
-        Jm = r0.map((_, j) => J.map((col) => col[j]));
-      } else Jm = analyticJ(Nn, F, h).map((row) => Array.from(row));
-      const dx = solve(Jm, r0.map((v) => -v));
+      const dx = solve(analyticJ(Nn, F, h).map((row) => Array.from(row)), r0.map((v) => -v));
       if (!dx) break;
       let lam = 1; // 감쇠: 음수 상태·음수 진행 금지
       for (let tries = 0; tries < 40; tries++) { const cand = xi.map((v, j) => v + lam * dx[j]); const Nn = stateAt(N0v, cand); if (cand.every((v) => v >= -1e-9) && Nn.every((v, i) => v >= -1e-6 * Math.max(1, N0v[i]))) { for (let j = 0; j < nF; j++) xi[j] = Math.max(0, cand[j]); break; } lam /= 2; }

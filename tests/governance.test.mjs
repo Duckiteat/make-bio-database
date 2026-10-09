@@ -187,8 +187,34 @@ test('⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사�
   const other = IRB.buildFateIR(BASE, 'D000174', { ...sc, saturation_K: 2e-6 });
   const jx = FA.judgeFate(BASE, raw, { scenario: sc, ir: other });
   assert.ok(!jx.irCheck.ok && !jx.irCheck.consumed && jx.audit.some((a) => a.code === 'AUDIT_SCHEMA' && /IR/.test(a.msg)));
-  // 해석적 야코비안: 유한차분 대비 잔차 계산이 줄고 결과(운명·도달)는 같다
-  const fd = F.simulateFate(BASE, 'D000174', { scenario: { ...sc, jacobian: 'fd' }, commitment: false });
-  assert.ok(raw.stats.residEvals < fd.stats.residEvals / 5 && raw.stats.jacEvals > 0 && fd.stats.jacEvals === 0);
-  assert.equal(raw.final.state, fd.final.state);
+  // 해석적 야코비안: 뉴턴 반복마다 잔차 한 번 (유한차분 경로는 판정 뒤 제거 — 군더더기 금지)
+  assert.ok(raw.stats.residEvals === raw.stats.newton && raw.stats.jacEvals > 0);
+  assert.ok(!/jacobian\s*===\s*'fd'|xi\[c\] \+= d/.test(src('engine/fate_engine.js')), '유한차분 대체 경로가 남아 있음');
+});
+
+test('⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 결과는 FINDING, 엔진·컴파일러·수치·데이터 결함은 각자의 층으로', () => {
+  const FT = req('../judicial/fault.js'), IRB = req('../compiler/ir_builder.js');
+  // 경로 감사 (모든 경로) — 태그 없는 항목 0
+  const paths = Object.keys(BASE.senses).filter((k) => BASE.senses[k].kind === 'pathway');
+  const all = paths.flatMap((p) => ORCH.auditRun(BASE, p, { t_end: 0.5, dt: 0.01 }));
+  assert.ok(all.length > 0 && FT.untagged(all).length === 0, JSON.stringify(FT.untagged(all).slice(0, 2)));
+  // 큰 Δt → 적분 안정성 감사는 NUMERICAL (생물 상수를 고치라고 하지 않음)
+  const tca = paths.find((p) => /시트르산 회로/.test(BASE.terms[BASE.senses[p].term].names.ko));
+  const stiff = ORCH.runRate(BASE, tca, { scenario: JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/tca-co2-equilibrium-hypothetical.json'), 'utf8')), t_end: 300, dt: 0.1 });
+  assert.ok(stiff.audit.some((a) => a.fault === 'NUMERICAL' && /Δt/.test(a.msg)), '큰 Δt → NUMERICAL');
+  assert.ok(stiff.audit.filter((a) => /사후 분석/.test(a.msg)).every((a) => a.fault === 'FINDING'), '사후 분석(정지 원인)은 결과');
+  // 운명: 분화 정지는 FINDING · 부피 공백은 DATA_GAP · 원자료 변조는 ENGINE_DEFECT · IR 변조는 COMPILER_DEFECT
+  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8'));
+  const v = ORCH.runFate(BASE, 'D000174', { scenario: { ...sc, commitment: { horizon: 3600, coarse: 3600 } } });
+  assert.ok(v.audit.length && FT.untagged(v.audit).length === 0);
+  assert.ok(v.audit.some((a) => a.code === 'AUDIT_FATE' && a.fault === 'FINDING'), '고갈로 인한 정지는 결과');
+  const noVol = { ...sc, t_end: 3600, volumes: { ...sc.volumes } }; delete noVol.volumes.nucleoplasm;
+  assert.ok(ORCH.runFate(BASE, 'D000174', { scenario: noVol, commitment: false }).audit.some((a) => a.code === 'AUDIT_CONCENTRATION' && a.fault === 'DATA_GAP'));
+  const s2 = { ...sc, t_end: 2 * 3600 }, ir = IRB.buildFateIR(BASE, 'D000174', s2), raw = F.simulateFate(BASE, 'D000174', { scenario: s2, commitment: false, ir });
+  const series = raw.series.map((N, j) => (j === 30 ? Float64Array.from(N, (x, k) => (k === 3 ? x + 5 : x)) : N));
+  assert.ok(FA.judgeFate(BASE, { ...raw, series }, { scenario: s2, ir }).audit.some((a) => a.code === 'AUDIT_MASS' && a.fault === 'ENGINE_DEFECT'));
+  const badIR = JSON.parse(JSON.stringify(ir)); badIR.jac.rate[0][1] *= 1.001; badIR.hash = IRB.irHash(badIR);
+  assert.ok(FA.judgeFate(BASE, raw, { scenario: s2, ir: badIR }).audit.some((a) => a.fault === 'COMPILER_DEFECT' || (a.fault === 'ENGINE_DEFECT' && /IR/.test(a.msg))));
+  for (const f of Object.keys(FT.FAULTS)) assert.ok(FT.FAULTS[f].route && FT.FAULTS[f].label);
+  assert.match(FT.FAULTS.NUMERICAL.route, /생물 상수\(db\.json\)를 바꾸지 않는다/);
 });

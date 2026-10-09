@@ -77,7 +77,10 @@
       "format": "UMD JavaScript 객체 (브라우저·Node 공용)",
       "writer": "사람이 검토 후 (AI 는 사용자 요청이 있을 때만)",
       "readers": "core.js",
-      "interpret": "통제 어휘 — 이 목록에 없는 값은 거부된다. 별칭은 병합 때 표준 키로 바뀐다. 9장 부록에 현재 값 전부."
+      "interpret": "통제 어휘 — 이 목록에 없는 값은 거부된다. 별칭은 병합 때 표준 키로 바뀐다. 9장 부록에 현재 값 전부.",
+      "node": "SHARED_VOCAB",
+      "governance": "Shared",
+      "refactor_strategy": "통제 어휘는 사용자 요청이 있을 때만. 데이터를 통과시키려고 어휘를 넓히지 않는다."
     },
     {
       "path": "core.js",
@@ -85,7 +88,10 @@
       "format": "UMD JavaScript (브라우저 DefDB / Node require)",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs, viewer.html, tests, migrations",
-      "interpret": "[행정] 읽기·질의(문맥·기전·패턴·프롬프트)·시뮬레이션(simulate, simulateRate)의 구현 — 규칙과 초기 상태의 순수 함수. 원자료만 내고 판정·'verified'·파일 쓰기를 하지 않는다. 4장."
+      "interpret": "[행정] 읽기·질의(문맥·기전·패턴·프롬프트)·시뮬레이션(simulate, simulateRate)의 구현 — 규칙과 초기 상태의 순수 함수. 원자료만 내고 판정·'verified'·파일 쓰기를 하지 않는다. 4장.",
+      "node": "EXECUTIVE_QUERY",
+      "governance": "Executive",
+      "refactor_strategy": "질의·simulate·simulateRate 원자료만. 감사·판정은 judicial.auditRate 로. 내부 루프의 문자열·Map 은 IR 정수 번호로 바꾸는 방향(3단계)."
     },
     {
       "path": "model.js",
@@ -93,7 +99,10 @@
       "format": "UMD JavaScript (브라우저 DefDBModel / Node require)",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "core.js, judicial/, legislative/, engine/coupling.js",
-      "interpret": "[공유] 헌법 층 — 형식 상수·정규화(normalize)·색인(index)·참조 해석·부분 구조(entityTally·moietyOf)·속도 법칙 정의(hillFactor·SAT_K·NA·VOL)·규칙 한 줄 표기. 시뮬레이션·판정·쓰기를 하지 않는다."
+      "interpret": "[공유] 헌법 층 — 형식 상수·정규화(normalize)·색인(index)·참조 해석·부분 구조(entityTally·moietyOf)·속도 법칙 정의(hillFactor·SAT_K·NA·VOL)·규칙 한 줄 표기. 시뮬레이션·판정·쓰기를 하지 않는다.",
+      "node": "SHARED_MODEL",
+      "governance": "Shared",
+      "refactor_strategy": "형식·정규화·색인·법칙 정의만. 시뮬레이션·판정·쓰기를 넣지 않는다 — 넣고 싶어지면 그 함수가 어느 권력의 일인지 먼저 정한다."
     },
     {
       "path": "compiler/ir_builder.js",
@@ -101,7 +110,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, engine/fate_engine.js, tests",
-      "interpret": "[공유·컴파일러] db + 시나리오 → 불변 운명 IR: 계 조립(assemble)·정수 묶음 번호·화학량 S·속도식과 기호 미분 ∂rate/∂N·조절 배율과 ∂f/∂s·희소 패턴·결합점 값·sha256. 쓰기·판정·엔진 호출 없음."
+      "interpret": "[공유·컴파일러] db + 시나리오 → 불변 운명 IR: 계 조립(assemble)·정수 묶음 번호·화학량 S·속도식과 기호 미분 ∂rate/∂N·조절 배율과 ∂f/∂s·희소 패턴·결합점 값·sha256. 쓰기·판정·엔진 호출 없음.",
+      "node": "COMPILER_IR",
+      "governance": "Shared",
+      "refactor_strategy": "순수 함수 유지. 도함수는 기호 미분으로만(수치 섭동 금지). 속도 법칙을 바꾸면 tape 명세·judicial/derivative.js 의 법칙 재구성을 같은 커밋에서."
     },
     {
       "path": "compiler/tape.js",
@@ -109,7 +121,10 @@
       "format": "UMD JavaScript",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "compiler/ir_builder.js, engine/fate_engine.js",
-      "interpret": "[공유·컴파일러] 수식 테이프 명령표(CONST·CONC·DCONC·CNT·FAC·MUL·ADD·POW·SAT·HILL 과 도함수 명령)와 참조 해석기 — Rust/WASM 엔진이 같은 명령표를 해석한다. 할당 없는 스택."
+      "interpret": "[공유·컴파일러] 수식 테이프 명령표(CONST·CONC·DCONC·CNT·FAC·MUL·ADD·POW·SAT·HILL 과 도함수 명령)와 참조 해석기 — Rust/WASM 엔진이 같은 명령표를 해석한다. 할당 없는 스택.",
+      "node": "COMPILER_TAPE",
+      "governance": "Shared",
+      "refactor_strategy": "명령표가 Rust/WASM 과의 계약 — 명령을 더하면 Rust 해석기·judicial 해석기·명세 주석을 함께. 해석기 안에서 할당하지 않는다."
     },
     {
       "path": "orchestrator.js",
@@ -117,7 +132,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI",
       "readers": "dbtool.mjs, tests",
-      "interpret": "조정자 — 행정부 실행 → 원자료 → 사법부 판정을 잇는다(runRate·auditRun·runFate·compare·augmentBuild·validateWithRegistry). 쓰지 않고 판정하지 않는다."
+      "interpret": "조정자 — 행정부 실행 → 원자료 → 사법부 판정을 잇는다(runRate·auditRun·runFate·compare·augmentBuild·validateWithRegistry). 쓰지 않고 판정하지 않는다.",
+      "node": "ORCHESTRATOR",
+      "governance": "Orchestration",
+      "refactor_strategy": "배선만: 컴파일 → 실행 → 판정. 판정·쓰기를 넣지 않는다."
     },
     {
       "path": "judicial/judicial.js",
@@ -125,7 +143,10 @@
       "format": "UMD JavaScript (브라우저 DefDBJudicial / Node require)",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs, viewer.html, tests",
-      "interpret": "[사법] validate(증명 도장 대조 포함)·관문(gate)·Patch Report·정제 점검(판결만)·한계 상태·detectGaps·감사(auditRate: simulateRate 원자료의 국소·전역 질량 독립 재계산, 사후 분석)·해상도 계획. 엔진을 실행하지 않고 쓰지 않는다."
+      "interpret": "[사법] validate(증명 도장 대조 포함)·관문(gate)·Patch Report·정제 점검(판결만)·한계 상태·detectGaps·감사(auditRate: simulateRate 원자료의 국소·전역 질량 독립 재계산, 사후 분석)·해상도 계획. 엔진을 실행하지 않고 쓰지 않는다.",
+      "node": "JUDICIAL_CORE",
+      "governance": "Judicial",
+      "refactor_strategy": "validate·관문·감사(auditRate). 모든 감사 항목에 결함 태그(judicial/fault.js)를 만드는 곳에서 명시 — 메시지에서 추측하지 않는다."
     },
     {
       "path": "judicial/verifier.js",
@@ -133,7 +154,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "judicial/fate_audit.js, judicial/compare.js, tests",
-      "interpret": "[사법] 독립 질량 검증기 — 운명 엔진 원자료(N·LO·누적 진행량)를 데이터베이스 화학량으로 다시 세워 화학량 대조·재생(replay)·부분 구조 원장(상대 1e-14)·규칙 밖 부분 구조·음수를 자체 TwoSum/TwoProduct 로 판정."
+      "interpret": "[사법] 독립 질량 검증기 — 운명 엔진 원자료(N·LO·누적 진행량)를 데이터베이스 화학량으로 다시 세워 화학량 대조·재생(replay)·부분 구조 원장(상대 1e-14)·규칙 밖 부분 구조·음수를 자체 TwoSum/TwoProduct 로 판정.",
+      "node": "JUDICIAL_MASS_VERIFIER",
+      "governance": "Judicial",
+      "refactor_strategy": "엔진 장부를 믿지 않고 db 화학량으로 재계산. 자체 TwoSum/TwoProduct."
     },
     {
       "path": "judicial/contract.js",
@@ -141,7 +165,21 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "judicial/fate_audit.js, tests",
-      "interpret": "[사법] 원자료 계약 검사 — JSON Schema 부분 집합(Float64Array 를 배열로) + x-dimensions. 위반 원자료는 판정하지 않는다 (AUDIT_SCHEMA, 증명서 FAIL)."
+      "interpret": "[사법] 원자료 계약 검사 — JSON Schema 부분 집합(Float64Array 를 배열로) + x-dimensions. 위반 원자료는 판정하지 않는다 (AUDIT_SCHEMA, 증명서 FAIL).",
+      "node": "JUDICIAL_CONTRACT",
+      "governance": "Judicial",
+      "refactor_strategy": "FFI 계약 검사 — 엔진 출력 모양이 바뀌면 스키마를 같은 커밋에서."
+    },
+    {
+      "path": "judicial/fault.js",
+      "class": "law",
+      "format": "UMD JavaScript",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/judicial.js, judicial/fate_audit.js, dbtool.mjs, tests",
+      "interpret": "[사법] 결함 출처 분류표 — FINDING·DATA_GAP·DOMAIN_CONFLICT·NUMERICAL·ENGINE_DEFECT·COMPILER_DEFECT 와 고치는 곳. 모든 감사 항목이 태그를 갖는다.",
+      "node": "JUDICIAL_FAULT",
+      "governance": "Judicial",
+      "refactor_strategy": "6 분류와 고치는 곳. 분류를 더하면 시험·문서를 함께."
     },
     {
       "path": "judicial/derivative.js",
@@ -149,7 +187,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "judicial/fate_audit.js, tests",
-      "interpret": "[사법] IR·기호 도함수 검사 — 해시·엔진이 먹은 IR 과 같은지·db 에서 다시 세운 법칙과 속도 테이프 비교·이중수 자동미분 대비 ∂rate/∂N·∂f/∂s (≤ 1e-14)·빠진 의존성·중심 유한차분 교차(≤ 1e-6). 자기 테이프 해석기(컴파일러 코드 쓰지 않음)."
+      "interpret": "[사법] IR·기호 도함수 검사 — 해시·엔진이 먹은 IR 과 같은지·db 에서 다시 세운 법칙과 속도 테이프 비교·이중수 자동미분 대비 ∂rate/∂N·∂f/∂s (≤ 1e-14)·빠진 의존성·중심 유한차분 교차(≤ 1e-6). 자기 테이프 해석기(컴파일러 코드 쓰지 않음).",
+      "node": "JUDICIAL_DERIVATIVE",
+      "governance": "Judicial",
+      "refactor_strategy": "컴파일러 코드를 쓰지 않는 독립 재구성·이중수 자동미분."
     },
     {
       "path": "judicial/fate_audit.js",
@@ -157,7 +198,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs fate, tests",
-      "interpret": "[사법] 운명 판정 — 감사 목록·분화 정지·사후 분석(실패 표지 → 조절 배율 → 고갈 저장소)·소비만 되는 저장소·궤적 해시·짧은 텍스트. 원자료 + 판결 = 판결된 보기."
+      "interpret": "[사법] 운명 판정 — 감사 목록·분화 정지·사후 분석(실패 표지 → 조절 배율 → 고갈 저장소)·소비만 되는 저장소·궤적 해시·짧은 텍스트. 원자료 + 판결 = 판결된 보기.",
+      "node": "JUDICIAL_FATE_AUDIT",
+      "governance": "Judicial",
+      "refactor_strategy": "원자료 → 판결된 보기. 결과(고갈·정지)는 FINDING — 결함으로 태그하지 않는다."
     },
     {
       "path": "judicial/process_report.js",
@@ -197,7 +241,10 @@
       "format": "UMD JavaScript (브라우저 DefDBLegislative / Node require)",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs, viewer.html, tests",
-      "interpret": "[입법] merge·ingest(패치 → 새 db, 순수 함수)·리팩터링 패치 초안(draftRefactor, 사법부 정제 판결로). 스스로 검사·시뮬레이션하지 않는다."
+      "interpret": "[입법] merge·ingest(패치 → 새 db, 순수 함수)·리팩터링 패치 초안(draftRefactor, 사법부 정제 판결로). 스스로 검사·시뮬레이션하지 않는다.",
+      "node": "LEGISLATIVE_MERGE",
+      "governance": "Legislative",
+      "refactor_strategy": "merge·초안은 순수 함수. 스스로 검사하지 않는다."
     },
     {
       "path": "legislative/augment_draft.js",
@@ -213,7 +260,10 @@
       "format": "Node ESM",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "dbtool.mjs, tests",
-      "interpret": "[입법] 입법 서기 — 저장소에서 파일을 쓰는 유일한 코드. db.json·data/patches/ 는 사법부 봉인(통과 + 같은 db sha256)일 때만, 증명 등록부는 도장 재검증 뒤에만, 파생 문서·수신함 받기·보고서는 정해진 위치에만."
+      "interpret": "[입법] 입법 서기 — 저장소에서 파일을 쓰는 유일한 코드. db.json·data/patches/ 는 사법부 봉인(통과 + 같은 db sha256)일 때만, 증명 등록부는 도장 재검증 뒤에만, 파생 문서·수신함 받기·보고서는 정해진 위치에만.",
+      "node": "LEGISLATIVE_CLERK",
+      "governance": "Legislative",
+      "refactor_strategy": "유일한 쓰기. 봉인·도장 확인 없이 쓰는 경로를 만들지 않는다."
     },
     {
       "path": "dbtool.mjs",
@@ -221,7 +271,10 @@
       "format": "Node ESM 명령줄",
       "writer": "사람·AI",
       "readers": "AI 에이전트, CI",
-      "interpret": "조정만 하는 명령줄 — 행정부를 부르고(orchestrator.js) 판정은 사법부(judicial/)에, 파일 쓰기는 입법 서기(legislative/clerk.mjs)에 맡긴다. 이 파일 안에 쓰기 코드가 없다."
+      "interpret": "조정만 하는 명령줄 — 행정부를 부르고(orchestrator.js) 판정은 사법부(judicial/)에, 파일 쓰기는 입법 서기(legislative/clerk.mjs)에 맡긴다. 이 파일 안에 쓰기 코드가 없다.",
+      "node": "CLI",
+      "governance": "Orchestration",
+      "refactor_strategy": "조정만. 쓰기는 서기, 판정은 사법부."
     },
     {
       "path": "engine/hmse.js",
@@ -285,7 +338,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs fate, tests",
-      "interpret": "[행정] 형식 v9 세포 운명 엔진 — 상태 집합 조립, 빠른 층(진행량, P5 관문: 명시 부분 단계 ↔ 역방향 오일러) + 느린 층(표지 지수 해), 결정 탐침(신호 철회). 원자료만: 기록점마다 N·LO·누적 진행량(double-double)·사건·사실(facts). 감사·사후 분석·질량 판정은 사법부."
+      "interpret": "[행정] 형식 v9 세포 운명 엔진 — 상태 집합 조립, 빠른 층(진행량, P5 관문: 명시 부분 단계 ↔ 역방향 오일러) + 느린 층(표지 지수 해), 결정 탐침(신호 철회). 원자료만: 기록점마다 N·LO·누적 진행량(double-double)·사건·사실(facts). 감사·사후 분석·질량 판정은 사법부.",
+      "node": "EXECUTIVE_FATE_SOLVER",
+      "governance": "Executive",
+      "refactor_strategy": "IR 만 먹는 기준 구현(JS 오라클) — 최적화하지 않는다. 적분기 개선(1.5단계 Rosenbrock·적응 단계)은 솔버 안에서, 바깥 잘라내기 래퍼 금지. Rust 엔진(engine/rust/)이 같은 계약으로 대체."
     },
     {
       "path": "engine/coupling.js",
@@ -293,7 +349,10 @@
       "format": "UMD JavaScript",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/fate_engine.js, tests",
-      "interpret": "[행정] 수치 결합점 등록부 — 포화 정칙화·명시 비율·충격 문턱·관문 K_up/K_down/M/W·결정 탐침 격자·뉴턴 허용 오차. 해석 순서 시나리오 → 데이터(params) → 기본값 — 엔진을 고치지 않고 데이터 층으로 뗄 수 있다."
+      "interpret": "[행정] 수치 결합점 등록부 — 포화 정칙화·명시 비율·충격 문턱·관문 K_up/K_down/M/W·결정 탐침 격자·뉴턴 허용 오차. 해석 순서 시나리오 → 데이터(params) → 기본값 — 엔진을 고치지 않고 데이터 층으로 뗄 수 있다.",
+      "node": "COUPLING_REGISTRY",
+      "governance": "Shared",
+      "refactor_strategy": "수치 결합점의 유일한 출처. 범위 지정 해석(규칙·시간 척도)은 규칙별 강성 측정으로 근거가 나올 때 IMEX 분할과 함께."
     },
     {
       "path": "engine/interfaces/hmse.hpp",
@@ -591,5 +650,15 @@
       "readers": "judicial/attestation.js validStamps → validate(db, { attestations })",
       "interpret": "도장: subject(정의항·필드·종류:값) · claim verified · evidence(수신함 파일·sha256) · issuer(모듈·코드 sha256) · issued_at · digest. validate 는 status verified 마다 유효한 도장을 요구한다."
     }
-  ]
+  ],
+  "governance": {
+    "enum": [
+      "Shared",
+      "Executive",
+      "Judicial",
+      "Legislative",
+      "Orchestration"
+    ],
+    "rule": "node 가 있는 항목은 아키텍처 노드 — 고칠 때 그 노드의 refactor_strategy 를 따른다. 래퍼·임시 대체 플래그로 덮지 말고 노드 안의 논리를 고친다 (docs/design/engine-port-roadmap.md §5)."
+  }
 }

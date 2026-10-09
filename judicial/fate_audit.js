@@ -30,11 +30,11 @@ function concFns(r) {
 function judgeFate(db, r, ctx) {
   db = M.normalize(db);
   ctx = ctx || {};
-  const ix = M.index(db), sc = ctx.scenario || {}, audit = [], AE = (code, where, msg, suggestion) => audit.push({ code, where, msg, suggestion });
+  const ix = M.index(db), sc = ctx.scenario || {}, audit = [], AE = (fault, code, where, msg, suggestion) => audit.push({ code, fault, where, msg, suggestion }); // fault: judicial/fault.js
   // ⓪ 원자료 계약 (schemas/ffi/fate-raw.schema.json) — 어긴 원자료는 판정하지 않는다 (JS·Rust 어느 엔진이든 같은 계약)
   const contract = checkFateRaw(r);
   if (!contract.ok) {
-    for (const x of contract.violations.slice(0, 10)) AE('AUDIT_SCHEMA', x.path, `원자료 계약 위반: ${x.msg}`, '엔진(행정부) 출력이 FFI 계약과 다름 — 엔진 오류');
+    for (const x of contract.violations.slice(0, 10)) AE('ENGINE_DEFECT', 'AUDIT_SCHEMA', x.path, `원자료 계약 위반: ${x.msg}`, '엔진(행정부) 출력이 FFI 계약과 다름 — 엔진 오류');
     return { error: `원자료 계약 위반 ${contract.violations.length}건 — 판정하지 않음 (${contract.violations.slice(0, 3).map((x) => `${x.path}: ${x.msg}`).join(' · ')})`, audit, contract };
   }
   // ⓪-2 IR·기호 도함수 (조정자가 넘긴 IR 이 있을 때): 해시·엔진이 먹은 IR 과 같은지·법칙 충실도·자동미분 대비 도함수
@@ -44,25 +44,27 @@ function judgeFate(db, r, ctx) {
     irCheck.consumed = r.irHash === ctx.ir.hash;
     irCheck.ruleOrder = ctx.ir.rules.map((x) => x.ref).join() === r.process.ruleInfo.map((x) => x.ref).join();
     irCheck.ok = irCheck.ok && irCheck.consumed && irCheck.ruleOrder;
-    if (!irCheck.consumed) AE('AUDIT_SCHEMA', 'IR', `엔진이 먹은 IR(${String(r.irHash).slice(0, 12)})이 조정자가 넘긴 IR(${ctx.ir.hash.slice(0, 12)})과 다름`, '같은 IR 로 다시 실행');
-    if (!irCheck.hashOK || irCheck.problems.length || !irCheck.ruleOrder) AE('AUDIT_SCHEMA', 'IR', `IR 충실도 위반: ${[...(irCheck.hashOK ? [] : ['해시']), ...(irCheck.ruleOrder ? [] : ['규칙 순서']), ...irCheck.problems].slice(0, 4).join(' · ')}`, '컴파일러(compiler/ir_builder.js) 오류 또는 IR 변조');
-    if (irCheck.missingDeps.length || irCheck.rateWorst > irCheck.tolerance || irCheck.derivWorst > irCheck.tolerance || irCheck.factorWorst > irCheck.tolerance || irCheck.fdWorst > irCheck.fdTolerance) AE('AUDIT_KINETIC', 'IR', `기호 도함수 검사 실패 — 속도 ${irCheck.rateWorst.toExponential(1)} · 도함수 ${irCheck.derivWorst.toExponential(1)} · 배율 ${irCheck.factorWorst.toExponential(1)} · 유한차분 ${irCheck.fdWorst.toExponential(1)}${irCheck.missingDeps.length ? ` · 빠진 의존 ${irCheck.missingDeps.slice(0, 3).join(', ')}` : ''}`, '컴파일러의 미분 규칙 오류');
+    if (!irCheck.consumed) AE('ENGINE_DEFECT', 'AUDIT_SCHEMA', 'IR', `엔진이 먹은 IR(${String(r.irHash).slice(0, 12)})이 조정자가 넘긴 IR(${ctx.ir.hash.slice(0, 12)})과 다름`, '같은 IR 로 다시 실행');
+    if (!irCheck.hashOK || irCheck.problems.length || !irCheck.ruleOrder) AE('COMPILER_DEFECT', 'AUDIT_SCHEMA', 'IR', `IR 충실도 위반: ${[...(irCheck.hashOK ? [] : ['해시']), ...(irCheck.ruleOrder ? [] : ['규칙 순서']), ...irCheck.problems].slice(0, 4).join(' · ')}`, '컴파일러(compiler/ir_builder.js) 오류 또는 IR 변조');
+    if (irCheck.missingDeps.length || irCheck.rateWorst > irCheck.tolerance || irCheck.derivWorst > irCheck.tolerance || irCheck.factorWorst > irCheck.tolerance || irCheck.fdWorst > irCheck.fdTolerance) AE('COMPILER_DEFECT', 'AUDIT_KINETIC', 'IR', `기호 도함수 검사 실패 — 속도 ${irCheck.rateWorst.toExponential(1)} · 도함수 ${irCheck.derivWorst.toExponential(1)} · 배율 ${irCheck.factorWorst.toExponential(1)} · 유한차분 ${irCheck.fdWorst.toExponential(1)}${irCheck.missingDeps.length ? ` · 빠진 의존 ${irCheck.missingDeps.slice(0, 3).join(', ')}` : ''}`, '컴파일러의 미분 규칙 오류');
   }
   const rules = r.process.ruleInfo, { distance, rawDistance } = distanceFns(db, r), { at, concAt, factorsAt } = concFns(r);
   // ① 원자료 사실
   for (const f of r.facts) {
-    if (f.kind === 'not_supply') AE('AUDIT_SCHEMA', f.ref, '공급 규칙이 아님 — 계에서 뺌');
-    else if (f.kind === 'recycle_ignored') AE('AUDIT_SCHEMA', f.ref, '재활용 분해는 운명 층에서 아직 다루지 않음 — 소실로 처리');
-    else if (f.kind === 'volume_unknown') AE('AUDIT_CONCENTRATION', f.bundle, `구획 ${f.location} 부피를 모름 — 농도 0 으로 계산`, J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
-    else if (f.kind === 'threshold_missing') AE('AUDIT_CONCENTRATION', f.bundle, '표지 문턱(thresholds[묶음] = { high, low })이 없음 — 상태를 판정할 수 없음', J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
+    if (f.kind === 'not_supply') AE('DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.ref, '공급 규칙이 아님 — 계에서 뺌');
+    else if (f.kind === 'recycle_ignored') AE('DATA_GAP', 'AUDIT_SCHEMA', f.ref, '재활용 분해는 운명 층에서 아직 다루지 않음 — 소실로 처리');
+    else if (f.kind === 'volume_unknown') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, `구획 ${f.location} 부피를 모름 — 농도 0 으로 계산`, J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
+    else if (f.kind === 'threshold_missing') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, '표지 문턱(thresholds[묶음] = { high, low })이 없음 — 상태를 판정할 수 없음', J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
   }
   // ② 독립 질량 검증
   const v = verifyFate(db, r);
-  for (const x of v.stoichMismatch) AE('AUDIT_MASS', x.ref, `화학량 대조 실패 — ${x.msg}`, '엔진이 데이터베이스 규칙과 다른 화학량을 썼음: 엔진 오류');
-  for (const x of v.violations) AE('AUDIT_MASS', x.moiety, `부분 구조 ${ix.label(x.moiety)} 가 균형 잡히지 않은 규칙으로 ${x.amount.toExponential(3)} 만큼 바뀜`, '규칙의 소비·생성을 고치거나 source/소실로 명시');
-  if (v.replayWorst > v.tolerance) AE('AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${v.replayWorst.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
-  if (v.worst > v.tolerance) AE('AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${v.worst.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
-  for (const x of v.negatives) AE('AUDIT_MASS', x.bundle, `음수 양 ${x.value}`, '엔진 오류');
+  for (const x of v.stoichMismatch) AE('ENGINE_DEFECT', 'AUDIT_MASS', x.ref, `화학량 대조 실패 — ${x.msg}`, '엔진이 데이터베이스 규칙과 다른 화학량을 썼음: 엔진 오류');
+  for (const x of v.violations) AE('DOMAIN_CONFLICT', 'AUDIT_MASS', x.moiety, `부분 구조 ${ix.label(x.moiety)} 가 균형 잡히지 않은 규칙으로 ${x.amount.toExponential(3)} 만큼 바뀜`, '규칙의 소비·생성을 고치거나 source/소실로 명시');
+  if (v.replayWorst > v.tolerance) AE('ENGINE_DEFECT', 'AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${v.replayWorst.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
+  if (v.worst > v.tolerance) AE('ENGINE_DEFECT', 'AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${v.worst.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
+  for (const x of v.negatives) AE('ENGINE_DEFECT', 'AUDIT_MASS', x.bundle, `음수 양 ${x.value}`, '엔진 오류');
+  // ②-2 수치: 뉴턴이 수렴하지 못해 명시 경로로 대체한 단계 (결과는 유효하지만 적분기가 한계에 닿음 — 결합점·솔버 쪽)
+  if (r.stats.newtonFail > 0) AE('NUMERICAL', 'AUDIT_KINETIC', '수치', `빠른 층 뉴턴 실패 ${r.stats.newtonFail}회 — 그 단계는 명시 부분 단계로 대체됨 (명시 부분 단계 ${r.stats.substeps})`, '결합점(newton_tol·newton_iters·explicit_fraction) 또는 솔버 단계 제어를 조정 — 생물 상수는 바꾸지 않는다');
   // ③ 분화 정지
   const target = r.target, traj = r.trajectory;
   let arrest = null;
@@ -76,9 +78,9 @@ function judgeFate(db, r, ctx) {
   // ④ 사후 분석
   const sigOn = new Set(r.process.schedule.filter((s) => s.list.some((e) => e.n > 0)).map((s) => s.bundle.split('|')[0]));
   const pm = target && !r.firstReach[target] ? postMortem(db, ix, r, { target, concAt, at, sigOn }) : null;
-  if (pm) AE('AUDIT_FATE', target, `분화 정지 — ${ix.label(target)} 에 도달하지 못함 (원인 ${pm.cause}${pm.limiting ? ', 제한 ' + pm.limiting.label : ''})`, pm.suggestion);
+  if (pm) AE('FINDING', 'AUDIT_FATE', target, `분화 정지 — ${ix.label(target)} 에 도달하지 못함 (원인 ${pm.cause}${pm.limiting ? ', 제한 ' + pm.limiting.label : ''})`, pm.suggestion);
   // ⑤ 소비만 되는 저장소 (재생 경로 없음)
-  for (const [b, x] of Object.entries(r.reservoirs)) { const prod = rules.some((R) => R.prods.some((q) => q[0] === b)); if (!prod && !x.buffered) AE('AUDIT_RESOURCE', b, `${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (시작 ${+x.start.toPrecision(4)}, 끝 ${+x.end.toPrecision(4)})`, fateSuggest(db, ix, b, 'Resource_Gap', rules)); }
+  for (const [b, x] of Object.entries(r.reservoirs)) { const prod = rules.some((R) => R.prods.some((q) => q[0] === b)); if (!prod && !x.buffered) AE('DATA_GAP', 'AUDIT_RESOURCE', b, `${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (시작 ${+x.start.toPrecision(4)}, 끝 ${+x.end.toPrecision(4)})`, fateSuggest(db, ix, b, 'Resource_Gap', rules)); }
   // ⑥ 궤적 해시 (결정론 판정용 지문)
   const hash = trajectoryHash(r);
   return Object.assign({}, r, {
@@ -191,7 +193,7 @@ function fateText(r) {
   lines.push(`  질량 (사법부 독립 재계산): 부분 구조 원장 최대 상대 편차 ${r.mass.worst.toExponential(2)} · 재생 ${r.mass.replayWorst.toExponential(2)} · ${r.mass.moieties.map((k) => `${L(k)} ${+r.mass.start[k].toPrecision(6)} → ${+r.mass.end[k].toPrecision(6)} (소실 ${+(r.mass.channels.lost[k] || 0).toPrecision(4)})`).join(' · ')}`);
   if (r.kineticGaps.length) lines.push(`  속도 상수 없음(적용 안 함): ${r.kineticGaps.join(', ')}`);
   if (r.modulationGaps.length) lines.push(`  힐 상수 없음(배율 1): ${r.modulationGaps.join(', ')}`);
-  for (const a of r.audit) lines.push(`  [${a.code}] ${a.where}: ${a.msg}${a.suggestion ? ' → ' + a.suggestion : ''}`);
+  for (const a of r.audit) lines.push(`  [${a.code} · ${a.fault}] ${a.where}: ${a.msg}${a.suggestion ? ' → ' + a.suggestion : ''}`);
   return { text: lines.join('\n'), code: r.audit.some((a) => a.code === 'AUDIT_MASS') ? 1 : 0 };
 }
 

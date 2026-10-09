@@ -13,6 +13,8 @@
 - 엔진 실행이 필요한 감사(audit-run·해상도 계획·비교 검토·운명 보고서)는 조정자 `orchestrator.js` 가 행정부로 원자료를 만들고 사법부에 넘긴다. 엔진의 수치 선택(정칙화·관문 문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만 읽는다 — 엔진에 기본값을 박지 않는다.
 - **엔진 출력은 원자료 계약을 지킨다.** 운명 엔진(JS·Rust/WASM)의 출력 모양을 바꾸면 `schemas/ffi/fate-raw.schema.json` 을 같은 커밋에서 고친다 — 사법부(`judicial/contract.js`)는 계약을 어긴 원자료를 판정하지 않는다. 엔진 이식은 `docs/design/engine-port-roadmap.md` 의 단계·완료 조건을 따르고, 이득은 `node tests/bench_engine.js` 기준선과 함께 보고한다.
 - **컴파일러(`compiler/`)는 공유 순수 층.** db + 시나리오 → 불변 IR(정수 번호·화학량·속도식·기호 도함수 테이프·희소 패턴·해시). 쓰기·판정·엔진·권력 모듈 호출 없음. 엔진은 IR 만 먹고 원자료에 `irHash` 를 적으며, 조정자는 같은 IR 을 사법부에 넘겨 `judicial/derivative.js` 가 법칙 충실도·자동미분 대비 도함수(≤ 1e-14)를 검증한다. 속도 법칙을 바꾸면 컴파일러·테이프 명세·사법부 법칙 재구성을 같은 커밋에서 맞춘다.
+- **결함은 태그대로 고친다 (`judicial/fault.js`).** 모든 감사 항목에 `fault` 가 있다: `FINDING`(결과 — 고치지 않음) · `DATA_GAP`(한계 등록, 확인된 값만) · `DOMAIN_CONFLICT`(근거와 함께 데이터 패치) · `NUMERICAL`(결합점·솔버 — **db.json 의 생물 상수를 바꾸지 않는다**) · `ENGINE_DEFECT`(엔진 코드) · `COMPILER_DEFECT`(`compiler/`). 수치 문제를 데이터로 맞추거나 결과(고갈·정지)를 결함으로 고치지 않는다.
+- **군더더기 금지.** 결함은 `storage-map.json` 의 아키텍처 노드(`node`·`governance`·`refactor_strategy`) 안에서 고친다 — 래퍼·임시 대체 플래그·사후 잘라내기로 덮지 않는다. 비교용으로 남긴 경로는 판정이 나면 지운다.
 - 이 분리를 바꾸는 변경은 `node --test tests/*.test.mjs`(특히 `tests/governance.test.mjs`) 통과가 조건이다.
 
 ## 데이터를 넣을 때

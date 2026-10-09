@@ -321,7 +321,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 ## 8F. 3 층 다중 규모 엔진 — 형식 v8
 
-설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고(`irHash` = 먹은 IR 의 sha256 포함), `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 운명 IR 은 `compiler/ir_builder.js`(형식 `definition-db-fate-ir` v1, 테이프 명령표 `compiler/tape.js`), 결합점 `jacobian`(analytic | fd)·`hill_s_floor` 는 `engine/coupling.js`. 이식 계획 `docs/design/engine-port-roadmap.md`.
+설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고(`irHash` = 먹은 IR 의 sha256 포함), `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 운명 IR 은 `compiler/ir_builder.js`(형식 `definition-db-fate-ir` v1, 테이프 명령표 `compiler/tape.js`), 결합점 `hill_s_floor` 는 `engine/coupling.js` (뉴턴은 해석적 야코비안만). 이식 계획 `docs/design/engine-port-roadmap.md`.
 
 | 필드 | 위치 | 규칙 |
 |---|---|---|

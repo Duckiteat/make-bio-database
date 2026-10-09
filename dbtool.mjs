@@ -195,6 +195,15 @@ switch (cmd) {
     const pats = map.files.map((f) => ({ f, re: re(f.path) }));
     const unclassified = walk(HERE).filter((p) => !pats.some((x) => x.re.test(p)));
     for (const f of map.files) if (!map.classes[f.class]) die(`storage-map: '${f.path}' 의 분류 '${f.class}' 가 classes 에 없음`);
+    // 아키텍처 노드: 이름 하나에 파일 하나, 권한은 열거값, 경로는 실제 파일
+    const nodeNames = new Set();
+    for (const f of map.files.filter((x) => x.node)) {
+      if (nodeNames.has(f.node)) die(`storage-map: 노드 '${f.node}' 가 둘 이상`);
+      nodeNames.add(f.node);
+      if (!(map.governance || { enum: [] }).enum.includes(f.governance)) die(`storage-map: 노드 '${f.node}' 의 권한 '${f.governance}' 가 열거값에 없음`);
+      if (!f.refactor_strategy) die(`storage-map: 노드 '${f.node}' 에 refactor_strategy 없음`);
+      if (!existsSync(join(HERE, f.path))) die(`storage-map: 노드 '${f.node}' 의 경로 ${f.path} 가 없음`);
+    }
     const md = textbookAppendix(loadDB(), map);
     if (flags.write) { CLERK.writeDerived('textbook', md, HERE); console.log('저장 (입법 서기): ' + rel(file)); }
     if (unclassified.length) die('storage-map.json 에 분류되지 않은 파일:\n' + unclassified.map((p) => '  ' + p).join('\n'));
@@ -214,7 +223,8 @@ switch (cmd) {
     // (rateOpt 는 아래 simulate 와 공용)
     if (!args[0]) die('사용법: audit-run <경로> [--scenario s.json]');
     const list = ORCH.auditRun(loadDB(), args[0], rateOpt());
-    for (const a of list) console.log(`[${a.code}] ${a.where}: ${a.msg}\n    → 교정 제안: ${a.suggestion}`);
+    const FT = req('./judicial/fault.js');
+    for (const a of list) console.log(`[${a.code} · ${a.fault}] ${a.where}: ${a.msg}\n    → 교정 제안: ${a.suggestion}\n    → 고치는 곳: ${FT.routeText(a.fault)}`);
     console.log(`— Audit Error ${list.length}건`);
     process.exit(list.length ? 1 : 0);
   }
@@ -390,6 +400,7 @@ function textbookAppendix(db, map) {
     const fs = map.files.filter((f) => f.class === k); if (!fs.length) continue;
     out.push(`### ${c.label} (\`${k}\`)`, '', c.rule, '', ...T(['경로', '형식', '쓰는 쪽', '읽는 쪽', '해석'], fs.map((f) => [`\`${f.path}\``, f.format, f.writer, f.readers, f.interpret])), '');
   }
+  out.push('### 아키텍처 노드 (삼권 분립 — 고칠 때 노드의 전략을 따른다)', '', (map.governance || {}).rule || '', '', ...T(['노드', '경로', '권한', '고치는 전략'], map.files.filter((f) => f.node).map((f) => [f.node, `\`${f.path}\``, f.governance, f.refactor_strategy])), '');
   // 4. 식별자
   out.push('## 9.4 식별자 문법', '', ...T(['형태', '예', '뜻'], [
     ['T + 6자리', 'T000042', '개념(피정의항, 이름 묶음)'], ['D + 6자리', 'D000044', '정의항(뜻, 원천)'], ['S + 6자리', 'S000009', '기전 단계'], ['L + 6자리', 'L000004', '한계'],
