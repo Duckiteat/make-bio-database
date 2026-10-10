@@ -6,8 +6,8 @@
       "T": 210,
       "D": 212,
       "S": 57,
-      "L": 101,
-      "O": 14
+      "L": 106,
+      "O": 16
     }
   },
   "terms": {
@@ -9535,7 +9535,94 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
+      "obs": [
+        {
+          "property": "compartment_volume",
+          "value": 181,
+          "context": {
+            "scope": "미토콘드리아 전체 부피 (기질의 상한)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "885911",
+                "citation": "Posakony, England & Attardi, 1977"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.06.025",
+                "citation": "Guillaume-Gentil et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27419874",
+                "citation": "Guillaume-Gentil et al., 2016"
+              }
+            ]
+          },
+          "unit": "fL",
+          "note": "관찰 기록 O+v_mx 의 파생값 — 수밀도 × 1 개 부피 × 세포질 부피. 내막 안 기질 부피는 더 작다 (상한)"
+        },
+        {
+          "property": "compartment_volume",
+          "value": 1600,
+          "context": {
+            "scope": "세포질 전체 부피 (cytosol 의 상한)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "cytosol"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.06.025",
+                "citation": "Guillaume-Gentil et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27419874",
+                "citation": "Guillaume-Gentil et al., 2016"
+              }
+            ]
+          },
+          "unit": "fL",
+          "note": "관찰 기록 O+v_cyt 의 파생값 — 중앙값 1.6 pL"
+        },
+        {
+          "property": "compartment_volume",
+          "value": 500,
+          "context": {
+            "scope": "섬유아세포 핵 부피",
+            "species": "9606",
+            "cell": "fibroblast",
+            "location": "nucleoplasm"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cub.2003.10.012",
+                "citation": "Lamond & Sleeman, 2003"
+              },
+              {
+                "db": "PMID",
+                "id": "14588256",
+                "citation": "Lamond & Sleeman, 2003"
+              }
+            ]
+          },
+          "unit": "fL",
+          "note": "관찰 기록 O+v_nuc 의 파생값 — 종설 서술값, 원 측정 논문이 아니다"
+        }
+      ],
       "addresses": [
         {
           "limitation": "L000001",
@@ -10915,7 +11002,35 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "concentration",
+          "value": 818,
+          "context": {
+            "scope": "미토콘드리아 기질 절대 정량 (LC/MS)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.07.040",
+                "citation": "Chen et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27565352",
+                "citation": "Chen et al., 2016"
+              }
+            ]
+          },
+          "unit": "µM",
+          "note": "관찰 기록 O+nad_mx 의 파생값 (형식에 obs → 관찰 기록 참조 칸이 없어 같은 출처를 적는다)"
+        }
+      ]
     },
     "D000145": {
       "term": "T000144",
@@ -10966,7 +11081,35 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "concentration",
+          "value": 7.36,
+          "context": {
+            "scope": "기질 NADH/NAD 비 0.009 × NAD 818 µM",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.07.040",
+                "citation": "Chen et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27565352",
+                "citation": "Chen et al., 2016"
+              }
+            ]
+          },
+          "unit": "µM",
+          "note": "관찰 기록 O+nadh_mx 의 파생값 — 비와 NAD 가 측정값이고 곱은 유도"
+        }
+      ]
     },
     "D000146": {
       "term": "T000145",
@@ -20541,6 +20684,76 @@
         ]
       },
       "found_in": "문헌 조사 2026-10-10 — TCA 상수 찾기"
+    },
+    "L000101": {
+      "target": "D000116",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "미토콘드리아 기질(내막 안) 부피가 전체 부피의 몇 분율인지 확인하지 못했다 — 그래서 기질 부피로 적은 181 fL 는 미토콘드리아 전체 부피이고 상한이다. 기질 부피가 과대하면 농도 × 부피로 계산한 시작 분자 수도 같은 비율로 과대하다. 쥐 심근의 \"기질 물 : 세포질 물 ≈ 1:4\"(BNID 116937)는 세포 유형이 달라 쓰지 않았다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "HeLa(또는 모델 대상 세포)의 미토콘드리아 기질 부피 분율 — 전자 현미경 형태 계측이나 기질 표지 부피 측정"
+          }
+        ]
+      },
+      "found_in": "농도·부피 측정값 수집 2026-10-10"
+    },
+    "L000102": {
+      "target": "D000116",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "구획 부피는 **관찰 기록으로 받을 수 없다** — 측정량(vocab.observables)에 부피가 없어서다. amount 로 빌려 적어 보니 관문이 두 가지로 거부했다: \"측정 대상: '구획 농도 모델'(principle) 는 기전에 참여할 수 없음\"(amount 의 대상은 참여 분자의 묶음이어야 함)과 \"단위 'm^3' — 이 측정량의 SI 정준 단위는 'molecule'\". 그래서 부피는 정의항 obs(compartment_volume)에만 있고, 불확도·반복 수·출처 sha256 을 담는 관찰 기록은 없다. 또 정의항 obs 에는 관찰 기록을 가리키는 from 칸이 없어 측정 ↔ 파생값 연결이 note 로만 남는다(kinetics 는 kinetics.from 으로 연결된다)",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "측정량 종류 volume(대상 = 위치, SI 단위 m³) 추가와 정의항 obs 에 from(관찰 기록 참조) 칸을 두는 결정 — 어휘·계약(schemas/obs/)·사법부 검사를 함께"
+          }
+        ]
+      },
+      "found_in": "농도·부피 측정값 수집 2026-10-10 (관문이 직접 거부)"
+    },
+    "L000103": {
+      "target": "D000116",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "측정 농도는 **입력·행위자 묶음의 시작량만** 정한다 — 엔진의 저장소 보충 경로(core.js resAmount·addRes)는 시나리오 reservoirs/amounts 가 없으면 바로 기본값(bulk)으로 가고 정의항 obs 를 보지 않는다. 그래서 산물로만 등장하는 묶음(예: NADH, 측정값 7.36 µM 를 넣었는데도)은 데이터를 쓰지 못하고 기본 1000 분자로 시작한다. 데이터만으로 돈 시트르산 회로 실행에서 열두 저장소 중 데이터에서 온 것은 NAD⁺ 하나였다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "resAmount 가 정의항 obs(농도 × 부피)를 보도록 하는 결정 — 행정부 코드 변경이므로 사용자 요청이 필요하고, 기존 시나리오의 궤적이 바뀌지 않는지(시나리오 우선) 확인이 조건"
+          }
+        ]
+      },
+      "found_in": "농도·부피 측정값 수집 2026-10-10 (데이터만으로 실행해 보고 확인)"
+    },
+    "L000104": {
+      "target": "D000116",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "엔진의 시작량·부피 조회(core.js fromData·rateAt)는 대상 경로에 세포 유형이 없으면 **아무 세포의 관찰이나** 받아들인다(okCtx 의 `!cell` 분기) — 그래서 HeLa 에서 잰 기질 농도·부피가 세포 유형을 선언하지 않은 경로(시트르산 회로)에 조용히 적용된다. 지금은 그 값이 유일해서 결과가 달라지지 않지만, 다른 세포의 값이 들어오면 어느 쪽이 쓰이는지 순서에 좌우된다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "세포 유형을 선언하지 않은 경로에서 관찰을 고르는 규약 — 거부하거나(세포 선언 필수), 기본 세포를 두거나, 여러 값을 모두 보고하는 결정"
+          }
+        ]
+      },
+      "found_in": "농도·부피 측정값 수집 2026-10-10"
+    },
+    "L000105": {
+      "target": "D000116",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "운명·기전 엔진(compiler/ir_builder.js 의 volOf, engine/fate_engine.js)은 시나리오 volumes 만 본다 — 정의항 obs 의 compartment_volume 을 읽지 않는다. 그래서 섬유아세포 핵 500 fL 처럼 데이터에 있는 부피도 운명 실행에서는 시나리오가 다시 적어 줘야 쓰이고, 시나리오가 없으면 그 단계는 꺼진다(step_volume_unknown). simulateRate(경로)와 운명 엔진(상태)이 같은 데이터를 다르게 대하는 비대칭이다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "컴파일러 volOf 가 정의항 obs(compartment_volume)를 시나리오 다음 순서로 보도록 하는 결정 — 공유 순수 층 변경이므로 사용자 요청이 필요하고, IR 해시·기존 시나리오 궤적이 바뀌지 않는지(시나리오 우선) 확인이 조건"
+          }
+        ]
+      },
+      "found_in": "농도·부피 측정값 수집 2026-10-10 (두 엔진의 부피 조회를 대조)"
     }
   },
   "observations": {
@@ -21019,6 +21232,81 @@
         "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0"
       },
       "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±0.6 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다."
+    },
+    "O000014": {
+      "observable": {
+        "kind": "concentration",
+        "target": "D000144|mito_matrix"
+      },
+      "value": 0.0008179999999999999,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.000001
+      },
+      "precision": 0.000001,
+      "replicates": 3,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "cell": "hela_cell"
+      },
+      "method": "에피톱 표지 미토콘드리아의 빠른 면역 포획 + LC/MS 절대 정량 (HeLa)",
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.07.040",
+            "citation": "Chen et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27565352",
+            "citation": "Chen et al., 2016"
+          }
+        ]
+      },
+      "note": "보고값 818 µM — 기질에서 가장 많은 대사물 네 개 중 하나(아스파르트산 1600 · 포스포콜린 1471 · GSH 1374 · NAD 818 µM). 논문 본문에는 ± 가 없고 Table S1 은 공개 접근이 아니어서 sd 를 유효 숫자 해상도(1 µM)로 적었다 — 측정 표준 편차가 아니다. 반복 수 3 은 방법의 n = 3."
+    },
+    "O000015": {
+      "observable": {
+        "kind": "concentration",
+        "target": "D000145|mito_matrix"
+      },
+      "value": 0.00000736,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.000001
+      },
+      "replicates": 3,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "cell": "hela_cell"
+      },
+      "method": "같은 LC/MS 정량에서 나온 기질 NADH/NAD 비 0.009 × NAD 818 µM",
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.07.040",
+            "citation": "Chen et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27565352",
+            "citation": "Chen et al., 2016"
+          }
+        ]
+      },
+      "note": "유도값 7.36 µM — 측정된 것은 비(0.009)와 NAD(818 µM)이고 곱은 내가 했다. 저자들은 이 비가 간접 추정 범위 0.006–0.125 안에 든다고 적었다."
     }
   }
 }
