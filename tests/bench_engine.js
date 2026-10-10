@@ -56,7 +56,10 @@ function rateRows() {
   for (const [label, re, f, t, dt] of [['시트르산 회로', /시트르산 회로/, 'tca-acetylcoa-exhaustion-hypothetical.json', 60, 0.01], ['LPS → NF-κB', /NF-κB|TLR4/, 'lps-hypothetical.json', 60, 0.01]]) {
     const p = pid(re); if (!p) continue;
     const sc = scen(f), setup = best(() => C.simulateRate(db, p, { scenario: sc, t_end: dt, dt })), all = best(() => C.simulateRate(db, p, { scenario: sc, t_end: t, dt }));
-    rows.push({ label, steps: Math.round(t / dt), setupMs: setup.ms, loopMs: Math.max(0, all.ms - setup.ms), perStepUs: Math.max(0, all.ms - setup.ms) * 1000 / (t / dt) });
+    // 단계당 시간은 **실제로 돈 Δt 수**로 나눈다. until_death 시나리오는 정지하면 중간에 멈추므로(시트르산 회로는 t_end 의 1/30 에서)
+    // t_end/dt 로 나누면 그 경로가 30배 빠른 것처럼 보인다 — 끝 기록 시각으로 실제 수를 센다.
+    const ser = all.r.series, ran = Math.max(1, Math.round(ser[ser.length - 1].t / dt)), planned = Math.round(t / dt);
+    rows.push({ label, steps: ran, planned, early: ran < planned, death: !!all.r.death, setupMs: setup.ms, loopMs: Math.max(0, all.ms - setup.ms), perStepUs: Math.max(0, all.ms - setup.ms) * 1000 / ran });
   }
   return rows;
 }
@@ -97,9 +100,9 @@ function run() {
   console.log('|---|---|---|---|---|---|---|---|---|');
   for (const r of sto) console.log(`| ${r.name} | ${f(r.js)} | ${f(r.rs)} | ${f(r.js / r.rs, 1)}× | ${f(r.det)} | ${r.steps} | ${r.draws} | ${r.ssa} | ${r.modes} |`);
   console.log('\nsimulateRate');
-  console.log('| 경로 | Δt 단계 | 준비 ms | 루프 ms | 단계당 µs |');
+  console.log('| 경로 | 돈 Δt 단계 | 준비 ms | 루프 ms | 단계당 µs |');
   console.log('|---|---|---|---|---|');
-  for (const r of rr) console.log(`| ${r.label} | ${r.steps} | ${f(r.setupMs, 1)} | ${f(r.loopMs, 1)} | ${f(r.perStepUs, 2)} |`);
+  for (const r of rr) console.log(`| ${r.label} | ${r.steps}${r.early ? ` (계획 ${r.planned} 중 — ${r.death ? '정지 감지로 중단' : '중단'})` : ''} | ${f(r.setupMs, 1)} | ${f(r.loopMs, 1)} | ${f(r.perStepUs, 2)} |`);
   return { fate: fr, engines: er, lanes: lr, rate: rr, stochastic: sto };
 }
 if (require.main === module) run();
