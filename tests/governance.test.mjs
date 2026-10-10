@@ -7,9 +7,9 @@
 // 실행: node --test tests/*.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, rmSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join, relative } from 'node:path';
+import { join, relative, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 
 const req = createRequire(import.meta.url);
@@ -139,6 +139,39 @@ test('④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 �
   assert.throws(() => CLERK.writeReport(join(ROOT, 'data', 'x.md'), 'x'), /보호된 위치/);
   assert.throws(() => CLERK.writeDraft(join(ROOT, 'x.json'), {}), /저장소 밖/);
   assert.throws(() => CLERK.appendAttestations({ root: ROOT, stamps: [{ subject: { sense: 'D000165', field: 'xref', ns: 'UniProt', value: 'Q9UL17' }, claim: 'verified', digest: 'x', evidence: {} }], db: BASE }), /도장/);
+});
+
+test('④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안의 다른 구역에 쓰려 하면 거부된다', async () => {
+  const CLERK = await import('../legislative/clerk.mjs');
+  // 서기 안에서 파일에 쓰는 함수는 하나(put)뿐이고, 그 하나가 구역을 받는다 — 구역 없이 쓸 길이 없다
+  const clerk = src('legislative/clerk.mjs');
+  assert.equal((clerk.match(/writeFileSync\(/g) || []).length, 1, 'writeFileSync 는 put 안에 하나만');
+  const zones = Object.keys(CLERK.ZONES);
+  for (const m of clerk.matchAll(/\bput\(([^,]+),/g)) {
+    const z = m[1].trim().replace(/^'|'$/g, '');
+    assert.ok(zones.includes(z), `put 의 첫 인자가 구역이 아님: ${m[1]}`);
+  }
+  // curl 로 직접 받는 길(put 을 지나지 않음)도 같은 구역 검사를 받는다
+  assert.match(clerk, /zoned\('evidence', t\.file \+ ext\)/, '받기도 증거 구역 검사를 지나야 한다');
+
+  // 봉인이 **유효한데도** 저장소 안의 다른 구역이면 거부 — 경로가 실제 경계로 작동하는지
+  const res = LEG.ingest(BASE, { format: 'definition-db-patch', version: 9, why: 't', terms: [{ id: 'T+1', names: { ko: '구역시험개념' } }], senses: [{ id: 'D+1', term: 'T+1', kind: 'concept', desc: [{ text: '시험', field: '생화학', context: { scope: '시험' } }] }] });
+  const seal = ATT.sealVerdict(J.gate(BASE, res, {}), res.db);
+  for (const bad of ['judicial/db.json', 'engine/db.json', 'attestations/db.json'])
+    assert.throws(() => CLERK.commitMerge({ dbPath: join(ROOT, bad), db: res.db, records: [], seal }), /입법 구역 .* 아닌 자리/, bad);
+  // 증거 구역: 수동 과제·받기는 수신함(과 시험 자료) 안에만
+  assert.throws(() => CLERK.writeRetrievalTasks(join(ROOT, 'engine'), 'x'), /증거 구역 .* 아닌 자리/);
+  assert.throws(() => CLERK.fetchToInbox([{ file: join(ROOT, 'compiler/evil'), urls: ['https://example.invalid/x.json'] }]), /증거 구역 .* 아닌 자리/);
+  // 파생·보고서·초안 구역
+  assert.throws(() => CLERK.writeDerived('없는것', 'x'), /알 수 없는 파생 문서/);
+  assert.throws(() => CLERK.writeReport(join(ROOT, 'docs', 'x.json'), 'x'), /보호된 위치/);
+  assert.throws(() => CLERK.writeDraft(join(ROOT, 'x.json'), {}), /저장소 밖/);
+  // 저장소 **밖**(tmp 사본·다른 저장소)은 구역 표가 다루지 않는다 — 막는 대상이 '저장소 안의 다른 구역' 이기 때문
+  const out = join(tmpdir(), `clerk-zone-${process.pid}`, 'draft.json');
+  assert.equal(CLERK.writeDraft(out, { ok: 1 }), out);
+  rmSync(dirname(out), { recursive: true, force: true });
+  // 구역마다 규칙 문구가 있다 (문서가 코드에서 나오게)
+  for (const [k, z] of Object.entries(CLERK.ZONES)) assert.ok(z.label && z.rule, k);
 });
 
 test('⑤ 독립 검증: 엔진 원자료를 몰래 바꾸면 사법부 검증기·판결이 잡는다', () => {

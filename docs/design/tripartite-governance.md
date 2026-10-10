@@ -30,6 +30,23 @@
 | 패치 초안·리팩터링 제안 | 저장소 밖(임시 폴더)에만 |
 | 수신함 받기(curl) | `data/fetched/` 에 원본 그대로 |
 
+### 1.1 구역 (Zone) — 경로가 경계로 작동하는 단 하나의 자리
+
+경로를 "보안 경계" 로 쓰려면 **쓰는 유일한 과정 안쪽**이어야 한다. 폴더 이름만 나눠 두면 어느 모듈이든 그 경로로 `writeFileSync` 할 수 있으므로 표시(advisory)에 그친다. 그래서 구역은 서기 안의 표(`ZONES`)이고, 서기의 모든 쓰기는 `put(구역, 파일)` 하나를 지난다 — 구역 없이 쓸 길이 없다.
+
+| 구역 | 저장소 안에서 허용되는 자리 | 조건 |
+|---|---|---|
+| `registry` 입법 | `data/db.json`, `data/patches/` | 관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같음 |
+| `attestation` 증명 | `attestations/registry.json` | 도장마다 digest·증거 재확인 (주장별 사법부 모듈: 신원 `verifyStamp` · 추세 `verifyTrendStamp`) |
+| `evidence` 증거 | `data/fetched/`, `tests/fixtures/` | 원본 그대로 — 해석·실행하지 않는다. 받기(curl)도 이 검사를 지난다 |
+| `derived` 파생 | `limitations.md`, 교과서 부록, `data/fetched/RETRIEVAL_TASKS.md`, `CHANGES.md` | 내용은 다른 모듈이 계산하고 서기는 정해진 파일에만 |
+| `report` 보고서 | (사용자가 정함) | 보호 목록 — 데이터·증명·코드 폴더와 `.js`/`.mjs`/`.json`, 규칙 문서는 거부 |
+| `draft` 초안 | — | 저장소 **밖**에만 |
+
+- 저장소 **밖**(tmp 사본, `--db` 로 가리킨 다른 저장소)은 구역 표가 다루지 않는다. 막는 대상은 "저장소 안인데 그 구역이 아닌 자리" 다 — 병합이 `judicial/` 에, 받기가 `compiler/` 에 쓰려는 경우. 봉인이 유효해도 자리가 틀리면 거부된다.
+- 구역 검사는 조건 검사와 **직교**한다. 봉인·도장 재확인이 "쓸 자격" 이라면 구역은 "쓸 자리" 다. 둘 다 통과해야 쓴다.
+- `tests/governance.test.mjs ④′` 가 못 박는다: `writeFileSync` 는 `put` 안에 하나뿐 · `put` 의 첫 인자는 늘 구역 이름 · 받기도 `zoned('evidence', …)` 를 지남 · 유효한 봉인으로도 구역 밖에는 못 씀.
+
 ## 2. 검증 논리 격리
 
 - **속도 시뮬레이션** (`core.simulateRate`) 이 내는 원자료:

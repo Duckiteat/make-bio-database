@@ -8,6 +8,12 @@
 //   · 파생 문서(limitations.md · 교과서 부록 · CHANGES.md 한 행 · 수동 수집 과제 · 사용자가 요청한 보고서 파일)와
 //     수신함(data/fetched/) 받기는 서기의 일이다 — 내용은 다른 모듈이 계산하고 서기는 정해진 위치에만 쓴다.
 // 서기는 판결을 만들지 않는다(검사·관문 없음). 거부 사유가 생기면 예외로 멈추고 아무것도 쓰지 않는다.
+//
+// 구역 (Zone) — 경로를 경계로 쓰는 자리는 여기뿐이다 (ZONES).
+//   쓰기는 모두 put(구역, 파일) 하나를 지나고, 그 파일이 구역의 허용 자리가 아니면 **거부**한다. 구역 없이 쓸 길은 없다.
+//   저장소 **밖**(tmp·스크래치 사본, `--db` 로 가리킨 다른 저장소)은 구역 표가 다루지 않는다 — 저장소의 코드·데이터·증명을
+//   건드리지 못하게 막는 것이 목적이고, 밖은 애초에 그것이 아니다. 막는 것은 '저장소 안인데 그 구역이 아닌 자리' 다
+//   (예: 병합이 judicial/ 에, 받기가 engine/ 에 쓰려는 경우).
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative, resolve, sep } from 'node:path';
@@ -23,10 +29,33 @@ const serialize = (db) => JSON.stringify(db, null, 2) + '\n';
 const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15);
 const refuse = (m) => { throw new Error('입법 서기 거부: ' + m); };
 const log = [];
-const put = (file, text) => { mkdirSync(dirname(file), { recursive: true }); const tmp = file + '.part'; writeFileSync(tmp, text); renameSync(tmp, file); log.push(relative(process.cwd(), file) || file); return file; };
 
 // 파생 문서가 놓일 수 있는 곳 (서기가 쓰는 위치 목록 — 이 밖으로는 쓰지 않는다; 보고서는 사용자가 지정)
 const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부록-자동생성.md', retrieval: 'data/fetched/RETRIEVAL_TASKS.md' };
+
+// 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
+export const ZONES = {
+  registry:    { label: '입법 구역 (정의·병합 기록)', allow: ['data/db.json', 'data/patches/'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
+  evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
+  derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
+  report:      { label: '사용자 보고서', deny: ['data', 'attestations', 'judicial', 'legislative', 'engine', 'compiler', 'migrations', 'schemas', 'tests'], rule: '위치는 사용자가 정한다 — 저장소의 코드·데이터·증명 위치에는 쓰지 않는다' },
+  draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
+};
+const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
+// 구역 검사 — 통과한 절대 경로를 돌려준다. 저장소 밖은 구역 표가 다루지 않는다(위 머리말).
+function zoned(zone, file) {
+  const z = ZONES[zone];
+  if (!z) refuse(`알 수 없는 구역 '${zone}'`);
+  const abs = resolve(file), rel = relative(ROOT, abs), outside = rel === '' || rel.startsWith('..');
+  if (z.outsideOnly) { if (!outside) refuse(`${z.label} 는 ${z.rule} (${rel})`); return abs; }
+  if (outside) return abs;
+  if (z.allow && !z.allow.some((a) => rel === a || rel.startsWith(a.endsWith('/') ? a : a + sep))) refuse(`${z.label} 가 아닌 자리에 쓰려 함: ${rel} — 허용 ${z.allow.join(', ')}`);
+  if (z.deny && (z.deny.some((d) => rel === d || rel.startsWith(d + sep)) || /\.(js|mjs|json)$/.test(abs) || GUARDED_FILES.includes(rel))) refuse(`보고서를 저장소의 보호된 위치(${rel})에 쓸 수 없음`);
+  return abs;
+}
+// 이 저장소에서 파일에 쓰는 단 하나의 함수 — 구역을 반드시 지난다
+const put = (zone, file, text) => { const abs = zoned(zone, file); mkdirSync(dirname(abs), { recursive: true }); const tmp = abs + '.part'; writeFileSync(tmp, text); renameSync(tmp, abs); log.push(relative(process.cwd(), abs) || abs); return abs; };
 
 // ① 병합 기록: 관문 봉인이 통과이고 봉인의 db 가 쓸 db 와 같을 때만 data/patches/ 기록 + data/db.json
 export function commitMerge({ dbPath, db, records, seal }) {
@@ -35,8 +64,8 @@ export function commitMerge({ dbPath, db, records, seal }) {
   const text = serialize(db);
   if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 쓰려는 db 가 다름 — 판결을 다른 데이터에 재사용할 수 없음');
   const patchDir = join(dirname(dbPath), 'patches'), written = [];
-  for (const r of records) written.push(put(join(patchDir, `${stamp()}-${r.name.replace(/\.json$/, '')}.json`), JSON.stringify({ applied_at: new Date().toISOString(), ...r.record }, null, 2) + '\n'));
-  put(dbPath, text);
+  for (const r of records) written.push(put('registry', join(patchDir, `${stamp()}-${r.name.replace(/\.json$/, '')}.json`), JSON.stringify({ applied_at: new Date().toISOString(), ...r.record }, null, 2) + '\n'));
+  put('registry', dbPath, text);
   return { records: written, db: dbPath };
 }
 
@@ -52,19 +81,17 @@ export function appendAttestations({ root, stamps, db }) {
     reg.stamps.push(st);
   }
   reg.stamps.sort((a, b) => ATT.subjectKey(a.subject).localeCompare(ATT.subjectKey(b.subject)));
-  return put(join(root, ATT.REGISTRY), JSON.stringify(reg, null, 2) + '\n');
+  return put('attestation', join(root, ATT.REGISTRY), JSON.stringify(reg, null, 2) + '\n');
 }
 
 // ③ 파생 문서 (limitations.md · 교과서 부록 · 수동 수집 과제)
 export function writeDerived(kind, content, root) {
   if (!DERIVED[kind]) refuse(`알 수 없는 파생 문서 '${kind}'`);
-  return put(join(root || ROOT, DERIVED[kind]), content);
+  return put('derived', join(root || ROOT, DERIVED[kind]), content);
 }
-// 수동 수집 과제 (수신함 폴더 안에만)
+// 수동 수집 과제 (증거 구역 = 수신함 안에만 — 자리 검사는 구역이 한다)
 export function writeRetrievalTasks(dir, content) {
-  const rel = relative(ROOT, resolve(dir));
-  if (!rel.startsWith('..') && !(rel === 'data/fetched' || rel.startsWith('data/fetched' + sep) || rel.startsWith('tests' + sep + 'fixtures'))) refuse(`수동 수집 과제는 수신함(data/fetched/) 안에만 (${rel})`);
-  return put(join(resolve(dir), 'RETRIEVAL_TASKS.md'), content);
+  return put('evidence', join(resolve(dir), 'RETRIEVAL_TASKS.md'), content);
 }
 export const derivedPath = (kind, root) => join(root || ROOT, DERIVED[kind]);
 
@@ -72,21 +99,17 @@ export const derivedPath = (kind, root) => join(root || ROOT, DERIVED[kind]);
 export function insertChangesRow(row, root) {
   const ch = join(root || ROOT, 'CHANGES.md'), txt = readFileSync(ch, 'utf8'), anchor = '|---|---|---|---|---|\n', i = txt.indexOf(anchor);
   if (i < 0) refuse('CHANGES.md 표 머리를 찾지 못함');
-  return put(ch, txt.slice(0, i + anchor.length) + row + txt.slice(i + anchor.length));
+  return put('derived', ch, txt.slice(0, i + anchor.length) + row + txt.slice(i + anchor.length));
 }
 
 // ⑤ 사용자가 요청한 보고서 파일 (예: fate --report 파일.md) — 저장소의 데이터·코드·증명 위치에는 쓰지 않는다
 export function writeReport(file, content) {
-  const abs = resolve(file), rel = relative(ROOT, abs);
-  const guarded = ['data', 'attestations', 'judicial', 'legislative', 'engine', 'migrations', 'schemas', 'tests'].some((d) => rel === d || rel.startsWith(d + sep));
-  if (!rel.startsWith('..') && (guarded || /\.(js|mjs|json)$/.test(abs) || ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'CHANGES.md', 'limitations.md'].includes(rel))) refuse(`보고서를 저장소의 보호된 위치(${rel})에 쓸 수 없음`);
-  return put(abs, content);
+  return put('report', resolve(file), content);
 }
 
 // ⑥ 임시 산출물 (패치 초안·리팩터링 제안) — 저장소 밖 임시 폴더에만
 export function writeDraft(file, obj) {
-  if (!relative(ROOT, resolve(file)).startsWith('..')) refuse('초안은 저장소 밖(스크래치·임시 폴더)에만');
-  return put(resolve(file), JSON.stringify(obj, null, 2) + '\n');
+  return put('draft', resolve(file), JSON.stringify(obj, null, 2) + '\n');
 }
 
 // ⑦ 수신함 받기 (curl, 프록시 설정을 따름) — 원본을 그대로 data/fetched/ 에. 해석·실행하지 않음
@@ -97,7 +120,8 @@ export function fetchToInbox(tasks, opt) {
     if (t.present && !opt.refetch) { out.push({ task: t, ok: true, cached: true, file: t.present }); continue; }
     let res = null;
     for (const url of t.urls) {
-      const ext = /\.fasta$/.test(url) ? '.fasta' : /\.txt$/.test(url) ? '.txt' : '.json', dest = t.file + ext, tmp = dest + '.part';
+      // curl 이 직접 쓰므로 put 을 지나지 않는다 — 같은 구역 검사를 여기서 받는다 (받기도 증거 구역 안에만)
+      const ext = /\.fasta$/.test(url) ? '.fasta' : /\.txt$/.test(url) ? '.txt' : '.json', dest = zoned('evidence', t.file + ext), tmp = dest + '.part';
       mkdirSync(dirname(dest), { recursive: true });
       try {
         execFileSync('curl', ['-sS', '-f', '-L', '-m', String(opt.timeout), '-o', tmp, url], { stdio: ['ignore', 'ignore', 'pipe'] });
