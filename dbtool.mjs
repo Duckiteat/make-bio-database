@@ -102,7 +102,7 @@ switch (cmd) {
     const r = ORCH.validateWithRegistry(loadDB(), HERE);
     printIssues(r.errors, r.warnings);
     for (const f of r.attestations.failed) console.log(`오류  증명 ${f.key}: ${f.reasons.join(' · ')}`);
-    console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}`);
+    console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}${(r.attestations.stale || []).length ? `, 지난 도장 ${r.attestations.stale.length}` : ''}`);
     if (r.attestations.failed.length) process.exit(1);
     process.exit(r.errors.length ? 1 : 0);
   }
@@ -321,7 +321,8 @@ switch (cmd) {
     const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
     for (const k of v.keys) console.log(`  ✓ ${k}`);
     for (const f of v.failed) console.log(`  ✗ ${f.key}: ${f.reasons.join(' · ')}`);
-    console.log(`— 증명 도장 ${reg.stamps.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}`);
+    for (const f of v.stale || []) console.log(`  · 지난 도장 ${f.key}: ${f.reasons.join(' · ')}`);
+    console.log(`— 증명 도장 ${reg.stamps.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}${(v.stale || []).length ? `, 지난 도장 ${v.stale.length} (데이터에서 빠진 주체 — 계보 기록)` : ''}`);
     process.exit(v.failed.length ? 1 : 0);
   }
   case 'compare': {

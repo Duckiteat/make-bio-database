@@ -25,6 +25,9 @@ const PRE = (() => {
     for (const x of d.xrefs || []) if (x.status === 'verified') { x.status = 'asserted'; delete x.note; }
     if (d.fingerprint && ['computed', 'verified'].includes(d.fingerprint.status)) delete d.fingerprint; // 지문도 사법부 도장이 있어야 verified
     if (d.obs) d.obs = d.obs.filter((o) => !(o.property === 'sequence_length' && o.evidence && o.evidence.level === 'computed'));
+    // ChEBI 역할(규약) 전 상태: 항목 하나만, 역할 표시 없음 — 합성 시험 자료는 규약 전에 만든 것
+    const ch = (d.xrefs || []).filter((x) => x.db === 'ChEBI');
+    if (ch.length) { const one = ch.find((x) => x.role === 'parent') || ch[0]; delete one.role; d.xrefs = (d.xrefs || []).filter((x) => x.db !== 'ChEBI' || x === one); }
   }
   return C.normalize(db);
 })();

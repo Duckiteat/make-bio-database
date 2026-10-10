@@ -1,0 +1,7 @@
+Reaction identifier	Equation	ChEBI identifier
+RHEA:15389	ATP = 3',5'-cyclic AMP + diphosphate	CHEBI:30616;CHEBI:58165;CHEBI:33019
+RHEA:22908	3',5'-cyclic AMP + H2O + H(+) = 3',5'-cyclic IMP + NH4(+)	CHEBI:58165;CHEBI:15377;CHEBI:15378;CHEBI:134197;CHEBI:28938
+RHEA:25277	3',5'-cyclic AMP + H2O = AMP + H(+)	CHEBI:58165;CHEBI:15377;CHEBI:456215;CHEBI:15378
+RHEA:66184	3',5'-cyclic AMP(in) + ATP + H2O = 3',5'-cyclic AMP(out) + ADP + phosphate + H(+)	CHEBI:58165;CHEBI:30616;CHEBI:15377;CHEBI:456216;CHEBI:43474;CHEBI:15378
+RHEA:76127	3',5'-cyclic AMP(out) + a dicarboxylate(in) = 3',5'-cyclic AMP(in) + a dicarboxylate(out)	CHEBI:58165;CHEBI:28965
+RHEA:76223	3',5'-cyclic AMP(in) = 3',5'-cyclic AMP(out)	CHEBI:58165

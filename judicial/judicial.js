@@ -127,7 +127,8 @@
     }
     if (!claims.length) return;
     const keys = opt && opt.attestations;
-    if (!keys) { W('증명 등록부', `status 'verified' ${claims.length}건을 증명 등록부와 대조하지 않음 — node dbtool.mjs validate (attestations/registry.json) 로 확인할 것`); return; }
+    // 경고 문구에 건수를 넣지 않는다 — 관문은 (where, msg) 로 '새 경고' 를 가리므로, 건수가 바뀌면 같은 경고가 새 경고로 보인다
+    if (!keys) { W('증명 등록부', "status 'verified' 항목을 증명 등록부와 대조하지 않음 — node dbtool.mjs validate (attestations/registry.json) 로 확인할 것"); return; }
     const have = new Set(keys);
     for (const c of claims) if (!have.has(c.key)) E(c.where, "status 'verified' 인데 사법부 증명(attestations/registry.json 의 유효한 도장)이 없음 — 데이터는 스스로 verified 를 선언할 수 없음 (augment apply 가 판결과 함께 도장을 발급)");
   }
@@ -273,14 +274,32 @@
     if (K && K.species === 'forbidden' && d.reference_species) E(where, `kind '${d.kind}' 는 종과 무관 — reference_species 를 두지 않음`);
     if (d.reference_species && !V.taxa[d.reference_species]) E(where, `기준 종 '${d.reference_species}' 은(는) 종 어휘에 없음`);
     // 외부 ID·지문
-    const dbs = new Set();
+    const dbs = new Set(), byDb = new Map(), seenId = new Set();
     for (const x of d.xrefs) {
       const src = V.xrefs[x.db];
       if (!src) { E(where, `외부 ID 종류 '${x.db}' 없음`); continue; }
       if (!new RegExp(src.pattern).test(x.id)) E(where, `${x.db} ID '${x.id}' 형식이 틀림`);
       if (K && !K.xref.allowed.includes(x.db)) E(where, `kind '${d.kind}' 에는 ${x.db} ID 를 붙일 수 없음 (허용: ${K.xref.allowed.join(', ') || '없음'})`);
       if (!V.xrefStatus.includes(x.status)) E(where, `외부 ID 상태 '${x.status}' — ${V.xrefStatus.join(' | ')}`);
+      if (x.role && !V.xrefRoles[x.role]) E(where, `외부 ID 역할 '${x.role}' — ${Object.keys(V.xrefRoles).join(' | ')}`);
+      if (seenId.has(`${x.db}:${x.id}`)) E(where, `외부 ID ${x.db}:${x.id} 가 두 번`);
+      seenId.add(`${x.db}:${x.id}`);
       dbs.add(x.db);
+      if (!byDb.has(x.db)) byDb.set(x.db, []);
+      byDb.get(x.db).push(x);
+    }
+    // 외부 ID 역할 (ChEBI 실험): 한 db 에 항목이 둘 이상이면 규약을 선언해야 한다 — 역할이 서로 달라야 하고, 엔진이 읽는 physiological 이 있어야 한다.
+    //   분류(class) 항목은 단일 종이 없는 물질(중합체·불균일 물질)만 — 셀 수 있는 저분자·이온의 번호로 쓰면 화학식 대조가 건너뛰어진다.
+    const SPECIES_KINDS = ['small_molecule', 'ion'];
+    for (const [dbName, list] of byDb) {
+      if (list.length > 1) {
+        const roles = list.map((x) => x.role);
+        if (roles.some((r) => !r)) E(where, `${dbName} ID 가 ${list.length}개인데 역할(role)이 없는 것이 있음 — ${Object.keys(V.xrefRoles).join(' | ')} 로 규약을 선언할 것`);
+        else if (new Set(roles).size !== roles.length) E(where, `${dbName} ID 의 역할이 겹침 (${roles.join(', ')})`);
+        else if (!roles.includes('physiological')) E(where, `${dbName} ID 가 여러 개면 엔진이 읽을 physiological(pH 7.3 우세 종)을 하나 정해야 함`);
+      }
+      for (const x of list) if (x.role === 'class' && SPECIES_KINDS.includes(d.kind)) E(where, `kind '${d.kind}' 는 셀 수 있는 분자 — 분류(class) 항목 ${dbName}:${x.id} 을 번호로 쓸 수 없음 (화학식이 없어 수지 대조가 건너뛰어진다). pH 7.3 우세 종을 physiological 로 적을 것`);
+      if (list.length === 1 && list[0].role === 'parent' && SPECIES_KINDS.includes(d.kind)) W(where, `${dbName}:${list[0].id} 이 중성 모체만 적혀 있음 — 반응 참여자(physiological)를 함께 적는 것이 규약`);
     }
     if (K) for (const req of K.xref.required || []) if (!dbs.has(req) && !d.unmapped) E(where, `kind '${d.kind}' 는 ${req} ID 가 필요함 — 확실한 ID 를 모르면 unmapped 에 사유를 적을 것 (추측 금지)`);
     if (d.fingerprint) {

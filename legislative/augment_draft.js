@@ -34,9 +34,14 @@ function draftPatch(db, verdict, opt) {
           else if (s._fp.scheme === 'SEQ_SHA256' && s._fp.value !== f.seqHash) notes.push(`서열 지문 충돌 — 그대로 둠${opt.sync ? ' (sync 는 지문을 바꾸지 않음)' : ''}`);
         }
       }
+    } else if (f.db === 'Rhea') {
+      // pH 7.3 우세 종 주장의 뒷받침 (반응 참여) — 번호를 바꾸지 않고 그 역할의 메모에 적는다
+      const x = s._xrefs.find((y) => y.db === 'ChEBI' && y.id === f.id);
+      if (x) { x.note = `${x.note ? x.note + ' · ' : ''}반응 참여 ${f.reactions}회 (Rhea pH 7.3 큐레이션, 예: ${(f.examples || [])[0] || '—'}) · ${r.src}`; s._changed.add('xrefs'); notes.push(`Rhea 참여 ${f.reactions}회`); }
     } else if (f.db === 'ChEBI') {
-      let x = s._xrefs.find((y) => y.db === 'ChEBI');
-      if (!x) { x = { db: 'ChEBI', id: f.id }; s._xrefs.push(x); }
+      // 역할이 선언된 항목은 그 역할의 번호를 고친다 (역할이 없으면 역할 없는 항목)
+      let x = s._xrefs.find((y) => y.db === 'ChEBI' && y.id === f.id) || s._xrefs.find((y) => y.db === 'ChEBI' && (r.role ? y.role === r.role : !y.role)) || s._xrefs.find((y) => y.db === 'ChEBI');
+      if (!x) { x = { db: 'ChEBI', id: f.id }; if (r.role) x.role = r.role; s._xrefs.push(x); }
       const fc = f.formulaCheck;
       x.id = f.id; x.status = 'verified'; x.note = `ChEBI 조회 ${opt.date} · 이름 일치 '${f.name}' · 화학식 ${f.formula || '없음'}${f.charge != null ? ` (전하 ${f.charge})` : ''} · 부분 구조 대조 ${fc.status}${fc.status === 'ok' ? ` (${fc.note})` : ''} · ${r.src}`;
       s._changed.add('xrefs');

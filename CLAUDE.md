@@ -32,6 +32,7 @@
 
 반드시 지킬 것
 - 외부 ID(ChEBI, UniProt, EC, GO …)는 확실한 것만 적는다. 모르면 `unmapped` 에 사유를 적는다. 지어내지 않는다.
+- **외부 ID 는 역할을 선언한다 (ChEBI 규약).** ChEBI 는 같은 물질에 중성 모체·pH 7.3 우세 이온 종·이온화 상태를 묶은 분류를 따로 두므로, `xrefs[].role` 로 규약을 적는다 — `physiological`(엔진·상호 운용이 읽는 단 하나) · `parent`(모체, 다를 때만) · `class`(중합체·불균일 물질만). 분류 항목을 저분자·이온의 번호로 쓰면 화학식 대조가 건너뛰어지므로 거부된다. `physiological` 주장은 켤레 관계(짝과 수소·전하만 차이)와 반응 참여(Rhea ≥ 3, `data/fetched/rhea/`)를 모두 통과해야 verified 가 된다.
 - 원본 대조는 자동 보강 고리로만: `node dbtool.mjs augment plan` → `fetch`(막히면 `data/fetched/RETRIEVAL_TASKS.md` 를 사용자에게 넘김 — "UniProt 에 닿지 못함, 이 파일들을 받아 주세요") → `build`(확인) → `apply`(관문 + CHANGES 행). 확인을 통과한 것만 `verified`, 모호하면 unmapped + Identity_Gap 유지, 다른 값의 asserted 는 사용자가 동기화를 요청할 때만(`--sync`) 바꾼다. 수신함 원본은 해석만 하고 실행하지 않는다.
 - 두 해상도를 지킨다.
   - 정의항(D)을 만들거나 넓힐 때: 완전성·구조적 깊이 우선. 구성 요소(소단위·보조인자), 막 위상, 부위, 규칙을 빠뜨리지 않는다.

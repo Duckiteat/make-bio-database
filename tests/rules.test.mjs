@@ -636,13 +636,16 @@ test('Patch Report: 바뀐 필드·하류 규칙·단계·경로·한계 상태 
 });
 test('Identity_Gap: unmapped 외부 ID 는 한계로 등록되어야 하고, 확인된 ID 가 들어오면 닫힌다', () => {
   const d = JSON.parse(JSON.stringify(BASE)), pi = id('무기 인산');
-  const lid = Object.keys(d.limitations).find((k) => d.limitations[k].target === pi && d.limitations[k].type === 'Identity_Gap');
-  assert.ok(lid);
-  delete d.limitations[lid];
+  // 확인 전 상태를 직접 만든다 (저장소는 원본 대조가 끝나면 unmapped 가 사라진다)
+  d.senses[pi].xrefs = (d.senses[pi].xrefs || []).filter((x) => x.db !== 'ChEBI');
+  d.senses[pi].unmapped = 'ChEBI 번호 미확인 (시험이 만든 상태)';
+  for (const k of Object.keys(d.limitations)) if (d.limitations[k].target === pi && d.limitations[k].type === 'Identity_Gap') delete d.limitations[k];
   assert.ok(J.detectGaps(d).some((x) => x.target === pi && x.type === 'Identity_Gap'));
-  const e = JSON.parse(JSON.stringify(BASE));
-  e.senses[pi].xrefs.push({ db: 'ChEBI', id: 'CHEBI:1', status: 'asserted' });
-  assert.equal(J.limitationStatus(DefDB.normalize(e), DefDB.normalize(e).limitations[lid]).status, 'resolved');
+  // 확인된 ID 가 들어오면 그 Identity_Gap 은 닫힌다 (지금 저장소에는 번호가 들어와 있어 그대로 resolved 여야 한다)
+  const lid2 = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === pi && BASE.limitations[k].type === 'Identity_Gap');
+  assert.ok(lid2, '무기 인산의 Identity_Gap 기록이 있어야 함');
+  assert.equal(J.limitationStatus(BASE, BASE.limitations[lid2]).status, 'resolved');
+  assert.equal(J.limitationStatus(DefDB.normalize(d), BASE.limitations[lid2]).status, 'open', '번호를 빼면 다시 열림');
 });
 
 // ===== 소진 시험 (Survival-to-Exhaustion): 시트르산 회로 =====
@@ -1078,6 +1081,9 @@ const PRE = (() => {
     for (const x of d.xrefs || []) if (x.status === 'verified') { x.status = 'asserted'; delete x.note; }
     if (d.fingerprint && ['computed', 'verified'].includes(d.fingerprint.status)) delete d.fingerprint; // 지문도 사법부 도장이 있어야 verified
     if (d.obs) d.obs = d.obs.filter((o) => !(o.property === 'sequence_length' && o.evidence && o.evidence.level === 'computed'));
+    // 규약(role) 전 상태: ChEBI 항목은 하나(모체 쪽)만 남기고 역할 표시를 지운다 — 합성 시험 자료는 규약 전에 만든 것
+    const ch = (d.xrefs || []).filter((x) => x.db === 'ChEBI');
+    if (ch.length) { const keepOne = ch.find((x) => x.role === 'parent') || ch[0]; delete keepOne.role; d.xrefs = (d.xrefs || []).filter((x) => x.db !== 'ChEBI' || x === keepOne); }
     if (back.has(sid)) { d.xrefs = (d.xrefs || []).filter((x) => x.db !== 'ChEBI'); d.unmapped = '확인 전 (자동 보강 시험의 출발 상태)'; }
   }
   return DefDB.normalize(db);
@@ -1130,6 +1136,43 @@ test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, �
   assert.ok(J.augmentCandidates(res.db) < J.augmentCandidates(PRE));
   const s = ORCH.augmentBuild(PRE, { dir: FIX, date: '2026-10-08', sync: true });
   assert.notEqual(s.rows.find((r) => r.sense === id('IL-12 p35')).outcome, 'verified', 'sync 여도 이름·종 확인은 그대로 (번호만 바뀐 응답은 이름 확인이 없으면 거부)');
+});
+
+// ===== 외부 ID 역할 (ChEBI 규약, 2026-10-10) — 모체·pH 7.3 우세 종·분류를 섞지 않는다 =====
+const INBOX = new URL('../data/fetched', import.meta.url).pathname;
+test('외부 ID 역할: 분류 항목은 셀 수 있는 분자의 번호가 될 수 없고, 역할이 겹치거나 physiological 이 없으면 거부', () => {
+  const ATP = id('ATP'), xs = (list) => ({ senses: [{ id: ATP, xrefs: list }] });
+  const parent = { db: 'ChEBI', id: 'CHEBI:15422', status: 'asserted', role: 'parent' };
+  const phys = { db: 'ChEBI', id: 'CHEBI:30616', status: 'asserted', role: 'physiological' };
+  passes(xs([parent, phys]));
+  rejectedFor(xs([{ ...parent, role: 'class' }, phys]), /분류\(class\) 항목 .* 을 번호로 쓸 수 없음/);
+  rejectedFor(xs([parent, { ...phys, role: 'parent' }]), /역할이 겹침/);
+  rejectedFor(xs([parent, { ...phys, role: undefined }]), /역할\(role\)이 없는 것이 있음/);
+  rejectedFor(xs([{ ...parent, role: 'parent' }, { ...phys, role: 'parent', id: 'CHEBI:57299' }]), /역할이 겹침/);
+  rejectedFor(xs([{ ...parent, role: 'vibes' }]), /외부 ID 역할 'vibes'/);
+  rejectedFor(xs([parent, { ...phys, id: 'CHEBI:15422' }]), /ChEBI:CHEBI:15422 가 두 번/);
+  // 중합체·불균일 물질(글리코겐·LPS)은 분류 항목이 맞다
+  passes({ senses: [{ id: id('글리코겐'), xrefs: [{ db: 'ChEBI', id: 'CHEBI:28087', status: 'asserted', role: 'class' }] }] });
+});
+test('외부 ID 역할: 신원 확인이 켤레 관계(수소·전하만 차이)와 반응 참여(Rhea ≥ 3)를 요구한다', () => {
+  const ATP = id('ATP'), db0 = JSON.parse(JSON.stringify(BASE));
+  const reset = (sid, list) => { db0.senses[sid].xrefs = list; };
+  // 올바른 짝: ATP(중성) ↔ ATP(4−) — 수소 −4·전하 −4, Rhea 50회
+  reset(ATP, [{ db: 'ChEBI', id: 'CHEBI:15422', status: 'verified', role: 'parent' }, { db: 'ChEBI', id: 'CHEBI:30616', status: 'asserted', role: 'physiological' }]);
+  const ok = AUG.verifyIdentity(DefDB.normalize(db0), { dir: INBOX }).rows.find((r) => r.sense === ATP && r.kind === 'chebi_entity' && r.key === 'CHEBI:30616');
+  assert.equal(ok.outcome, 'verified', ok.detail);
+  assert.equal(ok.facts.conjugate.dH, -4); assert.equal(ok.facts.conjugate.dCharge, -4);
+  assert.ok(ok.facts.rhea.reactions >= 3, '반응 참여 수가 증거에 있어야 함');
+  // 틀린 짝: ATP(중성) ↔ GTP(4−) — 수소 말고도 원자 수가 다름
+  reset(ATP, [{ db: 'ChEBI', id: 'CHEBI:15422', status: 'verified', role: 'parent' }, { db: 'ChEBI', id: 'CHEBI:37565', status: 'asserted', role: 'physiological' }]);
+  const bad = AUG.verifyIdentity(DefDB.normalize(db0), { dir: INBOX }).rows.find((r) => r.sense === ATP && r.key === 'CHEBI:37565');
+  assert.equal(bad.outcome, 'rejected');
+  assert.match(bad.detail, /수소 말고도 원자 수가 다름|이름 불일치/);
+  // 반응 참여 자료가 없으면 physiological 주장을 확인하지 않는다
+  reset(ATP, [{ db: 'ChEBI', id: 'CHEBI:15422', status: 'asserted', role: 'physiological' }]);
+  const noRhea = AUG.verifyIdentity(DefDB.normalize(db0), { dir: new URL('./fixtures/augment', import.meta.url).pathname }).rows.find((r) => r.sense === ATP && r.key === 'CHEBI:15422');
+  assert.equal(noRhea.outcome, 'rejected');
+  assert.match(noRhea.detail, /반응 참여 자료|수신함에 없음/);
 });
 
 // ===== 비교 검토·정제 점검 (Comparative Optimization) =====

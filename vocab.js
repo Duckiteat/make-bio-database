@@ -344,6 +344,13 @@
     PMID:     { pattern: '^[0-9]+$', url: 'https://pubmed.ncbi.nlm.nih.gov/{id}' },
     DOI:      { pattern: '^10\\.[0-9]{4,}/\\S+$', url: 'https://doi.org/{id}' },
   },
+  // 외부 ID 의 역할 (ChEBI 실험, 2026-10-10): 같은 분자에 ChEBI 항목이 세 종류 있다 — 중성 모체·pH 7.3 우세 이온 종·이온화 상태를 묶은 분류.
+  // 규약을 선언하지 않으면 셋이 섞여 화학식 대조가 조용히 건너뛰어진다(분류 항목은 화학식이 없다). 엔진·상호 운용이 읽는 것은 physiological 하나.
+  xrefRoles: {
+    physiological: { label: 'pH 7.3 우세 종 (반응 참여자 — 엔진·상호 운용이 읽는 번호)', note: '큐레이션된 반응 DB(Rhea)가 반응식에 쓰는 종. 중성 분자(포도당·CO₂)는 모체와 같은 번호다. 화학식이 있어야 한다 — 분류 항목은 쓸 수 없다.' },
+    parent:        { label: '중성 모체 (화학 정체성)', note: '양성자가 다 붙은 전하 0 의 화합물. physiological 과 다를 때만 함께 적고, 둘은 ChEBI 의 conjugate acid/base 관계로 이어져 있어야 한다.' },
+    class:         { label: '이온화·중합 상태를 묶은 분류', note: '단일 종이 없는 물질(중합체·불균일 물질 — 글리코겐·지질다당류)만. 화학식이 없으므로 셀 수 있는 저분자의 번호로는 쓸 수 없다.' },
+  },
   xrefStatus: ['asserted', 'verified'],
 
   // ===== 구조 지문 =====

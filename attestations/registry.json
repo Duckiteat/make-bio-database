@@ -4,6 +4,72 @@
   "stamps": [
     {
       "subject": {
+        "sense": "D000027",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "UCTWMZQNUQWSLP-VIFPVBQESA-O"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:71406",
+        "file": "data/fetched/chebi/CHEBI_71406.json",
+        "sha256": "eb46d165135de79b4495e6051c2910d64be71568d721cccad80f418ddf5358ea"
+      },
+      "checks": "검증 (이름 '(<i>R</i>)-adrenaline(1+)', 부분 구조가 선언되지 않음 — 화학식 C9 를 보면 탄소 골격 단위 9 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 6회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "33311563d8b4f06c4137d6b546556ea702a15fb59d0c610627023feb5af820b4"
+    },
+    {
+      "subject": {
+        "sense": "D000027",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:71406"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:71406",
+        "file": "data/fetched/chebi/CHEBI_71406.json",
+        "sha256": "eb46d165135de79b4495e6051c2910d64be71568d721cccad80f418ddf5358ea"
+      },
+      "checks": "검증 (이름 '(<i>R</i>)-adrenaline(1+)', 부분 구조가 선언되지 않음 — 화학식 C9 를 보면 탄소 골격 단위 9 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 6회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "d4ed5e63ca0cc21f50cd9404040c265d4ab02f989561ffc80ee0a07dce217af6"
+    },
+    {
+      "subject": {
+        "sense": "D000032",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "ZKHQWZAMYRWXGA-KQYNXXCUSA-J"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:30616",
+        "file": "data/fetched/chebi/CHEBI_30616.json",
+        "sha256": "f08b56153e1e43daa643dad0a15242e28c1a600fb5a19dd5ff6f0ca8404cb507"
+      },
+      "checks": "검증 (이름 'ATP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15422 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "a2bfd62c1d1c30777e3408932bade8f1f659c91bca5b8bf6f47cdc612b926253"
+    },
+    {
+      "subject": {
         "sense": "D000032",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -45,6 +111,50 @@
       },
       "issued_at": "2026-10-10",
       "digest": "92d5bbb795c195ff822ecf2bad28d42946420dc56fe14e27b50b552a7414f6ac"
+    },
+    {
+      "subject": {
+        "sense": "D000032",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:30616"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:30616",
+        "file": "data/fetched/chebi/CHEBI_30616.json",
+        "sha256": "f08b56153e1e43daa643dad0a15242e28c1a600fb5a19dd5ff6f0ca8404cb507"
+      },
+      "checks": "검증 (이름 'ATP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15422 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "bafef656e95af40d2cda11e19f0018858373397071ad85f226fefdaf795ba10d"
+    },
+    {
+      "subject": {
+        "sense": "D000033",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "XTWYTFMLZFPYCI-KQYNXXCUSA-K"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:456216",
+        "file": "data/fetched/chebi/CHEBI_456216.json",
+        "sha256": "1ed228cbc8ace3a4f41c1d04822228741751671414effb15041798c3e6a7b0ce"
+      },
+      "checks": "검증 (이름 'ADP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16761 와 수소 -3·전하 -3)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "9e1a337db4d01e8d6b07e2f51090c97077a880091c7c62118f5d4a1d926b12fb"
     },
     {
       "subject": {
@@ -92,6 +202,50 @@
     },
     {
       "subject": {
+        "sense": "D000033",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:456216"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:456216",
+        "file": "data/fetched/chebi/CHEBI_456216.json",
+        "sha256": "1ed228cbc8ace3a4f41c1d04822228741751671414effb15041798c3e6a7b0ce"
+      },
+      "checks": "검증 (이름 'ADP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16761 와 수소 -3·전하 -3)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "349cf7e854ce0dbe0821ed063ccc52a37405fc6973c970a75ad283073ec53974"
+    },
+    {
+      "subject": {
+        "sense": "D000034",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "UDMBCSSLTHHNCD-KQYNXXCUSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:456215",
+        "file": "data/fetched/chebi/CHEBI_456215.json",
+        "sha256": "ec01487109d88750bc1c0b149f750bf93fe7f44f5c519711641f2579942da36c"
+      },
+      "checks": "검증 (이름 'AMP(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16027 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "836ff51c76459fe3f392128223c12b5b748ae1216bbf394ff80bb0cdf449ce8a"
+    },
+    {
+      "subject": {
         "sense": "D000034",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -133,6 +287,50 @@
       },
       "issued_at": "2026-10-10",
       "digest": "880b8ad52cc7c230ebe0f6cbccc53f4d738aca6e2576ebe3edfd766173e4775e"
+    },
+    {
+      "subject": {
+        "sense": "D000034",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:456215"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:456215",
+        "file": "data/fetched/chebi/CHEBI_456215.json",
+        "sha256": "ec01487109d88750bc1c0b149f750bf93fe7f44f5c519711641f2579942da36c"
+      },
+      "checks": "검증 (이름 'AMP(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16027 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "aac52f32054cc7a144ce1f498c391dc90bf3bb5265404904d2152cb92e1f7072"
+    },
+    {
+      "subject": {
+        "sense": "D000035",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "XKMLYUALXHKNFT-UUOKFMHZSA-J"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:37565",
+        "file": "data/fetched/chebi/CHEBI_37565.json",
+        "sha256": "dc104325ae453e0b1955797983f0d3168959cacb4e633fef93b7dccd59fc1103"
+      },
+      "checks": "검증 (이름 'GTP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15996 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "3969b42ca4a4755e608ad3078eb6799e67df3312b1ecd54915d1aa24ba1ac5ca"
     },
     {
       "subject": {
@@ -180,6 +378,50 @@
     },
     {
       "subject": {
+        "sense": "D000035",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:37565"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:37565",
+        "file": "data/fetched/chebi/CHEBI_37565.json",
+        "sha256": "dc104325ae453e0b1955797983f0d3168959cacb4e633fef93b7dccd59fc1103"
+      },
+      "checks": "검증 (이름 'GTP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15996 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "677d396038abe79dddcd69431d33e663c5ba11bebbd291eeda42f4de3ed53e0c"
+    },
+    {
+      "subject": {
+        "sense": "D000036",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "QGWNDRXFNXRZMB-UUOKFMHZSA-K"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:58189",
+        "file": "data/fetched/chebi/CHEBI_58189.json",
+        "sha256": "743dbfff4cc0a7f35487b9026ae0a5ce4c0a7359a9866fc1f708ca911afcef0b"
+      },
+      "checks": "검증 (이름 'GDP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17552 와 수소 -3·전하 -3)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c932846fe2d0fb6d57542e76e8f463f0bf7a3789231f2c7644dab138edad5175"
+    },
+    {
+      "subject": {
         "sense": "D000036",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -224,6 +466,94 @@
     },
     {
       "subject": {
+        "sense": "D000036",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:58189"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:58189",
+        "file": "data/fetched/chebi/CHEBI_58189.json",
+        "sha256": "743dbfff4cc0a7f35487b9026ae0a5ce4c0a7359a9866fc1f708ca911afcef0b"
+      },
+      "checks": "검증 (이름 'GDP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17552 와 수소 -3·전하 -3)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2359d3def1535bc14f6fe149d742dd3dde5d0c5f4df2d0ac0e4a3348d6c27366"
+    },
+    {
+      "subject": {
+        "sense": "D000037",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "NBIIXXVUZAFLBC-UHFFFAOYSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:43474",
+        "file": "data/fetched/chebi/CHEBI_43474.json",
+        "sha256": "f24cf6e1d04621c14dcdb5fe91450e937cad58c004deef6b00cdc0cbf01ef594"
+      },
+      "checks": "검증 (이름 'hydrogenphosphate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "bebae287e607ab28ce01b4fe344a9a1a06677de51dd6f82718bc3c78eaa0b8fb"
+    },
+    {
+      "subject": {
+        "sense": "D000037",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:43474"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:43474",
+        "file": "data/fetched/chebi/CHEBI_43474.json",
+        "sha256": "f24cf6e1d04621c14dcdb5fe91450e937cad58c004deef6b00cdc0cbf01ef594"
+      },
+      "checks": "검증 (이름 'hydrogenphosphate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "f30648ddd7fb8e57b3972740465d725ee6bb4f25a2b615a416f492767cd498f7"
+    },
+    {
+      "subject": {
+        "sense": "D000039",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "IVOMOUWHDPKRLL-KQYNXXCUSA-M"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:58165",
+        "file": "data/fetched/chebi/CHEBI_58165.json",
+        "sha256": "a050c7df17003fe66feb60827792728649182f04fe38f6fa9bb7722078b94a58"
+      },
+      "checks": "검증 (이름 '3',5'-cyclic AMP(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 6회 · 켤레 CHEBI:17489 와 수소 -1·전하 -1)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "59093f364acf3d37cc3740aa19e062e92a031699b087dd29de1481c80c8fb803"
+    },
+    {
+      "subject": {
         "sense": "D000039",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -265,6 +595,28 @@
       },
       "issued_at": "2026-10-10",
       "digest": "4a3148a04ca8b88b12d51b9121a82c0a40b77c127a00ca405099988186ffc93f"
+    },
+    {
+      "subject": {
+        "sense": "D000039",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:58165"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:58165",
+        "file": "data/fetched/chebi/CHEBI_58165.json",
+        "sha256": "a050c7df17003fe66feb60827792728649182f04fe38f6fa9bb7722078b94a58"
+      },
+      "checks": "검증 (이름 '3',5'-cyclic AMP(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 6회 · 켤레 CHEBI:17489 와 수소 -1·전하 -1)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "0d24dc5e3cee66c4aa255335263ed47f1d65b147b357d34239bfd49ec4df9a48"
     },
     {
       "subject": {
@@ -334,6 +686,50 @@
     },
     {
       "subject": {
+        "sense": "D000053",
+        "field": "xref",
+        "ns": "UniProt",
+        "value": "P63092"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P63092",
+        "file": "data/fetched/uniprot/P63092.json",
+        "sha256": "84206ab2d6036ee098c23efb882224d6882ff4981b3435441fe70465280c2899"
+      },
+      "checks": "검증 (이름 'GNAS', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "4fb595e9efb030d3b97a5a46d80df22659aefceb8798cb67a357ab236af81872"
+    },
+    {
+      "subject": {
+        "sense": "D000062",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "NGVDGCNFYWLIFO-UHFFFAOYSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:597326",
+        "file": "data/fetched/chebi/CHEBI_597326.json",
+        "sha256": "3e66cd20b25d17e18dbb45139eb0d50f7592928e745e8955ed149df1bce2cc79"
+      },
+      "checks": "검증 (이름 'pyridoxal 5'-phosphate(2−)', 부분 구조가 선언되지 않음 — 화학식 C8 를 보면 탄소 골격 단위 8 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 10회 · 켤레 CHEBI:18405 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "93785bae68fa8a1b0c32ea13535b23d901860ac557c4e44fbdae936e4fc1a271"
+    },
+    {
+      "subject": {
         "sense": "D000062",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -375,6 +771,28 @@
       },
       "issued_at": "2026-10-10",
       "digest": "9a77ba4bec77edd8099c214e3dca33c27633923b0659e147b931b72584dcb04c"
+    },
+    {
+      "subject": {
+        "sense": "D000062",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:597326"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:597326",
+        "file": "data/fetched/chebi/CHEBI_597326.json",
+        "sha256": "3e66cd20b25d17e18dbb45139eb0d50f7592928e745e8955ed149df1bce2cc79"
+      },
+      "checks": "검증 (이름 'pyridoxal 5'-phosphate(2−)', 부분 구조가 선언되지 않음 — 화학식 C8 를 보면 탄소 골격 단위 8 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 10회 · 켤레 CHEBI:18405 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c2ff33d345029990571799f85c56ce7b49f6ec5acd1600f993662300cb10ec33"
     },
     {
       "subject": {
@@ -884,6 +1302,72 @@
     },
     {
       "subject": {
+        "sense": "D000122",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "XPPKVPWEQAFLFU-UHFFFAOYSA-K"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:33019",
+        "file": "data/fetched/chebi/CHEBI_33019.json",
+        "sha256": "0df99980abb41067e17be26b877dc3c58a307a031f36821da5f74311b102116d"
+      },
+      "checks": "검증 (이름 'diphosphate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "a111b4d0146f8e5bba97593a8fbbec80714f6264cef60a5daa2a7b66b98e7cfd"
+    },
+    {
+      "subject": {
+        "sense": "D000122",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:33019"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:33019",
+        "file": "data/fetched/chebi/CHEBI_33019.json",
+        "sha256": "0df99980abb41067e17be26b877dc3c58a307a031f36821da5f74311b102116d"
+      },
+      "checks": "검증 (이름 'diphosphate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "fb4ae78ef5bfb0dd6909dae0fd3b2e536755c42f8aba62f0edb36233d568cf7f"
+    },
+    {
+      "subject": {
+        "sense": "D000134",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "ZSLZBFCDCINBPY-ZSJPKINUSA-J"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57288",
+        "file": "data/fetched/chebi/CHEBI_57288.json",
+        "sha256": "e7ff8a403fea284e504c3b7ff1b235b028eccf5e36d891c5b01ca887f295e13f"
+      },
+      "checks": "검증 (이름 'acetyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15351 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "ebbbc7bf6db1d58471ec6fd4cce5f96a474e5a850c4b02a290a17a916be9406b"
+    },
+    {
+      "subject": {
         "sense": "D000134",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -925,6 +1409,50 @@
       },
       "issued_at": "2026-10-10",
       "digest": "ced75cbdd28a325aae751ab7131eff1a0d16ea54df14ab486173481459dc66bf"
+    },
+    {
+      "subject": {
+        "sense": "D000134",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57288"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57288",
+        "file": "data/fetched/chebi/CHEBI_57288.json",
+        "sha256": "e7ff8a403fea284e504c3b7ff1b235b028eccf5e36d891c5b01ca887f295e13f"
+      },
+      "checks": "검증 (이름 'acetyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15351 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "f29bd6657ee539389c4b64b3298bb2c685993fc9766bb8aec90d37305377be22"
+    },
+    {
+      "subject": {
+        "sense": "D000135",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "RGJOEKWQDUBAIZ-IBOSZNHHSA-J"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57287",
+        "file": "data/fetched/chebi/CHEBI_57287.json",
+        "sha256": "7cede4652a877f78adbe9254fa4a4047470cca8b037059c87914c788b5ecb5de"
+      },
+      "checks": "검증 (이름 'coenzyme A(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15346 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "9e0474b9d1c509979e3d495b157e9247ae1bb90028329edeba949797a4a71812"
     },
     {
       "subject": {
@@ -972,6 +1500,226 @@
     },
     {
       "subject": {
+        "sense": "D000135",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57287"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57287",
+        "file": "data/fetched/chebi/CHEBI_57287.json",
+        "sha256": "7cede4652a877f78adbe9254fa4a4047470cca8b037059c87914c788b5ecb5de"
+      },
+      "checks": "검증 (이름 'coenzyme A(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15346 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "b09613ac1aa604a5ec3001b8b873ce16b1f606bf116e748f79cff25cb67b1b8f"
+    },
+    {
+      "subject": {
+        "sense": "D000136",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "KHPXUQMNIQBQEV-UHFFFAOYSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16452",
+        "file": "data/fetched/chebi/CHEBI_16452.json",
+        "sha256": "e8c4295f245348ffb710fb55076579e12cdb995c1e52f5bbc2f984d8850ca314"
+      },
+      "checks": "검증 (이름 'oxaloacetate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "d1a64d79ba17b70327e8bed52880c334be55899239394fef42833ab1a7fa20d1"
+    },
+    {
+      "subject": {
+        "sense": "D000136",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:16452"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16452",
+        "file": "data/fetched/chebi/CHEBI_16452.json",
+        "sha256": "e8c4295f245348ffb710fb55076579e12cdb995c1e52f5bbc2f984d8850ca314"
+      },
+      "checks": "검증 (이름 'oxaloacetate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "9e9fd7aa1b65df5fc98af316889738957322df1402e222298ffc27f1c4759083"
+    },
+    {
+      "subject": {
+        "sense": "D000137",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "KRKNYBCHXYNGOX-UHFFFAOYSA-K"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16947",
+        "file": "data/fetched/chebi/CHEBI_16947.json",
+        "sha256": "d1fd2dd0bb7a3bbabb5ca5f362b3c1cf40ea9d11392130d15c6553435f7e966d"
+      },
+      "checks": "검증 (이름 'citrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 33회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2154b722b5a5b1ea4a32d614c6093262ec6e4de246a286877e6bbe6e21a1a16c"
+    },
+    {
+      "subject": {
+        "sense": "D000137",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:16947"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16947",
+        "file": "data/fetched/chebi/CHEBI_16947.json",
+        "sha256": "d1fd2dd0bb7a3bbabb5ca5f362b3c1cf40ea9d11392130d15c6553435f7e966d"
+      },
+      "checks": "검증 (이름 'citrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 33회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "d165c5077ac158ecfb94bfa01bd41fd504ef372ff94f3e5d63f9339f235f60cb"
+    },
+    {
+      "subject": {
+        "sense": "D000138",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "ODBLHEXUDAPZAU-ZAFYKAAXSA-K"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:15562",
+        "file": "data/fetched/chebi/CHEBI_15562.json",
+        "sha256": "ebd427169320eb2eebb8c68e88fe0a1e9b934626b7abc0afe9231dcdcfb62892"
+      },
+      "checks": "검증 (이름 '<small>D</small>-<i>threo</i>-isocitrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 9회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "902072b145a96b2a4bfc18c5d1f7b3b98e6bc49857731554790c925decfec532"
+    },
+    {
+      "subject": {
+        "sense": "D000138",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:15562"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:15562",
+        "file": "data/fetched/chebi/CHEBI_15562.json",
+        "sha256": "ebd427169320eb2eebb8c68e88fe0a1e9b934626b7abc0afe9231dcdcfb62892"
+      },
+      "checks": "검증 (이름 '<small>D</small>-<i>threo</i>-isocitrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 9회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2021fda606dcf8af41a73a2741923bb1206aae35a0e1fc9899942b6de9ecf63b"
+    },
+    {
+      "subject": {
+        "sense": "D000139",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "KPGXRSRHYNQIFN-UHFFFAOYSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16810",
+        "file": "data/fetched/chebi/CHEBI_16810.json",
+        "sha256": "d1a197f7fa8d7283ae39931601de11c2e2d57d1a0fa9c15ee796c3d0bd261d79"
+      },
+      "checks": "검증 (이름 '2-oxoglutarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "7fffcb56cba8d600491c9efa91d945efea349a0eb93adf82dce78bb4fbbf48cb"
+    },
+    {
+      "subject": {
+        "sense": "D000139",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:16810"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16810",
+        "file": "data/fetched/chebi/CHEBI_16810.json",
+        "sha256": "d1a197f7fa8d7283ae39931601de11c2e2d57d1a0fa9c15ee796c3d0bd261d79"
+      },
+      "checks": "검증 (이름 '2-oxoglutarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "602008cabeb599e94fe95e7ddc612e004b0f58cb996751fd0bfa53cbb4c795aa"
+    },
+    {
+      "subject": {
+        "sense": "D000140",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "VNOYUJKHFWYWIR-ITIYDSSPSA-I"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57292",
+        "file": "data/fetched/chebi/CHEBI_57292.json",
+        "sha256": "ae2b89d62eb73f00a92b99555d6aa21f68917eac41d90010964865f3b538e4f1"
+      },
+      "checks": "검증 (이름 'succinyl-CoA(5−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회 · 켤레 CHEBI:15380 와 수소 -5·전하 -5)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "4ce7f0196bbdb50e008517b1d89de391d97f918ee3431b1c606177269689f814"
+    },
+    {
+      "subject": {
         "sense": "D000140",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -1016,6 +1764,50 @@
     },
     {
       "subject": {
+        "sense": "D000140",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57292"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57292",
+        "file": "data/fetched/chebi/CHEBI_57292.json",
+        "sha256": "ae2b89d62eb73f00a92b99555d6aa21f68917eac41d90010964865f3b538e4f1"
+      },
+      "checks": "검증 (이름 'succinyl-CoA(5−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회 · 켤레 CHEBI:15380 와 수소 -5·전하 -5)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "25344d72dc715a5f58335d8321d473cfe3308723cdd7d4ec7a60b5a1aea5ca52"
+    },
+    {
+      "subject": {
+        "sense": "D000141",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "KDYFGRWQOYBRFD-UHFFFAOYSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:30031",
+        "file": "data/fetched/chebi/CHEBI_30031.json",
+        "sha256": "4476b3e1421d3489f5d7b9883879c970935f57931666e5a48e50dbd526f985d0"
+      },
+      "checks": "검증 (이름 'succinate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "da5b65ac08b1da5dd7d0812d5c61c07c9848dde2686eeb7269ae71d4c7fb3f2e"
+    },
+    {
+      "subject": {
         "sense": "D000141",
         "field": "xref",
         "ns": "ChEBI",
@@ -1035,6 +1827,182 @@
       },
       "issued_at": "2026-10-10",
       "digest": "2e78915dbda05cfde639e5273dd8b14f0fc357363fe2a604f76eadd118f9f36a"
+    },
+    {
+      "subject": {
+        "sense": "D000141",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:30031"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:30031",
+        "file": "data/fetched/chebi/CHEBI_30031.json",
+        "sha256": "4476b3e1421d3489f5d7b9883879c970935f57931666e5a48e50dbd526f985d0"
+      },
+      "checks": "검증 (이름 'succinate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c5f2a5db797382f627f982108e1a811633b7b93416480a741cca26b9c3b200b3"
+    },
+    {
+      "subject": {
+        "sense": "D000142",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "VZCYOOQTPOCHFL-OWOJBTEDSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:29806",
+        "file": "data/fetched/chebi/CHEBI_29806.json",
+        "sha256": "3ab81ddb9d51ea1464fbd26ab76b2179183445caaa2d6cd9a87a8a93d38b60e3"
+      },
+      "checks": "검증 (이름 'fumarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "482d126788e49af9850620e2ee520ddeb51c4870a5071b08c4ccf2b3fa1e5b14"
+    },
+    {
+      "subject": {
+        "sense": "D000142",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:29806"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:29806",
+        "file": "data/fetched/chebi/CHEBI_29806.json",
+        "sha256": "3ab81ddb9d51ea1464fbd26ab76b2179183445caaa2d6cd9a87a8a93d38b60e3"
+      },
+      "checks": "검증 (이름 'fumarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "e2366adfd2516b3ad419a8b5eb286aaa97cfc18984af21a91fc23f7691f9b04a"
+    },
+    {
+      "subject": {
+        "sense": "D000143",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "BJEPYKJPYRNKOW-REOHCLBHSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:15589",
+        "file": "data/fetched/chebi/CHEBI_15589.json",
+        "sha256": "13ab644aecdb61ff02054cdf64f7970bc9f5522597dcb09305c2a5fe62aba41a"
+      },
+      "checks": "검증 (이름 '<small>L</small>-malate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 34회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "a08035338597e2b64ceeaae481acc66a466173e20a9c72f5974fde441bceb782"
+    },
+    {
+      "subject": {
+        "sense": "D000143",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:15589"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:15589",
+        "file": "data/fetched/chebi/CHEBI_15589.json",
+        "sha256": "13ab644aecdb61ff02054cdf64f7970bc9f5522597dcb09305c2a5fe62aba41a"
+      },
+      "checks": "검증 (이름 '<small>L</small>-malate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 34회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "1cef4e43879296aa958ad9653ba8b84f1ebc10b0312076783bb1d204725098c4"
+    },
+    {
+      "subject": {
+        "sense": "D000144",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "BAWFJGJZGIEFAR-NNYOXOHSSA-M"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57540",
+        "file": "data/fetched/chebi/CHEBI_57540.json",
+        "sha256": "80dbce930214bf8c916d3d48dccf00b3e724653100b80b0b1d9343d712de01c7"
+      },
+      "checks": "검증 (이름 'NAD(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "ff85cb5902c8e73d1050ae06eed702807a13878891e73c66f94ad535a45ecec4"
+    },
+    {
+      "subject": {
+        "sense": "D000144",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57540"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57540",
+        "file": "data/fetched/chebi/CHEBI_57540.json",
+        "sha256": "80dbce930214bf8c916d3d48dccf00b3e724653100b80b0b1d9343d712de01c7"
+      },
+      "checks": "검증 (이름 'NAD(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "f998951443d8b14c0850fe343e7447d1f060a16894557ca2ff7da72133381619"
+    },
+    {
+      "subject": {
+        "sense": "D000145",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "BOPGDPNILDQYTO-NNYOXOHSSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57945",
+        "file": "data/fetched/chebi/CHEBI_57945.json",
+        "sha256": "30738be5a2d6e741493e7e55c2469a3258ea13dfa512b0e721d4bbd0df8e29ea"
+      },
+      "checks": "검증 (이름 'NADH(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16908 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "b4ebd18d048b02929464c0eed90892e8b24ca21d36abbef5cc52ebd767e99897"
     },
     {
       "subject": {
@@ -1082,6 +2050,50 @@
     },
     {
       "subject": {
+        "sense": "D000145",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57945"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57945",
+        "file": "data/fetched/chebi/CHEBI_57945.json",
+        "sha256": "30738be5a2d6e741493e7e55c2469a3258ea13dfa512b0e721d4bbd0df8e29ea"
+      },
+      "checks": "검증 (이름 'NADH(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16908 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "6e495947cbd2ea7a5efaeb046fe651d1f146eba177eafdc1a56d0e1b2349f166"
+    },
+    {
+      "subject": {
+        "sense": "D000146",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "IMGVNJNCCGXBHD-UYBVJOGSSA-K"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57692",
+        "file": "data/fetched/chebi/CHEBI_57692.json",
+        "sha256": "6515767d5ffff93a8d8060ca9185d1abe8dab7ec93029a4970125c786be566b7"
+      },
+      "checks": "검증 (이름 'FAD(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16238 와 수소 -3·전하 -3)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "4a246d49e77e651c22a03046f19ce1d76eb4329efe979382d8a85770f2057cf5"
+    },
+    {
+      "subject": {
         "sense": "D000146",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -1126,6 +2138,50 @@
     },
     {
       "subject": {
+        "sense": "D000146",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57692"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57692",
+        "file": "data/fetched/chebi/CHEBI_57692.json",
+        "sha256": "6515767d5ffff93a8d8060ca9185d1abe8dab7ec93029a4970125c786be566b7"
+      },
+      "checks": "검증 (이름 'FAD(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16238 와 수소 -3·전하 -3)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "38a0f7139ebda374bfd309d17e7a5d659f6da7e325ea0ff84da7480e2c1ba494"
+    },
+    {
+      "subject": {
+        "sense": "D000147",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "YPZRHBJKEMOYQH-UYBVJOGSSA-L"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:58307",
+        "file": "data/fetched/chebi/CHEBI_58307.json",
+        "sha256": "1411774bf173508bf5f66f6b192501ba9d51043d80e1e136056226169f11cb9d"
+      },
+      "checks": "검증 (이름 'FADH<small><sub>2</sub></small>(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17877 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "b71abf1e80799e685c58a745426abb1cdbd32e9985393456459543d47bd56086"
+    },
+    {
+      "subject": {
         "sense": "D000147",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -1167,6 +2223,28 @@
       },
       "issued_at": "2026-10-10",
       "digest": "64aff5f5ff110dd435985db787e019dc553ed940f6295b5a20a0880dc276f58a"
+    },
+    {
+      "subject": {
+        "sense": "D000147",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:58307"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:58307",
+        "file": "data/fetched/chebi/CHEBI_58307.json",
+        "sha256": "1411774bf173508bf5f66f6b192501ba9d51043d80e1e136056226169f11cb9d"
+      },
+      "checks": "검증 (이름 'FADH<small><sub>2</sub></small>(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17877 와 수소 -2·전하 -2)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "62cac16e3caa4db595e0979e52013eaf938051ffda304e00e73c4aaac1c92f0d"
     },
     {
       "subject": {
@@ -1368,6 +2446,72 @@
     },
     {
       "subject": {
+        "sense": "D000168",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "JVTAAEKCZFNVCJ-REOHCLBHSA-M"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16651",
+        "file": "data/fetched/chebi/CHEBI_16651.json",
+        "sha256": "dd9f35973697fe127bd45da64625a925414dc97f2bb4405f539b04cb2fb93e3a"
+      },
+      "checks": "검증 (이름 '<small>L</small>-lactate', 부분 구조가 선언되지 않음 — 화학식 C3 를 보면 탄소 골격 단위 3 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 32회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "3673f46fb14fa58ac03fa4d19af062210631bfbed261a2b3a91ceaa935c39b8c"
+    },
+    {
+      "subject": {
+        "sense": "D000168",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:16651"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:16651",
+        "file": "data/fetched/chebi/CHEBI_16651.json",
+        "sha256": "dd9f35973697fe127bd45da64625a925414dc97f2bb4405f539b04cb2fb93e3a"
+      },
+      "checks": "검증 (이름 '<small>L</small>-lactate', 부분 구조가 선언되지 않음 — 화학식 C3 를 보면 탄소 골격 단위 3 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 32회)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "82f7c66c8a00add709e1b6df3114d74a2376a6b7eca0316342431ba7650f2207"
+    },
+    {
+      "subject": {
+        "sense": "D000169",
+        "field": "fingerprint",
+        "ns": "InChIKey",
+        "value": "MNBKLUUYKPBKDU-BBECNAHFSA-J"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57379",
+        "file": "data/fetched/chebi/CHEBI_57379.json",
+        "sha256": "b6c42426b7f51bcbab8e7bfaf1f8b741077415352bb1ec6a94b7819c79139801"
+      },
+      "checks": "검증 (이름 'palmitoyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15525 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "4c6797e71feb78cd20a319460654126677d97f89cab0cdadb916c7e14fc4adbc"
+    },
+    {
+      "subject": {
         "sense": "D000169",
         "field": "fingerprint",
         "ns": "InChIKey",
@@ -1409,6 +2553,28 @@
       },
       "issued_at": "2026-10-10",
       "digest": "94d611aa71c422b393ba078420257b337020e75447c8775968ef3348ba34b7d6"
+    },
+    {
+      "subject": {
+        "sense": "D000169",
+        "field": "xref",
+        "ns": "ChEBI",
+        "value": "CHEBI:57379"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "chebi_entity",
+        "key": "CHEBI:57379",
+        "file": "data/fetched/chebi/CHEBI_57379.json",
+        "sha256": "b6c42426b7f51bcbab8e7bfaf1f8b741077415352bb1ec6a94b7819c79139801"
+      },
+      "checks": "검증 (이름 'palmitoyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15525 와 수소 -4·전하 -4)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c7cbb3c01591f0271fd5a7d08e728984b1d56cd356f93b132633f8ef628336c3"
     },
     {
       "subject": {

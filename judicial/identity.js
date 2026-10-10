@@ -18,8 +18,11 @@ const URLS = {
   uniprot_search: (gene, taxon) => [`https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(`gene_exact:${gene} AND organism_id:${taxon} AND reviewed:true`)}&fields=accession,gene_names,protein_name,organism_id,length&format=json&size=5`],
   chebi_entity: (id) => [`https://www.ebi.ac.uk/chebi/backend/api/public/compound/${id}/`, `https://www.ebi.ac.uk/ols4/api/ontologies/chebi/terms?obo_id=${id}`],
   chebi_search: (q) => [`https://www.ebi.ac.uk/ols4/api/search?q=${encodeURIComponent(q)}&ontology=chebi&exact=true&rows=5`, `https://www.ebi.ac.uk/chebi/backend/api/public/es_search/?term=${encodeURIComponent(q)}&size=5`],
+  // pH 7.3 우세 종 주장의 근거: 큐레이션된 반응 DB(Rhea)가 그 번호를 반응식의 참여자로 쓰는 횟수
+  rhea_usage: (id) => [`https://www.rhea-db.org/rhea?query=${encodeURIComponent(id)}&columns=rhea-id,equation,chebi-id&format=tsv&limit=50`],
 };
-const fileOf = (kind, key) => ({ uniprot_entry: `uniprot/${key}`, uniprot_search: `uniprot-search/${key}`, chebi_entity: `chebi/${key.replace(':', '_')}`, chebi_search: `chebi-search/${key}` })[kind];
+const RHEA_MIN = 3; // 이보다 적게 쓰이면 '반응 참여자' 주장을 받아들이지 않는다
+const fileOf = (kind, key) => ({ uniprot_entry: `uniprot/${key}`, uniprot_search: `uniprot-search/${key}`, chebi_entity: `chebi/${key.replace(':', '_')}`, chebi_search: `chebi-search/${key}`, rhea_usage: `rhea/${key.replace(':', '_')}` })[kind];
 
 // ===== ① 과제 =====
 function namesOf(db, id) { const d = db.senses[id], t = d && db.terms[d.term]; return t ? [t.names.ko, t.names.en, ...t.aliases].filter(Boolean) : []; }
@@ -32,9 +35,15 @@ function plan(db, opt) {
   for (const [id, d] of Object.entries(db.senses)) {
     const K = V.kinds[d.kind];
     if (!K) continue;
-    const up = d.xrefs.find((x) => x.db === 'UniProt'), ch = d.xrefs.find((x) => x.db === 'ChEBI');
+    const up = d.xrefs.find((x) => x.db === 'UniProt'), chAll = d.xrefs.filter((x) => x.db === 'ChEBI');
+    const ch = chAll.find((x) => x.role === 'physiological') || chAll.find((x) => !x.role) || chAll[0];
     if (up && up.status !== 'verified') add({ kind: 'uniprot_entry', key: up.id, sense: id, label: ix.label(id), why: `UniProt ${up.id} 대조 (asserted → verified)${seqGap(id).length ? ` · 서열 길이(${seqGap(id).join(', ')})` : ''}`, gaps: [...gapOf(id), ...seqGap(id)], urls: URLS.uniprot_entry(up.id) });
-    if (ch && ch.status !== 'verified') add({ kind: 'chebi_entity', key: ch.id, sense: id, label: ix.label(id), why: `ChEBI ${ch.id} 대조 (asserted → verified, 화학식 ↔ 부분 구조)`, gaps: gapOf(id), urls: URLS.chebi_entity(ch.id) });
+    for (const x of chAll) {
+      if (x.status !== 'verified') add({ kind: 'chebi_entity', key: x.id, sense: id, label: ix.label(id), role: x.role, why: `ChEBI ${x.id} 대조 (asserted → verified, 화학식 ↔ 부분 구조${x.role ? ` · 역할 ${x.role}` : ''})`, gaps: gapOf(id), urls: URLS.chebi_entity(x.id) });
+      // pH 7.3 우세 종이라는 주장은 큐레이션된 반응 DB 의 쓰임으로 뒷받침한다 (RHEA_MIN 개 이상의 반응).
+      //   이미 verified 인 번호에도 과제를 내는 이유: 도장 재확인이 같은 확인을 다시 돌리므로 증거 파일이 수신함에 남아 있어야 한다 (evidence: true — 보강 후보로 세지 않음)
+      if (x.role === 'physiological') add({ kind: 'rhea_usage', key: x.id, sense: id, label: ix.label(id), role: x.role, evidence: x.status === 'verified' || undefined, why: `${x.id} 가 반응 참여자로 쓰이는지 (Rhea ≥ ${RHEA_MIN})${x.status === 'verified' ? ' — 재확인 증거' : ''}`, gaps: gapOf(id), urls: URLS.rhea_usage(x.id) });
+    }
     if (d.unmapped && (K.xref.required || []).includes('ChEBI') && !ch) {
       const q = (db.terms[d.term].names.en || db.terms[d.term].names.ko);
       add({ kind: 'chebi_search', key: id, sense: id, label: ix.label(id), query: q, why: `unmapped → ChEBI 번호 찾기 (이름 '${q}')`, gaps: gapOf(id), urls: URLS.chebi_search(q) });
@@ -50,7 +59,7 @@ function plan(db, opt) {
   return tasks;
 }
 // 수신함: 확장자는 받아 본 형식으로 (.json · .fasta · .txt)
-function present(base) { for (const ext of ['.json', '.fasta', '.txt']) if (fs.existsSync(base + ext)) return base + ext; return null; }
+function present(base) { for (const ext of ['.json', '.fasta', '.txt', '.tsv']) if (fs.existsSync(base + ext)) return base + ext; return null; }
 
 // 수동 수집 과제 (네트워크가 막혔을 때 사람에게 넘기는 목록)
 function retrievalTasksMarkdown(tasks, results, date) {
@@ -77,7 +86,7 @@ function readTask(t) {
   if (!file) return null;
   const text = fs.readFileSync(file, 'utf8'), sha = crypto.createHash('sha256').update(text).digest('hex');
   try {
-    const data = t.kind === 'uniprot_entry' ? parseUniProt(text, file) : t.kind === 'chebi_entity' ? parseChEBI(text) : t.kind === 'chebi_search' ? parseChEBISearch(text) : parseUniProtSearch(text);
+    const data = t.kind === 'uniprot_entry' ? parseUniProt(text, file) : t.kind === 'chebi_entity' ? parseChEBI(text) : t.kind === 'chebi_search' ? parseChEBISearch(text) : t.kind === 'rhea_usage' ? parseRhea(text, t.key) : parseUniProtSearch(text);
     return { ok: true, file, sha, data };
   } catch (e) { return { ok: false, file, sha, error: e.message }; }
 }
@@ -126,6 +135,15 @@ function parseChEBI(text) {
     if (/synonym/.test(key)) for (const x of [].concat(v)) { const s = typeof x === 'string' ? x : x && (x.name || x.data || x.value); if (typeof s === 'string') out.synonyms.push(s); }
     if (out.stars == null && /stars?$/.test(key) && Number.isFinite(Number(v))) out.stars = Number(v);
   }, 0);
+  // conjugate acid/base 관계 (모체 ↔ 이온 종을 잇는 ChEBI 자체의 관계) 와 분류 여부(화학식 없음)
+  out.conjugates = [];
+  const rel = j && j.ontology_relations;
+  if (rel && typeof rel === 'object') for (const side of ['outgoing_relations', 'incoming_relations']) for (const r of rel[side] || []) {
+    if (!/conjugate/i.test(String(r.relation_type || ''))) continue;
+    for (const n of [r.final_id, r.init_id]) if (Number.isFinite(Number(n))) out.conjugates.push(`CHEBI:${n}`);
+  }
+  out.conjugates = [...new Set(out.conjugates)].filter((x) => x !== out.id);
+  out.isClass = !out.formula;
   if (!out.id) throw new Error('ChEBI 번호(CHEBI:…)를 찾을 수 없음');
   return out;
 }
@@ -143,9 +161,21 @@ function parseChEBISearch(text) {
 function parseUniProtSearch(text) { const j = JSON.parse(text); return { candidates: (j.results || []).map((r) => ({ accession: r.primaryAccession, taxon: r.organism && String(r.organism.taxonId), genes: (r.genes || []).map((g) => g.geneName && g.geneName.value).filter(Boolean) })).filter((r) => r.accession) }; }
 
 // ===== ③ 확인 =====
-const nn = (s) => M.normName(String(s || ''));
+// 이름 정규화 (서식만 벗긴다 — 물질을 바꾸지 않는다): HTML 꾸밈, 이온화 꼬리표 '(3−)'·'(1+)', 유니코드 빼기·곱셈 기호
+//   ChEBI 의 이온 종 이름은 모체 이름 + 이온화 꼬리표다('citrate(3−)'). 꼬리표는 역할(role)이 이미 적고 있으므로 이름 대조에서는 뺀다.
+const stripNameDeco = (s) => String(s || '').replace(/<[^>]*>/g, '').replace(/\(\s*\d*\s*[-−+±]\s*\)\s*$/, '').replace(/[−–]/g, '-').trim();
+const nn = (s) => M.normName(stripNameDeco(s));
 function nameHit(db, id, cands) { const mine = new Set(namesOf(db, id).map(nn)); return cands.filter(Boolean).find((c) => mine.has(nn(c))) || null; }
 // 검색 후보 고르기: 이름(정규화)이 개념 이름·별칭과 같은 후보가 정확히 하나일 때만
+// Rhea 표(TSV: 반응 번호 · 반응식 · 참여 ChEBI 번호) → 그 번호가 참여자로 쓰인 반응 수. 해석만 한다 (받기는 입법 서기).
+function parseRhea(text, id) {
+  const lines = String(text).trim().split('\n');
+  if (!lines.length || !/reaction identifier/i.test(lines[0])) throw new Error('Rhea TSV 머리글이 아님');
+  const want = String(id).toUpperCase(), rx = new RegExp(`(^|;)${want.replace(':', ':')}(;|$)`);
+  const hits = [];
+  for (const L of lines.slice(1)) { const f = L.split('\t'); if (f.length >= 3 && rx.test(f[2].toUpperCase())) hits.push({ rhea: f[0], equation: f[1] }); }
+  return { id: want, reactions: hits.length, examples: hits.slice(0, 3).map((h) => `${h.rhea} ${h.equation}`) };
+}
 function pickCandidate(db, id, data) {
   const mine = new Set(namesOf(db, id).map(nn));
   const hits = data.candidates.filter((c) => [c.name, ...(c.synonyms || [])].some((x) => x && mine.has(nn(x))));
@@ -178,7 +208,7 @@ function verifyIdentity(db, opt) {
   db = M.normalize(db); opt = Object.assign({ dir: INBOX, sync: false }, opt || {});
   const ix = M.index(db), tasks = plan(db, { dir: opt.dir }), rows = [];
   const holder = (db_, id) => [...ix.xrefs.get(`${db_}:${id}`) || []];
-  const row = (t, outcome, detail, extra) => rows.push(Object.assign({ sense: t.sense, label: t.label, kind: t.kind, key: t.key, gaps: t.gaps, outcome, detail }, extra || {}));
+  const row = (t, outcome, detail, extra) => rows.push(Object.assign({ sense: t.sense, label: t.label, kind: t.kind, key: t.key, role: t.role, gaps: t.gaps, outcome, detail }, extra || {}));
   for (const t of tasks) {
     const got = readTask(t);
     if (!got) { row(t, 'missing', `수신함에 없음 — ${t.file}.json`); continue; }
@@ -207,13 +237,47 @@ function verifyIdentity(db, opt) {
       if (fc.status === 'mismatch') fails.push(`화학식 ↔ 부분 구조: ${fc.note}`);
       const others = holder('ChEBI', c.id).filter((x) => x !== t.sense);
       if (others.length) fails.push(`${c.id} 는 이미 ${others.join(', ')} 에 있음`);
-      const s0 = db.senses[t.sense], existing = s0.xrefs.find((y) => y.db === 'ChEBI');
+      const s0 = db.senses[t.sense], existing = s0.xrefs.find((y) => y.db === 'ChEBI' && (t.role ? y.role === t.role : true) && y.id === c.id) ? null : s0.xrefs.find((y) => y.db === 'ChEBI' && (t.role ? y.role === t.role : !y.role));
       if (existing && existing.id !== c.id && !opt.sync) fails.push(`asserted ${existing.id} 를 ${c.id} 로 바꾸려면 sync`);
+      // 역할 규약 (ChEBI 실험): physiological 은 분류 항목일 수 없고, 모체와 함께 있으면 conjugate 관계로 이어져 있어야 한다
+      if (t.role === 'physiological' && c.isClass) fails.push(`${c.id} 는 분류 항목(화학식 없음) — pH 7.3 우세 종이 될 수 없음`);
+      let rhea = null;
+      if (t.role === 'physiological') {
+        const ru = readTask({ kind: 'rhea_usage', key: c.id, file: path.join(opt.dir || INBOX, fileOf('rhea_usage', c.id)) });
+        if (!ru || !ru.ok) fails.push(`반응 참여 자료(${fileOf('rhea_usage', c.id)}.tsv)가 수신함에 없음 — pH 7.3 우세 종 주장을 확인할 수 없음`);
+        else if (ru.data.reactions < RHEA_MIN) fails.push(`반응 참여 ${ru.data.reactions}회 < ${RHEA_MIN} — 반응 참여자로 쓰이는 종이 아님`);
+        else rhea = { reactions: ru.data.reactions, examples: ru.data.examples, file: path.relative(process.cwd(), ru.file) || ru.file, sha256: ru.sha };
+      }
+      if (t.role === 'parent' && Number(c.charge) !== 0) fails.push(`${c.id} 는 전하 ${c.charge} — 중성 모체가 아님`);
+      // 짝 역할과의 관계: 켤레 산·염기는 **수소와 전하만** 달라야 한다 (ATP C10H16… 0 ↔ ATP(4−) C10H12… −4).
+      //   ChEBI 의 conjugate 관계는 한 단계씩만 이어져 있어(ATP ↔ ATP(3−) ↔ ATP(4−)) 직접 연결을 요구할 수 없다 — 화학식으로 검사한다.
+      //   짝 항목 파일이 수신함에 있어야 한다 (받기는 입법 서기, 여기서는 읽기만).
+      let conj = null;
+      if (t.role && t.role !== 'class') {
+        const other = s0.xrefs.find((y) => y.db === 'ChEBI' && y.role && y.role !== t.role && y.role !== 'class');
+        if (other) {
+          const sib = readTask({ kind: 'chebi_entity', file: path.join(opt.dir || INBOX, fileOf('chebi_entity', other.id)) });
+          if (!sib || !sib.ok) { row(t, 'ambiguous', `짝 역할 ${other.id}(${other.role})의 항목 파일이 수신함에 없어 켤레 관계를 확인할 수 없음`, { file: got.file }); continue; }
+          const a = parseFormula(c.formula), b = parseFormula(sib.data.formula);
+          if (!a || !b) { row(t, 'ambiguous', `화학식을 원자 수로 풀 수 없어 켤레 관계를 확인할 수 없음 (${c.formula} / ${sib.data.formula})`, { file: got.file }); continue; }
+          const heavy = (o) => Object.fromEntries(Object.entries(o).filter(([e]) => e !== 'H'));
+          const same = JSON.stringify(heavy(a)) === JSON.stringify(heavy(b));
+          const dH = (a.H || 0) - (b.H || 0), dQ = Number(c.charge) - Number(sib.data.charge);
+          if (!same) { row(t, 'rejected', `${c.id} 와 ${other.id}(${other.role}) 는 수소 말고도 원자 수가 다름 — 켤레 산·염기가 아님 (${c.formula} / ${sib.data.formula})`, { file: got.file }); continue; }
+          // 양성자 하나가 떨어지면 H 하나와 전하 −1 이 같이 줄어든다 → dH = dQ (탈양성자 −1·−1, 양성자화 +1·+1)
+          if (dH !== dQ) { row(t, 'rejected', `수소 차이 ${dH} 와 전하 차이 ${dQ} 가 맞지 않음 — 양성자 하나당 전하 하나여야 함`, { file: got.file }); continue; }
+          conj = { with: other.id, role: other.role, dH, dCharge: dQ, direct: c.conjugates.includes(other.id) };
+        }
+      }
       if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file, formula: fc }); continue; }
       const ikOK = c.inchikey && V.fingerprints.InChIKey.kinds.includes(s0.kind);
       const dupIK = ikOK ? Object.entries(db.senses).find(([oid, o]) => oid !== t.sense && o.fingerprint && o.fingerprint.value === c.inchikey) : null;
-      row(t, 'verified', `검증 (이름 '${hit}', ${fc.status === 'ok' ? '부분 구조 원자 수 일치' : fc.note})`, { file: got.file, id: c.id, formula: fc, evidence, src,
-        facts: { db: 'ChEBI', id: c.id, from: existing ? existing.id : null, name: hit, formula: c.formula, charge: c.charge, formulaCheck: fc, inchikey: ikOK && !dupIK ? c.inchikey : null, inchikeyDuplicateOf: dupIK ? dupIK[0] : null } });
+      row(t, 'verified', `검증 (이름 '${hit}', ${fc.status === 'ok' ? '부분 구조 원자 수 일치' : fc.note}${t.role ? ` · 역할 ${t.role}` : ''}${rhea ? ` · Rhea 반응 참여 ${rhea.reactions}회` : ''}${conj ? ` · 켤레 ${conj.with} 와 수소 ${conj.dH >= 0 ? '+' : ''}${conj.dH}·전하 ${conj.dCharge >= 0 ? '+' : ''}${conj.dCharge}` : ''})`, { file: got.file, id: c.id, formula: fc, evidence, src,
+        facts: { db: 'ChEBI', id: c.id, role: t.role, conjugate: conj, rhea, from: existing ? existing.id : null, name: hit, formula: c.formula, charge: c.charge, formulaCheck: fc, inchikey: ikOK && !dupIK ? c.inchikey : null, inchikeyDuplicateOf: dupIK ? dupIK[0] : null } });
+    } else if (t.kind === 'rhea_usage') {
+      // 그 자체로는 신원 주장이 아니다 (도장 없음) — physiological 역할의 전제 조건으로 chebi_entity 판정이 이 파일을 읽는다
+      const r = got.data;
+      row(t, 'candidate', `반응 참여 ${r.reactions}회 (Rhea pH 7.3 큐레이션)${r.reactions < RHEA_MIN ? ` < ${RHEA_MIN} — 우세 종 주장을 뒷받침하지 못함` : ''}`, { file: got.file, id: r.id, reactions: r.reactions });
     } else if (t.kind === 'chebi_search') {
       const pick = pickCandidate(db, t.sense, got.data);
       if (!pick.id) { row(t, 'ambiguous', `${pick.reason}${pick.candidates.length ? ` — 후보 ${pick.candidates.slice(0, 5).map((c) => `${c.id}(${c.name || '?'})`).join(', ')}` : ''}`, { file: got.file, reason: pick.reason, candidates: pick.candidates.slice(0, 5) }); continue; }

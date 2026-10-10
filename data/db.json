@@ -6,7 +6,7 @@
       "T": 202,
       "D": 204,
       "S": 57,
-      "L": 83,
+      "L": 85,
       "O": 1
     }
   },
@@ -180,7 +180,9 @@
         "en": "epinephrine"
       },
       "aliases": [
-        "아드레날린"
+        "아드레날린",
+        "adrenaline",
+        "(R)-adrenaline"
       ]
     },
     "T000026": {
@@ -265,7 +267,9 @@
       },
       "aliases": [
         "Pi",
-        "인산 이온"
+        "인산 이온",
+        "phosphate",
+        "hydrogenphosphate"
       ]
     },
     "T000036": {
@@ -281,7 +285,8 @@
         "en": "cyclic AMP"
       },
       "aliases": [
-        "고리형 AMP"
+        "고리형 AMP",
+        "3',5'-cyclic AMP"
       ]
     },
     "T000038": {
@@ -354,7 +359,9 @@
         "en": "glucose-1-phosphate"
       },
       "aliases": [
-        "G1P"
+        "G1P",
+        "α-D-glucose 1-phosphate",
+        "alpha-D-glucose 1-phosphate"
       ]
     },
     "T000047": {
@@ -399,7 +406,8 @@
       },
       "aliases": [
         "Gsα",
-        "Gαs"
+        "Gαs",
+        "GNAS"
       ]
     },
     "T000052": {
@@ -1098,7 +1106,8 @@
         "en": "isocitrate"
       },
       "aliases": [
-        "이소시트르산"
+        "이소시트르산",
+        "D-threo-isocitrate"
       ]
     },
     "T000137": {
@@ -2653,8 +2662,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:71406",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 '(<i>R</i>)-adrenaline(1+)' · 화학식 C9H14NO3 (전하 1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_71406.json · sha256:eb46d165135d"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "UCTWMZQNUQWSLP-VIFPVBQESA-O",
+        "status": "verified"
+      },
       "components": [],
       "desc": [
         {
@@ -3148,7 +3169,15 @@
           "db": "ChEBI",
           "id": "CHEBI:15422",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP' · 화학식 C10H16N5O13P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15422.json · sha256:a670e0983205"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:30616",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP(4−)' · 화학식 C10H12N5O13P3 (전하 -4) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_30616.json · sha256:f08b56153e1e"
         }
       ],
       "fingerprint": {
@@ -3203,7 +3232,15 @@
           "db": "ChEBI",
           "id": "CHEBI:16761",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP' · 화학식 C10H15N5O10P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_16761.json · sha256:9258c8520c91"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:456216",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP(3−)' · 화학식 C10H12N5O10P2 (전하 -3) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_456216.json · sha256:1ed228cbc8ac"
         }
       ],
       "fingerprint": {
@@ -3263,7 +3300,15 @@
           "db": "ChEBI",
           "id": "CHEBI:16027",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP' · 화학식 C10H14N5O7P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_16027.json · sha256:598f1aaedc27"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:456215",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP(2−)' · 화학식 C10H12N5O7P (전하 -2) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_456215.json · sha256:ec01487109d8"
         }
       ],
       "fingerprint": {
@@ -3318,7 +3363,15 @@
           "db": "ChEBI",
           "id": "CHEBI:15996",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP' · 화학식 C10H16N5O14P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15996.json · sha256:5cfcfae1d683"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:37565",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP(4−)' · 화학식 C10H12N5O14P3 (전하 -4) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_37565.json · sha256:dc104325ae45"
         }
       ],
       "fingerprint": {
@@ -3373,7 +3426,15 @@
           "db": "ChEBI",
           "id": "CHEBI:17552",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP' · 화학식 C10H15N5O11P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_17552.json · sha256:90d9c12f49d4"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58189",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP(3−)' · 화학식 C10H12N5O11P2 (전하 -3) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_58189.json · sha256:743dbfff4cc0"
         }
       ],
       "fingerprint": {
@@ -3423,8 +3484,20 @@
       "n": 1,
       "kind": "ion",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:43474",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'hydrogenphosphate' · 화학식 HO4P (전하 -2) · 부분 구조 대조 ok (C0 N0 P1 S0 일치) · data/fetched/chebi/CHEBI_43474.json · sha256:f24cf6e1d046"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "NBIIXXVUZAFLBC-UHFFFAOYSA-L",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3495,7 +3568,15 @@
           "db": "ChEBI",
           "id": "CHEBI:17489",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'cAMP' · 화학식 C10H12N5O6P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_17489.json · sha256:9cd012a699fc"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58165",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 '3',5'-cyclic AMP(1−)' · 화학식 C10H11N5O6P (전하 -1) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_58165.json · sha256:a050c7df1700"
         }
       ],
       "fingerprint": {
@@ -4022,6 +4103,7 @@
           "db": "ChEBI",
           "id": "CHEBI:4167",
           "status": "verified",
+          "role": "physiological",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glucose' · 화학식 C6H12O6 (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_4167.json · sha256:9ef44756c98f"
         }
       ],
@@ -4061,6 +4143,7 @@
           "db": "ChEBI",
           "id": "CHEBI:28087",
           "status": "verified",
+          "role": "class",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glycogen' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_28087.json · sha256:4cb21197f16d"
         }
       ],
@@ -4101,8 +4184,15 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58601",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 α-D-glucose 1-phosphate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
       "components": [],
       "moieties": [
         {
@@ -4408,9 +4498,15 @@
         {
           "db": "UniProt",
           "id": "P63092",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v209, 서열 v1) · 이름 일치 'GNAS' · data/fetched/uniprot/P63092.json · sha256:84206ab2d603"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "6dedace6845efaa21a29f1b95f01b291bbbc27a72e2d8835a9ae15b3909c91bb",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -4461,7 +4557,21 @@
         }
       },
       "rule": [],
-      "obs": [],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 394,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P63092 서열 v1 (data/fetched/uniprot/P63092.json · sha256:84206ab2d603)"
+          },
+          "unit": "aa"
+        }
+      ],
       "note": "지질(팔미토일기)로 세포막 안쪽 면에 고정된다. 유전자 GNAS 는 여러 전사체를 만들며, 외부 ID 는 원본 대조 전(asserted)."
     },
     "D000054": {
@@ -4862,7 +4972,15 @@
           "db": "ChEBI",
           "id": "CHEBI:18405",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyridoxal 5'-phosphate' · 화학식 C8H10NO6P (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_18405.json · sha256:9b5e380134ba"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:597326",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyridoxal 5'-phosphate(2−)' · 화학식 C8H8NO6P (전하 -2) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_597326.json · sha256:3e66cd20b25d"
         }
       ],
       "fingerprint": {
@@ -4945,6 +5063,7 @@
           "db": "ChEBI",
           "id": "CHEBI:16412",
           "status": "verified",
+          "role": "class",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'lipopolysaccharide' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_16412.json · sha256:1761021018cb"
         }
       ],
@@ -9547,8 +9666,20 @@
       "n": 1,
       "kind": "ion",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:33019",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'diphosphate(3−)' · 화학식 HO7P2 (전하 -3) · 부분 구조 대조 ok (C0 N0 P2 S0 일치) · data/fetched/chebi/CHEBI_33019.json · sha256:0df99980abb4"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "XPPKVPWEQAFLFU-UHFFFAOYSA-K",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10187,7 +10318,15 @@
           "db": "ChEBI",
           "id": "CHEBI:15351",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'acetyl-CoA' · 화학식 C23H38N7O17P3S (전하 0) · 부분 구조 대조 ok (C23 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15351.json · sha256:ea5d881d8f09"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57288",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'acetyl-CoA(4−)' · 화학식 C23H34N7O17P3S (전하 -4) · 부분 구조 대조 ok (C23 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_57288.json · sha256:e7ff8a403fea"
         }
       ],
       "fingerprint": {
@@ -10249,7 +10388,15 @@
           "db": "ChEBI",
           "id": "CHEBI:15346",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'coenzyme A' · 화학식 C21H36N7O16P3S (전하 0) · 부분 구조 대조 ok (C21 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15346.json · sha256:6636a1cbaf91"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57287",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'coenzyme A(4−)' · 화학식 C21H32N7O16P3S (전하 -4) · 부분 구조 대조 ok (C21 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_57287.json · sha256:7cede4652a87"
         }
       ],
       "fingerprint": {
@@ -10287,8 +10434,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16452",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'oxaloacetate(2−)' · 화학식 C4H2O5 (전하 -2) · 부분 구조 대조 ok (C4 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16452.json · sha256:e8c4295f2453"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "KHPXUQMNIQBQEV-UHFFFAOYSA-L",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10319,8 +10478,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16947",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'citrate(3−)' · 화학식 C6H5O7 (전하 -3) · 부분 구조 대조 ok (C6 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16947.json · sha256:d1fd2dd0bb7a"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "KRKNYBCHXYNGOX-UHFFFAOYSA-K",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10351,8 +10522,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15562",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 '<small>D</small>-<i>threo</i>-isocitrate(3−)' · 화학식 C6H5O7 (전하 -3) · 부분 구조 대조 ok (C6 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_15562.json · sha256:ebd427169320"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "ODBLHEXUDAPZAU-ZAFYKAAXSA-K",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10383,8 +10566,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16810",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 '2-oxoglutarate(2−)' · 화학식 C5H4O5 (전하 -2) · 부분 구조 대조 ok (C5 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16810.json · sha256:d1a197f7fa8d"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "KPGXRSRHYNQIFN-UHFFFAOYSA-L",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10420,7 +10615,15 @@
           "db": "ChEBI",
           "id": "CHEBI:15380",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinyl-CoA' · 화학식 C25H40N7O19P3S (전하 0) · 부분 구조 대조 ok (C25 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15380.json · sha256:988fb724e7ef"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57292",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinyl-CoA(5−)' · 화학식 C25H35N7O19P3S (전하 -5) · 부분 구조 대조 ok (C25 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_57292.json · sha256:ae2b89d62eb7"
         }
       ],
       "fingerprint": {
@@ -10465,11 +10668,17 @@
       "xrefs": [
         {
           "db": "ChEBI",
-          "id": "CHEBI:26806",
+          "id": "CHEBI:30031",
           "status": "verified",
-          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinate' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_26806.json · sha256:051c1d52b59d"
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinate(2−)' · 화학식 C4H4O4 (전하 -2) · 부분 구조 대조 ok (C4 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_30031.json · sha256:4476b3e1421d"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "KDYFGRWQOYBRFD-UHFFFAOYSA-L",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10500,8 +10709,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:29806",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'fumarate(2−)' · 화학식 C4H2O4 (전하 -2) · 부분 구조 대조 ok (C4 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_29806.json · sha256:3ab81ddb9d51"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "VZCYOOQTPOCHFL-OWOJBTEDSA-L",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10532,8 +10753,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15589",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 '<small>L</small>-malate' · 화학식 C4H4O5 (전하 -2) · 부분 구조 대조 ok (C4 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_15589.json · sha256:13ab644aecdb"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "BJEPYKJPYRNKOW-REOHCLBHSA-L",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10564,8 +10797,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57540",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'NAD(1−)' · 화학식 C21H26N7O14P2 (전하 -1) · 부분 구조 대조 ok (C21 N7 P2 S0 일치) · data/fetched/chebi/CHEBI_57540.json · sha256:80dbce930214"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "BAWFJGJZGIEFAR-NNYOXOHSSA-M",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10601,7 +10846,15 @@
           "db": "ChEBI",
           "id": "CHEBI:16908",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'NADH' · 화학식 C21H29N7O14P2 (전하 0) · 부분 구조 대조 ok (C21 N7 P2 S0 일치) · data/fetched/chebi/CHEBI_16908.json · sha256:7ef3a84d9f6b"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57945",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'NADH(2−)' · 화학식 C21H27N7O14P2 (전하 -2) · 부분 구조 대조 ok (C21 N7 P2 S0 일치) · data/fetched/chebi/CHEBI_57945.json · sha256:30738be5a2d6"
         }
       ],
       "fingerprint": {
@@ -10644,7 +10897,15 @@
           "db": "ChEBI",
           "id": "CHEBI:16238",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FAD' · 화학식 C27H33N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_16238.json · sha256:e39ba5754cbd"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57692",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FAD(3−)' · 화학식 C27H30N9O15P2 (전하 -3) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_57692.json · sha256:6515767d5fff"
         }
       ],
       "fingerprint": {
@@ -10687,7 +10948,15 @@
           "db": "ChEBI",
           "id": "CHEBI:17877",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FADH2' · 화학식 C27H35N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_17877.json · sha256:3b7c983bb35e"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58307",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FADH<small><sub>2</sub></small>(2−)' · 화학식 C27H33N9O15P2 (전하 -2) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_58307.json · sha256:1411774bf173"
         }
       ],
       "fingerprint": {
@@ -11528,6 +11797,7 @@
           "db": "ChEBI",
           "id": "CHEBI:16526",
           "status": "verified",
+          "role": "physiological",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'carbon dioxide' · 화학식 CO2 (전하 0) · 부분 구조 대조 ok (C1 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16526.json · sha256:224182e044aa"
         }
       ],
@@ -12133,6 +12403,7 @@
           "db": "ChEBI",
           "id": "CHEBI:15361",
           "status": "verified",
+          "role": "physiological",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyruvate' · 화학식 C3H3O3 (전하 -1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_15361.json · sha256:ac954b0b1950"
         }
       ],
@@ -12180,8 +12451,20 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16651",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 '<small>L</small>-lactate' · 화학식 C3H5O3 (전하 -1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_16651.json · sha256:dd9f35973697"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "JVTAAEKCZFNVCJ-REOHCLBHSA-M",
+        "status": "verified"
+      },
       "components": [],
       "desc": [
         {
@@ -12228,7 +12511,15 @@
           "db": "ChEBI",
           "id": "CHEBI:15525",
           "status": "verified",
+          "role": "parent",
           "note": "ChEBI 조회 2026-10-10 · 이름 일치 'palmitoyl-CoA' · 화학식 C37H66N7O17P3S (전하 0) · 부분 구조 대조 ok (C37 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15525.json · sha256:7932c5e5c5fa"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57379",
+          "status": "verified",
+          "role": "physiological",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'palmitoyl-CoA(4−)' · 화학식 C37H62N7O17P3S (전하 -4) · 부분 구조 대조 ok (C37 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_57379.json · sha256:b6c42426b7f5"
         }
       ],
       "fingerprint": {
@@ -18972,6 +19263,45 @@
         ]
       },
       "found_in": "MHC I·II 기전 실험 (2026-10-09) — 확률 앙상블 24 궤적 (표면 펩타이드–MHC II Fano 0.77)"
+    },
+    "L000083": {
+      "target": "D000129",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "반응 참여자를 pH 7.3 우세 이온 종으로 적기 시작했지만 전하·양성자 수지는 검사하지 않는다 — 부분 구조 수지는 C·N·P·S 만 세고 H⁺ 를 모델에 두지 않는다(Rhea 반응식은 H⁺ 를 명시한다). 그래서 양성자 소비·생성이 있는 반응의 수지는 \"전하를 뺀 수지\" 로만 맞는다. 또 세포질 ATP·ADP 는 대부분 Mg²⁺ 착물(MgATP²⁻)인데 그것을 별개 종으로 두지 않았다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "수소 이온(H⁺)을 유한 저장소로 두고 pH 와 묶는 방식, 또는 전하 수지 검사(Σq_in = Σq_out)를 규칙 검사에 추가"
+          },
+          {
+            "kind": "manual",
+            "text": "Mg²⁺ 착물 종(MgATP²⁻ 등)과 그 해리 상수"
+          }
+        ]
+      },
+      "found_in": "ChEBI 규약 정리 (2026-10-10) — 모체·우세 종·분류 세 종류가 섞여 있던 것을 역할로 가름"
+    },
+    "L000084": {
+      "target": "D000047",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "중합체(글리코겐)는 분자 하나가 포도당 수천 단위라서 부분 구조(탄소 골격)를 선언할 수 없다. 그래서 가인산분해로 떨어지는 포도당-1-인산에 탄소 6 을 선언하면 수지가 탄소 0 → 6 으로 깨지고, 선언하지 않으면 ChEBI 화학식(C6H11O9P) 대조가 '부분 구조 0 ≠ 화학식 6' 으로 걸려 그 번호(CHEBI:58601)가 verified 로 올라가지 못한다. 지금은 선언하지 않는 쪽을 택했다 — 수지 검사를 지키고 신원 확인을 미룬다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "중합체를 '단위 수를 가진 저장소'로 다루는 형식(글리코겐 n 단위 → 부분 구조 n×탄소 6)과 그 단위 수의 출처"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "D000047",
+            "cell": "hepatocyte",
+            "location": "glycogen_granule"
+          }
+        ]
+      },
+      "found_in": "ChEBI 규약 정리 (2026-10-10) — 포도당-1-인산의 화학식 대조를 켜려다 드러남"
     }
   },
   "observations": {}

@@ -77,11 +77,11 @@
   // ===== 통제 어휘 매핑 =====
   const VTABLES = ['kinds', 'fields', 'actions', 'activity', 'effects', 'locations', 'faces', 'associations', 'features', 'siteTypes',
     'tissues', 'cells', 'taxa', 'obsProperties', 'evidenceLevels', 'gapTypes', 'kineticLaws', 'lifecycleFates', 'tiers', 'signatureLevels', 'commitmentCriteria',
-    'observables', 'uncertaintyKinds', 'noiseModels', 'calibrationKinds', 'obsUses'];
+    'observables', 'uncertaintyKinds', 'noiseModels', 'calibrationKinds', 'obsUses', 'xrefRoles'];
   const VNAME = { kinds: 'kind', fields: '분야(field)', actions: '변화 종류(action)', activity: '활성(activity)', effects: '조절 효과(effect)',
     locations: '위치(location)', faces: '막 면(face)', associations: '막 결합 방식(association)', features: '특징(feature)', siteTypes: '부위 종류',
     tissues: '조직(tissue)', cells: '세포(cell)', taxa: '종(species/taxa)', obsProperties: '관찰 속성(property)', evidenceLevels: '근거 수준', gapTypes: '한계 종류', kineticLaws: '속도 법칙', lifecycleFates: '분해 산물의 운명(fate)', tiers: '층(tier)', signatureLevels: '표지 수준(level)', commitmentCriteria: '결정 기준(criterion)',
-    observables: '측정량(observable)', uncertaintyKinds: '불확도 유형', noiseModels: '잡음 모형', calibrationKinds: '보정 종류', obsUses: '관찰 용도(use)' };
+    observables: '측정량(observable)', uncertaintyKinds: '불확도 유형', noiseModels: '잡음 모형', calibrationKinds: '보정 종류', obsUses: '관찰 용도(use)', xrefRoles: '외부 ID 역할(role)' };
   const VIX = {};
   for (const table of VTABLES) {
     const m = new Map();
@@ -99,7 +99,7 @@
   }
   const vlabel = (table, k) => (V[table][k] && (V[table][k].label || k)) || k;
   function parseXref(x) {
-    if (isObj(x)) return { db: str(x.db), id: str(x.id), status: str(x.status) || 'asserted', note: str(x.note) || undefined };
+    if (isObj(x)) return { db: str(x.db), id: str(x.id), status: str(x.status) || 'asserted', role: str(x.role) || undefined, note: str(x.note) || undefined };
     const s = str(x);
     for (const [db, v] of Object.entries(V.xrefs)) if (!['NCBIGene', 'PMID'].includes(db) && new RegExp(v.pattern).test(s)) return { db, id: s, status: 'asserted' };
     const i = s.indexOf(':');
@@ -288,7 +288,7 @@
     if (str(d.tier)) o.tier = str(d.tier);
     if (str(d.reference_species)) o.reference_species = str(d.reference_species);
     if (isObj(d.membrane)) { o.membrane = { association: str(d.membrane.association) }; for (const k of ['location', 'side']) if (str(d.membrane[k])) o.membrane[k] = str(d.membrane[k]); if (arr(d.membrane.route).length) o.membrane.route = arr(d.membrane.route).map(str).filter(Boolean); }
-    o.xrefs = arr(d.xrefs).map(parseXref).map((x) => (x.note ? x : { db: x.db, id: x.id, status: x.status }));
+    o.xrefs = arr(d.xrefs).map(parseXref).map((x) => Object.fromEntries(Object.entries({ db: x.db, id: x.id, status: x.status, role: x.role, note: x.note }).filter(([, v]) => v !== undefined)));
     if (str(d.unmapped)) o.unmapped = str(d.unmapped);
     if (isObj(d.fingerprint) && str(d.fingerprint.value)) o.fingerprint = { scheme: str(d.fingerprint.scheme), value: str(d.fingerprint.value), status: str(d.fingerprint.status) || 'asserted' };
     o.components = arr(d.components).filter(isObj).map((c) => { const x = { ref: str(c.ref), n: parseInt(c.n, 10) || 1 }; if (str(c.role)) x.role = str(c.role); return x; });

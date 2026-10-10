@@ -457,6 +457,19 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 형식을 바꿀 때는 `migrations/NNN-설명.mjs` 를 추가하고, 그 스크립트로 저장소를 변환한 뒤 아래 변경 기록에 적는다.
 - `data/patches/` 의 옛 기록은 당시 형식·ID 로 적혀 있다. 옛 ID ↔ 새 번호 대응은 `migrations/002-id-map.json`.
 
+## 8J. 외부 ID 의 역할 — ChEBI 규약 (형식 v10 확장, 2026-10-10)
+
+ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(ATP CHEBI:15422, 전하 0), pH 7.3 우세 이온 종(ATP(4−) CHEBI:30616), 이온화 상태를 묶은 분류(succinate CHEBI:26806, 화학식 없음). 규약을 선언하지 않으면 셋이 섞이고, 분류 항목은 화학식이 없어 **부분 구조 대조가 조용히 건너뛰어진다**.
+
+| 항목 | 규칙 |
+|---|---|
+| `xrefs[].role` (`xrefRoles`) | `physiological`(pH 7.3 우세 종 — **엔진·상호 운용이 읽는 단 하나**) · `parent`(중성 모체, 우세 종과 다를 때만) · `class`(단일 종이 없는 물질 — 중합체·불균일 물질) |
+| 한 db 에 항목이 둘 이상 | 역할이 서로 달라야 하고, 그중 하나는 `physiological` 이어야 한다. 같은 번호를 두 번 적을 수 없다 |
+| 분류 항목 | kind `small_molecule`·`ion` 에는 쓸 수 없다(거부). `macromolecule`·`molecule_class`(글리코겐·지질다당류)만 |
+| 모체만 적힌 저분자 | 경고 — 반응 참여자(physiological)를 함께 적는 것이 규약 |
+| 신원 확인 (`judicial/identity.js`) | `physiological` 주장은 두 가지를 통과해야 verified 가 된다: ① **켤레 관계** — 짝 역할 항목과 수소·전하만 달라야 함(H 차이 = 전하 차이, 무거운 원자 수는 같음; 짝 항목 파일이 수신함에 있어야 한다) ② **반응 참여** — 큐레이션된 반응 DB(Rhea)가 그 번호를 반응식 참여자로 3회 이상 씀(`rhea_usage` 과제, `data/fetched/rhea/*.tsv`) |
+| 지난 도장 | 데이터에서 빠진 주체의 도장은 무효가 아니라 **지난 도장**(계보 기록)으로 센다 — `attest` 가 따로 보고하고 validate 의 오류가 아니다 |
+
 ## 8I. 기전 프로그램과 시나리오 맥락 — MHC 실험 (형식 v10 확장)
 
 세포 상태가 표지의 근거를 가지려면 그 표지를 만드는 기전이 같은 계 안에서 돌아야 한다. `mechanisms` 로 경로를 걸면 그 경로의 단계(S)가 결합 적분(Rodas3) IR 의 반응이 된다 — 예전에는 공급·분해 규칙만 들어갔다.
@@ -475,6 +488,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-10 | 10 (확장 2) | 외부 ID 역할: `xrefs[].role`(`xrefRoles` physiological·parent·class), 역할 검사 넷(분류 항목 금지·역할 겹침·physiological 필수·같은 번호 두 번), 신원 확인에 켤레 관계(수소·전하만 차이)와 반응 참여(Rhea ≥ 3, 새 과제 종류 `rhea_usage`·수신함 `data/fetched/rhea/`), 증명 등록부의 '지난 도장' 구분. 데이터: ChEBI 항목 46개에 역할 선언(physiological 30·parent 14·class 2), 미확인 12건 닫음(Rhea 빈도로 고른 우세 종), 석신산의 분류 번호 CHEBI:26806 → succinate(2−) CHEBI:30031 교체, 원본 이름을 별칭으로 6건. 한계 2건(전하·양성자 수지 미검사, 중합체 단위 셈) (§8J) |
 | 2026-10-09 | 10 (확장) | 기전 프로그램: cell_state `mechanisms`(경로 → 그 경로의 단계가 결합 적분 IR 의 반응), 단계 속도 법칙 세 가지(질량 작용·가역 결합 정·역·미카엘리스–멘텐), 막에서만 일어나는 단계의 유효 부피 규약, 부위 조건이 있는 분해 규칙, 막(2D) 공급 규칙, 표지의 막 위치 허용, `membrane.route`(분비·섭취 경로의 막), 시나리오 `context { role: cause \| requirement \| baseline, state, note }` 와 사법부 맥락 판정, 어휘 세포 `dendritic_cell`. 데이터: MHC I·II 항원 처리·제시(정의항 27·단계 18·수지상 세포 상태 2·한계 9) — 모든 속도 상수는 가상 시나리오 값 (§8I) |
 | 2026-10-09 | 10 | 관찰 기록: 최상위 `observations`(O…, 측정량·SI 값·불확도·반복 수·조건·보정·출처·용도), `meta.next.O`, `kinetics.from`·`kinetics.lumped`(실측 상수 = 관찰의 파생값), 한계 종류 `Observation_Gap`, 어휘 observables·kineticUnits·uncertaintyKinds·noiseModels·calibrationKinds·obsUses, 계약 `schemas/obs/observation.schema.json`, 관찰 연산자 `compiler/obs_operator.js`. 관찰 기록은 바뀌지 않음(철회 표시만), 추정용과 검증용 관찰 분리. 데이터: 관찰 0건(실측값 없음 — 지어내지 않음), 규칙 kinetics 0건이라 이행할 상수 없음 (`migrations/009-v9-to-v10-observations.mjs`, 무손실) |
 | 2026-10-09 | 9 (확장 4) | 삼권 분립: `model.js`(공유 헌법 층) · `core.js`(행정 — 원자료만) · `judicial/`(검증·증명) · `legislative/`(병합·초안, 쓰기는 서기 `clerk.mjs` 만). xref·지문의 `status: verified` 는 증명 등록부 `attestations/registry.json` 의 유효한 도장이 있어야 통과(새 검사 규칙). `simulateRate` 결과에서 `audit`·`postMortem` 이 빠지고 원자료(`facts`·`kinUsed`·`firstFire`·기록점 원장)가 들어감 — 판정은 `judicial.auditRate`. 운명 엔진 결과에서 `audit`·`postMortem`·`arrest`·`mass.worst/series` 가 빠지고 `process.lo`·`process.cumDD` 가 들어감 — 판정은 `judicial/fate_audit.js`. 수치 결합점 등록부 `engine/coupling.js`. db.json 형식 변화 없음(지금 verified 0 건 — 마이그레이션 불필요). |

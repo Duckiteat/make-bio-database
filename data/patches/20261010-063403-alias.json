@@ -1,0 +1,175 @@
+{
+  "applied_at": "2026-10-10T06:34:03.186Z",
+  "result": {
+    "added": [
+      "L000084"
+    ],
+    "updated": [
+      "T000025",
+      "T000035",
+      "T000037",
+      "T000046",
+      "T000136",
+      "T000051"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000084"
+        ]
+      },
+      "updated": {
+        "terms": [
+          "T000025",
+          "T000035",
+          "T000037",
+          "T000046",
+          "T000136",
+          "T000051"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "T000025": [
+          "aliases"
+        ],
+        "T000035": [
+          "aliases"
+        ],
+        "T000037": [
+          "aliases"
+        ],
+        "T000046": [
+          "aliases"
+        ],
+        "T000136": [
+          "aliases"
+        ],
+        "T000051": [
+          "aliases"
+        ]
+      }
+    },
+    "why": "원본(ChEBI·UniProt)이 쓰는 이름을 별칭으로 받아들여 신원 확인이 이름으로 막히지 않게 한다 — 이름 대조를 느슨하게 하는 대신 권위 DB 의 자기 이름을 개념의 별칭으로 적는 쪽이 정직하다(같은 물질의 다른 표기). 포도당-1-인산의 부분 구조에 탄소 6 을 선언하려 했으나 그 탄소의 출처인 글리코겐이 중합체여서 부분 구조를 선언할 수 없고(가인산분해 수지가 탄소 0 → 6 으로 깨짐), 그 사실을 한계로 등록한다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000084",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000084",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 28
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "원본(ChEBI·UniProt)이 쓰는 이름을 별칭으로 받아들여 신원 확인이 이름으로 막히지 않게 한다 — 이름 대조를 느슨하게 하는 대신 권위 DB 의 자기 이름을 개념의 별칭으로 적는 쪽이 정직하다(같은 물질의 다른 표기). 포도당-1-인산의 부분 구조에 탄소 6 을 선언하려 했으나 그 탄소의 출처인 글리코겐이 중합체여서 부분 구조를 선언할 수 없고(가인산분해 수지가 탄소 0 → 6 으로 깨짐), 그 사실을 한계로 등록한다.",
+  "terms": [
+    {
+      "id": "T000025",
+      "aliases": [
+        "아드레날린",
+        "adrenaline",
+        "(R)-adrenaline"
+      ]
+    },
+    {
+      "id": "T000035",
+      "aliases": [
+        "Pi",
+        "인산 이온",
+        "phosphate",
+        "hydrogenphosphate"
+      ]
+    },
+    {
+      "id": "T000037",
+      "aliases": [
+        "고리형 AMP",
+        "3',5'-cyclic AMP"
+      ]
+    },
+    {
+      "id": "T000046",
+      "aliases": [
+        "G1P",
+        "α-D-glucose 1-phosphate",
+        "alpha-D-glucose 1-phosphate"
+      ]
+    },
+    {
+      "id": "T000136",
+      "aliases": [
+        "이소시트르산",
+        "D-threo-isocitrate"
+      ]
+    },
+    {
+      "id": "T000051",
+      "aliases": [
+        "Gsα",
+        "Gαs",
+        "GNAS"
+      ]
+    }
+  ],
+  "senses": [],
+  "steps": [],
+  "remove": [],
+  "limitations": [
+    {
+      "id": "L+polymer_unit",
+      "target": "D000047",
+      "type": "Structural_Gap",
+      "found_in": "ChEBI 규약 정리 (2026-10-10) — 포도당-1-인산의 화학식 대조를 켜려다 드러남",
+      "requirement": {
+        "text": "중합체(글리코겐)는 분자 하나가 포도당 수천 단위라서 부분 구조(탄소 골격)를 선언할 수 없다. 그래서 가인산분해로 떨어지는 포도당-1-인산에 탄소 6 을 선언하면 수지가 탄소 0 → 6 으로 깨지고, 선언하지 않으면 ChEBI 화학식(C6H11O9P) 대조가 '부분 구조 0 ≠ 화학식 6' 으로 걸려 그 번호(CHEBI:58601)가 verified 로 올라가지 못한다. 지금은 선언하지 않는 쪽을 택했다 — 수지 검사를 지키고 신원 확인을 미룬다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "중합체를 '단위 수를 가진 저장소'로 다루는 형식(글리코겐 n 단위 → 부분 구조 n×탄소 6)과 그 단위 수의 출처"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "D000047",
+            "cell": "hepatocyte",
+            "location": "glycogen_granule"
+          }
+        ]
+      }
+    }
+  ]
+}

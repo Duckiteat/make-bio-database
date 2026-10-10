@@ -184,6 +184,7 @@
       else if (!d._given.tier && isParticipantKind(d.kind)) { const t = defaultTier(d); if (t) d.tier = t; }
       if (d.reference_species) d.reference_species = voc('taxa', d.reference_species, id);
       else if (V.kinds[d.kind] && V.kinds[d.kind].species === 'required' && !d._given.reference_species) d.reference_species = V.defaultReferenceSpecies;
+      for (const x of d.xrefs || []) if (x.role) x.role = voc('xrefRoles', x.role, id);
       if (d.membrane) {
         d.membrane.association = voc('associations', d.membrane.association, id);
         if (d.membrane.location) d.membrane.location = voc('locations', d.membrane.location, id);

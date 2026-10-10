@@ -50,12 +50,14 @@ function verifyStamp(st, db, opt) {
     else {
       // 같은 확인을 다시: 그 외부 ID 를 잠시 asserted 로 되돌린 사본에서 신원 판결을 돌려 verified 가 나오는지
       const d = M.normalize(JSON.parse(JSON.stringify(db))), sense = d.senses[st.subject.sense];
-      const ns = st.subject.field === 'xref' ? st.subject.ns : 'ChEBI', x = sense && sense.xrefs.find((y) => y.db === ns && (st.subject.field !== 'xref' || y.id === st.subject.value));
-      if (!x) reasons.push('주체 외부 ID 가 데이터에 없음');
+      // 주체의 외부 ID: xref 면 그 값, 지문이면 그 지문을 낸 증거 항목(evidence.key)의 외부 ID — 한 정의항에 같은 db 항목이 여럿일 수 있다(역할)
+      const ns = st.subject.field === 'xref' ? st.subject.ns : 'ChEBI';
+      const x = sense && (sense.xrefs.find((y) => y.db === ns && (st.subject.field === 'xref' ? y.id === st.subject.value : y.id === st.evidence.key)) || (st.subject.field !== 'xref' ? sense.xrefs.find((y) => y.db === ns) : null));
+      if (!x) return { ok: false, stale: true, reasons: ['주체가 데이터에 없음 — 지난 도장 (그 값이 데이터에서 빠졌음, 위조가 아님)'], key: subjectKey(st.subject) };
       else {
         x.status = 'asserted';
         if (sense.fingerprint && st.subject.field === 'fingerprint') sense.fingerprint = undefined;
-        const rel = ID.fileOf(st.evidence.kind, st.evidence.key), dir = file.replace(/\.(json|fasta|txt)$/, '').slice(0, -rel.length - 1);
+        const rel = ID.fileOf(st.evidence.kind, st.evidence.key), dir = file.replace(/\.(json|fasta|txt|tsv)$/, '').slice(0, -rel.length - 1);
         const v = ID.verifyIdentity(d, { dir });
         const row = v.rows.find((r) => r.sense === st.subject.sense && r.kind === st.evidence.kind && r.key === st.evidence.key);
         if (!row || row.outcome !== 'verified') reasons.push(`재확인 실패 (${row ? row.outcome + ': ' + row.detail : '과제 없음'})`);
@@ -69,9 +71,15 @@ function verifyStamp(st, db, opt) {
 
 // 등록부 전체 → validate 에 넘길 유효 도장 열쇠 집합 + 실패 목록
 function validStamps(db, registry, opt) {
-  const ok = [], bad = [];
-  for (const st of (registry || emptyRegistry()).stamps) { const v = verifyStamp(st, db, opt); (v.ok ? ok : bad).push(v.ok ? v.key : { key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons }); }
-  return { keys: ok, failed: bad };
+  const ok = [], bad = [], stale = [];
+  for (const st of (registry || emptyRegistry()).stamps) {
+    const v = verifyStamp(st, db, opt);
+    if (v.ok) ok.push(v.key);
+    // 지난 도장: 주체(그 외부 ID)가 데이터에서 빠진 것 — 기록은 남기고(계보) 무효로 세지 않는다. 변조·재확인 실패와 구분한다.
+    else if (v.stale) stale.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });
+    else bad.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });
+  }
+  return { keys: ok, failed: bad, stale };
 }
 
 // 관문 판결 봉인: 서기가 쓸 db 가 사법부가 통과시킨 바로 그 db 임을 보증 (판결을 다른 db 에 재사용 불가)

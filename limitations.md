@@ -8,11 +8,11 @@
 |---|---|---|---|
 | Kinetic_Gap | 21 | 0 | 21 |
 | Concentration_Gap | 9 | 0 | 9 |
-| Structural_Gap | 23 | 2 | 25 |
+| Structural_Gap | 25 | 2 | 27 |
 | Resource_Gap | 6 | 0 | 6 |
 | Regulatory_Gap | 9 | 0 | 9 |
 | Observation_Gap | 2 | 0 | 2 |
-| Identity_Gap | 7 | 3 | 10 |
+| Identity_Gap | 1 | 9 | 10 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
 
@@ -89,6 +89,8 @@
 | L000078 | D000189 (펩타이드 적재 복합체) | Structural_Gap | MHC I 적재를 단순화했다: 적재 복합체 구성 비 1 (구조는 편집 모듈 둘), TAP 의 ATP 화학량 없음, ERAP1 다듬기·칼넥신 단계·면역프로테아좀 없음, 원천 단백질 하나당 펩타이드 1, 펩타이드를 한 부류로 묶어 에피토프 경쟁·친화도 편집을 다루지 않음<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 수동: ERAP1·칼넥신·면역프로테아좀 소단위 정의항과 단계, TAP 의 펩타이드당 ATP 화학량, 에피토프별 펩타이드 정의항 | open (0/1) | — |
 | L000079 | D000201 (펩타이드–MHC II 복합체) | Structural_Gap | 막 위 MHC 의 공간을 단순화했다: 막(2D) 참여자의 농도를 단계의 3D 위치 부피로 세고, 막에서의 합성은 시나리오가 준 막의 유효 부피로 속도를 정한다. 소포 수송은 1차 수송 하나이고 재순환 엔도솜·리소좀을 구분하지 않는다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 수동: 막 표면 밀도(분자/µm²)와 2D 반응 속도 상수, 소포 수송 구획 정의항<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 수지상 세포 · 소포체 내강 | open (0/2) | — |
 | L000081 | D000178 (MHC II 항원 처리·제시) | Structural_Gap | 막에서만 일어나는 단계(소포 수송·막 안 조립)의 반응 부피 규약이 두 적분 경로에서 다르다. 운명 엔진은 시나리오 volumes[막] 을 유효 부피로 써서 속도 법칙을 그대로 적용하고, simulateRate 는 3D 참여자가 없으면 속도 상수를 쓰지 않고 '즉시'로 처리한다(approx 표시). 그래서 MHC 경로에서 두 경로의 궤적을 서로의 수렴 기준(Δt → 0)으로 쓸 수 없고, 지금은 운명 엔진을 허용 오차 1/1000 의 같은 적분기와만 대조한다(상대 L2 2.8e-8). 막 표면 밀도(분자/µm²)와 2D 반응 속도 상수가 들어오면 두 경로를 같은 규약으로 맞출 수 있다.<br>발견: MHC I·II 기전 실험 (2026-10-09) — 같은 시나리오를 운명 엔진(결합 Rodas3)과 simulateRate 로 돌린 대조 | ✗ 수동: 막(2D) 묶음의 표면 밀도와 2D 속도 상수 단위(µm²·s⁻¹)를 형식에 넣고, simulateRate 와 운명 엔진이 같은 반응 부피·면적 규약을 쓰게 맞춤<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 수지상 세포 · 소포체 막 | open (0/2) | — |
+| L000083 | D000129 (대사물 저장소 모델) | Structural_Gap | 반응 참여자를 pH 7.3 우세 이온 종으로 적기 시작했지만 전하·양성자 수지는 검사하지 않는다 — 부분 구조 수지는 C·N·P·S 만 세고 H⁺ 를 모델에 두지 않는다(Rhea 반응식은 H⁺ 를 명시한다). 그래서 양성자 소비·생성이 있는 반응의 수지는 "전하를 뺀 수지" 로만 맞는다. 또 세포질 ATP·ADP 는 대부분 Mg²⁺ 착물(MgATP²⁻)인데 그것을 별개 종으로 두지 않았다<br>발견: ChEBI 규약 정리 (2026-10-10) — 모체·우세 종·분류 세 종류가 섞여 있던 것을 역할로 가름 | ✗ 수동: 수소 이온(H⁺)을 유한 저장소로 두고 pH 와 묶는 방식, 또는 전하 수지 검사(Σq_in = Σq_out)를 규칙 검사에 추가<br>✗ 수동: Mg²⁺ 착물 종(MgATP²⁻ 등)과 그 해리 상수 | open (0/2) | — |
+| L000084 | D000047 (글리코겐) | Structural_Gap | 중합체(글리코겐)는 분자 하나가 포도당 수천 단위라서 부분 구조(탄소 골격)를 선언할 수 없다. 그래서 가인산분해로 떨어지는 포도당-1-인산에 탄소 6 을 선언하면 수지가 탄소 0 → 6 으로 깨지고, 선언하지 않으면 ChEBI 화학식(C6H11O9P) 대조가 '부분 구조 0 ≠ 화학식 6' 으로 걸려 그 번호(CHEBI:58601)가 verified 로 올라가지 못한다. 지금은 선언하지 않는 쪽을 택했다 — 수지 검사를 지키고 신원 확인을 미룬다.<br>발견: ChEBI 규약 정리 (2026-10-10) — 포도당-1-인산의 화학식 대조를 켜려다 드러남 | ✗ 수동: 중합체를 '단위 수를 가진 저장소'로 다루는 형식(글리코겐 n 단위 → 부분 구조 n×탄소 6)과 그 단위 수의 출처<br>✗ 관찰 copy_number @ D000047 글리코겐 · 간세포 · 글리코겐 과립 | open (0/2) | — |
 
 ## Resource_Gap — 자원(저장소) 공백
 
@@ -134,13 +136,13 @@
 
 | ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |
 |---|---|---|---|---|---|---|
-| L000028 | D000027 (에피네프린) | Identity_Gap | 에피네프린의 ChEBI 항목(adrenaline 대 (R)-adrenaline)을 원본에서 골라 번호를 확인 — 지금은 unmapped: ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000027 에피네프린 | open (0/1) | — |
-| L000029 | D000037 (무기 인산) | Identity_Gap | 무기 인산을 대표할 ChEBI 항목(phosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000037 무기 인산 | open (0/1) | — |
-| L000030 | D000048 (포도당-1-인산) | Identity_Gap | 포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000048 포도당-1-인산 | open (0/1) | — |
+| L000028 | D000027 (에피네프린) | Identity_Gap | 에피네프린의 ChEBI 항목(adrenaline 대 (R)-adrenaline)을 원본에서 골라 번호를 확인 — 지금은 unmapped: ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000027 에피네프린 | resolved (1/1) | — |
+| L000029 | D000037 (무기 인산) | Identity_Gap | 무기 인산을 대표할 ChEBI 항목(phosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000037 무기 인산 | resolved (1/1) | — |
+| L000030 | D000048 (포도당-1-인산) | Identity_Gap | 포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000048 포도당-1-인산 | resolved (1/1) | — |
 | L000031 | D000062 (피리독살 인산) | Identity_Gap | 피리독살 인산의 ChEBI 번호를 원본에서 확인 — 지금은 unmapped: ChEBI 번호 원본 미확인 (네트워크로 대조할 수 없어 비워 둠)<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000062 피리독살 인산 | resolved (1/1) | — |
-| L000032 | D000122 (피로인산) | Identity_Gap | 피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000122 피로인산 | open (0/1) | — |
+| L000032 | D000122 (피로인산) | Identity_Gap | 피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000122 피로인산 | resolved (1/1) | — |
 | L000033 | D000101 (TNF mRNA) | Identity_Gap | TNF mRNA 전사체 ID — 외부 ID 어휘에 RefSeq(NM_)·Ensembl 전사체 체계가 없어 정체성을 외부 ID 로 고정하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ 수동: vocab.js xrefs 에 전사체 ID 체계(RefSeq NM_ 또는 Ensembl ENST)를 사람이 검토해 추가한 뒤, 원본에서 확인한 TNF 표준 전사체 ID 를 등록 | open (0/1) | — |
-| L000041 | D000148 (시트르산 회로) | Identity_Gap | 시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped<br>발견: 시트르산 회로를 넣으면서 (Identity_Gap) | ✓ ChEBI ID @ D000134 아세틸-CoA<br>✓ ChEBI ID @ D000135 조효소 A<br>✗ ChEBI ID @ D000136 옥살로아세트산<br>✗ ChEBI ID @ D000137 시트르산<br>✗ ChEBI ID @ D000138 아이소시트르산<br>✗ ChEBI ID @ D000139 2-옥소글루타르산<br>✓ ChEBI ID @ D000140 석시닐-CoA<br>✓ ChEBI ID @ D000141 석신산<br>✗ ChEBI ID @ D000142 푸마르산<br>✗ ChEBI ID @ D000143 말산<br>✓ ChEBI ID @ D000160 이산화탄소<br>✗ ChEBI ID @ D000144 NAD⁺<br>✓ ChEBI ID @ D000145 NADH<br>✓ ChEBI ID @ D000146 FAD<br>✓ ChEBI ID @ D000147 FADH₂ | open (8/15) | — |
+| L000041 | D000148 (시트르산 회로) | Identity_Gap | 시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped<br>발견: 시트르산 회로를 넣으면서 (Identity_Gap) | ✓ ChEBI ID @ D000134 아세틸-CoA<br>✓ ChEBI ID @ D000135 조효소 A<br>✓ ChEBI ID @ D000136 옥살로아세트산<br>✓ ChEBI ID @ D000137 시트르산<br>✓ ChEBI ID @ D000138 아이소시트르산<br>✓ ChEBI ID @ D000139 2-옥소글루타르산<br>✓ ChEBI ID @ D000140 석시닐-CoA<br>✓ ChEBI ID @ D000141 석신산<br>✓ ChEBI ID @ D000142 푸마르산<br>✓ ChEBI ID @ D000143 말산<br>✓ ChEBI ID @ D000160 이산화탄소<br>✓ ChEBI ID @ D000144 NAD⁺<br>✓ ChEBI ID @ D000145 NADH<br>✓ ChEBI ID @ D000146 FAD<br>✓ ChEBI ID @ D000147 FADH₂ | resolved (15/15) | — |
 | L000064 | D000167 (피루브산) | Identity_Gap | 피루브산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✓ ChEBI ID @ D000167 피루브산 | resolved (1/1) | — |
-| L000065 | D000168 (젖산) | Identity_Gap | L-젖산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ ChEBI ID @ D000168 젖산 | open (0/1) | — |
+| L000065 | D000168 (젖산) | Identity_Gap | L-젖산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✓ ChEBI ID @ D000168 젖산 | resolved (1/1) | — |
 | L000066 | D000169 (팔미토일-CoA) | Identity_Gap | 팔미토일-CoA ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✓ ChEBI ID @ D000169 팔미토일-CoA | resolved (1/1) | — |
