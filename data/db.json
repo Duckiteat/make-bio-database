@@ -8874,7 +8874,33 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 1678,
+          "context": {
+            "scope": "RefSeq 기준 전사체 NM_000594.4 (성숙 mRNA, 5′·3′ UTR 포함)",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1093/nar/gkv1189",
+                "citation": "O'Leary et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "26553804",
+                "citation": "O'Leary et al., 2016"
+              }
+            ]
+          },
+          "unit": "nt",
+          "note": "NCBI Nucleotide 의 NM_000594.4 레코드 길이 1678 nt — eutils esummary 의 slen 으로 조회했다(2026-10-10). 출처는 RefSeq 데이터베이스 논문이고 값 자체는 그 레코드다. 폴리(A) 꼬리는 레코드에 포함되지 않으므로 생체 내 전사체는 이보다 길다 — 재활용 뉴클레오타이드 수의 하한이다."
+        }
+      ]
     },
     "D000102": {
       "term": "T000100",
@@ -18674,7 +18700,7 @@
       "target": "D000101/rule/turnover",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "TNF mRNA 반감기(대식세포, LPS 자극 조건) — 없으면 mRNA 가 분해되지 않고 쌓인다",
+        "text": "사람 TNF mRNA 의 반감기(대식세포·LPS 자극)를 찾지 못했다 — 없으면 mRNA 가 분해되지 않고 쌓인다. 찾은 것: Hao & Baltimore 2009(PMID 19198593)가 LPS 자극 **생쥐** 골수 유래 대식세포와 3T3 섬유아세포에서 전사체별 반감기를 전장 측정했고 BioNumbers 112438·112439 로도 등재되어 있다 — 그러나 **생쥐 값이므로 사람 상수로 쓸 수 없다**(관문이 kinetics.from 의 종을 대조해 거부한다). 공개 접근 전문에서 사람(THP-1·사람 단핵구·사람 대식세포) 측정값은 집어내지 못했다",
         "needs": [
           {
             "kind": "kinetics",
@@ -18685,13 +18711,13 @@
           }
         ]
       },
-      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+      "found_in": "한계 닫기 2026-10-10 (Europe PMC·BioNumbers 조회)"
     },
     "L000025": {
       "target": "D000086/rule/basal_turnover",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "유리 IκBα 의 기저 분해 반감기 — 없으면 유리 IκBα 가 분해되지 않는다",
+        "text": "유리 IκBα 의 기저 분해 반감기를 찾지 못했다 — 없으면 유리 IκBα 가 분해되지 않는다. NF-κB 분야에서 널리 쓰이는 수(유리 IκBα 는 수 분, NF-κB 에 묶인 것은 훨씬 길다)이지만 공개 접근 전문에서 측정 조건·불확도와 함께 집어내지 못했다. BioNumbers 에는 없다(단백질 반감기 중위값 6.9 h 만 있다 — 특정 단백질 값이 아니다)",
         "needs": [
           {
             "kind": "kinetics",
@@ -18702,7 +18728,7 @@
           }
         ]
       },
-      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+      "found_in": "한계 닫기 2026-10-10 (Europe PMC·BioNumbers 조회)"
     },
     "L000026": {
       "target": "D000101",
@@ -19140,7 +19166,7 @@
       "target": "D000039",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "cAMP 의 세포질 확산 계수 (SI m^2/s) — 없으면 Tier 3 영역 승격 판단(Damköhler)과 경계 유속을 계산할 수 없다",
+        "text": "cAMP 의 세포질 확산 계수 (SI m²/s) — 없으면 Tier 3 영역 승격 판단(Damköhler)과 경계 유속을 계산할 수 없다. ATP(L000046)와 같은 문제를 안고 있다: 세포질 확산 계수는 세포 유형·온도·혼잡에 따라 달라지므로 조건과 함께 적어야 한다. 심근 세포에서 cAMP 확산이 국소화(microdomain)로 크게 제한된다는 보고가 있어 \"세포질 전체\" 하나의 값이 적절한지부터 확인해야 한다",
         "needs": [
           {
             "kind": "obs",
@@ -19150,13 +19176,13 @@
           }
         ]
       },
-      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+      "found_in": "한계 닫기 2026-10-10"
     },
     "L000045": {
       "target": "D000089",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "NF-κB p50–p65 이량체의 세포질·핵질 확산 계수 — 핵 이동 전후 공간 기울기를 Tier 3 로 풀 때 필요",
+        "text": "NF-κB p50–p65 이량체의 세포질·핵질 확산 계수 — 핵 이동 전후 공간 기울기를 Tier 3 로 풀 때 필요. 형광 상관 분광법(FCS)으로 측정된 값이 있을 것으로 보이지만 공개 접근 전문에서 사람 세포 측정값을 집어내지 못했다. 핵질과 세포질 값이 서로 다르므로 두 위치를 따로 적어야 하고(크로마틴 결합이 핵에서 겉보기 확산을 크게 낮춘다), 측정이 \"겉보기 확산\" 인지 \"자유 확산\" 인지도 함께 적어야 한다",
         "needs": [
           {
             "kind": "obs",
@@ -19172,13 +19198,13 @@
           }
         ]
       },
-      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+      "found_in": "한계 닫기 2026-10-10"
     },
     "L000046": {
       "target": "D000032",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "ATP 의 세포질 확산 계수 — Tier 1 연속 장의 청산 시간 상수",
+        "text": "ATP 의 세포질 확산 계수를 **단일 값으로 적을 수 없다**. 종설(Carbon-to-ATP ratios across the kingdoms of life, DOI 10.1016/j.isci.2026.116849)이 세포질 유효 확산 계수가 100 µm²/s 까지 낮게 관측되기도 하고 pH 7.31·5 °C 에서 153 µm²/s, pH 7.18·40 °C 에서 480 µm²/s 로 온도·pH 에 따라 3 배 이상 변하며, 긴 시간 척도에서는 더 작아진다고 적는다(경로·미세 점도·분자 혼잡·막 교환이 함께 작용). 그래서 이 한계는 \"값이 없다\" 가 아니라 **\"조건을 함께 적어야 한다\"** 다 — 넣을 때 context.condition 에 온도·pH·세포 유형·측정 시간 척도를 적고, 그 조건에서 측정한 원 논문을 출처로 삼는다. 지금 형식은 그것을 담을 수 있다(obs 의 context.scope·condition)",
         "needs": [
           {
             "kind": "obs",
@@ -19188,7 +19214,7 @@
           }
         ]
       },
-      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+      "found_in": "한계 닫기 2026-10-10 (Europe PMC 전문 조회)"
     },
     "L000047": {
       "target": "D000116",

@@ -574,14 +574,18 @@ test('매 단계 질량 감사: 단계에서 부산물(피로인산)을 빼면 �
   const a = r.audit.find((x) => x.code === 'AUDIT_MASS' && x.where.startsWith(s5) && /부분 구조 수지 위반/.test(x.msg));
   assert.ok(a && /t=0\.\d+ s 첫 발화/.test(a.msg) && /인산기 단위 -2/.test(a.msg), '단계·시각·부분 구조를 짚음');
 });
+// v11: TNF mRNA 에 서열 길이(1678 nt)가 데이터로 들어왔으므로, '재활용 화학량을 모르는 경우' 의 계약은
+//   그 관찰을 뺀 고정물로 시험한다 (계약 자체는 그대로 — 모르면 소실로 처리하고 한계를 제안한다).
+let _noseq = null;
+const noSeq = () => (_noseq ||= (() => { const d = JSON.parse(JSON.stringify(BASE)); d.senses[TNFM2].obs = d.senses[TNFM2].obs.filter((o) => o.property !== 'sequence_length'); return DefDB.normalize(d); })());
 test('분해(결정론·확률적): 1차 원장, 재활용 화학량을 모르면 소실로 처리하고 한계를 제안, seed 가 같으면 같은 결과', () => {
   const sc = scenario('lps-hypothetical.json'), m = `${TNFM2}|nucleoplasm`;
-  const det = ORCH.runRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01 });
+  const det = ORCH.runRate(noSeq(), TLRP, { scenario: sc, t_end: 20, dt: 0.01 });
   assert.ok(det.ledger[m].degradation < 0 && det.ledger[`${id('뉴클레오타이드')}|nucleoplasm`].recycle === 0);
-  const gap = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === TNFM2 && BASE.limitations[k].type === 'Structural_Gap');
+  const gap = Object.keys(noSeq().limitations).find((k) => noSeq().limitations[k].target === TNFM2 && noSeq().limitations[k].type === 'Structural_Gap');
   assert.ok(det.audit.some((a) => a.code === 'AUDIT_RESOURCE' && /서열 길이/.test(a.msg) && a.suggestion.includes(gap)));
-  const s1 = ORCH.runRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
-  const s2 = ORCH.runRate(BASE, TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
+  const s1 = ORCH.runRate(noSeq(), TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
+  const s2 = ORCH.runRate(noSeq(), TLRP, { scenario: sc, t_end: 20, dt: 0.01, stochastic: true, seed: 7 });
   assert.equal(s1.ledger[m].degradation, s2.ledger[m].degradation);
   assert.ok(Number.isInteger(-s1.ledger[m].degradation) || s1.ledger[m].degradation === 0, '확률적 분해는 정수 분자');
   assert.ok(Math.abs(s1.ledger[m].degradation - det.ledger[m].degradation) < 6 * Math.sqrt(-det.ledger[m].degradation) + 3, '기댓값 근처');
@@ -607,7 +611,7 @@ test('무한 풀 방식(v6 동작)도 그대로: 저장소 감사 없음, 교환
 });
 test('한계 후보 탐지: 속도 없는 공급·분해 규칙과 서열 길이 없는 재활용이 등록되지 않으면 후보로', () => {
   assert.deepEqual(J.detectGaps(BASE), []);
-  const d = JSON.parse(JSON.stringify(BASE));
+  const d = JSON.parse(JSON.stringify(noSeq()));
   for (const [k, l] of Object.entries(d.limitations)) if (/atp_supply|^D000101$/.test(l.target) || l.target === TNFM2) delete d.limitations[k];
   for (const s of Object.values(d.senses)) for (const a of s.addresses || []) if (!d.limitations[a.limitation]) s.addresses = s.addresses.filter((x) => d.limitations[x.limitation]);
   const c = J.detectGaps(d);
