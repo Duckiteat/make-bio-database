@@ -7,6 +7,7 @@
 'use strict';
 const crypto = require('crypto');
 const FA = require('./fate_audit.js');
+const REL = require('./reliability.js');
 
 const sha = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(x)).digest('hex');
 const h = (s) => (s == null ? '—' : `${(s / 3600).toFixed(2)} h`);
@@ -118,6 +119,8 @@ function processReport(r, ctx) {
   const nData = P.ruleInfo.filter((R) => R.src === 'data').length + P.ruleInfo.reduce((t, R) => t + R.mods.filter((m) => !(sc.kinetics || {})[m.ref] && (r.ix.ruleOf(m.ref) || {}).kinetics).length, 0);
   chk('매개변수 출처 — 쓰인 상수가 모두 해시된 입력(데이터·시나리오)의 값 그대로', kinOK, `시나리오 ${nScen} · 데이터 ${nData}${sc.hypothetical ? ' · 시나리오는 hypothetical (가상 값)' : ''}`);
   chk('엔진 감사에 AUDIT_MASS 없음', !r.audit.some((a) => a.code === 'AUDIT_MASS'), r.audit.filter((a) => a.code === 'AUDIT_MASS').map((a) => a.msg).join(' / ') || '없음');
+  // 상수 등급 (신뢰 지표 ②): 쓰인 상수가 문턱을 넘는지 — 가상 값은 시나리오가 hypothetical 을 선언했을 때만
+  if (r.grades) chk(`상수 등급 — 쓰인 상수가 문턱(${r.grades.min}) 이상, 가상 값은 hypothetical 선언 아래에서만`, r.grades.ok, REL.constantText(r.grades));
   // 시나리오 맥락 (원인 | 일반 상황) — 선언이 실행과 맞지 않으면 보고서의 해석이 거짓이 되므로 FAIL
   const cx = FA.contextVerdict(r, sc);
   const ROLE = { cause: '원인', requirement: '필수성', baseline: '일반 상황' };
@@ -202,6 +205,7 @@ function processReportMarkdown(rep) {
   out.push('', '### 예측과의 차이', '');
   out.push(rep.disc.length ? rep.disc.map((d) => `- ${d}`).join('\n') : `- 없음 — 예측(${ctx.scenario.expect ? '시나리오 expect' : '구동된 전이의 목표'})과 관찰이 같다`);
   out.push('', '## 5. 기술 부록 (Technical Appendix)', '', '| 지표 | 값 |', '|---|---|');
+  if (r.grades) out.push(`| 상수 등급 (신뢰 지표) | ${REL.constantText(r.grades)} |`);
   out.push(`| 관찰 격자 Δ · 기간 | ${r.dt} s · ${h(r.t_end)} (${r.process.times.length} 단계) |`);
   out.push(`| 부분 구조 원장 편차 (최대 · 끝) | ${fmt(r.mass.worst)} · ${fmt(r.mass.series[r.mass.series.length - 1])} (허용 ${r.mass.tolerance}) |`);
   out.push(`| 저장소 재생 편차 (최대) | ${fmt(r.mass.replayWorst)} |`);

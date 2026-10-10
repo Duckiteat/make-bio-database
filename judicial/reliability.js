@@ -8,8 +8,11 @@
 //   anchor 기준값 · parameter 매개변수 · bounded 구간값(오차 막대와 함께) · legacy 지난값 · reference 참고(계산 금지) · blocked 차단(한계로만)
 // 점수는 손으로 매기지 않는다 — 도장·근거·관찰 기록에서 계산한다. 그래서 데이터가 스스로 등급을 높일 수 없다.
 // 이 파일은 판정만 한다: 쓰기·엔진 실행·데이터 수정 없음. 추세 점검(시간 축)은 아직 없으므로 trend 는 'unchecked' 이고 anchor 는 나오지 않는다.
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('../model.js'));
+  else root.DefDBReliability = factory(root.DefDBModel);
+})(typeof self !== 'undefined' ? self : this, function (M) {
 'use strict';
-const M = require('../model.js');
 
 const S_LABEL = { 4: '권위 DB + 사법부 도장', 3: '동료 심사 문헌(DOI·PMID)', 2: '출처 없음·추론·예측', 0: '확인 불가' };
 const D_LABEL = { 4: '추적 가능한 실측·도구 계산', 3: '요약 상수·정체성 사실', 2: '추론·단순화·출처 없는 값' };
@@ -129,4 +132,40 @@ function gradeText(rows, opt) {
   return L.join('\n');
 }
 
-module.exports = { S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, items, summary, meets, gradeText };
+// ===== 관문 (②): 시뮬레이션이 읽는 상수의 등급 =====
+// IR 은 규칙마다 쓰인 상수를 evidence·src 와 함께 싣는다 — 사법부는 그 IR 만 보고 판정한다 (엔진을 부르지 않음).
+//   src 'data'     → 그 상수의 근거로 등급을 계산하고, 문턱(기본 parameter) 미달이면 위반
+//   src 'scenario' → 가상 값이므로 등급 밖('hypothetical'): 시나리오가 hypothetical 을 선언했을 때만 허용
+// 문턱은 시나리오 min_grade 로 올릴 수 있다. 판정만 하고 멈추는 것은 부르는 쪽(조정자·dbtool)이 한다.
+const DEFAULT_MIN = 'parameter';
+function constants(ir, sc, opt) {
+  sc = sc || {}; opt = opt || {};
+  const ctx = { evidenceShas: (opt.stamps || []).map((st) => (st.evidence || {}).sha256).filter(Boolean) };
+  const out = [];
+  const one = (ref, kind, k) => {
+    if (!k) return;
+    if (k.src === 'scenario') { out.push({ ref, kind, src: 'scenario', grade: 'hypothetical', s: null, d: null, why: '시나리오가 준 가상 값 — 등급 밖' }); return; }
+    const r = scoreEvidence(k.evidence, ctx);
+    out.push({ ref, kind, src: k.src || 'data', ...r, grade: gradeOf(r.s, r.d, 'unchecked') });
+  };
+  for (const R of ir.rules || []) {
+    one(R.ref, R.kind, R.k);
+    for (const m of R.mods || []) one(m.ref, 'modulation', m.k);
+  }
+  return out;
+}
+function constantVerdict(ir, sc, opt) {
+  sc = sc || {}; opt = opt || {};
+  const min = opt.min || sc.min_grade || DEFAULT_MIN;
+  if (!ORDER.includes(min)) return { error: `등급 문턱 '${min}' — ${ORDER.join(' | ')}` };
+  const rows = constants(ir, sc, opt), hypo = !!sc.hypothetical;
+  const violations = rows.filter((r) => (r.grade === 'hypothetical' ? !hypo : !meets(r, min)))
+    .map((r) => ({ ...r, msg: r.grade === 'hypothetical' ? '가상 값인데 시나리오가 hypothetical 을 선언하지 않음' : `등급 ${r.grade} < ${min} (S${r.s}D${r.d}) — ${r.why}` }));
+  const byGrade = {};
+  for (const r of rows) byGrade[r.grade] = (byGrade[r.grade] || 0) + 1;
+  return { min, hypothetical: hypo, n: rows.length, byGrade, rows, violations, ok: !violations.length };
+}
+const constantText = (v) => (v.error ? v.error : `문턱 ${v.min}${v.hypothetical ? ' · 시나리오는 hypothetical (가상 값 허용)' : ''} · 상수 ${v.n} (${Object.entries(v.byGrade).map(([g, n]) => `${g} ${n}`).join(' · ') || '없음'})${v.violations.length ? ` · 위반 ${v.violations.length}: ${v.violations.slice(0, 3).map((x) => `${x.ref} ${x.msg}`).join(' / ')}` : ''}`);
+
+return Object.freeze({ DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, items, summary, meets, gradeText });
+});

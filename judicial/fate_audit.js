@@ -10,6 +10,7 @@ const J = require('./judicial.js');
 const { verifyFate } = require('./verifier.js');
 const { checkFateRaw } = require('./contract.js');
 const { verifyIR } = require('./derivative.js');
+const REL = require('./reliability.js'); // 신뢰 지표 — 쓰인 상수의 등급 (②)
 
 // 표지 거리 (상태 서명 · 문턱) — 엔진의 분류와 독립적으로 다시 센다
 function distanceFns(db, r) {
@@ -84,11 +85,19 @@ function judgeFate(db, r, ctx) {
   if (pm) AE('FINDING', 'AUDIT_FATE', target, `분화 정지 — ${ix.label(target)} 에 도달하지 못함 (원인 ${pm.cause}${pm.limiting ? ', 제한 ' + pm.limiting.label : ''})`, pm.suggestion);
   // ⑤ 소비만 되는 저장소 (재생 경로 없음)
   for (const [b, x] of Object.entries(r.reservoirs)) { const prod = rules.some((R) => R.prods.some((q) => q[0] === b)); if (!prod && !x.buffered) AE('DATA_GAP', 'AUDIT_RESOURCE', b, `${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (시작 ${+x.start.toPrecision(4)}, 끝 ${+x.end.toPrecision(4)})`, fateSuggest(db, ix, b, 'Resource_Gap', rules)); }
-  // ⑥ 궤적 해시 (결정론 판정용 지문)
+  // ⑥ 상수 등급 (신뢰 지표 ②): 시뮬레이션이 읽은 상수마다 등급을 계산해 문턱(기본 parameter) 미달을 잡는다.
+  //   가상 값(시나리오)은 등급 밖 — 시나리오가 hypothetical 을 선언했을 때만 허용한다. 엔진·데이터를 고치지 않고 판결로만 낸다.
+  let grades = null;
+  if (ctx.ir) {
+    grades = REL.constantVerdict(ctx.ir, sc, { stamps: ctx.stamps });
+    if (grades.error) AE('DATA_GAP', 'AUDIT_KINETIC', '상수 등급', grades.error);
+    else for (const x of grades.violations.slice(0, 10)) AE('DATA_GAP', 'AUDIT_KINETIC', x.ref, `상수 등급: ${x.msg}`, x.grade === 'hypothetical' ? '시나리오에 hypothetical: true 를 적거나 확인된 상수를 데이터에 넣을 것' : J.gapSuggest(db, ix, x.ref, 'Kinetic_Gap'));
+  }
+  // ⑦ 궤적 해시 (결정론 판정용 지문)
   const hash = trajectoryHash(r);
   return Object.assign({}, r, {
     ix, // 사법부 자기 색인 (엔진이 넘긴 편의 색인을 쓰지 않음)
-    audit, arrest, postMortem: pm, verification: v, contract, irCheck,
+    audit, arrest, postMortem: pm, verification: v, contract, irCheck, grades,
     mass: Object.assign({}, r.mass, { moieties: v.moieties, start: v.start, end: v.end, worst: v.worst, tolerance: v.tolerance, series: v.series, replayWorst: v.replayWorst, replaySeries: v.replaySeries }),
     process: Object.assign({}, r.process, { factorsAt, rawDistance, distance, hash }),
   });

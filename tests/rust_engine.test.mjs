@@ -123,7 +123,7 @@ test('⑥ 사법부는 Rust 원자료도 같은 기준으로 판정 — 계약·
   for (const { f, sc } of SC.filter((x) => /il12|glucose-withheld|fa-withheld/.test(x.f))) {
     const v = ORCH.runFate(BASE, 'D000174', { scenario: { ...sc, commitment: { horizon: 3600, coarse: 3600 } }, engine: 'rust' });
     assert.ok(!v.error, v.error);
-    assert.ok(K.checkFateRaw(Object.fromEntries(Object.entries(v).filter(([k]) => !['audit', 'arrest', 'postMortem', 'verification', 'contract', 'irCheck'].includes(k)).map(([k, x]) => [k, k === 'mass' ? { moieties: x.moieties, start: x.start, end: x.end, channels: x.channels } : k === 'process' ? Object.fromEntries(Object.entries(x).filter(([q]) => !['factorsAt', 'rawDistance', 'distance', 'hash'].includes(q))) : x]))).ok, f);
+    assert.ok(K.checkFateRaw(Object.fromEntries(Object.entries(v).filter(([k]) => !['audit', 'arrest', 'postMortem', 'verification', 'contract', 'irCheck', 'grades'].includes(k)).map(([k, x]) => [k, k === 'mass' ? { moieties: x.moieties, start: x.start, end: x.end, channels: x.channels } : k === 'process' ? Object.fromEntries(Object.entries(x).filter(([q]) => !['factorsAt', 'rawDistance', 'distance', 'hash'].includes(q))) : x]))).ok, f);
     assert.ok(v.contract.ok && v.verification.pass && v.mass.worst <= 1e-14 && v.mass.replayWorst <= 1e-14, f);
     assert.ok(v.irCheck.ok && v.irCheck.consumed, f);
     assert.ok(!v.audit.some((a) => ['ENGINE_DEFECT', 'COMPILER_DEFECT'].includes(a.fault)), f);

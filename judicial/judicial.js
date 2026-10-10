@@ -5,9 +5,9 @@
 //   시뮬레이션 감사는 행정부가 낸 원자료(raw)를 입력으로 받는다 — 여기서 simulate·simulateRate 를 부르지 않는다.
 //   오류를 찾으면 판결(보고서)만 낸다. 고치는 것은 별도 과정(에이전트 → 새 패치 → 입법 서기 → 재검증)이다.
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'));
-  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp);
-})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'), require('./reliability.js'));
+  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp, root.DefDBReliability);
+})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP, RELI) {
   'use strict';
   const {
     NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
@@ -1265,6 +1265,21 @@
       for (const m of kineticIssues(rule, st, u.kin)) AE('DOMAIN_CONFLICT', 'AUDIT_KINETIC', u.step ? `${u.step} ${rule.label}` : u.ref, m, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
       if (!u.step) { const s = r.supplies.find((x) => x.ref === u.ref); if (s && !s.V) AE('DATA_GAP', 'AUDIT_CONCENTRATION', s.ref, `공급 위치(${vlabel('locations', s.loc)}) 부피를 모름 — 공급을 적용하지 못함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
       else { const x = react.get(u.step); if (!x.V) AE('DATA_GAP', 'AUDIT_CONCENTRATION', `${u.step} ${rule.label}`, `반응 부피(${x.loc ? vlabel('locations', x.loc) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
+    }
+    // ②′ 상수 등급 (신뢰 지표 ②, judicial/reliability.js): 쓰인 상수마다 등급을 계산하고 문턱 미달을 판정한다.
+    //   가상 값(시나리오가 준 상수)은 등급 밖이므로 시나리오가 hypothetical 을 선언했을 때만 허용한다 — 원자료가 그 선언을 싣고 온다.
+    {
+      const min = r.min_grade || RELI.DEFAULT_MIN, ctx = { evidenceShas: [] };
+      if (!RELI.ORDER.includes(min)) AE('DATA_GAP', 'AUDIT_KINETIC', '상수 등급', `등급 문턱 '${min}' 을 모름 — ${RELI.ORDER.join(' | ')}`, '시나리오의 min_grade 를 등급 이름 하나로 적을 것');
+      else for (const u of r.kinUsed) {
+        const k = u.kin || {}, where = u.step ? `${u.step} ${ix.ruleOf(u.ref).label}` : u.ref;
+        if (k.src === 'scenario') {
+          if (!r.hypothetical) AE('DATA_GAP', 'AUDIT_KINETIC', where, '상수 등급: 시나리오가 준 가상 값인데 시나리오가 hypothetical 을 선언하지 않음 — 가상 값은 등급 밖이다', '시나리오에 hypothetical: true 를 적거나, 확인한 상수를 규칙의 kinetics 로 데이터에 넣을 것');
+          continue;
+        }
+        const sd = RELI.scoreEvidence(k.evidence, ctx), g = RELI.gradeOf(sd.s, sd.d, 'unchecked');
+        if (!RELI.meets({ grade: g }, min)) AE('DATA_GAP', 'AUDIT_KINETIC', where, `상수 등급 ${g} < ${min} (S${sd.s}D${sd.d}) — ${sd.why}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
+      }
     }
     // ③ 국소 수지: 발화한 단계의 한 번당 실체·부분 구조 변화 (첫 발화 시각)
     for (const sid of ids.filter((s) => r.firstFire[s] != null).sort((a, b) => r.firstFire[a] - r.firstFire[b])) {

@@ -1225,6 +1225,39 @@ test('신뢰 지표: 데이터가 스스로 등급을 올릴 수 없다 (도장 
   assert.match(txt, /곱\(S×D\)은 .* 판정에 쓰지 않는다/);
   assert.match(txt, /\| S4D4 \|/);
 });
+test('신뢰 지표 ②: 관문은 쓰인 상수의 등급을 보고 미달을 거부한다 (가상 값은 hypothetical 선언 아래에서만)', () => {
+  // IR 하나를 손으로 지어 판정만 본다 — 사법부는 엔진을 부르지 않고 IR 의 k.evidence·k.src 만 읽는다
+  const ir = (k) => ({ rules: [{ ref: 'D000001/rule/x', kind: 'transition', k }] });
+  const DOI = { level: 'curated', sources: [{ db: 'DOI', id: '10.1/x' }] };
+  const ok = REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), {});
+  assert.ok(ok.ok && ok.rows[0].grade === 'parameter', REL.constantText(ok));
+  const bad = REL.constantVerdict(ir({ src: 'data', k: 1, evidence: { level: 'asserted' } }), {});
+  assert.equal(bad.ok, false);
+  assert.match(bad.violations[0].msg, /등급 reference < parameter \(S2D3\)/, '출처 없이 적은 상수는 참고 등급 — 계산에 쓸 수 없다');
+  // 문턱은 시나리오가 올릴 수 있다: parameter 로는 통과하던 값이 anchor 문턱에서는 미달
+  assert.equal(REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), { min_grade: 'anchor' }).ok, false);
+  assert.match(REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), { min_grade: '최고' }).error, /등급 문턱/);
+  // 시나리오가 준 값은 등급 밖(hypothetical) — 선언이 없으면 거부, 있으면 허용
+  const sv = ir({ src: 'scenario', k: 1, evidence: { level: 'predicted', confidence: 0 } });
+  assert.match(REL.constantVerdict(sv, {}).violations[0].msg, /hypothetical 을 선언하지 않음/);
+  assert.ok(REL.constantVerdict(sv, { hypothetical: true }).ok);
+});
+test('신뢰 지표 ②: 속도 감사가 같은 판정을 낸다 — 가상 상수를 선언 없이 쓰면 Audit Error', () => {
+  const path = '에피네프린에 의한 글리코겐 분해';
+  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/camp-competition-hypothetical.json', import.meta.url), 'utf8'));
+  const raw = DefDB.simulateRate(BASE, path, { scenario: sc, t_end: 10, dt: 0.01 });
+  assert.ok(!raw.error, raw.error);
+  assert.ok(raw.kinUsed.length && raw.kinUsed.every((u) => u.kin.src === 'scenario'), '이 저장소의 속도 상수는 모두 가상 시나리오에서 온다 (확인한 값만 데이터에 넣는다)');
+  const grade = (r) => J.auditRate(BASE, path, r).audit.filter((a) => /상수 등급|등급 문턱/.test(`${a.where} ${a.msg}`));
+  assert.equal(grade(raw).length, 0, '시나리오가 hypothetical 을 선언했으므로 가상 값이 허용된다');
+  const undeclared = DefDB.simulateRate(BASE, path, { scenario: { ...sc, hypothetical: false }, t_end: 10, dt: 0.01 });
+  const g = grade(undeclared);
+  assert.equal(g.length, raw.kinUsed.length);
+  assert.ok(g.every((a) => a.code === 'AUDIT_KINETIC' && a.fault === 'DATA_GAP'));
+  // 문턱 이름을 모르면 판정하지 않고 그 사실을 낸다
+  const weird = DefDB.simulateRate(BASE, path, { scenario: { ...sc, min_grade: '최고' }, t_end: 10, dt: 0.01 });
+  assert.match(grade(weird)[0].msg, /등급 문턱 '최고' 을 모름/);
+});
 
 // ===== 비교 검토·정제 점검 (Comparative Optimization) =====
 const CMP = req('../judicial/compare.js'); // 판정만 — 변형 실행은 ORCH.compare

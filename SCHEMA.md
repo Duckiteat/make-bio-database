@@ -471,6 +471,19 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 추세 점검(시간 축)은 아직 없다 — 모든 항목의 `trend` 가 `unchecked` 이므로 **지금은 `anchor` 가 하나도 없다**. 추세 점검이 들어오면 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해).
 - `node dbtool.mjs grade [<D…>] [--min <등급>]` — 등급 분포·쌍 분포·항목별 표, `--min` 미달이 있으면 종료 코드 1.
 
+### 관문 (②) — 시뮬레이션이 읽는 상수의 등급
+
+쓸 수 있는가를 **쓰는 자리에서** 판정한다. 사법부는 엔진을 부르지 않고 쓰인 상수의 `src`·`evidence` 만 읽는다 (운명 경로는 IR 의 `rules[].k`·`mods[].k`, 속도 경로는 원자료의 `kinUsed[].kin`).
+
+| 항목 | 규칙 |
+|---|---|
+| `src: 'data'` | 그 상수의 근거로 (S, D) 를 계산해 등급을 내고, **문턱 미달이면 Audit Error**(`AUDIT_KINETIC` · fault `DATA_GAP`) |
+| `src: 'scenario'` | 시나리오가 준 값은 등급 밖(`hypothetical`) — 시나리오가 `hypothetical: true` 를 선언했을 때만 허용, 아니면 미달과 같이 거부 |
+| 문턱 | 기본 `parameter`. 시나리오 `min_grade` 로 올릴 수 있다(등급 이름 하나). 모르는 이름이면 판정하지 않고 그 사실을 Audit Error 로 낸다 |
+| 보고 | 과정 보고서의 무결성 증명서에 한 줄(상수 등급), §5 기술 부록에 분포. 운명 판정의 `grades` (`judicial/reliability.js` `constantVerdict`) |
+
+지금 이 저장소의 규칙 `kinetics` 는 0건이다 — 확인한 속도 상수가 없으므로 모든 상수가 `hypothetical` 시나리오에서 온다. 그래서 `src: 'data'` 분기는 시험에서만 돌고, 확인된 상수가 들어오는 날 그대로 작동한다.
+
 ## 8J. 외부 ID 의 역할 — ChEBI 규약 (형식 v10 확장, 2026-10-10)
 
 ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(ATP CHEBI:15422, 전하 0), pH 7.3 우세 이온 종(ATP(4−) CHEBI:30616), 이온화 상태를 묶은 분류(succinate CHEBI:26806, 화학식 없음). 규약을 선언하지 않으면 셋이 섞이고, 분류 항목은 화학식이 없어 **부분 구조 대조가 조용히 건너뛰어진다**.
@@ -502,6 +515,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-10 | 10 (확장 4) | 신뢰 지표 ② 관문: 쓰인 상수마다 등급을 판정한다 — `reliability.constants`·`constantVerdict`·`constantText`, 속도 감사의 새 절 ②′(`judicial.auditRate`), 운명 판정의 `grades`(`fate_audit`), 과정 보고서의 무결성 증명서 한 줄 + §5 분포. 시나리오가 준 값은 등급 밖이므로 `hypothetical: true` 선언 아래에서만 쓸 수 있고, 문턱(기본 `parameter`)은 시나리오 `min_grade` 로 올린다. `reliability.js` 는 UMD(뷰어도 읽는다), 원자료에 `min_grade` 선언 전달 (§8K 관문) |
 | 2026-10-10 | 10 (확장 3) | 신뢰 지표: 새 `judicial/reliability.js`(S·D 쌍 계산·등급 6·보고서), `dbtool grade`, 서열 지문(SEQ_SHA256)도 사법부 도장을 받음(재확인 증거 과제 포함). 점수는 저장하지 않고 계산한다 — 곱은 보고용(겹침 때문에 판정 불가). 지금 분포: parameter 306 · reference 274 · blocked 1 · anchor 0(추세 점검 없음) (§8K) |
 | 2026-10-10 | 10 (확장 2) | 외부 ID 역할: `xrefs[].role`(`xrefRoles` physiological·parent·class), 역할 검사 넷(분류 항목 금지·역할 겹침·physiological 필수·같은 번호 두 번), 신원 확인에 켤레 관계(수소·전하만 차이)와 반응 참여(Rhea ≥ 3, 새 과제 종류 `rhea_usage`·수신함 `data/fetched/rhea/`), 증명 등록부의 '지난 도장' 구분. 데이터: ChEBI 항목 46개에 역할 선언(physiological 30·parent 14·class 2), 미확인 12건 닫음(Rhea 빈도로 고른 우세 종), 석신산의 분류 번호 CHEBI:26806 → succinate(2−) CHEBI:30031 교체, 원본 이름을 별칭으로 6건. 한계 2건(전하·양성자 수지 미검사, 중합체 단위 셈) (§8J) |
 | 2026-10-09 | 10 (확장) | 기전 프로그램: cell_state `mechanisms`(경로 → 그 경로의 단계가 결합 적분 IR 의 반응), 단계 속도 법칙 세 가지(질량 작용·가역 결합 정·역·미카엘리스–멘텐), 막에서만 일어나는 단계의 유효 부피 규약, 부위 조건이 있는 분해 규칙, 막(2D) 공급 규칙, 표지의 막 위치 허용, `membrane.route`(분비·섭취 경로의 막), 시나리오 `context { role: cause \| requirement \| baseline, state, note }` 와 사법부 맥락 판정, 어휘 세포 `dendritic_cell`. 데이터: MHC I·II 항원 처리·제시(정의항 27·단계 18·수지상 세포 상태 2·한계 9) — 모든 속도 상수는 가상 시나리오 값 (§8I) |

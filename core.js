@@ -750,7 +750,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     const endFlux = {};
     for (const sid of watch) { const x = react.get(sid), k = x.k; if (!k || k.law !== 'mass_action' || !k.reversible || !k.k_r) continue; endFlux[sid] = { f: k.k * [...x.lawIns].reduce((a, [b2, n]) => a * conc(b2, x.V) ** n, 1) * x.st.agents.reduce((a, p2) => a * conc(p2.b, x.V), 1), r: k.k_r * [...x.lawOuts].reduce((a, [b2, n]) => a * conc(b2, x.V) ** n, 1) }; }
     for (const [b, r] of Object.entries(resStat)) r.end = N.get(b);
-    return { ids, cell, mode, finite, stochastic, scenario: sc.name || null, hypothetical: !!sc.hypothetical, series, firstReach, firstFire, final: Object.fromEntries(N), facts, kineticGaps, kinUsed, react, ix, t_end: opt.t_end, dt: opt.dt, bulk: opt.bulk,
+    return { ids, cell, mode, finite, stochastic, scenario: sc.name || null, hypothetical: !!sc.hypothetical, min_grade: sc.min_grade || null, series, firstReach, firstFire, final: Object.fromEntries(N), facts, kineticGaps, kinUsed, react, ix, t_end: opt.t_end, dt: opt.dt, bulk: opt.bulk,
       reservoirSet: [...res], reservoirs: resStat, ledger, events, stalls, negatives, stiff, endFlux, targets: tg.ids,
       irHash: IR.hash, // 먹은 IR(compiler/rate_ir.js)의 해시
       supplies: sup.map((s) => ({ ref: s.ref, owner: s.owner, loc: s.loc, V: s.V, active: !!(s.k && s.V), law: s.k ? s.k.law : null, src: s.k ? s.k.src : null, kin: s.k, consumes: s.rule.consumes.map((q) => `${q.ref}|${s.loc}`), produces: s.rule.produces.map((q) => `${q.ref}|${s.loc}`) })),

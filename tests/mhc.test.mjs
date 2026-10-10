@@ -7,6 +7,7 @@
 //   ⑥ JS = Rust: 궤적 상대 ≤ rtol, 끝 상태·도달 시각 같음
 //   ⑦ 확률 실행: 같은 (seed, 궤적) 재현, 발화 수는 음이 아닌 정수
 //   ⑧ 경계: 모든 저장소 0 에서 시작해도 음수가 생기지 않음
+//   ⑨ 상수 등급 관문: 가상 상수는 hypothetical 선언 아래에서만 — 선언을 빼면 판정이 거부(궤적은 그대로)
 import test from 'node:test';
 import assert from 'node:assert';
 import { createRequire } from 'node:module';
@@ -71,6 +72,24 @@ test('MHC ③: 무결성 — 원장·재생 1e-14, 단계 화학량을 db.steps 
   const rep = PR.processReport(v, { scenario: sc, ir, rerunHash: FA.trajectoryHash(run(sc, { ir })) });
   assert.ok(rep.pass, rep.checks.filter((c) => c.ok === false).map((c) => c.name).join(' / '));
   assert.deepStrictEqual(rep.disc, []);
+});
+
+test('MHC ⑨: 상수 등급 관문 — 가상 상수는 hypothetical 선언 아래에서만, 선언을 빼면 운명 판정이 거부한다', () => {
+  const sc = scen(MAT), ir = IRB.buildFateIR(C.normalize(DB), SRC, sc), r = run(sc, { ir });
+  const v = judge(r, sc, ir);
+  assert.ok(v.grades && v.grades.n > 0, '쓰인 상수가 판정에 실려야 한다');
+  assert.strictEqual(v.grades.min, 'parameter');
+  assert.strictEqual(v.grades.byGrade.hypothetical, v.grades.n, '이 저장소의 속도 상수는 모두 가상 시나리오에서 온다');
+  assert.ok(v.grades.ok && !v.audit.some((a) => /상수 등급/.test(a.msg)));
+  // 선언을 빼면 같은 실행이 상수마다 Audit Error 를 받는다 (궤적은 그대로 — 판정만 달라진다)
+  const bare = { ...sc, hypothetical: false };
+  const vb = judge(r, bare, ir);
+  assert.strictEqual(vb.grades.ok, false);
+  assert.strictEqual(vb.grades.violations.length, v.grades.n);
+  assert.ok(vb.audit.filter((a) => /상수 등급/.test(a.msg)).length > 0);
+  assert.strictEqual(PR.processReport(vb, { scenario: bare, ir, rerunHash: FA.trajectoryHash(run(sc, { ir })) }).pass, false, '무결성 증명서가 FAIL 이어야 한다');
+  // 문턱은 시나리오가 올릴 수 있다 (등급 이름 하나 — 모르는 이름이면 판정하지 않고 그 사실을 낸다)
+  assert.match(judge(r, { ...sc, min_grade: '최고' }, ir).grades.error, /등급 문턱/);
 });
 
 test('MHC ④: 맥락 선언(원인·필수성·일반 상황)이 실행과 맞아야 한다 — 틀린 선언은 판정 실패', () => {
