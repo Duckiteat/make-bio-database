@@ -51,8 +51,14 @@ function verifyStamp(st, db, opt) {
     if (!fs.existsSync(file)) reasons.push(`증거 파일 없음 (${st.evidence.file})`);
     else if (sha(fs.readFileSync(file, 'utf8')) !== st.evidence.sha256) reasons.push('증거 파일 sha256 불일치');
     else {
-      // 같은 확인을 다시: 그 외부 ID 를 잠시 asserted 로 되돌린 사본에서 신원 판결을 돌려 verified 가 나오는지
-      const d = M.normalize(JSON.parse(JSON.stringify(db))), sense = d.senses[st.subject.sense];
+      // 같은 확인을 다시: 그 외부 ID 를 잠시 asserted 로 되돌린 사본에서 신원 판결을 돌려 verified 가 나오는지.
+      //   사본은 **그 정의항 하나만** 새로 만들고 나머지는 참조로 둔다 (전체 복제·재정규화를 도장마다 되풀이하지 않기 위해).
+      //   중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다 — 색인은 외부 ID → 정의항이고 status 에 매이지 않는다.
+      const base = opt.base || M.normalize(db), ix = opt.ix || M.index(base), sid = st.subject.sense;
+      const s0 = base.senses[sid];
+      if (!s0) return { ok: false, stale: true, reasons: ['주체가 데이터에 없음 — 지난 도장 (그 값이 데이터에서 빠졌음, 위조가 아님)'], key: subjectKey(st.subject) };
+      const sense = { ...s0, xrefs: s0.xrefs.map((y) => ({ ...y })) };
+      const d = { ...base, senses: { ...base.senses, [sid]: sense } };
       // 주체의 외부 ID: xref 면 그 값, 지문이면 그 지문을 낸 증거 항목(evidence.key)의 외부 ID — 한 정의항에 같은 db 항목이 여럿일 수 있다(역할)
       const ns = st.subject.field === 'xref' ? st.subject.ns : (st.subject.ns === 'SEQ_SHA256' ? 'UniProt' : 'ChEBI');
       const x = sense && (sense.xrefs.find((y) => y.db === ns && (st.subject.field === 'xref' ? y.id === st.subject.value : y.id === st.evidence.key)) || (st.subject.field !== 'xref' ? sense.xrefs.find((y) => y.db === ns) : null));
@@ -61,7 +67,7 @@ function verifyStamp(st, db, opt) {
         x.status = 'asserted';
         if (sense.fingerprint && st.subject.field === 'fingerprint') sense.fingerprint = undefined;
         const rel = ID.fileOf(st.evidence.kind, st.evidence.key), dir = file.replace(/\.(json|fasta|txt|tsv)$/, '').slice(0, -rel.length - 1);
-        const v = ID.verifyIdentity(d, { dir });
+        const v = ID.verifyIdentity(d, { dir, ix, only: { sense: sid, kind: st.evidence.kind, key: st.evidence.key } });
         const row = v.rows.find((r) => r.sense === st.subject.sense && r.kind === st.evidence.kind && r.key === st.evidence.key);
         if (!row || row.outcome !== 'verified') reasons.push(`재확인 실패 (${row ? row.outcome + ': ' + row.detail : '과제 없음'})`);
         else if (st.subject.field === 'xref' && row.facts.id !== st.subject.value) reasons.push(`재확인 값 ${row.facts.id} ≠ ${st.subject.value}`);
@@ -74,11 +80,14 @@ function verifyStamp(st, db, opt) {
 
 // 등록부 전체 → validate 에 넘길 유효 도장 열쇠 집합 + 실패 목록
 function validStamps(db, registry, opt) {
+  // 정규화·색인은 한 번만 — 도장마다 다시 만들면 도장 수에 비례해 느려진다 (판정은 같다)
+  const base = M.normalize(db), ix = M.index(base);
+  opt = { ...(opt || {}), base, ix };
   const ok = [], bad = [], stale = [], trend = [];
   for (const st of (registry || emptyRegistry()).stamps) {
     // 추세 도장(claim 'trend')은 다른 주장이다 — 검증은 judicial/trend.js 가 한다 (여기서 부르면 순환 의존). 그 쪽으로 넘긴다.
     if (st.claim === 'trend') { trend.push(st); continue; }
-    const v = verifyStamp(st, db, opt);
+    const v = verifyStamp(st, base, opt);
     if (v.ok) ok.push(v.key);
     // 지난 도장: 주체(그 외부 ID)가 데이터에서 빠진 것 — 기록은 남기고(계보) 무효로 세지 않는다. 변조·재확인 실패와 구분한다.
     else if (v.stale) stale.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });

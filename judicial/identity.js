@@ -26,15 +26,18 @@ const fileOf = (kind, key) => ({ uniprot_entry: `uniprot/${key}`, uniprot_search
 
 // ===== ① 과제 =====
 function namesOf(db, id) { const d = db.senses[id], t = d && db.terms[d.term]; return t ? [t.names.ko, t.names.en, ...t.aliases].filter(Boolean) : []; }
+// opt.only = { sense, kind, key } 면 그 주체의 과제 하나만 낸다 (도장 재검증처럼 한 주장만 다시 볼 때 — 다른 정의항의 수신함을 훑지 않는다).
+// opt.ix 는 이미 만든 색인 — 정규화·색인을 되풀이하지 않기 위해 받는다. 중복 검사는 색인(전체 db)으로 하므로 좁혀도 약해지지 않는다.
 function plan(db, opt) {
-  db = M.normalize(db); opt = opt || {};
-  const ix = M.index(db), tasks = [], dir = opt.dir || INBOX;
+  opt = opt || {};
+  db = opt.ix ? db : M.normalize(db);
+  const ix = opt.ix || M.index(db), tasks = [], dir = opt.dir || INBOX;
   const gapOf = (id) => Object.entries(db.limitations).filter(([, l]) => l.type === 'Identity_Gap' && (l.target === id || l.requirement.needs.some((n) => n.on === id))).map(([lid]) => lid);
   const seqGap = (id) => Object.entries(db.limitations).filter(([, l]) => l.requirement.needs.some((n) => n.kind === 'obs' && n.property === 'sequence_length' && n.on === id)).map(([lid]) => lid);
-  const add = (t) => { t.file = path.join(dir, fileOf(t.kind, t.key)); t.present = present(t.file); tasks.push(t); };
+  const add = (t) => { if (opt.only && !(t.sense === opt.only.sense && t.kind === opt.only.kind && t.key === opt.only.key)) return; t.file = path.join(dir, fileOf(t.kind, t.key)); t.present = present(t.file); tasks.push(t); };
   for (const [id, d] of Object.entries(db.senses)) {
     const K = V.kinds[d.kind];
-    if (!K) continue;
+    if (!K || (opt.only && id !== opt.only.sense)) continue;
     const up = d.xrefs.find((x) => x.db === 'UniProt'), chAll = d.xrefs.filter((x) => x.db === 'ChEBI');
     const ch = chAll.find((x) => x.role === 'physiological') || chAll.find((x) => !x.role) || chAll[0];
     // 도구가 계산한 서열 지문도 사법부 도장을 받는다 — 도장 재확인이 같은 확인을 다시 돌리므로 원본 파일이 수신함에 남아 있어야 한다 (evidence: true)
@@ -207,8 +210,9 @@ function formulaCheck(db, id, formula) {
 // verified 행에는 확인한 사실(facts)과 증거(evidence: 파일·sha256)가 붙는다 — 이것으로 사법부가 증명(attestation)을 발급하고,
 // 입법부(legislative/augment_draft.js)가 패치 초안을 쓴다. 여기서는 데이터를 바꾸지도, 패치를 만들지도 않는다.
 function verifyIdentity(db, opt) {
-  db = M.normalize(db); opt = Object.assign({ dir: INBOX, sync: false }, opt || {});
-  const ix = M.index(db), tasks = plan(db, { dir: opt.dir }), rows = [];
+  opt = Object.assign({ dir: INBOX, sync: false }, opt || {});
+  db = opt.ix ? db : M.normalize(db);
+  const ix = opt.ix || M.index(db), tasks = plan(db, { dir: opt.dir, ix, only: opt.only }), rows = [];
   const holder = (db_, id) => [...ix.xrefs.get(`${db_}:${id}`) || []];
   const row = (t, outcome, detail, extra) => rows.push(Object.assign({ sense: t.sense, label: t.label, kind: t.kind, key: t.key, role: t.role, gaps: t.gaps, outcome, detail }, extra || {}));
   for (const t of tasks) {

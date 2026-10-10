@@ -312,7 +312,7 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, legislative/clerk.mjs, dbtool.mjs, tests",
-      "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음)."
+      "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음). 재검증은 **주체 하나로 좁혀서** 한다(그 정의항만 새로 만든 얕은 겹침 사본 + 그 과제 하나) — 중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다. validStamps 는 정규화·색인을 한 번만 만들어 넘긴다."
     },
     {
       "path": "judicial/reliability.js",

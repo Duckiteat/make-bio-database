@@ -29,11 +29,13 @@ const windowDays = () => V.consensus.window_days;
 // 점검 대상: 유효한 신원 도장(claim 'verified')의 주체. 도장 없는 값은 S 가 이미 낮으므로 추세를 물을 자리가 아니다.
 function subjects(db, registry, opt) {
   opt = opt || {};
+  // 정규화·색인은 한 번만 만들어 도장마다 넘긴다 (도장 수에 비례해 느려지지 않게 — 판정은 같다)
+  const base = opt.base || M.normalize(db), ix = opt.ix || M.index(base), o = { ...opt, base, ix };
   const only = opt.only ? new Set(opt.only) : null, out = [];
   for (const st of (registry || ATT.emptyRegistry()).stamps) {
     if (st.claim !== 'verified') continue;
     if (only && !only.has(ATT.subjectKey(st.subject))) continue;
-    const v = ATT.verifyStamp(st, db, opt);
+    const v = ATT.verifyStamp(st, base, o);
     if (!v.ok) continue;
     out.push({ key: v.key, subject: st.subject, kind: st.evidence.kind, task: st.evidence.key, identityEvidence: st.evidence, issued_at: st.issued_at });
   }
@@ -62,7 +64,7 @@ function check(db, opt) {
   const memoKey = `${opt.dir}|${opt.today}|${sha(JSON.stringify(db))}`;
   if (opt.memo !== false && MEMO.has(memoKey)) return MEMO.get(memoKey);
   const base = M.normalize(db), ix = M.index(base);
-  const subs = subjects(base, opt.registry, opt);
+  const subs = subjects(base, opt.registry, { ...opt, base, ix });
   const done = (r) => { if (opt.memo !== false) MEMO.set(memoKey, r); return r; };
   if (!subs.length) return done({ rows: [], n: 0, byVerdict: {}, window: windowDays(), today: opt.today, tasks: [] });
   const reset = resetDB(base);

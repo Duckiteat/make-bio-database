@@ -1260,6 +1260,39 @@ test('신뢰 지표 ②: 속도 감사가 같은 판정을 낸다 — 가상 상
   assert.match(grade(weird)[0].msg, /등급 문턱 '최고' 을 모름/);
 });
 
+// ===== 도장 재검증의 범위 (성능과 강도) =====
+const AUG2 = req('../judicial/identity.js');
+test('도장 재검증: 주체 하나로 좁혀도 중복 검사는 전체 db 로 한다 (좁히기가 검증을 약하게 만들지 않는다)', () => {
+  // ① 좁히면 그 주체의 과제만 나온다 (다른 정의항의 수신함을 훑지 않는다)
+  const d0 = JSON.parse(JSON.stringify(BASE)), ATP = id('ATP');
+  for (const x of d0.senses[ATP].xrefs) if (x.db === 'ChEBI') x.status = 'asserted';
+  const n0 = AUG2.plan(DefDB.normalize(d0), { dir: FIX }).length;
+  const one = AUG2.plan(DefDB.normalize(d0), { dir: FIX, only: { sense: ATP, kind: 'chebi_entity', key: 'CHEBI:15422' } });
+  assert.ok(n0 > one.length && one.length === 1, `전체 ${n0} · 좁힘 ${one.length}`);
+  assert.deepEqual([one[0].sense, one[0].kind, one[0].key], [ATP, 'chebi_entity', 'CHEBI:15422']);
+  // ② 같은 번호를 다른 정의항이 가져가면 좁힌 재확인도 거부한다 — 중복은 전체 색인으로 보기 때문
+  const reg = REG(), st = reg.stamps.find((x) => x.claim === 'verified' && x.subject.field === 'xref' && x.subject.ns === 'ChEBI');
+  assert.ok(st, 'ChEBI 외부 ID 도장이 있어야 한다');
+  assert.ok(ATT.verifyStamp(st, BASE, { root: ROOT }).ok);
+  const dup = JSON.parse(JSON.stringify(BASE));
+  const victim = Object.keys(dup.senses).find((k) => k !== st.subject.sense && (dup.senses[k].xrefs || []).every((x) => x.db !== 'ChEBI'));
+  assert.ok(victim, '빈 자리가 있어야 한다');
+  dup.senses[victim].xrefs = [...(dup.senses[victim].xrefs || []), { db: 'ChEBI', id: st.subject.value, status: 'asserted', role: 'physiological' }];
+  const v = ATT.verifyStamp(st, DefDB.normalize(dup), { root: ROOT });
+  assert.equal(v.ok, false, `${st.subject.value} 를 ${victim} 가 함께 가져갔는데 통과함`);
+  assert.match(v.reasons.join(' '), new RegExp(`${victim}|이미`), v.reasons.join(' '));
+});
+test('도장 재검증: 등록부 전체 검증이 도장 수에 비례해 느려지지 않는다 (정규화·색인을 한 번만)', () => {
+  const reg = REG();
+  const t0 = process.hrtime.bigint();
+  const v = ATT.validStamps(BASE, reg, { root: ROOT });
+  const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+  assert.equal(v.failed.length, 0, v.failed.map((x) => `${x.key}: ${x.reasons.join(' · ')}`).join('\n'));
+  // 도장 하나당 전체 db 를 다시 정규화하면 70 ms 쯤 든다 — 그 길로 돌아가면 여기서 걸린다
+  const per = ms / Math.max(1, reg.stamps.filter((x) => x.claim === 'verified').length);
+  assert.ok(per < 20, `도장당 ${per.toFixed(1)} ms (전체 ${ms.toFixed(0)} ms, 도장 ${reg.stamps.length}) — 전체 재유도로 돌아갔는지 볼 것`);
+});
+
 // ===== 추세 점검 (Trend Check) — 신뢰 지표의 시간 축 =====
 const TRD = req('../judicial/trend.js');
 const REG = () => ATT.readRegistry(ROOT);
