@@ -277,5 +277,6 @@ cmp index.html viewer.html             # 화면 두 파일이 같은지
 | 알고리즘이 어떻게 계산하나 | `docs/textbook/04-알고리즘.md` (§4.9F 분열·소모, §4.9G 안전장치) |
 | 지금 못 하는 것 | `limitations.md` (`grep` 으로 필요한 줄만) |
 | 최근에 무엇이 바뀌었나 | `CHANGES.md` 맨 위 몇 행만 |
+| 내 임무의 경계가 어디까지인지 | `docs/PROMPTS.md` (프롬프트 묶음 — 작업 종류별 경계·검증·멈춤 조건) |
 | 권력 분리의 이유 | `docs/design/tripartite-governance.md` |
 | 관찰 포트 설계 | `docs/design/observation-port.md` |
