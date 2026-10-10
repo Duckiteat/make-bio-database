@@ -174,6 +174,25 @@ test('④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안�
   for (const [k, z] of Object.entries(CLERK.ZONES)) assert.ok(z.label && z.rule, k);
 });
 
+test('④″ CI 설정이 실제로 파싱되는가 — 검사가 조용히 죽지 않게', () => {
+  // ccabd83 이후 워크플로의 name 값에 ': ' 가 들어가 YAML 이 깨져 CI 가 아예 돌지 않았다 (2026-10-10 발견).
+  // YAML 모듈 없이, 그 실패 방식만 겨눈 검사: 평문 스칼라에는 ': ' 를 둘 수 없다.
+  const yml = readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8'), lines = yml.split('\n');
+  const bad = [];
+  lines.forEach((ln, i) => {
+    const m = /^\s*(?:- )?(name|run|if):\s(.*)$/.exec(ln);
+    if (!m) return;
+    const v = m[2].trim();
+    if (!v || v.startsWith("'") || v.startsWith('"') || v.startsWith('|') || v.startsWith('>')) return;
+    if (/:\s/.test(v) || /:$/.test(v)) bad.push(`${i + 1}: ${ln.trim().slice(0, 80)}`);
+  });
+  assert.deepEqual(bad, [], `평문 스칼라에 ': ' 가 있어 YAML 이 깨진다 — 따옴표로 감쌀 것:\n${bad.join('\n')}`);
+  // 검사가 실제로 저장소의 관문을 돌리는지 (이 목록이 줄면 CI 가 느슨해진 것)
+  for (const cmd of ['node --test tests/*.test.mjs', 'dbtool.mjs validate', 'dbtool.mjs attest', 'dbtool.mjs limitations --detect', 'dbtool.mjs trend', 'dbtool.mjs textbook --check'])
+    assert.ok(yml.includes(cmd), `CI 에 '${cmd}' 가 없음`);
+  assert.match(yml, /cmp .*index\.html .*viewer\.html|cmp .*viewer\.html .*index\.html/, 'CI 가 화면 사본을 대조하지 않음');
+});
+
 test('⑤ 독립 검증: 엔진 원자료를 몰래 바꾸면 사법부 검증기·판결이 잡는다', () => {
   const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json'), 'utf8')); sc.t_end = 2 * 3600;
   const raw = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false });

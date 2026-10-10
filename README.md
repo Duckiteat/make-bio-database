@@ -135,12 +135,26 @@ LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주�
 - **단계는 규칙의 적용**: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.
 - **관문**: 오류가 하나라도 있거나 패치가 새 경고를 만들면 패치 전체 거부. 통과한 패치는 `data/patches/` 에 매핑 결과와 함께 기록.
 
-규칙은 `tests/rules.test.mjs`(73개)가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
+규칙은 `tests/` 의 시험 195개가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
+
+## 값의 등급과 추세 — 무엇을 계산에 쓸 수 있나
+
+같은 데이터베이스 안에도 "권위 DB 에서 대조한 값" 과 "흐름에서 추론한 값" 이 섞인다. 그래서 값마다 **등급이 계산된다**(저장되지 않는다 — 데이터가 스스로 올릴 수 없다).
+
+| 축 | 뜻 |
+|---|---|
+| **S** 출처 | 유효한 사법부 도장 4 · 문헌 식별자(DOI·PMID) 3 · 그 밖 2 · 확인 불가 0 |
+| **D** 성질 | 실측·도구가 원본에서 계산 4 · 요약 상수·정체성 사실 3 · 추론·단순화 2 |
+| **추세** | 지금도 합의와 같은가 — 같은 확인을 **더 새 원본에 다시 돌려** 판정 (`match`·`mismatch`·`unchecked`) |
+
+→ `anchor`(고정점) · `parameter`(매개변수) · `bounded`(오차 막대와 함께) · `legacy`(지난값, 지우지 않음) · `reference`(계산 금지) · `blocked`(한계로만). `node dbtool.mjs grade` 로 본다.
+
+**시뮬레이션은 쓰는 자리에서 이 등급을 강제받는다**: 데이터 상수가 문턱(기본 `parameter`) 미달이면 감사 오류이고, 시나리오가 준 가상 상수는 그 시나리오가 `hypothetical: true` 를 선언했을 때만 쓸 수 있다. 과정 보고서의 무결성 증명서가 그 판정을 한 줄로 싣는다 — 미달이면 FAIL 이고 그 결과는 결론에 쓰지 않는다.
 
 ## 사용법
 
 ### 화면
-`index.html`(= `viewer.html`), `vocab.js`, `model.js`, `core.js`, `judicial/judicial.js`, `legislative/legislative.js` 를 같은 배치로 두고 브라우저로 연다.
+`index.html`(= `viewer.html`), `vocab.js`, `model.js`, `core.js`, `compiler/obs_operator.js`, `judicial/reliability.js`, `judicial/judicial.js`, `legislative/legislative.js` 를 같은 배치로 두고 브라우저로 연다.
 웹 서버로 열면 `data/db.json` 을 자동으로 읽고, 파일로 열었다면 **불러오기**로 고른다.
 
 1. **AI 지침**: 자료를 넣고 복사 → AI 에게 준다. 규칙·어휘·현재 색인(부위·규칙·구성 요소 포함)·기존 단계가 함께 들어간다.
@@ -167,6 +181,12 @@ node dbtool.mjs simulate <경로> --rate --scenario s.json [--reservoirs finite|
 node dbtool.mjs audit-run <경로> [--scenario s.json]  # 감사 (Audit Error + 교정 제안)
 node dbtool.mjs textbook [--write|--check]             # 교과서 부록 생성·검사 (파일 분류 포함)
 node dbtool.mjs audit                           # 매핑·채움 현황 (미매핑, 잔기 모름, 지문 없음)
+node dbtool.mjs augment plan|fetch|build|apply        # 자동 보강 고리 (외부 ID 원본 대조 → 사법부 도장)
+node dbtool.mjs attest                                # 도장 재검증 (digest·증거 sha256·같은 확인 재실행)
+node dbtool.mjs grade [<D…>] [--min parameter]        # 신뢰 지표: (S, D) + 추세 → 등급 분포·미달 목록
+node dbtool.mjs trend [<D…>] [--fetch] [--write]      # 추세 점검 (시간 축): 더 새 원본에 같은 확인을 다시
+node dbtool.mjs fate <세포 상태> --scenario s.json [--report 파일.md]   # 운명 실행 → 과정 보고서
+node dbtool.mjs compare --state <상태> --scenario A.json [--scenario-b B.json|--patch p.json]  # 비교 검토
 node dbtool.mjs vocab locations actions         # 통제 어휘 보기
 node --test tests/*.test.mjs                    # 규칙 테스트
 ```
@@ -175,7 +195,8 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 
 | 경로 | 내용 |
 |---|---|
-| `data/db.json` | 데이터베이스 원본 (형식 v7) |
+| `data/db.json` | 데이터베이스 원본 (형식 **v10**) |
+| `data/fetched/` | 외부 원본 수신함 (도장의 증거 — 고치지 않음). `consensus/` 는 추세 점검용 더 새 원본 |
 | `examples/scenarios/` | 속도 기반 시뮬레이션용 가상 시나리오 (지식이 아님) |
 | `limitations.md` | 한계 등록부 (data/db.json 에서 생성, 직접 고치지 않음) |
 | `data/patches/` | 병합된 패치 기록 |
@@ -192,6 +213,7 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 | `viewer.html`, `index.html` | 화면 |
 | `SCHEMA.md` | 규칙 명세와 변경 기록 |
 | `docs/textbook/` | 교과서 (00-목차부터), storage-map.json, 자동 생성 부록 |
+| `docs/design/scaling-limits.md` | 규모가 커지면 어디가 먼저 터지는지 **측정** 기록 + 구조/하드웨어 판정 + 쪼개기 방아쇠 |
 | `migrations/` | 형식 변환 스크립트, 옛 ID ↔ 번호 대응표 |
 | `tests/` | 규칙 테스트 |
 | `examples/` | 패치 예시 (`pgm-isomerization.json`: 원천이 규칙을 소유하고 단계는 규칙 참조 + 묶음, 이름·별칭이 번호로 매핑되는 예) |
@@ -200,9 +222,11 @@ node --test tests/*.test.mjs                    # 규칙 테스트
 
 ## 아직 안 된 것
 
-- **외부 ID 원본 대조**: 지금 ID 는 모두 `asserted`. UniProt·ChEBI 등에 접속해 확인하고 `verified` 로 바꾸는 명령은 아직 없다.
-- **구조 지문 계산**: 필드와 검사는 있지만 값은 아직 없음. RDKit 등으로 계산하는 도구가 필요하다.
+- **속도 상수**: 규칙의 `kinetics` 는 아직 **0건**이다 — 확인한 값만 넣기 때문. 그래서 모든 시뮬레이션 상수가 `hypothetical: true` 시나리오에서 오고, 결과는 도달 여부로만 읽는다. (등급 관문이 이걸 강제한다)
+- **관찰 기록**: `observations` 0건 — 실측값을 지어내지 않기 때문. 측정은 포트(`schemas/obs/`)로 들어온다.
+- **추세의 신선도 증명**: 합의 수신함의 원본이 실제로 더 새 것인지는 바이트로 증명할 수 없다(한계 L000085) — 창(365일)으로 만료시키는 것이 지금의 답이다.
+- **역할별 지문**: 정의항의 지문은 하나인데 ChEBI 역할은 여럿이다(한계 L000086).
 - **가설 층**: [`FEATURES.md`](FEATURES.md) 에 설계만 있음. (특징은 v4 에서 정의항의 부위·규칙·관찰로 구현됨)
 - **3차원 구조**: 부위·막 위상·구성 요소는 있지만, PDB 구조 참조·좌표·결합/충돌의 물리 결과는 아직 없음.
 - **수송 단계 예시**: 수송 효과와 검사는 있지만 저장소에 수송 단계는 아직 없음.
-- **저장 방식**: 지금은 JSON 파일 하나. 구조 데이터가 들어오면 SQLite 로 옮길 계획.
+- **저장 방식**: 지금은 JSON 파일 하나. **정의항 약 20만 개에서 `readFileSync(utf8)` 가 던진다**(V8 최대 문자열 537 MB) — 측정과 방아쇠는 [`docs/design/scaling-limits.md`](docs/design/scaling-limits.md). 쪼개는 일은 '파일 나누기' 가 아니라 **검증을 부분 단위로 다시 정의하는 일**이다(봉인이 db 전체 sha256 에 묶여 있다).
