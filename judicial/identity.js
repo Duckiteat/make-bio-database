@@ -37,6 +37,8 @@ function plan(db, opt) {
     if (!K) continue;
     const up = d.xrefs.find((x) => x.db === 'UniProt'), chAll = d.xrefs.filter((x) => x.db === 'ChEBI');
     const ch = chAll.find((x) => x.role === 'physiological') || chAll.find((x) => !x.role) || chAll[0];
+    // 도구가 계산한 서열 지문도 사법부 도장을 받는다 — 도장 재확인이 같은 확인을 다시 돌리므로 원본 파일이 수신함에 남아 있어야 한다 (evidence: true)
+    if (up && up.status === 'verified' && d.fingerprint && d.fingerprint.scheme === 'SEQ_SHA256') add({ kind: 'uniprot_entry', key: up.id, sense: id, label: ix.label(id), evidence: true, why: `${up.id} 원본 — 서열 지문 재확인 증거`, gaps: [], urls: URLS.uniprot_entry(up.id) });
     if (up && up.status !== 'verified') add({ kind: 'uniprot_entry', key: up.id, sense: id, label: ix.label(id), why: `UniProt ${up.id} 대조 (asserted → verified)${seqGap(id).length ? ` · 서열 길이(${seqGap(id).join(', ')})` : ''}`, gaps: [...gapOf(id), ...seqGap(id)], urls: URLS.uniprot_entry(up.id) });
     for (const x of chAll) {
       if (x.status !== 'verified') add({ kind: 'chebi_entity', key: x.id, sense: id, label: ix.label(id), role: x.role, why: `ChEBI ${x.id} 대조 (asserted → verified, 화학식 ↔ 부분 구조${x.role ? ` · 역할 ${x.role}` : ''})`, gaps: gapOf(id), urls: URLS.chebi_entity(x.id) });

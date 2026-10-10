@@ -457,6 +457,20 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 형식을 바꿀 때는 `migrations/NNN-설명.mjs` 를 추가하고, 그 스크립트로 저장소를 변환한 뒤 아래 변경 기록에 적는다.
 - `data/patches/` 의 옛 기록은 당시 형식·ID 로 적혀 있다. 옛 ID ↔ 새 번호 대응은 `migrations/002-id-map.json`.
 
+## 8K. 신뢰 지표 — 무엇을 무엇에 쓸 수 있는가 (`judicial/reliability.js`, `dbtool grade`)
+
+값마다 **두 축을 독립으로** 계산한다. 점수를 데이터에 저장하지 않는다 — 도장·근거·관찰 기록에서 계산하므로 데이터가 스스로 등급을 올릴 수 없다.
+
+| 축 | 값 | 어디서 계산되나 |
+|---|---|---|
+| S 출처 | 4 권위 DB + 유효한 사법부 도장 · 3 동료 심사 문헌 식별자(DOI·PMID) · 2 그 밖(출처 없음·추론·예측) · 0 확인 불가(도장 없는 verified·지난 도장·unmapped·철회) | 증명 등록부(`attestations/registry.json`)와 근거의 `sources` |
+| D 성질 | 4 추적 가능한 실측·도구가 도장받은 원본에서 계산한 값 · 3 요약 상수·정체성 사실 · 2 추론·단순화·출처 없는 값 | 관찰 기록(v10 — 불확도·반복 수)·`evidence.level`·`tool` 의 sha256 |
+
+- **곱(S × D)은 판정에 쓰지 않는다.** (2,4) 와 (4,2) 가 모두 8 이 되어 "출처가 약한 실측" 과 "권위 DB 에서 온 추론" 을 가르지 못한다. 보고서에 참고 숫자로만 적고, 관문은 쌍을 사전식으로 본다.
+- 등급은 **권한의 이름**이다: `anchor` 기준값(S4 ∧ D4 ∧ 추세 일치 — 시뮬레이션의 고정점) · `parameter` 매개변수(S ≥ 3 ∧ D ≥ 3) · `bounded` 구간값(S4 ∧ D2 — 오차 막대와 함께) · `legacy` 지난값(추세 불일치 — 지우지 않고 비교에만) · `reference` 참고(계산 금지) · `blocked` 차단(한계로만).
+- 추세 점검(시간 축)은 아직 없다 — 모든 항목의 `trend` 가 `unchecked` 이므로 **지금은 `anchor` 가 하나도 없다**. 추세 점검이 들어오면 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해).
+- `node dbtool.mjs grade [<D…>] [--min <등급>]` — 등급 분포·쌍 분포·항목별 표, `--min` 미달이 있으면 종료 코드 1.
+
 ## 8J. 외부 ID 의 역할 — ChEBI 규약 (형식 v10 확장, 2026-10-10)
 
 ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(ATP CHEBI:15422, 전하 0), pH 7.3 우세 이온 종(ATP(4−) CHEBI:30616), 이온화 상태를 묶은 분류(succinate CHEBI:26806, 화학식 없음). 규약을 선언하지 않으면 셋이 섞이고, 분류 항목은 화학식이 없어 **부분 구조 대조가 조용히 건너뛰어진다**.
@@ -488,6 +502,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-10 | 10 (확장 3) | 신뢰 지표: 새 `judicial/reliability.js`(S·D 쌍 계산·등급 6·보고서), `dbtool grade`, 서열 지문(SEQ_SHA256)도 사법부 도장을 받음(재확인 증거 과제 포함). 점수는 저장하지 않고 계산한다 — 곱은 보고용(겹침 때문에 판정 불가). 지금 분포: parameter 306 · reference 274 · blocked 1 · anchor 0(추세 점검 없음) (§8K) |
 | 2026-10-10 | 10 (확장 2) | 외부 ID 역할: `xrefs[].role`(`xrefRoles` physiological·parent·class), 역할 검사 넷(분류 항목 금지·역할 겹침·physiological 필수·같은 번호 두 번), 신원 확인에 켤레 관계(수소·전하만 차이)와 반응 참여(Rhea ≥ 3, 새 과제 종류 `rhea_usage`·수신함 `data/fetched/rhea/`), 증명 등록부의 '지난 도장' 구분. 데이터: ChEBI 항목 46개에 역할 선언(physiological 30·parent 14·class 2), 미확인 12건 닫음(Rhea 빈도로 고른 우세 종), 석신산의 분류 번호 CHEBI:26806 → succinate(2−) CHEBI:30031 교체, 원본 이름을 별칭으로 6건. 한계 2건(전하·양성자 수지 미검사, 중합체 단위 셈) (§8J) |
 | 2026-10-09 | 10 (확장) | 기전 프로그램: cell_state `mechanisms`(경로 → 그 경로의 단계가 결합 적분 IR 의 반응), 단계 속도 법칙 세 가지(질량 작용·가역 결합 정·역·미카엘리스–멘텐), 막에서만 일어나는 단계의 유효 부피 규약, 부위 조건이 있는 분해 규칙, 막(2D) 공급 규칙, 표지의 막 위치 허용, `membrane.route`(분비·섭취 경로의 막), 시나리오 `context { role: cause \| requirement \| baseline, state, note }` 와 사법부 맥락 판정, 어휘 세포 `dendritic_cell`. 데이터: MHC I·II 항원 처리·제시(정의항 27·단계 18·수지상 세포 상태 2·한계 9) — 모든 속도 상수는 가상 시나리오 값 (§8I) |
 | 2026-10-09 | 10 | 관찰 기록: 최상위 `observations`(O…, 측정량·SI 값·불확도·반복 수·조건·보정·출처·용도), `meta.next.O`, `kinetics.from`·`kinetics.lumped`(실측 상수 = 관찰의 파생값), 한계 종류 `Observation_Gap`, 어휘 observables·kineticUnits·uncertaintyKinds·noiseModels·calibrationKinds·obsUses, 계약 `schemas/obs/observation.schema.json`, 관찰 연산자 `compiler/obs_operator.js`. 관찰 기록은 바뀌지 않음(철회 표시만), 추정용과 검증용 관찰 분리. 데이터: 관찰 0건(실측값 없음 — 지어내지 않음), 규칙 kinetics 0건이라 이행할 상수 없음 (`migrations/009-v9-to-v10-observations.mjs`, 무손실) |

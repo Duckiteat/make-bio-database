@@ -687,6 +687,28 @@
     {
       "subject": {
         "sense": "D000053",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "6dedace6845efaa21a29f1b95f01b291bbbc27a72e2d8835a9ae15b3909c91bb"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P63092",
+        "file": "data/fetched/uniprot/P63092.json",
+        "sha256": "84206ab2d6036ee098c23efb882224d6882ff4981b3435441fe70465280c2899"
+      },
+      "checks": "검증 (이름 'GNAS', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "175db0754c56997c1d6377217e098d5ea81a41c58db0afcc10c83934db8f9397"
+    },
+    {
+      "subject": {
+        "sense": "D000053",
         "field": "xref",
         "ns": "UniProt",
         "value": "P63092"
@@ -701,10 +723,10 @@
       "checks": "검증 (이름 'GNAS', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "4a0d6368442d4c8f77c4376e88c872f39eff1e9634f612e7f79d8b8d947cc008"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "4fb595e9efb030d3b97a5a46d80df22659aefceb8798cb67a357ab236af81872"
+      "digest": "8fecabfe1fa339e36f5e59e46a3c7297923e26781f01ff304849ca1df83dcd1a"
     },
     {
       "subject": {
@@ -819,6 +841,28 @@
     {
       "subject": {
         "sense": "D000065",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "a36050703246e8fe1045b09ce6bd2b1be79b54f72cee38a45e53047786f0da36"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P18428",
+        "file": "data/fetched/uniprot/P18428.json",
+        "sha256": "3742d04a3170e840725b470a665481408a6e5cd6a6693ea10adbc9f1ff261e90"
+      },
+      "checks": "검증 (이름 'LBP', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2156cb423bcf6b826a71d52175e4343d57ba9426b47683acb265011bec367218"
+    },
+    {
+      "subject": {
+        "sense": "D000065",
         "field": "xref",
         "ns": "UniProt",
         "value": "P18428"
@@ -833,10 +877,32 @@
       "checks": "검증 (이름 'LBP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "0bb44b64a49705f0ce5134532d27129d11e67c8023bc01bc5e66f7338974fb17"
+      "digest": "e0881f333d01026e72a466c40899d64180933a30fb5b09ac36f63460a088fc87"
+    },
+    {
+      "subject": {
+        "sense": "D000066",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "fda1f9067d25694b653751bb70dac02b6599238f10d69ab7e5848580bcff073e"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P08571",
+        "file": "data/fetched/uniprot/P08571.json",
+        "sha256": "780766e938530b7d84e58c68d575d92a33f02d454fa3801c38ecba189ee64336"
+      },
+      "checks": "검증 (이름 'CD14', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c1f24f492030126b63ade0685de69bd5c1eb8b5b1d4fbe343cdd4c0edbdee7b1"
     },
     {
       "subject": {
@@ -855,10 +921,32 @@
       "checks": "검증 (이름 'CD14', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "d33d5bcfb03641ad7f3adba65ca345161135adcc872ec892cbccb4f6c11f70ac"
+      "digest": "281f632780b2313b76a61d06d994789448b38d69f66fde420afd63c4c34dde1d"
+    },
+    {
+      "subject": {
+        "sense": "D000067",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "f94b50d07a54dfafb481d544c5ae3034e5f8c23d13aeffce054621d6e348af4c"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O00206",
+        "file": "data/fetched/uniprot/O00206.json",
+        "sha256": "dd22c3dd0d7452db4756d175317e50aaea6e2050c0c42929830c53bc69361f87"
+      },
+      "checks": "검증 (이름 'TLR4', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "af13f06e8e99ed362ac65f4af54ff2fa136bb84e40d05ea2e3664a495282df03"
     },
     {
       "subject": {
@@ -877,10 +965,32 @@
       "checks": "검증 (이름 'TLR4', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "f4325d8aa0ee80ca04cd778be0a652914768c3039e9d34c1dad66834e05c344c"
+      "digest": "0944494619661c589763ced24b06ec8f0e007fdb09f319950d789f695549af11"
+    },
+    {
+      "subject": {
+        "sense": "D000068",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "cc6051cc087ee7754ce05ac28b3e20fc0ba4908ece9a5f529acfbd9a9a5b1314"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9Y6Y9",
+        "file": "data/fetched/uniprot/Q9Y6Y9.json",
+        "sha256": "e2888a030bf381aa5930ed805064ea72925a3023a474f2ab3f741927620eeb2d"
+      },
+      "checks": "검증 (이름 'LY96', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "f90acc1e3ca5e837e5f90b8eb54aa96e15a6a3747cf28ac7d6a050df1b084442"
     },
     {
       "subject": {
@@ -899,10 +1009,32 @@
       "checks": "검증 (이름 'LY96', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "4f98b1441827776e01f6142e658dba492566b5f6f80f423713577eb16118eb9a"
+      "digest": "462547bb3e00fe3b7b5353eb609284f90def3f63359befe27985dc9369621497"
+    },
+    {
+      "subject": {
+        "sense": "D000071",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "535a1443cdc09a629d818b0909d2e14e5f3a9bfb6611484e48699756657929f1"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P58753",
+        "file": "data/fetched/uniprot/P58753.json",
+        "sha256": "688361178693c738f059058cb249f16caac99adfaccd9a2f4de42bfde69c2797"
+      },
+      "checks": "검증 (이름 'TIRAP', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "d363186cf233c67ca42d3b9808ede0ce6c7dc979b4bd50157d9d61ca15a22f1d"
     },
     {
       "subject": {
@@ -921,10 +1053,32 @@
       "checks": "검증 (이름 'TIRAP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "a378f317d716617cefa632e2d1fd6ea73b90aaa08c572a4bfd6d1a6f96c411f8"
+      "digest": "86a0e4c51aa07d32bad556c42f6ca47545a4f7ebe9154f663a05f56332146dcf"
+    },
+    {
+      "subject": {
+        "sense": "D000072",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "54431f8a0aa2a42c7810354ab78e06561f7d2d8744a94e1c2a31525fab8aa2f3"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q99836",
+        "file": "data/fetched/uniprot/Q99836.json",
+        "sha256": "8fa044a948ef7012d5ced4240ef0a04011349a2f6daa76ae4a2a46a48be03e2f"
+      },
+      "checks": "검증 (이름 'MYD88', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "ab7f75713e75fe073a76a957bbeca43562f38dfd579fb167a1cb7b87c7922976"
     },
     {
       "subject": {
@@ -943,10 +1097,32 @@
       "checks": "검증 (이름 'MYD88', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "25613cad1d07357d96a10985034692fc6ba8a682452d84009fd67654cad54ca0"
+      "digest": "aa798a45e248e0fc9be7520929a3f40fba9b2753cc9e3817c86656af5bf02ba6"
+    },
+    {
+      "subject": {
+        "sense": "D000073",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "d1e98792da352b2d83ccca532e6144d5e51ae1b39a9c272494a4c18a7d3ec3fd"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9NWZ3",
+        "file": "data/fetched/uniprot/Q9NWZ3.json",
+        "sha256": "16ff71e038d0ddfd8f6f1cab4cb50d65b3c5b50d18c52526340891cf414ee777"
+      },
+      "checks": "검증 (이름 'IRAK4', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "631acf2d31ed84c681c6fddabef1f67c940d47aaea3a190c9b6b6d896113e1ca"
     },
     {
       "subject": {
@@ -965,10 +1141,32 @@
       "checks": "검증 (이름 'IRAK4', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "7a79222f7b1535383ddb08e095d2f8a7ba2b063432a1bd054aaf3383c1e45fa8"
+      "digest": "bdbbeb2a267c640b83edf67ccf1daa48964f389cc33e9823aa2688ab3027e799"
+    },
+    {
+      "subject": {
+        "sense": "D000074",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "920d53f2ba8db9ed226d6430fe54f562849c9cd1a5c72a52e854cc4e3bc78348"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P51617",
+        "file": "data/fetched/uniprot/P51617.json",
+        "sha256": "13445e7ca1e57bd461c9f0fdcd32fbbfc5d4b119479aefc4cd1b9d6212efadaf"
+      },
+      "checks": "검증 (이름 'IRAK1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "d09e382f5a96d940d1640a23dba02ec1a1421097559aa000015b7bd389f8f8db"
     },
     {
       "subject": {
@@ -987,10 +1185,32 @@
       "checks": "검증 (이름 'IRAK1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "21ec8eb4d2207f83eb904d3008cc2fbed4ac45731628142b39be4644dd88f6d8"
+      "digest": "37b4a99b06744e0277b2f07d10992e8baad445b06b2216eee6af268fe7262692"
+    },
+    {
+      "subject": {
+        "sense": "D000076",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "76a1b3b4f9a241cb2c1c2415ba7851b7f33e2803f817af8c553b845dcb76d2b4"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9Y4K3",
+        "file": "data/fetched/uniprot/Q9Y4K3.json",
+        "sha256": "6461e9f5339669d36a4d1d65d9f072ff9b4185a4099631b09133bd9eb56d94f6"
+      },
+      "checks": "검증 (이름 'TRAF6', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "63c6524dbc91b35b145c721d33eb29887b63a5aecc13a3a96bf3f8c565223d24"
     },
     {
       "subject": {
@@ -1009,10 +1229,32 @@
       "checks": "검증 (이름 'TRAF6', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "86dabed885a3a8551197d601d317cd14b48dfcdb66c5af051c0db7c9d7ef498a"
+      "digest": "01300279302e37f5b6acf725aac4021c274dc87c4be56116b0216d796097d802"
+    },
+    {
+      "subject": {
+        "sense": "D000078",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "ee8f636b23fc543f2ff590c279327e68a0e5edeff759e094a93aae43b8dc3666"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O43318",
+        "file": "data/fetched/uniprot/O43318.json",
+        "sha256": "c46eb813413bd4e2a79504a771fa99fd989a647eaebe5e24d4b01ce2ec09ed1b"
+      },
+      "checks": "검증 (이름 'MAP3K7', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "032205c1db1a3730c61f26d06c79c283a5b87270221465134d39c66e9e8cb41e"
     },
     {
       "subject": {
@@ -1031,10 +1273,32 @@
       "checks": "검증 (이름 'MAP3K7', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "8e5036639ea31bcc980bab69e8337b52532151451217efdb9bc333d8b14e14d3"
+      "digest": "9e11fc472512b9cf9d7100660f460555cd4803a12c66bf2fdf305b0b8bd2243b"
+    },
+    {
+      "subject": {
+        "sense": "D000079",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "b61b973b956d5372e1c7600e71cade4230e389b0f2fca4727d7d16d49721748b"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q15750",
+        "file": "data/fetched/uniprot/Q15750.json",
+        "sha256": "87194fee9a2bb25dbcf167db5b4b04ae35cd3d6b0abd0d822b5367494a4ec057"
+      },
+      "checks": "검증 (이름 'TAB1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "bbaca60d13db0e7f0718d3594888c168abc71328fd7235fd929dab71ffc95365"
     },
     {
       "subject": {
@@ -1053,10 +1317,32 @@
       "checks": "검증 (이름 'TAB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "ec760331c4a16cd40c98e7bd22f17516092c6d03aeb0cdb48cb270a7544a02b6"
+      "digest": "ec47a80d6d5b6c32d2597942ff284b336b38d4a8068d10960845ff107f5b2e90"
+    },
+    {
+      "subject": {
+        "sense": "D000080",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "7f1fbd4468e5a11cdafe3fc64fadd3907e417258259748c8a853a302e670ad01"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9NYJ8",
+        "file": "data/fetched/uniprot/Q9NYJ8.json",
+        "sha256": "69ac0ef1f0e7a4e8e6cd1ff2b3eb5b39f62dc5bf38a14531950cf5474c6e815b"
+      },
+      "checks": "검증 (이름 'TAB2', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "08623f12abdfd08a4b62dbd92d95ddc07051080d091b56fba1c05afddc7c757f"
     },
     {
       "subject": {
@@ -1075,10 +1361,32 @@
       "checks": "검증 (이름 'TAB2', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "2cf1a072f03ee0df79ec8845b25a09bf73f7c4f99d74a93d0ea7cc3721ffef63"
+      "digest": "195d6affcc75bb543d28ce7887419d1ce79aa70d4e7df8d87a9559b4528afa7c"
+    },
+    {
+      "subject": {
+        "sense": "D000082",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "66a19d6e61e3700e188de5520cbf39e9360def63f4ffc08c8610339c4891ed9f"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O15111",
+        "file": "data/fetched/uniprot/O15111.json",
+        "sha256": "0ea59d13b91303fc5011734e20af6031dbc88ab4a38e87c485c183eaf5053578"
+      },
+      "checks": "검증 (이름 'CHUK', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "8e7987286313365c1c6250fc487554631833fbb13ed9a13ac27d11fb949c65a5"
     },
     {
       "subject": {
@@ -1097,10 +1405,32 @@
       "checks": "검증 (이름 'CHUK', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "8d6852f6dedc7ffd8463616042bf6e199c81e81f3e1913b8a1fa30c132c6517c"
+      "digest": "0de8855003edec0bcf410a1518d630f1f4ac14d5a1400dc4ea0ab5ddf01f9c0f"
+    },
+    {
+      "subject": {
+        "sense": "D000083",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "22705f55903aa2007eb23dc3b4909f6525a7ab6303fb968f9a8f156a8b5d15f3"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O14920",
+        "file": "data/fetched/uniprot/O14920.json",
+        "sha256": "008f4baf141969e702ba8089ce477dfcb01f0e2bd941281b564b30eafa8cb259"
+      },
+      "checks": "검증 (이름 'IKBKB', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "91e30a593bf568ebe75679a44f1705f71dc7c9248fa94ec7d9dad7e62029eaa5"
     },
     {
       "subject": {
@@ -1119,10 +1449,32 @@
       "checks": "검증 (이름 'IKBKB', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "a424dc147cd5a64b4062b667af39dc8a7dd7ef46050e4bfe2978adc45f8f347e"
+      "digest": "8edd43f52554619ca182af0dbd38b58ab333f30ac77ffc1b58801712b83033ec"
+    },
+    {
+      "subject": {
+        "sense": "D000084",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "d535811c44f71ec5df6056b78f458d9e722640252a60f38687d6fb41809c5218"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9Y6K9",
+        "file": "data/fetched/uniprot/Q9Y6K9.json",
+        "sha256": "3353c88c74385d997c114757ede7c13debda6ad408661b0b00e67e489d0a5a2e"
+      },
+      "checks": "검증 (이름 'IKBKG', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "134f7210bafa9248366484de2b99cc4760a0a7182f5c97d5ee0af47ee90202c8"
     },
     {
       "subject": {
@@ -1141,10 +1493,32 @@
       "checks": "검증 (이름 'IKBKG', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "fb265a349c9bc0a16d810034ea56621617374e5ee556fe3cf34c3747979e10d9"
+      "digest": "a566272520a55b7cdaf490cd045a1d6cfa6d680af11072137cfa8f5cabfb78c3"
+    },
+    {
+      "subject": {
+        "sense": "D000086",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "760aff0aa84d0845d164d52e523c931034ddf53fe6d70413bbb18d7f3870d1f0"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P25963",
+        "file": "data/fetched/uniprot/P25963.json",
+        "sha256": "e1cf207b6884a47d6e63558811a19a63fbbdad18fbc1e51af08945a8ef47838f"
+      },
+      "checks": "검증 (이름 'NFKBIA', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "1b2d741ac4182621782c39e9c58928c51e478d6ac976232120e168d760d4d7ec"
     },
     {
       "subject": {
@@ -1163,10 +1537,32 @@
       "checks": "검증 (이름 'NFKBIA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "7d735d4a6daabe34ecddebbdf8774eca53ce19a81e285fcbbb41d9cf9b804150"
+      "digest": "83568c7779abe60d4e1cacda1f9587a74ed7070ac0dd82ea626971df542ae323"
+    },
+    {
+      "subject": {
+        "sense": "D000087",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "314be271367e8b3b3a6c8375cf4abc34a3f04f87ec929c4a224584087f1ad514"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q04206",
+        "file": "data/fetched/uniprot/Q04206.json",
+        "sha256": "584bd675535702f0eca501f845507d9a04094a60d96a3439ed49c212992254dd"
+      },
+      "checks": "검증 (이름 'RELA', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "fc8d960134023bdfad693754f9f181e3ca6040f2030ee1fcefd9a6dc2cfe72c3"
     },
     {
       "subject": {
@@ -1185,10 +1581,32 @@
       "checks": "검증 (이름 'RELA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "8a02e4acbb9442a8cd19dfb5334bbb746e652fb7feac683ac8ac7023a7afa29e"
+      "digest": "9da36c7db6b554d96b9b4ba5e60b0f7f8d1f129b9685d486f01ec5c0c8838586"
+    },
+    {
+      "subject": {
+        "sense": "D000088",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "38417ef83a638e372531019a12f8209f4135a7bd39ca73770a7efa633eea9362"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P19838",
+        "file": "data/fetched/uniprot/P19838.json",
+        "sha256": "b395d7b7895a5a5887811a51e5977ca7aba038a37ea5ae78925f474ad9c2c358"
+      },
+      "checks": "검증 (이름 'NFKB1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "51827bdfdb576370dac3601bde8d53e5e22710d0446c7d6284dbf9759d7dc246"
     },
     {
       "subject": {
@@ -1207,10 +1625,32 @@
       "checks": "검증 (이름 'NFKB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "45e414695a31e768db903b3ab01711ae417b3b3a59867b5d639519d456fce61c"
+      "digest": "fcdfcae94a5745999d04d8cea5c32788cf2b8a271d3a67e228205330511fb371"
+    },
+    {
+      "subject": {
+        "sense": "D000091",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "f045bce6f472f39f4ec4d95a94da2de457bcce02327c1d1dc4d1277a1110c45d"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9Y297",
+        "file": "data/fetched/uniprot/Q9Y297.json",
+        "sha256": "510357bd1f0442827408c8d97bb39e7af020f50e23f778174492894d88a2db8d"
+      },
+      "checks": "검증 (이름 'BTRC', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "33d074180f963f22b513b84c57992ae38ff228bc58eadea26650320e39bc497b"
     },
     {
       "subject": {
@@ -1229,10 +1669,32 @@
       "checks": "검증 (이름 'BTRC', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "939cb0d75a0f1cd662a3239c3830b42799cd2c115f25e7f02be74790391acc15"
+      "digest": "159d009c97ee7248e1f8d2d2d6885f8f711481a1910823cc22b35cda1d7eaec9"
+    },
+    {
+      "subject": {
+        "sense": "D000092",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "c635bfe220025687db0ac9efc3e94874e8c6b9a38133d31887631ad979ae0993"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P63208",
+        "file": "data/fetched/uniprot/P63208.json",
+        "sha256": "a9eb295972defd033a728ef6e178d5f6653c549c6d4b5adb2be3ebdf5762dc7a"
+      },
+      "checks": "검증 (이름 'SKP1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2ff77a153f15dc8b7a35bd4e1b172082b9527210baf6b1ac5509ec6704b6987b"
     },
     {
       "subject": {
@@ -1251,10 +1713,32 @@
       "checks": "검증 (이름 'SKP1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "d0c5f26d55f0d0757b61c5c7ff4b3963741ffe724912d0e6b8b9cf5893ce2f05"
+      "digest": "d2462c461fdcc8109346393c8e624af700404127a4295fb0e35b399635b3cad3"
+    },
+    {
+      "subject": {
+        "sense": "D000093",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "9f7f5be9884b59b3f3353a61b6950f7672ae672e4ffb01e1bea7cb1f58ff3ff9"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q13616",
+        "file": "data/fetched/uniprot/Q13616.json",
+        "sha256": "26cd107f0dabeab10ccc8abad2a6254cedf040d4d10856af412531b4afc3e65e"
+      },
+      "checks": "검증 (이름 'CUL1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "9dca5eee5353fe69a260b48b9accd49824a22f764a934e7fc4ab3de70cfe1825"
     },
     {
       "subject": {
@@ -1273,10 +1757,32 @@
       "checks": "검증 (이름 'CUL1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "e368087df679b2cad3d3e85444a992f3f589d4a3459bdb0cbb9f9f22f296530d"
+      "digest": "0425fb90a3975269963c11c1441510e11fa2d723e62ba32a21d89df14e17c83b"
+    },
+    {
+      "subject": {
+        "sense": "D000094",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "9987419f96fb514f4fa4958a9f8fc21d6f21cb6c37a372ab693d8f137ad349fd"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P62877",
+        "file": "data/fetched/uniprot/P62877.json",
+        "sha256": "0f26e1d30099d2fc0f33ada9adc73233da16958e27b67d2c6967541b7c860abf"
+      },
+      "checks": "검증 (이름 'RBX1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "7686225cd8fe03e080b4d89c32bf10beae77fa18d396f6049e5cec3b8604e5a6"
     },
     {
       "subject": {
@@ -1295,10 +1801,10 @@
       "checks": "검증 (이름 'RBX1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "20689fd310b445f3fb2cc71b6e95c7bb0e4d80f9907ba9c14ebac438e6985415"
+      "digest": "81d061a9bfcd203c39878a983111fa8ce1748389cc4c2e04a9cada5ab5c7d3f4"
     },
     {
       "subject": {
@@ -2293,6 +2799,28 @@
     {
       "subject": {
         "sense": "D000161",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "2ce004e921ab5aaa95c5313d2f45d78ad26e8c62127d60cd67c711d876aae7bc"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P29459",
+        "file": "data/fetched/uniprot/P29459.json",
+        "sha256": "8a9f407b720c6f34723f2a91ef4df35738c68d3b14e8524f6ab01ffdd2965c81"
+      },
+      "checks": "검증 (이름 'IL12A', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "79ec7ecf57295f945abbfb9d6b6d2ee4801ba4807489b508d1f5cb9dd06a439b"
+    },
+    {
+      "subject": {
+        "sense": "D000161",
         "field": "xref",
         "ns": "UniProt",
         "value": "P29459"
@@ -2307,10 +2835,32 @@
       "checks": "검증 (이름 'IL12A', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "3ea98a8b2f511c3cb4eb0c67898e7dd3929494498d214f361c9f84e7516676e3"
+      "digest": "3de8e4737927f0de0d67e543b1140796e789999d0e119bb95d07ab804e7cddd0"
+    },
+    {
+      "subject": {
+        "sense": "D000162",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "997621c8a338440d7db35c06ca18632dc6cfd6d26c4549a08d0a07eca120b766"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P29460",
+        "file": "data/fetched/uniprot/P29460.json",
+        "sha256": "9d651a25673c52209ac34858aa6ac031fb36b6b558327b8394d1dc845a10fed5"
+      },
+      "checks": "검증 (이름 'IL12B', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "a976cc07e4ef047224d62d0349b88f9ee89ebc9b4588576069c432e658a21ed7"
     },
     {
       "subject": {
@@ -2329,10 +2879,32 @@
       "checks": "검증 (이름 'IL12B', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "58c7f5fc9ad1f0a69bd3c73e750e79772d160bd968c8c25bfc8c78db8d0d9cb5"
+      "digest": "d3f1672e523e17b06a80501216a2300452b32c99b28b1a205cbb2cd08b514756"
+    },
+    {
+      "subject": {
+        "sense": "D000164",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "eb801922daf84030260c754b2516f6ef584ec257e956d9285e48f4a45ee299a0"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P40933",
+        "file": "data/fetched/uniprot/P40933.json",
+        "sha256": "575cb99a7e1d6dda078e3aefcac13454284966e5a0d49a253cd45553fb63b57d"
+      },
+      "checks": "검증 (이름 'IL15', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2c52a3b9f78de7da8901464080490ff37401f2488d237197fe248cc4aff644d1"
     },
     {
       "subject": {
@@ -2351,10 +2923,32 @@
       "checks": "검증 (이름 'IL15', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "aafd454ad4468e51a1f88a32210a5416c054e6c61706443aad5869273dadcffe"
+      "digest": "6a756b3e7a03a869a05750ac1242e961b064e6971d6df14c2f9406435cd0ce3a"
+    },
+    {
+      "subject": {
+        "sense": "D000165",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "8c452c4b47a38905befb2af901284213f2dc6add2a7a5a6cc9dbbdb0dd706a4b"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q9UL17",
+        "file": "data/fetched/uniprot/Q9UL17.json",
+        "sha256": "4e86377bcec5d0e16b0e480765e3a1b66d8584d2a5a5107da5c23d7b5c9128bf"
+      },
+      "checks": "검증 (이름 'TBX21', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "9c543f1dba0282a78ba650e7a8e2a84a13915a670757a7b5cc515aed71fb94de"
     },
     {
       "subject": {
@@ -2373,10 +2967,32 @@
       "checks": "검증 (이름 'TBX21', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "73fa52433b8ce09c4091b5d1536abdec6381a31222a1f4c19ca5eee366361cd0"
+      "digest": "a8d069c47d3d911c785e51f83c4ab980ea71105312646d819b7ea24ff00976a1"
+    },
+    {
+      "subject": {
+        "sense": "D000166",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "84bbceacbca7006c58d43e1409bb2fc036ffd69c321da676226e0ec6a7356a36"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O95936",
+        "file": "data/fetched/uniprot/O95936.json",
+        "sha256": "ef057934f3f40148a73fb87d1ca010f5c1936631ebbbefe28a4dbbaaf360cfa9"
+      },
+      "checks": "검증 (이름 'EOMES', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "f1e59c1f7928933cb75d1e1e8ba4d60c6b91a811fd4050f7beebe9c60efe0938"
     },
     {
       "subject": {
@@ -2395,10 +3011,10 @@
       "checks": "검증 (이름 'EOMES', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "e64331d36f3aa9321ddabf121acac25f1c56b00b47b7d550db230dfc1240bd04"
+      "digest": "7213a38210a0a71e302d697ba1e1fb372bbef3b75c5a7ce07bf1d3b8c66d08c5"
     },
     {
       "subject": {
@@ -2579,6 +3195,28 @@
     {
       "subject": {
         "sense": "D000182",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "7b02f3d954c7c3f2e4745b0e62dbcfaf734b97c45b3e54edc23b1a72d30ca8ad"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P04439",
+        "file": "data/fetched/uniprot/P04439.json",
+        "sha256": "bb88d5e380a6c5ecccd731cadb83245cb9738d532ef4ca8613d66172aa37358f"
+      },
+      "checks": "검증 (이름 'HLA-A', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "a079776ec74b4e6014c0968dc790ddd39b8529f479ec437f4bd93cf99947bb6f"
+    },
+    {
+      "subject": {
+        "sense": "D000182",
         "field": "xref",
         "ns": "UniProt",
         "value": "P04439"
@@ -2593,10 +3231,32 @@
       "checks": "검증 (이름 'HLA-A', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "51a975a0667dc9508f101b491fb9ffc5b3399cbe489bbb6e473e8b8ca4df22f4"
+      "digest": "7a3261f66840ccd309400b6b2adb5360fbb6a2162ecb3c3b70ee116fe685b4c3"
+    },
+    {
+      "subject": {
+        "sense": "D000183",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "c319ce623de7d59e9e73c6daf7ec603d5e5ed48358f54b97d1eccdc3c9bf693b"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P61769",
+        "file": "data/fetched/uniprot/P61769.json",
+        "sha256": "2c63a677327c7404f25a5423b106f23ac3a681d96e3e23eb2c9c60481d710f31"
+      },
+      "checks": "검증 (이름 'B2M', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "18d5f3e6fea63a832b90645cd57f2be916758ae94e417629c6278fd5f775f872"
     },
     {
       "subject": {
@@ -2615,10 +3275,32 @@
       "checks": "검증 (이름 'B2M', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "7cb86bdbcb2a12dad64f9dd13c3ae2f2822e2aa80a14cf463e9bd35b90bab794"
+      "digest": "ebc74db40fba6ccbe113321efaba3f0ea2e61edf87af5b2f234f5e6bdd8cb80b"
+    },
+    {
+      "subject": {
+        "sense": "D000184",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "32836215d14e4d6ee77708e3a21894a37c5b42532c826241d645339c8051bfc2"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q03518",
+        "file": "data/fetched/uniprot/Q03518.json",
+        "sha256": "cd302810de6f1989b7084e2065550fc09fc98be45d7f0cdaef91b955a7a3cdba"
+      },
+      "checks": "검증 (이름 'TAP1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "29d5a9c2f3926cda5836f01555e0c457ab88f0501557130b81f2bf6bfda031b7"
     },
     {
       "subject": {
@@ -2637,10 +3319,32 @@
       "checks": "검증 (이름 'TAP1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "852d3b7381146c2bcd2c2c88d6c9341d463f24655a782f6652afefcb3fd04969"
+      "digest": "d992e373188f046c7354067456d51b5a939de9e2e81344c4c5677864e4c651f4"
+    },
+    {
+      "subject": {
+        "sense": "D000185",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "3b6a0c4f9cc223ce302315995c05458c653a0586b432330e6ab0dc1cac4c738e"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "Q03519",
+        "file": "data/fetched/uniprot/Q03519.json",
+        "sha256": "80a4ea66b1e86837b86aedb3257526642efba6ee08e2da9ef138168e520e14e4"
+      },
+      "checks": "검증 (이름 'TAP2', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "cd04ab90febc6e344823b1396b0e6da70a69283b3122e7fe136d66f43bc94904"
     },
     {
       "subject": {
@@ -2659,10 +3363,32 @@
       "checks": "검증 (이름 'TAP2', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "cfd1149fc290c4f80da434d5d83acd28ab11a61e2685d1b9c0f1a5875eabb2ed"
+      "digest": "8a554570e1a284511c053e34137181df950adeb7b4aea31ae0d2c767d6fdf1a9"
+    },
+    {
+      "subject": {
+        "sense": "D000186",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "15726128aef8fecd5bc747250c168014ca1c8c52da7e1213196e3336840ce656"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O15533",
+        "file": "data/fetched/uniprot/O15533.json",
+        "sha256": "bace7ea8eec15a6cd1d49112ae5100000175417c0ca2c6af45f503f6d0f9390f"
+      },
+      "checks": "검증 (이름 'TAPBP', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "5cb82deacc1bd907e8afea87f5d437c9a4a0496d6c4d13f1b5aea62a79d3afaa"
     },
     {
       "subject": {
@@ -2681,10 +3407,32 @@
       "checks": "검증 (이름 'TAPBP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "c83ce9b0124209e57fcfa96bf14398915b3a1bead3e999262288c320ee78b99e"
+      "digest": "0057081a6ac71502a0382c16b787c98fe068b13b06365b82feaf10e3a2b85fea"
+    },
+    {
+      "subject": {
+        "sense": "D000187",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "9e4dcfd5cc4649a55d52b7f6f58a5d66513f3553779f6df1a35c8924e2d62ff3"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P27797",
+        "file": "data/fetched/uniprot/P27797.json",
+        "sha256": "4f89fce1fc71225c28877b88d7ea0609d69c3976708b249e66a38624141f7168"
+      },
+      "checks": "검증 (이름 'CALR', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "6bcca2ce38fb21933a9ad519970deb0c290909ac586fbff78466cc1112f2fd6d"
     },
     {
       "subject": {
@@ -2703,10 +3451,32 @@
       "checks": "검증 (이름 'CALR', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "95bae8657f7f10625188a31216ffd7dfbcabb5ea722aa43b4a024ed9638aaa40"
+      "digest": "4a8f7103202c2f75dc91f3dfee6910d912afc986e2b99c44381bfc97a834c1d6"
+    },
+    {
+      "subject": {
+        "sense": "D000188",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "2246e027ea031edb3b93e1ea9ac0b693e9fcc25fe5a5d1b2ee7381119fad1162"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P30101",
+        "file": "data/fetched/uniprot/P30101.json",
+        "sha256": "df3f5db0d1fc8e569f4c2ef0a908c663e537441dfb0527dfd18e5173da09b765"
+      },
+      "checks": "검증 (이름 'PDIA3', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "fedcb88c9d9153b34a3edc416b5c52a0796737179361f2eed05172866849c0df"
     },
     {
       "subject": {
@@ -2725,10 +3495,32 @@
       "checks": "검증 (이름 'PDIA3', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "ba3b6552879d248c7cce56953e32c4004b2b709d5d44411117ed52433d89332c"
+      "digest": "a57f41e09d4d5154ea323dc7263a302498b516fd87a291fcf0896039f6e79c84"
+    },
+    {
+      "subject": {
+        "sense": "D000192",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "ba441e701023b22b998f19610fa6074b5c397a848a1d6f6bfdfd289f5ce86163"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P01903",
+        "file": "data/fetched/uniprot/P01903.json",
+        "sha256": "8e1100c07869544b7b53e51e29ae69b722c0885ef36c75e78357bbee4605c3e4"
+      },
+      "checks": "검증 (이름 'HLA-DRA', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "4aa190743b91ec88b6372fb4c3a47837412e10b4e3413a600d73ab06b6f64b19"
     },
     {
       "subject": {
@@ -2747,10 +3539,32 @@
       "checks": "검증 (이름 'HLA-DRA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "04fea6d73d0b1045e543ec98883b25a687b976ebdd024c4daed6e67df723faf0"
+      "digest": "eed8379a5ad47eab3128b187f1055920c503fc82355484f395f199a61387899e"
+    },
+    {
+      "subject": {
+        "sense": "D000193",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "6c038ed8f95e0248a1ffd4dbab53c0ff1d973269cc93901237862549053780be"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P01911",
+        "file": "data/fetched/uniprot/P01911.json",
+        "sha256": "91f0b0bcaa96a6781e6373990b2db7c2b997fee7defbc12c8dc9067c373fdb97"
+      },
+      "checks": "검증 (이름 'HLA-DRB1', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "e514797b71eedeb4f9a0e73cf0648a2e5a4b3e4caee414bae62dfabe57f5e445"
     },
     {
       "subject": {
@@ -2769,10 +3583,32 @@
       "checks": "검증 (이름 'HLA-DRB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "e83f7589cfd88fc0b15c74aaa2df50a4c8cd093b1996fdcf74d96fa391548d24"
+      "digest": "b3a5255b1dd4c976e7aa1786eef0dcf64614ab6e64604e20570e56e333793b3d"
+    },
+    {
+      "subject": {
+        "sense": "D000194",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "f6909ab67f84bc41d8ef8976b6e5634ebcb9031613d297ac41e582c377b48728"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P04233",
+        "file": "data/fetched/uniprot/P04233.json",
+        "sha256": "01b107adc925b82eab188fbf12577b66d8a1ef800c1ee427c57a215733fcca9e"
+      },
+      "checks": "검증 (이름 'CD74', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "e14af0d2468c4e331e20b86f65ccbdba36001c58822a16be24708eac6b18df23"
     },
     {
       "subject": {
@@ -2791,10 +3627,32 @@
       "checks": "검증 (이름 'CD74', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "ba6260548b61f40b998d2cfc8d7f6c21f2533ceeebfc98898a3b9c6d7ea6f5ba"
+      "digest": "1b5e7a1c0a3a3279baa1dc1e501f31b38d730ca52ddacc97f4d4f6261d16efb0"
+    },
+    {
+      "subject": {
+        "sense": "D000195",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "acd1c3790427993ba8eea8553653c4d23fb6fe8590d065f65035e0aab0301c0a"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P25774",
+        "file": "data/fetched/uniprot/P25774.json",
+        "sha256": "7db29ebd785aa0766db4c33f3f7e8aa0e39e98edd7d839ddea4458eb9cfb3eeb"
+      },
+      "checks": "검증 (이름 'CTSS', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c33297824e3b47f4f11dbaee8e10ef530cfd986e6b709218634bf50f36d59480"
     },
     {
       "subject": {
@@ -2813,10 +3671,32 @@
       "checks": "검증 (이름 'CTSS', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "8d75a9351b77d82a65a8c6ee1814cacc844aa8ab8f719662f3ee4f80f159c257"
+      "digest": "a0f08857724ee54561e2810357b06e398170e7a7d35cde7be0fbaf029a70d633"
+    },
+    {
+      "subject": {
+        "sense": "D000196",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "4c7e4c736be54da59d92abd056a264e2d097ab97496ebcf1c986bf19653554ec"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P28067",
+        "file": "data/fetched/uniprot/P28067.json",
+        "sha256": "db5813f7726a0550c97aeb0d1d4054a213011abae9bd0075a9dada8b816c1040"
+      },
+      "checks": "검증 (이름 'HLA-DMA', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "c3b0ead895f9eaf1ab3a29f044c7ef5755efd786903e1bb9ee833ac108d20acb"
     },
     {
       "subject": {
@@ -2835,10 +3715,32 @@
       "checks": "검증 (이름 'HLA-DMA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "94684ffa535f14ee1c93e6dc3742495f0ec5fc4fab9c6a6acc4773b95cbd1ac1"
+      "digest": "7a6a629bf2a259096bdefb8383bd3b05139213908620bc967b56fd6b41e7fbc4"
+    },
+    {
+      "subject": {
+        "sense": "D000197",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "1095b780447806c9f8b4493da189ba8ecdada7f9db110d768ee7b8a8787a39dd"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P28068",
+        "file": "data/fetched/uniprot/P28068.json",
+        "sha256": "659f3470fba3bb76aee61c2a302e186922c4ca7a19a7ff80d93104f7be5df5f1"
+      },
+      "checks": "검증 (이름 'HLA-DMB', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "a61d14abcc5cc3e86d3818e8adeecc05a482a7d4c90ee6e627653529de432304"
     },
     {
       "subject": {
@@ -2857,10 +3759,10 @@
       "checks": "검증 (이름 'HLA-DMB', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "46146813e55319b0d07ed0f5d180ed1468d3c4e1886423fe4a696ba5351f19ff"
+        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
       },
       "issued_at": "2026-10-10",
-      "digest": "5c2f6eb86622e1bf20ea266d378662d0610d07a6bc1caea024f038ca8fbc180e"
+      "digest": "9d7d450d5be5bb6a00370b1df28955943a8f109f3f5025a76310e80147ce2178"
     }
   ]
 }

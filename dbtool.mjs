@@ -26,6 +26,7 @@
 //   node dbtool.mjs augment   plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync] | apply <초안 patch.json>
 //                                                           자동 보강 고리: unmapped·Identity_Gap·asserted 외부 ID → UniProt·ChEBI 원본(data/fetched/) → 확인 → 패치 → 관문 → CHANGES.md
 //                                                           네트워크가 막히면 data/fetched/RETRIEVAL_TASKS.md 에 수동 수집 과제를 쓴다
+//   node dbtool.mjs grade     [<D…>] [--min <등급>] [--limit N]  신뢰 지표: 도장·근거·관찰에서 (S, D) 를 계산해 등급 분포·미달 목록 (--min 미달이면 종료 코드 1)
 //   node dbtool.mjs attest    [--quick]                     증명 등록부 검사: 도장마다 digest·증거 sha256·같은 확인 재실행 (무효 도장이 있으면 종료 코드 1)
 //   node dbtool.mjs compare   --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]
 //                                                           비교 검토: 복잡도·수치 L2(수렴 기준)·결과·판정 (Optimization-Negative 이면 종료 코드 1)
@@ -76,6 +77,7 @@ const rateOpt = () => ({ scenario: flags.scenario ? readJSON(flags.scenario) : n
   until_death: flags['until-death'] ? true : undefined, window: flags.window != null ? +flags.window : undefined, death_frac: flags['death-frac'] != null ? +flags['death-frac'] : undefined });
 // 사법부가 검증한 증명 도장 열쇠 (validate·관문에 넘김)
 const attestations = (db) => ATT.validStamps(db, ATT.readRegistry(HERE), { root: HERE });
+const REL = req('./judicial/reliability.js'); // 사법부 — 신뢰 지표 (S·D 쌍 → 등급)
 
 switch (cmd) {
   case 'status': {
@@ -315,6 +317,23 @@ switch (cmd) {
       break;
     }
     die('사용법: augment plan [--write] | fetch [--refetch] | build [--sync] [--out patch.json] | apply [--sync] | apply <초안 patch.json>');
+  }
+  case 'grade': {
+    // 신뢰 지표 (사법부 judicial/reliability.js): 도장·근거·관찰에서 (S, D) 를 계산해 등급을 낸다 — 저장하지 않는다
+    const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
+    const rows = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps });
+    const target = args[0] ? DefDB.resolveRef(DefDB.index(DefDB.normalize(db)), args[0]) : null;
+    if (target && target.error) die(target.error);
+    const pick = target ? rows.filter((r) => r.sense === target.id) : rows;
+    if (target) {
+      console.log(`# 신뢰 지표 — ${target.id} (항목 ${pick.length})`, '');
+      console.log('| 항목 | 대상 | 등급 | S | D | 근거 |', '\n|---|---|---|---|---|---|');
+      for (const r of pick) console.log(`| ${r.what} | ${r.target} | ${r.grade} ${REL.GRADES[r.grade].label} | ${r.s} ${REL.S_LABEL[r.s]} | ${r.d} ${REL.D_LABEL[r.d] || '—'} | ${r.why} |`);
+    } else console.log(REL.gradeText(rows, { min: flags.min && flags.min !== true ? flags.min : undefined, limit: +(flags.limit || 40) }));
+    const min = flags.min && flags.min !== true ? flags.min : null;
+    if (min && !REL.ORDER.includes(min)) die(`등급 '${min}' — ${REL.ORDER.join(' | ')}`);
+    if (min) process.exit(pick.every((r) => REL.meets(r, min)) ? 0 : 1);
+    break;
   }
   case 'attest': {
     // 증명 등록부 검사: 도장마다 digest(변조)·증거 파일 sha256·같은 확인 재실행 — 사법부 판정만, 쓰기 없음

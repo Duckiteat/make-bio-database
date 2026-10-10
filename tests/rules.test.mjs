@@ -1175,6 +1175,57 @@ test('외부 ID 역할: 신원 확인이 켤레 관계(수소·전하만 차이)
   assert.match(noRhea.detail, /반응 참여 자료|수신함에 없음/);
 });
 
+// ===== 신뢰 지표 (Reliability Index) — (S, D) 쌍은 계산되고, 데이터가 스스로 등급을 올릴 수 없다 =====
+const REL = req('../judicial/reliability.js');
+const ATTR = (db) => { const reg = ATT.readRegistry(ROOT), v = ATT.validStamps(DefDB.normalize(db), reg, { root: ROOT }); return { attestations: v.keys, stale: v.stale, stamps: reg.stamps }; };
+test('신뢰 지표: 등급은 쌍을 사전식으로 — 곱이 같아도 뜻이 다르면 등급이 다르다', () => {
+  // 곱이 겹치는 두 쌍: (4,2) = (2,4) = 8 — 곱으로는 가를 수 없고, 쌍으로는 갈린다
+  assert.equal(REL.gradeOf(4, 2, 'unchecked'), 'bounded');
+  assert.equal(REL.gradeOf(2, 4, 'unchecked'), 'reference');
+  assert.equal(REL.gradeOf(3, 3, 'unchecked'), 'parameter');
+  assert.equal(REL.gradeOf(4, 4, 'unchecked'), 'parameter', '추세를 점검하지 않았으면 기준값이 아니다');
+  assert.equal(REL.gradeOf(4, 4, 'match'), 'anchor');
+  assert.equal(REL.gradeOf(4, 4, 'mismatch'), 'legacy', '추세가 어긋나도 버리지 않고 지난값으로');
+  assert.equal(REL.gradeOf(0, 4, 'match'), 'blocked');
+  // 관문은 등급 순서로 (anchor → blocked)
+  assert.ok(REL.meets({ grade: 'parameter' }, 'parameter') && !REL.meets({ grade: 'reference' }, 'parameter'));
+  assert.deepEqual(REL.ORDER, ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked']);
+});
+test('신뢰 지표: S 는 도장·문헌 식별자에서, D 는 실측·도구 계산에서 계산된다', () => {
+  const ctx = { evidenceShas: ['abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'] };
+  assert.deepEqual([REL.scoreEvidence({ level: 'curated', sources: [{ db: 'DOI', id: '10.1/x' }] }, ctx).s, REL.scoreEvidence({ level: 'curated', sources: [{ db: 'DOI', id: '10.1/x' }] }, ctx).d], [3, 3]);
+  assert.equal(REL.scoreEvidence({ level: 'curated', sources: [] }, ctx).s, 2, '문헌이라 적혀 있어도 식별자가 없으면 S2');
+  const comp = REL.scoreEvidence({ level: 'computed', tool: 'dbtool augment — x (data/fetched/uniprot/P1.json · sha256:abcdef012345)' }, ctx);
+  assert.deepEqual([comp.s, comp.d], [4, 4], '도장받은 원본에서 도구가 계산한 값');
+  assert.equal(REL.scoreEvidence({ level: 'computed', tool: 'sha256:999999999999' }, ctx).s, 2, '원본 증거를 찾을 수 없으면 S2');
+  assert.equal(REL.scoreEvidence({ level: 'abstracted', basis: '기전 흐름' }, ctx).d, 2);
+  assert.equal(REL.scoreEvidence({ level: 'asserted' }, ctx).s, 2);
+  assert.equal(REL.scoreEvidence({ level: 'predicted', confidence: 0 }, ctx).d, 2);
+});
+test('신뢰 지표: 데이터가 스스로 등급을 올릴 수 없다 (도장 없는 verified 는 차단)', () => {
+  const opt = ATTR(BASE), rows = REL.items(BASE, opt);
+  assert.ok(rows.length > 500, `항목 ${rows.length}`);
+  const sum = REL.summary(rows);
+  assert.equal(sum.n, rows.length);
+  assert.equal(sum.byGrade.anchor, 0, '추세 점검이 없으므로 기준값은 아직 없다');
+  assert.ok(sum.byGrade.parameter > 0 && sum.byGrade.reference > 0);
+  // 도장이 유효한 외부 ID 는 parameter, 도장을 뺀 사본에서는 blocked
+  const atp = rows.find((r) => r.sense === id('ATP') && r.what === 'xref');
+  assert.equal(atp.grade, 'parameter');
+  const noStamp = REL.items(BASE, { attestations: [], stale: [], stamps: [] }).find((r) => r.sense === id('ATP') && r.what === 'xref');
+  assert.equal(noStamp.grade, 'blocked');
+  assert.equal(noStamp.s, 0);
+  // 패치가 status 만 verified 로 바꿔도 등급은 오르지 않는다 (도장이 없으므로)
+  const d = JSON.parse(JSON.stringify(BASE)), pi = id('무기 인산');
+  d.senses[pi].xrefs = [{ db: 'ChEBI', id: 'CHEBI:999999', status: 'verified', role: 'physiological' }];
+  const faked = REL.items(d, ATTR(d)).find((r) => r.sense === pi && r.what === 'xref');
+  assert.equal(faked.grade, 'blocked', '스스로 선언한 verified 는 차단');
+  // 보고서는 쌍과 곱을 함께 적지만 판정은 쌍으로 한다
+  const txt = REL.gradeText(rows, { min: 'parameter', limit: 3 });
+  assert.match(txt, /곱\(S×D\)은 .* 판정에 쓰지 않는다/);
+  assert.match(txt, /\| S4D4 \|/);
+});
+
 // ===== 비교 검토·정제 점검 (Comparative Optimization) =====
 const CMP = req('../judicial/compare.js'); // 판정만 — 변형 실행은 ORCH.compare
 test('정제 점검: 경로 순 반응 ↔ 단계 화학량 차이는 등록된 Structural_Gap 이 있으면 known, 중복 조절·공급은 잡고 참조 없는 쪽을 지우는 리팩터링 패치', () => {

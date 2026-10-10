@@ -54,6 +54,7 @@
 - 시뮬레이션 결과를 보고할 때는 "농도 공백" 표시(기본값·무한 풀)를 함께 밝힌다 — 그 결과는 도달 여부만 말한다.
 - **3차원을 무작정 늘리지 않는다.** `node dbtool.mjs resolution <경로>` 로 단계마다 필요한 해상도(R0 위상·R1 부위·R2 구조)를 보고, R2 는 경쟁(T3)을 속도 상수로 가를 수 없는 반응 중심에만 둔다. 경쟁은 먼저 속도 상수(Kd·kcat·Km)로 푼다.
 - **속도 상수는 규칙의 `kinetics` 에 SI 정준 단위로, 근거와 함께.** 확인하지 못한 값은 넣지 않는다 — 엔진 시험용 값은 `examples/scenarios/` 의 `hypothetical: true` 시나리오에만 둔다.
+- **값의 등급은 계산된다 (신뢰 지표, `judicial/reliability.js`).** 어떤 값을 시뮬레이션에 쓸 수 있는지는 두 축으로 가른다 — S(출처: 유효한 도장 4 · 문헌 식별자 3 · 그 밖 2 · 확인 불가 0)와 D(성질: 실측·도구 계산 4 · 요약 상수 3 · 추론 2). 점수를 데이터에 적지 않는다(계산되는 것). 곱 S×D 로 판정하지 않는다 — (2,4) 와 (4,2) 가 겹친다. 등급은 `anchor`(기준값) · `parameter`(매개변수) · `bounded`(오차 막대와 함께) · `legacy`(지난값, 지우지 않음) · `reference`(계산 금지) · `blocked`(한계로만)이고, `node dbtool.mjs grade [--min parameter]` 로 본다. 결과를 보고할 때는 쓴 값의 등급을 함께 말한다.
 - **실측값은 관찰 기록으로 (v10, `docs/design/observation-port.md`).** 측정한 수치는 모델 표현이 아니라 "무엇을 쟀는가"로 `observations`(O+1)에 넣는다. 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처·용도(`estimation | validation`)가 필수다. 문헌 속도 상수는 그 관찰을 `kinetics.from` 으로 참조하는 파생값이고, 묶은 상수(`lumped`)도 원 관찰을 참조한다. 관찰 기록은 바꾸거나 지우지 않는다 — 잘못이면 `retracted` 만 더한다. 추정에 쓴 관찰을 검증에 쓰지 않는다. 합성 관찰은 `examples/observations/` 에만 둔다. 측정값은 손으로 옮기지 말고 포트(계약 `schemas/obs/`)로 넣는다 — 지식(개념·기전)은 직접 패치, 측정은 포트.
 - **모든 시뮬레이션·갱신 뒤 `node dbtool.mjs audit-run <경로>` 를 돌린다.** Audit Error 는 오류로 넘기지 말고, 교정 제안의 한계를 채우거나 새 한계로 등록한다.
 - **물질은 무한하지 않다 (v7).** 대사물은 유한 저장소이고, 재생은 공급 규칙(`type: supply`)으로, 소멸은 분해 규칙(`type: degradation`, lost | recycled)으로만 표현한다. 고갈(AUDIT_RESOURCE·stalled)은 결과로 보고하고, 재생 경로가 없으면 공급 규칙을 정의하거나 Kinetic_Gap 으로 등록한다.

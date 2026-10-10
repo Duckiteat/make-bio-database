@@ -32,6 +32,8 @@ function issue(rows, date) {
     const base = { claim: 'verified', evidence: { kind: r.kind, key: r.key, file: r.evidence.file, sha256: r.evidence.sha256 }, checks: r.detail, issuer: { module: ISSUER, code_sha256: code }, issued_at: date };
     const subs = [{ sense: r.sense, field: 'xref', ns: r.facts.db, value: r.facts.id }];
     if (r.facts.inchikey) subs.push({ sense: r.sense, field: 'fingerprint', ns: 'InChIKey', value: r.facts.inchikey });
+    // 도구가 원본 서열에서 계산한 지문도 도장을 받는다 — 그래야 신뢰 지표(judicial/reliability.js)가 그 출처를 S4 로 셀 수 있다
+    if (r.facts.seqHash) subs.push({ sense: r.sense, field: 'fingerprint', ns: 'SEQ_SHA256', value: r.facts.seqHash });
     for (const subject of subs) { const st = { subject, ...base }; st.digest = digestOf(st); out.push(st); }
   }
   return out;
@@ -51,7 +53,7 @@ function verifyStamp(st, db, opt) {
       // 같은 확인을 다시: 그 외부 ID 를 잠시 asserted 로 되돌린 사본에서 신원 판결을 돌려 verified 가 나오는지
       const d = M.normalize(JSON.parse(JSON.stringify(db))), sense = d.senses[st.subject.sense];
       // 주체의 외부 ID: xref 면 그 값, 지문이면 그 지문을 낸 증거 항목(evidence.key)의 외부 ID — 한 정의항에 같은 db 항목이 여럿일 수 있다(역할)
-      const ns = st.subject.field === 'xref' ? st.subject.ns : 'ChEBI';
+      const ns = st.subject.field === 'xref' ? st.subject.ns : (st.subject.ns === 'SEQ_SHA256' ? 'UniProt' : 'ChEBI');
       const x = sense && (sense.xrefs.find((y) => y.db === ns && (st.subject.field === 'xref' ? y.id === st.subject.value : y.id === st.evidence.key)) || (st.subject.field !== 'xref' ? sense.xrefs.find((y) => y.db === ns) : null));
       if (!x) return { ok: false, stale: true, reasons: ['주체가 데이터에 없음 — 지난 도장 (그 값이 데이터에서 빠졌음, 위조가 아님)'], key: subjectKey(st.subject) };
       else {
@@ -62,7 +64,7 @@ function verifyStamp(st, db, opt) {
         const row = v.rows.find((r) => r.sense === st.subject.sense && r.kind === st.evidence.kind && r.key === st.evidence.key);
         if (!row || row.outcome !== 'verified') reasons.push(`재확인 실패 (${row ? row.outcome + ': ' + row.detail : '과제 없음'})`);
         else if (st.subject.field === 'xref' && row.facts.id !== st.subject.value) reasons.push(`재확인 값 ${row.facts.id} ≠ ${st.subject.value}`);
-        else if (st.subject.field === 'fingerprint' && row.facts.inchikey !== st.subject.value) reasons.push('재확인 InChIKey 불일치');
+        else if (st.subject.field === 'fingerprint' && (st.subject.ns === 'SEQ_SHA256' ? row.facts.seqHash : row.facts.inchikey) !== st.subject.value) reasons.push(`재확인 ${st.subject.ns} 불일치`);
       }
     }
   }

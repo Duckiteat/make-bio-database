@@ -315,6 +315,14 @@
       "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음)."
     },
     {
+      "path": "judicial/reliability.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js, legislative/clerk.mjs, dbtool.mjs, tests",
+      "interpret": "신뢰 지표 — 도장·근거·관찰 기록에서 (S 출처, D 성질) 쌍을 계산하고 등급(anchor·parameter·bounded·legacy·reference·blocked)을 낸다. 점수를 저장하지 않는다(계산되는 것). 곱 S×D 는 보고용 숫자일 뿐 판정에 쓰지 않는다 — (2,4) 와 (4,2) 가 겹치기 때문. 추세 점검(시간 축)은 아직 없어 trend 는 unchecked, anchor 는 나오지 않는다."
+    },
+    {
       "path": "legislative/legislative.js",
       "class": "law",
       "format": "UMD JavaScript (브라우저 DefDBLegislative / Node require)",
