@@ -30,9 +30,10 @@ test('① 계약: 합성 예시는 모양을 지키고, 값만 있는 관찰은 
 });
 
 test('② 관문: 올바른 관찰은 통과(O 번호 배정), 합성·불확도 없음·SI 아님·보정 불일치는 거부', () => {
+  const n0 = Object.keys(BASE.observations).length, o0 = BASE.meta.next.O;
   const db = passes({ observations: [amount()] });
-  assert.equal(Object.keys(db.observations).length, 1);
-  assert.equal(db.meta.next.O, 2);
+  assert.equal(Object.keys(db.observations).length, n0 + 1);
+  assert.equal(db.meta.next.O, o0 + 1);
   rejectedFor({ observations: [amount({ hypothetical: true })] }, /합성\(hypothetical\) 관찰은 데이터베이스에 넣지 않음/);
   rejectedFor({ observations: [amount({ uncertainty: { kind: 'measurement', model: 'normal' } })] }, /uncertainty\.sd/);
   rejectedFor({ observations: [amount({ uncertainty: { model: 'normal', sd: 1 } })] }, /불확도 유형/);
@@ -67,19 +68,21 @@ test('③ 실측 상수 = 관찰의 파생값: from 이 같은 규칙·칸·값�
 
 test('④ 변경 불가: 관찰은 바꾸거나 지울 수 없고, 철회 표시만 더할 수 있음', () => {
   const db = passes({ observations: [amount()] });
-  rejectedFor({ observations: [{ id: 'O000001', value: 1300 }] }, /관찰 기록은 바꿀 수 없음/, db);
-  rejectedFor({ remove: ['O000001'] }, /관찰 기록은 지울 수 없음/, db);
-  const retract = { id: 'O000001', retracted: { note: '보정 곡선 오류', evidence: FIX } };
+  const NEW = Object.keys(db.observations).find((k) => !BASE.observations[k]); // 이 패치가 받은 번호 (저장소에 이미 기록이 있다)
+  rejectedFor({ observations: [{ id: NEW, value: 1300 }] }, /관찰 기록은 바꿀 수 없음/, db);
+  rejectedFor({ remove: [NEW] }, /관찰 기록은 지울 수 없음/, db);
+  const retract = { id: NEW, retracted: { note: '보정 곡선 오류', evidence: FIX } };
   const db2 = passes({ observations: [retract] }, db);
-  assert.equal(db2.observations.O000001.value, 1200, '철회해도 값은 그대로');
-  rejectedFor({ observations: [{ id: 'O000001', retracted: { note: '다른 사유', evidence: FIX } }] }, /철회 표시는 바꾸거나 지울 수 없음/, db2);
+  assert.equal(db2.observations[NEW].value, 1200, '철회해도 값은 그대로');
+  rejectedFor({ observations: [{ id: NEW, retracted: { note: '다른 사유', evidence: FIX } }] }, /철회 표시는 바꾸거나 지울 수 없음/, db2);
   // 사법부는 병합 결과를 직접 바꾼 경우도 잡는다 (입법부 우회)
-  const tampered = JSON.parse(JSON.stringify(db)); tampered.observations.O000001.value = 1;
+  const tampered = JSON.parse(JSON.stringify(db)); tampered.observations[NEW].value = 1;
   assert.ok(J.observationImmutability(db, DefDB.normalize(tampered)).length === 1);
   // 철회된 관찰은 상수의 출처가 될 수 없다
   const db3 = passes({ observations: [halfLife()] });
-  const db4 = passes({ observations: [{ id: 'O000001', retracted: { note: '시험', evidence: FIX } }] }, db3);
-  rejectedFor({ senses: [withKin({ law: 'mass_action', half_life: 1800, from: [{ param: 'half_life', obs: 'O000001' }], evidence: FIX })] }, /철회된 관찰/, db4);
+  const NEW3 = Object.keys(db3.observations).find((k) => !BASE.observations[k]);
+  const db4 = passes({ observations: [{ id: NEW3, retracted: { note: '시험', evidence: FIX } }] }, db3);
+  rejectedFor({ senses: [withKin({ law: 'mass_action', half_life: 1800, from: [{ param: 'half_life', obs: NEW3 }], evidence: FIX })] }, /철회된 관찰/, db4);
 });
 
 test('⑤ 무손실: 정규화 멱등, 저장소는 v10, 관찰 밖 필드는 형식 변환에서 그대로', () => {
@@ -88,6 +91,6 @@ test('⑤ 무손실: 정규화 멱등, 저장소는 v10, 관찰 밖 필드는 �
   assert.equal(once, twice, '관찰 기록은 정규화를 거쳐도 비트 단위로 같아야 함');
   const raw = JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8'));
   assert.equal(raw.version, 10);
-  assert.deepEqual(raw.observations, {});
+  for (const [oid, o] of Object.entries(raw.observations)) assert.ok(C.checkObservation(o).ok, `${oid} 계약 위반: ` + JSON.stringify(C.checkObservation(o).violations));
   assert.equal(JSON.stringify(DefDB.normalize(raw)), JSON.stringify(raw), '저장소는 이미 정규형 (변환이 바꾼 것 없음)');
 });

@@ -652,6 +652,15 @@ test('Identity_Gap: unmapped 외부 ID 는 한계로 등록되어야 하고, 확
 // ===== 소진 시험 (Survival-to-Exhaustion): 시트르산 회로 =====
 const TCA = '시트르산 회로', ACCOA = id('아세틸-CoA'), NADP = id('NAD⁺'), NADH = id('NADH'), CO2 = id('이산화탄소'), IDH = id('아이소시트르산 탈수소효소');
 const mx = (d) => `${d}|mito_matrix`;
+// 측정 상수가 들어온 뒤(관찰 기록 O000001–O000006) 아이소시트르산 탈수소효소·푸마레이스 단계는 속도를 가진다.
+// 소진 시험은 '유한 저장소의 장부'(바퀴 수·CO₂·고갈 시각)를 보는 것이고 그 수는 화학량이 정하므로, 여기서는
+// 그 두 상수를 뺀 '모든 단계 즉시' 기준에서 센다 — 측정 상수로 도는 흐름은 소진 시험 3(가역 IDH)과
+// examples/scenarios/tca-measured-kinetics-hypothetical.json(교과서 7.5′)에서 따로 확인한다.
+const INSTANT = (() => {
+  const d = JSON.parse(JSON.stringify(BASE));
+  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate']]) for (const r of d.senses[sid].rule) if (r.id === key) delete r.kinetics;
+  return DefDB.normalize(d);
+})();
 test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복실화에서 CO₂ 를 빼면 거부', () => {
   const rs = BASE.senses[IDH].rule.map((r) => (r.id === 'oxdecarb' ? { ...r, effect: { ...r.effect, produces: [id('2-옥소글루타르산')] } } : r));
   rejectedFor({ senses: [{ id: IDH, rule: rs }] }, /부분 구조 수지가 맞지 않음 — 탄소 골격 단위 6 → 5/);
@@ -659,7 +668,7 @@ test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복�
   rejectedFor({ senses: [{ id: IDH, rule: rs2 }] }, /니코틴아마이드 뉴클레오타이드 부분 1 → 0/);
 });
 test('소진 시험 1: 아세틸-CoA 1000 → 정확히 1000 바퀴 뒤 아세틸-CoA 고갈로 정지, CO₂ 2000·GTP 1000 축적', () => {
-  const r = ORCH.runRate(BASE, TCA, { scenario: scenario('tca-acetylcoa-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 });
+  const r = ORCH.runRate(INSTANT, TCA, { scenario: scenario('tca-acetylcoa-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 });
   const pm = r.postMortem;
   assert.equal(r.stepCycles.length, 1);
   assert.equal(r.stepCycles[0].length, 8);
@@ -675,7 +684,7 @@ test('소진 시험 1: 아세틸-CoA 1000 → 정확히 1000 바퀴 뒤 아세�
   assert.ok(!r.audit.some((a) => a.code === 'AUDIT_MASS'), '탄소·CoA·NAD 수지 위반 없음');
 });
 test('소진 시험 2: NAD⁺ 3002 → 1000 바퀴 + 부분 바퀴 뒤 NAD⁺ 고갈, NADH 3002 축적 (바퀴당 NAD⁺ 3)', () => {
-  const r = ORCH.runRate(BASE, TCA, { scenario: scenario('tca-nad-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 }), pm = r.postMortem;
+  const r = ORCH.runRate(INSTANT, TCA, { scenario: scenario('tca-nad-exhaustion-hypothetical.json'), t_end: 60, dt: 0.01 }), pm = r.postMortem;
   assert.ok(pm.cause === 'exhaustion' && pm.limiting.bundle === mx(NADP));
   assert.equal(pm.cycles[0].completed, 1000);
   assert.ok(pm.limiting.starved.length === 3, 'NAD⁺ 를 쓰는 세 탈수소효소가 굶음');
@@ -696,7 +705,7 @@ test('소진 시험 3: 기질이 남아도 CO₂ 축적이 가역 IDH 를 평형
 test('재생이 있으면 죽지 않는다: 아세틸-CoA 공급을 켜면 정지 없이 계속 돈다 · 시동 중에는 정지로 보지 않음', () => {
   const sc = scenario('tca-acetylcoa-exhaustion-hypothetical.json');
   sc.kinetics['D000159/rule/accoa_supply'] = { law: 'mass_action', k: 100, order: 1, evidence: { level: 'predicted', confidence: 0 } };
-  const r = ORCH.runRate(BASE, TCA, { scenario: sc, t_end: 5, dt: 0.01 });
+  const r = ORCH.runRate(INSTANT, TCA, { scenario: sc, t_end: 5, dt: 0.01 });
   assert.ok(r.postMortem.alive && r.postMortem.cycles[0].completed > 1000);
   const slow = scenario('tca-co2-equilibrium-hypothetical.json');
   for (const k of Object.keys(slow.kinetics)) if (slow.kinetics[k].k) slow.kinetics[k].k /= 1e6;
