@@ -7,7 +7,7 @@
 // 등급은 **권한의 이름**이다 (진리의 이름이 아니다 — 이 저장소는 검증 엔진이지 진리 선언기가 아니다):
 //   anchor 기준값 · parameter 매개변수 · bounded 구간값(오차 막대와 함께) · legacy 지난값 · reference 참고(계산 금지) · blocked 차단(한계로만)
 // 점수는 손으로 매기지 않는다 — 도장·근거·관찰 기록에서 계산한다. 그래서 데이터가 스스로 등급을 높일 수 없다.
-// 이 파일은 판정만 한다: 쓰기·엔진 실행·데이터 수정 없음. 추세 점검(시간 축)은 아직 없으므로 trend 는 'unchecked' 이고 anchor 는 나오지 않는다.
+// 이 파일은 판정만 한다: 쓰기·엔진 실행·데이터 수정 없음. 추세 축(시간)은 judicial/trend.js 가 판정해 opt.trend 로 들어온다 — 없으면 'unchecked'(anchor 없음).
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(require('../model.js'));
   else root.DefDBReliability = factory(root.DefDBModel);
@@ -62,6 +62,9 @@ function items(db, opt) {
   const valid = new Set(opt.attestations || []), stale = new Set((opt.stale || []).map((x) => (typeof x === 'string' ? x : x.key)));
   const evidenceShas = (opt.stamps || []).map((st) => (st.evidence || {}).sha256).filter(Boolean);
   const ctx = { evidenceShas };
+  // 추세 축 (judicial/trend.js): 창 안의 유효한 추세 도장만 'match'·'mismatch' 로 온다. 없으면 'unchecked' — 그래서 anchor 가 나오지 않는다.
+  const trends = opt.trend || {};
+  const tr = (sense, ns, value) => trends[`${sense}|${ns}:${value}`] || 'unchecked';
   const out = [];
   const add = (o) => { o.grade = gradeOf(o.s, o.d, o.trend || 'unchecked'); out.push(o); };
   for (const [sid, d] of Object.entries(db.senses)) {
@@ -70,14 +73,14 @@ function items(db, opt) {
     for (const x of d.xrefs) {
       const key = stampKey(sid, 'xref', x.db, x.id);
       const s = x.status === 'verified' ? (valid.has(key) ? 4 : 0) : 2;
-      add({ sense: sid, label, what: 'xref', target: `${x.db}:${x.id}${x.role ? ` (${x.role})` : ''}`, s, d: 3, trend: 'unchecked',
+      add({ sense: sid, label, what: 'xref', target: `${x.db}:${x.id}${x.role ? ` (${x.role})` : ''}`, s, d: 3, trend: tr(sid, x.db, x.id),
         why: s === 4 ? '원본 대조 + 유효한 도장' : s === 0 ? (stale.has(key) ? '지난 도장 — 주체가 데이터에서 빠짐' : 'verified 인데 유효한 도장이 없음') : '원본과 대조하지 않음 (asserted)' });
     }
     if (d.unmapped) add({ sense: sid, label, what: 'identity', target: '외부 ID 없음', s: 0, d: 2, why: `unmapped: ${String(d.unmapped).slice(0, 60)}` });
     if (d.fingerprint) {
       const f = d.fingerprint, key = stampKey(sid, 'fingerprint', f.scheme, f.value);
       const s = f.status === 'verified' || f.status === 'computed' ? (valid.has(key) ? 4 : 2) : 2;
-      add({ sense: sid, label, what: 'fingerprint', target: `${f.scheme}`, s, d: 4, trend: 'unchecked', why: s === 4 ? '원본·도구 계산 + 유효한 도장' : '도장 없음' });
+      add({ sense: sid, label, what: 'fingerprint', target: `${f.scheme}`, s, d: 4, trend: tr(sid, f.scheme, f.value), why: s === 4 ? '원본·도구 계산 + 유효한 도장' : '도장 없음' });
     }
     for (const [i, x] of (d.desc || []).entries()) { const r = scoreEvidence(x.evidence, ctx); add({ sense: sid, label, what: 'desc', target: `설명 ${i + 1}`, ...r, trend: 'unchecked' }); }
     for (const r0 of d.rule || []) {
@@ -128,7 +131,9 @@ function gradeText(rows, opt) {
     for (const r of bad.slice(0, opt.limit || 40)) L.push(`| ${r.sense} ${r.label} | ${r.what} ${r.target} | ${r.grade} | S${r.s}D${r.d} | ${r.why} |`);
     if (bad.length > (opt.limit || 40)) L.push(`| … | 그 밖 ${bad.length - (opt.limit || 40)} 개 | | | |`);
   }
-  L.push('', '추세 점검(시간 축)은 아직 없다 — 모든 항목의 trend 가 `unchecked` 이므로 `anchor` 는 나오지 않는다.');
+  const byTrend = {};
+  for (const r of rows) byTrend[r.trend || 'unchecked'] = (byTrend[r.trend || 'unchecked'] || 0) + 1;
+  L.push('', `추세 축 (\`dbtool trend\`): ${Object.entries(byTrend).map(([k, n]) => `${k} ${n}`).join(' · ')}. \`unchecked\` 인 항목에서는 \`anchor\` 가 나오지 않고, 창을 넘긴 추세 도장은 다시 \`unchecked\` 다.`);
   return L.join('\n');
 }
 

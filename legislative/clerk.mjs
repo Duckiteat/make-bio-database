@@ -4,7 +4,7 @@
 //   · 행정부(core.js·engine/)는 아무것도 쓰지 않는다. 사법부(judicial/)도 쓰지 않는다 — 판결·도장을 계산해 넘길 뿐이다.
 //   · 서기는 사법부 판결이 붙은 것만 쓴다:
 //       data/db.json · data/patches/  ← 관문 봉인(sealVerdict)이 통과이고, 그 봉인의 db sha256 이 쓸 db 와 같을 때만
-//       attestations/registry.json    ← 도장마다 digest·증거 재확인(verifyStamp)이 통과할 때만
+//       attestations/registry.json    ← 도장마다 digest·증거 재확인이 통과할 때만 (주장별로 신원 verifyStamp · 추세 verifyTrendStamp)
 //   · 파생 문서(limitations.md · 교과서 부록 · CHANGES.md 한 행 · 수동 수집 과제 · 사용자가 요청한 보고서 파일)와
 //     수신함(data/fetched/) 받기는 서기의 일이다 — 내용은 다른 모듈이 계산하고 서기는 정해진 위치에만 쓴다.
 // 서기는 판결을 만들지 않는다(검사·관문 없음). 거부 사유가 생기면 예외로 멈추고 아무것도 쓰지 않는다.
@@ -16,6 +16,7 @@ import { createHash } from 'node:crypto';
 
 const require = createRequire(import.meta.url);
 const ATT = require('../judicial/attestation.js');
+const TR = require('../judicial/trend.js'); // 추세 도장(claim 'trend')의 검증은 이 쪽 — 주장마다 맞는 사법부 모듈로 보낸다
 const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '..');
 const sha = (x) => createHash('sha256').update(x).digest('hex');
 const serialize = (db) => JSON.stringify(db, null, 2) + '\n';
@@ -39,12 +40,13 @@ export function commitMerge({ dbPath, db, records, seal }) {
   return { records: written, db: dbPath };
 }
 
-// ② 증명 등록부: 도장마다 사법부 검증(digest + 증거 재확인)을 다시 거친 뒤에만 추가
+// ② 증명 등록부: 도장마다 사법부 검증(digest + 증거 재확인)을 다시 거친 뒤에만 추가.
+//    주장(claim)에 따라 검증 모듈이 다르다 — 'verified' 는 신원(attestation), 'trend' 는 추세(trend). 검증 함수를 부르는 쪽이 고르게 하지 않는다.
 export function appendAttestations({ root, stamps, db }) {
   root = root || ROOT;
   const reg = ATT.readRegistry(root);
   for (const st of stamps) {
-    const v = ATT.verifyStamp(st, db, { root, reverify: true });
+    const v = st.claim === 'trend' ? TR.verifyTrendStamp(st, db, { root, reverify: true, registry: reg }) : ATT.verifyStamp(st, db, { root, reverify: true });
     if (!v.ok) refuse(`도장 ${v.key}: ${v.reasons.join(' · ')}`);
     reg.stamps = reg.stamps.filter((x) => ATT.subjectKey(x.subject) !== v.key);
     reg.stamps.push(st);

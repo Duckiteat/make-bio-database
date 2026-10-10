@@ -6,6 +6,7 @@
 //   검증(verify) : digest 재계산(위조·변조 탐지) + 재확인(reverify): 증거 파일이 같은 sha256 으로 있고, 같은 확인을 다시 돌려도
 //                  verified 가 나오는지. 이 둘을 통과한 도장만 validate(db, { attestations }) 에 넘긴다.
 //   validate 는 status 'verified' 인 외부 ID·지문마다 맞는 도장을 요구한다 — 없으면 오류 (엔진·데이터는 스스로 verified 를 만들 수 없음).
+//   같은 등록부에 추세 도장(claim 'trend', judicial/trend.js — 시간 축)도 함께 산다. 이 파일은 그것을 검증하지 않고 넘긴다 (validStamps().trend).
 // 이 파일은 도장을 계산·검증만 한다. 등록부 파일(attestations/registry.json)에 쓰는 것은 입법 서기(legislative/clerk.mjs)뿐이다.
 'use strict';
 const fs = require('fs');
@@ -73,15 +74,17 @@ function verifyStamp(st, db, opt) {
 
 // 등록부 전체 → validate 에 넘길 유효 도장 열쇠 집합 + 실패 목록
 function validStamps(db, registry, opt) {
-  const ok = [], bad = [], stale = [];
+  const ok = [], bad = [], stale = [], trend = [];
   for (const st of (registry || emptyRegistry()).stamps) {
+    // 추세 도장(claim 'trend')은 다른 주장이다 — 검증은 judicial/trend.js 가 한다 (여기서 부르면 순환 의존). 그 쪽으로 넘긴다.
+    if (st.claim === 'trend') { trend.push(st); continue; }
     const v = verifyStamp(st, db, opt);
     if (v.ok) ok.push(v.key);
     // 지난 도장: 주체(그 외부 ID)가 데이터에서 빠진 것 — 기록은 남기고(계보) 무효로 세지 않는다. 변조·재확인 실패와 구분한다.
     else if (v.stale) stale.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });
     else bad.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });
   }
-  return { keys: ok, failed: bad, stale };
+  return { keys: ok, failed: bad, stale, trend };
 }
 
 // 관문 판결 봉인: 서기가 쓸 db 가 사법부가 통과시킨 바로 그 db 임을 보증 (판결을 다른 db 에 재사용 불가)

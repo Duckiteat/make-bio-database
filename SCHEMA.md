@@ -484,6 +484,22 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 지금 이 저장소의 규칙 `kinetics` 는 0건이다 — 확인한 속도 상수가 없으므로 모든 상수가 `hypothetical` 시나리오에서 온다. 그래서 `src: 'data'` 분기는 시험에서만 돌고, 확인된 상수가 들어오는 날 그대로 작동한다.
 
+### 추세 축 (③) — 지금도 합의와 같은가 (`judicial/trend.js`, `dbtool trend`)
+
+S·D 는 "그때 맞았다" 까지만 말한다. 등급 `anchor`(기준값)는 "지금도 합의와 같다" 를 요구하므로 **시간 축**이 하나 더 있다. 재현되지 않는 웹 검색 결과를 상태로 저장하는 대신, **같은 확인을 더 새 원본에 다시 돌린다**.
+
+| 단계 | 하는 일 |
+|---|---|
+| 점검 대상 | 유효한 신원 도장(claim `verified`)이 있는 주체(외부 ID·지문)만. 도장이 없으면 S 가 이미 낮아 추세를 물을 자리가 아니다 |
+| 합의 수신함 | `data/fetched/consensus/` — 같은 과제 이름 규약. 신원 수신함(`data/fetched/`)은 신원 도장의 증거이므로 **덮지 않는다**. 받기는 입법 서기(`dbtool trend --fetch`) |
+| 판정 | 새 원본으로 신원 확인을 다시 돌려 같은 결론·같은 값이면 `match`, 결론이나 값이 달라지면 `mismatch`, 새 원본이 없으면 `unchecked` |
+| 도장 | 날짜가 박힌 claim `trend` — 주체·판정·증거 파일 sha256·점검일·발급 모듈 코드 sha256·digest. 같은 등록부(`attestations/registry.json`)에 살지만 신원 도장과 다른 주장이라 검증 모듈이 다르다(`verifyTrendStamp`) |
+| 만료 | 점검일이 합의 창(`vocab.consensus.window_days` = 365일)보다 오래되면 다시 `unchecked` — **`anchor` 는 영구하지 않다** |
+| `mismatch` | 값을 지우지 않는다. 등급이 `legacy`(지난값, 비교에만)로 내려가고 `Consensus_Gap` 한계 후보가 된다 — 왜 달라졌는지(원본의 개정 / 우리 쪽 오류)가 데이터다 |
+
+지금 분포: 주체 170 중 match 170 · mismatch 0 → **지문 70개가 `anchor`** (S4 ∧ D4 ∧ 추세 일치). 외부 ID 는 정체성 사실(D3)이므로 추세가 맞아도 `parameter` 가 상한이다.
+추세 도장이 증명하지 못하는 것: 원본이 **실제로 더 새 것인지**는 바이트로 알 수 없다 (한계 L000085) — 그래서 창으로 만료시킨다.
+
 ## 8J. 외부 ID 의 역할 — ChEBI 규약 (형식 v10 확장, 2026-10-10)
 
 ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(ATP CHEBI:15422, 전하 0), pH 7.3 우세 이온 종(ATP(4−) CHEBI:30616), 이온화 상태를 묶은 분류(succinate CHEBI:26806, 화학식 없음). 규약을 선언하지 않으면 셋이 섞이고, 분류 항목은 화학식이 없어 **부분 구조 대조가 조용히 건너뛰어진다**.
@@ -515,6 +531,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-10 | 10 (확장 5) | 신뢰 지표 ③ 추세 축: 새 `judicial/trend.js`(합의 수신함 `data/fetched/consensus/` · 판정 match·mismatch·unchecked · claim `trend` 도장 · 합의 창 만료 · Consensus_Gap 후보), `dbtool trend [--fetch] [--write]`, 어휘 `gapTypes.Consensus_Gap`·`consensus.window_days`, `reliability.items(opt.trend)` 로 추세 축 연결, `validStamps` 가 추세 도장을 분리해 넘김, 입법 서기가 주장별 검증 모듈로 보냄. 지문 70개가 `anchor` 로 올라감(이전 0). 한계 2건(L000085 신선도는 바이트로 증명 못 함 · L000086 지문은 하나인데 ChEBI 역할은 여럿) (§8K 추세 축) |
 | 2026-10-10 | 10 (확장 4) | 신뢰 지표 ② 관문: 쓰인 상수마다 등급을 판정한다 — `reliability.constants`·`constantVerdict`·`constantText`, 속도 감사의 새 절 ②′(`judicial.auditRate`), 운명 판정의 `grades`(`fate_audit`), 과정 보고서의 무결성 증명서 한 줄 + §5 분포. 시나리오가 준 값은 등급 밖이므로 `hypothetical: true` 선언 아래에서만 쓸 수 있고, 문턱(기본 `parameter`)은 시나리오 `min_grade` 로 올린다. `reliability.js` 는 UMD(뷰어도 읽는다), 원자료에 `min_grade` 선언 전달 (§8K 관문) |
 | 2026-10-10 | 10 (확장 3) | 신뢰 지표: 새 `judicial/reliability.js`(S·D 쌍 계산·등급 6·보고서), `dbtool grade`, 서열 지문(SEQ_SHA256)도 사법부 도장을 받음(재확인 증거 과제 포함). 점수는 저장하지 않고 계산한다 — 곱은 보고용(겹침 때문에 판정 불가). 지금 분포: parameter 306 · reference 274 · blocked 1 · anchor 0(추세 점검 없음) (§8K) |
 | 2026-10-10 | 10 (확장 2) | 외부 ID 역할: `xrefs[].role`(`xrefRoles` physiological·parent·class), 역할 검사 넷(분류 항목 금지·역할 겹침·physiological 필수·같은 번호 두 번), 신원 확인에 켤레 관계(수소·전하만 차이)와 반응 참여(Rhea ≥ 3, 새 과제 종류 `rhea_usage`·수신함 `data/fetched/rhea/`), 증명 등록부의 '지난 도장' 구분. 데이터: ChEBI 항목 46개에 역할 선언(physiological 30·parent 14·class 2), 미확인 12건 닫음(Rhea 빈도로 고른 우세 종), 석신산의 분류 번호 CHEBI:26806 → succinate(2−) CHEBI:30031 교체, 원본 이름을 별칭으로 6건. 한계 2건(전하·양성자 수지 미검사, 중합체 단위 셈) (§8J) |

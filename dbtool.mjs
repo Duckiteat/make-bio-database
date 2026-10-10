@@ -27,6 +27,9 @@
 //                                                           자동 보강 고리: unmapped·Identity_Gap·asserted 외부 ID → UniProt·ChEBI 원본(data/fetched/) → 확인 → 패치 → 관문 → CHANGES.md
 //                                                           네트워크가 막히면 data/fetched/RETRIEVAL_TASKS.md 에 수동 수집 과제를 쓴다
 //   node dbtool.mjs grade     [<D…>] [--min <등급>] [--limit N]  신뢰 지표: 도장·근거·관찰에서 (S, D) 를 계산해 등급 분포·미달 목록 (--min 미달이면 종료 코드 1)
+//   node dbtool.mjs trend     [<D…>] [--fetch] [--write] [--all] [--limit N]
+//                                                           추세 점검(시간 축): 더 새 원본을 합의 수신함에 받아 같은 확인을 다시 돌림 — match 면 anchor 가 열리고
+//                                                           mismatch 면 등급이 legacy 로 내려가며 Consensus_Gap 후보가 된다 (후보가 있으면 종료 코드 1)
 //   node dbtool.mjs attest    [--quick]                     증명 등록부 검사: 도장마다 digest·증거 sha256·같은 확인 재실행 (무효 도장이 있으면 종료 코드 1)
 //   node dbtool.mjs compare   --state <세포 상태> --scenario A.json [--scenario-b B.json] [--patch p.json] [--hours h] [--ref-hours h]
 //                                                           비교 검토: 복잡도·수치 L2(수렴 기준)·결과·판정 (Optimization-Negative 이면 종료 코드 1)
@@ -78,6 +81,9 @@ const rateOpt = () => ({ scenario: flags.scenario ? readJSON(flags.scenario) : n
 // 사법부가 검증한 증명 도장 열쇠 (validate·관문에 넘김)
 const attestations = (db) => ATT.validStamps(db, ATT.readRegistry(HERE), { root: HERE });
 const REL = req('./judicial/reliability.js'); // 사법부 — 신뢰 지표 (S·D 쌍 → 등급)
+const TR = req('./judicial/trend.js');        // 사법부 — 추세 점검 (시간 축: 합의와 같은가)
+// 추세 축: 창 안의 유효한 추세 도장만 (없으면 'unchecked' — anchor 가 나오지 않는다)
+const trendMap = (db, reg) => TR.verdicts(db, reg, { root: HERE }).map;
 
 switch (cmd) {
   case 'status': {
@@ -182,7 +188,11 @@ switch (cmd) {
       break;
     }
     if (flags.detect) {
-      const c = J.detectGaps(db);
+      // 추세 mismatch(합의와 다름)도 등록해야 하는 공백이다. 데이터만으로는 알 수 없으므로(합의 수신함·등록부가 필요) 여기서 더한다 —
+      // 관문(gate)의 detectGaps 는 db.json 만 보므로 병합의 재현성은 그대로다.
+      const reg0 = ATT.readRegistry(HERE);
+      const tcand = reg0.stamps.some((x) => x.claim === 'trend') ? TR.gapCandidates(db, TR.check(db, { registry: reg0, root: HERE }).rows) : [];
+      const c = [...J.detectGaps(db), ...tcand];
       console.log(c.length ? '등록되지 않은 한계 후보:\n' + c.map((x) => `  [${x.target} | ${x.type}] ${x.why}`).join('\n') : '등록되지 않은 한계 후보 없음');
       process.exit(c.length ? 1 : 0); // CI: 미등록 공백(unmapped·속도 없는 공급/분해 …)이 있으면 실패
     }
@@ -321,7 +331,7 @@ switch (cmd) {
   case 'grade': {
     // 신뢰 지표 (사법부 judicial/reliability.js): 도장·근거·관찰에서 (S, D) 를 계산해 등급을 낸다 — 저장하지 않는다
     const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
-    const rows = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps });
+    const rows = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps, trend: flags.quick ? {} : trendMap(db, reg) });
     const target = args[0] ? DefDB.resolveRef(DefDB.index(DefDB.normalize(db)), args[0]) : null;
     if (target && target.error) die(target.error);
     const pick = target ? rows.filter((r) => r.sense === target.id) : rows;
@@ -341,8 +351,50 @@ switch (cmd) {
     for (const k of v.keys) console.log(`  ✓ ${k}`);
     for (const f of v.failed) console.log(`  ✗ ${f.key}: ${f.reasons.join(' · ')}`);
     for (const f of v.stale || []) console.log(`  · 지난 도장 ${f.key}: ${f.reasons.join(' · ')}`);
-    console.log(`— 증명 도장 ${reg.stamps.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}${(v.stale || []).length ? `, 지난 도장 ${v.stale.length} (데이터에서 빠진 주체 — 계보 기록)` : ''}`);
-    process.exit(v.failed.length ? 1 : 0);
+    // 추세 도장(claim 'trend')은 다른 주장이므로 사법부의 추세 모듈이 검증한다 — 창을 넘긴 것은 무효가 아니라 '만료'
+    let tbad = 0;
+    if (v.trend.length) {
+      const tv = TR.verdicts(db, reg, { root: HERE });
+      for (const st of v.trend) {
+        const r = TR.verifyTrendStamp(st, db, { root: HERE, registry: reg });
+        if (r.ok) console.log(`  ✓ ${r.key} (추세 ${st.verdict}, ${st.issued_at})`);
+        else if (r.stale) console.log(`  · 지난 추세 도장 ${r.key}: ${r.reasons.join(' · ')}`);
+        else { console.log(`  ✗ ${r.key}: ${r.reasons.join(' · ')}`); tbad++; }
+      }
+      for (const e of tv.expired) console.log(`  ⌛ 만료 ${e.key}: 점검 ${e.age}일 전 > 합의 창 ${tv.window}일 — 다시 받아 점검할 것`);
+      console.log(`— 추세 도장 ${v.trend.length}: 유효 ${Object.keys(tv.map).length}, 만료 ${tv.expired.length}, 무효 ${tbad}`);
+    }
+    console.log(`— 증명 도장 ${reg.stamps.length - v.trend.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}${(v.stale || []).length ? `, 지난 도장 ${v.stale.length} (데이터에서 빠진 주체 — 계보 기록)` : ''}`);
+    process.exit(v.failed.length + tbad ? 1 : 0);
+  }
+  case 'trend': {
+    // 추세 점검 (사법부 judicial/trend.js): 더 새 원본에 같은 확인을 다시 돌려 합의와 같은지 — 받기·등록부 쓰기는 입법 서기
+    const db = loadDB(), reg = ATT.readRegistry(HERE), dir = flags.dir || TR.CONSENSUS; // 저장소 최상위 기준 (도장의 증거 경로가 상대 경로여야 재검증된다)
+    if (flags.fetch) {
+      const tasks = TR.plan(db, { dir, registry: reg, root: HERE });
+      const res = CLERK.fetchToInbox(tasks, { refetch: !!flags.refetch });
+      const ok = res.filter((r) => r.ok).length;
+      console.log(`합의 수신함 (입법 서기): 과제 ${tasks.length}, 받음 ${ok}, 실패 ${res.length - ok}`);
+      for (const r of res.filter((x) => !x.ok)) console.log(`  ✗ ${r.task.sense} ${r.task.kind} ${r.task.key}: ${r.error}`);
+    }
+    const r = TR.check(db, { dir, registry: reg, root: HERE });
+    const target = args[0] ? DefDB.resolveRef(DefDB.index(db), args[0]) : null;
+    if (target && target.error) die(target.error);
+    const pick = target ? { ...r, rows: r.rows.filter((x) => x.sense === target.id), n: r.rows.filter((x) => x.sense === target.id).length } : r;
+    console.log(TR.text(pick, { all: !!flags.all || !!target, limit: +(flags.limit || 60) }));
+    const cand = TR.gapCandidates(db, r.rows);
+    if (cand.length) {
+      console.log('', `## 등록되지 않은 Consensus_Gap 후보 ${cand.length}`, '');
+      for (const c of cand) console.log(`  · ${c.target} ${c.type}: ${c.why}`);
+      console.log('', '한계로 등록할 것 (값은 지우지 않는다 — 지난값은 비교에 쓴다).');
+    }
+    if (flags.write) {
+      const stamps = TR.issue(r.rows, new Date().toISOString().slice(0, 10));
+      if (!stamps.length) die('기록할 추세 도장이 없음 — 먼저 `trend --fetch` 로 더 새 원본을 받을 것');
+      const f = CLERK.appendAttestations({ root: HERE, stamps, db });
+      console.log(`추세 도장 ${stamps.length} 기록 (입법 서기): ${rel(f)}`);
+    }
+    process.exit(cand.length ? 1 : 0);
   }
   case 'compare': {
     // 비교 검토 (프로토콜 §5): 기준(A) 대 제안(B = 패치 적용 db 와/또는 다른 시나리오) — 실행은 조정자가, 판정은 사법부(judicial/compare.js)
@@ -428,7 +480,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

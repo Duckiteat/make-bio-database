@@ -233,6 +233,11 @@
   // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
   thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
+  // ===== 합의 창 (추세 점검, judicial/trend.js) =====
+  // 추세 도장은 상하지 않는 사실이 아니다 — 점검일이 이 창(일)보다 오래되면 다시 '점검하지 않음' 이 되어 등급 anchor 가 내려간다.
+  // 창을 늘리면 오래된 점검이 기준값을 떠받치고, 줄이면 다시 받아야 한다. 권위 DB(UniProt·ChEBI)의 판 주기(8주)의 여유 배수로 둔다.
+  consensus: { window_days: 365, label: '추세 점검이 유효한 기간 (일)' },
+
   // ===== 생애 주기 (Lifecycle) — 정의항의 lifecycle 필드 (형식 v7) =====
   // k_deg (s⁻¹, 1차 분해) 또는 half_life (s), k_syn (분자/s/세포, 0차 합성). fate: 분해 산물이 어디로 가나.
   lifecycleFates: {
@@ -285,6 +290,7 @@
     Regulatory_Gap:    { label: '조절 연결 공백 (신호 전달·유전자 조절)', aliases: ['regulatory', 'signaling'], note: '신호 → 대사, 대사 → 유전자 조절의 매개 단계(수용체·STAT·mTORC1·염색질)를 단계로 풀지 않고 조절 규칙 하나로 묶었거나, 조절 상수(K·n·fmax)를 모르는 곳 (형식 v9).' },
     Observation_Gap:   { label: '관찰 공백 (가를 수 없음)', aliases: ['observation'], note: '관찰의 오차 막대로 경쟁 가설(compare 의 Behavior-Changing 쌍)을 가를 수 없거나, 판정할 관찰이 없는 곳 (형식 v10). requirement 에 필요한 정밀도를 적는다.' },
     Identity_Gap:      { label: '정체성(외부 ID) 공백', aliases: ['identity', 'unmapped'], note: '필수 외부 ID(ChEBI·UniProt …)를 원본과 대조하지 못해 unmapped 에 사유만 둔 곳. 확인된 ID 가 들어오면 닫힌다.' },
+    Consensus_Gap:     { label: '합의(추세) 공백', aliases: ['consensus', 'trend'], note: '저장된 값이 더 새 원본의 합의와 다르거나(추세 mismatch — 등급이 legacy 로 내려감), 추세를 점검할 새 원본이 없는 곳. 값을 지우지 않는다 — 왜 달라졌는지(원본의 개정·우리 쪽 오류)가 데이터다. judicial/trend.js 가 후보를 낸다 (형식 v10 확장 5).' },
   },
 
   // ===== 관찰 기록 (형식 v10, observations O…) — docs/design/observation-port.md =====

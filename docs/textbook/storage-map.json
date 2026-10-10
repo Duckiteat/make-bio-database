@@ -320,7 +320,23 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, legislative/clerk.mjs, dbtool.mjs, tests",
-      "interpret": "신뢰 지표 — 도장·근거·관찰 기록에서 (S 출처, D 성질) 쌍을 계산하고 등급(anchor·parameter·bounded·legacy·reference·blocked)을 낸다. 점수를 저장하지 않는다(계산되는 것). 곱 S×D 는 보고용 숫자일 뿐 판정에 쓰지 않는다 — (2,4) 와 (4,2) 가 겹치기 때문. 추세 점검(시간 축)은 아직 없어 trend 는 unchecked, anchor 는 나오지 않는다."
+      "interpret": "신뢰 지표 — 도장·근거·관찰 기록에서 (S 출처, D 성질) 쌍을 계산하고 등급(anchor·parameter·bounded·legacy·reference·blocked)을 낸다. 점수를 저장하지 않는다(계산되는 것). 곱 S×D 는 보고용 숫자일 뿐 판정에 쓰지 않는다 — (2,4) 와 (4,2) 가 겹치기 때문. 추세 축(시간)은 judicial/trend.js 가 판정해 opt.trend 로 들어온다 — 없으면 unchecked 이고 anchor 가 나오지 않는다."
+    },
+    {
+      "path": "judicial/trend.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "legislative/clerk.mjs (도장 검증), dbtool.mjs, tests",
+      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 창(vocab consensus.window_days)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
+    },
+    {
+      "path": "data/fetched/consensus/*/*",
+      "class": "evidence",
+      "format": "원본 응답 (JSON · FASTA · UniProt 평문 · Rhea TSV)",
+      "writer": "입법 서기 fetchToInbox (dbtool trend --fetch) 또는 사람(수동 수집)",
+      "readers": "judicial/trend.js (추세 판정·도장 재검증)",
+      "interpret": "추세 점검용 **더 새** 원본. 신원 수신함(data/fetched/)은 신원 도장의 증거이므로 덮지 않고 따로 둔다 — 같은 과제 이름 규약(uniprot/{번호}, chebi/{CHEBI_번호}, rhea/{CHEBI_번호})."
     },
     {
       "path": "legislative/legislative.js",

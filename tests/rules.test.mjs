@@ -2,6 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { createRequire } from 'node:module';
 
 // 삼권 분립: 행정부(core.js — 읽기·시뮬레이션), 사법부(judicial/ — 검사·관문·감사), 입법부(legislative/ — 병합), 조정자(orchestrator.js)
@@ -1257,6 +1258,79 @@ test('신뢰 지표 ②: 속도 감사가 같은 판정을 낸다 — 가상 상
   // 문턱 이름을 모르면 판정하지 않고 그 사실을 낸다
   const weird = DefDB.simulateRate(BASE, path, { scenario: { ...sc, min_grade: '최고' }, t_end: 10, dt: 0.01 });
   assert.match(grade(weird)[0].msg, /등급 문턱 '최고' 을 모름/);
+});
+
+// ===== 추세 점검 (Trend Check) — 신뢰 지표의 시간 축 =====
+const TRD = req('../judicial/trend.js');
+const REG = () => ATT.readRegistry(ROOT);
+// 도장 집합 (digest 만 — 재확인은 신원 시험이 따로 한다; 추세 시험은 추세 축만 본다)
+const ATTR0 = (db) => { const reg = REG(), v = ATT.validStamps(DefDB.normalize(db), reg, { root: ROOT, reverify: false }); return { attestations: v.keys, stale: v.stale, stamps: reg.stamps }; };
+test('추세 점검 ③: 더 새 원본에 같은 확인을 다시 돌린 결과만 추세다 — 원본이 없으면 unchecked, anchor 는 나오지 않는다', () => {
+  const reg = REG();
+  // 합의 수신함이 아닌 빈 폴더를 가리키면 점검할 새 원본이 없다 → 모두 unchecked (match 를 만들어 내지 않는다)
+  const none = TRD.check(BASE, { registry: reg, root: ROOT, dir: join(ROOT, 'tests/fixtures/augment/__none__'), reverify: false, memo: false });
+  assert.ok(none.n > 0, `점검 대상 ${none.n}`);
+  assert.equal(none.byVerdict.unchecked, none.n);
+  assert.equal(none.byVerdict.match || 0, 0);
+  assert.equal(TRD.issue(none.rows, '2026-10-10').length, 0, 'unchecked 는 기록할 사실이 없다');
+  // 추세 축이 비면 anchor 가 없다 — 지금 저장소의 anchor 는 모두 추세 match 에서 온다
+  assert.equal(REL.summary(REL.items(BASE, { ...ATTR0(BASE), trend: {} })).byGrade.anchor, 0);
+});
+test('추세 점검 ③: 합의 수신함의 새 원본으로 판정하고, 창을 넘긴 도장은 다시 unchecked (anchor 는 영구하지 않다)', () => {
+  const reg = REG();
+  const r = TRD.check(BASE, { registry: reg, root: ROOT, reverify: false, memo: false });
+  assert.ok(r.byVerdict.match > 0, `match ${r.byVerdict.match || 0}`);
+  assert.equal(r.byVerdict.mismatch || 0, 0, `합의와 다른 값 ${JSON.stringify(r.rows.filter((x) => x.verdict === 'mismatch').slice(0, 3))}`);
+  assert.equal(r.window, DefDB.VOCAB.consensus.window_days);
+  // 창 안: 유효한 추세 도장이 등급의 추세 축이 되고 지문(S4·D4)이 기준값으로 올라간다
+  const v = TRD.verdicts(BASE, reg, { root: ROOT, reverify: false });
+  assert.ok(Object.keys(v.map).length > 0 && Object.values(v.map).every((x) => x === 'match'));
+  const sum = REL.summary(REL.items(BASE, { ...ATTR0(BASE), trend: v.map }));
+  assert.ok(sum.byGrade.anchor > 0, `기준값 ${sum.byGrade.anchor}`);
+  // 창을 넘긴 날짜로 보면 같은 도장이 만료된다 → 추세 축이 비고 anchor 가 내려간다
+  const late = TRD.verdicts(BASE, reg, { root: ROOT, reverify: false, today: '2099-01-01' });
+  assert.equal(Object.keys(late.map).length, 0);
+  assert.equal(late.expired.length, Object.keys(v.map).length);
+  assert.equal(REL.summary(REL.items(BASE, { ...ATTR0(BASE), trend: late.map })).byGrade.anchor, 0);
+});
+test('추세 점검 ③: 도장을 손대면 거부 — digest 변조·판정 뒤집기·증거 파일 바뀜', () => {
+  const reg = REG(), st = reg.stamps.find((x) => x.claim === 'trend');
+  assert.ok(st, '추세 도장이 등록부에 있어야 한다');
+  assert.ok(TRD.verifyTrendStamp(st, BASE, { root: ROOT, registry: reg, reverify: false }).ok);
+  // ① 판정만 바꾸면 digest 가 어긋난다
+  const forged = { ...st, verdict: st.verdict === 'match' ? 'mismatch' : 'match' };
+  assert.match(TRD.verifyTrendStamp(forged, BASE, { root: ROOT, registry: reg, reverify: false }).reasons[0], /digest 불일치/);
+  // ② digest 까지 다시 계산해도 재판정이 다르다 (사법부가 같은 판정을 다시 돌린다)
+  const forged2 = { ...forged }; delete forged2.digest; forged2.digest = ATT.digestOf(forged2);
+  const v2 = TRD.verifyTrendStamp(forged2, BASE, { root: ROOT, registry: reg, memo: false });
+  assert.equal(v2.ok, false);
+  assert.match(v2.reasons[0], /재판정 match ≠ 도장 mismatch/);
+  // ③ 증거 파일이 바뀌면 거부
+  const moved = { ...st, evidence: { ...st.evidence, sha256: 'f'.repeat(64) } };
+  delete moved.digest; moved.digest = ATT.digestOf(moved);
+  assert.match(TRD.verifyTrendStamp(moved, BASE, { root: ROOT, registry: reg }).reasons[0], /증거 파일 sha256 불일치/);
+  // 신원 도장과 섞이지 않는다 — 신원 쪽 검증기는 추세 도장을 자기 집계에 넣지 않고 넘긴다
+  const vs = ATT.validStamps(BASE, reg, { root: ROOT, reverify: false });
+  assert.equal(vs.trend.length, reg.stamps.filter((x) => x.claim === 'trend').length);
+  assert.ok(!vs.keys.some((k) => /\|trend\|/.test(k)) && !vs.failed.length);
+});
+test('추세 점검 ③: mismatch 는 값을 지우지 않고 지난값(legacy)으로 내리고 Consensus_Gap 으로 등록한다', () => {
+  // 등급: 추세가 어긋나면 S4·D4 여도 anchor 가 아니라 legacy (지우지 않고 비교에 쓴다)
+  assert.equal(REL.gradeOf(4, 4, 'mismatch'), 'legacy');
+  // 이미 Consensus_Gap 이 등록된 정의항은 후보에서 빠지므로, 등록되지 않은 쪽에서 고른다
+  const taken = new Set(Object.values(BASE.limitations).filter((l) => l.type === 'Consensus_Gap').map((l) => l.target));
+  const fp = REL.items(BASE, { ...ATTR0(BASE), trend: {} }).find((r) => r.what === 'fingerprint' && r.s === 4 && !taken.has(r.sense));
+  assert.ok(fp, '도장받았고 Consensus_Gap 이 없는 지문이 있어야 한다');
+  const f0 = BASE.senses[fp.sense].fingerprint;
+  const mism = REL.items(BASE, { ...ATTR0(BASE), trend: { [`${fp.sense}|${f0.scheme}:${f0.value}`]: 'mismatch' } }).find((r) => r.sense === fp.sense && r.what === 'fingerprint');
+  assert.equal(mism.grade, 'legacy', `${fp.sense} ${f0.scheme}`);
+  // 후보: 등록된 Consensus_Gap 이 없는 정의항의 mismatch 만 (등록되면 후보에서 빠진다)
+  const row = { sense: fp.sense, label: 'x', ns: 'InChIKey', value: 'Z', verdict: 'mismatch', detail: '새 원본의 값이 다름' };
+  assert.deepEqual(TRD.gapCandidates(BASE, [row]).map((c) => [c.target, c.type]), [[fp.sense, 'Consensus_Gap']]);
+  const d = JSON.parse(JSON.stringify(BASE));
+  d.limitations.L999999 = { type: 'Consensus_Gap', target: fp.sense, requirement: { text: '등록됨', needs: [] } };
+  assert.deepEqual(TRD.gapCandidates(d, [row]), []);
+  assert.ok(DefDB.VOCAB.gapTypes.Consensus_Gap, '어휘에 한계 종류가 있어야 한다');
 });
 
 // ===== 비교 검토·정제 점검 (Comparative Optimization) =====
