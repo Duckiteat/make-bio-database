@@ -27,17 +27,21 @@ const day = (s) => Math.floor(Date.parse(s + (/T/.test(s) ? '' : 'T00:00:00Z')) 
 const windowDays = () => V.consensus.window_days;
 
 // 점검 대상: 유효한 신원 도장(claim 'verified')의 주체. 도장 없는 값은 S 가 이미 낮으므로 추세를 물을 자리가 아니다.
+// db 는 **부르는 쪽이 준 객체 그대로** 넘긴다 — validStamps 가 객체 신원으로 판정을 기억하므로,
+// 여기서 다시 정규화하면(새 객체) 같은 과정에서 신원 검사가 두 번 돈다.
 function subjects(db, registry, opt) {
   opt = opt || {};
-  // 정규화·색인은 한 번만 만들어 도장마다 넘긴다 (도장 수에 비례해 느려지지 않게 — 판정은 같다)
-  const base = opt.base || M.normalize(db), ix = opt.ix || M.index(base), o = { ...opt, base, ix };
+  const reg = registry || ATT.emptyRegistry();
+  // 신원 도장의 유효성은 사법부의 그 모듈이 판정한다 — 부르는 쪽이 '이미 확인했다' 고 주장하게 하지 않는다.
+  // validStamps 는 같은 (db, 등록부)면 판정을 기억하므로, 같은 과정에서 신원 검사가 두 번 돌지 않는다.
+  const ok = new Set(ATT.validStamps(db, reg, opt).keys);
   const only = opt.only ? new Set(opt.only) : null, out = [];
-  for (const st of (registry || ATT.emptyRegistry()).stamps) {
+  for (const st of reg.stamps) {
     if (st.claim !== 'verified') continue;
-    if (only && !only.has(ATT.subjectKey(st.subject))) continue;
-    const v = ATT.verifyStamp(st, base, o);
-    if (!v.ok) continue;
-    out.push({ key: v.key, subject: st.subject, kind: st.evidence.kind, task: st.evidence.key, identityEvidence: st.evidence, issued_at: st.issued_at });
+    const key = ATT.subjectKey(st.subject);
+    if (only && !only.has(key)) continue;
+    if (!ok.has(key)) continue;
+    out.push({ key, subject: st.subject, kind: st.evidence.kind, task: st.evidence.key, identityEvidence: st.evidence, issued_at: st.issued_at });
   }
   return out;
 }
@@ -58,14 +62,17 @@ function plan(db, opt) {
 
 // ③ 판정
 // 같은 (데이터, 합의 수신함, 날짜)면 같은 판정이다 — 도장마다 다시 돌리지 않도록 기억한다 (순수 함수의 메모, 상태 아님).
-const MEMO = new Map();
+// 열쇠는 **객체 신원**이다 (WeakMap): db 를 호출마다 문자열화·해시하면 도장 170개에 0.4 s 가 들어 아끼려는 비용만큼 든다.
+// 등록부도 신원으로 맞춘다 — 다르면 다시 판정한다(느려질 뿐, 묵은 판정을 쓰지 않는다). db 가 사라지면 기억도 사라진다.
+const MEMO = new WeakMap();
 function check(db, opt) {
   opt = Object.assign({ dir: CONSENSUS, today: new Date().toISOString().slice(0, 10) }, opt || {});
-  const memoKey = `${opt.dir}|${opt.today}|${sha(JSON.stringify(db))}`;
-  if (opt.memo !== false && MEMO.has(memoKey)) return MEMO.get(memoKey);
+  const memoKey = `${opt.dir}|${opt.today}`;
+  let slot = opt.memo === false ? null : MEMO.get(db);
+  if (slot && slot.has(memoKey)) { const hit = slot.get(memoKey); if (hit.registry === opt.registry) return hit.out; }
   const base = M.normalize(db), ix = M.index(base);
-  const subs = subjects(base, opt.registry, { ...opt, base, ix });
-  const done = (r) => { if (opt.memo !== false) MEMO.set(memoKey, r); return r; };
+  const subs = subjects(db, opt.registry, opt);
+  const done = (r) => { if (opt.memo !== false) { if (!slot) MEMO.set(db, (slot = new Map())); slot.set(memoKey, { registry: opt.registry, out: r }); } return r; };
   if (!subs.length) return done({ rows: [], n: 0, byVerdict: {}, window: windowDays(), today: opt.today, tasks: [] });
   const reset = resetDB(base);
   const { rows: idRows, tasks } = ID.verifyIdentity(reset, { dir: opt.dir });

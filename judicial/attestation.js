@@ -79,10 +79,17 @@ function verifyStamp(st, db, opt) {
 }
 
 // 등록부 전체 → validate 에 넘길 유효 도장 열쇠 집합 + 실패 목록
+// 같은 (db, 등록부, 뿌리, 재확인 여부)면 같은 판정이다 — 한 과정 안에서 두 번 묻는 자리가 있어(추세 점검이 신원 도장을 다시 본다) 기억한다.
+// 열쇠는 **객체 신원**이다(내용 해시가 아님): 내용 해시는 db 를 매번 문자열화·해시해야 해서 아끼려는 비용만큼 든다.
+// WeakMap 이라 db 가 사라지면 기억도 사라지고, 다른 객체면 다시 판정한다(느려질 뿐, 틀리지 않는다).
+const SEEN = new WeakMap();
 function validStamps(db, registry, opt) {
   // 정규화·색인은 한 번만 — 도장마다 다시 만들면 도장 수에 비례해 느려진다 (판정은 같다)
   const base = M.normalize(db), ix = M.index(base);
-  opt = { ...(opt || {}), base, ix };
+  const o0 = opt || {}, memoKey = `${o0.root || process.cwd()}|${o0.reverify === false ? 0 : 1}`;
+  let slot = SEEN.get(db);
+  if (slot && slot.has(memoKey)) { const hit = slot.get(memoKey); if (hit.registry === registry) return hit.out; }
+  opt = { ...o0, base, ix };
   const ok = [], bad = [], stale = [], trend = [];
   for (const st of (registry || emptyRegistry()).stamps) {
     // 추세 도장(claim 'trend')은 다른 주장이다 — 검증은 judicial/trend.js 가 한다 (여기서 부르면 순환 의존). 그 쪽으로 넘긴다.
@@ -93,7 +100,10 @@ function validStamps(db, registry, opt) {
     else if (v.stale) stale.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });
     else bad.push({ key: st.subject ? subjectKey(st.subject) : '?', reasons: v.reasons });
   }
-  return { keys: ok, failed: bad, stale, trend };
+  const out = { keys: ok, failed: bad, stale, trend };
+  if (!slot) SEEN.set(db, (slot = new Map()));
+  slot.set(memoKey, { registry, out });
+  return out;
 }
 
 // 관문 판결 봉인: 서기가 쓸 db 가 사법부가 통과시킨 바로 그 db 임을 보증 (판결을 다른 db 에 재사용 불가)
