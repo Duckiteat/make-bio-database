@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read", "Glob", "Grep", "Edit", "Write", "MultiEdit", "NotebookEdit",
+
+      "Bash(node dbtool.mjs status:*)",
+      "Bash(node dbtool.mjs prompt:*)",
+      "Bash(node dbtool.mjs map:*)",
+      "Bash(node dbtool.mjs context:*)",
+      "Bash(node dbtool.mjs mechanism:*)",
+      "Bash(node dbtool.mjs pattern:*)",
+      "Bash(node dbtool.mjs resolution:*)",
+      "Bash(node dbtool.mjs vocab:*)",
+      "Bash(node dbtool.mjs audit:*)",
+      "Bash(node dbtool.mjs audit-run:*)",
+      "Bash(node dbtool.mjs grade:*)",
+      "Bash(node dbtool.mjs attest:*)",
+      "Bash(node dbtool.mjs report:*)",
+      "Bash(node dbtool.mjs validate:*)",
+      "Bash(node dbtool.mjs simulate:*)",
+      "Bash(node dbtool.mjs fate:*)",
+      "Bash(node dbtool.mjs observe:*)",
+      "Bash(node dbtool.mjs compare:*)",
+      "Bash(node dbtool.mjs augment plan:*)",
+      "Bash(node dbtool.mjs augment build:*)",
+      "Bash(node dbtool.mjs limitations --check:*)",
+      "Bash(node dbtool.mjs limitations --detect:*)",
+      "Bash(node dbtool.mjs textbook --check:*)",
+
+      "Bash(node --test:*)",
+      "Bash(node tests/:*)",
+      "Bash(node -e:*)",
+      "Bash(node migrations/:*)",
+
+      "Bash(git status:*)", "Bash(git diff:*)", "Bash(git log:*)",
+      "Bash(git show:*)", "Bash(git add:*)", "Bash(git commit:*)",
+
+      "Bash(ls:*)", "Bash(cat:*)", "Bash(head:*)", "Bash(tail:*)",
+      "Bash(sed -n:*)", "Bash(grep:*)", "Bash(rg:*)", "Bash(find:*)",
+      "Bash(wc:*)", "Bash(du:*)", "Bash(diff:*)", "Bash(sha256sum:*)",
+      "Bash(mkdir:*)", "Bash(cp:*)", "Bash(sort:*)", "Bash(cut:*)", "Bash(jq:*)"
+    ],
+    "ask": [
+      "Bash(node dbtool.mjs merge:*)",
+      "Bash(node dbtool.mjs augment apply:*)",
+      "Bash(node dbtool.mjs augment fetch:*)",
+      "Bash(node dbtool.mjs limitations --write:*)",
+      "Bash(node dbtool.mjs textbook --write:*)",
+      "Bash(node dbtool.mjs trend:*)",
+      "Bash(git push:*)",
+      "Bash(cargo:*)",
+      "Bash(sh engine/rust/build.sh:*)"
+    ],
+    "deny": [
+      "Edit(data/db.json)", "Write(data/db.json)",
+      "Edit(data/patches/**)", "Write(data/patches/**)",
+      "Edit(attestations/**)", "Write(attestations/**)",
+      "Edit(data/fetched/**)", "Write(data/fetched/**)",
+      "Bash(rm -rf:*)",
+      "Bash(git reset --hard:*)", "Bash(git clean:*)",
+      "Bash(git checkout --:*)", "Bash(git push --force:*)",
+      "Read(.env)", "Read(.env.*)", "Read(**/id_rsa)", "Read(**/*.pem)"
+    ]
+  }
+}

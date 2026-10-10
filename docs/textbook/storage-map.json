@@ -912,6 +912,14 @@
       "interpret": "hypothetical: true 인 합성 관찰 — 포트 계약·관문·판정 시험용. 데이터베이스에 넣으면 관문이 거부한다(실측값을 지어내지 않음)."
     },
     {
+      "path": ".claude/settings.json",
+      "class": "config",
+      "format": "Claude Code 설정 JSON",
+      "writer": "사람·AI (사용자 요청 시)",
+      "readers": "Claude Code (이 저장소를 연 세션)",
+      "interpret": "에이전트 권한 목록 — allow(읽기·검증·시뮬레이션·시험·로컬 커밋) · ask(병합·갱신 쓰기·푸시·Rust 빌드) · deny(db.json·패치 기록·증명 등록부·수신함 직접 편집, 되돌릴 수 없는 git·rm). CLAUDE.md 의 두 규약(db.json 직접 편집 금지 · 쓰기는 입법 서기 put 경유)을 도구 층에서 막는 자리이고 규약을 대체하지 않는다."
+    },
+    {
       "path": ".gitignore",
       "class": "config",
       "format": "gitignore",
