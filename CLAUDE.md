@@ -3,6 +3,7 @@
 데이터는 사람이 아니라 AI가 넣는다. 저장소는 `data/db.json`, 병합 기록은 `data/patches/`.
 모든 항목은 고정 번호(개념 T…, 뜻 D…, 단계 S…)로 식별되고 연결도 번호로만 건다. 정의항의 하위 항목은 `D…/site/키`·`D…/rule/키`, 묶음은 `D…|부위:특징|위치`.
 규칙 전체는 `SCHEMA.md`, 구조·저장·알고리즘·상호작용의 설명은 교과서 `docs/textbook/00-목차.md`. 명령은 저장소 최상위에서 실행한다.
+**무엇을 어떻게 돌리는지는 `docs/RUNBOOK.md` 하나로 충분하다** — 돌릴 수 있는 경로·상태, 확인된 상태×시나리오 짝, 결과를 읽는 법, 관문 거부 메시지 → 고칠 곳, 넘길 신호. 큰 파일(`data/db.json` 604 KB·`CHANGES.md`·`limitations.md`)을 통째로 읽지 말고 조회 명령과 `grep` 으로 필요한 줄만 본다.
 
 ## 삼권 분립 (반드시 — 어기면 무결성 규약 위반, `docs/design/tripartite-governance.md`)
 

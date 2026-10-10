@@ -952,6 +952,22 @@
       "interpret": "과제 하나에 파일 하나: uniprot/{번호}, uniprot-search/{D…}, chebi/{CHEBI_번호}, chebi-search/{D…}."
     },
     {
+      "path": "tests/runbook.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "CI · node --test",
+      "interpret": "[설명서 묶기] docs/RUNBOOK.md 가 가리키는 dbtool 명령·상태×시나리오 짝·정의항 번호·파일 경로가 실재하는지, 경로·상태 목록이 db 의 전부를 담고 있는지. 시뮬레이션을 돌리지는 않는다 — 설명서가 낡으면 여기서 먼저 빨개진다."
+    },
+    {
+      "path": "docs/RUNBOOK.md",
+      "class": "spec",
+      "format": "Markdown (실행 설명서)",
+      "writer": "사람·AI (명령·숫자가 바뀌면 같은 커밋에서)",
+      "readers": "에이전트 (세션 시작 — 이 파일 하나로 작업을 시작한다)",
+      "interpret": "[실행 설명서] 무엇을 어떻게 돌리고 결과를 어떻게 읽고 무엇을 하면 안 되는지. 확인된 상태×시나리오 짝, 관문 거부 메시지 → 고칠 곳 표, 넘길 신호. 적힌 명령은 모두 실제로 돌려 확인한 것이다 — 값이 바뀌면 다시 돌려 고친다. 교과서는 설명(왜·어떻게), 이 파일은 조작(무엇을 치나)."
+    },
+    {
       "path": "tests/rejections.test.mjs",
       "class": "verification",
       "format": "node:test",
