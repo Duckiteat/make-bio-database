@@ -6,13 +6,13 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 21 | 0 | 21 |
-| Concentration_Gap | 9 | 0 | 9 |
+| Kinetic_Gap | 23 | 0 | 23 |
+| Concentration_Gap | 10 | 0 | 10 |
 | Structural_Gap | 26 | 2 | 28 |
 | Resource_Gap | 6 | 0 | 6 |
-| Regulatory_Gap | 9 | 0 | 9 |
-| Observation_Gap | 2 | 0 | 2 |
-| Identity_Gap | 1 | 9 | 10 |
+| Regulatory_Gap | 12 | 0 | 12 |
+| Observation_Gap | 3 | 0 | 3 |
+| Identity_Gap | 3 | 9 | 12 |
 | Consensus_Gap | 1 | 0 | 1 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
@@ -42,6 +42,8 @@
 | L000063 | D000170/rule/aerobic_glycolysis (해당과정 · aerobic_glycolysis) | Kinetic_Gap | T 세포 해당과정·젖산 발효·β-산화·ATP 소비·젖산 배출의 속도 상수 — 없으면 운명 층의 빠른 시간 척도가 가상 값으로 정해진다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 k @ D000170/rule/aerobic_glycolysis<br>✗ 속도 상수 k @ D000171/rule/pyruvate_reduction<br>✗ 속도 상수 k @ D000172/rule/palmitoyl_oxidation<br>✗ 속도 상수 k @ D000173/rule/atp_hydrolysis_load<br>✗ 속도 상수 k @ D000168/rule/export<br>✗ 속도 상수 k @ D000148/rule/lumped_oxidation | open (0/6) | — |
 | L000074 | D000177 (MHC I 항원 처리·제시) | Kinetic_Gap | MHC I 경로의 속도 상수를 하나도 확인하지 못했다 (합성·프로테아좀 절단·TAP 수송·조립·적재·소포 수송·섭취·분해) — 실행은 가상 시나리오 값에만 기댄다. 표면 펩타이드–MHC I 의 수와 시각은 기전의 흐름만 말한다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 속도 상수 k @ D000180/rule/synthesis<br>✗ 속도 상수 k @ D000182/rule/synthesis<br>✗ 속도 상수 k @ D000183/rule/synthesis<br>✗ 속도 상수 kcat·Km @ D000098/rule/antigen_processing<br>✗ 속도 상수 kcat·Km @ D000189/rule/peptide_import<br>✗ 속도 상수 k_on·k_off @ D000189/rule/peptide_loading<br>✗ 속도 상수 k_on·k_off @ D000190/rule/assembly<br>✗ 속도 상수 k @ D000191/rule/er_exit<br>✗ 속도 상수 k @ D000191/rule/surface_delivery<br>✗ 속도 상수 k @ D000191/rule/internalization<br>✗ 속도 상수 half_life @ D000182/rule/free_hc_loss<br>✗ 속도 상수 half_life @ D000190/rule/erad<br>✗ 속도 상수 half_life @ D000191/rule/turnover<br>✗ 속도 상수 half_life @ D000179/rule/peptidase_loss | open (0/14) | — |
 | L000075 | D000178 (MHC II 항원 처리·제시) | Kinetic_Gap | MHC II 경로의 속도 상수를 하나도 확인하지 못했다 (합성·조립·소포 수송·카텝신 S 절단·CLIP 떼기·적재·항원 섭취·분해) — 실행은 가상 시나리오 값에만 기댄다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 속도 상수 k @ D000192/rule/synthesis<br>✗ 속도 상수 k @ D000193/rule/synthesis<br>✗ 속도 상수 k @ D000194/rule/synthesis<br>✗ 속도 상수 k @ D000200/rule/er_exit<br>✗ 속도 상수 k @ D000200/rule/endosomal_sorting<br>✗ 속도 상수 k @ D000181/rule/uptake<br>✗ 속도 상수 k @ D000201/rule/surface_delivery<br>✗ 속도 상수 k @ D000201/rule/internalization<br>✗ 속도 상수 k_on·k_off @ D000199/rule/assembly<br>✗ 속도 상수 k_on·k_off @ D000200/rule/assembly<br>✗ 속도 상수 k_on·k_off @ D000198/rule/peptide_loading<br>✗ 속도 상수 kcat·Km @ D000195/rule/antigen_processing<br>✗ 속도 상수 kcat·Km @ D000195/rule/ii_cleavage<br>✗ 속도 상수 kcat·Km @ D000198/rule/clip_release<br>✗ 속도 상수 half_life @ D000192/rule/free_loss<br>✗ 속도 상수 half_life @ D000193/rule/free_loss<br>✗ 속도 상수 half_life @ D000194/rule/free_loss<br>✗ 속도 상수 half_life @ D000194/rule/clip_turnover<br>✗ 속도 상수 half_life @ D000199/rule/turnover<br>✗ 속도 상수 half_life @ D000201/rule/turnover<br>✗ 속도 상수 half_life @ D000179/rule/endosomal_loss | open (0/21) | — |
+| L000087 | D000205/rule/division_attrition (텔로미어 소모 · division_attrition) | Kinetic_Gap | 섬유아세포의 분열 간격(0차 속도 k)과 분열당 소실 반복 단위 수(화학량 ΔL)를 확인한 값으로 넣지 못했다 — 실행은 가상 시나리오 값(24 h · 16 단위 = 96 염기쌍)에 기댄다. Allsopp et al., 1992 의 '1 kbp 당 10 배가' 는 초기 텔로미어 길이와 분열 능력의 상관 기울기이므로 ΔL 로 바로 쓰려면 변환 가정이 필요하다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 속도 상수 k @ D000205/rule/division_attrition<br>✗ 수동: 분열당 소실 염기쌍(ΔL)의 직접 측정값과, 그것을 화학량으로 담을 측정량(관찰 종류) — 지금 observables 에는 화학량을 재는 종류가 없다 | open (0/2) | — |
+| L000095 | D000206/rule/elongation (텔로머레이스 역전사효소 · elongation) | Kinetic_Gap | 텔로머레이스의 연장 속도(세포당 반복 단위 생성 속도)를 모른다 — 불멸화 시험은 소모 속도와 같게 둔 가상 값으로 돈다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 속도 상수 k @ D000206/rule/elongation | open (0/1) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 
@@ -58,6 +60,7 @@
 | L000047 | D000116 (구획 농도 모델) | Concentration_Gap | 구획별 pH 와 상대 유전율(세포질·미토콘드리아 기질·핵질) — 없으면 Tier 1 환경 보정 ΔG_env 가 0 (기준 환경)으로 계산된다<br>발견: 형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6 | ✗ 관찰 pH @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 세포질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 미토콘드리아 기질<br>✗ 관찰 pH @ D000116 구획 농도 모델 · 핵질<br>✗ 관찰 relative_permittivity @ D000116 구획 농도 모델 · 핵질 | open (0/6) | — |
 | L000062 | D000174 (활성화된 CD8 T 세포) | Concentration_Gap | 활성 CD8 T 세포의 구획 부피(세포질·핵질·미토콘드리아 기질)와 포도당·팔미토일-CoA·보조 인자 시작량 — 없으면 시나리오 값(가상)으로 시작한다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 세포질<br>✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 핵질<br>✗ 관찰 compartment_volume @ D000129 대사물 저장소 모델 · CD8 T 세포 · 미토콘드리아 기질 | open (0/3) | — |
 | L000080 | D000179 (항원 펩타이드) | Concentration_Gap | 펩타이드·원천 단백질·MHC 사슬의 세포당 분자 수와 수지상 세포의 구획 부피(소포체·엔도솜·골지체)를 모른다 — 시작량은 가상 시나리오 값이다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 관찰 copy_number @ D000179 항원 펩타이드 · 수지상 세포 · 세포질<br>✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 수지상 세포 · 엔도솜 내강 | open (0/2) | — |
+| L000092 | D000204 (텔로미어 반복 단위) | Concentration_Gap | 섬유아세포의 핵질 부피와, 초기·임계 텔로미어 반복 단위 수(세포당)를 확인한 값으로 모른다 — 시작량 1800 단위(10.8 kbp)와 임계 600 단위(3.6 kbp)는 가상 시나리오 값이고, 힐 상수 K 를 농도로 환산할 때 핵질 부피가 들어간다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 관찰 compartment_volume @ D000116 구획 농도 모델 · 섬유아세포 · 핵질<br>✗ 관찰 copy_number @ D000204 텔로미어 반복 단위 · 섬유아세포 · 핵질 | open (0/2) | — |
 
 ## Structural_Gap — 구조·위상·해상도 공백
 
@@ -122,6 +125,9 @@
 | L000055 | D000134/rule/eomes_licensing (아세틸-CoA · eomes_licensing) | Regulatory_Gap | 지방산 산화 → 기억 프로그램 허가를 기질 아세틸-CoA 농도로 대신함 — 실제 매개(미토콘드리아 여분 호흡 능력·AMPK)가 없다<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000134/rule/eomes_licensing<br>✗ 수동: 여분 호흡 능력·AMPK 매개의 정의항과 단계 | open (0/2) | — |
 | L000056 | D000165/rule/glycolysis_maintenance (T-bet · glycolysis_maintenance) | Regulatory_Gap | 결정된 프로그램이 대사를 유지하는 되먹임(T-bet → 해당, Eomes → β-산화)은 추론이며 상수를 모름<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✗ 속도 상수 K·n·fmax @ D000165/rule/glycolysis_maintenance<br>✗ 속도 상수 K·n·fmax @ D000166/rule/fao_maintenance | open (0/2) | — |
 | L000076 | D000064/rule/mhc2_surface_retention (지질다당류 · mhc2_surface_retention) | Regulatory_Gap | LPS 에 의한 수지상 세포 성숙을 표면 MHC II 섭취 억제 하나로 묶었다 — TLR4 → NF-κB → MARCH1 감소의 매개 단계가 없고 힐 상수(K·n·fmin)를 모른다. 성숙의 다른 변화(MHC II 합성·CIITA, 보조 자극 분자, 섭취 감소, 리소좀 산성화)는 넣지 않았다<br>발견: MHC I·II 기전 실험 (2026-10-09) — 항원 제시 세포 상태와 기전 단계의 결합 적분 IR 낮춤 | ✗ 속도 상수 K·n·fmin @ D000064/rule/mhc2_surface_retention<br>✗ 수동: MARCH1 정의항과 β 사슬 꼬리 유비퀴틴화 단계, NF-κB 와 MARCH1 발현을 잇는 조절 규칙 | open (0/2) | — |
+| L000089 | D000204/rule/short_telomere_ddr (텔로미어 반복 단위 · short_telomere_ddr) | Regulatory_Gap | 짧아진 텔로미어가 p53 을 안정화하는 길의 매개 단계(셸터린 TRF2 이탈 · ATM 활성화 · CHK2 · MDM2 억제)를 단계로 풀지 않고 조절 규칙 하나로 묶었고, 힐 상수(K·n·fmax·fmin)를 모른다 — 문턱의 급격함(n)이 가상 값이다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 속도 상수 K·n·fmax·fmin @ D000204/rule/short_telomere_ddr<br>✗ 수동: 셸터린(TRF2 Q15554 등)·ATM·CHK2·MDM2 정의항과 단계 — 텔로미어 길이에서 p53 안정화까지 | open (0/2) | — |
+| L000090 | D000207/rule/p21_transactivation (세포 종양 항원 p53 · p21_transactivation) | Regulatory_Gap | p53 → p21 (전사·번역)과 p21 → 분열 정지(사이클린 E–CDK2·Rb)를 각각 조절 규칙 하나로 묶었고, 힐 상수와 p53·p21 의 합성 속도·반감기를 모른다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 속도 상수 K·n·fmax @ D000207/rule/p21_transactivation<br>✗ 속도 상수 K·n·fmin @ D000208/rule/cdk_arrest<br>✗ 속도 상수 k @ D000207/rule/synthesis<br>✗ 속도 상수 k @ D000208/rule/synthesis<br>✗ 속도 상수 half_life @ D000207/rule/turnover<br>✗ 속도 상수 half_life @ D000208/rule/turnover<br>✗ 수동: CDK2(P24941)·사이클린 E·Rb(P06400) 정의항과 단계 | open (0/7) | — |
+| L000091 | D000209/rule/mitogen_drive (섬유아세포 성장 인자 2 · mitogen_drive) | Regulatory_Gap | 성장 인자 → 세포 주기 진입(FGFR·MAPK·사이클린 D)을 조절 하나로 묶었고 힐 상수를 모른다 — 분열 허가가 가상 값의 계단으로 들어간다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 속도 상수 K·n·fmax·fmin @ D000209/rule/mitogen_drive<br>✗ 수동: FGFR1·MAPK·사이클린 D 정의항과 단계 | open (0/2) | — |
 
 ## Observation_Gap — 관찰 공백 (가를 수 없음)
 
@@ -131,6 +137,7 @@
 |---|---|---|---|---|---|---|
 | L000073 | D000174 (활성화된 CD8 T 세포) | Observation_Gap | 운명 프로그램(활성 CD8 T → 효과기 \| 기억 전구)에 검증용(use: validation) 관찰 기록이 하나도 없다 — 도달 시각·운명 비율·T-bet/Eomes 분자 수와 세포 간 퍼짐 모두. 그래서 모든 운명 결과는 가상 상수 위에서 기전이 일관되는지만 말하고, 사법부 관찰 판정(observe)은 합성 관찰로만 시험되었다. 형식 예시(가상 상수): 혼합-최적 대 IL-12 시나리오의 효과기 도달 시각 차는 58 s 라, 3 회 반복 관찰로 가르려면 측정 sd ≤ 36 s 가 필요하다(design).<br>발견: 엔진 이식 4단계 ②·⑥ — 관찰 판정 시험 (합성 관찰 examples/observations/) | ✗ 수동: 관찰 포트(schemas/obs/observation.schema.json)로 효과기·기억 전구 도달 시각(event_time), 운명 비율(fraction), 표지 분자 수(amount — 생물 변이면 반복 = 세포 수)를 검증용으로 넣고 node dbtool.mjs observe 로 판정; 상수 추정에 쓴 관찰은 검증에 쓰지 않는다 | open (0/1) | — |
 | L000082 | D000202 (미성숙 수지상 세포) | Observation_Gap | 확률 실행은 결정 탐침(신호 철회 시험)을 돌리지 않으므로 '요동 아래의 결정 시각'을 판정하지 못한다. 지금 말할 수 있는 것은 앙상블의 끝 상태 비율과 도달 시각 분포뿐이다(가상 상수에서 24/24 성숙, 도달 0.83 ± 0.01 h). 또 미성숙·성숙 수지상 세포의 표면 펩타이드–MHC II 문턱(low·high)을 실측으로 정하지 못해 상태 판정이 가상 문턱에 기댄다 — 세포당 표면 복합체 수를 재면 닫힌다.<br>발견: MHC I·II 기전 실험 (2026-10-09) — 확률 앙상블 24 궤적 (표면 펩타이드–MHC II Fano 0.77) | ✗ 관찰 copy_number @ D000201 펩타이드–MHC II 복합체 · 수지상 세포 · 세포막<br>✗ 수동: 확률 실행의 결정 확률 판정(궤적마다 신호 철회 탐침을 돌려 결정 시각의 분포를 내는 방식) | open (0/2) | — |
+| L000088 | D000205/rule/division_attrition (텔로미어 소모 · division_attrition) | Observation_Gap | 분열당 소실 염기쌍(ΔL)은 규칙의 화학량인데, 관찰 기록의 측정량(vocab.observables: amount·concentration·fraction·event_time·kinetic_constant)에는 화학량을 가리키는 종류가 없다 — 그래서 문헌 측정값을 관찰 기록으로 받아 kinetics.from 으로 묶을 수 없고, 가상 시나리오 값으로만 둘 수 있다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 수동: 규칙의 화학량을 대상으로 하는 측정량(observable) 종류와, 그 관찰로 화학량을 파생시키는 규약 — 어휘·계약(schemas/obs/)·사법부 판정을 함께 | open (0/1) | — |
 
 ## Identity_Gap — 정체성(외부 ID) 공백
 
@@ -148,6 +155,8 @@
 | L000064 | D000167 (피루브산) | Identity_Gap | 피루브산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✓ ChEBI ID @ D000167 피루브산 | resolved (1/1) | — |
 | L000065 | D000168 (젖산) | Identity_Gap | L-젖산 ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✓ ChEBI ID @ D000168 젖산 | resolved (1/1) | — |
 | L000066 | D000169 (팔미토일-CoA) | Identity_Gap | 팔미토일-CoA ChEBI 번호를 원본과 대조하지 못함<br>발견: 세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램 | ✓ ChEBI ID @ D000169 팔미토일-CoA | resolved (1/1) | — |
+| L000093 | D000204 (텔로미어 반복 단위) | Identity_Gap | 텔로미어 반복 단위를 가리키는 외부 ID 를 넣지 못했다 — 서열 특징을 담는 체계(SO 등)가 xref 어휘에 없고, UniProt·ChEBI 어느 쪽도 이 단위를 가리키지 않는다<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ 수동: 서열 특징(telomeric repeat)을 가리키는 외부 ID 체계를 xref 어휘에 더하는 결정, 또는 이 정의항을 외부 ID 없이 두는 규약 | open (0/1) | — |
+| L000094 | D000211 (복제 노화 섬유아세포) | Identity_Gap | 복제 노화 섬유아세포 상태에 해당하는 세포 온톨로지(CL) 항목을 찾지 못했다 (EBI OLS 2026-10-10 완전 일치 검색 결과 없음)<br>발견: 텔로미어 소모·복제 노화 실험 (2026-10-10) | ✗ CL ID @ D000211 복제 노화 섬유아세포 | open (0/1) | — |
 
 ## Consensus_Gap — 합의(추세) 공백
 

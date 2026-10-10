@@ -42,10 +42,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:71406 — 검증 (이름 '(<i>R</i>)-adrenaline(1+)', 부분 구조가 선언되지 않음 — 화학식 C9 를 보면 탄소 골격 단위 9 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 6회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "471333bdbd43c6e798905b6d85945fc67adac938ca2d0bcd6d86cb59a555df7a"
+      "digest": "47c64b27fc911cdf10023aeb9bb1c3ea6c3bd283aec159295c99b4648949d233"
     },
     {
       "subject": {
@@ -65,10 +65,10 @@
       "checks": "새 원본에서도 InChIKey UCTWMZQNUQWSLP-V… — 검증 (이름 '(<i>R</i>)-adrenaline(1+)', 부분 구조가 선언되지 않음 — 화학식 C9 를 보면 탄소 골격 단위 9 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 6회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b18b669f766bcec81e934eceef64a80a4c1e2228ecb556d38d54e1fb56cdaf0c"
+      "digest": "498cb574b6018d1354a97107302297dbca7b6cf06942591ef65c212c47d24416"
     },
     {
       "subject": {
@@ -154,10 +154,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15422 — 검증 (이름 'ATP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:30616 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "a6d2f3413b38293a49cc2055934d0e453692739eca013bd7825bd0ccb5c7a6f9"
+      "digest": "a50d389d33a7123754806e824ccf0d52a9d990db712ce0259993d384cdb6090b"
     },
     {
       "subject": {
@@ -177,10 +177,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:30616 — 검증 (이름 'ATP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15422 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0369526ae0cb5c9f4ba0c768e5f9ea241ca69edd31365fc42e6c9e003efaab5a"
+      "digest": "abca265ab65e6ba365836abf2fc991a49834a98433b1462a79d949dea854cf82"
     },
     {
       "subject": {
@@ -200,10 +200,10 @@
       "checks": "새 원본에서도 InChIKey ZKHQWZAMYRWXGA-K… — 검증 (이름 'ATP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15422 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "cf3cb9c0320f80094f5580ffd1ab5e3afd26c68a8078fcbfc0e4a2d7f8046972"
+      "digest": "2b7bc22b60fee62e5969c36b047d92f8d5a63ef2055d3ce1a93e452c98226f4b"
     },
     {
       "subject": {
@@ -223,10 +223,10 @@
       "checks": "새 원본에서도 InChIKey ZKHQWZAMYRWXGA-K… — 검증 (이름 'ATP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:30616 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "7591251d5a7054e3188237caefee49d8da61142eed46438c8ce35e0d5d2a846c"
+      "digest": "57e59de20911aa83fc949ca63fe7f3b8b92344c910f41cd03d32906b3eb0ffd0"
     },
     {
       "subject": {
@@ -334,10 +334,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16761 — 검증 (이름 'ADP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:456216 와 수소 +3·전하 +3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b4672d6962d43970f92e81629f865bc2067c2d988a955738d21c59707bf7db24"
+      "digest": "7491077263d82d44f784fabb3bf89cc8eebcfd8b3e178bfb2013bbda64092a30"
     },
     {
       "subject": {
@@ -357,10 +357,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:456216 — 검증 (이름 'ADP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16761 와 수소 -3·전하 -3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "214309c08c9f851b6837414f64828e79db5fc71bd5854e7468754988d20b5e8d"
+      "digest": "efc9f0b9d79a9e9fc7e720c8c2f0ee10e004cc22bfa3e77b6fac0dd15bb42fca"
     },
     {
       "subject": {
@@ -380,10 +380,10 @@
       "checks": "새 원본에서도 InChIKey XTWYTFMLZFPYCI-K… — 검증 (이름 'ADP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16761 와 수소 -3·전하 -3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "00aa40715292a87d3edc7ebbfa69dff2cecd8b9098aa26020891b9f29ea67224"
+      "digest": "faedeb38f81dcc59f9de17d845f2a0f756d03ef0b69a52797bc6a4dc2ba91430"
     },
     {
       "subject": {
@@ -403,10 +403,10 @@
       "checks": "새 원본에서도 InChIKey XTWYTFMLZFPYCI-K… — 검증 (이름 'ADP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:456216 와 수소 +3·전하 +3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "d77e19f95e0aba21233570a68ed18689fb7751695fae007533e0ed78fa6fc616"
+      "digest": "ee82a67a279a734cb3184e50a5e01be81588a300bcbfef9d49714eee1bb3a09b"
     },
     {
       "subject": {
@@ -514,10 +514,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16027 — 검증 (이름 'AMP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:456215 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2b3a0bd0f2b512af484f0b9f0ea726b5fa1504285ecc25e4eebf4c14c69cb39a"
+      "digest": "2bea28b6f418f58fe96411b9e597d3db92c2c3faa96dd4c163afdbe906e34038"
     },
     {
       "subject": {
@@ -537,10 +537,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:456215 — 검증 (이름 'AMP(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16027 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "75b6f69c5bf206d7bb49ff230b3cfd94ce878c670f8f0da2915a4189607e54ff"
+      "digest": "d5b492d5b33f114fc423312b8f7a94e004fefd015fc65640c689075e4ebe91fe"
     },
     {
       "subject": {
@@ -560,10 +560,10 @@
       "checks": "새 원본에서도 InChIKey UDMBCSSLTHHNCD-K… — 검증 (이름 'AMP(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16027 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "321b3baa933d2e10fb10f5f8d1c377cc648123a6a94cc764395acaa227e6fdcb"
+      "digest": "3a73ff9769ad4786f5fbb8820317dd0df5f855db904e20e829dfd5ef7b8d5449"
     },
     {
       "subject": {
@@ -583,10 +583,10 @@
       "checks": "새 원본에서도 InChIKey UDMBCSSLTHHNCD-K… — 검증 (이름 'AMP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:456215 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "044b99b8735aaa720a1eab1abc9cd47c73c9d565836a8fc674d9c083592c8489"
+      "digest": "83cac18daa2812cb73151eaf39ad5540676bca13e85e1272ce754e4f4da9a04b"
     },
     {
       "subject": {
@@ -694,10 +694,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15996 — 검증 (이름 'GTP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:37565 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "66f6f9eb7c04aebe5c176cb7ec876ed2b78102fc5df1597aa65d1f6ab59d220f"
+      "digest": "da3fdc733d5b3afe31bf15f855bfa3925e2c8c0de7bd2059f0245d0be4f1312b"
     },
     {
       "subject": {
@@ -717,10 +717,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:37565 — 검증 (이름 'GTP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15996 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "7d31af3ef8a8eafeaf15ab32ae8eee90a999c10ce941abb7737146600ac92411"
+      "digest": "e98a1fd17f8c60332330208b8f9a0aec61fe63a9b191219fe6155a4df9185bc2"
     },
     {
       "subject": {
@@ -740,10 +740,10 @@
       "checks": "새 원본에서도 InChIKey XKMLYUALXHKNFT-U… — 검증 (이름 'GTP(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15996 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f724b96674b710361bc503c405b17fada698f8ff21ed510d64971ff015272df0"
+      "digest": "a8fabc3dbb3705cb6b71fbfef9d487a3a05932342d26615e8ca631aceb4fc77b"
     },
     {
       "subject": {
@@ -763,10 +763,10 @@
       "checks": "새 원본에서도 InChIKey XKMLYUALXHKNFT-U… — 검증 (이름 'GTP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:37565 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "9d40d95e937fd0f2a94de12cdb452b54eb001c355c2dc710abe93217e265bb54"
+      "digest": "429aac215642a8a72c3fd99dc5f2a1825701ef93a5c401cc448a8104b8154119"
     },
     {
       "subject": {
@@ -874,10 +874,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:17552 — 검증 (이름 'GDP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:58189 와 수소 +3·전하 +3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "a64e227e3be57987316402b7aa67cba535f85d6f72737bb527d4859a3969ea59"
+      "digest": "5b9c190606cd564a32e878588c5eb5800b79cecec2baa3b25f0b23b362f44d97"
     },
     {
       "subject": {
@@ -897,10 +897,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:58189 — 검증 (이름 'GDP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17552 와 수소 -3·전하 -3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "71d930f772162058d71a5960d0ff25584d9a928ba29798570a2e22fcf724cc5d"
+      "digest": "42bd97d77f439a02d04200321ecceaa07490f9ef31ee0815c48a73544e496033"
     },
     {
       "subject": {
@@ -920,10 +920,10 @@
       "checks": "새 원본에서도 InChIKey QGWNDRXFNXRZMB-U… — 검증 (이름 'GDP(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17552 와 수소 -3·전하 -3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "450a6956bfba859cce7e738e9f7e1730c308463a73cbb2e705caa76997f3e388"
+      "digest": "cb269d0c1f8c992fbf62116d604e0b3d90442bf334c08420a9b24dd669f323f8"
     },
     {
       "subject": {
@@ -943,10 +943,10 @@
       "checks": "새 원본에서도 InChIKey QGWNDRXFNXRZMB-U… — 검증 (이름 'GDP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:58189 와 수소 +3·전하 +3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "55490aafb6578bbe2e2536d0a98a58548414e116e3e95216982fd7ee4af18c54"
+      "digest": "5952d589f5e68456cc1619801c130f9fb9ab2c616b97f3832194342f5915fd7d"
     },
     {
       "subject": {
@@ -1032,10 +1032,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:43474 — 검증 (이름 'hydrogenphosphate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "044ed0430f43d8cc2e484ded9cc0ee6183b159440dd1197ccebb0901e687e1c3"
+      "digest": "10f2073cc47012403202008d30d404ab9de7a6188abd2248a6584730c4d63d89"
     },
     {
       "subject": {
@@ -1055,10 +1055,10 @@
       "checks": "새 원본에서도 InChIKey NBIIXXVUZAFLBC-U… — 검증 (이름 'hydrogenphosphate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "485c9d5878c6e7accd6665f3510d172a07d8ac8b1f7650183fd32d331a9e2237"
+      "digest": "b403030924c3aed361baff728354e027990226700111b08c6cbc6854c57a0809"
     },
     {
       "subject": {
@@ -1144,10 +1144,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:17489 — 검증 (이름 '3',5'-cyclic AMP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:58165 와 수소 +1·전하 +1)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b597b931e8b2ef041abb3132fc0bfcb9d7de4b0737d88e82acc01cf92760c905"
+      "digest": "83b2f58207dc581afed646f2cc88eb208175b37052f6ced29ac3af3f714321d7"
     },
     {
       "subject": {
@@ -1167,10 +1167,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:58165 — 검증 (이름 '3',5'-cyclic AMP(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 6회 · 켤레 CHEBI:17489 와 수소 -1·전하 -1)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "47799f4a44c8f5f00210d29915bbd0da11998e6a7b137df5197fb0da86b51d02"
+      "digest": "a8aeb97e0fb03d23da3a139cf7f1d06bf6068e9afd4f2abf08b101e9dca292b5"
     },
     {
       "subject": {
@@ -1190,10 +1190,10 @@
       "checks": "새 원본에서도 InChIKey IVOMOUWHDPKRLL-K… — 검증 (이름 '3',5'-cyclic AMP(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 6회 · 켤레 CHEBI:17489 와 수소 -1·전하 -1)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "3c5526ef609e5fd537c45b06814e43f93b8bf010f5e6870054b8db5b759a1bf3"
+      "digest": "d823be0fbabc2a33f30658d35626a4d6e41ee8bd83291dd6672628d9bf6b3621"
     },
     {
       "subject": {
@@ -1213,10 +1213,10 @@
       "checks": "새 원본에서도 InChIKey IVOMOUWHDPKRLL-K… — 검증 (이름 '3',5'-cyclic AMP', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:58165 와 수소 +1·전하 +1)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "3420967d2fc336ea77bc0cb94eb384e7ff672e94ed147791bd81bc70dca44dc1"
+      "digest": "91dc0637f57e26e549ab2b9331e7b806c654b0b2d500d4d3e3a62ca81e5b28ec"
     },
     {
       "subject": {
@@ -1302,10 +1302,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:4167 — 검증 (이름 'glucose', 부분 구조가 선언되지 않음 — 화학식 C6 를 보면 탄소 골격 단위 6 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 46회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f280c099dfaa5eda90bd7e4a7853400a1f3b738d2073b8c79fe29e36c55c6e30"
+      "digest": "54eb4cae50584c7ed3cb7d5cdb844b42cfff4f5488f2afe78d48a2f2dd23ac7d"
     },
     {
       "subject": {
@@ -1325,10 +1325,10 @@
       "checks": "새 원본에서도 InChIKey WQZGKKKJIJFFOK-G… — 검증 (이름 'glucose', 부분 구조가 선언되지 않음 — 화학식 C6 를 보면 탄소 골격 단위 6 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 46회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "cf049000e02382194eb0ed0e5621140642b8209cb7b7414a0dcf07f25cecf939"
+      "digest": "52b2387092d087944f1a35d25110dc2d3d1cbedf64fd0c9b10544b3a7859ea84"
     },
     {
       "subject": {
@@ -1370,10 +1370,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:28087 — 검증 (이름 'glycogen', 화학식 '없음' 은 원자 수로 풀 수 없음 (중합체·R 기) · 역할 class)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1cf4934a8a6388907c022d47c95f5d30a0f4db931f30a9938f3eb522c9191150"
+      "digest": "1cf34058acc8f46b9d3cc880411501a32a56456aa10eb99576c8812177757df2"
     },
     {
       "subject": {
@@ -1414,10 +1414,10 @@
       "checks": "검증 (이름 'GNAS', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "175db0754c56997c1d6377217e098d5ea81a41c58db0afcc10c83934db8f9397"
+      "digest": "e3c09fa7945183eb07233183e6455c2331da91d003da6bd7263fe4ebab3f6e42"
     },
     {
       "subject": {
@@ -1437,10 +1437,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 6dedace6845efaa2… — 검증 (이름 'GNAS', 종 9606) · 원본 판 209/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "60b62a6dd855f3577bbc1fb909a5b71117133905f1b9c12e465cd8726abb08d9"
+      "digest": "8ac9a8c0744b3a852294cdcc2584ddf08df4e314664fa2c82f1dd8f0475ec23c"
     },
     {
       "subject": {
@@ -1460,10 +1460,10 @@
       "checks": "새 원본에서도 UniProt P63092 — 검증 (이름 'GNAS', 종 9606) · 원본 판 209/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f83c2ac62f8300d5efce79b3c0683a3fcb43964d996eb270fc5acb88a2851190"
+      "digest": "30b8c5516b2f8fa62cd64cbd9d58942684b79b397546de4618c1c3fe5618f220"
     },
     {
       "subject": {
@@ -1482,10 +1482,10 @@
       "checks": "검증 (이름 'GNAS', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "8fecabfe1fa339e36f5e59e46a3c7297923e26781f01ff304849ca1df83dcd1a"
+      "digest": "8e7eaadd1f188a72403716a3a26a33c1181c974f5b6fffb1319260b7767bcfee"
     },
     {
       "subject": {
@@ -1549,10 +1549,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:18405 — 검증 (이름 'pyridoxal 5'-phosphate', 부분 구조가 선언되지 않음 — 화학식 C8 를 보면 탄소 골격 단위 8 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 parent · 켤레 CHEBI:597326 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "82d5b0525eb2e07902d9b41cd808dd8accabb7b4d5e1136015ac75a9a961b3d0"
+      "digest": "b53177243fb34c866417dc0300ea3f4b253ca1feb7e42875d762f96189a390d3"
     },
     {
       "subject": {
@@ -1572,10 +1572,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:597326 — 검증 (이름 'pyridoxal 5'-phosphate(2−)', 부분 구조가 선언되지 않음 — 화학식 C8 를 보면 탄소 골격 단위 8 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 10회 · 켤레 CHEBI:18405 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "39d4dd1c534e40a1037c4324fbd9bf4eca0d4d4966ab3942bd966a46d801ee5c"
+      "digest": "5db4ca931975f786beaaa8eabf7de99c2c08e7ca98f3487169c484732d21e30c"
     },
     {
       "subject": {
@@ -1595,10 +1595,10 @@
       "checks": "새 원본에서도 InChIKey NGVDGCNFYWLIFO-U… — 검증 (이름 'pyridoxal 5'-phosphate(2−)', 부분 구조가 선언되지 않음 — 화학식 C8 를 보면 탄소 골격 단위 8 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 10회 · 켤레 CHEBI:18405 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "c5228610c28d922c847f9a7a6ff5347921625e22a294cf027e9b82d7ba8a2f5d"
+      "digest": "feccd0cf28eda6fa1affff3368177262b0b3380e9449dd150505c5b6fa121b10"
     },
     {
       "subject": {
@@ -1618,10 +1618,10 @@
       "checks": "새 원본에서도 InChIKey NGVDGCNFYWLIFO-U… — 검증 (이름 'pyridoxal 5'-phosphate', 부분 구조가 선언되지 않음 — 화학식 C8 를 보면 탄소 골격 단위 8 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 parent · 켤레 CHEBI:597326 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "4f9d11a6bff8ac9517744fd5e316f3d3e748290da63fdf1f3b153d3fd21e5558"
+      "digest": "5326bed9c3daeb8001aca6426f76733270e3940e74a6a26c5abb9a1cda994a7b"
     },
     {
       "subject": {
@@ -1685,10 +1685,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16412 — 검증 (이름 'lipopolysaccharide', 화학식 '없음' 은 원자 수로 풀 수 없음 (중합체·R 기) · 역할 class)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b5fe72e35377e2a25332f977efc09d538d8fc83a3450ea76889119248e95f4ac"
+      "digest": "4fb9c62d282a64c0b63096aa63086e71a71330d872921ef4281a21c7a29c17e3"
     },
     {
       "subject": {
@@ -1729,10 +1729,10 @@
       "checks": "검증 (이름 'LBP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "2156cb423bcf6b826a71d52175e4343d57ba9426b47683acb265011bec367218"
+      "digest": "22373893232b5fda1759339a5294bc86b0aad0c76bcdbbdec472c5ddfe56cfa7"
     },
     {
       "subject": {
@@ -1752,10 +1752,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 a36050703246e8fe… — 검증 (이름 'LBP', 종 9606) · 원본 판 204/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "ba625d7739368128a3bffa186fd43fb9e58ba6552a46c1353fc001c4b3678728"
+      "digest": "e260a2e35eea509f81c886b47e74d32dedced41f672bb22d380018c4621485e7"
     },
     {
       "subject": {
@@ -1775,10 +1775,10 @@
       "checks": "새 원본에서도 UniProt P18428 — 검증 (이름 'LBP', 종 9606) · 원본 판 204/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "22ab29e0686186a542e02fcc8ef48be62e93ff1ebaa06b3f154c4cde6a6f2dfa"
+      "digest": "bbf62ec7ee1d564bf3a9c398a9567ce9ff7af1ba740172f7585b575787681d53"
     },
     {
       "subject": {
@@ -1797,10 +1797,10 @@
       "checks": "검증 (이름 'LBP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "e0881f333d01026e72a466c40899d64180933a30fb5b09ac36f63460a088fc87"
+      "digest": "12c98fcdb96320732ef5f4c07c05d08b39eb47d3db1ac8673e47e860487a0d9d"
     },
     {
       "subject": {
@@ -1819,10 +1819,10 @@
       "checks": "검증 (이름 'CD14', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "c1f24f492030126b63ade0685de69bd5c1eb8b5b1d4fbe343cdd4c0edbdee7b1"
+      "digest": "73c10eb627ee33e82f02567855b7dbf87c7f6ba6aa2d8c5b42d42e965af154cb"
     },
     {
       "subject": {
@@ -1842,10 +1842,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 fda1f9067d25694b… — 검증 (이름 'CD14', 종 9606) · 원본 판 233/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "7a8efc9fe701c90e871258fb5aa5682e652478ecf393f2c7d67c163776e7d264"
+      "digest": "afc1beb42b2d4c24825309083b4612ad4d622d8a41bfee1d119da9f00b46c2b7"
     },
     {
       "subject": {
@@ -1865,10 +1865,10 @@
       "checks": "새 원본에서도 UniProt P08571 — 검증 (이름 'CD14', 종 9606) · 원본 판 233/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "41744a4bbadfde528fa791108903139bbb95f13dee743af49110876e15b82428"
+      "digest": "7309cd38269dd40b15344a8eda4139d64f3442bcfb32e2039220b817b73d4ce9"
     },
     {
       "subject": {
@@ -1887,10 +1887,10 @@
       "checks": "검증 (이름 'CD14', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "281f632780b2313b76a61d06d994789448b38d69f66fde420afd63c4c34dde1d"
+      "digest": "4cf1ff958c3351285a3ec8d65bd61af9d6ea29fd2c1d2be3d1af50af39ad2322"
     },
     {
       "subject": {
@@ -1909,10 +1909,10 @@
       "checks": "검증 (이름 'TLR4', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "af13f06e8e99ed362ac65f4af54ff2fa136bb84e40d05ea2e3664a495282df03"
+      "digest": "63789cb408cd777b06db55dd228ca74a955ebc85de80754fbfc41eb6aacb869f"
     },
     {
       "subject": {
@@ -1932,10 +1932,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 f94b50d07a54dfaf… — 검증 (이름 'TLR4', 종 9606) · 원본 판 240/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "4bcaa4aff3aeca56c229c14fe901b229e6476de442002abdc3ab4912d52134a2"
+      "digest": "f7dbc1be6a8fc3ee34d5b8b22d9609be1ec35caa83ea3ac04c9356fbcfbd1c57"
     },
     {
       "subject": {
@@ -1955,10 +1955,10 @@
       "checks": "새 원본에서도 UniProt O00206 — 검증 (이름 'TLR4', 종 9606) · 원본 판 240/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "576a9e1418ff822f6edce4b6ce6157ed36e67494b5e166692ff73020feae8c34"
+      "digest": "b0b7fe844e7f9df406f289a6702a445c45ac690a9af3343d274695f8ddd1e2aa"
     },
     {
       "subject": {
@@ -1977,10 +1977,10 @@
       "checks": "검증 (이름 'TLR4', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "0944494619661c589763ced24b06ec8f0e007fdb09f319950d789f695549af11"
+      "digest": "71d431f06da8521ae6ca802e8e8db723b990a48fa8b07959c8a87c1f8d85fb07"
     },
     {
       "subject": {
@@ -1999,10 +1999,10 @@
       "checks": "검증 (이름 'LY96', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "f90acc1e3ca5e837e5f90b8eb54aa96e15a6a3747cf28ac7d6a050df1b084442"
+      "digest": "3b5d26bbef94532e7f7148ddadae5615fbdb8be6ad40ffe598f29d18289c86e0"
     },
     {
       "subject": {
@@ -2022,10 +2022,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 cc6051cc087ee775… — 검증 (이름 'LY96', 종 9606) · 원본 판 203/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "23b4197df878df23db7b26f64a618c8ffe77af169ae793da27a21907e6d5b4e8"
+      "digest": "5340cca41bafe6195d748d9577504aa4225151332aeca18bb8421af3a9033706"
     },
     {
       "subject": {
@@ -2045,10 +2045,10 @@
       "checks": "새 원본에서도 UniProt Q9Y6Y9 — 검증 (이름 'LY96', 종 9606) · 원본 판 203/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "6145734a41cc8c195ac9c524833edf31b0a9c4a70f29d364e0cc06671103977c"
+      "digest": "bf6408c6196f935a479d816a580a2a90d49cba27c6e3488076ddbeeea9ebeb7e"
     },
     {
       "subject": {
@@ -2067,10 +2067,10 @@
       "checks": "검증 (이름 'LY96', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "462547bb3e00fe3b7b5353eb609284f90def3f63359befe27985dc9369621497"
+      "digest": "7c609e282ed8d4e0367b55b796c6b7eee95497cc6917150df5c87dcc6a56c31d"
     },
     {
       "subject": {
@@ -2089,10 +2089,10 @@
       "checks": "검증 (이름 'TIRAP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "d363186cf233c67ca42d3b9808ede0ce6c7dc979b4bd50157d9d61ca15a22f1d"
+      "digest": "394638058132b979437467a04637ada4076b8c69daef84da472d5d76ad073416"
     },
     {
       "subject": {
@@ -2112,10 +2112,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 535a1443cdc09a62… — 검증 (이름 'TIRAP', 종 9606) · 원본 판 199/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b86fd06c6395e6a8bea8b9fcdbad810ef044749842b358d5f45664ecbdfb549b"
+      "digest": "34f9cd0174975ada84c84721f01b96b51bc353d974b40385108151c851deea28"
     },
     {
       "subject": {
@@ -2135,10 +2135,10 @@
       "checks": "새 원본에서도 UniProt P58753 — 검증 (이름 'TIRAP', 종 9606) · 원본 판 199/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0b8c464a6ac9444a90a8bb8eafd397557c1cb2354cbe7dddaf5c3f70b931d604"
+      "digest": "324f79b2b9dfe83a313ce7ed67f8c9c5ca310dab726f80763cba724e3a32136d"
     },
     {
       "subject": {
@@ -2157,10 +2157,10 @@
       "checks": "검증 (이름 'TIRAP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "86a0e4c51aa07d32bad556c42f6ca47545a4f7ebe9154f663a05f56332146dcf"
+      "digest": "942e552eb92cded668ae58e4c764b4f7a91b6d2c3879321449d5b1a44f1a55fe"
     },
     {
       "subject": {
@@ -2179,10 +2179,10 @@
       "checks": "검증 (이름 'MYD88', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "ab7f75713e75fe073a76a957bbeca43562f38dfd579fb167a1cb7b87c7922976"
+      "digest": "53086e6dd69bf6625d71e1d0cf15ca4bd06eaa4b94047779ca93cd210c64ebf9"
     },
     {
       "subject": {
@@ -2202,10 +2202,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 54431f8a0aa2a42c… — 검증 (이름 'MYD88', 종 9606) · 원본 판 231/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "3c0807978fe592fbaf85e3b61bff817d7bfd4dc6f7e294dc31b801d90b477af0"
+      "digest": "8710e1eb2907b851c32187dec9abfb216910124473633aa3484962c6498ec831"
     },
     {
       "subject": {
@@ -2225,10 +2225,10 @@
       "checks": "새 원본에서도 UniProt Q99836 — 검증 (이름 'MYD88', 종 9606) · 원본 판 231/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "397937fcf49ae9378f2348a8ce56bf5e502ebcca0b7dbb670dd94590d64781a5"
+      "digest": "fbe9732ca11e662047e3f3afe0deff464721e4e43ff46d89851371d75248f543"
     },
     {
       "subject": {
@@ -2247,10 +2247,10 @@
       "checks": "검증 (이름 'MYD88', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "aa798a45e248e0fc9be7520929a3f40fba9b2753cc9e3817c86656af5bf02ba6"
+      "digest": "8c842cfc4ebc3c48350893bef765e91d5e52d6e87b0b602040a0f79d25d5c338"
     },
     {
       "subject": {
@@ -2269,10 +2269,10 @@
       "checks": "검증 (이름 'IRAK4', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "631acf2d31ed84c681c6fddabef1f67c940d47aaea3a190c9b6b6d896113e1ca"
+      "digest": "5bc87b7780ff15aeb423397b09cad08d9560158b0d3ca1ceed8955e0409b50b1"
     },
     {
       "subject": {
@@ -2292,10 +2292,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 d1e98792da352b2d… — 검증 (이름 'IRAK4', 종 9606) · 원본 판 221/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "bd5deb52286e0f83d56fbaa325c76eedce9f32e19d0ea6e1346c2c58a29621d3"
+      "digest": "e5654e3e3926b9d16de34c32405ce84144434e32ff9e54e594003cc41b7e1d49"
     },
     {
       "subject": {
@@ -2315,10 +2315,10 @@
       "checks": "새 원본에서도 UniProt Q9NWZ3 — 검증 (이름 'IRAK4', 종 9606) · 원본 판 221/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "09c3e7ec61d4cb5dfa88fd564f2341476a8f2239f77e8a7928f1e4f1b3f0f375"
+      "digest": "a51aac3e4c744c3502eb5a20d218e77c5c423de2dfbbe547296cbfa3144278f8"
     },
     {
       "subject": {
@@ -2337,10 +2337,10 @@
       "checks": "검증 (이름 'IRAK4', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "bdbbeb2a267c640b83edf67ccf1daa48964f389cc33e9823aa2688ab3027e799"
+      "digest": "aff3a907a0438779f8b564f3616521667b637693d949f05edf6ae31d773f0321"
     },
     {
       "subject": {
@@ -2359,10 +2359,10 @@
       "checks": "검증 (이름 'IRAK1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "d09e382f5a96d940d1640a23dba02ec1a1421097559aa000015b7bd389f8f8db"
+      "digest": "dba4396873ae70d5f884129de4b7b21f8276ea5bae08c779ba13d4075e701980"
     },
     {
       "subject": {
@@ -2382,10 +2382,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 920d53f2ba8db9ed… — 검증 (이름 'IRAK1', 종 9606) · 원본 판 239/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1424ab06ab7d9fa57da6f47840e9079a7f2d01448b9fc63aab1b267a20a9b608"
+      "digest": "c622e7ab57297fdbb30008dd8e13732c6cba468f52eee6b8c2b1f95f083040e9"
     },
     {
       "subject": {
@@ -2405,10 +2405,10 @@
       "checks": "새 원본에서도 UniProt P51617 — 검증 (이름 'IRAK1', 종 9606) · 원본 판 239/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5e19f770adf16ea5f8506d297439bec39330acaa55e572f393ccfb16c781eb37"
+      "digest": "f998ff7e8cbb279a7a6bfe5dffe1e64541ff99689bd06f7163dffd0b23bc3057"
     },
     {
       "subject": {
@@ -2427,10 +2427,10 @@
       "checks": "검증 (이름 'IRAK1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "37b4a99b06744e0277b2f07d10992e8baad445b06b2216eee6af268fe7262692"
+      "digest": "b794af1c5ad690f041afd82dde2e47438c7675f3ee2c791823ab0c15117c9600"
     },
     {
       "subject": {
@@ -2449,10 +2449,10 @@
       "checks": "검증 (이름 'TRAF6', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "63c6524dbc91b35b145c721d33eb29887b63a5aecc13a3a96bf3f8c565223d24"
+      "digest": "64a097fcf7aa79ee5f93b8cac32f5cfb84ecd3056130464986237026660f9b66"
     },
     {
       "subject": {
@@ -2472,10 +2472,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 76a1b3b4f9a241cb… — 검증 (이름 'TRAF6', 종 9606) · 원본 판 254/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "cb28e463d5c6ecc6d3df5478540b41263b86c9b5792490972a960ac89853795e"
+      "digest": "921cf622811b421e4e30cb6c0d7af72cb362400aeb16bfdda4a81ae2d7dbfe64"
     },
     {
       "subject": {
@@ -2495,10 +2495,10 @@
       "checks": "새 원본에서도 UniProt Q9Y4K3 — 검증 (이름 'TRAF6', 종 9606) · 원본 판 254/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "566099e7bac42fd4795b2df29a2709e836e89d9f3b86427193b261721a48c912"
+      "digest": "a74e63cca76a0afce6b57947e80746cc4fa9f8d2ca4feee38ace009f5bc651b3"
     },
     {
       "subject": {
@@ -2517,10 +2517,10 @@
       "checks": "검증 (이름 'TRAF6', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "01300279302e37f5b6acf725aac4021c274dc87c4be56116b0216d796097d802"
+      "digest": "8b74a3dab867a68d2c9401739aa0a9f7f084a73468d4d71f8a87b33d581fe901"
     },
     {
       "subject": {
@@ -2539,10 +2539,10 @@
       "checks": "검증 (이름 'MAP3K7', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "032205c1db1a3730c61f26d06c79c283a5b87270221465134d39c66e9e8cb41e"
+      "digest": "34d75511dd6d4b2821c1ca13b9f4f63a005fd9d844025231a7721365f9a9b2a1"
     },
     {
       "subject": {
@@ -2562,10 +2562,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 ee8f636b23fc543f… — 검증 (이름 'MAP3K7', 종 9606) · 원본 판 249/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "a243eb16d6e87dff11cd8b4e26267a633adef96443b7d4f53d161f74f237e0c4"
+      "digest": "1ff619c61f01e3c1dabeb18744aa4093795aa171896a4bb4105317d928e5d5cb"
     },
     {
       "subject": {
@@ -2585,10 +2585,10 @@
       "checks": "새 원본에서도 UniProt O43318 — 검증 (이름 'MAP3K7', 종 9606) · 원본 판 249/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "56176b9d301ffa87c80917648c93524862fd2519ffc3253ac60899bcc7c5306d"
+      "digest": "b6f05f43406fef2601fa298b2dfc8a6b408d8082d0b0e6aa4f4fd954e180bdc6"
     },
     {
       "subject": {
@@ -2607,10 +2607,10 @@
       "checks": "검증 (이름 'MAP3K7', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "9e11fc472512b9cf9d7100660f460555cd4803a12c66bf2fdf305b0b8bd2243b"
+      "digest": "b5b75f066a2407c57059ffcc6edc2e2737fdf7561c0d09e26cff57abefe82a73"
     },
     {
       "subject": {
@@ -2629,10 +2629,10 @@
       "checks": "검증 (이름 'TAB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "bbaca60d13db0e7f0718d3594888c168abc71328fd7235fd929dab71ffc95365"
+      "digest": "3d73fbb5f81833a2dfffcbd4f07391f00d273a96d2088f6b0d251f614fa67228"
     },
     {
       "subject": {
@@ -2652,10 +2652,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 b61b973b956d5372… — 검증 (이름 'TAB1', 종 9606) · 원본 판 227/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "df98457dba60a4060d414425b7b0c1c8aaa506148374cf668573a125a1528f08"
+      "digest": "6dbb9c25ebdb5088a7fb5d440a60414e8a72c07e9e97a970996d3f5465783d8b"
     },
     {
       "subject": {
@@ -2675,10 +2675,10 @@
       "checks": "새 원본에서도 UniProt Q15750 — 검증 (이름 'TAB1', 종 9606) · 원본 판 227/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "ee6c22aa426e1620022a7dd166e8820bf57db04f91cda1faf22c93cef777a38f"
+      "digest": "81de8d58e88aaa051388d445a626c9b2e3bbe3f480d60342b2e89ddffe94b751"
     },
     {
       "subject": {
@@ -2697,10 +2697,10 @@
       "checks": "검증 (이름 'TAB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "ec47a80d6d5b6c32d2597942ff284b336b38d4a8068d10960845ff107f5b2e90"
+      "digest": "e3c02aba854364c1b18f3e2d91db351c81bea664ba8b82ce011a26638e18ffeb"
     },
     {
       "subject": {
@@ -2719,10 +2719,10 @@
       "checks": "검증 (이름 'TAB2', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "08623f12abdfd08a4b62dbd92d95ddc07051080d091b56fba1c05afddc7c757f"
+      "digest": "dc2410a20099db8ca1b798ea0a9c18ffb52d683fc2b05c74cc46c256113b0cf3"
     },
     {
       "subject": {
@@ -2742,10 +2742,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 7f1fbd4468e5a11c… — 검증 (이름 'TAB2', 종 9606) · 원본 판 215/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "4da74acb390417539efdeb4614e004a1f22bcececd052615692cee84052d39ff"
+      "digest": "2a1b49747a00c2e0f5d772fe6ce93813d3509ac7fce52ad128c475198130b237"
     },
     {
       "subject": {
@@ -2765,10 +2765,10 @@
       "checks": "새 원본에서도 UniProt Q9NYJ8 — 검증 (이름 'TAB2', 종 9606) · 원본 판 215/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "026b9bd5c6dac8e65262838554b7a266a1773d4d97c112602dbc7ad9ea7ba597"
+      "digest": "69e2af0450383820fafd75fee79c264866ae96e768e1bdb86cc63ec57414a69e"
     },
     {
       "subject": {
@@ -2787,10 +2787,10 @@
       "checks": "검증 (이름 'TAB2', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "195d6affcc75bb543d28ce7887419d1ce79aa70d4e7df8d87a9559b4528afa7c"
+      "digest": "27bf5ac8c56b894025a6192b6fa839ba25265c13cfb69bb564df5b902c7a2d39"
     },
     {
       "subject": {
@@ -2809,10 +2809,10 @@
       "checks": "검증 (이름 'CHUK', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "8e7987286313365c1c6250fc487554631833fbb13ed9a13ac27d11fb949c65a5"
+      "digest": "0204aa23382e9846d97d7ca7fbb8fdd3a2f7df3cb46ecf93cee82b3bb32f4924"
     },
     {
       "subject": {
@@ -2832,10 +2832,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 66a19d6e61e3700e… — 검증 (이름 'CHUK', 종 9606) · 원본 판 248/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "090fcb7bc57230474509001a0dceb82bac3a43e65d315e5afd1e1db34b68738f"
+      "digest": "4ac37c211f49a2ead869466df4db6ebe4b5a49236c245f7649dae5ea1c5dbfc3"
     },
     {
       "subject": {
@@ -2855,10 +2855,10 @@
       "checks": "새 원본에서도 UniProt O15111 — 검증 (이름 'CHUK', 종 9606) · 원본 판 248/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "24be5e074d93ee7f3c9815a0def5e9f25b5fbce75f80bd71d1200446baaa01f2"
+      "digest": "d5b46460cda20324253d38fce226eaf5096e3476296959471b9e1ed0c04e19e0"
     },
     {
       "subject": {
@@ -2877,10 +2877,10 @@
       "checks": "검증 (이름 'CHUK', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "0de8855003edec0bcf410a1518d630f1f4ac14d5a1400dc4ea0ab5ddf01f9c0f"
+      "digest": "f09d67b5a5b7030bcd594dad632d985775d81f19674a666abf89cbefc47eed93"
     },
     {
       "subject": {
@@ -2899,10 +2899,10 @@
       "checks": "검증 (이름 'IKBKB', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "91e30a593bf568ebe75679a44f1705f71dc7c9248fa94ec7d9dad7e62029eaa5"
+      "digest": "a3630bb63e027a989625b229a25c922626f5dbe2b743b7b32fbf47f3f3595868"
     },
     {
       "subject": {
@@ -2922,10 +2922,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 22705f55903aa200… — 검증 (이름 'IKBKB', 종 9606) · 원본 판 252/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "02d2909bc801729a0d84cf4f58cafd245f76158928a9b356f6e6fd18cc87bd11"
+      "digest": "9f105a14c6cf445bddd57c0bff4ac11c2eafdf57b87eff0207a1ec0a31b16f89"
     },
     {
       "subject": {
@@ -2945,10 +2945,10 @@
       "checks": "새 원본에서도 UniProt O14920 — 검증 (이름 'IKBKB', 종 9606) · 원본 판 252/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "8679b33ad3da3427f8f912653bbd4dc7930ba7888547ef18bcac6e407955f3e2"
+      "digest": "95a2858bb7fd781b6d8e9b461ba0d731fb238702e92626034d78c769bb87dc21"
     },
     {
       "subject": {
@@ -2967,10 +2967,10 @@
       "checks": "검증 (이름 'IKBKB', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "8edd43f52554619ca182af0dbd38b58ab333f30ac77ffc1b58801712b83033ec"
+      "digest": "b0b8f5cb6b5c92eca5ddd43ca03bf586b302f5f417bb7f3f017993f2177d4c73"
     },
     {
       "subject": {
@@ -2989,10 +2989,10 @@
       "checks": "검증 (이름 'IKBKG', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "134f7210bafa9248366484de2b99cc4760a0a7182f5c97d5ee0af47ee90202c8"
+      "digest": "67076a6134700c59c466f6ff596c1ca033f9db529858814232828928295ad7c5"
     },
     {
       "subject": {
@@ -3012,10 +3012,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 d535811c44f71ec5… — 검증 (이름 'IKBKG', 종 9606) · 원본 판 252/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "30d3073c2512c19d94ad517511b6505755c0304afc1cb7ffd74c448e4784f67d"
+      "digest": "8198c9b76268028e1abb6646bdd1ed73de800c0169f7175c197665827bc15cf0"
     },
     {
       "subject": {
@@ -3035,10 +3035,10 @@
       "checks": "새 원본에서도 UniProt Q9Y6K9 — 검증 (이름 'IKBKG', 종 9606) · 원본 판 252/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2f42d751593841690b8546a9fbc315c8018be5bf4f22dcd7e00ab52fb2fa7307"
+      "digest": "fc65f053d21a78b937c5bede65aba3d8c03994b755e0aab8ae20ec0c04a871b0"
     },
     {
       "subject": {
@@ -3057,10 +3057,10 @@
       "checks": "검증 (이름 'IKBKG', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a566272520a55b7cdaf490cd045a1d6cfa6d680af11072137cfa8f5cabfb78c3"
+      "digest": "50c7cba2c39639f9dcf5c8810f2ae102e859393adfd9c176fff2860e62264851"
     },
     {
       "subject": {
@@ -3079,10 +3079,10 @@
       "checks": "검증 (이름 'NFKBIA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "1b2d741ac4182621782c39e9c58928c51e478d6ac976232120e168d760d4d7ec"
+      "digest": "619798cfa0809fe653692c40bc19a80ed14d4fce9c8eeeb5e95da25298f2d742"
     },
     {
       "subject": {
@@ -3102,10 +3102,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 760aff0aa84d0845… — 검증 (이름 'NFKBIA', 종 9606) · 원본 판 249/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1e14111a9b03ba12c6b8cc37631c79c9e3d3074548a4f1dbc532d7363c1a2ed0"
+      "digest": "4f90c1dae952b288e8607c3111f52cecb6009e9705896ffdb63f350676574695"
     },
     {
       "subject": {
@@ -3125,10 +3125,10 @@
       "checks": "새 원본에서도 UniProt P25963 — 검증 (이름 'NFKBIA', 종 9606) · 원본 판 249/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "e2ce97e3fa80afae29dda883e50ed6d77a728e6c839a1391d017cc9f4427b7e5"
+      "digest": "f0a301bce3666b2097d800d63820fbd0c94112429a9ed3e69bb39656b02c7a21"
     },
     {
       "subject": {
@@ -3147,10 +3147,10 @@
       "checks": "검증 (이름 'NFKBIA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "83568c7779abe60d4e1cacda1f9587a74ed7070ac0dd82ea626971df542ae323"
+      "digest": "164360e1942d7026924db3e38b55699fc39b67f96bed7a122c45c939d865115b"
     },
     {
       "subject": {
@@ -3169,10 +3169,10 @@
       "checks": "검증 (이름 'RELA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "fc8d960134023bdfad693754f9f181e3ca6040f2030ee1fcefd9a6dc2cfe72c3"
+      "digest": "c75b440eda05d0705fef00f8028e3f40137e753f05480f68bb6ac674433919f1"
     },
     {
       "subject": {
@@ -3192,10 +3192,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 314be271367e8b3b… — 검증 (이름 'RELA', 종 9606) · 원본 판 268/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "7be2a11358dc57918996b24b57d1fafbebbcd98e079bceaa899bc7dba156734a"
+      "digest": "13a61c8e98cc801504fbf19e358ade4e18d175017bb880704b345557c72f59fa"
     },
     {
       "subject": {
@@ -3215,10 +3215,10 @@
       "checks": "새 원본에서도 UniProt Q04206 — 검증 (이름 'RELA', 종 9606) · 원본 판 268/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "deaa26123afda4d3dc47d548a6af1d2e8e7f4c41e7a4dbe7d7818b82fb8db6aa"
+      "digest": "13b3e2d6d5d04d8bce3775c2d0de7d79df3eece8894bc06381b1823e2b8e0e93"
     },
     {
       "subject": {
@@ -3237,10 +3237,10 @@
       "checks": "검증 (이름 'RELA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "9da36c7db6b554d96b9b4ba5e60b0f7f8d1f129b9685d486f01ec5c0c8838586"
+      "digest": "f1f6950c216a1e8266476043c56f0e4c88141adee8bc536cb2fb1ce3a5e72d36"
     },
     {
       "subject": {
@@ -3259,10 +3259,10 @@
       "checks": "검증 (이름 'NFKB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "51827bdfdb576370dac3601bde8d53e5e22710d0446c7d6284dbf9759d7dc246"
+      "digest": "630655a5eca2977c6816e902969735948508debe8a89b188420065524bc345cd"
     },
     {
       "subject": {
@@ -3282,10 +3282,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 38417ef83a638e37… — 검증 (이름 'NFKB1', 종 9606) · 원본 판 279/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "23c01a39d0d42fa4b35f6839811bfc8d5a6acc88140888104b178a622f28b747"
+      "digest": "3bb73c2882f0f6e3355033c7462bec9abb59b86e5312561ff21a43e25a0f49b1"
     },
     {
       "subject": {
@@ -3305,10 +3305,10 @@
       "checks": "새 원본에서도 UniProt P19838 — 검증 (이름 'NFKB1', 종 9606) · 원본 판 279/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "a1d1af4a7b8c87a4bad5092c87a070034ae9c08ec103c84612f7e360ad452e3c"
+      "digest": "418221880b9ad2533392d73737f40c8f7502e0bcd77336949dd25bc58bc3297c"
     },
     {
       "subject": {
@@ -3327,10 +3327,10 @@
       "checks": "검증 (이름 'NFKB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "fcdfcae94a5745999d04d8cea5c32788cf2b8a271d3a67e228205330511fb371"
+      "digest": "288bfa40e4748e6bd169c2452e4439d2e7d686be2c308e817e18835f07184eee"
     },
     {
       "subject": {
@@ -3349,10 +3349,10 @@
       "checks": "검증 (이름 'BTRC', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "33d074180f963f22b513b84c57992ae38ff228bc58eadea26650320e39bc497b"
+      "digest": "c046f5a3b3cff75122c4064c2e5fd967c98a9e955589382830155ed735ef3985"
     },
     {
       "subject": {
@@ -3372,10 +3372,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 f045bce6f472f39f… — 검증 (이름 'BTRC', 종 9606) · 원본 판 239/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "158609d662d0269a67cc0463740276ac0b699a1745d69b5148408b2234af6a86"
+      "digest": "5c7e7f8941d5d71336796f11aec7110a37297ab73fc15d143816123870d92915"
     },
     {
       "subject": {
@@ -3395,10 +3395,10 @@
       "checks": "새 원본에서도 UniProt Q9Y297 — 검증 (이름 'BTRC', 종 9606) · 원본 판 239/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b86c87dda91f8903d1381695649b6ff51f96de9c610c1fc9d3b414ae4af88ed0"
+      "digest": "181f38e2746d221f187db4161005b30503b0cd4298f3d8ba9cd087d4ff90f502"
     },
     {
       "subject": {
@@ -3417,10 +3417,10 @@
       "checks": "검증 (이름 'BTRC', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "159d009c97ee7248e1f8d2d2d6885f8f711481a1910823cc22b35cda1d7eaec9"
+      "digest": "7cd7ad3dbc354eb42d73b393450fc3dba0b562af4b75bf8aec7b5a1e25c92dfc"
     },
     {
       "subject": {
@@ -3439,10 +3439,10 @@
       "checks": "검증 (이름 'SKP1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "2ff77a153f15dc8b7a35bd4e1b172082b9527210baf6b1ac5509ec6704b6987b"
+      "digest": "d105c9d7855ad40ac8d812b8cd28929c622e0ecad1dbb218a71951adcd5b0711"
     },
     {
       "subject": {
@@ -3462,10 +3462,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 c635bfe220025687… — 검증 (이름 'SKP1', 종 9606) · 원본 판 209/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "388c07a8eccd83143d597aefaa131c75a072a7e5bd1f6155649c6cdbc5f28fe2"
+      "digest": "584acd300bd5a9d71538107bc08d3f3301981ded40143210e96b4119313fcbd7"
     },
     {
       "subject": {
@@ -3485,10 +3485,10 @@
       "checks": "새 원본에서도 UniProt P63208 — 검증 (이름 'SKP1', 종 9606) · 원본 판 209/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f15cdcf11507a2435d37df45178aea79e3315573e1e5e80d3889a841f92ede4c"
+      "digest": "9c6ac3225fd8736230a973b40ea5874d71c91b0d39f51cfde63d322cd8486b09"
     },
     {
       "subject": {
@@ -3507,10 +3507,10 @@
       "checks": "검증 (이름 'SKP1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "d2462c461fdcc8109346393c8e624af700404127a4295fb0e35b399635b3cad3"
+      "digest": "9045414597e971b24bf480229e4dbe328456ff5e3c160deece6d22d75b854b6a"
     },
     {
       "subject": {
@@ -3529,10 +3529,10 @@
       "checks": "검증 (이름 'CUL1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "9dca5eee5353fe69a260b48b9accd49824a22f764a934e7fc4ab3de70cfe1825"
+      "digest": "44f5b3a96d8fac9dbbb42be0a2e80b46a0fe767408d0cb81fd4e259c3ce5f019"
     },
     {
       "subject": {
@@ -3552,10 +3552,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 9f7f5be9884b59b3… — 검증 (이름 'CUL1', 종 9606) · 원본 판 229/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b875bcf9016a45b21274076fa986bd90fe8892d80b426ad240aceaacf6d93709"
+      "digest": "c857bd7228d5c77ec6037d56d267eaa7ea4ad9b0afc6cbe98d40537af4c8d4e9"
     },
     {
       "subject": {
@@ -3575,10 +3575,10 @@
       "checks": "새 원본에서도 UniProt Q13616 — 검증 (이름 'CUL1', 종 9606) · 원본 판 229/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "7b960bac637a9a843e6540719d78dc19572b2aac78aab1c73669766041c53fc5"
+      "digest": "48e8ceb1aab0fbf9db7340b65ba74580e9b7ae44077a9f445dac2c6552d82e43"
     },
     {
       "subject": {
@@ -3597,10 +3597,10 @@
       "checks": "검증 (이름 'CUL1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "0425fb90a3975269963c11c1441510e11fa2d723e62ba32a21d89df14e17c83b"
+      "digest": "e90a9d6801e98be96bd5e36989e0342900fc3912614e1c5c9cba8acc2f7f958a"
     },
     {
       "subject": {
@@ -3619,10 +3619,10 @@
       "checks": "검증 (이름 'RBX1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "7686225cd8fe03e080b4d89c32bf10beae77fa18d396f6049e5cec3b8604e5a6"
+      "digest": "36cc59b7213fdc5b108cc9b3cc6e43e1f5ce3f2cf2b1992aa09a62f6f9bfe4f2"
     },
     {
       "subject": {
@@ -3642,10 +3642,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 9987419f96fb514f… — 검증 (이름 'RBX1', 종 9606) · 원본 판 206/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "d87e96b5bd12e3fc4ebb6d93dd5637b57bf0ad372ac44f360e2fd4c425898399"
+      "digest": "9211c505e05a07c7f88f33427d9ac2ed0304a3f2a3e3c5f71798481f0ed5feda"
     },
     {
       "subject": {
@@ -3665,10 +3665,10 @@
       "checks": "새 원본에서도 UniProt P62877 — 검증 (이름 'RBX1', 종 9606) · 원본 판 206/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f7e0b2ec140a9a308914495b9551d4ec5528d3c1587035f48a508ff380b3536a"
+      "digest": "ea7cee68332c85e6e4b34832dea3cdb569099988b1330457d4e6dff6221ce5c1"
     },
     {
       "subject": {
@@ -3687,10 +3687,10 @@
       "checks": "검증 (이름 'RBX1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "81d061a9bfcd203c39878a983111fa8ce1748389cc4c2e04a9cada5ab5c7d3f4"
+      "digest": "15ade172ce3857ed0834a4de10b1ef77a98907a8a9f2294b28fd18e3231a097c"
     },
     {
       "subject": {
@@ -3732,10 +3732,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:33019 — 검증 (이름 'diphosphate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "d79c7d41a8e699da21b18e1a50acf4d35839e8313d93e90397dd0a42b6cdba5a"
+      "digest": "0dedfcfbb6ccca0ef517f463e9c0b676e73ab867ad029944fe6ba3e51efbba0a"
     },
     {
       "subject": {
@@ -3755,10 +3755,10 @@
       "checks": "새 원본에서도 InChIKey XPPKVPWEQAFLFU-U… — 검증 (이름 'diphosphate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "bc25768badf104759d8449c3aff175ada6feb38c55380f540d8ad1ebd8aca617"
+      "digest": "4c72f9afdcd6d2f06e8df6aafc8dddc40fabf248a684c737ebfc9218205f577c"
     },
     {
       "subject": {
@@ -3844,10 +3844,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15351 — 검증 (이름 'acetyl-CoA', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57288 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "9ce469a58f202f0afc4c7f0eccf49f476a4eddc4257ce581be517851a61f8807"
+      "digest": "ae862b45de317d5b1ae3c3847fdae174c033737a0562a484fdd9215fda21a520"
     },
     {
       "subject": {
@@ -3867,10 +3867,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57288 — 검증 (이름 'acetyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15351 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "abb6096e49c3e60f8f9ee1c6799612eeca34200b1c117a319d9fd2703799e81d"
+      "digest": "24a55d56ab8acfac957a25e9cc18f87887d4bc106686c5a8e8eab80f2b8e7bc4"
     },
     {
       "subject": {
@@ -3890,10 +3890,10 @@
       "checks": "새 원본에서도 InChIKey ZSLZBFCDCINBPY-Z… — 검증 (이름 'acetyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15351 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "31e65e3df101ebc47386a2c7245061e6bffffeb6c6ee134c7f01e7510d96d1bb"
+      "digest": "177ddaf9baafcfe5b0f9c9a658494c51ae102355a83ccae993f93195ef660d81"
     },
     {
       "subject": {
@@ -3913,10 +3913,10 @@
       "checks": "새 원본에서도 InChIKey ZSLZBFCDCINBPY-Z… — 검증 (이름 'acetyl-CoA', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57288 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "18c0acb59c5fff8916b8bee25e2bc287594d22ddc762d400e70c017de6ced917"
+      "digest": "122539ae02007a2793c2d75fbe4d88715d0ffd11bcacdc9d90fc16bcb3af0d4c"
     },
     {
       "subject": {
@@ -4024,10 +4024,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15346 — 검증 (이름 'coenzyme A', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57287 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "ae23767888e829c8e63b6de99d93f11db0b99282016215925b07f74e6176d7fa"
+      "digest": "64547dcb96fc6044669fa1f81afeeece41cc61e19748ce8a88beae7d271722e5"
     },
     {
       "subject": {
@@ -4047,10 +4047,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57287 — 검증 (이름 'coenzyme A(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15346 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0aaa6b5295450f4dae6be03af99b5a266fe87065b0913680247b0b5630d4ecaa"
+      "digest": "1b726cc8c4fa89efe5e37c8b94fb635ed868a6c5959098514298b43539821a30"
     },
     {
       "subject": {
@@ -4070,10 +4070,10 @@
       "checks": "새 원본에서도 InChIKey RGJOEKWQDUBAIZ-I… — 검증 (이름 'coenzyme A(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15346 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "c9c69771302e3aa5a222acf5333428085bc0770bf1b737856fabb8b315c0de87"
+      "digest": "f52356d1f9be4efb5adeb68791376c3b18d3fd81baf61d28ad5dac4abcac5941"
     },
     {
       "subject": {
@@ -4093,10 +4093,10 @@
       "checks": "새 원본에서도 InChIKey RGJOEKWQDUBAIZ-I… — 검증 (이름 'coenzyme A', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57287 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "c21fb506600096e78ddc0bbd578b7ce0f07f2d372b64ce64a9335fa33917a3fd"
+      "digest": "cebe1c7b9cb00544ee57015f562a37a020fad3b65704242b413b101225978b56"
     },
     {
       "subject": {
@@ -4182,10 +4182,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16452 — 검증 (이름 'oxaloacetate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "4c7020ba39cc04f4754a695bf821ee5b3942132001b397fc5f8ece4d905e7b2c"
+      "digest": "facca042a422a8c1ef191bb12e1b3b1029495f703de26ba7209c8a004f05869a"
     },
     {
       "subject": {
@@ -4205,10 +4205,10 @@
       "checks": "새 원본에서도 InChIKey KHPXUQMNIQBQEV-U… — 검증 (이름 'oxaloacetate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b798e526bba3bdd0b8c046c4693595fce1f2731200322ed7295d149c6fcd070c"
+      "digest": "62789b663b17c58e2cfaa1bb45e74f78ee4434bb29d979d2439859167b3031bf"
     },
     {
       "subject": {
@@ -4272,10 +4272,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16947 — 검증 (이름 'citrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 33회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "c6ff7c01726838ab8f1b0ed4864899ef3e9854c2108c1f6b76e3e825314ff112"
+      "digest": "65cce46eca3928cfa146b5516abeb1d371a512d2fda3ba2615ed1c484c591c54"
     },
     {
       "subject": {
@@ -4295,10 +4295,10 @@
       "checks": "새 원본에서도 InChIKey KRKNYBCHXYNGOX-U… — 검증 (이름 'citrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 33회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5ee99ee965f2b3fe409017e656d0f9ae58ffa9ca2f8a8d950df884367dd9be94"
+      "digest": "48f2545e14c30ee566040d8eece808002cd221f64f3fdfcd0989501fa48d0852"
     },
     {
       "subject": {
@@ -4362,10 +4362,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15562 — 검증 (이름 '<small>D</small>-<i>threo</i>-isocitrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 9회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f99051c6d6915daf8722127304600be0bb3d2cbb29132ca61b2d67371e0090cb"
+      "digest": "09ad3507b5ae23ca41fea603dece70e04badf5e29050ee9d9920b80f21857109"
     },
     {
       "subject": {
@@ -4385,10 +4385,10 @@
       "checks": "새 원본에서도 InChIKey ODBLHEXUDAPZAU-Z… — 검증 (이름 '<small>D</small>-<i>threo</i>-isocitrate(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 9회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1a866dbf5e259d34ab89617984afb9377583eb7b6338d55c1091ef2a5a8125ea"
+      "digest": "3a5809b250be1c113044dd2ccefea75d16e1f21a4112781e80a2670db2f7f6a7"
     },
     {
       "subject": {
@@ -4452,10 +4452,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16810 — 검증 (이름 '2-oxoglutarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "a2e165081ffab2bd67e7d2ae992211d50bbb0981d065c365c533b20feb691c56"
+      "digest": "1861e310995d9e9ed4ca70b9601b7646e68d3887f1783d740c6c06abef3aaed5"
     },
     {
       "subject": {
@@ -4475,10 +4475,10 @@
       "checks": "새 원본에서도 InChIKey KPGXRSRHYNQIFN-U… — 검증 (이름 '2-oxoglutarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f2b3be7eccacfa902df10eb8c26fa9455b325067b7d1805484b928baa3685223"
+      "digest": "5280b68184fdf5cff718c604669560bf82908f71606be5803fcd105ace341547"
     },
     {
       "subject": {
@@ -4564,10 +4564,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15380 — 검증 (이름 'succinyl-CoA', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57292 와 수소 +5·전하 +5)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2f9a7a10545e9038223900c36d9b669a881330d7ff9175c4b1a5c26a8cab1253"
+      "digest": "dfec948826ce5d6b6d24361dfcd0cb99f9ac6a1dcbc5341799ab646cf2c80b9b"
     },
     {
       "subject": {
@@ -4587,10 +4587,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57292 — 검증 (이름 'succinyl-CoA(5−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회 · 켤레 CHEBI:15380 와 수소 -5·전하 -5)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "eec44151b89aae351cc9d3bb5646a45a5a80cc76bd6409b9c49f0d5d08e81f63"
+      "digest": "c7417902f60c16eeb51154d6142fe21b2e2644b43929b75d952c1638b83df297"
     },
     {
       "subject": {
@@ -4610,10 +4610,10 @@
       "checks": "새 원본에서도 InChIKey VNOYUJKHFWYWIR-I… — 검증 (이름 'succinyl-CoA(5−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회 · 켤레 CHEBI:15380 와 수소 -5·전하 -5)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "319fbb790cb6ad71b12a28aee40182fab8590df3de21d1d08c537f0e0243fb97"
+      "digest": "fcf1b5bd91f95fff4739ad8449dc4572e075ee5f1b1ed2a6d391f906d13be788"
     },
     {
       "subject": {
@@ -4633,10 +4633,10 @@
       "checks": "새 원본에서도 InChIKey VNOYUJKHFWYWIR-I… — 검증 (이름 'succinyl-CoA', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57292 와 수소 +5·전하 +5)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5b8038140275423bc2b9c25e9b107a14076e4453cebc004aa21d517229a9ea86"
+      "digest": "3a11c568f61d1b0765b692992a521da71fe5b2edf8400b1cf2c3d9c6f7406aa8"
     },
     {
       "subject": {
@@ -4722,10 +4722,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:30031 — 검증 (이름 'succinate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "da93b46635598af8da6b288e8acdf2fff9f4b7cb428f52d05dd6155d9fc380fb"
+      "digest": "7a3a97c4249ae286e32679aaa89dfd317ee3b7b6fe4d1de91e05a4beb71cad38"
     },
     {
       "subject": {
@@ -4745,10 +4745,10 @@
       "checks": "새 원본에서도 InChIKey KDYFGRWQOYBRFD-U… — 검증 (이름 'succinate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5b17d9130b46b896d279c4ed781b8985548c372d8da017238eba35b42a062faa"
+      "digest": "67a47cae7b1d399fdf22e7d0480b69dacf63f7d28a4d7c6b1e5a0d3ab1ae142f"
     },
     {
       "subject": {
@@ -4834,10 +4834,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:29806 — 검증 (이름 'fumarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "19b923165c0205fe97f4c79dcbd146cf93e071332327ccce88afb209e8c19e53"
+      "digest": "d50c68b6436720d48c14928a3f80258f0592d290c7a5c2746c5743f2473c017d"
     },
     {
       "subject": {
@@ -4857,10 +4857,10 @@
       "checks": "새 원본에서도 InChIKey VZCYOOQTPOCHFL-O… — 검증 (이름 'fumarate(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 43회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0c5408b18b8ad23851c113aca00d135fa5dac5ccf1649a2496e2071120256262"
+      "digest": "0fb91cde8aed0f7c54bc4a19f9db082d8d003d108789d61c798084137b88d537"
     },
     {
       "subject": {
@@ -4924,10 +4924,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15589 — 검증 (이름 '<small>L</small>-malate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 34회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "884c37a3c42fad846690420367e12b39951bc13e7899ad231c63047f03924cdf"
+      "digest": "c3c5de04a444ea7199536b53b5d9fbe336e78ebb6236a92c42a04209aefb590f"
     },
     {
       "subject": {
@@ -4947,10 +4947,10 @@
       "checks": "새 원본에서도 InChIKey BJEPYKJPYRNKOW-R… — 검증 (이름 '<small>L</small>-malate', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 34회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "24a1db99d2bada9bc0c3795811df92db67c63a648787f9664dc5ee1c8c8de684"
+      "digest": "53109980feedc45465814d647789872d74d55530b99bb65c16061f4022796c68"
     },
     {
       "subject": {
@@ -5014,10 +5014,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57540 — 검증 (이름 'NAD(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "d7b97406992f2e7bb0383f1a401b47061d3a1df3ebc42bb8d3a21854997f424d"
+      "digest": "2c75019095ab91fdd2140c90eb4c7bddbe73de224e53e64068951a8a69efec85"
     },
     {
       "subject": {
@@ -5037,10 +5037,10 @@
       "checks": "새 원본에서도 InChIKey BAWFJGJZGIEFAR-N… — 검증 (이름 'NAD(1−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "955665f0c73965e2921031277f8ad936e5a0d5691b01d716de2f0bb81a5a9019"
+      "digest": "b522761321e617b61ea3218f1068353fff9ff9395c952afb4a5c80455e804863"
     },
     {
       "subject": {
@@ -5126,10 +5126,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16908 — 검증 (이름 'NADH', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57945 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "cfa9e5bf596c68241d58a1b85f19393f5439fa9b9acec9427555553397bb8ba4"
+      "digest": "0bd5ea43e2bb481ba52e1b0b7546c5e494e955db02c83069b43860c117f87635"
     },
     {
       "subject": {
@@ -5149,10 +5149,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57945 — 검증 (이름 'NADH(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16908 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "86a980202d6ef53a7159e70f03c8c91eeda9334734598f8076bd7325971b479d"
+      "digest": "2d998bafb61a5bd7a5ae436093be6169772061d1321941864620ffd9cc34ba56"
     },
     {
       "subject": {
@@ -5172,10 +5172,10 @@
       "checks": "새 원본에서도 InChIKey BOPGDPNILDQYTO-N… — 검증 (이름 'NADH(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16908 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1fe01e4f6abb77c81e6de502861a17d3a85b192c584f18cef88ebba24b16e0bb"
+      "digest": "56936bdda2b3368a9a86d6b2596bd9e6c24b27fa364dd228f7bc4686fc10392b"
     },
     {
       "subject": {
@@ -5195,10 +5195,10 @@
       "checks": "새 원본에서도 InChIKey BOPGDPNILDQYTO-N… — 검증 (이름 'NADH', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57945 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "e1592c6981c9dc8db5ae7a5dbce534ea4a10f978f3743075fe253b4051b7df19"
+      "digest": "023e4747ad917f8b7e27cea72eef11e94fd4797d2dff09ccc8a02f39dc9ff3e5"
     },
     {
       "subject": {
@@ -5306,10 +5306,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16238 — 검증 (이름 'FAD', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57692 와 수소 +3·전하 +3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0ad14ae57073a09e26dea965e4c246dc3d4ea5bbfcc9a847a09162015f28f795"
+      "digest": "4a375fda04887e61e9e911cf7f21f392be986baa2379c46cd3355bf8ea920441"
     },
     {
       "subject": {
@@ -5329,10 +5329,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57692 — 검증 (이름 'FAD(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16238 와 수소 -3·전하 -3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "213f9ec957edc45ce7f491259d4fa5d7627a289eb08ee9594557e34369e1b6c0"
+      "digest": "649ff5693dc35331c2be4ba4b128e8009decf1854d8a1738b529d173ef25c715"
     },
     {
       "subject": {
@@ -5352,10 +5352,10 @@
       "checks": "새 원본에서도 InChIKey IMGVNJNCCGXBHD-U… — 검증 (이름 'FAD(3−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:16238 와 수소 -3·전하 -3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "4d90114c2d675362dbc90236a6f5a94defd6916b4977cae4b6b53e9612c198b1"
+      "digest": "44bdbd0c6aac0898ebe8e9c39247233d2b38c03ce3ad22f6443199aba60d7c24"
     },
     {
       "subject": {
@@ -5375,10 +5375,10 @@
       "checks": "새 원본에서도 InChIKey VWWQXMAJTJZDQX-U… — 검증 (이름 'FAD', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57692 와 수소 +3·전하 +3)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "3522e94611f985afeadda34410d74ee8386f35301798846ba1ba285a444d7434"
+      "digest": "a7f8d44660104edac05903f4982ca2e55a62cb7d325b57a743ac8202fcf4b706"
     },
     {
       "subject": {
@@ -5486,10 +5486,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:17877 — 검증 (이름 'FADH<small><sub>2</sub></small>', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:58307 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "da7211e3352176375f40e7036e79dd9d25a8612631c3a8dcf500a64205af6eb2"
+      "digest": "5a970cae78a92a067e57ae132101cc558f326aa9e384143cc26e1418a0fbb16d"
     },
     {
       "subject": {
@@ -5509,10 +5509,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:58307 — 검증 (이름 'FADH<small><sub>2</sub></small>(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17877 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0c2b7a64e27f65c5e79bcf9d2e01d29ca0154ee385e17c16570926e6e969a2e4"
+      "digest": "74ce2329f95ec0cd98e90fe0994ad013f4c1e29cd1be7e238b9ab9331fd87e48"
     },
     {
       "subject": {
@@ -5532,10 +5532,10 @@
       "checks": "새 원본에서도 InChIKey YPZRHBJKEMOYQH-U… — 검증 (이름 'FADH<small><sub>2</sub></small>(2−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:17877 와 수소 -2·전하 -2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "c399ac3f17863ce08e99b0a3a7d8a90aa2b210fb31e4ee29e623df5434500800"
+      "digest": "16eb2971b0756a9ffe8a91ed56028494af88981f781f96374acb7230875bd250"
     },
     {
       "subject": {
@@ -5555,10 +5555,10 @@
       "checks": "새 원본에서도 InChIKey YPZRHBJKEMOYQH-U… — 검증 (이름 'FADH<small><sub>2</sub></small>', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:58307 와 수소 +2·전하 +2)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2f458d12eaa5c36a4a37d8e44eab7c4ea0e79462a138589102687471a8c75847"
+      "digest": "7742c36f42206ed9189e4297344eb2b3d4f6e39d1123643da12b7da811dd2776"
     },
     {
       "subject": {
@@ -5644,10 +5644,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16526 — 검증 (이름 'carbon dioxide', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "0f55bc87d875dacb1c5d761bf8a67bc39e0005ff9aabdb3886896981bd909051"
+      "digest": "98e437a7144282f8482f2fc518969b88b59f72be64fcf4382a89326f466880bd"
     },
     {
       "subject": {
@@ -5667,10 +5667,10 @@
       "checks": "새 원본에서도 InChIKey CURLTUGMZLYLDI-U… — 검증 (이름 'carbon dioxide', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "895240a863ed354ec07b22d3180ddcd5766221d3bffb02b0800aad7e5d5c65b0"
+      "digest": "fac517d667af085e2641d0e0b22a3df8b30c3025cc0fe424151eb335e0e559b4"
     },
     {
       "subject": {
@@ -5711,10 +5711,10 @@
       "checks": "검증 (이름 'IL12A', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "79ec7ecf57295f945abbfb9d6b6d2ee4801ba4807489b508d1f5cb9dd06a439b"
+      "digest": "f14e1c6c1c499c86633779f0507232dcc206d1eb2f8835b9d459d488e10dc940"
     },
     {
       "subject": {
@@ -5734,10 +5734,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 2ce004e921ab5aaa… — 검증 (이름 'IL12A', 종 9606) · 원본 판 208/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "69358c6700aabd9e445a09444fdb7a01bb54ac57cc75881ae7b8988cea5abf6b"
+      "digest": "4953ed5eb86d74e28a04aca5ecc1626445b73e9b549520a1dae091b81f808dc7"
     },
     {
       "subject": {
@@ -5757,10 +5757,10 @@
       "checks": "새 원본에서도 UniProt P29459 — 검증 (이름 'IL12A', 종 9606) · 원본 판 208/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "6e64b407342a2748561a90830a4283ec1e0e8c830bc7f5e93ecbdbafdf6e3931"
+      "digest": "533243af1396e6c73fc90298f80dcfd4b938f612ad406dcc84ce0df7829d7be6"
     },
     {
       "subject": {
@@ -5779,10 +5779,10 @@
       "checks": "검증 (이름 'IL12A', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "3de8e4737927f0de0d67e543b1140796e789999d0e119bb95d07ab804e7cddd0"
+      "digest": "358509b609d9eddb00b23880ab2f518a9f8e629094424be73dad52f727d3ad30"
     },
     {
       "subject": {
@@ -5801,10 +5801,10 @@
       "checks": "검증 (이름 'IL12B', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a976cc07e4ef047224d62d0349b88f9ee89ebc9b4588576069c432e658a21ed7"
+      "digest": "265c0aa532bef1e1cddd7e5d293ca19489eb94db3bdb74e3db47813806e5e095"
     },
     {
       "subject": {
@@ -5824,10 +5824,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 997621c8a338440d… — 검증 (이름 'IL12B', 종 9606) · 원본 판 249/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5553cb68ad95e7f7eae1fb7897ba80b8a4a471a96a35a89d1c569473065dfb42"
+      "digest": "f0837948ea8d511c9505dc602ae06eaae5fcbb3e9bc55b567e54937f3b10eeaa"
     },
     {
       "subject": {
@@ -5847,10 +5847,10 @@
       "checks": "새 원본에서도 UniProt P29460 — 검증 (이름 'IL12B', 종 9606) · 원본 판 249/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "526722b2ca56d2d9f89616288668594469cdf6e3e01c0b4d3a2f3da57a6b5cf6"
+      "digest": "13b5e8292a5f444e34a1c3565ebd53406206fc20a4634670d2a5a8736bcd10c6"
     },
     {
       "subject": {
@@ -5869,10 +5869,10 @@
       "checks": "검증 (이름 'IL12B', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "d3f1672e523e17b06a80501216a2300452b32c99b28b1a205cbb2cd08b514756"
+      "digest": "00deb443943703a57aa21d354ca7cb1dbe338322096879c32ece4116882d0bfe"
     },
     {
       "subject": {
@@ -5891,10 +5891,10 @@
       "checks": "검증 (이름 'IL15', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "2c52a3b9f78de7da8901464080490ff37401f2488d237197fe248cc4aff644d1"
+      "digest": "4032953401670857ff2d21ea6dad770b30ef6cccf1cb96af93a36731c793b396"
     },
     {
       "subject": {
@@ -5914,10 +5914,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 eb801922daf84030… — 검증 (이름 'IL15', 종 9606) · 원본 판 207/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "ff91c83b4cbb5694b701936a7ea7693153a25e55ff8d202539da15f0a91005ea"
+      "digest": "e6ff2965072a76b9ce7a74e4a6c857ef3c54100ec79656b47c2b1f221a463d16"
     },
     {
       "subject": {
@@ -5937,10 +5937,10 @@
       "checks": "새 원본에서도 UniProt P40933 — 검증 (이름 'IL15', 종 9606) · 원본 판 207/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "7dd6d96d5362c6c196d394c511b706527bebe199ec1a33111cfc83cafd77f8cc"
+      "digest": "c1401fda861802ffcdf424fd9cd65c28cb9465a78b0e4254b49b6ab675c12ba8"
     },
     {
       "subject": {
@@ -5959,10 +5959,10 @@
       "checks": "검증 (이름 'IL15', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "6a756b3e7a03a869a05750ac1242e961b064e6971d6df14c2f9406435cd0ce3a"
+      "digest": "b71fc2a8a811394cfd21e6e1c6bd5dd6285d0b76930c792152d197f3b1481815"
     },
     {
       "subject": {
@@ -5981,10 +5981,10 @@
       "checks": "검증 (이름 'TBX21', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "9c543f1dba0282a78ba650e7a8e2a84a13915a670757a7b5cc515aed71fb94de"
+      "digest": "1afd448f1a20dd1696f2fde7e2069128f711349076e39e82bd0d82a87c18bced"
     },
     {
       "subject": {
@@ -6004,10 +6004,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 8c452c4b47a38905… — 검증 (이름 'TBX21', 종 9606) · 원본 판 191/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "6020f1c6b14dbb620b29e4a5923c8072d973dbe5f36274708f7bf59d2ba084d2"
+      "digest": "c1d851ee032ad0910f94045c8cea6c8e79eeab358f141d30d311a6ab7de7b066"
     },
     {
       "subject": {
@@ -6027,10 +6027,10 @@
       "checks": "새 원본에서도 UniProt Q9UL17 — 검증 (이름 'TBX21', 종 9606) · 원본 판 191/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "ad828320f56894426e8edfe23227ab921c370b958818034de9d138f12c41190a"
+      "digest": "d987aa8883e4587cd735a66272dbd6e55252c2982f40f1ffebace76ab58f423d"
     },
     {
       "subject": {
@@ -6049,10 +6049,10 @@
       "checks": "검증 (이름 'TBX21', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a8d069c47d3d911c785e51f83c4ab980ea71105312646d819b7ea24ff00976a1"
+      "digest": "0a9de4d90de566ac82cb95ec7f190991b81447a669980e66e64a2c5e36bd4bc8"
     },
     {
       "subject": {
@@ -6071,10 +6071,10 @@
       "checks": "검증 (이름 'EOMES', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "f1e59c1f7928933cb75d1e1e8ba4d60c6b91a811fd4050f7beebe9c60efe0938"
+      "digest": "96a9f93f007932185f8fed765ee6d463fd2488bc571e9e082155baa39c75f8b7"
     },
     {
       "subject": {
@@ -6094,10 +6094,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 84bbceacbca7006c… — 검증 (이름 'EOMES', 종 9606) · 원본 판 198/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "4555fb91881b0c31aeeef77c5a3a5132fbf2e84adc09ebb87a94c29a79526787"
+      "digest": "d3d955443b1041634e1da58029916ead09462e817326a3c8b5c886d5d5878661"
     },
     {
       "subject": {
@@ -6117,10 +6117,10 @@
       "checks": "새 원본에서도 UniProt O95936 — 검증 (이름 'EOMES', 종 9606) · 원본 판 198/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "fb84c2a7e72a913158aecdfc31d83daad227f3813df46d8c783ec7863ca9d5b9"
+      "digest": "bd0c03fee2b7bc39e8e3e8cc84e61c99a133d560a8081cfbfcda25bfcfa72af2"
     },
     {
       "subject": {
@@ -6139,10 +6139,10 @@
       "checks": "검증 (이름 'EOMES', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "7213a38210a0a71e302d697ba1e1fb372bbef3b75c5a7ce07bf1d3b8c66d08c5"
+      "digest": "75df65f79769f9f2ff12d9581a66deb5177352f642f5fd7d1539844d7cc5d0b2"
     },
     {
       "subject": {
@@ -6184,10 +6184,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15361 — 검증 (이름 'pyruvate', 부분 구조가 선언되지 않음 — 화학식 C3 를 보면 탄소 골격 단위 3 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5ea2fb64366e3e7e7cdc320a643e706e89b55cc0e3e55eacb5532e22ad1e897e"
+      "digest": "daec4e1968651c1fa3e24e1629bc81d1a0dfe66a8eaa831023aa19da2f890bce"
     },
     {
       "subject": {
@@ -6207,10 +6207,10 @@
       "checks": "새 원본에서도 InChIKey LCTONWCANYUPML-U… — 검증 (이름 'pyruvate', 부분 구조가 선언되지 않음 — 화학식 C3 를 보면 탄소 골격 단위 3 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 50회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "ac177b210a2a1171a51a80cbb799e4e93044488a0a3e3ef9c5e4c0e64c838c98"
+      "digest": "1b3fbe9f8497fc5897d7c92a199b510a84fe8351444217743042a421bfed2942"
     },
     {
       "subject": {
@@ -6274,10 +6274,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:16651 — 검증 (이름 '<small>L</small>-lactate', 부분 구조가 선언되지 않음 — 화학식 C3 를 보면 탄소 골격 단위 3 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 32회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "3b850a8ddc4f8c9fead2bbc62207b77435f08c6ad1752b8cac08c586c149927a"
+      "digest": "f28b19427b57ad5a43440366de593547961e8033f03daec9fcdd9b0c582c23a6"
     },
     {
       "subject": {
@@ -6297,10 +6297,10 @@
       "checks": "새 원본에서도 InChIKey JVTAAEKCZFNVCJ-R… — 검증 (이름 '<small>L</small>-lactate', 부분 구조가 선언되지 않음 — 화학식 C3 를 보면 탄소 골격 단위 3 를 선언할 수 있음 (수지 검사를 켜려면) · 역할 physiological · Rhea 반응 참여 32회)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "142c3ed68c60911ed8151bc9f927fa8489f686788971c1605427174a349509b5"
+      "digest": "d054ce9ca0c715f7e94358410f692c3e9c002a3a76553f17ec258e0855a7674e"
     },
     {
       "subject": {
@@ -6386,10 +6386,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:15525 — 검증 (이름 'palmitoyl-CoA', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57379 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "9a849d0207bf7320d1d241fa613fa154afecdb133cd89299b30299a64fbaf8bb"
+      "digest": "9e98b6b41e6df32c7bbeda17adae601ffab4411e08872aa0a385450e18b309bb"
     },
     {
       "subject": {
@@ -6409,10 +6409,10 @@
       "checks": "새 원본에서도 ChEBI CHEBI:57379 — 검증 (이름 'palmitoyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15525 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "693c57eacfc02c093d229357f1976476f40ebe085d3e4e128f4549d6d805a04d"
+      "digest": "40acbb85b5dcbf90d09b6ba22c49fce2d197ea1b8e704a0c5831e2be19c60167"
     },
     {
       "subject": {
@@ -6432,10 +6432,10 @@
       "checks": "새 원본에서도 InChIKey MNBKLUUYKPBKDU-B… — 검증 (이름 'palmitoyl-CoA(4−)', 부분 구조 원자 수 일치 · 역할 physiological · Rhea 반응 참여 50회 · 켤레 CHEBI:15525 와 수소 -4·전하 -4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2d581ec1dd98db73403a9e0ec1dc4a310b957d4c487b73a8fffc0300ad91f879"
+      "digest": "7a2bcf35beed29b464f94b58cf7af8467494e024654482905bf9d74b386d29f0"
     },
     {
       "subject": {
@@ -6455,10 +6455,10 @@
       "checks": "새 원본에서도 InChIKey MNBKLUUYKPBKDU-B… — 검증 (이름 'palmitoyl-CoA', 부분 구조 원자 수 일치 · 역할 parent · 켤레 CHEBI:57379 와 수소 +4·전하 +4)",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b91a5aa1f1b47d94084f76c75c4068f589bc648e16c5080d4f190d6252e2d93a"
+      "digest": "53dde5c78352760656b444cd868762200344b4add0d7b1597c8d5de99c672802"
     },
     {
       "subject": {
@@ -6521,10 +6521,10 @@
       "checks": "검증 (이름 'HLA-A', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a079776ec74b4e6014c0968dc790ddd39b8529f479ec437f4bd93cf99947bb6f"
+      "digest": "d7727eb3f807ba3bdb0a8d85681feb6232c23e435802f46bbb2f3dbc6937ecac"
     },
     {
       "subject": {
@@ -6544,10 +6544,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 7b02f3d954c7c3f2… — 검증 (이름 'HLA-A', 종 9606) · 원본 판 226/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1bf0702a5e19afb37c2de17a3d07a95f38d41c374dd78a4a6d3c1e02e90f77da"
+      "digest": "f411d8f630bde4b61f4dad6ae2c7775ac3dfbe8f09e4c4f17f3646c209bc6d6e"
     },
     {
       "subject": {
@@ -6567,10 +6567,10 @@
       "checks": "새 원본에서도 UniProt P04439 — 검증 (이름 'HLA-A', 종 9606) · 원본 판 226/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2cbbf7001986e1d5acd6848dd8c875c9f1b0f436b6e37c3297a87e06869d98ea"
+      "digest": "78d05aeadfad3cebc3aa386005f74360db4a3576db0cc8a3354812bb5a9a4b11"
     },
     {
       "subject": {
@@ -6589,10 +6589,10 @@
       "checks": "검증 (이름 'HLA-A', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "7a3261f66840ccd309400b6b2adb5360fbb6a2162ecb3c3b70ee116fe685b4c3"
+      "digest": "d6904d1e8093e49792cf8b4763a88caed13acc0b0031d8ca4655840c2893cb94"
     },
     {
       "subject": {
@@ -6611,10 +6611,10 @@
       "checks": "검증 (이름 'B2M', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "18d5f3e6fea63a832b90645cd57f2be916758ae94e417629c6278fd5f775f872"
+      "digest": "53a3c1774bb38179f3177de16349b1b8217014a9618d11f32cfc2f7fb30ef4da"
     },
     {
       "subject": {
@@ -6634,10 +6634,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 c319ce623de7d59e… — 검증 (이름 'B2M', 종 9606) · 원본 판 221/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "b3a07d7a859e0f9ac3bee5ce49cc09fb90fb1a016970ee35108ffac7188cb94e"
+      "digest": "9f026a5acff1b642832330f3bf98730c2a76832934d066156fbbbf3ab124cbea"
     },
     {
       "subject": {
@@ -6657,10 +6657,10 @@
       "checks": "새 원본에서도 UniProt P61769 — 검증 (이름 'B2M', 종 9606) · 원본 판 221/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "3c9301d2b5c3c19545c966c85febe2ff2c8dc9c19f7690d04646184bdc07f28b"
+      "digest": "172d21f3747cdd93b2043bcdbe3c0dfe659c8ce15e494758fdfc78015e0ca3d0"
     },
     {
       "subject": {
@@ -6679,10 +6679,10 @@
       "checks": "검증 (이름 'B2M', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "ebc74db40fba6ccbe113321efaba3f0ea2e61edf87af5b2f234f5e6bdd8cb80b"
+      "digest": "5ce316e043b9567b6fd46f70629282c676708fb304db40db65f849e886eba1b3"
     },
     {
       "subject": {
@@ -6701,10 +6701,10 @@
       "checks": "검증 (이름 'TAP1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "29d5a9c2f3926cda5836f01555e0c457ab88f0501557130b81f2bf6bfda031b7"
+      "digest": "a6b080e4b3009cf90b6c4015fed53300f6900127411424af21962f5bc3a67937"
     },
     {
       "subject": {
@@ -6724,10 +6724,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 32836215d14e4d6e… — 검증 (이름 'TAP1', 종 9606) · 원본 판 243/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "81d5c8f90007ee38221e6a4aa15a98deaac9079a09d80716d6bfcf37934d25e3"
+      "digest": "01ca02f2879391f7e6bb8d618c9e8819838d6daf7ce8f670d4a2afd453074936"
     },
     {
       "subject": {
@@ -6747,10 +6747,10 @@
       "checks": "새 원본에서도 UniProt Q03518 — 검증 (이름 'TAP1', 종 9606) · 원본 판 243/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "30e97cba6c898756801b349c58f7303548c37ccbfa4cf430fca9403d934f6c7c"
+      "digest": "97cf7e05be64b5945c7e53dfa45e7bb3d60cf2972eccb07fc418aa24514fa527"
     },
     {
       "subject": {
@@ -6769,10 +6769,10 @@
       "checks": "검증 (이름 'TAP1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "d992e373188f046c7354067456d51b5a939de9e2e81344c4c5677864e4c651f4"
+      "digest": "8f42322be628625c9f3da0a02903f4f0ff187261d3a5368488054ae7128fe514"
     },
     {
       "subject": {
@@ -6791,10 +6791,10 @@
       "checks": "검증 (이름 'TAP2', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "cd04ab90febc6e344823b1396b0e6da70a69283b3122e7fe136d66f43bc94904"
+      "digest": "9055fd5d68f3966b3a23addb667cc9dd72ea70cb942c187e170b1957946762ee"
     },
     {
       "subject": {
@@ -6814,10 +6814,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 3b6a0c4f9cc223ce… — 검증 (이름 'TAP2', 종 9606) · 원본 판 241/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "81a2bc35de91813faa022629a5b68d8efa15c6f4e0cf9f20b8f2e402e0a59baa"
+      "digest": "6094dea47234b489f13502cbc8ffb2609be1a9e9b3bde3b1977af6bdef44e756"
     },
     {
       "subject": {
@@ -6837,10 +6837,10 @@
       "checks": "새 원본에서도 UniProt Q03519 — 검증 (이름 'TAP2', 종 9606) · 원본 판 241/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f36ad92c742c8afbe4cf7bda35ac5f74156d1cd4a8983b93281f40f47f5a57bc"
+      "digest": "82f2bf20f491017d854bb3c619a33430973997992b168dc392bb9687d533f571"
     },
     {
       "subject": {
@@ -6859,10 +6859,10 @@
       "checks": "검증 (이름 'TAP2', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "8a554570e1a284511c053e34137181df950adeb7b4aea31ae0d2c767d6fdf1a9"
+      "digest": "d814eeb08f8cba161f62a1b24cbb5c22728acbfde223914c1e6bb76e22973e15"
     },
     {
       "subject": {
@@ -6881,10 +6881,10 @@
       "checks": "검증 (이름 'TAPBP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "5cb82deacc1bd907e8afea87f5d437c9a4a0496d6c4d13f1b5aea62a79d3afaa"
+      "digest": "b1f960a49e247615c6b9917f39c0465779092be6a7c1ca18892023770c268458"
     },
     {
       "subject": {
@@ -6904,10 +6904,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 15726128aef8fecd… — 검증 (이름 'TAPBP', 종 9606) · 원본 판 223/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "9ee01f8300be0381a9b06dd774cd071599b9541d5412a665cabe84e1943a3eea"
+      "digest": "9b1f9cc41d6dc1e08fbaad68f6e3bf2e43b1bdcc2b085f8295a61469bd1f29ed"
     },
     {
       "subject": {
@@ -6927,10 +6927,10 @@
       "checks": "새 원본에서도 UniProt O15533 — 검증 (이름 'TAPBP', 종 9606) · 원본 판 223/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "d60e87f8eab1b382c6f6b0d75c96efd7db3488589d301a0584ec1298396406b7"
+      "digest": "ed1dc46f65870c6ad38946ef96001c1223754d0e98763030c5f03665b9e81162"
     },
     {
       "subject": {
@@ -6949,10 +6949,10 @@
       "checks": "검증 (이름 'TAPBP', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "0057081a6ac71502a0382c16b787c98fe068b13b06365b82feaf10e3a2b85fea"
+      "digest": "1a920f8f9c7dd88790aee9a1afa546ddc68557f58094c77fbf609357784bfb64"
     },
     {
       "subject": {
@@ -6971,10 +6971,10 @@
       "checks": "검증 (이름 'CALR', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "6bcca2ce38fb21933a9ad519970deb0c290909ac586fbff78466cc1112f2fd6d"
+      "digest": "3ce6bc3720325caf0e9e3a10506772c56571ab8d2df66e3a1e1df9c393ababa0"
     },
     {
       "subject": {
@@ -6994,10 +6994,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 9e4dcfd5cc4649a5… — 검증 (이름 'CALR', 종 9606) · 원본 판 268/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "8e7e08038088313a724f2990e7688bcd7def5b65725dd1c0ffdd7acdc4d83dd3"
+      "digest": "e88e44eb790a953b6898472909219a0740291c54b01c1f1237bfc3b025ab4091"
     },
     {
       "subject": {
@@ -7017,10 +7017,10 @@
       "checks": "새 원본에서도 UniProt P27797 — 검증 (이름 'CALR', 종 9606) · 원본 판 268/1",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "56d7e39c3b66a2379b4758dba3e1113d0e3919b7f3a2e503952ba2095d64d3ca"
+      "digest": "7f2bcc01e883e15721f92aa59bb13d855fc0b38bae432b510bf6cddb4884c9d1"
     },
     {
       "subject": {
@@ -7039,10 +7039,10 @@
       "checks": "검증 (이름 'CALR', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "4a8f7103202c2f75dc91f3dfee6910d912afc986e2b99c44381bfc97a834c1d6"
+      "digest": "9ad008bef4396f77e221a4658850c7a334c7fe594fae13b5e067a7d0acf38ff1"
     },
     {
       "subject": {
@@ -7061,10 +7061,10 @@
       "checks": "검증 (이름 'PDIA3', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "fedcb88c9d9153b34a3edc416b5c52a0796737179361f2eed05172866849c0df"
+      "digest": "8a08f573fa1a09071f24193373dfb024f1dfb4dde9f7e063ddf1b756d2a17e3d"
     },
     {
       "subject": {
@@ -7084,10 +7084,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 2246e027ea031edb… — 검증 (이름 'PDIA3', 종 9606) · 원본 판 261/4",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "a4ff7953fe36a921aa7b778b0bc91254d6f7b070f96d5da48c987264e82b5042"
+      "digest": "8d24c3eee1b49a0c5cad5f6ee061645bf190487906440b902881f8d0e4906cdb"
     },
     {
       "subject": {
@@ -7107,10 +7107,10 @@
       "checks": "새 원본에서도 UniProt P30101 — 검증 (이름 'PDIA3', 종 9606) · 원본 판 261/4",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1176a077cb877212db377c99e6c6438d94ad3bf57e88240f0f1cc5fccabb1d3b"
+      "digest": "ed2169a52d33a0edc71e50b6d013528b5426272fe0169fa73cc0bfa61bbb1a29"
     },
     {
       "subject": {
@@ -7129,10 +7129,10 @@
       "checks": "검증 (이름 'PDIA3', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a57f41e09d4d5154ea323dc7263a302498b516fd87a291fcf0896039f6e79c84"
+      "digest": "a18acefa7b6e568b7c3b6a8e9abbb303104a584ff0e7b76033814220ff71e298"
     },
     {
       "subject": {
@@ -7151,10 +7151,10 @@
       "checks": "검증 (이름 'HLA-DRA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "4aa190743b91ec88b6372fb4c3a47837412e10b4e3413a600d73ab06b6f64b19"
+      "digest": "f00e5fec73ef337e3b8009315c6616c75bd32e58428ad6d7b63053036615074b"
     },
     {
       "subject": {
@@ -7174,10 +7174,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 ba441e701023b22b… — 검증 (이름 'HLA-DRA', 종 9606) · 원본 판 238/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "f45e199197d810b03fecb2d17730e042a3c92eac8782fe17738a80e2cbe482f3"
+      "digest": "e21cb08ad3216deb77a8e1e420b5e42cd02e10e2fa5669937c4bdd5cbd0b95fb"
     },
     {
       "subject": {
@@ -7197,10 +7197,10 @@
       "checks": "새 원본에서도 UniProt P01903 — 검증 (이름 'HLA-DRA', 종 9606) · 원본 판 238/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "2fe7e53940cecc020dfaca73d44656eae41b26276b1bffbfc5194ee43cb0221b"
+      "digest": "d14932751914bb8a50b6d11a437a6be084236036f5e31c38d9fe16e7d95b4436"
     },
     {
       "subject": {
@@ -7219,10 +7219,10 @@
       "checks": "검증 (이름 'HLA-DRA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "eed8379a5ad47eab3128b187f1055920c503fc82355484f395f199a61387899e"
+      "digest": "fd7c0a99712d54dd20f15fb3394a0b1b4b8b53d1653a0af447ace957805c1558"
     },
     {
       "subject": {
@@ -7241,10 +7241,10 @@
       "checks": "검증 (이름 'HLA-DRB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "e514797b71eedeb4f9a0e73cf0648a2e5a4b3e4caee414bae62dfabe57f5e445"
+      "digest": "ec1e8004950f1fc8c82236da5f82ffd115f12e26bbf561c29ccb80d2ed28fcdc"
     },
     {
       "subject": {
@@ -7264,10 +7264,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 6c038ed8f95e0248… — 검증 (이름 'HLA-DRB1', 종 9606) · 원본 판 195/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "8b55c3849beb36e2e69f63634048b960b10ef4ef462e43184a90807b730d6faf"
+      "digest": "dd8d4c9da5db2fe610e20bc470603461ec96c486fbb92243f26f30ccfb42391e"
     },
     {
       "subject": {
@@ -7287,10 +7287,10 @@
       "checks": "새 원본에서도 UniProt P01911 — 검증 (이름 'HLA-DRB1', 종 9606) · 원본 판 195/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "24f9f56c7fbf68d01fd65a517da836e704b9b648ccd0f0cef548cefe389a712b"
+      "digest": "0e7e4f6532df0fc7cf14441261319c7884761f91dfdaec6468682857dc4a6490"
     },
     {
       "subject": {
@@ -7309,10 +7309,10 @@
       "checks": "검증 (이름 'HLA-DRB1', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "b3a5255b1dd4c976e7aa1786eef0dcf64614ab6e64604e20570e56e333793b3d"
+      "digest": "bc9a0d6b051cb0b145c97244bfb3de6d7f1b3cf284b794f94ea50b664c100da4"
     },
     {
       "subject": {
@@ -7331,10 +7331,10 @@
       "checks": "검증 (이름 'CD74', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "e14af0d2468c4e331e20b86f65ccbdba36001c58822a16be24708eac6b18df23"
+      "digest": "ed3faac0ae4d8722949adef5bfeae6137257baa97cac731f01c4bf7ad1eee75b"
     },
     {
       "subject": {
@@ -7354,10 +7354,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 f6909ab67f84bc41… — 검증 (이름 'CD74', 종 9606) · 원본 판 250/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "1c414db8c297bb7843e510a6ae650607798829fdfc762fd8650c059876fd5213"
+      "digest": "29cb7bb0117748e85baa9243001fdbbfe9f0618cb7f3a6d77cb9b6b80e148b39"
     },
     {
       "subject": {
@@ -7377,10 +7377,10 @@
       "checks": "새 원본에서도 UniProt P04233 — 검증 (이름 'CD74', 종 9606) · 원본 판 250/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "e92b59b8812619a013bc64ee3a7dabb57c5d1aa3d026c454f57afd34108e379e"
+      "digest": "8173b1b85f5ffce644522136b567d92275f02e290060fc96b248ab45107c18a7"
     },
     {
       "subject": {
@@ -7399,10 +7399,10 @@
       "checks": "검증 (이름 'CD74', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "1b5e7a1c0a3a3279baa1dc1e501f31b38d730ca52ddacc97f4d4f6261d16efb0"
+      "digest": "7920a3820515a8039d95d91d18526979d566e7c930cb0a430f92946111c5534d"
     },
     {
       "subject": {
@@ -7421,10 +7421,10 @@
       "checks": "검증 (이름 'CTSS', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "c33297824e3b47f4f11dbaee8e10ef530cfd986e6b709218634bf50f36d59480"
+      "digest": "e88080fcc3571e72bec596820d6783c0291e58c9ccc4f58a43e9e8f825fda5b2"
     },
     {
       "subject": {
@@ -7444,10 +7444,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 acd1c3790427993b… — 검증 (이름 'CTSS', 종 9606) · 원본 판 228/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "814e4c7336bf9d3e1496d8694a3c3a9b7eb9e2d3c815f326bbbd7616d3e41fde"
+      "digest": "a7436b19798fb08185d3d441b45c165b2b01b4e683acb9b4be0c0e4c15c7bd00"
     },
     {
       "subject": {
@@ -7467,10 +7467,10 @@
       "checks": "새 원본에서도 UniProt P25774 — 검증 (이름 'CTSS', 종 9606) · 원본 판 228/3",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "d377b672d4d51a9dc7cbcd64842863c6087c6dcd46a108d24305ac0afd58925e"
+      "digest": "7f008b519c325749cc4b229a9cd3349f7368de427a4aec4ae9ceb71b9475446f"
     },
     {
       "subject": {
@@ -7489,10 +7489,10 @@
       "checks": "검증 (이름 'CTSS', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a0f08857724ee54561e2810357b06e398170e7a7d35cde7be0fbaf029a70d633"
+      "digest": "f3e3b277875505f58ea789a740db988c26ab9134abfed6533a0ac8d97a1d927d"
     },
     {
       "subject": {
@@ -7511,10 +7511,10 @@
       "checks": "검증 (이름 'HLA-DMA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "c3b0ead895f9eaf1ab3a29f044c7ef5755efd786903e1bb9ee833ac108d20acb"
+      "digest": "80f8e908475af254df4b77a55c2827ef520e064898e821c4b8e824ca3ae668fb"
     },
     {
       "subject": {
@@ -7534,10 +7534,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 4c7e4c736be54da5… — 검증 (이름 'HLA-DMA', 종 9606) · 원본 판 208/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "5538fd3c17bc704020fdec3424bfc5b8390f7ca4200b2b83637b335a95645382"
+      "digest": "54a984588220c7e443839a6e24d2fa80e0e24e40eaf53f95b233b2107e9e2ee4"
     },
     {
       "subject": {
@@ -7557,10 +7557,10 @@
       "checks": "새 원본에서도 UniProt P28067 — 검증 (이름 'HLA-DMA', 종 9606) · 원본 판 208/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "821b5fba34d0f4f28175e0784e9e7a61eec5ad94351f04c74d044f1496162c35"
+      "digest": "baddcfaba13558d54bb3c96ef0f4e3b63de0a3f6395df87ebb562a043eef6153"
     },
     {
       "subject": {
@@ -7579,10 +7579,10 @@
       "checks": "검증 (이름 'HLA-DMA', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "7a6a629bf2a259096bdefb8383bd3b05139213908620bc967b56fd6b41e7fbc4"
+      "digest": "22c6ff8f65c4f166fa839e34ae43363911df468ab44e6553c410e061cee28de7"
     },
     {
       "subject": {
@@ -7601,10 +7601,10 @@
       "checks": "검증 (이름 'HLA-DMB', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "a61d14abcc5cc3e86d3818e8adeecc05a482a7d4c90ee6e627653529de432304"
+      "digest": "dac9c8d31f5596d52d2a6cd06fb6029c05d78535d1d085baf16e44fdc8d63fec"
     },
     {
       "subject": {
@@ -7624,10 +7624,10 @@
       "checks": "새 원본에서도 SEQ_SHA256 1095b780447806c9… — 검증 (이름 'HLA-DMB', 종 9606) · 원본 판 219/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "e0646233bad79bd50bd5cc9972130f4230752fceb5754648800c3014efa9fdb3"
+      "digest": "c4e303ca85484d09d27f466d8f9812518039036248e74a433f3fbee67020d371"
     },
     {
       "subject": {
@@ -7647,10 +7647,10 @@
       "checks": "새 원본에서도 UniProt P28068 — 검증 (이름 'HLA-DMB', 종 9606) · 원본 판 219/2",
       "issuer": {
         "module": "judicial/trend.js",
-        "code_sha256": "edd15dda748875cc7226e645b972a4fda1e0397daf367b708b224ce1817c489b"
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
       },
       "issued_at": "2026-10-10",
-      "digest": "8bc6a072adc6134ad09222c7ed187d97f6127828e30d90a28ad822b193a3666e"
+      "digest": "3cebf17d55ab3a24a98484ea3ed3400185f5002e8369a7437002ff858b60480b"
     },
     {
       "subject": {
@@ -7669,10 +7669,370 @@
       "checks": "검증 (이름 'HLA-DMB', 종 9606)",
       "issuer": {
         "module": "judicial/identity.js",
-        "code_sha256": "41fc7ceb847e43b5dc6235424b2309e5a73fa660af11d2c1aa2ec3dab4dd7f72"
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
       },
       "issued_at": "2026-10-10",
-      "digest": "9d7d450d5be5bb6a00370b1df28955943a8f109f3f5025a76310e80147ce2178"
+      "digest": "93567e463ed317addc63a06d6de05a7f3d9e04ad2791ef13905ac93ad8004a13"
+    },
+    {
+      "subject": {
+        "sense": "D000206",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "9f78fdccd40dfd933c741c4cb1434d732f76b20a11abd0922c50fd63493bf5ce"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O14746",
+        "file": "data/fetched/uniprot/O14746.json",
+        "sha256": "f0b92d47001042bacd408c079a3f58e3eb9cb7a671e1a2af2b56fd81fa3f0dec"
+      },
+      "checks": "검증 (이름 'TERT', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "5da8a48769b5ea1b0174251f0585d331c8781e9dbb678e3bf62d15bbbc37fb5d"
+    },
+    {
+      "subject": {
+        "sense": "D000206",
+        "field": "trend",
+        "ns": "SEQ_SHA256",
+        "value": "9f78fdccd40dfd933c741c4cb1434d732f76b20a11abd0922c50fd63493bf5ce"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O14746",
+        "file": "data/fetched/consensus/uniprot/O14746.json",
+        "sha256": "f0b92d47001042bacd408c079a3f58e3eb9cb7a671e1a2af2b56fd81fa3f0dec"
+      },
+      "checks": "새 원본에서도 SEQ_SHA256 9f78fdccd40dfd93… — 검증 (이름 'TERT', 종 9606) · 원본 판 219/1",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "733a8e8f81b2cb6ea59ba4a3103a07227690661f2e332efb7ff2b3a40fd8fcb3"
+    },
+    {
+      "subject": {
+        "sense": "D000206",
+        "field": "trend",
+        "ns": "UniProt",
+        "value": "O14746"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O14746",
+        "file": "data/fetched/consensus/uniprot/O14746.json",
+        "sha256": "f0b92d47001042bacd408c079a3f58e3eb9cb7a671e1a2af2b56fd81fa3f0dec"
+      },
+      "checks": "새 원본에서도 UniProt O14746 — 검증 (이름 'TERT', 종 9606) · 원본 판 219/1",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "da108a31555cac7626e33a540473d5840281f84a13dce2faa3b66e63a595743e"
+    },
+    {
+      "subject": {
+        "sense": "D000206",
+        "field": "xref",
+        "ns": "UniProt",
+        "value": "O14746"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "O14746",
+        "file": "data/fetched/uniprot/O14746.json",
+        "sha256": "f0b92d47001042bacd408c079a3f58e3eb9cb7a671e1a2af2b56fd81fa3f0dec"
+      },
+      "checks": "검증 (이름 'TERT', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "df4a98f6c1a04512cb7ea1c19ed76c0251ddcaa555fb22dd994ce81679f048d2"
+    },
+    {
+      "subject": {
+        "sense": "D000207",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "e3ca60f18e3b6e98986ad6749215ee3b7a3abc09c191675213d1f243c035c9a3"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P04637",
+        "file": "data/fetched/uniprot/P04637.json",
+        "sha256": "6bdb471fae5b0d4c92a1e2fd63f35b49e3826188e82ff54fcddec70c4e63e114"
+      },
+      "checks": "검증 (이름 'TP53', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "d1b2ce692e574a47a59b86cca4a9bb0dc3384714ff6e09afb3933a7d4978f08e"
+    },
+    {
+      "subject": {
+        "sense": "D000207",
+        "field": "trend",
+        "ns": "SEQ_SHA256",
+        "value": "e3ca60f18e3b6e98986ad6749215ee3b7a3abc09c191675213d1f243c035c9a3"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P04637",
+        "file": "data/fetched/consensus/uniprot/P04637.json",
+        "sha256": "6bdb471fae5b0d4c92a1e2fd63f35b49e3826188e82ff54fcddec70c4e63e114"
+      },
+      "checks": "새 원본에서도 SEQ_SHA256 e3ca60f18e3b6e98… — 검증 (이름 'TP53', 종 9606) · 원본 판 315/4",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "3dfb86fd20590c0ef481c211ea2370fe44acce9077edc069380e18db4ca78a90"
+    },
+    {
+      "subject": {
+        "sense": "D000207",
+        "field": "trend",
+        "ns": "UniProt",
+        "value": "P04637"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P04637",
+        "file": "data/fetched/consensus/uniprot/P04637.json",
+        "sha256": "6bdb471fae5b0d4c92a1e2fd63f35b49e3826188e82ff54fcddec70c4e63e114"
+      },
+      "checks": "새 원본에서도 UniProt P04637 — 검증 (이름 'TP53', 종 9606) · 원본 판 315/4",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "eeb0fdc85074ad8f950df633a7b69ec31aa5b7ec4be36ea58f362509ae1ae740"
+    },
+    {
+      "subject": {
+        "sense": "D000207",
+        "field": "xref",
+        "ns": "UniProt",
+        "value": "P04637"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P04637",
+        "file": "data/fetched/uniprot/P04637.json",
+        "sha256": "6bdb471fae5b0d4c92a1e2fd63f35b49e3826188e82ff54fcddec70c4e63e114"
+      },
+      "checks": "검증 (이름 'TP53', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "ed03584d382e3dafc7a361151ddb97911fe8bd86386d92ea335816b4a97eaba3"
+    },
+    {
+      "subject": {
+        "sense": "D000208",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "bfd75f273e0e2657346971dac0cadb2fa0b2ccf4c3235360c7e0ed313107e3fe"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P38936",
+        "file": "data/fetched/uniprot/P38936.json",
+        "sha256": "452469f6e8901a3bc63edd0c4ee8844287bae31fcbdb8b6aab3a21b7e00f090e"
+      },
+      "checks": "검증 (이름 'CDKN1A', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "7d90d4ce4c519dadeb75168aab9987cf94756a9d6f76d28f0078ae24fbdff68d"
+    },
+    {
+      "subject": {
+        "sense": "D000208",
+        "field": "trend",
+        "ns": "SEQ_SHA256",
+        "value": "bfd75f273e0e2657346971dac0cadb2fa0b2ccf4c3235360c7e0ed313107e3fe"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P38936",
+        "file": "data/fetched/consensus/uniprot/P38936.json",
+        "sha256": "452469f6e8901a3bc63edd0c4ee8844287bae31fcbdb8b6aab3a21b7e00f090e"
+      },
+      "checks": "새 원본에서도 SEQ_SHA256 bfd75f273e0e2657… — 검증 (이름 'CDKN1A', 종 9606) · 원본 판 255/3",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "34ed0c85facc662a741ade4e30cb5bc2949b09376576c20170d114f2d284a4e4"
+    },
+    {
+      "subject": {
+        "sense": "D000208",
+        "field": "trend",
+        "ns": "UniProt",
+        "value": "P38936"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P38936",
+        "file": "data/fetched/consensus/uniprot/P38936.json",
+        "sha256": "452469f6e8901a3bc63edd0c4ee8844287bae31fcbdb8b6aab3a21b7e00f090e"
+      },
+      "checks": "새 원본에서도 UniProt P38936 — 검증 (이름 'CDKN1A', 종 9606) · 원본 판 255/3",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "bb1ed239730d5a81899ed1328cf43c15b3145024d69cc55106368d9e2b00b149"
+    },
+    {
+      "subject": {
+        "sense": "D000208",
+        "field": "xref",
+        "ns": "UniProt",
+        "value": "P38936"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P38936",
+        "file": "data/fetched/uniprot/P38936.json",
+        "sha256": "452469f6e8901a3bc63edd0c4ee8844287bae31fcbdb8b6aab3a21b7e00f090e"
+      },
+      "checks": "검증 (이름 'CDKN1A', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "73f829ae14aa2b3f2fd0e56055442573efdadf6098036e61dd2a113a09429839"
+    },
+    {
+      "subject": {
+        "sense": "D000209",
+        "field": "fingerprint",
+        "ns": "SEQ_SHA256",
+        "value": "25fd33ff81df33c9fddc2060d55474c1b6196bc12a34847b482a6b3f8da18afe"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P09038",
+        "file": "data/fetched/uniprot/P09038.json",
+        "sha256": "2cd85b2366240b478af9fecfce083ed3f2ed62f25488049f01c7cdc00b0a4566"
+      },
+      "checks": "검증 (이름 'FGF2', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "4f3603d54b9cdd0f44f60232fb5911bb730eb307adb72257cf5dc5c13f7c9a96"
+    },
+    {
+      "subject": {
+        "sense": "D000209",
+        "field": "trend",
+        "ns": "SEQ_SHA256",
+        "value": "25fd33ff81df33c9fddc2060d55474c1b6196bc12a34847b482a6b3f8da18afe"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P09038",
+        "file": "data/fetched/consensus/uniprot/P09038.json",
+        "sha256": "2cd85b2366240b478af9fecfce083ed3f2ed62f25488049f01c7cdc00b0a4566"
+      },
+      "checks": "새 원본에서도 SEQ_SHA256 25fd33ff81df33c9… — 검증 (이름 'FGF2', 종 9606) · 원본 판 263/3",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "6acc50aa83b2e6b77ed18ae0e51bb84f415da000113b501d99cc65b2f7b52d3c"
+    },
+    {
+      "subject": {
+        "sense": "D000209",
+        "field": "trend",
+        "ns": "UniProt",
+        "value": "P09038"
+      },
+      "claim": "trend",
+      "verdict": "match",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P09038",
+        "file": "data/fetched/consensus/uniprot/P09038.json",
+        "sha256": "2cd85b2366240b478af9fecfce083ed3f2ed62f25488049f01c7cdc00b0a4566"
+      },
+      "checks": "새 원본에서도 UniProt P09038 — 검증 (이름 'FGF2', 종 9606) · 원본 판 263/3",
+      "issuer": {
+        "module": "judicial/trend.js",
+        "code_sha256": "7ea27e3652d281725787b5331caf34bfae7fa5c2ae16d69cf8027c0e1bdd1ff0"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "180e16278821552aa211bfd8dd925a0b9716cc26224534ad28da0050ffde32cf"
+    },
+    {
+      "subject": {
+        "sense": "D000209",
+        "field": "xref",
+        "ns": "UniProt",
+        "value": "P09038"
+      },
+      "claim": "verified",
+      "evidence": {
+        "kind": "uniprot_entry",
+        "key": "P09038",
+        "file": "data/fetched/uniprot/P09038.json",
+        "sha256": "2cd85b2366240b478af9fecfce083ed3f2ed62f25488049f01c7cdc00b0a4566"
+      },
+      "checks": "검증 (이름 'FGF2', 종 9606)",
+      "issuer": {
+        "module": "judicial/identity.js",
+        "code_sha256": "e2147240266de18e2c29f66a3a3faf1399581ec9e3d572669608852e4457702f"
+      },
+      "issued_at": "2026-10-10",
+      "digest": "2eb6eabde3dff593a84fd58526494f4607e138c4f54967df899fde52efa8bd81"
     }
   ]
 }

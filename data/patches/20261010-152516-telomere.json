@@ -1,0 +1,1113 @@
+{
+  "applied_at": "2026-10-10T15:25:16.641Z",
+  "result": {
+    "added": [
+      "T000202",
+      "T000203",
+      "T000204",
+      "T000205",
+      "T000206",
+      "T000207",
+      "T000208",
+      "T000209",
+      "D000204",
+      "D000205",
+      "D000206",
+      "D000207",
+      "D000208",
+      "D000209",
+      "D000210",
+      "D000211",
+      "L000087",
+      "L000088",
+      "L000089",
+      "L000090",
+      "L000091",
+      "L000092",
+      "L000093",
+      "L000094",
+      "L000095"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "terms": [
+          "T000202",
+          "T000203",
+          "T000204",
+          "T000205",
+          "T000206",
+          "T000207",
+          "T000208",
+          "T000209"
+        ],
+        "senses": [
+          "D000204",
+          "D000205",
+          "D000206",
+          "D000207",
+          "D000208",
+          "D000209",
+          "D000210",
+          "D000211"
+        ],
+        "limitations": [
+          "L000087",
+          "L000088",
+          "L000089",
+          "L000090",
+          "L000091",
+          "L000092",
+          "L000093",
+          "L000094",
+          "L000095"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "Mission — 텔로미어 소모와 복제 노화(헤이플릭 한계): 분열마다 말단 복제 문제로 줄어드는 텔로미어 반복 단위를 유한 저장소로, 분열을 0차 공급 규칙(진행량 = 분열 횟수)으로, 임계 길이에서의 상태 전이를 DNA 손상 반응 → p53 → p21 → 분열 정지의 힐 사슬로 넣는다. 형식·엔진을 바꾸지 않고 기존 어휘(supply·degradation·modulation·cell_state)로 표현되는지 확인하고, 묶은 매개 단계와 모르는 상수·측정량을 한계로 등록",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [
+        "S000030"
+      ],
+      "pathways": [
+        "D000105",
+        "D000102"
+      ],
+      "limitations": [
+        {
+          "id": "L000087",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000088",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000089",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000090",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000091",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000092",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000093",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000094",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000095",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000087",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000088",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000089",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000090",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000091",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000092",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000093",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000094",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000095",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 5
+    }
+  },
+  "format": "definition-db-patch",
+  "why": "Mission — 텔로미어 소모와 복제 노화(헤이플릭 한계): 분열마다 말단 복제 문제로 줄어드는 텔로미어 반복 단위를 유한 저장소로, 분열을 0차 공급 규칙(진행량 = 분열 횟수)으로, 임계 길이에서의 상태 전이를 DNA 손상 반응 → p53 → p21 → 분열 정지의 힐 사슬로 넣는다. 형식·엔진을 바꾸지 않고 기존 어휘(supply·degradation·modulation·cell_state)로 표현되는지 확인하고, 묶은 매개 단계와 모르는 상수·측정량을 한계로 등록",
+  "terms": [
+    {
+      "id": "T+tel",
+      "names": {
+        "ko": "텔로미어 반복 단위",
+        "en": "telomeric repeat unit"
+      },
+      "aliases": [
+        "TTAGGG 반복",
+        "telomere repeat"
+      ]
+    },
+    {
+      "id": "T+attr",
+      "names": {
+        "ko": "텔로미어 소모",
+        "en": "telomere attrition"
+      },
+      "aliases": [
+        "말단 복제 문제",
+        "end-replication problem"
+      ]
+    },
+    {
+      "id": "T+tert",
+      "names": {
+        "ko": "텔로머레이스 역전사효소",
+        "en": "telomerase reverse transcriptase"
+      },
+      "aliases": [
+        "TERT",
+        "텔로머레이스"
+      ]
+    },
+    {
+      "id": "T+p53",
+      "names": {
+        "ko": "세포 종양 항원 p53",
+        "en": "cellular tumor antigen p53"
+      },
+      "aliases": [
+        "p53",
+        "TP53"
+      ]
+    },
+    {
+      "id": "T+p21",
+      "names": {
+        "ko": "사이클린 의존성 키네이스 억제제 1",
+        "en": "cyclin-dependent kinase inhibitor 1"
+      },
+      "aliases": [
+        "p21",
+        "CDKN1A",
+        "p21CIP1"
+      ]
+    },
+    {
+      "id": "T+fgf2",
+      "names": {
+        "ko": "섬유아세포 성장 인자 2",
+        "en": "fibroblast growth factor 2"
+      },
+      "aliases": [
+        "FGF2",
+        "bFGF",
+        "염기성 섬유아세포 성장 인자"
+      ]
+    },
+    {
+      "id": "T+prol",
+      "names": {
+        "ko": "증식하는 섬유아세포",
+        "en": "proliferating fibroblast"
+      },
+      "aliases": [
+        "presenescent fibroblast"
+      ]
+    },
+    {
+      "id": "T+sen",
+      "names": {
+        "ko": "복제 노화 섬유아세포",
+        "en": "replicatively senescent fibroblast"
+      },
+      "aliases": [
+        "senescent fibroblast",
+        "헤이플릭 한계에 이른 섬유아세포"
+      ]
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+tel",
+      "term": "T+tel",
+      "kind": "nucleic_acid",
+      "tier": "T2",
+      "reference_species": "9606",
+      "unmapped": [
+        "텔로미어 반복 단위(TTAGGG·CCCTAA 6 염기쌍)를 가리키는 외부 ID 체계가 이 저장소의 xref 어휘(UniProt·ChEBI·EC·GO·Rhea·PDB·CL·NCBIGene)에 없음 — 서열 특징은 서열 온톨로지(SO) 쪽이고 그 체계는 아직 어휘에 없다. 반복 서열 자체는 Moyzis et al., 1988 로 확인"
+      ],
+      "desc": [
+        {
+          "text": "사람 염색체 말단에 반복되는 TTAGGG·CCCTAA 6 염기쌍 한 단위로, 분열마다 그 수가 줄어드는 유한 저장소",
+          "field": "분자생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.85.18.6622",
+                "citation": "Moyzis et al., 1988"
+              },
+              {
+                "db": "PMID",
+                "id": "3413114",
+                "citation": "Moyzis et al., 1988"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "short_telomere_ddr",
+          "type": "modulation",
+          "label": "텔로미어 반복 단위 ⊣ p53 축적 (짧아지면 DNA 손상 반응)",
+          "target": "D+p53/rule/synthesis",
+          "effect": "inhibits",
+          "at": "nucleoplasm",
+          "via": [],
+          "text": "반복 단위가 많으면(긴 텔로미어) p53 이 쌓이지 않고, 임계 길이 아래로 내려가면 손상 반응이 켜져 p53 이 쌓인다 — 억제 힐의 K 가 임계 길이이고 n 이 문턱의 급격함이다. 셸터린(TRF2) 이탈·ATM·CHK2·MDM2 단계를 조절 하나로 묶음(Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Herbig et al., 2004, Mol Cell 14:501 (텔로미어 단축이 ATM–p53–p21 경로로 노화를 일으킴, p16 은 아님) 의 앞 구간을 '반복 단위 농도에 대한 억제 힐' 하나로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인했고, 임계 길이와 n 은 문헌 값이 아니다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+attr",
+      "term": "T+attr",
+      "kind": "process",
+      "reference_species": "9606",
+      "desc": [
+        {
+          "text": "DNA 복제가 선형 염색체의 말단을 끝까지 복제하지 못해, 분열마다 텔로미어 반복 단위가 일정한 수만큼 줄어드는 과정",
+          "field": "분자생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [
+            {
+              "to": "D+tel",
+              "rel": "refers",
+              "span": "텔로미어 반복 단위"
+            }
+          ],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/345458a0",
+                "citation": "Harley, Futcher & Greider, 1990"
+              },
+              {
+                "db": "PMID",
+                "id": "2342578",
+                "citation": "Harley, Futcher & Greider, 1990"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "division_attrition",
+          "type": "supply",
+          "label": "분열 1회 — 텔로미어 반복 단위 소모 (말단 복제 문제)",
+          "consumes": [
+            {
+              "ref": "D+tel",
+              "n": 16
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000013",
+              "n": 192
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "이 규칙의 진행량 1 = 분열 1회다. 분열마다 반복 단위 16 개(96 염기쌍)가 복제되지 않고 떨어져 나가며, 절단된 가닥의 뉴클레오타이드(단위당 양쪽 가닥 12 개)는 핵의 풀로 돌아간다. 속도(0차)는 분열 간격의 역수이고, 조절 배율이 분열 허가(성장 인자)와 정지(p21)를 정한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "말단 복제 문제로 분열마다 텔로미어가 줄어든다는 관찰(Harley et al., 1990, Nature 345:458 — DOI 10.1038/345458a0 / PMID 2342578 로 확인)을 '분열 1회 = 반복 단위 ΔL 소모' 의 0차 공급 규칙 하나로 묶었다. 떨어져 나간 가닥이 뉴클레오타이드로 되돌아간다는 산물 쪽은 문헌 값이 아니라 수지를 닫기 위한 기전 흐름의 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+tert",
+      "term": "T+tert",
+      "kind": "protein",
+      "tier": "T2",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O14746",
+          "status": "asserted",
+          "note": "TERT_HUMAN (UniProt REST 2026-10-10: Telomerase reverse transcriptase, Homo sapiens, 1132 aa)"
+        }
+      ],
+      "desc": [
+        {
+          "text": "텔로미어 반복 단위를 염색체 말단에 새로 더해 소모를 되돌리는 역전사효소로, 정상 섬유아세포에는 거의 없고 넣어 주면 분열 한계가 사라진다",
+          "field": "분자생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [
+            {
+              "to": "D+tel",
+              "rel": "refers",
+              "span": "텔로미어 반복 단위"
+            }
+          ],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.279.5349.349",
+                "citation": "Bodnar et al., 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "9454332",
+                "citation": "Bodnar et al., 1998"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "elongation",
+          "type": "supply",
+          "label": "텔로미어 연장 (텔로머레이스)",
+          "consumes": [
+            {
+              "ref": "D000013",
+              "n": 12
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D+tel",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "뉴클레오타이드로 반복 단위를 새로 더한다(단위당 양쪽 가닥 12 개). 정상 섬유아세포의 대사 프로그램에는 들어 있지 않다 — 시나리오가 extra_rules 로 켤 때만 돈다(불멸화 시험).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "텔로머레이스를 넣으면 텔로미어가 유지되고 수명이 늘어난다는 관찰(Bodnar et al., 1998, Science 279:349 — DOI 10.1126/science.279.5349.349 / PMID 9454332 로 확인)을 '반복 단위 1 개 생성' 의 0차 공급 하나로 묶었다. 연장 속도·처리성은 문헌 값이 아니다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+p53",
+      "term": "T+p53",
+      "kind": "protein",
+      "tier": "T2",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P04637",
+          "status": "asserted",
+          "note": "P53_HUMAN (UniProt REST 2026-10-10: Cellular tumor antigen p53, Homo sapiens, 393 aa)"
+        }
+      ],
+      "desc": [
+        {
+          "text": "짧아진 텔로미어가 일으킨 DNA 손상 반응에 안정화되어 쌓이는 전사 인자로, 분열 정지 프로그램을 켠다",
+          "field": "분자생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4",
+                "citation": "Herbig et al., 2004"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599",
+                "citation": "Herbig et al., 2004"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "p53 축적 (합성·안정화 묶음)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D+p53",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "source": true,
+          "text": "아미노산·ATP 는 모델 밖(source). 합성과 MDM2 매개 분해 사이의 균형을 '0차 생성 + 1차 소실' 로 묶었고, 생성 쪽 배율이 짧은 텔로미어의 손상 반응을 받는다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "p53 의 안정화(분해 억제)를 0차 생성 배율의 증가로 근사"
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "p53 분해",
+          "fate": "lost",
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "유비퀴틴–프로테아좀 분해 — 아미노산은 모델 밖으로.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 분해를 1차 소실로 근사"
+          }
+        },
+        {
+          "id": "p21_transactivation",
+          "type": "modulation",
+          "label": "p53 → p21 합성",
+          "target": "D+p21/rule/synthesis",
+          "effect": "activates",
+          "at": "nucleoplasm",
+          "via": [],
+          "text": "p53 이 CDKN1A 를 전사 활성화해 p21 이 쌓인다 — 전사·번역 단계를 조절 하나로 묶음(Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Herbig et al., 2004, Mol Cell 14:501 (텔로미어 단축 → ATM → p53 → p21 상향, G1 정지) 의 사슬 중 p53 → p21 구간을 힐 배율 하나로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인했고, 힐 상수(K·n·fmax)는 문헌 값이 아니다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+p21",
+      "term": "T+p21",
+      "kind": "protein",
+      "tier": "T2",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P38936",
+          "status": "asserted",
+          "note": "CDN1A_HUMAN (UniProt REST 2026-10-10: Cyclin-dependent kinase inhibitor 1, Homo sapiens, 164 aa)"
+        }
+      ],
+      "desc": [
+        {
+          "text": "사이클린 의존성 키네이스를 막아 세포 주기를 G1 에서 멈추는 억제 단백질로, 높게 쌓이면 분열이 일어나지 않는다",
+          "field": "분자생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4",
+                "citation": "Herbig et al., 2004"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599",
+                "citation": "Herbig et al., 2004"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "p21 합성 (전사·번역 묶음)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D+p21",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "source": true,
+          "text": "아미노산·뉴클레오타이드·ATP 는 모델 밖(source). 속도는 p53 의 힐 배율이 정한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "유전자 발현을 0차 합성 하나와 조절 배율로 근사"
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "p21 분해",
+          "fate": "lost",
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "프로테아좀 분해 — 아미노산은 모델 밖으로.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 분해를 1차 소실로 근사"
+          }
+        },
+        {
+          "id": "cdk_arrest",
+          "type": "modulation",
+          "label": "p21 ⊣ 분열 (CDK 억제에 의한 G1 정지)",
+          "target": "D+attr/rule/division_attrition",
+          "effect": "inhibits",
+          "at": "nucleoplasm",
+          "via": [],
+          "text": "p21 이 사이클린 E–CDK2 를 막고 Rb 가 인산화되지 않아 S 기로 들어가지 못한다 — 분열이 멈추면 텔로미어 소모도 멈춘다. CDK2·사이클린 E·Rb 단계를 조절 하나로 묶음(Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Herbig et al., 2004 (p21 상향에 따른 G1 정지)를 '분열 규칙의 배율 → 0' 으로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인. CDK 억제의 힐 상수는 문헌 값이 아니다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fgf2",
+      "term": "T+fgf2",
+      "kind": "protein",
+      "tier": "T2",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P09038",
+          "status": "asserted",
+          "note": "FGF2_HUMAN (UniProt REST 2026-10-10: Fibroblast growth factor 2, Homo sapiens, 288 aa)"
+        }
+      ],
+      "desc": [
+        {
+          "text": "배양 섬유아세포가 세포 주기로 들어가게 하는 세포 밖 성장 인자로, 없으면 분열하지 않고 멈춰 있다",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted",
+            "note": "배양 섬유아세포의 분열이 성장 인자(혈청·bFGF)에 달려 있다는 일반 지식 — 이 정의항은 분열 허가 신호의 자리로만 쓰인다"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "mitogen_drive",
+          "type": "modulation",
+          "label": "FGF2 → 분열 (성장 인자 의존 세포 주기 진입)",
+          "target": "D+attr/rule/division_attrition",
+          "effect": "activates",
+          "at": "extracellular",
+          "via": [],
+          "text": "성장 인자가 있어야 분열이 일어난다 — 수용체(FGFR)·MAPK·사이클린 D 단계를 조절 하나로 묶음(Regulatory_Gap). 신호를 끊으면 분열이 멈추고 텔로미어도 줄지 않는다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "성장 인자 의존 세포 주기 진입을 분열 규칙의 힐 배율 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+prol",
+      "term": "T+prol",
+      "kind": "cell_state",
+      "reference_species": "9606",
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000057",
+          "status": "asserted",
+          "note": "EBI OLS(2026-10-10): fibroblast — 이 상태는 아직 분열 능력이 남은 섬유아세포다"
+        }
+      ],
+      "desc": [
+        {
+          "text": "텔로미어가 아직 임계 길이보다 길고 p21 이 낮아 성장 인자가 있으면 분열하는 섬유아세포 상태",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/0014-4827(61)90192-6",
+                "citation": "Hayflick & Moorhead, 1961"
+              },
+              {
+                "db": "PMID",
+                "id": "13905658",
+                "citation": "Hayflick & Moorhead, 1961"
+              }
+            ]
+          }
+        }
+      ],
+      "signature": [
+        {
+          "ref": "D+tel",
+          "level": "high",
+          "location": "nucleoplasm"
+        },
+        {
+          "ref": "D+p21",
+          "level": "low",
+          "location": "nucleoplasm"
+        }
+      ],
+      "metabolome": [
+        {
+          "ref": "D+attr/rule/division_attrition",
+          "level": "high"
+        },
+        {
+          "ref": "D+p53/rule/synthesis",
+          "level": "low"
+        },
+        {
+          "ref": "D+p21/rule/synthesis",
+          "level": "low"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "D+sen",
+          "signals": [
+            "D+fgf2"
+          ],
+          "commitment": {
+            "criterion": "withdrawal"
+          },
+          "text": "성장 인자가 있는 동안 분열이 이어지고 텔로미어가 임계 길이 아래로 내려가면 p53 → p21 사슬이 분열을 영구히 멈춘다 — 그 뒤에는 성장 인자를 끊어도 되돌아오지 않는다",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.89.21.10114",
+                "citation": "Allsopp et al., 1992"
+              },
+              {
+                "db": "PMID",
+                "id": "1438199",
+                "citation": "Allsopp et al., 1992"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4",
+                "citation": "Herbig et al., 2004"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599",
+                "citation": "Herbig et al., 2004"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+sen",
+      "term": "T+sen",
+      "kind": "cell_state",
+      "reference_species": "9606",
+      "unmapped": [
+        "세포 온톨로지(CL)에 '복제 노화 세포' 에 해당하는 항목을 찾지 못했음 — EBI OLS(2026-10-10) 에서 'senescent cell' 완전 일치 검색 결과 없음. 분열 능력이 남은 쪽은 CL:0000057(fibroblast)로 두고 이 상태는 비워 둔다"
+      ],
+      "desc": [
+        {
+          "text": "텔로미어가 임계 길이 아래로 내려가 p21 이 높게 쌓이고, 성장 인자가 있어도 더 이상 분열하지 않는 섬유아세포 상태",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포 노화 (복제 노화)",
+            "species": "9606",
+            "cell": "fibroblast"
+          },
+          "links": [
+            {
+              "to": "D+p21",
+              "rel": "refers",
+              "span": "p21"
+            }
+          ],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4",
+                "citation": "Herbig et al., 2004"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599",
+                "citation": "Herbig et al., 2004"
+              }
+            ]
+          }
+        }
+      ],
+      "signature": [
+        {
+          "ref": "D+tel",
+          "level": "low",
+          "location": "nucleoplasm"
+        },
+        {
+          "ref": "D+p21",
+          "level": "high",
+          "location": "nucleoplasm"
+        }
+      ],
+      "metabolome": [
+        {
+          "ref": "D+p53/rule/synthesis",
+          "level": "high"
+        },
+        {
+          "ref": "D+p21/rule/synthesis",
+          "level": "high"
+        }
+      ],
+      "transitions": []
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+attr_k",
+      "target": "D+attr/rule/division_attrition",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "섬유아세포의 분열 간격(0차 속도 k)과 분열당 소실 반복 단위 수(화학량 ΔL)를 확인한 값으로 넣지 못했다 — 실행은 가상 시나리오 값(24 h · 16 단위 = 96 염기쌍)에 기댄다. Allsopp et al., 1992 의 '1 kbp 당 10 배가' 는 초기 텔로미어 길이와 분열 능력의 상관 기울기이므로 ΔL 로 바로 쓰려면 변환 가정이 필요하다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+attr/rule/division_attrition",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "분열당 소실 염기쌍(ΔL)의 직접 측정값과, 그것을 화학량으로 담을 측정량(관찰 종류) — 지금 observables 에는 화학량을 재는 종류가 없다"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+obs_stoich",
+      "target": "D+attr/rule/division_attrition",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "분열당 소실 염기쌍(ΔL)은 규칙의 화학량인데, 관찰 기록의 측정량(vocab.observables: amount·concentration·fraction·event_time·kinetic_constant)에는 화학량을 가리키는 종류가 없다 — 그래서 문헌 측정값을 관찰 기록으로 받아 kinetics.from 으로 묶을 수 없고, 가상 시나리오 값으로만 둘 수 있다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "규칙의 화학량을 대상으로 하는 측정량(observable) 종류와, 그 관찰로 화학량을 파생시키는 규약 — 어휘·계약(schemas/obs/)·사법부 판정을 함께"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+ddr",
+      "target": "D+tel/rule/short_telomere_ddr",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "짧아진 텔로미어가 p53 을 안정화하는 길의 매개 단계(셸터린 TRF2 이탈 · ATM 활성화 · CHK2 · MDM2 억제)를 단계로 풀지 않고 조절 규칙 하나로 묶었고, 힐 상수(K·n·fmax·fmin)를 모른다 — 문턱의 급격함(n)이 가상 값이다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+tel/rule/short_telomere_ddr",
+            "params": [
+              "K",
+              "n",
+              "fmax",
+              "fmin"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "셸터린(TRF2 Q15554 등)·ATM·CHK2·MDM2 정의항과 단계 — 텔로미어 길이에서 p53 안정화까지"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+p21ax",
+      "target": "D+p53/rule/p21_transactivation",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "p53 → p21 (전사·번역)과 p21 → 분열 정지(사이클린 E–CDK2·Rb)를 각각 조절 규칙 하나로 묶었고, 힐 상수와 p53·p21 의 합성 속도·반감기를 모른다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+p53/rule/p21_transactivation",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+p21/rule/cdk_arrest",
+            "params": [
+              "K",
+              "n",
+              "fmin"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+p53/rule/synthesis",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+p21/rule/synthesis",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+p53/rule/turnover",
+            "params": [
+              "half_life"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+p21/rule/turnover",
+            "params": [
+              "half_life"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "CDK2(P24941)·사이클린 E·Rb(P06400) 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+mito",
+      "target": "D+fgf2/rule/mitogen_drive",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "성장 인자 → 세포 주기 진입(FGFR·MAPK·사이클린 D)을 조절 하나로 묶었고 힐 상수를 모른다 — 분열 허가가 가상 값의 계단으로 들어간다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+fgf2/rule/mitogen_drive",
+            "params": [
+              "K",
+              "n",
+              "fmax",
+              "fmin"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "FGFR1·MAPK·사이클린 D 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+telamt",
+      "target": "D+tel",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "섬유아세포의 핵질 부피와, 초기·임계 텔로미어 반복 단위 수(세포당)를 확인한 값으로 모른다 — 시작량 1800 단위(10.8 kbp)와 임계 600 단위(3.6 kbp)는 가상 시나리오 값이고, 힐 상수 K 를 농도로 환산할 때 핵질 부피가 들어간다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D000116",
+            "cell": "fibroblast",
+            "location": "nucleoplasm"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "D+tel",
+            "cell": "fibroblast",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+telid",
+      "target": "D+tel",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "텔로미어 반복 단위를 가리키는 외부 ID 를 넣지 못했다 — 서열 특징을 담는 체계(SO 등)가 xref 어휘에 없고, UniProt·ChEBI 어느 쪽도 이 단위를 가리키지 않는다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "서열 특징(telomeric repeat)을 가리키는 외부 ID 체계를 xref 어휘에 더하는 결정, 또는 이 정의항을 외부 ID 없이 두는 규약"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+senid",
+      "target": "D+sen",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "복제 노화 섬유아세포 상태에 해당하는 세포 온톨로지(CL) 항목을 찾지 못했다 (EBI OLS 2026-10-10 완전 일치 검색 결과 없음)",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "CL",
+            "on": "D+sen"
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    },
+    {
+      "id": "L+tertk",
+      "target": "D+tert/rule/elongation",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "텔로머레이스의 연장 속도(세포당 반복 단위 생성 속도)를 모른다 — 불멸화 시험은 소모 속도와 같게 둔 가상 값으로 돈다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+tert/rule/elongation",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "텔로미어 소모·복제 노화 실험 (2026-10-10)"
+    }
+  ]
+}

@@ -93,6 +93,7 @@
     macrophage: { label: '대식세포', aliases: ['macrophage'] }, monocyte: { label: '단핵구', tissue: 'blood', aliases: ['monocyte'] },
     cd8_t_cell: { label: 'CD8 T 세포', aliases: ['CD8+ T cell', 'CD8 T cell', '세포독성 T 세포'] },
     dendritic_cell: { label: '수지상 세포', aliases: ['dendritic cell', 'DC', '수지상세포'] },
+    fibroblast: { label: '섬유아세포', aliases: ['fibroblast', '섬유세포', 'HDF'] },
   },
 
   // ===== 위치 — 계층·차원·인접 =====
