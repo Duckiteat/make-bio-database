@@ -1,0 +1,10 @@
+{
+  "format": "definition-db-patch",
+  "why": "레드팀 시험 — 병합하지 않는다",
+  "senses": [
+    {
+      "id": "D000144",
+      "obs": []
+    }
+  ]
+}

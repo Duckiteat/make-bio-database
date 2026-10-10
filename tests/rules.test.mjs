@@ -435,7 +435,7 @@ test('구획 농도 모델: copy_number 관찰 → 시작량, 농도 × 구획 �
   assert.equal(r.source[`${NI}|cytosol`], 'default');
   const ev = { level: 'predicted', confidence: 0.1 };
   const res = passes({ senses: [{ id: NI, obs: [{ property: 'concentration', value: 0.1, unit: 'µM', context: { species: '9606', cell: 'macrophage', location: 'cytosol' }, evidence: ev }] },
-    { id: id('구획 농도 모델'), obs: [{ property: 'compartment_volume', value: 1000, unit: 'fL', context: { species: '9606', cell: 'macrophage', location: 'cytosol' }, evidence: ev }] }] });
+    { id: id('구획 농도 모델'), obs: [...BASE.senses[id('구획 농도 모델')].obs, { property: 'compartment_volume', value: 1000, unit: 'fL', context: { species: '9606', cell: 'macrophage', location: 'cytosol' }, evidence: ev }] }] });
   const r2 = DefDB.simulate(res.db, TLRP, { until: TNFM });
   assert.equal(r2.origin[`${NI}|cytosol`], 60221, '0.1 µM × 1000 fL(=1e-12 L) × 6.022e23 ≈ 60221 분자');
 });

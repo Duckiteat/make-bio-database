@@ -196,20 +196,20 @@
   obsProperties: {
     localization:  { label: '세포 내 위치 분포', value: 'location', speciesRequired: false },
     expression:    { label: '발현 수준', value: ['high', 'medium', 'low', 'absent'], speciesRequired: true },
-    Km:            { label: '미카엘리스 상수', value: 'number', unit: true, speciesRequired: true },
-    kcat:          { label: '전환수', value: 'number', unit: true, speciesRequired: true },
-    Kd:            { label: '해리 상수', value: 'number', unit: true, speciesRequired: true },
-    concentration: { label: '농도', value: 'number', unit: true, speciesRequired: true },
-    half_life:     { label: '반감기', value: 'number', unit: true, speciesRequired: true },
+    Km:            { label: '미카엘리스 상수', value: 'number', unit: true, speciesRequired: true, dim: 'concentration' },
+    kcat:          { label: '전환수', value: 'number', unit: true, speciesRequired: true, dim: 'per_time' },
+    Kd:            { label: '해리 상수', value: 'number', unit: true, speciesRequired: true, dim: 'concentration' },
+    concentration: { label: '농도', value: 'number', unit: true, speciesRequired: true, dim: 'concentration', observable: 'concentration' },
+    half_life:     { label: '반감기', value: 'number', unit: true, speciesRequired: true, dim: 'time' },
     activity_level:{ label: '활성 정도', value: ['high', 'medium', 'low', 'none'], speciesRequired: true },
     ortholog_xref: { label: '다른 종의 대응 외부 ID', value: 'xref', speciesRequired: true },
-    copy_number:   { label: '세포당 분자 수', value: 'number', unit: true, speciesRequired: true },
-    compartment_volume: { label: '구획 부피 (세포 유형·위치별)', value: 'number', unit: true, speciesRequired: true },
-    sequence_length: { label: '서열 길이 (아미노산·뉴클레오타이드 수 — 재활용 화학량의 근거)', value: 'number', unit: true, speciesRequired: true },
+    copy_number:   { label: '세포당 분자 수', value: 'number', unit: true, speciesRequired: true, dim: 'count', observable: 'amount' },
+    compartment_volume: { label: '구획 부피 (세포 유형·위치별)', value: 'number', unit: true, speciesRequired: true, dim: 'volume', observable: 'volume' },
+    sequence_length: { label: '서열 길이 (아미노산·뉴클레오타이드 수 — 재활용 화학량의 근거)', value: 'number', unit: true, speciesRequired: true, dim: 'residue' },
     // 형식 v8 — 3 층 엔진: 확산 계수(SI m^2/s)와 Tier 1 환경 장(pH·이온 세기·상대 유전율). 모두 위치(context.location) 필수
-    diffusion_coefficient: { label: '확산 계수 (SI, m^2/s) — Tier 3 공간 동역학·Damköhler 수', value: 'number', unit: true, units: ['m^2/s'], speciesRequired: false, requiresLocation: true },
+    diffusion_coefficient: { label: '확산 계수 (SI, m^2/s) — Tier 3 공간 동역학·Damköhler 수', value: 'number', unit: true, units: ['m^2/s'], speciesRequired: false, requiresLocation: true, dim: 'diffusion' },
     pH:                    { label: '구획 pH (Tier 1 환경 장)', value: 'number', speciesRequired: false, requiresLocation: true },
-    ionic_strength:        { label: '이온 세기 (SI 정준 M, Tier 1 환경 장)', value: 'number', unit: true, units: ['M'], speciesRequired: false, requiresLocation: true },
+    ionic_strength:        { label: '이온 세기 (SI 정준 M, Tier 1 환경 장)', value: 'number', unit: true, units: ['M'], speciesRequired: false, requiresLocation: true, dim: 'concentration' },
     relative_permittivity: { label: '상대 유전율 ε_r (Tier 1 환경 장 — 극성)', value: 'number', speciesRequired: false, requiresLocation: true },
   },
 
@@ -298,11 +298,40 @@
   // ===== 관찰 기록 (형식 v10, observations O…) — docs/design/observation-port.md =====
   // 측정한 것은 모델 표현이 아니라 "무엇을 쟀는가"로 저장한다. 값은 SI 정준 단위, 불확도·반복 수·조건·출처와 함께.
   //   target: 'bundle' 묶음 키 | 'cell_state' 세포 상태 정의항 | 'rule' D…/rule/키 (param 필수)
+  // ===== 단위 환산표 (형식 v11) — 값 × 계수 = 정준 단위의 값 =====
+  //   엔진(core.js 의 시작량·부피 환산)과 사법부(정의항 obs ↔ 관찰 기록 값 대조)가 **같은 표**를 읽는다.
+  //   표가 둘이면 대조 검사가 자기 환산으로 틀린 판정을 낸다. 부피의 정준은 L 로 둔다 — 농도의 정준이 M(mol/L)이라
+  //   m³ 로 두면 엔진이 환산을 한 번 더 해 기존 궤적의 마지막 비트가 달라진다.
+  unitFactors: {
+    concentration: { M: 1, mM: 1e-3, 'µM': 1e-6, uM: 1e-6, nM: 1e-9, pM: 1e-12 },
+    volume:        { L: 1, mL: 1e-3, 'µL': 1e-6, uL: 1e-6, nL: 1e-9, pL: 1e-12, fL: 1e-15 },
+    time:          { s: 1, min: 60, h: 3600, d: 86400 },
+    per_time:      { 's^-1': 1, 'min^-1': 1 / 60 },
+    count:         { molecule: 1, molecules: 1, copies: 1, 'copies/cell': 1 },
+    residue:       { aa: 1, nt: 1, bp: 1 },
+    energy_molar:  { 'J/mol': 1, 'kJ/mol': 1e3 },
+    diffusion:     { 'm^2/s': 1 },
+  },
+  // 물리적 상한 (형식 v11) — 생물학적 범위가 아니라 **불가능**을 걸러내는 천장이다.
+  //   818 µM 을 818 M 로 적는 실수를 잡는 것이 목적이고, 어떤 값이 생물학적으로 그럴듯한지는 판정하지 않는다.
+  //   근거: 순수한 물이 55.5 M · 1 µL = 1e9 µm³(가장 큰 세포도 그 아래) · 1 몰 = 6.02e23 개 ·
+  //   가장 빠른 효소 전환수 ~1e6 s⁻¹ · 확산 한계 결합 ~1e10 M⁻¹s⁻¹ · 물의 자기 확산 2.3e-9 m²/s.
+  physicalBounds: {
+    concentration: { min: 0, max: 1e2,  why: '순수한 물이 55.5 M — 그보다 큰 농도는 물리적으로 불가능' },
+    volume:        { min: 0, max: 1e-6, why: '1 µL = 1e9 µm³ — 어떤 세포 구획도 그보다 크지 않다', exclusiveMin: true },
+    count:         { min: 0, max: 1e20, why: '1 몰 = 6.02e23 개 — 한 세포가 그 규모를 담지 못한다' },
+    residue:       { min: 1, max: 1e6, why: '가장 긴 사람 단백질 타이틴이 34,350 aa · 1 번 염색체가 2.5e8 bp 이지만 정의항의 서열은 그 아래', integer: true },
+    time:          { min: 0, max: 1e12, why: '1e12 s ≈ 3만 년', exclusiveMin: true },
+    per_time:      { min: 0, max: 1e9,  why: '가장 빠른 효소 전환수가 ~1e6 s⁻¹' },
+    energy_molar:  { min: -1e7, max: 1e7, why: '±1e7 J/mol 은 공유 결합 에너지의 수십 배' },
+    diffusion:     { min: 0, max: 1e-6, why: '물의 자기 확산 2.3e-9 m²/s', exclusiveMin: true },
+  },
   observables: {
-    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule' },
-    concentration:    { label: '농도', target: 'bundle', unit: 'M' },
+    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule', dim: 'count' },
+    concentration:    { label: '농도', target: 'bundle', unit: 'M', dim: 'concentration' },
     fraction:         { label: '세포 상태에 있는 세포의 비율 (0–1)', target: 'cell_state', unit: '1' },
-    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's' },
+    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's', dim: 'time' },
+    volume:           { label: '구획 부피 (대상 = 위치)', target: 'location', unit: 'L', dim: 'volume' },
     kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param' },
   },
   // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)

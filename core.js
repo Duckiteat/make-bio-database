@@ -289,7 +289,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       if (!cc) return null;
       const vol = Object.values(db.senses).flatMap((x) => x.obs).find((o) => o.property === 'compartment_volume' && o.context.location === loc && (!cell || !o.context.cell || o.context.cell === cell));
       if (!vol) return null;
-      const M = { pM: 1e-12, nM: 1e-9, 'µM': 1e-6, uM: 1e-6, mM: 1e-3, M: 1 }[cc.unit], L = { fL: 1e-15, pL: 1e-12, nL: 1e-9 }[vol.unit];
+      // 단위 계수는 어휘의 환산표에서 (vocab.unitFactors) — 사법부의 값 대조가 같은 표를 쓴다
+      const M = V.unitFactors.concentration[cc.unit], L = V.unitFactors.volume[vol.unit];
       if (!M || !L) return null;
       return { n: Math.round(cc.value * M * vol.value * L * 6.02214076e23), how: `concentration ${cc.value} ${cc.unit} × volume ${vol.value} ${vol.unit}` };
     };

@@ -279,6 +279,8 @@
   function normObs(b) {
     const o = { property: str(b.property), value: typeof b.value === 'number' ? b.value : str(b.value), context: normContext(b.context), evidence: normEvidence(b.evidence) };
     if (str(b.unit)) o.unit = str(b.unit);
+    // v11: 측정의 파생값임을 밝히는 관찰 기록 참조 — 사법부가 값·종·세포를 그 관찰과 대조한다
+    if (str(b.from)) o.from = str(b.from);
     if (str(b.note)) o.note = str(b.note);
     return o;
   }
@@ -669,7 +671,8 @@
   }
 
   // 물리 상수·부피 단위 (SI) — 행정부의 농도 환산과 사법부의 독립 재계산이 같은 정의를 읽는다
-  const NA = 6.02214076e23, VOL = { fL: 1e-15, pL: 1e-12, nL: 1e-9, 'µL': 1e-6, uL: 1e-6, L: 1 };
+  // 부피 환산표는 어휘 하나에서 (vocab.unitFactors.volume) — 엔진·사법부가 같은 계수를 쓴다
+  const NA = 6.02214076e23, VOL = V.unitFactors.volume;
 
   // 속도 법칙의 정의 (행정부 적분과 사법부 재계산이 같은 법칙을 읽는다)
   const SAT_K = 1e-6; // 포화 보조 기질의 수치 포화 상수 (M) — 생물 상수가 아니라 바닥날 때 속도를 매끄럽게 끄는 정칙화 (시나리오 saturation_K 로 바꿈)

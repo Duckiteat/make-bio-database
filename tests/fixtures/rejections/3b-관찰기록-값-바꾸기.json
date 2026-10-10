@@ -1,0 +1,38 @@
+{
+  "format": "definition-db-patch",
+  "why": "레드팀 시험 — 병합하지 않는다",
+  "observations": [
+    {
+      "id": "O000014",
+      "observable": {
+        "kind": "concentration",
+        "target": "D000144|mito_matrix"
+      },
+      "value": 0.0012,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.000001
+      },
+      "replicates": 3,
+      "condition": {
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "mito_matrix"
+      },
+      "use": "estimation",
+      "method": "바꿔치기",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.07.040",
+            "citation": "Chen et al., 2016"
+          }
+        ]
+      }
+    }
+  ]
+}

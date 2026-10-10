@@ -104,6 +104,13 @@
         const merged = clone(old);
         for (const k of SENSE_FIELDS) if (d._given[k]) { if (d[k] === undefined) delete merged[k]; else merged[k] = d[k]; }
         const nd = normSense({ ...merged, term: old.term, n: old.n });
+        // v11 — 측정의 파생값은 지울 수 없다. 관찰 기록을 지울 수 없게 한 것과 같은 규약이다:
+        //   패치는 배열을 통째로 교체하므로 obs 한 줄을 빼면 측정값이 조용히 사라진다.
+        //   잘못된 측정이면 그 관찰 기록을 retracted 로 표시한 뒤에 지운다 (그러면 아래 조건이 풀린다).
+        const okey2 = (o) => `${o.property}|${o.context.location || ''}|${o.context.cell || ''}|${o.context.species || ''}`;
+        const lost = old.obs.filter((o) => o.from && !nd.obs.some((x) => okey2(x) === okey2(o)))
+          .filter((o) => !(db.observations[o.from] && db.observations[o.from].retracted));
+        if (lost.length) { ERR(rid, `측정의 파생값은 지울 수 없음 — ${lost.map((o) => `${o.property} ${o.value}${o.unit ? ' ' + o.unit : ''} (출처 ${o.from})`).join(' · ')}. 잘못된 측정이면 그 관찰 기록에 retracted 를 표시한 뒤에 지운다`); continue; }
         db.senses[rid] = nd; report.updated.push(rid); touched.push([rid, nd]);
         continue;
       }
@@ -317,6 +324,8 @@
       if (!o.condition.states) delete o.condition.states;
     }
     for (const [, d] of new Map(touched)) for (const r of d.rule) for (const f of (r.kinetics && r.kinetics.from) || []) if (report.idmap[f.obs]) f.obs = report.idmap[f.obs];
+    // v11: 정의항 obs 의 관찰 기록 참조도 같은 치환을 받는다 (kinetics.from 과 같은 자리)
+    for (const [, d] of new Map(touched)) for (const b of d.obs) if (b.from && report.idmap[b.from]) b.from = report.idmap[b.from];
     // 규칙 참조 (v9): 조절 대상, 세포 상태의 대사 프로그램 — 'D…/rule/키' (임시 번호·이름 머리도 풀림)
     for (const [id, d] of new Map(touched)) {
       for (const r of d.rule) if (r.type === 'modulation' && r.target) r.target = target(r.target, `${id}/rule/${r.id} 조절 대상`);

@@ -545,10 +545,38 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 데이터: 텔로미어 반복 단위 · 소모 과정 · 텔로머레이스(TERT) · p53 · p21 · FGF2 · 세포 상태 2(증식·복제 노화), 한계 9건(L000087–L000095). 모든 속도·힐 상수는 가상 시나리오 값이다.
 
+## 8M. 측정값 사슬과 래칫 — 안전장치 (형식 v11, 2026-10-10)
+
+레드팀 시험(사용자가 설계한 공격 5 가지, 11 패치)에서 **7 건이 통과**했다. 통과한 경로는 모두 한 자리였다:
+`kinetics` 는 `kinetics.from` 으로 관찰 기록과 묶여 있었고 **정의항 `obs` 는 묶여 있지 않았다**.
+그래서 관찰 기록(불변)은 그대로 둔 채 그 파생값만 바꾸면 관문이 "새 오류 0" 으로 통과시켰고,
+엔진의 시작량이 8.916e7 → 1.308e8 로 오염되면서 출력은 `data: concentration 1200 µM` 라고 측정값인 척했다.
+
+- **정의항 `obs` 는 측정의 파생값이다.** 측정량이 있는 속성(`obsProperties[*].observable`)의 문헌(`curated`) 값은
+  `from: 'O…'` 로 관찰 기록을 가리켜야 하고, 사법부가 **단위 환산 뒤 값·종·세포·위치**를 그 관찰과 대조한다
+  (`checkSenseObsFrom` — `checkKineticsFrom` 의 거울). 철회된 관찰이나 `use: validation` 관찰은 출처로 쓸 수 없다.
+- **파생값은 지울 수 없다.** 패치는 배열을 통째로 교체하므로 `obs` 한 줄을 빼면 측정값이 조용히 사라진다.
+  `from` 이 달린 항목이 사라지는 패치는 거부되고, **가리키는 관찰 기록에 `retracted` 가 있을 때만** 지울 수 있다.
+  관찰 기록을 지울 수 없게 한 것과 같은 규약이다.
+- **단위 환산표는 하나다 (`vocab.unitFactors`).** 엔진(`core.js`·`model.js` 의 `VOL`)과 사법부가 같은 계수를 읽는다 —
+  표가 둘이면 대조 검사가 자기 환산으로 틀린 판정을 낸다. 부피의 정준은 `L` 로 둔다(농도 정준이 M = mol/L).
+- **물리적 상한 (`vocab.physicalBounds`).** "불가능" 만 걸러낸다 — 농도 ≤ 100 M(순수한 물 55.5 M), 구획 부피 ≤ 1e-6 L,
+  분자 수 ≤ 1e20, 서열 ≤ 1e6. 그럴듯함은 판정하지 않는다. 818 µM 을 818 M 로 적는 실수를 잡는 것이 목적이다.
+- **종이 다른 값은 상수로도 못 쓴다.** `kinetics.from` 도 `context.species`·`location` 을 관찰의 조건과 대조한다.
+- **측정값의 전후가 기록에 남는다.** Patch Report 의 `measured_changed` 가 `이전 → 이후` 를 적는다 —
+  선언된 기록(`data/patches/*.json`)만 읽는 사람도 무엇이 바뀌었는지 안다.
+- **거부 말뭉치와 래칫 (`tests/fixtures/rejections/`, `tests/rejections.test.mjs`).** 방어 규칙을 느슨하게 하는 공격은
+  규칙 한 줄을 무력화하고 **그것을 잡던 시험을 건너뛰면** 시험이 전부 초록이 된다(실측: 202 pass / 0 fail).
+  말뭉치 11 건이 기대 거부 사유(`EXPECT.json`)와 함께 있어 규칙이 느슨해지면 통과해 버려서 빨개지고,
+  바닥값(`tests/fixtures/FLOOR.json` — 말뭉치 수·사법부 검사 자리 수·시험 수)과 `skip` 금지가 ②를 막는다.
+  바닥값을 내리는 변경은 그 자체로 눈에 보이는 커밋이 된다.
+- 새 측정량 **`volume`**(대상 = 위치, 단위 L)으로 부피도 관찰 기록이 된다 — L000102 해결.
+
 ## 변경 기록
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-10 | **11** | 측정값 사슬과 래칫(§8M, 레드팀 7/7 차단): 정의항 `obs` 에 `from`(관찰 기록 참조) — 측정량이 있는 속성의 `curated` 값은 필수이고 단위 환산 뒤 값·종·세포·위치를 관찰과 대조(`checkSenseObsFrom`) · 파생값 삭제 금지(관찰이 `retracted` 일 때만) · 새 측정량 `volume`(대상 위치, 단위 L — L000102 해결) · 단위 환산표 하나로(`vocab.unitFactors`, `core.js`·`model.js` 가 그 표를 읽음 — 값 동일, 궤적 비트 불변) · 물리적 상한(`vocab.physicalBounds`) · `kinetics.from` 에 종·위치 대조 · Patch Report `measured_changed`(측정값 전후) · 거부 말뭉치 11 + 래칫(`tests/fixtures/FLOOR.json`, `skip` 금지) · 관찰 계약에 `volume` |
 | 2026-10-10 | 10 (확장 6) | 분열과 소모 규약(형식·엔진 바뀌지 않음, §8L): 분열 = 0차 공급 규칙의 진행량, 임계 문턱 = 억제 힐(K 는 임계의 0.9 배), 상태 전이 = 서명 문턱 + 근 찾기. 어휘에 세포 `fibroblast` 하나 추가. 데이터: 텔로미어 반복 단위·소모 과정·TERT·p53·p21·FGF2·세포 상태 2(정의항 8·한계 9, L000087–L000095), 시나리오 5(가상), `tests/telomere.test.mjs` 7 검사. 형식의 빈칸 둘을 한계로: 활성 힐의 기준선이 1 로 고정(L000091) · 화학량을 재는 측정량이 없음(L000088) |
 | 2026-10-10 | 10 (확장 5) | 신뢰 지표 ③ 추세 축: 새 `judicial/trend.js`(합의 수신함 `data/fetched/consensus/` · 판정 match·mismatch·unchecked · claim `trend` 도장 · 합의 창 만료 · Consensus_Gap 후보), `dbtool trend [--fetch] [--write]`, 어휘 `gapTypes.Consensus_Gap`·`consensus.window_days`, `reliability.items(opt.trend)` 로 추세 축 연결, `validStamps` 가 추세 도장을 분리해 넘김, 입법 서기가 주장별 검증 모듈로 보냄. 지문 70개가 `anchor` 로 올라감(이전 0). 한계 2건(L000085 신선도는 바이트로 증명 못 함 · L000086 지문은 하나인데 ChEBI 역할은 여럿) (§8K 추세 축) |
 | 2026-10-10 | 10 (확장 4) | 신뢰 지표 ② 관문: 쓰인 상수마다 등급을 판정한다 — `reliability.constants`·`constantVerdict`·`constantText`, 속도 감사의 새 절 ②′(`judicial.auditRate`), 운명 판정의 `grades`(`fate_audit`), 과정 보고서의 무결성 증명서 한 줄 + §5 분포. 시나리오가 준 값은 등급 밖이므로 `hypothetical: true` 선언 아래에서만 쓸 수 있고, 문턱(기본 `parameter`)은 시나리오 `min_grade` 로 올린다. `reliability.js` 는 UMD(뷰어도 읽는다), 원자료에 `min_grade` 선언 전달 (§8K 관문) |

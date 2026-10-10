@@ -136,6 +136,22 @@
   // ===== 관찰 기록 (v10, docs/design/observation-port.md) =====
   const REL_EQ = 1e-12;
   const near = (a, b) => Math.abs(a - b) <= REL_EQ * Math.max(Math.abs(a), Math.abs(b), Number.MIN_VALUE);
+  // 물리적 상한 (v11, vocab.physicalBounds) — "불가능" 을 걸러내는 천장이다. 그럴듯함은 판정하지 않는다.
+  //   값은 정준 단위로 들어온다(관찰 기록은 저장 단위가 정준, 정의항 obs 는 환산 뒤).
+  function checkBound(dim, si, w, what, E) {
+    const B = V.physicalBounds[dim];
+    if (!B || !Number.isFinite(si)) return;
+    if (B.integer && !Number.isInteger(si)) E(w, `${what}: 값 ${si} 은(는) 정수여야 함`);
+    const lowBad = B.exclusiveMin ? !(si > B.min) : !(si >= B.min);
+    if (lowBad) E(w, `${what}: 값 ${si} 이(가) 물리적 하한 ${B.min} ${B.exclusiveMin ? '초과' : '이상'} 이 아님 — ${B.why}`);
+    if (si > B.max) E(w, `${what}: 값 ${si} 이(가) 물리적 상한 ${B.max} 를 넘음 — ${B.why} (단위를 잘못 적었는지 확인)`);
+  }
+  // 정의항 obs 의 값을 정준 단위로. 차원·단위를 모르면 null (그 자리에서 이미 단위 오류가 난다)
+  function obsSI(P, b) {
+    const F = P && P.dim && V.unitFactors[P.dim];
+    if (!F || !(b.unit in F) || typeof b.value !== 'number') return null;
+    return b.value * F[b.unit];
+  }
   // 측정량의 SI 정준 단위 (kinetic_constant 는 칸마다, k·k0·k_r 은 차수에서)
   function obsUnit(db, o) {
     const ov = V.observables[o.observable.kind];
@@ -158,6 +174,7 @@
     if (!ov) E(w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
     else if (ov.target === 'bundle') checkBundle(db, ix, ob.target, `${w} 측정 대상`, E);
     else if (ov.target === 'cell_state') { const d = db.senses[ob.target]; if (!d || d.kind !== 'cell_state') E(w, `측정 대상 '${ob.target}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
+    else if (ov.target === 'location') { if (!V.locations[ob.target]) E(w, `측정 대상 위치 '${ob.target}' 은(는) 위치 어휘에 없음`); }
     else if (ov.target === 'rule') {
       const t = parseTarget(ob.target);
       if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `측정 대상 규칙 '${ob.target}' 없음 — D…/rule/키`);
@@ -169,6 +186,7 @@
     if (ov && !want) E(w, '이 측정량의 단위를 정할 수 없음 (대상 규칙의 kinetics.order 필요)');
     if (ob.kind === 'fraction' && !(o.value >= 0 && o.value <= 1)) E(w, '비율은 0–1');
     if (['amount', 'concentration', 'event_time'].includes(ob.kind) && !(o.value >= 0)) E(w, '분자 수·농도·시각은 0 이상');
+    if (ov && ov.dim) checkBound(ov.dim, o.value, w, `측정량 ${ob.kind}`, E);
     const u = o.uncertainty, nm = V.noiseModels[u.model];
     if (!V.uncertaintyKinds[u.kind]) E(w, `불확도 유형 '${u.kind}' — ${Object.keys(V.uncertaintyKinds).join(' | ')} (값만 있는 관찰은 받지 않음)`);
     if (!nm) E(w, `잡음 모형 '${u.model}' — ${Object.keys(V.noiseModels).join(' | ')}`);
@@ -217,6 +235,12 @@
       if (k.lumped) continue;
       if (o.observable.kind !== 'kinetic_constant' || o.observable.target !== ref || o.observable.param !== f.param) E(fw, `관찰이 이 규칙(${ref})의 '${f.param}' 을(를) 잰 것이 아님`);
       else if (!near(o.value, k[f.param])) E(fw, `'${f.param}' 값 ${k[f.param]} 이(가) 관찰 값 ${o.value} 와 다름 — 실측 상수는 관찰에서 그대로`);
+      // v11 — 종·세포 대조: 다른 종에서 잰 값을 이 종의 상수로 적지 않는다 (CLAUDE.md 의 규약을 기계 집행으로)
+      const kc = k.context || {}, oc = o.condition || {};
+      if (kc.species && oc.species && kc.species !== oc.species)
+        E(fw, `종이 다름 — 상수의 맥락은 '${kc.species}', 관찰은 '${oc.species}' (다른 종의 측정을 이 종의 상수로 적지 않는다)`);
+      if (kc.location && oc.location && kc.location !== oc.location)
+        E(fw, `위치가 다름 — 상수의 맥락은 '${kc.location}', 관찰은 '${oc.location}'`);
     }
     if (k.lumped && !from.length) E(rw, '묶은 상수(lumped)에는 원 관찰 참조(from)가 필요함 — 기전을 세분할 때 다시 재지 않고 다시 계산하려고');
     if (k.evidence.level === 'curated' && !k.lumped) {
@@ -224,6 +248,32 @@
       const miss = KIN_FIELDS.filter((p) => p !== 'order' && k[p] != null && !have.has(p));
       if (miss.length) E(rw, `문헌(curated) 속도 상수 ${miss.join('·')} 에 관찰 기록(kinetics.from)이 없음 — 실측값은 관찰 기록으로 넣고 상수는 그것을 참조 (observation-port.md §1)`);
     }
+  }
+  // 정의항 obs ↔ 관찰 기록 (v11) — checkKineticsFrom 의 거울. 측정량 종류·대상·값·종·세포가 모두 같아야 한다.
+  function checkSenseObsFrom(db, sid, b, P, ow, E) {
+    const o = db.observations[b.from], fw = `${ow} 측정 출처 ${b.from}`;
+    if (!o) { E(fw, '관찰 기록 없음'); return; }
+    if (!P || !P.observable) { E(fw, `'${b.property}' 에는 대응하는 측정량이 없어 관찰 기록을 가리킬 수 없음`); return; }
+    if (o.retracted) E(fw, '철회된 관찰을 참조함');
+    if (o.use !== 'estimation') E(fw, `용도가 ${o.use} 인 관찰은 모델 값의 출처로 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
+    if (o.observable.kind !== P.observable) E(fw, `관찰이 '${P.observable}' 을(를) 잰 것이 아님 (측정량 ${o.observable.kind})`);
+    else {
+      // 대상 대조: 묶음 측정량은 이 정의항의 묶음이어야 하고, 위치 측정량은 obs 의 위치여야 한다
+      const ovt = (V.observables[o.observable.kind] || {}).target;
+      if (ovt === 'bundle' && String(o.observable.target).split('|')[0] !== sid)
+        E(fw, `관찰 대상 '${o.observable.target}' 이(가) 이 정의항(${sid})의 묶음이 아님`);
+      if (ovt === 'location' && b.context.location && o.observable.target !== b.context.location)
+        E(fw, `관찰 대상 위치 '${o.observable.target}' 이(가) obs 의 위치 '${b.context.location}' 와 다름`);
+    }
+    const si = obsSI(P, b);
+    if (si != null && !near(si, o.value)) E(fw, `값 ${b.value} ${b.unit} (= ${si} 정준) 이(가) 관찰 값 ${o.value} ${o.unit} 와 다름 — 파생값은 관찰에서 그대로 환산한다`);
+    const c = o.condition || {};
+    if (b.context.species && c.species && b.context.species !== c.species)
+      E(fw, `종이 다름 — obs 는 '${b.context.species}', 관찰은 '${c.species}' (다른 종의 측정을 이 종의 값으로 적지 않는다)`);
+    if (b.context.cell && c.cell && b.context.cell !== c.cell)
+      E(fw, `세포 유형이 다름 — obs 는 '${b.context.cell}', 관찰은 '${c.cell}'`);
+    if (b.context.location && c.location && b.context.location !== c.location)
+      E(fw, `위치가 다름 — obs 는 '${b.context.location}', 관찰은 '${c.location}'`);
   }
   function validateLimitation(db, ix, id, l, E, W) {
     const w = `${id}`;
@@ -537,6 +587,16 @@
       if (P.value === 'location' && !V.locations[b.value]) E(ow, `값 '${b.value}' 은(는) 위치 어휘에 없음`);
       if (Array.isArray(P.value) && !P.value.includes(b.value)) E(ow, `값은 ${P.value.join(' | ')} 중 하나`);
       if (P.value === 'xref') { const x = parseXref(b.value); if (!V.xrefs[x.db] || !new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(ow, `외부 ID '${b.value}' 형식 틀림`); }
+      // v11 — 허용 단위(어휘의 환산표)·물리 상한·관찰 기록 대조. 정의항 obs 는 **측정의 파생값**이므로
+      //   측정량이 있는 속성의 문헌(curated) 값은 관찰 기록을 가리켜야 하고, 값·종·세포가 그 관찰과 같아야 한다.
+      //   kinetics.from 과 같은 계약이다 — 한쪽만 막혀 있으면 그 틈으로 측정값이 조용히 바뀐다.
+      if (P.dim && !P.units && b.unit && !(b.unit in (V.unitFactors[P.dim] || {})))
+        E(ow, `'${b.property}' 의 단위 '${b.unit}' 은(는) 어휘의 환산표에 없음 — ${Object.keys(V.unitFactors[P.dim] || {}).join(' | ')}`);
+      const si = obsSI(P, b);
+      if (si != null) checkBound(P.dim, si, ow, `'${b.property}'`, E);
+      if (P.observable && b.evidence.level === 'curated' && !b.from)
+        E(ow, `문헌(curated) '${b.property}' 에 관찰 기록 참조(from)가 없음 — 측정값은 관찰 기록(O…)으로 넣고 정의항 obs 는 그것을 가리킨다 (observation-port.md §1, kinetics.from 과 같은 계약)`);
+      if (b.from) checkSenseObsFrom(db, id, b, P, ow, E);
     });
   }
   // lhs/rhs: [{ref, n}] → 불균형 설명 문자열 또는 null. 어느 쪽에도 부분 구조가 없으면 검사하지 않음(null)
@@ -918,8 +978,31 @@
     const v = validate(after), gaps = detectGaps(after);
     const regenerate = ['docs/textbook/90-부록-자동생성.md'];
     if (statusChanged.length || r.added.concat(r.updated, r.removed).some((x) => /^L/.test(x)) || limits.length) regenerate.unshift('limitations.md');
+    // v11 — 측정값의 전후. 패치는 최상위 필드를 통째로 교체하므로 기록에는 새 값만 남는다:
+    //   선언된 기록(data/patches/*.json)만 읽는 사람도 "무엇이 무엇으로" 바뀌었는지 알 수 있어야 한다.
+    //   관찰 기록은 불변이므로(철회만) 값이 바뀔 수 있는 자리는 정의항 obs 와 규칙 kinetics 뿐이다.
+    const okey = (o) => `${o.property}|${o.context.location || ''}|${o.context.cell || ''}|${o.context.species || ''}`;
+    const uval = (o) => `${o.value}${o.unit ? ' ' + o.unit : ''}`;
+    const measured = [];
+    for (const id of changedD) {
+      const b0 = before.senses[id], a0 = after.senses[id];
+      if (!b0 || !a0) continue;
+      const bm = new Map(b0.obs.map((o) => [okey(o), o]));
+      for (const o of a0.obs) { const q = bm.get(okey(o)); if (q && q.value !== o.value) measured.push({ at: `${id}/obs/${o.property}`, from: uval(q), to: uval(o) }); }
+      for (const o of b0.obs) if (!a0.obs.some((x) => okey(x) === okey(o))) measured.push({ at: `${id}/obs/${o.property}`, from: uval(o), to: '없음 (삭제)' });
+      const br = new Map(b0.rule.map((x) => [x.id, x]));
+      for (const x of a0.rule) {
+        const q = br.get(x.id); if (!q) continue;
+        for (const f of KIN_FIELDS) {
+          const u = q.kinetics && q.kinetics[f], w2 = x.kinetics && x.kinetics[f];
+          if (u != null && w2 != null && u !== w2) measured.push({ at: `${id}/rule/${x.id}.${f}`, from: u, to: w2 });
+          else if (u != null && w2 == null) measured.push({ at: `${id}/rule/${x.id}.${f}`, from: u, to: '없음 (삭제)' });
+        }
+      }
+    }
     return {
       scope: { files: ['data/db.json', 'data/patches/'], added: group(r.added), updated: group(r.updated), removed: group(r.removed), fields },
+      measured_changed: measured,
       why: str(patch && patch.why),
       impact: { rules: uniq(rules), senses: uniq(senses), steps, pathways, limitations: limits, limitation_status_changed: statusChanged, regenerate },
       verification: { gate: gateResult ? (gateResult.ok ? 'pass' : 'reject') : null, errors: v.errors.length, warnings: v.warnings.length, new_errors: gateResult ? gateResult.errors.length : null, new_warnings: gateResult ? gateResult.warnings.length : null, undetected_gaps: gaps.length, augment_candidates: augmentCandidates(after) },
@@ -977,6 +1060,7 @@
       `| Scope · 파일 | ${rep.scope.files.join(', ')} |`,
       `| Scope · 추가 | ${g(rep.scope.added)} |`, `| Scope · 수정 | ${g(rep.scope.updated)} |`, `| Scope · 삭제 | ${g(rep.scope.removed)} |`,
       `| Scope · 바뀐 필드 | ${Object.entries(rep.scope.fields).map(([id, fs]) => `${id}{${fs.join(',')}}`).join(' ') || '—'} |`,
+      `| Scope · 측정값 전후 | ${(rep.measured_changed || []).map((m) => `${m.at}: ${m.from} → ${m.to}`).join(' · ') || '바뀐 측정값 없음'} |`,
       `| Why | ${rep.why || '✗ 없음 (patch.why 필수)'} |`,
       `| Impact · 참조하는 규칙 | ${list(rep.impact.rules)} |`, `| Impact · 참조하는 정의항 | ${list(rep.impact.senses)} |`,
       `| Impact · 단계 | ${rep.impact.steps.join(', ') || '—'} |`, `| Impact · 경로 (simulate·audit-run 대상) | ${list(rep.impact.pathways)} |`,

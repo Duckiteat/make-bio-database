@@ -6,8 +6,8 @@
       "T": 210,
       "D": 212,
       "S": 57,
-      "L": 106,
-      "O": 16
+      "L": 107,
+      "O": 19
     }
   },
   "terms": {
@@ -9566,6 +9566,7 @@
             ]
           },
           "unit": "fL",
+          "from": "O000016",
           "note": "관찰 기록 O+v_mx 의 파생값 — 수밀도 × 1 개 부피 × 세포질 부피. 내막 안 기질 부피는 더 작다 (상한)"
         },
         {
@@ -9593,6 +9594,7 @@
             ]
           },
           "unit": "fL",
+          "from": "O000017",
           "note": "관찰 기록 O+v_cyt 의 파생값 — 중앙값 1.6 pL"
         },
         {
@@ -9620,6 +9622,7 @@
             ]
           },
           "unit": "fL",
+          "from": "O000018",
           "note": "관찰 기록 O+v_nuc 의 파생값 — 종설 서술값, 원 측정 논문이 아니다"
         }
       ],
@@ -11028,7 +11031,8 @@
             ]
           },
           "unit": "µM",
-          "note": "관찰 기록 O+nad_mx 의 파생값 (형식에 obs → 관찰 기록 참조 칸이 없어 같은 출처를 적는다)"
+          "from": "O000014",
+          "note": "관찰 기록 O000014 의 파생값"
         }
       ]
     },
@@ -11107,7 +11111,8 @@
             ]
           },
           "unit": "µM",
-          "note": "관찰 기록 O+nadh_mx 의 파생값 — 비와 NAD 가 측정값이고 곱은 유도"
+          "from": "O000015",
+          "note": "관찰 기록 O000015 의 파생값 — 비와 NAD 가 측정값이고 곱은 유도"
         }
       ]
     },
@@ -20754,6 +20759,20 @@
         ]
       },
       "found_in": "농도·부피 측정값 수집 2026-10-10 (두 엔진의 부피 조회를 대조)"
+    },
+    "L000106": {
+      "target": "D000050",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "서열 길이(sequence_length)는 관찰 기록으로 받을 수 없다 — 측정량(vocab.observables)에 대응 항목이 없어서다. 그래서 정의항 obs 45 건의 서열 길이는 새 from 대조(v11)의 대상이 아니고, 값이 바뀌어도 관찰과 어긋나는지 검사되지 않는다. 지금은 모두 evidence.level 이 curated 가 아니어서 from 이 요구되지 않지만, 문헌에서 서열 길이를 가져오면 그 자리에 대조가 없다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "측정량 'sequence_length'(대상 = 묶음 또는 정의항, 단위 aa|nt|bp) 를 둘지 결정 — 서열 길이는 측정이라기보다 참조 서열의 속성이어서 관찰 포트에 맞는지가 먼저다"
+          }
+        ]
+      },
+      "found_in": "안전장치 v11 (레드팀 시나리오 2·4 를 막는 중에 드러남)"
     }
   },
   "observations": {
@@ -21307,6 +21326,122 @@
         ]
       },
       "note": "유도값 7.36 µM — 측정된 것은 비(0.009)와 NAD(818 µM)이고 곱은 내가 했다. 저자들은 이 비가 간접 추정 범위 0.006–0.125 안에 든다고 적었다."
+    },
+    "O000016": {
+      "observable": {
+        "kind": "volume",
+        "target": "mito_matrix"
+      },
+      "value": 1.81e-13,
+      "unit": "L",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 7.9e-14
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "cell": "hela_cell"
+      },
+      "method": "유도: 미토콘드리아 수밀도 0.39/µm³ × 1 개 부피 0.29 µm³ (전자 현미경 형태 계측) × 세포질 부피 1.6 pL",
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "PMID",
+            "id": "885911",
+            "citation": "Posakony, England & Attardi, 1977"
+          },
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.06.025",
+            "citation": "Guillaume-Gentil et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27419874",
+            "citation": "Guillaume-Gentil et al., 2016"
+          }
+        ]
+      },
+      "note": "미토콘드리아 **전체** 부피이고 내막 안 기질 부피의 상한이다 (L000101). sd 는 세포질 부피의 보고된 산포 ±0.7 pL 를 같은 비율로 옮긴 것이고, 수밀도·1 개 부피의 불확도는 원문에 없다."
+    },
+    "O000017": {
+      "observable": {
+        "kind": "volume",
+        "target": "cytosol"
+      },
+      "value": 1.6e-12,
+      "unit": "L",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 7e-13
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "cytosol",
+        "cell": "hela_cell"
+      },
+      "method": "단일 세포 흡입(SICM 기반 나노피펫)으로 뽑아낸 세포질 부피",
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.06.025",
+            "citation": "Guillaume-Gentil et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27419874",
+            "citation": "Guillaume-Gentil et al., 2016"
+          }
+        ]
+      },
+      "note": "중앙값 1.6 pL · 보고된 산포 ±0.7 pL."
+    },
+    "O000018": {
+      "observable": {
+        "kind": "volume",
+        "target": "nucleoplasm"
+      },
+      "value": 5e-13,
+      "unit": "L",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 1e-13
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "nucleoplasm",
+        "cell": "fibroblast"
+      },
+      "method": "종설에 서술된 섬유아세포 핵 부피 (원 측정 논문이 아니다)",
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cub.2003.10.012",
+            "citation": "Lamond & Sleeman, 2003"
+          },
+          {
+            "db": "PMID",
+            "id": "14588256",
+            "citation": "Lamond & Sleeman, 2003"
+          }
+        ]
+      },
+      "note": "종설값 500 µm³ — BioNumbers 가 \"better ref needed\" 를 달아 둔 항목이다. 불확도가 보고되지 않아 sd 를 보고된 유효 숫자의 해상도(100 fL)로 적었다 — 측정 표준 편차가 아니다."
     }
   }
 }

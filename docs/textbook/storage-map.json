@@ -952,6 +952,30 @@
       "interpret": "과제 하나에 파일 하나: uniprot/{번호}, uniprot-search/{D…}, chebi/{CHEBI_번호}, chebi-search/{D…}."
     },
     {
+      "path": "tests/rejections.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "CI · node --test",
+      "interpret": "[래칫] 거부 말뭉치가 모두 거부되는지(①), 바닥값 아래로 내려가지 않는지(②), 건너뛴 시험이 없는지(③). 방어 규칙을 느슨하게 하면서 그 시험까지 무력화하는 공격을 막는다 (SCHEMA §8M)."
+    },
+    {
+      "path": "tests/fixtures/rejections/*.json",
+      "class": "verification",
+      "format": "패치 JSON (거부 말뭉치) + EXPECT.json (기대 거부 사유 표)",
+      "writer": "사람·AI (새 방어 규칙을 더할 때 함께)",
+      "readers": "tests/rejections.test.mjs",
+      "interpret": "[거부 말뭉치] 반드시 거부되어야 하는 패치들 — 2026-10-10 레드팀 시험에서 성공했던 7 건과 막혔던 4 건. 규칙을 느슨하게 하면 이 중 하나가 통과해 버려서 빨개진다(SCHEMA §8M). 데이터베이스에 넣으면 안 되는 내용이다."
+    },
+    {
+      "path": "tests/fixtures/FLOOR.json",
+      "class": "verification",
+      "format": "JSON (바닥값)",
+      "writer": "사람·AI (올리는 것은 자유, 내리려면 그 커밋이 눈에 보여야 한다)",
+      "readers": "tests/rejections.test.mjs ②",
+      "interpret": "[래칫] 거부 말뭉치 수·사법부 검사 자리 수(judicial.js 의 E( 호출)·전체 시험 수의 바닥값. 방어를 지우면서 그 시험까지 지우는 수를 막는다."
+    },
+    {
       "path": "tests/fixtures/augment/README.md",
       "class": "verification",
       "format": "Markdown",

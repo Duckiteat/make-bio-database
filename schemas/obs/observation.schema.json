@@ -34,6 +34,7 @@
             "concentration",
             "fraction",
             "event_time",
+            "volume",
             "kinetic_constant"
           ]
         },

@@ -1,0 +1,39 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "senses": [
+    {
+      "id": "D000144",
+      "obs": [
+        {
+          "property": "concentration",
+          "value": 818,
+          "context": {
+            "scope": "미토콘드리아 기질 절대 정량 (LC/MS)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.07.040",
+                "citation": "Chen et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27565352",
+                "citation": "Chen et al., 2016"
+              }
+            ]
+          },
+          "unit": "unit_x",
+          "from": "O000014",
+          "note": "관찰 기록 O000014 의 파생값"
+        }
+      ]
+    }
+  ]
+}
