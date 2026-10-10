@@ -3147,9 +3147,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:15422",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP' · 화학식 C10H16N5O13P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15422.json · sha256:a670e0983205"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "ZKHQWZAMYRWXGA-KQYNXXCUSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3196,9 +3202,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:16761",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP' · 화학식 C10H15N5O10P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_16761.json · sha256:9258c8520c91"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "XTWYTFMLZFPYCI-KQYNXXCUSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3250,9 +3262,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:16027",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP' · 화학식 C10H14N5O7P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_16027.json · sha256:598f1aaedc27"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "UDMBCSSLTHHNCD-KQYNXXCUSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3299,9 +3317,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:15996",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP' · 화학식 C10H16N5O14P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15996.json · sha256:5cfcfae1d683"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "XKMLYUALXHKNFT-UUOKFMHZSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3348,9 +3372,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:17552",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP' · 화학식 C10H15N5O11P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_17552.json · sha256:90d9c12f49d4"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "QGWNDRXFNXRZMB-UUOKFMHZSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3464,9 +3494,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:17489",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'cAMP' · 화학식 C10H12N5O6P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_17489.json · sha256:9cd012a699fc"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "IVOMOUWHDPKRLL-KQYNXXCUSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -3985,9 +4021,15 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:4167",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glucose' · 화학식 C6H12O6 (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_4167.json · sha256:9ef44756c98f"
         }
       ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
+        "status": "verified"
+      },
       "components": [],
       "desc": [
         {
@@ -4018,7 +4060,8 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:28087",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glycogen' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_28087.json · sha256:4cb21197f16d"
         }
       ],
       "components": [],
@@ -4814,8 +4857,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호 원본 미확인 (네트워크로 대조할 수 없어 비워 둠)",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:18405",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyridoxal 5'-phosphate' · 화학식 C8H10NO6P (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_18405.json · sha256:9b5e380134ba"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "NGVDGCNFYWLIFO-UHFFFAOYSA-N",
+        "status": "verified"
+      },
       "components": [],
       "desc": [
         {
@@ -4890,7 +4944,8 @@
         {
           "db": "ChEBI",
           "id": "CHEBI:16412",
-          "status": "asserted"
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'lipopolysaccharide' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_16412.json · sha256:1761021018cb"
         }
       ],
       "components": [],
@@ -4941,7 +4996,7 @@
           "text": "LPS 가 TLR4 로 수지상 세포를 성숙시키면 MARCH1 이 줄어 표면 펩타이드–MHC II 의 섭취가 느려지고 표면에 쌓인다 — TLR4 → NF-κB → MARCH1 감소의 매개 단계를 조절 하나로 묶음 (Regulatory_Gap).",
           "evidence": {
             "level": "abstracted",
-            "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림 / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). — 서지는 Crossref·PubMed 로 확인(Cella et al., 1997 (DOI 10.1038/42030, PMID 9285591) / De Gassart et al., 2008 (DOI 10.1073/pnas.0708874105, PMID 18305173)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
@@ -4958,9 +5013,15 @@
         {
           "db": "UniProt",
           "id": "P18428",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v204, 서열 v3) · 이름 일치 'LBP' · data/fetched/uniprot/P18428.json · sha256:3742d04a3170"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "a36050703246e8fe1045b09ce6bd2b1be79b54f72cee38a45e53047786f0da36",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5070,7 +5131,21 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 481,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P18428 서열 v3 (data/fetched/uniprot/P18428.json · sha256:3742d04a3170)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000066": {
       "term": "T000064",
@@ -5087,9 +5162,15 @@
         {
           "db": "UniProt",
           "id": "P08571",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v233, 서열 v2) · 이름 일치 'CD14' · data/fetched/uniprot/P08571.json · sha256:780766e93853"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "fda1f9067d25694b653751bb70dac02b6599238f10d69ab7e5848580bcff073e",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5163,7 +5244,21 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 375,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P08571 서열 v2 (data/fetched/uniprot/P08571.json · sha256:780766e93853)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000067": {
       "term": "T000065",
@@ -5179,9 +5274,15 @@
         {
           "db": "UniProt",
           "id": "O00206",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v240, 서열 v2) · 이름 일치 'TLR4' · data/fetched/uniprot/O00206.json · sha256:dd22c3dd0d74"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "f94b50d07a54dfafb481d544c5ae3034e5f8c23d13aeffce054621d6e348af4c",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5238,7 +5339,21 @@
         }
       },
       "rule": [],
-      "obs": [],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 839,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O00206 서열 v2 (data/fetched/uniprot/O00206.json · sha256:dd22c3dd0d74)"
+          },
+          "unit": "aa"
+        }
+      ],
       "note": "Poltorak et al. (1998) 은 LPS 무반응 생쥐(C3H/HeJ 등)의 원인이 Tlr4 변이임을 밝혔다."
     },
     "D000068": {
@@ -5251,9 +5366,15 @@
         {
           "db": "UniProt",
           "id": "Q9Y6Y9",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v203, 서열 v2) · 이름 일치 'LY96' · data/fetched/uniprot/Q9Y6Y9.json · sha256:e2888a030bf3"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "cc6051cc087ee7754ce05ac28b3e20fc0ba4908ece9a5f529acfbd9a9a5b1314",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5305,7 +5426,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 160,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y6Y9 서열 v2 (data/fetched/uniprot/Q9Y6Y9.json · sha256:e2888a030bf3)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000069": {
       "term": "T000067",
@@ -5601,9 +5736,15 @@
         {
           "db": "UniProt",
           "id": "P58753",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v199, 서열 v2) · 이름 일치 'TIRAP' · data/fetched/uniprot/P58753.json · sha256:688361178693"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "535a1443cdc09a629d818b0909d2e14e5f3a9bfb6611484e48699756657929f1",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5645,7 +5786,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 221,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P58753 서열 v2 (data/fetched/uniprot/P58753.json · sha256:688361178693)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000072": {
       "term": "T000070",
@@ -5657,9 +5812,15 @@
         {
           "db": "UniProt",
           "id": "Q99836",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v231, 서열 v1) · 이름 일치 'MYD88' · data/fetched/uniprot/Q99836.json · sha256:8fa044a948ef"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "54431f8a0aa2a42c7810354ab78e06561f7d2d8744a94e1c2a31525fab8aa2f3",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5709,7 +5870,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 296,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q99836 서열 v1 (data/fetched/uniprot/Q99836.json · sha256:8fa044a948ef)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000073": {
       "term": "T000071",
@@ -5721,9 +5896,15 @@
         {
           "db": "UniProt",
           "id": "Q9NWZ3",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v221, 서열 v1) · 이름 일치 'IRAK4' · data/fetched/uniprot/Q9NWZ3.json · sha256:16ff71e038d0"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "d1e98792da352b2d83ccca532e6144d5e51ae1b39a9c272494a4c18a7d3ec3fd",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5770,7 +5951,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 460,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9NWZ3 서열 v1 (data/fetched/uniprot/Q9NWZ3.json · sha256:16ff71e038d0)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000074": {
       "term": "T000072",
@@ -5782,9 +5977,15 @@
         {
           "db": "UniProt",
           "id": "P51617",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v239, 서열 v2) · 이름 일치 'IRAK1' · data/fetched/uniprot/P51617.json · sha256:13445e7ca1e5"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "920d53f2ba8db9ed226d6430fe54f562849c9cd1a5c72a52e854cc4e3bc78348",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -5856,7 +6057,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 712,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P51617 서열 v2 (data/fetched/uniprot/P51617.json · sha256:13445e7ca1e5)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000075": {
       "term": "T000073",
@@ -6124,9 +6339,15 @@
         {
           "db": "UniProt",
           "id": "Q9Y4K3",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v254, 서열 v1) · 이름 일치 'TRAF6' · data/fetched/uniprot/Q9Y4K3.json · sha256:6461e9f53396"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "76a1b3b4f9a241cb2c1c2415ba7851b7f33e2803f817af8c553b845dcb76d2b4",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6176,7 +6397,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 522,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y4K3 서열 v1 (data/fetched/uniprot/Q9Y4K3.json · sha256:6461e9f53396)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000077": {
       "term": "T000075",
@@ -6222,9 +6457,15 @@
         {
           "db": "UniProt",
           "id": "O43318",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v249, 서열 v1) · 이름 일치 'MAP3K7' · data/fetched/uniprot/O43318.json · sha256:c46eb813413b"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "ee8f636b23fc543f2ff590c279327e68a0e5edeff759e094a93aae43b8dc3666",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6271,7 +6512,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 606,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O43318 서열 v1 (data/fetched/uniprot/O43318.json · sha256:c46eb813413b)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000079": {
       "term": "T000077",
@@ -6283,9 +6538,15 @@
         {
           "db": "UniProt",
           "id": "Q15750",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v227, 서열 v1) · 이름 일치 'TAB1' · data/fetched/uniprot/Q15750.json · sha256:87194fee9a2b"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "b61b973b956d5372e1c7600e71cade4230e389b0f2fca4727d7d16d49721748b",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6318,7 +6579,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 504,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q15750 서열 v1 (data/fetched/uniprot/Q15750.json · sha256:87194fee9a2b)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000080": {
       "term": "T000078",
@@ -6330,9 +6605,15 @@
         {
           "db": "UniProt",
           "id": "Q9NYJ8",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v215, 서열 v1) · 이름 일치 'TAB2' · data/fetched/uniprot/Q9NYJ8.json · sha256:69ac0ef1f0e7"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "7f1fbd4468e5a11cdafe3fc64fadd3907e417258259748c8a853a302e670ad01",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6379,7 +6660,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 693,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9NYJ8 서열 v1 (data/fetched/uniprot/Q9NYJ8.json · sha256:69ac0ef1f0e7)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000081": {
       "term": "T000079",
@@ -6583,9 +6878,15 @@
         {
           "db": "UniProt",
           "id": "O15111",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v248, 서열 v2) · 이름 일치 'CHUK' · data/fetched/uniprot/O15111.json · sha256:0ea59d13b913"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "66a19d6e61e3700e188de5520cbf39e9360def63f4ffc08c8610339c4891ed9f",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6642,7 +6943,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 745,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O15111 서열 v2 (data/fetched/uniprot/O15111.json · sha256:0ea59d13b913)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000083": {
       "term": "T000081",
@@ -6654,9 +6969,15 @@
         {
           "db": "UniProt",
           "id": "O14920",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v252, 서열 v1) · 이름 일치 'IKBKB' · data/fetched/uniprot/O14920.json · sha256:008f4baf1419"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "22705f55903aa2007eb23dc3b4909f6525a7ab6303fb968f9a8f156a8b5d15f3",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6718,7 +7039,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 756,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O14920 서열 v1 (data/fetched/uniprot/O14920.json · sha256:008f4baf1419)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000084": {
       "term": "T000082",
@@ -6730,9 +7065,15 @@
         {
           "db": "UniProt",
           "id": "Q9Y6K9",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v252, 서열 v2) · 이름 일치 'IKBKG' · data/fetched/uniprot/Q9Y6K9.json · sha256:3353c88c7438"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "d535811c44f71ec5df6056b78f458d9e722640252a60f38687d6fb41809c5218",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -6772,7 +7113,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 419,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y6K9 서열 v2 (data/fetched/uniprot/Q9Y6K9.json · sha256:3353c88c7438)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000085": {
       "term": "T000083",
@@ -6994,9 +7349,15 @@
         {
           "db": "UniProt",
           "id": "P25963",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v249, 서열 v1) · 이름 일치 'NFKBIA' · data/fetched/uniprot/P25963.json · sha256:e1cf207b6884"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "760aff0aa84d0845d164d52e523c931034ddf53fe6d70413bbb18d7f3870d1f0",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7119,9 +7480,15 @@
         {
           "db": "UniProt",
           "id": "Q04206",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v268, 서열 v2) · 이름 일치 'RELA' · data/fetched/uniprot/Q04206.json · sha256:584bd6755357"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "314be271367e8b3b3a6c8375cf4abc34a3f04f87ec929c4a224584087f1ad514",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7155,7 +7522,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 551,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q04206 서열 v2 (data/fetched/uniprot/Q04206.json · sha256:584bd6755357)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000088": {
       "term": "T000086",
@@ -7167,9 +7548,15 @@
         {
           "db": "UniProt",
           "id": "P19838",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v279, 서열 v2) · 이름 일치 'NFKB1' · data/fetched/uniprot/P19838.json · sha256:b395d7b7895a"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "38417ef83a638e372531019a12f8209f4135a7bd39ca73770a7efa633eea9362",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7195,7 +7582,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 968,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P19838 서열 v2 (data/fetched/uniprot/P19838.json · sha256:b395d7b7895a)"
+          },
+          "unit": "aa"
+        }
+      ],
       "note": "UniProt P19838 은 p105 전구체 항목. p50 은 그 N 말단 부분이다."
     },
     "D000089": {
@@ -7407,9 +7808,15 @@
         {
           "db": "UniProt",
           "id": "Q9Y297",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v239, 서열 v1) · 이름 일치 'BTRC' · data/fetched/uniprot/Q9Y297.json · sha256:510357bd1f04"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "f045bce6f472f39f4ec4d95a94da2de457bcce02327c1d1dc4d1277a1110c45d",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7455,7 +7862,21 @@
         }
       },
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 605,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y297 서열 v1 (data/fetched/uniprot/Q9Y297.json · sha256:510357bd1f04)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000092": {
       "term": "T000090",
@@ -7467,9 +7888,15 @@
         {
           "db": "UniProt",
           "id": "P63208",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v209, 서열 v2) · 이름 일치 'SKP1' · data/fetched/uniprot/P63208.json · sha256:a9eb295972de"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "c635bfe220025687db0ac9efc3e94874e8c6b9a38133d31887631ad979ae0993",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7495,7 +7922,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 163,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P63208 서열 v2 (data/fetched/uniprot/P63208.json · sha256:a9eb295972de)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000093": {
       "term": "T000091",
@@ -7507,9 +7948,15 @@
         {
           "db": "UniProt",
           "id": "Q13616",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v229, 서열 v2) · 이름 일치 'CUL1' · data/fetched/uniprot/Q13616.json · sha256:26cd107f0dab"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "9f7f5be9884b59b3f3353a61b6950f7672ae672e4ffb01e1bea7cb1f58ff3ff9",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7535,7 +7982,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 776,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q13616 서열 v2 (data/fetched/uniprot/Q13616.json · sha256:26cd107f0dab)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000094": {
       "term": "T000092",
@@ -7547,9 +8008,15 @@
         {
           "db": "UniProt",
           "id": "P62877",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v206, 서열 v1) · 이름 일치 'RBX1' · data/fetched/uniprot/P62877.json · sha256:0f26e1d30099"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "9987419f96fb514f4fa4958a9f8fc21d6f21cb6c37a372ab693d8f137ad349fd",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -7575,7 +8042,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 108,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P62877 서열 v1 (data/fetched/uniprot/P62877.json · sha256:0f26e1d30099)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000095": {
       "term": "T000093",
@@ -7918,7 +8399,7 @@
           "text": "프로테아좀이 세포질 단백질을 펩타이드로 자른다 — 면역프로테아좀 소단위, ATP 소비, 원천 단백질 하나당 펩타이드 수는 다루지 않음 (Structural_Gap).",
           "evidence": {
             "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
@@ -9701,8 +10182,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15351",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'acetyl-CoA' · 화학식 C23H38N7O17P3S (전하 0) · 부분 구조 대조 ok (C23 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15351.json · sha256:ea5d881d8f09"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "ZSLZBFCDCINBPY-ZSJPKINUSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -9752,8 +10244,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15346",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'coenzyme A' · 화학식 C21H36N7O16P3S (전하 0) · 부분 구조 대조 ok (C21 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15346.json · sha256:6636a1cbaf91"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "RGJOEKWQDUBAIZ-IBOSZNHHSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -9912,8 +10415,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15380",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinyl-CoA' · 화학식 C25H40N7O19P3S (전하 0) · 부분 구조 대조 ok (C25 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15380.json · sha256:988fb724e7ef"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "VNOYUJKHFWYWIR-ITIYDSSPSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -9948,8 +10462,14 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:26806",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinate' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_26806.json · sha256:051c1d52b59d"
+        }
+      ],
       "components": [],
       "moieties": [
         {
@@ -10076,8 +10596,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16908",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'NADH' · 화학식 C21H29N7O14P2 (전하 0) · 부분 구조 대조 ok (C21 N7 P2 S0 일치) · data/fetched/chebi/CHEBI_16908.json · sha256:7ef3a84d9f6b"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "BOPGDPNILDQYTO-NNYOXOHSSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10108,8 +10639,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16238",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FAD' · 화학식 C27H33N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_16238.json · sha256:e39ba5754cbd"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "VWWQXMAJTJZDQX-UYBVJOGSSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10140,8 +10682,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17877",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FADH2' · 화학식 C27H35N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_17877.json · sha256:3b7c983bb35e"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "YPZRHBJKEMOYQH-UYBVJOGSSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -10970,8 +11523,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 직접 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16526",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'carbon dioxide' · 화학식 CO2 (전하 0) · 부분 구조 대조 ok (C1 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16526.json · sha256:224182e044aa"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "CURLTUGMZLYLDI-UHFFFAOYSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -11024,9 +11588,15 @@
         {
           "db": "UniProt",
           "id": "P29459",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v208, 서열 v2) · 이름 일치 'IL12A' · data/fetched/uniprot/P29459.json · sha256:8a9f407b720c"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "2ce004e921ab5aaa95c5313d2f45d78ad26e8c62127d60cd67c711d876aae7bc",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -11044,7 +11614,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 219,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P29459 서열 v2 (data/fetched/uniprot/P29459.json · sha256:8a9f407b720c)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000162": {
       "term": "T000160",
@@ -11056,9 +11640,15 @@
         {
           "db": "UniProt",
           "id": "P29460",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v249, 서열 v1) · 이름 일치 'IL12B' · data/fetched/uniprot/P29460.json · sha256:9d651a25673c"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "997621c8a338440d7db35c06ca18632dc6cfd6d26c4549a08d0a07eca120b766",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -11076,7 +11666,21 @@
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 328,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P29460 서열 v1 (data/fetched/uniprot/P29460.json · sha256:9d651a25673c)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000163": {
       "term": "T000161",
@@ -11178,9 +11782,15 @@
         {
           "db": "UniProt",
           "id": "P40933",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v207, 서열 v1) · 이름 일치 'IL15' · data/fetched/uniprot/P40933.json · sha256:575cb99a7e1d"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "eb801922daf84030260c754b2516f6ef584ec257e956d9285e48f4a45ee299a0",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -11226,7 +11836,21 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 162,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P40933 서열 v1 (data/fetched/uniprot/P40933.json · sha256:575cb99a7e1d)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000165": {
       "term": "T000163",
@@ -11238,9 +11862,15 @@
         {
           "db": "UniProt",
           "id": "Q9UL17",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v191, 서열 v1) · 이름 일치 'TBX21' · data/fetched/uniprot/Q9UL17.json · sha256:4e86377bcec5"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "8c452c4b47a38905befb2af901284213f2dc6add2a7a5a6cc9dbbdb0dd706a4b",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -11345,7 +11975,21 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 535,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9UL17 서열 v1 (data/fetched/uniprot/Q9UL17.json · sha256:4e86377bcec5)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000166": {
       "term": "T000164",
@@ -11357,9 +12001,15 @@
         {
           "db": "UniProt",
           "id": "O95936",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v198, 서열 v3) · 이름 일치 'EOMES' · data/fetched/uniprot/O95936.json · sha256:ef057934f3f4"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "84bbceacbca7006c58d43e1409bb2fc036ffd69c321da676226e0ec6a7356a36",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -11457,15 +12107,40 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 686,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O95936 서열 v3 (data/fetched/uniprot/O95936.json · sha256:ef057934f3f4)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000167": {
       "term": "T000165",
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15361",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyruvate' · 화학식 C3H3O3 (전하 -1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_15361.json · sha256:ac954b0b1950"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "LCTONWCANYUPML-UHFFFAOYSA-M",
+        "status": "verified"
+      },
       "components": [],
       "desc": [
         {
@@ -11548,8 +12223,19 @@
       "n": 1,
       "kind": "small_molecule",
       "tier": "T1",
-      "xrefs": [],
-      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 조회할 수 없음)",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15525",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'palmitoyl-CoA' · 화학식 C37H66N7O17P3S (전하 0) · 부분 구조 대조 ok (C37 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15525.json · sha256:7932c5e5c5fa"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "MNBKLUUYKPBKDU-BBECNAHFSA-N",
+        "status": "verified"
+      },
       "components": [],
       "moieties": [
         {
@@ -12167,8 +12853,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12193,8 +12890,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -12222,8 +12930,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12241,8 +12960,19 @@
           ],
           "text": "대부분의 세포질 펩타이드는 TAP 에 닿기 전에 펩티데이스에 잘려 아미노산이 된다 — 아미노산은 모델 밖.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         },
         {
@@ -12257,8 +12987,19 @@
           ],
           "text": "MHC II 에 실리지 못한 엔도솜 펩타이드는 더 잘려 사라진다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -12285,8 +13026,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12336,8 +13088,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -12358,7 +13121,7 @@
           "text": "세포 밖 단백질이 섭취 소포에 담겨 엔도솜 내강으로 들어간다 — 소포 형성·융합을 수송 하나로 묶음.",
           "evidence": {
             "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
@@ -12383,9 +13146,15 @@
         {
           "db": "UniProt",
           "id": "P04439",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v226, 서열 v2) · 이름 일치 'HLA-A' · data/fetched/uniprot/P04439.json · sha256:bb88d5e380a6"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "7b02f3d954c7c3f2e4745b0e62dbcfaf734b97c45b3e54edc23b1a72d30ca8ad",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12397,8 +13166,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12437,12 +13217,37 @@
           ],
           "text": "β2m 과 짝짓지 못한 중쇄는 ERAD 로 세포질에 빠져나가 분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blum, Wearsch & Cresswell, 2013, Annu Rev Immunol 31:443 (항원 처리 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev-immunol-032712-095910",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              },
+              {
+                "db": "PMID",
+                "id": "23298205",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              }
+            ]
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 365,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P04439 서열 v2 (data/fetched/uniprot/P04439.json · sha256:bb88d5e380a6)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000183": {
       "term": "T000181",
@@ -12457,9 +13262,15 @@
         {
           "db": "UniProt",
           "id": "P61769",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v221, 서열 v1) · 이름 일치 'B2M' · data/fetched/uniprot/P61769.json · sha256:2c63a677327c"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "c319ce623de7d59e9e73c6daf7ec603d5e5ed48358f54b97d1eccdc3c9bf693b",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12471,8 +13282,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12500,7 +13322,21 @@
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 119,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P61769 서열 v1 (data/fetched/uniprot/P61769.json · sha256:2c63a677327c)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000184": {
       "term": "T000182",
@@ -12516,9 +13352,15 @@
         {
           "db": "UniProt",
           "id": "Q03518",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v243, 서열 v3) · 이름 일치 'TAP1' · data/fetched/uniprot/Q03518.json · sha256:cd302810de6f"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "32836215d14e4d6ee77708e3a21894a37c5b42532c826241d645339c8051bfc2",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12530,14 +13372,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 748,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q03518 서열 v3 (data/fetched/uniprot/Q03518.json · sha256:cd302810de6f)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000185": {
       "term": "T000183",
@@ -12553,9 +13420,15 @@
         {
           "db": "UniProt",
           "id": "Q03519",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v241, 서열 v1) · 이름 일치 'TAP2' · data/fetched/uniprot/Q03519.json · sha256:80a4ea66b1e8"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "3b6a0c4f9cc223ce302315995c05458c653a0586b432330e6ab0dc1cac4c738e",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12567,14 +13440,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 686,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q03519 서열 v1 (data/fetched/uniprot/Q03519.json · sha256:80a4ea66b1e8)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000186": {
       "term": "T000184",
@@ -12590,9 +13488,15 @@
         {
           "db": "UniProt",
           "id": "O15533",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v223, 서열 v2) · 이름 일치 'TAPBP' · data/fetched/uniprot/O15533.json · sha256:bace7ea8eec1"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "15726128aef8fecd5bc747250c168014ca1c8c52da7e1213196e3336840ce656",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12604,14 +13508,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 448,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O15533 서열 v2 (data/fetched/uniprot/O15533.json · sha256:bace7ea8eec1)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000187": {
       "term": "T000185",
@@ -12626,9 +13555,15 @@
         {
           "db": "UniProt",
           "id": "P27797",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v268, 서열 v1) · 이름 일치 'CALR' · data/fetched/uniprot/P27797.json · sha256:4f89fce1fc71"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "9e4dcfd5cc4649a55d52b7f6f58a5d66513f3553779f6df1a35c8924e2d62ff3",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12640,14 +13575,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 417,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P27797 서열 v1 (data/fetched/uniprot/P27797.json · sha256:4f89fce1fc71)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000188": {
       "term": "T000186",
@@ -12662,9 +13622,15 @@
         {
           "db": "UniProt",
           "id": "P30101",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v261, 서열 v4) · 이름 일치 'PDIA3' · data/fetched/uniprot/P30101.json · sha256:df3f5db0d1fc"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "2246e027ea031edb3b93e1ea9ac0b693e9fcc25fe5a5d1b2ee7381119fad1162",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -12676,14 +13642,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 505,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P30101 서열 v4 (data/fetched/uniprot/P30101.json · sha256:df3f5db0d1fc)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000189": {
       "term": "T000187",
@@ -12732,8 +13723,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
           }
         }
       ],
@@ -12765,7 +13767,7 @@
           "text": "TAP1–TAP2 가 세포질 펩타이드를 소포체 내강으로 옮긴다. ATP 소비 화학량은 확인하지 못해 넣지 않음 (Structural_Gap).",
           "evidence": {
             "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
         {
@@ -12782,7 +13784,7 @@
           "text": "펩타이드 적재 복합체에 붙잡힌 빈 MHC I 이 내강의 펩타이드를 받아 펩타이드–MHC I 이 되어 복합체를 떠난다. ERAP1 다듬기·타파신의 편집 경쟁은 이 한 단계에 묶음.",
           "evidence": {
             "level": "abstracted",
-            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
@@ -12821,8 +13823,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12841,7 +13854,7 @@
           "text": "접힌 중쇄의 α3 도메인에 β2m 이 붙는다 (칼넥신 단계는 묶음).",
           "evidence": {
             "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
         {
@@ -12856,8 +13869,19 @@
           ],
           "text": "펩타이드를 받지 못한 MHC I 은 소포체에 붙잡혀 있다가 분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Blum, Wearsch & Cresswell, 2013, Annu Rev Immunol 31:443 (항원 처리 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev-immunol-032712-095910",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              },
+              {
+                "db": "PMID",
+                "id": "23298205",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              }
+            ]
           }
         }
       ],
@@ -12900,8 +13924,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -12931,8 +13966,19 @@
           "regulators": [],
           "text": "안정해진 펩타이드–MHC I 이 소포체 출구에서 소포로 골지체로 간다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         },
         {
@@ -12949,8 +13995,19 @@
           "regulators": [],
           "text": "분비 소포가 세포막에 융합해 펩타이드–MHC I 이 표면에 놓인다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         },
         {
@@ -12967,8 +14024,19 @@
           "regulators": [],
           "text": "표면의 MHC I 이 섭취 소포로 들어간다 (재순환 경로는 묶지 않음).",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         },
         {
@@ -12983,8 +14051,19 @@
           ],
           "text": "섭취된 MHC I 은 리소좀에서 분해된다 — 펩타이드와 함께 모델 밖으로.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
           }
         }
       ],
@@ -13009,9 +14088,15 @@
         {
           "db": "UniProt",
           "id": "P01903",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v238, 서열 v2) · 이름 일치 'HLA-DRA' · data/fetched/uniprot/P01903.json · sha256:8e1100c07869"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "ba441e701023b22b998f19610fa6074b5c397a848a1d6f6bfdfd289f5ce86163",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -13023,8 +14108,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13063,12 +14159,37 @@
           ],
           "text": "조립되지 못한 사슬은 소포체에서 분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 254,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P01903 서열 v2 (data/fetched/uniprot/P01903.json · sha256:8e1100c07869)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000193": {
       "term": "T000191",
@@ -13089,9 +14210,15 @@
         {
           "db": "UniProt",
           "id": "P01911",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v195, 서열 v2) · 이름 일치 'HLA-DRB1' · data/fetched/uniprot/P01911.json · sha256:91f0b0bcaa96"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "6c038ed8f95e0248a1ffd4dbab53c0ff1d973269cc93901237862549053780be",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -13103,8 +14230,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13143,12 +14281,37 @@
           ],
           "text": "조립되지 못한 사슬은 소포체에서 분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
-      "obs": [],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 266,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P01911 서열 v2 (data/fetched/uniprot/P01911.json · sha256:91f0b0bcaa96)"
+          },
+          "unit": "aa"
+        }
+      ],
       "note": "UniProt 항목 하나는 대립 유전자 하나(기준 서열)를 대표한다 — 대립 유전자별 펩타이드 선호는 다루지 않음."
     },
     "D000194": {
@@ -13169,9 +14332,15 @@
         {
           "db": "UniProt",
           "id": "P04233",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v250, 서열 v3) · 이름 일치 'CD74' · data/fetched/uniprot/P04233.json · sha256:01b107adc925"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "f6909ab67f84bc41d8ef8976b6e5634ebcb9031613d297ac41e582c377b48728",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -13183,8 +14352,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13233,8 +14413,19 @@
           ],
           "text": "αβ 와 조립되지 않은 불변 사슬의 소포체 분해.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         },
         {
@@ -13251,12 +14442,37 @@
           ],
           "text": "HLA-DM 이 떼어 낸 CLIP 과 남은 조각은 엔도솜에서 분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
-      "obs": [],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 296,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P04233 서열 v3 (data/fetched/uniprot/P04233.json · sha256:01b107adc925)"
+          },
+          "unit": "aa"
+        }
+      ],
       "note": "불변 사슬은 삼량체로 αβ 셋과 아홉 사슬 복합체를 이루지만 여기서는 αβ 하나당 하나로 둠 (Structural_Gap)."
     },
     "D000195": {
@@ -13272,9 +14488,15 @@
         {
           "db": "UniProt",
           "id": "P25774",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v228, 서열 v3) · 이름 일치 'CTSS' · data/fetched/uniprot/P25774.json · sha256:7db29ebd785a"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "acd1c3790427993ba8eea8553653c4d23fb6fe8590d065f65035e0aab0301c0a",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -13286,8 +14508,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13321,7 +14554,7 @@
           "text": "엔도솜 내강에서 불변 사슬의 내강 쪽 부분이 단계적으로 잘려 CLIP 만 홈에 남는다 — 여러 단백질 분해효소의 단계를 하나로 묶음.",
           "evidence": {
             "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
         {
@@ -13343,11 +14576,25 @@
           "text": "엔도솜 내강의 단백질 항원을 펩타이드로 자른다 — 원천 단백질 하나당 펩타이드 수는 모름(1 로 둠).",
           "evidence": {
             "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 331,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P25774 서열 v3 (data/fetched/uniprot/P25774.json · sha256:7db29ebd785a)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000196": {
       "term": "T000194",
@@ -13363,9 +14610,15 @@
         {
           "db": "UniProt",
           "id": "P28067",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v208, 서열 v2) · 이름 일치 'HLA-DMA' · data/fetched/uniprot/P28067.json · sha256:db5813f7726a"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "4c7e4c736be54da59d92abd056a264e2d097ab97496ebcf1c986bf19653554ec",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -13377,14 +14630,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 261,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P28067 서열 v2 (data/fetched/uniprot/P28067.json · sha256:db5813f7726a)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000197": {
       "term": "T000195",
@@ -13400,9 +14678,15 @@
         {
           "db": "UniProt",
           "id": "P28068",
-          "status": "asserted"
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v219, 서열 v2) · 이름 일치 'HLA-DMB' · data/fetched/uniprot/P28068.json · sha256:659f3470fba3"
         }
       ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "1095b780447806c9f8b4493da189ba8ecdada7f9db110d768ee7b8a8787a39dd",
+        "status": "computed"
+      },
       "components": [],
       "desc": [
         {
@@ -13414,14 +14698,39 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
       "site": {},
       "rule": [],
-      "obs": []
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 263,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P28068 서열 v2 (data/fetched/uniprot/P28068.json · sha256:659f3470fba3)"
+          },
+          "unit": "aa"
+        }
+      ]
     },
     "D000198": {
       "term": "T000196",
@@ -13455,8 +14764,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13491,8 +14811,19 @@
           "regulators": [],
           "text": "HLA-DM 이 MHC II 홈의 CLIP 을 떼어 낸다 — 홈이 빈 MHC II 와 CLIP 조각이 남는다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         },
         {
@@ -13509,7 +14840,7 @@
           "text": "HLA-DM 이 붙잡은 빈 MHC II 에 엔도솜 펩타이드가 실린다 — 편집 경쟁(약한 펩타이드 교체)은 이 한 단계에 묶음.",
           "evidence": {
             "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
@@ -13551,8 +14882,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13570,8 +14912,19 @@
           "regulators": [],
           "text": "소포체 막에서 α·β 사슬이 짝을 짓는다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         },
         {
@@ -13586,8 +14939,19 @@
           ],
           "text": "펩타이드를 받지 못한 빈 αβ 는 엔도솜에서 응집·분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13629,8 +14993,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13659,8 +15034,19 @@
           "regulators": [],
           "text": "불변 사슬이 αβ 의 홈에 CLIP 부분을 끼워 넣는다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         },
         {
@@ -13677,8 +15063,19 @@
           "regulators": [],
           "text": "조립된 복합체가 소포체를 떠난다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         },
         {
@@ -13696,7 +15093,7 @@
           "text": "불변 사슬 세포질 꼬리의 류신 신호가 복합체를 엔도솜으로 보낸다 (세포막을 거쳐 섭취되는 길은 묶음).",
           "evidence": {
             "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
       ],
@@ -13737,8 +15134,19 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         }
       ],
@@ -13768,8 +15176,19 @@
           "regulators": [],
           "text": "엔도솜 소관·소포가 세포막에 융합해 펩타이드–MHC II 를 표면에 놓는다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
           }
         },
         {
@@ -13787,7 +15206,7 @@
           "text": "미성숙 수지상 세포에서는 MARCH1 이 β 사슬 꼬리를 유비퀴틴화해 표면 MHC II 를 빨리 섭취한다 — 유비퀴틴화·섭취를 수송 하나로 묶음.",
           "evidence": {
             "level": "abstracted",
-            "basis": "De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "basis": "De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). — 서지는 Crossref·PubMed 로 확인(De Gassart et al., 2008 (DOI 10.1073/pnas.0708874105, PMID 18305173)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
         {
@@ -13802,8 +15221,19 @@
           ],
           "text": "섭취된 펩타이드–MHC II 는 리소좀에서 분해된다.",
           "evidence": {
-            "level": "abstracted",
-            "basis": "De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
           }
         }
       ],
@@ -13813,7 +15243,14 @@
       "term": "T000200",
       "n": 1,
       "kind": "cell_state",
-      "xrefs": [],
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000840",
+          "status": "asserted",
+          "note": "EBI OLS(2026-10-10): immature conventional dendritic cell — \"high levels of antigen uptake via endocytosis, macropinocytosis, and phagocytosis\" (이 상태의 정의와 맞음: 섭취·처리는 활발하고 표면 제시는 낮음)"
+        }
+      ],
       "components": [],
       "desc": [
         {
@@ -13826,8 +15263,29 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림 / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
           }
         }
       ],
@@ -13886,8 +15344,29 @@
           },
           "text": "LPS 가 TLR4 를 거쳐 성숙을 일으켜 표면 펩타이드–MHC II 가 쌓인다",
           "evidence": {
-            "level": "abstracted",
-            "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림 / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
           }
         }
       ]
@@ -13896,7 +15375,14 @@
       "term": "T000201",
       "n": 1,
       "kind": "cell_state",
-      "xrefs": [],
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000841",
+          "status": "asserted",
+          "note": "EBI OLS(2026-10-10): mature conventional dendritic cell — \"a high capacity for antigen presentation\" (이 상태의 정의와 맞음: 표면 펩타이드–MHC II 가 높음)"
+        }
+      ],
       "components": [],
       "desc": [
         {
@@ -13909,8 +15395,29 @@
           "links": [],
           "examples": [],
           "evidence": {
-            "level": "abstracted",
-            "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림 / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). 이 세션에서 DOI/PMID 를 확인하지 못함 (네트워크 차단) — 확인 뒤 curated 로 올림"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
           }
         }
       ],
@@ -15927,7 +17434,8 @@
           }
         ]
       },
-      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)"
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:233315 Racepinephrine Hydrochloride; CHEBI:28918 (R)-adrenaline; CHEBI:228805 Epinephrine bitartrate; CHEBI:89878 Epinephrine sulfate; CHEBI:165186 Epinephrine glucuronide — 이름이 정확히 하나로 맞을 때만 고른다"
     },
     "L000029": {
       "target": "D000037",
@@ -15942,7 +17450,8 @@
           }
         ]
       },
-      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)"
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 없음 — 이름이 정확히 하나로 맞을 때만 고른다"
     },
     "L000030": {
       "target": "D000048",
@@ -15957,7 +17466,8 @@
           }
         ]
       },
-      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)"
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:83927 sodium 3-aminopropyl 2-acetamido-2-deoxy-alpha-D-glucose-1-phosphate — 이름이 정확히 하나로 맞을 때만 고른다"
     },
     "L000031": {
       "target": "D000062",
@@ -15987,7 +17497,8 @@
           }
         ]
       },
-      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)"
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:85618 EC 2.5.1.31 {ditrans,polycis-undecaprenyl-diphosphate synthase [(2E,6E)-farnesyl-diphosphate specific]} inhibitor; CHEBI:17407 2-trans,6-trans-farnesyl diphosphate; CHEBI:74213 EC 1.17.4.1 (ribonucleoside-diphosphate reductase) inhibitor; CHEBI:84804 EC 2.7.4.6 (nucleoside-diphosphate kinase) inhibitor; CHEBI:57907 all-trans-pentaprenyl diphosphate(3-) — 이름이 정확히 하나로 맞을 때만 고른다"
     },
     "L000033": {
       "target": "D000101",
@@ -16276,7 +17787,8 @@
           }
         ]
       },
-      "found_in": "시트르산 회로를 넣으면서 (Identity_Gap)"
+      "found_in": "시트르산 회로를 넣으면서 (Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:50390 EC 1.6.5.2 [NAD(P)H dehydrogenase (quinone)] inhibitor; CHEBI:140378 EC 1.1.1.37 (malate dehydrogenase) inhibitor; CHEBI:35487 EC 1.2.1.3 [aldehyde dehydrogenase (NAD(+))] inhibitor; CHEBI:77108 EC 1.1.1.141 [15-hydroxyprostaglandin dehydrogenase (NAD(+))] inhibitor; CHEBI:50423 EC 1.6.3.1. [NAD(P)H oxidase (H2O2-forming)] inhibitor — 이름이 정확히 하나로 맞을 때만 고른다"
     },
     "L000042": {
       "target": "D000123/rule/gdp_regeneration_matrix",
@@ -16904,7 +18416,8 @@
           }
         ]
       },
-      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:232798 sodium L-lactate; CHEBI:83222 methyl (S)-lactate; CHEBI:16651 (S)-lactate; CHEBI:755282 onalespib lactate; CHEBI:760464 magnesium lactate dihydrate, l- — 이름이 정확히 하나로 맞을 때만 고른다"
     },
     "L000066": {
       "target": "D000169",

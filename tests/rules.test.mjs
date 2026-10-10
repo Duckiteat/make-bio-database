@@ -39,8 +39,10 @@ const CAMP = id('cAMP'), ATP = id('ATP'), EPI = id('에피네프린');
 const stepOf = (db, ruleRef) => Object.values(db.steps).find((s) => s.rule === ruleRef);
 
 test('현재 저장소는 오류·경고 없음', () => {
-  const r = J.validate(BASE);
+  // verified 외부 ID 는 증명 등록부와 대조해야 한다 (등록부를 주지 않으면 사법부가 경고로 남긴다 — governance ④)
+  const r = ORCH.validateWithRegistry(BASE, ROOT);
   assert.deepEqual([r.errors, r.warnings], [[], []]);
+  assert.ok(r.attestations.keys.length > 0 && !r.attestations.failed.length, '증명 도장이 모두 유효');
 });
 test('예시 패치는 관문을 통과', () => {
   const patch = JSON.parse(readFileSync(new URL('../examples/pgm-isomerization.json', import.meta.url), 'utf8'));
@@ -1066,12 +1068,26 @@ test('v9 Fate-Test: 계통 충실도·경쟁·결정 비가역성(관문 충격 
 // ===== 자동 보강 고리 (UniProt·ChEBI) — 합성 시험 자료 tests/fixtures/augment =====
 const AUG = req('../judicial/identity.js'); // 사법부: 과제·해석·신원 확인 (패치 초안은 legislative/augment_draft.js, 묶음은 ORCH.augmentBuild)
 const FIX = new URL('./fixtures/augment', import.meta.url).pathname;
+// 자동 보강 시험의 출발 상태: 확인 전으로 되돌린 저장소 사본 (실제 저장소는 원본 대조가 끝나면 verified 로 바뀌므로, 시험이 그 상태에 묶이지 않게)
+//   · 모든 외부 ID status → asserted (출처 메모·도구 지문·서열 길이 관찰은 지움)
+//   · 아래 목록의 저분자는 ChEBI 번호를 지우고 unmapped 로 (이름 검색 경로를 시험하는 항목)
+const UNMAPPED_AGAIN = ['피루브산', '젖산', '에피네프린'];
+const PRE = (() => {
+  const db = JSON.parse(JSON.stringify(BASE)), back = new Set(UNMAPPED_AGAIN.map((n) => id(n)));
+  for (const [sid, d] of Object.entries(db.senses)) {
+    for (const x of d.xrefs || []) if (x.status === 'verified') { x.status = 'asserted'; delete x.note; }
+    if (d.fingerprint && ['computed', 'verified'].includes(d.fingerprint.status)) delete d.fingerprint; // 지문도 사법부 도장이 있어야 verified
+    if (d.obs) d.obs = d.obs.filter((o) => !(o.property === 'sequence_length' && o.evidence && o.evidence.level === 'computed'));
+    if (back.has(sid)) { d.xrefs = (d.xrefs || []).filter((x) => x.db !== 'ChEBI'); d.unmapped = '확인 전 (자동 보강 시험의 출발 상태)'; }
+  }
+  return DefDB.normalize(db);
+})();
 test('자동 보강 plan: unmapped → 이름 검색, asserted UniProt·ChEBI → 직접 조회, 서열 길이 한계 연결, 막히면 수동 수집 과제', () => {
-  const t = AUG.plan(BASE, { dir: '/nonexistent' });
+  const t = AUG.plan(PRE, { dir: '/nonexistent' });
   const k = (kind, key) => t.find((x) => x.kind === kind && x.key === key);
   assert.ok(k('uniprot_entry', 'Q9UL17') && k('uniprot_entry', 'Q9UL17').gaps.includes('L000058'));
   assert.ok(k('chebi_entity', 'CHEBI:15422') && k('chebi_search', id('피루브산')) && !t.some((x) => x.kind === 'chebi_search' && x.sense === id('ATP')));
-  assert.equal(J.augmentCandidates(BASE), new Set(t.map((x) => x.sense)).size);
+  assert.equal(J.augmentCandidates(PRE), new Set(t.map((x) => x.sense)).size);
   const md = AUG.retrievalTasksMarkdown(t, [], '2026-10-08');
   assert.ok(md.includes('rest.uniprot.org/uniprotkb/Q9UL17.json') && md.includes('/nonexistent/uniprot/Q9UL17.json') && md.split('\n').filter((l) => /^\| \d+ \|/.test(l)).length === t.length);
 });
@@ -1084,22 +1100,22 @@ test('자동 보강 해석: UniProt JSON·FASTA·평문, ChEBI 단순·OLS·중�
   assert.deepEqual(AUG.parseChEBISearch(rd('chebi-search/D000169.json')).candidates.map((c) => c.id), ['CHEBI:15525', 'CHEBI:57379']);
   assert.deepEqual(AUG.parseFormula('C21H36N7O16P3S'), { C: 21, H: 36, N: 7, O: 16, P: 3, S: 1 });
   assert.equal(AUG.parseFormula('(C6H10O5)n'), null);
-  assert.equal(AUG.formulaCheck(BASE, id('아세틸-CoA'), 'C23H38N7O17P3S').status, 'ok');
-  assert.equal(AUG.formulaCheck(BASE, id('ATP'), 'C10H16N5O13P2').status, 'mismatch');
+  assert.equal(AUG.formulaCheck(PRE, id('아세틸-CoA'), 'C23H38N7O17P3S').status, 'ok');
+  assert.equal(AUG.formulaCheck(PRE, id('ATP'), 'C10H16N5O13P2').status, 'mismatch');
 });
 test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, 종·번호·이름·화학식·중복 위반은 거부, 모호하면 unmapped 유지 + 후보 메모, asserted 는 덮어쓰지 않음', () => {
-  const b = ORCH.augmentBuild(BASE, { dir: FIX, date: '2026-10-08' }), out = (s, kind) => b.rows.find((r) => r.sense === id(s) && (!kind || r.kind === kind)).outcome;
+  const b = ORCH.augmentBuild(PRE, { dir: FIX, date: '2026-10-08' }), out = (s, kind) => b.rows.find((r) => r.sense === id(s) && (!kind || r.kind === kind)).outcome;
   assert.equal(out('T-bet'), 'verified'); assert.equal(out('IL-15'), 'verified');
   assert.equal(out('Eomes'), 'rejected', '종 불일치 (생쥐)');
   assert.equal(out('IL-12 p35'), 'rejected', '번호 불일치 — sync 없이는 바꾸지 않음');
   assert.equal(out('ADP', 'chebi_entity'), 'rejected', '화학식 P3 ≠ 부분 구조 P2');
   assert.equal(out('에피네프린', 'chebi_entity'), 'rejected', '이름 불일치 + 이미 ATP 에 있는 번호');
   assert.equal(out('젖산'), 'ambiguous');
-  const res = LEG.merge(BASE, b.patch);
+  const res = LEG.merge(PRE, b.patch);
   // 'verified' 는 사법부 도장으로만: 도장 없이 관문에 넣으면 거부, 도장(재확인 통과)과 함께면 통과
-  const g0 = J.gate(BASE, res, { attestations: [] });
+  const g0 = J.gate(PRE, res, { attestations: [] });
   assert.ok(!g0.ok && g0.errors.some((e) => /사법부 증명/.test(e.msg)), '도장 없는 verified 는 거부');
-  const keys = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: ROOT })), g = J.gate(BASE, res, { attestations: keys.filter((v) => v.ok).map((v) => v.key) });
+  const keys = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: ROOT })), g = J.gate(PRE, res, { attestations: keys.filter((v) => v.ok).map((v) => v.key) });
   assert.ok(keys.every((v) => v.ok), keys.filter((v) => !v.ok).map((v) => v.key + ' ' + v.reasons).join('\n'));
   assert.ok(g.ok, msgs(g));
   const T = res.db.senses[id('T-bet')], up = T.xrefs.find((x) => x.db === 'UniProt');
@@ -1111,8 +1127,8 @@ test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, �
   assert.equal(J.limitationStatus(res.db, res.db.limitations.L000064).status, 'resolved');
   assert.ok(res.db.senses[id('젖산')].unmapped && /모호/.test(res.db.limitations.L000065.note));
   assert.ok(res.db.senses[id('팔미토일-CoA')].xrefs.some((x) => x.id === 'CHEBI:15525'), 'OLS 형식 + 부분 구조 원자 수 일치 (C37 N7 P3 S1)');
-  assert.ok(J.augmentCandidates(res.db) < J.augmentCandidates(BASE));
-  const s = ORCH.augmentBuild(BASE, { dir: FIX, date: '2026-10-08', sync: true });
+  assert.ok(J.augmentCandidates(res.db) < J.augmentCandidates(PRE));
+  const s = ORCH.augmentBuild(PRE, { dir: FIX, date: '2026-10-08', sync: true });
   assert.notEqual(s.rows.find((r) => r.sense === id('IL-12 p35')).outcome, 'verified', 'sync 여도 이름·종 확인은 그대로 (번호만 바뀐 응답은 이름 확인이 없으면 거부)');
 });
 

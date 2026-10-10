@@ -18,6 +18,16 @@ const C = req('../core.js'), J = req('../judicial/judicial.js'), LEG = req('../l
 const ATT = req('../judicial/attestation.js'), FA = req('../judicial/fate_audit.js'), F = req('../engine/fate_engine.js'), COUPLING = req('../engine/coupling.js');
 const BASE = C.normalize(JSON.parse(readFileSync(join(ROOT, 'data/db.json'), 'utf8')));
 const FIX = join(ROOT, 'tests/fixtures/augment');
+// 자동 보강 시험의 출발 상태: 확인 전으로 되돌린 사본 (원본 대조가 끝난 저장소에는 올릴 것이 남아 있지 않다 — rules.test.mjs 의 PRE 와 같은 규칙)
+const PRE = (() => {
+  const db = JSON.parse(JSON.stringify(BASE));
+  for (const d of Object.values(db.senses)) {
+    for (const x of d.xrefs || []) if (x.status === 'verified') { x.status = 'asserted'; delete x.note; }
+    if (d.fingerprint && ['computed', 'verified'].includes(d.fingerprint.status)) delete d.fingerprint; // 지문도 사법부 도장이 있어야 verified
+    if (d.obs) d.obs = d.obs.filter((o) => !(o.property === 'sequence_length' && o.evidence && o.evidence.level === 'computed'));
+  }
+  return C.normalize(db);
+})();
 
 // 저장소의 코드 파일 (테스트·node_modules·.git 제외)
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'tests', 'target'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
@@ -90,7 +100,7 @@ test('③ 사법부: 엔진을 실행하지 않고 쓰지 않는다 · 입법 �
 });
 
 test('④ 증명 등록부: 도장 없는 verified 는 오류, 변조·위조 도장은 무효', () => {
-  const b = ORCH.augmentBuild(BASE, { dir: FIX, date: '2026-10-08' }), res = LEG.merge(BASE, b.patch);
+  const b = ORCH.augmentBuild(PRE, { dir: FIX, date: '2026-10-08' }), res = LEG.merge(PRE, b.patch);
   assert.ok(b.stamps.length >= 3, '판결의 verified 행마다 도장');
   assert.ok(J.validate(res.db, { attestations: [] }).errors.some((e) => /사법부 증명/.test(e.msg)), '도장 없음 → 오류');
   assert.ok(J.validate(res.db).warnings.some((e) => /증명 등록부와 대조하지 않음/.test(e.msg)), '등록부를 주지 않으면 경고 (브라우저 보기)');
@@ -108,8 +118,8 @@ test('④ 증명 등록부: 도장 없는 verified 는 오류, 변조·위조 �
   const t3 = { ...st, evidence: { ...st.evidence, sha256: '0'.repeat(64) } }; t3.digest = ATT.digestOf(t3);
   assert.match(ATT.verifyStamp(t3, res.db, { root: ROOT }).reasons.join(), /sha256 불일치/);
   // 데이터가 스스로 verified 를 선언하는 패치 (판결 없이) → 관문 거부
-  const self = { format: 'definition-db-patch', version: 9, why: 'test', senses: [{ id: 'D000165', xrefs: BASE.senses.D000165.xrefs.map((x) => ({ ...x, status: 'verified' })) }] };
-  const g = J.gate(BASE, LEG.ingest(BASE, self), { attestations: [] });
+  const self = { format: 'definition-db-patch', version: 9, why: 'test', senses: [{ id: 'D000165', xrefs: PRE.senses.D000165.xrefs.map((x) => ({ ...x, status: 'verified' })) }] };
+  const g = J.gate(PRE, LEG.ingest(PRE, self), { attestations: [] });
   assert.ok(!g.ok && g.errors.some((e) => /스스로 verified/.test(e.msg)));
 });
 

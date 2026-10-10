@@ -1,0 +1,622 @@
+{
+  "applied_at": "2026-10-10T05:25:35.503Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "D000062",
+      "D000134",
+      "D000135",
+      "D000140",
+      "D000141",
+      "D000145",
+      "D000146",
+      "D000147",
+      "D000160",
+      "D000167",
+      "D000169",
+      "L000028",
+      "L000029",
+      "L000030",
+      "L000032",
+      "L000041",
+      "L000065"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "senses": [
+          "D000062",
+          "D000134",
+          "D000135",
+          "D000140",
+          "D000141",
+          "D000145",
+          "D000146",
+          "D000147",
+          "D000160",
+          "D000167",
+          "D000169"
+        ],
+        "limitations": [
+          "L000028",
+          "L000029",
+          "L000030",
+          "L000032",
+          "L000041",
+          "L000065"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000062": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000134": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000135": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000140": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000141": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000145": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000146": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000147": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000160": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000167": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "D000169": [
+          "xrefs",
+          "unmapped",
+          "fingerprint"
+        ],
+        "L000028": [],
+        "L000029": [],
+        "L000030": [],
+        "L000032": [],
+        "L000041": [],
+        "L000065": []
+      }
+    },
+    "why": "자동 보강 고리 (2026-10-10): 원본(UniProt·ChEBI)에서 받은 35개 파일로 외부 ID 확인 — 검증 11, 거부 1, 모호 12, 수신함에 없음 0. 검증된 것만 status verified·출처 메모·서열 길이·지문을 더하고, asserted 값은 바꾸지 않음",
+    "impact": {
+      "rules": [
+        "D000148/rule/lumped_oxidation",
+        "D000149/rule/condense",
+        "D000151/rule/oxdecarb",
+        "D000152/rule/oxdecarb",
+        "D000153/rule/slp",
+        "D000154/rule/oxidize",
+        "D000156/rule/oxidize",
+        "D000157/rule/nad_regen",
+        "D000158/rule/fad_regen",
+        "D000159/rule/accoa_supply",
+        "D000170/rule/aerobic_glycolysis",
+        "D000171/rule/pyruvate_reduction",
+        "D000172/rule/palmitoyl_oxidation"
+      ],
+      "senses": [
+        "D000044",
+        "D000148",
+        "D000149",
+        "D000170",
+        "D000171",
+        "D000172"
+      ],
+      "steps": [
+        "S000031",
+        "S000033",
+        "S000034",
+        "S000035",
+        "S000036",
+        "S000038"
+      ],
+      "pathways": [
+        "D000148"
+      ],
+      "limitations": [
+        {
+          "id": "L000028",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000029",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000030",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000031",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000032",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000037",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000039",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000054",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000055",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000064",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000065",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000066",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000068",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000031",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000064",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000066",
+          "before": "open",
+          "after": "resolved"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 13
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "자동 보강 고리 (2026-10-10): 원본(UniProt·ChEBI)에서 받은 35개 파일로 외부 ID 확인 — 검증 11, 거부 1, 모호 12, 수신함에 없음 0. 검증된 것만 status verified·출처 메모·서열 길이·지문을 더하고, asserted 값은 바꾸지 않음",
+  "senses": [
+    {
+      "id": "D000062",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:18405",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyridoxal 5'-phosphate' · 화학식 C8H10NO6P (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_18405.json · sha256:9b5e380134ba"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "NGVDGCNFYWLIFO-UHFFFAOYSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000134",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15351",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'acetyl-CoA' · 화학식 C23H38N7O17P3S (전하 0) · 부분 구조 대조 ok (C23 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15351.json · sha256:ea5d881d8f09"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "ZSLZBFCDCINBPY-ZSJPKINUSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000135",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15346",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'coenzyme A' · 화학식 C21H36N7O16P3S (전하 0) · 부분 구조 대조 ok (C21 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15346.json · sha256:6636a1cbaf91"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "RGJOEKWQDUBAIZ-IBOSZNHHSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000140",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15380",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinyl-CoA' · 화학식 C25H40N7O19P3S (전하 0) · 부분 구조 대조 ok (C25 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15380.json · sha256:988fb724e7ef"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "VNOYUJKHFWYWIR-ITIYDSSPSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000141",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:26806",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinate' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_26806.json · sha256:051c1d52b59d"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000145",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16908",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'NADH' · 화학식 C21H29N7O14P2 (전하 0) · 부분 구조 대조 ok (C21 N7 P2 S0 일치) · data/fetched/chebi/CHEBI_16908.json · sha256:7ef3a84d9f6b"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "BOPGDPNILDQYTO-NNYOXOHSSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000146",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16238",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FAD' · 화학식 C27H33N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_16238.json · sha256:e39ba5754cbd"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "VWWQXMAJTJZDQX-UYBVJOGSSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000147",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17877",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FADH2' · 화학식 C27H35N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_17877.json · sha256:3b7c983bb35e"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "YPZRHBJKEMOYQH-UYBVJOGSSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000160",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16526",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'carbon dioxide' · 화학식 CO2 (전하 0) · 부분 구조 대조 ok (C1 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16526.json · sha256:224182e044aa"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "CURLTUGMZLYLDI-UHFFFAOYSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000167",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15361",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyruvate' · 화학식 C3H3O3 (전하 -1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_15361.json · sha256:ac954b0b1950"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "LCTONWCANYUPML-UHFFFAOYSA-M",
+        "status": "verified"
+      },
+      "unmapped": ""
+    },
+    {
+      "id": "D000169",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15525",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'palmitoyl-CoA' · 화학식 C37H66N7O17P3S (전하 0) · 부분 구조 대조 ok (C37 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15525.json · sha256:7932c5e5c5fa"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "MNBKLUUYKPBKDU-BBECNAHFSA-N",
+        "status": "verified"
+      },
+      "unmapped": ""
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L000028",
+      "target": "D000027",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "에피네프린의 ChEBI 항목(adrenaline 대 (R)-adrenaline)을 원본에서 골라 번호를 확인 — 지금은 unmapped: ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000027",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:233315 Racepinephrine Hydrochloride; CHEBI:28918 (R)-adrenaline; CHEBI:228805 Epinephrine bitartrate; CHEBI:89878 Epinephrine sulfate; CHEBI:165186 Epinephrine glucuronide — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000029",
+      "target": "D000037",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "무기 인산을 대표할 ChEBI 항목(phosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000037",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 없음 — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000030",
+      "target": "D000048",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000048",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:83927 sodium 3-aminopropyl 2-acetamido-2-deoxy-alpha-D-glucose-1-phosphate — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000032",
+      "target": "D000122",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000122",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:85618 EC 2.5.1.31 {ditrans,polycis-undecaprenyl-diphosphate synthase [(2E,6E)-farnesyl-diphosphate specific]} inhibitor; CHEBI:17407 2-trans,6-trans-farnesyl diphosphate; CHEBI:74213 EC 1.17.4.1 (ribonucleoside-diphosphate reductase) inhibitor; CHEBI:84804 EC 2.7.4.6 (nucleoside-diphosphate kinase) inhibitor; CHEBI:57907 all-trans-pentaprenyl diphosphate(3-) — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000041",
+      "target": "D000148",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000134",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000135",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000136",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000137",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000138",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000139",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000140",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000141",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000142",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000143",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000160",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000144",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000145",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000146",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000147",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "시트르산 회로를 넣으면서 (Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:50390 EC 1.6.5.2 [NAD(P)H dehydrogenase (quinone)] inhibitor; CHEBI:140378 EC 1.1.1.37 (malate dehydrogenase) inhibitor; CHEBI:35487 EC 1.2.1.3 [aldehyde dehydrogenase (NAD(+))] inhibitor; CHEBI:77108 EC 1.1.1.141 [15-hydroxyprostaglandin dehydrogenase (NAD(+))] inhibitor; CHEBI:50423 EC 1.6.3.1. [NAD(P)H oxidase (H2O2-forming)] inhibitor — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000065",
+      "target": "D000168",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "L-젖산 ChEBI 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000168",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:232798 sodium L-lactate; CHEBI:83222 methyl (S)-lactate; CHEBI:16651 (S)-lactate; CHEBI:755282 onalespib lactate; CHEBI:760464 magnesium lactate dihydrate, l- — 이름이 정확히 하나로 맞을 때만 고른다"
+    }
+  ]
+}
