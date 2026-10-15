@@ -41,7 +41,7 @@
 - 추세(`judicial/trend.js`): 웹 검색 결과 저장 금지. `trend --fetch`(→ `data/fetched/consensus/`) → `trend` → `--write`. 도장은 `vocab.consensus.window_days` 뒤 다시 unchecked. mismatch 면 값 유지·`legacy`·Consensus_Gap.
 - 등급 문턱(기본 `parameter`) 미달 데이터 상수 = AUDIT_KINETIC. 시나리오 값은 `hypothetical: true` 때만. 문턱은 `min_grade` 로 올리기만.
 - 실측값은 `observations`(O+1): 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처·용도(`estimation|validation`). 수정·삭제 금지(`retracted` 만). 추정용을 검증에 쓰지 않음. 합성 관찰은 `examples/observations/` 만. 측정은 포트(`schemas/obs/`)로.
-- 정성 관찰(v12): `kind: qualitative` — 교란·`readout`·`expect`, 1차 문헌(DOI·PMID) `provenance.source` + 원문 `quote` 필수, `use: validation` 만, 수치 근거 금지. 교과서·추론은 정성 관찰 아님(한계·메모). 같은 실험은 `experiment` 로 묶음. 넣은 뒤 `qualgraph` — 경로 없음은 Structural_Gap 후보, 모순 후보는 근거와 데이터 대조. "구조 지지" 는 일치가 아님.
+- 정성 관찰(v12): `kind: qualitative` — 교란·`readout`·`expect`, 1차 문헌(DOI·PMID) `provenance.source` + 원문 `quote` 필수, `use: validation` 만, 수치 근거 금지. 교과서·추론은 정성 관찰 아님(한계·메모). 같은 실험은 `experiment` 로 묶음. 넣은 뒤 `qualgraph` — 경로 없음은 Structural_Gap 후보, 모순 후보는 근거와 데이터 대조. "구조 지지" 는 일치가 아님. 모의 판정은 `observe <O…> --state --scenario 대조군` — 맞음·틀림·보이지 못함(불일치 아님)·무효, 우연 기준선과 함께 보고, 결론은 등록 규약의 검증 세트만.
 - 맥락 열쇠(v12): `contextKeys` 여섯 칸, `condition` 은 정의항 번호 목록(문장은 `scope`). 번호를 합치거나 나눌 땐 패치 `moved`(지우고 새로 만들지 않음), 이동된 번호는 쓰지 않음.
 - 값 층(v12, SCHEMA §8N): 수치는 `values`(V…)에만 저장, `obs`·`kinetics` 는 정규화가 붙이는 보기. 패치는 지금처럼 obs·kinetics 로 쓰고 병합이 대체·철회로 접음(값 기록 불변) — `values`·`moved` 직접 쓰기 금지, 값이 바뀌면 `recorded_at` 필요(dbtool 이 찍음). 그날 기준은 `model.asOf`.
 - 정의항 `obs` 의 curated 측정값은 `from: 'O…'`. 단위는 `vocab.unitFactors` 만, 값은 `vocab.physicalBounds` 안. `from` 달린 obs 는 관찰 `retracted` 뒤에만 삭제. 환산표는 하나.

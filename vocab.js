@@ -353,14 +353,16 @@
   },
   // 형식 v12 §4 — 정성 관찰의 기대 (방향·유무·순서·단조). relative: 대조군(교란 없음)과 비교하므로 교란 선언 필수
   //   qualitative: true 인 측정량만 정성 관찰의 읽을 거리(readout)가 된다 — 부피·속도 상수는 정성으로 말하지 않는다
+  //   chance: 우연 기준선(build-plan 8) — 결과 칸을 똑같이 고르는 영 가설에서 맞힐 확률. 방향·단조는 세 칸(늘어남·줄어듦·같음 / 증가·감소·그 밖),
+  //   유무는 두 칸, 순서는 m 개 사건의 순열 1/m! (판정 모듈이 계산)
   qualitativeExpectations: {
-    increase:          { label: '교란하면 대조군보다 늘어남', relative: true },
-    decrease:          { label: '교란하면 대조군보다 줄어듦', relative: true },
-    no_change:         { label: '교란해도 대조군과 같음', relative: true },
-    present:           { label: '있음 (검출됨 · 도달함)' },
-    absent:            { label: '없음 (검출 안 됨 · 도달 안 함)' },
-    monotone_increase: { label: '시간에 따라 단조 증가' },
-    monotone_decrease: { label: '시간에 따라 단조 감소' },
+    increase:          { label: '교란하면 대조군보다 늘어남', relative: true, chance: 1 / 3 },
+    decrease:          { label: '교란하면 대조군보다 줄어듦', relative: true, chance: 1 / 3 },
+    no_change:         { label: '교란해도 대조군과 같음', relative: true, chance: 1 / 3 },
+    present:           { label: '있음 (검출됨 · 도달함)', chance: 1 / 2 },
+    absent:            { label: '없음 (검출 안 됨 · 도달 안 함)', chance: 1 / 2 },
+    monotone_increase: { label: '시간에 따라 단조 증가', chance: 1 / 3 },
+    monotone_decrease: { label: '시간에 따라 단조 감소', chance: 1 / 3 },
     order:             { label: '사건 순서 — { order: [대상, 대상, …] } 앞의 것이 먼저 (대상은 읽을 거리 종류의 대상)' },
   },
   qualitativeSources: ['DOI', 'PMID'], // 정성 관찰은 1차 문헌만 — 교과서·추론은 정성 관찰이 될 수 없다 (한계·메모로)

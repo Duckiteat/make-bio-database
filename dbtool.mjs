@@ -505,6 +505,14 @@ switch (cmd) {
     }
     const x = DefDB.resolveRef(DefDB.index(db), flags.state); if (x.error) die(x.error);
     const scA = readJSON(flags.scenario), scB = flags['scenario-b'] && flags['scenario-b'] !== true ? readJSON(flags['scenario-b']) : null;
+    if (o.kind === 'qualitative') { // 정성 모의 판정 (build-plan 8): 교란은 관찰이 선언, 대조군 = --scenario
+      const QC = req('./judicial/qual_compare.js'), oid = /^O\d{6}$/.test(args[0]) ? args[0] : null;
+      const q = ORCH.observeQualitative(db, o, x.id, scA, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: oid });
+      if (q.error) die('오류: ' + q.error);
+      console.log(req('./judicial/protocol.js').protocolText(q.protocol) + '\n');
+      console.log(QC.qualCompareText([Object.assign(q, { id: oid || '(파일)' })], QC.chanceBaseline([q])));
+      process.exit(q.outcome === 'invalid' ? 1 : 0);
+    }
     const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null });
     console.log(req('./judicial/protocol.js').protocolText(req('./judicial/protocol.js').protocolVerdict(db, scA, { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() })) + '\n');
     console.log(OC.verdictText(v));

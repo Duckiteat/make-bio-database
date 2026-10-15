@@ -19,6 +19,7 @@ const PROTO = require('./judicial/protocol.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const OC = require('./judicial/obs_compare.js');
 const SA = require('./judicial/stoch_audit.js');
+const M = require('./model.js');
 
 // ----- 사건 기반·속도 시뮬레이션 -----
 const pools = (db, target) => { const s = C.simulate(db, target, { rounds: 0 }); return s.error ? undefined : { source: s.source }; };
@@ -98,7 +99,7 @@ function ensembleLimit(db, state, sc, omegas, n, bundles, opt) {
 // 시나리오 A (필수)·B (선택 — 경쟁 가설). 시나리오에 stochastic 이 있으면 앙상블(opt.n 궤적, 기본 50) — 생물 변이(퍼짐)까지 판정
 function observeFate(db, o, state, scA, scB, opt) {
   opt = opt || {};
-  if (o.kind === 'qualitative') return { error: '정성 관찰의 판정(방향·유무·순서)은 아직 없음 — build-plan 8 (정성 판정)' };
+  if (o.kind === 'qualitative') return { error: '정성 관찰은 observeQualitative 로 (build-plan 8)' };
   const runs = (sc) => {
     if (sc.stochastic) { const rs = runEnsemble(db, state, sc, opt.n || 50, { commitment: false }); if (rs.error) throw new Error(rs.error); return rs; }
     const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r];
@@ -110,6 +111,59 @@ function observeFate(db, o, state, scA, scB, opt) {
   if (pv.declared && scA.stochastic && p.replicates && p.replicates.n) opt = Object.assign({}, opt, { n: p.replicates.n });
   try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, Object.assign({}, opt, { equivalence: eq, protocol: pv, observationId: opt.observationId })); }
   catch (e) { return { error: e.message }; }
+}
+
+// ----- 정성 모의 판정 (build-plan 8): 교란 시나리오(컴파일러) + 교란 차이 검사(사법부) → 대조군·교란군 실행(행정부) → 측정량(관찰 연산자) → 사법부 판정 -----
+// 결정론이면 같은 시나리오를 허용 오차 1/1000(refScenario)로 한 번 더 돌려 그 차를 수치 오차로 — 분해능 = 수치 오차 + 측정량의 양자(분자 1 개)
+function observeQualitative(db, o, state, sc, opt) {
+  opt = opt || {};
+  const PT = require('./compiler/perturb.js'), PA = require('./judicial/perturb_audit.js'), QC = require('./judicial/qual_compare.js');
+  const rd = o.readout, ex = o.expect, isOrder = ex && typeof ex === 'object';
+  let psc = null, audit = null;
+  if (o.perturbation) {
+    const v = PT.perturbedIR(db, state, sc, o.perturbation);
+    if (v.error) return { error: v.error };
+    const { scenario, record, ir } = v.variants[0];
+    if (!ir) return { error: v.variants[0].error };
+    audit = PA.verifyPerturbation({ baseScenario: sc, baseIR: v.base, scenario, ir, record });
+    psc = scenario;
+  }
+  const pv = PROTO.protocolVerdict(db, sc, { prereg: opt.prereg || [], runAt: new Date().toISOString() }), p = sc.protocol || {};
+  const n = pv.declared && sc.stochastic && p.replicates && p.replicates.n ? p.replicates.n : opt.n || 50;
+  const run = (x) => {
+    if (x.stochastic) { const rs = runEnsemble(db, state, x, n, { commitment: false }); if (rs.error) throw new Error(rs.error); return rs; }
+    const r = F.simulateFate(db, state, { engine: 'rust', commitment: false, scenario: x }); if (r.error) throw new Error(r.error); return [r];
+  };
+  const quantumOf = (raw, t) => (rd.kind === 'amount' ? 1 : rd.kind === 'concentration' ? 1 / (M.NA * raw.volumes[String(t).split('|').pop()]) : 0);
+  const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+  const measure = (raws) => {
+    const out = {};
+    if (!isOrder && rd.target) out.values = OBSOP.predict({ observable: { kind: rd.kind, target: rd.target }, condition: o.condition }, raws);
+    if (ex === 'monotone_increase' || ex === 'monotone_decrease') {
+      const tEnd = o.condition.time_s, T = [0, ...raws[0].process.times.filter((t) => tEnd == null || t <= tEnd)];
+      out.series = { t: T, v: T.map((t) => mean(raws.map((raw) => OBSOP.predict({ observable: { kind: rd.kind, target: rd.target }, condition: { time_s: t } }, [raw])[0]))) };
+    }
+    if (isOrder) out.events = raws.map((raw) => ex.order.map((t) => {
+      if (rd.kind === 'fraction' || rd.kind === 'event_time') return raw.firstReach[t] != null ? raw.firstReach[t] : Infinity;
+      const q = quantumOf(raw, t), T = [0, ...raw.process.times];
+      const hit = T.find((x) => OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: { time_s: x } }, [raw])[0] >= q);
+      return hit != null ? hit : Infinity;
+    }));
+    return out;
+  };
+  try {
+    const cRaws = run(sc), pRaws = psc ? run(psc) : null, control = measure(cRaws), perturbed = pRaws ? measure(pRaws) : null;
+    const target = rd.target || (isOrder ? ex.order[0] : null), quantum = target ? quantumOf(cRaws[0], target) : 0;
+    let resolution = quantum, numerical = null;
+    if (!sc.stochastic) { // 결정론: 수치 오차 = 기준 허용 오차 실행과의 차
+      const cRef = measure(run(refScenario(sc))), pRef = psc ? measure(run(refScenario(psc))) : null, gap = (a, b) => (a && b ? Math.max(0, ...a.map((x, i) => (Number.isFinite(x) && Number.isFinite(b[i]) ? Math.abs(x - b[i]) : 0))) : 0);
+      numerical = gap(control.values, cRef.values) + gap(perturbed && perturbed.values, pRef && pRef.values) + gap(control.series && control.series.v, cRef.series && cRef.series.v) + gap(perturbed && perturbed.series && perturbed.series.v, pRef && pRef.series && pRef.series.v) + gap(control.events && control.events[0], cRef.events && cRef.events[0]) + gap(perturbed && perturbed.events && perturbed.events[0], pRef && pRef.events && pRef.events[0]);
+      resolution = quantum + numerical;
+    }
+    const eq = (p.equivalence || []).find((e) => e.observable && e.observable.kind === rd.kind && e.observable.target === rd.target);
+    const r = QC.judgeQualitative({ o, control, perturbed, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq });
+    return Object.assign(r, { id: opt.observationId || null, numerical_error: numerical, quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv });
+  } catch (e) { return { error: e.message }; }
 }
 
 // ----- 자동 보강: 사법부 신원 판결 → 도장 발급 → 입법부 패치 초안 -----
@@ -145,4 +199,4 @@ function replayLog(log, currentText) {
   return LOGA.replayVerdict(log.genesis, log.events, replay, sha(currentText));
 }
 
-module.exports = { replayLog, observeFate, runEnsemble, scaleScenario, ensembleLimit, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+module.exports = { replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
