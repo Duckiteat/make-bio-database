@@ -13,7 +13,7 @@
 | 2 | **S1 기원 체크포인트 + 델타 기록**: 지금 db 를 기원으로 봉인(해시), 이후 병합마다 사건(why·출처·기록 시각·이전 루트)을 추가만 하는 기록. 사법부: 기원 + 기록 재생 = db.json | `legislative/clerk.mjs`(구역 `registry`) · 사법부 재생 검사 · `data/log/` | 병합 1 건 뒤 재생 일치 · 기록 변조 시 거부 시험 | ☑ 2026-10-15 — 기원 봉인 완료(db sha256 00017ddcb41c…, 루트 953cc1b7cc4f…) |
 | 3 | **모의 실험 규약 (시나리오 형식)**: 대응 실험·대조군(음성 필수)·교란 목록·측정·반복 수(검정력)·사전 선언(`validation` 목록·δ·분석 계획)·중단 규칙. 무결성 증명서가 선언 항목을 입력 해시와 대조 | 시나리오 계약 `schemas/` · `judicial/fate_audit.contextVerdict` 확장 · `process_report` | 선언 누락·사후 변경 거부 시험 | ☑ 2026-10-15 — 결정: 검증 실행에만 필수(그 밖은 탐색 실행) · 사전 등록부 · equivalence 는 protocol 안 · 등록 규약 없으면 일치 없음 |
 | 4 | **교란 연산자**: knockout(시작량 0 + 생성 규칙 제거) · block · inhibit · clamp · dose_series. 교란 IR 해시 = f(기준, 교란) | `compiler/perturb.js`(새) | 각 교란의 IR 변환 시험 · 엔진 코드 변경 없음 | ☑ 2026-10-15 — 시나리오 exclude_rules·rule_scale, 사법부 재구성 포함 |
-| 5 | **교란 차이 검사**: 교란 IR − 기준 IR = 선언한 교란 (그 밖 0) | `judicial/derivative.js` 곁 새 검사 | 선언 밖 차이를 넣은 IR 거부 시험 | ☐ |
+| 5 | **교란 차이 검사**: 교란 IR − 기준 IR = 선언한 교란 (그 밖 0) | `judicial/derivative.js` 곁 새 검사 | 선언 밖 차이를 넣은 IR 거부 시험 | ☑ 2026-10-15 — 시나리오·IR·기록 모두, 사법부 독립 재구성 |
 | 6 | **형식 v12**: 정성 관찰(kind direction·presence·order·monotone, 교란, 읽기 값, 기대, 맥락, DOI + 원문 구절) · 매개변수 분포(평균·sd·형태·구간) · 두 시간(기록·근거) · 맥락 열쇠 표준 | `model.js` · `vocab.js` · `schemas/obs/` · `migrations/010-v10-to-v12` | 이전 스크립트 왕복 · 정성 관찰 거부 말뭉치 | ☐ |
 | 7 | **정성 그래프 0 층 판정**: 주장 간선 양방향 색인, 기전 경로 부호 곱 대 주장 부호 → 지지·경로 없음(Structural_Gap 후보)·모순 후보 | `judicial/qual_graph.js`(새) | 합성 그래프 시험(일치·없음·반대) | ☐ |
 | 8 | **정성 모의 판정**: 대조 대비 방향·유무·순서·단조, 우연 기준선(이항) 함께 | `judicial/qual_compare.js`(새) · `orchestrator` | 해석적으로 아는 경우 시험 · 우연 수준 보고 | ☐ |

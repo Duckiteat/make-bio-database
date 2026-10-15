@@ -315,6 +315,17 @@
       "refactor_strategy": "기준은 \"너무 시끄러운가\"가 아니라 \"가를 수 있는가\" — 판정 규칙을 바꾸면 세 판정 시험(tests/stats.test.mjs ④·④′)을 같이 고친다. 예측은 조정자가 관찰 연산자로 만들어 넘긴다 — 엔진을 부르지 않는다."
     },
     {
+      "path": "judicial/perturb_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "tests/perturb.test.mjs (조정자 연결은 build-plan 8)",
+      "interpret": "[사법] build-plan 5 — 교란 차이 검사: 교란 선언에서 기대 변경을 기준 시나리오·기준 IR 만으로 독립 재구성(knockout = 그 분자 묶음 전부·생성 규칙 전부·신호, block, inhibit 배율, clamp 완충) → 기록·교란 시나리오(그 밖 필드 같음)·교란 IR(묶음·상태·결합점 같음, 규칙 = 기준 − 제외, 배율·완충만 다름, 해시)과 대조.",
+      "node": "JUDICIAL_PERTURB_AUDIT",
+      "governance": "Judicial",
+      "refactor_strategy": "컴파일러 코드를 쓰지 않는다 — 같은 규칙을 따로 세워야 대조가 된다. 새 교란 종류는 compiler/perturb.js 와 같은 커밋에서."
+    },
+    {
       "path": "judicial/protocol.js",
       "class": "law",
       "format": "Node CommonJS",

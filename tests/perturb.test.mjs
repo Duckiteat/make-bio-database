@@ -2,12 +2,13 @@
 //   ① knockout: 그 분자의 묶음 시작량 0 · 만드는 규칙 제외 · IR 묶음 번호는 기준과 같음 · 실행하면 끝까지 0
 //   ② block · inhibit(배율 1/(1+dose/Ki), 사법부 법칙 재구성 ≤ 1e-14) · clamp(완충) · dose_series
 //   ③ 교란 IR 해시 = f(기준 IR 해시, 교란 기록) · 없는 대상은 오류 · 엔진 코드는 바뀌지 않음(IR 만 먹음)
+//   ④ 사법부 교란 차이 검사(build-plan 5): 기준에서 독립 재구성 — 선언 밖 차이·빠진 생성 규칙·꾸민 배율·다른 대조군을 잡는다
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const fs = require('fs');
-const C = require('../core.js'), F = require('../engine/fate_engine.js'), IRB = require('../compiler/ir_builder.js'), PT = require('../compiler/perturb.js'), DER = require('../judicial/derivative.js');
+const C = require('../core.js'), F = require('../engine/fate_engine.js'), IRB = require('../compiler/ir_builder.js'), PT = require('../compiler/perturb.js'), DER = require('../judicial/derivative.js'), PA = require('../judicial/perturb_audit.js');
 const DB = C.normalize(JSON.parse(fs.readFileSync(new URL('../data/db.json', import.meta.url))));
 const SRC = 'D000202';
 const SC = JSON.parse(fs.readFileSync(new URL('../examples/scenarios/mhc-dc-maturation-lps-hypothetical.json', import.meta.url)));
@@ -67,4 +68,22 @@ test('③ 교란 IR 해시 · 없는 대상 · 잘못된 선언', () => {
   bad({ type: 'clamp', target: 'D999999|cytosol', conc_M: 1 }, /이 계에 없음/);
   bad({ type: 'dose_series', of: { type: 'block', target: RULE.ref }, doses: [1] }, /dose_series/);
   bad({ type: 'heat' }, /알 수 없는 교란/);
+});
+
+test('④ 교란 차이 검사: 교란 외에는 대조군과 같다 — 사법부 독립 재구성', () => {
+  const run = (q) => { const p = PT.perturbedIR(DB, SRC, SC, q); assert.ok(!p.error, p.error); const v = p.variants[0]; return { baseScenario: SC, baseIR: p.base, scenario: v.scenario, ir: v.ir, record: v.record }; };
+  const cases = [{ type: 'knockout', target: KO }, { type: 'block', target: RULE.ref }, { type: 'inhibit', target: RULE.ref, Ki_M: 1e-6, dose_M: 2e-6 }, { type: 'clamp', target: BUNDLE, conc_M: 1e-7 }];
+  for (const q of cases) { const v = PA.verifyPerturbation(run(q)); assert.ok(v.ok, `${q.type}: ${v.problems.join(' · ')}`); }
+  const ko = run(cases[0]), bad = (mut, re) => { const x = JSON.parse(JSON.stringify(ko)); mut(x); const v = PA.verifyPerturbation(x); assert.ok(!v.ok && v.problems.some((m) => re.test(m)), `${re}: ${v.problems.join(' · ')}`); };
+  // 선언 밖 차이: 교란 시나리오에서 다른 값도 몰래 바꿈
+  bad((x) => { x.scenario.t_end = (x.scenario.t_end || 0) + 1; }, /선언 밖의 차이/);
+  bad((x) => { const b = Object.keys(x.scenario.amounts).find((k) => !(k in x.record.change.amounts)); if (b) x.scenario.amounts[b] += 1; else x.scenario.amounts['D000001|cytosol'] = 5; }, /기준 \+ 선언한 변경과 다름/);
+  // 생성 규칙 하나를 빼먹은 넉아웃 (기록·시나리오를 서로 맞게 꾸며도 사법부 재구성이 잡는다)
+  if (ko.record.change.exclude_rules.length) bad((x) => { const r = x.record.change.exclude_rules.pop(); x.scenario.exclude_rules = x.scenario.exclude_rules.filter((y) => y !== r); }, /만들어야 할 exclude_rules/);
+  // IR 이 시나리오와 다름: 제외한 규칙이 남음 · 다른 규칙의 상수가 바뀜
+  bad((x) => { x.ir.rules.push(JSON.parse(JSON.stringify(x.baseIR.rules.find((R) => x.record.change.exclude_rules.includes(R.ref))))); }, /규칙 수/);
+  bad((x) => { const R = x.ir.rules.find((r) => r.k && r.k.k != null); if (R) R.k.k *= 2; else x.ir.rules[0].loc = 'x'; }, /배율 말고도 기준과 다름|IR 해시가 내용과 다름/);
+  // 다른 대조군 · 기록 변조
+  bad((x) => { x.baseScenario = { ...x.baseScenario, name: '다른 대조군' }; }, /기준 시나리오 해시/);
+  bad((x) => { x.record.perturbation.target = 'D000001'; }, /기록의 해시/);
 });
