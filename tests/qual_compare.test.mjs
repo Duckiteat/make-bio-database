@@ -1,6 +1,6 @@
 // 정성 모의 판정 (build-plan 8) — judicial/qual_compare.js · orchestrator.observeQualitative
 //   ① 판정 단위: 방향(결정론 분해능 · 앙상블 z) · 효과 없음은 앙상블에서 δ 필요(M1) · 유무 · 단조 · 순서(우연 1/m!) · 교란 검사 실패 = 무효 · 결론은 등록 규약의 검증 세트만
-//   ② 우연 기준선: 포아송 이항 P(K ≥ k) 를 손으로 아는 경우와 대조
+//   ② 우연 기준선: 포아송 이항 P(K ≥ k) 를 손으로 아는 경우와 대조 · 경험적 우연 확률(같은 실행의 다른 읽을 거리)
 //   ③ 조정자 결정론: 합성 규칙을 막으면 그 산물이 줄어듦 (교란 차이 검사 통과 · 분해능 = 수치 오차 + 분자 1 개)
 //   ④ 조정자 앙상블: 출생–사멸(해석해) — 합성 절반이면 평균이 절반 E(t)/2 만큼 줄어듦, 거의 0 인 교란은 δ 로 효과 없음을 보임
 import { test } from 'node:test';
@@ -64,6 +64,16 @@ test('② 우연 기준선: 포아송 이항 P(K ≥ k)', () => {
   assert.equal(QC.chanceBaseline([r('not_shown', 0.5)]).p_at_least, null);
 });
 
+test('② 경험적 우연 확률: 같은 실행의 다른 읽을 거리에 같은 규칙 — 방향은 비율, 순서는 오름 사슬 / 순서쌍', () => {
+  const c = (t, x, y) => ({ target: t, control: { values: [x] }, perturbed: { values: [y] }, resolution: 1, quantum: 1 });
+  const e = QC.empiricalChance(Q('decrease'), [c('a', 100, 50), c('b', 100, 100), c('c', 100, 150), c('d', 100, 99.5)]);
+  assert.equal(e.chance, 1 / 4); assert.equal(e.n, 4); assert.equal(e.source, 'empirical');
+  // 순서: 시각 1·3·5 (분해능 1) 에서 m = 2 — 간격 > 1 인 오름 쌍 3 개 / 순서쌍 3·2 = 6
+  const ord = Q({ order: ['A', 'B'] }, { readout: { kind: 'event_time' } });
+  assert.equal(QC.empiricalChance(ord, [1, 3, 5].map((t, i) => ({ target: 'S' + i, events: [t], resolution: 1 }))).chance, 0.5);
+  assert.equal(QC.empiricalChance(ord, [{ target: 'S', events: [1], resolution: 1 }]).chance, null, '후보가 m 개보다 적으면 균등 가정으로');
+});
+
 test('③ 조정자 결정론: 합성 규칙을 막으면 산물이 줄어듦 — 교란 차이 검사 통과, 분해능 = 수치 오차 + 분자 1 개', () => {
   const SRC = 'D000202', SC = json('examples/scenarios/mhc-dc-maturation-lps-hypothetical.json'), A = IRB.assemble(DB, SRC, SC);
   const R = A.rules.find((x) => x.k && x.kind !== 'degradation' && x.prods.length === 1 && !x.cons.length && !A.signals.includes(x.prods[0].b));
@@ -73,6 +83,7 @@ test('③ 조정자 결정론: 합성 규칙을 막으면 산물이 줄어듦 �
   assert.equal(r.outcome, 'match', JSON.stringify(r.detail)); assert.ok(r.perturbation_audit.ok);
   assert.equal(r.quantum, 1); assert.ok(r.detail.resolution >= 1 && r.numerical_error < 1, `수치 오차 ${r.numerical_error}`);
   assert.equal(r.conclusive, false, '규약 없는 실행은 탐색');
+  assert.equal(r.chance_source, 'empirical'); assert.ok(r.chance_pool > 5 && r.chance >= 0 && r.chance <= 1); assert.equal(r.chance_uniform, 1 / 3);
   assert.equal(ORCH.observeQualitative(DB, o('increase'), SRC, SC).outcome, 'mismatch');
 });
 

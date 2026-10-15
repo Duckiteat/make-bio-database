@@ -92,3 +92,25 @@ test('지금 저장소: 기전 그래프가 서고, 정성 관찰이 없으면 �
   assert.ok(v.graph.nodes > 100 && v.graph.edges > v.graph.nodes);
   assert.equal(v.rows.length, Object.values(db.observations).filter((o) => o.kind === 'qualitative' && !o.retracted).length);
 });
+
+test('정확 탐색: 첫 도달 너비 우선이 놓치던 부호를 찾는다 · 지금 db 는 탐색 상한에 닿지 않는다', () => {
+  // S→Y→X 가 X(+)에 먼저 닿으면, X→Y(−)→G 는 '자기 경로 위' 라 막히고 Y 를 지나지 않는 S→Z→W→X 는 이미 본 상태라 버려졌다
+  const E = [['S', 'Y', 1], ['Y', 'X', 1], ['S', 'Z', 1], ['Z', 'W', 1], ['W', 'X', 1], ['X', 'Y', -1], ['Y', 'G', 1]], adj = new Map();
+  for (const [a, b, s] of E) { if (!adj.has(a)) adj.set(a, []); adj.get(a).push({ to: b, sign: s, why: `${a}→${b}` }); }
+  const r = Q.signedPaths({ adj }, 'S', 'G');
+  assert.deepEqual(Object.keys(r.paths).sort(), ['-1', '1']);
+  assert.deepEqual(r.paths['-1'].map((x) => x.node), ['S', 'Z', 'W', 'X', 'Y', 'G']);
+  assert.deepEqual(r.paths['1'].map((x) => x.node), ['S', 'Y', 'G'], '보여 주는 경로는 가장 짧은 것');
+  // 상한에 닿으면 판정하지 않는다
+  const t = Q.signedPaths({ adj }, 'S', 'G', null, 2);
+  assert.ok(t.truncated);
+  // 지금 저장소: 정의항 → 묶음 쌍 일부에서 상한에 닿지 않음 (최대 펼침 기록)
+  const db = M.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8'))), GG = Q.buildGraph(db), bs = [...GG.bundles];
+  let max = 0;
+  for (const d of Object.keys(db.senses).filter((_, i) => i % 5 === 0)) for (const b of bs.filter((_, i) => i % 5 === 0)) {
+    if (b.split('|')[0] === d) continue;
+    const x = Q.signedPaths(GG, d, b, (z) => z.split('|')[0] === d || z === `${d}#pool`);
+    assert.ok(!x.truncated, `${d} → ${b} 탐색 상한`); max = Math.max(max, x.expanded);
+  }
+  assert.ok(max < Q.SEARCH_CAP / 2, `최대 펼침 ${max} — 상한 ${Q.SEARCH_CAP} 의 절반을 넘으면 그래프가 커진 것: 상한·방법을 다시 볼 때`);
+});

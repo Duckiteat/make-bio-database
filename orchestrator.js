@@ -136,33 +136,57 @@ function observeQualitative(db, o, state, sc, opt) {
   };
   const quantumOf = (raw, t) => (rd.kind === 'amount' ? 1 : rd.kind === 'concentration' ? 1 / (M.NA * raw.volumes[String(t).split('|').pop()]) : 0);
   const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
-  const measure = (raws) => {
-    const out = {};
-    if (!isOrder && rd.target) out.values = OBSOP.predict({ observable: { kind: rd.kind, target: rd.target }, condition: o.condition }, raws);
-    if (ex === 'monotone_increase' || ex === 'monotone_decrease') {
-      const tEnd = o.condition.time_s, T = [0, ...raws[0].process.times.filter((t) => tEnd == null || t <= tEnd)];
-      out.series = { t: T, v: T.map((t) => mean(raws.map((raw) => OBSOP.predict({ observable: { kind: rd.kind, target: rd.target }, condition: { time_s: t } }, [raw])[0]))) };
-    }
-    if (isOrder) out.events = raws.map((raw) => ex.order.map((t) => {
-      if (rd.kind === 'fraction' || rd.kind === 'event_time') return raw.firstReach[t] != null ? raw.firstReach[t] : Infinity;
-      const q = quantumOf(raw, t), T = [0, ...raw.process.times];
-      const hit = T.find((x) => OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: { time_s: x } }, [raw])[0] >= q);
-      return hit != null ? hit : Infinity;
-    }));
+  const mono = ex === 'monotone_increase' || ex === 'monotone_decrease', stateKind = rd.kind === 'fraction' || rd.kind === 'event_time';
+  // 대상 하나의 측정량: 값(실행마다) · 단조 기대면 시계열(실행 평균) — 경험적 우연 확률의 후보에도 같은 함수를 쓴다
+  const measure = (raws, t) => {
+    const out = { values: OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: o.condition }, raws) };
+    if (mono) { const tEnd = o.condition.time_s, T = [0, ...raws[0].process.times.filter((x) => tEnd == null || x <= tEnd)]; out.series = { t: T, v: T.map((x) => mean(raws.map((raw) => OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: { time_s: x } }, [raw])[0]))) }; }
     return out;
   };
+  // 대상 하나의 첫 도달 시각(실행마다): 세포 상태는 도달, 묶음은 양자(분자 1 개) 이상이 된 첫 기록점
+  const eventsOf = (raws, t) => raws.map((raw) => {
+    if (stateKind) return raw.firstReach[t] != null ? raw.firstReach[t] : Infinity;
+    const q = quantumOf(raw, t), T = [0, ...raw.process.times];
+    const hit = T.find((x) => OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: { time_s: x } }, [raw])[0] >= q);
+    return hit != null ? hit : Infinity;
+  });
+  const gap = (a, b) => (a && b ? Math.max(0, ...a.map((x, i) => (Number.isFinite(x) && Number.isFinite(b[i]) ? Math.abs(x - b[i]) : 0))) : 0);
   try {
-    const cRaws = run(sc), pRaws = psc ? run(psc) : null, control = measure(cRaws), perturbed = pRaws ? measure(pRaws) : null;
-    const target = rd.target || (isOrder ? ex.order[0] : null), quantum = target ? quantumOf(cRaws[0], target) : 0;
-    let resolution = quantum, numerical = null;
-    if (!sc.stochastic) { // 결정론: 수치 오차 = 기준 허용 오차 실행과의 차
-      const cRef = measure(run(refScenario(sc))), pRef = psc ? measure(run(refScenario(psc))) : null, gap = (a, b) => (a && b ? Math.max(0, ...a.map((x, i) => (Number.isFinite(x) && Number.isFinite(b[i]) ? Math.abs(x - b[i]) : 0))) : 0);
-      numerical = gap(control.values, cRef.values) + gap(perturbed && perturbed.values, pRef && pRef.values) + gap(control.series && control.series.v, cRef.series && cRef.series.v) + gap(perturbed && perturbed.series && perturbed.series.v, pRef && pRef.series && pRef.series.v) + gap(control.events && control.events[0], cRef.events && cRef.events[0]) + gap(perturbed && perturbed.events && perturbed.events[0], pRef && pRef.events && pRef.events[0]);
-      resolution = quantum + numerical;
+    const cRaws = run(sc), pRaws = psc ? run(psc) : null, det = !sc.stochastic;
+    const cRef = det ? run(refScenario(sc)) : null, pRef = det && psc ? run(refScenario(psc)) : null;
+    // 대상 하나의 판정 입력 — 결정론이면 분해능 = 양자 + 수치 오차(기준 허용 오차 실행과의 차)
+    const inputFor = (t) => {
+      const quantum = quantumOf(cRaws[0], t), control = measure(cRaws, t), perturbed = pRaws ? measure(pRaws, t) : null;
+      let numerical = null;
+      if (det) {
+        const c0 = measure(cRef, t), p0 = pRef ? measure(pRef, t) : null;
+        numerical = gap(control.values, c0.values) + gap(perturbed && perturbed.values, p0 && p0.values) + gap(control.series && control.series.v, c0.series && c0.series.v) + gap(perturbed && perturbed.series && perturbed.series.v, p0 && p0.series && p0.series.v);
+      }
+      return { target: t, control, perturbed, quantum, numerical, resolution: quantum + (numerical || 0) };
+    };
+    // 후보: 같은 종류의 읽을 거리 전부(주장의 대상 제외) — 묶음 또는 세포 상태
+    const claimTargets = new Set(isOrder ? ex.order : [rd.target]);
+    const cands = (stateKind ? IRB.buildFateIR(db, state, sc).states : cRaws[0].keys).filter((t) => !claimTargets.has(t) && Number.isFinite(quantumOf(cRaws[0], t)));
+    let r, pool, main;
+    if (isOrder) {
+      const evs = (raws) => raws.map((_, k) => ex.order.map((t) => eventsOf([raws[k]], t)[0]));
+      let numerical = null;
+      if (det) numerical = gap(evs(cRaws)[0], evs(cRef)[0]) + (pRaws ? gap(evs(pRaws)[0], evs(pRef)[0]) : 0);
+      const quantum = 0, resolution = numerical || 0; // 순서의 분해능은 시각의 수치 오차 — 분자 양자는 시각에 쓰지 않는다
+      main = { quantum, numerical, resolution };
+      r = QC.judgeQualitative({ o, control: { events: evs(cRaws) }, perturbed: pRaws ? { events: evs(pRaws) } : null, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId });
+      const arm = pRaws || cRaws;
+      pool = cands.map((t) => ({ target: t, events: eventsOf(arm, t), resolution }));
+    } else {
+      main = inputFor(rd.target);
+      const eq = (p.equivalence || []).find((e) => e.observable && e.observable.kind === rd.kind && e.observable.target === rd.target);
+      r = QC.judgeQualitative({ o, control: main.control, perturbed: main.perturbed, resolution: main.resolution, quantum: main.quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq });
+      pool = cands.map(inputFor);
     }
-    const eq = (p.equivalence || []).find((e) => e.observable && e.observable.kind === rd.kind && e.observable.target === rd.target);
-    const r = QC.judgeQualitative({ o, control, perturbed, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq });
-    return Object.assign(r, { id: opt.observationId || null, numerical_error: numerical, quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv });
+    const emp = QC.empiricalChance(o, pool), uniform = r.chance;
+    if (emp.chance != null) Object.assign(r, { chance: emp.chance, chance_source: 'empirical', chance_pool: emp.n, chance_uniform: uniform });
+    else Object.assign(r, { chance_source: 'uniform', chance_pool: 0 });
+    return Object.assign(r, { id: opt.observationId || null, numerical_error: main.numerical, quantum: main.quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv });
   } catch (e) { return { error: e.message }; }
 }
 

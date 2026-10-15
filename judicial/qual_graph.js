@@ -60,12 +60,21 @@ function buildGraph(db) {
   return { adj, bundles };
 }
 
-// 부호 붙은 도달: (노드, 부호) 상태마다 처음 도달한 경로 하나만 펼치는 너비 우선 — 다항 시간.
-//   순환은 막는다: 자기 경로 위의 노드로 돌아가는 간선은 따르지 않는다(음성 되먹임 A → 소비 → A 는 직접 효과의 부호를 뒤집지 않는다).
+// 부호 붙은 도달 — 정확: '교란 대상 → 읽을 거리' 의 단순 경로(노드를 다시 지나지 않음)에서 나올 수 있는 부호를 모두 찾는다.
+//   순환은 경로로 세지 않는다(음성 되먹임 A → 소비 → A 는 직접 효과의 부호를 뒤집지 않는다).
 //   avoid: 한 번 나간 뒤 다시 들어가지 않을 노드 — knockout 은 그 정의항의 모든 형태를 없애므로 형태 사이 변환을 지나는 경로는 뜻이 없다.
-//   근사: 한 상태에 먼저 닿은 경로만 이어 가므로, 그 경로 때문에 막힌 다른 경로의 부호를 놓칠 수 있다 — 놓치는 쪽은 '경로 없음·지지' 가
-//   아니라 반대 부호이므로, 판결 문구는 '찾은 경로' 기준이라고 밝힌다.
-function signedPaths(G, start, goal, avoid) {
+//   방법: 읽을 거리에 닿을 수 있는 노드만 남기는 가지치기 + 깊이 우선 전수 탐색(세 부호를 다 찾으면 멈춤). 부호가 정해진 단순 경로의 존재는
+//   일반 그래프에서 NP-어려움이라 펼침 수에 상한(SEARCH_CAP)을 두고, 닿으면 truncated — 판결은 '판정 못 함' 으로 드러낸다(조용히 놓치지 않음).
+//   예전 (노드, 부호)당 첫 도달 너비 우선은 2026-10-15 db 의 27,300 쌍 중 46 쌍에서 반대 부호를 놓쳤다.
+//   보여 주는 경로: 부호마다 가장 짧은 것(너비 우선이 찾은 것), 너비 우선이 못 찾은 부호는 깊이 우선이 찾은 경로.
+const SEARCH_CAP = 1e6; // 사법부 탐색 예산 — 판정을 바꾸지 않고 '판정 못 함' 을 드러내는 장치. 지금 db 최대 펼침은 시험이 기록(< 상한)
+function reachSet(G, goal) {
+  if (!G.radj) { G.radj = new Map(); for (const [u, l] of G.adj) for (const e of l) { if (!G.radj.has(e.to)) G.radj.set(e.to, []); G.radj.get(e.to).push(u); } }
+  const can = new Set([goal]), st = [goal];
+  while (st.length) { const x = st.pop(); for (const u of G.radj.get(x) || []) if (!can.has(u)) { can.add(u); st.push(u); } }
+  return can;
+}
+function shortestBySign(G, start, goal, avoid) {
   const st = [{ node: start, sign: 1, parent: -1, via: null, esign: null }], seen = new Set([`1:${start}`]), found = {};
   const onChain = (i, n) => { for (let j = i; j >= 0; j = st[j].parent) if (st[j].node === n) return true; return false; };
   for (let i = 0; i < st.length; i++) {
@@ -73,12 +82,33 @@ function signedPaths(G, start, goal, avoid) {
     if (cur.node === goal && i > 0) { if (!(cur.sign in found)) found[cur.sign] = i; continue; }
     for (const e of G.adj.get(cur.node) || []) {
       const s2 = cur.sign * e.sign, k = `${s2}:${e.to}`;
-      if (seen.has(k) || (avoid && avoid(e.to) && !avoid(cur.node) && e.to !== goal) || onChain(i, e.to)) continue; // 대상의 형태들에서 나간 뒤에는 다시 들어가지 않음
+      if (seen.has(k) || (avoid && avoid(e.to) && !avoid(cur.node) && e.to !== goal) || onChain(i, e.to)) continue;
       seen.add(k); st.push({ node: e.to, sign: s2, parent: i, via: e.why, esign: e.sign });
     }
   }
   const trace = (i) => { const out = []; for (let j = i; j >= 0; j = st[j].parent) out.unshift({ node: st[j].node, via: st[j].via, sign: st[j].esign }); return out; };
-  return { paths: Object.fromEntries(Object.entries(found).map(([s, i]) => [s, trace(i)])), expanded: st.length };
+  return Object.fromEntries(Object.entries(found).map(([sg, i]) => [sg, trace(i)]));
+}
+function signedPaths(G, start, goal, avoid, cap) {
+  cap = cap || SEARCH_CAP;
+  const can = reachSet(G, goal), found = {}, path = [{ node: start, via: null, sign: null }], on = new Set([start]);
+  let expanded = 0, truncated = false, done = false;
+  const dfs = (n, sg) => {
+    if (done || truncated) return;
+    if (++expanded > cap) { truncated = true; return; }
+    for (const e of G.adj.get(n) || []) {
+      if (done || truncated) return;
+      const t = e.to;
+      if (!can.has(t) || on.has(t) || (avoid && avoid(t) && !avoid(n) && t !== goal)) continue;
+      const s2 = sg * e.sign;
+      if (t === goal) { if (!(s2 in found)) found[s2] = [...path, { node: t, via: e.why, sign: e.sign }]; if ((1 in found) && (-1 in found) && (0 in found)) done = true; continue; }
+      on.add(t); path.push({ node: t, via: e.why, sign: e.sign }); dfs(t, s2); path.pop(); on.delete(t);
+    }
+  };
+  if (start !== goal) dfs(start, 1);
+  const short = shortestBySign(G, start, goal, avoid), paths = {};
+  for (const sg of Object.keys(found)) paths[sg] = short[sg] || found[sg];
+  return { paths, expanded, truncated };
 }
 
 // 주장 하나 → 0 층 판결
@@ -94,14 +124,15 @@ function judgeClaim(db, G, o) {
   }
   const avoid = p.type === 'knockout' ? (n) => baseOf(n) === p.target || n === `${p.target}#pool` : null;
   const sp = signedPaths(G, p.target, goal, avoid), paths = sp.paths, signs = Object.keys(paths).map(Number);
+  if (sp.truncated) return Object.assign(row, { paths, verdict: 'undetermined', why: `경로 탐색이 상한 ${SEARCH_CAP} 펼침에 닿음 — 판정하지 않음 (찾은 부호 ${signs.join(',') || '없음'})` });
   // 예측 변화 = 교란 부호(줄임 −1) × 경로 부호
   const predicted = signs.map((s) => PERTURB_SIGN[p.type] * s);
   Object.assign(row, { paths, predicted: [...new Set(predicted)].sort() });
   if (!signs.length) return Object.assign(row, { verdict: ex === 'no_change' ? 'supported' : 'no_path', why: ex === 'no_change' ? '경로 없음 — 효과 없다는 주장과 맞음' : '기전 그래프에 교란 대상 → 읽을 거리 경로가 없음 — Structural_Gap 후보 (빠진 단계·조절)' });
   if (ex === 'no_change') return Object.assign(row, { verdict: 'tension', why: '경로가 있는데 효과 없음을 주장 — 상쇄·포화 여부는 모의 판정으로' });
   const want = EXPECT_SIGN[ex], hasWant = predicted.includes(want), hasOpp = predicted.includes(-want), unsigned = predicted.includes(0);
-  if (hasWant && !hasOpp && !unsigned) return Object.assign(row, { verdict: 'supported', why: '찾은 경로의 부호가 모두 주장 방향과 같음' });
-  if (hasOpp && !hasWant && !unsigned) return Object.assign(row, { verdict: 'contradiction_candidate', why: '찾은 경로의 부호가 모두 주장과 반대 — 빠진 경로 또는 잘못된 부호 후보' });
+  if (hasWant && !hasOpp && !unsigned) return Object.assign(row, { verdict: 'supported', why: '모든 단순 경로의 부호가 주장 방향과 같음' });
+  if (hasOpp && !hasWant && !unsigned) return Object.assign(row, { verdict: 'contradiction_candidate', why: '모든 단순 경로의 부호가 주장과 반대 — 빠진 경로 또는 잘못된 부호 후보' });
   return Object.assign(row, { verdict: 'mixed', why: unsigned ? '효과를 모르는 조절 간선을 지나는 경로가 있음' : '부호가 다른 경로가 함께 있음 — 우열은 속도·양이 정함 (모의 판정)' });
 }
 
@@ -128,7 +159,7 @@ function qualGraphVerdict(db, opt) {
   return { rows, counts, index: claimIndex(db), graph: { nodes: G.adj.size, edges: [...G.adj.values()].reduce((t, l) => t + l.length, 0) } };
 }
 
-const LABEL = { supported: '구조 지지', no_path: '경로 없음 (Structural_Gap 후보)', contradiction_candidate: '모순 후보', mixed: '부호 섞임 (모의 판정 필요)', tension: '긴장 (경로 있음 · 효과 없음 주장)', not_applicable: '0 층 판정 대상 아님' };
+const LABEL = { supported: '구조 지지', no_path: '경로 없음 (Structural_Gap 후보)', contradiction_candidate: '모순 후보', mixed: '부호 섞임 (모의 판정 필요)', tension: '긴장 (경로 있음 · 효과 없음 주장)', not_applicable: '0 층 판정 대상 아님', undetermined: '판정 못 함 (탐색 상한)' };
 function qualGraphText(v) {
   const out = [`정성 그래프 0 층 판정 — 기전 그래프 노드 ${v.graph.nodes} · 간선 ${v.graph.edges} · 정성 관찰 ${v.rows.length}`];
   if (!v.rows.length) out.push('  (정성 관찰 없음)');
@@ -140,4 +171,4 @@ function qualGraphText(v) {
   return out.join('\n');
 }
 
-module.exports = { buildGraph, signedPaths, judgeClaim, claimIndex, qualGraphVerdict, qualGraphText, LABEL };
+module.exports = { SEARCH_CAP, buildGraph, signedPaths, judgeClaim, claimIndex, qualGraphVerdict, qualGraphText, LABEL };

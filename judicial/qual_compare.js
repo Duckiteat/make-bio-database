@@ -8,7 +8,8 @@
 //   앙상블(확률 실행 여럿): 방향은 양측 z(Welch) 검정 α = stats.ALPHA · 유무·순서는 이항 검정 — 차이를 못 보이면 '보이지 못함'(불일치가 아니다).
 //     효과 없음(no_change)을 앙상블로 보이려면 동등성 허용 차이 δ 가 필요하다(M1) — 규약 protocol.equivalence 에 그 측정량이 없으면 '보이지 못함'.
 //   결론: 일치는 사전 등록된 규약의 검증 세트에 있는 관찰에서만 결론(conclusive) — 그 밖은 탐색 실행.
-//   우연 기준선: 판정한 주장들의 맞힌 수 k 가 우연(vocab.qualitativeExpectations.chance, 순서 1/m!)으로 나올 확률 P(K ≥ k) — 포아송 이항 분포.
+//   우연 기준선: 판정한 주장들의 맞힌 수 k 가 우연으로 나올 확률 P(K ≥ k) — 포아송 이항 분포. 주장마다 우연 확률은 경험적(같은 실행의 다른 읽을 거리
+//     중 같은 결과의 비율, empiricalChance)이 먼저, 후보가 없을 때만 결과 칸 균등(vocab.qualitativeExpectations.chance, 순서 1/m!).
 'use strict';
 const V = require('../vocab.js');
 const S = require('./stats.js');
@@ -82,6 +83,35 @@ function judgeQualitative(input, opt) {
     requirement: conclusive ? '' : !pv || !pv.declared ? '모의 실험 규약이 없음(탐색 실행) — 결론으로 쓰려면 protocol 선언 후 실행 전 사전 등록' : !pv.ok ? '규약 위반: ' + pv.problems.join(' · ') : `관찰 ${input.observationId || '(번호 없음)'} 이 사전 등록된 검증 세트에 없음` });
 }
 
+// 경험적 우연 확률 (영 가설 = '이 모델에서 아무 읽을 거리나 골랐을 때'): 같은 실행의 다른 후보(같은 종류의 묶음·세포 상태)에
+//   같은 판정 규칙을 적용해, 주장과 같은 결과가 나온 비율. 결과 칸을 똑같이 고른다는 가정(vocab chance)을 모델의 실제 분포로 바꾼다.
+//   pool: [{ target, control, perturbed?, resolution, quantum }] — 주장 입력과 같은 모양(조정자가 만든다). 순서 기대는 후보의 사건 시각에서
+//   '아무 m 개를 순서대로 뽑았을 때 분해능보다 벌어지며 오름' 의 비율(실행마다 계산해 평균).
+function empiricalChance(o, pool, opt) {
+  const ex = o.expect;
+  if (ex && typeof ex === 'object') {
+    const m = (ex.order || []).length, runs = pool.length ? pool[0].events.length : 0;
+    if (pool.length < m || !runs) return { chance: null, n: pool.length, source: 'empirical' };
+    let sum = 0;
+    for (let r = 0; r < runs; r++) {
+      const ts = pool.map((c) => c.events[r]).filter(Number.isFinite).sort((a, b) => a - b), res = pool[0].resolution;
+      // 오름 사슬(간격 > 분해능) 길이 m 의 수 — 동적 계획 O(n²·m)
+      let ways = ts.map(() => 1);
+      for (let len = 2; len <= m; len++) ways = ts.map((t, j) => { let w = 0; for (let i = 0; i < j; i++) if (t - ts[i] > res) w += ways[i]; return w; });
+      const chains = ways.reduce((a, b) => a + b, 0); let tuples = 1; for (let i = 0; i < m; i++) tuples *= pool.length - i;
+      sum += chains / tuples;
+    }
+    return { chance: sum / runs, n: pool.length, source: 'empirical' };
+  }
+  let hit = 0, n = 0;
+  for (const c of pool) {
+    const r = judgeQualitative({ o: Object.assign({}, o, { readout: Object.assign({}, o.readout, { target: c.target }) }), control: c.control, perturbed: c.perturbed, resolution: c.resolution, quantum: c.quantum }, opt);
+    if (r.outcome === 'invalid') continue;
+    n++; if (r.outcome === 'match') hit++;
+  }
+  return { chance: n ? hit / n : null, n, hits: hit, source: 'empirical' };
+}
+
 // 우연 기준선: 판정된 주장(맞음·틀림 — 보이지 못함·무효 제외)의 맞힌 수가 우연으로 나올 확률 P(K ≥ k), K ~ 포아송 이항(pᵢ = chance)
 function chanceBaseline(rows) {
   const judged = rows.filter((r) => r.outcome === 'match' || r.outcome === 'mismatch'), k = judged.filter((r) => r.outcome === 'match').length;
@@ -102,9 +132,10 @@ function qualCompareText(rows, base) {
     if (r.why) out.push(`      ${r.why}`);
     if (r.requirement) out.push(`      ${r.requirement}`);
   }
+  for (const r of rows) if (r.chance_source === 'empirical') out.push(`  ${r.id || ''} 우연 확률 ${r.chance.toPrecision(3)} — 같은 실행의 다른 읽을 거리 ${r.chance_pool} 개 중 같은 결과의 비율 (결과 칸 균등 가정이면 ${r.chance_uniform.toPrecision(3)})`);
   if (base) out.push(`우연 기준선: 판정 ${base.n} 건 중 맞음 ${base.k} (우연 기대 ${base.expected_by_chance.toFixed(2)})${base.p_at_least != null ? ` · 우연으로 ${base.k} 건 이상 맞힐 확률 ${base.p_at_least.toPrecision(3)}` : ''}${base.not_judged ? ` · 판정 못 함 ${base.not_judged}` : ''}`);
   out.push(`α = ${S.ALPHA}. 상수가 가상(hypothetical)인 시나리오의 결과는 기전의 귀결이지 측정 예측이 아니다.`);
   return out.join('\n');
 }
 
-module.exports = { judgeQualitative, chanceBaseline, chanceOf, direction, presence, monotone, order, qualCompareText };
+module.exports = { judgeQualitative, empiricalChance, chanceBaseline, chanceOf, direction, presence, monotone, order, qualCompareText };
