@@ -1,0 +1,9 @@
+{
+  "format": "definition-db-log",
+  "version": 1,
+  "at": "2026-10-15T12:30:11.070Z",
+  "db_sha256": "00017ddcb41c2f5edb073333e12a0710fe4d4018e6d2437b40d3f158fc5bd872",
+  "root": "953cc1b7cc4f34064eab7585cb1ed0f33e67bceb9961e8750b5c0be20070d77e",
+  "snapshot": "genesis-db.json",
+  "note": ""
+}
