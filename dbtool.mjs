@@ -67,6 +67,8 @@ for (let i = 0; i < rest.length; i++) {
 const DB_PATH = flags.db || join(HERE, 'data', 'db.json');
 const PATCH_DIR = join(dirname(DB_PATH), 'patches');
 const readJSON = (p) => DefDB.parseLoose(readFileSync(p, 'utf8'));
+// 형식 v12: 값이 바뀌는 병합의 기록 시각 — 병합 전에 패치에 찍어 관문이 봉인한다(패치 기록에 남아 재생해도 같다). 이미 있으면 그대로
+const stamped = (patch) => (patch && typeof patch === 'object' && !patch.recorded_at ? { ...patch, recorded_at: new Date().toISOString() } : patch);
 const loadDB = () => (existsSync(DB_PATH) ? DefDB.normalize(readJSON(DB_PATH)) : DefDB.emptyDB());
 const rel = (p) => relative(process.cwd(), p) || p;
 const printIssues = (errors, warnings) => {
@@ -97,7 +99,7 @@ switch (cmd) {
   }
   case 'validate': {
     if (args[0]) { // 패치 검사: 관문 미리 보기 + 부분 구조 수지(ΣIn = ΣOut, 상대 1e-14 — validate 규칙) + 정제 점검의 새 문제
-      const db = loadDB(), patch = readJSON(args[0]), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys });
+      const db = loadDB(), patch = stamped(readJSON(args[0])), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys });
       printIssues(g.errors, g.warnings);
       const before = J.refineCheck(db).issues.map((x) => x.type + x.where), ref = J.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
       for (const x of fresh) console.log(`  △ [${x.type}] ${x.msg}`);
@@ -119,7 +121,7 @@ switch (cmd) {
     let db = loadDB(), seal = null;
     const applied = [], att = attestations(db).keys;
     for (const p of args) {
-      const patch = readJSON(p);
+      const patch = stamped(readJSON(p));
       const res = LEG.ingest(db, patch), g = J.gate(db, res, { allowWarnings: !!flags['allow-warnings'], attestations: att }), r = res.report;
       console.log(`${p}: 추가 ${r.added.length}, 수정 ${r.updated.length}, 삭제 ${r.removed.length}`);
       for (const [a, b] of Object.entries(r.idmap)) console.log(`  id   ${a} → ${b}`);
@@ -294,6 +296,7 @@ switch (cmd) {
       if (b.empty) { console.log('바꿀 것이 없음 — 수신함 파일을 더하거나 (augment plan --write) 과제를 확인할 것'); process.exit(b.rows.some((r) => r.outcome === 'rejected') ? 1 : 0); }
       const out = flags.out && flags.out !== true ? flags.out : join(tmpdir(), `augment-${date}.json`);
       CLERK.writeDraft(out, b.patch);
+      b.patch = stamped(b.patch);
       const res = LEG.ingest(db, b.patch);
       // 새 도장: 사법부가 병합 뒤 데이터로 다시 확인한 것만 관문에 넘긴다 (데이터는 스스로 verified 를 만들 수 없음)
       const fresh = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: HERE })), badSt = fresh.filter((v) => !v.ok);

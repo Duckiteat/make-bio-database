@@ -82,7 +82,7 @@
     const E = (where, msg) => errors.push({ where, msg }), W = (where, msg) => warnings.push({ where, msg });
     if (db._version) E('데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
-    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations]]) {
+    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations], ['V', db.values || {}]]) {
       const max = Math.max(0, ...Object.keys(table).map((id) => parseInt(id.slice(1), 10) || 0));
       if (db.meta.next[p] <= max) E('meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
     }
@@ -115,6 +115,7 @@
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
     for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W);
+    validateValues(db, E);
     checkAttestations(db, opt, E, W);
     return { errors, warnings };
   }
@@ -167,6 +168,48 @@
     }
     return null;
   }
+  // 값 층 (형식 v12, docs/design/format-v12.md): 기록 하나하나의 모양 — 의미(단위·상한·from 대조·종)는 보기(obs·kinetics)에 대한 기존 검사가 그대로 본다
+  const VALUE_DISTS = ['point', 'normal', 'lognormal', 'interval', 'categorical'], DERIVATIONS = ['direct', 'unit_conversion', 'lumped', 'computed'];
+  function validateValues(db, E) {
+    const vals = db.values || {}, KIN = M.KIN_VALUE_FIELDS, laws = new Set();
+    for (const [sid, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.kinetic_law) laws.add(`${sid}/rule/${r.id}`);
+    const superseders = new Map();
+    for (const [id, v] of Object.entries(vals)) {
+      const w = `${id} (${v.subject} · ${v.property})`, isRule = v.subject.includes('/rule/');
+      if (isRule ? !laws.has(v.subject) && !v.retracted : !db.senses[v.subject] && !v.retracted) E(w, isRule ? '대상 규칙이 없거나 법칙 모양(kinetic_law)이 없음' : '대상 정의항이 없음');
+      if (isRule ? !KIN.includes(v.property) : !V.obsProperties[v.property]) E(w, `속성 '${v.property}' 이 ${isRule ? '속도 칸' : '관찰 속성 어휘'}에 없음`);
+      if (!VALUE_DISTS.includes(v.value.dist)) E(w, `분포 '${v.value.dist}' — ${VALUE_DISTS.join(' | ')}`);
+      else if (v.value.dist === 'categorical' ? v.value.level == null : !Number.isFinite(v.value.mean) && v.value.dist !== 'interval') E(w, '분포에 값(mean 또는 level)이 없음');
+      if ((v.value.dist === 'normal' || v.value.dist === 'lognormal') && !(v.value.sd >= 0)) E(w, `${v.value.dist} 분포에 sd ≥ 0 이 없음`);
+      if (v.value.dist === 'interval' && !(v.value.low <= v.value.high)) E(w, '구간 low ≤ high 가 아님');
+      if (!DERIVATIONS.includes(v.derivation)) E(w, `유도 방식 '${v.derivation}' — ${DERIVATIONS.join(' | ')}`);
+      if (!v.recorded_at || Number.isNaN(Date.parse(v.recorded_at))) E(w, '기록 시각(recorded_at)이 없음 — 값은 언제 들어왔는지가 데이터다 (두 시간)');
+      for (const o of v.from || []) if (!db.observations[o]) E(w, `근거 관찰 ${o} 이 없음`);
+      if (v.supersedes) {
+        const old = vals[v.supersedes];
+        if (!old) E(w, `대체 대상 ${v.supersedes} 이 없음`);
+        else {
+          if (old.subject !== v.subject || old.property !== v.property) E(w, `대체 대상 ${v.supersedes} 의 대상·속성이 다름`);
+          if (v.supersedes >= id) E(w, `대체 대상 ${v.supersedes} 이 이 기록보다 뒤 — 대체는 앞선 기록만`);
+          if (superseders.has(v.supersedes)) E(w, `${v.supersedes} 을 ${superseders.get(v.supersedes)} 도 대체함 — 갈래 이력`);
+          superseders.set(v.supersedes, id);
+        }
+      }
+    }
+  }
+  // 값은 바꾸지 않는다 (관찰 기록과 같은 규약): 이전 기록은 그대로 있어야 하고, 할 수 있는 것은 retracted 한 번 더하기뿐
+  function valueImmutability(before, after) {
+    const out = [];
+    for (const [id, v] of Object.entries(before.values || {})) {
+      const a = (after.values || {})[id];
+      if (!a) { out.push({ where: id, msg: '값 기록은 지울 수 없음 — 바뀌면 새 기록이 대체(supersedes), 틀리면 retracted' }); continue; }
+      const strip = (x) => { const { retracted, ...rest } = x; return JSON.stringify(rest); };
+      if (strip(a) !== strip(v)) out.push({ where: id, msg: '값 기록은 바꿀 수 없음 — 새 값은 새 기록(supersedes)으로' });
+      if (v.retracted && JSON.stringify(a.retracted) !== JSON.stringify(v.retracted)) out.push({ where: id, msg: '값의 철회 표시는 바꾸거나 지울 수 없음' });
+    }
+    return out;
+  }
+
   function validateObservation(db, ix, id, o, E, W) {
     const w = id, ob = o.observable, ov = V.observables[ob.kind];
     if (!isId('O', id)) E(id, "관찰 번호는 'O' + 숫자 6자리");
@@ -904,7 +947,7 @@
     const vo = opt && opt.attestations ? { attestations: opt.attestations } : undefined;
     const b0 = normalize(dbBefore), before = validate(b0, vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
-    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...patchPolicy(b0, result)];
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result)];
     const warnings = after.warnings.filter((i) => !old.has(key(i)));
     const r = result.report;
     const changed = r.added.length + r.updated.length + r.removed.length > 0;
@@ -1539,7 +1582,7 @@
   }
 
   return Object.freeze({ auditRate, checkAttestations,
-    needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
+    needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });

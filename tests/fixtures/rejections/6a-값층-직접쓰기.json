@@ -1,0 +1,15 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "values": {
+    "V000001": {
+      "subject": "D000086",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 1
+      },
+      "recorded_at": "2026-10-15T00:00:00.000Z"
+    }
+  }
+}

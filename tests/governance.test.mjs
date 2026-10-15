@@ -20,7 +20,7 @@ const BASE = C.normalize(JSON.parse(readFileSync(join(ROOT, 'data/db.json'), 'ut
 const FIX = join(ROOT, 'tests/fixtures/augment');
 // 자동 보강 시험의 출발 상태: 확인 전으로 되돌린 사본 (원본 대조가 끝난 저장소에는 올릴 것이 남아 있지 않다 — rules.test.mjs 의 PRE 와 같은 규칙)
 const PRE = (() => {
-  const db = JSON.parse(JSON.stringify(BASE));
+  const db = C.normalize(JSON.parse(JSON.stringify(BASE)));
   for (const d of Object.values(db.senses)) {
     for (const x of d.xrefs || []) if (x.status === 'verified') { x.status = 'asserted'; delete x.note; }
     if (d.fingerprint && ['computed', 'verified'].includes(d.fingerprint.status)) delete d.fingerprint; // 지문도 사법부 도장이 있어야 verified
@@ -103,7 +103,7 @@ test('③ 사법부: 엔진을 실행하지 않고 쓰지 않는다 · 입법 �
 });
 
 test('④ 증명 등록부: 도장 없는 verified 는 오류, 변조·위조 도장은 무효', () => {
-  const b = ORCH.augmentBuild(PRE, { dir: FIX, date: '2026-10-08' }), res = LEG.merge(PRE, b.patch);
+  const b = ORCH.augmentBuild(PRE, { dir: FIX, date: '2026-10-08' }), res = LEG.merge(PRE, { ...b.patch, recorded_at: '2026-10-15T00:00:00.000Z' });
   assert.ok(b.stamps.length >= 3, '판결의 verified 행마다 도장');
   assert.ok(J.validate(res.db, { attestations: [] }).errors.some((e) => /사법부 증명/.test(e.msg)), '도장 없음 → 오류');
   assert.ok(J.validate(res.db).warnings.some((e) => /증명 등록부와 대조하지 않음/.test(e.msg)), '등록부를 주지 않으면 경고 (브라우저 보기)');

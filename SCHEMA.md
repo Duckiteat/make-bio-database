@@ -454,7 +454,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 ## 13. 형식 버전과 변환
 
 - `data/db.json` 의 `version` 이 `core.js` 의 `VERSION` 과 다르면 검사가 오류를 낸다.
-- 형식을 바꿀 때는 `migrations/NNN-설명.mjs` 를 추가하고, 그 스크립트로 저장소를 변환한 뒤 아래 변경 기록에 적는다.
+- 형식을 바꿀 때는 `migrations/NNN-설명.mjs` 를 추가하고(v12 부터는 순수 `transform` 을 내보내는 CommonJS `.js` — 기원 체크포인트 뒤의 변환은 사건 사슬의 `migration` 사건으로 남고 재생 때 다시 돌린다), 그 스크립트로 저장소를 변환한 뒤 아래 변경 기록에 적는다.
 - `data/patches/` 의 옛 기록은 당시 형식·ID 로 적혀 있다. 옛 ID ↔ 새 번호 대응은 `migrations/002-id-map.json`.
 
 ## 8K. 신뢰 지표 — 무엇을 무엇에 쓸 수 있는가 (`judicial/reliability.js`, `dbtool grade`)
@@ -572,10 +572,21 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
   바닥값을 내리는 변경은 그 자체로 눈에 보이는 커밋이 된다.
 - 새 측정량 **`volume`**(대상 = 위치, 단위 L)으로 부피도 관찰 기록이 된다 — L000102 해결.
 
+## 8N. 값 층 — 형식 v12 (2026-10-15, `docs/design/format-v12.md`)
+
+- **저장**: 정의항 `obs` 와 규칙 `kinetics` 의 수치는 최상위 `values { V… }` 에만 있다. 규칙에는 법칙 모양 `kinetic_law { law, order?, reversible?, env?, context?, lumped?, evidence }` 만 남는다. `meta.next.V`.
+- **값 기록**: `{ subject: D… | D…/rule/키, property, value { dist: point | normal | lognormal | interval | categorical, mean | sd | low | high | level }, unit?, context?, evidence, from? [O…], derivation: direct | unit_conversion | lumped | computed, note?, evidence_at?, recorded_at, supersedes?, retracted? { note, at?, evidence? } }`. 정의항 대상의 속성은 `obsProperties`, 규칙 대상은 속도 칸(차수 제외).
+- **보기**: 정규화가 현재 값(철회·대체되지 않은 기록)으로 정의항 `obs` 와 규칙 `kinetics` 를 지금 모양 그대로 **열거되지 않는 속성**으로 붙인다 — 읽는 코드·패치 작성법은 그대로이고, JSON 에는 값 층만 나간다.
+- **패치**: 값은 지금처럼 정의항 `obs`·규칙 `kinetics` 로 적는다. 병합(`legislative foldValues`)이 바뀐 값을 새 기록(`supersedes`)으로, 빠진 값을 철회로 접는다. 이전 기록은 바뀌지 않는다. 패치가 `values`·`moved` 를 직접 쓰면 거부. 값이 바뀌는 병합은 패치의 `recorded_at`(병합 전에 dbtool 이 찍음)이 필요하다 — 사건 사슬 재생 결정론.
+- **두 시간**: `recorded_at`(기록 시각)·`evidence_at`(근거 시각). `model.asOf(db, 그날)` 은 그날까지 기록된 값만으로 보기를 다시 세운다 — 과거 보고서 재현.
+- **사법부**: `validateValues`(대상·속성 어휘·분포·유도 방식·기록 시각·근거 관찰·대체 사슬) · 관문 `valueImmutability`(값 기록은 바꾸거나 지울 수 없음, 철회 표시만). 단위·상한·from 대조·종 검사는 보기에 대한 기존 검사가 그대로 한다.
+- **아직(build-plan 6 남은 몫)**: 정성 관찰 · 실험 묶음 `experiment` · 맥락 열쇠 6 의 정준화 · 번호 이동 `moved` · `evidence_at` 채우기.
+
 ## 변경 기록
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-15 | **12** | 값 층 분리(§8N): `values { V… }`·`kinetic_law`·보기(열거되지 않는 obs·kinetics)·병합의 대체·철회 접기·`recorded_at` 필수·`asOf`·사법부 `validateValues`·`valueImmutability`. 데이터: 값 기록 58(정의항 obs 52 · 속도 칸 6) — 보기 무손실, IR 해시 238 조합 같음, 등급 분포 같음. 변환은 사건 사슬의 `migration` 사건 #1 (`migrations/010-v10-to-v12-values.js`) |
 | 2026-10-10 | **11** | 측정값 사슬과 래칫(§8M, 레드팀 7/7 차단): 정의항 `obs` 에 `from`(관찰 기록 참조) — 측정량이 있는 속성의 `curated` 값은 필수이고 단위 환산 뒤 값·종·세포·위치를 관찰과 대조(`checkSenseObsFrom`) · 파생값 삭제 금지(관찰이 `retracted` 일 때만) · 새 측정량 `volume`(대상 위치, 단위 L — L000102 해결) · 단위 환산표 하나로(`vocab.unitFactors`, `core.js`·`model.js` 가 그 표를 읽음 — 값 동일, 궤적 비트 불변) · 물리적 상한(`vocab.physicalBounds`) · `kinetics.from` 에 종·위치 대조 · Patch Report `measured_changed`(측정값 전후) · 거부 말뭉치 11 + 래칫(`tests/fixtures/FLOOR.json`, `skip` 금지) · 관찰 계약에 `volume` |
 | 2026-10-10 | 10 (확장 6) | 분열과 소모 규약(형식·엔진 바뀌지 않음, §8L): 분열 = 0차 공급 규칙의 진행량, 임계 문턱 = 억제 힐(K 는 임계의 0.9 배), 상태 전이 = 서명 문턱 + 근 찾기. 어휘에 세포 `fibroblast` 하나 추가. 데이터: 텔로미어 반복 단위·소모 과정·TERT·p53·p21·FGF2·세포 상태 2(정의항 8·한계 9, L000087–L000095), 시나리오 5(가상), `tests/telomere.test.mjs` 7 검사. 형식의 빈칸 둘을 한계로: 활성 힐의 기준선이 1 로 고정(L000091) · 화학량을 재는 측정량이 없음(L000088) |
 | 2026-10-10 | 10 (확장 5) | 신뢰 지표 ③ 추세 축: 새 `judicial/trend.js`(합의 수신함 `data/fetched/consensus/` · 판정 match·mismatch·unchecked · claim `trend` 도장 · 합의 창 만료 · Consensus_Gap 후보), `dbtool trend [--fetch] [--write]`, 어휘 `gapTypes.Consensus_Gap`·`consensus.window_days`, `reliability.items(opt.trend)` 로 추세 축 연결, `validStamps` 가 추세 도장을 분리해 넘김, 입법 서기가 주장별 검증 모듈로 보냄. 지문 70개가 `anchor` 로 올라감(이전 0). 한계 2건(L000085 신선도는 바이트로 증명 못 함 · L000086 지문은 하나인데 ChEBI 역할은 여럿) (§8K 추세 축) |

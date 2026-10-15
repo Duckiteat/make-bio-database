@@ -20,7 +20,7 @@ test('① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그�
   assert.deepEqual(files, Object.keys(EXPECT.cases).sort(), 'EXPECT.json 과 말뭉치 파일이 어긋남 — 둘을 같이 고친다');
   for (const f of files) {
     const patch = JSON.parse(readFileSync(new URL(f, DIR), 'utf8'));
-    const res = LEG.merge(BASE, patch), g = J.gate(BASE, res);
+    const res = LEG.merge(BASE, { recorded_at: '2026-10-15T00:00:00.000Z', ...patch }), g = J.gate(BASE, res); // 병합 전 dbtool 이 찍는 시각 (형식 v12)
     const all = [...g.errors, ...g.warnings, ...(res.report.errors || []).map((e) => ({ where: e.where, msg: e.msg }))];
     assert.equal(g.ok, false, `${f}: 통과해 버렸다 — 방어 규칙이 느슨해졌는지 본다`);
     assert.ok(all.some((e) => String(e.msg).includes(EXPECT.cases[f])),

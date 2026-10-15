@@ -20,7 +20,8 @@ function verifyChain(genesis, events) {
     if (ev.seq !== i + 1) errors.push(`사건 ${i + 1}: seq ${ev.seq} — 빠지거나 끼운 사건`);
     if (ev.prev !== prev) errors.push(`사건 ${i + 1}: prev 가 직전 루트와 다름 — 사슬이 끊김`);
     if (root !== sha(body.prev + '\n' + ATT.canon(body))) errors.push(`사건 ${i + 1}: root 재계산 불일치 — 내용이 바뀜`);
-    if (!Array.isArray(ev.patches) || !ev.patches.length) errors.push(`사건 ${i + 1}: 패치가 없음`);
+    if (ev.kind === 'migration') { if (!/^migrations\/[^/]+\.js$/.test(ev.script || '') || !/^[0-9a-f]{64}$/.test(ev.script_sha256 || '')) errors.push(`사건 ${i + 1}: 형식 변환 사건에 스크립트·해시가 없음`); }
+    else if (!Array.isArray(ev.patches) || !ev.patches.length) errors.push(`사건 ${i + 1}: 패치가 없음`);
     prev = root;
   });
   return { ok: !errors.length, errors, head: prev, n: events.length };
@@ -29,6 +30,8 @@ function verifyChain(genesis, events) {
 // replay = { snapshot_sha256, shas: [사건마다 재생한 db sha256], error? } · current_sha256 = 지금 db.json 의 sha256
 function replayVerdict(genesis, events, replay, currentSha) {
   const chain = verifyChain(genesis, events), errors = chain.errors.slice();
+  // 형식 변환 사건: 재생에 쓴 스크립트 파일이 사건이 적은 그 스크립트여야 한다
+  events.forEach((ev, i) => { if (ev.kind === 'migration' && (replay.scriptShas || {})[i] !== ev.script_sha256) errors.push(`사건 ${i + 1}: 형식 변환 스크립트가 기록된 것과 다름 (${ev.script})`); });
   if (replay.error) errors.push('재생 실패: ' + replay.error);
   if (replay.snapshot_sha256 !== genesis.db_sha256) errors.push('기원 스냅숏 파일이 기원이 적은 sha256 과 다름 — 스냅숏이 바뀜');
   events.forEach((ev, i) => { if (replay.shas[i] !== undefined && replay.shas[i] !== ev.db_sha256) errors.push(`사건 ${i + 1}: 재생한 db 가 봉인된 db 와 다름 — 병합이 결정론적이지 않거나 기록이 바뀜`); });

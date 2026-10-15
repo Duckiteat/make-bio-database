@@ -21,7 +21,9 @@ const idGaps = (o) => {
     ...fresh.flatMap((d) => Object.entries(d.site || {}).filter(([, x]) => x.residue_unknown).map(([k]) => [`${d.id}/site/${k}`, 'Structural_Gap'])).filter(([t]) => !has(t))].map(([t, ty], i) => gap(t, ty, i));
   return add.length ? { ...o, limitations: [...(o.limitations || []), ...add] } : o;
 };
-const P = (o) => idGaps(Object.assign({ format: 'definition-db-patch', version: 9, why: '시험' }, o));
+// 형식 v12: 값이 바뀌는 패치는 recorded_at 이 필요하다 (병합 전에 dbtool 이 찍는 것 — 시험은 고정 시각)
+const AT = '2026-10-15T00:00:00.000Z';
+const P = (o) => idGaps(Object.assign({ format: 'definition-db-patch', version: 9, why: '시험', recorded_at: AT }, o));
 const run = (patch, opt) => { const res = LEG.merge(BASE, P(patch)); return { res, g: J.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };
@@ -56,7 +58,7 @@ test('현재 저장소는 오류·경고 없음', () => {
 });
 test('예시 패치는 관문을 통과', () => {
   const patch = JSON.parse(readFileSync(new URL('../examples/pgm-isomerization.json', import.meta.url), 'utf8'));
-  const res = LEG.merge(BASE, patch), g = J.gate(BASE, res);
+  const res = LEG.merge(BASE, { ...patch, recorded_at: AT }), g = J.gate(BASE, res);
   assert.ok(g.ok, msgs(g));
 });
 
@@ -586,7 +588,7 @@ test('매 단계 질량 감사: 단계에서 부산물(피로인산)을 빼면 �
 // v11: TNF mRNA 에 서열 길이(1678 nt)가 데이터로 들어왔으므로, '재활용 화학량을 모르는 경우' 의 계약은
 //   그 관찰을 뺀 고정물로 시험한다 (계약 자체는 그대로 — 모르면 소실로 처리하고 한계를 제안한다).
 let _noseq = null;
-const noSeq = () => (_noseq ||= (() => { const d = JSON.parse(JSON.stringify(BASE)); d.senses[TNFM2].obs = d.senses[TNFM2].obs.filter((o) => o.property !== 'sequence_length'); return DefDB.normalize(d); })());
+const noSeq = () => (_noseq ||= (() => { const d = DefDB.normalize(JSON.parse(JSON.stringify(BASE))); d.senses[TNFM2].obs = d.senses[TNFM2].obs.filter((o) => o.property !== 'sequence_length'); return DefDB.normalize(d); })());
 test('분해(결정론·확률적): 1차 원장, 재활용 화학량을 모르면 소실로 처리하고 한계를 제안, seed 가 같으면 같은 결과', () => {
   const sc = scenario('lps-hypothetical.json'), m = `${TNFM2}|nucleoplasm`;
   const det = ORCH.runRate(noSeq(), TLRP, { scenario: sc, t_end: 20, dt: 0.01 });
@@ -671,7 +673,7 @@ const mx = (d) => `${d}|mito_matrix`;
 // examples/scenarios/tca-measured-kinetics-hypothetical.json(교과서 7.5′)에서 따로 확인한다.
 const INSTANT = (() => {
   const d = JSON.parse(JSON.stringify(BASE));
-  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate']]) for (const r of d.senses[sid].rule) if (r.id === key) delete r.kinetics;
+  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate']]) for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다
   return DefDB.normalize(d);
 })();
 test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복실화에서 CO₂ 를 빼면 거부', () => {
@@ -1099,7 +1101,7 @@ const FIX = new URL('./fixtures/augment', import.meta.url).pathname;
 //   · 아래 목록의 저분자는 ChEBI 번호를 지우고 unmapped 로 (이름 검색 경로를 시험하는 항목)
 const UNMAPPED_AGAIN = ['피루브산', '젖산', '에피네프린'];
 const PRE = (() => {
-  const db = JSON.parse(JSON.stringify(BASE)), back = new Set(UNMAPPED_AGAIN.map((n) => id(n)));
+  const db = DefDB.normalize(JSON.parse(JSON.stringify(BASE))), back = new Set(UNMAPPED_AGAIN.map((n) => id(n)));
   for (const [sid, d] of Object.entries(db.senses)) {
     for (const x of d.xrefs || []) if (x.status === 'verified') { x.status = 'asserted'; delete x.note; }
     if (d.fingerprint && ['computed', 'verified'].includes(d.fingerprint.status)) delete d.fingerprint; // 지문도 사법부 도장이 있어야 verified
@@ -1140,7 +1142,7 @@ test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, �
   assert.equal(out('ADP', 'chebi_entity'), 'rejected', '화학식 P3 ≠ 부분 구조 P2');
   assert.equal(out('에피네프린', 'chebi_entity'), 'rejected', '이름 불일치 + 이미 ATP 에 있는 번호');
   assert.equal(out('젖산'), 'ambiguous');
-  const res = LEG.merge(PRE, b.patch);
+  const res = LEG.merge(PRE, { ...b.patch, recorded_at: AT });
   // 'verified' 는 사법부 도장으로만: 도장 없이 관문에 넣으면 거부, 도장(재확인 통과)과 함께면 통과
   const g0 = J.gate(PRE, res, { attestations: [] });
   assert.ok(!g0.ok && g0.errors.some((e) => /사법부 증명/.test(e.msg)), '도장 없는 verified 는 거부');

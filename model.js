@@ -18,7 +18,7 @@
 })(typeof self !== 'undefined' ? self : this, function (V) {
   'use strict';
 
-  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 10;
+  const FORMAT = 'definition-db', PATCH_FORMAT = 'definition-db-patch', VERSION = 12;
 
   const REL = {
     is_a:         { axis: 'kind',     dir: 'up',   label: '~의 일종' },
@@ -142,18 +142,20 @@
   const bundleKey = (b) => [b.base, ...b.features.map((f) => `${f.site}:${f.feature}`).sort(), b.location].join('|');
 
   // ===== 정규화 =====
-  function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1, L: 1, O: 1 } }, terms: {}, senses: {}, steps: {}, limitations: {}, observations: {} }; }
+  function emptyDB() { return { format: FORMAT, version: VERSION, meta: { next: { T: 1, D: 1, S: 1, L: 1, O: 1, V: 1 } }, terms: {}, senses: {}, steps: {}, limitations: {}, observations: {}, values: {} }; }
   function normalize(input) {
     const db = emptyDB();
     if (!isObj(input)) return db;
     if (input.version != null && Number(input.version) !== VERSION) Object.defineProperty(db, '_version', { value: Number(input.version) });
     const nx = isObj(input.meta) && isObj(input.meta.next) ? input.meta.next : {};
-    for (const p of ['T', 'D', 'S', 'L', 'O']) db.meta.next[p] = Math.max(1, parseInt(nx[p], 10) || 1);
+    for (const p of ['T', 'D', 'S', 'L', 'O', 'V']) db.meta.next[p] = Math.max(1, parseInt(nx[p], 10) || 1);
     for (const [id, t] of Object.entries(isObj(input.terms) ? input.terms : {})) if (isObj(t)) db.terms[id] = normTerm(t);
     for (const [id, d] of Object.entries(isObj(input.senses) ? input.senses : {})) if (isObj(d)) db.senses[id] = normSense(d);
     for (const [id, st] of Object.entries(isObj(input.steps) ? input.steps : {})) if (isObj(st)) db.steps[id] = normStep(st);
     for (const [id, l] of Object.entries(isObj(input.limitations) ? input.limitations : {})) if (isObj(l)) db.limitations[id] = normLimitation(l);
     for (const [id, o] of Object.entries(isObj(input.observations) ? input.observations : {})) if (isObj(o)) db.observations[id] = normObservation(o);
+    for (const [id, v] of Object.entries(isObj(input.values) ? input.values : {})) if (isObj(v)) db.values[id] = normValue(v);
+    reconcileValues(db, input);
     return db;
   }
   function normTerm(t) {
@@ -256,6 +258,7 @@
     }
     if (arr(r.taxa).length) o.taxa = arr(r.taxa).map(str);
     if (isObj(r.kinetics)) o.kinetics = normKinetics(r.kinetics);
+    else if (isObj(r.kinetic_law)) o.kinetic_law = normKineticLaw(r.kinetic_law);
     o.evidence = normEvidence(r.evidence);
     return o;
   }
@@ -283,6 +286,136 @@
     if (str(b.from)) o.from = str(b.from);
     if (str(b.note)) o.note = str(b.note);
     return o;
+  }
+  // ===== 값 층 (형식 v12, docs/design/format-v12.md) =====
+  // 저장: 값은 db.values(V…)에만 — 정의항 obs 와 규칙 kinetics 의 수치는 여기로 빠지고, 규칙에는 법칙 모양(kinetic_law)만 남는다.
+  // 메모리: 정규화가 값 층에서 지금 모양의 obs·kinetics 를 **열거되지 않는 보기**로 다시 붙인다 — 읽는 코드는 그대로, 직렬화(JSON)에는 값 층만.
+  // 값은 바꾸지 않는다: 바뀌면 새 기록이 supersedes 로 대체, 빠지면 retracted (legislative merge 의 foldValues).
+  const KIN_VALUE_FIELDS = KIN_FIELDS.filter((f) => f !== 'order'); // 차수는 법칙의 구조
+  const canonJ = (o) => (Array.isArray(o) ? `[${o.map(canonJ).join(',')}]` : o && typeof o === 'object' ? `{${Object.keys(o).sort().filter((k) => o[k] !== undefined).map((k) => JSON.stringify(k) + ':' + canonJ(o[k])).join(',')}}` : JSON.stringify(o));
+  function normKineticLaw(k) {
+    const o = { law: str(k.law) };
+    if (k.order != null && k.order !== '') o.order = Number(k.order);
+    if (k.reversible) o.reversible = true;
+    if (isObj(k.env)) { o.env = {}; for (const f of ENV_FIELDS) if (k.env[f] != null && k.env[f] !== '') o.env[f] = Number(k.env[f]); }
+    if (isObj(k.context)) o.context = normContext(k.context);
+    if (k.lumped) o.lumped = true;
+    o.evidence = normEvidence(k.evidence);
+    return o;
+  }
+  function normValue(v) {
+    const x = isObj(v.value) ? v.value : {}, o = { subject: str(v.subject), property: str(v.property), value: { dist: str(x.dist) || 'point' } };
+    for (const f of ['mean', 'sd', 'low', 'high']) if (typeof x[f] === 'number') o.value[f] = x[f];
+    if (x.level != null) o.value.level = str(x.level);
+    if (str(v.unit)) o.unit = str(v.unit);
+    if (isObj(v.context)) o.context = normContext(v.context);
+    o.evidence = normEvidence(v.evidence);
+    if (arr(v.from).length) o.from = arr(v.from).map(str).filter(Boolean);
+    o.derivation = str(v.derivation) || 'direct';
+    for (const k of ['note', 'evidence_at', 'recorded_at', 'supersedes']) if (str(v[k])) o[k] = str(v[k]);
+    if (isObj(v.retracted)) { o.retracted = { note: str(v.retracted.note) }; if (str(v.retracted.at)) o.retracted.at = str(v.retracted.at); if (isObj(v.retracted.evidence)) o.retracted.evidence = normEvidence(v.retracted.evidence); }
+    return o;
+  }
+  // 현재 값 = 철회되지 않았고 다른 기록이 대체하지 않은 기록 (번호 순)
+  function currentValues(db) {
+    const sup = new Set(Object.values(db.values || {}).map((v) => v.supersedes).filter(Boolean)), m = new Map();
+    for (const id of Object.keys(db.values || {}).sort()) {
+      const v = db.values[id];
+      if (v.retracted || sup.has(id)) continue;
+      if (!m.has(v.subject)) m.set(v.subject, []);
+      m.get(v.subject).push([id, v]);
+    }
+    return m;
+  }
+  // 값 기록 ↔ 지금 모양 (보기)
+  const valueOfObs = (sid, o) => {
+    const v = { subject: sid, property: o.property, value: typeof o.value === 'number' ? { dist: 'point', mean: o.value } : { dist: 'categorical', level: String(o.value) }, context: o.context, evidence: o.evidence,
+      derivation: o.evidence && o.evidence.level === 'computed' ? 'computed' : 'direct' };
+    if (o.unit) v.unit = o.unit; if (o.from) v.from = [o.from]; if (o.note) v.note = o.note;
+    return normValue(v);
+  };
+  const obsOfValue = (v) => {
+    const o = { property: v.property, value: v.value.dist === 'categorical' ? v.value.level : v.value.mean, context: v.context || { scope: '' }, evidence: v.evidence };
+    if (v.unit) o.unit = v.unit; if (v.from && v.from.length) o.from = v.from[0]; if (v.note) o.note = v.note;
+    return o;
+  };
+  const valuesOfKinetics = (ref, k) => KIN_VALUE_FIELDS.filter((f) => k[f] != null).map((f) => {
+    const v = { subject: ref, property: f, value: { dist: 'point', mean: k[f] }, evidence: k.evidence, derivation: k.lumped ? 'lumped' : 'direct' };
+    if (k.context) v.context = k.context;
+    const fr = (k.from || []).filter((x) => x.param === f).map((x) => x.obs); if (fr.length) v.from = fr;
+    return normValue(v);
+  });
+  const lawOfKinetics = (k) => normKineticLaw(k);
+  // 규칙에 법칙 모양을 놓는다 — 키 순서를 normRule 과 같게(evidence 앞) 두어 정규화가 멱등이고 직렬화 해시가 안정적이게
+  const placeLaw = (r, law) => { const ev = r.evidence; delete r.evidence; delete r.kinetic_law; if (law) r.kinetic_law = law; if (ev !== undefined) r.evidence = ev; };
+  function kineticsOf(law, vals) {
+    const o = { law: law.law };
+    const by = new Map(vals.map(([, v]) => [v.property, v]));
+    for (const f of KIN_FIELDS) { if (f === 'order') { if (law.order != null) o.order = law.order; continue; } if (by.has(f)) o[f] = by.get(f).value.mean; }
+    if (law.reversible) o.reversible = true;
+    if (law.env) o.env = { ...law.env };
+    if (law.context) o.context = law.context;
+    const from = KIN_FIELDS.flatMap((f) => (by.has(f) && by.get(f).from ? by.get(f).from.map((obs) => ({ param: f, obs })) : []));
+    if (from.length) o.from = from;
+    if (law.lumped) o.lumped = true;
+    o.evidence = law.evidence;
+    return o;
+  }
+  // 두 시간 (형식 v12): 그날 기준의 db — recorded_at ≤ 그날인 기록만으로 현재 값을 다시 계산한다(그 뒤의 대체·철회는 없던 일로)
+  function asOf(db, iso) {
+    const t = Date.parse(iso), out = normalize(JSON.parse(JSON.stringify(db)));
+    for (const [id, v] of Object.entries(out.values)) if (!(Date.parse(v.recorded_at) <= t)) delete out.values[id];
+    for (const v of Object.values(out.values)) if (v.retracted && v.retracted.at && !(Date.parse(v.retracted.at) <= t)) delete v.retracted;
+    attachViews(out);
+    return out;
+  }
+  const obsKey = (o) => `${o.property}|${canonJ(o.context || {})}|${o.unit || ''}`;
+  // 보기 붙이기 (열거되지 않음 — JSON 에는 나가지 않는다)
+  function attachViews(db) {
+    const cur = currentValues(db), view = (o, k, v) => Object.defineProperty(o, k, { value: v, enumerable: false, writable: true, configurable: true });
+    for (const [sid, d] of Object.entries(db.senses)) {
+      view(d, 'obs', (cur.get(sid) || []).filter(([, v]) => !KIN_VALUE_FIELDS.includes(v.property) || !v.subject.includes('/rule/')).map(([, v]) => obsOfValue(v)));
+      for (const r of d.rule) if (r.kinetic_law) view(r, 'kinetics', kineticsOf(r.kinetic_law, cur.get(`${sid}/rule/${r.id}`) || []));
+    }
+  }
+  // 정규화의 마지막 단계: 입력이 준 obs·kinetics(보기이든 고친 배열이든)를 값 층과 맞춘다.
+  //   값 층이 없는 입력(v10 이하) = 처음 옮기기 — 기록을 새로 만든다(recorded_at 은 변환 스크립트가 찍는다).
+  //   값 층이 있는데 입력의 보기가 값과 다르면 = 메모리에서 만든 변형(시험) — 같은 열쇠의 기록을 제자리에서 고친다.
+  //   실제 병합은 legislative foldValues 가 먼저 대체·철회로 접으므로 여기서는 차이가 없다(관문이 값 불변을 따로 본다).
+  function reconcileValues(db, input) {
+    const hasValues = isObj(input.values), inSenses = isObj(input.senses) ? input.senses : {};
+    const newId = () => fmtId('V', db.meta.next.V++);
+    const stampOf = () => Object.values(db.values).map((v) => v.recorded_at).filter(Boolean).sort().pop();
+    for (const [sid, d] of Object.entries(db.senses)) {
+      const src = inSenses[sid] || {}, givenObs = 'obs' in src;
+      const cur = currentValues(db);
+      if (givenObs || !hasValues) {
+        const built = d.obs || [], derived = (cur.get(sid) || []).filter(([, v]) => !v.subject.includes('/rule/'));
+        if (!hasValues) for (const o of built) db.values[newId()] = valueOfObs(sid, o);
+        else if (canonJ(built) !== canonJ(derived.map(([, v]) => obsOfValue(v)))) {
+          const left = new Map(derived.map(([id, v]) => [obsKey(obsOfValue(v)), id]));
+          for (const o of built) { const k = obsKey(o), id = left.get(k); const nv = valueOfObs(sid, o); if (id) { left.delete(k); const keep = db.values[id]; db.values[id] = Object.assign(nv, keep.recorded_at ? { recorded_at: keep.recorded_at } : {}); } else db.values[newId()] = Object.assign(nv, stampOf() ? { recorded_at: stampOf() } : {}); }
+          for (const id of left.values()) delete db.values[id];
+        }
+      }
+      delete d.obs;
+      const srcRules = new Map(arr(src.rule).filter(isObj).map((r) => [str(r.id), r]));
+      for (const r of d.rule) {
+        const ref = `${sid}/rule/${r.id}`, sr = srcRules.get(r.id) || {}, givenK = 'kinetics' in sr || !hasValues;
+        if (!givenK) continue;
+        const k = r.kinetics, curK = (currentValues(db).get(ref) || []);
+        delete r.kinetics;
+        if (!k) { if (hasValues && 'kinetics' in sr) { delete r.kinetic_law; for (const [id] of curK) delete db.values[id]; } continue; }
+        const want = valuesOfKinetics(ref, k);
+        placeLaw(r, lawOfKinetics(k));
+        if (!hasValues) { for (const v of want) db.values[newId()] = v; continue; }
+        if (canonJ(want) === canonJ(curK.map(([, v]) => { const { recorded_at, supersedes, evidence_at, ...rest } = v; return rest; }))) continue;
+        const left = new Map(curK.map(([id, v]) => [v.property, id]));
+        for (const v of want) { const id = left.get(v.property); if (id) { left.delete(v.property); const keep = db.values[id]; db.values[id] = Object.assign(v, keep.recorded_at ? { recorded_at: keep.recorded_at } : {}); } else db.values[newId()] = Object.assign(v, stampOf() ? { recorded_at: stampOf() } : {}); }
+        for (const id of left.values()) delete db.values[id];
+      }
+    }
+    attachViews(db);
   }
   const SENSE_FIELDS = ['kind', 'tier', 'reference_species', 'membrane', 'xrefs', 'unmapped', 'fingerprint', 'components', 'moieties', 'desc', 'site', 'rule', 'obs', 'motif', 'addresses', 'gap_review', 'distinction', 'note', 'signature', 'metabolome', 'transitions', 'mechanisms', 'elements'];
   function normSense(d) {
@@ -723,6 +856,6 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, normObservation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, normValue, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION });
 });

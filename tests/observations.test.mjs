@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 const req = createRequire(import.meta.url);
 const DefDB = req('../core.js'), J = req('../judicial/judicial.js'), LEG = req('../legislative/legislative.js'), C = req('../judicial/contract.js'), OP = req('../compiler/obs_operator.js');
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 10, why: '시험' }, o);
+const P = (o) => Object.assign({ format: 'definition-db-patch', version: 10, why: '시험', recorded_at: '2026-10-15T00:00:00.000Z' }, o);
 const run = (db, patch) => { const res = LEG.merge(db, P(patch)); return { res, g: J.gate(db, res) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, db = BASE) => { const r = run(db, patch); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res.db; };
@@ -85,12 +85,12 @@ test('④ 변경 불가: 관찰은 바꾸거나 지울 수 없고, 철회 표시
   rejectedFor({ senses: [withKin({ law: 'mass_action', half_life: 1800, from: [{ param: 'half_life', obs: NEW3 }], evidence: FIX })] }, /철회된 관찰/, db4);
 });
 
-test('⑤ 무손실: 정규화 멱등, 저장소는 v10, 관찰 밖 필드는 형식 변환에서 그대로', () => {
+test('⑤ 무손실: 정규화 멱등, 저장소는 v12, 관찰 밖 필드는 형식 변환에서 그대로', () => {
   const db = passes({ observations: [amount({ calibration: { kind: 'linear', a: 2, b: 0 }, raw: 600, condition: { species: '9606', time_s: 60, states: [BUNDLE] }, provenance: { sha256: 'a'.repeat(64) } })] });
   const once = JSON.stringify(DefDB.normalize(db)), twice = JSON.stringify(DefDB.normalize(JSON.parse(once)));
   assert.equal(once, twice, '관찰 기록은 정규화를 거쳐도 비트 단위로 같아야 함');
   const raw = JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8'));
-  assert.equal(raw.version, 10);
+  assert.equal(raw.version, 12);
   for (const [oid, o] of Object.entries(raw.observations)) assert.ok(C.checkObservation(o).ok, `${oid} 계약 위반: ` + JSON.stringify(C.checkObservation(o).violations));
   assert.equal(JSON.stringify(DefDB.normalize(raw)), JSON.stringify(raw), '저장소는 이미 정규형 (변환이 바꾼 것 없음)');
 });

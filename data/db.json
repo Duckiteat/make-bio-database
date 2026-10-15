@@ -1,13 +1,14 @@
 {
   "format": "definition-db",
-  "version": 10,
+  "version": 12,
   "meta": {
     "next": {
       "T": 210,
       "D": 212,
       "S": 57,
       "L": 107,
-      "O": 19
+      "O": 19,
+      "V": 59
     }
   },
   "terms": {
@@ -1863,8 +1864,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000002": {
       "term": "T000002",
@@ -1890,8 +1890,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000003": {
       "term": "T000003",
@@ -1922,8 +1921,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000004": {
       "term": "T000004",
@@ -1948,8 +1946,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000005": {
       "term": "T000005",
@@ -1986,8 +1983,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000006": {
       "term": "T000006",
@@ -2020,8 +2016,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000007": {
       "term": "T000007",
@@ -2047,8 +2042,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000008": {
       "term": "T000008",
@@ -2081,8 +2075,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000009": {
       "term": "T000009",
@@ -2123,8 +2116,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000010": {
       "term": "T000009",
@@ -2162,8 +2154,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000011": {
       "term": "T000010",
@@ -2206,8 +2197,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000012": {
       "term": "T000011",
@@ -2239,8 +2229,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000013": {
       "term": "T000012",
@@ -2272,8 +2261,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000014": {
       "term": "T000013",
@@ -2310,8 +2298,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000015": {
       "term": "T000014",
@@ -2348,8 +2335,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000016": {
       "term": "T000015",
@@ -2380,8 +2366,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000017": {
       "term": "T000016",
@@ -2423,8 +2408,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000018": {
       "term": "T000016",
@@ -2456,7 +2440,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "물질적 실체(DNA)를 전제하지 않는 정의 — 유전자#1 과 구별"
     },
     "D000019": {
@@ -2485,8 +2468,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000020": {
       "term": "T000018",
@@ -2521,8 +2503,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000021": {
       "term": "T000019",
@@ -2558,8 +2539,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000022": {
       "term": "T000020",
@@ -2600,8 +2580,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000023": {
       "term": "T000021",
@@ -2637,8 +2616,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000024": {
       "term": "T000022",
@@ -2675,8 +2653,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000025": {
       "term": "T000023",
@@ -2708,8 +2685,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000026": {
       "term": "T000024",
@@ -2735,8 +2711,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000027": {
       "term": "T000025",
@@ -2781,8 +2756,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000028": {
       "term": "T000026",
@@ -2824,8 +2798,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000029": {
       "term": "T000027",
@@ -2974,7 +2947,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "활성화되면 실제로는 α(GTP) 와 βγ 로 갈라지지만, 여기서는 삼량체를 한 단위로 두고 α 소단위의 뉴클레오타이드 부위만 추적한다."
     },
     "D000030": {
@@ -3119,7 +3091,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "β1·β2·β3 아형이 있어 분자 부류로 둔다. 일곱 번 막을 관통하는 G 단백질 연결 수용체."
     },
     "D000031": {
@@ -3237,7 +3208,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "여러 아형(AC1–9)이 있어 분자 부류로 둔다. 막관통 도메인 두 묶음과 세포질 쪽 촉매 도메인을 가진다."
     },
     "D000032": {
@@ -3300,8 +3270,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000033": {
       "term": "T000031",
@@ -3368,8 +3337,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000034": {
       "term": "T000032",
@@ -3431,8 +3399,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000035": {
       "term": "T000033",
@@ -3494,8 +3461,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000036": {
       "term": "T000034",
@@ -3557,8 +3523,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000037": {
       "term": "T000035",
@@ -3603,8 +3568,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000038": {
       "term": "T000036",
@@ -3636,8 +3600,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000039": {
       "term": "T000037",
@@ -3704,8 +3667,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000040": {
       "term": "T000038",
@@ -3736,8 +3698,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000041": {
       "term": "T000039",
@@ -3774,8 +3735,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000042": {
       "term": "T000040",
@@ -3858,7 +3818,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "전효소는 조절 소단위 2개 + 촉매 소단위 2개(R2C2). 효소 번호(EC 2.7.11.11)는 촉매 소단위 정의항으로 옮겼다."
     },
     "D000043": {
@@ -3991,7 +3950,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "(αβγδ)4 의 16량체. δ 소단위는 칼모듈린이라 칼슘 이온으로도 활성화된다(칼슘 경로는 아직 없음)."
     },
     "D000044": {
@@ -4138,7 +4096,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "인산화된 a형이 활성형, 비인산화 b형은 덜 활성. 이름에 '인산화'가 들어가지만 단백질 키네이스가 아니라 가인산분해 효소다. 동종 이량체이며 간형·근육형·뇌형 아형이 있어 분자 부류로 둔다."
     },
     "D000045": {
@@ -4171,8 +4128,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000046": {
       "term": "T000044",
@@ -4211,8 +4167,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000047": {
       "term": "T000045",
@@ -4257,8 +4212,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000048": {
       "term": "T000046",
@@ -4304,8 +4258,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000049": {
       "term": "T000047",
@@ -4385,8 +4338,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000050": {
       "term": "T000048",
@@ -4428,8 +4380,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000051": {
       "term": "T000049",
@@ -4472,7 +4423,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "효소가 효소를 활성화하는 연쇄라 단계마다 신호가 증폭된다."
     },
     "D000052": {
@@ -4561,7 +4511,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "촉매 소단위는 여러 아형(α·β·γ)이 있어 분자 부류로 둔다."
     },
     "D000053": {
@@ -4638,21 +4587,6 @@
         }
       },
       "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 394,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P63092 서열 v1 (data/fetched/uniprot/P63092.json · sha256:84206ab2d603)"
-          },
-          "unit": "aa"
-        }
-      ],
       "note": "지질(팔미토일기)로 세포막 안쪽 면에 고정된다. 유전자 GNAS 는 여러 전사체를 만들며, 외부 ID 는 원본 대조 전(asserted)."
     },
     "D000054": {
@@ -4696,7 +4630,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "β1–β5 여러 아형이 있어 분자 부류로 둔다. γ 소단위의 지질 닻을 통해 막에 붙는다."
     },
     "D000055": {
@@ -4740,7 +4673,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "여러 아형이 있어 분자 부류로 둔다. 지질 닻은 프레닐기."
     },
     "D000056": {
@@ -4801,7 +4733,6 @@
         }
       },
       "rule": [],
-      "obs": [],
       "note": "RIα·RIβ·RIIα·RIIβ 아형이 있어 분자 부류로 둔다. 조절 소단위 하나에 cAMP 결합 자리가 둘(A·B)."
     },
     "D000057": {
@@ -4885,7 +4816,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "Cα·Cβ 아형이 있어 분자 부류로 둔다. 효소 번호(EC)는 촉매 소단위가 가진다."
     },
     "D000058": {
@@ -4919,7 +4849,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "근육형·간형 아형이 있어 분자 부류로 둔다."
     },
     "D000059": {
@@ -4957,8 +4886,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000060": {
       "term": "T000058",
@@ -5001,7 +4929,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "근육형·간형(정소형) 아형이 있어 분자 부류로 둔다."
     },
     "D000061": {
@@ -5040,7 +4967,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "사람에서는 서로 다른 세 유전자(CALM1·2·3)가 같은 단백질을 만든다 — 한 UniProt 항목으로 정하지 않고 분자 부류로 둔다. 칼슘 이온 정의항은 아직 없음."
     },
     "D000062": {
@@ -5098,8 +5024,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000063": {
       "term": "T000061",
@@ -5131,8 +5056,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000064": {
       "term": "T000062",
@@ -5200,7 +5124,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "ChEBI:16412 는 지질다당류 부류 항목. 세균 종마다 지질 A 의 아실 사슬 수가 달라 활성도 다르다."
     },
     "D000065": {
@@ -5330,21 +5253,6 @@
             "note": "Wright 1990 은 CD14 가 LPS–LBP 복합체의 수용체임을 보였다. LBP 가 다시 쓰인다는 부분은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 481,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P18428 서열 v3 (data/fetched/uniprot/P18428.json · sha256:3742d04a3170)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000066": {
@@ -5443,21 +5351,6 @@
             "basis": "MD-2 가 TLR4 의 LPS 반응성에 필요하고(Shimazu et al., 1999, DOI 10.1084/jem.189.11.1777), LPS 가 MD-2 주머니에 결합함(Park et al., 2009, DOI 10.1038/nature07830). CD14 → MD-2 직접 전달을 보인 문헌은 이번 세션에서 확인하지 못함."
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 375,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P08571 서열 v2 (data/fetched/uniprot/P08571.json · sha256:780766e93853)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000067": {
@@ -5539,21 +5432,6 @@
         }
       },
       "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 839,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O00206 서열 v2 (data/fetched/uniprot/O00206.json · sha256:dd22c3dd0d74)"
-          },
-          "unit": "aa"
-        }
-      ],
       "note": "Poltorak et al. (1998) 은 LPS 무반응 생쥐(C3H/HeJ 등)의 원인이 Tlr4 변이임을 밝혔다."
     },
     "D000068": {
@@ -5625,22 +5503,7 @@
           "note": "지질 A 의 아실 사슬이 들어가는 큰 소수성 주머니 (Park et al., 2009)"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 160,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9Y6Y9 서열 v2 (data/fetched/uniprot/Q9Y6Y9.json · sha256:e2888a030bf3)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000069": {
       "term": "T000067",
@@ -5724,8 +5587,7 @@
           "note": "TLR4 의 TIR 도메인"
         }
       },
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000070": {
       "term": "T000068",
@@ -5918,8 +5780,7 @@
             "note": "Lin et al. 2010 의 결정 구조는 MyD88 6 : IRAK4 4 : IRAK2 4. MyD88–IRAK4 가 IRAK2 또는 IRAK1 을 모은다고 보고했으며, 여기서 IRAK2 자리에 IRAK1 을 둔 것은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000071": {
       "term": "T000069",
@@ -5985,22 +5846,7 @@
           "note": "TIR 도메인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 221,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P58753 서열 v2 (data/fetched/uniprot/P58753.json · sha256:688361178693)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000072": {
       "term": "T000070",
@@ -6069,22 +5915,7 @@
           "note": "TIR 도메인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 296,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q99836 서열 v1 (data/fetched/uniprot/Q99836.json · sha256:8fa044a948ef)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000073": {
       "term": "T000071",
@@ -6150,22 +5981,7 @@
           "note": "죽음 도메인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 460,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9NWZ3 서열 v1 (data/fetched/uniprot/Q9NWZ3.json · sha256:16ff71e038d0)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000074": {
       "term": "T000072",
@@ -6256,22 +6072,7 @@
           "note": "TRAF6 결합 모티프 — 잔기 범위 미기록"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 712,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P51617 서열 v2 (data/fetched/uniprot/P51617.json · sha256:13445e7ca1e5)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000075": {
       "term": "T000073",
@@ -6526,8 +6327,7 @@
             "note": "Wang et al. 2001: TAK1 은 TRAF6·Ubc13–Uev1A 에 의존하는 유비퀴틴 의존 키네이스. 발판(마이도솜)을 행위자로 둔 것은 [Abstracted Logic]."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000076": {
       "term": "T000074",
@@ -6596,22 +6396,7 @@
           "note": "자가 유비퀴틴화 자리 — 사람 번호 미확인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 522,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9Y4K3 서열 v1 (data/fetched/uniprot/Q9Y4K3.json · sha256:6461e9f53396)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000077": {
       "term": "T000075",
@@ -6644,7 +6429,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "UBB·UBC·RPS27A·UBA52 네 유전자가 만들어 하나의 UniProt 항목으로 정하지 않고 분자 부류로 둔다."
     },
     "D000078": {
@@ -6711,22 +6495,7 @@
           "note": "활성화 고리의 자가 인산화 트레오닌 — 사람 번호 미확인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 606,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O43318 서열 v1 (data/fetched/uniprot/O43318.json · sha256:c46eb813413b)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000079": {
       "term": "T000077",
@@ -6778,22 +6547,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 504,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q15750 서열 v1 (data/fetched/uniprot/Q15750.json · sha256:87194fee9a2b)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000080": {
       "term": "T000078",
@@ -6859,22 +6613,7 @@
           "note": "NZF 유비퀴틴 결합 도메인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 693,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9NYJ8 서열 v1 (data/fetched/uniprot/Q9NYJ8.json · sha256:69ac0ef1f0e7)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000081": {
       "term": "T000079",
@@ -7065,8 +6804,7 @@
             "note": "Ser177 다음에 Ser181 로 둔 순서는 [Abstracted Logic] — 두 자리는 독립 규칙이다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000082": {
       "term": "T000080",
@@ -7142,22 +6880,7 @@
           }
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 745,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O15111 서열 v2 (data/fetched/uniprot/O15111.json · sha256:0ea59d13b913)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000083": {
       "term": "T000081",
@@ -7238,22 +6961,7 @@
           }
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 756,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O14920 서열 v1 (data/fetched/uniprot/O14920.json · sha256:008f4baf1419)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000084": {
       "term": "T000082",
@@ -7312,22 +7020,7 @@
           "note": "유비퀴틴 결합(UBAN) 도메인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 419,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9Y6K9 서열 v2 (data/fetched/uniprot/Q9Y6K9.json · sha256:3353c88c7438)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000085": {
       "term": "T000083",
@@ -7536,7 +7229,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "NEMO 의 화학량(2)은 이량체로 둔 추론값 [Abstracted Logic]. NEMO 가 K63 사슬에 결합해 IKK 를 TAK1 곁으로 모으는 단계는 아직 따로 두지 않았다."
     },
     "D000086": {
@@ -7653,21 +7345,6 @@
             "basis": "단백질 분해 산물이 아미노산으로 재활용된다는 일반 원리를 유리 IκBα 에 적용"
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 317,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "asserted",
-            "note": "UniProt P25963 표준 서열 길이 — 판매처·2차 자료(creativebiomart, iPTMnet P25963 항목)에서 확인, UniProt 원본은 직접 대조 못 함"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000087": {
@@ -7721,22 +7398,7 @@
           "note": "핵 위치 신호 — IκBα 가 결합하면 가려진다 (위치 미기록)"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 551,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q04206 서열 v2 (data/fetched/uniprot/Q04206.json · sha256:584bd6755357)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000088": {
       "term": "T000086",
@@ -7782,21 +7444,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 968,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P19838 서열 v2 (data/fetched/uniprot/P19838.json · sha256:b395d7b7895a)"
-          },
-          "unit": "aa"
-        }
-      ],
       "note": "UniProt P19838 은 p105 전구체 항목. p50 은 그 N 말단 부분이다."
     },
     "D000089": {
@@ -7888,8 +7535,7 @@
             "basis": "Fagerlund et al., 2005, J Biol Chem 280(16) \"NF-κB is transported into the nucleus by importin α3 and importin α4\" — 서지는 확인했으나 DOI/PMID 는 이번 세션에서 확인하지 못함"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000090": {
       "term": "T000088",
@@ -7995,8 +7641,7 @@
             ]
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000091": {
       "term": "T000089",
@@ -8061,22 +7706,7 @@
           "note": "인산화된 DSGxxS 서열(IκBα Ser32·Ser36)을 인식하는 WD40 도메인"
         }
       },
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 605,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9Y297 서열 v1 (data/fetched/uniprot/Q9Y297.json · sha256:510357bd1f04)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000092": {
       "term": "T000090",
@@ -8121,22 +7751,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 163,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P63208 서열 v2 (data/fetched/uniprot/P63208.json · sha256:a9eb295972de)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000093": {
       "term": "T000091",
@@ -8181,22 +7796,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 776,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q13616 서열 v2 (data/fetched/uniprot/Q13616.json · sha256:26cd107f0dab)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000094": {
       "term": "T000092",
@@ -8241,22 +7841,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 108,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P62877 서열 v1 (data/fetched/uniprot/P62877.json · sha256:0f26e1d30099)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000095": {
       "term": "T000093",
@@ -8391,8 +7976,7 @@
             "note": "E1·E2 는 정의항으로 두지 않았다. ATP→AMP 는 E1 반응을 합친 것 [Abstracted Logic]."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000096": {
       "term": "T000094",
@@ -8425,7 +8009,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "28개 소단위(α1–7, β1–7 두 벌)는 아직 정의항으로 나누지 않았다."
     },
     "D000097": {
@@ -8464,7 +8047,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "구성 소단위는 아직 정의항으로 나누지 않았다."
     },
     "D000098": {
@@ -8602,8 +8184,7 @@
             "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000099": {
       "term": "T000097",
@@ -8635,8 +8216,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000100": {
       "term": "T000098",
@@ -8797,23 +8377,6 @@
             "note": "유전자를 행위자(주형)로 두고 RNA 중합효소를 생략한 표현은 [Abstracted Logic]"
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "copy_number",
-          "value": 2,
-          "context": {
-            "scope": "이배체 체세포",
-            "species": "9606",
-            "cell": "macrophage",
-            "location": "nucleoplasm"
-          },
-          "evidence": {
-            "level": "asserted",
-            "note": "상염색체 유전자의 대립유전자 2개 (이배체 기준) — 일반 지식"
-          },
-          "unit": "copies/cell"
-        }
       ]
     },
     "D000101": {
@@ -8872,33 +8435,6 @@
             "level": "abstracted",
             "basis": "RNA 분해 산물이 뉴클레오타이드라는 일반 원리를 TNF mRNA 에 적용"
           }
-        }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 1678,
-          "context": {
-            "scope": "RefSeq 기준 전사체 NM_000594.4 (성숙 mRNA, 5′·3′ UTR 포함)",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "curated",
-            "sources": [
-              {
-                "db": "DOI",
-                "id": "10.1093/nar/gkv1189",
-                "citation": "O'Leary et al., 2016"
-              },
-              {
-                "db": "PMID",
-                "id": "26553804",
-                "citation": "O'Leary et al., 2016"
-              }
-            ]
-          },
-          "unit": "nt",
-          "note": "NCBI Nucleotide 의 NM_000594.4 레코드 길이 1678 nt — eutils esummary 의 slen 으로 조회했다(2026-10-10). 출처는 RefSeq 데이터베이스 논문이고 값 자체는 그 레코드다. 폴리(A) 꼬리는 레코드에 포함되지 않으므로 생체 내 전사체는 이보다 길다 — 재활용 뉴클레오타이드 수의 하한이다."
         }
       ]
     },
@@ -8959,8 +8495,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000103": {
       "term": "T000101",
@@ -9004,8 +8539,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000104": {
       "term": "T000102",
@@ -9054,8 +8588,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000105": {
       "term": "T000103",
@@ -9104,8 +8637,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000106": {
       "term": "T000104",
@@ -9143,7 +8675,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "receptor_signaling",
       "addresses": [
         {
@@ -9188,7 +8719,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "membrane_to_nucleus",
       "addresses": [
         {
@@ -9228,7 +8758,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "ligand_relay",
       "gap_review": "등록부 검토: 이 패턴에 직접 걸린 한계 없음. 전달 단계의 속도는 L+time 과 같은 시간 공백에 속한다."
     },
@@ -9263,7 +8792,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "receptor_clustering",
       "addresses": [
         {
@@ -9303,7 +8831,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "scaffold_assembly",
       "addresses": [
         {
@@ -9348,7 +8875,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "kinase_cascade",
       "addresses": [
         {
@@ -9393,7 +8919,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "second_messenger",
       "addresses": [
         {
@@ -9438,7 +8963,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "gtpase_timer",
       "addresses": [
         {
@@ -9478,7 +9002,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "inhibitor_degradation_release",
       "addresses": [
         {
@@ -9523,7 +9046,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "motif": "nuclear_translocation_transcription",
       "addresses": [
         {
@@ -9561,97 +9083,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [
-        {
-          "property": "compartment_volume",
-          "value": 181,
-          "context": {
-            "scope": "미토콘드리아 전체 부피 (기질의 상한)",
-            "species": "9606",
-            "cell": "hela_cell",
-            "location": "mito_matrix"
-          },
-          "evidence": {
-            "level": "curated",
-            "sources": [
-              {
-                "db": "PMID",
-                "id": "885911",
-                "citation": "Posakony, England & Attardi, 1977"
-              },
-              {
-                "db": "DOI",
-                "id": "10.1016/j.cell.2016.06.025",
-                "citation": "Guillaume-Gentil et al., 2016"
-              },
-              {
-                "db": "PMID",
-                "id": "27419874",
-                "citation": "Guillaume-Gentil et al., 2016"
-              }
-            ]
-          },
-          "unit": "fL",
-          "from": "O000016",
-          "note": "관찰 기록 O+v_mx 의 파생값 — 수밀도 × 1 개 부피 × 세포질 부피. 내막 안 기질 부피는 더 작다 (상한)"
-        },
-        {
-          "property": "compartment_volume",
-          "value": 1600,
-          "context": {
-            "scope": "세포질 전체 부피 (cytosol 의 상한)",
-            "species": "9606",
-            "cell": "hela_cell",
-            "location": "cytosol"
-          },
-          "evidence": {
-            "level": "curated",
-            "sources": [
-              {
-                "db": "DOI",
-                "id": "10.1016/j.cell.2016.06.025",
-                "citation": "Guillaume-Gentil et al., 2016"
-              },
-              {
-                "db": "PMID",
-                "id": "27419874",
-                "citation": "Guillaume-Gentil et al., 2016"
-              }
-            ]
-          },
-          "unit": "fL",
-          "from": "O000017",
-          "note": "관찰 기록 O+v_cyt 의 파생값 — 중앙값 1.6 pL"
-        },
-        {
-          "property": "compartment_volume",
-          "value": 500,
-          "context": {
-            "scope": "섬유아세포 핵 부피",
-            "species": "9606",
-            "cell": "fibroblast",
-            "location": "nucleoplasm"
-          },
-          "evidence": {
-            "level": "curated",
-            "sources": [
-              {
-                "db": "DOI",
-                "id": "10.1016/j.cub.2003.10.012",
-                "citation": "Lamond & Sleeman, 2003"
-              },
-              {
-                "db": "PMID",
-                "id": "14588256",
-                "citation": "Lamond & Sleeman, 2003"
-              }
-            ]
-          },
-          "unit": "fL",
-          "from": "O000018",
-          "note": "관찰 기록 O+v_nuc 의 파생값 — 종설 서술값, 원 측정 논문이 아니다"
-        }
-      ],
       "addresses": [
         {
           "limitation": "L000001",
@@ -9693,7 +9124,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "addresses": [
         {
           "limitation": "L000004",
@@ -9735,7 +9165,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "addresses": [
         {
           "limitation": "L000010",
@@ -9784,7 +9213,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "note": "부분 구조 수지(moiety balance)의 셈 단위. 원자 수지 대신 반응에서 깨지지 않는 부분을 센다.",
       "elements": {
         "C": 10,
@@ -9819,7 +9247,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "elements": {
         "C": 10,
         "N": 5
@@ -9853,7 +9280,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "elements": {
         "P": 1
       }
@@ -9910,8 +9336,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000123": {
       "term": "T000121",
@@ -10025,8 +9450,7 @@
             "basis": "EC 2.7.4.6 반응식(NTP + NDP 교환, 가역)을 기질의 GTP/ADP 방향에 적용 — 시트르산 회로 소진 시험에서 기질 GDP 고갈이 드러나 추가"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000124": {
       "term": "T000122",
@@ -10098,8 +9522,7 @@
             "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.3 항목(IUBMB/ExplorEnz)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000125": {
       "term": "T000123",
@@ -10167,8 +9590,7 @@
             "note": "반응식은 IUBMB 효소 목록 EC 3.6.1.1 항목(https://iubmb.qmul.ac.uk/enzyme/EC3/6/1/1.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000126": {
       "term": "T000124",
@@ -10238,7 +9660,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "단순화: 원료(포도당·NADH·O₂)를 모델 밖에 두므로 부분 구조(아데노신·인산)만 보존되고 에너지원은 무한으로 가정된다."
     },
     "D000127": {
@@ -10290,8 +9711,7 @@
             "basis": "뉴클레오타이드 생합성·재활용 경로 전체를 0차 공급 하나로 생략"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000128": {
       "term": "T000126",
@@ -10322,7 +9742,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "addresses": [
         {
           "limitation": "L000006",
@@ -10378,7 +9797,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "addresses": [
         {
           "limitation": "L000002",
@@ -10412,7 +9830,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "elements": {
         "C": 1
       }
@@ -10439,7 +9856,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "elements": {
         "C": 21,
         "N": 7,
@@ -10469,7 +9885,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "elements": {
         "C": 21,
         "N": 7,
@@ -10498,7 +9913,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "elements": {
         "C": 27,
         "N": 9,
@@ -10572,8 +9986,7 @@
             "basis": "지방산 산화가 기억 CD8 T 세포 형성을 지탱한다는 문헌의 흐름(Pearce 2009, van der Windt 2012)을 기질 농도의 조절로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000135": {
       "term": "T000133",
@@ -10623,8 +10036,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000136": {
       "term": "T000134",
@@ -10667,8 +10079,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000137": {
       "term": "T000135",
@@ -10711,8 +10122,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000138": {
       "term": "T000136",
@@ -10755,8 +10165,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000139": {
       "term": "T000137",
@@ -10799,8 +10208,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000140": {
       "term": "T000138",
@@ -10854,8 +10262,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000141": {
       "term": "T000139",
@@ -10898,8 +10305,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000142": {
       "term": "T000140",
@@ -10942,8 +10348,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000143": {
       "term": "T000141",
@@ -10986,8 +10391,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000144": {
       "term": "T000143",
@@ -11030,37 +10434,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "concentration",
-          "value": 818,
-          "context": {
-            "scope": "미토콘드리아 기질 절대 정량 (LC/MS)",
-            "species": "9606",
-            "cell": "hela_cell",
-            "location": "mito_matrix"
-          },
-          "evidence": {
-            "level": "curated",
-            "sources": [
-              {
-                "db": "DOI",
-                "id": "10.1016/j.cell.2016.07.040",
-                "citation": "Chen et al., 2016"
-              },
-              {
-                "db": "PMID",
-                "id": "27565352",
-                "citation": "Chen et al., 2016"
-              }
-            ]
-          },
-          "unit": "µM",
-          "from": "O000014",
-          "note": "관찰 기록 O000014 의 파생값"
-        }
-      ]
+      "rule": []
     },
     "D000145": {
       "term": "T000144",
@@ -11110,37 +10484,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "concentration",
-          "value": 7.36,
-          "context": {
-            "scope": "기질 NADH/NAD 비 0.009 × NAD 818 µM",
-            "species": "9606",
-            "cell": "hela_cell",
-            "location": "mito_matrix"
-          },
-          "evidence": {
-            "level": "curated",
-            "sources": [
-              {
-                "db": "DOI",
-                "id": "10.1016/j.cell.2016.07.040",
-                "citation": "Chen et al., 2016"
-              },
-              {
-                "db": "PMID",
-                "id": "27565352",
-                "citation": "Chen et al., 2016"
-              }
-            ]
-          },
-          "unit": "µM",
-          "from": "O000015",
-          "note": "관찰 기록 O000015 의 파생값 — 비와 NAD 가 측정값이고 곱은 유도"
-        }
-      ]
+      "rule": []
     },
     "D000146": {
       "term": "T000145",
@@ -11190,8 +10534,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000147": {
       "term": "T000146",
@@ -11241,8 +10584,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000148": {
       "term": "T000147",
@@ -11334,8 +10676,7 @@
             "basis": "시트르산 회로 여덟 단계(S000031–S000038)의 화학량을 더해 옥살로아세트산을 소거"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000149": {
       "term": "T000148",
@@ -11405,8 +10746,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000150": {
       "term": "T000149",
@@ -11468,8 +10808,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000151": {
       "term": "T000150",
@@ -11536,31 +10875,14 @@
           },
           "regulators": [],
           "text": "첫 번째 이산화탄소와 첫 번째 NADH.",
-          "kinetics": {
+          "kinetic_law": {
             "law": "michaelis_menten",
-            "kcat": 26.7,
-            "Km": 0.00235,
-            "dG0": 5600,
             "context": {
               "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
               "species": "9606",
               "location": "mito_matrix",
               "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
             },
-            "from": [
-              {
-                "param": "kcat",
-                "obs": "O000001"
-              },
-              {
-                "param": "Km",
-                "obs": "O000002"
-              },
-              {
-                "param": "dG0",
-                "obs": "O000003"
-              }
-            ],
             "evidence": {
               "level": "curated",
               "sources": [
@@ -11582,8 +10904,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000152": {
       "term": "T000151",
@@ -11649,8 +10970,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000153": {
       "term": "T000152",
@@ -11722,8 +11042,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000154": {
       "term": "T000153",
@@ -11793,8 +11112,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000155": {
       "term": "T000154",
@@ -11852,31 +11170,14 @@
           },
           "regulators": [],
           "text": "물 분자는 부분 구조가 없어 생략.",
-          "kinetics": {
+          "kinetic_law": {
             "law": "michaelis_menten",
-            "kcat": 170,
-            "Km": 0.0002,
-            "dG0": -3400,
             "context": {
               "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향",
               "species": "9606",
               "location": "mito_matrix",
               "condition": "pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산"
             },
-            "from": [
-              {
-                "param": "kcat",
-                "obs": "O000004"
-              },
-              {
-                "param": "Km",
-                "obs": "O000005"
-              },
-              {
-                "param": "dG0",
-                "obs": "O000006"
-              }
-            ],
             "evidence": {
               "level": "curated",
               "sources": [
@@ -11898,8 +11199,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000156": {
       "term": "T000155",
@@ -11969,8 +11269,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000157": {
       "term": "T000156",
@@ -12020,8 +11319,7 @@
             "basis": "복합체 I 의 순 효과(NADH → NAD⁺)를 전자 수용체를 생략하고 공급 하나로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000158": {
       "term": "T000157",
@@ -12071,8 +11369,7 @@
             "basis": "복합체 II 의 FAD 재산화를 유비퀴논을 생략하고 공급 하나로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000159": {
       "term": "T000158",
@@ -12123,8 +11420,7 @@
             "basis": "피루브산 탈수소효소·β-산화의 순 효과를 원료를 생략하고 계 밖 공급으로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000160": {
       "term": "T000142",
@@ -12184,8 +11480,7 @@
             "basis": "기체 확산 배출을 1차 소실로 근사"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000161": {
       "term": "T000159",
@@ -12222,22 +11517,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 219,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P29459 서열 v2 (data/fetched/uniprot/P29459.json · sha256:8a9f407b720c)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000162": {
       "term": "T000160",
@@ -12274,22 +11554,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 328,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P29460 서열 v1 (data/fetched/uniprot/P29460.json · sha256:9d651a25673c)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000163": {
       "term": "T000161",
@@ -12378,8 +11643,7 @@
             "basis": "IL-12 가 T-bet 과 Eomes 를 반대로 조절한다는 보고를 억제 조절 하나로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000164": {
       "term": "T000162",
@@ -12443,21 +11707,6 @@
               }
             ]
           }
-        }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 162,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P40933 서열 v1 (data/fetched/uniprot/P40933.json · sha256:575cb99a7e1d)"
-          },
-          "unit": "aa"
         }
       ]
     },
@@ -12583,21 +11832,6 @@
             "basis": "효과기 프로그램과 해당 대사의 상호 강화를 조절 규칙으로 둠"
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 535,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q9UL17 서열 v1 (data/fetched/uniprot/Q9UL17.json · sha256:4e86377bcec5)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000166": {
@@ -12715,21 +11949,6 @@
             "basis": "기억 프로그램과 지방산 산화의 상호 강화를 조절 규칙으로 둠"
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 686,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O95936 서열 v3 (data/fetched/uniprot/O95936.json · sha256:ef057934f3f4)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000167": {
@@ -12782,8 +12001,7 @@
             "basis": "포도당 대사가 효과기 기능 유전자 발현을 지탱한다는 문헌의 흐름을 해당 산물 농도의 조절로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000168": {
       "term": "T000166",
@@ -12837,8 +12055,7 @@
             "basis": "수송체 배출을 1차 소실로 근사"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000169": {
       "term": "T000167",
@@ -12898,8 +12115,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000170": {
       "term": "T000168",
@@ -12988,8 +12204,7 @@
             "basis": "해당과정 열 단계의 순 화학량을 공급 규칙 하나로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000171": {
       "term": "T000170",
@@ -13059,8 +12274,7 @@
             "level": "asserted"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000172": {
       "term": "T000169",
@@ -13144,8 +12358,7 @@
             "basis": "β-산화 일곱 바퀴의 순 화학량(탄소·CoA·NAD·FAD 수지)을 공급 규칙 하나로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000173": {
       "term": "T000171",
@@ -13199,8 +12412,7 @@
             "basis": "ATP 를 쓰는 모든 과정의 순 효과를 공급 규칙 하나로 묶음"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000174": {
       "term": "T000172",
@@ -13232,7 +12444,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000165",
@@ -13348,7 +12559,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000165",
@@ -13422,7 +12632,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000166",
@@ -13500,8 +12709,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000178": {
       "term": "T000176",
@@ -13537,8 +12745,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": []
+      "rule": []
     },
     "D000179": {
       "term": "T000177",
@@ -13633,7 +12840,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "펩타이드 서열·길이(MHC I 8–10, MHC II 13–25 아미노산)를 하나의 부류로 묶었다 — 특정 에피토프의 경쟁은 다루지 않음 (Structural_Gap)."
     },
     "D000180": {
@@ -13695,8 +12901,7 @@
             "basis": "단백질 합성을 0차 공급 하나로 근사"
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000181": {
       "term": "T000179",
@@ -13754,8 +12959,7 @@
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000182": {
       "term": "T000180",
@@ -13862,21 +13066,6 @@
             ]
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 365,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P04439 서열 v2 (data/fetched/uniprot/P04439.json · sha256:bb88d5e380a6)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000183": {
@@ -13951,21 +13140,6 @@
             "basis": "합성을 0차 공급 하나로 근사"
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 119,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P61769 서열 v1 (data/fetched/uniprot/P61769.json · sha256:2c63a677327c)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000184": {
@@ -14019,22 +13193,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 748,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q03518 서열 v3 (data/fetched/uniprot/Q03518.json · sha256:cd302810de6f)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000185": {
       "term": "T000183",
@@ -14087,22 +13246,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 686,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB Q03519 서열 v1 (data/fetched/uniprot/Q03519.json · sha256:80a4ea66b1e8)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000186": {
       "term": "T000184",
@@ -14155,22 +13299,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 448,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O15533 서열 v2 (data/fetched/uniprot/O15533.json · sha256:bace7ea8eec1)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000187": {
       "term": "T000185",
@@ -14222,22 +13351,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 417,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P27797 서열 v1 (data/fetched/uniprot/P27797.json · sha256:4f89fce1fc71)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000188": {
       "term": "T000186",
@@ -14289,22 +13403,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 505,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P30101 서열 v4 (data/fetched/uniprot/P30101.json · sha256:df3f5db0d1fc)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000189": {
       "term": "T000187",
@@ -14418,7 +13517,6 @@
           }
         }
       ],
-      "obs": [],
       "note": "Blees et al. (2017) 의 구조는 TAP 하나에 편집 모듈 둘(타파신·ERp57·칼레티큘린·MHC I 각 2) — 여기서는 구성 비를 1 로 둠 (Structural_Gap)."
     },
     "D000190": {
@@ -14514,8 +13612,7 @@
             ]
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000191": {
       "term": "T000189",
@@ -14696,8 +13793,7 @@
             ]
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000192": {
       "term": "T000190",
@@ -14803,21 +13899,6 @@
               }
             ]
           }
-        }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 254,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P01903 서열 v2 (data/fetched/uniprot/P01903.json · sha256:8e1100c07869)"
-          },
-          "unit": "aa"
         }
       ]
     },
@@ -14925,21 +14006,6 @@
               }
             ]
           }
-        }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 266,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P01911 서열 v2 (data/fetched/uniprot/P01911.json · sha256:91f0b0bcaa96)"
-          },
-          "unit": "aa"
         }
       ],
       "note": "UniProt 항목 하나는 대립 유전자 하나(기준 서열)를 대표한다 — 대립 유전자별 펩타이드 선호는 다루지 않음."
@@ -15088,21 +14154,6 @@
           }
         }
       ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 296,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P04233 서열 v3 (data/fetched/uniprot/P04233.json · sha256:01b107adc925)"
-          },
-          "unit": "aa"
-        }
-      ],
       "note": "불변 사슬은 삼량체로 αβ 셋과 아홉 사슬 복합체를 이루지만 여기서는 αβ 하나당 하나로 둠 (Structural_Gap)."
     },
     "D000195": {
@@ -15209,21 +14260,6 @@
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 331,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P25774 서열 v3 (data/fetched/uniprot/P25774.json · sha256:7db29ebd785a)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000196": {
@@ -15277,22 +14313,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 261,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P28067 서열 v2 (data/fetched/uniprot/P28067.json · sha256:db5813f7726a)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000197": {
       "term": "T000195",
@@ -15345,22 +14366,7 @@
         }
       ],
       "site": {},
-      "rule": [],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 263,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P28068 서열 v2 (data/fetched/uniprot/P28068.json · sha256:659f3470fba3)"
-          },
-          "unit": "aa"
-        }
-      ]
+      "rule": []
     },
     "D000198": {
       "term": "T000196",
@@ -15473,8 +14479,7 @@
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000199": {
       "term": "T000197",
@@ -15584,8 +14589,7 @@
             ]
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000200": {
       "term": "T000198",
@@ -15726,8 +14730,7 @@
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000201": {
       "term": "T000199",
@@ -15866,8 +14869,7 @@
             ]
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000202": {
       "term": "T000200",
@@ -15921,7 +14923,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000201",
@@ -16053,7 +15054,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000201",
@@ -16149,8 +15149,7 @@
             "basis": "Herbig et al., 2004, Mol Cell 14:501 (텔로미어 단축이 ATM–p53–p21 경로로 노화를 일으킴, p16 은 아님) 의 앞 구간을 '반복 단위 농도에 대한 억제 힐' 하나로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인했고, 임계 길이와 n 은 문헌 값이 아니다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000205": {
       "term": "T000203",
@@ -16220,8 +15219,7 @@
             "basis": "말단 복제 문제로 분열마다 텔로미어가 줄어든다는 관찰(Harley et al., 1990, Nature 345:458 — DOI 10.1038/345458a0 / PMID 2342578 로 확인)을 '분열 1회 = 반복 단위 ΔL 소모' 의 0차 공급 규칙 하나로 묶었다. 떨어져 나간 가닥이 뉴클레오타이드로 되돌아간다는 산물 쪽은 문헌 값이 아니라 수지를 닫기 위한 기전 흐름의 추론이다."
           }
         }
-      ],
-      "obs": []
+      ]
     },
     "D000206": {
       "term": "T000204",
@@ -16303,21 +15301,6 @@
             "level": "abstracted",
             "basis": "텔로머레이스를 넣으면 텔로미어가 유지되고 수명이 늘어난다는 관찰(Bodnar et al., 1998, Science 279:349 — DOI 10.1126/science.279.5349.349 / PMID 9454332 로 확인)을 '반복 단위 1 개 생성' 의 0차 공급 하나로 묶었다. 연장 속도·처리성은 문헌 값이 아니다."
           }
-        }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 1132,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB O14746 서열 v1 (data/fetched/uniprot/O14746.json · sha256:f0b92d470010)"
-          },
-          "unit": "aa"
         }
       ]
     },
@@ -16422,21 +15405,6 @@
             "basis": "Herbig et al., 2004, Mol Cell 14:501 (텔로미어 단축 → ATM → p53 → p21 상향, G1 정지) 의 사슬 중 p53 → p21 구간을 힐 배율 하나로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인했고, 힐 상수(K·n·fmax)는 문헌 값이 아니다."
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 393,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P04637 서열 v4 (data/fetched/uniprot/P04637.json · sha256:6bdb471fae5b)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000208": {
@@ -16540,21 +15508,6 @@
             "basis": "Herbig et al., 2004 (p21 상향에 따른 G1 정지)를 '분열 규칙의 배율 → 0' 으로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인. CDK 억제의 힐 상수는 문헌 값이 아니다."
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 164,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P38936 서열 v3 (data/fetched/uniprot/P38936.json · sha256:452469f6e890)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000209": {
@@ -16610,21 +15563,6 @@
             "basis": "성장 인자 의존 세포 주기 진입을 분열 규칙의 힐 배율 하나로 묶음"
           }
         }
-      ],
-      "obs": [
-        {
-          "property": "sequence_length",
-          "value": 288,
-          "context": {
-            "scope": "",
-            "species": "9606"
-          },
-          "evidence": {
-            "level": "computed",
-            "tool": "dbtool augment — UniProtKB P09038 서열 v3 (data/fetched/uniprot/P09038.json · sha256:2cd85b236624)"
-          },
-          "unit": "aa"
-        }
       ]
     },
     "D000210": {
@@ -16671,7 +15609,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000204",
@@ -16780,7 +15717,6 @@
       ],
       "site": {},
       "rule": [],
-      "obs": [],
       "signature": [
         {
           "ref": "D000204",
@@ -21468,6 +20404,1310 @@
         ]
       },
       "note": "종설값 500 µm³ — BioNumbers 가 \"better ref needed\" 를 달아 둔 항목이다. 불확도가 보고되지 않아 sd 를 보고된 유효 숫자의 해상도(100 fL)로 적었다 — 측정 표준 편차가 아니다."
+    }
+  },
+  "values": {
+    "V000001": {
+      "subject": "D000053",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 394
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P63092 서열 v1 (data/fetched/uniprot/P63092.json · sha256:84206ab2d603)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000002": {
+      "subject": "D000065",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 481
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P18428 서열 v3 (data/fetched/uniprot/P18428.json · sha256:3742d04a3170)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000003": {
+      "subject": "D000066",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 375
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P08571 서열 v2 (data/fetched/uniprot/P08571.json · sha256:780766e93853)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000004": {
+      "subject": "D000067",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 839
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O00206 서열 v2 (data/fetched/uniprot/O00206.json · sha256:dd22c3dd0d74)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000005": {
+      "subject": "D000068",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 160
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9Y6Y9 서열 v2 (data/fetched/uniprot/Q9Y6Y9.json · sha256:e2888a030bf3)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000006": {
+      "subject": "D000071",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 221
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P58753 서열 v2 (data/fetched/uniprot/P58753.json · sha256:688361178693)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000007": {
+      "subject": "D000072",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 296
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q99836 서열 v1 (data/fetched/uniprot/Q99836.json · sha256:8fa044a948ef)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000008": {
+      "subject": "D000073",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 460
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9NWZ3 서열 v1 (data/fetched/uniprot/Q9NWZ3.json · sha256:16ff71e038d0)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000009": {
+      "subject": "D000074",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 712
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P51617 서열 v2 (data/fetched/uniprot/P51617.json · sha256:13445e7ca1e5)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000010": {
+      "subject": "D000076",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 522
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9Y4K3 서열 v1 (data/fetched/uniprot/Q9Y4K3.json · sha256:6461e9f53396)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000011": {
+      "subject": "D000078",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 606
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O43318 서열 v1 (data/fetched/uniprot/O43318.json · sha256:c46eb813413b)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000012": {
+      "subject": "D000079",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 504
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q15750 서열 v1 (data/fetched/uniprot/Q15750.json · sha256:87194fee9a2b)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000013": {
+      "subject": "D000080",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 693
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9NYJ8 서열 v1 (data/fetched/uniprot/Q9NYJ8.json · sha256:69ac0ef1f0e7)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000014": {
+      "subject": "D000082",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 745
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O15111 서열 v2 (data/fetched/uniprot/O15111.json · sha256:0ea59d13b913)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000015": {
+      "subject": "D000083",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 756
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O14920 서열 v1 (data/fetched/uniprot/O14920.json · sha256:008f4baf1419)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000016": {
+      "subject": "D000084",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 419
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9Y6K9 서열 v2 (data/fetched/uniprot/Q9Y6K9.json · sha256:3353c88c7438)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000017": {
+      "subject": "D000086",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 317
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "asserted",
+        "note": "UniProt P25963 표준 서열 길이 — 판매처·2차 자료(creativebiomart, iPTMnet P25963 항목)에서 확인, UniProt 원본은 직접 대조 못 함"
+      },
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000018": {
+      "subject": "D000087",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 551
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q04206 서열 v2 (data/fetched/uniprot/Q04206.json · sha256:584bd6755357)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000019": {
+      "subject": "D000088",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 968
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P19838 서열 v2 (data/fetched/uniprot/P19838.json · sha256:b395d7b7895a)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000020": {
+      "subject": "D000091",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 605
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9Y297 서열 v1 (data/fetched/uniprot/Q9Y297.json · sha256:510357bd1f04)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000021": {
+      "subject": "D000092",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 163
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P63208 서열 v2 (data/fetched/uniprot/P63208.json · sha256:a9eb295972de)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000022": {
+      "subject": "D000093",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 776
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q13616 서열 v2 (data/fetched/uniprot/Q13616.json · sha256:26cd107f0dab)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000023": {
+      "subject": "D000094",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 108
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P62877 서열 v1 (data/fetched/uniprot/P62877.json · sha256:0f26e1d30099)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000024": {
+      "subject": "D000100",
+      "property": "copy_number",
+      "value": {
+        "dist": "point",
+        "mean": 2
+      },
+      "unit": "copies/cell",
+      "context": {
+        "scope": "이배체 체세포",
+        "species": "9606",
+        "cell": "macrophage",
+        "location": "nucleoplasm"
+      },
+      "evidence": {
+        "level": "asserted",
+        "note": "상염색체 유전자의 대립유전자 2개 (이배체 기준) — 일반 지식"
+      },
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000025": {
+      "subject": "D000101",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 1678
+      },
+      "unit": "nt",
+      "context": {
+        "scope": "RefSeq 기준 전사체 NM_000594.4 (성숙 mRNA, 5′·3′ UTR 포함)",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkv1189",
+            "citation": "O'Leary et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "26553804",
+            "citation": "O'Leary et al., 2016"
+          }
+        ]
+      },
+      "derivation": "direct",
+      "note": "NCBI Nucleotide 의 NM_000594.4 레코드 길이 1678 nt — eutils esummary 의 slen 으로 조회했다(2026-10-10). 출처는 RefSeq 데이터베이스 논문이고 값 자체는 그 레코드다. 폴리(A) 꼬리는 레코드에 포함되지 않으므로 생체 내 전사체는 이보다 길다 — 재활용 뉴클레오타이드 수의 하한이다.",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000026": {
+      "subject": "D000116",
+      "property": "compartment_volume",
+      "value": {
+        "dist": "point",
+        "mean": 181
+      },
+      "unit": "fL",
+      "context": {
+        "scope": "미토콘드리아 전체 부피 (기질의 상한)",
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "PMID",
+            "id": "885911",
+            "citation": "Posakony, England & Attardi, 1977"
+          },
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.06.025",
+            "citation": "Guillaume-Gentil et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27419874",
+            "citation": "Guillaume-Gentil et al., 2016"
+          }
+        ]
+      },
+      "from": [
+        "O000016"
+      ],
+      "derivation": "direct",
+      "note": "관찰 기록 O+v_mx 의 파생값 — 수밀도 × 1 개 부피 × 세포질 부피. 내막 안 기질 부피는 더 작다 (상한)",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000027": {
+      "subject": "D000116",
+      "property": "compartment_volume",
+      "value": {
+        "dist": "point",
+        "mean": 1600
+      },
+      "unit": "fL",
+      "context": {
+        "scope": "세포질 전체 부피 (cytosol 의 상한)",
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "cytosol"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.06.025",
+            "citation": "Guillaume-Gentil et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27419874",
+            "citation": "Guillaume-Gentil et al., 2016"
+          }
+        ]
+      },
+      "from": [
+        "O000017"
+      ],
+      "derivation": "direct",
+      "note": "관찰 기록 O+v_cyt 의 파생값 — 중앙값 1.6 pL",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000028": {
+      "subject": "D000116",
+      "property": "compartment_volume",
+      "value": {
+        "dist": "point",
+        "mean": 500
+      },
+      "unit": "fL",
+      "context": {
+        "scope": "섬유아세포 핵 부피",
+        "species": "9606",
+        "cell": "fibroblast",
+        "location": "nucleoplasm"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cub.2003.10.012",
+            "citation": "Lamond & Sleeman, 2003"
+          },
+          {
+            "db": "PMID",
+            "id": "14588256",
+            "citation": "Lamond & Sleeman, 2003"
+          }
+        ]
+      },
+      "from": [
+        "O000018"
+      ],
+      "derivation": "direct",
+      "note": "관찰 기록 O+v_nuc 의 파생값 — 종설 서술값, 원 측정 논문이 아니다",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000029": {
+      "subject": "D000144",
+      "property": "concentration",
+      "value": {
+        "dist": "point",
+        "mean": 818
+      },
+      "unit": "µM",
+      "context": {
+        "scope": "미토콘드리아 기질 절대 정량 (LC/MS)",
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.07.040",
+            "citation": "Chen et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27565352",
+            "citation": "Chen et al., 2016"
+          }
+        ]
+      },
+      "from": [
+        "O000014"
+      ],
+      "derivation": "direct",
+      "note": "관찰 기록 O000014 의 파생값",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000030": {
+      "subject": "D000145",
+      "property": "concentration",
+      "value": {
+        "dist": "point",
+        "mean": 7.36
+      },
+      "unit": "µM",
+      "context": {
+        "scope": "기질 NADH/NAD 비 0.009 × NAD 818 µM",
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.07.040",
+            "citation": "Chen et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27565352",
+            "citation": "Chen et al., 2016"
+          }
+        ]
+      },
+      "from": [
+        "O000015"
+      ],
+      "derivation": "direct",
+      "note": "관찰 기록 O000015 의 파생값 — 비와 NAD 가 측정값이고 곱은 유도",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000031": {
+      "subject": "D000151/rule/oxdecarb",
+      "property": "kcat",
+      "value": {
+        "dist": "point",
+        "mean": 26.7
+      },
+      "context": {
+        "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
+        "species": "9606",
+        "location": "mito_matrix",
+        "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ],
+        "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+      },
+      "from": [
+        "O000001"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000032": {
+      "subject": "D000151/rule/oxdecarb",
+      "property": "Km",
+      "value": {
+        "dist": "point",
+        "mean": 0.00235
+      },
+      "context": {
+        "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
+        "species": "9606",
+        "location": "mito_matrix",
+        "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ],
+        "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+      },
+      "from": [
+        "O000002"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000033": {
+      "subject": "D000151/rule/oxdecarb",
+      "property": "dG0",
+      "value": {
+        "dist": "point",
+        "mean": 5600
+      },
+      "context": {
+        "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
+        "species": "9606",
+        "location": "mito_matrix",
+        "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ],
+        "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+      },
+      "from": [
+        "O000003"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000034": {
+      "subject": "D000155/rule/hydrate",
+      "property": "kcat",
+      "value": {
+        "dist": "point",
+        "mean": 170
+      },
+      "context": {
+        "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향",
+        "species": "9606",
+        "location": "mito_matrix",
+        "condition": "pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ],
+        "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+      },
+      "from": [
+        "O000004"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000035": {
+      "subject": "D000155/rule/hydrate",
+      "property": "Km",
+      "value": {
+        "dist": "point",
+        "mean": 0.0002
+      },
+      "context": {
+        "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향",
+        "species": "9606",
+        "location": "mito_matrix",
+        "condition": "pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ],
+        "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+      },
+      "from": [
+        "O000005"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000036": {
+      "subject": "D000155/rule/hydrate",
+      "property": "dG0",
+      "value": {
+        "dist": "point",
+        "mean": -3400
+      },
+      "context": {
+        "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향",
+        "species": "9606",
+        "location": "mito_matrix",
+        "condition": "pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ],
+        "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+      },
+      "from": [
+        "O000006"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000037": {
+      "subject": "D000161",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 219
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P29459 서열 v2 (data/fetched/uniprot/P29459.json · sha256:8a9f407b720c)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000038": {
+      "subject": "D000162",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 328
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P29460 서열 v1 (data/fetched/uniprot/P29460.json · sha256:9d651a25673c)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000039": {
+      "subject": "D000164",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 162
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P40933 서열 v1 (data/fetched/uniprot/P40933.json · sha256:575cb99a7e1d)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000040": {
+      "subject": "D000165",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 535
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q9UL17 서열 v1 (data/fetched/uniprot/Q9UL17.json · sha256:4e86377bcec5)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000041": {
+      "subject": "D000166",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 686
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O95936 서열 v3 (data/fetched/uniprot/O95936.json · sha256:ef057934f3f4)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000042": {
+      "subject": "D000182",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 365
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P04439 서열 v2 (data/fetched/uniprot/P04439.json · sha256:bb88d5e380a6)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000043": {
+      "subject": "D000183",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 119
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P61769 서열 v1 (data/fetched/uniprot/P61769.json · sha256:2c63a677327c)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000044": {
+      "subject": "D000184",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 748
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q03518 서열 v3 (data/fetched/uniprot/Q03518.json · sha256:cd302810de6f)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000045": {
+      "subject": "D000185",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 686
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB Q03519 서열 v1 (data/fetched/uniprot/Q03519.json · sha256:80a4ea66b1e8)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000046": {
+      "subject": "D000186",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 448
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O15533 서열 v2 (data/fetched/uniprot/O15533.json · sha256:bace7ea8eec1)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000047": {
+      "subject": "D000187",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 417
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P27797 서열 v1 (data/fetched/uniprot/P27797.json · sha256:4f89fce1fc71)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000048": {
+      "subject": "D000188",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 505
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P30101 서열 v4 (data/fetched/uniprot/P30101.json · sha256:df3f5db0d1fc)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000049": {
+      "subject": "D000192",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 254
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P01903 서열 v2 (data/fetched/uniprot/P01903.json · sha256:8e1100c07869)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000050": {
+      "subject": "D000193",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 266
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P01911 서열 v2 (data/fetched/uniprot/P01911.json · sha256:91f0b0bcaa96)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000051": {
+      "subject": "D000194",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 296
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P04233 서열 v3 (data/fetched/uniprot/P04233.json · sha256:01b107adc925)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000052": {
+      "subject": "D000195",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 331
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P25774 서열 v3 (data/fetched/uniprot/P25774.json · sha256:7db29ebd785a)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000053": {
+      "subject": "D000196",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 261
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P28067 서열 v2 (data/fetched/uniprot/P28067.json · sha256:db5813f7726a)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000054": {
+      "subject": "D000197",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 263
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P28068 서열 v2 (data/fetched/uniprot/P28068.json · sha256:659f3470fba3)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000055": {
+      "subject": "D000206",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 1132
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB O14746 서열 v1 (data/fetched/uniprot/O14746.json · sha256:f0b92d470010)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000056": {
+      "subject": "D000207",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 393
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P04637 서열 v4 (data/fetched/uniprot/P04637.json · sha256:6bdb471fae5b)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000057": {
+      "subject": "D000208",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 164
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P38936 서열 v3 (data/fetched/uniprot/P38936.json · sha256:452469f6e890)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000058": {
+      "subject": "D000209",
+      "property": "sequence_length",
+      "value": {
+        "dist": "point",
+        "mean": 288
+      },
+      "unit": "aa",
+      "context": {
+        "scope": "",
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "computed",
+        "tool": "dbtool augment — UniProtKB P09038 서열 v3 (data/fetched/uniprot/P09038.json · sha256:2cd85b236624)"
+      },
+      "derivation": "computed",
+      "recorded_at": "2026-10-15T12:30:11.070Z"
     }
   }
 }

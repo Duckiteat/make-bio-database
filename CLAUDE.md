@@ -41,6 +41,7 @@
 - 추세(`judicial/trend.js`): 웹 검색 결과 저장 금지. `trend --fetch`(→ `data/fetched/consensus/`) → `trend` → `--write`. 도장은 `vocab.consensus.window_days` 뒤 다시 unchecked. mismatch 면 값 유지·`legacy`·Consensus_Gap.
 - 등급 문턱(기본 `parameter`) 미달 데이터 상수 = AUDIT_KINETIC. 시나리오 값은 `hypothetical: true` 때만. 문턱은 `min_grade` 로 올리기만.
 - 실측값은 `observations`(O+1): 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처·용도(`estimation|validation`). 수정·삭제 금지(`retracted` 만). 추정용을 검증에 쓰지 않음. 합성 관찰은 `examples/observations/` 만. 측정은 포트(`schemas/obs/`)로.
+- 값 층(v12, SCHEMA §8N): 수치는 `values`(V…)에만 저장, `obs`·`kinetics` 는 정규화가 붙이는 보기. 패치는 지금처럼 obs·kinetics 로 쓰고 병합이 대체·철회로 접음(값 기록 불변) — `values`·`moved` 직접 쓰기 금지, 값이 바뀌면 `recorded_at` 필요(dbtool 이 찍음). 그날 기준은 `model.asOf`.
 - 정의항 `obs` 의 curated 측정값은 `from: 'O…'`. 단위는 `vocab.unitFactors` 만, 값은 `vocab.physicalBounds` 안. `from` 달린 obs 는 관찰 `retracted` 뒤에만 삭제. 환산표는 하나.
 - 시뮬레이션·갱신 뒤 `audit-run <경로>`; Audit Error → 한계 채우기/등록.
 - 물질 유한(v7): 재생은 `supply`, 소멸은 `degradation`(lost|recycled). 고갈은 결과로 보고, 재생 경로 없으면 supply 정의 또는 Kinetic_Gap.

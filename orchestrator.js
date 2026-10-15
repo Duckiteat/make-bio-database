@@ -130,8 +130,16 @@ function replayLog(log, currentText) {
   const sha = (x) => require('crypto').createHash('sha256').update(x).digest('hex'), ser = (db) => JSON.stringify(db, null, 2) + '\n';
   const replay = { snapshot_sha256: sha(log.snapshotText), shas: [] };
   try {
-    let db = C.normalize(JSON.parse(log.snapshotText));
-    for (const ev of log.events) { for (const p of ev.patches) db = L.ingest(db, p).db; replay.shas.push(sha(ser(db))); }
+    let db = JSON.parse(log.snapshotText); // 원문 그대로 — 첫 사건이 형식 변환이면 그 스크립트가 옛 판을 받는다 (병합은 ingest 가 정규화)
+    replay.scriptShas = {};
+    log.events.forEach((ev, i) => {
+      if (ev.kind === 'migration') { // 형식 변환: 기록된 스크립트의 순수 transform 을 같은 recorded_at 으로 다시 돌린다
+        const file = require('path').join(__dirname, ev.script);
+        replay.scriptShas[i] = sha(require('fs').readFileSync(file, 'utf8'));
+        db = require(file).transform(JSON.parse(ser(db)), { recorded_at: ev.recorded_at });
+      } else for (const p of ev.patches) db = L.ingest(db, p).db;
+      replay.shas.push(sha(ser(db)));
+    });
   } catch (e) { replay.error = e.message; }
   return LOGA.replayVerdict(log.genesis, log.events, replay, sha(currentText));
 }

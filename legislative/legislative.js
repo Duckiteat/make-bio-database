@@ -31,6 +31,7 @@
     const MAP = (from, to, via) => report.mapped.push({ from, to, via });
     if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }
     if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states) || isObj(patchIn.limitations)) { ERR('패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
+    if ('values' in patchIn || 'moved' in patchIn) ERR('패치', '값 층(values)·번호 이동(moved)은 패치가 직접 쓰지 않는다 — 값은 정의항 obs·규칙 kinetics 로 적으면 병합이 대체·철회 기록으로 접는다 (형식 v12)');
     const alloc = (p) => fmtId(p, db.meta.next[p]++);
     const ix0 = index(db);
     const preSenses = new Map([...ix0.termSenses].map(([k, v]) => [k, v.length]));
@@ -103,6 +104,7 @@
         if (!old) { ERR(rid, '없는 정의항 번호 — 새 정의항은 임시 번호(D+1)를 쓸 것'); continue; }
         if (raw.term && termOf(raw.term, rid) !== old.term) { ERR(rid, '정의항을 다른 개념으로 옮길 수 없음'); continue; }
         const merged = clone(old);
+        merged.obs = clone(old.obs); // v12: obs 는 값 층의 보기(열거되지 않음)라 clone 이 빼먹는다 — 적지 않은 obs 는 그대로
         for (const k of SENSE_FIELDS) if (d._given[k]) { if (d[k] === undefined) delete merged[k]; else merged[k] = d[k]; }
         const nd = normSense({ ...merged, term: old.term, n: old.n });
         // v11 — 측정의 파생값은 지울 수 없다. 관찰 기록을 지울 수 없게 한 것과 같은 규약이다:
@@ -351,7 +353,43 @@
       ERR(r, '삭제 대상 없음 (번호로 지정할 것)');
     }
     if (gone.size) for (const d of Object.values(db.senses)) for (const ds of d.desc) ds.links = ds.links.filter((l) => !gone.has(l.to));
+    foldValues(db, report, str(patchIn.recorded_at), report.why, ERR);
     return { db, report };
+  }
+
+  // 값 층 접기 (형식 v12): 병합이 만든 obs·kinetics(지금 모양)를 값 기록으로 — 바뀐 것은 새 기록이 대체(supersedes), 빠진 것은 철회.
+  //   기록은 바꾸거나 지우지 않는다. 새 기록의 recorded_at 은 패치가 가진 시각(병합 전에 dbtool 이 찍음 — 재생해도 같다).
+  function foldValues(db, report, recordedAt, why, ERR) {
+    const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k), cur = M.currentValues(db), ops = { added: [], superseded: [], retracted: [] };
+    const add = (v, sup) => { const id = fmtId('V', db.meta.next.V++); db.values[id] = Object.assign(v, recordedAt ? { recorded_at: recordedAt } : {}, sup ? { supersedes: sup } : {}); (sup ? ops.superseded : ops.added).push(id); };
+    const retract = (id, note) => { db.values[id].retracted = recordedAt ? { note, at: recordedAt } : { note }; ops.retracted.push(id); };
+    const strip = (v) => { const { recorded_at, supersedes, evidence_at, retracted, ...rest } = v; return M.canonJ(rest); };
+    const diff = (want, have, keyOf, note) => {
+      const left = new Map(have.map(([id, v]) => [keyOf(v), id]));
+      for (const v of want) { const k = keyOf(v), id = left.get(k); if (id) { left.delete(k); if (strip(db.values[id]) !== strip(v)) add(v, id); } else add(v); }
+      for (const id of left.values()) retract(id, note);
+    };
+    const why0 = `패치에서 빠짐 — ${why || '이유 없음'}`, liveRules = new Set();
+    for (const [sid, d] of Object.entries(db.senses)) {
+      if (own(d, 'obs')) {
+        const have = (cur.get(sid) || []).filter(([, v]) => !v.subject.includes('/rule/'));
+        diff((d.obs || []).map((o) => M.valueOfObs(sid, o)), have, (v) => M.obsKey(M.obsOfValue(v)), why0);
+        delete d.obs;
+      }
+      for (const r of d.rule || []) {
+        const ref = `${sid}/rule/${r.id}`;
+        if (own(r, 'kinetics')) { const k = r.kinetics; delete r.kinetics; if (k) { M.placeLaw(r, M.lawOfKinetics(k)); diff(M.valuesOfKinetics(ref, k), cur.get(ref) || [], (v) => v.property, why0); } else delete r.kinetic_law; }
+        if (r.kinetic_law) liveRules.add(ref);
+      }
+    }
+    // 대상이 사라진 현재 값(정의항·규칙 삭제, 속도 법칙을 뺀 규칙)은 철회
+    for (const [subject, list] of cur) {
+      const dead = subject.includes('/rule/') ? !liveRules.has(subject) : !db.senses[subject];
+      if (dead) for (const [id] of list) if (!db.values[id].retracted) retract(id, `대상이 없어짐 — ${why || '이유 없음'}`);
+    }
+    if ((ops.added.length || ops.superseded.length) && !recordedAt) ERR('패치', '값이 바뀌는데 recorded_at 이 없음 — 병합 전에 dbtool 이 찍는다 (형식 v12, 재생 결정론)');
+    report.values = ops;
+    M.attachViews(db);
   }
   const ingest = (db, obj) => merge(db, obj);
 

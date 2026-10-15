@@ -820,6 +820,14 @@
       "interpret": "001 v1→2 상태 객체화, 002 v2→3 고정 번호, 003 v3→4 두 해상도, 004 v4→5 한계 등록부, 005 v5→6 혼합 해상도·속도, 006 v6→7 생애 주기·대사물 저장소, 007 v7→8 3 층(tier 배정), 008 v8→9 세포 운명 층, 009 v9→10 관찰 기록(무손실 — 관찰 밖 필드가 바뀌면 변환하지 않음)."
     },
     {
+      "path": "migrations/010-v10-to-v12-values.js",
+      "class": "migration",
+      "format": "Node CommonJS (순수 transform + 명령행)",
+      "writer": "사람·AI (형식을 바꿀 때)",
+      "readers": "node migrations/010-v10-to-v12-values.js (1 회), orchestrator.replayLog (사건 사슬의 migration 사건 재생), tests/values.test.mjs",
+      "interpret": "형식 v10 → v12 (값 층 분리): 정의항 obs·규칙 kinetics 수치 → values(V…), 규칙에는 kinetic_law. transform(raw, { recorded_at }) 은 순수 함수라 사건 사슬을 재생할 때 다시 돌려 같은 해시를 확인한다. 보기 무손실 검사(lossless) 포함."
+    },
+    {
       "path": "migrations/002-id-map.json",
       "class": "migration",
       "format": "JSON",
@@ -858,6 +866,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "교란 연산자 — knockout(시작량 0·생성 규칙 제외·묶음 번호 그대로·실행 내내 0), block, inhibit(배율·사법부 재구성 ≤ 1e-14·꾸민 배율 검출), clamp(완충), dose_series, 교란 IR 해시, 없는 대상·잘못된 선언 오류."
+    },
+    {
+      "path": "tests/values.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "값 층(형식 v12) — 저장은 값 층만·보기 그대로·멱등, 병합의 대체·철회와 이전 기록 불변, 두 시간(asOf), 사법부 값 모양·불변 검사, 형식 변환 재현(기원 스냅숏 → transform)."
     },
     {
       "path": "tests/protocol.test.mjs",

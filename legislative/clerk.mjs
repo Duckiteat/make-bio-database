@@ -87,6 +87,26 @@ function appendEvent(dataDir, records, seal) {
   put('registry', f, old + JSON.stringify(ev) + '\n');
   return ev;
 }
+// ①″ 형식 변환 (migrations/): 사법부 검사 봉인이 있을 때만 db 를 쓰고, 기원이 있으면 사건 종류 'migration' 으로 사슬에 남긴다.
+//   사건 = { seq, at, kind: 'migration', script, script_sha256, from_sha256, recorded_at, db_sha256, prev } — 재생은 그 스크립트의 transform 을 다시 돌린다.
+export function commitMigration({ dbPath, db, seal, script, scriptText, fromSha, recorded_at }) {
+  if (!ATT.checkSeal(seal)) refuse('검사 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('검사 판결이 거부');
+  const text = serialize(db);
+  if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 쓰려는 db 가 다름');
+  if (!/^migrations\/[^/]+\.js$/.test(script)) refuse(`형식 변환 스크립트는 migrations/ 의 CommonJS 파일이어야 함 (${script})`);
+  const dir = join(dirname(dbPath), LOG.dir), gf = join(dir, LOG.genesis);
+  let event = null;
+  if (existsSync(gf)) {
+    const genesis = JSON.parse(readFileSync(gf, 'utf8')), events = readEvents(dir), last = events[events.length - 1];
+    const body = { seq: events.length + 1, at: new Date().toISOString(), kind: 'migration', script, script_sha256: sha(scriptText), from_sha256: fromSha, recorded_at, db_sha256: seal.db_sha256, prev: last ? last.root : genesis.root };
+    event = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+    const f = join(dir, LOG.events);
+    put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + JSON.stringify(event) + '\n');
+  }
+  put('registry', dbPath, text);
+  return { db: dbPath, event };
+}
 // 기원 체크포인트: 지금 db 를 사법부가 검사해 봉인한 것만 기원으로 쓴다. 한 번만 — 이미 있으면 거부.
 export function sealGenesis({ dbPath, db, seal, note }) {
   if (!ATT.checkSeal(seal)) refuse('관문 봉인이 없거나 변조됨');
