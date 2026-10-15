@@ -84,6 +84,9 @@ function assemble(db, sourceId, sc) {
       rules.push({ ref, kind: 'degradation', rule: r, loc, k, cons: [{ b, n: 1 }], prods: [], lost: true });
     }
   }
+  // 교란(build-plan 4, compiler/perturb.js): 시나리오 exclude_rules 의 규칙은 계에서 뺀다 — 묶음은 그대로 두어 기준 IR 과 번호가 같다
+  const excl = new Set(sc.exclude_rules || []);
+  for (let i = rules.length - 1; i >= 0; i--) if (excl.has(rules[i].ref)) { facts.push({ kind: 'excluded', ref: rules[i].ref }); rules.splice(i, 1); }
   // 조절: 계 안 규칙을 대상으로 하는 모든 조절 규칙 (조절자 묶음 = 소유자|at)
   const mods = M.modulationIndex(db), modGaps = [];
   for (const R of rules) {
@@ -186,13 +189,14 @@ function buildFateIR(db, sourceId, sc, params) {
   const volL = {}; for (const [l, v] of Object.entries(sc.volumes || {})) if (M.VOL[v.unit]) volL[l] = v.value * M.VOL[v.unit];
   const species = keys.map((b) => { const bf = (sc.buffered || {})[b]; return { b, V: volL[b.split('|').pop()] || 0, buf: bf ? bf.conc_M : null }; });
   const rules = A.rules.map((R) => ({
-    ref: R.ref, kind: R.kind, slow: !!R.slow, loc: R.loc, k: R.k, source: !!R.source, lost: !!R.lost, Vr: volL[R.loc] || 0, kdeg: R.kind === 'degradation' ? kdegOf(R.k) : 0,
+    ref: R.ref, kind: R.kind, slow: !!R.slow, loc: R.loc, k: R.k, ...((sc.rule_scale || {})[R.ref] != null ? { scale: sc.rule_scale[R.ref] } : {}), source: !!R.source, lost: !!R.lost, Vr: volL[R.loc] || 0, kdeg: R.kind === 'degradation' ? kdegOf(R.k) : 0,
     cons: R.cons.map((q) => ({ b: q.b, i: at.get(q.b), n: q.n, sat: !!q.sat })), prods: R.prods.map((q) => ({ b: q.b, i: at.get(q.b), n: q.n })),
     mods: R.mods.map((m) => ({ ref: m.ref, owner: m.owner, b: m.b, i: at.get(m.b), effect: m.rule.effect, k: m.k })),
     ...(R.kind === 'step' ? { step: R.step, dir: R.dir, Vr: R.loc ? volL[R.loc] || 0 : 0, agents: R.agents.map((b) => at.get(b)), lawIns: R.lawIns.map((q) => ({ i: at.get(q.b), n: q.n })), lawOuts: R.lawOuts.map((q) => ({ i: at.get(q.b), n: q.n })) } : {}),
   }));
-  // 속도식 rate_j(N; f) — 엔진 rate() 와 같은 법칙
-  const rateExpr = (R) => {
+  // 속도식 rate_j(N; f) — 엔진 rate() 와 같은 법칙. 교란 inhibit 은 시나리오 rule_scale 의 배율을 곱한다 (사법부 derivative 가 같은 배율로 재구성)
+  const rateExpr = (R) => (R.scale != null ? mul(num(R.scale), rateExpr0(R)) : rateExpr0(R));
+  const rateExpr0 = (R) => {
     if (!R.k) return num(0);
     if (R.kind === 'degradation') return R.kdeg > 0 ? mul(num(R.kdeg), { op: 'cnt', i: R.cons[0].i }, { op: 'fac' }) : num(0);
     if (!R.Vr) return num(0);

@@ -134,6 +134,17 @@
       "refactor_strategy": "형식·정규화·색인·법칙 정의만. 시뮬레이션·판정·쓰기를 넣지 않는다 — 넣고 싶어지면 그 함수가 어느 권력의 일인지 먼저 정한다."
     },
     {
+      "path": "compiler/perturb.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "tests/perturb.test.mjs (조정자·규약 연결은 build-plan 5·8)",
+      "interpret": "[공유·컴파일러] build-plan 4 — 교란 연산자: 기준 시나리오 + 교란 선언 → 교란 시나리오(amounts·exclude_rules·rule_scale·buffered·signals 의 차이만). knockout·block·inhibit·clamp·dose_series. 교란 IR 해시 = f(기준 IR 해시, 교란 기록). 순수 — 쓰기·판정·엔진 호출 없음.",
+      "node": "COMPILER_PERTURB",
+      "governance": "Shared",
+      "refactor_strategy": "교란은 시나리오 선언 필드로만 — 엔진 코드를 바꾸지 않는다. 새 교란 종류는 여기와 사법부 재구성(derivative)·교란 차이 검사(build-plan 5)를 같은 커밋에서."
+    },
+    {
       "path": "compiler/ir_builder.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -828,6 +839,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "관찰 기록(v10) — 계약 모양, 관문 의미 검사(불확도·SI 단위·보정 재계산·합성 거부), 실측 상수 = 관찰의 파생값(from·lumped·추정/검증 용도 분리), 변경 불가(바꿈·지움 거부, 철회만), 무손실(정규화 멱등)."
+    },
+    {
+      "path": "tests/perturb.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "교란 연산자 — knockout(시작량 0·생성 규칙 제외·묶음 번호 그대로·실행 내내 0), block, inhibit(배율·사법부 재구성 ≤ 1e-14·꾸민 배율 검출), clamp(완충), dose_series, 교란 IR 해시, 없는 대상·잘못된 선언 오류."
     },
     {
       "path": "tests/protocol.test.mjs",

@@ -62,6 +62,10 @@ function lawsFromDB(db, ir, sc) {
     if (!r) { problems.push(`${R.ref}: db 에 없음`); return L; }
     const same = (a, b) => (a == null && b == null) || (a && b && ['law', 'k', 'half_life', 'order'].every((f) => a[f] === b[f]));
     if (!same(k, R.k)) problems.push(`${R.ref}: IR 속도 상수 ≠ db·시나리오`);
+    const sc0 = (sc.rule_scale || {})[R.ref];
+    if ((sc0 == null ? null : sc0) !== (R.scale == null ? null : R.scale)) problems.push(`${R.ref}: IR 교란 배율 ${R.scale} ≠ 시나리오 rule_scale ${sc0}`);
+    if (sc0 != null) L.scale = sc0;
+    if ((sc.exclude_rules || []).includes(R.ref)) problems.push(`${R.ref}: 시나리오가 뺀(exclude_rules) 규칙이 IR 에 있음`);
     if (r.type === 'supply') { const loc = r.where[0]; L.Vr = volL[loc] || 0; L.cons = r.consumes.map((q) => ({ i: at.get(`${q.ref}|${loc}`), n: q.n, sat: !!q.saturating })); if (L.cons.some((q) => q.i == null)) problems.push(`${R.ref}: 소비 묶음이 IR 에 없음`); }
     else if (r.type === 'degradation') { const b = R.cons[0] && R.cons[0].b; if (!b || b.split('|')[0] !== R.ref.split('/rule/')[0]) problems.push(`${R.ref}: 분해 대상 묶음이 소유자의 것이 아님`); L.i = at.get(b); L.kdeg = k ? (k.k > 0 ? k.k : k.half_life > 0 ? Math.LN2 / k.half_life : 0) : 0; }
     else if (R.kind === 'step') {
@@ -88,7 +92,9 @@ function lawsFromDB(db, ir, sc) {
   return { laws, sp, Ksat, problems };
 }
 // 사법부의 속도식 (이중수): rate_j(N; f) 의 값과 N_seed 방향 도함수
-function rateDual(L, N, f, sp, Ksat, seed) {
+// 교란 배율(시나리오 rule_scale — build-plan 4)을 곱한 속도
+function rateDual(L, N, f, sp, Ksat, seed) { const v = rateDual0(L, N, f, sp, Ksat, seed); return L.scale != null ? dmul(D(L.scale), v) : v; }
+function rateDual0(L, N, f, sp, Ksat, seed) {
   const conc = (i) => { const V = sp.V[i]; if (!(V > 0)) return D(0); const x = Math.max(0, N[i]) / (M.NA * V); return x >= sp.buf[i] ? D(sp.buf[i]) : D(x, i === seed && N[i] > 0 ? 1 / (M.NA * V) : 0); };
   if (!L.k) return D(0);
   if (L.kind === 'degradation') return L.kdeg > 0 ? dmul(D(L.kdeg * f), D(Math.max(0, N[L.i]), L.i === seed && N[L.i] > 0 ? 1 : 0)) : D(0);
