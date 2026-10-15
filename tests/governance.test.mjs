@@ -325,3 +325,41 @@ test('⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 
   for (const f of Object.keys(FT.FAULTS)) assert.ok(FT.FAULTS[f].route && FT.FAULTS[f].label);
   assert.match(FT.FAULTS.NUMERICAL.route, /생물 상수\(db\.json\)를 바꾸지 않는다/);
 });
+
+test('⑩ 델타 기록 (S1): 기원 봉인 → 병합마다 사건 추가 → 재생 = db · 사건·스냅숏·db 변조를 사법부가 잡는다', async () => {
+  const CLERK = await import('../legislative/clerk.mjs');
+  const LOGA = req('../judicial/log_audit.js');
+  const { writeFileSync, mkdirSync } = await import('node:fs');
+  const dir = join(tmpdir(), `log-test-${process.pid}`), dbPath = join(dir, 'db.json');
+  rmSync(dir, { recursive: true, force: true }); mkdirSync(dir, { recursive: true });
+  const ser = (db) => JSON.stringify(db, null, 2) + '\n';
+  writeFileSync(dbPath, ser(BASE));
+  // 기원: 사법부 봉인 없이는, 그리고 두 번은 만들지 않는다
+  assert.throws(() => CLERK.sealGenesis({ dbPath, db: BASE, seal: null }), /봉인/);
+  const g0 = CLERK.sealGenesis({ dbPath, db: BASE, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, BASE) });
+  assert.throws(() => CLERK.sealGenesis({ dbPath, db: BASE, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, BASE) }), /이미 있음/);
+  // 병합 두 번 → 사건 두 개, 사슬로 묶임
+  let db = BASE;
+  for (const ko of ['기록시험개념1', '기록시험개념2']) {
+    const patch = { format: 'definition-db-patch', version: 9, why: '기록 시험', terms: [{ id: 'T+1', names: { ko } }], senses: [{ id: 'D+1', term: 'T+1', kind: 'concept', desc: [{ text: '시험', field: '생화학', context: { scope: '시험' } }] }] };
+    const res = LEG.ingest(db, patch), g = J.gate(db, res, {});
+    assert.ok(g.ok, g.errors.map((e) => e.msg).join('; '));
+    const w = CLERK.commitMerge({ dbPath, db: res.db, records: [{ name: 'p.json', record: { result: {}, report: {}, ...patch } }], seal: ATT.sealVerdict(g, res.db) });
+    assert.ok(w.event && w.event.prev, '사건이 기록됨'); db = res.db;
+  }
+  const log = CLERK.readLog(dir);
+  assert.equal(log.events.length, 2); assert.equal(log.events[0].prev, g0.root); assert.equal(log.events[1].prev, log.events[0].root);
+  assert.ok(ORCH.replayLog(log, readFileSync(dbPath, 'utf8')).ok, '재생 = 지금 db');
+  // 사건 내용 변조 → root 재계산 불일치 (그리고 재생 결과도 다름)
+  const t1 = JSON.parse(JSON.stringify(log)); t1.events[0].patches[0].terms[0].names.ko = '바뀜';
+  assert.ok(ORCH.replayLog(t1, readFileSync(dbPath, 'utf8')).errors.some((e) => /내용이 바뀜/.test(e)));
+  // 사건 빼기 → seq·prev 불일치
+  const t2 = { ...log, events: [log.events[1]] };
+  assert.ok(LOGA.verifyChain(t2.genesis, t2.events).errors.some((e) => /seq|사슬이 끊김/.test(e)));
+  // 기원 스냅숏 바꿔치기
+  assert.ok(ORCH.replayLog({ ...log, snapshotText: log.snapshotText.replace('"version"', '"version" ') }, readFileSync(dbPath, 'utf8')).errors.some((e) => /스냅숏이 바뀜/.test(e)));
+  // 기록을 거치지 않은 db 직접 편집
+  assert.ok(ORCH.replayLog(log, ser(BASE)).errors.some((e) => /기록을 거치지 않은 쓰기/.test(e)));
+  // 기원이 없는 db 는 기록하지 않는다 (시험용 임시 db)
+  rmSync(dir, { recursive: true, force: true });
+});

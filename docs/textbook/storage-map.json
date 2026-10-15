@@ -77,6 +77,14 @@
       "interpret": "terms(T)·senses(D)·steps(S)·limitations(L)·observations(O) 다섯 표와 meta.next(다음 번호). 관찰 기록(v10)은 한 번 들어오면 바뀌지 않는다(철회 표시만) — 실측 상수는 kinetics.from 으로 관찰을 참조하는 파생값. 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장."
     },
     {
+      "path": "data/log/*",
+      "class": "log",
+      "format": "genesis.json(기원: db sha256·루트) · genesis-db.json(기원 스냅숏) · events.jsonl(사건 한 줄씩: seq·at·names·patches·db_sha256·prev·root)",
+      "writer": "입법 서기 (dbtool log --genesis 한 번, 이후 merge·augment apply 마다 추가만)",
+      "readers": "node dbtool.mjs log (사법부 사슬·재생 판정), 사람·AI (이력)",
+      "interpret": "S1 — 원본은 기원 + 사건 사슬, data/db.json 은 재생 결과. 사건은 고치거나 지우지 않는다(사슬이 끊겨 드러남)."
+    },
+    {
       "path": "data/patches/*.json",
       "class": "log",
       "format": "JSON — 패치 원문(why 포함) + applied_at + result(added·updated·removed·mapped) + report(Patch Report: scope·why·impact·verification)",
@@ -282,10 +290,21 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js observeFate, tests",
-      "interpret": "[사법] 4단계 ② — 관찰 비교: 예측 표본 ⊛ 측정 잡음 모형(정규·로그정규·계수, 측정·생물·합산) ↔ 관찰. 세 판정 CONSISTENT(FINDING)·CONFLICT(DOMAIN_CONFLICT)·INDISTINGUISHABLE(DATA_GAP → Observation_Gap + 필요한 정밀도). 생물 변이는 앙상블일 때만 F 검정. 추정용·철회 관찰은 판정 거부. design(): 관찰 없이 두 가설을 가를 반복 수.",
+      "interpret": "[사법] 4단계 ② — 관찰 비교: 예측 표본 ⊛ 측정 잡음 모형(정규·로그정규·계수, 측정·생물·합산) ↔ 관찰. 세 판정 CONSISTENT(FINDING)·CONFLICT(DOMAIN_CONFLICT)·INDISTINGUISHABLE(DATA_GAP → Observation_Gap + 필요한 정밀도). 가설 하나의 일치는 시나리오가 선언한 δ(근거 등급 parameter 이상)로 동등성 검정(TOST)을 통과해야만 — 기각 못 함은 일치가 아님(M1). 생물 변이는 앙상블일 때만 F 검정. 추정용·철회 관찰은 판정 거부. design(): 관찰 없이 두 가설을 가를 반복 수.",
       "node": "JUDICIAL_OBS_COMPARE",
       "governance": "Judicial",
-      "refactor_strategy": "기준은 \"너무 시끄러운가\"가 아니라 \"가를 수 있는가\" — 판정 규칙을 바꾸면 세 판정 시험(tests/stats.test.mjs ④)을 같이 고친다. 예측은 조정자가 관찰 연산자로 만들어 넘긴다 — 엔진을 부르지 않는다."
+      "refactor_strategy": "기준은 \"너무 시끄러운가\"가 아니라 \"가를 수 있는가\" — 판정 규칙을 바꾸면 세 판정 시험(tests/stats.test.mjs ④·④′)을 같이 고친다. 예측은 조정자가 관찰 연산자로 만들어 넘긴다 — 엔진을 부르지 않는다."
+    },
+    {
+      "path": "judicial/log_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js replayLog, dbtool log, tests",
+      "interpret": "[사법] S1 델타 기록 감사 — ① 사슬 무결성(기원 루트 = sha256('genesis\\n' + 기원 db sha256), 사건마다 prev = 직전 루트, root = sha256(prev + 정준 JSON), seq 연속) ② 재생 일치(기원 스냅숏 sha256, 사건마다 재생 db = 봉인 db, 마지막 = 지금 db.json). 재생(병합)은 조정자가 입법부 순수 함수로 한다.",
+      "node": "JUDICIAL_LOG_AUDIT",
+      "governance": "Judicial",
+      "refactor_strategy": "원본은 기원 + 사건 사슬이고 db.json 은 재생 결과(스냅숏)다. 재생 불일치는 병합의 비결정성(ENGINE 아님 — 입법부 merge) 또는 기록 밖 쓰기. 조각·머클 매니페스트(S3)로 넘어가도 사슬 규칙은 그대로."
     },
     {
       "path": "judicial/stoch_audit.js",

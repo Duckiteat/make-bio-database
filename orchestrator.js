@@ -14,6 +14,7 @@ const ID = require('./judicial/identity.js');
 const ATT = require('./judicial/attestation.js');
 const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
+const LOGA = require('./judicial/log_audit.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const OC = require('./judicial/obs_compare.js');
 const SA = require('./judicial/stoch_audit.js');
@@ -119,4 +120,16 @@ function validateWithRegistry(db, root, opt) {
   return Object.assign(J.validate(C.normalize(db), { attestations: v.keys }), { attestations: v });
 }
 
-module.exports = { observeFate, runEnsemble, scaleScenario, ensembleLimit, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+// ----- 델타 기록 재생 (S1): 기원 스냅숏에서 사건의 패치를 입법부 순수 병합으로 차례로 적용 → 사건마다 sha256 → 사법부 판정 -----
+// log = clerk.readLog(데이터 폴더) · currentText = 지금 db.json 텍스트. 쓰기 없음.
+function replayLog(log, currentText) {
+  const sha = (x) => require('crypto').createHash('sha256').update(x).digest('hex'), ser = (db) => JSON.stringify(db, null, 2) + '\n';
+  const replay = { snapshot_sha256: sha(log.snapshotText), shas: [] };
+  try {
+    let db = C.normalize(JSON.parse(log.snapshotText));
+    for (const ev of log.events) { for (const p of ev.patches) db = L.ingest(db, p).db; replay.shas.push(sha(ser(db))); }
+  } catch (e) { replay.error = e.message; }
+  return LOGA.replayVerdict(log.genesis, log.events, replay, sha(currentText));
+}
+
+module.exports = { replayLog, observeFate, runEnsemble, scaleScenario, ensembleLimit, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };

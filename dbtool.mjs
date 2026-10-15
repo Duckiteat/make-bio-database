@@ -342,6 +342,23 @@ switch (cmd) {
     if (min) process.exit(pick.every((r) => REL.meets(r, min)) ? 0 : 1);
     break;
   }
+  case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
+    const dataDir = dirname(DB_PATH);
+    if (flags.genesis) {
+      const db = loadDB(), r = ORCH.validateWithRegistry(db, HERE);
+      printIssues(r.errors, r.warnings);
+      if (r.errors.length || r.attestations.failed.length) die('검사를 통과하지 못한 db 는 기원으로 봉인하지 않는다');
+      const seal = ATT.sealVerdict({ ok: true, errors: [], warnings: r.warnings }, db, { issuer: 'judicial/judicial.js#validate (기원)' });
+      const g = CLERK.sealGenesis({ dbPath: DB_PATH, db, seal, note: flags.note && flags.note !== true ? flags.note : '' });
+      console.log(`기원 체크포인트 (입법 서기): db sha256 ${g.db_sha256.slice(0, 12)}…, 루트 ${g.root.slice(0, 12)}… — 이후 병합은 data/log/events.jsonl 에 사건으로 추가된다`);
+      break;
+    }
+    const log = CLERK.readLog(dataDir);
+    if (!log) die('기원 체크포인트가 없음 — node dbtool.mjs log --genesis');
+    const v = ORCH.replayLog(log, readFileSync(DB_PATH, 'utf8'));
+    console.log(req('./judicial/log_audit.js').logText(v));
+    process.exit(v.ok ? 0 : 1);
+  }
   case 'attest': {
     // 증명 등록부 검사: 도장마다 digest(변조)·증거 파일 sha256·같은 확인 재실행 — 사법부 판정만, 쓰기 없음
     const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
@@ -477,7 +494,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

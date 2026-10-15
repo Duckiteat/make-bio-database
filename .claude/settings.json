@@ -27,6 +27,7 @@
       "Bash(node dbtool.mjs limitations --check:*)",
       "Bash(node dbtool.mjs limitations --detect:*)",
       "Bash(node dbtool.mjs textbook --check:*)",
+      "Bash(node dbtool.mjs log:*)",
 
       "Bash(node --test:*)",
       "Bash(node tests/:*)",
@@ -48,6 +49,7 @@
       "Bash(node dbtool.mjs limitations --write:*)",
       "Bash(node dbtool.mjs textbook --write:*)",
       "Bash(node dbtool.mjs trend:*)",
+      "Bash(node dbtool.mjs log --genesis:*)",
       "Bash(git push:*)",
       "Bash(cargo:*)",
       "Bash(sh engine/rust/build.sh:*)"
@@ -55,6 +57,7 @@
     "deny": [
       "Edit(data/db.json)", "Write(data/db.json)",
       "Edit(data/patches/**)", "Write(data/patches/**)",
+      "Edit(data/log/**)", "Write(data/log/**)",
       "Edit(attestations/**)", "Write(attestations/**)",
       "Edit(data/fetched/**)", "Write(data/fetched/**)",
       "Bash(rm -rf:*)",

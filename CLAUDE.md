@@ -8,7 +8,7 @@
 - 행정 `core.js`·`engine/*`: 읽기·시뮬레이션만. 파일 쓰기·검사·승인·`'verified'`·`AUDIT_*`·사후 분석·질량 판정 금지. 사법·입법·조정자 호출 금지.
 - 엔진은 이름을 모른다: 분자·위치·부분 구조 이름 금지 — 사실은 데이터·어휘에. 부분 구조 수지 ΣIn=ΣOut 상대 1e-14(규칙 검사·운명 원장).
 - 수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만. 엔진에 기본값 금지.
-- 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
+- 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`(db.json·patches·log)·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
 - 사법 `judicial/`: 검증·증명·감사·보고만. 엔진 실행·데이터/엔진 수정 금지 — 판결·보고서로만. 행정부는 관찰을 읽지 않음; 예측 표본은 조정자가 `compiler/obs_operator.js` 로.
 - `'verified'` 는 `attestations/registry.json` 의 유효 도장으로만(`augment apply` 발급, `node dbtool.mjs attest` 재검증). 없으면 관문 거부.
 - 엔진 실행이 필요한 감사는 조정자 `orchestrator.js` 가 원자료 → 사법부.

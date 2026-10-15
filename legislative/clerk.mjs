@@ -35,7 +35,7 @@ const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부
 
 // 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
 export const ZONES = {
-  registry:    { label: '입법 구역 (정의·병합 기록)', allow: ['data/db.json', 'data/patches/'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
   attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
   evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
@@ -65,8 +65,45 @@ export function commitMerge({ dbPath, db, records, seal }) {
   if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 쓰려는 db 가 다름 — 판결을 다른 데이터에 재사용할 수 없음');
   const patchDir = join(dirname(dbPath), 'patches'), written = [];
   for (const r of records) written.push(put('registry', join(patchDir, `${stamp()}-${r.name.replace(/\.json$/, '')}.json`), JSON.stringify({ applied_at: new Date().toISOString(), ...r.record }, null, 2) + '\n'));
+  const event = appendEvent(dirname(dbPath), records, seal);
   put('registry', dbPath, text);
-  return { records: written, db: dbPath };
+  return { records: written, db: dbPath, event };
+}
+
+// ①′ 델타 기록 (S1, docs/design/integral-field-engine.md §17): 기원 체크포인트가 있으면 병합마다 사건 하나를 **추가만** 한다.
+//   사건 = { seq, at, names, patches(관문에 들어간 그대로), db_sha256(봉인의 db), prev(직전 루트) } · root = sha256(prev + '\n' + 정준 JSON)
+//   이 사슬이 원본이고 db.json 은 그 재생 결과(스냅숏)다 — 재생 일치·사슬 무결성은 사법부(judicial/log_audit.js)가 판정한다.
+//   기원이 없는 db(시험용 임시 db 등)에서는 기록하지 않는다.
+const LOG = { dir: 'log', genesis: 'genesis.json', snapshot: 'genesis-db.json', events: 'events.jsonl' };
+const readEvents = (dir) => { const f = join(dir, LOG.events); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; };
+function appendEvent(dataDir, records, seal) {
+  const dir = join(dataDir, LOG.dir), gf = join(dir, LOG.genesis);
+  if (!existsSync(gf)) return null;
+  const genesis = JSON.parse(readFileSync(gf, 'utf8')), events = readEvents(dir), last = events[events.length - 1];
+  const body = { seq: events.length + 1, at: new Date().toISOString(), names: records.map((r) => r.name),
+    patches: records.map((r) => { const { result, report, applied_at, ...patch } = r.record; return patch; }), db_sha256: seal.db_sha256, prev: last ? last.root : genesis.root };
+  const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+  const f = join(dir, LOG.events), old = existsSync(f) ? readFileSync(f, 'utf8') : '';
+  put('registry', f, old + JSON.stringify(ev) + '\n');
+  return ev;
+}
+// 기원 체크포인트: 지금 db 를 사법부가 검사해 봉인한 것만 기원으로 쓴다. 한 번만 — 이미 있으면 거부.
+export function sealGenesis({ dbPath, db, seal, note }) {
+  if (!ATT.checkSeal(seal)) refuse('관문 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse(`검사 판결이 거부 (오류 ${seal.errors}, 경고 ${seal.warnings})`);
+  const text = serialize(db);
+  if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 기원으로 쓰려는 db 가 다름');
+  const dir = join(dirname(dbPath), LOG.dir);
+  if (existsSync(join(dir, LOG.genesis))) refuse('기원 체크포인트가 이미 있음 — 기원은 한 번만 만든다');
+  const g = { format: 'definition-db-log', version: 1, at: new Date().toISOString(), db_sha256: seal.db_sha256, root: sha('genesis\n' + seal.db_sha256), snapshot: LOG.snapshot, note: note || '' };
+  put('registry', join(dir, LOG.snapshot), text);
+  put('registry', join(dir, LOG.genesis), JSON.stringify(g, null, 2) + '\n');
+  return g;
+}
+export function readLog(dataDir) {
+  const dir = join(dataDir, LOG.dir), gf = join(dir, LOG.genesis);
+  if (!existsSync(gf)) return null;
+  return { genesis: JSON.parse(readFileSync(gf, 'utf8')), snapshotText: readFileSync(join(dir, LOG.snapshot), 'utf8'), events: readEvents(dir) };
 }
 
 // ② 증명 등록부: 도장마다 사법부 검증(digest + 증거 재확인)을 다시 거친 뒤에만 추가.
