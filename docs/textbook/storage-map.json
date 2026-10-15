@@ -326,6 +326,17 @@
       "refactor_strategy": "컴파일러 코드를 쓰지 않는다 — 같은 규칙을 따로 세워야 대조가 된다. 새 교란 종류는 compiler/perturb.js 와 같은 커밋에서."
     },
     {
+      "path": "judicial/qual_graph.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool qualgraph, tests/qual_graph.test.mjs",
+      "interpret": "[사법] build-plan 7 — 정성 그래프 0 층 판정: 정의 층에서 부호 있는 기전 그래프(정의항 → 묶음, 단계 참여·산물·소비, 공급·분해, 조절 activates/inhibits, 세포 상태 전이 신호·표지 서명)를 세우고, 정성 관찰의 교란 대상 → 읽을 거리 경로를 (노드, 부호)당 첫 도달 너비 우선(자기 경로 재방문 금지 — 되먹임 순환 배제, knockout 은 대상의 다른 형태를 다시 지나지 않음)으로 찾아 예측 변화 = 교란 부호 × 경로 부호를 주장과 비교 → 구조 지지 · 경로 없음(Structural_Gap 후보) · 모순 후보 · 부호 섞임 · 긴장 · 대상 아님. 교란 대상·읽을 거리·맥락 열쇠 양방향 색인.",
+      "node": "JUDICIAL_QUAL_GRAPH",
+      "governance": "Judicial",
+      "refactor_strategy": "구조만 본다 — 경로 우열·포화는 모의 판정(build-plan 8). 새 규칙 종류가 영향 간선을 가지면 buildGraph 에 같은 커밋에서. 구조 지지는 일치가 아니다."
+    },
+    {
       "path": "judicial/protocol.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -874,6 +885,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "값 층(형식 v12) — 저장은 값 층만·보기 그대로·멱등, 병합의 대체·철회와 이전 기록 불변, 두 시간(asOf), 사법부 값 모양·불변 검사, 형식 변환 재현(기원 스냅숏 → transform)."
+    },
+    {
+      "path": "tests/qual_graph.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "정성 그래프 0 층 판정 — 합성 기전으로 지지·모순 후보·경로 없음·부호 섞임·효과 모르는 조절·음성 되먹임 무시·정의상 판정·세포 상태 표지·긴장·대상 아님, 양방향 색인(철회 제외), 지금 저장소에서 그래프가 섬."
     },
     {
       "path": "tests/qualitative.test.mjs",

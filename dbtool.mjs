@@ -354,6 +354,13 @@ switch (cmd) {
     console.log(`사전 등록 #${e.seq} (입법 서기): ${e.at} · 시나리오 sha256 ${e.scenario_sha256.slice(0, 12)}… — 이 시나리오를 고치면 미등록이 된다`);
     break;
   }
+  case 'qualgraph': { // 정성 그래프 0 층 판정 (build-plan 7): 기전 그래프 경로 부호 대 정성 관찰의 주장 — 읽기만
+    const QG = req('./judicial/qual_graph.js'), ids = args.filter((a) => /^O\d{6}$/.test(a));
+    const v = QG.qualGraphVerdict(loadDB(), ids.length ? { ids } : {});
+    if (flags.json) console.log(JSON.stringify({ rows: v.rows, counts: v.counts, index: v.index, graph: v.graph }, null, 2));
+    else console.log(QG.qualGraphText(v));
+    break;
+  }
   case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
     const dataDir = dirname(DB_PATH);
     if (flags.genesis) {
@@ -508,7 +515,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====
