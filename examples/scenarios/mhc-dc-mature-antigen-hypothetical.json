@@ -1,0 +1,394 @@
+{
+  "name": "MHC 가상 — 성숙 신호와 항원이 처음부터 (카텝신 S·HLA-DM 필수성 시험의 대조군)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 기전(MHC I·II 의 합성 → 수송 → 적재 → 제시 → 분해)이 그 값에서 어떻게 흐르는지 보기 위한 크기 정도 값만 둔다. 막(2D) 묶음의 부피는 그 막의 유효 부피다 (한계 L000079).",
+  "cell": "dendritic_cell",
+  "dt_slow": 60,
+  "t_end": 43200,
+  "volumes": {
+    "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+    },
+    "cytosol": {
+      "value": 1000,
+      "unit": "fL"
+    },
+    "er_lumen": {
+      "value": 100,
+      "unit": "fL"
+    },
+    "er_membrane": {
+      "value": 30,
+      "unit": "fL"
+    },
+    "golgi_lumen": {
+      "value": 30,
+      "unit": "fL"
+    },
+    "golgi_membrane": {
+      "value": 10,
+      "unit": "fL"
+    },
+    "endosome_lumen": {
+      "value": 20,
+      "unit": "fL"
+    },
+    "endosome_membrane": {
+      "value": 10,
+      "unit": "fL"
+    },
+    "plasma_membrane": {
+      "value": 30,
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000189|er_membrane": 2000,
+    "D000198|endosome_membrane": 2000,
+    "D000098|cytosol": 20000,
+    "D000195|endosome_lumen": 5000,
+    "D000181|extracellular": 2000000,
+    "D000180|cytosol": 20000
+  },
+  "thresholds": {
+    "D000201|plasma_membrane": {
+      "low": 2000,
+      "high": 20000
+    }
+  },
+  "kinetics": {
+    "D000180/rule/synthesis": {
+      "law": "zero_order",
+      "k": 8.302695335869233e-11,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000182/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.1070260447825641e-9,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000183/rule/synthesis": {
+      "law": "zero_order",
+      "k": 3.3210781343476934e-10,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000098/rule/antigen_processing": {
+      "law": "michaelis_menten",
+      "kcat": 0.05,
+      "Km": 3.3210781343476934e-8,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000189/rule/peptide_import": {
+      "law": "michaelis_menten",
+      "kcat": 0.02,
+      "Km": 3.3210781343476934e-8,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000190/rule/assembly": {
+      "law": "binding",
+      "k_on": 75276.7595,
+      "k_off": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000189/rule/peptide_loading": {
+      "law": "binding",
+      "k_on": 75276.7595,
+      "k_off": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/er_exit": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0016666666666666668,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/surface_delivery": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0033333333333333335,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/internalization": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0002777777777777778,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000182/rule/free_hc_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1800,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000190/rule/erad": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 3600,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1800,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000179/rule/peptidase_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 60,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000192/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.1070260447825641e-9,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000193/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.1070260447825641e-9,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000194/rule/synthesis": {
+      "law": "zero_order",
+      "k": 2.2140520895651282e-9,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000199/rule/assembly": {
+      "law": "binding",
+      "k_on": 22583.027850000006,
+      "k_off": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000200/rule/assembly": {
+      "law": "binding",
+      "k_on": 22583.027850000006,
+      "k_off": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000200/rule/er_exit": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0016666666666666668,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000200/rule/endosomal_sorting": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0033333333333333335,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000181/rule/uptake": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0008333333333333334,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000195/rule/antigen_processing": {
+      "law": "michaelis_menten",
+      "kcat": 0.05,
+      "Km": 0.0000016605390671738465,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000195/rule/ii_cleavage": {
+      "law": "michaelis_menten",
+      "kcat": 0.02,
+      "Km": 4.151347667934616e-7,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000198/rule/clip_release": {
+      "law": "michaelis_menten",
+      "kcat": 0.05,
+      "Km": 8.302695335869232e-7,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000198/rule/peptide_loading": {
+      "law": "binding",
+      "k_on": 15055.351900000001,
+      "k_off": 0.0001,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000201/rule/surface_delivery": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.0033333333333333335,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000201/rule/internalization": {
+      "law": "mass_action",
+      "order": 1,
+      "k": 0.016666666666666666,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000192/rule/free_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1800,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000193/rule/free_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1800,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000194/rule/free_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1800,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000194/rule/clip_turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 600,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000199/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000201/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 3600,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000179/rule/endosomal_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 120,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000064/rule/mhc2_surface_retention": {
+      "law": "hill",
+      "K": 9.96323440304308e-9,
+      "n": 2,
+      "fmin": 0.02,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "signals": {
+    "D000064|extracellular": [
+      {
+        "t": 0,
+        "n": 300000
+      }
+    ]
+  },
+  "context": {
+    "role": "cause",
+    "state": "D000203",
+    "note": "LPS 와 항원이 처음부터 있을 때 표면 MHC II 제시에 이르는지 — 카텝신 S·HLA-DM 을 끊은 파생 시나리오의 대조군"
+  }
+}

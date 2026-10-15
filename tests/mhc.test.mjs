@@ -23,7 +23,10 @@ const PR = require('../judicial/process_report.js');
 
 const DB = JSON.parse(fs.readFileSync(new URL('../data/db.json', import.meta.url)));
 const SRC = 'D000202', TARGET = 'D000203';
-const scen = (name) => JSON.parse(fs.readFileSync(new URL(`../examples/scenarios/${name}.json`, import.meta.url)));
+const PT = require('../compiler/perturb.js'), PA = require('../judicial/perturb_audit.js');
+const raw = (file) => JSON.parse(fs.readFileSync(new URL(`../examples/scenarios/${file}`, import.meta.url)));
+// 파생 시나리오(기준 + 교란 한 줄, build-plan 9)는 기준을 읽어 교란을 건 실제 입력으로
+const scen = (name) => { const sc = raw(`${name}.json`); if (!PT.isDerived(sc)) return sc; const v = PT.derive(C.normalize(DB), SRC, sc, raw(sc.base)); assert.ok(!v.error, v.error); return v.scenario; };
 const MAT = 'mhc-dc-maturation-lps-hypothetical';
 const run = (sc, opt) => { const r = F.simulateFate(DB, SRC, Object.assign({ engine: 'rust', scenario: sc }, opt || {})); assert.ok(!r.error, r.error); return r; };
 const judge = (r, sc, ir) => FA.judgeFate(DB, r, { scenario: sc, ir });
@@ -153,4 +156,27 @@ test('MHC ⑧: 경계 — 모든 저장소가 0 에서 시작해도 음수가 �
   // 펩타이드 원천이 없으니 표면 펩타이드–MHC II 는 만들어지지 않는다 (결과) — 합성·조립·수송까지는 0 에서 켜진다
   assert.strictEqual(r.final.N['D000201|plasma_membrane'], 0);
   assert.ok(r.final.N['D000200|endosome_membrane'] > 0, 'MHC II–불변 사슬 복합체가 엔도솜에 도달하지 못함');
+});
+
+test('MHC ⑩: null 시나리오 = 기준 + 교란 한 줄 (build-plan 9) — 교란 차이 검사 통과 · 필수성은 같은 대조군과 비교', () => {
+  const D = C.normalize(DB), nulls = fs.readdirSync(new URL('../examples/scenarios/', import.meta.url)).filter((f) => /^mhc-.*-null-hypothetical\.json$/.test(f));
+  assert.equal(nulls.length, 4);
+  for (const f of nulls) {
+    const sc = raw(f);
+    assert.ok(PT.isDerived(sc), `${f} 가 복사본 시나리오 — 기준 + 교란 한 줄이어야 함`);
+    assert.deepEqual(Object.keys(sc).filter((k) => !PT.DERIVED_KEYS.includes(k)), []);
+    const base = raw(sc.base), p = PT.perturbedIR(D, SRC, base, sc.perturbation), v = p.variants[0];
+    const audit = PA.verifyPerturbation({ baseScenario: base, baseIR: p.base, scenario: v.scenario, ir: v.ir, record: v.record });
+    assert.ok(audit.ok, `${f}: ${audit.problems.join(' · ')}`);
+  }
+  // 카텝신 S·HLA-DM 필수성: 같은 대조군(성숙 신호 + 항원)은 성숙에 이르고, 끊은 쪽은 이르지 못한다
+  const ctl = scen('mhc-dc-mature-antigen-hypothetical'), rc = run(ctl);
+  assert.ok(rc.firstReach[TARGET] > 0, '대조군이 성숙에 이르지 않음 — 필수성 비교가 성립하지 않음');
+  assert.ok(FA.contextVerdict(rc, ctl).consistent);
+  for (const n of ['mhc-dc-cathepsin-null-hypothetical', 'mhc-dc-hladm-null-hypothetical']) assert.strictEqual(run(scen(n)).firstReach[TARGET], undefined, n);
+  // 파생 형식의 거부: 교란 밖 필드 · 이중 파생 · dose_series
+  const d = raw('mhc-dc-hladm-null-hypothetical.json'), b = raw(d.base);
+  assert.match(PT.derive(D, SRC, { ...d, t_end: 10 }, b).error, /받지 않는 필드: t_end/);
+  assert.match(PT.derive(D, SRC, d, { ...b, base: 'x.json' }).error, /기준은 한 단계만/);
+  assert.match(PT.derive(D, SRC, { ...d, perturbation: { type: 'dose_series', of: { type: 'clamp', target: 'D000198|endosome_membrane' }, doses: [0] } }, b).error, /교란 하나/);
 });

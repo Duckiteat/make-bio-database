@@ -57,7 +57,7 @@
 - 비교 검토(`compare`): 결과 같고 비용(규칙·조절 수, 시간 +5% 초과)만 늘며 이득 <1e-5 → Optimization-Negative, 넣지 않음. 결과가 바뀌면 관찰로 고르고, 없으면 Gap note. 기존 supply·modulation 으로 되면 새 규칙 종류 금지.
 - 정제 점검 자동(`refineCheck`): 새 중복·미등록 모순은 관문 거부. 초안은 `draftRefactor`(저장소 밖), 적용은 새 패치. 의도한 단순화는 Structural_Gap.
 - 기전은 세포 상태 `mechanisms` 에 걸어 운명 엔진으로(따로 돌리는 길 금지). 결합 적분은 질량 작용·가역 결합(정·역 두 채널)·MM 만, 나머지는 Kinetic_Gap. 막 단계는 `volumes[막]`. `simulateRate` 와 서로 기준 금지(L000081). 변경 → `node --test tests/mhc.test.mjs`.
-- 운명·기전 시나리오에 `context {role: cause|requirement|baseline, state, note}`. 보고는 맥락과 함께.
+- 운명·기전 시나리오에 `context {role: cause|requirement|baseline, state, note}`. 보고는 맥락과 함께. 교란 실험은 복사본 금지 — 파생 시나리오 `{ base, perturbation }`(대조군 = 기준).
 - 확률: `stochastic {seed}`(실행 전), 앙상블로만 판정(`judicial/stoch_audit.js` — 운명 비율·도달 시각 분포·Fano), 궤적 하나로 결론 금지. 방식·문턱 변경 → `tests/stochastic.test.mjs`. 확률 없으면 결정론 비트 불변.
 - 검증(관찰과의 일치)은 사전 등록된 모의 실험 규약 아래에서만: 시나리오 `protocol`(실제 실험 대응·음성 대조 필수·검정력 반복 수·검증 세트·중단 규칙) → `register` 로 실행 전 등록 → 고치면 미등록. 규약 없는 실행은 탐색 실행(일치 결론 불가).
 - 운명 결과는 `fate <상태> --scenario s.json --report f.md` 과정 보고서로만, 끝 상태만 말하지 않음. 무결성 증명서 FAIL 이면 실패로 보고. 예측은 실행 전 `expect`, 실행 뒤 변경 금지.

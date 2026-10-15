@@ -83,4 +83,23 @@ function perturbedIR(db, sid, sc, p, params) {
   }) };
 }
 
-module.exports = { perturb, perturbedIR, applyOne, CLAMP_TOTAL };
+// 파생 시나리오 (build-plan 9): { base: '기준.json', perturbation: { … }, name?, context?, expect?, hypothetical?, _설명? } — 기준 + 교란 한 줄.
+//   교란 실험의 복사본 시나리오를 두지 않는다: 복사본은 기준이 바뀌어도 따라가지 않고, 교란 말고도 다른 곳이 달라질 수 있다(대조군이 없다).
+//   base 는 부르는 쪽이 읽어 넘긴다(컴파일러는 파일을 읽지 않는다). 기준이 또 파생이면 거부 — 한 단계만.
+//   결과 = 교란 시나리오 + 파생 파일의 이름·맥락·예측(실험마다 다른 선언). 그 밖의 필드는 받지 않는다(교란 외의 차이를 숨길 자리가 없게).
+const DERIVED_KEYS = ['base', 'perturbation', 'name', 'context', 'expect', 'hypothetical', '_설명'];
+const isDerived = (sc) => !!(sc && typeof sc === 'object' && 'base' in sc);
+function derive(db, sid, sc, base) {
+  const extra = Object.keys(sc).filter((k) => !DERIVED_KEYS.includes(k));
+  if (extra.length) return { error: `파생 시나리오는 기준 + 교란 한 줄만 — 받지 않는 필드: ${extra.join(', ')} (다른 값이 필요하면 기준을 새로 만든다)` };
+  if (!base || typeof base !== 'object') return { error: `기준 시나리오 '${sc.base}' 를 읽지 못함` };
+  if (isDerived(base)) return { error: `기준 '${sc.base}' 도 파생 시나리오 — 기준은 한 단계만` };
+  if (!sc.perturbation || sc.perturbation.type === 'dose_series') return { error: '파생 시나리오의 perturbation 은 교란 하나 (dose_series 는 실행마다 하나씩)' };
+  const v = perturb(db, sid, base, sc.perturbation);
+  if (v.error) return v;
+  const { scenario, record } = v.variants[0], out = clone(scenario);
+  for (const k of ['name', 'context', 'expect', 'hypothetical', '_설명']) { if (k in sc) out[k] = clone(sc[k]); else delete out[k]; }
+  return { scenario: out, record, base: sc.base };
+}
+
+module.exports = { perturb, perturbedIR, applyOne, derive, isDerived, DERIVED_KEYS, CLAMP_TOTAL };

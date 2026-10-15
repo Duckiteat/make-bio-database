@@ -60,7 +60,7 @@ node dbtool.mjs mechanism 시트르산회로   # 단계 사슬·묶음 키
 ### 운명 (세포 상태 전이)
 
 ```bash
-node dbtool.mjs fate <시작 상태> --scenario examples/scenarios/<파일>.json [--report 보고서.md] [--workers 8]
+node dbtool.mjs fate <시작 상태> --scenario examples/scenarios/<파일>.json [--report 보고서.md] [--workers 8]   # 파생 시나리오(base + perturbation)는 기준을 읽어 풀린다 — 예: mhc-*-null
 ```
 
 **인자는 시작 상태다.** 끝 상태로 부르면 보고서는 나오지만 무결성이 FAIL 이고 종료 코드가 1 이다(아래 표).
@@ -227,7 +227,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 245/245 (약 115 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 246/246 (약 115 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음

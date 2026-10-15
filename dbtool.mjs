@@ -69,6 +69,18 @@ const PATCH_DIR = join(dirname(DB_PATH), 'patches');
 const readJSON = (p) => DefDB.parseLoose(readFileSync(p, 'utf8'));
 // 형식 v12: 값이 바뀌는 병합의 기록 시각 — 병합 전에 패치에 찍어 관문이 봉인한다(패치 기록에 남아 재생해도 같다). 이미 있으면 그대로
 const stamped = (patch) => (patch && typeof patch === 'object' && !patch.recorded_at ? { ...patch, recorded_at: new Date().toISOString() } : patch);
+// 시나리오 읽기: 파생 시나리오(기준 + 교란 한 줄, build-plan 9)는 같은 폴더의 기준을 읽어 교란을 건 실제 입력으로 푼다 (컴파일러 derive)
+const loadScenario = (path, sid, db) => {
+  const sc = readJSON(path), PT = req('./compiler/perturb.js');
+  if (!PT.isDerived(sc)) return { scenario: sc, text: readFileSync(path, 'utf8') };
+  if (!sid) die(`파생 시나리오 ${path} 는 세포 상태가 있는 실행(fate · observe · compare)에서만 — 교란이 그 계의 규칙·묶음을 보고 풀린다`);
+  const bp = join(dirname(path), String(sc.base));
+  if (!existsSync(bp)) die(`파생 시나리오 ${path}: 기준 '${sc.base}' 이 없음`);
+  const v = PT.derive(db, sid, sc, readJSON(bp));
+  if (v.error) die(`파생 시나리오 ${path}: ${v.error}`);
+  console.log(`※ 파생 시나리오: 기준 ${sc.base} + 교란 ${JSON.stringify(sc.perturbation)} (교란 기록 ${v.record.hash.slice(0, 12)}…)`);
+  return { scenario: v.scenario, text: JSON.stringify(v.scenario, null, 2) + '\n', derived: v };
+};
 const loadDB = () => (existsSync(DB_PATH) ? DefDB.normalize(readJSON(DB_PATH)) : DefDB.emptyDB());
 const rel = (p) => relative(process.cwd(), p) || p;
 const printIssues = (errors, warnings) => {
@@ -77,7 +89,7 @@ const printIssues = (errors, warnings) => {
 };
 const die = (m) => { console.error(m); process.exit(1); };
 // 속도 기반 시뮬레이션·감사 공용 옵션
-const rateOpt = () => ({ scenario: flags.scenario ? readJSON(flags.scenario) : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3),
+const rateOpt = () => ({ scenario: flags.scenario ? loadScenario(flags.scenario).scenario : null, t_end: +(flags.t || 60), dt: +(flags.dt || 1e-3),
   reservoirs: typeof flags.reservoirs === 'string' ? flags.reservoirs : undefined, stochastic: flags.stochastic ? true : undefined, seed: flags.seed != null ? +flags.seed : undefined,
   until_death: flags['until-death'] ? true : undefined, window: flags.window != null ? +flags.window : undefined, death_frac: flags['death-frac'] != null ? +flags['death-frac'] : undefined });
 // 사법부가 검증한 증명 도장 열쇠 (validate·관문에 넘김)
@@ -436,7 +448,7 @@ switch (cmd) {
     const dbA = loadDB(), x = DefDB.resolveRef(DefDB.index(dbA), flags.state); if (x.error) die(x.error);
     let dbB = dbA;
     if (flags.patch) { const res = LEG.ingest(dbA, readJSON(flags.patch)), g = J.gate(dbA, res, { attestations: attestations(dbA).keys }); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
-    const scA = readJSON(flags.scenario), scB = flags['scenario-b'] ? readJSON(flags['scenario-b']) : JSON.parse(JSON.stringify(scA));
+    const scA = loadScenario(flags.scenario, x.id, dbA).scenario, scB = flags['scenario-b'] ? loadScenario(flags['scenario-b'], x.id, dbA).scenario : JSON.parse(JSON.stringify(scA));
     if (flags.hours) { scA.t_end = +flags.hours * 3600; scB.t_end = +flags.hours * 3600; }
     const r = ORCH.compare(dbA, dbB, x.id, scA, scB, { refHours: +(flags['ref-hours'] || 3) });
     console.log(CMP.compareText(r));
@@ -447,7 +459,7 @@ switch (cmd) {
     const db = loadDB(), x = DefDB.resolveRef(DefDB.index(db), args[0]);
     if (x.error) die(x.error);
     const FATE = req('./engine/fate_engine.js'), FA = req('./judicial/fate_audit.js'), PR = req('./judicial/process_report.js');
-    const scenarioText = readFileSync(flags.scenario, 'utf8'), scenario = JSON.parse(scenarioText);
+    const loaded = loadScenario(flags.scenario, x.id, db), scenarioText = loaded.text, scenario = JSON.parse(scenarioText);
     if (flags.t) scenario.t_end = +flags.t * 3600;
     const opt = { scenario, commitment: flags['no-commitment'] ? false : undefined, engine: flags.engine && flags.engine !== true ? flags.engine : 'rust', workers: flags.workers != null && flags.workers !== true ? +flags.workers : undefined };
     if (flags.brief) { const r = ORCH.fateBrief(db, x.id, opt); console.log(r.text); console.log(J.refineText(db).text); process.exit(r.code); }
@@ -504,7 +516,7 @@ switch (cmd) {
       if (o.hypothetical) console.log('※ 합성(hypothetical) 관찰 — 판정 시험용. 데이터베이스에는 넣을 수 없다.\n');
     }
     const x = DefDB.resolveRef(DefDB.index(db), flags.state); if (x.error) die(x.error);
-    const scA = readJSON(flags.scenario), scB = flags['scenario-b'] && flags['scenario-b'] !== true ? readJSON(flags['scenario-b']) : null;
+    const scA = loadScenario(flags.scenario, x.id, db).scenario, scB = flags['scenario-b'] && flags['scenario-b'] !== true ? loadScenario(flags['scenario-b'], x.id, db).scenario : null;
     if (o.kind === 'qualitative') { // 정성 모의 판정 (build-plan 8): 교란은 관찰이 선언, 대조군 = --scenario
       const QC = req('./judicial/qual_compare.js'), oid = /^O\d{6}$/.test(args[0]) ? args[0] : null;
       const q = ORCH.observeQualitative(db, o, x.id, scA, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: oid });
