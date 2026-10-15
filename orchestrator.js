@@ -100,7 +100,9 @@ function observeFate(db, o, state, scA, scB, opt) {
     if (sc.stochastic) { const rs = runEnsemble(db, state, sc, opt.n || 50, { commitment: false }); if (rs.error) throw new Error(rs.error); return rs; }
     const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r];
   };
-  try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, opt); }
+  // 허용 차이 δ 는 시나리오 A 가 실행 전에 선언한 것만 쓴다 (equivalence: [{ observable: { kind, target }, delta, scale, evidence }])
+  const eq = (scA.equivalence || []).find((e) => e.observable && o.observable && e.observable.kind === o.observable.kind && e.observable.target === o.observable.target);
+  try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, Object.assign({}, opt, { equivalence: eq })); }
   catch (e) { return { error: e.message }; }
 }
 

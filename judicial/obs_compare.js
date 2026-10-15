@@ -2,9 +2,11 @@
 //
 // 모델 예측(측정량 표본 — 결정론이면 하나, 앙상블이면 여럿)에 관찰의 측정 잡음 모형을 합성해 관찰과 비교한다.
 // 질문은 "너무 시끄러운가"가 아니라 "이 오차 막대로 가를 수 있는가"다.
-//   CONSISTENT        관찰이 예측 ⊛ 측정 잡음 안 (p ≥ α)                         → FINDING
+//   CONSISTENT        가설 하나: 선언된 δ 안임을 동등성 검정(TOST)으로 보임 · 가설 둘: 이 가설만 기각되지 않음 → FINDING
 //   CONFLICT          밖 — 모델(데이터)과 관찰의 모순 (p < α)                       → DOMAIN_CONFLICT
-//   INDISTINGUISHABLE 경쟁 가설 둘(compare 의 Behavior-Changing 쌍)이 모두 맞음 — 가를 수 없음 → DATA_GAP (Observation_Gap, 필요한 정밀도)
+//   INDISTINGUISHABLE 가를 수 없음 — 두 가설이 모두 맞거나, 가설 하나인데 일치를 보이지 못함(δ 미선언·근거 등급 미달·정밀도 부족)
+//                     → DATA_GAP (Observation_Gap, 필요한 정밀도)
+//   "기각하지 못함" 은 일치가 아니다: 오차 막대가 크면 무엇이든 기각되지 않는다 (M1, docs/design/integral-field-engine.md §13.6)
 // 불확도 유형:
 //   measurement  관찰 값 = 같은 양을 replicates 번 잰 평균, sd = 한 번 잴 때의 잡음 → 표준 오차 sd/√r. 모델은 평균으로 비교
 //   biological   관찰 값 = 개체(세포) r 개의 평균, sd = 개체 간 퍼짐 — 확률 층이 예측하는 것. 평균은 sd/√r 로, 퍼짐은 F 검정으로(앙상블일 때만)
@@ -14,6 +16,7 @@
 // 엔진을 부르지 않는다: 예측 표본은 조정자가 관찰 연산자(compiler/obs_operator.js predict)로 만들어 넘긴다.
 'use strict';
 const S = require('./stats.js');
+const RELI = require('./reliability.js');
 
 // 비교 척도로 옮긴 예측·관찰과 분산 성분
 function scale(o, samples) {
@@ -56,6 +59,35 @@ function test(o, samples, alpha) {
   return out;
 }
 
+// 동등성 (M1): 관찰과 예측의 차이가 허용 차이 δ 안임을 두 단측 검정(TOST)으로 보인다.
+// δ 는 실행 전에 시나리오가 근거(evidence)와 함께 선언한다. δ 도 값이므로 신뢰 지표 (S,D) 쌍으로 등급을 매긴다 —
+// parameter 이상이면 판정, bounded 면 조건부, 그 밖이면 판정하지 않는다(결정 11). 검출 한계 관찰은 δ 없이 "확신 상한" 으로 본다.
+function equivalence(o, A, opt) {
+  const alpha = opt.alpha, z1 = S.normInv(1 - alpha), d = A.y - A.mu, se = A.se;
+  if (o.detection_limit != null && o.value <= o.detection_limit) {
+    const shown = A.p >= 1 - alpha;
+    return { kind: 'below_limit', shown, p: 1 - A.p, requirement: shown ? '' : `예측이 검출 한계 아래라고 확신할 수 없음 (확률 ${fmt(A.p)} < ${fmt(1 - alpha)}) — 예측 퍼짐을 줄이거나 더 낮은 검출 한계의 관찰 필요` };
+  }
+  const decl = opt.equivalence;
+  if (!decl) return { shown: false, requirement: '허용 차이 δ 가 선언되지 않음 — 시나리오 equivalence 에 δ 를 근거(evidence)와 함께 실행 전에 선언해야 일치를 판정할 수 있음' };
+  const log = A.scale === 'ln', scale = decl.scale || 'linear';
+  if (!(decl.delta > 0) || !Number.isFinite(decl.delta)) return { shown: false, requirement: `δ 가 양의 유한수가 아님 (${decl.delta})` };
+  if ((scale === 'ln') !== log) return { shown: false, requirement: `δ 의 척도(${scale})가 관찰의 비교 척도(${A.scale})와 다름` };
+  const sd = RELI.scoreEvidence(decl.evidence), grade = RELI.gradeOf(sd.s, sd.d, 'unchecked');
+  const base = { delta: decl.delta, scale, grade, basis: sd.why, d, se };
+  if (!['anchor', 'parameter', 'bounded'].includes(grade)) return Object.assign(base, { shown: false, requirement: `δ 의 근거 등급이 ${grade} (S${sd.s}·D${sd.d}: ${sd.why}) — 동등성 판정에는 parameter 이상(조건부는 bounded) 필요` });
+  const p = se > 0 ? Math.max(S.normSf((d + decl.delta) / se), S.normCdf((d - decl.delta) / se)) : Math.abs(d) < decl.delta ? 0 : 1;
+  const shown = p < alpha, out = Object.assign(base, { p, shown });
+  if (shown && grade === 'bounded') out.conditional = `δ 근거가 bounded — δ = ${fmt(decl.delta)} 가정 아래의 일치`;
+  if (!shown) {
+    const seReq = (decl.delta - Math.abs(d)) / z1;
+    out.required_se = seReq > 0 ? seReq : 0;
+    out.requirement = seReq > 0 ? `동등성을 보이려면 표준 오차 ≤ ${fmt(seReq)} (지금 ${fmt(se)}, ${scale === 'ln' ? 'ln 척도, ' : ''}δ ${fmt(decl.delta)})`
+      : `관찰과 예측의 차 ${fmt(Math.abs(d))} 가 δ ${fmt(decl.delta)} 이상 — 어떤 정밀도로도 동등성을 보일 수 없음(모순은 아님): δ 의 근거나 모델을 재검토`;
+  }
+  return out;
+}
+
 // 판정: 예측 A (필수), 경쟁 예측 B (선택 — compare 의 Behavior-Changing 쌍)
 function verdict(o, predA, predB, opt) {
   opt = Object.assign({ alpha: S.ALPHA, power: S.POWER }, opt || {});
@@ -63,7 +95,14 @@ function verdict(o, predA, predB, opt) {
   if (o.retracted) return { error: '철회된 관찰 — 판정하지 않음' };
   const A = test(o, predA, opt.alpha), out = { observable: o.observable, alpha: opt.alpha, power_target: opt.power, A };
   if (!predB) {
-    out.verdict = A.ok ? 'CONSISTENT' : 'CONFLICT';
+    // 가설 하나: 기각하지 못한 것은 일치가 아니다 — 일치는 동등성(TOST)으로 적극적으로 보여야 한다 (M1)
+    if (!A.ok) out.verdict = 'CONFLICT';
+    else {
+      const eq = equivalence(o, A, opt); out.equivalence = eq;
+      out.verdict = eq.shown ? 'CONSISTENT' : 'INDISTINGUISHABLE';
+      if (eq.shown && eq.conditional) out.conditional = eq.conditional;
+      if (!eq.shown) out.limitation = { type: 'Observation_Gap', requirement: eq.requirement };
+    }
   } else {
     const B = test(o, predB, opt.alpha); out.B = B;
     // 가를 수 있는가: 두 예측 평균의 차를 관찰 하나의 표준 오차로 — 검정력
@@ -102,6 +141,12 @@ function verdictText(v) {
   const lines = [`관찰 판정: **${v.verdict}** [${v.fault}] — ${v.observable.kind} @ ${v.observable.target} (α ${v.alpha}, 목표 검정력 ${v.power_target})`, '',
     '| 가설 | 예측 평균 | 표준 오차 | z | p | 퍼짐 | 메모 |', '|---|---|---|---|---|---|---|', row('A', v.A)];
   if (v.B) lines.push(row('B', v.B), '', v.required ? `가름: 차 ${fmt(v.discrimination.delta)} (${v.discrimination.scale}), 검정력 ${fmt(v.discrimination.power)} · 필요한 표준 오차 ≤ ${fmt(v.required.se)}${v.required.note ? ' — ' + v.required.note : ''}` : `가름: ${v.discrimination.note}`);
+  if (v.equivalence) {
+    const e = v.equivalence;
+    lines.push('', e.kind === 'below_limit' ? `확신 상한: 예측이 검출 한계 아래일 확률 ${fmt(1 - e.p)}`
+      : e.delta != null ? `동등성(TOST): δ ${fmt(e.delta)} (${e.scale}, 근거 등급 ${e.grade} — ${e.basis}), 차 ${fmt(e.d)}, 표준 오차 ${fmt(e.se)}${e.p != null ? `, p ${fmt(e.p)}` : ''}${v.conditional ? ' — ' + v.conditional : ''}`
+      : '동등성: δ 미선언');
+  }
   if (v.preferred) lines.push(`관찰이 고른 가설: ${v.preferred}`);
   if (v.limitation) lines.push('', `→ 한계 후보 ${v.limitation.type}: ${v.limitation.requirement}`);
   return lines.join('\n');

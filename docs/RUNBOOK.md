@@ -97,7 +97,7 @@ node dbtool.mjs resolution <경로>             # 단계마다 필요한 해상�
 node dbtool.mjs pattern <경로>                # 상위 패턴 (motif 후보)
 node dbtool.mjs grade [--min parameter]       # 쓰인 값의 신뢰 등급
 node dbtool.mjs compare --state D000174 --scenario A.json [--scenario-b B.json | --patch p.json]
-node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [--n 50]
+node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [--n 50]   # 가설 하나의 일치는 시나리오 equivalence 의 δ(근거 등급 parameter 이상)로만
 node dbtool.mjs report data/patches/<기록>.json    # 지난 패치의 Patch Report
 ```
 
@@ -224,7 +224,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 212/212 (약 105 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 213/213 (약 105 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음

@@ -54,8 +54,11 @@ test('③ 검정력: 비중심 χ² 공식 = 모의 기각률, z 검정 필요 �
 const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'computed', tool: 'synthetic' } }, o);
 
 test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백', () => {
-  // 표준 오차 25 (sd 50 / √4)
-  assert.equal(OC.verdict(obs(), [1010]).verdict, 'CONSISTENT');
+  // 표준 오차 25 (sd 50 / √4). 가설 하나의 일치는 선언된 δ 로만 (M1) — δ 는 근거 등급이 붙는 값
+  const EQ = (delta, o) => ({ equivalence: Object.assign({ delta, evidence: { level: 'curated', sources: [{ db: 'DOI', id: '10.0000/synthetic', citation: '합성, 2026' }] } }, o) });
+  assert.equal(OC.verdict(obs(), [1010]).verdict, 'INDISTINGUISHABLE', 'δ 없이 기각 못 함은 일치가 아님');
+  assert.match(OC.verdict(obs(), [1010]).limitation.requirement, /δ 가 선언되지 않음/);
+  assert.equal(OC.verdict(obs(), [1010], null, EQ(100)).verdict, 'CONSISTENT');
   const c = OC.verdict(obs(), [1200]); assert.equal(c.verdict, 'CONFLICT'); assert.equal(c.fault, 'DOMAIN_CONFLICT');
   // 두 가설 1000·1030 은 표준 오차 25 로 가를 수 없음 → Observation_Gap, 필요한 반복 수에서는 검정력 0.8
   const v = OC.verdict(obs({ value: 1015 }), [1000], [1030]);
@@ -72,18 +75,49 @@ test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정�
   const bio = obs({ uncertainty: { kind: 'biological', model: 'normal', sd: 100 }, replicates: 30 });
   assert.ok(OC.verdict(bio, [1000]).A.notes.some((x) => /확률 앙상블 필요/.test(x)));
   const u = S.rng(5), ens = Array.from({ length: 200 }, () => 1000 + 100 * S.normInv(u()));
-  const ok = OC.verdict(bio, ens); assert.equal(ok.verdict, 'CONSISTENT'); assert.ok(ok.A.spread);
+  const ok = OC.verdict(bio, ens, null, EQ(100)); assert.equal(ok.verdict, 'CONSISTENT'); assert.ok(ok.A.spread);
   const narrow = Array.from({ length: 200 }, () => 1000 + 20 * S.normInv(u()));
   assert.equal(OC.verdict(bio, narrow).verdict, 'CONFLICT', '모델 퍼짐이 생물 변이보다 훨씬 좁음');
   // 로그정규·계수·검출 한계
-  assert.equal(OC.verdict(obs({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.1 } }), [1050]).verdict, 'CONSISTENT');
-  assert.equal(OC.verdict(obs({ value: 3, uncertainty: { kind: 'measurement', model: 'poisson', sd: 0 }, replicates: 1 }), [5]).verdict, 'CONSISTENT');
-  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [5]).verdict, 'CONSISTENT');
+  assert.equal(OC.verdict(obs({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.1 } }), [1050], null, EQ(0.2, { scale: 'ln' })).verdict, 'CONSISTENT');
+  assert.match(OC.verdict(obs({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.1 } }), [1050], null, EQ(100)).limitation.requirement, /척도/);
+  assert.equal(OC.verdict(obs({ value: 3, uncertainty: { kind: 'measurement', model: 'poisson', sd: 0 }, replicates: 1 }), [5], null, EQ(10)).verdict, 'CONSISTENT');
+  // 검출 한계: δ 없이 "확신 상한" — 오차가 크면 아래라고 확신할 수 없음
+  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [5]).verdict, 'INDISTINGUISHABLE');
+  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [5]).verdict, 'CONSISTENT');
   assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [500]).verdict, 'CONFLICT');
   // 도달 시각: 도달하지 않은 실행은 중도 절단, 모두 못 하면 모순
   const et = obs({ observable: { kind: 'event_time', target: 'D000175' }, value: 7200, unit: 's', uncertainty: { kind: 'measurement', model: 'normal', sd: 600 }, replicates: 3 });
   assert.equal(OC.verdict(et, [Infinity]).verdict, 'CONFLICT');
   assert.ok(OC.verdict(et, [7000, Infinity]).A.notes.some((x) => /중도 절단/.test(x)));
+});
+
+test('④′ 동등성(TOST, M1): δ 근거 등급 · 정밀도 부족 · 차가 δ 이상 · 척도', () => {
+  const ev = (level, extra) => Object.assign({ level }, extra);
+  const doi = { sources: [{ db: 'DOI', id: '10.0000/synthetic', citation: '합성, 2026' }] };
+  const v = (delta, evidence, o, pred) => OC.verdict(obs(o), pred || [1010], null, { equivalence: { delta, evidence } });
+  // 근거 등급: curated+DOI → parameter (판정), asserted → reference (판정 안 함), abstracted+DOI → S3·D2 = reference, 근거 없음 → reference
+  assert.equal(v(100, ev('curated', doi)).verdict, 'CONSISTENT');
+  assert.equal(v(100, ev('curated', doi)).equivalence.grade, 'parameter');
+  for (const e of [ev('asserted'), ev('abstracted', doi), undefined]) {
+    const r = v(100, e); assert.equal(r.verdict, 'INDISTINGUISHABLE'); assert.match(r.limitation.requirement, /근거 등급이 reference/);
+  }
+  // 정밀도 부족: δ 40, 차 10, 표준 오차 25 → 필요한 표준 오차 = (40 − 10) / z_0.95
+  const weak = v(40, ev('curated', doi)); assert.equal(weak.verdict, 'INDISTINGUISHABLE');
+  close(weak.equivalence.required_se, 30 / S.normInv(0.95), 1e-12, '필요 표준 오차');
+  // 그 표준 오차에서는 (경계에서) 보인다: sd = 필요 se × √4 보다 조금 작게
+  const sdOk = weak.equivalence.required_se * 2 * 0.99;
+  assert.equal(v(40, ev('curated', doi), { uncertainty: { kind: 'measurement', model: 'normal', sd: sdOk } }).verdict, 'CONSISTENT');
+  // 차가 δ 이상: 기각은 못 해도(모순 아님) 동등성은 어떤 정밀도로도 불가
+  const far = v(5, ev('curated', doi)); assert.equal(far.verdict, 'INDISTINGUISHABLE'); assert.match(far.limitation.requirement, /어떤 정밀도로도/);
+  // 모순은 δ 와 무관하게 모순
+  assert.equal(v(1000, ev('curated', doi), {}, [1200]).verdict, 'CONFLICT');
+  // 잘못된 δ
+  assert.match(v(-1, ev('curated', doi)).limitation.requirement, /양의 유한수/);
+  // 두 가설 비교는 그대로 (가르는 판정)
+  assert.equal(OC.verdict(obs({ value: 1000, uncertainty: { kind: 'measurement', model: 'normal', sd: 5 } }), [1000], [1030]).verdict, 'CONSISTENT');
+  // 보고서 줄에 동등성이 실린다
+  assert.match(OC.verdictText(v(100, ev('curated', doi))), /동등성\(TOST\): δ 100/);
 });
 
 test('⑤ 관찰 연산자: 운명 원자료(결정론) → 분자 수(격자 보간)·농도·비율·도달 시각', () => {
