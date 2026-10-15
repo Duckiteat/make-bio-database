@@ -1,0 +1,13 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "moved": {
+    "D000013": {
+      "to": [
+        "D000001"
+      ],
+      "kind": "merge",
+      "why": "합쳤다고 적고 단계의 참조는 옛 번호 그대로 둠"
+    }
+  }
+}

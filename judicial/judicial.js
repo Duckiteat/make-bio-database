@@ -115,6 +115,7 @@
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
     for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W);
+    validateMoved(db, E);
     validateValues(db, E);
     checkAttestations(db, opt, E, W);
     return { errors, warnings };
@@ -173,8 +174,16 @@
   function validateValues(db, E) {
     const vals = db.values || {}, KIN = M.KIN_VALUE_FIELDS, laws = new Set();
     for (const [sid, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.kinetic_law) laws.add(`${sid}/rule/${r.id}`);
-    const superseders = new Map();
+    const superseders = new Map(), cur = new Set([...M.currentValues(db).values()].flat().map(([id]) => id)), keys = new Map();
     for (const [id, v] of Object.entries(vals)) {
+      // 맥락 열쇠 (v12 §5) — 현재 값만 (대체·철회된 기록은 그때의 규약으로 남은 이력)
+      if (cur.has(id)) {
+        const w0 = `${id} (${v.subject} · ${v.property}) 맥락`, c = v.context || {};
+        checkContextKeys(db, c, w0, E);
+        const k = `${v.subject}|${v.property}|${M.contextKey(c)}${v.value.dist === 'categorical' ? '|' + v.value.level : ''}`;
+        if (keys.has(k)) E(w0, `같은 열쇠(대상·속성·맥락)의 현재 값이 둘 — ${keys.get(k)} 과 겹침 (새 값은 supersedes 로)`);
+        keys.set(k, id);
+      }
       const w = `${id} (${v.subject} · ${v.property})`, isRule = v.subject.includes('/rule/');
       if (isRule ? !laws.has(v.subject) && !v.retracted : !db.senses[v.subject] && !v.retracted) E(w, isRule ? '대상 규칙이 없거나 법칙 모양(kinetic_law)이 없음' : '대상 정의항이 없음');
       if (isRule ? !KIN.includes(v.property) : !V.obsProperties[v.property]) E(w, `속성 '${v.property}' 이 ${isRule ? '속도 칸' : '관찰 속성 어휘'}에 없음`);
@@ -210,10 +219,94 @@
     return out;
   }
 
+  // 번호 이동 (형식 v12 §6): 이동된 번호는 표에 없고(재사용 금지), 대상은 지금 있는 번호, 정의 층은 이동된 번호를 가리키지 않는다.
+  //   값·관찰(불변 층)은 옛 번호를 그대로 둔다 — 대상이 사라진 값은 병합이 철회했고, 관찰은 바꾸지 않는다
+  function validateMoved(db, E) {
+    const mv = db.moved || {}, tableOf = (id) => ({ T: db.terms, D: db.senses, S: db.steps })[String(id)[0]];
+    for (const [id, m] of Object.entries(mv)) {
+      const w = `이동 ${id}`, mk = V.moveKinds[m.kind];
+      if (!/^[TDS]\d{6}$/.test(id)) E(w, '이동할 수 있는 번호는 개념(T)·정의항(D)·단계(S)');
+      else if (tableOf(id)[id]) E(w, '이동된 번호가 아직 표에 있음 — 번호는 재사용하지 않음');
+      if (!mk) E(w, `이동 종류 '${m.kind}' — ${Object.keys(V.moveKinds).join(' | ')}`);
+      else if (m.kind === 'merge' ? m.to.length !== 1 : m.to.length < mk.targets) E(w, `${m.kind} 대상 수 ${m.to.length} — ${mk.label}`);
+      for (const t of m.to) if (String(t)[0] !== String(id)[0] || !(tableOf(t) || {})[t]) E(w, `이동 대상 '${t}' 은(는) 같은 종류의 지금 있는 번호가 아님 (사슬이면 마지막 번호를)`);
+      if (!m.why) E(w, '이동 사유(why)가 없음');
+      if (!m.at || Number.isNaN(Date.parse(m.at))) E(w, '이동 시각(at)이 없음');
+    }
+    if (!Object.keys(mv).length) return;
+    const seen = new Set(), text = JSON.stringify([db.terms, db.senses, db.steps, db.limitations]);
+    for (const x of text.match(/[TDS]\d{6}/g) || []) if (mv[x] && !seen.has(x)) { seen.add(x); E(x, `이동된 번호를 가리킴 (${mv[x].kind}) — ${mv[x].to.join('·')} 를 쓸 것`); }
+  }
+  // 맥락 열쇠 칸 (형식 v12 §5): 조건은 정의항 번호 목록(이동된 번호 금지), 온도·pH 범위. 종 필수는 부르는 쪽이 정한다
+  function checkContextKeys(db, c, w, E) {
+    if (c.condition != null) {
+      if (!Array.isArray(c.condition)) E(w, `조건(condition)은 정의항 번호 목록 — 문장 '${String(c.condition).slice(0, 40)}' 은(는) scope(맥락 설명)·note 로 (맥락 열쇠에 자유 문장을 넣지 않음)`);
+      else for (const d of c.condition) {
+        if (db.moved && db.moved[d]) E(w, `조건 ${d} 은(는) 이동된 번호 — ${db.moved[d].to.join('·')} 를 쓸 것`);
+        else if (!isId('D', d) || !db.senses[d]) E(w, `조건 '${d}' 은(는) 있는 정의항 번호가 아님`);
+      }
+    }
+    if (c.temperature_K != null && !(c.temperature_K > 0)) E(w, '온도(K)는 0 보다 커야 함');
+    if (c.pH != null && !(c.pH >= 0 && c.pH <= 14)) E(w, 'pH 는 0–14');
+  }
+  const PERTURB_TARGET = { knockout: 'sense', block: 'rule', inhibit: 'rule', clamp: 'bundle' }; // compiler/perturb.js 와 같은 교란 (dose_series 는 관찰 하나가 아님)
+  // 정성 관찰의 대상 하나 — 읽을 거리 종류가 정한 대상 종류
+  function checkObsTarget(db, ix, kind, t, w, E) {
+    const tk = (V.observables[kind] || {}).target;
+    if (tk === 'bundle') checkBundle(db, ix, t, w, E);
+    else if (tk === 'cell_state') { const d = db.senses[t]; if (!d || d.kind !== 'cell_state') E(w, `'${t}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
+  }
+  function validateQualitative(db, ix, w, o, E) {
+    const rk = o.readout.kind, rv = V.observables[rk], ex = o.expect, order = ex && typeof ex === 'object';
+    if (!rv || !rv.qualitative) E(w, `읽을 거리(readout.kind) '${rk}' — ${Object.keys(V.observables).filter((k) => V.observables[k].qualitative).join(' | ')} (부피·속도 상수는 정성으로 말하지 않음)`);
+    if (order) {
+      const ev = ex.order || [];
+      if (ev.length < 2 || new Set(ev).size !== ev.length) E(w, '순서 기대(expect.order)는 서로 다른 대상 둘 이상');
+      if (o.readout.target) E(w, '순서 기대에서는 readout.target 을 쓰지 않음 — 대상은 expect.order 에');
+      if (rv) ev.forEach((t, i) => checkObsTarget(db, ix, rk, t, `${w} expect.order[${i}]`, E));
+    } else {
+      const xv = V.qualitativeExpectations[ex];
+      if (!xv || ex === 'order') E(w, `기대(expect) '${ex}' — ${Object.keys(V.qualitativeExpectations).filter((k) => k !== 'order').join(' | ')} | { order: [대상, …] }`);
+      else if (xv.relative && !o.perturbation) E(w, `기대 '${ex}' 는 대조군과의 비교 — 교란(perturbation)이 필요함`);
+      if (!o.readout.target) E(w, '읽을 거리 대상(readout.target)이 없음');
+      else if (rv) checkObsTarget(db, ix, rk, o.readout.target, `${w} 읽을 거리`, E);
+    }
+    const p = o.perturbation;
+    if (p) {
+      const tk = PERTURB_TARGET[p.type], pw = `${w} 교란`;
+      if (!tk) E(pw, `교란 종류 '${p.type}' — ${Object.keys(PERTURB_TARGET).join(' | ')}`);
+      else if (tk === 'sense') { if (!db.senses[p.target]) E(pw, `knockout 대상 '${p.target}' 은(는) 있는 정의항 번호가 아님`); }
+      else if (tk === 'bundle') checkBundle(db, ix, p.target, pw, E);
+      else { const t = parseTarget(p.target); if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(pw, `${p.type} 대상 규칙 '${p.target}' 없음 — D…/rule/키`); }
+      if (p.type === 'inhibit' && !(p.Ki_M > 0 && p.dose_M >= 0)) E(pw, 'inhibit 에는 Ki_M > 0, dose_M ≥ 0 (몰 농도) — 모르면 block');
+      if (p.type === 'clamp' && !(p.conc_M >= 0)) E(pw, 'clamp 에는 conc_M ≥ 0 (몰 농도)');
+    }
+    if (o.replicates != null && !(Number.isInteger(o.replicates) && o.replicates >= 1)) E(w, '반복 수(replicates)는 1 이상의 정수');
+    // 출처: 1차 문헌(DOI·PMID) + 원문 구절 — 교과서·추론은 정성 관찰이 될 수 없다
+    if (!o.quote) E(w, '원문 구절(quote)이 없음 — 정성 관찰은 논문의 해당 문장을 그대로 적는다');
+    const src = (o.provenance || {}).source;
+    if (!src || !V.qualitativeSources.includes(src.db)) E(w, `출처(provenance.source.db)는 ${V.qualitativeSources.join(' | ')} — 교과서·추론은 정성 관찰이 될 수 없음 (한계·메모로)`);
+    else if (src.db === 'DOI' ? !/^10\.\d{4,9}\/\S+$/.test(src.id) : !/^\d{1,9}$/.test(src.id)) E(w, `출처 ${src.db} 식별자 '${src.id}' 형식 틀림`);
+    if (o.evidence.level !== 'curated') E(w, `정성 관찰 근거는 curated(문헌) — 지금 ${o.evidence.level}`);
+    if (o.use !== 'validation') E(w, '정성 관찰의 용도는 validation — 상수 추정에 쓰지 않음');
+  }
   function validateObservation(db, ix, id, o, E, W) {
-    const w = id, ob = o.observable, ov = V.observables[ob.kind];
+    const w = id;
     if (!isId('O', id)) E(id, "관찰 번호는 'O' + 숫자 6자리");
     if (o.hypothetical) E(w, '합성(hypothetical) 관찰은 데이터베이스에 넣지 않음 — examples/observations/ 에만 (실측값을 지어내지 않음)');
+    if (o.evidence_at && !/^\d{4}(-\d{2}(-\d{2})?)?$/.test(o.evidence_at)) E(w, `근거 시각(evidence_at) '${o.evidence_at}' — YYYY · YYYY-MM · YYYY-MM-DD`);
+    if (o.recorded_at && Number.isNaN(Date.parse(o.recorded_at))) E(w, `기록 시각(recorded_at) '${o.recorded_at}' 을 읽을 수 없음`);
+    if (o.kind === 'qualitative') {
+      validateQualitative(db, ix, w, o, E);
+      if (!o.condition.species) E(w, '조건에 종(condition.species)이 없음');
+      checkContext(o.condition, w + ' 조건', E);
+      checkContextKeys(db, o.condition, w + ' 조건', E);
+      if (o.condition.time_s != null && !(o.condition.time_s >= 0)) E(w, '시각(time_s)은 0 이상');
+      checkEvidence(o.evidence, w, E);
+      if (o.retracted) { if (!o.retracted.note) E(w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
+      return;
+    }
+    const ob = o.observable, ov = V.observables[ob.kind];
     if (!ov) E(w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
     else if (ov.target === 'bundle') checkBundle(db, ix, ob.target, `${w} 측정 대상`, E);
     else if (ov.target === 'cell_state') { const d = db.senses[ob.target]; if (!d || d.kind !== 'cell_state') E(w, `측정 대상 '${ob.target}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
@@ -243,8 +336,7 @@
     const c = o.condition;
     if (!c.species) E(w, '조건에 종(condition.species)이 없음');
     checkContext(c, w + ' 조건', E);
-    if (c.temperature_K != null && !(c.temperature_K > 0)) E(w, '온도(K)는 0 보다 커야 함');
-    if (c.pH != null && !(c.pH >= 0 && c.pH <= 14)) E(w, 'pH 는 0–14');
+    checkContextKeys(db, c, w + ' 조건', E);
     if (c.time_s != null && !(c.time_s >= 0)) E(w, '시각(time_s)은 0 이상');
     for (const b of c.states || []) checkBundle(db, ix, b, `${w} 조건 상태`, E);
     const cal = o.calibration;
@@ -261,7 +353,7 @@
         }
       }
     }
-    if (o.provenance && !/^[0-9a-f]{64}$/.test(o.provenance.sha256)) E(w, '원본 sha256 형식 틀림 (16진 64자리)');
+    if (o.provenance && o.provenance.sha256 != null && !/^[0-9a-f]{64}$/.test(o.provenance.sha256)) E(w, '원본 sha256 형식 틀림 (16진 64자리)');
     if (!V.obsUses[o.use]) E(w, `용도 '${o.use}' — estimation | validation (추정에 쓴 관찰을 검증에 쓰지 않음)`);
     checkEvidence(o.evidence, w, E);
     if (!['curated', 'computed'].includes(o.evidence.level)) E(w, `관찰 근거는 curated(문헌) | computed(포트 변환 도구) — 지금 ${o.evidence.level}`);
@@ -273,6 +365,7 @@
     for (const f of from) {
       const o = db.observations[f.obs], fw = `${rw} 속도 출처 ${f.obs}`;
       if (!o) { E(fw, '관찰 기록 없음'); continue; }
+      if (o.kind === 'qualitative') { E(fw, '정성 관찰은 수치의 근거가 될 수 없음'); continue; }
       if (o.use !== 'estimation') E(fw, `용도가 ${o.use} 인 관찰은 상수 추정에 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
       if (o.retracted) E(fw, '철회된 관찰을 참조함');
       if (k.lumped) continue;
@@ -296,6 +389,7 @@
   function checkSenseObsFrom(db, sid, b, P, ow, E) {
     const o = db.observations[b.from], fw = `${ow} 측정 출처 ${b.from}`;
     if (!o) { E(fw, '관찰 기록 없음'); return; }
+    if (o.kind === 'qualitative') { E(fw, '정성 관찰은 수치의 근거가 될 수 없음'); return; }
     if (!P || !P.observable) { E(fw, `'${b.property}' 에는 대응하는 측정량이 없어 관찰 기록을 가리킬 수 없음`); return; }
     if (o.retracted) E(fw, '철회된 관찰을 참조함');
     if (o.use !== 'estimation') E(fw, `용도가 ${o.use} 인 관찰은 모델 값의 출처로 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
@@ -977,6 +1071,8 @@
       if (strip(a) !== strip(o)) out.push({ where: id, msg: '관찰 기록은 바꿀 수 없음 — 새 측정은 새 관찰(O+1), 잘못된 관찰은 retracted 로 표시' });
       if (o.retracted && JSON.stringify(a.retracted) !== JSON.stringify(o.retracted)) out.push({ where: id, msg: '철회 표시는 바꾸거나 지울 수 없음' });
     }
+    // 새 관찰은 기록 시각을 가진다 (형식 v12 — 병합이 패치의 recorded_at 을 찍는다)
+    for (const [id, a] of Object.entries(after.observations || {})) if (!(before.observations || {})[id] && !a.recorded_at) out.push({ where: id, msg: '새 관찰에 기록 시각(recorded_at)이 없음 — 병합 전에 dbtool 이 패치에 찍는다' });
     return out;
   }
 

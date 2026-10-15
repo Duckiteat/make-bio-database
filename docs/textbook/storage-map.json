@@ -876,6 +876,14 @@
       "interpret": "값 층(형식 v12) — 저장은 값 층만·보기 그대로·멱등, 병합의 대체·철회와 이전 기록 불변, 두 시간(asOf), 사법부 값 모양·불변 검사, 형식 변환 재현(기원 스냅숏 → transform)."
     },
     {
+      "path": "tests/qualitative.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "형식 v12 2차 — 정성 관찰(교란·읽을 거리·기대, DOI·PMID + 원문 구절, validation 만, 수치 근거 금지), 관찰 입력 계약의 kind 분기, 맥락 열쇠(여섯 칸·조건 번호 목록·같은 열쇠 중복 거부), 새 관찰의 기록 시각, 번호 이동(병합·조회 따라감·이동 번호 참조 거부)."
+    },
+    {
       "path": "tests/protocol.test.mjs",
       "class": "verification",
       "format": "node:test",

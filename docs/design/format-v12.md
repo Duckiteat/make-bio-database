@@ -1,6 +1,6 @@
 # 형식 v12 명세 — 값 층 분리 (결정 A: 정의 그래프 유지, 값·증거·맥락·번호 개편)
 
-상태: **1차 구현됨 (2026-10-15)** — §2·§3·§7 과 두 시간(recorded_at·asOf). **남음**: §4 정성 관찰·실험 묶음, §5 맥락 열쇠 정준화, §6 번호 이동, evidence_at 채우기. 구현에서 정한 것: 값의 `context` 는 기존 맥락 모양 그대로 저장하고(자유 문장 condition 포함), 열쇠 정준화는 §5 단계에서. 패치 작성법은 그대로(obs·kinetics) — 병합이 값 기록으로 접는다. 근거: `integral-field-engine.md` §17, `build-plan.md` 6·13·14 를 흡수. 그릇(조각 저장·색인)은 15–19 에서 따로.
+상태: **구현됨 (2026-10-15)** — 1차 §2·§3·§7 과 두 시간(recorded_at·asOf), 2차 §4 정성 관찰·실험 묶음·근거 시각, §5 맥락 열쇠, §6 번호 이동. **남음**: 기존 기록의 evidence_at 채우기(데이터 패치). 구현에서 정한 것: ① 값의 `context` 는 맥락 모양 그대로 저장하고 열쇠는 `model.contextKey` 가 계산(여섯 칸, 빈 칸 null) — 자유 문장은 `scope`(맥락 설명, 열쇠 밖). ② 종은 모든 값에 필수로 하지 않음 — 위치에 매인 물리 속성(확산 계수 등)은 종이 없으므로 기존 속성 어휘 `speciesRequired` 를 따른다. ③ 정성 관찰의 inhibit 교란은 Ki·용량이 있어야 함 — 모르면 block. ④ `moved` 는 비어 있으면 직렬화하지 않음(기존 db 해시 불변). ⑤ 형식 번호는 12 그대로(추가 필드만). 패치 작성법은 그대로(obs·kinetics) — 병합이 값 기록으로 접는다. 근거: `integral-field-engine.md` §17, `build-plan.md` 6·13·14 를 흡수. 그릇(조각 저장·색인)은 15–19 에서 따로.
 
 ## 0. 왜
 
@@ -66,7 +66,7 @@
 
 ## 5. 맥락 열쇠 `vocab.contextKeys`
 
-`species`(NCBI taxon, 필수) · `cell`(어휘 `cells`) · `location`(어휘 `locations`) · `condition`(정의항 번호 목록 — 자극·약물 등, 없으면 null) · `temperature_K` · `pH`. 이 여섯만, 빈 칸은 `null` 로 채워 **정준 문자열**(키 정렬 JSON)을 만든다. 자유 문장은 `note` 로 — 열쇠에 들어가지 않는다. 다른 맥락의 값·관찰은 섞지 않는다(맥락 이전은 V8 로만).
+`species`(NCBI taxon — 필수 여부는 속성 어휘) · `cell`(어휘 `cells`) · `location`(어휘 `locations`) · `condition`(정의항 번호 목록 — 자극·약물 등, 없으면 null) · `temperature_K` · `pH`. 이 여섯만, 빈 칸은 `null` 로 채워 **정준 문자열**(키 정렬 JSON)을 만든다. 자유 문장은 `scope`·`note` 로 — 열쇠에 들어가지 않는다. 다른 맥락의 값·관찰은 섞지 않는다(맥락 이전은 V8 로만).
 
 ## 6. 번호 이동 `moved`
 

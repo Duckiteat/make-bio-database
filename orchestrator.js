@@ -98,6 +98,7 @@ function ensembleLimit(db, state, sc, omegas, n, bundles, opt) {
 // 시나리오 A (필수)·B (선택 — 경쟁 가설). 시나리오에 stochastic 이 있으면 앙상블(opt.n 궤적, 기본 50) — 생물 변이(퍼짐)까지 판정
 function observeFate(db, o, state, scA, scB, opt) {
   opt = opt || {};
+  if (o.kind === 'qualitative') return { error: '정성 관찰의 판정(방향·유무·순서)은 아직 없음 — build-plan 8 (정성 판정)' };
   const runs = (sc) => {
     if (sc.stochastic) { const rs = runEnsemble(db, state, sc, opt.n || 50, { commitment: false }); if (rs.error) throw new Error(rs.error); return rs; }
     const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r];

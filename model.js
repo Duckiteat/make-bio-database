@@ -156,7 +156,19 @@
     for (const [id, o] of Object.entries(isObj(input.observations) ? input.observations : {})) if (isObj(o)) db.observations[id] = normObservation(o);
     for (const [id, v] of Object.entries(isObj(input.values) ? input.values : {})) if (isObj(v)) db.values[id] = normValue(v);
     reconcileValues(db, input);
+    // 번호 이동 (형식 v12 §6) — 있을 때만 (빈 표를 더하면 기존 db 의 직렬화가 바뀐다)
+    if (isObj(input.moved) && Object.keys(input.moved).length) {
+      db.moved = {};
+      for (const [id, m] of Object.entries(input.moved)) if (isObj(m)) db.moved[id] = { to: arr(m.to).map(str).filter(Boolean), kind: str(m.kind), at: str(m.at), why: str(m.why) };
+    }
     return db;
+  }
+  // 이동된 번호 → 지금 번호들 (사슬을 따라감 — 순환은 사법부가 거부하므로 깊이로 끊는다)
+  function followMoved(db, id) {
+    const mv = (db && db.moved) || {};
+    let ids = [id];
+    for (let depth = 0; depth < 32 && ids.some((x) => mv[x]); depth++) ids = uniq(ids.flatMap((x) => (mv[x] ? mv[x].to : [x])));
+    return ids;
   }
   function normTerm(t) {
     const n = isObj(t.names) ? t.names : { ko: t.names };
@@ -180,8 +192,22 @@
   const normContext = (c) => {
     if (!isObj(c)) return { scope: str(c) };
     const o = { scope: str(c.scope) };
-    for (const k of ['species', 'tissue', 'cell', 'location', 'condition']) if (str(c[k])) o[k] = str(c[k]);
+    for (const k of ['species', 'tissue', 'cell', 'location']) if (str(c[k])) o[k] = str(c[k]);
+    // condition: 정의항 번호 목록(형식 v12 §5). 문장으로 온 것은 그대로 두어 사법부가 거부하게 한다 (scope 로 옮길 것)
+    if (Array.isArray(c.condition)) { if (c.condition.length) o.condition = c.condition.map(str).filter(Boolean); }
+    else if (str(c.condition)) o.condition = str(c.condition);
+    for (const k of ['temperature_K', 'pH']) if (c[k] != null && c[k] !== '') o[k] = Number(c[k]);
     return o;
+  };
+  // 맥락 열쇠 (형식 v12 §5): vocab.contextKeys 여섯 칸만, 빈 칸 null, 조건은 정렬 — 키 정렬 JSON 문자열
+  const contextKey = (c) => {
+    c = isObj(c) ? c : {};
+    const o = {};
+    for (const k of Object.keys(V.contextKeys).sort()) {
+      const v = c[k];
+      o[k] = v == null || v === '' ? null : k === 'condition' ? (Array.isArray(v) ? (v.length ? [...v].sort() : null) : v) : v;
+    }
+    return JSON.stringify(o);
   };
   function normDesc(d) {
     const o = { text: str(d.text), field: str(d.field), context: normContext(d.context), links: [] };
@@ -493,7 +519,24 @@
   }
   // 관찰 기록 (v10, docs/design/observation-port.md): 실측값은 모델 표현이 아니라 "무엇을 쟀는가"로 — 한 번 들어오면 바뀌지 않는다(철회 표시만)
   const num = (x) => (x == null || x === '' ? undefined : Number(x));
+  // 정성 관찰 (형식 v12 §4): 교란 → 읽을 거리 → 기대. 값·단위·불확도 대신 원문 구절과 1차 문헌 출처
+  function normQualitative(b) {
+    const o = { kind: 'qualitative' };
+    if (isObj(b.perturbation)) {
+      const p = b.perturbation, q = { type: str(p.type) };
+      if (str(p.target)) q.target = str(p.target);
+      for (const k of ['Ki_M', 'dose_M', 'conc_M']) if (num(p[k]) !== undefined) q[k] = num(p[k]);
+      o.perturbation = q;
+    }
+    const rd = isObj(b.readout) ? b.readout : {};
+    o.readout = { kind: str(rd.kind) };
+    if (str(rd.target)) o.readout.target = str(rd.target);
+    o.expect = isObj(b.expect) ? { order: arr(b.expect.order).map(str) } : str(b.expect);
+    if (num(b.replicates) !== undefined) o.replicates = num(b.replicates);
+    return o;
+  }
   function normObservation(b) {
+    if (b.kind === 'qualitative') return Object.assign(normQualitative(b), normObsCommon(b));
     const ob = isObj(b.observable) ? b.observable : {};
     const o = { observable: { kind: str(ob.kind), target: str(ob.target) } };
     if (str(ob.param)) o.observable.param = str(ob.param);
@@ -503,11 +546,7 @@
     o.uncertainty = { kind: str(u.kind), model: str(u.model), sd: num(u.sd) };
     for (const k of ['precision', 'detection_limit', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
     o.replicates = num(b.replicates);
-    const c = isObj(b.condition) ? b.condition : {};
-    o.condition = { species: str(c.species) };
-    for (const k of ['location', 'cell']) if (str(c[k])) o.condition[k] = str(c[k]);
-    for (const k of ['temperature_K', 'pH', 'time_s']) if (num(c[k]) !== undefined) o.condition[k] = num(c[k]);
-    if (arr(c.states).length) o.condition.states = arr(c.states).map(str);
+    o.condition = normObsCondition(b.condition);
     if (isObj(b.calibration)) {
       const cal = { kind: str(b.calibration.kind) };
       for (const k of ['a', 'b']) if (num(b.calibration[k]) !== undefined) cal[k] = num(b.calibration[k]);
@@ -515,9 +554,33 @@
       o.calibration = cal;
     }
     if (str(b.method)) o.method = str(b.method);
-    if (isObj(b.provenance) && str(b.provenance.sha256)) o.provenance = { sha256: str(b.provenance.sha256).toLowerCase() };
+    return Object.assign(o, normObsCommon(b));
+  }
+  // 관찰 조건 = 맥락 열쇠(v12 §5) + 측정 시각·상태 (조건 목록은 끝에 — 기존 기록의 필드 순서 유지)
+  function normObsCondition(c) {
+    c = isObj(c) ? c : {};
+    const o = { species: str(c.species) };
+    for (const k of ['location', 'cell']) if (str(c[k])) o[k] = str(c[k]);
+    for (const k of ['temperature_K', 'pH', 'time_s']) if (num(c[k]) !== undefined) o[k] = num(c[k]);
+    if (arr(c.states).length) o.states = arr(c.states).map(str);
+    if (Array.isArray(c.condition)) { if (c.condition.length) o.condition = c.condition.map(str).filter(Boolean); }
+    else if (str(c.condition)) o.condition = str(c.condition);
+    return o;
+  }
+  // 두 종류 공통: 조건 · 출처 · 용도 · 근거 · 실험 묶음 · 두 시간 · 철회 (필드 순서는 v10 그대로 — 기존 기록의 직렬화가 바뀌지 않게)
+  function normObsCommon(b) {
+    const o = {};
+    if (b.kind === 'qualitative') { o.condition = normObsCondition(b.condition); if (str(b.quote)) o.quote = str(b.quote); }
+    if (isObj(b.provenance)) {
+      const pv = {};
+      if (str(b.provenance.sha256)) pv.sha256 = str(b.provenance.sha256).toLowerCase();
+      if (isObj(b.provenance.source)) pv.source = { db: str(b.provenance.source.db), id: str(b.provenance.source.id) };
+      if (Object.keys(pv).length) o.provenance = pv;
+    }
     o.use = str(b.use);
     o.evidence = normEvidence(b.evidence);
+    if (str(b.experiment)) o.experiment = str(b.experiment);
+    for (const k of ['evidence_at', 'recorded_at']) if (str(b[k])) o[k] = str(b[k]);
     if (b.hypothetical) o.hypothetical = true; // 관문이 거부 — 합성 관찰은 examples/ 에만
     if (str(b.note)) o.note = str(b.note);
     if (isObj(b.retracted)) o.retracted = { note: str(b.retracted.note), evidence: normEvidence(b.retracted.evidence) };
@@ -690,6 +753,11 @@
     if (!r) return { error: '참조가 비어 있음' };
     if (ix.senses.has(r)) return { id: r, via: 'id' };
     if (/^[TDS]\+/.test(r)) return { error: `임시 번호 '${r}' 가 이 패치 안에 없음` };
+    if (ix.db.moved && ix.db.moved[r]) { // 이동된 번호는 따라간다 — 나뉜 번호는 하나를 골라야 한다
+      const to = followMoved(ix.db, r), m = ix.db.moved[r];
+      if (to.length === 1) { const x = resolveRef(ix, to[0]); return x.error ? x : { id: x.id, via: `이동 ${r} → ${to[0]} (${m.kind})` }; }
+      return { error: `${r} 은(는) 나뉘었음 (${m.kind}) — 하나를 지정할 것: ${to.map((x) => `${x}(${ix.label(x)})`).join(', ')}` };
+    }
     if (isId('D', r)) return { error: `정의항 ${r} 없음` };
     const fromTerm = (tid, via) => {
       const ds = ix.termSenses.get(tid) || [];
@@ -856,6 +924,6 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, normObservation, normValue, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, normValue, contextKey, followMoved, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION });
 });

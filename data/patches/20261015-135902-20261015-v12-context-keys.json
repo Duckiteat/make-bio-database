@@ -1,0 +1,259 @@
+{
+  "applied_at": "2026-10-15T13:59:02.602Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "D000151",
+      "D000155"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "senses": [
+          "D000151",
+          "D000155"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000151": [
+          "rule"
+        ],
+        "D000155": [
+          "rule"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "형식 v12 §5 맥락 열쇠 정준화: 속도 값 6 건(D000151/rule/oxdecarb·D000155/rule/hydrate 의 kcat·Km·dG0)의 맥락 condition 이 자유 문장이라 열쇠에 들어갈 수 없음 — 문장을 그대로 맥락 설명(scope)으로 옮기고 condition 은 비움. 수치·근거·출처 관찰은 그대로이고, 값 기록은 대체(supersedes)로 남는다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [
+        "S000033",
+        "S000037"
+      ],
+      "pathways": [
+        "D000148"
+      ],
+      "limitations": [
+        {
+          "id": "L000038",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000043",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000048",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000097",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000098",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "형식 v12 §5 맥락 열쇠 정준화: 속도 값 6 건(D000151/rule/oxdecarb·D000155/rule/hydrate 의 kcat·Km·dG0)의 맥락 condition 이 자유 문장이라 열쇠에 들어갈 수 없음 — 문장을 그대로 맥락 설명(scope)으로 옮기고 condition 은 비움. 수치·근거·출처 관찰은 그대로이고, 값 기록은 대체(supersedes)로 남는다.",
+  "senses": [
+    {
+      "id": "D000151",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxdecarb",
+          "type": "transition",
+          "label": "아이소시트르산 산화적 탈카복실화",
+          "action": "산화",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000138"
+            ],
+            "produces": [
+              "D000139",
+              "D000160"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000144"
+            ],
+            "produces": [
+              "D000145"
+            ]
+          },
+          "regulators": [],
+          "text": "첫 번째 이산화탄소와 첫 번째 NADH.",
+          "evidence": {
+            "level": "asserted"
+          },
+          "kinetics": {
+            "law": "michaelis_menten",
+            "kcat": 26.7,
+            "Km": 0.00235,
+            "dG0": 5600,
+            "context": {
+              "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체 — 측정 조건: 33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산",
+              "species": "9606",
+              "location": "mito_matrix"
+            },
+            "from": [
+              {
+                "param": "kcat",
+                "obs": "O000001"
+              },
+              {
+                "param": "Km",
+                "obs": "O000002"
+              },
+              {
+                "param": "dG0",
+                "obs": "O000003"
+              }
+            ],
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1038/srep41882",
+                  "citation": "Ma et al., 2017"
+                },
+                {
+                  "db": "PMID",
+                  "id": "28139779",
+                  "citation": "Ma et al., 2017"
+                }
+              ],
+              "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000155",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "hydrate",
+          "type": "transition",
+          "label": "푸마르산 수화",
+          "action": "수화",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000142"
+            ],
+            "produces": [
+              "D000143"
+            ]
+          },
+          "regulators": [],
+          "text": "물 분자는 부분 구조가 없어 생략.",
+          "evidence": {
+            "level": "asserted"
+          },
+          "kinetics": {
+            "law": "michaelis_menten",
+            "kcat": 170,
+            "Km": 0.0002,
+            "dG0": -3400,
+            "context": {
+              "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향 — 측정 조건: pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산",
+              "species": "9606",
+              "location": "mito_matrix"
+            },
+            "from": [
+              {
+                "param": "kcat",
+                "obs": "O000004"
+              },
+              {
+                "param": "Km",
+                "obs": "O000005"
+              },
+              {
+                "param": "dG0",
+                "obs": "O000006"
+              }
+            ],
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1111/febs.14782",
+                  "citation": "Ajalla Aleixo et al., 2019"
+                },
+                {
+                  "db": "PMID",
+                  "id": "30761759",
+                  "citation": "Ajalla Aleixo et al., 2019"
+                }
+              ],
+              "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-15T13:59:02.362Z"
+}

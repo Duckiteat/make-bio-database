@@ -1,221 +1,495 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "definition-db/obs/observation.schema.json",
-  "title": "Observation — 관찰 포트 입력 계약 (docs/design/observation-port.md, 형식 v10)",
-  "description": "측정한 것을 모델 표현이 아니라 '무엇을 쟀는가'로 받는다. 값만 있는 관찰은 받지 않는다 — 불확도(크기·유형·잡음 모형)·반복 수·조건(종)·용도가 필수. 장비·논문 표·공개 데이터셋 어느 원천이든 같은 모양. 의미 검사(대상 존재·SI 단위·보정 재계산·용도 분리·변경 불가)는 사법부 관문(judicial.validateObservation)이 한다. 합성 관찰(hypothetical: true)은 examples/observations/ 에만.",
-  "type": "object",
-  "required": [
-    "observable",
-    "value",
-    "unit",
-    "uncertainty",
-    "replicates",
-    "condition",
-    "use",
-    "evidence"
-  ],
-  "additionalProperties": false,
-  "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^O(\\d{6}|\\+.*)$"
-    },
-    "observable": {
+  "title": "Observation — 관찰 포트 입력 계약 (docs/design/observation-port.md, 형식 v12: 정량 · 정성)",
+  "description": "측정한 것을 모델 표현이 아니라 '무엇을 쟀는가'로 받는다. 값만 있는 관찰은 받지 않는다 — 불확도(크기·유형·잡음 모형)·반복 수·조건(종)·용도가 필수. 장비·논문 표·공개 데이터셋 어느 원천이든 같은 모양. 의미 검사(대상 존재·SI 단위·보정 재계산·용도 분리·변경 불가)는 사법부 관문(judicial.validateObservation)이 한다. 합성 관찰(hypothetical: true)은 examples/observations/ 에만. 형식 v12 §4: kind 'qualitative' 는 값·단위·불확도 대신 교란(perturbation)·읽을 거리(readout)·기대(expect)·원문 구절(quote)·1차 문헌 출처(provenance.source DOI|PMID) — 용도는 validation 만. 두 모양은 $defs 에 있고 checkObservation 이 kind 로 고른다.",
+  "$defs": {
+    "quantitative": {
       "type": "object",
       "required": [
-        "kind",
-        "target"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "kind": {
-          "enum": [
-            "amount",
-            "concentration",
-            "fraction",
-            "event_time",
-            "volume",
-            "kinetic_constant"
-          ]
-        },
-        "target": {
-          "type": "string",
-          "minLength": 1
-        },
-        "param": {
-          "type": "string"
-        }
-      }
-    },
-    "value": {
-      "type": "number"
-    },
-    "unit": {
-      "type": "string"
-    },
-    "uncertainty": {
-      "type": "object",
-      "required": [
-        "kind",
-        "model",
-        "sd"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "kind": {
-          "enum": [
-            "measurement",
-            "biological",
-            "combined"
-          ]
-        },
-        "model": {
-          "enum": [
-            "normal",
-            "lognormal",
-            "poisson"
-          ]
-        },
-        "sd": {
-          "type": "number",
-          "minimum": 0
-        }
-      }
-    },
-    "precision": {
-      "type": "number",
-      "minimum": 0
-    },
-    "detection_limit": {
-      "type": "number",
-      "minimum": 0
-    },
-    "raw": {
-      "type": "number"
-    },
-    "replicates": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "condition": {
-      "type": "object",
-      "required": [
-        "species"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "species": {
-          "type": "string"
-        },
-        "location": {
-          "type": "string"
-        },
-        "cell": {
-          "type": "string"
-        },
-        "temperature_K": {
-          "type": "number",
-          "exclusiveMinimum": 0
-        },
-        "pH": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 14
-        },
-        "time_s": {
-          "type": "number",
-          "minimum": 0
-        },
-        "states": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "calibration": {
-      "type": "object",
-      "required": [
-        "kind"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "kind": {
-          "enum": [
-            "identity",
-            "linear",
-            "table"
-          ]
-        },
-        "a": {
-          "type": "number"
-        },
-        "b": {
-          "type": "number"
-        },
-        "points": {
-          "type": "array",
-          "minItems": 2,
-          "items": {
-            "type": "array",
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "minItems": 2,
-            "maxItems": 2
-          }
-        }
-      }
-    },
-    "method": {
-      "type": "string"
-    },
-    "provenance": {
-      "type": "object",
-      "required": [
-        "sha256"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-fA-F]{64}$"
-        }
-      }
-    },
-    "use": {
-      "enum": [
-        "estimation",
-        "validation"
-      ]
-    },
-    "evidence": {
-      "type": "object"
-    },
-    "hypothetical": {
-      "type": "boolean"
-    },
-    "note": {
-      "type": "string"
-    },
-    "retracted": {
-      "type": "object",
-      "required": [
-        "note",
+        "observable",
+        "value",
+        "unit",
+        "uncertainty",
+        "replicates",
+        "condition",
+        "use",
         "evidence"
       ],
+      "additionalProperties": false,
       "properties": {
-        "note": {
+        "id": {
+          "type": "string",
+          "pattern": "^O(\\d{6}|\\+.*)$"
+        },
+        "observable": {
+          "type": "object",
+          "required": [
+            "kind",
+            "target"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "amount",
+                "concentration",
+                "fraction",
+                "event_time",
+                "volume",
+                "kinetic_constant"
+              ]
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "param": {
+              "type": "string"
+            }
+          }
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
           "type": "string"
+        },
+        "uncertainty": {
+          "type": "object",
+          "required": [
+            "kind",
+            "model",
+            "sd"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "measurement",
+                "biological",
+                "combined"
+              ]
+            },
+            "model": {
+              "enum": [
+                "normal",
+                "lognormal",
+                "poisson"
+              ]
+            },
+            "sd": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "precision": {
+          "type": "number",
+          "minimum": 0
+        },
+        "detection_limit": {
+          "type": "number",
+          "minimum": 0
+        },
+        "raw": {
+          "type": "number"
+        },
+        "replicates": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "condition": {
+          "type": "object",
+          "required": [
+            "species"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "species": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "cell": {
+              "type": "string"
+            },
+            "temperature_K": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "pH": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 14
+            },
+            "time_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "states": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "condition": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^D(\\d{6}|\\+.*)$"
+              },
+              "minItems": 1
+            }
+          }
+        },
+        "calibration": {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "identity",
+                "linear",
+                "table"
+              ]
+            },
+            "a": {
+              "type": "number"
+            },
+            "b": {
+              "type": "number"
+            },
+            "points": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2
+              }
+            }
+          }
+        },
+        "method": {
+          "type": "string"
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{64}$"
+            },
+            "source": {
+              "type": "object",
+              "required": [
+                "db",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "db": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "use": {
+          "enum": [
+            "estimation",
+            "validation"
+          ]
         },
         "evidence": {
           "type": "object"
+        },
+        "hypothetical": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "retracted": {
+          "type": "object",
+          "required": [
+            "note",
+            "evidence"
+          ],
+          "properties": {
+            "note": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "object"
+            }
+          }
+        },
+        "kind": {
+          "const": "quantitative"
+        },
+        "experiment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_at": {
+          "type": "string",
+          "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"
+        },
+        "recorded_at": {
+          "type": "string"
+        }
+      }
+    },
+    "qualitative": {
+      "type": "object",
+      "required": [
+        "kind",
+        "readout",
+        "expect",
+        "condition",
+        "quote",
+        "provenance",
+        "use",
+        "evidence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^O(\\d{6}|\\+.*)$"
+        },
+        "condition": {
+          "type": "object",
+          "required": [
+            "species"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "species": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "cell": {
+              "type": "string"
+            },
+            "temperature_K": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "pH": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 14
+            },
+            "time_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "states": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "condition": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^D(\\d{6}|\\+.*)$"
+              },
+              "minItems": 1
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "required": [
+            "source"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{64}$"
+            },
+            "source": {
+              "type": "object",
+              "required": [
+                "db",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "db": {
+                  "enum": [
+                    "DOI",
+                    "PMID"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "use": {
+          "const": "validation"
+        },
+        "evidence": {
+          "type": "object"
+        },
+        "hypothetical": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "retracted": {
+          "type": "object",
+          "required": [
+            "note",
+            "evidence"
+          ],
+          "properties": {
+            "note": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "object"
+            }
+          }
+        },
+        "experiment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_at": {
+          "type": "string",
+          "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"
+        },
+        "recorded_at": {
+          "type": "string"
+        },
+        "replicates": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "kind": {
+          "const": "qualitative"
+        },
+        "perturbation": {
+          "type": "object",
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "enum": [
+                "knockout",
+                "block",
+                "inhibit",
+                "clamp"
+              ]
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "Ki_M": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "dose_M": {
+              "type": "number",
+              "minimum": 0
+            },
+            "conc_M": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "readout": {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "amount",
+                "concentration",
+                "fraction",
+                "event_time"
+              ]
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "expect": {
+          "anyOf": [
+            {
+              "enum": [
+                "increase",
+                "decrease",
+                "no_change",
+                "present",
+                "absent",
+                "monotone_increase",
+                "monotone_decrease"
+              ]
+            },
+            {
+              "type": "object",
+              "required": [
+                "order"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }

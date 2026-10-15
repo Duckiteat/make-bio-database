@@ -327,10 +327,10 @@
     diffusion:     { min: 0, max: 1e-6, why: '물의 자기 확산 2.3e-9 m²/s', exclusiveMin: true },
   },
   observables: {
-    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule', dim: 'count' },
-    concentration:    { label: '농도', target: 'bundle', unit: 'M', dim: 'concentration' },
-    fraction:         { label: '세포 상태에 있는 세포의 비율 (0–1)', target: 'cell_state', unit: '1' },
-    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's', dim: 'time' },
+    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule', dim: 'count', qualitative: true },
+    concentration:    { label: '농도', target: 'bundle', unit: 'M', dim: 'concentration', qualitative: true },
+    fraction:         { label: '세포 상태에 있는 세포의 비율 (0–1)', target: 'cell_state', unit: '1', qualitative: true },
+    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's', dim: 'time', qualitative: true },
     volume:           { label: '구획 부피 (대상 = 위치)', target: 'location', unit: 'L', dim: 'volume' },
     kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param' },
   },
@@ -350,6 +350,33 @@
     identity: { label: '보정 없음 (값 = 읽은 값)' },
     linear:   { label: '선형 (값 = a·raw + b)' },
     table:    { label: '보정 표 (raw 오름차순 점 사이 선형 보간)' },
+  },
+  // 형식 v12 §4 — 정성 관찰의 기대 (방향·유무·순서·단조). relative: 대조군(교란 없음)과 비교하므로 교란 선언 필수
+  //   qualitative: true 인 측정량만 정성 관찰의 읽을 거리(readout)가 된다 — 부피·속도 상수는 정성으로 말하지 않는다
+  qualitativeExpectations: {
+    increase:          { label: '교란하면 대조군보다 늘어남', relative: true },
+    decrease:          { label: '교란하면 대조군보다 줄어듦', relative: true },
+    no_change:         { label: '교란해도 대조군과 같음', relative: true },
+    present:           { label: '있음 (검출됨 · 도달함)' },
+    absent:            { label: '없음 (검출 안 됨 · 도달 안 함)' },
+    monotone_increase: { label: '시간에 따라 단조 증가' },
+    monotone_decrease: { label: '시간에 따라 단조 감소' },
+    order:             { label: '사건 순서 — { order: [대상, 대상, …] } 앞의 것이 먼저 (대상은 읽을 거리 종류의 대상)' },
+  },
+  qualitativeSources: ['DOI', 'PMID'], // 정성 관찰은 1차 문헌만 — 교과서·추론은 정성 관찰이 될 수 없다 (한계·메모로)
+  // 형식 v12 §5 — 값·관찰의 맥락 열쇠. 이 여섯만 열쇠에 들어가고(빈 칸 null, 키 정렬 JSON), 자유 문장은 scope(맥락 설명)·note 로
+  contextKeys: {
+    species:       { label: '종 (NCBI taxon, 어휘 taxa) — 필수 여부는 속성 어휘(obsProperties.speciesRequired)·관찰 조건(필수)이 정한다' },
+    cell:          { label: '세포 유형 (어휘 cells)' },
+    location:      { label: '위치 (어휘 locations)' },
+    condition:     { label: '조건 — 정의항 번호 목록 (자극·약물 등)' },
+    temperature_K: { label: '온도 (K)' },
+    pH:            { label: 'pH' },
+  },
+  // 형식 v12 §6 — 번호 이동. 번호는 재사용하지 않는다
+  moveKinds: {
+    merge: { label: '다른 번호에 합쳐짐 (대상 하나)', targets: 1 },
+    split: { label: '여러 번호로 나뉨 (대상 둘 이상)', targets: 2 },
   },
   obsUses: {
     estimation: { label: '상수 추정용 — kinetics.from 이 참조할 수 있음, 판정에 쓰지 않음' },

@@ -8,7 +8,7 @@
       "S": 57,
       "L": 107,
       "O": 19,
-      "V": 59
+      "V": 65
     }
   },
   "terms": {
@@ -10878,10 +10878,9 @@
           "kinetic_law": {
             "law": "michaelis_menten",
             "context": {
-              "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
+              "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체 — 측정 조건: 33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산",
               "species": "9606",
-              "location": "mito_matrix",
-              "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
+              "location": "mito_matrix"
             },
             "evidence": {
               "level": "curated",
@@ -11173,10 +11172,9 @@
           "kinetic_law": {
             "law": "michaelis_menten",
             "context": {
-              "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향",
+              "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향 — 측정 조건: pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산",
               "species": "9606",
-              "location": "mito_matrix",
-              "condition": "pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산"
+              "location": "mito_matrix"
             },
             "evidence": {
               "level": "curated",
@@ -21708,6 +21706,216 @@
       },
       "derivation": "computed",
       "recorded_at": "2026-10-15T12:30:11.070Z"
+    },
+    "V000059": {
+      "subject": "D000151/rule/oxdecarb",
+      "property": "kcat",
+      "value": {
+        "dist": "point",
+        "mean": 26.7
+      },
+      "context": {
+        "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체 — 측정 조건: 33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ],
+        "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+      },
+      "from": [
+        "O000001"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T13:59:02.362Z",
+      "supersedes": "V000031"
+    },
+    "V000060": {
+      "subject": "D000151/rule/oxdecarb",
+      "property": "Km",
+      "value": {
+        "dist": "point",
+        "mean": 0.00235
+      },
+      "context": {
+        "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체 — 측정 조건: 33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ],
+        "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+      },
+      "from": [
+        "O000002"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T13:59:02.362Z",
+      "supersedes": "V000032"
+    },
+    "V000061": {
+      "subject": "D000151/rule/oxdecarb",
+      "property": "dG0",
+      "value": {
+        "dist": "point",
+        "mean": 5600
+      },
+      "context": {
+        "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체 — 측정 조건: 33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ],
+        "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+      },
+      "from": [
+        "O000003"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T13:59:02.362Z",
+      "supersedes": "V000033"
+    },
+    "V000062": {
+      "subject": "D000155/rule/hydrate",
+      "property": "kcat",
+      "value": {
+        "dist": "point",
+        "mean": 170
+      },
+      "context": {
+        "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향 — 측정 조건: pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ],
+        "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+      },
+      "from": [
+        "O000004"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T13:59:02.362Z",
+      "supersedes": "V000034"
+    },
+    "V000063": {
+      "subject": "D000155/rule/hydrate",
+      "property": "Km",
+      "value": {
+        "dist": "point",
+        "mean": 0.0002
+      },
+      "context": {
+        "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향 — 측정 조건: pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ],
+        "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+      },
+      "from": [
+        "O000005"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T13:59:02.362Z",
+      "supersedes": "V000035"
+    },
+    "V000064": {
+      "subject": "D000155/rule/hydrate",
+      "property": "dG0",
+      "value": {
+        "dist": "point",
+        "mean": -3400
+      },
+      "context": {
+        "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향 — 측정 조건: pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ],
+        "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+      },
+      "from": [
+        "O000006"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-15T13:59:02.362Z",
+      "supersedes": "V000036"
     }
   }
 }

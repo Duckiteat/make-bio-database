@@ -101,7 +101,7 @@ function items(db, opt) {
   // 관찰 기록 (v10): 불확도·반복 수가 있는 실측 — 철회된 것은 차단
   for (const [oid, o] of Object.entries(db.observations || {})) {
     const sc = scoreObservation(o);
-    add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || {}).kind || '?'} (${o.use || '?'})`, s: sc.s, d: sc.d, trend: 'unchecked', why: sc.why });
+    add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || o.readout || {}).kind || '?'} (${o.use || '?'})`, s: sc.s, d: sc.d, trend: 'unchecked', why: sc.why });
   }
   return out;
 }

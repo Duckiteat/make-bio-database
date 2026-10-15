@@ -1,0 +1,40 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "observations": [
+    {
+      "id": "O+q",
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000027"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000030|ligand:bound|plasma_membrane"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "provenance": {
+        "source": {
+          "db": "DOI",
+          "id": "10.1000/redteam.1"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1000/redteam.1",
+            "citation": "레드팀"
+          }
+        ]
+      },
+      "note": "원문 구절 없이 교과서식 요약만 — 정성 관찰은 논문 문장을 그대로 적어야 한다"
+    }
+  ]
+}

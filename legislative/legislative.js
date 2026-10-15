@@ -31,7 +31,12 @@
     const MAP = (from, to, via) => report.mapped.push({ from, to, via });
     if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }
     if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states) || isObj(patchIn.limitations)) { ERR('패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
-    if ('values' in patchIn || 'moved' in patchIn) ERR('패치', '값 층(values)·번호 이동(moved)은 패치가 직접 쓰지 않는다 — 값은 정의항 obs·규칙 kinetics 로 적으면 병합이 대체·철회 기록으로 접는다 (형식 v12)');
+    if ('values' in patchIn) ERR('패치', '값 층(values)은 패치가 직접 쓰지 않는다 — 값은 정의항 obs·규칙 kinetics 로 적으면 병합이 대체·철회 기록으로 접는다 (형식 v12)');
+    // 이동된 번호를 가리키는 패치는 받지 않는다 — 이동 대상을 알려 준다 (형식 v12 §6, moved 의 키 자체는 제외)
+    if (db.moved) {
+      const { moved: _m, why: _w, ...body } = patchIn, hit = new Set();
+      for (const x of JSON.stringify(body).match(/[TDS]\d{6}/g) || []) if (db.moved[x] && !hit.has(x)) { hit.add(x); ERR(x, `이동된 번호 (${db.moved[x].kind}) — ${db.moved[x].to.join('·')} 를 쓸 것`); }
+    }
     const alloc = (p) => fmtId(p, db.meta.next[p]++);
     const ix0 = index(db);
     const preSenses = new Map([...ix0.termSenses].map(([k, v]) => [k, v.length]));
@@ -168,7 +173,7 @@
         continue;
       }
       const id = alloc('O'); if (rid) report.idmap[rid] = id; report.added.push(id);
-      db.observations[id] = normObservation(raw); touchedObs.push([id, db.observations[id]]);
+      db.observations[id] = normObservation(Object.assign({}, raw, str(patchIn.recorded_at) ? { recorded_at: str(patchIn.recorded_at) } : {})); touchedObs.push([id, db.observations[id]]);
     }
     // 4. 참조·어휘 매핑
     const ix = index(db);
@@ -311,16 +316,30 @@
     }
     for (const [id, d] of new Map(touched)) for (const a of d.addresses || []) if (report.idmap[a.limitation]) a.limitation = report.idmap[a.limitation];
     // 관찰 기록의 대상(묶음 키·세포 상태·규칙)과 어휘, 속도 상수의 출처 관찰 번호
+    // 측정 대상 하나: 묶음 키의 머리·세포 상태·규칙 참조를 번호로
+    const obsTarget = (kind, t, w) => {
+      const tk = V.observables[kind] && V.observables[kind].target;
+      if (tk === 'bundle' && t) { const parts = t.split('|'); parts[0] = report.idmap[parts[0]] || ref(parts[0], w); return parts.join('|'); }
+      if (tk === 'cell_state') return ref(t, w);
+      if (tk === 'rule') return target(t, w);
+      return t;
+    };
     for (const [id, o] of touchedObs) {
-      const ob = o.observable;
-      ob.kind = voc('observables', ob.kind, id);
-      const tk = V.observables[ob.kind] && V.observables[ob.kind].target;
-      if (tk === 'bundle' && ob.target) { const parts = ob.target.split('|'); parts[0] = report.idmap[parts[0]] || ref(parts[0], `${id} 측정 대상`); ob.target = parts.join('|'); }
-      else if (tk === 'cell_state') ob.target = ref(ob.target, `${id} 측정 대상`);
-      else if (tk === 'rule') ob.target = target(ob.target, `${id} 측정 대상`);
-      o.uncertainty.kind = voc('uncertaintyKinds', o.uncertainty.kind, id);
-      o.uncertainty.model = voc('noiseModels', o.uncertainty.model, id);
-      if (o.calibration) o.calibration.kind = voc('calibrationKinds', o.calibration.kind, id);
+      if (o.kind === 'qualitative') { // 정성 관찰 (v12 §4): 읽을 거리·교란 대상
+        o.readout.kind = voc('observables', o.readout.kind, id);
+        if (o.readout.target) o.readout.target = obsTarget(o.readout.kind, o.readout.target, `${id} 읽을 거리`);
+        if (o.expect && typeof o.expect === 'object') o.expect.order = o.expect.order.map((t) => obsTarget(o.readout.kind, t, `${id} 순서`));
+        const p = o.perturbation;
+        if (p && p.target) p.target = p.type === 'knockout' ? ref(p.target, `${id} 교란 대상`) : p.type === 'clamp' ? obsTarget('amount', p.target, `${id} 교란 대상`) : target(p.target, `${id} 교란 대상`);
+      } else {
+        const ob = o.observable;
+        ob.kind = voc('observables', ob.kind, id);
+        ob.target = obsTarget(ob.kind, ob.target, `${id} 측정 대상`);
+        o.uncertainty.kind = voc('uncertaintyKinds', o.uncertainty.kind, id);
+        o.uncertainty.model = voc('noiseModels', o.uncertainty.model, id);
+        if (o.calibration) o.calibration.kind = voc('calibrationKinds', o.calibration.kind, id);
+      }
+      if (o.condition.condition && Array.isArray(o.condition.condition)) o.condition.condition = o.condition.condition.map((d) => ref(d, `${id} 조건`));
       o.use = voc('obsUses', o.use, id);
       if (o.condition.location) o.condition.location = voc('locations', o.condition.location, id);
       o.condition.states = o.condition.states && o.condition.states.map((b) => { const parts = b.split('|'); parts[0] = report.idmap[parts[0]] || ref(parts[0], `${id} 조건 상태`); return parts.join('|'); });
@@ -352,7 +371,24 @@
       }
       ERR(r, '삭제 대상 없음 (번호로 지정할 것)');
     }
-    if (gone.size) for (const d of Object.values(db.senses)) for (const ds of d.desc) ds.links = ds.links.filter((l) => !gone.has(l.to));
+    // 5b. 번호 이동 (형식 v12 §6): { "D000123": { to: ["D000045"], kind: "merge" | "split", why } } — 옛 번호는 지우고 이동 기록을 남긴다.
+    //   옛 번호를 가리키던 참조는 같은 패치가 새 번호로 고쳐 적어야 한다(사법부가 남은 참조를 거부). 값은 대상이 사라져 철회된다
+    if (isObj(patchIn.moved)) for (const [from, m] of Object.entries(patchIn.moved)) {
+      const t = ({ T: db.terms, D: db.senses, S: db.steps })[from[0]];
+      if (!isObj(m) || !t || !t[from]) { ERR(from, '이동할 번호가 없음 (개념·정의항·단계 번호로)'); continue; }
+      if (db.moved && db.moved[from]) { ERR(from, '이미 이동된 번호'); continue; }
+      if (from[0] === 'D') { const tid = db.senses[from].term; delete db.senses[from]; gone.add(from); if (!Object.values(db.senses).some((x) => x.term === tid)) { delete db.terms[tid]; report.removed.push(tid); } }
+      else delete t[from];
+      report.removed.push(from);
+      db.moved = db.moved || {};
+      db.moved[from] = { to: arr(m.to).map((x) => report.idmap[str(x)] || str(x)), kind: str(m.kind), at: str(patchIn.recorded_at), why: str(m.why) || report.why };
+    }
+    // 합쳐진 정의항을 가리키던 설명 연결은 대상으로 옮기고, 지워진 것은 뺀다
+    const redirect = (to) => (db.moved && db.moved[to] && db.moved[to].kind === 'merge' && gone.has(to) ? db.moved[to].to[0] : null);
+    if (gone.size) for (const d of Object.values(db.senses)) for (const ds of d.desc) {
+      ds.links = ds.links.map((l) => (redirect(l.to) ? Object.assign(l, { to: redirect(l.to) }) : l)).filter((l) => !gone.has(l.to));
+      ds.links = ds.links.filter((l, i) => ds.links.findIndex((x) => x.to === l.to && x.rel === l.rel) === i);
+    }
     foldValues(db, report, str(patchIn.recorded_at), report.why, ERR);
     return { db, report };
   }

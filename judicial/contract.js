@@ -81,7 +81,8 @@ function checkFateRaw(r) {
 // 관찰 포트 입력 계약 (4단계, schemas/obs/observation.schema.json): 모양만 — 의미는 관문(judicial.validateObservation)
 function checkObservation(o) {
   const schema = loadSchema('observation.schema.json', path.join(__dirname, '..', 'schemas', 'obs')), out = [];
-  check(o, schema, schema, '$', out);
+  // 형식 v12: 정량·정성 두 모양 — kind 로 고른다 (anyOf 로 묶으면 어긋난 칸을 말해 주지 못한다)
+  check(o, schema.$defs[o && o.kind === 'qualitative' ? 'qualitative' : 'quantitative'], schema, '$', out);
   return { ok: !out.length, violations: out.slice(0, 50), schema: schema.$id };
 }
 
