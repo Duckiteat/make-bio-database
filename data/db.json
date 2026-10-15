@@ -6,8 +6,8 @@
       "T": 210,
       "D": 212,
       "S": 57,
-      "L": 108,
-      "O": 20,
+      "L": 109,
+      "O": 22,
       "V": 65
     }
   },
@@ -19747,6 +19747,20 @@
         ]
       },
       "found_in": "build-plan 10 관문 A′ — node dbtool.mjs observe O000019 --state D000202 --scenario examples/scenarios/mhc-dc-immature-baseline-hypothetical.json"
+    },
+    "L000108": {
+      "target": "D000189",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "펩타이드 적재 복합체(D000189)는 타파신(D000186)·칼레티큘린(D000187)·ERp57(D000188)·TAP1/2 를 components 로 나열하지만, 이 구성 요소들이 복합체의 조립·기능으로 배선되어 있지 않다(복합체가 소비하는 입력도, 구성 요소 → 복합체 간선도 없다). 그래서 구성 요소 하나를 끊는 정성 관찰(O000020: 타파신 없는 220 세포에서 표면 class I 낮음)을 판정할 수 없다 — 0 층은 '경로 없음', 모의는 '대상 D000186 이 이 계에 없음'. 복합체 전체를 끊는 교란(O000019: TAP, 대상 D000189)이나 조립 단계를 거치는 구성 요소(O000021: β2m → D000190 조립)는 판정된다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "적재 복합체의 조립을 기전 단계로 넣어 구성 요소(타파신·칼레티큘린·ERp57)가 복합체 생성의 입력이 되게 하거나, 적어도 구성 요소 → 복합체 묶음의 영향 간선을 두어 구성 요소 knockout 이 복합체 기능에 닿게 한다 — 그 뒤 O000020 을 다시 판정"
+          }
+        ]
+      },
+      "found_in": "build-plan 12A — node dbtool.mjs qualgraph O000020 · observe O000020"
     }
   },
   "observations": {
@@ -20459,6 +20473,92 @@
       "evidence_at": "1994",
       "recorded_at": "2026-10-15T16:29:10.286Z",
       "note": "교란 대응: 원문은 'TAP transporter' 결손 — 모델에서 TAP1(D000184)·TAP2(D000185)는 펩타이드 적재 복합체(D000189)의 구성 요소라 그 복합체의 knockout 으로 둔다. 읽을 거리: 표면 class I = 펩타이드–MHC I 복합체의 세포막 묶음. 대조군 = 정상인(초록이 비교 대상 세포를 명시하지 않음). 세포 유형은 초록에 없어 condition 에 적지 않음 — 모델의 수지상 세포 상태에서 판정하면 맥락 이전(V8)이다."
+    },
+    "O000020": {
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000186"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000191|plasma_membrane"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "Expression of tapasin in a negative mutant human cell line (220) restored class I-TAP association and normal class I cell surface expression.",
+      "provenance": {
+        "sha256": "32f52b952e2f46a35c6ae3398fb5ced51b47c27156fff913909eb4c1fab8bde9",
+        "source": {
+          "db": "PMID",
+          "id": "9271576"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1126/science.277.5330.1306",
+            "citation": "Ortmann B et al., 1997, Science"
+          },
+          {
+            "db": "PMID",
+            "id": "9271576",
+            "citation": "Ortmann B et al., 1997, Science"
+          }
+        ]
+      },
+      "experiment": "Ortmann 1997 — 타파신 음성 220 세포 복원",
+      "evidence_at": "1997",
+      "recorded_at": "2026-10-15T17:11:27.455Z",
+      "note": "복원 실험(타파신 없음 → 표면 낮음, 복원 → 정상)을 교란 대비 방향으로: knockout 타파신 → 표면 펩타이드–MHC I 감소. 타파신은 적재 복합체(D000189)의 구성 요소. 측정 세포는 220(사람 B-LCL) — 모델 수지상 세포 상태에서 판정하면 맥락 이전."
+    },
+    "O000021": {
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000183"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000191|plasma_membrane"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "transfection of the mouse beta 2m gene into Daudi indeed rescued cell surface expression of class I HLA molecules",
+      "provenance": {
+        "sha256": "2a096149c956bcdeae96515de97d677d5e6e67f535e2958407fa515d2ed5bc12",
+        "source": {
+          "db": "PMID",
+          "id": "3279151"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1084/jem.167.2.288",
+            "citation": "Seong RH et al., 1988, J Exp Med"
+          },
+          {
+            "db": "PMID",
+            "id": "3279151",
+            "citation": "Seong RH et al., 1988, J Exp Med"
+          }
+        ]
+      },
+      "experiment": "Seong 1988 — β2m 결손 Daudi 복원",
+      "evidence_at": "1988",
+      "recorded_at": "2026-10-15T17:11:27.455Z",
+      "note": "β2m 결손 Daudi 는 표면 class I 이 없고 β2m 유전자 복원으로 회복 — 교란 대비 방향으로 knockout β2m → 표면 펩타이드–MHC I 감소. 측정 세포는 Daudi(사람 버킷림프종) — 모델 수지상 세포 상태에서 판정하면 맥락 이전."
     }
   },
   "values": {
