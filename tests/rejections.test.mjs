@@ -16,7 +16,7 @@ const EXPECT = JSON.parse(readFileSync(new URL('EXPECT.json', DIR), 'utf8'));
 const FLOOR = JSON.parse(readFileSync(new URL('./fixtures/FLOOR.json', import.meta.url), 'utf8'));
 const files = readdirSync(DIR).filter((f) => f.endsWith('.json') && f !== 'EXPECT.json').sort();
 
-test('① 거부 말뭉치: 나쁜 패치 11건이 모두 거부되고, 사유가 그대로다', () => {
+test('① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그대로다', () => {
   assert.deepEqual(files, Object.keys(EXPECT.cases).sort(), 'EXPECT.json 과 말뭉치 파일이 어긋남 — 둘을 같이 고친다');
   for (const f of files) {
     const patch = JSON.parse(readFileSync(new URL(f, DIR), 'utf8'));

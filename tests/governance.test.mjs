@@ -141,6 +141,25 @@ test('④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 �
   assert.throws(() => CLERK.appendAttestations({ root: ROOT, stamps: [{ subject: { sense: 'D000165', field: 'xref', ns: 'UniProt', value: 'Q9UL17' }, claim: 'verified', digest: 'x', evidence: {} }], db: BASE }), /도장/);
 });
 
+test('④‴ 봉인 = 병합 규약: dbtool 을 거치지 않아도 why·미등록 한계·정제 점검이 관문에서 막힌다 (판정이 CLI 에만 있으면 서기 경로가 건너뛴다)', async () => {
+  const CLERK = await import('../legislative/clerk.mjs');
+  const dbPath = join(tmpdir(), `clerk-policy-${process.pid}`, 'db.json');
+  const base = { format: 'definition-db-patch', version: 10, terms: [{ id: 'T+1', names: { ko: '규약시험개념' } }], senses: [{ id: 'D+1', term: 'T+1', kind: 'concept', desc: [{ text: '시험', field: '생화학', context: { scope: '시험' } }] }] };
+  const cases = [
+    [base, /변경 이유\(why\)/],
+    [{ ...base, why: 't', senses: [{ ...base.senses[0], kind: 'small_molecule', unmapped: '미확인' }] }, /미등록 한계 후보 \[Identity_Gap\]/],
+  ];
+  for (const [patch, re] of cases) {
+    const res = LEG.ingest(BASE, patch), g = J.gate(BASE, res, {}), seal = ATT.sealVerdict(g, res.db);
+    assert.ok(!g.ok && g.errors.some((e) => re.test(e.msg)), `${re}: ${g.errors.map((e) => e.msg).join(' / ')}`);
+    assert.throws(() => CLERK.commitMerge({ dbPath, db: res.db, records: [], seal }), /관문 판결이 거부/, '서기는 규약을 어긴 판결로 쓰지 않는다');
+  }
+  // 규약을 지키면 같은 경로로 봉인이 통과한다 (규칙이 막는 것은 위반뿐)
+  const ok = J.gate(BASE, LEG.ingest(BASE, { ...base, why: 't' }), {});
+  assert.ok(ok.ok, ok.errors.map((e) => e.msg).join(' / '));
+  assert.equal(typeof J.patchPolicy, 'function');
+});
+
 test('④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안의 다른 구역에 쓰려 하면 거부된다', async () => {
   const CLERK = await import('../legislative/clerk.mjs');
   // 서기 안에서 파일에 쓰는 함수는 하나(put)뿐이고, 그 하나가 구역을 받는다 — 구역 없이 쓸 길이 없다

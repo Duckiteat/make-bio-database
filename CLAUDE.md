@@ -84,7 +84,7 @@
 추적 가능성 > 장황함. 기록은 구조화·고밀도·차등(diff)으로.
 | 변경 | 기록 | 도구 |
 |---|---|---|
-| 데이터 패치 | 패치 최상위 `why` 필수 → `merge` 가 **Patch Report**(Scope·Why·Impact·Verification)를 계산해 출력하고 `data/patches/` 기록의 `report` 에 저장. `why` 없거나 미등록 한계 후보가 있으면 거부 | `merge`, `report <기록>` |
+| 데이터 패치 | 패치 최상위 `why` 필수 → `merge` 가 **Patch Report**(Scope·Why·Impact·Verification)를 계산해 출력하고 `data/patches/` 기록의 `report` 에 저장. `why` 없거나 미등록 한계 후보·새 정제 점검 문제가 있으면 **관문이** 거부(`patchPolicy` — 봉인 경계 안) | `merge`, `report <기록>` |
 | 코드·형식·어휘·문서 구조 | `CHANGES.md` 맨 위에 한 행(표): Scope(파일·함수·정의항) · Why · Impact(하류 규칙·명령·데이터) · Verification(테스트 수·validate·check) | 손으로, 같은 커밋 |
 | 사용자 보고 | 같은 네 칸의 표. 산문 요약 금지 | — |
 

@@ -25,7 +25,8 @@
   //   기존 정의항은 패치에 적힌 최상위 필드만 교체된다(적지 않은 필드는 유지).
   function merge(dbIn, patchIn) {
     const db = normalize(clone(dbIn));
-    const report = { added: [], updated: [], removed: [], idmap: {}, mapped: [], errors: [] };
+    // why: 변경 이유를 보고에 옮겨 적는다(판정은 사법부 관문이 한다 — 입법부는 검사하지 않는다)
+    const report = { added: [], updated: [], removed: [], idmap: {}, mapped: [], errors: [], why: isObj(patchIn) ? str(patchIn.why) : '' };
     const ERR = (where, msg) => report.errors.push({ where, msg });
     const MAP = (from, to, via) => report.mapped.push({ from, to, via });
     if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }

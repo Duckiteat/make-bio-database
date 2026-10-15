@@ -23,7 +23,7 @@
 
 | 쓰는 곳 | 조건 |
 |---|---|
-| `data/db.json`, `data/patches/` | 사법부 관문 봉인(`judicial/attestation.js sealVerdict`)이 통과이고, 봉인에 적힌 db sha256 이 쓰려는 db 와 같을 것. 판결을 다른 db 에 재사용할 수 없다. |
+| `data/db.json`, `data/patches/` | 사법부 관문 봉인(`judicial/attestation.js sealVerdict`)이 통과이고, 봉인에 적힌 db sha256 이 쓰려는 db 와 같을 것. 판결을 다른 db 에 재사용할 수 없다. 관문은 검사(validate)와 **병합 규약**(`patchPolicy`: why · 미등록 한계 후보 · 새 정제 점검 문제)을 함께 판정한다 — 병합을 막는 규칙은 CLI 가 아니라 관문 안에만 둔다 (`tests/governance.test.mjs ④‴`). |
 | `attestations/registry.json` | 도장마다 digest 와 증거 재확인(`verifyStamp`)을 다시 통과할 것 |
 | `limitations.md`, 교과서 부록, `data/fetched/RETRIEVAL_TASKS.md`, `CHANGES.md` 한 행 | 정해진 위치에만. 내용은 다른 모듈이 계산한다. |
 | 사용자가 지정한 보고서(`fate --report`) | 데이터·코드·증명 위치는 거부 |

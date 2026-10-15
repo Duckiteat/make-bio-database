@@ -206,10 +206,10 @@ ${kinds}
 1. 색인에 있는 개념은 새로 만들지 말고 그 번호를 쓴다. 이름이 겹치면 합쳐지거나 거부된다.
 2. 인산화형·활성형 같은 변화는 새 개념이 아니라 묶음의 부위:특징으로, 활성은 원천의 상태 의미 규칙으로 표현한다.
 3. 외부 ID·잔기 번호·서열은 확실한 것만. 추측 금지.
-4. 출력은 JSON 하나만.
+4. 출력은 JSON 하나만. 최상위에 변경 이유 "why" 를 반드시 적는다 (없으면 관문이 거부).
 
 ## 출력 형식
-{ "format": "definition-db-patch", "version": ${VERSION}, "terms": [], "senses": [], "steps": [], "remove": [] }
+{ "format": "definition-db-patch", "version": ${VERSION}, "why": "변경 이유", "terms": [], "senses": [], "steps": [], "remove": [] }
 
 ## 현재 색인 (정의항 꼬리표 / 영문 (별칭) | kind | 분야·범위 | 정의 앞부분 | 구조)
 ${idx.length ? idx.join('\n') : '(비어 있음)'}

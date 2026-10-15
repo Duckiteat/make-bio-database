@@ -103,9 +103,9 @@ switch (cmd) {
       for (const x of fresh) console.log(`  △ [${x.type}] ${x.msg}`);
       const refactor = LEG.draftRefactor(res.db, ref.issues);
       if (refactor && fresh.some((x) => x.type === 'duplicate_rule')) console.log(`  → 리팩터링 패치 제안 (입법 초안): ${refactor.why}`);
-      const bad = fresh.filter((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length));
-      console.log(`— 패치 ${args[0]}: 관문 ${g.ok ? '통과' : '거부'} (새 오류 ${g.errors.length}, 새 경고 ${g.warnings.length}) · 정제 점검 새 문제 ${fresh.length} (차단 ${bad.length})`);
-      process.exit(g.ok && !bad.length ? 0 : 1);
+      // 차단 판정(why · 미등록 한계 · 정제 점검)은 관문(judicial patchPolicy)이 한다 — 여기서는 보여 주기만
+      console.log(`— 패치 ${args[0]}: 관문 ${g.ok ? '통과' : '거부'} (새 오류 ${g.errors.length}, 새 경고 ${g.warnings.length}) · 정제 점검 새 문제 ${fresh.length}`);
+      process.exit(g.ok ? 0 : 1);
     }
     const r = ORCH.validateWithRegistry(loadDB(), HERE);
     printIssues(r.errors, r.warnings);
@@ -127,8 +127,6 @@ switch (cmd) {
       printIssues(g.errors, g.warnings);
       const rep = J.patchReport(db, res, patch, g);
       console.log(J.patchReportText(rep, DefDB.index(res.db)));
-      if (g.ok && !rep.why && !flags.dry) die('Patch Report: patch.why(변경 이유) 가 없음 — 거부했습니다. 패치 최상위에 "why": "…" 를 적으세요.');
-      if (g.ok && rep.verification.undetected_gaps && !flags.dry) die(`Patch Report: 등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — limitations --detect 를 보고 같은 패치에 등록하세요.`);
       if (!g.ok) die(!g.changed ? '바뀐 것이 없음 — 저장하지 않았습니다.'
         : g.errors.length ? `오류 ${g.errors.length} — 패치를 거부했습니다. 위 메시지대로 패치를 고치세요.`
         : `패치가 새 경고 ${g.warnings.length}개를 만듦 — 거부했습니다. 고치거나 --allow-warnings 로 명시적으로 허용하세요.`);
@@ -308,13 +306,12 @@ switch (cmd) {
       // 정제 점검: 이 패치가 만든 중복·등록되지 않은 화학량 모순은 병합을 막는다 (리팩터링 패치 초안을 함께 제안)
       const before = J.refineCheck(db).issues.map((x) => x.type + x.where), ref = J.refineCheck(res.db), freshI = ref.issues.filter((x) => !before.includes(x.type + x.where));
       console.log(freshI.length ? ['정제 점검 — 이 패치가 만든 문제:', ...freshI.map((x) => `  △ [${x.type}] ${x.msg}`)].join('\n') : J.refineText(res.db).text);
-      if (freshI.some((x) => x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length))) {
+      // 정제 점검의 차단은 관문(judicial patchPolicy)이 한다 — 여기서는 리팩터링 초안만 써 둔다
+      if (freshI.some((x) => x.type === 'duplicate_rule')) {
         const refactor = LEG.draftRefactor(res.db, ref.issues);
         if (refactor) { const rp = join(tmpdir(), `refactor-${date}.json`); CLERK.writeDraft(rp, refactor); console.log('리팩터링 패치 제안 (입법 초안): ' + rp); }
-        die('정제 점검 — 중복 복잡도 또는 등록되지 않은 화학량 모순: 저장하지 않음 (Optimization-Negative)');
       }
       if (!g.ok || badSt.length) die('관문 거부 — 패치를 저장하지 않음');
-      if (rep.verification.undetected_gaps) die(`등록되지 않은 한계 후보 ${rep.verification.undetected_gaps}개 — 저장하지 않음`);
       if (sub === 'build') { console.log(`관문 통과 — 병합하려면: node dbtool.mjs augment apply${flags.sync ? ' --sync' : ''}`); break; }
       const r = res.report, name = drafted ? basename(args[1]).replace(/\.json$/, '') : 'auto-augmentation';
       const w = CLERK.commitMerge({ dbPath: DB_PATH, db: res.db, records: [{ name, record: { result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch } }], seal: ATT.sealVerdict(g, res.db) });

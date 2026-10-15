@@ -12,7 +12,16 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const BASE = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
 const IX = DefDB.index(BASE);
 const id = (ref) => { const r = DefDB.resolveRef(IX, ref); if (r.error) throw new Error(r.error); return r.id; };
-const P = (o) => Object.assign({ format: 'definition-db-patch', version: 9 }, o);
+// 시험 패치는 관문의 병합 규약(why · 미등록 한계 후보 0)을 지킨다 — 새 unmapped 정의항에는 Identity_Gap 을 함께 등록 (규칙을 느슨하게 하지 않고 패치를 맞춘다)
+//   (잔기 번호를 모르는 부위에는 Structural_Gap)
+const idGaps = (o) => {
+  const has = (t) => (o.limitations || []).some((l) => l.target === t), fresh = (o.senses || []).filter((d) => /^D\+/.test(d.id || ''));
+  const gap = (target, type, i) => ({ id: `L+u${i}`, target, type, requirement: { text: '시험: 확인 전 값', needs: [{ kind: 'manual', text: '시험' }] } });
+  const add = [...fresh.filter((d) => d.unmapped && !has(d.id)).map((d) => [d.id, 'Identity_Gap']),
+    ...fresh.flatMap((d) => Object.entries(d.site || {}).filter(([, x]) => x.residue_unknown).map(([k]) => [`${d.id}/site/${k}`, 'Structural_Gap'])).filter(([t]) => !has(t))].map(([t, ty], i) => gap(t, ty, i));
+  return add.length ? { ...o, limitations: [...(o.limitations || []), ...add] } : o;
+};
+const P = (o) => idGaps(Object.assign({ format: 'definition-db-patch', version: 9, why: '시험' }, o));
 const run = (patch, opt) => { const res = LEG.merge(BASE, P(patch)); return { res, g: J.gate(BASE, res, opt) }; };
 const msgs = (g) => [...g.errors, ...g.warnings].map((e) => `${e.where}: ${e.msg}`).join('\n');
 const passes = (patch, opt) => { const r = run(patch, opt); assert.ok(r.g.ok, '통과해야 함:\n' + msgs(r.g)); return r.res; };

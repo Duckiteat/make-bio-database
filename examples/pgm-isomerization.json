@@ -49,5 +49,9 @@
       "part_of": ["에피네프린에 의한 글리코겐 분해"]
     }
   ],
+  "limitations": [
+    { "id": "L+g6p", "target": "D+g6p", "type": "Identity_Gap",
+      "requirement": { "text": "포도당-6-인산의 ChEBI 번호를 원본과 대조하지 못함 — pH 7.3 우세 종(physiological) 번호를 확인하면 닫힌다", "needs": [{ "kind": "xref", "db": "ChEBI", "on": "D+g6p" }] } }
+  ],
   "remove": []
 }

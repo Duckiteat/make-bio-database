@@ -902,9 +902,9 @@
 
   function gate(dbBefore, result, opt) {
     const vo = opt && opt.attestations ? { attestations: opt.attestations } : undefined;
-    const before = validate(normalize(dbBefore), vo), after = validate(result.db, vo);
+    const b0 = normalize(dbBefore), before = validate(b0, vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
-    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(normalize(dbBefore), result.db)];
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...patchPolicy(b0, result)];
     const warnings = after.warnings.filter((i) => !old.has(key(i)));
     const r = result.report;
     const changed = r.added.length + r.updated.length + r.removed.length > 0;
@@ -912,6 +912,18 @@
     return { ok, changed, errors, warnings, preexisting: before.errors.length };
   }
 
+  // 병합 규약 (Traceable Evolution Protocol · 한계 등록 · 정제 점검) — 관문 안에서 판정한다.
+  //   봉인(sealVerdict)은 관문 판결에만 묶이므로, 병합을 막는 규칙이 관문 밖(CLI)에 있으면 CLI 를 거치지 않는 병합이 그 규칙을 건너뛴다.
+  //   ① why 필수 ② 미등록 한계 후보 0 (병합 뒤 db 전체 — CI 의 limitations --detect 와 같은 기준) ③ 이 패치가 새로 만든 중복 규칙·등록 안 된 화학량 모순
+  function patchPolicy(before, result) {
+    const out = [], after = result.db;
+    if (!result.report.why) out.push({ where: '패치', msg: '변경 이유(why)가 없음 — 패치 최상위에 "why": "…" 를 적을 것 (Traceable Evolution Protocol)' });
+    for (const g of detectGaps(after)) out.push({ where: g.target, msg: `미등록 한계 후보 [${g.type}] ${g.why} — 같은 패치의 limitations 에 등록할 것` });
+    const was = new Set(refineCheck(before).issues.map((x) => x.type + x.where));
+    for (const x of refineCheck(after).issues) if (!was.has(x.type + x.where) && (x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length)))
+      out.push({ where: x.where, msg: `정제 점검 [${x.type}] ${x.msg} — 의도한 단순화면 Structural_Gap 으로 등록, 중복이면 리팩터링 초안(legislative draftRefactor)대로` });
+    return out;
+  }
   // 관찰 기록은 한 번 들어오면 바뀌지 않는다 — 지울 수 없고, 바꿀 수 있는 것은 철회 표시(retracted) 하나 (실측값을 다시 잴 일이 없게)
   function observationImmutability(before, after) {
     const out = [];
@@ -1528,7 +1540,7 @@
 
   return Object.freeze({ auditRate, checkAttestations,
     needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
-    validateModulation, validateCellState, checkBundle, validateStep, gate, refsOfRule, patchReport, refineCheck, refineText, augmentCandidates, patchReportText, audit,
+    validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });
 });

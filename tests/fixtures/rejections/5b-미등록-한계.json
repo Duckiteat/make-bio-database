@@ -1,0 +1,32 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "terms": [
+    {
+      "id": "T+1",
+      "names": {
+        "ko": "한계 없는 저분자"
+      }
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+1",
+      "term": "T+1",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호 미확인 — 그런데 Identity_Gap 을 등록하지 않음",
+      "desc": [
+        {
+          "text": "한계 등록 없이 외부 ID 를 비운 저분자",
+          "field": "생화학",
+          "context": {
+            "scope": "거부 말뭉치"
+          },
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    }
+  ]
+}
