@@ -6,7 +6,7 @@
       "T": 210,
       "D": 212,
       "S": 58,
-      "L": 109,
+      "L": 110,
       "O": 22,
       "V": 65
     }
@@ -19815,6 +19815,20 @@
           "tool": "node dbtool.mjs qualgraph O000020 · observe O000020 --scenario examples/scenarios/mhc-dc-plc-from-components-hypothetical.json · docs/reports/2026-10-15-mhc1-qualitative-batch.md"
         }
       }
+    },
+    "L000109": {
+      "target": "D000177",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "우연 기준선(judicial/qual_compare.chanceBaseline)은 증거 독립(M3·L4: 다른 DOI·다른 실험계)인 주장을 포아송 이항으로 서로 독립이라 가정한다. 그러나 MHC I 적재의 세 관찰(O000019 TAP·O000020 타파신·O000021 β2m)은 서로 다른 논문·세포주라 증거 독립이지만, 교란 → 읽을 거리 경로가 모두 '적재 → 소포체 이탈 → 골지 → 표면' 하류를 공유한다 — 셋 다 맞아도 모델의 서로 다른 부분을 검증한 것이 아니라 같은 축을 세 번 건드린 것이라, '셋 다 맞힐 확률 ≈ 0.02' 는 모델 전체의 신뢰도를 과대평가한다. 기전 경로 독립(0 층 그래프에서 교란 → 읽을 거리 경로가 겹치는 정도)은 아직 판정에 들어가지 않는다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "서로 다른 하류를 건드리는 관찰을 모으거나(경로 겹침이 작은 교란), 우연 기준선이 0 층 경로 겹침으로 단위 간 상관을 반영하도록 확장한다 — 어느 쪽이든 정의되기 전에는 '증거 독립이되 경로 공유' 를 보고에 함께 밝힌다"
+          }
+        ]
+      },
+      "found_in": "build-plan 22 — judicial/qual_compare.chanceBaseline (증거 독립만, 기전 경로 독립 아님)"
     }
   },
   "observations": {

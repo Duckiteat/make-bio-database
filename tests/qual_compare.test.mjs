@@ -62,6 +62,20 @@ test('② 우연 기준선: 포아송 이항 P(K ≥ k)', () => {
   assert.ok(Math.abs(b.p_at_least - 1 / 6) < 1e-15); assert.equal(b.n, 2); assert.equal(b.not_judged, 2);
   assert.ok(Math.abs(QC.chanceBaseline([r('match', 1 / 3), r('mismatch', 0.5)]).p_at_least - (1 - (2 / 3) * 0.5)) < 1e-15);
   assert.equal(QC.chanceBaseline([r('not_shown', 0.5)]).p_at_least, null);
+  assert.equal(QC.chanceBaseline([r('match', 0.5), r('match', 0.5), r('match', 0.5)]).units, 3, '출처 없는 주장은 각자 한 단위');
+});
+
+test('② 증거 독립 (M3·L4): 같은 실험·출처는 한 단위로 묶고 비독립 표시', () => {
+  const r = (id, outcome, chance, extra) => Object.assign({ id, outcome, chance }, extra || {});
+  // 같은 experiment 두 건 → 1 단위 (모두 맞아야 맞음, chance = 최댓값 0.5)
+  const b = QC.chanceBaseline([r('O1', 'match', 1 / 3, { experiment: 'E1' }), r('O2', 'match', 0.5, { experiment: 'E1' }), r('O3', 'match', 0.5, { experiment: 'E2' })]);
+  assert.equal(b.n, 3); assert.equal(b.units, 2, '세 건이 두 실험이라 두 단위');
+  assert.equal(b.k, 2);
+  assert.ok(Math.abs(b.p_at_least - 0.5 * 0.5) < 1e-15, '두 단위 다 맞힐 확률 = 0.5·0.5');
+  assert.equal(b.non_independent.length, 1); assert.deepEqual(b.non_independent[0].ids, ['O1', 'O2']);
+  // 같은 출처(DOI) 두 건도 한 단위, 한 건이 틀리면 단위는 틀림
+  const c = QC.chanceBaseline([r('O4', 'match', 0.5, { source: { db: 'DOI', id: '10.1/x' } }), r('O5', 'mismatch', 0.5, { source: { db: 'DOI', id: '10.1/x' } })]);
+  assert.equal(c.units, 1); assert.equal(c.k, 0, '묶음 안 한 건이 틀리면 단위는 맞음 아님');
 });
 
 test('② 경험적 우연 확률: 같은 실행의 다른 읽을 거리에 같은 규칙 — 방향은 비율, 순서는 오름 사슬 / 순서쌍', () => {

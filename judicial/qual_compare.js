@@ -112,13 +112,30 @@ function empiricalChance(o, pool, opt) {
   return { chance: n ? hit / n : null, n, hits: hit, source: 'empirical' };
 }
 
-// 우연 기준선: 판정된 주장(맞음·틀림 — 보이지 못함·무효 제외)의 맞힌 수가 우연으로 나올 확률 P(K ≥ k), K ~ 포아송 이항(pᵢ = chance)
+// 증거 독립 열쇠 (M3·L4, 설계 §13 표): 같은 실험(experiment)·같은 출처(DOI·PMID)는 한 단위. 없으면 그 주장 혼자 한 단위.
+//   독립 기준은 '다른 DOI · 다른 실험계 · 다른 측정 방법' — 지금은 experiment 문자열과 provenance.source 로 판단한다(측정 방법 필드는 아직 없음 → 한계).
+function independenceKey(r) {
+  if (r.experiment) return 'exp:' + r.experiment;
+  const s = r.source; if (s && s.db && s.id) return 'src:' + s.db + ':' + s.id;
+  return 'row:' + (r.id || Math.random());
+}
+// 우연 기준선: 판정된 주장을 증거 단위로 묶고(M3), 단위의 맞힌 수가 우연으로 나올 확률 P(K ≥ k), K ~ 포아송 이항.
+//   한 단위 안의 여러 주장은 비독립 — 단위는 한 번만 센다(모두 맞아야 '맞음', 우연 확률은 가장 쉬운 것 = member chance 최댓값). 비독립 묶음은 표시한다.
 function chanceBaseline(rows) {
-  const judged = rows.filter((r) => r.outcome === 'match' || r.outcome === 'mismatch'), k = judged.filter((r) => r.outcome === 'match').length;
+  const judged = rows.filter((r) => r.outcome === 'match' || r.outcome === 'mismatch');
+  const groups = new Map();
+  for (const r of judged) { const key = independenceKey(r); if (!groups.has(key)) groups.set(key, []); groups.get(key).push(r); }
+  const units = [], nonIndependent = [];
+  for (const [key, members] of groups) {
+    const allMatch = members.every((m) => m.outcome === 'match'), chance = Math.max(...members.map((m) => m.chance));
+    units.push({ key, match: allMatch, chance, size: members.length });
+    if (members.length > 1) nonIndependent.push({ key, size: members.length, ids: members.map((m) => m.id) });
+  }
+  const k = units.filter((u) => u.match).length;
   let dist = [1];
-  for (const r of judged) { const p = r.chance, next = new Array(dist.length + 1).fill(0); dist.forEach((q, i) => { next[i] += q * (1 - p); next[i + 1] += q * p; }); dist = next; }
-  const pAtLeast = dist.slice(k).reduce((s, q) => s + q, 0), expected = judged.reduce((s, r) => s + r.chance, 0);
-  return { n: judged.length, k, expected_by_chance: expected, p_at_least: judged.length ? pAtLeast : null, not_judged: rows.length - judged.length };
+  for (const u of units) { const p = u.chance, next = new Array(dist.length + 1).fill(0); dist.forEach((q, i) => { next[i] += q * (1 - p); next[i + 1] += q * p; }); dist = next; }
+  const pAtLeast = dist.slice(k).reduce((s, q) => s + q, 0), expected = units.reduce((s, u) => s + u.chance, 0);
+  return { n: judged.length, units: units.length, k, expected_by_chance: expected, p_at_least: units.length ? pAtLeast : null, not_judged: rows.length - judged.length, non_independent: nonIndependent };
 }
 
 const OUT = { match: '맞음', mismatch: '틀림', not_shown: '보이지 못함', invalid: '무효' };
@@ -133,7 +150,10 @@ function qualCompareText(rows, base) {
     if (r.requirement) out.push(`      ${r.requirement}`);
   }
   for (const r of rows) if (r.chance_source === 'empirical') out.push(`  ${r.id || ''} 우연 확률 ${r.chance.toPrecision(3)} — 같은 실행의 다른 읽을 거리 ${r.chance_pool} 개 중 같은 결과의 비율 (결과 칸 균등 가정이면 ${r.chance_uniform.toPrecision(3)})`);
-  if (base) out.push(`우연 기준선: 판정 ${base.n} 건 중 맞음 ${base.k} (우연 기대 ${base.expected_by_chance.toFixed(2)})${base.p_at_least != null ? ` · 우연으로 ${base.k} 건 이상 맞힐 확률 ${base.p_at_least.toPrecision(3)}` : ''}${base.not_judged ? ` · 판정 못 함 ${base.not_judged}` : ''}`);
+  if (base) {
+    out.push(`우연 기준선: 판정 ${base.n} 건 → 증거 독립 단위 ${base.units} 개 중 맞음 ${base.k} (우연 기대 ${base.expected_by_chance.toFixed(2)})${base.p_at_least != null ? ` · 우연으로 ${base.k} 단위 이상 맞힐 확률 ${base.p_at_least.toPrecision(3)}` : ''}${base.not_judged ? ` · 판정 못 함 ${base.not_judged}` : ''}`);
+    for (const g of base.non_independent || []) out.push(`  비독립 묶음: ${g.ids.join('·')} 는 같은 실험·출처라 ${g.size} 건이 1 단위로 셈 (M3)`);
+  }
   out.push(`α = ${S.ALPHA}. 상수가 가상(hypothetical)인 시나리오의 결과는 기전의 귀결이지 측정 예측이 아니다.`);
   return out.join('\n');
 }

@@ -186,7 +186,7 @@ function observeQualitative(db, o, state, sc, opt) {
     const emp = QC.empiricalChance(o, pool), uniform = r.chance;
     if (emp.chance != null) Object.assign(r, { chance: emp.chance, chance_source: 'empirical', chance_pool: emp.n, chance_uniform: uniform });
     else Object.assign(r, { chance_source: 'uniform', chance_pool: 0 });
-    return Object.assign(r, { id: opt.observationId || null, numerical_error: main.numerical, quantum: main.quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv });
+    return Object.assign(r, { id: opt.observationId || null, experiment: o.experiment || null, source: (o.provenance || {}).source || null, numerical_error: main.numerical, quantum: main.quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv });
   } catch (e) { return { error: e.message }; }
 }
 
