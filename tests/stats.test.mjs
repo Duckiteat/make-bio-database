@@ -55,9 +55,11 @@ const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D00016
 
 test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백', () => {
   // 표준 오차 25 (sd 50 / √4). 가설 하나의 일치는 선언된 δ 로만 (M1) — δ 는 근거 등급이 붙는 값
-  const EQ = (delta, o) => ({ equivalence: Object.assign({ delta, evidence: { level: 'curated', sources: [{ db: 'DOI', id: '10.0000/synthetic', citation: '합성, 2026' }] } }, o) });
+  // 일치는 사전 등록된 규약의 검증 세트 관찰에서만 (L3) — 여기서는 규약 판정이 통과했다고 두고 판정 규칙만 본다 (규약 자체는 tests/protocol.test.mjs)
+  const PV = { declared: true, ok: true, problems: [], validation: ['O900001'] };
+  const EQ = (delta, o) => ({ protocol: PV, observationId: 'O900001', equivalence: Object.assign({ delta, evidence: { level: 'curated', sources: [{ db: 'DOI', id: '10.0000/synthetic', citation: '합성, 2026' }] } }, o) });
   assert.equal(OC.verdict(obs(), [1010]).verdict, 'INDISTINGUISHABLE', 'δ 없이 기각 못 함은 일치가 아님');
-  assert.match(OC.verdict(obs(), [1010]).limitation.requirement, /δ 가 선언되지 않음/);
+  assert.match(OC.verdict(obs(), [1010], null, { protocol: PV, observationId: 'O900001' }).limitation.requirement, /δ 가 선언되지 않음/);
   assert.equal(OC.verdict(obs(), [1010], null, EQ(100)).verdict, 'CONSISTENT');
   const c = OC.verdict(obs(), [1200]); assert.equal(c.verdict, 'CONFLICT'); assert.equal(c.fault, 'DOMAIN_CONFLICT');
   // 두 가설 1000·1030 은 표준 오차 25 로 가를 수 없음 → Observation_Gap, 필요한 반복 수에서는 검정력 0.8
@@ -82,9 +84,10 @@ test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정�
   assert.equal(OC.verdict(obs({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.1 } }), [1050], null, EQ(0.2, { scale: 'ln' })).verdict, 'CONSISTENT');
   assert.match(OC.verdict(obs({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.1 } }), [1050], null, EQ(100)).limitation.requirement, /척도/);
   assert.equal(OC.verdict(obs({ value: 3, uncertainty: { kind: 'measurement', model: 'poisson', sd: 0 }, replicates: 1 }), [5], null, EQ(10)).verdict, 'CONSISTENT');
-  // 검출 한계: δ 없이 "확신 상한" — 오차가 크면 아래라고 확신할 수 없음
-  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [5]).verdict, 'INDISTINGUISHABLE');
-  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [5]).verdict, 'CONSISTENT');
+  // 검출 한계: δ 없이 "확신 상한" — 오차가 크면 아래라고 확신할 수 없음 (규약은 여전히 필요)
+  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [5], null, EQ(1)).verdict, 'INDISTINGUISHABLE');
+  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [5], null, EQ(1)).verdict, 'CONSISTENT');
+  assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [5]).verdict, 'INDISTINGUISHABLE', '규약 없이는 확신 상한도 일치가 아님');
   assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [500]).verdict, 'CONFLICT');
   // 도달 시각: 도달하지 않은 실행은 중도 절단, 모두 못 하면 모순
   const et = obs({ observable: { kind: 'event_time', target: 'D000175' }, value: 7200, unit: 's', uncertainty: { kind: 'measurement', model: 'normal', sd: 600 }, replicates: 3 });
@@ -95,7 +98,8 @@ test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정�
 test('④′ 동등성(TOST, M1): δ 근거 등급 · 정밀도 부족 · 차가 δ 이상 · 척도', () => {
   const ev = (level, extra) => Object.assign({ level }, extra);
   const doi = { sources: [{ db: 'DOI', id: '10.0000/synthetic', citation: '합성, 2026' }] };
-  const v = (delta, evidence, o, pred) => OC.verdict(obs(o), pred || [1010], null, { equivalence: { delta, evidence } });
+  const PV = { declared: true, ok: true, problems: [], validation: ['O900001'] };
+  const v = (delta, evidence, o, pred) => OC.verdict(obs(o), pred || [1010], null, { protocol: PV, observationId: 'O900001', equivalence: { delta, evidence } });
   // 근거 등급: curated+DOI → parameter (판정), asserted → reference (판정 안 함), abstracted+DOI → S3·D2 = reference, 근거 없음 → reference
   assert.equal(v(100, ev('curated', doi)).verdict, 'CONSISTENT');
   assert.equal(v(100, ev('curated', doi)).equivalence.grade, 'parameter');
@@ -120,6 +124,12 @@ test('④′ 동등성(TOST, M1): δ 근거 등급 · 정밀도 부족 · 차가
   const noSrc = v(100, ev('curated', doi), { provenance: undefined });
   assert.equal(noSrc.verdict, 'INDISTINGUISHABLE'); assert.match(noSrc.limitation.requirement, /검증 관찰의 등급이 reference/);
   assert.equal(v(100, ev('curated', doi)).equivalence.observation_grade, 'parameter');
+  // 규약 (L3): 없으면 탐색 실행, 위반이면 그 사유, 검증 세트 밖 관찰이면 사후 선택
+  const base = { equivalence: { delta: 100, evidence: ev('curated', doi) } };
+  assert.match(OC.verdict(obs(), [1010], null, base).limitation.requirement, /규약이 없음/);
+  assert.match(OC.verdict(obs(), [1010], null, { ...base, protocol: { declared: true, ok: false, problems: ['사전 등록되지 않은 시나리오'] } }).limitation.requirement, /규약 위반: 사전 등록되지 않은/);
+  assert.match(OC.verdict(obs(), [1010], null, { ...base, protocol: PV, observationId: 'O900002' }).limitation.requirement, /검증 세트\(protocol.validation\)에 없음/);
+  assert.match(OC.verdict(obs(), [1010], null, { ...base, protocol: PV }).limitation.requirement, /번호 없음/);
   // 보고서 줄에 동등성이 실린다
   assert.match(OC.verdictText(v(100, ev('curated', doi))), /동등성\(TOST\): δ 100/);
 });

@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const FA = require('./fate_audit.js');
 const REL = require('./reliability.js');
 
+const PROTO = require('./protocol.js');
 const sha = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(x)).digest('hex');
 const h = (s) => (s == null ? '—' : `${(s / 3600).toFixed(2)} h`);
 const fmt = (x) => (x == null || !Number.isFinite(x) ? '—' : Math.abs(x) >= 1e5 || (Math.abs(x) < 1e-2 && x !== 0) ? x.toExponential(2) : (+x.toPrecision(4)).toString());
@@ -125,6 +126,8 @@ function processReport(r, ctx) {
   const cx = FA.contextVerdict(r, sc);
   const ROLE = { cause: '원인', requirement: '필수성', baseline: '일반 상황' };
   if (cx.declared) chk(`시나리오 맥락 선언 — ${ROLE[cx.role] || cx.role} (${L(cx.state)})`, cx.consistent, cx.consistent ? (cx.role === 'baseline' ? '시작 상태 · 구동된 전이 없음' : '목표 상태로 가는 전이의 신호가 켜져 있음') : cx.problems.join(' · '));
+  // 모의 실험 규약 (build-plan 3): 선언했다면 사전 등록·대조군·반복 수·검증 세트를 지켜야 한다 — 어기면 FAIL. 없으면 탐색 실행(증명서 줄 없음, 요약에 표시)
+  if (ctx.protocol && ctx.protocol.declared) chk('모의 실험 규약 — 사전 등록(실행 전)·음성 대조·반복 수(검정력)·검증 세트(추정과 분리)·중단 규칙', ctx.protocol.ok, ctx.protocol.ok ? `등록 #${ctx.protocol.registered.seq} (${ctx.protocol.registered.at})` : ctx.protocol.problems.join(' · '));
   const pass = checks.every((c) => c.ok !== false);
   // ===== 예측과의 차이 =====
   const expect = sc.expect || {}, disc = [];
@@ -197,6 +200,7 @@ function processReportMarkdown(rep) {
   out.push('', '## 3. 무결성 증명서 (Integrity Certificate)', '', '| 확인 | 결과 | 근거 |', '|---|---|---|');
   for (const c of rep.checks) out.push(`| ${c.name} | ${c.ok === true ? 'PASS' : c.ok === false ? '**FAIL**' : '미실행'} | ${c.detail} |`);
   out.push('', `입력 해시 — 데이터 sha256:${rep.inputs.db ? rep.inputs.db.slice(0, 16) : '—'} · 시나리오 sha256:${rep.inputs.scenario.slice(0, 16)} · 궤적 sha256:${P.hash.slice(0, 16)}`, '');
+  out.push(rep.ctx.protocol ? PROTO.protocolText(rep.ctx.protocol).split('\n')[0] : '모의 실험 규약: 판정 안 함 — 탐색 실행 (검증 결론을 낼 수 없음)', '');
   out.push(rep.pass
     ? `**판정: PASS.** 이 실행의 모든 상태 변화는 데이터베이스의 규칙(신호 → 대사 공급 규칙 → 대사물 → 전사 인자 합성·분해)과 위 해시의 입력만으로 만들어졌다. 매 관찰 격자 단계에서 부분 구조 원장과 저장소 재생이 상대 ${r.mass.tolerance} 안에서 맞았고, 신호는 선언된 일정 그대로였다. 이 증명서는 계산의 무결성을 증명할 뿐, 가상 상수의 생물학적 타당성을 증명하지 않는다.`
     : '**판정: FAIL.** 위에서 FAIL 인 항목이 있다 — 이 실행의 결과를 결론으로 쓰지 말 것.');

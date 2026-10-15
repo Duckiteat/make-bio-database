@@ -50,6 +50,7 @@
       "Bash(node dbtool.mjs textbook --write:*)",
       "Bash(node dbtool.mjs trend:*)",
       "Bash(node dbtool.mjs log --genesis:*)",
+      "Bash(node dbtool.mjs register:*)",
       "Bash(git push:*)",
       "Bash(cargo:*)",
       "Bash(sh engine/rust/build.sh:*)"
@@ -58,6 +59,7 @@
       "Edit(data/db.json)", "Write(data/db.json)",
       "Edit(data/patches/**)", "Write(data/patches/**)",
       "Edit(data/log/**)", "Write(data/log/**)",
+      "Edit(data/preregistrations.jsonl)", "Write(data/preregistrations.jsonl)",
       "Edit(attestations/**)", "Write(attestations/**)",
       "Edit(data/fetched/**)", "Write(data/fetched/**)",
       "Bash(rm -rf:*)",

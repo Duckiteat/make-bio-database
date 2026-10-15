@@ -99,6 +99,7 @@ node dbtool.mjs grade [--min parameter]       # 쓰인 값의 신뢰 등급
 node dbtool.mjs compare --state D000174 --scenario A.json [--scenario-b B.json | --patch p.json]
 node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [--n 50]   # 가설 하나의 일치는 시나리오 equivalence 의 δ(근거 등급 parameter 이상)로만
 node dbtool.mjs report data/patches/<기록>.json    # 지난 패치의 Patch Report
+node dbtool.mjs register <시나리오.json>        # 모의 실험 규약 사전 등록 (검증에 쓰는 실행은 실행 전에 — 고치면 미등록)
 node dbtool.mjs log                            # 델타 기록: 사슬 무결성 + 기원부터 재생 = 지금 db (기원은 log --genesis 로 한 번)
 ```
 
@@ -225,7 +226,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 214/214 (약 105 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 217/217 (약 105 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음

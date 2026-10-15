@@ -35,7 +35,7 @@ const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부
 
 // 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
 export const ZONES = {
-  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
   attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
   evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
@@ -100,6 +100,24 @@ export function sealGenesis({ dbPath, db, seal, note }) {
   put('registry', join(dir, LOG.genesis), JSON.stringify(g, null, 2) + '\n');
   return g;
 }
+// 사전 등록 (build-plan 3, L3): 검증에 쓸 시나리오를 **실행 전에** 정준 해시·시각으로 사슬에 남긴다.
+//   사법부(judicial/protocol.js protocolStructure)가 규약 구조를 통과시킨 봉인이 있을 때만 쓴다. 판정(실행보다 앞선 등록인가)은 사법부.
+const PREREG = 'preregistrations.jsonl', PREREG_GENESIS = sha('preregistration\n');
+export function readPrereg(dataDir) { const f = join(dataDir, PREREG); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; }
+export function registerPrereg({ dataDir, scenario, seal }) {
+  if (!ATT.checkSeal(seal)) refuse('규약 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse(`규약 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(scenario, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 시나리오와 등록하려는 시나리오가 다름');
+  const entries = readPrereg(dataDir), h = sha(ATT.canon(scenario));
+  const dup = entries.find((e) => e.scenario_sha256 === h);
+  if (dup) refuse(`이미 등록된 시나리오 (#${dup.seq}, ${dup.at})`);
+  const last = entries[entries.length - 1];
+  const body = { seq: entries.length + 1, at: new Date().toISOString(), scenario_sha256: h, name: scenario.name || '', question: (scenario.protocol || {}).question || '', prev: last ? last.root : PREREG_GENESIS };
+  const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) }, f = join(dataDir, PREREG);
+  put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + JSON.stringify(ev) + '\n');
+  return ev;
+}
+
 export function readLog(dataDir) {
   const dir = join(dataDir, LOG.dir), gf = join(dir, LOG.genesis);
   if (!existsSync(gf)) return null;

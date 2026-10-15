@@ -8,7 +8,7 @@
 - 행정 `core.js`·`engine/*`: 읽기·시뮬레이션만. 파일 쓰기·검사·승인·`'verified'`·`AUDIT_*`·사후 분석·질량 판정 금지. 사법·입법·조정자 호출 금지.
 - 엔진은 이름을 모른다: 분자·위치·부분 구조 이름 금지 — 사실은 데이터·어휘에. 부분 구조 수지 ΣIn=ΣOut 상대 1e-14(규칙 검사·운명 원장).
 - 수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만. 엔진에 기본값 금지.
-- 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`(db.json·patches·log)·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
+- 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`(db.json·patches·log·사전 등록부)·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
 - 사법 `judicial/`: 검증·증명·감사·보고만. 엔진 실행·데이터/엔진 수정 금지 — 판결·보고서로만. 행정부는 관찰을 읽지 않음; 예측 표본은 조정자가 `compiler/obs_operator.js` 로.
 - `'verified'` 는 `attestations/registry.json` 의 유효 도장으로만(`augment apply` 발급, `node dbtool.mjs attest` 재검증). 없으면 관문 거부.
 - 엔진 실행이 필요한 감사는 조정자 `orchestrator.js` 가 원자료 → 사법부.
@@ -56,6 +56,7 @@
 - 기전은 세포 상태 `mechanisms` 에 걸어 운명 엔진으로(따로 돌리는 길 금지). 결합 적분은 질량 작용·가역 결합(정·역 두 채널)·MM 만, 나머지는 Kinetic_Gap. 막 단계는 `volumes[막]`. `simulateRate` 와 서로 기준 금지(L000081). 변경 → `node --test tests/mhc.test.mjs`.
 - 운명·기전 시나리오에 `context {role: cause|requirement|baseline, state, note}`. 보고는 맥락과 함께.
 - 확률: `stochastic {seed}`(실행 전), 앙상블로만 판정(`judicial/stoch_audit.js` — 운명 비율·도달 시각 분포·Fano), 궤적 하나로 결론 금지. 방식·문턱 변경 → `tests/stochastic.test.mjs`. 확률 없으면 결정론 비트 불변.
+- 검증(관찰과의 일치)은 사전 등록된 모의 실험 규약 아래에서만: 시나리오 `protocol`(실제 실험 대응·음성 대조 필수·검정력 반복 수·검증 세트·중단 규칙) → `register` 로 실행 전 등록 → 고치면 미등록. 규약 없는 실행은 탐색 실행(일치 결론 불가).
 - 운명 결과는 `fate <상태> --scenario s.json --report f.md` 과정 보고서로만, 끝 상태만 말하지 않음. 무결성 증명서 FAIL 이면 실패로 보고. 예측은 실행 전 `expect`, 실행 뒤 변경 금지.
 - 부분 구조 수지: 옮겨 다니는 분자에 `moieties`, 빠진 산물(PPi·Pi …)은 규칙·단계(minor)에. `source: true` 는 원료가 모델 밖일 때만. 반감기·공급 속도·서열 길이는 확인 값만.
 

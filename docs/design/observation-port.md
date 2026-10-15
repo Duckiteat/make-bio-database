@@ -55,7 +55,7 @@
 
 | 판정 | 조건 | 결함 태그 |
 |---|---|---|
-| CONSISTENT | 가설 하나: 선언된 δ(근거 등급 parameter 이상) 안임을 동등성 검정(TOST)으로 보임 · 가설 둘: 이 가설만 기각되지 않음 (2026-10-15, M1 — 기각 못 함은 일치가 아님) | FINDING |
+| CONSISTENT | (사전 등록된 규약의 검증 세트 관찰만 — build-plan 3) 가설 하나: 선언된 δ(근거 등급 parameter 이상) 안임을 동등성 검정(TOST)으로 보임 · 가설 둘: 이 가설만 기각되지 않음 (2026-10-15, M1 — 기각 못 함은 일치가 아님) | FINDING |
 | CONFLICT | 밖 — 모델 오류 | DOMAIN_CONFLICT |
 | INDISTINGUISHABLE | 이 오차 막대로 경쟁 가설(compare 의 Behavior-Changing 쌍)을 가를 수 없음, 또는 가설 하나인데 일치를 보이지 못함(δ 미선언·근거 등급 미달·정밀도 부족) | `Observation_Gap` (필요 정밀도를 requirement 에) |
 

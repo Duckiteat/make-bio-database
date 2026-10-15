@@ -36,7 +36,7 @@
 
 | 구역 | 저장소 안에서 허용되는 자리 | 조건 |
 |---|---|---|
-| `registry` 입법 | `data/db.json`, `data/patches/`, `data/log/` | 관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같음. 기원 체크포인트가 있으면 병합마다 사건을 사슬로 추가(S1) — 사슬·재생 판정은 `judicial/log_audit.js` |
+| `registry` 입법 | `data/db.json`, `data/patches/`, `data/log/`, `data/preregistrations.jsonl` | 관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같음. 기원 체크포인트가 있으면 병합마다 사건을 사슬로 추가(S1) — 사슬·재생 판정은 `judicial/log_audit.js`. 사전 등록은 규약 구조 판정(`judicial/protocol.js`) 봉인이 있을 때만 사슬로 추가 |
 | `attestation` 증명 | `attestations/registry.json` | 도장마다 digest·증거 재확인 (주장별 사법부 모듈: 신원 `verifyStamp` · 추세 `verifyTrendStamp`) |
 | `evidence` 증거 | `data/fetched/`, `tests/fixtures/` | 원본 그대로 — 해석·실행하지 않는다. 받기(curl)도 이 검사를 지난다 |
 | `derived` 파생 | `limitations.md`, 교과서 부록, `data/fetched/RETRIEVAL_TASKS.md`, `CHANGES.md` | 내용은 다른 모듈이 계산하고 서기는 정해진 파일에만 |

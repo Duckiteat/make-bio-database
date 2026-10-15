@@ -342,6 +342,15 @@ switch (cmd) {
     if (min) process.exit(pick.every((r) => REL.meets(r, min)) ? 0 : 1);
     break;
   }
+  case 'register': { // 사전 등록 (build-plan 3): 검증에 쓸 시나리오를 실행 전에 — 사법부 규약 구조 판정이 통과한 것만 서기가 사슬에 남긴다
+    if (!args[0]) die('사용법: register <시나리오.json>');
+    const PROTO = req('./judicial/protocol.js'), db = loadDB(), sc = JSON.parse(readFileSync(args[0], 'utf8')), v = PROTO.protocolStructure(db, sc);
+    console.log(v.declared ? (v.ok ? '규약 구조: 통과' : `규약 구조: 위반 ${v.problems.length}\n` + v.problems.map((x) => '  ✗ ' + x).join('\n')) : '규약(protocol) 없음 — 등록할 수 없음');
+    if (!v.ok) process.exit(1);
+    const e = CLERK.registerPrereg({ dataDir: dirname(DB_PATH), scenario: sc, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, sc, { issuer: 'judicial/protocol.js#protocolStructure' }) });
+    console.log(`사전 등록 #${e.seq} (입법 서기): ${e.at} · 시나리오 sha256 ${e.scenario_sha256.slice(0, 12)}… — 이 시나리오를 고치면 미등록이 된다`);
+    break;
+  }
   case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
     const dataDir = dirname(DB_PATH);
     if (flags.genesis) {
@@ -462,7 +471,8 @@ switch (cmd) {
       const ref = FATE.simulateFate(db, x.id, { scenario: ORCH.refScenario(s2), commitment: false, engine: opt.engine }), refMs = Date.now() - t0;
       numerics = { hours: s2.t_end / 3600, l2: FA.markerL2(r, ref), refMs };
     }
-    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again, numerics });
+    const protocol = req('./judicial/protocol.js').protocolVerdict(db, JSON.parse(scenarioText), { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() });
+    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again, numerics, protocol });
     const md = PR.processReportMarkdown(rep);
     console.log(md);
     console.log(J.refineText(db).text);
@@ -485,7 +495,8 @@ switch (cmd) {
     }
     const x = DefDB.resolveRef(DefDB.index(db), flags.state); if (x.error) die(x.error);
     const scA = readJSON(flags.scenario), scB = flags['scenario-b'] && flags['scenario-b'] !== true ? readJSON(flags['scenario-b']) : null;
-    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined });
+    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null });
+    console.log(req('./judicial/protocol.js').protocolText(req('./judicial/protocol.js').protocolVerdict(db, scA, { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() })) + '\n');
     console.log(OC.verdictText(v));
     process.exit(v.error ? 1 : 0);
   }
@@ -494,7 +505,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

@@ -15,6 +15,7 @@ const ATT = require('./judicial/attestation.js');
 const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
 const LOGA = require('./judicial/log_audit.js');
+const PROTO = require('./judicial/protocol.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const OC = require('./judicial/obs_compare.js');
 const SA = require('./judicial/stoch_audit.js');
@@ -101,9 +102,12 @@ function observeFate(db, o, state, scA, scB, opt) {
     if (sc.stochastic) { const rs = runEnsemble(db, state, sc, opt.n || 50, { commitment: false }); if (rs.error) throw new Error(rs.error); return rs; }
     const r = F.simulateFate(db, state, Object.assign({ engine: 'rust', commitment: false }, opt, { scenario: sc })); if (r.error) throw new Error(r.error); return [r];
   };
-  // 허용 차이 δ 는 시나리오 A 가 실행 전에 선언한 것만 쓴다 (equivalence: [{ observable: { kind, target }, delta, scale, evidence }])
-  const eq = (scA.equivalence || []).find((e) => e.observable && o.observable && e.observable.kind === o.observable.kind && e.observable.target === o.observable.target);
-  try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, Object.assign({}, opt, { equivalence: eq })); }
+  // 허용 차이 δ 는 사전 등록된 규약이 선언한 것만 쓴다 (protocol.equivalence: [{ observable: { kind, target }, delta, scale, evidence }])
+  // 규약 판정(사법부)은 실행 전에 — 등록 시각이 지금보다 앞서야 한다. 확률 실행의 앙상블 크기는 규약의 n 그대로(중단 규칙)
+  const pv = PROTO.protocolVerdict(db, scA, { prereg: opt.prereg || [], runAt: new Date().toISOString() });
+  const p = scA.protocol || {}, eq = (p.equivalence || []).find((e) => e.observable && o.observable && e.observable.kind === o.observable.kind && e.observable.target === o.observable.target);
+  if (pv.declared && scA.stochastic && p.replicates && p.replicates.n) opt = Object.assign({}, opt, { n: p.replicates.n });
+  try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, Object.assign({}, opt, { equivalence: eq, protocol: pv, observationId: opt.observationId })); }
   catch (e) { return { error: e.message }; }
 }
 

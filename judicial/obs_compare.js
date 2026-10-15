@@ -7,6 +7,7 @@
 //   INDISTINGUISHABLE 가를 수 없음 — 두 가설이 모두 맞거나, 가설 하나인데 일치를 보이지 못함(δ 미선언·근거 등급 미달·정밀도 부족)
 //                     → DATA_GAP (Observation_Gap, 필요한 정밀도)
 //   "기각하지 못함" 은 일치가 아니다: 오차 막대가 크면 무엇이든 기각되지 않는다 (M1, docs/design/integral-field-engine.md §13.6)
+//   일치는 사전 등록된 규약(judicial/protocol.js)의 검증 세트에 있는 관찰에서만 (L3) — opt.protocol · opt.observationId
 // 불확도 유형:
 //   measurement  관찰 값 = 같은 양을 replicates 번 잰 평균, sd = 한 번 잴 때의 잡음 → 표준 오차 sd/√r. 모델은 평균으로 비교
 //   biological   관찰 값 = 개체(세포) r 개의 평균, sd = 개체 간 퍼짐 — 확률 층이 예측하는 것. 평균은 sd/√r 로, 퍼짐은 F 검정으로(앙상블일 때만)
@@ -64,6 +65,11 @@ function test(o, samples, alpha) {
 // parameter 이상이면 판정, bounded 면 조건부, 그 밖이면 판정하지 않는다(결정 11). 검출 한계 관찰은 δ 없이 "확신 상한" 으로 본다.
 function equivalence(o, A, opt) {
   const alpha = opt.alpha, z1 = S.normInv(1 - alpha), d = A.y - A.mu, se = A.se;
+  // 일치를 결론으로 쓰려면 사전 등록된 모의 실험 규약이 있고, 이 관찰이 그 규약의 검증 세트에 실행 전부터 있어야 한다 (L3 — 사후 선택 금지)
+  const pv = opt.protocol;
+  if (!pv || !pv.declared) return { shown: false, requirement: '모의 실험 규약이 없음(탐색 실행) — 일치를 결론으로 쓰려면 protocol 을 선언하고 실행 전에 사전 등록 (node dbtool.mjs register <시나리오>)' };
+  if (!pv.ok) return { shown: false, requirement: '모의 실험 규약 위반: ' + pv.problems.join(' · ') };
+  if (!opt.observationId || !(pv.validation || []).includes(opt.observationId)) return { shown: false, requirement: `관찰 ${opt.observationId || '(파일 — 번호 없음)'} 이 사전 등록된 검증 세트(protocol.validation)에 없음 — 결과를 본 뒤 고른 관찰은 검증에 쓰지 않는다` };
   if (o.detection_limit != null && o.value <= o.detection_limit) {
     const shown = A.p >= 1 - alpha;
     return { kind: 'below_limit', shown, p: 1 - A.p, requirement: shown ? '' : `예측이 검출 한계 아래라고 확신할 수 없음 (확률 ${fmt(A.p)} < ${fmt(1 - alpha)}) — 예측 퍼짐을 줄이거나 더 낮은 검출 한계의 관찰 필요` };
@@ -149,7 +155,7 @@ function verdictText(v) {
     const e = v.equivalence;
     lines.push('', e.kind === 'below_limit' ? `확신 상한: 예측이 검출 한계 아래일 확률 ${fmt(1 - e.p)}`
       : e.delta != null ? `동등성(TOST): δ ${fmt(e.delta)} (${e.scale}, 강도 ${e.grade} = min(δ ${e.delta_grade}, 관찰 ${e.observation_grade}) — ${e.basis}), 차 ${fmt(e.d)}, 표준 오차 ${fmt(e.se)}${e.p != null ? `, p ${fmt(e.p)}` : ''}${v.conditional ? ' — ' + v.conditional : ''}`
-      : '동등성: δ 미선언');
+      : '동등성: 판정 안 함 (아래 사유)');
   }
   if (v.preferred) lines.push(`관찰이 고른 가설: ${v.preferred}`);
   if (v.limitation) lines.push('', `→ 한계 후보 ${v.limitation.type}: ${v.limitation.requirement}`);

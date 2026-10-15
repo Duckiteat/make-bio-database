@@ -77,6 +77,14 @@
       "interpret": "terms(T)·senses(D)·steps(S)·limitations(L)·observations(O) 다섯 표와 meta.next(다음 번호). 관찰 기록(v10)은 한 번 들어오면 바뀌지 않는다(철회 표시만) — 실측 상수는 kinetics.from 으로 관찰을 참조하는 파생값. 묶음 키·상태·사례 경로·한계 상태는 저장하지 않고 계산한다 — 3장."
     },
     {
+      "path": "data/preregistrations.jsonl",
+      "class": "log",
+      "format": "JSON Lines — 등록 한 줄씩: seq·at·scenario_sha256(정준)·name·question·prev·root",
+      "writer": "입법 서기 (node dbtool.mjs register — 규약 구조 판정 봉인 뒤, 추가만)",
+      "readers": "judicial/protocol.js (사전 등록 판정), dbtool observe·fate",
+      "interpret": "모의 실험 규약의 사전 등록부 — 시나리오를 실행 전에 남겼다는 증명. 고치거나 지우지 않는다(사슬이 끊겨 드러남)."
+    },
+    {
       "path": "data/log/*",
       "class": "log",
       "format": "genesis.json(기원: db sha256·루트) · genesis-db.json(기원 스냅숏) · events.jsonl(사건 한 줄씩: seq·at·names·patches·db_sha256·prev·root)",
@@ -294,6 +302,17 @@
       "node": "JUDICIAL_OBS_COMPARE",
       "governance": "Judicial",
       "refactor_strategy": "기준은 \"너무 시끄러운가\"가 아니라 \"가를 수 있는가\" — 판정 규칙을 바꾸면 세 판정 시험(tests/stats.test.mjs ④·④′)을 같이 고친다. 예측은 조정자가 관찰 연산자로 만들어 넘긴다 — 엔진을 부르지 않는다."
+    },
+    {
+      "path": "judicial/protocol.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js observeFate, dbtool register·observe·fate, judicial/process_report.js, tests",
+      "interpret": "[사법] build-plan 3 — 모의 실험 규약 판정: 구조(질문·실제 실험 대응·음성 대조·측정·중단 규칙) · 반복 수(검정력 n ≥ ⌈(z₁₋α/₂+z_power)²σ²/Δ²⌉) · 검증 세트(use validation·철회 아님·어떤 값의 근거로도 안 쓰임) · 사전 등록(시나리오 정준 해시가 등록부 사슬에 있고 실행보다 앞섬). 규약 없으면 탐색 실행.",
+      "node": "JUDICIAL_PROTOCOL",
+      "governance": "Judicial",
+      "refactor_strategy": "검증의 L3(사후 선택 금지)·V3(사전 선언)·V6(음성 대조)를 지는 자리. 교란 연산자(build-plan 4)가 들어오면 perturbations 를 형식 검사에서 실제 IR 대조로 넓힌다."
     },
     {
       "path": "judicial/log_audit.js",
@@ -809,6 +828,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "관찰 기록(v10) — 계약 모양, 관문 의미 검사(불확도·SI 단위·보정 재계산·합성 거부), 실측 상수 = 관찰의 파생값(from·lumped·추정/검증 용도 분리), 변경 불가(바꿈·지움 거부, 철회만), 무손실(정규화 멱등)."
+    },
+    {
+      "path": "tests/protocol.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "모의 실험 규약·사전 등록 — 구조(필수 항목·음성 대조·검증 세트 분리·최상위 equivalence 금지), 반복 수 검정력 공식, 사전 등록(봉인·중복·사후 수정·실행보다 늦은 등록·사슬 변조·키 순서 무관)."
     },
     {
       "path": "tests/stats.test.mjs",
