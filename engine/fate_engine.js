@@ -21,7 +21,7 @@ const C = require('../core.js');
 const IRB = require('../compiler/ir_builder.js'); // IR (컴파일러 — 순수): 조립·정수 번호·기호 도함수 테이프
 const TAPE = require('../compiler/tape.js');
 const RNG = require('./rng.js'); // 4단계 ④ 확률 층의 난수 (xoshiro256++)
-const V = C.VOCAB, NA = C.NA, VOL = C.VOL;
+const V = C.VOCAB, VOL = C.VOL;
 
 
 // ===== 시뮬레이션 =====
@@ -94,7 +94,7 @@ function simulateFate(db, sourceId, opt) {
   //   알고리즘 상수는 여기와 engine/rust/src/engine.rs 에 같게 — 단계 제어 값은 결합점 등록부.
   const ROD = { g: 0.5, newF: [1, 0, 1, 1], A: [[], [0], [2, 0], [2, 0, 1]], C: [[], [4], [1, -1], [1, -1, -8 / 3]], M: [2, 0, 1, 1], E: [0, 0, 0, 1] };
   const act = IR.jac.active, nA = act.length, SA = IR.jac.S;
-  const tctx = { NA, V: Float64Array.from(IR.species, (x) => x.V), buf: Float64Array.from(IR.species, (x) => (x.buf == null ? Infinity : x.buf)), stack: new Float64Array(64) };
+  const tctx = { cinv: Float64Array.from(IR.species, (x) => x.cinv), buf: Float64Array.from(IR.species, (x) => (x.buf == null ? Infinity : x.buf)), stack: new Float64Array(64) };
   const stats = { rhs: 0, jac: 0, steps: 0, rejected: 0, rejectedNeg: 0, hMinHits: 0, singular: 0 };
   const fy = new Float64Array(nA), f0 = new Float64Array(nA), Kst = Array.from({ length: 4 }, () => new Float64Array(nA)), xs = new Float64Array(nA), xn = new Float64Array(nA), xe = new Float64Array(nA), bv = new Float64Array(nA);
   const Y = new Float64Array(nB), Yn = new Float64Array(nB);

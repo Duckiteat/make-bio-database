@@ -180,3 +180,12 @@ test('MHC ⑩: null 시나리오 = 기준 + 교란 한 줄 (build-plan 9) — �
   assert.match(PT.derive(D, SRC, d, { ...b, base: 'x.json' }).error, /기준은 한 단계만/);
   assert.match(PT.derive(D, SRC, { ...d, perturbation: { type: 'dose_series', of: { type: 'clamp', target: 'D000198|endosome_membrane' }, doses: [0] } }, b).error, /교란 하나/);
 });
+
+test('MHC ⑪: 접은 상수 cinv = 1/(N_A·V) (엔진 단계 0) — 사법부가 부피에서 따로 계산해 비트까지 대조, 꾸민 값은 거부', () => {
+  const sc = scen(MAT), ir = IRB.buildFateIR(DB, SRC, sc);
+  for (const s of ir.species) assert.strictEqual(s.cinv, s.V > 0 ? 1 / (C.NA * s.V) : 0);
+  assert.deepEqual(DER.verifyIR(DB, ir, sc).problems, []);
+  const bad = JSON.parse(JSON.stringify(ir)), i = bad.species.findIndex((s) => s.V > 0);
+  bad.species[i].cinv *= 1 + 2 ** -52;
+  assert.ok(DER.verifyIR(DB, bad, sc).problems.some((p) => /접은 상수 cinv/.test(p)), '한 ulp 어긋난 접은 상수를 잡아야 함');
+});

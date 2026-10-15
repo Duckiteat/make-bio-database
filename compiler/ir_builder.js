@@ -16,7 +16,7 @@ const { OP } = require('./tape.js');
 const SLU = require('./sparse_lu.js');
 
 const V = M.VOCAB;
-const FORMAT = 'definition-db-fate-ir', IR_VERSION = 3; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분 · 3: 희소 LU 기호 분석(jac.lu)·J 항의 값 위치(jac.scatter)
+const FORMAT = 'definition-db-fate-ir', IR_VERSION = 4; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분 · 3: 희소 LU 기호 분석(jac.lu)·J 항의 값 위치(jac.scatter) · 4: 묶음별 접은 상수 cinv = 1/(N_A·V) (엔진은 농도를 나눗셈 대신 곱셈으로)
 
 // ===== 계 조립: 상태들 → 규칙·묶음 =====
 function assemble(db, sourceId, sc) {
@@ -187,7 +187,8 @@ function buildFateIR(db, sourceId, sc, params) {
   const CP = COUPLING.resolve(sc, params), Ksat = CP.saturation_K, smin = CP.hill_s_floor;
   const keys = A.bundles, at = new Map(keys.map((b, i) => [b, i]));
   const volL = {}; for (const [l, v] of Object.entries(sc.volumes || {})) if (M.VOL[v.unit]) volL[l] = v.value * M.VOL[v.unit];
-  const species = keys.map((b) => { const bf = (sc.buffered || {})[b]; return { b, V: volL[b.split('|').pop()] || 0, buf: bf ? bf.conc_M : null }; });
+  // 상수 접기 (엔진 단계 0, integral-field-engine.md §2): 농도 c = N·cinv — 나눗셈 N/(N_A·V) 를 실행마다 하지 않는다. V = 0 이면 cinv = 0 (농도 0)
+  const species = keys.map((b) => { const bf = (sc.buffered || {})[b], V = volL[b.split('|').pop()] || 0; return { b, V, cinv: V > 0 ? 1 / (M.NA * V) : 0, buf: bf ? bf.conc_M : null }; });
   const rules = A.rules.map((R) => ({
     ref: R.ref, kind: R.kind, slow: !!R.slow, loc: R.loc, k: R.k, ...((sc.rule_scale || {})[R.ref] != null ? { scale: sc.rule_scale[R.ref] } : {}), source: !!R.source, lost: !!R.lost, Vr: volL[R.loc] || 0, kdeg: R.kind === 'degradation' ? kdegOf(R.k) : 0,
     cons: R.cons.map((q) => ({ b: q.b, i: at.get(q.b), n: q.n, sat: !!q.sat })), prods: R.prods.map((q) => ({ b: q.b, i: at.get(q.b), n: q.n })),

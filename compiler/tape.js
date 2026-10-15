@@ -4,8 +4,8 @@
 // 같은 명령표를 해석한다. 이 파일은 명령표와 참조 해석기다(순수, 할당 없음 — 스택은 미리 잡은 버퍼).
 //
 // 명령 (인자 수):
-//   CONST v (1)   · CONC i (1) 농도 c_i = min(buf_i, max(0,N_i)/(N_A·V_i)), V_i = 0 이면 0
-//   DCONC i (1)   ∂c_i/∂N_i = 1/(N_A·V_i)  (N_i > 0 이고 완충 상한 아래일 때, 아니면 0 — 꺾인 곳은 현재 가지의 한쪽 도함수)
+//   CONST v (1)   · CONC i (1) 농도 c_i = min(buf_i, max(0,N_i)·cinv_i), cinv_i = 1/(N_A·V_i) 는 컴파일러가 접은 상수 (V_i = 0 이면 0 → 농도 0)
+//   DCONC i (1)   ∂c_i/∂N_i = cinv_i  (N_i > 0 이고 완충 상한 아래일 때, 아니면 0 — 꺾인 곳은 현재 가지의 한쪽 도함수)
 //   CNT i (1)     max(0, N_i) · DCNT i (1) N_i > 0 ? 1 : 0
 //   FAC (0)       이 규칙의 고정 조절 배율 f (뉴턴 한 단계 안에서 상수)
 //   MUL (0) · ADD (0)   스택 위 둘
@@ -30,15 +30,15 @@
     const x = Math.pow(s / K, n); return n * x / (s * (1 + x) * (1 + x));
   };
 
-  // ctx: { NA, V: Float64Array(nB), buf: Float64Array(nB) (완충 상한 M, 없으면 Infinity), stack: Float64Array }
+  // ctx: { cinv: Float64Array(nB) (IR species[i].cinv), buf: Float64Array(nB) (완충 상한 M, 없으면 Infinity), stack: Float64Array }
   function evalTape(t, N, f, ctx) {
     const st = ctx.stack; let sp = 0;
     for (let p = 0; p < t.length;) {
       const op = t[p++];
       switch (op) {
         case 0: st[sp++] = t[p++]; break;
-        case 1: { const i = t[p++], V = ctx.V[i]; let c = V > 0 ? Math.max(0, N[i]) / (ctx.NA * V) : 0; if (c > ctx.buf[i]) c = ctx.buf[i]; st[sp++] = c; break; }
-        case 2: { const i = t[p++], V = ctx.V[i]; st[sp++] = V > 0 && N[i] > 0 && Math.max(0, N[i]) / (ctx.NA * V) < ctx.buf[i] ? 1 / (ctx.NA * V) : 0; break; }
+        case 1: { const i = t[p++], q = ctx.cinv[i]; let c = q > 0 ? Math.max(0, N[i]) * q : 0; if (c > ctx.buf[i]) c = ctx.buf[i]; st[sp++] = c; break; }
+        case 2: { const i = t[p++], q = ctx.cinv[i]; st[sp++] = q > 0 && N[i] > 0 && Math.max(0, N[i]) * q < ctx.buf[i] ? q : 0; break; }
         case 3: st[sp++] = Math.max(0, N[t[p++]]); break;
         case 4: st[sp++] = N[t[p++]] > 0 ? 1 : 0; break;
         case 5: st[sp++] = f; break;

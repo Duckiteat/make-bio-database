@@ -18,9 +18,10 @@ function pack(a) {
   const nB = IR.keys.length, nR = IR.rules.length, nA = IR.jac.active.length, out = [];
   const P = (...x) => { for (const v of x) out.push(+v); };
   const tapes = (list) => { P(list.length); for (const x of list) P(x.i, x.t.length, ...x.t); };
-  P(4, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, 6.02214076e23, recordEvery);
+  // 덩어리 판 5: 아보가드로 수 칸을 빼고 부피 자리에 컴파일러가 접은 cinv = 1/(N_A·V) (IR 4)
+  P(5, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, recordEvery);
   for (let i = 0; i < nB; i++) P(N0[i]);
-  for (const s of IR.species) P(s.V);
+  for (const s of IR.species) P(s.cinv);
   for (const s of IR.species) P(s.buf == null ? Infinity : s.buf);
   IR.rules.forEach((R, j) => {
     P(R.cons.length, R.prods.length);

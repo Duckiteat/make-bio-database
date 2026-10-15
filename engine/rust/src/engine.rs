@@ -47,10 +47,10 @@ struct Sparse {
 pub struct Engine {
     // 차원·설정
     pub nb: usize, pub nr: usize, pub na_: usize, pub nsig: usize, pub nres: usize,
-    pub dt: f64, pub t_end: f64, pub horizon: f64, ctl: Ctl, na: f64, record_every: usize,
+    pub dt: f64, pub t_end: f64, pub horizon: f64, ctl: Ctl, record_every: usize,
     pub n_steps: usize, pub n_rec_max: usize,
     // 데이터 (IR)
-    pub n0: Vec<f64>, v: Vec<f64>, buf: Vec<f64>,
+    pub n0: Vec<f64>, cinv: Vec<f64>, buf: Vec<f64>, // cinv = 1/(N_A·V) — 컴파일러가 접은 상수 (IR 4)
     rules: Vec<Rule>, act: Vec<usize>,
     s_act: Vec<Vec<(usize, f64)>>, // 묶음 → [(활성 규칙 위치, 화학량)]
     sp: Sparse,
@@ -103,12 +103,12 @@ impl Engine {
     /// IR 직렬 덩어리(engine/fate_rust.js pack)에서 엔진을 만든다. 모든 할당은 여기서 끝난다.
     pub fn new(blob: &[f64]) -> Result<Engine, &'static str> {
         let mut c = Cursor { d: blob, p: 0 };
-        if c.f() != 4.0 { return Err("blob version"); }
+        if c.f() != 5.0 { return Err("blob version"); }
         let (nb, nr, na_, nsig, nres) = (c.u(), c.u(), c.u(), c.u(), c.u());
         let (dt, t_end, horizon) = (c.f(), c.f(), c.f());
         let ctl = Ctl { rtol: c.f(), atol: c.f(), h0: c.f(), h_min: c.f(), safety: c.f(), fac_min: c.f(), fac_max: c.f(), neg_shrink: c.f(), pivot_rel: c.f() };
-        let (na, record_every) = (c.f(), c.u().max(1));
-        let n0 = c.vecf(nb); let v = c.vecf(nb); let buf = c.vecf(nb);
+        let record_every = c.u().max(1);
+        let n0 = c.vecf(nb); let cinv = c.vecf(nb); let buf = c.vecf(nb);
         let mut rules = Vec::with_capacity(nr);
         for _ in 0..nr {
             let (nc, np) = (c.u(), c.u());
@@ -163,8 +163,8 @@ impl Engine {
         let max_ev = if sto { n_steps * nres.max(1) * 8 + 64 } else { n_steps * nres.max(1) };
         let h0 = ctl.h0;
         Ok(Engine {
-            nb, nr, na_, nsig, nres, dt, t_end, horizon, ctl, na, record_every, n_steps, n_rec_max,
-            n0, v, buf, rules, act, s_act, sp, signals, res_idx,
+            nb, nr, na_, nsig, nres, dt, t_end, horizon, ctl, record_every, n_steps, n_rec_max,
+            n0, cinv, buf, rules, act, s_act, sp, signals, res_idx,
             n: vec![0.0; nb], lo: vec![0.0; nb], cum: vec![0.0; 2 * nr],
             f0: vec![0.0; na_], fy: vec![0.0; na_], kst: vec![0.0; 4 * na_], xs: vec![0.0; na_], xn: vec![0.0; na_], xe: vec![0.0; na_], bv: vec![0.0; na_],
             y: vec![0.0; nb], yn: vec![0.0; nb], vals: vec![0.0; nnz], wrk: vec![0.0; na_], ys: vec![0.0; na_],
@@ -206,8 +206,8 @@ impl Engine {
         for k in 0..self.na_ {
             let j = self.act[k];
             let n: &[f64] = if use_y { &self.y } else { &self.n };
-            let f = tape::eval(&self.rules[j].factor, n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
-            let r = tape::eval(&self.rules[j].rate, n, f, &self.v, &self.buf, self.na, &mut self.stack);
+            let f = tape::eval(&self.rules[j].factor, n, 1.0, &self.cinv, &self.buf, &mut self.stack);
+            let r = tape::eval(&self.rules[j].rate, n, f, &self.cinv, &self.buf, &mut self.stack);
             if to_f0 { self.f0[k] = r; } else { self.fy[k] = r; }
         }
     }
@@ -218,14 +218,14 @@ impl Engine {
         for x in self.vals.iter_mut() { *x = 0.0; }
         for k in 0..na_ {
             let j = self.act[k];
-            let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
-            let g = tape::eval(&self.rules[j].rate, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
+            let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack);
+            let g = tape::eval(&self.rules[j].rate, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack);
             for d in 0..self.rules[j].drate.len() {
-                let val = tape::eval(&self.rules[j].drate[d].1, &self.n, f, &self.v, &self.buf, self.na, &mut self.stack);
+                let val = tape::eval(&self.rules[j].drate[d].1, &self.n, f, &self.cinv, &self.buf, &mut self.stack);
                 if val != 0.0 { for q in 0..self.sp.rate[k][d].len() { let (p, co) = self.sp.rate[k][d][q]; if self.disc[self.col_of[p]] == 0 { self.vals[p] -= val * co; } } }
             }
             for d in 0..self.rules[j].dfactor.len() {
-                let val = tape::eval(&self.rules[j].dfactor[d].1, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack) * g;
+                let val = tape::eval(&self.rules[j].dfactor[d].1, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack) * g;
                 if val != 0.0 { for q in 0..self.sp.factor[k][d].len() { let (p, co) = self.sp.factor[k][d][q]; if self.disc[self.col_of[p]] == 0 { self.vals[p] -= val * co; } } }
             }
         }
@@ -321,8 +321,8 @@ impl Engine {
     #[inline]
     fn rate_at(&mut self, k: usize) -> f64 {
         let j = self.act[k];
-        let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.v, &self.buf, self.na, &mut self.stack);
-        tape::eval(&self.rules[j].rate, &self.n, f, &self.v, &self.buf, self.na, &mut self.stack)
+        let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack);
+        tape::eval(&self.rules[j].rate, &self.n, f, &self.cinv, &self.buf, &mut self.stack)
     }
     #[inline]
     fn count(&self, k: usize) -> f64 { let mut c = f64::INFINITY; for &(i, _) in &self.spec[k] { c = fmin(c, self.n[i]); } c }

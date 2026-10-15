@@ -42,7 +42,7 @@ test('② block · inhibit · clamp · dose_series', () => {
   const ir = IRB.buildFateIR(DB, SRC, inh.scenario), j = ir.rules.findIndex((R) => R.ref === RULE.ref), j0 = base.rules.findIndex((R) => R.ref === RULE.ref);
   assert.equal(ir.rules[j].scale, 0.25);
   const ver = DER.verifyIR(DB, ir, inh.scenario); assert.equal(ver.problems.length, 0, ver.problems.join('; ')); assert.ok(ver.rateWorst <= 1e-14);
-  const N = base.keys.map((_, i) => 1000 + 37 * i), sp = { V: base.species.map((s) => s.V), buf: base.species.map((s) => (s.buf == null ? Infinity : s.buf)) };
+  const N = base.keys.map((_, i) => 1000 + 37 * i), sp = { cinv: base.species.map((s) => s.cinv), buf: base.species.map((s) => (s.buf == null ? Infinity : s.buf)) };
   const r1 = DER.runTape(ir.jac.rate[j], N, 1, sp), r0 = DER.runTape(base.jac.rate[j0], N, 1, sp);
   assert.ok(Math.abs(r1 - 0.25 * r0) <= 1e-14 * Math.abs(r0), `${r1} vs ${0.25 * r0}`);
   // 배율을 시나리오와 다르게 꾸민 IR 은 사법부가 잡는다

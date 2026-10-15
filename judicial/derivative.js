@@ -25,12 +25,13 @@ const dpowr = (a, n) => D(Math.pow(a.v, n), a.v === 0 ? (n === 1 ? a.d : 0) : n 
 const AR = [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 5, 6];
 function runTape(t, N, f, sp) {
   const st = [];
-  const c = (i) => { const V = sp.V[i]; if (!(V > 0)) return 0; const x = Math.max(0, N[i]) / (M.NA * V); return Math.min(x, sp.buf[i]); };
+  // 명세(IR 4): 농도 = max(0,N)·cinv, cinv = 1/(N_A·V) 는 접은 상수 — sp.cinv 는 사법부가 부피에서 따로 계산한 값(lawsFromDB)
+  const c = (i) => { const q = sp.cinv[i]; if (!(q > 0)) return 0; return Math.min(Math.max(0, N[i]) * q, sp.buf[i]); };
   for (let p = 0; p < t.length;) {
     const op = t[p], a = t.slice(p + 1, p + 1 + AR[op]); p += 1 + AR[op];
     if (op === 0) st.push(a[0]);
     else if (op === 1) st.push(c(a[0]));
-    else if (op === 2) { const i = a[0], V = sp.V[i]; st.push(V > 0 && N[i] > 0 && c(i) < sp.buf[i] ? 1 / (M.NA * V) : 0); }
+    else if (op === 2) { const i = a[0], q = sp.cinv[i]; st.push(q > 0 && N[i] > 0 && c(i) < sp.buf[i] ? q : 0); }
     else if (op === 3) st.push(Math.max(0, N[a[0]]));
     else if (op === 4) st.push(N[a[0]] > 0 ? 1 : 0);
     else if (op === 5) st.push(f);
@@ -53,10 +54,15 @@ function lawsFromDB(db, ir, sc) {
   const kinOf = (ref) => ((sc.kinetics || {})[ref] ? sc.kinetics[ref] : (ix.ruleOf(ref) || {}).kinetics || null);
   const volL = {}; for (const [l, v] of Object.entries(sc.volumes || {})) if (M.VOL[v.unit]) volL[l] = v.value * M.VOL[v.unit];
   const sp = { V: ir.keys.map((b) => volL[b.split('|').pop()] || 0), buf: ir.keys.map((b) => ((sc.buffered || {})[b] ? sc.buffered[b].conc_M : Infinity)) };
+  sp.cinv = sp.V.map((V) => (V > 0 ? 1 / (M.NA * V) : 0)); // 접은 상수를 사법부가 따로 — IR 의 값과 비트까지 같아야 한다
   const Ksat = ir.coupling.saturation_K, srcK = ir.coupling._source.saturation_K;
   if (srcK === 'scenario' && Ksat !== sc.saturation_K) problems.push(`saturation_K ${Ksat} ≠ 시나리오 ${sc.saturation_K}`);
   if (srcK === 'default' && Ksat !== M.SAT_K) problems.push(`saturation_K ${Ksat} ≠ 기본값 ${M.SAT_K}`);
-  for (let i = 0; i < ir.keys.length; i++) { const s = ir.species[i]; if (s.V !== sp.V[i] || (s.buf == null ? Infinity : s.buf) !== sp.buf[i]) problems.push(`묶음 ${ir.keys[i]} 의 부피·완충 값이 시나리오와 다름`); }
+  for (let i = 0; i < ir.keys.length; i++) {
+    const s = ir.species[i];
+    if (s.V !== sp.V[i] || (s.buf == null ? Infinity : s.buf) !== sp.buf[i]) problems.push(`묶음 ${ir.keys[i]} 의 부피·완충 값이 시나리오와 다름`);
+    if (s.cinv !== sp.cinv[i]) problems.push(`묶음 ${ir.keys[i]} 의 접은 상수 cinv ${s.cinv} ≠ 1/(N_A·V) ${sp.cinv[i]}`);
+  }
   const laws = ir.rules.map((R) => {
     const r = ix.ruleOf(R.ref), k = kinOf(R.ref), L = { ref: R.ref, k, kind: r ? r.type : null, cons: [], mods: [] };
     if (!r) { problems.push(`${R.ref}: db 에 없음`); return L; }

@@ -18,9 +18,10 @@ fn docc(mut s: f64, k: f64, n: f64, smin: f64) -> f64 {
     n * x / (s * (1.0 + x) * (1.0 + x))
 }
 
-/// 테이프 하나를 평가한다. `n` 상태(분자 수), `f` 이 규칙의 고정 배율, `v` 묶음 부피(L), `buf` 완충 상한(M, 없으면 ∞), `na` 아보가드로 수.
+/// 테이프 하나를 평가한다. `n` 상태(분자 수), `f` 이 규칙의 고정 배율, `cinv` 묶음별 1/(N_A·V) (컴파일러가 접은 상수, V = 0 이면 0),
+/// `buf` 완충 상한(M, 없으면 ∞).
 #[inline]
-pub fn eval(t: &[f64], n: &[f64], f: f64, v: &[f64], buf: &[f64], na: f64, st: &mut [f64]) -> f64 {
+pub fn eval(t: &[f64], n: &[f64], f: f64, cinv: &[f64], buf: &[f64], st: &mut [f64]) -> f64 {
     let mut sp = 0usize;
     let mut p = 0usize;
     while p < t.len() {
@@ -30,15 +31,15 @@ pub fn eval(t: &[f64], n: &[f64], f: f64, v: &[f64], buf: &[f64], na: f64, st: &
             0 => { st[sp] = t[p]; p += 1; sp += 1; }
             1 => {
                 let i = t[p] as usize; p += 1;
-                let vv = v[i];
-                let mut c = if vv > 0.0 { max0(n[i]) / (na * vv) } else { 0.0 };
+                let q = cinv[i];
+                let mut c = if q > 0.0 { max0(n[i]) * q } else { 0.0 };
                 if c > buf[i] { c = buf[i]; }
                 st[sp] = c; sp += 1;
             }
             2 => {
                 let i = t[p] as usize; p += 1;
-                let vv = v[i];
-                st[sp] = if vv > 0.0 && n[i] > 0.0 && max0(n[i]) / (na * vv) < buf[i] { 1.0 / (na * vv) } else { 0.0 };
+                let q = cinv[i];
+                st[sp] = if q > 0.0 && n[i] > 0.0 && max0(n[i]) * q < buf[i] { q } else { 0.0 };
                 sp += 1;
             }
             3 => { let i = t[p] as usize; p += 1; st[sp] = max0(n[i]); sp += 1; }
@@ -72,27 +73,32 @@ mod tests {
     #[test]
     fn mass_action_and_hill() {
         let na = 6.02214076e23;
-        let v = [1e-12, 1e-12];
+        let cinv = [1.0 / (na * 1e-12), 1.0 / (na * 1e-12)];
         let buf = [f64::INFINITY, f64::INFINITY];
         let n = [6.02214076e11, 3.0e11];
         let mut st = [0.0; 16];
         // 2·f·c0^1·sat(c1; 1e-6)
         let t = [0.0, 2.0, 5.0, 6.0, 1.0, 0.0, 8.0, 1.0, 6.0, 1.0, 1.0, 10.0, 1e-6, 6.0];
-        let c0 = n[0] / (na * v[0]); let c1 = n[1] / (na * v[1]);
+        let c0 = n[0] / (na * 1e-12); let c1 = n[1] / (na * 1e-12);
         let want = 2.0 * 0.5 * c0 * (c1 / (c1 + 1e-6));
-        let got = eval(&t, &n, 0.5, &v, &buf, na, &mut st);
+        let got = eval(&t, &n, 0.5, &cinv, &buf, &mut st);
         assert!(((got - want) / want).abs() < 1e-15);
         // HILL activates K=1 n=2 fmax=5 at s=1 → 3
         let h = [0.0, 1.0, 12.0, 1.0, 1.0, 2.0, 5.0, 0.0];
-        assert!((eval(&h, &n, 1.0, &v, &buf, na, &mut st) - 3.0).abs() < 1e-15);
+        assert!((eval(&h, &n, 1.0, &cinv, &buf, &mut st) - 3.0).abs() < 1e-15);
     }
     #[test]
     fn buffered_cap_derivative_zero() {
-        let na = 6.02214076e23;
-        let v = [1e-12]; let buf = [1e-3];
+        let cinv = [1.0 / (6.02214076e23 * 1e-12)]; let buf = [1e-3];
         let n = [1e15]; // c ≫ 1 mM
         let mut st = [0.0; 4];
-        assert_eq!(eval(&[1.0, 0.0], &n, 1.0, &v, &buf, na, &mut st), 1e-3);
-        assert_eq!(eval(&[2.0, 0.0], &n, 1.0, &v, &buf, na, &mut st), 0.0);
+        assert_eq!(eval(&[1.0, 0.0], &n, 1.0, &cinv, &buf, &mut st), 1e-3);
+        assert_eq!(eval(&[2.0, 0.0], &n, 1.0, &cinv, &buf, &mut st), 0.0);
+    }
+    #[test]
+    fn zero_volume_is_zero_concentration() {
+        let mut st = [0.0; 4];
+        assert_eq!(eval(&[1.0, 0.0], &[5.0], 1.0, &[0.0], &[f64::INFINITY], &mut st), 0.0);
+        assert_eq!(eval(&[2.0, 0.0], &[5.0], 1.0, &[0.0], &[f64::INFINITY], &mut st), 0.0);
     }
 }
