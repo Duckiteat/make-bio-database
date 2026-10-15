@@ -698,7 +698,7 @@
       "format": "Markdown",
       "writer": "사람·AI",
       "readers": "Claude Code 등 AI 에이전트 (세션 시작 시 자동)",
-      "interpret": "에이전트가 반드시 지킬 작업 규칙의 요약."
+      "interpret": "에이전트가 반드시 지킬 작업 규칙의 한 줄 점검표(세션마다 자동으로 실리므로 짧게). 이유·경위·예시는 docs/design/agent-rules.md — 규칙은 두 곳에 같이 있고 함께 고친다."
     },
     {
       "path": "CHANGES.md",
