@@ -56,6 +56,13 @@ function scoreEvidence(ev, ctx) {
 
 // ----- 항목 모으기 -----
 // 등급을 다는 것은 "쓸 수 있는가" 를 물을 수 있는 것뿐이다: 외부 ID·지문(정체성) · 근거를 가진 주장 · 속도 상수 · 관찰 기록.
+// 관찰 기록의 (S,D): 출처가 문헌 식별자면 S3(철회면 S0, 그 밖 S2) · 불확도와 반복 수가 있으면 D4(실측) 아니면 D3
+function scoreObservation(o) {
+  const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db);
+  return { s: o.retracted ? 0 : doi ? 3 : 2, d: o.uncertainty && o.replicates >= 1 ? 4 : 3,
+    why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · 반복 ${o.replicates || 0}` };
+}
+
 function items(db, opt) {
   db = M.normalize(db); opt = opt || {};
   const ix = M.index(db);
@@ -93,10 +100,8 @@ function items(db, opt) {
   }
   // 관찰 기록 (v10): 불확도·반복 수가 있는 실측 — 철회된 것은 차단
   for (const [oid, o] of Object.entries(db.observations || {})) {
-    const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db);
-    const s = o.retracted ? 0 : doi ? 3 : 2, dd = o.uncertainty && o.replicates >= 1 ? 4 : 3;
-    add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || {}).kind || '?'} (${o.use || '?'})`, s, d: dd, trend: 'unchecked',
-      why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · 반복 ${o.replicates || 0}` });
+    const sc = scoreObservation(o);
+    add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || {}).kind || '?'} (${o.use || '?'})`, s: sc.s, d: sc.d, trend: 'unchecked', why: sc.why });
   }
   return out;
 }
@@ -172,5 +177,5 @@ function constantVerdict(ir, sc, opt) {
 }
 const constantText = (v) => (v.error ? v.error : `문턱 ${v.min}${v.hypothetical ? ' · 시나리오는 hypothetical (가상 값 허용)' : ''} · 상수 ${v.n} (${Object.entries(v.byGrade).map(([g, n]) => `${g} ${n}`).join(' · ') || '없음'})${v.violations.length ? ` · 위반 ${v.violations.length}: ${v.violations.slice(0, 3).map((x) => `${x.ref} ${x.msg}`).join(' / ')}` : ''}`);
 
-return Object.freeze({ DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, items, summary, meets, gradeText });
+return Object.freeze({ DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
 });

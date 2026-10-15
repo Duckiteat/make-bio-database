@@ -73,12 +73,16 @@ function equivalence(o, A, opt) {
   const log = A.scale === 'ln', scale = decl.scale || 'linear';
   if (!(decl.delta > 0) || !Number.isFinite(decl.delta)) return { shown: false, requirement: `δ 가 양의 유한수가 아님 (${decl.delta})` };
   if ((scale === 'ln') !== log) return { shown: false, requirement: `δ 의 척도(${scale})가 관찰의 비교 척도(${A.scale})와 다름` };
-  const sd = RELI.scoreEvidence(decl.evidence), grade = RELI.gradeOf(sd.s, sd.d, 'unchecked');
-  const base = { delta: decl.delta, scale, grade, basis: sd.why, d, se };
-  if (!['anchor', 'parameter', 'bounded'].includes(grade)) return Object.assign(base, { shown: false, requirement: `δ 의 근거 등급이 ${grade} (S${sd.s}·D${sd.d}: ${sd.why}) — 동등성 판정에는 parameter 이상(조건부는 bounded) 필요` });
+  // 판정 강도 = min(δ 근거 등급, 검증 관찰 등급) — 둘 중 약한 쪽이 결론의 강도를 정한다 (결정 11)
+  const sd = RELI.scoreEvidence(decl.evidence), dGrade = RELI.gradeOf(sd.s, sd.d, 'unchecked');
+  const so = RELI.scoreObservation(o), oGrade = RELI.gradeOf(so.s, so.d, 'unchecked');
+  const grade = RELI.ORDER.indexOf(dGrade) >= RELI.ORDER.indexOf(oGrade) ? dGrade : oGrade;
+  const base = { delta: decl.delta, scale, grade, delta_grade: dGrade, observation_grade: oGrade, basis: sd.why, d, se };
+  if (!['anchor', 'parameter', 'bounded'].includes(dGrade)) return Object.assign(base, { shown: false, requirement: `δ 의 근거 등급이 ${dGrade} (S${sd.s}·D${sd.d}: ${sd.why}) — 동등성 판정에는 parameter 이상(조건부는 bounded) 필요` });
+  if (!['anchor', 'parameter', 'bounded'].includes(oGrade)) return Object.assign(base, { shown: false, requirement: `검증 관찰의 등급이 ${oGrade} (S${so.s}·D${so.d}: ${so.why}) — 일치를 결론으로 쓰려면 parameter 이상의 관찰 필요` });
   const p = se > 0 ? Math.max(S.normSf((d + decl.delta) / se), S.normCdf((d - decl.delta) / se)) : Math.abs(d) < decl.delta ? 0 : 1;
   const shown = p < alpha, out = Object.assign(base, { p, shown });
-  if (shown && grade === 'bounded') out.conditional = `δ 근거가 bounded — δ = ${fmt(decl.delta)} 가정 아래의 일치`;
+  if (shown && grade === 'bounded') out.conditional = `${dGrade === 'bounded' ? 'δ 근거' : '관찰'}가 bounded — δ = ${fmt(decl.delta)} 가정 아래의 일치`;
   if (!shown) {
     const seReq = (decl.delta - Math.abs(d)) / z1;
     out.required_se = seReq > 0 ? seReq : 0;
@@ -144,7 +148,7 @@ function verdictText(v) {
   if (v.equivalence) {
     const e = v.equivalence;
     lines.push('', e.kind === 'below_limit' ? `확신 상한: 예측이 검출 한계 아래일 확률 ${fmt(1 - e.p)}`
-      : e.delta != null ? `동등성(TOST): δ ${fmt(e.delta)} (${e.scale}, 근거 등급 ${e.grade} — ${e.basis}), 차 ${fmt(e.d)}, 표준 오차 ${fmt(e.se)}${e.p != null ? `, p ${fmt(e.p)}` : ''}${v.conditional ? ' — ' + v.conditional : ''}`
+      : e.delta != null ? `동등성(TOST): δ ${fmt(e.delta)} (${e.scale}, 강도 ${e.grade} = min(δ ${e.delta_grade}, 관찰 ${e.observation_grade}) — ${e.basis}), 차 ${fmt(e.d)}, 표준 오차 ${fmt(e.se)}${e.p != null ? `, p ${fmt(e.p)}` : ''}${v.conditional ? ' — ' + v.conditional : ''}`
       : '동등성: δ 미선언');
   }
   if (v.preferred) lines.push(`관찰이 고른 가설: ${v.preferred}`);

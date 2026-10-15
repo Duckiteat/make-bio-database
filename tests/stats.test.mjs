@@ -51,7 +51,7 @@ test('③ 검정력: 비중심 χ² 공식 = 모의 기각률, z 검정 필요 �
   const se = S.requiredSE(1); close(S.powerZ(1, se), 0.8, 1e-5, '필요 표준 오차에서 검정력 0.8 (반대쪽 꼬리 몫만큼 위)'); assert.ok(S.powerZ(1, se) >= 0.8);
 });
 
-const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'computed', tool: 'synthetic' } }, o);
+const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'computed', tool: 'synthetic' }, provenance: { source: { db: 'DOI', id: '10.0000/synthetic-obs' } } }, o);
 
 test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백', () => {
   // 표준 오차 25 (sd 50 / √4). 가설 하나의 일치는 선언된 δ 로만 (M1) — δ 는 근거 등급이 붙는 값
@@ -116,6 +116,10 @@ test('④′ 동등성(TOST, M1): δ 근거 등급 · 정밀도 부족 · 차가
   assert.match(v(-1, ev('curated', doi)).limitation.requirement, /양의 유한수/);
   // 두 가설 비교는 그대로 (가르는 판정)
   assert.equal(OC.verdict(obs({ value: 1000, uncertainty: { kind: 'measurement', model: 'normal', sd: 5 } }), [1000], [1030]).verdict, 'CONSISTENT');
+  // 판정 강도 = min(δ, 관찰): 출처 식별자 없는 관찰은 δ 가 좋아도 일치를 결론으로 쓰지 않음
+  const noSrc = v(100, ev('curated', doi), { provenance: undefined });
+  assert.equal(noSrc.verdict, 'INDISTINGUISHABLE'); assert.match(noSrc.limitation.requirement, /검증 관찰의 등급이 reference/);
+  assert.equal(v(100, ev('curated', doi)).equivalence.observation_grade, 'parameter');
   // 보고서 줄에 동등성이 실린다
   assert.match(OC.verdictText(v(100, ev('curated', doi))), /동등성\(TOST\): δ 100/);
 });
