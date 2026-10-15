@@ -11,7 +11,7 @@
 | Structural_Gap | 27 | 3 | 30 |
 | Resource_Gap | 6 | 0 | 6 |
 | Regulatory_Gap | 12 | 0 | 12 |
-| Observation_Gap | 6 | 0 | 6 |
+| Observation_Gap | 7 | 0 | 7 |
 | Identity_Gap | 3 | 9 | 12 |
 | Consensus_Gap | 1 | 0 | 1 |
 
@@ -149,6 +149,7 @@
 | L000100 | D000148 (시트르산 회로) | Observation_Gap | 문헌·큐레이션이 kcat·Km 의 불확도와 반복 수를 함께 보고하지 않아, 관찰 기록 네 건(O+idh_kcat·O+fh_kcat·O+fh_km·O+cs_km_oaa)의 sd 를 보고된 유효 숫자의 해상도로 적었다 — 측정 표준 편차가 아니다. 이 값들로 모델–관찰 비교(obs_compare)를 하면 오차 막대가 실제보다 좁거나 넓다<br>발견: 문헌 조사 2026-10-10 — TCA 상수 찾기 | ✗ 수동: 원 논문 표의 ± 값(또는 원자료) — FEBS J 286:1925 와 Biol Chem 400:1567 은 공개 접근이 아니다 | open (0/1) | — |
 | L000102 | D000116 (구획 농도 모델) | Observation_Gap | 구획 부피는 **관찰 기록으로 받을 수 없다** — 측정량(vocab.observables)에 부피가 없어서다. amount 로 빌려 적어 보니 관문이 두 가지로 거부했다: "측정 대상: '구획 농도 모델'(principle) 는 기전에 참여할 수 없음"(amount 의 대상은 참여 분자의 묶음이어야 함)과 "단위 'm^3' — 이 측정량의 SI 정준 단위는 'molecule'". 그래서 부피는 정의항 obs(compartment_volume)에만 있고, 불확도·반복 수·출처 sha256 을 담는 관찰 기록은 없다. 또 정의항 obs 에는 관찰 기록을 가리키는 from 칸이 없어 측정 ↔ 파생값 연결이 note 로만 남는다(kinetics 는 kinetics.from 으로 연결된다)<br>발견: 농도·부피 측정값 수집 2026-10-10 (관문이 직접 거부) | ✗ 수동: 측정량 종류 volume(대상 = 위치, SI 단위 m³) 추가와 정의항 obs 에 from(관찰 기록 참조) 칸을 두는 결정 — 어휘·계약(schemas/obs/)·사법부 검사를 함께 | open (0/1) | — |
 | L000106 | D000050 (cAMP 신호 전달) | Observation_Gap | 서열 길이(sequence_length)는 관찰 기록으로 받을 수 없다 — 측정량(vocab.observables)에 대응 항목이 없어서다. 그래서 정의항 obs 45 건의 서열 길이는 새 from 대조(v11)의 대상이 아니고, 값이 바뀌어도 관찰과 어긋나는지 검사되지 않는다. 지금은 모두 evidence.level 이 curated 가 아니어서 from 이 요구되지 않지만, 문헌에서 서열 길이를 가져오면 그 자리에 대조가 없다<br>발견: 안전장치 v11 (레드팀 시나리오 2·4 를 막는 중에 드러남) | ✗ 수동: 측정량 'sequence_length'(대상 = 묶음 또는 정의항, 단위 aa\|nt\|bp) 를 둘지 결정 — 서열 길이는 측정이라기보다 참조 서열의 속성이어서 관찰 포트에 맞는지가 먼저다 | open (0/1) | — |
+| L000107 | D000189 (펩타이드 적재 복합체) | Observation_Gap | 정성 관찰 O000019(de la Salle et al., 1994 — 사람 TAP 결손 형제, 표면 class I 이 매우 낮음)는 초록만 받아 측정한 세포 유형(림프구·섬유아세포·B 세포주 등)과 대조 세포를 알 수 없다. 그래서 모의 실험 규약의 대응 실험(matched_experiment.system.cell)을 세울 수 없고, 수지상 세포 상태(D000202)에서 한 모의 판정 '맞음' 은 탐색 실행이다(결론 아님). 판정에는 환자 세포 → 수지상 세포의 맥락 이전(V8)도 끼어 있다.<br>발견: build-plan 10 관문 A′ — node dbtool.mjs observe O000019 --state D000202 --scenario examples/scenarios/mhc-dc-immature-baseline-hypothetical.json | ✗ 수동: 원문(DOI 10.1126/science.7517574) 방법·그림 설명에서 표면 class I 을 잰 세포 유형과 대조군을 확인 → 관찰 condition.cell 을 새 관찰(O+1)로 다시 넣고 이 관찰은 철회 표시, 그 세포 유형의 시나리오로 규약 선언 → register → observe | open (0/1) | — |
 
 ## Identity_Gap — 정체성(외부 ID) 공백
 

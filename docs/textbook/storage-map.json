@@ -1042,6 +1042,14 @@
       "interpret": "hypothetical: true 면 가상 값 — 엔진 시험용. 결론·데이터베이스에 쓰지 않는다. lps-hypothetical(LPS 경로 + 저장소·공급·mRNA 분해), camp-competition(감사 시험), gtp-exhaustion / gtp-regeneration(공급 유무로 기질 고갈 대 순환 재생). tca-acetylcoa-exhaustion / tca-nad-exhaustion / tca-co2-equilibrium(시트르산 회로 소진 시험: 자원 고갈 2종과 산물 축적 평형)."
     },
     {
+      "path": "docs/reports/*.md",
+      "class": "history",
+      "format": "Markdown (네 칸 표 + 다음에 필요한 것 + 재현 명령)",
+      "writer": "입법 서기 writeReport (구역 report)",
+      "readers": "사람",
+      "interpret": "관문 보고서 — 판정 수준(탐색·결론)을 맨 위에. 2026-10-15-gate-a-prime-tap-mhc1: build-plan 10 관문 A′ (TAP 결손 정성 관찰 O000019, 0 층 구조 지지 + 모의 맞음, 탐색 실행 — 한계 L000107)."
+    },
+    {
       "path": "examples/observations/*.json",
       "class": "scenario",
       "format": "관찰 JSON (schemas/obs/observation.schema.json)",
