@@ -1,0 +1,88 @@
+{
+  "applied_at": "2026-10-15T17:25:45.959Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000108"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000108"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000108": [
+          "resolution"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "L000108 해결 기록의 단계 번호 정정 — 조립 단계는 S000057 (앞 패치에 S000053 으로 잘못 적음)",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000108",
+          "before": "resolved_manual",
+          "after": "resolved_manual"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "L000108 해결 기록의 단계 번호 정정 — 조립 단계는 S000057 (앞 패치에 S000053 으로 잘못 적음)",
+  "limitations": [
+    {
+      "id": "L000108",
+      "target": "D000189",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "펩타이드 적재 복합체(D000189)는 타파신(D000186)·칼레티큘린(D000187)·ERp57(D000188)·TAP1/2 를 components 로 나열하지만, 이 구성 요소들이 복합체의 조립·기능으로 배선되어 있지 않다(복합체가 소비하는 입력도, 구성 요소 → 복합체 간선도 없다). 그래서 구성 요소 하나를 끊는 정성 관찰(O000020: 타파신 없는 220 세포에서 표면 class I 낮음)을 판정할 수 없다 — 0 층은 '경로 없음', 모의는 '대상 D000186 이 이 계에 없음'. 복합체 전체를 끊는 교란(O000019: TAP, 대상 D000189)이나 조립 단계를 거치는 구성 요소(O000021: β2m → D000190 조립)는 판정된다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "적재 복합체의 조립을 기전 단계로 넣어 구성 요소(타파신·칼레티큘린·ERp57)가 복합체 생성의 입력이 되게 하거나, 적어도 구성 요소 → 복합체 묶음의 영향 간선을 두어 구성 요소 knockout 이 복합체 기능에 닿게 한다 — 그 뒤 O000020 을 다시 판정"
+          }
+        ]
+      },
+      "found_in": "build-plan 12A — node dbtool.mjs qualgraph O000020 · observe O000020",
+      "resolution": {
+        "note": "조립 단계 D000189/rule/assembly (S000057) 를 넣었다 — 구성 요소 5 개가 입력, 복합체가 산물. 기존 시나리오는 복합체를 직접 심고 이 규칙에 상수를 주지 않아 궤적 불변(MHC 4 시나리오 비트 같음). 구성 요소를 심는 시나리오(mhc-dc-plc-from-components-hypothetical)에서 타파신 knockout 은 0 층 구조 지지 + 모의 표면 pMHC I −70,953 분자(맞음). 조립을 한 단계로 묶은 것·5-체 화학량은 추론이다.",
+        "evidence": {
+          "level": "computed",
+          "tool": "node dbtool.mjs qualgraph O000020 · observe O000020 --scenario examples/scenarios/mhc-dc-plc-from-components-hypothetical.json · docs/reports/2026-10-15-mhc1-qualitative-batch.md"
+        }
+      }
+    }
+  ],
+  "recorded_at": "2026-10-15T17:25:45.680Z"
+}

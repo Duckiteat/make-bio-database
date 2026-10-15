@@ -5,7 +5,7 @@
     "next": {
       "T": 210,
       "D": 212,
-      "S": 57,
+      "S": 58,
       "L": 109,
       "O": 22,
       "V": 65
@@ -13513,6 +13513,23 @@
             "level": "abstracted",
             "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
+        },
+        {
+          "id": "assembly",
+          "type": "transition",
+          "label": "펩타이드 적재 복합체 조립",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "associate",
+            "complex": "D000189"
+          },
+          "regulators": [],
+          "text": "TAP1–TAP2 수송체에 타파신이 MHC I 을 연결하고 칼레티큘린·ERp57 이 붙어 적재 복합체가 된다. 단계적 조립(TAP 이량체 → 타파신 가교 → 렉틴 샤페론)을 한 묶음으로 둔다 (Structural_Gap L000108 을 닫는 배선 — 구성 요소 하나를 끊으면 복합체가 서지 못한다). 화학량·순서는 문헌이 아니라 기전 흐름에서 온 추론이다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조 — TAP·타파신·칼레티큘린·ERp57·MHC I). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 추론이다."
+          }
         }
       ],
       "note": "Blees et al. (2017) 의 구조는 TAP 하나에 편집 모듈 둘(타파신·ERp57·칼레티큘린·MHC I 각 2) — 여기서는 구성 비를 1 로 둠 (Structural_Gap)."
@@ -17151,6 +17168,36 @@
       "part_of": [
         "D000178"
       ]
+    },
+    "S000057": {
+      "rule": "D000189/rule/assembly",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000184|er_membrane"
+        },
+        {
+          "b": "D000185|er_membrane"
+        },
+        {
+          "b": "D000186|er_membrane"
+        },
+        {
+          "b": "D000187|er_lumen"
+        },
+        {
+          "b": "D000188|er_lumen"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000189|er_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000177"
+      ]
     }
   },
   "limitations": {
@@ -19760,7 +19807,14 @@
           }
         ]
       },
-      "found_in": "build-plan 12A — node dbtool.mjs qualgraph O000020 · observe O000020"
+      "found_in": "build-plan 12A — node dbtool.mjs qualgraph O000020 · observe O000020",
+      "resolution": {
+        "note": "조립 단계 D000189/rule/assembly (S000057) 를 넣었다 — 구성 요소 5 개가 입력, 복합체가 산물. 기존 시나리오는 복합체를 직접 심고 이 규칙에 상수를 주지 않아 궤적 불변(MHC 4 시나리오 비트 같음). 구성 요소를 심는 시나리오(mhc-dc-plc-from-components-hypothetical)에서 타파신 knockout 은 0 층 구조 지지 + 모의 표면 pMHC I −70,953 분자(맞음). 조립을 한 단계로 묶은 것·5-체 화학량은 추론이다.",
+        "evidence": {
+          "level": "computed",
+          "tool": "node dbtool.mjs qualgraph O000020 · observe O000020 --scenario examples/scenarios/mhc-dc-plc-from-components-hypothetical.json · docs/reports/2026-10-15-mhc1-qualitative-batch.md"
+        }
+      }
     }
   },
   "observations": {
