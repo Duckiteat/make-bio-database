@@ -7,7 +7,7 @@
       "D": 212,
       "S": 58,
       "L": 111,
-      "O": 22,
+      "O": 23,
       "V": 65
     }
   },
@@ -19834,15 +19834,15 @@
       "target": "D000148",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "시트르산 회로 효소 반응 규칙(시트르산 생성효소 D000149/condense·숙신산 탈수소효소 D000154·말산 탈수소효소 D000156·석시닐-CoA 합성효소 D000153·2-옥소글루타르산 탈수소효소 D000152·젖산 탈수소효소 D000171)에 실측 속도 상수(kcat·Km)가 없다 — 지금 실측은 IDH(D000151)·FH(D000155) 둘뿐이고 나머지 동적 상수는 시나리오의 가상값이다. 2026-10-16 수집 시도에서 닿는 출처로는 채우지 못했다: SABIO-RK 는 사이트 개편으로 옛 REST(sabioRestWebServices)가 404, eQuilibrator(api.equilibrator.org)는 환경 네트워크 정책이 거부(502), BRENDA 는 계정·SOAP 필요, UniProt(닿음)는 사람 CS(O75390)·IDH2(P48735)에 Km 두 개씩만 있고 기질명이 비어 있어(구조화 필드 None, 초록·본문 표에만) 어느 Km 인지 확인 불가, kcat 는 없음. 초록만 받는 Europe PMC 로는 본문 표의 kcat/Km 을 확인할 수 없다.",
+        "text": "시트르산 회로 효소 반응 규칙(시트르산 생성효소 D000149/condense·숙신산 탈수소효소 D000154·말산 탈수소효소 D000156·석시닐-CoA 합성효소 D000153·2-옥소글루타르산 탈수소효소 D000152·젖산 탈수소효소 D000171)에 실측 속도 상수(kcat·Km)가 없다 — 실측은 IDH(D000151)·FH(D000155) 둘뿐. 2026-10-16 모든 도메인을 연 뒤에도 자동 수집 불가로 확인됨(네트워크가 아닌 서비스 문제): SABIO-RK 는 REST API 폐지(옛 경로 /ui/404), BRENDA 는 WSDL 은 닿으나 계정·SOAP 필요, eQuilibrator 는 api.equilibrator.org 호스트가 502(본 사이트는 200), UniProt 는 사람 CS·IDH2 에 Km 만(기질 미상·kcat 없음), OA 논문 전문(Europe PMC)은 받히지만 절대 kcat/Km 이 그림·보충자료에 잠겨 본문 텍스트로 확인 불가(예: 사람 CS PMC12616816 은 WT 대비 배수만 본문에).",
         "needs": [
           {
             "kind": "manual",
-            "text": "셋 중 하나: (1) 환경 Network access 에 api.equilibrator.org(ΔG°)·SABIO-RK 새 API 호스트를 Allowed domains 로 추가 → 직접 수집, (2) 사용자가 BRENDA/논문 본문에서 효소별 kcat·기질별 Km(사람 9606, 출처 DOI·PMID)을 제공 → 관찰 포트로 기록, (3) 닿는 범위(정성 관찰·서열·위치)로 검증 자원을 먼저 키운다. 값은 어느 경우든 관찰(O…)로 넣고 규칙 kinetics.from 이 참조"
+            "text": "둘 중 하나: (1) BRENDA 계정(무료 등록)·credential 을 주면 WSDL 로 효소별 kcat·Km 질의 → 관찰 포트 기록, (2) 사용자가 특정 값(사람 9606, 출처 DOI·PMID, 조건)을 직접 제공 → 관찰 포트 기록. eQuilibrator api 호스트가 복구되면 ΔG° 는 직접 가능. 그 전에는 정량 속도 자원은 보류하고 정성 관찰·서열·위치로 검증 자원을 키운다(route 3)."
           }
         ]
       },
-      "found_in": "build-plan 12A 실측 수집 시도 2026-10-16 — SABIO REST 404 · eQuilibrator 네트워크 거부 · UniProt Km 기질 미상·kcat 없음"
+      "found_in": "build-plan 12A 실측 수집 시도 2026-10-15~16 — 도메인 개방 후 재확인"
     }
   },
   "observations": {
@@ -20641,6 +20641,49 @@
       "evidence_at": "1988",
       "recorded_at": "2026-10-15T17:11:27.455Z",
       "note": "β2m 결손 Daudi 는 표면 class I 이 없고 β2m 유전자 복원으로 회복 — 교란 대비 방향으로 knockout β2m → 표면 펩타이드–MHC I 감소. 측정 세포는 Daudi(사람 버킷림프종) — 모델 수지상 세포 상태에서 판정하면 맥락 이전."
+    },
+    "O000022": {
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000198"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000201|plasma_membrane"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "These results show that HLA-DMA and -DMB, genes of previously unknown function mapping between HLA-DP and HLA-DQ, are required for the normal assembly of peptides with MHC class II molecules.",
+      "provenance": {
+        "sha256": "bba0141df0ff99dde42b1d9ca2d643db4d58347a149cd311877325901e339e92",
+        "source": {
+          "db": "PMID",
+          "id": "8139690"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/368554a0",
+            "citation": "Fling SP, Arp B, Pious D, 1994, Nature"
+          },
+          {
+            "db": "PMID",
+            "id": "8139690",
+            "citation": "Fling SP, Arp B, Pious D, 1994, Nature"
+          }
+        ]
+      },
+      "experiment": "Fling 1994 — HLA-DM 결손 APC 변이세포 2.2.93·9.5.3",
+      "evidence_at": "1994",
+      "recorded_at": "2026-10-16T05:56:33.846Z",
+      "note": "HLA-DM 복합체(D000198) 없으면 펩타이드–MHC II 적재가 결함 → 표면 펩타이드–MHC II(D000201) 감소. DM 없이도 CLIP 결합 MHC II 는 표면에 남지만 항원 펩타이드 적재 복합체(D000201)는 준다. 측정 세포는 사람 APC 변이세포(2.2.93·9.5.3, B-LCL 유래) — 모델 수지상 세포 상태에서 판정하면 맥락 이전."
     }
   },
   "values": {
