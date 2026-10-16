@@ -1,0 +1,98 @@
+{
+  "applied_at": "2026-10-16T16:47:47.188Z",
+  "result": {
+    "added": [
+      "O000027"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "observations": [
+          "O000027"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "TIER A 독립 축 — 복제 노화(텔로미어). Bodnar et al. 1998(Science, PMID 9454332)의 1차 관찰을 정성 검증으로 넣는다: 텔로머레이스가 없으면(telomerase-negative 대조 클론) 텔로미어가 짧아지고 노화한다. 모델에서 교란 = 텔로머레이스 신장 규칙 차단(telomerase-negative 대조 클론에 대응), 읽을거리 = 텔로미어 반복 길이 감소. MHC 와 분자·경로·읽을거리가 완전히 달라 우연 기준선의 진짜 독립 단위가 된다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db",
+  "version": 12,
+  "why": "TIER A 독립 축 — 복제 노화(텔로미어). Bodnar et al. 1998(Science, PMID 9454332)의 1차 관찰을 정성 검증으로 넣는다: 텔로머레이스가 없으면(telomerase-negative 대조 클론) 텔로미어가 짧아지고 노화한다. 모델에서 교란 = 텔로머레이스 신장 규칙 차단(telomerase-negative 대조 클론에 대응), 읽을거리 = 텔로미어 반복 길이 감소. MHC 와 분자·경로·읽을거리가 완전히 달라 우연 기준선의 진짜 독립 단위가 된다.",
+  "observations": [
+    {
+      "id": "O+1",
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "block",
+        "target": "D000206/rule/elongation"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000204|nucleoplasm"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "In contrast to telomerase-negative control clones, which exhibited telomere shortening and senescence, telomerase-expressing clones had elongated telomeres, divided vigorously, and showed reduced straining for beta-galactosidase, a biomarker for senescence.",
+      "provenance": {
+        "sha256": "877f947bf931dd6b49b1a7626f9be42477975d04d274bba7c47384cdd1ceb170",
+        "source": {
+          "db": "PMID",
+          "id": "9454332"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1126/science.279.5349.349",
+            "citation": "Bodnar AG et al., 1998, Science"
+          },
+          {
+            "db": "PMID",
+            "id": "9454332",
+            "citation": "Bodnar AG et al., 1998, Science"
+          }
+        ]
+      },
+      "experiment": "Bodnar 1998 — hTERT 도입 사람 섬유아세포·RPE 세포",
+      "evidence_at": "1998",
+      "note": "교란 대응: 원문의 telomerase-negative 대조 클론을 모델의 '텔로머레이스 신장 규칙(D000206/rule/elongation) 차단'으로 둔다(telomerase 를 켜는 것은 그 규칙을 더하는 것이므로, 끄는 것은 그것을 빼는 block). 읽을거리 = 텔로미어 반복 단위(D000204) 양 감소 = 원문의 'telomere shortening'. 측정 세포는 사람 섬유아세포·망막색소상피(RPE) — 모델의 증식 섬유아세포 상태(D000210)에서 판정하면 RPE 분은 맥락 이전(V8). 노화 도달 자체(상태 D000211)는 후보 상태가 적어 우연 기준선이 약하므로, 반복 길이 감소를 읽을거리로 택했다."
+    }
+  ],
+  "recorded_at": "2026-10-16T16:47:46.134Z"
+}

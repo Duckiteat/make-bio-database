@@ -6,8 +6,8 @@
       "T": 211,
       "D": 213,
       "S": 58,
-      "L": 114,
-      "O": 27,
+      "L": 115,
+      "O": 28,
       "V": 69
     }
   },
@@ -20010,6 +20010,21 @@
       },
       "found_in": "TIER A 확장 — LPS 축 대식세포 상태(D000212) 신설 후 fate 성능 측정, 2026-10-16. simulateFate(D000212, lps-tnf-validation) 모의 60초 > 벽시간 60초",
       "by": "Claude"
+    },
+    "L000114": {
+      "target": "D000210",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "정성 관찰 O000027(Bodnar et al., 1998 — hTERT 도입이 사람 섬유아세포·RPE 의 텔로미어 단축·노화를 막음)은 사람 섬유아세포와 망막색소상피(RPE) 두 세포에서 측정했는데, 모델은 증식 섬유아세포 상태(D000210)에서만 판정한다. 섬유아세포 분은 세포가 맞으나 RPE 분은 섬유아세포 상태로 판정하는 맥락 이전(V8)이다(observe 가 자동으로 깃발을 단다). 또 상수가 전부 가상이라 방향(telomerase 차단 → 텔로미어 반복 길이 감소)만 결론이고 크기(−1251 단위)는 측정 예측이 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "RPE 세포 상태를 모델에 추가하거나, 섬유아세포만 측정한 1차 문헌 관찰로 바꾸면 RPE 분 맥락 이전이 사라진다. 텔로미어 소모·신장 속도의 실측 상수가 들어오면 크기도 검증 범위에 든다."
+          }
+        ]
+      },
+      "found_in": "TIER A 독립 축 — O000027 텔로미어 검증(사전 등록 #4), node dbtool.mjs observe O000027 --state D000210 --scenario examples/scenarios/telomere-telomerase-validation-hypothetical.json, 2026-10-16",
+      "by": "Claude"
     }
   },
   "observations": {
@@ -21027,6 +21042,49 @@
       },
       "recorded_at": "2026-10-16T09:24:42.909Z",
       "note": "BRENDA EC 4.2.1.3 Homo sapiens, 사람 미토콘드리아 아코니테이스(ACO2), 시트르산 기질, WT, pH 7.4, 25 °C; 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC4.2.1.3-Homo-sapiens.json"
+    },
+    "O000027": {
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "block",
+        "target": "D000206/rule/elongation"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000204|nucleoplasm"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "In contrast to telomerase-negative control clones, which exhibited telomere shortening and senescence, telomerase-expressing clones had elongated telomeres, divided vigorously, and showed reduced straining for beta-galactosidase, a biomarker for senescence.",
+      "provenance": {
+        "sha256": "877f947bf931dd6b49b1a7626f9be42477975d04d274bba7c47384cdd1ceb170",
+        "source": {
+          "db": "PMID",
+          "id": "9454332"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1126/science.279.5349.349",
+            "citation": "Bodnar AG et al., 1998, Science"
+          },
+          {
+            "db": "PMID",
+            "id": "9454332",
+            "citation": "Bodnar AG et al., 1998, Science"
+          }
+        ]
+      },
+      "experiment": "Bodnar 1998 — hTERT 도입 사람 섬유아세포·RPE 세포",
+      "evidence_at": "1998",
+      "recorded_at": "2026-10-16T16:47:46.134Z",
+      "note": "교란 대응: 원문의 telomerase-negative 대조 클론을 모델의 '텔로머레이스 신장 규칙(D000206/rule/elongation) 차단'으로 둔다(telomerase 를 켜는 것은 그 규칙을 더하는 것이므로, 끄는 것은 그것을 빼는 block). 읽을거리 = 텔로미어 반복 단위(D000204) 양 감소 = 원문의 'telomere shortening'. 측정 세포는 사람 섬유아세포·망막색소상피(RPE) — 모델의 증식 섬유아세포 상태(D000210)에서 판정하면 RPE 분은 맥락 이전(V8). 노화 도달 자체(상태 D000211)는 후보 상태가 적어 우연 기준선이 약하므로, 반복 길이 감소를 읽을거리로 택했다."
     }
   },
   "values": {
