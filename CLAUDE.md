@@ -74,7 +74,7 @@
 
 ## 규칙·코드 바꾸기
 - `vocab.js`·`model.js`·`core.js`·`judicial/`·`legislative/` 규칙은 사용자 요청 시만. 데이터를 통과시키려고 느슨하게 하지 않음.
-- 바꾼 뒤 `node --test tests/*.test.mjs` + `node dbtool.mjs validate`. 새 규칙엔 거부 시험.
+- 반복 중엔 바뀐 게 닿는 테스트 파일만(결정론이라 안 바뀐 부분은 같은 결과 — 재실행은 낭비), 전체 `node --test tests/*.test.mjs` 는 커밋 직전 1회. 엔진·공유 기계(vocab·model·core·engine·compiler·judicial·legislative·형식)를 바꿨으면 그 업데이트가 기존 결과를 여전히 옳게 두는지 재려 전체를 돌린다(이것이 전체 재실행의 본래 목적). 데이터·보고서만 고쳤으면 영향 테스트 + 최종 전체 1회. 어느 경우든 `node dbtool.mjs validate`. 새 규칙엔 거부 시험.
 - 래칫: 거부 패치는 `tests/fixtures/rejections/` + `EXPECT.json`, 바닥값 `tests/fixtures/FLOOR.json`. `skip`·`todo` 금지. 새 규칙 → 말뭉치·바닥값 올림. 의도적 완화는 바닥값 내리는 별도 커밋.
 - 형식 변경 → `migrations/` 스크립트 + `SCHEMA.md` 변경 기록.
 - `index.html` = `viewer.html` 복사본, 둘 다.
