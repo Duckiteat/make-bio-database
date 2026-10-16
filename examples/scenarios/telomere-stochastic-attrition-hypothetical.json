@@ -1,0 +1,150 @@
+{
+  "name": "텔로미어 확률 — 분열당 소모를 확률로 (세포 간 노화 시점 분산)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다. 기원·출처: 이 시나리오는 텔로미어 소모가 매 분열 똑같은 개수(결정론)가 아니라 분포임을 보이기 위한 것이다. Baird et al. 2003 (STELA, 사람 섬유아세포, PMID 12539050 · DOI 10.1038/ng1084): 대부분의 텔로미어는 말단 복제로 점진 소모되나 occasional, more substantial changes(확률 도약)가 겹치고 염색체·대립형질마다 다르다. Hemann et al. 2001 (PMID 11595186 · DOI 10.1016/s0092-8674(01)00504-9): 평균이 아니라 가장 짧은 텔로미어가 결정적. 모델은 텔로미어를 단일 풀로 보므로 염색체별 분포·가장 짧은 것은 못 담지만(한계 L000115), 0차 소모를 확률(stochastic)로 돌리면 세포마다 임계 도달 시각이 흩어지는 세포 간 분산은 보인다. 결정론 대조는 telomere-hayflick-hypothetical.json(노화 고정 78일).",
+  "cell": "fibroblast",
+  "context": {
+    "role": "cause",
+    "state": "D000211",
+    "note": "성장 인자가 있는 동안 분열이 이어져 텔로미어가 임계 600 단위(3.6 kbp)를 지나고, 손상 반응 → p53 → p21 사슬이 분열을 영구히 멈춘다 — 이 실행이 복제 노화에 이르는 원인을 보인다"
+  },
+  "dt_slow": 21600,
+  "t_end": 8640000,
+  "record_every": 1,
+  "volumes": {
+    "nucleoplasm": {
+      "value": 500,
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": 1,
+      "unit": "pL"
+    }
+  },
+  "amounts": {
+    "D000204|nucleoplasm": 1800,
+    "D000207|nucleoplasm": 200,
+    "D000208|nucleoplasm": 200,
+    "D000013|nucleoplasm": 2000000
+  },
+  "signals": {
+    "D000209|extracellular": [
+      {
+        "t": 0,
+        "n": 6022
+      }
+    ]
+  },
+  "thresholds": {
+    "D000204|nucleoplasm": {
+      "low": 600,
+      "high": 1200
+    },
+    "D000208|nucleoplasm": {
+      "low": 1000,
+      "high": 10000
+    }
+  },
+  "commitment": {
+    "horizon": 86400,
+    "coarse": 864000
+  },
+  "arrest_window": 864000,
+  "event_tol": 0.001,
+  "kinetics": {
+    "D000205/rule/division_attrition": {
+      "law": "zero_order",
+      "k": 3.843840433272793e-19,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.9183299543686555e-11,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.2788866362457704e-13,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 3600,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000209/rule/mitogen_drive": {
+      "law": "hill",
+      "K": 1e-12,
+      "n": 4,
+      "fmax": 100,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000204/rule/short_telomere_ddr": {
+      "law": "hill",
+      "K": 1.7933821925477544e-9,
+      "n": 32,
+      "fmin": 0.02,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/p21_transactivation": {
+      "law": "hill",
+      "K": 1.6605390671738467e-8,
+      "n": 2,
+      "fmax": 200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/cdk_arrest": {
+      "law": "hill",
+      "K": 2.6568625074781545e-8,
+      "n": 8,
+      "fmin": 0,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "expect": {
+    "_설명": "실행 전에 적은 가설 — 과정 보고서가 관찰과 대조한다.",
+    "final": "D000211",
+    "divisions_at_crossing": 75,
+    "t_cross_s": 6480000
+  },
+  "report": {
+    "_설명": "시계열에 함께 보일 비율 — 표지(텔로미어 반복 단위·p21)는 자동"
+  },
+  "stochastic": {
+    "seed": 1
+  }
+}
