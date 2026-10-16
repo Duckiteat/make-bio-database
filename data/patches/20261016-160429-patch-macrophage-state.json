@@ -1,0 +1,135 @@
+{
+  "applied_at": "2026-10-16T16:04:29.238Z",
+  "result": {
+    "added": [
+      "T000210",
+      "D000212"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "terms": [
+          "T000210"
+        ],
+        "senses": [
+          "D000212"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "LPS→TLR4→MyD88→NF-κB→TNF 축을 정성 검증 기계(observeQualitative)로 판정할 수 있게, 그 경로들을 기전으로 감싸는 대식세포 세포 상태를 만든다. 지금 이 축은 경로(D000102~105)로만 있고 세포 상태가 없어 '대식세포는 cell_state 가 아님'으로 판정이 막혔다(수지상 세포 D000202 가 MHC 경로를 감싼 것과 같은 구조). 이 상태가 서면 TLR4·MyD88·NF-κB 녹아웃(TNF↓)과 IκBα 녹아웃(TNF↑)을 1차 문헌 정성 관찰로 검증할 수 있다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db",
+  "version": 12,
+  "why": "LPS→TLR4→MyD88→NF-κB→TNF 축을 정성 검증 기계(observeQualitative)로 판정할 수 있게, 그 경로들을 기전으로 감싸는 대식세포 세포 상태를 만든다. 지금 이 축은 경로(D000102~105)로만 있고 세포 상태가 없어 '대식세포는 cell_state 가 아님'으로 판정이 막혔다(수지상 세포 D000202 가 MHC 경로를 감싼 것과 같은 구조). 이 상태가 서면 TLR4·MyD88·NF-κB 녹아웃(TNF↓)과 IκBα 녹아웃(TNF↑)을 1차 문헌 정성 관찰로 검증할 수 있다.",
+  "terms": [
+    {
+      "id": "T+macrophage",
+      "names": {
+        "ko": "대식세포",
+        "en": "macrophage"
+      },
+      "aliases": [
+        "Mφ",
+        "큰포식세포"
+      ]
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+macrophage",
+      "term": "T+macrophage",
+      "kind": "cell_state",
+      "n": 1,
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000235",
+          "status": "asserted",
+          "note": "EBI OLS — macrophage. LPS 를 TLR4 로 인식해 염증 사이토카인을 내는 선천면역 식세포"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "LPS 를 TLR4 로 인식해 MyD88 의존 연쇄로 NF-κB 를 활성화하고 TNF 등 염증 유전자를 전사하는 대식세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "macrophage"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.282.5396.2085",
+                "citation": "Poltorak et al., 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "gap_review": "limitations.md 검토: LPS 계의 열린 한계(L000001·002·006 등)는 속도 상수·농도·시간 공백으로, 세포 상태 유무와 무관하다. 이 상태는 새 공백을 열지 않는다 — 경로(D000103·104·105)를 기전으로 묶기만 하며, 상수는 가상 시나리오로만 돈다.",
+      "mechanisms": [
+        {
+          "ref": "D000103"
+        },
+        {
+          "ref": "D000104"
+        },
+        {
+          "ref": "D000105"
+        }
+      ],
+      "signature": [
+        {
+          "ref": "D000069",
+          "level": "high",
+          "location": "plasma_membrane"
+        }
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-16T16:04:28.477Z"
+}

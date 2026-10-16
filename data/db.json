@@ -3,10 +3,10 @@
   "version": 12,
   "meta": {
     "next": {
-      "T": 210,
-      "D": 212,
+      "T": 211,
+      "D": 213,
       "S": 58,
-      "L": 113,
+      "L": 114,
       "O": 27,
       "V": 69
     }
@@ -1825,6 +1825,16 @@
       "aliases": [
         "senescent fibroblast",
         "헤이플릭 한계에 이른 섬유아세포"
+      ]
+    },
+    "T000210": {
+      "names": {
+        "ko": "대식세포",
+        "en": "macrophage"
+      },
+      "aliases": [
+        "Mφ",
+        "큰포식세포"
       ]
     }
   },
@@ -15800,6 +15810,68 @@
           "level": "high"
         }
       ]
+    },
+    "D000212": {
+      "term": "T000210",
+      "n": 1,
+      "kind": "cell_state",
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000235",
+          "status": "asserted",
+          "note": "EBI OLS — macrophage. LPS 를 TLR4 로 인식해 염증 사이토카인을 내는 선천면역 식세포"
+        }
+      ],
+      "components": [],
+      "desc": [
+        {
+          "text": "LPS 를 TLR4 로 인식해 MyD88 의존 연쇄로 NF-κB 를 활성화하고 TNF 등 염증 유전자를 전사하는 대식세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "macrophage"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.282.5396.2085",
+                "citation": "Poltorak et al., 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ]
+          }
+        }
+      ],
+      "site": {},
+      "rule": [],
+      "gap_review": "limitations.md 검토: LPS 계의 열린 한계(L000001·002·006 등)는 속도 상수·농도·시간 공백으로, 세포 상태 유무와 무관하다. 이 상태는 새 공백을 열지 않는다 — 경로(D000103·104·105)를 기전으로 묶기만 하며, 상수는 가상 시나리오로만 돈다.",
+      "signature": [
+        {
+          "ref": "D000069",
+          "level": "high",
+          "location": "plasma_membrane"
+        }
+      ],
+      "mechanisms": [
+        {
+          "ref": "D000103"
+        },
+        {
+          "ref": "D000104"
+        },
+        {
+          "ref": "D000105"
+        }
+      ]
     }
   },
   "steps": {
@@ -19922,6 +19994,21 @@
         ]
       },
       "found_in": "TIER A 검증 세트 — O000020(사전 등록 #2)·O000022(사전 등록 #3) 결론급 승격, 2026-10-16",
+      "by": "Claude"
+    },
+    "L000113": {
+      "target": "D000212",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "대식세포 상태(D000212)는 LPS→TLR4→MyD88→NF-κB→TNF 경로(D000103·104·105)를 기전으로 감싸 구조적으로 유효하고, 완결 kinetics 시나리오(examples/scenarios/lps-tnf-validation-hypothetical.json)도 22/22 단계를 살려 뒀다. 그러나 fate 엔진의 결합 Rodas3 적분이 이 42종 뻣뻣한 신호 연쇄를 tractable 하게 풀지 못한다 — 모의 60초도 벽시간 60초를 넘겨(완만한 비뻣뻣 상수에서도) 정성 검증(observeQualitative, 대조군+교란+기준 4회 적분)을 돌릴 수 없다. MHC 경로(같은 규모)는 수 초에 돌므로, 이 사슬 특유의 뻣뻣함/결합 구조 문제다. 그래서 LPS 축의 1차 문헌 정성 관찰(TLR4·MyD88 녹아웃 → TNF↓, IκBα 녹아웃 → TNF↑)을 지금은 결론급으로 검증할 수 없다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "적분장 엔진(build-plan 27–37, T3 정수 장·T4 사건 트리거·희소 LU)이 서면 이 뻣뻣한 연쇄를 tractable 하게 풀 수 있는지 재측정한다. 또는 이 사슬에서 병리적 뻣뻣함의 원천(특정 종의 빠른 전이·결합 루프)을 진단해 시나리오·결합점 등록부(engine/coupling.js)에서 수치 선택을 조정한다 — 엔진 소스는 사용자 요청 시만."
+          }
+        ]
+      },
+      "found_in": "TIER A 확장 — LPS 축 대식세포 상태(D000212) 신설 후 fate 성능 측정, 2026-10-16. simulateFate(D000212, lps-tnf-validation) 모의 60초 > 벽시간 60초",
       "by": "Claude"
     }
   },
