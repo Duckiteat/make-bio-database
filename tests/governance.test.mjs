@@ -420,6 +420,10 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   assert.match(rep.judgment.level, /가설 생성|탐색/);
   // 실패를 숨기지 않는다: 열린 한계가 보고된다
   assert.ok(rep.failures.some((f) => f.id === 'L000096' || f.id === 'L000110'), '사람 kcat 공백 한계를 드러낸다');
+  // 판정 기준과 근거: 등급 척도·문턱이 코드(reliability)에서 나오고, 쓰인 등급(parameter)이 표시된다
+  assert.equal(rep.criteria.threshold, 'parameter');
+  assert.ok(rep.criteria.grades.some((g) => g.key === 'parameter' && g.used && /S ≥ 3/.test(g.rule)), '등급 규칙과 근거를 밝힌다');
+  assert.ok(rep.criteria.sScale[3] && rep.criteria.dScale[3], 'S·D 척도의 뜻을 싣는다');
   // 삼각 결론: 얻은 것·다음·바닥 모두 비어 있지 않다
   assert.ok(rep.triad.gained.length && rep.triad.next.length && rep.triad.floor.length);
   // 마크다운이 8개 절을 낸다

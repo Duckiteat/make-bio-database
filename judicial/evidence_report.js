@@ -90,12 +90,24 @@ function evidenceReport(db, scenario, opt = {}) {
   }
   failures.sort((a, b) => a.id.localeCompare(b.id));
 
-  // 4. 판정 수준
+  // 4. 판정 수준 + 판정 기준과 그 근거 (무슨 기준으로 이렇게 잡았나 — reliability.js 의 실제 정의에서)
   const reg = scenario.protocol && scenario.protocol.validation;
   const judgment = hyp
     ? { level: '가설 생성 / 탐색', why: '시나리오가 hypothetical — 농도·부피 등 가상 값을 쓰므로 관찰과의 일치를 주장하지 않는다 (설계 P6)' }
     : reg ? { level: '검증(사전 등록 규약)', why: '등록된 모의 실험 규약 아래 — 검증 세트로만 일치 결론' }
     : { level: '탐색 (규약 없음)', why: '사전 등록 규약이 없어 관찰과의 일치 결론을 내지 않는다' };
+  const usedGrades = new Set([...chain.map((c) => c.grade), ...values.map((v) => v.grade && v.grade.grade)].filter(Boolean));
+  const criteria = {
+    threshold: scenario.min_grade || REL.DEFAULT_MIN, // 이 실행에 적용된 등급 문턱 (시나리오가 올릴 수만, 내릴 수 없음)
+    thresholdDefault: REL.DEFAULT_MIN,
+    sScale: REL.S_LABEL, dScale: REL.D_LABEL,
+    grades: REL.ORDER.map((g) => ({ key: g, label: REL.GRADES[g].label, rule: REL.GRADES[g].rule, use: REL.GRADES[g].use, used: usedGrades.has(g) })),
+    basis: [
+      '등급은 데이터에 쓰는 값이 아니라 사법부(reliability.js)가 출처 S 와 데이터 D 에서 **계산**한다 — S·D 를 곱하지 않고 둘 다 문턱을 넘어야 한다(한쪽만 좋으면 주 매개변수로 쓰지 않는다).',
+      '판정 수준은 "사전 등록된 모의 실험 규약(음성 대조·검정력·검증 세트·허용 차이 δ·중단 규칙)" 아래에서만 검증이 된다 — 규약이 없으면 탐색, 가상 값을 쓰면 가설 생성(설계 P6). 규약 없는 실행은 관찰과의 일치를 주장하지 않는다.',
+      `등급 문턱은 기본 ${REL.DEFAULT_MIN}(주 매개변수 사용 최소선)이고 시나리오가 올릴 수만 있다(내릴 수 없다).`,
+    ],
+  };
 
   // 6·7. 사고 패턴(지문) + 삼각 결론
   const measured = chain.filter((c) => c.measured), eventBased = chain.filter((c) => c.closure === 'none');
@@ -115,7 +127,7 @@ function evidenceReport(db, scenario, opt = {}) {
   return {
     target: { id: target, label: L(target), kind: (db.senses[target] || {}).kind },
     scenario: { name: scenario.name || '(이름 없음)', note: scenario._설명 || scenario.note || '', hypothetical: hyp, window: scenario.window || null },
-    chain, values, assumptions, failures, judgment,
+    chain, values, assumptions, failures, judgment, criteria,
     fingerprint: {
       invariants: [
         '모든 값에 등급(S,D)과 출처를 붙이고, 닫는 방법(measure·computed·abstraction·assumed·none)을 밝힌다',
@@ -186,6 +198,23 @@ function evidenceReportMarkdown(rep) {
   o.push(`- **판정 수준: ${rep.judgment.level}** — ${rep.judgment.why}`);
   const meas = rep.chain.filter((c) => c.measured).length, ev = rep.chain.filter((c) => c.closure === 'none').length, other = rep.chain.length - meas - ev;
   o.push(`- 고리별 검증 범위: 전체 ${rep.chain.length}단계 중 실측 ${meas} · 사건기반 ${ev} · 가정/추상 ${other}. 측정으로 닫힌 고리의 결론만 "데이터에 매여 있다" 고 말할 수 있다.`);
+  o.push('');
+
+  o.push('### 4a. 판정 기준과 그 근거 — 무슨 기준으로 이렇게 잡았나', '');
+  o.push('위 등급·판정 수준은 자의가 아니라 사법부(`reliability.js`)의 고정된 기준에서 나온다. 이 보고서가 그 기준을 함께 밝힌다:', '');
+  o.push('**출처 척도 S · 데이터 척도 D** (등급은 둘을 곱하지 않고 둘 다 문턱을 넘어야 한다):', '');
+  o.push('| S (출처) | 뜻 | | D (데이터) | 뜻 |', '|---|---|---|---|---|');
+  const sK = Object.keys(rep.criteria.sScale).sort((a, b) => b - a), dK = Object.keys(rep.criteria.dScale).sort((a, b) => b - a);
+  for (let i = 0; i < Math.max(sK.length, dK.length); i++) {
+    const s = sK[i], d = dK[i];
+    o.push(`| ${s != null ? 'S' + s : ''} | ${s != null ? rep.criteria.sScale[s] : ''} | | ${d != null ? 'D' + d : ''} | ${d != null ? rep.criteria.dScale[d] : ''} |`);
+  }
+  o.push('', '**등급 규칙과 용도** (▶ = 이 보고서에 실제로 쓰인 등급):', '');
+  o.push('| 등급 | 규칙 | 쓸 수 있는 곳 | |', '|---|---|---|---|');
+  for (const g of rep.criteria.grades) o.push(`| ${g.key} (${g.label}) | ${g.rule} | ${g.use} | ${g.used ? '▶' : ''} |`);
+  o.push('', `**적용 문턱: ${rep.criteria.threshold}**${rep.criteria.threshold === rep.criteria.thresholdDefault ? ' (기본)' : ' (시나리오가 올림)'} — 이 값 미만의 상수를 "데이터" 로 쓰면 위반이다.`, '');
+  o.push('왜 이렇게 잡았나:', '');
+  for (const b of rep.criteria.basis) o.push(`- ${b}`);
   o.push('');
 
   o.push('## 5. 실패·막다른 길 (숨기지 않는다)', '');
