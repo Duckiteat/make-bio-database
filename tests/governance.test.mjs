@@ -398,3 +398,33 @@ test('⑬ 사법부: 철회 전파 — 관찰에 기댄 값·단계·경로를 �
   assert.match(J.retractionText(BASE, { assume: ['O000025'] }), /근거 철회됨 → 값 V000067/);
   assert.match(J.retractionText(BASE), /철회된 관찰 없음/);
 });
+
+// 증거·방법 보고서 (build-plan 12 / 설계 §13.4): 읽기 전용 판결 — 인과·값표·닫는 방법·판정 수준·실패·사고패턴·삼각 결론
+test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, 실패를 숨기지 않는다 (읽기만, db 불변)', () => {
+  const ER = req('../judicial/evidence_report.js');
+  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/tca-measured-kinetics-hypothetical.json'), 'utf8'));
+  const before = JSON.stringify(BASE);
+  const rep = ER.evidenceReport(BASE, sc, { target: 'D000148' });
+  assert.equal(before, JSON.stringify(BASE), '보고서는 db 를 바꾸지 않는다');
+  // 인과 사슬: TCA 8단계, 실측 4 · 사건기반 4 (CS·아코니테이스·IDH·푸마레이스만 measure)
+  assert.equal(rep.chain.length, 8);
+  assert.equal(rep.chain.filter((c) => c.measured).length, 4, '실측 단계 4');
+  assert.equal(rep.chain.filter((c) => c.closure === 'none').length, 4, '사건 기반 단계 4');
+  // 값 표: 측정 상수에 등급·출처
+  const aco = rep.values.find((v) => v.rule === 'D000150/rule/isomerize' && v.param === 'kcat');
+  assert.ok(aco && aco.closure === 'measure' && aco.grade.grade === 'parameter', '아코니테이스 kcat 은 measure·parameter');
+  assert.ok(aco.sources.some((s) => /PMID:36738801/.test(s)), '출처 PMID 를 보인다');
+  // 가정 입력(가상 농도)을 측정과 가른다
+  assert.ok(rep.assumptions.length > 0, '시나리오의 가정 입력을 드러낸다');
+  // 판정 수준: 가상 시나리오 → 가설 생성
+  assert.match(rep.judgment.level, /가설 생성|탐색/);
+  // 실패를 숨기지 않는다: 열린 한계가 보고된다
+  assert.ok(rep.failures.some((f) => f.id === 'L000096' || f.id === 'L000110'), '사람 kcat 공백 한계를 드러낸다');
+  // 삼각 결론: 얻은 것·다음·바닥 모두 비어 있지 않다
+  assert.ok(rep.triad.gained.length && rep.triad.next.length && rep.triad.floor.length);
+  // 마크다운이 8개 절을 낸다
+  const md = ER.evidenceReportMarkdown(rep);
+  for (const h of ['## 1.', '## 2.', '## 3.', '## 4.', '## 5.', '## 6.', '## 7.', '## 8.']) assert.ok(md.includes(h), `절 ${h}`);
+  // 대상 없으면 오류 (판결을 내지 않음)
+  assert.ok(ER.evidenceReport(BASE, sc, {}).error, '대상 없으면 오류');
+});

@@ -9,7 +9,7 @@
 | 공유 (헌법) | `vocab.js`, `model.js` | 형식·어휘·정규화·색인·참조 해석·부분 구조 셈·속도 법칙 정의(힐·SAT_K·NA·VOL)·규칙 표기 | 시뮬레이션·판정·쓰기 |
 | 행정 (Executive) | `core.js`, `engine/*` | 읽기·질의·시뮬레이션. 규칙과 초기 상태의 **순수 함수** — 원자료만 낸다 | 자기 코드·db.json 수정, 파일 쓰기, 검사·승인, `'verified'` 선언, 감사 코드(`AUDIT_*`) 발행 |
 | 입법 (Legislative) | `legislative/legislative.js`, `legislative/augment_draft.js`, `legislative/clerk.mjs` | 데이터 정의·수정: merge(패치 → 새 db), 패치 초안(보강·리팩터링). **파일 쓰기는 서기(clerk.mjs)만** | 스스로 검사·시뮬레이션 |
-| 사법 (Judicial) | `judicial/*` | 검증·증명: validate·관문·Patch Report·정제 점검·파생 그래프(철회 전파 `retractionImpact`, 읽기 전용)·한계 상태·감사·사후 분석·독립 질량 검증·신원 확인·증명 도장·보고서·통계 검정(`stats.js`, 자기 난수)·관찰 판정(`obs_compare.js`)·확률 앙상블 판정(`stoch_audit.js`) | 데이터·엔진 수정, 엔진 실행, 파일 쓰기 |
+| 사법 (Judicial) | `judicial/*` | 검증·증명: validate·관문·Patch Report·정제 점검·파생 그래프(철회 전파 `retractionImpact`, 읽기 전용)·증거·방법 보고서(`evidence_report.js`, 읽기 전용)·한계 상태·감사·사후 분석·독립 질량 검증·신원 확인·증명 도장·보고서·통계 검정(`stats.js`, 자기 난수)·관찰 판정(`obs_compare.js`)·확률 앙상블 판정(`stoch_audit.js`) | 데이터·엔진 수정, 엔진 실행, 파일 쓰기 |
 | 조정 | `orchestrator.js`, `dbtool.mjs` | 행정 실행 → 원자료 → 사법 판정, 쓰기가 필요하면 서기 호출 | 판정·쓰기 코드를 직접 갖는 것 |
 
 행정부는 관찰 기록(`observations`)을 읽지 않는다 — 관찰에 맞추느라 결함을 덮는 순환을 막으려고. 예측 표본은 조정자가 관찰 연산자(`compiler/obs_operator.js`, 공유 컴파일러)로 만들어 사법부에 넘긴다 (4단계, `tests/governance.test.mjs` ②′).

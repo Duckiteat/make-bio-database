@@ -348,6 +348,17 @@
       "refactor_strategy": "구조만 본다 — 경로 우열·포화는 모의 판정(build-plan 8). 새 규칙 종류가 영향 간선을 가지면 buildGraph 에 같은 커밋에서. 구조 지지는 일치가 아니다."
     },
     {
+      "path": "judicial/evidence_report.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool evidence, tests/governance.test.mjs",
+      "interpret": "[사법] build-plan 12 / 설계 §13.4 — 증거·방법 보고서: db(정규화 보기) + 시나리오 + 대상 경로를 읽어, 한 사람이 결론을 완전히 이해하고 질문할 수 있도록 인과 사슬·따라간 방식·사고 패턴(지문)·쓰인 값 전부(등급 S·D·출처·닫는 방법 measure/computed/abstraction/assumed/none)·가정 입력·판정 수준·고리별 검증 범위·실패(열린 한계)·얻은 것/다음 지점/바닥의 불안정함을 마크다운으로 낸다. 읽기 전용 — 엔진·쓰기 없음.",
+      "node": "JUDICIAL_EVIDENCE_REPORT",
+      "governance": "Judicial",
+      "refactor_strategy": "지어낸 산문을 쓰지 않는다 — 모든 절은 등급·한계·시나리오의 실제 자취에서만. 사고 패턴(지문)은 규약 불변식의 서술이지 자화자찬이 아니다. 엔진·시뮬레이션은 fate --report·simulate --rate 가, 여기선 증거 기반만."
+    },
+    {
       "path": "judicial/protocol.js",
       "class": "law",
       "format": "Node CommonJS",

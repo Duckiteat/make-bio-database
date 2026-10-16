@@ -101,6 +101,7 @@ node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [-
 node dbtool.mjs report data/patches/<기록>.json    # 지난 패치의 Patch Report
 node dbtool.mjs register <시나리오.json>        # 모의 실험 규약 사전 등록 (검증에 쓰는 실행은 실행 전에 — 고치면 미등록)
 node dbtool.mjs qualgraph [O…] [--json]         # 정성 그래프 0 층 판정: 교란 대상 → 읽을 거리 경로 부호 대 주장 (지지·경로 없음·모순 후보·부호 섞임) — 구조만, 일치 아님
+node dbtool.mjs evidence <시나리오.json> --target <경로|상태> [--report 파일.md] [--json]   # 증거·방법 보고서: 인과·값표(등급·출처·닫는 방법)·판정 수준·실패(열린 한계)·사고패턴·얻은 것/다음/바닥의 불안정함 — 읽기만
 node dbtool.mjs log                            # 델타 기록: 사슬 무결성 + 기원부터 재생 = 지금 db (기원은 log --genesis 로 한 번)
 ```
 
@@ -227,7 +228,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 251/251 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 252/252 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음

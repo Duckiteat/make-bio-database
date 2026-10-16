@@ -380,6 +380,19 @@ switch (cmd) {
     else console.log(J.retractionText(db, opt));
     break;
   }
+  case 'evidence': { // 증거·방법 보고서 (build-plan 12): 시나리오 + 대상 경로 → 인과·값표·닫는 방법·판정 수준·실패·사고패턴·삼각 결론 (읽기만)
+    if (!args[0] || !flags.target) die('사용법: evidence <시나리오.json> --target <경로|상태 번호·이름> [--report 파일.md]');
+    const ER = req('./judicial/evidence_report.js'), db = loadDB();
+    const scenarioText = readFileSync(args[0], 'utf8'), scenario = JSON.parse(scenarioText);
+    const ix = DefDB.index(DefDB.normalize(db)), tg = DefDB.resolveRef(ix, flags.target === true ? '' : flags.target);
+    if (tg.error) die(tg.error);
+    const rep = ER.evidenceReport(db, scenario, { target: tg.id, scenarioText, dbText: readFileSync(DB_PATH, 'utf8') });
+    const md = ER.evidenceReportMarkdown(rep);
+    if (flags.json) console.log(JSON.stringify(rep, null, 2));
+    else console.log(md);
+    if (flags.report && flags.report !== true) { CLERK.writeReport(flags.report, md); console.log('\n보고서 (입법 서기): ' + flags.report); }
+    break;
+  }
   case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
     const dataDir = dirname(DB_PATH);
     if (flags.genesis) {
@@ -542,7 +555,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | evidence | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====
