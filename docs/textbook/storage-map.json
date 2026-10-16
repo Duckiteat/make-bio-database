@@ -1046,6 +1046,14 @@
       "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6."
     },
     {
+      "path": "tests/conservation.test.mjs",
+      "class": "verification",
+      "format": "Node 테스트 (node:test)",
+      "writer": "사람·AI",
+      "readers": "CI, 사람(콘솔)",
+      "interpret": "보존 분류 일관성 시험 (오차 3채널 기저, 설계 conservation-classes.md) — ⓐ 모든 observable 이 유효한 conservation.{class,reason} 보유 ⓑ 카운트=보존·나머지=비보존(doctrine 일치) ⓒ class·reason 이 사전 register 로 노출(나중 적분장 참조)."
+    },
+    {
       "path": "tests/dictionary.test.mjs",
       "class": "verification",
       "format": "Node 테스트 (node:test)",

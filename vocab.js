@@ -327,12 +327,27 @@
     diffusion:     { min: 0, max: 1e-6, why: '물의 자기 확산 2.3e-9 m²/s', exclusiveMin: true },
   },
   observables: {
-    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule', dim: 'count', qualitative: true },
-    concentration:    { label: '농도', target: 'bundle', unit: 'M', dim: 'concentration', qualitative: true },
-    fraction:         { label: '세포 상태에 있는 세포의 비율 (0–1)', target: 'cell_state', unit: '1', qualitative: true },
-    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's', dim: 'time', qualitative: true },
-    volume:           { label: '구획 부피 (대상 = 위치)', target: 'location', unit: 'L', dim: 'volume' },
-    kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param' },
+    amount:           { label: '분자 수 (세포·구획당)', target: 'bundle', unit: 'molecule', dim: 'count', qualitative: true, conservation: { class: 'conserved', reason: 'substance_count' } },
+    concentration:    { label: '농도', target: 'bundle', unit: 'M', dim: 'concentration', qualitative: true, conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
+    fraction:         { label: '세포 상태에 있는 세포의 비율 (0–1)', target: 'cell_state', unit: '1', qualitative: true, conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
+    event_time:       { label: '세포 상태에 도달한 시각', target: 'cell_state', unit: 's', dim: 'time', qualitative: true, conservation: { class: 'non_conserved', reason: 'emergent_time' } },
+    volume:           { label: '구획 부피 (대상 = 위치)', target: 'location', unit: 'L', dim: 'volume', conservation: { class: 'non_conserved', reason: 'measured_parameter' } },
+    kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param', conservation: { class: 'non_conserved', reason: 'measured_parameter' } },
+  },
+  // 보존 분류 (오차 3채널 doctrine 의 기저 — build-plan 20–25, 설계 conservation-classes.md). class 는 표현 독립:
+  // 보존 법칙의 유무로 정의한다(정수 원장이 정확-0 이든 Rodas3 가 상대 1e-14 로 근사하든 같은 class).
+  conservationClasses: {
+    conserved:     { label: '보존 (보존 법칙 존재 — 대조 가능, 목표 오차 0)', note: '질량·부분구조 수지로 대조되는 양. 정수 원장(카운트·1e-9 고정소수점)으로 구조상 정확, 수치오차는 추적이 아니라 제거.' },
+    non_conserved: { label: '비보존 (보존 법칙 없음 — 참조 없음, 예산으로만)', note: '정확한 참조가 없는 양. float 로 두고 오차를 예산으로 추적(0 으로 제거 불가). 보존 장부·생물 상수에 섞지 않는다. 정확한 척하려 고정소수점으로 밀지 않는다.' },
+  },
+  conservationReasons: {
+    substance_count:     { label: '물질 카운트 (질량·부분구조 수지로 보존)', note: '분자·부분구조 개수. 반응이 만들고 없애도 수지(ΣIn=ΣOut)가 보존 법칙을 준다.' },
+    rate_derivative:     { label: '속도·도함수 (보존 법칙 없음)', note: '단위 시간당 변화(1/s). 반응 속도 등 — 보존되는 실체가 아니다.' },
+    intensive_potential: { label: '세기 변수 (ΔG·pH·온도 — 카운트 아님)', note: '크기에 무관한 열역학·환경 변수. 더해지지 않으므로 수지가 없다.' },
+    derived_scaled:      { label: '유도·환산값 (카운트 × 스케일·비율)', note: '보존 카운트에서 유도(농도 = 카운트 × cinv, 비율). float 스케일을 실어 자체 보존 법칙이 없다.' },
+    sensitivity:         { label: '민감도 (야코비안 ∂rate/∂N — 실체 아님)', note: '동역학의 도함수. 실체가 아니라 감도이므로 보존 대상이 아니다.' },
+    emergent_time:       { label: '창발 시각 (event_time — 참조 없음)', note: '첫 도달 시각 같은 창발량. 참조 정답이 없어 예산으로만.' },
+    measured_parameter:  { label: '측정 파라미터 (kcat·Km·Kd·반감기·부피 세팅)', note: '경험적으로 측정·설정된 입력. 불확도를 달고 들어오며 보존 법칙이 없다.' },
   },
   // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)
   kineticUnits: { k_on: 'M^-1 s^-1', k_off: 's^-1', kcat: 's^-1', Kd: 'M', Km: 'M', K: 'M', half_life: 's', n: '1', fmax: '1', fmin: '1', dG_act: 'J/mol', dG0: 'J/mol' },
