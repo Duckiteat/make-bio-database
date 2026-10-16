@@ -6,7 +6,7 @@
       "T": 210,
       "D": 212,
       "S": 58,
-      "L": 111,
+      "L": 112,
       "O": 27,
       "V": 69
     }
@@ -19889,6 +19889,25 @@
         ]
       },
       "found_in": "build-plan 12A — BRENDA route 1 열림, CS 완료, 사람 kcat 희소 확인"
+    },
+    "L000111": {
+      "target": "D000183",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "정성 관찰 O000021(Seong et al., 1988 — β2m 결손 Daudi 가 β2m 복원으로 표면 class I 회복)은 측정 세포가 Daudi(사람 버킷림프종 B 세포주)인데, 모델에는 수지상 세포 상태(D000202)만 있다. 그래서 사전 등록 규약 #1 의 모의 판정 '맞음(감소)'에는 Daudi → 수지상 세포의 맥락 이전(V8)이 끼어 있다. β2m 이 표면 MHC I 에 필요하다는 것은 모든 유핵 세포에 공통인 상시(housekeeping) 생물학이라 이 특정 읽을거리의 이전 위험은 낮지만, 전제로 남는다. 또 우연 확률 0.147 > α 0.05 라, 이 한 건만으로는 우연과 구별되는 통계적 힘이 없다 — 결론은 '방향 재현 + 파이프라인 작동'이지 '유의한 검증'이 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "수지상 세포(또는 모델에 담긴 세포 상태)에서 β2m 결손 → 표면 MHC I 감소를 직접 보인 1차 문헌을 찾아 관찰로 다시 넣으면 맥락 이전이 사라진다. 또는 Daudi 등 B 세포 상태를 모델에 추가해 측정 세포와 모델 상태를 맞춘다."
+          },
+          {
+            "kind": "manual",
+            "text": "같은 MHC I·II 적재 경로의 다른 결손 검증(O000019 TAP · O000020 타파신 · O000022 HLA-DM)을 각각 사전 등록 규약으로 올려 검증 세트를 넓히면, 합친 우연 확률이 α 아래로 내려가 통계적 힘이 생긴다."
+          }
+        ]
+      },
+      "found_in": "TIER A 첫 검증 — node dbtool.mjs observe O000021 --state D000202 --scenario examples/scenarios/mhc-i-b2m-validation-hypothetical.json (사전 등록 #1, 2026-10-16)",
+      "by": "Claude"
     }
   },
   "observations": {

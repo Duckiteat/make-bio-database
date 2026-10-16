@@ -11,7 +11,7 @@
 | Structural_Gap | 27 | 4 | 31 |
 | Resource_Gap | 6 | 0 | 6 |
 | Regulatory_Gap | 12 | 0 | 12 |
-| Observation_Gap | 8 | 0 | 8 |
+| Observation_Gap | 9 | 0 | 9 |
 | Identity_Gap | 3 | 9 | 12 |
 | Consensus_Gap | 1 | 0 | 1 |
 
@@ -153,6 +153,7 @@
 | L000106 | D000050 (cAMP 신호 전달) | Observation_Gap | 서열 길이(sequence_length)는 관찰 기록으로 받을 수 없다 — 측정량(vocab.observables)에 대응 항목이 없어서다. 그래서 정의항 obs 45 건의 서열 길이는 새 from 대조(v11)의 대상이 아니고, 값이 바뀌어도 관찰과 어긋나는지 검사되지 않는다. 지금은 모두 evidence.level 이 curated 가 아니어서 from 이 요구되지 않지만, 문헌에서 서열 길이를 가져오면 그 자리에 대조가 없다<br>발견: 안전장치 v11 (레드팀 시나리오 2·4 를 막는 중에 드러남) | ✗ 수동: 측정량 'sequence_length'(대상 = 묶음 또는 정의항, 단위 aa\|nt\|bp) 를 둘지 결정 — 서열 길이는 측정이라기보다 참조 서열의 속성이어서 관찰 포트에 맞는지가 먼저다 | open (0/1) | — |
 | L000107 | D000189 (펩타이드 적재 복합체) | Observation_Gap | 정성 관찰 O000019(de la Salle et al., 1994 — 사람 TAP 결손 형제, 표면 class I 이 매우 낮음)는 초록만 받아 측정한 세포 유형(림프구·섬유아세포·B 세포주 등)과 대조 세포를 알 수 없다. 그래서 모의 실험 규약의 대응 실험(matched_experiment.system.cell)을 세울 수 없고, 수지상 세포 상태(D000202)에서 한 모의 판정 '맞음' 은 탐색 실행이다(결론 아님). 판정에는 환자 세포 → 수지상 세포의 맥락 이전(V8)도 끼어 있다.<br>발견: build-plan 10 관문 A′ — node dbtool.mjs observe O000019 --state D000202 --scenario examples/scenarios/mhc-dc-immature-baseline-hypothetical.json | ✗ 수동: 원문(DOI 10.1126/science.7517574) 방법·그림 설명에서 표면 class I 을 잰 세포 유형과 대조군을 확인 → 관찰 condition.cell 을 새 관찰(O+1)로 다시 넣고 이 관찰은 철회 표시, 그 세포 유형의 시나리오로 규약 선언 → register → observe | open (0/1) | — |
 | L000109 | D000177 (MHC I 항원 처리·제시) | Observation_Gap | 우연 기준선(judicial/qual_compare.chanceBaseline)은 증거 독립(M3·L4: 다른 DOI·다른 실험계)인 주장을 포아송 이항으로 서로 독립이라 가정한다. 그러나 MHC I 적재의 세 관찰(O000019 TAP·O000020 타파신·O000021 β2m)은 서로 다른 논문·세포주라 증거 독립이지만, 교란 → 읽을 거리 경로가 모두 '적재 → 소포체 이탈 → 골지 → 표면' 하류를 공유한다 — 셋 다 맞아도 모델의 서로 다른 부분을 검증한 것이 아니라 같은 축을 세 번 건드린 것이라, '셋 다 맞힐 확률 ≈ 0.02' 는 모델 전체의 신뢰도를 과대평가한다. 기전 경로 독립(0 층 그래프에서 교란 → 읽을 거리 경로가 겹치는 정도)은 아직 판정에 들어가지 않는다.<br>발견: build-plan 22 — judicial/qual_compare.chanceBaseline (증거 독립만, 기전 경로 독립 아님) | ✗ 수동: 서로 다른 하류를 건드리는 관찰을 모으거나(경로 겹침이 작은 교란), 우연 기준선이 0 층 경로 겹침으로 단위 간 상관을 반영하도록 확장한다 — 어느 쪽이든 정의되기 전에는 '증거 독립이되 경로 공유' 를 보고에 함께 밝힌다 | open (0/1) | — |
+| L000111 | D000183 (β2-마이크로글로불린) | Observation_Gap | 정성 관찰 O000021(Seong et al., 1988 — β2m 결손 Daudi 가 β2m 복원으로 표면 class I 회복)은 측정 세포가 Daudi(사람 버킷림프종 B 세포주)인데, 모델에는 수지상 세포 상태(D000202)만 있다. 그래서 사전 등록 규약 #1 의 모의 판정 '맞음(감소)'에는 Daudi → 수지상 세포의 맥락 이전(V8)이 끼어 있다. β2m 이 표면 MHC I 에 필요하다는 것은 모든 유핵 세포에 공통인 상시(housekeeping) 생물학이라 이 특정 읽을거리의 이전 위험은 낮지만, 전제로 남는다. 또 우연 확률 0.147 > α 0.05 라, 이 한 건만으로는 우연과 구별되는 통계적 힘이 없다 — 결론은 '방향 재현 + 파이프라인 작동'이지 '유의한 검증'이 아니다.<br>발견: TIER A 첫 검증 — node dbtool.mjs observe O000021 --state D000202 --scenario examples/scenarios/mhc-i-b2m-validation-hypothetical.json (사전 등록 #1, 2026-10-16) | ✗ 수동: 수지상 세포(또는 모델에 담긴 세포 상태)에서 β2m 결손 → 표면 MHC I 감소를 직접 보인 1차 문헌을 찾아 관찰로 다시 넣으면 맥락 이전이 사라진다. 또는 Daudi 등 B 세포 상태를 모델에 추가해 측정 세포와 모델 상태를 맞춘다.<br>✗ 수동: 같은 MHC I·II 적재 경로의 다른 결손 검증(O000019 TAP · O000020 타파신 · O000022 HLA-DM)을 각각 사전 등록 규약으로 올려 검증 세트를 넓히면, 합친 우연 확률이 α 아래로 내려가 통계적 힘이 생긴다. | open (0/2) | — |
 
 ## Identity_Gap — 정체성(외부 ID) 공백
 
