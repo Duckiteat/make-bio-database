@@ -1,0 +1,203 @@
+{
+ "source": "BRENDA SOAP getTurnoverNumber·getKmValue",
+ "ecNumber": "2.3.3.1",
+ "organism": "Homo sapiens",
+ "queried": "2026-10-16",
+ "literature_756131_pubmedId": "31141475",
+ "turnoverNumber": [
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "turnoverNumberMaximum": null,
+   "commentary": "mutant A348G, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "111",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, mutant enzyme G348G",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "111",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "turnoverNumberMaximum": null,
+   "commentary": "mutant A348G, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "117",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, mutant enzyme G348G",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "117",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "turnoverNumberMaximum": null,
+   "commentary": "wild-type, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "208",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, wild-type enzyme",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "208",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "turnoverNumberMaximum": null,
+   "commentary": "wild-type, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "260",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, wild-type enzyme",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "260",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  }
+ ],
+ "kmValue": [
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "kmValue": "0.0036",
+   "kmValueMaximum": null,
+   "commentary": "wild-type, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "kmValue": "0.0036",
+   "kmValueMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, wild-type enzyme",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "kmValue": "0.0057",
+   "kmValueMaximum": null,
+   "commentary": "mutant A348G, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "oxaloacetate",
+   "kmValue": "0.0057",
+   "kmValueMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, mutant enzyme G348G",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 53
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "kmValue": "0.0077",
+   "kmValueMaximum": null,
+   "commentary": "wild-type, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "kmValue": "0.0077",
+   "kmValueMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, wild-type enzyme",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "kmValue": "0.0104",
+   "kmValueMaximum": null,
+   "commentary": "mutant A348G, pH 8.0, temperature not specified in the publication",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  },
+  {
+   "literature": [
+    756131
+   ],
+   "substrate": "acetyl-CoA",
+   "kmValue": "0.0104",
+   "kmValueMaximum": null,
+   "commentary": "pH 8.0, temperature not specified in the publication, mutant enzyme G348G",
+   "organism": "Homo sapiens",
+   "ecNumber": "2.3.3.1",
+   "ligandStructureId": 27
+  }
+ ]
+}

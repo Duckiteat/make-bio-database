@@ -7,8 +7,8 @@
       "D": 212,
       "S": 58,
       "L": 111,
-      "O": 23,
-      "V": 65
+      "O": 25,
+      "V": 67
     }
   },
   "terms": {
@@ -10741,7 +10741,30 @@
             ]
           },
           "regulators": [],
-          "text": "아세틸-CoA 의 아세틸기가 옥살로아세트산과 축합해 시트르산이 되고 조효소 A 가 풀려난다 (물 분자는 부분 구조가 없어 생략).",
+          "text": "아세틸-CoA 의 아세틸기가 옥살로아세트산과 축합해 시트르산이 되고 조효소 A 가 풀려난다 (물 분자는 부분 구조가 없어 생략). 속도는 단일 기질 MM 근사 — core.js 가 첫 law 입력(아세틸-CoA)의 Km 을 쓴다, 옥살로아세트산은 포화 가정(실측 OAA kcat 208/s·Km 3.6 µM 은 BRENDA 증거 파일에).",
+          "kinetic_law": {
+            "law": "michaelis_menten",
+            "context": {
+              "scope": "사람 시트르산 생성효소 (EC 2.3.3.1) — BRENDA, 아세틸-CoA 변화 기질, WT, pH 8.0 (온도 미기재)",
+              "species": "9606",
+              "location": "mito_matrix"
+            },
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1515/hsz-2019-0106",
+                  "citation": "Schlachter CR et al., 2019, Biol Chem"
+                },
+                {
+                  "db": "PMID",
+                  "id": "31141475",
+                  "citation": "Schlachter CR et al., 2019, Biol Chem"
+                }
+              ]
+            }
+          },
           "evidence": {
             "level": "asserted"
           }
@@ -19834,15 +19857,15 @@
       "target": "D000148",
       "type": "Kinetic_Gap",
       "requirement": {
-        "text": "시트르산 회로 효소 반응 규칙(시트르산 생성효소 D000149/condense·숙신산 탈수소효소 D000154·말산 탈수소효소 D000156·석시닐-CoA 합성효소 D000153·2-옥소글루타르산 탈수소효소 D000152·젖산 탈수소효소 D000171)에 실측 속도 상수(kcat·Km)가 없다 — 실측은 IDH(D000151)·FH(D000155) 둘뿐. 2026-10-16 모든 도메인을 연 뒤에도 자동 수집 불가로 확인됨(네트워크가 아닌 서비스 문제): SABIO-RK 는 REST API 폐지(옛 경로 /ui/404), BRENDA 는 WSDL 은 닿으나 계정·SOAP 필요, eQuilibrator 는 api.equilibrator.org 호스트가 502(본 사이트는 200), UniProt 는 사람 CS·IDH2 에 Km 만(기질 미상·kcat 없음), OA 논문 전문(Europe PMC)은 받히지만 절대 kcat/Km 이 그림·보충자료에 잠겨 본문 텍스트로 확인 불가(예: 사람 CS PMC12616816 은 WT 대비 배수만 본문에).",
+        "text": "시트르산 회로 효소 반응 규칙의 실측 속도 상수: 2026-10-16 BRENDA(사용자 계정)로 route 1 이 열려 시트르산 생성효소(D000149/condense)에 사람 WT kcat 260/s·Km 7.7 µM(아세틸-CoA, PMID 31141475)을 넣었다 → 실측 kinetics 규칙 3개(IDH·FH·CS). 그러나 사람 특이 kcat 은 BRENDA 에도 희소하다: 석시닐-CoA 합성효소(EC 6.2.1.4)·석신산 탈수소효소(EC 1.3.5.1)·말산 탈수소효소(EC 1.1.1.37) 모두 사람 kcat 0건(MDH 는 사람 Km 6건만), 아코니테이스·OGDH 도 마찬가지. 대부분 kinetics 가 돼지·소·세균 값이라 사람 상수로 쓸 수 없다(다른 종 값 금지).",
         "needs": [
           {
             "kind": "manual",
-            "text": "둘 중 하나: (1) BRENDA 계정(무료 등록)·credential 을 주면 WSDL 로 효소별 kcat·Km 질의 → 관찰 포트 기록, (2) 사용자가 특정 값(사람 9606, 출처 DOI·PMID, 조건)을 직접 제공 → 관찰 포트 기록. eQuilibrator api 호스트가 복구되면 ΔG° 는 직접 가능. 그 전에는 정량 속도 자원은 보류하고 정성 관찰·서열·위치로 검증 자원을 키운다(route 3)."
+            "text": "나머지 TCA 효소는 (1) 사람 kcat 을 보고한 1차 문헌을 찾으면 BRENDA·관찰 포트로 넣고, (2) 없으면 다른 종 값은 쓰지 않고 공백으로 두거나 별도 종 맥락으로 기록한다. ΔG° 는 eQuilibrator api 호스트 복구 시 직접."
           }
         ]
       },
-      "found_in": "build-plan 12A 실측 수집 시도 2026-10-15~16 — 도메인 개방 후 재확인"
+      "found_in": "build-plan 12A — BRENDA route 1 열림, CS 완료, 사람 kcat 희소 확인"
     }
   },
   "observations": {
@@ -20684,6 +20707,94 @@
       "evidence_at": "1994",
       "recorded_at": "2026-10-16T05:56:33.846Z",
       "note": "HLA-DM 복합체(D000198) 없으면 펩타이드–MHC II 적재가 결함 → 표면 펩타이드–MHC II(D000201) 감소. DM 없이도 CLIP 결합 MHC II 는 표면에 남지만 항원 펩타이드 적재 복합체(D000201)는 준다. 측정 세포는 사람 APC 변이세포(2.2.93·9.5.3, B-LCL 유래) — 모델 수지상 세포 상태에서 판정하면 맥락 이전."
+    },
+    "O000023": {
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000149/rule/condense",
+        "param": "kcat"
+      },
+      "value": 260,
+      "unit": "s^-1",
+      "uncertainty": {
+        "kind": "measurement",
+        "model": "normal",
+        "sd": 10
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "provenance": {
+        "sha256": "0f971698dbecc089df10c159cf13190582de12e5e16d69d2e46880869c873853",
+        "source": {
+          "db": "PMID",
+          "id": "31141475"
+        }
+      },
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          }
+        ]
+      },
+      "recorded_at": "2026-10-16T08:19:11.396Z",
+      "note": "BRENDA EC 2.3.3.1 Homo sapiens 아세틸-CoA 변화 기질, WT, pH 8.0, 온도 미기재(BRENDA 'temperature not specified'); 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC2.3.3.1-Homo-sapiens.json"
+    },
+    "O000024": {
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000149/rule/condense",
+        "param": "Km"
+      },
+      "value": 0.0000077,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "measurement",
+        "model": "normal",
+        "sd": 1e-7
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "provenance": {
+        "sha256": "0f971698dbecc089df10c159cf13190582de12e5e16d69d2e46880869c873853",
+        "source": {
+          "db": "PMID",
+          "id": "31141475"
+        }
+      },
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          }
+        ]
+      },
+      "recorded_at": "2026-10-16T08:19:11.396Z",
+      "note": "BRENDA EC 2.3.3.1 Homo sapiens 아세틸-CoA 변화 기질, WT, pH 8.0, 온도 미기재(BRENDA 'temperature not specified'); 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC2.3.3.1-Homo-sapiens.json"
     }
   },
   "values": {
@@ -22198,6 +22309,72 @@
       "derivation": "direct",
       "recorded_at": "2026-10-15T13:59:02.362Z",
       "supersedes": "V000036"
+    },
+    "V000065": {
+      "subject": "D000149/rule/condense",
+      "property": "kcat",
+      "value": {
+        "dist": "point",
+        "mean": 260
+      },
+      "context": {
+        "scope": "사람 시트르산 생성효소 (EC 2.3.3.1) — BRENDA, 아세틸-CoA 변화 기질, WT, pH 8.0 (온도 미기재)",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          }
+        ]
+      },
+      "from": [
+        "O000023"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-16T08:19:11.396Z"
+    },
+    "V000066": {
+      "subject": "D000149/rule/condense",
+      "property": "Km",
+      "value": {
+        "dist": "point",
+        "mean": 0.0000077
+      },
+      "context": {
+        "scope": "사람 시트르산 생성효소 (EC 2.3.3.1) — BRENDA, 아세틸-CoA 변화 기질, WT, pH 8.0 (온도 미기재)",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          }
+        ]
+      },
+      "from": [
+        "O000024"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-16T08:19:11.396Z"
     }
   }
 }

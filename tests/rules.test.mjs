@@ -673,7 +673,7 @@ const mx = (d) => `${d}|mito_matrix`;
 // examples/scenarios/tca-measured-kinetics-hypothetical.json(교과서 7.5′)에서 따로 확인한다.
 const INSTANT = (() => {
   const d = JSON.parse(JSON.stringify(BASE));
-  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate']]) for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다
+  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate'], ['D000149', 'condense']]) for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다 (CS 는 2026-10-16 실측 kcat·Km 추가 — 즉시 순환 픽스처에서는 벗긴다)
   return DefDB.normalize(d);
 })();
 test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복실화에서 CO₂ 를 빼면 거부', () => {
