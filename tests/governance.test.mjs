@@ -363,3 +363,38 @@ test('⑩ 델타 기록 (S1): 기원 봉인 → 병합마다 사건 추가 → �
   // 기원이 없는 db 는 기록하지 않는다 (시험용 임시 db)
   rmSync(dir, { recursive: true, force: true });
 });
+
+// ⑬ 파생 그래프 · 철회 전파 (build-plan 13): 관찰 철회 → 기댄 값·상수·단계·경로에 '근거 철회됨' (읽기 전용 판결, db 불변)
+test('⑬ 사법부: 철회 전파 — 관찰에 기댄 값·단계·경로를 드러낸다 (읽기만)', () => {
+  // 유효한 db 에는 철회된 관찰이 없다 → 전파할 것 없음
+  const base = J.retractionImpact(BASE);
+  assert.equal(base.retractedCount, 0);
+  assert.equal(base.rows.length, 0, '철회된 관찰이 없으면 행 없음');
+
+  // 만약 아코니테이스 kcat 관찰(O000025)을 철회하면 — 값 V000067 → 규칙 isomerize → 단계 S000032 → 경로 D000148
+  const whatif = J.retractionImpact(BASE, { assume: ['O000025'] });
+  assert.equal(whatif.rows.length, 1);
+  const r = whatif.rows[0];
+  assert.equal(r.obs, 'O000025'); assert.equal(r.assumed, true); assert.equal(r.retracted, false);
+  assert.ok(r.values.some((v) => v.value === 'V000067' && v.subject === 'D000150/rule/isomerize' && v.property === 'kcat'), '기댄 값을 가리킴');
+  assert.ok(r.rules.includes('D000150/rule/isomerize'));
+  assert.ok(r.steps.includes('S000032'), '그 규칙을 쓰는 단계');
+  assert.ok(r.pathways.includes('D000148'), '단계가 속한 경로');
+
+  // 실제로 철회 표시가 붙은 관찰(메모리에서 — 관문은 이런 db 를 거부하지만 판결 함수는 blast-radius 를 보여준다)
+  const dbR = C.normalize(JSON.parse(JSON.stringify(BASE)));
+  dbR.observations.O000025 = { ...dbR.observations.O000025, retracted: { note: '시험 철회' } };
+  const got = J.retractionImpact(dbR);
+  assert.equal(got.retractedCount, 1);
+  assert.equal(got.rows.length, 1);
+  assert.equal(got.rows[0].retracted, true); assert.equal(got.rows[0].assumed, false);
+  assert.ok(got.rows[0].values.some((v) => v.value === 'V000067'));
+
+  // 어떤 현재 값도 기대지 않는 관찰(정성 관찰 O000019)을 철회 가정 → 전파할 것 없음
+  const none = J.retractionImpact(BASE, { assume: ['O000019'] });
+  assert.equal(none.rows.length, 0, '값이 기대지 않는 관찰은 전파 없음');
+
+  // 텍스트 보고 — 철회 가정이 반영되고, 철회된 관찰이 없는 기본 db 는 안내 문구
+  assert.match(J.retractionText(BASE, { assume: ['O000025'] }), /근거 철회됨 → 값 V000067/);
+  assert.match(J.retractionText(BASE), /철회된 관찰 없음/);
+});

@@ -1198,6 +1198,49 @@
     if (!r.issues.length) return { text: '정제 점검: 중복 규칙·화학량 모순 없음', result: r };
     return { text: ['정제 점검 (Continuous Refinement):', ...r.issues.map((x) => `  ${x.type === 'lumped_contradiction' && x.known.length ? '○' : '△'} [${x.type}] ${x.msg}`), ...(r.issues.some((x) => x.type === 'duplicate_rule' && x.removable) ? [`  → 참조 없는 중복 ${r.issues.filter((x) => x.type === 'duplicate_rule' && x.removable).length}개 — 리팩터링 패치 초안은 입법부(legislative draftRefactor)가 쓴다`] : [])].join('\n'), result: r };
   }
+  // ===== 파생 그래프 · 철회 전파 (build-plan 13) =====
+  //   관찰(O)이 철회되면 그 관찰에 기댄 현재 값(V)·상수·단계·경로를 '근거 철회됨' 으로 드러낸다. 읽기 전용 판결 — db 를 바꾸지 않는다.
+  //   파생은 한 홉(관찰 → 값, v.from); 값의 subject 가 규칙이면 그 규칙을 쓰는 단계(step.rule) → 경로(step.part_of)로 이어진다.
+  //   관문은 지금도 '철회된 관찰을 참조하는 살아있는 상수' 를 하드 차단하므로(checkKineticsFrom), 유효한 db 에는 그런 상수가 없다 —
+  //   그래서 이 보고의 쓸모는 '만약 이 관찰을 철회하면 무엇이 무너지나'(opt.assume)를 미리 보는 것. 모델(차단 유지 vs 완화)은 이 그래프를 본 뒤 결정(사용자).
+  //   실행·결론(시뮬레이션 보고서)은 db 밖 파일이라 이 그래프에 없다 — 재생성 때 같은 추적으로 표시(모델 결정 뒤 항목).
+  function retractionImpact(db, opt = {}) {
+    db = normalize(db);
+    const assume = new Set(opt.assume || []);
+    const already = new Set(Object.entries(db.observations || {}).filter(([, o]) => o.retracted).map(([id]) => id));
+    const retracted = new Set([...already, ...assume]);
+    const live = M.currentValues(db); // subject → [[id, v], …] (철회·대체 제외)
+    const byObs = new Map();
+    for (const [subject, list] of live) for (const [vid, v] of list) for (const o of v.from || []) {
+      if (!retracted.has(o)) continue;
+      if (!byObs.has(o)) byObs.set(o, []);
+      byObs.get(o).push({ value: vid, subject, property: v.property, unit: v.unit || null, derivation: v.derivation });
+    }
+    const stepsOf = (ref) => Object.keys(db.steps).filter((sid) => db.steps[sid].rule === ref);
+    const rows = [];
+    for (const oid of [...retracted].sort()) {
+      const vals = byObs.get(oid) || [];
+      if (!vals.length) continue; // 기댄 현재 값이 없으면 전파할 것이 없다 (이미 떼어냄)
+      const rules = uniq(vals.map((x) => x.subject).filter((s) => s.includes('/rule/')));
+      const steps = uniq(rules.flatMap(stepsOf));
+      const pathways = uniq(steps.flatMap((sid) => db.steps[sid].part_of || []));
+      const o = db.observations[oid];
+      rows.push({ obs: oid, retracted: already.has(oid), assumed: assume.has(oid) && !already.has(oid), note: (o && o.retracted && o.retracted.note) || '', values: vals, rules, steps, pathways });
+    }
+    return { rows, retractedCount: already.size, assumedCount: assume.size };
+  }
+  function retractionText(db, opt = {}) {
+    const r = retractionImpact(db, opt);
+    if (!r.retractedCount && !r.assumedCount) return '근거 철회 전파: 철회된 관찰 없음 (가정할 관찰을 주려면 retraction <O…>).';
+    if (!r.rows.length) return `근거 철회 전파: 철회${r.assumedCount ? '·가정' : ''} 관찰에 기댄 현재 값 없음 — 파생값이 이미 떼어졌거나 그 관찰을 쓰는 상수가 없다.`;
+    const out = [`근거 철회 전파 (파생 그래프, build-plan 13):`];
+    for (const row of r.rows) {
+      out.push(`  ✗ ${row.obs} ${row.assumed ? '철회 가정' : '철회됨'}${row.note ? ' — ' + row.note : ''}`);
+      for (const v of row.values) out.push(`      근거 철회됨 → 값 ${v.value} (${v.subject} · ${v.property}${v.unit ? ' ' + v.unit : ''}${v.derivation === 'lumped' ? ' · 묶음' : ''})`);
+      if (row.steps.length) out.push(`      → 단계 ${row.steps.join('·')}${row.pathways.length ? ' → 경로 ' + row.pathways.join('·') : ''} 의 시뮬레이션 결론은 근거 철회된 상수에 의존`);
+    }
+    return out.join('\n');
+  }
   // 자동 보강 후보 (원본 대조 대상): unmapped 필수 외부 ID, 또는 대조 안 된(asserted) UniProt·ChEBI — judicial/identity.js 의 plan 과 같은 기준
   function augmentCandidates(db) {
     let n = 0;
@@ -1679,7 +1722,7 @@
 
   return Object.freeze({ auditRate, checkAttestations,
     needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
-    validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, augmentCandidates, patchReportText, audit,
+    validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, retractionImpact, retractionText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });
 });

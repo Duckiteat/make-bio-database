@@ -373,6 +373,13 @@ switch (cmd) {
     else console.log(QG.qualGraphText(v));
     break;
   }
+  case 'retraction': { // 파생 그래프 · 철회 전파 (build-plan 13): 철회된(또는 <O…> 로 철회를 가정한) 관찰에 기댄 현재 값·상수·단계·경로 — 읽기만, db 불변
+    const db = loadDB(), ids = args.filter((a) => /^O\d{6}$/.test(a));
+    const opt = ids.length ? { assume: ids } : {};
+    if (flags.json) console.log(JSON.stringify(J.retractionImpact(db, opt), null, 2));
+    else console.log(J.retractionText(db, opt));
+    break;
+  }
   case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
     const dataDir = dirname(DB_PATH);
     if (flags.genesis) {
@@ -535,7 +542,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====
