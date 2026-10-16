@@ -1029,6 +1029,14 @@
       "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6."
     },
     {
+      "path": "tests/bench_index.js",
+      "class": "verification",
+      "format": "Node CommonJS 스크립트 (읽기 전용)",
+      "writer": "사람·AI",
+      "readers": "사람(콘솔), build-plan 16A·15–19 색인 계층 문턱 판정",
+      "interpret": "색인·파싱 고정 비용 측정 — 매 콜드 명령의 JSON.parse·normalize·index(db) 가 규모(합성 N×)에 따라 어떻게 자라나, parse 대 index 비중, 영속 색인/오프셋/샤딩이 되돌릴 몫, 200 ms 문턱 외삽. 설계 dictionary-and-translation.md §6′."
+    },
+    {
       "path": ".github/workflows/check.yml",
       "class": "verification",
       "format": "GitHub Actions YAML",
