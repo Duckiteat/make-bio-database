@@ -26,6 +26,8 @@ function closureOfRule(rule) {
   if (lvl === 'abstracted') return { closure: 'abstraction', label: 'abstraction — 추론으로 대체', measured: false };
   return { closure: 'assumed', label: `${lvl || '?'} — 실측 아님`, measured: false };
 }
+const PARAM_KO = { kcat: '최대 회전수 kcat', Km: '반포화 농도 Km', k: '속도 상수 k', k_r: '역반응 속도 k_r', k0: '전지수 인자 k0', dG_act: '활성화 에너지 ΔG‡', dG0: '표준 반응 자유에너지 ΔG°′', half_life: '반감기' };
+function taxonLabel(sp) { if (!sp) return null; const t = V.taxa && V.taxa[sp]; const nm = t && (t.ko || t.en || t.name); return nm ? `${nm}(${sp})` : sp; }
 const CLOSURE_SELF = { // 사고 패턴: 각 닫는 방법이 결론에 어떤 무게를 싣는지 (독자가 스스로 판단하도록)
   measure: '이 종·이 반응에서 실제로 잰 값 — 결론의 단단한 바닥',
   computed: '측정에서 도구로 계산 — 측정만큼 믿되 도구 가정을 짊어짐',
@@ -48,30 +50,34 @@ function evidenceReport(db, scenario, opt = {}) {
   const relRows = REL.items(db, opt.reliability || {});
   const gradeOf = (ref, what) => relRows.find((r) => r.target === ref && r.what === what) || null;
 
-  // 2·3. 인과 사슬 + 값 표 — 단계마다 닫는 방법·등급·출처
+  // 2·3. 인과 사슬 + 값 표 — 이름으로(번호 아님), 기질 → 〈효소〉 → 산물 로 인과를 드러낸다
   const chain = [], values = [];
   for (const sid of steps) {
     const st = db.steps[sid], ref = st.rule, rule = ruleOf(ref), c = closureOfRule(rule);
-    const g = gradeOf(ref, 'kinetics');
-    chain.push({ sid, label: L(sid), rule: ref, closure: c.closure, closureLabel: c.label, measured: c.measured, grade: g ? g.grade : null });
+    const g = gradeOf(ref, 'kinetics'), senseId = ref.split('/')[0], eff = (rule && rule.effect) || {};
+    const inputs = (eff.consumes || []).map(L), outputs = (eff.produces || []).map(L);
+    chain.push({ sid, enzyme: L(senseId), reaction: (rule && rule.label) || L(sid), inputs, outputs,
+      rule: ref, closure: c.closure, closureLabel: c.label, measured: c.measured, grade: g ? g.grade : null });
     const k = rule && rule.kinetics;
     if (k) for (const f of M.KIN_VALUE_FIELDS || ['kcat', 'Km', 'k', 'k_r', 'k0', 'dG_act', 'dG0', 'half_life']) {
       if (k[f] == null) continue;
       const srcs = (k.evidence && k.evidence.sources) || [];
       const fromObs = (k.from || []).filter((x) => x.param === f).map((x) => x.obs);
-      values.push({ step: sid, rule: ref, param: f, value: k[f], unit: unitOf(db, ref, f, k), species: (k.context && k.context.species) || null,
-        sources: srcs.map((s) => `${s.db}:${s.id}`), fromObs, closure: c.closure, closureLabel: c.label,
-        grade: g ? { grade: g.grade, s: g.s, d: g.d, why: g.why } : null });
+      values.push({ step: sid, rule: ref, enzyme: L(senseId), reaction: (rule && rule.label) || L(sid),
+        param: f, paramKo: PARAM_KO[f] || f, value: k[f], unit: unitOf(db, ref, f, k),
+        species: taxonLabel((k.context && k.context.species) || null), sources: srcs.map((s) => `${s.db}:${s.id}`), fromObs,
+        closure: c.closure, closureLabel: c.label, grade: g ? { grade: g.grade, s: g.s, d: g.d, why: g.why } : null });
     }
   }
 
   // 3b. 가정 입력 (시나리오의 가상 값) — 자료를 다 보인다: 무엇이 측정이고 무엇이 가정인지 나란히
   const assumptions = [];
   const hyp = !!scenario.hypothetical;
-  for (const [key, v] of Object.entries(scenario.amounts || {})) assumptions.push({ kind: '시작량', key, value: v });
-  for (const [key, v] of Object.entries(scenario.reservoirs || {})) assumptions.push({ kind: '저장소(무한 풀)', key, value: v });
-  for (const [key, v] of Object.entries(scenario.volumes || {})) assumptions.push({ kind: '부피', key, value: `${v.value} ${v.unit}` });
-  for (const key of Object.keys(scenario.kinetics || {})) assumptions.push({ kind: '속도 상수 덮어쓰기(시나리오)', key, value: '시나리오에서 지정' });
+  const bl = (key) => (ix.bundleLabel ? ix.bundleLabel(key) || key : key);
+  for (const [key, v] of Object.entries(scenario.amounts || {})) assumptions.push({ kind: '시작량', key: bl(key), value: v });
+  for (const [key, v] of Object.entries(scenario.reservoirs || {})) assumptions.push({ kind: '저장소(무한 풀)', key: bl(key), value: v });
+  for (const [key, v] of Object.entries(scenario.volumes || {})) assumptions.push({ kind: '부피', key: bl(key), value: `${v.value} ${v.unit}` });
+  for (const key of Object.keys(scenario.kinetics || {})) { const r = key.split('/')[0]; assumptions.push({ kind: '속도 상수 덮어쓰기', key: `${L(r)} — ${(ruleOf(key) || {}).label || key}`, value: '시나리오에서 지정' }); }
 
   // 5. 실패·막다른 길 — 등록된 한계가 곧 '이래서 안 됐다 / 이게 있어야 닫힌다' 의 기록
   const onPath = (t) => { const base = (M.parseTarget(t) || {}).base; return t === target || base === target || steps.some((sid) => db.steps[sid].rule.split('/')[0] === base) || steps.some((sid) => db.steps[sid].rule === t); };
@@ -96,7 +102,7 @@ function evidenceReport(db, scenario, opt = {}) {
   const gained = measured.map((c) => `${c.sid} ${c.label}: ${c.closure} · 등급 ${c.grade || '—'}`);
   const floor = [];
   // 가정 입력은 한 줄로 요약한다 (낱개 나열은 소음) — 가장 약한 것은 보통 '측정이 아닌 입력' 그 자체다
-  const concAssume = assumptions.filter((x) => x.kind !== '속도 상수 덮어쓰기(시나리오)');
+  const concAssume = assumptions.filter((x) => x.kind !== '속도 상수 덮어쓰기');
   if (hyp && concAssume.length) floor.push(`시작량·저장소·부피가 모두 **가상 값**(시나리오 hypothetical, 입력 ${concAssume.length}개) — 농도 공백(L000039 등). 소진 시각·완료 바퀴 수는 질적 의미만이다.`);
   // 근사·구조·열역학 한계를 앞세운다 — 결론을 실제로 흔드는 것들
   for (const f of failures.filter((x) => x.type === 'Structural_Gap' || /pH|협동|가역|ΔG|역반응|힐|열역학|비가역/.test(x.text))) floor.push(`${f.id} [${f.type}] ${f.text.slice(0, 90)}`);
@@ -151,18 +157,22 @@ function evidenceReportMarkdown(rep) {
   if (rep.scenario.note) o.push('', `> ${rep.scenario.note}`);
   o.push('');
 
-  o.push('## 2. 인과 사슬 — 그리고 우리가 그걸 따라간 방식', '');
-  o.push('각 단계가 어떤 근거 위에 서 있는지(닫는 방법)와 등급을 함께 적는다. 측정으로 닫힌 고리와 아직 가정/사건 기반인 고리가 한눈에 갈린다.', '');
-  o.push('| 단계 | 반응 | 닫는 방법 | 등급 | 바닥 |', '|---|---|---|---|---|');
-  for (const c of rep.chain) o.push(`| ${c.sid} | ${c.label} | ${c.closureLabel} | ${c.grade || '—'} | ${c.measured ? '● 실측' : c.closure === 'none' ? '○ 사건기반' : '◐ 가정/추상'} |`);
-  o.push('');
+  o.push('## 2. 인과 사슬 — 무엇이 무엇을 만드나', '');
+  o.push('반응을 일어나는 순서대로, **기질 → 〈효소〉 → 산물** 로 읽는다. 각 화살표 옆에 그 단계의 속도를 우리가 어떻게 아는지(● 실제로 잰 값 / ○ 속도 모름·일어난다는 것만) 적는다 — 측정으로 뒷받침된 고리와 아직 비어 있는 고리가 눈으로 갈린다.', '');
+  for (const c of rep.chain) {
+    const mark = c.measured ? '● 실측 속도' : c.closure === 'none' ? '○ 속도 미상(사건 기반)' : '◐ 가정/추상';
+    const lhs = c.inputs.length ? c.inputs.join(' + ') : '(기질 미지정)', rhs = c.outputs.length ? c.outputs.join(' + ') : '(산물 미지정)';
+    o.push(`- **${lhs}**  →  〈${c.enzyme}〉  →  **${rhs}**`);
+    o.push(`    · ${c.reaction} — ${mark}${c.grade ? ` · 등급 ${c.grade}` : ''}`);
+  }
+  o.push('', '> ● 인 고리만 "얼마나 빠른지" 를 데이터로 말할 수 있다. ○ 인 고리는 "일어난다" 까지만 알고 속도는 모른다(아래 5·7절).', '');
 
   o.push('## 3. 자료 — 쓰인 값 전부 (숨기지 않음)', '');
-  o.push('### 3a. 측정·유도 상수', '');
+  o.push('### 3a. 실제로 잰 상수 (효소 이름으로)', '');
   if (rep.values.length) {
-    o.push('| 상수 | 값 | 종 | 출처 | 등급(S,D) | 근거 관찰 | 닫는 방법 |', '|---|---|---|---|---|---|---|');
-    for (const v of rep.values) o.push(`| ${v.rule}·${v.param} | ${fmt(v.value)}${v.unit ? ' ' + v.unit : ''} | ${v.species || '—'} | ${v.sources.join(', ') || '—'} | ${v.grade ? `${v.grade.grade} (${v.grade.s},${v.grade.d})` : '—'} | ${v.fromObs.join(', ') || '—'} | ${v.closure} |`);
-  } else o.push('_(측정·유도 상수 없음 — 모든 단계가 사건 기반)_');
+    o.push('| 효소 · 반응 | 무엇 | 값 | 종 | 출처 | 등급(S,D) | 어떻게 알았나 |', '|---|---|---|---|---|---|---|');
+    for (const v of rep.values) o.push(`| ${v.enzyme} · ${v.reaction} | ${v.paramKo} | ${fmt(v.value)}${v.unit ? ' ' + v.unit : ''} | ${v.species || '—'} | ${v.sources.join(', ') || '—'} | ${v.grade ? `${v.grade.grade} (${v.grade.s},${v.grade.d})` : '—'} | ${v.closure}${v.fromObs.length ? ` · 관찰 ${v.fromObs.join(', ')}` : ''} |`);
+  } else o.push('_(측정·유도 상수 없음 — 모든 단계가 "일어난다" 까지만, 속도는 미상)_');
   o.push('');
   o.push('### 3b. 가정 값 (시나리오가 넣은 가상 입력 — 측정이 아니다)', '');
   if (rep.assumptions.length) {
