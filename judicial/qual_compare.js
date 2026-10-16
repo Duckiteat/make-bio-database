@@ -13,6 +13,7 @@
 'use strict';
 const V = require('../vocab.js');
 const S = require('./stats.js');
+const PROTO = require('./protocol.js');
 
 const fact = (m) => (m <= 1 ? 1 : m * fact(m - 1));
 const chanceOf = (o) => (o.expect && typeof o.expect === 'object' ? 1 / fact((o.expect.order || []).length) : (V.qualitativeExpectations[o.expect] || {}).chance);
@@ -148,6 +149,7 @@ function qualCompareText(rows, base) {
     if (d.mode === 'ensemble' && d.p != null) out.push(`      앙상블 ${d.n ? `n ${[].concat(d.n).join('·')}` : ''} · p ${d.p.toPrecision(3)}${d.k != null ? ` · ${d.k}/${d.n}` : ''}`);
     if (r.why) out.push(`      ${r.why}`);
     if (r.requirement) out.push(`      ${r.requirement}`);
+    if (r.context_transfer) for (const l of PROTO.contextTransferText(r.context_transfer).split('\n')) out.push(`      ${l}`);
   }
   for (const r of rows) if (r.chance_source === 'empirical') out.push(`  ${r.id || ''} 우연 확률 ${r.chance.toPrecision(3)} — 같은 실행의 다른 읽을 거리 ${r.chance_pool} 개 중 같은 결과의 비율 (결과 칸 균등 가정이면 ${r.chance_uniform.toPrecision(3)})`);
   if (base) {

@@ -104,10 +104,43 @@ function protocolVerdict(db, sc, ctx) {
   return out;
 }
 
+// V8 맥락 이전 (build-plan 25): 추정/측정 맥락(규약 matched_experiment.system) 과 예측/판정 맥락(시뮬레이션이 돈 맥락)을
+//   여섯 맥락 열쇠(format v12 §5)로 비교한다. 둘 다 아는 열쇠가 다르면 '맥락 이전' — 조건 A 로 추정하고 B 를 예측한 것.
+//   판정을 막지 않는다(가상 상수 주석과 같은 급의 공개 전제). 한쪽만 아는 열쇠는 '비교 못 함'(전제가 덜 선언됨)으로 따로 센다.
+const CTX_KEYS = ['species', 'cell', 'location', 'condition', 'temperature_K', 'pH'];
+const canonCtxVal = (k, v) => {
+  if (v == null || v === '') return null;
+  if (k === 'cell') return String(v).trim().toLowerCase().replace(/\s+/g, '_'); // 토큰/산문 모두 정규화 — 같은 토큰이면 이전 아님
+  if (k === 'condition') return JSON.stringify(Array.isArray(v) ? [...v].map(String).sort() : String(v));
+  return String(v);
+};
+function contextTransfer(estimated, predicted) {
+  estimated = estimated || {}; predicted = predicted || {};
+  const differ = [], incomparable = [], same = [];
+  for (const k of CTX_KEYS) {
+    const a = estimated[k] == null || estimated[k] === '' ? null : estimated[k];
+    const b = predicted[k] == null || predicted[k] === '' ? null : predicted[k];
+    if (a == null || b == null) { if (a != null || b != null) incomparable.push({ key: k, estimated: a, predicted: b }); continue; }
+    (canonCtxVal(k, a) === canonCtxVal(k, b) ? same : differ).push({ key: k, estimated: a, predicted: b });
+  }
+  return { transfer: differ.length > 0, differ, incomparable, same };
+}
+function contextTransferText(ct) {
+  if (!ct) return '';
+  if (ct.transfer) {
+    const lines = ['맥락 이전 (V8): 추정한 맥락과 판정한 맥락이 다름 — 조건 A 로 추정, B 를 예측 (판정을 막지 않는 공개 전제)'];
+    for (const d of ct.differ) lines.push(`  ✗ ${d.key}: 추정 '${d.estimated}' → 판정 '${d.predicted}'`);
+    for (const d of ct.incomparable) lines.push(`  · ${d.key}: 비교 못 함 (추정 ${d.estimated == null ? '미선언' : d.estimated} · 판정 ${d.predicted == null ? '미선언' : d.predicted})`);
+    return lines.join('\n');
+  }
+  if (ct.incomparable.length && !ct.same.length) return '맥락 이전 (V8): 비교할 공통 맥락 열쇠가 없음 — ' + ct.incomparable.map((d) => d.key).join('·') + ' 한쪽만 선언';
+  return '맥락 이전 (V8): 없음 — 추정과 판정의 맥락이 같음' + (ct.incomparable.length ? ' (단, ' + ct.incomparable.map((d) => d.key).join('·') + ' 는 한쪽만 선언)' : '');
+}
+
 function protocolText(v) {
   if (!v.declared) return '모의 실험 규약: 없음 — 탐색 실행 (검증 결론을 낼 수 없음)';
   return v.ok ? `모의 실험 규약: 통과 — 사전 등록 #${v.registered.seq} (${v.registered.at})${v.required_n > 1 ? `, 앙상블 n ≥ ${v.required_n}` : ''}`
     : `모의 실험 규약: 위반 ${v.problems.length}\n` + v.problems.map((x) => '  ✗ ' + x).join('\n');
 }
 
-module.exports = { scenarioHash, PREREG_GENESIS, requiredReplicates, usedAsEvidence, protocolStructure, verifyPreregChain, protocolVerdict, protocolText };
+module.exports = { scenarioHash, PREREG_GENESIS, requiredReplicates, usedAsEvidence, protocolStructure, verifyPreregChain, protocolVerdict, protocolText, contextTransfer, contextTransferText, CTX_KEYS };

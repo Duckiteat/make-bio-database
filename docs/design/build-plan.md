@@ -66,7 +66,7 @@
 | 22 | **L4·M3** 독립 기준(DOI·실험계·측정 방법)·실험 단위 묶음 | 비독립 일치 표시 시험 | ☑ 2026-10-15 — `chanceBaseline` 이 판정 주장을 증거 단위(experiment·출처)로 묶어 P(K ≥ k) 를 단위 수로 셈, 비독립 묶음 표시. 측정 방법 필드는 아직 없음. 기전 경로 독립(하류 겹침)은 증거 독립과 다른 더 깊은 공백 → L000109 로 등록 |
 | 23 | **M2** Holm 보정 · 예측 구간 덮임률 · CRPS | 보정 시험 | ☐ |
 | 24 | **L1** 충돌 원인 분류(모델·데이터·맥락) | 분류 전 "원인 미정" 시험 | ☐ |
-| 25 | **V7 식별 가능성**(프로파일 우도) · **V8 맥락 이전** | 식별 불가 상수 표시 시험 | ☐ |
+| 25 | **V7 식별 가능성**(프로파일 우도) · **V8 맥락 이전** | 식별 불가 상수 표시 시험 | ◐ 2026-10-16 — **V8 맥락 이전 완료**: `judicial/protocol.js contextTransfer`/`contextTransferText`, `orchestrator.observeQualitative` 가 추정 맥락(규약 matched_experiment.system) 대 판정 맥락(시나리오 cell·판정 세포 상태)을 여섯 열쇠로 대조해 `context_transfer` 깃발을 붙이고 `qual_compare.qualCompareText` 가 렌더(판정 막지 않음·공개 전제). MHC 검증 3건이 Daudi/220/2.2.93 → dendritic_cell 세포 이전을 자동 표시(L000111·L000112 의 산문을 구조 깃발로). 시험 `tests/qualitative.test.mjs ⑥`. **남음: V7 식별 가능성(프로파일 우도) — 정량 검증이 생기면.** |
 | 26 | **M4** 대안 구조 비교의 복잡도 벌점 | compare 출력에 매개변수 수·정보 기준 | ☐ |
 
 ## 4부 — 적분 엔진 (관문 D 를 통과해야 4부 후반)

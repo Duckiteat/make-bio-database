@@ -135,3 +135,22 @@ test('⑤ 번호 이동: 병합이 옛 번호를 지우고 기록 · 조회는 �
   const es = J.validate(M.normalize(bad)).errors.filter((e) => e.where === `이동 ${from}`).map((e) => e.msg).join(' | ');
   assert.ok(es.includes('merge 대상 수 2') && es.includes(`이동 대상 '${from}'`), es);
 });
+
+test('⑥ V8 맥락 이전: 추정·판정 세포가 다르면 깃발 · 같으면 없음 · 한쪽만 선언은 비교 못 함', () => {
+  const PROTO = req('../judicial/protocol.js');
+  // 세포 다름 → 이전, species 는 한쪽만 선언이라 비교 못 함
+  const t = PROTO.contextTransfer({ species: '9606', cell: 'Daudi' }, { species: null, cell: 'dendritic_cell' });
+  assert.ok(t.transfer, '세포가 다르면 맥락 이전');
+  assert.deepEqual(t.differ.map((d) => d.key), ['cell']);
+  assert.deepEqual(t.incomparable.map((d) => d.key), ['species']);
+  // 같은 세포(공백/밑줄 정규화) → 이전 아님
+  const s = PROTO.contextTransfer({ cell: 'dendritic cell' }, { cell: 'dendritic_cell' });
+  assert.ok(!s.transfer && s.same.some((d) => d.key === 'cell'), '같은 토큰이면 이전 아님');
+  // 공통으로 아는 열쇠가 없음 → 이전 아님(비교 못 함만)
+  const n = PROTO.contextTransfer({ species: '9606' }, { cell: 'x' });
+  assert.ok(!n.transfer && n.incomparable.length === 2, '공통 열쇠 없으면 이전 주장 안 함');
+  // 텍스트: 이전이면 differ 열쇠를 적고, 판정을 막지 않는다고 밝힌다
+  const txt = PROTO.contextTransferText(t);
+  assert.ok(/맥락 이전 \(V8\)/.test(txt) && /cell/.test(txt) && /막지 않는/.test(txt), txt);
+  assert.equal(PROTO.contextTransferText(s).includes('없음'), true);
+});

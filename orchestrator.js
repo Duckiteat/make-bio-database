@@ -186,7 +186,14 @@ function observeQualitative(db, o, state, sc, opt) {
     const emp = QC.empiricalChance(o, pool), uniform = r.chance;
     if (emp.chance != null) Object.assign(r, { chance: emp.chance, chance_source: 'empirical', chance_pool: emp.n, chance_uniform: uniform });
     else Object.assign(r, { chance_source: 'uniform', chance_pool: 0 });
-    return Object.assign(r, { id: opt.observationId || null, experiment: o.experiment || null, source: (o.provenance || {}).source || null, numerical_error: main.numerical, quantum: main.quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv });
+    // V8 맥락 이전 (build-plan 25): 추정 맥락(규약 matched_experiment.system) 대 판정 맥락(시나리오 cell·판정 세포 상태)
+    const sys = (p.matched_experiment || {}).system;
+    let contextTransfer = null;
+    if (sys) {
+      const stateCell = ((db.senses[state] || {}).desc || []).map((d) => d.context && d.context.cell).find(Boolean);
+      contextTransfer = PROTO.contextTransfer({ species: sys.species, cell: sys.cell }, { species: sc.species || null, cell: sc.cell || stateCell || null });
+    }
+    return Object.assign(r, { id: opt.observationId || null, experiment: o.experiment || null, source: (o.provenance || {}).source || null, numerical_error: main.numerical, quantum: main.quantum, runs: cRaws.length, perturbation_audit: audit, protocol: pv, context_transfer: contextTransfer });
   } catch (e) { return { error: e.message }; }
 }
 
