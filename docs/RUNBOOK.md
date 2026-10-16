@@ -1,6 +1,6 @@
 # 실행 설명서 — 이 시뮬레이션을 쓰는 법
 
-이 파일 하나로 작업을 시작할 수 있게 쓴 것이다. **여기 적힌 명령은 전부 실제로 돌려 확인했다**(2026-10-10).
+이 파일 하나로 작업을 시작할 수 있게 쓴 것이다. **여기 적힌 명령은 전부 실제로 돌려 확인했다**(2026-10-10 · 수치 갱신 2026-10-16).
 막히면 끝의 "더 읽을 곳" 으로 간다 — 교과서를 처음부터 읽지 않는다.
 
 - 모든 명령은 **저장소 최상위**에서 돈다.
@@ -32,14 +32,14 @@
 ## 1. 지금 무엇이 있나
 
 ```bash
-node dbtool.mjs status          # 규모·색인 (232 자, 가장 싼 조회)
+node dbtool.mjs status          # 규모 한 줄 요약 (가장 싼 조회 — 개념·정의항·규칙·관찰·한계 수)
 node dbtool.mjs map <이름>       # 개념이 이미 있나 — 번호(D…)를 찾는다
 node dbtool.mjs context D000144 # 그 정의항의 부위·규칙·관찰
 node dbtool.mjs mechanism 시트르산회로   # 단계 사슬·묶음 키
 ```
 
-**`data/db.json` 을 직접 읽지 마라 — 604 KB(≈176 k 토큰)다.** 위 조회가 같은 답을 1/500 로 준다.
-`CHANGES.md`(96 KB)·`limitations.md`(72 KB)·교과서 부록(80 KB)도 통째로 읽지 말고 `grep`·`sed -n` 으로 필요한 줄만 본다.
+**`data/db.json` 을 직접 읽지 마라 — 660 KB(≈190 k 토큰)다.** 위 조회가 같은 답을 1/500 로 준다.
+`CHANGES.md`(172 KB)·`limitations.md`(84 KB)·교과서 부록(100 KB)도 통째로 읽지 말고 `grep`·`sed -n` 으로 필요한 줄만 본다.
 
 ### 돌릴 수 있는 것
 
@@ -52,7 +52,7 @@ node dbtool.mjs mechanism 시트르산회로   # 단계 사슬·묶음 키
 `D000202` 미성숙 수지상 세포 · `D000203` 성숙 수지상 세포 · `D000210` 증식하는 섬유아세포 · `D000211` 복제 노화 섬유아세포 ·
 `D000212` 대식세포 (LPS→NF-κB→TNF 를 기전으로 감쌈 — fate 성능 벽 L000113, 검증은 적분장 엔진 뒤로)
 
-**시나리오 34 개**: `examples/scenarios/*.json` — 전부 `hypothetical: true`(상수가 가상).
+**시나리오 42 개**: `examples/scenarios/*.json` — 전부 `hypothetical: true`(상수가 가상). 검증용은 `*-validation-hypothetical.json`.
 
 ---
 
@@ -105,6 +105,24 @@ node dbtool.mjs qualgraph [O…] [--json]         # 정성 그래프 0 층 판�
 node dbtool.mjs evidence <시나리오.json> --target <경로|상태> [--report 파일.md] [--json]   # 증거·방법 보고서: 인과·값표(등급·출처·닫는 방법)·판정 수준·실패(열린 한계)·사고패턴·얻은 것/다음/바닥의 불안정함 — 읽기만
 node dbtool.mjs log                            # 델타 기록: 사슬 무결성 + 기원부터 재생 = 지금 db (기원은 log --genesis 로 한 번)
 ```
+
+### 검증 (관찰과의 일치) — 사전 등록된 규약 아래에서만
+
+일치/불일치 **결론**은 사전 등록 규약 아래에서만 낸다. 규약 없는 실행은 **탐색 실행**(결론 불가).
+
+```bash
+# ① 선행조건 점검 (가장 먼저) — 어느 관찰이 규약을 세울 출처인가?
+#    규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP 사례 L000107).
+node dbtool.mjs grade              # 쓰인 값이 실측(anchor/parameter)인지 가상인지
+#    정량 검증은 보류용 관찰이 use=validation 이어야 한다 — 지금은 정량 관찰이 전부 estimation(공백).
+# ② 규약(protocol) 담은 시나리오를 실행 전에 등록 (등록 뒤 고치면 미등록)
+node dbtool.mjs register examples/scenarios/<검증>-validation-hypothetical.json
+# ③ 판정 — 정성(방향·유무·순서) 또는 정량(δ equivalence), 우연 기준선·음성 대조와 함께
+node dbtool.mjs observe <O…> --state <상태> --scenario <대조군>.json
+node dbtool.mjs evidence <검증>.json --target <경로|상태> --report <보고서>.md
+```
+
+판정 결과: **맞음 · 틀림 · 보이지 못함(불일치 아님) · 무효**. 결론은 등록 규약의 검증 세트 관찰만, 우연 기준선 P(K≥k) 와 함께.
 
 ---
 
@@ -285,3 +303,6 @@ cmp index.html viewer.html             # 화면 두 파일이 같은지
 | 내 임무의 경계가 어디까지인지 | `docs/PROMPTS.md` (프롬프트 묶음 — 작업 종류별 경계·검증·멈춤 조건) |
 | 권력 분리의 이유 | `docs/design/tripartite-governance.md` |
 | 관찰 포트 설계 | `docs/design/observation-port.md` |
+| 사전·번역기(기계어↔사람말, 영한 병기) | `docs/design/dictionary-and-translation.md` (`dictionary.js`·`data/dictionary.jsonl`) |
+| 보존/비보존 분류(오차 3채널 기저) | `docs/design/conservation-classes.md` (`vocab.conservationClasses`·`conservationReasons`) |
+| 색인·파싱 비용 문턱 | `tests/bench_index.js` (`node tests/bench_index.js`) |
