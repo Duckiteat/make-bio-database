@@ -28,6 +28,13 @@ function closureOfRule(rule) {
 }
 const PARAM_KO = { kcat: '최대 회전수 kcat', Km: '반포화 농도 Km', k: '속도 상수 k', k_r: '역반응 속도 k_r', k0: '전지수 인자 k0', dG_act: '활성화 에너지 ΔG‡', dG0: '표준 반응 자유에너지 ΔG°′', half_life: '반감기' };
 function taxonLabel(sp) { if (!sp) return null; const t = V.taxa && V.taxa[sp]; const nm = t && (t.ko || t.en || t.name); return nm ? `${nm}(${sp})` : sp; }
+// 대상 참조를 사람 이름 + 번호로: "시트르산 회로 (D000148)" · "석신산 탈수소효소 · 석신산 산화 (D000154/rule/oxidize)"
+function labelRef(ix, db, ref) {
+  if (!ref) return '(미지정)';
+  const t = M.parseTarget(ref);
+  if (t && t.sub === 'rule') { const d = db.senses[t.base], r = d && d.rule.find((x) => x.id === t.key); return `${ix.label(t.base)}${r && r.label ? ' · ' + r.label : ''} (${ref})`; }
+  return `${ix.label((t && t.base) || ref)} (${ref})`;
+}
 const CLOSURE_SELF = { // 사고 패턴: 각 닫는 방법이 결론에 어떤 무게를 싣는지 (독자가 스스로 판단하도록)
   measure: '이 종·이 반응에서 실제로 잰 값 — 결론의 단단한 바닥',
   computed: '측정에서 도구로 계산 — 측정만큼 믿되 도구 가정을 짊어짐',
@@ -86,7 +93,7 @@ function evidenceReport(db, scenario, opt = {}) {
     if (!onPath(l.target)) continue;
     const s = limitationStatus(db, l);
     if (s.status.startsWith('resolved')) continue; // 닫힌 것은 실패가 아니다
-    failures.push({ id, type: l.type, target: l.target, status: s.status, done: s.done, total: s.total, text: l.requirement.text });
+    failures.push({ id, type: l.type, target: l.target, targetLabel: labelRef(ix, db, l.target), status: s.status, done: s.done, total: s.total, text: l.requirement.text });
   }
   failures.sort((a, b) => a.id.localeCompare(b.id));
 
@@ -109,22 +116,53 @@ function evidenceReport(db, scenario, opt = {}) {
     ],
   };
 
+  // 5·7. 흐름 비교 — 기대 vs 실제 (시뮬레이션 원자료는 조정자가 돌려 opt.sim 으로 넣는다; 사법부는 읽기만)
+  //   actual = 실행의 단계별 누적 진행량 / 창(window) = 회/s. expected = 시나리오가 실행 전에 선언한 예측(report.expect).
+  const flux = [];
+  const sim = opt.sim, win = sim && (sim.window || scenario.window || 1);
+  const expectDecl = (scenario.report && scenario.report.expect) || scenario.expect || [];
+  const findExpect = (sid, ref) => expectDecl.find((e) => e.step === sid || e.rule === ref || e.target === ref);
+  if (sim && sim.cum) {
+    for (const c of chain) {
+      const actual = sim.cum[c.sid] != null ? sim.cum[c.sid] / win : null;
+      const ex = findExpect(c.sid, c.rule);
+      if (actual == null && !ex) continue;
+      let pass = null, rel = null;
+      if (ex && actual != null && ex.value) { rel = Math.abs(actual - ex.value) / Math.abs(ex.value); pass = rel <= (ex.tol != null ? ex.tol : 0.05); }
+      flux.push({ step: c.sid, enzyme: c.enzyme, reaction: c.reaction, measured: c.measured,
+        expected: ex ? ex.value : null, expectedNote: ex ? ex.note : null, unit: (ex && ex.unit) || '회/s', actual, rel, pass });
+    }
+  }
+
   // 6·7. 사고 패턴(지문) + 삼각 결론
   const measured = chain.filter((c) => c.measured), eventBased = chain.filter((c) => c.closure === 'none');
-  const gained = measured.map((c) => `${c.sid} ${c.label}: ${c.closure} · 등급 ${c.grade || '—'}`);
+  const gained = measured.map((c) => `${c.enzyme} — ${c.reaction}: 실측 속도(${c.closure}) · 등급 ${c.grade || '—'}`);
   const floor = [];
   // 가정 입력은 한 줄로 요약한다 (낱개 나열은 소음) — 가장 약한 것은 보통 '측정이 아닌 입력' 그 자체다
   const concAssume = assumptions.filter((x) => x.kind !== '속도 상수 덮어쓰기');
-  if (hyp && concAssume.length) floor.push(`시작량·저장소·부피가 모두 **가상 값**(시나리오 hypothetical, 입력 ${concAssume.length}개) — 농도 공백(L000039 등). 소진 시각·완료 바퀴 수는 질적 의미만이다.`);
-  // 근사·구조·열역학 한계를 앞세운다 — 결론을 실제로 흔드는 것들
-  for (const f of failures.filter((x) => x.type === 'Structural_Gap' || /pH|협동|가역|ΔG|역반응|힐|열역학|비가역/.test(x.text))) floor.push(`${f.id} [${f.type}] ${f.text.slice(0, 90)}`);
+  if (hyp && concAssume.length) floor.push(`시작량·저장소·부피가 모두 **가상 값**(시나리오 hypothetical, 입력 ${concAssume.length}개) — 농도 공백. 소진 시각·완료 바퀴 수는 질적 의미만이다.`);
+  // 근사·구조·열역학 한계를 앞세운다 — 결론을 실제로 흔드는 것들 (문장을 자르지 않는다)
+  for (const f of failures.filter((x) => x.type === 'Structural_Gap' || /pH|협동|가역|ΔG|역반응|힐|열역학|비가역/.test(x.text))) floor.push(`${labelRef(ix, db, f.target)} — ${f.text} 〔${f.id}, ${f.type}〕`);
   // 사건 기반(사람 kcat 없음) 단계는 시간·병목을 말하지 못하는 바닥
-  if (eventBased.length) floor.push(`${eventBased.length}개 단계(${eventBased.map((c) => c.sid).join('·')})는 속도 상수가 없어 사건 기반 — 회로 전체의 시간·병목은 아직 말할 수 없다 (L000096·L000110).`);
+  if (eventBased.length) floor.push(`${eventBased.length}개 단계(${eventBased.map((c) => c.enzyme).join('·')})는 속도 상수가 없어 사건 기반 — 회로 전체의 시간·병목은 아직 말할 수 없다.`);
   const next = [];
-  if (measured.length) next.push(`${measured.length}개 단계가 실측 상수로 rate-active — "측정 상수가 속도를 정하는가" 를 같은 방식으로 더 물을 수 있다`);
-  if (eventBased.length) next.push(`${eventBased.length}개 단계는 아직 사건 기반(사람 kcat 없음) — 같은 경로(BRENDA route 1 등)로 채우면 회로 전체의 시간·병목을 말할 수 있다`);
+  if (measured.length) next.push(`${measured.length}개 단계가 실측 상수로 돌아간다 — "측정 상수가 속도를 정하는가" 를 같은 방식으로 더 물을 수 있다`);
+  if (eventBased.length) next.push(`${eventBased.length}개 단계는 아직 사건 기반(사람 kcat 없음) — 같은 경로로 채우면 회로 전체의 시간·병목을 말할 수 있다`);
+
+  // 0. 핵심 실행 결과 요약 — 질문·결론(Pass/Fail)·판정 수준 (맨 위 상자)
+  const checked = flux.filter((f) => f.pass != null);
+  const verdict = !checked.length ? '선언된 기대 없음 (탐색 실행)'
+    : checked.every((f) => f.pass) ? 'PASS — 선언한 기대와 실제 흐름이 일치' : 'FAIL — 기대와 실제가 어긋남';
+  const summary = {
+    question: scenario.name || '(이름 없음)',
+    verdict,
+    detail: checked.map((f) => `${f.enzyme}: 기대 ${fmt(f.expected)} ${f.unit} · 실제 ${fmt(f.actual)} ${f.unit}${f.pass ? ' ✓' : ' ✗'}`),
+    judgment: judgment.level,
+    coverage: `전체 ${chain.length}단계 중 실측 ${measured.length} · 사건기반 ${eventBased.length}`,
+  };
 
   return {
+    summary, flux,
     target: { id: target, label: L(target), kind: (db.senses[target] || {}).kind },
     scenario: { name: scenario.name || '(이름 없음)', note: scenario._설명 || scenario.note || '', hypothetical: hyp, window: scenario.window || null },
     chain, values, assumptions, failures, judgment, criteria,
@@ -163,6 +201,12 @@ function evidenceReportMarkdown(rep) {
   o.push(`# 증거·방법 보고서 — ${rep.target.label} 〔${rep.scenario.name}〕`, '');
   o.push('> 이 보고서는 한 사람이 읽고 결론을 **완전히 이해하고 질문할 수 있도록** 쓰였다. 인과뿐 아니라 그것을 따라간 방식과 사고 패턴(지문), 실패·막다른 길, 그리고 바닥의 불안정함까지 드러낸다.', '');
 
+  const s0 = rep.summary;
+  o.push('> **［핵심 실행 결과 요약］**  ');
+  o.push(`> **질문** — ${s0.question}  `);
+  o.push(`> **결론** — ${s0.verdict}${s0.detail.length ? ' (' + s0.detail.join(' · ') + ')' : ''}  `);
+  o.push(`> **판정 수준** — ${s0.judgment} · ${s0.coverage}`, '');
+
   o.push('## 1. 무엇을 물었나', '');
   o.push(`- 대상: **${rep.target.label}** (${rep.target.id}${rep.target.kind ? ' · ' + rep.target.kind : ''})`);
   o.push(`- 시나리오: ${rep.scenario.name}${rep.scenario.hypothetical ? ' · ⚠ **가상(hypothetical)** — 지식이 아니라 "측정 상수가 쓰이는 자리" 를 보이는 실행' : ''}`);
@@ -200,8 +244,52 @@ function evidenceReportMarkdown(rep) {
   o.push(`- 고리별 검증 범위: 전체 ${rep.chain.length}단계 중 실측 ${meas} · 사건기반 ${ev} · 가정/추상 ${other}. 측정으로 닫힌 고리의 결론만 "데이터에 매여 있다" 고 말할 수 있다.`);
   o.push('');
 
-  o.push('### 4a. 판정 기준과 그 근거 — 무슨 기준으로 이렇게 잡았나', '');
-  o.push('위 등급·판정 수준은 자의가 아니라 사법부(`reliability.js`)의 고정된 기준에서 나온다. 이 보고서가 그 기준을 함께 밝힌다:', '');
+  o.push(`- 등급·판정 수준을 **무슨 기준으로** 잡았는지(출처 S·데이터 D 척도, 등급 규칙, 적용 문턱과 그 근거)는 본문 흐름을 가리지 않도록 맨 뒤 **［부록 A. 사법부 판정 기준］** 에 두었다.`);
+  o.push('');
+
+  o.push('## 5. 실패·막다른 길 (숨기지 않는다)', '');
+  o.push('등록된 한계가 곧 "이래서 안 됐다 / 이게 있어야 닫힌다" 의 기록이다. 이 경로에 열린 한계(문장을 자르지 않는다):', '');
+  if (rep.failures.length) {
+    for (const f of rep.failures) o.push(`- **${f.targetLabel}** — ${f.text}  _〔${f.id} · ${f.type} · 진행 ${f.done}/${f.total}〕_`);
+  } else o.push('_(이 경로에 열린 한계 없음)_');
+  o.push('');
+
+  o.push('## 6. 사고 패턴 (지문)', '');
+  o.push('이 결론을 만든 방식은 아래 규약을 이 경우에 그대로 적용한 것이다 — 이것이 이 시스템의 지문이다:', '');
+  for (const inv of rep.fingerprint.invariants) o.push(`- ${inv}`);
+  o.push('', '그래서 위 2~5절의 "닫는 방법" 하나하나가 결론에 싣는 무게는 다음과 같이 읽어야 한다:', '');
+  for (const [k, meaning] of Object.entries(rep.fingerprint.closureMeaning)) o.push(`- \`${k}\`: ${meaning}`);
+  o.push('');
+
+  o.push('## 7. 얻은 것 · 다음으로 나갈 지점 · 바닥의 불안정함', '');
+  if (rep.flux && rep.flux.length) {
+    o.push('**측정 흐름 — 기대 vs 실제** (시뮬레이션 실행 결과; 기대값은 실행 전 시나리오가 선언한 예측)', '');
+    o.push('| 효소 · 반응 | 기대 | 실제(측정) | 일치 |', '|---|---|---|---|');
+    for (const f of rep.flux) {
+      const exp = f.expected != null ? `${fmt(f.expected)} ${f.unit}${f.expectedNote ? ` (${f.expectedNote})` : ''}` : '— (선언 안 됨)';
+      const act = f.actual != null ? `${fmt(f.actual)} ${f.unit}` : '—';
+      const pass = f.pass == null ? '—' : f.pass ? `✓ 일치 (오차 ${(f.rel * 100).toFixed(1)}%)` : `✗ 불일치 (오차 ${(f.rel * 100).toFixed(1)}%)`;
+      o.push(`| ${f.enzyme} · ${f.reaction} | ${exp} | ${act} | ${pass} |`);
+    }
+    o.push('', '> 기대값(예: kcat·[E]/2)은 측정 상수에서 손으로 계산한 예측이고, 실제값은 그 상수로 돌린 시뮬레이션의 단계별 진행량 ÷ 창(window)이다. 둘이 맞으면 "측정 상수가 실제로 속도를 정한다" 는 뜻이다.', '');
+  }
+  o.push('**얻은 것**');
+  for (const g of rep.triad.gained) o.push(`- ${g}`);
+  o.push('', '**다음으로 나갈 수 있게 된 지점**');
+  for (const n of rep.triad.next) o.push(`- ${n}`);
+  o.push('', '**바닥의 불안정함 (결론을 떠받치는 가장 약한 지점)**');
+  for (const f of rep.triad.floor) o.push(`- ${f}`);
+  o.push('');
+
+  o.push('## 8. 재현', '');
+  o.push(`- db sha256: \`${rep.reproduce.dbSha}…\` · 시나리오 sha256: \`${rep.reproduce.scenarioSha}…\`${rep.reproduce.asOf ? ` · 기준 시각(asOf) ${rep.reproduce.asOf}` : ''}`);
+  o.push('- 이 보고서는 읽기 전용 판결(사법부)이다 — db·엔진을 바꾸지 않는다. 시뮬레이션 과정·무결성 증명서는 `fate --report`(운명) 또는 `simulate --rate`(속도)로.');
+  o.push('');
+
+  // 부록 A — 판정 기준 (본문 흐름을 가리지 않도록 뒤로)
+  o.push('---', '');
+  o.push('## 부록 A. 사법부 판정 기준 — 무슨 기준으로 등급·판정 수준을 잡았나', '');
+  o.push('본문의 등급·판정 수준은 자의가 아니라 사법부(`reliability.js`)의 고정된 기준에서 계산된다:', '');
   o.push('**출처 척도 S · 데이터 척도 D** (등급은 둘을 곱하지 않고 둘 다 문턱을 넘어야 한다):', '');
   o.push('| S (출처) | 뜻 | | D (데이터) | 뜻 |', '|---|---|---|---|---|');
   const sK = Object.keys(rep.criteria.sScale).sort((a, b) => b - a), dK = Object.keys(rep.criteria.dScale).sort((a, b) => b - a);
@@ -215,35 +303,6 @@ function evidenceReportMarkdown(rep) {
   o.push('', `**적용 문턱: ${rep.criteria.threshold}**${rep.criteria.threshold === rep.criteria.thresholdDefault ? ' (기본)' : ' (시나리오가 올림)'} — 이 값 미만의 상수를 "데이터" 로 쓰면 위반이다.`, '');
   o.push('왜 이렇게 잡았나:', '');
   for (const b of rep.criteria.basis) o.push(`- ${b}`);
-  o.push('');
-
-  o.push('## 5. 실패·막다른 길 (숨기지 않는다)', '');
-  o.push('등록된 한계가 곧 "이래서 안 됐다 / 이게 있어야 닫힌다" 의 기록이다. 이 경로에 열린 한계:', '');
-  if (rep.failures.length) {
-    o.push('| 한계 | 종류 | 대상 | 진행 | 무엇이 있어야 닫히나 |', '|---|---|---|---|---|');
-    for (const f of rep.failures) o.push(`| ${f.id} | ${f.type} | ${f.target} | ${f.done}/${f.total} | ${f.text.slice(0, 90)} |`);
-  } else o.push('_(이 경로에 열린 한계 없음)_');
-  o.push('');
-
-  o.push('## 6. 사고 패턴 (지문)', '');
-  o.push('이 결론을 만든 방식은 아래 규약을 이 경우에 그대로 적용한 것이다 — 이것이 이 시스템의 지문이다:', '');
-  for (const inv of rep.fingerprint.invariants) o.push(`- ${inv}`);
-  o.push('', '그래서 위 2~5절의 "닫는 방법" 하나하나가 결론에 싣는 무게는 다음과 같이 읽어야 한다:', '');
-  for (const [k, meaning] of Object.entries(rep.fingerprint.closureMeaning)) o.push(`- \`${k}\`: ${meaning}`);
-  o.push('');
-
-  o.push('## 7. 얻은 것 · 다음으로 나갈 지점 · 바닥의 불안정함', '');
-  o.push('**얻은 것**');
-  for (const g of rep.triad.gained) o.push(`- ${g}`);
-  o.push('', '**다음으로 나갈 수 있게 된 지점**');
-  for (const n of rep.triad.next) o.push(`- ${n}`);
-  o.push('', '**바닥의 불안정함 (결론을 떠받치는 가장 약한 지점)**');
-  for (const f of rep.triad.floor) o.push(`- ${f}`);
-  o.push('');
-
-  o.push('## 8. 재현', '');
-  o.push(`- db sha256: \`${rep.reproduce.dbSha}…\` · 시나리오 sha256: \`${rep.reproduce.scenarioSha}…\`${rep.reproduce.asOf ? ` · 기준 시각(asOf) ${rep.reproduce.asOf}` : ''}`);
-  o.push('- 이 보고서는 읽기 전용 판결(사법부)이다 — db·엔진을 바꾸지 않는다. 시뮬레이션 과정·무결성 증명서는 `fate --report`(운명) 또는 `simulate --rate`(속도)로.');
   return o.join('\n');
 }
 

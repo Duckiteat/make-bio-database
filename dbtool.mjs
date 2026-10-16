@@ -386,7 +386,13 @@ switch (cmd) {
     const scenarioText = readFileSync(args[0], 'utf8'), scenario = JSON.parse(scenarioText);
     const ix = DefDB.index(DefDB.normalize(db)), tg = DefDB.resolveRef(ix, flags.target === true ? '' : flags.target);
     if (tg.error) die(tg.error);
-    const rep = ER.evidenceReport(db, scenario, { target: tg.id, scenarioText, dbText: readFileSync(DB_PATH, 'utf8') });
+    // 흐름 비교용 원자료는 조정자가 돌린다 (사법부 evidence_report 는 읽기만) — 경로 대상일 때만
+    let sim = null;
+    if ((db.senses[tg.id] || {}).kind === 'pathway') {
+      try { const raw = ORCH.runRate(db, tg.id, { scenario, t_end: scenario.window || 1, dt: scenario.dt || 0.001 }); sim = { cum: raw.cum, window: scenario.window || 1 }; }
+      catch (e) { console.error('⚠ 흐름 비교용 속도 실행 실패(보고서는 흐름 표 없이 계속): ' + e.message); }
+    }
+    const rep = ER.evidenceReport(db, scenario, { target: tg.id, scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), sim });
     const md = ER.evidenceReportMarkdown(rep);
     if (flags.json) console.log(JSON.stringify(rep, null, 2));
     else console.log(md);

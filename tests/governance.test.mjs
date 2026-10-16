@@ -424,8 +424,19 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   assert.equal(rep.criteria.threshold, 'parameter');
   assert.ok(rep.criteria.grades.some((g) => g.key === 'parameter' && g.used && /S ≥ 3/.test(g.rule)), '등급 규칙과 근거를 밝힌다');
   assert.ok(rep.criteria.sScale[3] && rep.criteria.dScale[3], 'S·D 척도의 뜻을 싣는다');
-  // 삼각 결론: 얻은 것·다음·바닥 모두 비어 있지 않다
+  // 삼각 결론: 얻은 것·다음·바닥 모두 비어 있지 않다 (얻은 것은 이름으로 — undefined 바인딩 버그 회귀 방지)
   assert.ok(rep.triad.gained.length && rep.triad.next.length && rep.triad.floor.length);
+  assert.ok(rep.triad.gained.every((g) => !/undefined/.test(g)), '얻은 것에 undefined 가 없다');
+  assert.ok(rep.failures.every((f) => f.targetLabel && !/undefined/.test(f.targetLabel)), '실패 대상이 이름으로 붙는다');
+  // 흐름 비교: 조정자가 넘긴 원자료(cum)로 기대 vs 실제. 선언 기대(S000033 1335/s)와 실제가 일치하면 pass
+  const simRaw = ORCH.runRate(BASE, 'D000148', { scenario: sc, t_end: sc.window || 1, dt: sc.dt || 0.001 });
+  const rep2 = ER.evidenceReport(BASE, sc, { target: 'D000148', sim: { cum: simRaw.cum, window: sc.window || 1 } });
+  const idh = rep2.flux.find((f) => f.step === 'S000033');
+  assert.ok(idh && idh.expected === 1335 && idh.actual != null && idh.pass === true, '선언한 기대 1335/s 와 실제가 일치(pass)');
+  assert.match(rep2.summary.verdict, /PASS/);
+  // 마크다운에 요약 상자·흐름 표가 있다
+  const md2 = ER.evidenceReportMarkdown(rep2);
+  assert.ok(md2.includes('［핵심 실행 결과 요약］') && md2.includes('측정 흐름 — 기대 vs 실제') && md2.includes('부록 A'), '요약 상자·흐름 표·부록');
   // 마크다운이 8개 절을 낸다
   const md = ER.evidenceReportMarkdown(rep);
   for (const h of ['## 1.', '## 2.', '## 3.', '## 4.', '## 5.', '## 6.', '## 7.', '## 8.']) assert.ok(md.includes(h), `절 ${h}`);
