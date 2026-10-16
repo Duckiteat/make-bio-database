@@ -7,8 +7,8 @@
       "D": 212,
       "S": 58,
       "L": 111,
-      "O": 25,
-      "V": 67
+      "O": 27,
+      "V": 69
     }
   },
   "terms": {
@@ -10826,7 +10826,30 @@
             ]
           },
           "regulators": [],
-          "text": "시스-아코니트산 중간체는 한 단계로 묶었다.",
+          "text": "시스-아코니트산 중간체는 한 단계로 묶었다. 속도는 단일 기질 MM — core.js 가 첫 law 입력(시트르산)의 Km 을 쓴다. kcat·Km 은 시트르산 기질에서 잰 전체 전환 상수 (탈수·수화 두 단계를 포함한 효소 측정값).",
+          "kinetic_law": {
+            "law": "michaelis_menten",
+            "context": {
+              "scope": "사람 미토콘드리아 아코니테이스 (ACO2, EC 4.2.1.3) — BRENDA, 시트르산 기질, WT, pH 7.4, 25 °C",
+              "species": "9606",
+              "location": "mito_matrix"
+            },
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1016/j.freeradbiomed.2023.01.028",
+                  "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+                },
+                {
+                  "db": "PMID",
+                  "id": "36738801",
+                  "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+                }
+              ]
+            }
+          },
           "evidence": {
             "level": "asserted"
           }
@@ -20795,6 +20818,94 @@
       },
       "recorded_at": "2026-10-16T08:19:11.396Z",
       "note": "BRENDA EC 2.3.3.1 Homo sapiens 아세틸-CoA 변화 기질, WT, pH 8.0, 온도 미기재(BRENDA 'temperature not specified'); 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC2.3.3.1-Homo-sapiens.json"
+    },
+    "O000025": {
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000150/rule/isomerize",
+        "param": "kcat"
+      },
+      "value": 10.2,
+      "unit": "s^-1",
+      "uncertainty": {
+        "kind": "measurement",
+        "model": "normal",
+        "sd": 0.1
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "provenance": {
+        "sha256": "74a9541b6f2f0685d2765f68feb4fb15038708eb437473c77c52bc345496d27e",
+        "source": {
+          "db": "PMID",
+          "id": "36738801"
+        }
+      },
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.freeradbiomed.2023.01.028",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          },
+          {
+            "db": "PMID",
+            "id": "36738801",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          }
+        ]
+      },
+      "recorded_at": "2026-10-16T09:24:42.909Z",
+      "note": "BRENDA EC 4.2.1.3 Homo sapiens, 사람 미토콘드리아 아코니테이스(ACO2), 시트르산 기질, WT, pH 7.4, 25 °C; 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC4.2.1.3-Homo-sapiens.json"
+    },
+    "O000026": {
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000150/rule/isomerize",
+        "param": "Km"
+      },
+      "value": 0.00095,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "measurement",
+        "model": "normal",
+        "sd": 0.00001
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "provenance": {
+        "sha256": "74a9541b6f2f0685d2765f68feb4fb15038708eb437473c77c52bc345496d27e",
+        "source": {
+          "db": "PMID",
+          "id": "36738801"
+        }
+      },
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.freeradbiomed.2023.01.028",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          },
+          {
+            "db": "PMID",
+            "id": "36738801",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          }
+        ]
+      },
+      "recorded_at": "2026-10-16T09:24:42.909Z",
+      "note": "BRENDA EC 4.2.1.3 Homo sapiens, 사람 미토콘드리아 아코니테이스(ACO2), 시트르산 기질, WT, pH 7.4, 25 °C; 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC4.2.1.3-Homo-sapiens.json"
     }
   },
   "values": {
@@ -22375,6 +22486,72 @@
       ],
       "derivation": "direct",
       "recorded_at": "2026-10-16T08:19:11.396Z"
+    },
+    "V000067": {
+      "subject": "D000150/rule/isomerize",
+      "property": "kcat",
+      "value": {
+        "dist": "point",
+        "mean": 10.2
+      },
+      "context": {
+        "scope": "사람 미토콘드리아 아코니테이스 (ACO2, EC 4.2.1.3) — BRENDA, 시트르산 기질, WT, pH 7.4, 25 °C",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.freeradbiomed.2023.01.028",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          },
+          {
+            "db": "PMID",
+            "id": "36738801",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          }
+        ]
+      },
+      "from": [
+        "O000025"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-16T09:24:42.909Z"
+    },
+    "V000068": {
+      "subject": "D000150/rule/isomerize",
+      "property": "Km",
+      "value": {
+        "dist": "point",
+        "mean": 0.00095
+      },
+      "context": {
+        "scope": "사람 미토콘드리아 아코니테이스 (ACO2, EC 4.2.1.3) — BRENDA, 시트르산 기질, WT, pH 7.4, 25 °C",
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.freeradbiomed.2023.01.028",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          },
+          {
+            "db": "PMID",
+            "id": "36738801",
+            "citation": "Mansilla S et al., 2023, Free Radic Biol Med"
+          }
+        ]
+      },
+      "from": [
+        "O000026"
+      ],
+      "derivation": "direct",
+      "recorded_at": "2026-10-16T09:24:42.909Z"
     }
   }
 }
