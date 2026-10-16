@@ -1133,6 +1133,14 @@
       "interpret": "[실행 설명서] 무엇을 어떻게 돌리고 결과를 어떻게 읽고 무엇을 하면 안 되는지. 확인된 상태×시나리오 짝, 관문 거부 메시지 → 고칠 곳 표, 넘길 신호. 적힌 명령은 모두 실제로 돌려 확인한 것이다 — 값이 바뀌면 다시 돌려 고친다. 교과서는 설명(왜·어떻게), 이 파일은 조작(무엇을 치나)."
     },
     {
+      "path": "docs/project-overview.md",
+      "class": "spec",
+      "format": "Markdown (바깥용 개요)",
+      "writer": "사람·AI (상태가 바뀌면 같은 커밋에서)",
+      "readers": "바깥(지도교수·학과·협업자) — 이 프로젝트가 무엇이고 왜 다른지 한 장으로",
+      "interpret": "[바깥용 한 장 개요] 문제·접근(네 기둥: 신뢰 기층·반증 가능 검증·비트 정확 검증 엔진·사람이 읽는 증거 보고서)·왜 중요(규제 신뢰성·QSP·AI-for-science 근거 기층)·정직한 현재 상태·다음. 과장 없이 지금 참인 것만 — 상태(코퍼스 크기·완성 범위)가 바뀌면 함께 갱신. 포스트-빌드 방향·전략 기록은 docs/design/post-build-directions.md."
+    },
+    {
       "path": "tests/rejections.test.mjs",
       "class": "verification",
       "format": "node:test",
