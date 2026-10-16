@@ -85,6 +85,14 @@
       "interpret": "모의 실험 규약의 사전 등록부 — 시나리오를 실행 전에 남겼다는 증명. 고치거나 지우지 않는다(사슬이 끊겨 드러남)."
     },
     {
+      "path": "data/dictionary.jsonl",
+      "class": "law",
+      "format": "JSON Lines — 통제 토큰 overlay 한 줄씩: key·register·label_en·meaning_en·xref·since",
+      "writer": "사람·AI (입법 구역·sha 봉인 배선은 build-plan 16A 다음 단계 — 지금은 읽기 전용 커밋 파일)",
+      "readers": "dictionary.js",
+      "interpret": "사전 overlay — 통제 토큰의 en 라벨·의미·외부 온톨로지 앵커(xref). ko 는 vocab.js(권위)에서 병합한다(복제 없음). 고유 개념(gap 타입 등)은 우리가 en 을 저술하므로 xref null, 외부 개념은 xref 로 검증. 설계 dictionary-and-translation.md."
+    },
+    {
       "path": "data/log/*",
       "class": "log",
       "format": "genesis.json(기원: db sha256·루트) · genesis-db.json(기원 스냅숏) · events.jsonl(사건 한 줄씩: seq·at·names·patches·db_sha256·prev·root)",
@@ -121,6 +129,15 @@
       "node": "EXECUTIVE_QUERY",
       "governance": "Executive",
       "refactor_strategy": "질의·simulate·simulateRate 원자료만. 감사·판정은 judicial.auditRate 로. 내부 루프의 문자열·Map 은 IR 정수 번호로 바꾸는 방향(3단계)."
+    },
+    {
+      "path": "dictionary.js",
+      "class": "law",
+      "format": "Node CommonJS (읽기 전용 모듈)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "tests/dictionary.test.mjs (이후 dbtool·보고서 렌더러가 소비)",
+      "interpret": "[표현 층] 사전·번역기 (build-plan 16A) — 통제 토큰(R1)은 vocab(ko 권위) + data/dictionary.jsonl(en overlay) 병합 조회, 자유 서술(R2)은 원문 통과. 핵심 규칙: 조회(lookup)하지 추론(infer)하지 않는다. 읽기 전용 — 쓰기·판정·엔진 없음. 설계 dictionary-and-translation.md.",
+      "refactor_strategy": "통제 토큰 register 를 더할 때(faultChannels·observables·expect) REGISTERS 에만 추가. 번역기는 조회·통과만 — 생성 금지. core.js 질의 표현기 통합은 16A 이후 단계."
     },
     {
       "path": "model.js",
@@ -1027,6 +1044,14 @@
       "writer": "사람·AI",
       "readers": "사람(콘솔), 엔진 이식 판정",
       "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6."
+    },
+    {
+      "path": "tests/dictionary.test.mjs",
+      "class": "verification",
+      "format": "Node 테스트 (node:test)",
+      "writer": "사람·AI",
+      "readers": "CI, 사람(콘솔)",
+      "interpret": "사전·번역기 뼈대 방어 시험 (build-plan 16A) — ① R1 왕복(렌더→회수 동일, 모든 키·청중) ② R2 통과(자유 서술 바이트 동일, 생성 아님) ③ 미등록 토큰 거부(추론으로 안 메움) ④ 병합 형태(ko=vocab 권위·en=overlay, 복제 없음)."
     },
     {
       "path": "tests/bench_index.js",
