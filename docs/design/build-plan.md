@@ -25,6 +25,7 @@
 - **지금 vs TIER C**: 설계는 지금 확정. **지금 가능한 구조 분리** = 검증·보고 출력이 A·B·C 를 **별도 이름 필드**로(한 "오차"로 합치지 않음) + 그 분리를 지키는 시험. **빈 강제 장치를 미리 짓지 않음**(아직 C 값이 없음 — 북극성). **TIER C(엔진과 함께)** = 정수 장·배치 보상 리덕션 코드 경로(27·희소 텐서), 장 수렴 계측(29·30·31).
 공통 조건(모든 항목): `node --test tests/*.test.mjs` 전부 · `node dbtool.mjs validate` 오류 0 · `textbook --check` · `CHANGES.md` 한 행 · 사법부 규칙이 바뀌면 거부 말뭉치 + `FLOOR.json` 상향 · 형식이 바뀌면 `migrations/` + SCHEMA 변경 기록 + 교과서 해당 장 · 엔진이 바뀌면 JS·Rust 같은 커밋 + `rust_engine.test` + `bench_engine` 기준선.
 상태: ☐ 대기 · ◐ 진행 · ☑ 완료.
+포스트-빌드(프로젝트 1–41 이후) 방향은 여기 섞지 않고 `docs/design/post-build-directions.md` 에서 따로 관리 — 엔진 효율별 분해·MCP 노출 등. 활성 항목 아님.
 
 ## 1부 — 검증 기반과 저장의 출발점
 
