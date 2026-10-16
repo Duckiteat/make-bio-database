@@ -61,3 +61,15 @@ test('④ 병합 형태 — ko(vocab 권위) + en(overlay) 한 항목, 사실 �
   assert.equal(e.label_ko, V.gapTypes.Kinetic_Gap.label, 'ko 라벨은 vocab 권위를 가리켜야 함');
   assert.equal(e.meaning_ko, V.gapTypes.Kinetic_Gap.note, 'ko 의미는 vocab 권위를 가리켜야 함');
 });
+
+test('⑤ register 확장 — gapTypes·observables·qualitativeExpectations 일반화(모든 키 overlay·왕복)', () => {
+  const V = req('../vocab.js');
+  for (const r of ['gapTypes', 'observables', 'qualitativeExpectations']) assert.ok(D.registers.includes(r), `register ${r} 누락`);
+  // 세 register 의 모든 키가 사전에 등록(overlay 있음) 돼 있어야 — 조각화가 통제 토큰 전체로 퍼짐
+  const want = [...Object.keys(V.gapTypes), ...Object.keys(V.observables), ...Object.keys(V.qualitativeExpectations)];
+  assert.equal(D.keys().length, want.length, `키 수 불일치 — overlay 누락 의심`);
+  for (const k of want) assert.ok(!D.entry(k).error, `${k} overlay 미등록`);
+  // 다른 register 의 토큰도 왕복 (①이 전수하지만 확장을 못박아 둔다)
+  assert.equal(D.parseToken(D.renderToken('event_time', { audience: 'both' })), 'event_time');
+  assert.equal(D.parseToken(D.renderToken('monotone_increase', { audience: 'en' })), 'monotone_increase');
+});

@@ -11,8 +11,9 @@ const { readFileSync } = require('fs');
 const path = require('path');
 const V = require('./vocab.js');
 
-// 통제 토큰 register: 이름 → vocab 테이블. 뼈대는 gapTypes 하나(8개). 이후 faultChannels·observables·expect 를 더한다.
-const REGISTERS = { gapTypes: V.gapTypes };
+// 통제 토큰 register: 이름 → vocab 테이블. gapTypes(8)·observables(6)·qualitativeExpectations(8).
+// 이후 더할 것: faultChannels(judicial/fault.js — 모양 어댑터 필요)·obsUses·tiers 등.
+const REGISTERS = { gapTypes: V.gapTypes, observables: V.observables, qualitativeExpectations: V.qualitativeExpectations };
 
 // overlay(JSONL) 로드 — 한 줄 한 레코드. 권위는 정준 텍스트, 지금은 읽기 전용 커밋 파일(입법 구역·sha 봉인 배선은 다음 단계).
 function loadOverlay() {
@@ -39,7 +40,7 @@ function entry(key) {
   return {
     key, register: reg,
     label_en: ov.label_en, label_ko: base.label,
-    meaning_en: ov.meaning_en, meaning_ko: base.note,
+    meaning_en: ov.meaning_en, meaning_ko: base.note || null,
     xref: ov.xref || null, aliases: base.aliases || [], since: ov.since || null,
   };
 }
@@ -85,7 +86,7 @@ function translate(record, opt = {}) {
   for (const k of tokens) {
     const e = entry(k);
     if (e.error) throw new Error(e.error);
-    const meaning = (opt.audience === 'ko') ? e.meaning_ko : e.meaning_en;
+    const meaning = (opt.audience === 'ko') ? (e.meaning_ko || e.meaning_en) : e.meaning_en;
     lines.push(`- ${renderToken(k, opt)} — ${meaning}`);
   }
   let out = lines.join('\n');
