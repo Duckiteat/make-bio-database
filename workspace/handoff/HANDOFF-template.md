@@ -4,7 +4,7 @@
 > **해석·수집만**, 적용은 통합가가 패치로 한다. 더 싼 모델(수집가)이 여기에 후보를 모으고, 통합가(Opus/사람)가
 > 1차 출처로 검증해 패치로 적용한다. 설계: `docs/PROMPTS.md`(수집가·통합가 두 역할) · `docs/RUNBOOK.md` §2.
 > (수신함 `data/fetched/` 는 쓰기 보호다 — 원본 대조는 `augment plan→fetch→build→apply` 고리로만. 이 핸드오프
-> 파일은 그 밖의 작업 큐라 `docs/handoff/` 에 둔다.)
+> 파일은 그 밖의 작업 큐라 AI 작업자 전용 공간 `workspace/handoff/` 에 둔다 — `workspace/README.md`.)
 
 ## 역할 분리 (깨면 안 되는 선)
 

@@ -228,7 +228,7 @@ data/db.json·CHANGES.md·limitations.md·교과서 부록을 통째로 읽지 �
 
 **루프:** 통합가가 수집가에게 묶음 하나를 시킴 → 수집가가 읽기·조회·문헌으로 후보를 모아 **반환**(또는
 핸드오프 파일에 `collected`) → 통합가가 **1차 출처로 재확인** → 통과분 패치 → `validate` → `augment apply`
-→ 커밋 → 다음 묶음. 핸드오프 파일: `docs/handoff/HANDOFF-<주제>.md`(템플릿 같은 폴더).
+→ 커밋 → 다음 묶음. 핸드오프 파일: `workspace/handoff/HANDOFF-<주제>.md`(AI 작업자 전용 공간 — `workspace/README.md`).
 
 **수집가 권한 (A: 서브에이전트 / B: 상주 세션):**
 - **A (서브에이전트, 지금 기본):** 보고만 — 구조적으로 apply·commit 불가. 설정 0. 묶음마다 통합가가 띄운다.
@@ -242,7 +242,7 @@ data/db.json·CHANGES.md·limitations.md·교과서 부록을 통째로 읽지 �
 너는 읽기 전용 수집가다. 금지: 파일 쓰기, augment apply·merge·register, git commit·push,
 규칙·코드 파일(vocab·model·core·judicial·legislative) 수정, db.json 직접 편집.
 읽기·조회·분석만 하고 결과는 파일에 쓰지 말고 네 메시지에 표로 반환해라(상주 세션이면
-docs/handoff/HANDOFF-<주제>.md 에 collected 로 append).
+workspace/handoff/HANDOFF-<주제>.md 에 collected 로 append). workspace/ 밖은 쓰지 마라.
 
 먼저 docs/RUNBOOK.md 를 읽어라. 큰 파일은 통째로 읽지 마라(grep·dbtool 조회).
 

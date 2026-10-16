@@ -306,4 +306,5 @@ cmp index.html viewer.html             # 화면 두 파일이 같은지
 | 사전·번역기(기계어↔사람말, 영한 병기) | `docs/design/dictionary-and-translation.md` (`dictionary.js`·`data/dictionary.jsonl`) |
 | 보존/비보존 분류(오차 3채널 기저) | `docs/design/conservation-classes.md` (`vocab.conservationClasses`·`conservationReasons`) |
 | 색인·파싱 비용 문턱 | `tests/bench_index.js` (`node tests/bench_index.js`) |
-| 수집가·통합가 핸드오프(싼 모델에 수집 위임) | `docs/PROMPTS.md` §3′ · 템플릿 `docs/handoff/HANDOFF-template.md` |
+| 수집가·통합가 핸드오프(싼 모델에 수집 위임) | `docs/PROMPTS.md` §3′ |
+| AI 작업자 전용 공간(격리) | `workspace/README.md` · 핸드오프 `workspace/handoff/` · 권한 프로파일 `workspace/collector.settings.json` |

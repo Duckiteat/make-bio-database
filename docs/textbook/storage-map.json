@@ -1166,12 +1166,28 @@
       "interpret": "[프롬프트] 설명서를 읽은 에이전트에게 일을 주는 여섯 칸 틀(좌표·임무·경계·검증·보고·멈춤)과 작업 종류별 프롬프트 8 개(§2 A–H, H=실측 정량 검증), §3′ 수집가·통합가 핸드오프(싼 모델 수집→Opus 검증·커밋, 권한 deny-list), 다른 AI 를 함께 쓸 때의 경계, 새 프롬프트 제작 가이드. '통과하게 만들어라' 류의 문장을 금지 목록으로 못박는다."
     },
     {
-      "path": "docs/handoff/*",
+      "path": "workspace/*",
+      "class": "log",
+      "format": "AI 작업자 전용 공간 (최상위) — README(격리 규약)·collector.settings.json(권한 프로파일)",
+      "writer": "작업자(Sonnet 등, workspace/ 안에서만) · 통합가(Opus/사람)",
+      "readers": "작업자·통합가 · 사람",
+      "interpret": "[작업 공간] 싼 모델(작업자·수집가)이 일하는 유일한 쓰기 공간 — 신뢰 저장소(db·규칙·엔진)와 분리. 적용·본체 병합은 통합가가. 설계 docs/PROMPTS.md §3′ · workspace/README.md."
+    },
+    {
+      "path": "workspace/handoff/*",
       "class": "log",
       "format": "Markdown (수집가→통합가 작업 큐·기록)",
-      "writer": "통합가(Opus/사람, 검증·상태 기록) · 상주 수집가 세션이면 collected 행 append",
-      "readers": "수집가·통합가 · 사람 (핸드오프 이력)",
-      "interpret": "[핸드오프] 싼 모델(수집가)이 모은 후보와 통합가의 1차 출처 검증·적용 상태(collected→verified/rejected→applied)를 담는 작업 큐. db.json 아님 — 수신함처럼 해석·수집만, 적용은 통합가가 패치로. 설계 docs/PROMPTS.md §3′. HANDOFF-template.md 는 복사용 틀."
+      "writer": "작업자(collected 행) · 통합가(검증·상태)",
+      "readers": "작업자·통합가 · 사람",
+      "interpret": "[핸드오프] 후보와 1차 출처 검증·적용 상태(collected→verified/rejected→applied). db.json 아님. HANDOFF-template.md 는 복사용 틀."
+    },
+    {
+      "path": "workspace/tasks/*",
+      "class": "log",
+      "format": "Markdown (통합가→작업자 묶음 과제 명세)",
+      "writer": "통합가(Opus/사람)",
+      "readers": "작업자",
+      "interpret": "[과제] 작업자에게 맡기는 묶음(batch) 하나의 명세 — 임무·각 후보 필수 필드·경계·반환. 한 번에 하나."
     },
     {
       "path": "docs/RUNBOOK.md",
