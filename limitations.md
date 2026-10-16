@@ -6,7 +6,7 @@
 
 | 종류 | 열림 | 해결 | 합계 |
 |---|---|---|---|
-| Kinetic_Gap | 26 | 0 | 26 |
+| Kinetic_Gap | 27 | 0 | 27 |
 | Concentration_Gap | 13 | 0 | 13 |
 | Structural_Gap | 27 | 4 | 31 |
 | Resource_Gap | 6 | 0 | 6 |
@@ -47,6 +47,7 @@
 | L000096 | D000148 (시트르산 회로) | Kinetic_Gap | 사람 효소의 kcat·Km 을 다섯 효소(아코니테이스·2-옥소글루타르산 탈수소효소 복합체·석시닐-CoA 합성효소·석신산 탈수소효소·말산 탈수소효소)에서 찾지 못했다 — UniProt 큐레이션에 없고(해당 항목의 BIOPHYSICOCHEMICAL PROPERTIES 비어 있음), Europe PMC 전문 검색에서도 사람 값이 아닌 세균·식물·기생충 효소만 나왔다. 시트르산 생성효소는 Km 두 기질(옥살로아세트산 3.6 µM · 아세틸-CoA 7.7 µM, Schlachter et al., 2019)은 확인했지만 kcat 이 없어 속도 법칙을 넣지 못했다(Km 은 관찰 기록으로 남김). 돼지·소 심장 효소의 값으로 바꿔 넣지 않았다 — 종이 다른 값을 사람 값으로 적지 않는다<br>발견: 문헌 조사 2026-10-10 (UniProt 큐레이션 + Europe PMC 전문) — TCA 상수 찾기 | ✗ 속도 상수 kcat·Km @ D000150/rule/isomerize<br>✗ 속도 상수 kcat·Km @ D000152/rule/oxdecarb<br>✗ 속도 상수 kcat·Km @ D000153/rule/slp<br>✗ 속도 상수 kcat·Km @ D000154/rule/oxidize<br>✗ 속도 상수 kcat·Km @ D000156/rule/oxidize<br>✗ 속도 상수 kcat @ D000149/rule/condense | open (0/6) | — |
 | L000097 | D000151/rule/oxdecarb (아이소시트르산 탈수소효소 · oxdecarb) | Kinetic_Gap | 사람 NAD-IDH 는 아이소시트르산에 양성 협동성(힐 계수 1.5)을 보이고 보고된 값은 S0.5 다 — 이것을 미카엘리스–멘텐의 Km 으로 쓰는 것은 근사다. 또 기질이 셋(아이소시트르산·Mn²⁺·NAD)인데 형식의 michaelis_menten 은 기질 하나만 담는다: S0.5(Mn²⁺) 60.2 µM · S0.5(NAD) 143 µM 를 넣을 칸이 없다. 시트르산·ADP 가 S0.5 를 낮추는 알로스테릭 활성화도 표현하지 않았다<br>발견: 문헌 조사 2026-10-10 — TCA 상수 찾기 | ✗ 수동: 협동성(힐 n)과 기질 여럿을 담는 속도 법칙, 또는 알로스테릭 활성화를 조절 규칙으로 두는 규약 — 어휘·검사·엔진을 함께 | open (0/1) | — |
 | L000098 | D000155/rule/hydrate (푸마레이스 · hydrate) | Kinetic_Gap | 푸마레이스의 kcat·Km 은 pH 8.5 에서 측정된 값이고 미토콘드리아 기질 pH(≈7.8)의 값이 아니다. 형식의 env(환경 보정 dG_dpH)는 기준 속도가 있는 질량 작용 상수에만 걸리고 michaelis_menten 에는 pH 보정 칸이 없다<br>발견: 문헌 조사 2026-10-10 — TCA 상수 찾기 | ✓ 속도 상수 kcat·Km @ D000155/rule/hydrate<br>✗ 수동: 기질 pH 조건의 측정값, 또는 michaelis_menten 에 pH 보정을 두는 규약 | open (1/2) | — |
+| L000110 | D000148 (시트르산 회로) | Kinetic_Gap | 시트르산 회로 효소 반응 규칙(시트르산 생성효소 D000149/condense·숙신산 탈수소효소 D000154·말산 탈수소효소 D000156·석시닐-CoA 합성효소 D000153·2-옥소글루타르산 탈수소효소 D000152·젖산 탈수소효소 D000171)에 실측 속도 상수(kcat·Km)가 없다 — 지금 실측은 IDH(D000151)·FH(D000155) 둘뿐이고 나머지 동적 상수는 시나리오의 가상값이다. 2026-10-16 수집 시도에서 닿는 출처로는 채우지 못했다: SABIO-RK 는 사이트 개편으로 옛 REST(sabioRestWebServices)가 404, eQuilibrator(api.equilibrator.org)는 환경 네트워크 정책이 거부(502), BRENDA 는 계정·SOAP 필요, UniProt(닿음)는 사람 CS(O75390)·IDH2(P48735)에 Km 두 개씩만 있고 기질명이 비어 있어(구조화 필드 None, 초록·본문 표에만) 어느 Km 인지 확인 불가, kcat 는 없음. 초록만 받는 Europe PMC 로는 본문 표의 kcat/Km 을 확인할 수 없다.<br>발견: build-plan 12A 실측 수집 시도 2026-10-16 — SABIO REST 404 · eQuilibrator 네트워크 거부 · UniProt Km 기질 미상·kcat 없음 | ✗ 수동: 셋 중 하나: (1) 환경 Network access 에 api.equilibrator.org(ΔG°)·SABIO-RK 새 API 호스트를 Allowed domains 로 추가 → 직접 수집, (2) 사용자가 BRENDA/논문 본문에서 효소별 kcat·기질별 Km(사람 9606, 출처 DOI·PMID)을 제공 → 관찰 포트로 기록, (3) 닿는 범위(정성 관찰·서열·위치)로 검증 자원을 먼저 키운다. 값은 어느 경우든 관찰(O…)로 넣고 규칙 kinetics.from 이 참조 | open (0/1) | — |
 
 ## Concentration_Gap — 농도·부피·질량 수지 공백
 

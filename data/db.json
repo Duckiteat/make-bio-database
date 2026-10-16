@@ -6,7 +6,7 @@
       "T": 210,
       "D": 212,
       "S": 58,
-      "L": 110,
+      "L": 111,
       "O": 22,
       "V": 65
     }
@@ -19829,6 +19829,20 @@
         ]
       },
       "found_in": "build-plan 22 — judicial/qual_compare.chanceBaseline (증거 독립만, 기전 경로 독립 아님)"
+    },
+    "L000110": {
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시트르산 회로 효소 반응 규칙(시트르산 생성효소 D000149/condense·숙신산 탈수소효소 D000154·말산 탈수소효소 D000156·석시닐-CoA 합성효소 D000153·2-옥소글루타르산 탈수소효소 D000152·젖산 탈수소효소 D000171)에 실측 속도 상수(kcat·Km)가 없다 — 지금 실측은 IDH(D000151)·FH(D000155) 둘뿐이고 나머지 동적 상수는 시나리오의 가상값이다. 2026-10-16 수집 시도에서 닿는 출처로는 채우지 못했다: SABIO-RK 는 사이트 개편으로 옛 REST(sabioRestWebServices)가 404, eQuilibrator(api.equilibrator.org)는 환경 네트워크 정책이 거부(502), BRENDA 는 계정·SOAP 필요, UniProt(닿음)는 사람 CS(O75390)·IDH2(P48735)에 Km 두 개씩만 있고 기질명이 비어 있어(구조화 필드 None, 초록·본문 표에만) 어느 Km 인지 확인 불가, kcat 는 없음. 초록만 받는 Europe PMC 로는 본문 표의 kcat/Km 을 확인할 수 없다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "셋 중 하나: (1) 환경 Network access 에 api.equilibrator.org(ΔG°)·SABIO-RK 새 API 호스트를 Allowed domains 로 추가 → 직접 수집, (2) 사용자가 BRENDA/논문 본문에서 효소별 kcat·기질별 Km(사람 9606, 출처 DOI·PMID)을 제공 → 관찰 포트로 기록, (3) 닿는 범위(정성 관찰·서열·위치)로 검증 자원을 먼저 키운다. 값은 어느 경우든 관찰(O…)로 넣고 규칙 kinetics.from 이 참조"
+          }
+        ]
+      },
+      "found_in": "build-plan 12A 실측 수집 시도 2026-10-16 — SABIO REST 404 · eQuilibrator 네트워크 거부 · UniProt Km 기질 미상·kcat 없음"
     }
   },
   "observations": {
