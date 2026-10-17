@@ -37,6 +37,13 @@ node -e 'const d=require("./data/db.json");for(const[id,o]of Object.entries(d.ob
 | # | 대상(D…·O…) | 값·단위 | 종·세포·시각·불확도 | 출처+인용 | 현재 use | 규약 가능? 빠진 것 | 상태 |
 ```
 
+5. **기계 검증용 JSONL도 함께** 낸다 — `workspace/handoff/<주제>.jsonl`, 한 줄 한 후보:
+   `{"outcome":"...","target":"...","value":...,"unit":"...","species":...,"source":{"db":"DOI|PMID","id":"..."},"quote":"...","use":"estimation|validation","reuse":{"ref":"O…"}}`
+   `outcome` ∈ `not_searched|not_found|unreadable|read_no_value|read_value|ambiguous|reused`.
+   **값(value)을 적으면 반드시 source + quote 가 있어야** 한다(없으면 검증기가 거부). 못 찾았으면 `not_found`,
+   접근 못 하면 `unreadable` — 값 칸을 비운다. 통합가가 `node dbtool.mjs verify-collection <그 .jsonl>` 로
+   판정한다(네가 "완료"라 적어도 무시된다 — 판정기가 정함). 값 후보는 통합가 1차 출처 재확인 전까지 PASS 안 됨.
+
 ## 4. 기억할 것
 
 - **네가 적은 건 전부 "후보"다.** 통합가가 1차 출처로 다시 확인한 뒤에만 진짜 데이터가 된다. 그러니 **정확한 수집**이 네 일이지, 판단·적용이 아니다.

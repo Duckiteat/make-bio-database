@@ -2,7 +2,9 @@
 
 > 작업자(AI)가 작업을 생략·조작하고도 완료한 척 보고하는 것을 **탐지·거부**하는 설계. 목적은 성실을
 > 기대하는 게 아니라 **불성실한 작업이 통과하기 어렵게** 만드는 것. 요청서(2026-10-17 사용자) + 조사 결론.
-> **이 문서는 설계다 — 아직 구현하지 않았다.** 저장소 전체 재설계·규칙 변경은 별도 요청 때.
+> **1차 구현됨**(2026-10-17): `judicial/collection_audit.js` + `dbtool verify-collection` — 결정론 구조·구별·출처
+> 형식·재사용 db 존재 검사와 상태 판정. 외부 내용 진실(DOI 해석·인용 대조·관련성)·커버리지는 **여전히 자동
+> 불가** → REVIEW_REQUIRED / 통합가 / 사람. harness 실행 테이프 소비(§4)는 미착수.
 > 기원: TASK-001(사람 TNF mRNA 반감기) 수집이 대충이었던 일 — 수집가의 "웹 검색함·403" 자기보고를
 > 실행 기록과 대조 없이 받아들였다(꼼수 #2·#9). 그 구멍을 닫는 설계.
 
@@ -68,8 +70,18 @@ REVIEW_REQUIRED**. 특히 구별: 조사 안 함 / 검색했으나 없음(missin
 일치·버전 동일)"면 **재수집 금지**, 부족분만. **재사용 ≠ 독립 검토 생략** — 재수집 안 해도 통합가 1차 출처 재확인은
 필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴).
 
-## 8. 최소 구현안 (별도 요청 때)
+## 8. 최소 구현 (1차 구현됨 — `judicial/collection_audit.js` · `dbtool verify-collection`)
 
+**구현됨**: 항목(JSONL) 계약 `{target?, outcome, value?, unit?, species?, cell?, time?, uncertainty?, use?,
+source:{db,id}, quote?, verified?, reuse:{ref}}` 를 받아 — 구조·필드, outcome 구별(not_searched/not_found/
+unreadable/read_no_value/read_value/ambiguous/reused), 근거 없는 값·가짜 출처 형식·상태 내용 불일치 거부,
+재사용 대상 db 존재·철회 재-도출, 값 후보 자동 PASS 금지 → PASS/INCOMPLETE/BLOCKED/REJECTED/
+REVIEW_REQUIRED. 작업자 자기선언 무시. 거부 시험 `tests/collection_audit.test.mjs`.
+
+**미구현(설계)**: 실행 테이프 해시 사슬(#10·#1·#2 — harness 도구 로그 소비 필요) · 통합가 외부 표본 재-fetch
+자동화(DOI 해석·인용 대조는 지금은 사람·통합가 절차).
+
+참고 — 원래 설계 골격:
 `judicial/collection_audit.js`(신설·읽기 전용) — 핸드오프 + 실행 테이프를 받아:
 1. **사슬 무결성**(재생=root) → #10 자동.
 2. **결정론 사건 재실행 대조**(파일·db 다시 읽어 주장과 비교) → #2 자동, 싸니 **전수**.

@@ -399,6 +399,18 @@ switch (cmd) {
     if (flags.report && flags.report !== true) { CLERK.writeReport(flags.report, md); console.log('\n보고서 (입법 서기): ' + flags.report); }
     break;
   }
+  case 'verify-collection': { // 수집 작업 검증 (작업 검증 설계): 핸드오프 JSONL → 구조·구별·형식·재사용 db 존재 판정 (읽기만, db 불변). 작업자 자기선언 무시 — 판정기가 완료를 정함
+    if (!args[0]) die('사용법: verify-collection <핸드오프.jsonl> [--json]');
+    const CA = req('./judicial/collection_audit.js'), db = loadDB();
+    const lines = readFileSync(args[0], 'utf8').split('\n').map((s) => s.trim()).filter((s) => s && !s.startsWith('//'));
+    const objs = lines.map((s, i) => { try { return JSON.parse(s); } catch (e) { die(`${i + 1}행이 JSON 이 아님: ${e.message}`); } });
+    const entries = objs.filter((o) => o && typeof o === 'object' && !('_task' in o) && !('_meta' in o)); // _task/_meta 줄은 메타
+    const res = CA.auditCollection(db, entries, {});
+    if (flags.json) console.log(JSON.stringify(res, null, 2));
+    else console.log(CA.auditText(res));
+    if (res.verdict === 'REJECTED' || res.verdict === 'INCOMPLETE' || res.verdict === 'BLOCKED') process.exitCode = 1; // PASS·REVIEW_REQUIRED 는 0
+    break;
+  }
   case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
     const dataDir = dirname(DB_PATH);
     if (flags.genesis) {
@@ -561,7 +573,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | evidence | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | evidence | verify-collection | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

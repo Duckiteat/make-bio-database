@@ -365,6 +365,17 @@
       "refactor_strategy": "구조만 본다 — 경로 우열·포화는 모의 판정(build-plan 8). 새 규칙 종류가 영향 간선을 가지면 buildGraph 에 같은 커밋에서. 구조 지지는 일치가 아니다."
     },
     {
+      "path": "judicial/collection_audit.js",
+      "class": "law",
+      "format": "Node CommonJS (읽기 전용·순수)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool verify-collection, tests/collection_audit.test.mjs",
+      "interpret": "[사법] 작업 검증 설계(work-verification.md) — 수집 핸드오프 항목을 받아 구조·'검색/못찾음/접근불가/읽음/값있음' 구별·출처 형식·근거 없는 값·상태 내용 불일치·재사용 대상 db 존재·철회를 검사해 PASS/INCOMPLETE/BLOCKED/REJECTED/REVIEW_REQUIRED 판정. 작업자 자기선언 무시 — 완료는 판정기가. 값 후보는 자동 PASS 금지(통합가 1차 출처 재확인). 내용 진실·DOI 해석·인용 대조는 자동 불가 → REVIEW_REQUIRED.",
+      "node": "JUDICIAL_COLLECTION_AUDIT",
+      "governance": "Judicial",
+      "refactor_strategy": "읽기·판정만 — 파일 쓰기·엔진·입법 호출 없음. 자동 불가 사안을 자동 PASS 로 두지 않는다. 새 꼼수 방어는 거부 시험과 같은 커밋."
+    },
+    {
       "path": "judicial/evidence_report.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -1044,6 +1055,14 @@
       "writer": "사람·AI",
       "readers": "사람(콘솔), 엔진 이식 판정",
       "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6."
+    },
+    {
+      "path": "tests/collection_audit.test.mjs",
+      "class": "verification",
+      "format": "Node 테스트 (node:test)",
+      "writer": "사람·AI",
+      "readers": "CI, 사람(콘솔)",
+      "interpret": "수집 작업 검증 거부 시험 (설계 work-verification.md) — 근거 없는 값·가짜 출처 형식·상태 내용 불일치·무효 재사용은 REJECTED, 값 후보는 REVIEW_REQUIRED(자동 PASS 금지), 정직한 '못 찾음'은 PASS. 이름만 추가·기준 완화 금지."
     },
     {
       "path": "tests/conservation.test.mjs",
