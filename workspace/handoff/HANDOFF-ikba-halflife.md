@@ -48,3 +48,43 @@
 **수집가 평가:** 격리 준수(workspace 만 씀)·종 정직 표시·not_found 정직·리드 제공 — 규율 지킴. 유일한 과다주장
 (#2 인용을 검증된 듯 제시)을 **게이트가 아니라 통합가 1차 출처 재확인이 잡았다** — 설계대로(결과 재-도출이 과정
 검증을 대신한다).
+
+---
+
+## 재수집 — SOURCES 가이드 적용 (2026-10-17)
+
+> 근거: `workspace/SOURCES.md` 규칙 1 — 인용·값은 Europe PMC(PMID)·UniProt 이 반환한 내용에서만. 웹 검색 스니펫·2차 리뷰 금지.
+> 기계 기록: `workspace/handoff/ikba-halflife-sources.jsonl` (8행) → `verify-collection` **PASS** (자동 조건 충족; 과학적 진실·승인 아님).
+> 위 원본 표(collected)의 값 행은 **철회**한다. 이전 `ikba-halflife.jsonl` 은 기록으로 남긴다.
+
+### 철회 사유
+
+- #2 "~7 min" 인용은 Europe PMC 초록(PMID 18511071)에 없다. 이전 수집이 쓴 출처는 웹 요약이었다.
+- #1 "≤10 min" 과 #3 "5–10 min" 도 초록에 없다. 검색 스니펫·2차 인용에서 왔다.
+- #4 "<15 min" 은 GFP 절편 값이라 전장 유리 IκBα 가 아니다.
+- 사람 세포 값은 여전히 없다.
+
+### 초록 확인 결과 (Europe PMC, 읽고 값 없음 = `read_no_value`)
+
+| PMID | 논문 | 초록에서 확인한 것 | 반감기 수치 | 상태 |
+|---|---|---|---|---|
+| 18401342 | Mathes 2008, EMBO J | 유리형 분해는 PEST 의존·IKK 비의존 | 없음 | 전문 필요 |
+| 18511071 | Truhlar 2008, J Mol Biol | 유리형은 프로테아좀 의존·유비퀴틴 비의존 분해 | 없음 (~7 min 은 초록에 없음) | 전문 필요 |
+| 17486138 | O'Dea 2007, Mol Syst Biol | "newly measured in vivo degradation rate constants" 주장 | 없음 | 전문 필요 |
+| 26191773 | Fortmann 2015, J Mol Biol | 11 aa 유비퀴틴 비의존 degron, 짧은 반감기 | 없음 | 전문 필요 |
+| 8978697 | Scherer 1996, EMBO J | 기저 turnover 는 ankyrin 핵심 도메인 의존 | 없음 | 전문 필요 |
+| 10764587 | 2000, J Mol Biol | 휴지 세포에서 유리 IκBα turnover 는 S293 의존 | 없음 | 전문 필요 |
+| 20055496 | 2010 리뷰, Biochemistry | "quantitative protein half-life measurements" 언급 | 없음 | 리뷰 — 원 논문 추적 |
+
+### 검색 (Europe PMC 검색어 3개, 초록 기준)
+
+- `IkappaBalpha AND half-life AND (free OR unbound)` — 128건 중 위 목록 외 관련 반감기 수치 없음
+- `"IkappaB alpha" AND "half-life" AND (HeLa OR HEK293 OR human OR THP-1 OR U937 OR Jurkat)` — 사람 세포 측정 없음
+- `IkappaBalpha degradation rate constant free bound NF-kappaB in vivo` — 수치 없음
+
+### 판정
+
+1. **사람(9606) 세포에서 측정한 유리 IκBα 반감기는 초록 수준에서 찾지 못했다.** 이번에 확인된 수치는 0건이다.
+2. 반감기 숫자가 실제로 들어 있을 가능성이 있는 논문은 **전문이 필요하다**: 18511071 (Truhlar 2008, PMC 열람 가능 확인), 17486138 (O'Dea 2007, 속도 상수 측정), 18401342 (Mathes 2008, 전문 "~8 h vs ~10 min" 언급), 8978697 (Scherer 1996, 세포 종 확인 필요).
+3. 통합가에게 넘기는 리드: O'Dea 2007 의 측정 세포와 방법, 그리고 Mathes 2008 의 "~10 min" 이 사람 세포인지 생쥐 세포인지. 둘 다 전문에서만 확인된다.
+4. L000025 는 open 유지 권고. db 변경 없음.
