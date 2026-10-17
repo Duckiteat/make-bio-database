@@ -26,7 +26,8 @@ function findRec(db, ref) {
 }
 
 // 한 항목 판정 — issues: { sev: 'reject'|'incomplete'|'review', msg }
-function auditEntry(db, e, i) {
+//   opt.sourceChecks: { 'DOI:10.x/y': 'resolves'|'notfound'|'error' } — dbtool 이 HTTP 로 확인해 넘긴다(순수층은 판정만)
+function auditEntry(db, e, i, opt = {}) {
   const issues = [];
   const id = e && e.id ? String(e.id) : `#${i + 1}`;
   const push = (sev, msg) => issues.push({ sev, msg });
@@ -49,6 +50,10 @@ function auditEntry(db, e, i) {
   if (hasSrc) {
     if (src.db === 'DOI' && !/\S\/\S/.test(String(src.id))) push('reject', `DOI 형식 아님: ${src.id}`);
     if (src.db === 'PMID' && !/^\d+$/.test(String(src.id))) push('reject', `PMID 형식 아님: ${src.id}`);
+    // 출처 해석(존재) 확인 — dbtool 이 HTTP 로 확인해 넘긴 결과. 존재 안 하면 가짜/오기(꼼수 #4), 확인 실패는 통합가로.
+    const st = (opt.sourceChecks || {})[`${src.db}:${src.id}`];
+    if (st === 'notfound') push('reject', `출처가 해석되지 않음 — 존재하지 않는 ${src.db}: ${src.id} (가짜/오기)`);
+    else if (st === 'error') push('review', `출처 해석 확인 실패(네트워크·접근) — 통합가 재확인: ${src.db} ${src.id}`);
   }
   // 상태-내용 구별: 값 없다고 선언한 outcome 에 값이 있으면 모순 (조사 안함 vs 못찾음 vs 접근불가 혼동 방지)
   if (NO_VALUE_OUTCOMES.includes(e.outcome) && hasValue) push('reject', `${e.outcome} 인데 값이 있음 — 상태와 내용 불일치`);
@@ -72,7 +77,7 @@ function auditEntry(db, e, i) {
 // 전체 판정 — 작업자가 적어 둔 상태 선언은 무시하고 여기서 다시 정한다.
 function auditCollection(db, entries, opt = {}) {
   const list = Array.isArray(entries) ? entries : [];
-  const rows = list.map((e, i) => auditEntry(db, e, i));
+  const rows = list.map((e, i) => auditEntry(db, e, i, opt));
   const all = rows.flatMap((r) => r.issues.map((x) => ({ ...x, id: r.id })));
   const has = (sev) => all.some((x) => x.sev === sev);
 
@@ -99,4 +104,33 @@ function auditText(res) {
   return out.join('\n');
 }
 
-module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText };
+// 핸드오프 항목에서 확인할 출처 목록 (dbtool 이 HTTP 로 해석 확인할 대상)
+function sourcesOf(entries) {
+  const out = [];
+  for (const e of (entries || [])) {
+    const s = e && e.source;
+    if (s && s.db && s.id) out.push({ db: s.db, id: String(s.id), key: `${s.db}:${s.id}` });
+  }
+  return out;
+}
+
+// 실행 기록(transcript) 파서 — best-effort. harness 내부 JSONL 형식이라 계약이 아니다: 알아보지 못하면 0 으로 둔다.
+//   내 세션 서브에이전트에만 있다(외부에서 돌린 작업자 세션엔 없음). 실행 증거는 harness 가 찍은 것이지 작업자가 쓴 게 아니다.
+const RUN_TOOLS = Object.freeze(['WebFetch', 'WebSearch', 'Read', 'Grep', 'Bash']);
+function parseRunlog(text) {
+  const uses = (String(text).match(/"type":"tool_use"/g) || []).length;
+  const tools = {};
+  for (const t of RUN_TOOLS) tools[t] = (String(text).match(new RegExp(`"name":"${t}"`, 'g')) || []).length;
+  return { uses, tools, fetch: tools.WebFetch + tools.Read, search: tools.WebSearch };
+}
+
+// 주장 ↔ 실행 기록 교차 검사. 형식 미인식·false-negative 위험이 있어 reject 아닌 review 로 둔다(정직).
+function crossCheckRun(entries, s) {
+  const issues = [];
+  const claimsRead = (entries || []).some((e) => e && (e.outcome === 'read_value' || (e.value != null && e.value !== '')));
+  if (claimsRead && s.fetch === 0 && s.search === 0) issues.push({ sev: 'review', msg: '값/읽음 주장인데 실행 기록에 WebFetch·WebSearch·Read 가 0 — 실제 열람 여부 확인 필요(꼼수 #2)' });
+  if (s.uses === 0) issues.push({ sev: 'review', msg: '실행 기록에 도구 호출 0 — transcript 가 비었거나 형식 미인식(검증 불가, 통과로 치지 않음)' });
+  return issues;
+}
+
+module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText, sourcesOf, parseRunlog, crossCheckRun };

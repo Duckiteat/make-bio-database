@@ -78,8 +78,19 @@ unreadable/read_no_value/read_value/ambiguous/reused), 근거 없는 값·가짜
 재사용 대상 db 존재·철회 재-도출, 값 후보 자동 PASS 금지 → PASS/INCOMPLETE/BLOCKED/REJECTED/
 REVIEW_REQUIRED. 작업자 자기선언 무시. 거부 시험 `tests/collection_audit.test.mjs`.
 
-**미구현(설계)**: 실행 테이프 해시 사슬(#10·#1·#2 — harness 도구 로그 소비 필요) · 통합가 외부 표본 재-fetch
-자동화(DOI 해석·인용 대조는 지금은 사람·통합가 절차).
+**추가 구현(2026-10-17 ②)**:
+- **#2 외부 출처 해석 — 순수 판정 훅 + sanctioned 받기 고리**: `collection_audit` 에 `sourceChecks`
+  (`{db:id → resolves|notfound|error}`) 훅 — notfound → **REJECTED**(가짜/오기 DOI), error → REVIEW. 단
+  **실제 HTTP 해석은 dbtool 이 직접 못 한다**(governance ①: dbtool 에 `execFileSync|child_process` 금지, 받기는
+  서기에게). 해석·받기는 **기존 sanctioned 고리**(`augment plan→fetch→build`, `data/fetched/` 수신함)로 가서
+  그 결과로 sourceChecks 를 채운다. 인용이 원문에 있나(#5)는 유료·403 흔해 여전히 자동 불가 → REVIEW/사람.
+- **#1 실행 기록 대조(부분)** — `verify-run <transcript> --handoff`: 서브에이전트 transcript(harness 가 찍은
+  실제 도구 호출)를 파싱해 "값/읽음 주장인데 WebFetch·WebSearch·Read 0" 을 깃발(꼼수 #2). 확인: TASK-001
+  수집가 transcript 에서 WebFetch 3·WebSearch 3·Read 4 추출 성공. **한계**: 내 세션 서브에이전트에만 있음
+  (외부에서 돌린 작업자 세션엔 없음) · 형식은 harness 내부라 미보장(best-effort) · 작업자가 자기 테이프를
+  쓰면 무의미하니 harness 가 찍은 것만 증거 · 과정 완전 증명 아님(review 수준).
+
+**여전히 미구현**: 해시 사슬 실행 테이프(런타임 emit·#10 과정 강제, 외부 작업자까지) · 인용-원문 자동 대조.
 
 참고 — 원래 설계 골격:
 `judicial/collection_audit.js`(신설·읽기 전용) — 핸드오프 + 실행 테이프를 받아:

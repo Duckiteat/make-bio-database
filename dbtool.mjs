@@ -405,10 +405,25 @@ switch (cmd) {
     const lines = readFileSync(args[0], 'utf8').split('\n').map((s) => s.trim()).filter((s) => s && !s.startsWith('//'));
     const objs = lines.map((s, i) => { try { return JSON.parse(s); } catch (e) { die(`${i + 1}행이 JSON 이 아님: ${e.message}`); } });
     const entries = objs.filter((o) => o && typeof o === 'object' && !('_task' in o) && !('_meta' in o)); // _task/_meta 줄은 메타
+    // 출처 해석(존재) 확인 결과는 sanctioned 받기 고리(augment fetch/수신함)가 채운다 — dbtool 은 네트워크 직접 금지(governance ①). sourceChecks 훅은 순수 판정용(collection_audit).
     const res = CA.auditCollection(db, entries, {});
     if (flags.json) console.log(JSON.stringify(res, null, 2));
     else console.log(CA.auditText(res));
     if (res.verdict === 'REJECTED' || res.verdict === 'INCOMPLETE' || res.verdict === 'BLOCKED') process.exitCode = 1; // PASS·REVIEW_REQUIRED 는 0
+    break;
+  }
+  case 'verify-run': { // 실행 기록 대조 (작업 검증 #1): 서브에이전트 transcript 의 실제 도구 호출 vs 핸드오프 주장 (읽기만, best-effort)
+    if (!args[0]) die('사용법: verify-run <transcript.output> --handoff <핸드오프.jsonl>  (실행 기록은 harness 가 찍은 것·내 세션 서브에이전트 한정·형식 미보장)');
+    const CA = req('./judicial/collection_audit.js');
+    const stats = CA.parseRunlog(readFileSync(args[0], 'utf8'));
+    let entries = [];
+    if (flags.handoff && flags.handoff !== true) {
+      entries = readFileSync(flags.handoff, 'utf8').split('\n').map((s) => s.trim()).filter((s) => s && !s.startsWith('//'))
+        .map((s) => { try { return JSON.parse(s); } catch { return null; } }).filter((o) => o && !('_task' in o) && !('_meta' in o));
+    }
+    const issues = CA.crossCheckRun(entries, stats);
+    console.log(`실행 기록: 도구 호출 ${stats.uses} · WebFetch ${stats.tools.WebFetch} · WebSearch ${stats.tools.WebSearch} · Read ${stats.tools.Read}`);
+    console.log(issues.length ? issues.map((x) => `  · (${x.sev}) ${x.msg}`).join('\n') : '  주장과 실행 기록에 뚜렷한 모순 없음 (best-effort — 과정 완전 증명 아님)');
     break;
   }
   case 'log': { // 델타 기록 (S1): --genesis 기원 체크포인트 봉인(한 번) · 기본 = 사슬 무결성 + 재생 일치 판정
@@ -573,7 +588,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | evidence | verify-collection | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | qualgraph | retraction | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

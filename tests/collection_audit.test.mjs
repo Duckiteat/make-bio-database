@@ -41,3 +41,20 @@ test('⑦ outcome 누락·빈 입력 → INCOMPLETE', () => {
   assert.equal(v([]), 'INCOMPLETE');
   assert.equal(v([{ outcome: 'read_no_value', target: 'D000101' }]), 'PASS'); // 읽었으나 값 없음, 정직
 });
+
+test('⑧ 출처 해석 확인(#4): 해석 안 됨 → REJECTED · 됨 → 통과', () => {
+  const e = [{ outcome: 'read_value', value: 1, source: { db: 'DOI', id: '10.9/fake' }, quote: 'x', verified: true }];
+  assert.equal(CA.auditCollection(db, e, { sourceChecks: { 'DOI:10.9/fake': 'notfound' } }).verdict, 'REJECTED');
+  assert.equal(CA.auditCollection(db, e, { sourceChecks: { 'DOI:10.9/fake': 'resolves' } }).verdict, 'PASS'); // verified:true 라 review 없음
+  assert.equal(CA.auditCollection(db, e, { sourceChecks: { 'DOI:10.9/fake': 'error' } }).verdict, 'REVIEW_REQUIRED'); // 확인 실패는 통합가로
+});
+
+test('⑨ 실행 기록 파서 + 교차 검사(#2)', () => {
+  const tx = '{"type":"tool_use","name":"WebSearch"}\n{"type":"tool_use","name":"Read"}';
+  const s = CA.parseRunlog(tx);
+  assert.equal(s.uses, 2); assert.equal(s.tools.WebSearch, 1); assert.equal(s.fetch, 1);
+  // 값 주장인데 실행 기록에 열람 0 → review 플래그
+  const none = CA.parseRunlog('{"type":"assistant"}');
+  const iss = CA.crossCheckRun([{ outcome: 'read_value', value: 1 }], none);
+  assert.ok(iss.some((x) => x.sev === 'review' && /열람/.test(x.msg)), '열람 0 모순을 못 잡음');
+});
