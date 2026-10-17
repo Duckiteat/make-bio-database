@@ -90,7 +90,20 @@ REVIEW_REQUIRED. 작업자 자기선언 무시. 거부 시험 `tests/collection_
   (외부에서 돌린 작업자 세션엔 없음) · 형식은 harness 내부라 미보장(best-effort) · 작업자가 자기 테이프를
   쓰면 무의미하니 harness 가 찍은 것만 증거 · 과정 완전 증명 아님(review 수준).
 
-**여전히 미구현**: 해시 사슬 실행 테이프(런타임 emit·#10 과정 강제, 외부 작업자까지) · 인용-원문 자동 대조.
+**추가(2026-10-17 ③)**: `verify-collection --check-sources` — 출처(PMID)를 **로컬 수신함**(`data/fetched/
+europepmc/MED-<pmid>.json`)과 대조. 있으면 confirmed(sanctioned 받기 고리가 이미 가져옴), 없으면 error →
+REVIEW("통합가가 augment fetch 로 1차 출처 확인"). **네트워크 없음**(governance ①: dbtool 로컬 읽기만).
+
+## 12. 경계 — in-repo 로 못 짓는 것 (정직하게, 빈 강제 미리 안 짓기)
+
+- **해시 사슬 실행 테이프의 런타임 emit (외부 작업자)**: 테이프를 **도구 런타임이 써야** 증거가 된다(작업자가
+  자기 테이프를 쓰면 자기보고). 그 emit 은 **harness 기능이지 이 저장소 코드가 아니다** — in-repo 로 못 짓는다.
+  빈 소비기만 미리 세우지 않는다(doctrine: 빈 강제 장치 금지). **내 세션 서브에이transcript 는 `verify-run`
+  이 이미 소비**(best-effort). 외부에서 돌린 작업자 세션엔 그 기록이 없다.
+- **인용-원문 자동 대조(#5)·DOI 실제 해석**: 네트워크가 필요하고, 받기는 sanctioned 고리(`augment fetch`)로만.
+  유료·403 흔해 완전 자동은 불가 → 통합가/사람. (로컬 수신함 대조까지가 dbtool 이 할 수 있는 끝.)
+- **커버리지(#1 "정말 없나")**: 없음의 증명 — 통합가 재검색 또는 사람(RETRIEVAL_TASKS).
+→ 이 셋은 자동으로 다 막는 척하지 않는다. REVIEW_REQUIRED / 통합가 / 사람 / harness 로 정직하게 넘긴다.
 
 참고 — 원래 설계 골격:
 `judicial/collection_audit.js`(신설·읽기 전용) — 핸드오프 + 실행 테이프를 받아:

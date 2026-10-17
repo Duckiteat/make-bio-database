@@ -104,7 +104,7 @@ node dbtool.mjs register <시나리오.json>        # 모의 실험 규약 사�
 node dbtool.mjs qualgraph [O…] [--json]         # 정성 그래프 0 층 판정: 교란 대상 → 읽을 거리 경로 부호 대 주장 (지지·경로 없음·모순 후보·부호 섞임) — 구조만, 일치 아님
 node dbtool.mjs evidence <시나리오.json> --target <경로|상태> [--report 파일.md] [--json]   # 증거·방법 보고서: 인과·값표(등급·출처·닫는 방법)·판정 수준·실패(열린 한계)·사고패턴·얻은 것/다음/바닥의 불안정함 — 읽기만
 node dbtool.mjs log                            # 델타 기록: 사슬 무결성 + 기원부터 재생 = 지금 db (기원은 log --genesis 로 한 번)
-node dbtool.mjs verify-collection <핸드오프.jsonl>   # 수집 작업 검증: 구조·구별·출처 형식·재사용 db 존재 → PASS/INCOMPLETE/BLOCKED/REJECTED/REVIEW_REQUIRED (읽기만). 값 후보는 자동 PASS 안 됨. 출처 실제 해석은 sanctioned 받기 고리(augment fetch)로 — dbtool 네트워크 직접 금지(governance). sourceChecks 는 순수 판정 훅
+node dbtool.mjs verify-collection <핸드오프.jsonl> [--check-sources]   # 수집 작업 검증: 구조·구별·출처 형식·재사용 db 존재 → PASS/INCOMPLETE/BLOCKED/REJECTED/REVIEW_REQUIRED (읽기만). 값 후보는 자동 PASS 안 됨. --check-sources 는 출처(PMID)를 로컬 수신함(data/fetched/)과 대조(네트워크 금지 governance) — 없으면 통합가가 augment fetch 로 1차 출처 확인
 node dbtool.mjs verify-run <transcript.output> --handoff <핸드오프.jsonl>   # 실행 기록 대조: 서브에이전트 실제 도구 호출 vs 주장(값/읽음인데 WebFetch·Read 0 이면 깃발). best-effort — 내 세션 서브에이전트 한정·과정 완전 증명 아님
 ```
 
