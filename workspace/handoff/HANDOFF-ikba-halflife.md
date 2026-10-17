@@ -88,3 +88,12 @@
 2. 반감기 숫자가 실제로 들어 있을 가능성이 있는 논문은 **전문이 필요하다**: 18511071 (Truhlar 2008, PMC 열람 가능 확인), 17486138 (O'Dea 2007, 속도 상수 측정), 18401342 (Mathes 2008, 전문 "~8 h vs ~10 min" 언급), 8978697 (Scherer 1996, 세포 종 확인 필요).
 3. 통합가에게 넘기는 리드: O'Dea 2007 의 측정 세포와 방법, 그리고 Mathes 2008 의 "~10 min" 이 사람 세포인지 생쥐 세포인지. 둘 다 전문에서만 확인된다.
 4. L000025 는 open 유지 권고. db 변경 없음.
+
+---
+
+## 통합가 검증 2 (Opus, 2026-10-17 — 재수집 검증)
+
+- 게이트 `verify-collection ikba-halflife-sources.jsonl` → **PASS**(8항목, 지어낸 값 0·모두 read_no_value/not_found·구조 OK). `--check-sources` → REVIEW(PMID 수신함 미등록, 정상).
+- **독립 스팟체크(Europe PMC REST)**: PMID 10764587 인용 "the turnover of free IkappaBalpha in resting cells is S293-dependent" 이 **실제 초록에 그대로 존재** 확인 ✓. PMID 18511071 의 새 인용(proteasome-dependent·ubiquitin-independent)도 1라운드 내 확인과 일치 ✓. → **인용 날조 아님, 1차 출처에서 진짜.**
+- **재수집이 1라운드 오류를 교정했다**: 수집가가 SOURCES.md(1차 출처만) 적용 후 이전 "~7min·≤10min·<15min" 인용을 **스스로 철회**(웹 스니펫 출처였음). 설계가 의도한 결과 — 1차 출처 지정이 과다주장을 없앴다.
+- **결론(불변)**: 초록 수준 반감기 수치 0 · 사람 세포 값 not_found → **넣을 값 없음, L000025 open 유지, db 변경 없음.** 반감기 숫자는 전문에만 → 통합가 `augment fetch`(전문) 또는 RETRIEVAL. 상태: **verified(통합가) — PASS(구조)·값 공백 확정.**
