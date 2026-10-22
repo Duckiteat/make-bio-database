@@ -94,3 +94,12 @@ test('⑤ 무손실: 정규화 멱등, 저장소는 v12, 관찰 밖 필드는 �
   for (const [oid, o] of Object.entries(raw.observations)) assert.ok(C.checkObservation(o).ok, `${oid} 계약 위반: ` + JSON.stringify(C.checkObservation(o).violations));
   assert.equal(JSON.stringify(DefDB.normalize(raw)), JSON.stringify(raw), '저장소는 이미 정규형 (변환이 바꾼 것 없음)');
 });
+
+test('⑥ 관측 커버리지 지도 (48): 예측 가능한 측정량마다 검증 관찰, 정량 검증 0 = 사각', () => {
+  const cov = J.coverageMap(BASE);
+  assert.equal(cov.length, 6, 'obs_operator 가 내는 6 종류');
+  assert.ok(cov.every((r) => typeof r.quant === 'number' && typeof r.qual === 'number' && typeof r.blind === 'boolean'));
+  assert.ok(cov.find((r) => r.kind === 'ratio').blind, 'ratio 는 정량 검증 관찰이 없어 사각');
+  assert.equal(cov.find((r) => r.kind === 'ratio').blind, cov.find((r) => r.kind === 'ratio').quant === 0);
+  assert.match(J.coverageMapText(BASE), /관측 커버리지/);
+});

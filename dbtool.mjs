@@ -192,6 +192,7 @@ switch (cmd) {
   }
   case 'limitations': {
     const db = loadDB(), md = J.limitationsMarkdown(db), file = CLERK.derivedPath('limitations', HERE);
+    if (flags.coverage) { console.log(J.coverageMapText(db)); break; } // 48: 관측 커버리지 지도 (어떤 측정량이 현실 검증 사각인가)
     if (flags.write) { CLERK.writeDerived('limitations', md, HERE); console.log('저장 (입법 서기): ' + rel(file)); break; }
     if (flags.check) {
       const cur = existsSync(file) ? readFileSync(file, 'utf8') : '';

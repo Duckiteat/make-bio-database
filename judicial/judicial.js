@@ -1356,6 +1356,26 @@
     }
     return out;
   }
+  // 관측 커버리지 지도 (build-plan 48): 실행이 내는 측정량(obs_operator.predict 가 만드는 종류)마다 현실 검증 관찰이 있나.
+  //   정량(observable.kind)·정성(readout.kind) 검증을 따로 센다. 정량 검증 0 = 그 종류의 엔진 예측을 숫자로 반박할 수 없는 사각 —
+  //   정성·해석해 벤치마크로만 간접 검증(Phase 0 머리기사). 읽기 전용 지도 — 엔티티별 공백은 obs_compare 가 Observation_Gap 으로 등록한다.
+  function coverageMap(db) {
+    db = normalize(db);
+    const PRED = ['amount', 'concentration', 'fraction', 'event_time', 'ratio', 'fraction_above']; // = compiler/obs_operator.js predict 가 내는 종류
+    const val = Object.values(db.observations).filter((o) => !o.retracted && o.use === 'validation');
+    return PRED.map((kind) => {
+      const quant = val.filter((o) => o.kind !== 'qualitative' && o.observable && o.observable.kind === kind).length;
+      const qual = val.filter((o) => o.kind === 'qualitative' && o.readout && o.readout.kind === kind).length;
+      return { kind, quant, qual, blind: quant === 0 };
+    });
+  }
+  function coverageMapText(db) {
+    const m = coverageMap(db), lines = ['관측 커버리지 지도 (현실 검증) — 실행이 내는 측정량마다 검증 관찰 수', '', '| 측정량 | 정량 검증 | 정성 검증 | 사각(정량 0) |', '|---|---|---|---|'];
+    for (const r of m) lines.push(`| ${r.kind} | ${r.quant} | ${r.qual} | ${r.blind ? '예' : '아니오'} |`);
+    const blind = m.filter((r) => r.blind).map((r) => r.kind);
+    lines.push('', blind.length ? `정량 검증 사각 ${blind.length}/${m.length}: ${blind.join(', ')} — 이 종류의 엔진 예측은 숫자로 반박할 수 없다(데이터 수집은 build-plan 12A 고리). 정성·해석해 벤치마크로만 간접 검증.` : '모든 측정량에 정량 검증 관찰 있음.');
+    return lines.join('\n');
+  }
   // 사건 기반 시뮬레이션 보고: 행정부 simulate 의 원자료(raw)를 판정·서술한다 (엔진을 부르지 않음)
   function simulateText(db, target, opt, raw) {
     const r = raw;
@@ -1725,6 +1745,6 @@
   return Object.freeze({ auditRate, checkAttestations,
     needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, retractionImpact, retractionText, augmentCandidates, patchReportText, audit,
-    auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
+    auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, coverageMap, coverageMapText, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });
 });
