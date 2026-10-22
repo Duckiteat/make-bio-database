@@ -334,6 +334,7 @@
     volume:           { label: '구획 부피 (대상 = 위치)', target: 'location', unit: 'L', dim: 'volume', conservation: { class: 'non_conserved', reason: 'measured_parameter' } },
     kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param', conservation: { class: 'non_conserved', reason: 'measured_parameter' } },
     ratio:            { label: '비 (두 형태·대상의 몫 — 정규화 밴드 강도·활성 분율·fold-change, 무차원)', target: 'bundle', unit: '1', conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
+    fraction_above:   { label: '문턱 넘은 비율 (%양성 — 게이팅 문턱 이상 실행의 비, 0–1)', target: 'bundle', unit: '1', conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
   },
   // 보존 분류 (오차 3채널 doctrine 의 기저 — build-plan 20–25, 설계 conservation-classes.md). class 는 표현 독립:
   // 보존 법칙의 유무로 정의한다(정수 원장이 정확-0 이든 Rodas3 가 상대 1e-14 로 근사하든 같은 class).

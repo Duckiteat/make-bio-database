@@ -317,11 +317,12 @@
       if (!KIN_FIELDS.includes(ob.param) || ob.param === 'order') E(w, `속도 상수 칸 '${ob.param || ''}' — ${KIN_FIELDS.filter((f) => f !== 'order').join(', ')}`);
     }
     if (ob.kind === 'ratio') { if (!ob.denominator) E(w, 'ratio 측정에는 분모 묶음(observable.denominator)이 필요함'); else checkBundle(db, ix, ob.denominator, `${w} 분모`, E); }
+    if (ob.kind === 'fraction_above' && !(ob.threshold >= 0)) E(w, 'fraction_above 측정에는 게이팅 문턱(threshold ≥ 0, 분자 수)이 필요함');
     if (!Number.isFinite(o.value)) E(w, '값(value)이 수가 아님');
     const want = ov && obsUnit(db, o);
     if (ov && want && o.unit !== want) E(w, `단위 '${o.unit}' — 이 측정량의 SI 정준 단위는 '${want}' (값은 SI 로 환산해 저장)`);
     if (ov && !want) E(w, '이 측정량의 단위를 정할 수 없음 (대상 규칙의 kinetics.order 필요)');
-    if (ob.kind === 'fraction' && !(o.value >= 0 && o.value <= 1)) E(w, '비율은 0–1');
+    if (['fraction', 'fraction_above'].includes(ob.kind) && !(o.value >= 0 && o.value <= 1)) E(w, '비율은 0–1');
     if (['amount', 'concentration', 'event_time', 'ratio'].includes(ob.kind) && !(o.value >= 0)) E(w, '분자 수·농도·시각·비는 0 이상');
     if (ov && ov.dim) checkBound(ov.dim, o.value, w, `측정량 ${ob.kind}`, E);
     const u = o.uncertainty, nm = V.noiseModels[u.model];

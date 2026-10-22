@@ -28,7 +28,7 @@ function scale(o, samples) {
   const y = log ? Math.log(o.value) : o.value;
   let noise = (u.sd * u.sd) / r; // 관찰 평균의 측정(또는 합산) 분산
   if (u.model === 'poisson') noise += Math.max(mu, 0) / r; // 계수 잡음
-  if (o.observable.kind === 'fraction') noise += (mu * (1 - mu)) / r; // r 개 세포를 센 비율의 표집 분산
+  if (o.observable.kind === 'fraction' || o.observable.kind === 'fraction_above') noise += (mu * (1 - mu)) / r; // r 개 세포를 센 비율의 표집 분산
   const mc = n > 1 ? s2 / n : 0; // 앙상블 평균의 몬테카를로 분산
   return { y, mu, s2, n, censored, noise, mc, se: Math.sqrt(noise + mc), log };
 }

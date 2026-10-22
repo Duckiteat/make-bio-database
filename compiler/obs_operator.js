@@ -56,6 +56,7 @@ function predict(o, raws) {
       return N / (NA * V);
     }
     if (ob.kind === 'ratio') { const den = at(raw, ob.denominator, t); return den > 0 ? forms.reduce((s, b) => s + at(raw, b, t), 0) / den : NaN; } // 무차원 비 — 분자는 also 합산 가능, 분모는 하나
+    if (ob.kind === 'fraction_above') return forms.reduce((s, b) => s + at(raw, b, t), 0) >= ob.threshold ? 1 : 0; // 실행마다 게이팅 — 앙상블 평균이 %양성 (fraction 과 같은 꼴)
     const r = raw.firstReach[ob.target];
     if (ob.kind === 'fraction') return r != null && (t == null || r <= t) ? 1 : 0;
     if (ob.kind === 'event_time') return r != null ? r : Infinity;

@@ -13,6 +13,7 @@
 {"key":"volume","register":"observables","label_en":"Volume","meaning_en":"Compartment or cell volume (litres).","xref":null,"since":"2026-10-16"}
 {"key":"kinetic_constant","register":"observables","label_en":"Kinetic constant","meaning_en":"A rate or affinity constant read out as the observable (kcat, Km, Kd, half-life).","xref":null,"since":"2026-10-16"}
 {"key":"ratio","register":"observables","label_en":"Ratio","meaning_en":"Dimensionless ratio of two forms or targets (normalized band intensity, active fraction, fold-change).","xref":null,"since":"2026-10-22"}
+{"key":"fraction_above","register":"observables","label_en":"Fraction above threshold","meaning_en":"Fraction of an ensemble whose amount is at or above a gating threshold (percent-positive, e.g. flow cytometry).","xref":null,"since":"2026-10-22"}
 {"key":"increase","register":"qualitativeExpectations","label_en":"Increase (vs control)","meaning_en":"The readout is higher under the perturbation than in the control.","xref":null,"since":"2026-10-16"}
 {"key":"decrease","register":"qualitativeExpectations","label_en":"Decrease (vs control)","meaning_en":"The readout is lower under the perturbation than in the control.","xref":null,"since":"2026-10-16"}
 {"key":"no_change","register":"qualitativeExpectations","label_en":"No change (vs control)","meaning_en":"The readout is indistinguishable from the control within the declared equivalence margin.","xref":null,"since":"2026-10-16"}

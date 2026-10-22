@@ -161,4 +161,7 @@ test('⑤ 관찰 연산자: 운명 원자료(결정론) → 분자 수(격자 �
   const nz = raw.keys.find((b) => b !== 'D000165|nucleoplasm' && e[raw.keys.indexOf(b)] > 0);
   const rt = OP.predict(obs({ observable: { kind: 'ratio', target: 'D000165|nucleoplasm', denominator: nz } }), [raw])[0];
   close(rt, e[k] / e[raw.keys.indexOf(nz)], 1e-12 * Math.abs(rt), 'ratio = 대상 / 분모');
+  // 43: fraction_above — 게이팅 문턱 이상이면 1, 아니면 0 (앙상블 평균이 %양성)
+  assert.equal(OP.predict(obs({ observable: { kind: 'fraction_above', target: 'D000165|nucleoplasm', threshold: e[k] - 1 } }), [raw])[0], 1, 'fraction_above: 문턱 이상 = 양성');
+  assert.equal(OP.predict(obs({ observable: { kind: 'fraction_above', target: 'D000165|nucleoplasm', threshold: e[k] + 1 } }), [raw])[0], 0, 'fraction_above: 문턱 미만 = 음성');
 });

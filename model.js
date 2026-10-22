@@ -544,6 +544,7 @@
     if (str(ob.param)) o.observable.param = str(ob.param);
     if (arr(ob.also).length) o.observable.also = arr(ob.also).map(str);
     if (str(ob.denominator)) o.observable.denominator = str(ob.denominator);
+    if (num(ob.threshold) !== undefined) o.observable.threshold = num(ob.threshold);
     o.value = num(b.value);
     o.unit = str(b.unit);
     const u = isObj(b.uncertainty) ? b.uncertainty : {};
