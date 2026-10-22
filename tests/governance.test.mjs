@@ -443,3 +443,34 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   // 대상 없으면 오류 (판결을 내지 않음)
   assert.ok(ER.evidenceReport(BASE, sc, {}).error, '대상 없으면 오류');
 });
+
+// 보고서가 경로만이 아니라 세포 상태·교란·검증 시나리오에서도 비지 않고 맞는 판정 수준을 낸다 (2026-10-22 회귀: 0 고리·가정 없음·검증이 '탐색' 으로)
+test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준', () => {
+  const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), IRB = req('../compiler/ir_builder.js');
+  const json = (f) => JSON.parse(readFileSync(join(ROOT, 'examples/scenarios', f), 'utf8'));
+  const prereg = readFileSync(join(ROOT, 'data/preregistrations.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  // ① 세포 상태: 사슬 = 컴파일러가 조립한 계(엔진이 먹는 것)와 같은 규칙 집합, 시나리오가 덮어쓴 상수는 가정
+  const tel = json('telomere-hayflick-hypothetical.json');
+  const rep = ER.evidenceReport(BASE, tel, { target: 'D000210', prereg });
+  const A = IRB.assemble(BASE, 'D000210', tel);
+  const want = new Set(A.rules.map((R) => R.ref)), got = new Set(rep.chain.filter((c) => c.kind !== 'modulation').map((c) => c.rule));
+  assert.deepEqual([...got].sort(), [...want].sort(), '사슬 고리 = 조립된 계의 규칙');
+  assert.ok(rep.chain.some((c) => c.kind === 'modulation' && c.effect === 'inhibits'), '조절 고리(⊣)가 사슬에 있다');
+  assert.ok(rep.chain.every((c) => c.src !== 'scenario' || c.closure === 'assumed'), '시나리오 상수는 assumed');
+  assert.equal(rep.states.map((s) => s.id).join(','), 'D000210,D000211');
+  assert.ok(rep.failures.length > 0, '계의 열린 한계가 보인다');
+  // ② 파생 시나리오: 풀린 입력의 가정 값 + 교란 기록이 보인다
+  const raw = json('mhc-i-tap-null-hypothetical.json'), d = PT.derive(BASE, 'D000202', raw, json(raw.base));
+  const rp = ER.evidenceReport(BASE, d.scenario, { target: 'D000202', derived: d, prereg });
+  assert.ok(rp.assumptions.length > 0, '기준에서 풀린 가정 값');
+  assert.equal(rp.perturbation.perturbation.type, 'knockout');
+  assert.ok(rp.excluded.includes('D000189/rule/assembly'), '교란이 뺀 규칙');
+  assert.ok(ER.evidenceReportMarkdown(rp).includes('**교란 실험**'));
+  // ③ 판정 수준: 등록된 규약 → 검증 (hypothetical 이어도), 등록부 없으면 미확인, 고친 규약 → 위반
+  const b2m = json('mhc-i-b2m-validation-hypothetical.json');
+  assert.match(ER.evidenceReport(BASE, b2m, { target: 'D000202', prereg }).judgment.level, /^검증 \(사전 등록 #1\)/);
+  assert.match(ER.evidenceReport(BASE, b2m, { target: 'D000202' }).judgment.level, /등록 미확인/);
+  const edited = Object.assign({}, b2m, { name: b2m.name + ' (고침)' });
+  assert.match(ER.evidenceReport(BASE, edited, { target: 'D000202', prereg }).judgment.level, /규약 위반/, '등록 뒤 고치면 검증 아님');
+  assert.match(rep.judgment.level, /가설 생성/, '규약 없는 가상 → 가설 생성');
+});
