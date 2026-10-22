@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 const req = createRequire(import.meta.url);
-const C = req('../core.js'), F = req('../engine/fate_engine.js'), S = req('../judicial/stats.js'), SA = req('../judicial/stoch_audit.js'), ORCH = req('../orchestrator.js'), RNG = req('../engine/rng.js');
+const C = req('../core.js'), F = req('../engine/fate_engine.js'), S = req('../judicial/stats.js'), SA = req('../judicial/stoch_audit.js'), ORCH = req('../orchestrator.js'), RNG = req('../engine/rng.js'), STF = req('../judicial/stiffness.js');
 const ROOT = new URL('..', import.meta.url);
 const BASE = C.normalize(JSON.parse(readFileSync(new URL('data/db.json', ROOT), 'utf8')));
 const BD = JSON.parse(readFileSync(new URL('examples/scenarios/stochastic-birth-death-hypothetical.json', ROOT), 'utf8'));
@@ -64,6 +64,12 @@ test('③ 결정론 극한: Ω 1·4·16 — 앙상블 평균과 결정론 궤적
   const fake = (v) => ({ keys: [B], series: [[v]] });
   const bad = SA.convergenceTrend([{ tol: 1e-3, det: fake(2) }, { tol: 1e-4, det: fake(1.5) }], fake(1), [B], 1e-6);
   assert.equal(bad.fault, 'NUMERICAL'); assert.ok(!bad.converged);
+  // 46: 강성 프로파일 — 매끈한 계는 well_conditioned(느림은 결함 아님), 최소 단계 바닥(hMinHits>0)만 NUMERICAL
+  const prof = STF.stiffnessProfile(F.simulateFate(BASE, 'D000174', { scenario: { ...MO, stochastic: undefined }, engine: 'js', commitment: false }));
+  assert.equal(prof.fault, 'FINDING'); assert.ok(prof.flags.includes('well_conditioned'), JSON.stringify(prof.flags));
+  assert.ok(prof.nAct > 0 && prof.rejFrac < 0.5);
+  const stiff = STF.stiffnessProfile({ integrator: { steps: 100, rejected: 0, hMinHits: 3, h: { min: 1e-9, max: 60 } }, rules: [{ active: true }] });
+  assert.equal(stiff.fault, 'NUMERICAL'); assert.ok(stiff.flags.includes('h_min_floor'));
 });
 
 test('④ 재현·정수 발화·원장: 같은 (seed, 궤적) → 같은 해시, 다른 궤적 → 다름, 사법부 감사 결함 없음', () => {
