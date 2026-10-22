@@ -75,6 +75,18 @@ function limitTrend(rows, bundles) {
   return { err, decreasing, slope, fault: decreasing ? 'FINDING' : 'NUMERICAL' };
 }
 
+// 수렴 스윕 판정 (build-plan 45): 허용 오차를 조인 수열 runs = [{tol, det}] 의 각 궤적을 더 조인 기준해 ref 와 상대 L2 로 대조.
+//   converged = 가장 큰 오차도 bound 미만 (적분기 기여가 무시 가능 — 현실과의 차이는 수치가 아니라 모델·데이터). 아니면 NUMERICAL.
+//   매끈한 계는 느슨한 허용 오차에서도 바닥이라 차수 slope 가 깨끗하지 않을 수 있다 — 보고만 하고 수렴 판정은 bound 로 한다.
+function convergenceTrend(runs, ref, bundles, bound) {
+  const rel = (det) => { let num = 0, den = 0; for (const b of bundles) { const i = det.keys.indexOf(b), ir = ref.keys.indexOf(b); const L = Math.min(det.series.length, ref.series.length); for (let j = 0; j < L; j++) { num += (det.series[j][i] - ref.series[j][ir]) ** 2; den += ref.series[j][ir] ** 2; } } return den ? Math.sqrt(num / den) : 0; };
+  const err = runs.map(({ tol, det }) => ({ tol, rel: rel(det) }));
+  const worst = Math.max(...err.map((e) => e.rel)), converged = worst < bound;
+  const a = err[0], z = err[err.length - 1];
+  const slope = err.length > 1 && a.rel > 0 && z.rel > 0 ? Math.log(z.rel / a.rel) / Math.log(z.tol / a.tol) : NaN;
+  return { err, worst, bound, converged, slope, fault: converged ? 'FINDING' : 'NUMERICAL' };
+}
+
 function ensembleText(sum) {
   const pct = (x) => (100 * x).toFixed(1) + '%', h = (s) => (s / 3600).toFixed(2) + ' h', f = (x) => (Number.isFinite(x) ? (+x.toPrecision(4)).toString() : '—');
   const lines = [`앙상블 ${sum.n} 궤적`, '', '| 끝 상태 | 수 | 비율 | 95% 구간 |', '|---|---|---|---|', ...Object.entries(sum.fate).map(([s, x]) => `| ${s} | ${x.k} | ${pct(x.p)} | ${pct(x.ci[0])}–${pct(x.ci[1])} |`)];
@@ -83,4 +95,4 @@ function ensembleText(sum) {
   return lines.join('\n');
 }
 
-module.exports = { auditTrajectory, reproducible, wilson, ensembleSummary, compareMethods, limitTrend, ensembleText };
+module.exports = { auditTrajectory, reproducible, wilson, ensembleSummary, compareMethods, limitTrend, convergenceTrend, ensembleText };

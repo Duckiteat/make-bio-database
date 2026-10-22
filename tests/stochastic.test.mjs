@@ -55,6 +55,15 @@ test('③ 결정론 극한: Ω 1·4·16 — 앙상블 평균과 결정론 궤적
   const wDefault = worstVs(scA), wTight = worstVs(ORCH.refScenario(scA));
   assert.ok(wDefault < 1e-6, `결정론이 해석해와 상대차 ${wDefault} — 모델 오차가 아니라 적분 허용 오차 안의 수치 오차`);
   assert.ok(wTight <= wDefault, `허용 오차를 조이면 해석해에 더 수렴(또는 이미 바닥): ${wTight} ≤ ${wDefault}`);
+  // 45: 수렴 스윕 — 비선형 다종 시나리오가 허용 오차를 조이는 수열 전체에서 기준해 대비 작은 오차로 수렴(적분기 기여 무시 가능 = 수치≠모델)
+  const MO = JSON.parse(readFileSync(new URL('examples/scenarios/fate-mixed-optimal-hypothetical.json', ROOT), 'utf8'));
+  const sw = ORCH.convergenceSweep(BASE, 'D000174', MO, [1e-3, 1e-4, 1e-5], [B]);
+  assert.ok(sw.converged && sw.worst < 1e-6, `수렴 스윕 worst ${sw.worst} (fault ${sw.fault})`);
+  assert.equal(sw.fault, 'FINDING'); assert.equal(sw.err.length, 3, '≥2 단계 스윕');
+  // 비수렴이면 NUMERICAL (judicial 판정 — 합성 입력: 오차가 bound 를 넘음)
+  const fake = (v) => ({ keys: [B], series: [[v]] });
+  const bad = SA.convergenceTrend([{ tol: 1e-3, det: fake(2) }, { tol: 1e-4, det: fake(1.5) }], fake(1), [B], 1e-6);
+  assert.equal(bad.fault, 'NUMERICAL'); assert.ok(!bad.converged);
 });
 
 test('④ 재현·정수 발화·원장: 같은 (seed, 궤적) → 같은 해시, 다른 궤적 → 다름, 사법부 감사 결함 없음', () => {

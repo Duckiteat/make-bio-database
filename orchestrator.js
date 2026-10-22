@@ -95,6 +95,17 @@ function ensembleLimit(db, state, sc, omegas, n, bundles, opt) {
   return SA.limitTrend(rows, bundles);
 }
 
+// 수렴 스윕 (build-plan 45): 허용 오차 tols(내림차순)마다 결정론 실행 + 더 조인 기준해 → 사법부가 수렴 판정(비수렴은 NUMERICAL).
+//   단일 refScenario 비교를 여러 단계로 넓힌다. 기준해는 가장 조인 tol 의 1/100.
+function convergenceSweep(db, state, sc, tols, bundles, opt) {
+  opt = opt || {};
+  const { stochastic, ...det } = sc;
+  const run = (rtol, atol) => F.simulateFate(db, state, { engine: 'js', commitment: false, scenario: { ...det, integrator: { ...(det.integrator || {}), rtol, atol } } });
+  const ref = run(Math.min(...tols) / 100, 1e-6);
+  const runs = tols.map((tol) => ({ tol, det: run(tol, 1e-2) }));
+  return SA.convergenceTrend(runs, ref, bundles, opt.bound || 1e-6);
+}
+
 // ----- 관찰 판정 (4단계 ②): 행정부 실행 → 관찰 연산자(컴파일러)로 측정량 → 사법부 판정. 엔진은 관찰을 보지 않는다 -----
 // 시나리오 A (필수)·B (선택 — 경쟁 가설). 시나리오에 stochastic 이 있으면 앙상블(opt.n 궤적, 기본 50) — 생물 변이(퍼짐)까지 판정
 function observeFate(db, o, state, scA, scB, opt) {
@@ -232,4 +243,4 @@ function replayLog(log, currentText) {
   return LOGA.replayVerdict(log.genesis, log.events, replay, sha(currentText));
 }
 
-module.exports = { replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+module.exports = { replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
