@@ -452,6 +452,14 @@
       "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 창(vocab consensus.window_days)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
     },
     {
+      "path": "judicial/stiffness.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js (reductionCheck·진단), tests",
+      "interpret": "[사법] 강성 프로파일 진단 (build-plan 46) — 운명 엔진의 적분 진단(steps·rejected·hMinHits·h.min/max)과 활성 규칙 수로 '왜 느린가'를 분류한다(h_min_floor = NUMERICAL·rejection_storm·timescale_separation·lu_cost·well_conditioned). 느림은 결과지 결함이 아니다 — 최소 단계 바닥(hMinHits>0, 정확도 타협)만 NUMERICAL 후보. 판정만, 엔진 실행·데이터 수정·쓰기 없음."
+    },
+    {
       "path": "data/fetched/consensus/*/*",
       "class": "evidence",
       "format": "원본 응답 (JSON · FASTA · UniProt 평문 · Rhea TSV)",
