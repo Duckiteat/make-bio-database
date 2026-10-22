@@ -49,6 +49,12 @@ test('③ 결정론 극한: Ω 1·4·16 — 앙상블 평균과 결정론 궤적
   const v = ORCH.ensembleLimit(BASE, 'D000174', bd(20, 10, { t_end: 3600 }), [1, 4, 16], 40, [B]);
   assert.ok(v.decreasing, `줄지 않음: ${JSON.stringify(v.err)}`);
   assert.ok(v.slope < -0.3, `기울기 ${v.slope} (몬테카를로 오차면 ≈ −½)`);
+  // 44: 해석해 벤치마크 (생물 경로, P3-5 밖) — 결정론 궤적 대 닫힌 해 N(t) = λ(1−e^{−γt}) + N₀e^{−γt}. 수치 오차와 모델 오차를 가른다.
+  const scA = bd(20, 10, { t_end: 3600, stochastic: undefined }), exactAt = (t) => 20 * (1 - Math.exp(-G * t)) + 10 * Math.exp(-G * t); // stochastic 꺼서 결정론 ODE
+  const worstVs = (sc) => { const r = F.simulateFate(BASE, 'D000174', { scenario: sc, engine: 'js', commitment: false }), ki = r.keys.indexOf(B); return Math.max(...r.series.map((N, i) => Math.abs(N[ki] - exactAt(r.trajectory[i].t)) / exactAt(r.trajectory[i].t))); };
+  const wDefault = worstVs(scA), wTight = worstVs(ORCH.refScenario(scA));
+  assert.ok(wDefault < 1e-6, `결정론이 해석해와 상대차 ${wDefault} — 모델 오차가 아니라 적분 허용 오차 안의 수치 오차`);
+  assert.ok(wTight <= wDefault, `허용 오차를 조이면 해석해에 더 수렴(또는 이미 바닥): ${wTight} ≤ ${wDefault}`);
 });
 
 test('④ 재현·정수 발화·원장: 같은 (seed, 궤적) → 같은 해시, 다른 궤적 → 다름, 사법부 감사 결함 없음', () => {
