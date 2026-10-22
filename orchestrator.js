@@ -17,6 +17,7 @@ const IRB = require('./compiler/ir_builder.js');
 const LOGA = require('./judicial/log_audit.js');
 const PROTO = require('./judicial/protocol.js');
 const OBSOP = require('./compiler/obs_operator.js');
+const STF = require('./judicial/stiffness.js');
 const OC = require('./judicial/obs_compare.js');
 const SA = require('./judicial/stoch_audit.js');
 const M = require('./model.js');
@@ -104,6 +105,24 @@ function convergenceSweep(db, state, sc, tols, bundles, opt) {
   const ref = run(Math.min(...tols) / 100, 1e-6);
   const runs = tols.map((tol) => ({ tol, det: run(tol, 1e-2) }));
   return SA.convergenceTrend(runs, ref, bundles, opt.bound || 1e-6);
+}
+
+// 모델 축약 (build-plan 47): 관찰 해상도 아래로 무관한 규칙 drop 을 제거(exclude_rules)하고 전체 대 축약을 TOST(상대 L2 ≤ delta)로 검증.
+//   선언 밖 변화 거부: 축약 실행의 활성 규칙 = 전체 − drop, 그 밖 동일. 전후 강성 프로파일(46)로 축약이 조건을 낫게 하는지 본다.
+//   진짜 QSSA(대수 제약으로 ODE 를 접어 강성 제거)는 DAE 엔진이 필요 — 적분장 작업. 여기서는 엔진이 표현 가능한 '관찰 무관 규칙 제거' 만.
+function reductionCheck(db, state, sc, drop, bundles, opt) {
+  opt = opt || {};
+  const { stochastic, ...det } = sc;
+  const reducedSc = { ...det, exclude_rules: [...(det.exclude_rules || []), ...drop] };
+  const full = F.simulateFate(db, state, { engine: 'js', commitment: false, scenario: det });
+  const reduced = F.simulateFate(db, state, { engine: 'js', commitment: false, scenario: reducedSc });
+  if (full.error || reduced.error) return { error: full.error || reduced.error };
+  const bund = bundles && bundles.length ? bundles : full.keys;
+  const fa = new Set(full.rules.filter((x) => x.active).map((x) => x.ref)), ra = new Set(reduced.rules.filter((x) => x.active).map((x) => x.ref));
+  const removed = [...fa].filter((r) => !ra.has(r)).sort(), added = [...ra].filter((r) => !fa.has(r));
+  const declaredOnly = !added.length && removed.every((r) => drop.includes(r)) && drop.every((r) => !ra.has(r));
+  const v = SA.reductionVerdict(full, reduced, bund, opt.delta != null ? opt.delta : 1e-2);
+  return Object.assign(v, { drop, declaredOnly, removed, added, full: STF.stiffnessProfile(full), reduced: STF.stiffnessProfile(reduced) });
 }
 
 // ----- 관찰 판정 (4단계 ②): 행정부 실행 → 관찰 연산자(컴파일러)로 측정량 → 사법부 판정. 엔진은 관찰을 보지 않는다 -----
@@ -243,4 +262,4 @@ function replayLog(log, currentText) {
   return LOGA.replayVerdict(log.genesis, log.events, replay, sha(currentText));
 }
 
-module.exports = { replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+module.exports = { replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, reductionCheck, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };

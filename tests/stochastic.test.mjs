@@ -70,6 +70,12 @@ test('③ 결정론 극한: Ω 1·4·16 — 앙상블 평균과 결정론 궤적
   assert.ok(prof.nAct > 0 && prof.rejFrac < 0.5);
   const stiff = STF.stiffnessProfile({ integrator: { steps: 100, rejected: 0, hMinHits: 3, h: { min: 1e-9, max: 60 } }, rules: [{ active: true }] });
   assert.equal(stiff.fault, 'NUMERICAL'); assert.ok(stiff.flags.includes('h_min_floor'));
+  // 47: 모델 축약 — 관찰이 못 보는(해상도 아래) 규칙은 제거해도 동등, 결과를 바꾸는 규칙 제거는 거부 · 선언 밖 변화 없음
+  const safe = ORCH.reductionCheck(BASE, 'D000174', MO, ['D000166/rule/synthesis'], null, { delta: 1e-2 });
+  assert.ok(safe.equivalent, `안전 축약 rel ${safe.rel} ≤ ${safe.delta}`);
+  assert.ok(safe.declaredOnly && safe.removed.length === 1, `선언 밖 변화 없음: removed ${JSON.stringify(safe.removed)}`);
+  const unsafe = ORCH.reductionCheck(BASE, 'D000174', MO, ['D000168/rule/export'], null, { delta: 1e-2 });
+  assert.ok(!unsafe.equivalent, `결과를 바꾸는 축약은 거부(동등 아님): rel ${unsafe.rel}`);
 });
 
 test('④ 재현·정수 발화·원장: 같은 (seed, 궤적) → 같은 해시, 다른 궤적 → 다름, 사법부 감사 결함 없음', () => {
