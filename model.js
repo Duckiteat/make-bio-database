@@ -532,6 +532,7 @@
     o.readout = { kind: str(rd.kind) };
     if (str(rd.target)) o.readout.target = str(rd.target);
     if (num(rd.instrument_resolution) !== undefined) o.readout.instrument_resolution = num(rd.instrument_resolution);
+    if (arr(rd.also).length) o.readout.also = arr(rd.also).map(str);
     o.expect = isObj(b.expect) ? { order: arr(b.expect.order).map(str) } : str(b.expect);
     if (num(b.replicates) !== undefined) o.replicates = num(b.replicates);
     return o;
@@ -541,6 +542,7 @@
     const ob = isObj(b.observable) ? b.observable : {};
     const o = { observable: { kind: str(ob.kind), target: str(ob.target) } };
     if (str(ob.param)) o.observable.param = str(ob.param);
+    if (arr(ob.also).length) o.observable.also = arr(ob.also).map(str);
     o.value = num(b.value);
     o.unit = str(b.unit);
     const u = isObj(b.uncertainty) ? b.uncertainty : {};

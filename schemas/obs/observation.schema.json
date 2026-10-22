@@ -46,6 +46,10 @@
             },
             "param": {
               "type": "string"
+            },
+            "also": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
             }
           }
         },
@@ -460,6 +464,10 @@
             "instrument_resolution": {
               "type": "number",
               "minimum": 0
+            },
+            "also": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
             }
           }
         },

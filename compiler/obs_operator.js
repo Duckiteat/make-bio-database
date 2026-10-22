@@ -45,9 +45,16 @@ function at(raw, b, t) {
 function predict(o, raws) {
   const NA = M.NA; // 아보가드로 수는 공유 헌법 층(model.js)에서만
   const ob = o.observable, t = o.condition && o.condition.time_s;
+  // 측정이 못 가르는 형태(자유형·결합형 …)는 합산한다 — ob.also 로 선언. 없으면 대상 하나(옛 동작과 비트 동일)
+  const forms = ob.also && ob.also.length ? [ob.target, ...ob.also] : [ob.target];
   return raws.map((raw) => {
-    if (ob.kind === 'amount') return at(raw, ob.target, t);
-    if (ob.kind === 'concentration') { const loc = ob.target.split('|').pop(), V = raw.volumes[loc]; return V > 0 ? at(raw, ob.target, t) / (NA * V) : NaN; }
+    if (ob.kind === 'amount') return forms.reduce((s, b) => s + at(raw, b, t), 0);
+    if (ob.kind === 'concentration') {
+      const loc = ob.target.split('|').pop(), V = raw.volumes[loc];
+      if (!(V > 0)) return NaN;
+      let N = 0; for (const b of forms) { if (b.split('|').pop() !== loc) return NaN; N += at(raw, b, t); } // 농도 합산은 같은 위치만
+      return N / (NA * V);
+    }
     const r = raw.firstReach[ob.target];
     if (ob.kind === 'fraction') return r != null && (t == null || r <= t) ? 1 : 0;
     if (ob.kind === 'event_time') return r != null ? r : Infinity;

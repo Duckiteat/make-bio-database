@@ -153,4 +153,8 @@ test('⑤ 관찰 연산자: 운명 원자료(결정론) → 분자 수(격자 �
   assert.equal(OP.predict(obs({ observable: { kind: 'event_time', target: 'D000175' } }), [raw])[0], reach);
   assert.deepEqual(OP.predict(obs({ observable: { kind: 'fraction', target: 'D000175' }, condition: { species: '9606', time_s: reach - 1 } }), [raw, raw]), [0, 0]);
   assert.deepEqual(OP.predict(obs({ observable: { kind: 'fraction', target: 'D000176' } }), [raw]), [0], '도달 안 한 상태');
+  // 42: 자유형↔결합형 미분해 — also 로 못 가르는 형태들의 총량(측정이 합쳐서 잼)
+  const e = raw.series[raw.series.length - 1], other = raw.keys.find((b) => b !== 'D000165|nucleoplasm');
+  assert.equal(OP.predict(obs({ observable: { kind: 'amount', target: 'D000165|nucleoplasm', also: [other] } }), [raw])[0], e[raw.keys.indexOf('D000165|nucleoplasm')] + e[raw.keys.indexOf(other)], 'also: 못 가르는 형태 합산');
+  assert.equal(OP.predict(obs(), [raw])[0], e[k], 'also 없으면 옛 동작(대상 하나)');
 });

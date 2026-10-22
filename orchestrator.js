@@ -139,8 +139,10 @@ function observeQualitative(db, o, state, sc, opt) {
   const mono = ex === 'monotone_increase' || ex === 'monotone_decrease', stateKind = rd.kind === 'fraction' || rd.kind === 'event_time';
   // 대상 하나의 측정량: 값(실행마다) · 단조 기대면 시계열(실행 평균) — 경험적 우연 확률의 후보에도 같은 함수를 쓴다
   const measure = (raws, t) => {
-    const out = { values: OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: o.condition }, raws) };
-    if (mono) { const tEnd = o.condition.time_s, T = [0, ...raws[0].process.times.filter((x) => tEnd == null || x <= tEnd)]; out.series = { t: T, v: T.map((x) => mean(raws.map((raw) => OBSOP.predict({ observable: { kind: rd.kind, target: t }, condition: { time_s: x } }, [raw])[0]))) }; }
+    const also = t === rd.target && Array.isArray(rd.also) ? rd.also : []; // 못 가르는 형태 합산은 주장 대상에만 (후보 풀은 각각 하나)
+    const ob = { kind: rd.kind, target: t, also };
+    const out = { values: OBSOP.predict({ observable: ob, condition: o.condition }, raws) };
+    if (mono) { const tEnd = o.condition.time_s, T = [0, ...raws[0].process.times.filter((x) => tEnd == null || x <= tEnd)]; out.series = { t: T, v: T.map((x) => mean(raws.map((raw) => OBSOP.predict({ observable: ob, condition: { time_s: x } }, [raw])[0]))) }; }
     return out;
   };
   // 대상 하나의 첫 도달 시각(실행마다): 세포 상태는 도달, 묶음은 양자(분자 1 개) 이상이 된 첫 기록점
