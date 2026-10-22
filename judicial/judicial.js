@@ -316,12 +316,13 @@
       if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `측정 대상 규칙 '${ob.target}' 없음 — D…/rule/키`);
       if (!KIN_FIELDS.includes(ob.param) || ob.param === 'order') E(w, `속도 상수 칸 '${ob.param || ''}' — ${KIN_FIELDS.filter((f) => f !== 'order').join(', ')}`);
     }
+    if (ob.kind === 'ratio') { if (!ob.denominator) E(w, 'ratio 측정에는 분모 묶음(observable.denominator)이 필요함'); else checkBundle(db, ix, ob.denominator, `${w} 분모`, E); }
     if (!Number.isFinite(o.value)) E(w, '값(value)이 수가 아님');
     const want = ov && obsUnit(db, o);
     if (ov && want && o.unit !== want) E(w, `단위 '${o.unit}' — 이 측정량의 SI 정준 단위는 '${want}' (값은 SI 로 환산해 저장)`);
     if (ov && !want) E(w, '이 측정량의 단위를 정할 수 없음 (대상 규칙의 kinetics.order 필요)');
     if (ob.kind === 'fraction' && !(o.value >= 0 && o.value <= 1)) E(w, '비율은 0–1');
-    if (['amount', 'concentration', 'event_time'].includes(ob.kind) && !(o.value >= 0)) E(w, '분자 수·농도·시각은 0 이상');
+    if (['amount', 'concentration', 'event_time', 'ratio'].includes(ob.kind) && !(o.value >= 0)) E(w, '분자 수·농도·시각·비는 0 이상');
     if (ov && ov.dim) checkBound(ov.dim, o.value, w, `측정량 ${ob.kind}`, E);
     const u = o.uncertainty, nm = V.noiseModels[u.model];
     if (!V.uncertaintyKinds[u.kind]) E(w, `불확도 유형 '${u.kind}' — ${Object.keys(V.uncertaintyKinds).join(' | ')} (값만 있는 관찰은 받지 않음)`);
@@ -332,7 +333,7 @@
     }
     if (!(u.sd >= 0 && Number.isFinite(u.sd))) E(w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
     if (!(Number.isInteger(o.replicates) && o.replicates >= 1)) E(w, '반복 수(replicates)는 1 이상의 정수');
-    for (const k of ['precision', 'detection_limit']) if (o[k] != null && !(o[k] >= 0)) E(w, `${k} 는 0 이상`);
+    for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E(w, `${k} 는 0 이상`);
     const c = o.condition;
     if (!c.species) E(w, '조건에 종(condition.species)이 없음');
     checkContext(c, w + ' 조건', E);

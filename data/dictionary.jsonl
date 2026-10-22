@@ -12,6 +12,7 @@
 {"key":"event_time","register":"observables","label_en":"Event time","meaning_en":"Time at which a state or threshold is first reached (seconds).","xref":null,"since":"2026-10-16"}
 {"key":"volume","register":"observables","label_en":"Volume","meaning_en":"Compartment or cell volume (litres).","xref":null,"since":"2026-10-16"}
 {"key":"kinetic_constant","register":"observables","label_en":"Kinetic constant","meaning_en":"A rate or affinity constant read out as the observable (kcat, Km, Kd, half-life).","xref":null,"since":"2026-10-16"}
+{"key":"ratio","register":"observables","label_en":"Ratio","meaning_en":"Dimensionless ratio of two forms or targets (normalized band intensity, active fraction, fold-change).","xref":null,"since":"2026-10-22"}
 {"key":"increase","register":"qualitativeExpectations","label_en":"Increase (vs control)","meaning_en":"The readout is higher under the perturbation than in the control.","xref":null,"since":"2026-10-16"}
 {"key":"decrease","register":"qualitativeExpectations","label_en":"Decrease (vs control)","meaning_en":"The readout is lower under the perturbation than in the control.","xref":null,"since":"2026-10-16"}
 {"key":"no_change","register":"qualitativeExpectations","label_en":"No change (vs control)","meaning_en":"The readout is indistinguishable from the control within the declared equivalence margin.","xref":null,"since":"2026-10-16"}

@@ -157,4 +157,8 @@ test('⑤ 관찰 연산자: 운명 원자료(결정론) → 분자 수(격자 �
   const e = raw.series[raw.series.length - 1], other = raw.keys.find((b) => b !== 'D000165|nucleoplasm');
   assert.equal(OP.predict(obs({ observable: { kind: 'amount', target: 'D000165|nucleoplasm', also: [other] } }), [raw])[0], e[raw.keys.indexOf('D000165|nucleoplasm')] + e[raw.keys.indexOf(other)], 'also: 못 가르는 형태 합산');
   assert.equal(OP.predict(obs(), [raw])[0], e[k], 'also 없으면 옛 동작(대상 하나)');
+  // 43: ratio — 두 묶음의 몫(무차원). 정규화 밴드·활성 분율·fold-change 의 바탕
+  const nz = raw.keys.find((b) => b !== 'D000165|nucleoplasm' && e[raw.keys.indexOf(b)] > 0);
+  const rt = OP.predict(obs({ observable: { kind: 'ratio', target: 'D000165|nucleoplasm', denominator: nz } }), [raw])[0];
+  close(rt, e[k] / e[raw.keys.indexOf(nz)], 1e-12 * Math.abs(rt), 'ratio = 대상 / 분모');
 });
