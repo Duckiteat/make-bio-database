@@ -43,6 +43,10 @@ function test(o, samples, alpha) {
     // 검출 한계 아래: 관찰은 상한만 말한다 — 예측이 한계 아래일 확률
     const dl = k.log ? Math.log(o.detection_limit) : o.detection_limit;
     out.p = S.normCdf((dl - k.mu) / k.se); out.z = (k.mu - dl) / k.se; out.notes.push(`검출 한계 ${o.detection_limit} 아래 — 상한 검정`);
+  } else if (o.saturation != null && o.value >= o.saturation) {
+    // 포화 상한 위: 관찰은 하한만 말한다 (장치 천장) — 예측이 상한 위일 확률
+    const sl = k.log ? Math.log(o.saturation) : o.saturation;
+    out.p = S.normSf((sl - k.mu) / k.se); out.z = (k.mu - sl) / k.se; out.notes.push(`포화 상한 ${o.saturation} 위 — 하한 검정`);
   } else if (k.se === 0) { out.z = k.y === k.mu ? 0 : Infinity; out.p = k.y === k.mu ? 1 : 0; out.notes.push('불확도 0 — 정확히 같아야 함'); }
   else { out.z = (k.y - k.mu) / k.se; out.p = 2 * S.normSf(Math.abs(out.z)); }
   // 퍼짐: 생물 변이는 확률 앙상블만 예측한다
@@ -73,6 +77,10 @@ function equivalence(o, A, opt) {
   if (o.detection_limit != null && o.value <= o.detection_limit) {
     const shown = A.p >= 1 - alpha;
     return { kind: 'below_limit', shown, p: 1 - A.p, requirement: shown ? '' : `예측이 검출 한계 아래라고 확신할 수 없음 (확률 ${fmt(A.p)} < ${fmt(1 - alpha)}) — 예측 퍼짐을 줄이거나 더 낮은 검출 한계의 관찰 필요` };
+  }
+  if (o.saturation != null && o.value >= o.saturation) {
+    const shown = A.p >= 1 - alpha;
+    return { kind: 'above_saturation', shown, p: 1 - A.p, requirement: shown ? '' : `예측이 포화 상한 위라고 확신할 수 없음 (확률 ${fmt(A.p)} < ${fmt(1 - alpha)}) — 예측 퍼짐을 줄이거나 더 높은 포화 상한의 관찰 필요` };
   }
   const decl = opt.equivalence;
   if (!decl) return { shown: false, requirement: '허용 차이 δ 가 선언되지 않음 — 시나리오 equivalence 에 δ 를 근거(evidence)와 함께 실행 전에 선언해야 일치를 판정할 수 있음' };
@@ -154,6 +162,7 @@ function verdictText(v) {
   if (v.equivalence) {
     const e = v.equivalence;
     lines.push('', e.kind === 'below_limit' ? `확신 상한: 예측이 검출 한계 아래일 확률 ${fmt(1 - e.p)}`
+      : e.kind === 'above_saturation' ? `확신 하한: 예측이 포화 상한 위일 확률 ${fmt(1 - e.p)}`
       : e.delta != null ? `동등성(TOST): δ ${fmt(e.delta)} (${e.scale}, 강도 ${e.grade} = min(δ ${e.delta_grade}, 관찰 ${e.observation_grade}) — ${e.basis}), 차 ${fmt(e.d)}, 표준 오차 ${fmt(e.se)}${e.p != null ? `, p ${fmt(e.p)}` : ''}${v.conditional ? ' — ' + v.conditional : ''}`
       : '동등성: 판정 안 함 (아래 사유)');
   }

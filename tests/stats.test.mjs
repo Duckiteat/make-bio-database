@@ -87,6 +87,10 @@ test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정�
   // 검출 한계: δ 없이 "확신 상한" — 오차가 크면 아래라고 확신할 수 없음 (규약은 여전히 필요)
   assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [5], null, EQ(1)).verdict, 'INDISTINGUISHABLE');
   assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [5], null, EQ(1)).verdict, 'CONSISTENT');
+  // 42: 포화 상한 — 대칭 "확신 하한". 예측이 상한 위라고 확신하면 일치, 오차 크면 확신 못 함, 상한 한참 아래면 모순
+  assert.equal(OC.verdict(obs({ value: 2000, saturation: 1500 }), [1515], null, EQ(1)).verdict, 'INDISTINGUISHABLE');
+  assert.equal(OC.verdict(obs({ value: 2000, saturation: 1500, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [1515], null, EQ(1)).verdict, 'CONSISTENT');
+  assert.equal(OC.verdict(obs({ value: 2000, saturation: 1500 }), [1000]).verdict, 'CONFLICT');
   assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20, uncertainty: { kind: 'measurement', model: 'normal', sd: 2 } }), [5]).verdict, 'INDISTINGUISHABLE', '규약 없이는 확신 상한도 일치가 아님');
   assert.equal(OC.verdict(obs({ value: 10, detection_limit: 20 }), [500]).verdict, 'CONFLICT');
   // 도달 시각: 도달하지 않은 실행은 중도 절단, 모두 못 하면 모순

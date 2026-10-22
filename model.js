@@ -531,6 +531,7 @@
     const rd = isObj(b.readout) ? b.readout : {};
     o.readout = { kind: str(rd.kind) };
     if (str(rd.target)) o.readout.target = str(rd.target);
+    if (num(rd.instrument_resolution) !== undefined) o.readout.instrument_resolution = num(rd.instrument_resolution);
     o.expect = isObj(b.expect) ? { order: arr(b.expect.order).map(str) } : str(b.expect);
     if (num(b.replicates) !== undefined) o.replicates = num(b.replicates);
     return o;
@@ -544,7 +545,7 @@
     o.unit = str(b.unit);
     const u = isObj(b.uncertainty) ? b.uncertainty : {};
     o.uncertainty = { kind: str(u.kind), model: str(u.model), sd: num(u.sd) };
-    for (const k of ['precision', 'detection_limit', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
+    for (const k of ['precision', 'detection_limit', 'saturation', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
     o.replicates = num(b.replicates);
     o.condition = normObsCondition(b.condition);
     if (isObj(b.calibration)) {

@@ -92,6 +92,10 @@
           "type": "number",
           "minimum": 0
         },
+        "saturation": {
+          "type": "number",
+          "minimum": 0
+        },
         "raw": {
           "type": "number"
         },
@@ -452,6 +456,10 @@
             "target": {
               "type": "string",
               "minLength": 1
+            },
+            "instrument_resolution": {
+              "type": "number",
+              "minimum": 0
             }
           }
         },

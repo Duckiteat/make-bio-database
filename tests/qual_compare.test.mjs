@@ -99,6 +99,11 @@ test('③ 조정자 결정론: 합성 규칙을 막으면 산물이 줄어듦 �
   assert.equal(r.conclusive, false, '규약 없는 실행은 탐색');
   assert.equal(r.chance_source, 'empirical'); assert.ok(r.chance_pool > 5 && r.chance >= 0 && r.chance <= 1); assert.equal(r.chance_uniform, 1 / 3);
   assert.equal(ORCH.observeQualitative(DB, o('increase'), SRC, SC).outcome, 'mismatch');
+  // 42: 장치 해상도 — 측정이 못 가르는 차이는 방향으로 읽지 않는다 (수치 분해능 위로 바닥을 올림)
+  const oBig = Q('decrease', { perturbation: { type: 'block', target: R.ref }, readout: { kind: 'amount', target: R.prods[0].b, instrument_resolution: 1e18 } });
+  const rb = ORCH.observeQualitative(DB, oBig, SRC, SC);
+  assert.ok(rb.detail.resolution >= 1e18, '장치 해상도가 분해능 바닥을 올림');
+  assert.equal(rb.detail.observed, 'no_change', '장치가 못 가르는 차이는 방향 없음');
 });
 
 test('④ 조정자 앙상블: 출생–사멸 해석해 — 합성 절반이면 평균이 E(t)/2 줄어듦, 거의 0 인 교란은 δ 로 효과 없음', () => {

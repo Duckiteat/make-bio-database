@@ -162,7 +162,7 @@ function observeQualitative(db, o, state, sc, opt) {
         const c0 = measure(cRef, t), p0 = pRef ? measure(pRef, t) : null;
         numerical = gap(control.values, c0.values) + gap(perturbed && perturbed.values, p0 && p0.values) + gap(control.series && control.series.v, c0.series && c0.series.v) + gap(perturbed && perturbed.series && perturbed.series.v, p0 && p0.series && p0.series.v);
       }
-      return { target: t, control, perturbed, quantum, numerical, resolution: quantum + (numerical || 0) };
+      return { target: t, control, perturbed, quantum, numerical, resolution: Math.max(quantum + (numerical || 0), rd.instrument_resolution || 0) };
     };
     // 후보: 같은 종류의 읽을 거리 전부(주장의 대상 제외) — 묶음 또는 세포 상태
     const claimTargets = new Set(isOrder ? ex.order : [rd.target]);
@@ -172,7 +172,7 @@ function observeQualitative(db, o, state, sc, opt) {
       const evs = (raws) => raws.map((_, k) => ex.order.map((t) => eventsOf([raws[k]], t)[0]));
       let numerical = null;
       if (det) numerical = gap(evs(cRaws)[0], evs(cRef)[0]) + (pRaws ? gap(evs(pRaws)[0], evs(pRef)[0]) : 0);
-      const quantum = 0, resolution = numerical || 0; // 순서의 분해능은 시각의 수치 오차 — 분자 양자는 시각에 쓰지 않는다
+      const quantum = 0, resolution = Math.max(numerical || 0, rd.instrument_resolution || 0); // 순서의 분해능은 시각의 수치 오차 — 분자 양자는 시각에 쓰지 않는다 (장치 해상도가 선언되면 그 바닥)
       main = { quantum, numerical, resolution };
       r = QC.judgeQualitative({ o, control: { events: evs(cRaws) }, perturbed: pRaws ? { events: evs(pRaws) } : null, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId });
       const arm = pRaws || cRaws;
