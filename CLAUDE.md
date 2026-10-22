@@ -68,7 +68,7 @@
 - 코드·형식·어휘·문서 구조: `CHANGES.md` 맨 위 한 행 — Scope · Why · Impact · Verification, 같은 커밋.
 - **사용자 보고: 같은 네 칸 표. 산문 요약 금지.**
 - 구조 변경 → `SCHEMA.md`, 작업 규칙 → 이 파일 + `docs/design/agent-rules.md`, 실패·unmapped·공백 → `limitations.md`(`--write`). 문서는 해당 절만 고침.
-- 세션 시작: `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록.
+- 세션 시작: `docs/design/direction.md`(방향·우선순위·왜 그 순서) → 철학(`authority-and-comprehension`·`tripartite-governance`·`dictionary-and-translation`·`conservation-classes`·`work-verification`) → `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록.
 - 논리를 깨면 감지·수정·기록까지 한 작업.
 - 주석은 계약·이유만. 이력은 `CHANGES.md`.
 

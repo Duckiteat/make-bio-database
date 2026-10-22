@@ -98,7 +98,7 @@
 
 - 살아 있는 문서: 구조(D·묶음·S 형식) 변경 → `SCHEMA.md`, 작업 규칙·원리 → `CLAUDE.md`, 모든 실패·unmapped·미해결 공백 → `limitations.md`(패치 `limitations` → `--write`). 문서는 전체 재작성 금지, 해당 절만 고친다.
 - `unmapped` 외부 ID 도 한계다(`Identity_Gap`). `limitations --detect` 후보 0 은 병합 조건.
-- 세션 시작: `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록 순으로 최신 설계와 동기화한다.
+- 세션 시작: `docs/design/direction.md`(방향·우선순위·왜 그 순서) → 철학 문서(`authority-and-comprehension`·`tripartite-governance`·`dictionary-and-translation`·`conservation-classes`·`work-verification`) → `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록 순으로 최신 방향·설계와 동기화한다. 새 세션은 이 읽기로 지금의 방향 감각에 들어온다 — 기억이 아니라 저장소가 연속성을 준다.
 - 변경이 논리를 깨면 감지·수정·기록까지가 한 작업이다 (테스트·`audit-run` 로 감지, CHANGES.md 에 기록).
 
 ## 규칙·코드를 바꿀 때
