@@ -156,6 +156,14 @@
       "interpret": "시나리오 읽기 — 파일 + 가정 원장을 읽어 compiler/assumptions.resolve 로 번호를 푼다. 번호 없는 시나리오는 파일 글자 그대로(입력 해시 불변). 풀리지 않으면 예외 — 숫자를 지어내지 않음. 읽기 전용 — 쓰기·판정·엔진 없음."
     },
     {
+      "path": "inbox.js",
+      "class": "law",
+      "format": "Node CommonJS (읽기 전용 모듈)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool verify-collection · mcp/query.mjs verify_collection",
+      "interpret": "수신함 읽기 — 핸드오프 후보의 출처(PMID)마다 초록(MED-*.json 제목+abstractText)과 공개 전문(PMC-*.xml, 후보 pmcid 또는 초록 기록의 pmcid)을 모아 사법부 인용 대조(collection_audit.quoteCheck)에 넘긴다. 받기·쓰기·판정 없음."
+    },
+    {
       "path": "mcp/protocol.mjs",
       "class": "law",
       "format": "Node ESM",

@@ -18,6 +18,7 @@
 'use strict';
 const S = require('./stats.js');
 const RELI = require('./reliability.js');
+const PROTO = require('./protocol.js');
 
 // 비교 척도로 옮긴 예측·관찰과 분산 성분
 function scale(o, samples) {
@@ -167,6 +168,7 @@ function verdictText(v) {
       : '동등성: 판정 안 함 (아래 사유)');
   }
   if (v.preferred) lines.push(`관찰이 고른 가설: ${v.preferred}`);
+  if (v.context_transfer) lines.push('', PROTO.contextTransferText(v.context_transfer)); // V8 맥락 이전 (build-plan 59)
   if (v.limitation) lines.push('', `→ 한계 후보 ${v.limitation.type}: ${v.limitation.requirement}`);
   return lines.join('\n');
 }

@@ -63,3 +63,17 @@ test('⑤ 첫 장면 기원 — ΔL 은 숫자 출처 없음, 핵질 부피는 �
   const tca = SO.sceneOrigin(RAW, SCN.read(new URL('../examples/scenarios/tca-measured-kinetics-hypothetical.json', import.meta.url)), { target: 'D000148' });
   assert.ok(tca.count.measured >= 4, 'TCA 실측 kinetics 는 measured');
 });
+
+// build-plan 59: 정량 판정에도 V8 맥락 이전 — 측정 맥락(관찰 condition) 대 판정 맥락(시나리오·세포 상태·기준 종)
+test('⑥ 정량 맥락 이전: 생쥐 측정을 사람 모델로 판정하면 표시 · 같은 종이면 종은 같음 · 글에도 나온다 (판정은 막지 않음)', () => {
+  const OC = req('../judicial/obs_compare.js');
+  const mouse = ORCH.observeFate(DB, obs({ condition: { species: '10090', cell: 'MEF' } }), 'D000210', SC, null, {});
+  assert.ok(!mouse.error, mouse.error);
+  assert.equal(mouse.context_transfer.transfer, true);
+  assert.deepEqual(mouse.context_transfer.differ.find((d) => d.key === 'species'), { key: 'species', estimated: '10090', predicted: '9606' });
+  assert.ok(mouse.verdict, '판정은 그대로 나온다');
+  assert.match(OC.verdictText(mouse), /맥락 이전 \(V8\): 추정한 맥락과 판정한 맥락이 다름[\s\S]*species: 추정 '10090' → 판정 '9606'/);
+  const human = ORCH.observeFate(DB, obs({ condition: { species: '9606' } }), 'D000210', SC, null, {});
+  assert.ok(human.context_transfer.same.some((d) => d.key === 'species'));
+  assert.ok(!human.context_transfer.differ.some((d) => d.key === 'species'));
+});

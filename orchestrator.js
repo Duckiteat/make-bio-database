@@ -16,6 +16,7 @@ const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
 const LOGA = require('./judicial/log_audit.js');
 const PROTO = require('./judicial/protocol.js');
+const V = require('./vocab.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const STF = require('./judicial/stiffness.js');
 const OC = require('./judicial/obs_compare.js');
@@ -127,7 +128,22 @@ function reductionCheck(db, state, sc, drop, bundles, opt) {
 
 // ----- 관찰 판정 (4단계 ②): 행정부 실행 → 관찰 연산자(컴파일러)로 측정량 → 사법부 판정. 엔진은 관찰을 보지 않는다 -----
 // 시나리오 A (필수)·B (선택 — 경쟁 가설). 시나리오에 stochastic 이 있으면 앙상블(opt.n 궤적, 기본 50) — 생물 변이(퍼짐)까지 판정
+// V8 맥락 이전 — 정량 판정 (build-plan 59): 측정 맥락 = 관찰 자신의 조건(condition, 없으면 규약 matched_experiment.system),
+//   판정 맥락 = 시나리오(species·cell) → 없으면 판정 세포 상태의 세포 · 기준 종. 판정을 막지 않는 공개 전제(정성 경로와 같은 급).
+//   비교는 종·세포 두 열쇠만 — 시뮬레이션이 위치·온도·pH 를 하나로 선언하지 않아 나머지는 늘 '비교 못 함' 이 된다.
+function quantContext(db, o, state, sc) {
+  const sense = db.senses[state] || {}, cond = o.condition || {}, sys = ((sc.protocol || {}).matched_experiment || {}).system || {};
+  const stateCell = (sense.desc || []).map((d) => d.context && d.context.cell).find(Boolean);
+  const measured = { species: cond.species || sys.species || null, cell: cond.cell || sys.cell || null };
+  const judged = { species: sc.species || sense.reference_species || V.defaultReferenceSpecies, cell: sc.cell || stateCell || null };
+  return PROTO.contextTransfer(measured, judged);
+}
+
 function observeFate(db, o, state, scA, scB, opt) {
+  const out = observeFateRaw(db, o, state, scA, scB, opt);
+  return out && !out.error ? Object.assign(out, { context_transfer: quantContext(db, o, state, scA) }) : out;
+}
+function observeFateRaw(db, o, state, scA, scB, opt) {
   opt = opt || {};
   if (o.kind === 'qualitative') return { error: '정성 관찰은 observeQualitative 로 (build-plan 8)' };
   const runs = (sc) => {

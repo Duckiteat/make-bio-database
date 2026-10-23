@@ -128,8 +128,8 @@
 | 54 | **재검토 감지 정밀화** — `needs` 의 속성·규칙 단위 매칭 | `judicial.reviewCandidates` | 거짓 경보 사례(D000210 → L000116) 시험 | ☐ |
 | 55 | **두 갈래 차이 측정 → 하나로** (`simulateRate` 대 운명 엔진) | 조정자 · 사법부 → 행정 | 차이 보고 · 하나로 옮기면 기존 보고 결과 대조 | ☐ |
 | 56 | **엔진 경계** — 운명 엔진은 IR 만 | `engine/fate_engine.js` · `compiler/` · 조정자 | 궤적 비트 · `rust_engine.test` | ☐ |
-| 58 | **전문 수신함 + 인용–전문 자동 대조** — 외주 전문 에이전트의 출력 자리 (`outsourcing-and-mcp.md` §6 ①) | 서기 받기 · `judicial/collection_audit.js` · `verify-collection` | 인용이 전문에 없으면 REJECTED · 전문 없으면 REVIEW · 거부 시험 | ☐ |
-| 59 | **정량 판정 맥락 이전** (§6 ②) | 조정자 `observeFate` · `judicial/protocol.js` | 정량 판정에 context_transfer · 시험 | ☐ |
+| 58 | **전문 수신함 + 인용–전문 자동 대조** — 외주 전문 에이전트의 출력 자리 (`outsourcing-and-mcp.md` §6 ①) | 서기 받기 · `judicial/collection_audit.js` · `verify-collection` | 인용이 전문에 없으면 REJECTED · 전문 없으면 REVIEW · 거부 시험 | ☑ 2026-10-23 — `judicial/collection_audit.js quoteCheck`(정규화: 태그·엔터티·NFKC·대시·따옴표, 참고문헌 목록 제외) + 읽기 전용 `inbox.js`. 실물: 텔로미어 후보 9/11 초록 일치, Henderson 1996 공개 전문 받아 일치, Allsopp 1992 본문 인용은 사람 확인 |
+| 59 | **정량 판정 맥락 이전** (§6 ②) | 조정자 `observeFate` · `judicial/protocol.js` | 정량 판정에 context_transfer · 시험 | ☑ 2026-10-23 — `orchestrator.quantContext`(측정 = 관찰 condition, 판정 = 시나리오·세포 상태·기준 종, 종·세포만) · `obs_compare.verdictText` 가 표시 · 판정은 막지 않음 · 시험 `dose_slope ⑥`(생쥐 10090 → 사람 9606). 종 정책은 보류 |
 | 60 | **받기 기록** `FETCH_LOG.jsonl` (§6 ③) | 서기 · 사법부 | 추가 전용 사슬 · 대조 시험 | ☑ 2026-10-23 — 서기 `appendFetchLog`, 사법부 `verifyFetchLog`(사슬 + 받은 뒤 파일 그대로), validate 포함 |
 | 61 | **MCP 서버** — query·fetch + 입출력기 clerk (`outsourcing-and-mcp.md` §4.3, lab 은 56 뒤) | `mcp/` · 서기(`handoff` 구역·`writerLock`·XML 받기) | 프로토콜·역할 거부·단일 작성자·쓰기 없음 시험 | ☑ 2026-10-23 — 외부 패키지 없음, 시험 `tests/mcp.test.mjs`(8). 첫 실사용: O'Dea 2007(PMID 17486138) 공개 전문 받음, Allsopp 1995 유료 거부 |
 | 57 | **LPS 기준해 → 운명 엔진 QSSA** (L000113 을 공간 엔진에서 떼어냄) | 조정자 · 47번 | 기준해 1회 또는 한계 기록 · 축약 TOST | ☐ |
