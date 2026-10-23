@@ -53,6 +53,7 @@ import { createRequire } from 'node:module';
 import { dirname, join, basename, relative } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import * as CLERK from './legislative/clerk.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -143,8 +144,14 @@ switch (cmd) {
     if (!dict.ok) for (const e of dict.errors) console.log(`오류  사전 ${e}`);
     const AA = req('./judicial/assumption_audit.js'), asm = AA.audit(CLERK.readAssumptions(dirname(DB_PATH)), loadDB(), scenarioFiles()); // 가정 원장 (49) — 사슬·기록·시나리오 번호 풀기
     if (!asm.ok) for (const e of asm.errors) console.log(`오류  가정 ${e}`);
+    const CA = req('./judicial/collection_audit.js'), fdir = join(dirname(DB_PATH), 'fetched'), flog = { ok: true, errors: [] }; // 받기 기록 (60) — 사슬 + 받은 파일이 그대로인가
+    for (const src of existsSync(fdir) ? readdirSync(fdir).filter((d) => existsSync(join(fdir, d, CLERK.FETCH_LOG))) : []) {
+      const ev = CLERK.readFetchLog(join(fdir, src)), cur = {};
+      for (const e of ev) if (e.file) { const abs = join(HERE, e.file); cur[e.file] = existsSync(abs) ? createHash('sha256').update(readFileSync(abs)).digest('hex') : null; }
+      const v = CA.verifyFetchLog(ev, cur); if (!v.ok) { flog.ok = false; for (const e of v.errors) { flog.errors.push(e); console.log(`오류  받기 기록 ${src}: ${e}`); } }
+    }
     console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}${(r.attestations.stale || []).length ? `, 지난 도장 ${r.attestations.stale.length}` : ''}`);
-    if (r.attestations.failed.length || !dict.ok || !asm.ok) process.exit(1);
+    if (r.attestations.failed.length || !dict.ok || !asm.ok || !flog.ok) process.exit(1);
     process.exit(r.errors.length ? 1 : 0);
   }
   case 'merge': {

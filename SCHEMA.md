@@ -600,6 +600,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-23 | (받기 기록) | `data/fetched/<원천>/FETCH_LOG.jsonl` 신설 — 받기마다 한 사건, 추가 전용 사슬 `seq·at·url·file·ok·bytes?·sha256?·error?·cached?·prev·root`(첫 prev = sha256('fetchlog\n')). 수신함에 공개 전문 `europepmc/PMC-{번호}.xml`. 서기 구역 `handoff`(`workspace/handoff/`). db.json 형식·버전 불변 |
 | 2026-10-23 | (가정 원장) | `data/assumptions.jsonl` 신설(§8O) — 추가만 하는 사슬 `seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root`, 첫 prev = sha256('assumptions\n'). 시나리오 숫자 자리에 `{ "assume": "A…" }`. 사전 등록 사건에 선택 칸 `assumptions`(번호 목록). 변환 `migrations/012-assumption-ledger.mjs`(미등록 시나리오 34 개 · 숫자 자리 1 696 → 기록 360, 무손실 확인). db.json 형식·버전 불변 |
 | 2026-10-23 | 12 (측정 유형) | 측정량 `dose_slope`(대상 규칙 진행량, `observable.dose { target, values }`, 단위 1, 보존 분류 non_conserved/sensitivity) · 교란 `set_amount { target: 묶음, n }`(+ dose_series of set_amount) · `schemas/obs` 갱신. 추가 필드만 — 기존 db 불변 |
 | 2026-10-23 | 12 (가 스키마) | 한계 구조 필드 `symptom`·`downstream_blocked`·`resolution_trigger`·`prohibited_bypasses`(선택, 추가 필드만 — 없으면 직렬화 불변, 버전 번호 그대로) · 어휘 `resolutionTriggers` · 사법부 검사 5 자리 + 재검토 후보 `reviewCandidates`. 데이터: L000113 에 원문의 증상 수치·막힌 하류(D000103·104·105)를 칸으로 |

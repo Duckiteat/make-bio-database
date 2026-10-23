@@ -14,10 +14,11 @@
 //   저장소 **밖**(tmp·스크래치 사본, `--db` 로 가리킨 다른 저장소)은 구역 표가 다루지 않는다 — 저장소의 코드·데이터·증명을
 //   건드리지 못하게 막는 것이 목적이고, 밖은 애초에 그것이 아니다. 막는 것은 '저장소 안인데 그 구역이 아닌 자리' 다
 //   (예: 병합이 judicial/ 에, 받기가 engine/ 에 쓰려는 경우).
-import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 
 const require = createRequire(import.meta.url);
@@ -41,6 +42,7 @@ export const ZONES = {
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
   report:      { label: '사용자 보고서', deny: ['data', 'attestations', 'judicial', 'legislative', 'engine', 'compiler', 'migrations', 'schemas', 'tests'], rule: '위치는 사용자가 정한다 — 저장소의 코드·데이터·증명 위치에는 쓰지 않는다' },
   draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
+  handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
 // 구역 검사 — 통과한 절대 경로를 돌려준다. 저장소 밖은 구역 표가 다루지 않는다(위 머리말).
@@ -235,7 +237,7 @@ export function fetchToInbox(tasks, opt) {
     let res = null;
     for (const url of t.urls) {
       // curl 이 직접 쓰므로 put 을 지나지 않는다 — 같은 구역 검사를 여기서 받는다 (받기도 증거 구역 안에만)
-      const ext = /\.fasta$/.test(url) ? '.fasta' : /\.txt$/.test(url) ? '.txt' : '.json', dest = zoned('evidence', t.file + ext), tmp = dest + '.part';
+      const ext = /\.fasta$/.test(url) ? '.fasta' : /\.txt$/.test(url) ? '.txt' : /fullTextXML$|\.xml$/.test(url) ? '.xml' : '.json', dest = zoned('evidence', t.file + ext), tmp = dest + '.part';
       mkdirSync(dirname(dest), { recursive: true });
       try {
         execFileSync('curl', ['-sS', '-f', '-L', '-m', String(opt.timeout), '-o', tmp, url], { stdio: ['ignore', 'ignore', 'pipe'] });
@@ -245,6 +247,43 @@ export function fetchToInbox(tasks, opt) {
     out.push(res);
   }
   return out;
+}
+
+// ⑧ 받기 기록 (build-plan 60 · outsourcing-and-mcp.md §6 ③): 받기마다 한 사건 — 도구가 쓰는 실행 기록이라 받은 쪽의 말 대신 증거가 된다.
+//   data/fetched/<원천>/FETCH_LOG.jsonl, 추가만 하는 사슬 { seq, at, url, file, ok, bytes?, sha256?, error?, cached?, prev, root }, 첫 prev = sha256('fetchlog\n').
+export const FETCH_LOG = 'FETCH_LOG.jsonl', FETCH_GENESIS = sha('fetchlog\n');
+export function readFetchLog(dir) { const f = join(dir, FETCH_LOG); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []; }
+export function appendFetchLog(dir, results) {
+  const events = readFetchLog(dir), f = join(dir, FETCH_LOG), at = new Date().toISOString(), out = [];
+  let prev = events.length ? events[events.length - 1].root : FETCH_GENESIS;
+  for (const r of results) {
+    const file = r.file ? relative(ROOT, resolve(r.file)) : null;
+    const body = { seq: events.length + out.length + 1, at, url: r.url || null, file, ok: !!r.ok, ...(r.ok && r.file && existsSync(r.file) ? { bytes: statSync(r.file).size, sha256: sha(readFileSync(r.file)) } : {}), ...(r.error ? { error: r.error } : {}), ...(r.cached ? { cached: true } : {}), prev };
+    const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+    out.push(ev); prev = ev.root;
+  }
+  put('evidence', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + out.map((e) => JSON.stringify(e)).join('\n') + '\n');
+  return out;
+}
+
+// ⑨ 핸드오프 추가 (outsourcing-and-mcp.md §4.3): 수집가가 쓸 수 있는 유일한 자리. 후보 줄을 붙이기만 한다 — 고치거나 지우지 않는다.
+export function appendHandoff(name, lines) {
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(String(name))) refuse(`핸드오프 이름 '${name}' — 소문자·숫자·하이픈만`);
+  if (!Array.isArray(lines) || !lines.length) refuse('붙일 후보 줄이 없음');
+  const rows = lines.map((l, i) => { const o = typeof l === 'string' ? JSON.parse(l) : l; if (!o || typeof o !== 'object' || Array.isArray(o)) refuse(`${i + 1}번째 후보가 JSON 객체가 아님`); return JSON.stringify(o); });
+  const f = join(ROOT, 'workspace', 'handoff', `${name}.jsonl`);
+  return put('handoff', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + rows.join('\n') + '\n');
+}
+
+// ⑩ 단일 작성자 잠금 (outsourcing-and-mcp.md §4.3): 저장소마다 입출력기(MCP clerk 서버) 하나. 잠금은 저장소 밖(운영체제 임시 폴더) —
+//   쓰기는 put('draft') — 저장소 밖만 허용하는 구역. 살아 있는 작성자가 있으면 거부, 죽은 잠금은 치운다. 돌려준 함수로 푼다.
+export function writerLock(root = ROOT) {
+  const f = join(tmpdir(), `biodb-clerk-${sha(resolve(root)).slice(0, 16)}.lock`);
+  const alive = (pid) => { try { process.kill(pid, 0); return true; } catch (e) { return false; } };
+  if (existsSync(f)) { const pid = +readFileSync(f, 'utf8'); if (pid && alive(pid)) refuse(`입출력기가 이미 떠 있음 (pid ${pid}) — 작성자는 하나`); unlinkSync(f); }
+  put('draft', f, String(process.pid)); // 저장소 밖 — draft 구역(저장소 밖만)
+  if (+readFileSync(f, 'utf8') !== process.pid) refuse('입출력기 잠금을 다른 작성자가 먼저 잡음');
+  return () => { try { if (+readFileSync(f, 'utf8') === process.pid) unlinkSync(f); } catch (e) { /* 이미 없음 */ } };
 }
 
 export const writtenFiles = () => log.slice();

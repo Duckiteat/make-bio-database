@@ -133,4 +133,28 @@ function crossCheckRun(entries, s) {
   return issues;
 }
 
-module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText, sourcesOf, parseRunlog, crossCheckRun };
+// 받기 기록 검사 (build-plan 60): 사슬(seq·prev·root) + 성공한 받기의 파일이 지금도 같은 내용인가(sha256).
+//   currentSha = { 파일(저장소 상대): 지금 sha256 | null(없음) } — 파일을 읽는 것은 부르는 쪽(사법부는 읽지 않음).
+//   같은 파일을 다시 받으면 뒤 사건이 앞 사건을 대신한다(마지막 성공 사건이 기준).
+const crypto = require('crypto');
+const ATT = require('./attestation.js');
+const FETCH_GENESIS = crypto.createHash('sha256').update('fetchlog\n').digest('hex');
+function verifyFetchLog(events, currentSha) {
+  const errors = []; let prev = FETCH_GENESIS; const last = new Map();
+  (events || []).forEach((e, i) => {
+    const { root, ...body } = e;
+    if (e.seq !== i + 1) errors.push(`사건 ${i + 1}: seq ${e.seq} — 빠지거나 끼운 사건`);
+    if (e.prev !== prev) errors.push(`사건 ${i + 1}: prev 가 직전 root 와 다름 — 사슬이 끊김`);
+    if (root !== crypto.createHash('sha256').update(body.prev + '\n' + ATT.canon(body)).digest('hex')) errors.push(`사건 ${i + 1}: root 재계산 불일치 — 기록이 바뀜`);
+    if (e.ok && e.file && e.sha256) last.set(e.file, e);
+    prev = root;
+  });
+  for (const [file, e] of last) {
+    const now = (currentSha || {})[file];
+    if (now === null || now === undefined) errors.push(`${file}: 받기 기록에 있는데 파일이 없음 (사건 ${e.seq})`);
+    else if (now !== e.sha256) errors.push(`${file}: 받은 뒤 내용이 바뀜 — 기록 ${e.sha256.slice(0, 12)}… · 지금 ${now.slice(0, 12)}… (사건 ${e.seq})`);
+  }
+  return { ok: !errors.length, errors, events: (events || []).length, files: last.size, head: prev };
+}
+
+module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText, sourcesOf, parseRunlog, crossCheckRun, verifyFetchLog, FETCH_GENESIS };
