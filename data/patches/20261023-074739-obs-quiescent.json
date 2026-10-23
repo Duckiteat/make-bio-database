@@ -1,0 +1,96 @@
+{
+  "applied_at": "2026-10-23T07:47:39.414Z",
+  "result": {
+    "added": [
+      "O000028"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "observations": [
+          "O000028"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "무료 1차 초록(Allsopp et al. 1995, PMID 7664836)의 정성 주장 — 분열을 멈춘 섬유아세포는 텔로미어 소실이 유의하지 않고 계대 배양 세포는 유의하게 준다 — 을 검증 관찰로. TASK-004 정량 경로가 유료 전문에 막혀, 같은 축(텔로미어)에서 독립 실험 하나를 더한다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "why": "무료 1차 초록(Allsopp et al. 1995, PMID 7664836)의 정성 주장 — 분열을 멈춘 섬유아세포는 텔로미어 소실이 유의하지 않고 계대 배양 세포는 유의하게 준다 — 을 검증 관찰로. TASK-004 정량 경로가 유료 전문에 막혀, 같은 축(텔로미어)에서 독립 실험 하나를 더한다.",
+  "observations": [
+    {
+      "id": "O+1",
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000209"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000204|nucleoplasm"
+      },
+      "expect": "increase",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "the rate of telomere shortening over time for HDFs held quiescent was not statistically significant (m = -12 bp/day, P = 0.16) while that for serially passaged cells was significant (m = -34 bp/day, P = 0.017)",
+      "provenance": {
+        "sha256": "110c86c0923dce8bca2a8c33bae0861f5f492d5f0386ff0eef1aafbee3405907",
+        "source": {
+          "db": "PMID",
+          "id": "7664836"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1006/excr.1995.1306",
+            "citation": "Allsopp RC et al., 1995, Exp Cell Res"
+          },
+          {
+            "db": "PMID",
+            "id": "7664836",
+            "citation": "Allsopp RC et al., 1995, Exp Cell Res"
+          }
+        ]
+      },
+      "experiment": "Allsopp 1995 — 정지 대 계대 사람 이배체 섬유아세포 텔로미어 소실",
+      "evidence_at": "1995",
+      "note": "교란 대응: 원문의 '정지(quiescent)로 둔' 섬유아세포를 모델의 성장 인자(FGF2, D000209) knockout — 분열 허가가 꺼짐 — 으로 둔다. 원문이 정지를 어떻게 만들었는지(혈청 제거·접촉 억제)는 초록에 없어(전문 유료) 이 대응은 해석이다. 대조 = 계대 배양(성장 인자 있음). 읽을거리 = 텔로미어 반복 단위(D000204) 양: 정지 쪽이 덜 줄어 대조보다 많다 = increase. 원문 정지군의 −12 bp/day 는 유의하지 않음(P 0.16)이지 0 이라는 증명이 아니므로 '더 많다(덜 줄었다)' 방향만 주장한다. 정량값(−34·−12 bp/day)은 TASK-004 후보 #10·#11 에 따로."
+    }
+  ],
+  "recorded_at": "2026-10-23T07:47:38.982Z"
+}

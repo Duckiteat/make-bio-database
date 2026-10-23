@@ -1,6 +1,6 @@
 # 증거 보고서 색인 — 시나리오별 판정 수준
 
-시나리오 42개 · 보고서 42 · 실패 0. 판정 수준: 가설 생성 / 탐색 38 · 검증 4.
+시나리오 43개 · 보고서 43 · 실패 0. 판정 수준: 가설 생성 / 탐색 38 · 검증 (사전 등록) 5.
 
 > 판정 수준은 등록 확인(사전 등록부의 입력 해시)에서 나온다 — 규약 선언만으로는 검증이 아니다. 고리 수는 실행이 쓰는 규칙(경로 단계 또는 세포 상태 계의 공급·분해·기전 단계·조절)이고, 실측 고리만 "데이터에 매여 있다". 대상은 `examples/scenarios/subjects.json`.
 
@@ -41,10 +41,11 @@
 | `tca-co2-equilibrium-hypothetical.json` | 시트르산 회로 (D000148) | 가설 생성 / 탐색 | 8 (0 · 8 · 0 사건기반) | 12 | — |
 | `tca-measured-kinetics-hypothetical.json` | 시트르산 회로 (D000148) | 가설 생성 / 탐색 | 8 (4 · 0 · 4 사건기반) | 12 | — |
 | `tca-nad-exhaustion-hypothetical.json` | 시트르산 회로 (D000148) | 가설 생성 / 탐색 | 8 (4 · 0 · 4 사건기반) | 12 | — |
-| `telomere-hayflick-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 10 | — |
-| `telomere-law-isolation-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 10 | — |
-| `telomere-mitogen-withheld-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 10 | — |
-| `telomere-sharp-threshold-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 10 | — |
-| `telomere-stochastic-attrition-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 10 | — |
-| `telomere-telomerase-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 10 (0 · 10 · 0 꺼짐) | 11 | — |
-| `telomere-telomerase-validation-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 검증 (사전 등록 #4) | 10 (0 · 10 · 0 꺼짐) | 11 | — |
+| `telomere-hayflick-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 11 | — |
+| `telomere-law-isolation-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 11 | — |
+| `telomere-mitogen-withheld-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 11 | — |
+| `telomere-quiescence-validation-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 검증 (사전 등록 #5) | 9 (0 · 9 · 0 꺼짐) | 11 | — |
+| `telomere-sharp-threshold-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 11 | — |
+| `telomere-stochastic-attrition-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 9 (0 · 9 · 0 꺼짐) | 11 | — |
+| `telomere-telomerase-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 가설 생성 / 탐색 | 10 (0 · 10 · 0 꺼짐) | 12 | — |
+| `telomere-telomerase-validation-hypothetical.json` | 증식하는 섬유아세포 (D000210) | 검증 (사전 등록 #4) | 10 (0 · 10 · 0 꺼짐) | 12 | — |

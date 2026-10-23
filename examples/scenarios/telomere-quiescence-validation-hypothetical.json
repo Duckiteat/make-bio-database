@@ -1,0 +1,178 @@
+{
+  "name": "텔로미어 검증 — 정지 대 계대 섬유아세포 (사전 등록)",
+  "hypothetical": true,
+  "_설명": "[검증 대조군] 성장 인자(FGF2)가 있어 분열하는 섬유아세포 — 계대 배양에 대응. 교란(FGF2 knockout = 정지)은 관찰 O000028 이 선언하고 observeQualitative 가 적용한다. 읽기 시각 = 실행 끝 30일(2 592 000 s) — 노화 임계(분열 75 회, 75일) 전, 분열이 한창인 시기라 정지·계대의 차이가 소모로만 갈린다(임계 뒤면 p53 차단 같은 하류 교란도 길이를 바꿔 음성 대조가 무너진다 — 사전 확인 100일: 차이 −349). 나머지 값은 telomere-hayflick-hypothetical 을 인라인 복사(사전 등록 산출물 — 가변 기준 상속 금지). 모든 값은 가상(한계 L000087–L000095·L000116).",
+  "cell": "fibroblast",
+  "context": {
+    "role": "baseline",
+    "state": "D000210",
+    "note": "성장 인자가 있는 계대 배양 대조군 — 30일 안에는 노화 전이가 일어나지 않는다"
+  },
+  "dt_slow": 21600,
+  "t_end": 2592000,
+  "record_every": 1,
+  "volumes": {
+    "nucleoplasm": {
+      "value": 500,
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": 1,
+      "unit": "pL"
+    }
+  },
+  "amounts": {
+    "D000204|nucleoplasm": 1800,
+    "D000207|nucleoplasm": 200,
+    "D000208|nucleoplasm": 200,
+    "D000013|nucleoplasm": 2000000
+  },
+  "signals": {
+    "D000209|extracellular": [
+      {
+        "t": 0,
+        "n": 6022
+      }
+    ]
+  },
+  "thresholds": {
+    "D000204|nucleoplasm": {
+      "low": 600,
+      "high": 1200
+    },
+    "D000208|nucleoplasm": {
+      "low": 1000,
+      "high": 10000
+    }
+  },
+  "commitment": {
+    "horizon": 86400,
+    "coarse": 864000
+  },
+  "arrest_window": 864000,
+  "event_tol": 0.001,
+  "kinetics": {
+    "D000205/rule/division_attrition": {
+      "law": "zero_order",
+      "k": 3.843840433272793e-19,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.9183299543686555e-11,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.2788866362457704e-13,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 3600,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000209/rule/mitogen_drive": {
+      "law": "hill",
+      "K": 1e-12,
+      "n": 4,
+      "fmax": 100,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000204/rule/short_telomere_ddr": {
+      "law": "hill",
+      "K": 1.7933821925477544e-9,
+      "n": 32,
+      "fmin": 0.02,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/p21_transactivation": {
+      "law": "hill",
+      "K": 1.6605390671738467e-8,
+      "n": 2,
+      "fmax": 200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/cdk_arrest": {
+      "law": "hill",
+      "K": 2.6568625074781545e-8,
+      "n": 8,
+      "fmin": 0,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "protocol": {
+    "question": "성장 인자를 끊어 분열을 멈추면(정지) 텔로미어 반복 길이가 계대 배양 대조보다 덜 줄어드는가 — 모델이 Allsopp 1995(정지 섬유아세포의 소실 비유의, 계대 세포의 유의한 소실)의 방향을 재현하는가?",
+    "matched_experiment": {
+      "source": {
+        "db": "PMID",
+        "id": "7664836"
+      },
+      "system": {
+        "species": "9606",
+        "cell": "사람 이배체 섬유아세포(HDF) — 정지 대 계대 배양",
+        "condition": "정지 유도 방법은 초록에 없음(전문 유료) — 모델은 성장 인자 knockout 으로 대응(해석)"
+      },
+      "readout_times_s": [
+        2592000
+      ]
+    },
+    "controls": {
+      "negative": {
+        "description": "노화 신호 하류인 p53(D000207) 합성 차단은 노화 임계 전(30일)에는 텔로미어 반복 길이(D000204)를 바꾸지 않아야 한다 — 읽을거리가 교란 종류와 무관하게 늘 늘지 않음을 확인. 사전 확인(30일): no_change, 차이 5.8e-10."
+      }
+    },
+    "readouts": [
+      {
+        "observable": {
+          "kind": "amount",
+          "target": "D000204|nucleoplasm"
+        },
+        "time_s": 2592000
+      }
+    ],
+    "replicates": {
+      "n": 1
+    },
+    "stopping": {
+      "fixed_n": true
+    },
+    "validation": [
+      "O000028"
+    ]
+  }
+}
