@@ -41,3 +41,69 @@
 {"key":"registration_unchecked","register":"judgmentLevels","label_en":"Protocol declared (registration unchecked)","meaning_en":"The preregistration registry was not supplied, so registration could not be confirmed; not read as validation until checked.","xref":null,"since":"2026-10-23"}
 {"key":"hypothesis_generating","register":"judgmentLevels","label_en":"Hypothesis generating","meaning_en":"A hypothetical run without a protocol; it makes no claim of agreement with observations.","xref":null,"since":"2026-10-23"}
 {"key":"exploratory","register":"judgmentLevels","label_en":"Exploratory (no protocol)","meaning_en":"No preregistered protocol, so no conclusion of agreement with observations.","xref":null,"since":"2026-10-23"}
+{"key":"FINDING","register":"faultChannels","label_en":"Finding (not a defect)","meaning_en":"A result, not a defect: report it and do not fix it; if no regeneration path exists, register a limitation (Resource_Gap etc.).","xref":null,"since":"2026-10-23"}
+{"key":"DATA_GAP","register":"faultChannels","label_en":"Data gap","meaning_en":"Register it in the limitation registry and fill it only with confirmed values through a patch (never invent).","xref":null,"since":"2026-10-23"}
+{"key":"DOMAIN_CONFLICT","register":"faultChannels","label_en":"Domain conflict","meaning_en":"Data contradict each other (rules, stoichiometry, constants, observations): patch the data with evidence deciding which side is wrong.","xref":null,"since":"2026-10-23"}
+{"key":"NUMERICAL","register":"faultChannels","label_en":"Numerical issue","meaning_en":"Fix at the coupling points in engine/coupling.js or the solver step control; never change biological constants in db.json.","xref":null,"since":"2026-10-23"}
+{"key":"ENGINE_DEFECT","register":"faultChannels","label_en":"Engine defect","meaning_en":"Fix the engine code; do not mask it by changing data or coupling points.","xref":null,"since":"2026-10-23"}
+{"key":"COMPILER_DEFECT","register":"faultChannels","label_en":"Compiler defect","meaning_en":"Fix compiler/ (IR, symbolic differentiation, tape); do not mask it by changing the engine or data.","xref":null,"since":"2026-10-23"}
+{"key": "agent", "register": "bundleRoles", "label_en": "Catalyst / actor", "meaning_en": "Takes part without being consumed (enzyme, carrier, actor) in a step.", "xref": null, "since": "2026-10-23"}
+{"key": "input", "register": "bundleRoles", "label_en": "Consumed (input)", "meaning_en": "Consumed by a step.", "xref": null, "since": "2026-10-23"}
+{"key": "output", "register": "bundleRoles", "label_en": "Produced (output)", "meaning_en": "Produced by a step.", "xref": null, "since": "2026-10-23"}
+{"key": "regulator", "register": "bundleRoles", "label_en": "Regulator", "meaning_en": "Modulates a step without being consumed.", "xref": null, "since": "2026-10-23"}
+{"key": "kind", "register": "hierarchyUp", "label_en": "Broader category", "meaning_en": "The parent along the is_a axis.", "xref": null, "since": "2026-10-23"}
+{"key": "part", "register": "hierarchyUp", "label_en": "Whole", "meaning_en": "The whole this is part of (part_of axis).", "xref": null, "since": "2026-10-23"}
+{"key": "instance", "register": "hierarchyUp", "label_en": "Type", "meaning_en": "The type this is an instance of (instance_of axis).", "xref": null, "since": "2026-10-23"}
+{"key": "kind", "register": "hierarchyDown", "label_en": "Narrower category", "meaning_en": "A child along the is_a axis.", "xref": null, "since": "2026-10-23"}
+{"key": "part", "register": "hierarchyDown", "label_en": "Component", "meaning_en": "A part of this whole (has_part axis).", "xref": null, "since": "2026-10-23"}
+{"key": "instance", "register": "hierarchyDown", "label_en": "Instance", "meaning_en": "A concrete instance of this type.", "xref": null, "since": "2026-10-23"}
+{"key": "cause", "register": "contextRoles", "label_en": "Cause", "meaning_en": "What leads to the state: the transition signal is on and the state is reached.", "xref": null, "since": "2026-10-23"}
+{"key": "requirement", "register": "contextRoles", "label_en": "Requirement", "meaning_en": "Necessity: cutting something under the same signal prevents reaching the state.", "xref": null, "since": "2026-10-23"}
+{"key": "baseline", "register": "contextRoles", "label_en": "Baseline", "meaning_en": "The ordinary situation: the starting state with no driven transition.", "xref": null, "since": "2026-10-23"}
+{"key": "supported", "register": "qualGraphVerdicts", "label_en": "Structurally supported", "meaning_en": "A mechanism path with the claimed sign exists in the graph.", "xref": null, "since": "2026-10-23"}
+{"key": "no_path", "register": "qualGraphVerdicts", "label_en": "No path (Structural_Gap candidate)", "meaning_en": "No mechanism path connects the perturbation to the readout.", "xref": null, "since": "2026-10-23"}
+{"key": "contradiction_candidate", "register": "qualGraphVerdicts", "label_en": "Contradiction candidate", "meaning_en": "Only paths with the opposite sign exist.", "xref": null, "since": "2026-10-23"}
+{"key": "mixed", "register": "qualGraphVerdicts", "label_en": "Mixed signs (needs simulation)", "meaning_en": "Paths of both signs exist; only a simulation can decide.", "xref": null, "since": "2026-10-23"}
+{"key": "tension", "register": "qualGraphVerdicts", "label_en": "Tension (path exists, no-effect claimed)", "meaning_en": "A path exists although the observation claims no effect.", "xref": null, "since": "2026-10-23"}
+{"key": "not_applicable", "register": "qualGraphVerdicts", "label_en": "Not a layer-0 target", "meaning_en": "This observation kind is not judged on the qualitative graph.", "xref": null, "since": "2026-10-23"}
+{"key": "undetermined", "register": "qualGraphVerdicts", "label_en": "Undetermined (search bound)", "meaning_en": "The search bound was reached before a verdict.", "xref": null, "since": "2026-10-23"}
+{"key": "match", "register": "qualOutcomes", "label_en": "Match", "meaning_en": "The simulated direction or presence agrees with the observation.", "xref": null, "since": "2026-10-23"}
+{"key": "mismatch", "register": "qualOutcomes", "label_en": "Mismatch", "meaning_en": "The simulated outcome disagrees with the observation.", "xref": null, "since": "2026-10-23"}
+{"key": "not_shown", "register": "qualOutcomes", "label_en": "Not shown", "meaning_en": "The simulation cannot resolve a difference at its resolution (not a disagreement).", "xref": null, "since": "2026-10-23"}
+{"key": "invalid", "register": "qualOutcomes", "label_en": "Invalid", "meaning_en": "The comparison is void (e.g. the perturbation-difference check failed).", "xref": null, "since": "2026-10-23"}
+{"key": "match", "register": "trendVerdicts", "label_en": "Agrees with consensus", "meaning_en": "The stored value agrees with the current source consensus.", "xref": null, "since": "2026-10-23"}
+{"key": "mismatch", "register": "trendVerdicts", "label_en": "Differs from consensus (legacy)", "meaning_en": "The stored value differs from the current consensus; it is kept and graded legacy.", "xref": null, "since": "2026-10-23"}
+{"key": "unchecked", "register": "trendVerdicts", "label_en": "Not checked", "meaning_en": "No trend check within the window.", "xref": null, "since": "2026-10-23"}
+{"key": "h_min_floor", "register": "stiffnessFlags", "label_en": "Minimum step floor (accuracy compromised)", "meaning_en": "The step size hit its lower bound; accuracy was compromised (NUMERICAL).", "xref": null, "since": "2026-10-23"}
+{"key": "rejection_storm", "register": "stiffnessFlags", "label_en": "Step rejection storm", "meaning_en": "A large fraction of integrator steps were rejected.", "xref": null, "since": "2026-10-23"}
+{"key": "timescale_separation", "register": "stiffnessFlags", "label_en": "Timescale separation (stiffness absorbed)", "meaning_en": "Widely separated timescales, absorbed by the L-stable integrator.", "xref": null, "since": "2026-10-23"}
+{"key": "lu_cost", "register": "stiffnessFlags", "label_en": "Large active set (LU cost)", "meaning_en": "Many active rules make the linear solves expensive.", "xref": null, "since": "2026-10-23"}
+{"key": "well_conditioned", "register": "stiffnessFlags", "label_en": "Well conditioned", "meaning_en": "No stiffness symptom.", "xref": null, "since": "2026-10-23"}
+{"key": "kcat", "register": "kineticParams", "label_en": "Turnover number kcat", "meaning_en": "Maximum catalytic turnover (s^-1).", "xref": null, "since": "2026-10-23"}
+{"key": "Km", "register": "kineticParams", "label_en": "Michaelis constant Km", "meaning_en": "Substrate concentration at half-maximal rate (M).", "xref": null, "since": "2026-10-23"}
+{"key": "k", "register": "kineticParams", "label_en": "Rate constant k", "meaning_en": "Rate constant; unit depends on reaction order.", "xref": null, "since": "2026-10-23"}
+{"key": "k_r", "register": "kineticParams", "label_en": "Reverse rate k_r", "meaning_en": "Reverse-reaction rate constant.", "xref": null, "since": "2026-10-23"}
+{"key": "k_on", "register": "kineticParams", "label_en": "Association rate k_on", "meaning_en": "Binding rate constant (M^-1 s^-1).", "xref": null, "since": "2026-10-23"}
+{"key": "k_off", "register": "kineticParams", "label_en": "Dissociation rate k_off", "meaning_en": "Unbinding rate constant (s^-1).", "xref": null, "since": "2026-10-23"}
+{"key": "Kd", "register": "kineticParams", "label_en": "Dissociation constant Kd", "meaning_en": "Equilibrium dissociation constant (M).", "xref": null, "since": "2026-10-23"}
+{"key": "k0", "register": "kineticParams", "label_en": "Pre-exponential factor k0", "meaning_en": "Pre-exponential factor of a transition-state rate law.", "xref": null, "since": "2026-10-23"}
+{"key": "dG_act", "register": "kineticParams", "label_en": "Activation energy ΔG‡", "meaning_en": "Activation free energy (J/mol).", "xref": null, "since": "2026-10-23"}
+{"key": "dG0", "register": "kineticParams", "label_en": "Standard reaction free energy ΔG°′", "meaning_en": "Standard transformed reaction Gibbs energy (J/mol).", "xref": null, "since": "2026-10-23"}
+{"key": "half_life", "register": "kineticParams", "label_en": "Half-life", "meaning_en": "Time for half of the quantity to be lost (s).", "xref": null, "since": "2026-10-23"}
+{"key": "K", "register": "kineticParams", "label_en": "Hill half-saturation K", "meaning_en": "Half-saturation constant of a Hill term (M).", "xref": null, "since": "2026-10-23"}
+{"key": "n", "register": "kineticParams", "label_en": "Hill coefficient n", "meaning_en": "Hill coefficient (dimensionless).", "xref": null, "since": "2026-10-23"}
+{"key": "fmax", "register": "kineticParams", "label_en": "Maximum fold fmax", "meaning_en": "Maximum fold factor of an activating Hill term.", "xref": null, "since": "2026-10-23"}
+{"key": "fmin", "register": "kineticParams", "label_en": "Minimum fold fmin", "meaning_en": "Minimum fold factor of an inhibiting Hill term.", "xref": null, "since": "2026-10-23"}
+{"key": "4", "register": "sourceScale", "label_en": "Authoritative DB + judicial stamp", "meaning_en": "Source score 4: an authoritative database confirmed by a judicial stamp.", "xref": null, "since": "2026-10-23"}
+{"key": "3", "register": "sourceScale", "label_en": "Peer-reviewed literature (DOI·PMID)", "meaning_en": "Source score 3: peer-reviewed primary literature.", "xref": null, "since": "2026-10-23"}
+{"key": "2", "register": "sourceScale", "label_en": "No source · inference · prediction", "meaning_en": "Source score 2: unsourced, inferred or predicted.", "xref": null, "since": "2026-10-23"}
+{"key": "0", "register": "sourceScale", "label_en": "Unverifiable", "meaning_en": "Source score 0: cannot be confirmed.", "xref": null, "since": "2026-10-23"}
+{"key": "4", "register": "dataScale", "label_en": "Traceable measurement · tool computation", "meaning_en": "Data score 4: a traceable measurement or a tool computation from one.", "xref": null, "since": "2026-10-23"}
+{"key": "3", "register": "dataScale", "label_en": "Summary constant · identity fact", "meaning_en": "Data score 3: a summary constant or an identity fact.", "xref": null, "since": "2026-10-23"}
+{"key": "2", "register": "dataScale", "label_en": "Inference · simplification · unsourced value", "meaning_en": "Data score 2: inferred, simplified or unsourced.", "xref": null, "since": "2026-10-23"}
+{"key": "anchor", "register": "reliabilityGrades", "label_en": "Anchor", "meaning_en": "Usable as a fixed point of the simulation (S4 ∧ D4 ∧ trend agrees).", "xref": null, "since": "2026-10-23"}
+{"key": "parameter", "register": "reliabilityGrades", "label_en": "Parameter", "meaning_en": "Usable as a main parameter (S ≥ 3 ∧ D ≥ 3).", "xref": null, "since": "2026-10-23"}
+{"key": "bounded", "register": "reliabilityGrades", "label_en": "Bounded", "meaning_en": "Usable only with error bars.", "xref": null, "since": "2026-10-23"}
+{"key": "legacy", "register": "reliabilityGrades", "label_en": "Legacy", "meaning_en": "For comparison only; never deleted.", "xref": null, "since": "2026-10-23"}
+{"key": "reference", "register": "reliabilityGrades", "label_en": "Reference", "meaning_en": "Narrative only; not used in computation.", "xref": null, "since": "2026-10-23"}
+{"key": "blocked", "register": "reliabilityGrades", "label_en": "Blocked", "meaning_en": "Not to be computed with or cited; kept only as a limitation.", "xref": null, "since": "2026-10-23"}

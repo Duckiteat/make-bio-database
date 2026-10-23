@@ -32,9 +32,11 @@
     refers:       { axis: null, label: '정의에 사용', inverse: '이 개념을 사용하는 정의' },
   };
   const UP_OF = { has_kind: 'is_a', has_part: 'part_of', has_instance: 'instance_of' };
-  const AXIS_UP = { kind: '상위 범주', part: '전체', instance: '유형' };
-  const AXIS_DOWN = { kind: '하위 범주', part: '구성요소', instance: '사례' };
-  const ROLE = { agent: '촉매/행위자', input: '소비(입력)', output: '생성(출력)', regulator: '조절자' };
+  // 토큰 → 라벨 보기 (표는 vocab: hierarchyUp·hierarchyDown·bundleRoles)
+  const labelsOf = (T) => Object.fromEntries(Object.entries(T).map(([k, v]) => [k, v.label]));
+  const AXIS_UP = labelsOf(V.hierarchyUp);
+  const AXIS_DOWN = labelsOf(V.hierarchyDown);
+  const ROLE = labelsOf(V.bundleRoles);
   const EFFECT_TYPES = ['modify', 'convert', 'dissociate', 'associate', 'transport', 'transfer', 'degrade'];
   // 동일성 보존을 검사하는 효과 (화학 변환이 없는 물리적 변화)
   const CONSERVING = new Set(['dissociate', 'associate', 'transport', 'transfer', 'degrade']);
@@ -924,7 +926,7 @@
   }
 
   return Object.freeze({ VOCAB: V, NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
-    FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
+    FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, labelsOf, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
     isStepId, isObj, clone, str, arr, uniq, RESERVED, RES_RE, MOLECULAR, isParticipantKind, GREEK, normName,
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,

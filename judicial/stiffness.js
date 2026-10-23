@@ -20,7 +20,7 @@ function stiffnessProfile(r) {
   return { nAct, accepted, rejected, rejFrac, hSpread, hMinHits: ig.hMinHits || 0, flags: flags.length ? flags : ['well_conditioned'], fault: ig.hMinHits > 0 ? 'NUMERICAL' : 'FINDING' };
 }
 
-const LABEL = { h_min_floor: '최소 단계 바닥(정확도 타협)', rejection_storm: '단계 거부 폭주', timescale_separation: '시간척도 분리(강성 흡수)', lu_cost: '큰 활성 집합(LU 비용)', well_conditioned: '양호' };
+const LABEL = Object.fromEntries(Object.entries(require('../vocab.js').stiffnessFlags).map(([k, v]) => [k, v.label])); // 표지 토큰 → 라벨 (표는 vocab)
 function stiffnessText(p) {
   return `강성 프로파일 [${p.fault}]: ${p.flags.map((f) => LABEL[f] || f).join(' · ')} — 활성 규칙 ${p.nAct}, 받아들인 ${p.accepted}·거부 ${p.rejected}(${(100 * p.rejFrac).toFixed(1)}%), h 범위 ${Number.isFinite(p.hSpread) ? Number(p.hSpread.toPrecision(3)) + '×' : '∞'}, 최소단계 바닥 ${p.hMinHits}`;
 }

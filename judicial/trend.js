@@ -20,7 +20,7 @@ const V = M.VOCAB;
 
 const CONSENSUS = 'data/fetched/consensus';
 const ISSUER = 'judicial/trend.js';
-const VERDICTS = { match: '합의와 같음', mismatch: '합의와 다름 — 지난값', unchecked: '점검하지 않음' };
+const VERDICTS = M.labelsOf(M.VOCAB.trendVerdicts); // 추세 판정 토큰 → 라벨 (표·키 집합은 vocab)
 const sha = (x) => crypto.createHash('sha256').update(x).digest('hex');
 const codeSha = () => sha(fs.readFileSync(path.join(__dirname, 'trend.js')));
 const day = (s) => Math.floor(Date.parse(s + (/T/.test(s) ? '' : 'T00:00:00Z')) / 86400000);

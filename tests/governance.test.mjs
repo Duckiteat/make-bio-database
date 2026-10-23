@@ -322,8 +322,8 @@ test('⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 
   assert.ok(FA.judgeFate(BASE, { ...raw, series }, { scenario: s2, ir }).audit.some((a) => a.code === 'AUDIT_MASS' && a.fault === 'ENGINE_DEFECT'));
   const badIR = JSON.parse(JSON.stringify(ir)); badIR.jac.rate[0][1] *= 1.001; badIR.hash = IRB.irHash(badIR);
   assert.ok(FA.judgeFate(BASE, raw, { scenario: s2, ir: badIR }).audit.some((a) => a.fault === 'COMPILER_DEFECT' || (a.fault === 'ENGINE_DEFECT' && /IR/.test(a.msg))));
-  for (const f of Object.keys(FT.FAULTS)) assert.ok(FT.FAULTS[f].route && FT.FAULTS[f].label);
-  assert.match(FT.FAULTS.NUMERICAL.route, /생물 상수\(db\.json\)를 바꾸지 않는다/);
+  for (const f of Object.keys(FT.FAULTS)) assert.ok(FT.FAULTS[f].note && FT.FAULTS[f].label);
+  assert.match(FT.FAULTS.NUMERICAL.note, /생물 상수\(db\.json\)를 바꾸지 않는다/);
 });
 
 test('⑩ 델타 기록 (S1): 기원 봉인 → 병합마다 사건 추가 → 재생 = db · 사건·스냅숏·db 변조를 사법부가 잡는다', async () => {
@@ -476,6 +476,18 @@ test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란)
 });
 
 // 시나리오 → 대상 색인은 시나리오 폴더와 정확히 같아야 한다 (빠진 것·남는 것·없는 대상 거부) — 모든 시나리오가 비지 않은 보고서를 낸다
+// 데이터(표)와 로직의 분리 (16A): 통제 토큰 표는 vocab 에만, 사전은 vocab 만 읽는다 — 어느 권력 층이 사전을 써도 다른 층으로 가는 우회로가 아니다
+test('⑮ 표·로직 분리 — 사전은 vocab 만 읽고, 결함 표는 vocab.faultChannels 에만', () => {
+  const s = src('dictionary.js');
+  const reqs = [...s.matchAll(/require\(['"]([^'"]+)['"]\)/g)].map((m) => m[1]);
+  assert.deepEqual(reqs.filter((r) => !['fs', 'path', './vocab.js'].includes(r)), [], `사전이 vocab 밖 모듈을 부름: ${reqs}`);
+  const f = src('judicial/fault.js');
+  assert.ok(!/\blabel\s*:/.test(f), 'judicial/fault.js 에 표 리터럴(label:)이 있음 — 표는 vocab.faultChannels 로');
+  const V = req('../vocab.js'), FT = req('../judicial/fault.js'), DICT = req('../dictionary.js');
+  assert.equal(FT.FAULTS, V.faultChannels, '결함 표 = vocab 표 그 자체(복사본 아님)');
+  for (const k of Object.keys(V.faultChannels)) assert.ok(!DICT.entry(k).error, `결함 채널 ${k} 사전 미등록`);
+});
+
 test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못된 대상 없음, 42개 모두 보고서', () => {
   const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), DICT = req('../dictionary.js');
   const dir = join(ROOT, 'examples/scenarios'), idx = JSON.parse(readFileSync(join(dir, 'subjects.json'), 'utf8')).subjects;

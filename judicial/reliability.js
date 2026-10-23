@@ -14,16 +14,14 @@
 })(typeof self !== 'undefined' ? self : this, function (M) {
 'use strict';
 
-const S_LABEL = { 4: '권위 DB + 사법부 도장', 3: '동료 심사 문헌(DOI·PMID)', 2: '출처 없음·추론·예측', 0: '확인 불가' };
-const D_LABEL = { 4: '추적 가능한 실측·도구 계산', 3: '요약 상수·정체성 사실', 2: '추론·단순화·출처 없는 값' };
-const GRADES = {
-  anchor:    { label: '기준값', use: '시뮬레이션의 고정점으로 쓸 수 있음', rule: 'S4 ∧ D4 ∧ 추세 일치' },
-  parameter: { label: '매개변수', use: '주 매개변수로 쓸 수 있음 (추세 미점검이면 함께 보고)', rule: 'S ≥ 3 ∧ D ≥ 3' },
-  bounded:   { label: '구간값', use: '오차 막대와 함께만 쓸 수 있음', rule: 'S4 ∧ D2 — 출처는 최상, 값은 추론·단순화' },
-  legacy:    { label: '지난값', use: '비교 분석에만 (지우지 않는다)', rule: '추세 불일치 — 과거 합의' },
-  reference: { label: '참고', use: '계산에 쓰지 않음 — 서술에만', rule: '그 밖 (S2 또는 D 가 낮음)' },
-  blocked:   { label: '차단', use: '계산·인용 금지 — 한계로만 남긴다', rule: '확인 불가·모순 (S0)' },
+// 척도·등급의 이름·쓰임은 vocab(sourceScale·dataScale·reliabilityGrades)에. 여기 남는 것은 등급을 정하는 규칙과 그 설명(RULE) — 로직이 바뀌면 같이 바뀐다
+const S_LABEL = M.labelsOf(M.VOCAB.sourceScale);
+const D_LABEL = M.labelsOf(M.VOCAB.dataScale);
+const RULE = {
+  anchor: 'S4 ∧ D4 ∧ 추세 일치', parameter: 'S ≥ 3 ∧ D ≥ 3', bounded: 'S4 ∧ D2 — 출처는 최상, 값은 추론·단순화',
+  legacy: '추세 불일치 — 과거 합의', reference: '그 밖 (S2 또는 D 가 낮음)', blocked: '확인 불가·모순 (S0)',
 };
+const GRADES = Object.freeze(Object.fromEntries(Object.entries(M.VOCAB.reliabilityGrades).map(([k, g]) => [k, Object.freeze({ label: g.label, use: g.note, rule: RULE[k] })])));
 const ORDER = ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked'];
 
 function gradeOf(s, d, trend) {

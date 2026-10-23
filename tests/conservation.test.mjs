@@ -31,5 +31,5 @@ test('ⓒ class·reason 이 사전 register 로 노출된다 (나중 적분장�
   for (const k of Object.keys(V.conservationClasses)) assert.ok(!D.entry(k).error, `${k} 사전 미등록`);
   for (const k of Object.keys(V.conservationReasons)) assert.ok(!D.entry(k).error, `${k} 사전 미등록`);
   // 왕복 확인(한 쌍)
-  assert.equal(D.parseToken(D.renderToken('non_conserved', { audience: 'both' })), 'non_conserved');
+  assert.equal(D.parseToken(D.renderToken('non_conserved', { audience: 'both' })), 'conservationClasses/non_conserved');
 });

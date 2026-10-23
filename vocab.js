@@ -351,6 +351,81 @@
     emergent_time:       { label: '창발 시각 (event_time — 참조 없음)', note: '첫 도달 시각 같은 창발량. 참조 정답이 없어 예산으로만.' },
     measured_parameter:  { label: '측정 파라미터 (kcat·Km·Kd·반감기·부피 세팅)', note: '경험적으로 측정·설정된 입력. 불확도를 달고 들어오며 보존 법칙이 없다.' },
   },
+  // 결함 채널 (judicial/fault.js 가 태그·확인에 쓰는 표 — 표는 여기, 로직은 거기). label·note(고치는 곳)·fix(고치는 층)
+  faultChannels: {
+    FINDING:         { label: '결과 (결함 아님)', note: '고치지 않는다 — 결과로 보고. 재생 경로가 없으면 한계(Resource_Gap 등)로 등록', fix: 'none' },
+    DATA_GAP:        { label: '데이터 공백', note: '한계 등록부에 등록하고, 확인된 값만 패치로 채운다 (지어내지 않음)', fix: 'limitation' },
+    DOMAIN_CONFLICT: { label: '데이터 모순 (규칙·화학량·상수·관찰 사이)', note: '근거와 함께 데이터 패치 (입법) — 모순의 어느 쪽이 틀렸는지 근거로 정함', fix: 'data' },
+    NUMERICAL:       { label: '수치 문제', note: 'engine/coupling.js 결합점 또는 솔버 단계 제어 (행정) — 생물 상수(db.json)를 바꾸지 않는다', fix: 'numerics' },
+    ENGINE_DEFECT:   { label: '엔진 결함', note: '엔진 코드 (행정) — 데이터·결합점을 바꿔 덮지 않는다', fix: 'engine' },
+    COMPILER_DEFECT: { label: '컴파일러 결함', note: 'compiler/ (IR·기호 미분·테이프) — 엔진·데이터를 바꿔 덮지 않는다', fix: 'compiler' },
+  },
+  // ── 판결·보고의 통제 토큰 (16A: 토큰 → 사람말 표는 여기 — 토큰 → 동작·숫자·정책 표는 로직 곁에) ──
+  // 기전 참여 역할 (model.js ROLE 보기 · core.js·viewer 표시)
+  bundleRoles: {
+    agent:     { label: '촉매/행위자' },
+    input:     { label: '소비(입력)' },
+    output:    { label: '생성(출력)' },
+    regulator: { label: '조절자' },
+  },
+  // 개념 위계 축의 위·아래 이름 (model.js AXIS_UP·AXIS_DOWN 보기)
+  hierarchyUp:   { kind: { label: '상위 범주' }, part: { label: '전체' }, instance: { label: '유형' } },
+  hierarchyDown: { kind: { label: '하위 범주' }, part: { label: '구성요소' }, instance: { label: '사례' } },
+  // 운명·기전 시나리오 context.role (judicial/process_report.js)
+  contextRoles: {
+    cause:       { label: '원인', note: '그 상태에 이르는 원인 — 전이 신호가 켜져 있고 그 상태에 도달' },
+    requirement: { label: '필수성', note: '같은 신호에서 무엇을 끊으면 도달하지 못함' },
+    baseline:    { label: '일반 상황', note: '시작 상태, 구동된 전이 없음' },
+  },
+  // 정성 그래프 0 층 판정 (judicial/qual_graph.js)
+  qualGraphVerdicts: {
+    supported:               { label: '구조 지지' },
+    no_path:                 { label: '경로 없음 (Structural_Gap 후보)' },
+    contradiction_candidate: { label: '모순 후보' },
+    mixed:                   { label: '부호 섞임 (모의 판정 필요)' },
+    tension:                 { label: '긴장 (경로 있음 · 효과 없음 주장)' },
+    not_applicable:          { label: '0 층 판정 대상 아님' },
+    undetermined:            { label: '판정 못 함 (탐색 상한)' },
+  },
+  // 정성 모의 판정 결과 (judicial/qual_compare.js)
+  qualOutcomes: {
+    match:     { label: '맞음' },
+    mismatch:  { label: '틀림' },
+    not_shown: { label: '보이지 못함' },
+    invalid:   { label: '무효' },
+  },
+  // 추세 판정 (judicial/trend.js) — 키 집합은 추세 도장의 verdict 어휘이기도 하다
+  trendVerdicts: {
+    match:     { label: '합의와 같음' },
+    mismatch:  { label: '합의와 다름 — 지난값' },
+    unchecked: { label: '점검하지 않음' },
+  },
+  // 강성 프로파일 표지 (judicial/stiffness.js)
+  stiffnessFlags: {
+    h_min_floor:          { label: '최소 단계 바닥(정확도 타협)' },
+    rejection_storm:      { label: '단계 거부 폭주' },
+    timescale_separation: { label: '시간척도 분리(강성 흡수)' },
+    lu_cost:              { label: '큰 활성 집합(LU 비용)' },
+    well_conditioned:     { label: '양호' },
+  },
+  // 속도 상수 칸의 사람 이름 (judicial/evidence_report.js 값 표)
+  kineticParams: {
+    kcat: { label: '최대 회전수 kcat' }, Km: { label: '반포화 농도 Km' }, k: { label: '속도 상수 k' }, k_r: { label: '역반응 속도 k_r' },
+    k_on: { label: '결합 속도 k_on' }, k_off: { label: '해리 속도 k_off' }, Kd: { label: '해리 상수 Kd' }, k0: { label: '전지수 인자 k0' },
+    dG_act: { label: '활성화 에너지 ΔG‡' }, dG0: { label: '표준 반응 자유에너지 ΔG°′' }, half_life: { label: '반감기' },
+    K: { label: '힐 반포화 K' }, n: { label: '힐 계수 n' }, fmax: { label: '최대 배율 fmax' }, fmin: { label: '최소 배율 fmin' },
+  },
+  // 신뢰 지표 척도·등급의 뜻 (judicial/reliability.js — 등급을 정하는 규칙과 그 설명 rule 은 로직 곁에 남는다)
+  sourceScale: { 4: { label: '권위 DB + 사법부 도장' }, 3: { label: '동료 심사 문헌(DOI·PMID)' }, 2: { label: '출처 없음·추론·예측' }, 0: { label: '확인 불가' } },
+  dataScale:   { 4: { label: '추적 가능한 실측·도구 계산' }, 3: { label: '요약 상수·정체성 사실' }, 2: { label: '추론·단순화·출처 없는 값' } },
+  reliabilityGrades: {
+    anchor:    { label: '기준값', note: '시뮬레이션의 고정점으로 쓸 수 있음' },
+    parameter: { label: '매개변수', note: '주 매개변수로 쓸 수 있음 (추세 미점검이면 함께 보고)' },
+    bounded:   { label: '구간값', note: '오차 막대와 함께만 쓸 수 있음' },
+    legacy:    { label: '지난값', note: '비교 분석에만 (지우지 않는다)' },
+    reference: { label: '참고', note: '계산에 쓰지 않음 — 서술에만' },
+    blocked:   { label: '차단', note: '계산·인용 금지 — 한계로만 남긴다' },
+  },
   // 닫는 방법 (설계 §13.2 B) — 실행에 쓰인 상수를 우리가 어떻게 아는가. 증거 보고서가 고리마다 붙인다 (judicial/evidence_report.js)
   closureMethods: {
     measure:     { label: '문헌 실측값', note: '이 종·이 반응에서 실제로 잰 값 — 결론의 단단한 바닥' },

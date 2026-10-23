@@ -139,7 +139,7 @@ function chanceBaseline(rows) {
   return { n: judged.length, units: units.length, k, expected_by_chance: expected, p_at_least: units.length ? pAtLeast : null, not_judged: rows.length - judged.length, non_independent: nonIndependent };
 }
 
-const OUT = { match: '맞음', mismatch: '틀림', not_shown: '보이지 못함', invalid: '무효' };
+const OUT = Object.fromEntries(Object.entries(V.qualOutcomes).map(([k, v]) => [k, v.label])); // 결과 토큰 → 라벨 (표는 vocab)
 function qualCompareText(rows, base) {
   const out = ['정성 모의 판정'];
   for (const r of rows) {

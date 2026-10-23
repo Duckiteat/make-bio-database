@@ -64,13 +64,32 @@ test('④ 병합 형태 — ko(vocab 권위) + en(overlay) 한 항목, 사실 �
 
 test('⑤ register 확장 — gapTypes·observables·qualitativeExpectations 일반화(모든 키 overlay·왕복)', () => {
   const V = req('../vocab.js');
-  const regs = ['gapTypes', 'observables', 'qualitativeExpectations', 'conservationClasses', 'conservationReasons', 'closureMethods', 'judgmentLevels'];
+  const regs = D.registers;
+  for (const r of ['gapTypes', 'observables', 'qualitativeExpectations', 'conservationClasses', 'conservationReasons', 'closureMethods', 'judgmentLevels', 'faultChannels', 'qualOutcomes', 'trendVerdicts', 'reliabilityGrades']) assert.ok(regs.includes(r), `register ${r} 누락`);
   for (const r of regs) assert.ok(D.registers.includes(r), `register ${r} 누락`);
   // 모든 register 의 모든 키가 사전에 등록(overlay 있음) 돼 있어야 — 조각화가 통제 토큰 전체로 퍼짐
-  const want = regs.flatMap((r) => Object.keys(V[r]));
+  const want = regs.flatMap((r) => Object.keys(V[r]).map((k) => `${r}/${k}`));
   assert.equal(D.keys().length, want.length, `키 수 불일치 — overlay 누락 의심`);
   for (const k of want) assert.ok(!D.entry(k).error, `${k} overlay 미등록`);
   // 다른 register 의 토큰도 왕복 (①이 전수하지만 확장을 못박아 둔다)
-  assert.equal(D.parseToken(D.renderToken('event_time', { audience: 'both' })), 'event_time');
-  assert.equal(D.parseToken(D.renderToken('monotone_increase', { audience: 'en' })), 'monotone_increase');
+  assert.equal(D.parseToken(D.renderToken('event_time', { audience: 'both' })), 'observables/event_time');
+  assert.equal(D.parseToken(D.renderToken('monotone_increase', { audience: 'en' })), 'qualitativeExpectations/monotone_increase');
+});
+
+test('⑥ 이름공간 — 같은 키가 두 register 에 있으면 맨 키는 모호(오류), register/key 로만 (고르지 않는다)', () => {
+  assert.match(D.entry('match').error || '', /모호한 통제 토큰/, '맨 키 match 가 하나를 골랐다');
+  assert.equal(D.entry('qualOutcomes/match').label_ko, '맞음');
+  assert.equal(D.entry('trendVerdicts/match').label_ko, '합의와 같음');
+  assert.equal(D.entry('match', { register: 'trendVerdicts' }).id, 'trendVerdicts/match');
+  assert.throws(() => D.renderToken('mismatch'), /모호/);
+  assert.ok(D.entry('nope/match').error, '없는 register');
+  assert.deepEqual(D.ambiguousRenders(), [], '두 토큰이 같은 렌더 문자열을 쓰면 회수가 깨진다 — 라벨을 가른다');
+});
+
+test('⑦ 판결 모듈의 라벨 = vocab 표 (코드에 문구 복사본 없음)', () => {
+  const V = req('../vocab.js'), REL = req('../judicial/reliability.js'), M = req('../model.js');
+  for (const [k, g] of Object.entries(REL.GRADES)) { assert.equal(g.label, V.reliabilityGrades[k].label); assert.equal(g.use, V.reliabilityGrades[k].note); assert.ok(g.rule, `${k}: 규칙 설명은 로직 곁에`); }
+  assert.equal(REL.S_LABEL[3], V.sourceScale[3].label);
+  assert.equal(M.ROLE.agent, V.bundleRoles.agent.label);
+  assert.equal(M.AXIS_UP.part, V.hierarchyUp.part.label);
 });

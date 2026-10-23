@@ -136,7 +136,7 @@
       "format": "Node CommonJS (읽기 전용 모듈)",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "tests/dictionary.test.mjs (이후 dbtool·보고서 렌더러가 소비)",
-      "interpret": "[표현 층] 사전·번역기 (build-plan 16A) — 통제 토큰(R1)은 vocab(ko 권위) + data/dictionary.jsonl(en overlay) 병합 조회, 자유 서술(R2)은 원문 통과. 핵심 규칙: 조회(lookup)하지 추론(infer)하지 않는다. 읽기 전용 — 쓰기·판정·엔진 없음. 설계 dictionary-and-translation.md.",
+      "interpret": "[표현 층] 사전·번역기 (build-plan 16A) — 통제 토큰(R1)은 vocab(ko 권위) + data/dictionary.jsonl(en overlay) 병합 조회 — 신원은 register/key(맨 키는 한 register 에만 있을 때), 자유 서술(R2)은 원문 통과. 핵심 규칙: 조회(lookup)하지 추론(infer)하지 않는다. vocab 만 읽는다(사법·행정 모듈을 부르지 않음). 읽기 전용 — 쓰기·판정·엔진 없음. 설계 dictionary-and-translation.md.",
       "refactor_strategy": "통제 토큰 register 를 더할 때(faultChannels·observables·expect) REGISTERS 에만 추가. 번역기는 조회·통과만 — 생성 금지. core.js 질의 표현기 통합은 16A 이후 단계."
     },
     {

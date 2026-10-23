@@ -37,7 +37,7 @@ function closureOfUse(k, src) {
   if (k && src === 'scenario') return closure('assumed', '시나리오가 지정한 가상 값', false);
   return closureOfRule({ kinetics: k || null });
 }
-const PARAM_KO = { kcat: '최대 회전수 kcat', Km: '반포화 농도 Km', k: '속도 상수 k', k_r: '역반응 속도 k_r', k_on: '결합 속도 k_on', k_off: '해리 속도 k_off', Kd: '해리 상수 Kd', k0: '전지수 인자 k0', dG_act: '활성화 에너지 ΔG‡', dG0: '표준 반응 자유에너지 ΔG°′', half_life: '반감기', K: '힐 반포화 K', n: '힐 계수 n', fmax: '최대 배율 fmax', fmin: '최소 배율 fmin' };
+const PARAM_KO = M.labelsOf(V.kineticParams); // 속도 상수 칸 → 사람 이름 (표는 vocab)
 function taxonLabel(sp) { if (!sp) return null; const t = V.taxa && V.taxa[sp]; const nm = t && (t.ko || t.en || t.name); return nm ? `${nm}(${sp})` : sp; }
 // 대상 참조를 사람 이름 + 번호로: "시트르산 회로 (D000148)" · "석신산 탈수소효소 · 석신산 산화 (D000154/rule/oxidize)"
 function labelRef(ix, db, ref) {

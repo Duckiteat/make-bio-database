@@ -11,15 +11,21 @@ const { readFileSync } = require('fs');
 const path = require('path');
 const V = require('./vocab.js');
 
-// 통제 토큰 register: 이름 → vocab 테이블. gapTypes·observables·qualitativeExpectations·보존 분류·닫는 방법·판정 수준.
-// 이후 더할 것: faultChannels(judicial/fault.js — 모양 어댑터 필요)·obsUses·tiers 등.
+// 통제 토큰 register: 이름 → vocab 테이블. 사전은 vocab 만 읽는다(사법·행정 모듈을 부르지 않음 — 어느 층이 써도 우회로가 아니다).
+// 토큰 신원 = register + key. 키는 register 안에서만 유일하다(match 는 정성 판정과 추세 판정 모두에 있다) —
+// 한 register 에만 있는 키는 그냥 'key' 로, 여럿에 있으면 'register/key' 로 부른다(모호하면 오류, 고르지 않는다).
 const REGISTERS = {
   gapTypes: V.gapTypes, observables: V.observables, qualitativeExpectations: V.qualitativeExpectations,
   conservationClasses: V.conservationClasses, conservationReasons: V.conservationReasons,
-  closureMethods: V.closureMethods, judgmentLevels: V.judgmentLevels,
+  closureMethods: V.closureMethods, judgmentLevels: V.judgmentLevels, faultChannels: V.faultChannels,
+  bundleRoles: V.bundleRoles, hierarchyUp: V.hierarchyUp, hierarchyDown: V.hierarchyDown, contextRoles: V.contextRoles,
+  qualGraphVerdicts: V.qualGraphVerdicts, qualOutcomes: V.qualOutcomes, trendVerdicts: V.trendVerdicts,
+  stiffnessFlags: V.stiffnessFlags, kineticParams: V.kineticParams,
+  sourceScale: V.sourceScale, dataScale: V.dataScale, reliabilityGrades: V.reliabilityGrades,
 };
+const qid = (reg, key) => `${reg}/${key}`;
 
-// overlay(JSONL) 로드 — 한 줄 한 레코드. 권위는 정준 텍스트, 지금은 읽기 전용 커밋 파일(입법 구역·sha 봉인 배선은 다음 단계).
+// overlay(JSONL) 로드 — 한 줄 한 레코드, (register, key) 마다 하나. 권위는 정준 텍스트, 지금은 읽기 전용 커밋 파일(입법 구역·sha 봉인 배선은 다음 단계).
 function loadOverlay() {
   const file = path.join(__dirname, 'data', 'dictionary.jsonl');
   const map = new Map();
@@ -27,56 +33,70 @@ function loadOverlay() {
     const s = line.trim();
     if (!s || s.startsWith('//')) continue;
     const o = JSON.parse(s);
-    if (map.has(o.key)) throw new Error(`사전 중복 키: ${o.key}`);
-    map.set(o.key, o);
+    if (!REGISTERS[o.register]) throw new Error(`사전 overlay 의 register 어휘 밖: '${o.register}' (${o.key})`);
+    if (map.has(qid(o.register, o.key))) throw new Error(`사전 중복 항목: ${qid(o.register, o.key)}`);
+    map.set(qid(o.register, o.key), o);
   }
   return map;
 }
 const OVERLAY = loadOverlay();
 
-// 병합 조회 — 미등록 토큰·overlay 누락은 error(추론으로 메우지 않음).
-function entry(key) {
-  const ov = OVERLAY.get(key);
-  let reg = ov && ov.register, base = reg && REGISTERS[reg] && REGISTERS[reg][key];
-  if (!base) for (const [r, t] of Object.entries(REGISTERS)) if (t[key]) { reg = r; base = t[key]; break; }
-  if (!base) return { error: `사전 미등록 통제 토큰: '${key}'` };
-  if (!ov) return { error: `사전 overlay 없음 (en 라벨·의미 미등록): '${key}'` };
+// 토큰 → (register, key). 'register/key' 는 그대로, 맨 key 는 그 키를 가진 register 가 하나일 때만.
+function resolve(token, reg) {
+  let key = String(token);
+  if (!reg && key.includes('/')) { const i = key.indexOf('/'); if (REGISTERS[key.slice(0, i)]) { reg = key.slice(0, i); key = key.slice(i + 1); } }
+  if (reg) return REGISTERS[reg] && Object.prototype.hasOwnProperty.call(REGISTERS[reg], key) ? { reg, key } : { error: `사전 미등록 통제 토큰: '${qid(reg, key)}'` };
+  const hits = Object.keys(REGISTERS).filter((r) => Object.prototype.hasOwnProperty.call(REGISTERS[r], key));
+  if (!hits.length) return { error: `사전 미등록 통제 토큰: '${key}'` };
+  if (hits.length > 1) return { error: `모호한 통제 토큰 '${key}' — register 를 지정한다 (${hits.map((r) => qid(r, key)).join(' · ')})` };
+  return { reg: hits[0], key };
+}
+
+// 병합 조회 — 미등록·모호·overlay 누락은 error(추론으로 메우지 않음).
+function entry(token, opt = {}) {
+  const r = resolve(token, opt.register);
+  if (r.error) return { error: r.error };
+  const base = REGISTERS[r.reg][r.key], ov = OVERLAY.get(qid(r.reg, r.key));
+  if (!ov) return { error: `사전 overlay 없음 (en 라벨·의미 미등록): '${qid(r.reg, r.key)}'` };
   return {
-    key, register: reg,
+    key: r.key, register: r.reg, id: qid(r.reg, r.key),
     label_en: ov.label_en, label_ko: base.label,
     meaning_en: ov.meaning_en, meaning_ko: base.note || null,
     xref: ov.xref || null, aliases: base.aliases || [], since: ov.since || null,
   };
 }
 
-function keys() { const out = []; for (const t of Object.values(REGISTERS)) out.push(...Object.keys(t)); return out; }
+// 모든 토큰의 정준 신원 'register/key'
+function keys() { const out = []; for (const [r, t] of Object.entries(REGISTERS)) for (const k of Object.keys(t)) out.push(qid(r, k)); return out; }
 
-// 청중별 렌더 — both(병기)·en·ko. 결정론(같은 키 → 같은 문자열)이라 왕복 검증이 성립한다.
+// 청중별 렌더 — both(병기)·en·ko. 결정론(같은 토큰 → 같은 문자열)이라 왕복 검증이 성립한다.
 const AUD = {
   both: (e) => `${e.label_en} (${e.label_ko})`,
   en: (e) => e.label_en,
   ko: (e) => e.label_ko,
 };
-function renderToken(key, opt = {}) {
-  const e = entry(key);
+function renderToken(token, opt = {}) {
+  const e = entry(token, opt);
   if (e.error) throw new Error(e.error);
   const f = AUD[opt.audience || 'both'];
   if (!f) throw new Error(`audience 어휘 밖: '${opt.audience}' (both·en·ko)`);
   return f(e);
 }
 
-// 역색인: 렌더 문자열 → 키 (왕복 검증·사람 글에서 토큰 회수). 모든 키·청중에서 결정론으로 구축.
+// 역색인: 렌더 문자열 → 'register/key'. 같은 문자열이 두 토큰에서 나오면 그 문자열은 회수 불가(모호) — 고르지 않는다.
 function reverseIndex() {
-  const rev = new Map();
-  for (const k of keys()) {
-    const e = entry(k);
+  const rev = new Map(), amb = new Set();
+  for (const id of keys()) {
+    const e = entry(id);
     if (e.error) continue;
-    for (const a of Object.keys(AUD)) rev.set(AUD[a](e), k);
+    for (const a of Object.keys(AUD)) { const s = AUD[a](e); if (rev.has(s) && rev.get(s) !== id) amb.add(s); else rev.set(s, id); }
   }
-  return rev;
+  for (const s of amb) rev.delete(s);
+  return { rev, amb };
 }
-const REV = reverseIndex();
+const { rev: REV, amb: AMB } = reverseIndex();
 function parseToken(str) {
+  if (AMB.has(str)) throw new Error(`모호한 렌더 문자열: '${str}' — 두 토큰이 같은 라벨을 쓴다`);
   const k = REV.get(str);
   if (!k) throw new Error(`사전에 없는 렌더 문자열: '${str}'`);
   return k;
@@ -88,7 +108,7 @@ function translate(record, opt = {}) {
   const tokens = record.tokens || [];
   const lines = [];
   for (const k of tokens) {
-    const e = entry(k);
+    const e = entry(k, opt);
     if (e.error) throw new Error(e.error);
     const meaning = (opt.audience === 'ko') ? (e.meaning_ko || e.meaning_en) : e.meaning_en;
     lines.push(`- ${renderToken(k, opt)} — ${meaning}`);
@@ -98,4 +118,4 @@ function translate(record, opt = {}) {
   return out;
 }
 
-module.exports = { entry, keys, renderToken, parseToken, translate, registers: Object.keys(REGISTERS) };
+module.exports = { entry, keys, renderToken, parseToken, translate, ambiguousRenders: () => [...AMB], registers: Object.keys(REGISTERS) };
