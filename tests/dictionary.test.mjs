@@ -93,3 +93,19 @@ test('⑦ 판결 모듈의 라벨 = vocab 표 (코드에 문구 복사본 없음
   assert.equal(M.ROLE.agent, V.bundleRoles.agent.label);
   assert.equal(M.AXIS_UP.part, V.hierarchyUp.part.label);
 });
+
+test('⑧ core.js 번역 함수 + 주입 라벨러 — ko 는 기본과 바이트 동일, en 은 지어내지 않음, 행정부는 사전을 부르지 않음', () => {
+  const C = req('../core.js'), fs = req('fs'), path = req('path');
+  const db = JSON.parse(fs.readFileSync(path.join(path.dirname(req.resolve('../core.js')), 'data/db.json'), 'utf8'));
+  const ko = { label: D.labeler({ audience: 'ko' }) }, en = { label: D.labeler({ audience: 'en' }) };
+  for (const id of ['D000189', 'D000210', 'D000148']) {
+    assert.equal(C.contextText(db, id, ko), C.contextText(db, id), `${id}: ko 라벨러가 기본 출력과 다름`);
+    assert.equal(C.mapText(db, id, ko), C.mapText(db, id));
+  }
+  const out = C.contextText(db, 'D000189', en);
+  assert.match(out, /Catalyst \/ actor/, '등록된 토큰(bundleRoles/agent)은 영어로');
+  assert.match(out, /\[en 미등록\]/, 'overlay 없는 토큰은 표시만 — 영어를 지어내지 않음');
+  assert.throws(() => D.labeler({ audience: 'de' }), /audience/);
+  const src = fs.readFileSync(req.resolve('../core.js'), 'utf8');
+  assert.ok(!/require\(['"][./]*dictionary/.test(src) && !/require\(['"]fs['"]\)/.test(src), 'core.js 가 사전·파일 읽기를 부름 — 주입받기만 한다');
+});

@@ -34,7 +34,7 @@
 ```bash
 node dbtool.mjs status          # 규모 한 줄 요약 (가장 싼 조회 — 개념·정의항·규칙·관찰·한계 수)
 node dbtool.mjs map <이름>       # 개념이 이미 있나 — 번호(D…)를 찾는다
-node dbtool.mjs context D000144 # 그 정의항의 부위·규칙·관찰
+node dbtool.mjs context D000144 # 그 정의항의 부위·규칙·관찰 (map·context·mechanism·pattern 에 --audience en|both: 통제 토큰을 사전 영어로, 없으면 [en 미등록])
 node dbtool.mjs mechanism 시트르산회로   # 단계 사슬·묶음 키
 ```
 
@@ -250,7 +250,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 276/276 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 277/277 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음

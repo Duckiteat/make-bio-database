@@ -102,6 +102,23 @@ function parseToken(str) {
   return k;
 }
 
+// 라벨러 — core.js 번역 함수에 주입하는 (표 이름, 키) → 문자열. 행정부는 사전을 부르지 않고 이것을 받기만 한다.
+//   ko: vocab 라벨(기본 출력과 같음) · en·both: 사전 overlay 가 있는 토큰만 영어로, 없으면 한글 + '[en 미등록]' — 영어를 지어내지 않는다.
+//   vocab 표에 없는 키는 키 그대로(기본 출력과 같음 — 미등록 토큰 거부는 관문의 몫).
+function labeler(opt = {}) {
+  const aud = opt.audience || 'ko';
+  if (!AUD[aud]) throw new Error(`audience 어휘 밖: '${aud}' (both·en·ko)`);
+  return (table, key) => {
+    const base = V[table] && V[table][key];
+    if (!base) return key;
+    const ko = base.label || key;
+    if (aud === 'ko') return ko;
+    const ov = REGISTERS[table] && OVERLAY.get(qid(table, key));
+    if (!ov) return `${ko} [en 미등록]`;
+    return AUD[aud]({ label_en: ov.label_en, label_ko: ko });
+  };
+}
+
 // 번역기 — R1 토큰은 조회(라벨 + 의미), R2 서술은 원문 통과(바이트 보존). 생성 없음.
 //   record = { tokens: [key,...], narrative: "자유 서술" }
 function translate(record, opt = {}) {
@@ -118,4 +135,4 @@ function translate(record, opt = {}) {
   return out;
 }
 
-module.exports = { entry, keys, renderToken, parseToken, translate, ambiguousRenders: () => [...AMB], registers: Object.keys(REGISTERS) };
+module.exports = { entry, keys, renderToken, parseToken, translate, labeler, ambiguousRenders: () => [...AMB], registers: Object.keys(REGISTERS) };

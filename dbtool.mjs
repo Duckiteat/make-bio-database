@@ -89,6 +89,8 @@ const loadScenario = (path, sid, db) => {
 // 시나리오 → 실행 대상(시작 세포 상태·경로) 색인 — 시나리오 파일은 대상을 담지 않는다(사전 등록 해시 보존)
 const SCENARIO_DIR = join(HERE, 'examples', 'scenarios'), SUBJECTS = join(SCENARIO_DIR, 'subjects.json');
 const subjectOf = (path) => { const m = existsSync(SUBJECTS) ? readJSON(SUBJECTS).subjects : {}; return m[basename(path)] || null; };
+// 통제 토큰 청중 (--audience ko|en|both): 사전 라벨러를 행정부 번역 함수에 주입 (16A). 없으면 기본 한글
+const audienceOpt = () => { if (!flags.audience || flags.audience === true) return {}; try { return { label: req('./dictionary.js').labeler({ audience: flags.audience }) }; } catch (e) { die(e.message); } };
 const loadDB = () => (existsSync(DB_PATH) ? DefDB.normalize(readJSON(DB_PATH)) : DefDB.emptyDB());
 const rel = (p) => relative(process.cwd(), p) || p;
 const printIssues = (errors, warnings) => {
@@ -172,7 +174,7 @@ switch (cmd) {
   case 'map': {
     if (!args.length) die('사용법: map <번호|이름|이름#n|외부ID|지문>');
     const db = loadDB();
-    for (const q of args) console.log(DefDB.mapText(db, q));
+    for (const q of args) console.log(DefDB.mapText(db, q, audienceOpt()));
     break;
   }
   case 'audit': {
@@ -190,12 +192,12 @@ switch (cmd) {
   }
   case 'context': {
     if (!args[0]) die('사용법: context <번호|이름|이름#n> [--up N] [--down N]');
-    console.log(DefDB.contextText(loadDB(), args[0], { up: +(flags.up || 4), down: +(flags.down || 1) }));
+    console.log(DefDB.contextText(loadDB(), args[0], { up: +(flags.up || 4), down: +(flags.down || 1), ...audienceOpt() }));
     break;
   }
   case 'mechanism': {
     if (!args[0]) die('사용법: mechanism <S…|경로 번호·이름> [--up N] [--down N]');
-    console.log(DefDB.mechanismText(loadDB(), args[0], { up: +(flags.up || 3), down: +(flags.down || 3) }));
+    console.log(DefDB.mechanismText(loadDB(), args[0], { up: +(flags.up || 3), down: +(flags.down || 3), ...audienceOpt() }));
     break;
   }
   case 'limitations': {
@@ -222,7 +224,7 @@ switch (cmd) {
   }
   case 'pattern': {
     if (!args[0]) die('사용법: pattern <경로|상위 개념>');
-    console.log(DefDB.patternText(loadDB(), args[0]));
+    console.log(DefDB.patternText(loadDB(), args[0], audienceOpt()));
     break;
   }
   case 'textbook': {
