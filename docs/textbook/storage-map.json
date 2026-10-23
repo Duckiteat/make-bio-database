@@ -156,6 +156,38 @@
       "interpret": "시나리오 읽기 — 파일 + 가정 원장을 읽어 compiler/assumptions.resolve 로 번호를 푼다. 번호 없는 시나리오는 파일 글자 그대로(입력 해시 불변). 풀리지 않으면 예외 — 숫자를 지어내지 않음. 읽기 전용 — 쓰기·판정·엔진 없음."
     },
     {
+      "path": "mcp/protocol.mjs",
+      "class": "law",
+      "format": "Node ESM",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "mcp/query.mjs·fetch.mjs·clerk.mjs",
+      "interpret": "[MCP] 공통 틀 — 표준 입출력 JSON-RPC 2.0(initialize·ping·tools/list·tools/call), 역할(BIODB_ROLE, 기본 collector)별 도구 거르기와 부르는 자리의 거부. 외부 패키지 없음. 파일 쓰기 없음."
+    },
+    {
+      "path": "mcp/query.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(에이전트)",
+      "interpret": "[MCP] query — db·색인·원장을 메모리에 두고 읽기만(map·context·mechanism·pattern·limitations·origin·assume_uses·qualgraph·retraction·inbox·verify_collection). 무효화 열쇠 = 파일 (크기, 수정 시각). 쓰기 없음."
+    },
+    {
+      "path": "mcp/fetch.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(에이전트)",
+      "interpret": "[MCP] fetch — 접근 판정과 공개 전문·초록 받기. 받기는 입법 서기 fetchToInbox(증거 구역), 받을 때마다 FETCH_LOG 사슬. db 를 읽지 않음. 유료·무료 열람본은 받지 않음."
+    },
+    {
+      "path": "mcp/clerk.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(통합가·사람·수집가)",
+      "interpret": "[MCP] clerk — 입출력기, 저장소를 바꾸는 유일한 문. 단일 작성자 잠금(서기 writerLock), 권위 쓰기는 dbtool 명령(사법부 재판정 → 서기), 수집가는 put_handoff 만, --allow-warnings 는 사람만."
+    },
+    {
       "path": "model.js",
       "class": "law",
       "format": "UMD JavaScript (브라우저 DefDBModel / Node require)",
@@ -986,6 +1018,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "가정 원장 시험 — 사슬 변조·삭제·번호 바꾸기 · 다른 자리 옮겨 붙이기·없는 번호 거부 · 최신 따라가기 없음 · 새 기록 거부 사유별 · 서기 봉인·순번 · 인라인 숫자 등록 거부 · 거꾸로 색인 · 변환 결과."
+    },
+    {
+      "path": "tests/mcp.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "MCP 시험 — 프로토콜 · query 가 dbtool 과 같은 글·메모리 사본·파일 바뀌면 다시 읽음 · 역할 거부 · 단일 작성자 · 핸드오프 추가만 · 받기 기록 변조·파일 바뀜 · mcp 서버의 파일 쓰기 없음 · fetch 인자 검사."
     },
     {
       "path": "tests/gap_schema.test.mjs",

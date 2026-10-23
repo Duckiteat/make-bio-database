@@ -130,5 +130,6 @@
 | 56 | **엔진 경계** — 운명 엔진은 IR 만 | `engine/fate_engine.js` · `compiler/` · 조정자 | 궤적 비트 · `rust_engine.test` | ☐ |
 | 58 | **전문 수신함 + 인용–전문 자동 대조** — 외주 전문 에이전트의 출력 자리 (`outsourcing-and-mcp.md` §6 ①) | 서기 받기 · `judicial/collection_audit.js` · `verify-collection` | 인용이 전문에 없으면 REJECTED · 전문 없으면 REVIEW · 거부 시험 | ☐ |
 | 59 | **정량 판정 맥락 이전** (§6 ②) | 조정자 `observeFate` · `judicial/protocol.js` | 정량 판정에 context_transfer · 시험 | ☐ |
-| 60 | **받기 기록** `FETCH_LOG.jsonl` (§6 ③) | 서기 · 사법부 | 추가 전용 사슬 · 대조 시험 | ☐ |
+| 60 | **받기 기록** `FETCH_LOG.jsonl` (§6 ③) | 서기 · 사법부 | 추가 전용 사슬 · 대조 시험 | ☑ 2026-10-23 — 서기 `appendFetchLog`, 사법부 `verifyFetchLog`(사슬 + 받은 뒤 파일 그대로), validate 포함 |
+| 61 | **MCP 서버** — query·fetch + 입출력기 clerk (`outsourcing-and-mcp.md` §4.3, lab 은 56 뒤) | `mcp/` · 서기(`handoff` 구역·`writerLock`·XML 받기) | 프로토콜·역할 거부·단일 작성자·쓰기 없음 시험 | ☑ 2026-10-23 — 외부 패키지 없음, 시험 `tests/mcp.test.mjs`(8). 첫 실사용: O'Dea 2007(PMID 17486138) 공개 전문 받음, Allsopp 1995 유료 거부 |
 | 57 | **LPS 기준해 → 운명 엔진 QSSA** (L000113 을 공간 엔진에서 떼어냄) | 조정자 · 47번 | 기준해 1회 또는 한계 기록 · 축약 TOST | ☐ |

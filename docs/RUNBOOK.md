@@ -131,6 +131,17 @@ node dbtool.mjs evidence <검증>.json --target <경로|상태> --report <보고
 
 판정 결과: **맞음 · 틀림 · 보이지 못함(불일치 아님) · 무효**. 결론은 등록 규약의 검증 세트 관찰만, 우연 기준선 P(K≥k) 와 함께.
 
+### MCP 서버 (에이전트용, `docs/design/outsourcing-and-mcp.md` §4)
+
+```
+BIODB_ROLE=collector  node mcp/query.mjs    # 읽기 — map·context·limitations·origin·assume_uses·inbox·verify_collection …
+BIODB_ROLE=collector  node mcp/fetch.mjs    # 받기 — resolve_access·fetch_abstract·fetch_fulltext (공개 전문만), 받기 기록 FETCH_LOG.jsonl
+BIODB_ROLE=integrator node mcp/clerk.mjs    # 쓰기 — 수집가는 put_handoff 만, 통합가는 merge·register·assume_add … (하나만 뜸)
+```
+
+Claude Code 등 MCP 클라이언트 설정 예(`.mcp.json` — 저장소에 두지 않고 쓰는 쪽에서):
+`{"mcpServers":{"biodb-query":{"command":"node","args":["mcp/query.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-fetch":{"command":"node","args":["mcp/fetch.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-clerk":{"command":"node","args":["mcp/clerk.mjs"],"env":{"BIODB_ROLE":"collector"}}}}`
+
 ---
 
 ## 3. 결과를 읽는 법
@@ -254,7 +265,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 301/301 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 309/309 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)
