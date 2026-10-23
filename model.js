@@ -516,6 +516,11 @@
     const r = isObj(l.requirement) ? l.requirement : { text: str(l.requirement) };
     const o = { target: str(l.target), type: str(l.type), requirement: { text: str(r.text), needs: arr(r.needs).map(normNeed) } };
     for (const k of ['found_in', 'note', 'by', 'at']) if (str(l[k])) o[k] = str(l[k]);
+    // 구조 필드 (16A 가 스키마): 증상(정량 키 → 수) · 막힌 하류(번호) · 재검토 조건(통제 토큰) · 금지된 우회(저장만 — 관문 강제 안 함). requirement.text(R2)는 그대로
+    if (isObj(l.symptom)) o.symptom = Object.fromEntries(Object.entries(l.symptom).map(([k, v]) => [str(k), typeof v === 'number' ? v : Number(v)]));
+    if (arr(l.downstream_blocked).length) o.downstream_blocked = arr(l.downstream_blocked).map(str);
+    if (str(l.resolution_trigger)) o.resolution_trigger = str(l.resolution_trigger);
+    if (arr(l.prohibited_bypasses).length) o.prohibited_bypasses = arr(l.prohibited_bypasses).map(str);
     if (isObj(l.resolution)) o.resolution = { note: str(l.resolution.note), evidence: normEvidence(l.resolution.evidence) };
     return o;
   }

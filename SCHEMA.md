@@ -210,6 +210,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - **Type** (`vocab.js` 의 `gapTypes`): `Kinetic_Gap`(속도·Kd·시간 상수) · `Concentration_Gap`(몰 농도·부피·질량 수지) · `Structural_Gap`(3차원 좌표·위상·잔기·화학량) · `Resource_Gap`(재생·공급 경로나 속도가 없어 저장소가 고갈되는 곳 — 사후 분석의 제한 요인) · `Identity_Gap`(unmapped 필수 외부 ID — 해결 경로 `xref`, 어휘에 없는 ID 체계면 `manual`).
 - **Requirement**: 사람이 읽는 `text` + 기계가 확인하는 해결 경로 `needs`.
   - `obs`: 그 정의항에 그 관찰(세포·위치 맥락)이 들어오면 충족 · `residue`: 그 부위에 기준 종 잔기 번호가 들어오면 충족 · `xref`: 그 외부 ID 가 붙으면 충족 · `manual`: 형식으로 확인할 수 없는 요구 — `resolution` 으로만 닫힘.
+- **구조 필드 (가 스키마, 2026-10-23, 선택)**: `symptom`(정량 증상 — 키 소문자·숫자·밑줄, 단위는 키 끝에(`wall_time_s`), 값은 유한한 수) · `downstream_blocked`(이 공백이 막는 하류 `D…`·`S…` 번호 — 있어야 함, 대상 자신 금지) · `resolution_trigger`(재검토 조건 `vocab.resolutionTriggers`: `manual` · `observation_added` · `value_recorded` — 자동 조건은 `at`(ISO) 필수) · `prohibited_bypasses`(금지된 우회 문장 — **저장만**, 의도를 탐지할 수 없어 관문은 강제하지 않음). `requirement.text`(R2 서술)는 그대로 두고 칸을 더한다. 재검토 후보(`judicial.reviewCandidates`)는 열린 한계 중 `at` 이후 대상·막힌 하류에 새 관찰(기록 시각 있는 것, 철회 제외)·값이 기록된 것 — 해결 판정이 아니라 '다시 볼 때'이고, `limitations --detect` 가 따로 보여 주되 병합 관문(미등록 후보 0)은 막지 않는다.
 - **상태는 저장하지 않고 계산한다**: needs 가 모두 충족되면 `resolved`, manual 이 resolution 으로 닫히면 `resolved_manual`, 아니면 `open`.
 - `limitations.md` 는 이 데이터에서 생성된다(`node dbtool.mjs limitations --write`). CI 가 최신인지 검사한다. `--detect` 는 등록되지 않은 한계 후보(잔기 모름 부위)를 찾는다.
 - 시뮬레이터는 기본값·무한 풀로 시작량을 정한 묶음을 표시하고, 그 경로의 Concentration_Gap 이 등록되어 있지 않으면 등록하라고 알린다.
@@ -590,6 +591,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-23 | 12 (가 스키마) | 한계 구조 필드 `symptom`·`downstream_blocked`·`resolution_trigger`·`prohibited_bypasses`(선택, 추가 필드만 — 없으면 직렬화 불변, 버전 번호 그대로) · 어휘 `resolutionTriggers` · 사법부 검사 5 자리 + 재검토 후보 `reviewCandidates`. 데이터: L000113 에 원문의 증상 수치·막힌 하류(D000103·104·105)를 칸으로 |
 | 2026-10-23 | (사전) | `data/dictionary.jsonl` 형식: 한 줄 한 레코드 → **추가만 하는 사슬**(한 줄 한 사건 `seq·at·…항목·revises?·prev·root`, root = sha256(prev + '\n' + 정준 JSON), 첫 prev = sha256('dictionary\n')). 쓰기는 입법 서기(구역 registry)만 — 사법부 `judicial/dictionary_audit.js` 봉인 뒤. 고치기는 `revises` 단 새 사건. db.json 형식·버전 불변. 변환 `migrations/011-dictionary-chain.mjs`(무손실, 109 사건) |
 | 2026-10-15 | 12 (2차) | §8N 정성 관찰(`kind: qualitative`)·관찰 `experiment`·`evidence_at`·`recorded_at`·`provenance.source` · 맥락 열쇠(`contextKeys`·`contextKey`, 조건 = 정의항 번호 목록) · 번호 이동 `moved`. 버전 번호는 그대로(추가 필드만, 기존 db 직렬화 불변). 데이터: 자유 문장 조건 6 건 → `scope` (값 대체 기록, IR 해시 238 조합 같음) |
 | 2026-10-15 | **12** | 값 층 분리(§8N): `values { V… }`·`kinetic_law`·보기(열거되지 않는 obs·kinetics)·병합의 대체·철회 접기·`recorded_at` 필수·`asOf`·사법부 `validateValues`·`valueImmutability`. 데이터: 값 기록 58(정의항 obs 52 · 속도 칸 6) — 보기 무손실, IR 해시 238 조합 같음, 등급 분포 같음. 변환은 사건 사슬의 `migration` 사건 #1 (`migrations/010-v10-to-v12-values.js`) |

@@ -929,6 +929,14 @@
       "interpret": "사전 봉인 거부 시험 — 변조·삭제·잘못된 새 항목(register·키·빈 영어·날짜·사슬 칸·중복·revises·렌더 충돌·xref)·봉인 없는/다른 쓰기를 거부하고, revises 고치기는 붙이기만 하는지."
     },
     {
+      "path": "tests/gap_schema.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "가 스키마 구조 필드 — 정규화 보존(없으면 불변)·재검토 후보(at 이후 새 관찰·값, 철회·manual·미래 at 제외)·병합 관문과 분리."
+    },
+    {
       "path": "tests/governance.test.mjs",
       "class": "verification",
       "format": "node:test",

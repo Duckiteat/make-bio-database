@@ -20009,7 +20009,22 @@
         ]
       },
       "found_in": "TIER A 확장 — LPS 축 대식세포 상태(D000212) 신설 후 fate 성능 측정, 2026-10-16. simulateFate(D000212, lps-tnf-validation) 모의 60초 > 벽시간 60초",
-      "by": "Claude"
+      "by": "Claude",
+      "symptom": {
+        "sim_time_s": 60,
+        "wall_time_exceeded_s": 60,
+        "species_n": 42,
+        "steps_n": 22
+      },
+      "downstream_blocked": [
+        "D000103",
+        "D000104",
+        "D000105"
+      ],
+      "resolution_trigger": "manual",
+      "prohibited_bypasses": [
+        "엔진 소스를 사용자 요청 없이 고쳐 돌아가게 만들기"
+      ]
     },
     "L000114": {
       "target": "D000210",

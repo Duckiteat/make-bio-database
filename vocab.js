@@ -360,6 +360,13 @@
     ENGINE_DEFECT:   { label: '엔진 결함', note: '엔진 코드 (행정) — 데이터·결합점을 바꿔 덮지 않는다', fix: 'engine' },
     COMPILER_DEFECT: { label: '컴파일러 결함', note: 'compiler/ (IR·기호 미분·테이프) — 엔진·데이터를 바꿔 덮지 않는다', fix: 'compiler' },
   },
+  // 한계의 재검토 조건 (limitations[].resolution_trigger, 설계 dictionary-and-translation §10) — 열린 한계를 언제 다시 볼지.
+  //   자동 조건은 한계의 at(등록 시각) 이후에 대상·막힌 하류(downstream_blocked)에 새로 기록된 것을 본다 — 해결 판정이 아니라 '다시 볼 때' 표시
+  resolutionTriggers: {
+    manual:            { label: '사람이 판단', note: '자동 재검토 없음 — 형식으로 확인할 수 없는 조건' },
+    observation_added: { label: '새 관찰이 들어오면', note: '한계의 at 이후 대상·막힌 하류를 재는 관찰(O…)이 기록되면 다시 본다' },
+    value_recorded:    { label: '새 값이 기록되면', note: '한계의 at 이후 대상·막힌 하류에 값(V…)이 새로 기록되면 다시 본다' },
+  },
   // ── 판결·보고의 통제 토큰 (16A: 토큰 → 사람말 표는 여기 — 토큰 → 동작·숫자·정책 표는 로직 곁에) ──
   // 기전 참여 역할 (model.js ROLE 보기 · core.js·viewer 표시)
   bundleRoles: {

@@ -219,6 +219,9 @@ switch (cmd) {
       const tcand = reg0.stamps.some((x) => x.claim === 'trend') ? TR.gapCandidates(db, TR.check(db, { registry: reg0, root: HERE }).rows) : [];
       const c = [...J.detectGaps(db), ...tcand];
       console.log(c.length ? '등록되지 않은 한계 후보:\n' + c.map((x) => `  [${x.target} | ${x.type}] ${x.why}`).join('\n') : '등록되지 않은 한계 후보 없음');
+      // 재검토 후보(가 스키마 resolution_trigger) — 병합을 막지 않는 알림이라 종료 코드에 넣지 않는다
+      const rv = J.reviewCandidates(db);
+      if (rv.length) console.log('다시 볼 한계 (재검토 조건 충족 — 해결 판정 아님):\n' + rv.map((x) => `  ${x.limitation} [${x.target} | ${x.type}] ${x.trigger}: at ${x.at} 이후 ${x.hits.join(', ')}`).join('\n'));
       process.exit(c.length ? 1 : 0); // CI: 미등록 공백(unmapped·속도 없는 공급/분해 …)이 있으면 실패
     }
     console.log(J.limitationsText(db, { open: !!flags.open }));

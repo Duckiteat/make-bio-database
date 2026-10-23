@@ -252,10 +252,10 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 281/281 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 284/284 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
-node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음
+node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)
 node dbtool.mjs attest                 # 도장 재검증
 node dbtool.mjs textbook --check       # 부록 최신 · 모든 파일 분류됨
 node tests/fate_suite.js --quick       # 54/54

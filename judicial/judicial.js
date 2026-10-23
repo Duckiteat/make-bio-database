@@ -425,6 +425,22 @@
     if (!V.gapTypes[l.type]) E(w, `한계 종류 '${l.type}' — ${Object.keys(V.gapTypes).join(' | ')}`);
     if (!l.requirement.text) E(w, '요구 사항(requirement.text) 없음 — 무엇이 있어야 해결되는지');
     if (!l.requirement.needs.length) E(w, '해결 경로(requirement.needs) 없음 — 필요한 데이터를 하나 이상');
+    // 구조 필드 (가 스키마)
+    if (l.symptom) for (const [k, v] of Object.entries(l.symptom)) {
+      if (!/^[a-z][a-z0-9_]*$/.test(k)) E(w, `증상 키 '${k}' — 소문자·숫자·밑줄(단위는 키 끝에, 예: wall_time_s)`);
+      if (!Number.isFinite(v)) E(w, `증상 '${k}' 의 값은 유한한 수 — 설명은 requirement.text 에`);
+    }
+    for (const ref of l.downstream_blocked || []) {
+      const t2 = parseTarget(ref);
+      if (!t2) E(w, `막힌 하류 '${ref}' 형식 — D…, D…/site/키, D…/rule/키, S…`);
+      else if (t2.base[0] === 'S' ? !db.steps[t2.base] : !db.senses[t2.base]) E(w, `막힌 하류 '${ref}' 없음`);
+      else if (ref === l.target) E(w, `막힌 하류 '${ref}' 가 대상 자신`);
+    }
+    if (l.resolution_trigger != null) {
+      if (!V.resolutionTriggers[l.resolution_trigger]) E(w, `재검토 조건 '${l.resolution_trigger}' — ${Object.keys(V.resolutionTriggers).join(' | ')}`);
+      else if (l.resolution_trigger !== 'manual' && !(l.at && Number.isFinite(Date.parse(l.at)))) E(w, `재검토 조건 '${l.resolution_trigger}' 은 한계의 등록 시각 at(ISO) 이 있어야 비교할 수 있음`);
+    }
+    if (l.prohibited_bypasses && !l.prohibited_bypasses.every((x) => x && x.trim())) E(w, '금지된 우회(prohibited_bypasses)는 비지 않은 문장 목록');
     l.requirement.needs.forEach((n, i) => {
       const nw = `${id} 필요 ${i + 1}`;
       if (n.kind === 'obs') {
@@ -1332,11 +1348,42 @@
       const rs = rows.filter((r) => r.l.type === type);
       if (!rs.length) continue;
       out.push('', `## ${type} — ${V.gapTypes[type].label}`, '', V.gapTypes[type].note || '', '', '| ID | Target | Type | Requirement | 해결 경로 | 상태 | 다루는 개념 |', '|---|---|---|---|---|---|---|');
-      for (const r of rs) out.push(`| ${r.id} | ${cell(r.tl)} | ${type} | ${cell(r.l.requirement.text)}${r.l.found_in ? `<br>발견: ${cell(r.l.found_in)}` : ''} | ${r.needs.map(cell).join('<br>')} | ${r.st.status} (${r.st.done}/${r.st.total}) | ${r.by.map((d) => `${d} ${cell(ix.label(d))}`).join('<br>') || '—'} |`);
+      for (const r of rs) out.push(`| ${r.id} | ${cell(r.tl)} | ${type} | ${cell(r.l.requirement.text)}${r.l.found_in ? `<br>발견: ${cell(r.l.found_in)}` : ''}${gapFields(r.l)} | ${r.needs.map(cell).join('<br>')} | ${r.st.status} (${r.st.done}/${r.st.total}) | ${r.by.map((d) => `${d} ${cell(ix.label(d))}`).join('<br>') || '—'} |`);
     }
     return out.join('\n') + '\n';
   }
   // 등록되지 않은 한계 후보 — 잔기 모름 부위 중 어떤 한계도 가리키지 않는 것
+  // 재검토 후보 (가 스키마 resolution_trigger): 열린 한계 중 at 이후 대상·막힌 하류에 새 관찰·값이 기록된 것. 해결 판정이 아니라 '다시 볼 때' —
+  //   detectGaps(병합 관문 기준)와 섞지 않는다(재검토 후보는 병합을 막지 않음). 기록 시각이 없는 관찰은 at 이후임을 보일 수 없어 세지 않는다
+  // 가 스키마 구조 필드를 한 칸 안에 (있는 것만) — 증상 키=값 · 막힌 하류 · 재검토 조건 · 금지된 우회
+  function gapFields(l) {
+    const b = [];
+    if (l.symptom && Object.keys(l.symptom).length) b.push(`증상: ${Object.entries(l.symptom).map(([k, v]) => `${k}=${v}`).join(' · ')}`);
+    if ((l.downstream_blocked || []).length) b.push(`막힌 하류: ${l.downstream_blocked.join(' · ')}`);
+    if (l.resolution_trigger) b.push(`재검토: ${(V.resolutionTriggers[l.resolution_trigger] || {}).label || l.resolution_trigger}`);
+    if ((l.prohibited_bypasses || []).length) b.push(`금지된 우회: ${l.prohibited_bypasses.join(' · ')}`);
+    return b.map((x) => '<br>' + x.replace(/\|/g, '\\|')).join('');
+  }
+  function reviewCandidates(db) {
+    db = normalize(db);
+    const baseOf = (ref) => String(ref || '').split('|')[0].split('/')[0];
+    const obsTargets = (o) => [o.observable && o.observable.target, o.readout && o.readout.target, o.perturbation && o.perturbation.target].filter(Boolean).map(baseOf);
+    const live = M.currentValues(db), out = [];
+    for (const [id, l] of Object.entries(db.limitations)) {
+      const trig = l.resolution_trigger;
+      if (!trig || trig === 'manual' || !l.at || limitationStatus(db, l).status.startsWith('resolved')) continue;
+      const since = Date.parse(l.at), scope = new Set([l.target, ...(l.downstream_blocked || [])].map(baseOf)), hits = [];
+      if (trig === 'observation_added') for (const [oid, o] of Object.entries(db.observations || {})) {
+        if (o.retracted || !o.recorded_at || !(Date.parse(o.recorded_at) > since)) continue;
+        if (obsTargets(o).some((b) => scope.has(b))) hits.push(oid);
+      }
+      if (trig === 'value_recorded') for (const [subject, list] of live) for (const [vid, v] of list) {
+        if (scope.has(baseOf(subject)) && v.recorded_at && Date.parse(v.recorded_at) > since) hits.push(vid);
+      }
+      if (hits.length) out.push({ limitation: id, type: l.type, target: l.target, trigger: trig, at: l.at, hits });
+    }
+    return out;
+  }
   function detectGaps(db) {
     db = normalize(db);
     const ix = index(db), covered = new Set();
@@ -1745,6 +1792,6 @@
   return Object.freeze({ auditRate, checkAttestations,
     needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, retractionImpact, retractionText, augmentCandidates, patchReportText, audit,
-    auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, coverageMap, coverageMapText, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
+    auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, reviewCandidates, coverageMap, coverageMapText, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });
 });

@@ -21,7 +21,7 @@ const REGISTERS = {
   bundleRoles: V.bundleRoles, hierarchyUp: V.hierarchyUp, hierarchyDown: V.hierarchyDown, contextRoles: V.contextRoles,
   qualGraphVerdicts: V.qualGraphVerdicts, qualOutcomes: V.qualOutcomes, trendVerdicts: V.trendVerdicts,
   stiffnessFlags: V.stiffnessFlags, kineticParams: V.kineticParams,
-  sourceScale: V.sourceScale, dataScale: V.dataScale, reliabilityGrades: V.reliabilityGrades,
+  sourceScale: V.sourceScale, dataScale: V.dataScale, reliabilityGrades: V.reliabilityGrades, resolutionTriggers: V.resolutionTriggers,
 };
 const qid = (reg, key) => `${reg}/${key}`;
 
