@@ -34,3 +34,8 @@
 ## 2026-10-23 ④ 사용자 EBSCO 목록 대조
 - 사용자가 EBSCO 메타데이터(7건)를 보냄. 그중 **Henderson 1996 J Cell Biol(PMID 8698806)은 OA**(PMC2120915) — 계정 없이 전문 확인: BJ 섬유아세포 '~40 bp per population doubling (Allsopp, R., unpublished data)' → #9, 미발표 자료 인용이라 ΔL 독립 근거로 약함.
 - ΔL 독립 추정에 필요한 1차 전문은 여전히 **Harley 1990 Nature 345:458**(목록에 없음)과 **Allsopp & Harley 1995 Exp Cell Res 219:130**(목록에 없음). 사용자가 받아 올려 주면 통합.
+
+## 2026-10-23 ⑤ 사용자 EBSCO 메타데이터 2 — Allsopp et al. 1995 Exp Cell Res 220:194 (PMID 7664836)
+- 찾던 'critical telomere length'(219:130)와 **다른** 1995 논문. 구독(OA 아님) — EBSCO pLink 는 학교 로그인이 필요해 열지 않음. 초록은 Europe PMC 수신함(MED-7664836), 인용 일치.
+- #10 계대 섬유아세포 **−34 bp/day**(P 0.017) — Allsopp 1992 기울기와 다른 실험이라 **ΔL 독립 추정 후보**. bp/PD 로 바꾸려면 배가 속도(PD/day) — 전문 필요.
+- #11 정지 섬유아세포 −12 bp/day(P 0.16, 유의 아님) — '소모는 분열에 매임' 정성 검증 후보(성장 인자 끊은 시나리오와 대응).
