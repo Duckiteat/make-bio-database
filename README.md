@@ -1,146 +1,233 @@
 # Duckiteat's make bio database
 
-맥락 보존형 생명과학 정의·기전 데이터베이스
+맥락 보존형 생명과학 정의·기전 데이터베이스. 입력은 AI가 하고, 사람은 보고 검사한다.
 
-옵시디언·노션처럼 "메모 한 장 = 노드"가 아니라, **정의항 하나 = 노드**인 개념 데이터베이스.
-입력은 AI가 하고, 사람은 보고 검사만 한다.
+옵시디언·노션처럼 "메모 한 장 = 노드"가 아니라 **정의항(뜻) 하나 = 노드**이고, 정의항이 그 분자의 구조와 규칙을 소유한다.
+기전 단계는 그 규칙을 적용한 결과만 가볍게 담는다. 모든 입력은 엄격한 매핑 규칙([`SCHEMA.md`](SCHEMA.md))을 통과해야 저장된다.
 
-## 왜 정의항끼리 잇는가
-
-메모 링크는 `[[효소]]`처럼 *말*을 가리킬 뿐, 그 말의 **어느 뜻**인지는 잃어버린다.
-여기서는 연결이 정의항 ID 끼리 걸린다.
+## 두 해상도
 
 ```
-효소#1  "생체 내 화학 반응의 촉매 역할을 하는 단백질"   〈고등학교 생명과학 (좁은 뜻)〉
-  ↑ 상위 범주: 단백질#1, 촉매#1
-  ↓ 하위 범주: 아밀레이스#1
-효소#2  "생체 내 화학 반응을 촉매하는 생체 고분자 전반"  〈생화학 (넓은 뜻)〉
-  ↑ 상위 범주: 촉매#1
-  ↓ 하위 범주: 리보자임#1        ← 리보자임은 효소#2 아래에만 있고 효소#1 아래에는 없다
+지식 해상도   정의항 D000042  단백질 키네이스 A {complex}
+  (원천)       ├ 구성 요소   PKA 조절 소단위 ×2 · PKA 촉매 소단위 ×2
+               ├ 부위        (조절 소단위) cnb_a · cnb_b — cAMP 결합 [bound]
+               ├ 규칙        holo: (기본) → 비활성
+               │             camp_release: 해리, cAMP 가 조절 소단위의 cnb_a·cnb_b 에 흡수
+               └ 설명·관찰   맥락(분야·종·조직·세포)별 정의 문장, 종별 수치
+                       │
+                    규칙이 다리
+                       ▼
+시뮬레이션     S000006 = D000042/rule/camp_release 적용
+  해상도         D000042|cytosol + 4× D000039|cytosol
+  (결과)         → 2× D000056|cnb_a:bound|cnb_b:bound|cytosol + 2× D000057|cytosol
 ```
 
-그래서 어떤 정의항에서 위로 올라가면 **그 뜻이 기대고 있는 정의들의 사슬**(맥락)이 그대로 나온다.
+- **정의항(D)** 은 가능한 가장 높은 구조적 진실을 담는다: 구성 요소(소단위·보조인자), 막 위상(막관통·지질 고정 …, 어느 막의 어느 면),
+  부위(`D…/site/키` — 종별 잔기 번호, 막 면, 리간드), 규칙(`D…/rule/키`), 설명(`D…/desc/n`), 관찰(`D…/obs/n`).
+  **모르는 값은 지어내지 않고 명시한다** — 잔기 번호는 `residue_unknown`, 외부 ID 는 `unmapped`.
+- **묶음(B)** 은 번호가 아니라 파생 키다: `바탕 D|부위:특징|…|위치`. 인산화형·활성형은 새 개념이 아니라 묶음의 특징이고,
+  그것이 활성인지는 원천의 **상태 의미 규칙**이 정한다(`reg_phos:phosphorylated → 활성`).
+- **단계(S)** 는 "원천의 전이 규칙이 이 묶음들에 적용됨" 이다. 라벨·설명문은 규칙에 있고, 단계에는 규칙 참조와 묶음만 있다.
+  검사는 단계가 규칙과 맞는지 본다 — 행위자가 활성인가, 변화량이 규칙과 같은가, 해리된 구성 요소 개수가 맞는가,
+  **같은 공간에서 맞닿을 수 있는가**(세포 밖 에피네프린은 세포막 수용체의 바깥면과만, 세포질의 ATP 는 효소의 세포질 쪽 면과만).
 
-## 구조
-
-| 단위 | 뜻 | 필드 |
-|---|---|---|
-| 피정의항 (term) | 정의되는 말 | `aliases`, `note`, `definientia[]` |
-| 정의항 (definiens) | 정의 하나 | `id`(`피정의항#번호`), `text`, `context`(분야/관점), `links[]`, `note`, `examples[]`, `source`, `by`, `at` |
-| 연결 (link) | 정의항 → 정의항 | `to`(정의항 id), `rel`, `span`(정의 문장 속 근거 구절), `note` |
-
-관계(`rel`):
-
-- 위계 — `is_a`/`has_kind` (상위·하위 범주), `part_of`/`has_part` (전체·구성요소), `instance_of`/`has_instance` (유형·사례)
-- 비위계 — `requires` (조건/전제), `contrasts` (대비), `refers` (정의에 사용)
-
-하위 방향은 저장하지 않아도 자동으로 계산된다(B가 A의 `is_a`이면 A의 화면에 B가 하위로 보임).
-위계 순환은 오류로 막힌다. 대상 말의 뜻을 정하지 않은 연결(`"to": "효소"`)은 정의항이 하나뿐이면 자동으로 정해지고, 여러 개면 경고가 뜬다.
-
-## 기전: 단계끼리 자동으로 이어지는 사슬
-
-정의가 "무엇인가"라면 기전 단계는 "무엇이 무엇을 어떻게 바꾸는가"다. 단계 하나는
+## 고정 번호
 
 ```
-행위자(효소, 상태)  ⚙  입력(상태) + …  ⟶  출력(상태) + …      조절: ⊕ 활성화 / ⊣ 억제
+개념    T000042               이름 묶음        글리코겐 인산화효소 / glycogen phosphorylase · 별칭 포스포릴레이스
+뜻      D000044               정의항(원천)     "글리코겐 말단의 포도당 잔기를 …" {molecule_class}
+부위    D000044/site/reg_phos  수식 부위         사람 Ser14 · 특징 [인산화됨]
+묶음    D000044|reg_phos:phosphorylated|cytosol   = a형, 원천 규칙상 활성
+기전    S000009               규칙 적용         D000043/rule/gp_phos
 ```
 
-- **상태**: 분자는 그대로 하나의 정의항이고, 인산화형·활성형 같은 변화는 `state` 로 적는다.
-  `글리코겐 인산화효소#1 (b형(비인산화))` 과 `(a형(인산화))` 은 같은 개념의 다른 상태다.
-- **자동 연결**: 한 단계의 출력(정의항+상태)이 다른 단계의 입력·행위자·조절자와 같으면 두 단계는 이어진다.
-  그래서 "효소가 바꾼 단백질 → 그 단백질이 결합하는 효소 → 그 효소의 영향 → …"을 따로 연결하지 않아도 계속 따라갈 수 있다.
-  ATP·ADP 같은 부산물은 `minor` 로 표시해 사슬을 어지럽히지 않게 한다.
-- **행위자의 운명**: `after` 에 단계 뒤 행위자 상태를 적는다(그대로면 생략). 효소가 스스로 꺼지는 반응도 하나의 단계다(예: Gs 의 GTP 가수분해).
-- **묶는 개념**: 단계는 경로 정의항에 `part_of` 로 속한다. 경로는 평범한 정의항이라 `is_a 신호 전달 경로` 처럼 위계에 들어가고,
-  작은 경로를 큰 경로의 `has_part` 로 걸면 큰 경로 화면에 하위 경로의 단계까지 이어지는 순서로 모두 나온다.
+모든 연결은 의미 없는 고정 번호로만 걸린다. 이름은 번호에 붙은 꼬리표(ko·en·별칭)라서 바꿔도 연결이 끊기지 않고,
+지운 번호는 다시 쓰지 않는다. 사람과 AI 는 `글리코겐 인산화효소`, `효소#2`, `CHEBI:15422` 처럼 불러도 되고 병합 때 번호로 바뀐다.
+분자의 정체성은 이름이 아니라 **구조 지문**(InChIKey·서열 해시)으로 확인하도록 자리를 마련해 두었다.
 
-현재 저장소의 예: **에피네프린에 의한 글리코겐 분해** (⊃ cAMP 신호 전달)
+### 정의항끼리 잇는 이유
+`[[효소]]` 같은 링크는 *말*만 가리키고 **어느 뜻**인지는 잃는다. 여기서는 연결이 정의항 id 끼리 걸린다.
+리보자임은 `효소#2`(넓은 뜻, 생화학) 아래에만 있고 `효소#1`(좁은 뜻, 단백질) 아래에는 없다.
+어떤 정의항에서 위로 올라가면 그 뜻이 기대고 있는 정의들의 사슬(맥락)이 그대로 나온다.
 
+### 기전 사슬
+한 단계의 출력 묶음 키가 다른 단계의 입력·행위자·조절자 묶음 키와 같으면 **자동으로 이어진다**.
+단계는 경로(`pathway`) 정의항에 `part_of` 로 묶이고, 작은 경로는 큰 경로의 `has_part` 가 된다.
+
+현재 예: **에피네프린에 의한 글리코겐 분해** (⊃ cAMP 신호 전달), 11단계
 ```
-수용체 활성화 → Gs 활성화 → 아데닐산 고리화효소 활성화 → cAMP 합성 → PKA 활성화
-  → 인산화효소 키네이스 활성화 → 글리코겐 인산화효소 활성화(b→a) → 글리코겐 가인산분해 (⊣ 포도당)
-  cAMP ─→ cAMP 분해(PDE, 신호 종료)          Gs(활성) ─→ Gs 자체 비활성화 ─→ 다시 Gs 활성화
+에피네프린(세포 밖) → 수용체[ligand:결합](세포막) → Gs[nucleotide:GTP](세포막) → 아데닐산 고리화효소[gs_site:결합](세포막)
+ → cAMP(세포질) → PKA 해리 → 촉매 소단위 → 인산화효소 키네이스[pka_phos:인산화] → 글리코겐 인산화효소[reg_phos(Ser14):인산화]
+ → 글리코겐(글리코겐 과립) 가인산분해 → 포도당-1-인산 (⊣ 포도당)      ⇄ PP1 이 reg_phos 탈인산화
+ cAMP → AMP (신호 종료)            Gs[GTP] → Gs 자체 비활성화 → Gs[GDP]
 ```
+
+### 스트레스 시험: LPS → TLR4 → NF-κB (19단계, 정의항 43개)
+```
+LPS(세포 밖) → LBP 결합 → CD14 로 전달 → TLR4–MD-2 의 MD-2 주머니로 전달 → (TLR4–MD-2)₂ 다량체 → TIRAP 모집
+ → 마이도솜 조립 (MyD88 6 · IRAK4 4 · IRAK1 4) → IRAK1 Thr209 인산화 → TRAF6 모집 → K63 사슬 → TAK1 활성화
+ → IKKβ Ser177·Ser181 → IκBα Ser32·Ser36 → SCF–βTrCP 의 K48 유비퀴틴화 → 26S 프로테아좀이 IκBα 만 분해
+ → NF-κB p50–p65 핵 이동(수송) → TNF 유전자 κB 자리 결합 → TNF mRNA 전사
+```
+`node dbtool.mjs simulate "LPS–TLR4–NF-κB 신호 전달" --until "TNF mRNA" --from LPS` 로 실제로 발화시켜 확인한다 (LPS 를 0 으로 두면 전사에 이르지 못함).
+문헌 근거는 서지(저자·연도·DOI/PMID)를 확인한 것만 curated, 추론은 `[Abstracted Logic: Derived from the inferred mechanistic flow]` 로 표시된다.
+
+### 한계 등록부와 개념 진화
+- [`limitations.md`](limitations.md): 지금 모델이 못 하는 것 16건 — `[Target | Type | Requirement]`. 데이터가 들어오면 자동으로 resolved (예: TNF 유전자 사본 수 2 를 넣자 L000001 이 1/3 충족).
+- 상위 개념 10개(키네이스 연쇄, 막–핵 신호 연쇄, 억제자 분해에 의한 전사 인자 방출 …)는 패턴 검출기로 사례 경로를 스스로 찾는다 — `node dbtool.mjs pattern "키네이스 연쇄"`.
+- 구획 농도 모델: 시뮬레이션 시작량을 기본값 대신 copy_number·농도 × 구획 부피 데이터에서 가져온다.
+
+### 혼합 해상도와 반응 속도 (형식 v6)
+- **3차원은 필요한 곳에만.** `node dbtool.mjs resolution <경로>` — LPS 경로 19단계 중 R2(구조)가 필요한 단계는 0, 글리코겐 경로는 cAMP 를 두고 PKA 활성화·PDE 가 경쟁하는 2단계뿐(속도 상수가 들어오면 R1 로 해결). 확인된 구조 참조: 3FXI(TLR4–MD-2–LPS 주머니).
+- **속도 기반 시뮬레이션** `simulate --rate`: 규칙의 `kinetics`(binding·michaelis_menten·mass_action)를 농도 × 부피로 적분. 시험용 값은 가상 시나리오(`examples/scenarios/`)에만.
+- **감사** `audit-run`: 질량 보존·해상도 일관성·속도 무결성 위반을 Audit Error 로 내고, 한계 등록부에서 교정 제안을 찾는다. 예: Gs 를 AC 의 리간드와 행위자로 두 번 센 단순화를 질량 감사가 찾아 L000018 로 등록.
+
+### 생애 주기와 대사물 저장소 (형식 v7)
+- **유한 대사물 저장소**: ATP·GTP·뉴클레오타이드·아미노산 같은 보조 기질은 구획마다 하나의 유한한 풀. 단계가 소비하면 줄고, 바닥나면 그 단계가 멈춘다(기질 고갈 — 오류가 아니라 결과).
+- **공급 규칙 (Metabolic_Supply_Rule)**: NDPK(GDP + ATP → GTP + ADP)·ATP 재생(ADP + Pi → ATP)·아데닐산 키네이스·PPase·뉴클레오타이드 공급. 켜지면 GTP–GDP·ATP–ADP 순환이 닫힌다(순환 재생, 자원 순환 성분으로 보고).
+- **분해 규칙 (Degradation_Rule)**: 1차 k_deg(또는 반감기), 산물은 소실(lost) 또는 구성 단위로 재활용(recycled — 화학량은 서열 길이 관찰). 결정론 또는 `--stochastic --seed`.
+- **매 Δt 질량 감사**: 단계 국소 수지(첫 발화 시각) + 전역 합계 = 시작 + 원장(분해·재활용·공급). 원자 대신 부분 구조(`moieties`: 아데노신·구아노신·인산기 단위)를 센다 — 이 검사가 AC 고리화의 피로인산, 유비퀴틴 활성화의 피로인산, 프로테아좀의 Pi 누락을 찾아 데이터를 고쳤다.
+- 시험: `node dbtool.mjs simulate "에피네프린에 의한 글리코겐 분해" --rate --scenario examples/scenarios/gtp-exhaustion-hypothetical.json` 대 `gtp-regeneration-hypothetical.json` (가상 값).
+
+### 소진 시험 (Survival-to-Exhaustion)
+- `node dbtool.mjs simulate "시트르산 회로" --rate --scenario examples/scenarios/tca-acetylcoa-exhaustion-hypothetical.json --until-death` — 유한 저장소에서 회로를 정지까지 돌리고 사후 분석(정지 시각·원인·제한 요인·완료 바퀴·폐기물·소비/생산 비)을 낸다. 제한 요인은 Resource_Gap/Kinetic_Gap 한계로 연결된다 (가상 값).
+
+### 3 층 엔진 (형식 v8)
+- 정의항마다 기본 층 `tier`(T1 연속 장 / T2 규칙 행위자), Tier 1 환경(pH·유전율)과 전이 상태 이론 k(r), ΔG° 로 정해지는 역 상수(미시적 가역성), 닫힌 고리 ΣΔG° = 0 감사(AUDIT_THERMO).
+- 실행 층 `engine/hmse.js`: 정수 원장·인접 경계 거래(두 원장만 잠금)·이동량 표본(포아송·나머지 이월)·영역 점수와 히스테리시스. 인터페이스 `engine/interfaces/hmse.{hpp,py}`, 스키마 `schemas/v8/`, 설계 `docs/design/hybrid-multiscale-engine.md`.
+
+### 실행 층 P3
+- `node tests/p3_end_to_end.js` — 3차원 FV 영역(T3) + 규칙 노드(T2, SSA + τ-도약/CLE)를 Parallel-DEVS 로 결합해 10,000 단계, 원장·경계 버퍼 질량 보존을 콘솔에 출력 (`engine/devs_scheduler.js`, `engine/fv_solver.js`).
+
+### 실행 층 P4
+- `node tests/p4_benchmark.js` — 스펙트럼 신경 연산자 대리 모델(FV 궤적에서 학습, O(N log N), Δt 무관) 대 P3 FV 의 속도·L2 오차. 강성 영역(FV 부분 단계 ≳ 70)에서 11–56×, 비강성에서는 더 느림.
+- `node tests/p4_end_to_end.js [--fallback worker]` — 대리 모델 영역 + T2 노드 10,000 단계, 디랙 충격을 같은 단계에서 탐지해 FV(인라인/일꾼)로 대체, |ΔN| = 0.
+
+### 실행 층 P5
+- `node tests/p5_dynamic_promotion.js` — 확산 계수 일정으로 강성(N_sub)이 오르내리는 영역 + T2 노드 10,000 단계. 관문이 강성 구간(N_sub 76)에서만 대리 모델로 승격(≈ 10–15×), 비강성·히스테리시스·적대적 교대 구간은 FV(≈ 1×), 충격은 같은 단계 강등 + 20 단계 냉각, |ΔN| = 0, 장–원장 ≤ 1e-15.
+
+### 외부 ID 원본 대조 (자동 보강 고리)
+- `node dbtool.mjs augment plan | fetch | build | apply` — unmapped·Identity_Gap·대조 안 된 UniProt·ChEBI 를 원본에서 받아(`data/fetched/`) 번호·종·이름·중복·화학식 ↔ 부분 구조로 확인한 것만 verified 로 병합. 네트워크가 막히면 `data/fetched/RETRIEVAL_TASKS.md` (수동 수집 과제).
+
+### 비교 검토·정제 점검
+- `node dbtool.mjs compare --state <세포 상태> --scenario A.json [--scenario-b B.json | --patch p.json]` — 복잡도·수치 L2·결과를 나란히, 판정 Optimization-Negative 이면 종료 코드 1.
+- `node dbtool.mjs validate <patch.json>` → `node dbtool.mjs augment apply <patch.json>` — 관문 + 정제 점검(중복 규칙·화학량 모순) 후 병합·CHANGES·limitations.md·부록 자동 갱신.
+
+### 세포 운명 (v9)
+- `node dbtool.mjs fate "활성화된 CD8 T 세포" --scenario examples/scenarios/fate-effector-il12-hypothetical.json` — 신호(IL-12/IL-15) → 대사(해당과정/β-산화) → 전사 인자(T-bet/Eomes) 결합 적분(Rodas3, 두 층·조절 배율을 한 계로), 결정 시점(신호 철회 시험), 분화 정지 사후 분석. 시나리오 8개(`fate-*-hypothetical.json`, 가상 값).
+- `node dbtool.mjs fate <상태> --scenario s.json --report 보고서.md` — 과정 분석 보고서 (요약·변곡점·시계열·구간·무결성 증명서·인과 추적·부록). 무결성 FAIL 이면 종료 코드 1.
+- `node dbtool.mjs fate <상태> --scenario examples/scenarios/stochastic-mixed-optimal-hypothetical.json --ensemble 40` — 혼성 확률 층(4단계: 정확 SSA·τ-도약·Rodas3, seed 는 시나리오에) 앙상블: 운명 비율(95% 구간)·도달 시각 분포·표지 퍼짐(Fano), 궤적마다 원장 감사, seed 재현, 결정론 대비.
+- `node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [--scenario-b B.json]` — 관찰 포트 판정: 예측 ⊛ 측정 잡음 ↔ 관찰 → CONSISTENT · CONFLICT · INDISTINGUISHABLE(Observation_Gap + 필요한 정밀도). 관찰 기록(형식 v10 `observations`)은 바뀌지 않고, 실측 상수는 그것을 참조하는 파생값 — `docs/design/observation-port.md`.
+- `node tests/fate_suite.js [--engine js|rust]` — Fate-Test 57 검사 (확률 앙상블 3 포함): 계통 충실도, 경쟁, 결정 비가역성, 포도당·지방산 결핍 분화 정지, 포도당 결핍 → 다른 운명(기억 전구), 수렴 기준(허용 오차 1/1000) 대비 L2·속도 향상, 질량, 과정 보고서. 설계 `docs/design/cell-fate-engine.md`.
+
+### 교과서
+구조·저장 방식·알고리즘·상호작용·출력 해석·AI 작업 절차는 [`docs/textbook/`](docs/textbook/00-목차.md). 파일마다 저장 분류는 [`storage-map.json`](docs/textbook/storage-map.json), 지금 값은 자동 생성 부록.
+
+## 매핑 규칙 요약 (자세히는 SCHEMA.md)
+
+- **통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막 결합 방식·부위 종류·특징·변화 종류·활성·종(NCBI)·조직·세포·관찰 속성·근거 수준은 목록의 값만. 별칭은 표준 값으로 바뀐다.
+- **이름 하나 = 개념 하나**: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키면 오류. 새 이름이 기존 별칭과 같으면 기존 개념으로 합쳐진다.
+- **참조는 번호로 저장**: 패치에서 이름·영문명·`이름#n`·`CHEBI:…`·지문으로 가리켜도 병합 때 정의항 번호로 바뀐다. 뜻이 여러 개인 이름은 거부.
+- **번호 재사용 금지**: 지운 번호는 영구 결번. 이름을 바꾸면 옛 이름은 별칭으로 남는다.
+- **외부 ID·구조 지문·잔기 번호**: 형식·kind 검사, 같은 ID·지문 중복 금지. 모르면 지어내지 말고 `unmapped`·`residue_unknown`.
+- **종**: 정의항의 기준 종은 하나(단백질·핵산은 필수, 기본 사람 9606). 종마다 다른 값은 `obs` 에 `context.species` 와 함께.
+- **구조**: 구성 요소는 복합체만, 부위의 `on` 은 구성 요소, 막 면은 그 막에 있는 면, 막 결합 분자는 2D 위치에만.
+- **단계는 규칙의 적용**: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.
+- **관문**: 오류가 하나라도 있거나 패치가 새 경고를 만들면 패치 전체 거부. 통과한 패치는 `data/patches/` 에 매핑 결과와 함께 기록.
+
+규칙은 `tests/` 의 시험 195개가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
+
+## 값의 등급과 추세 — 무엇을 계산에 쓸 수 있나
+
+같은 데이터베이스 안에도 "권위 DB 에서 대조한 값" 과 "흐름에서 추론한 값" 이 섞인다. 그래서 값마다 **등급이 계산된다**(저장되지 않는다 — 데이터가 스스로 올릴 수 없다).
+
+| 축 | 뜻 |
+|---|---|
+| **S** 출처 | 유효한 사법부 도장 4 · 문헌 식별자(DOI·PMID) 3 · 그 밖 2 · 확인 불가 0 |
+| **D** 성질 | 실측·도구가 원본에서 계산 4 · 요약 상수·정체성 사실 3 · 추론·단순화 2 |
+| **추세** | 지금도 합의와 같은가 — 같은 확인을 **더 새 원본에 다시 돌려** 판정 (`match`·`mismatch`·`unchecked`) |
+
+→ `anchor`(고정점) · `parameter`(매개변수) · `bounded`(오차 막대와 함께) · `legacy`(지난값, 지우지 않음) · `reference`(계산 금지) · `blocked`(한계로만). `node dbtool.mjs grade` 로 본다.
+
+**시뮬레이션은 쓰는 자리에서 이 등급을 강제받는다**: 데이터 상수가 문턱(기본 `parameter`) 미달이면 감사 오류이고, 시나리오가 준 가상 상수는 그 시나리오가 `hypothetical: true` 를 선언했을 때만 쓸 수 있다. 과정 보고서의 무결성 증명서가 그 판정을 한 줄로 싣는다 — 미달이면 FAIL 이고 그 결과는 결론에 쓰지 않는다.
 
 ## 사용법
 
-### 화면 (`viewer.html`)
+### 화면
+`index.html`(= `viewer.html`), `vocab.js`, `model.js`, `core.js`, `compiler/obs_operator.js`, `judicial/reliability.js`, `judicial/judicial.js`, `legislative/legislative.js` 를 같은 배치로 두고 브라우저로 연다.
+웹 서버로 열면 `data/db.json` 을 자동으로 읽고, 파일로 열었다면 **불러오기**로 고른다.
 
-`index.html`(= `viewer.html`) 과 `core.js` 를 같은 폴더에 두고 브라우저로 연다.
+1. **AI 지침**: 자료를 넣고 복사 → AI 에게 준다. 규칙·어휘·현재 색인(부위·규칙·구성 요소 포함)·기존 단계가 함께 들어간다.
+2. **AI 결과 반영**: AI 가 준 JSON 을 붙여 넣으면 매핑 결과와 규칙 위반이 바로 보인다. 위반이 있으면 반영 버튼이 잠긴다.
+3. **검사**: 전체 규칙 검사 + 매핑 현황(외부 ID 대조 여부, 미매핑 목록).
+4. 화면에서 반영한 것은 브라우저에만 남는다. 저장소에 넣으려면 **저장**한 파일로 `data/db.json` 을 바꾸거나 AI 에이전트에게 병합을 맡긴다.
 
-1. **AI 지침** → 정리할 자료를 넣고 복사 → 아무 AI(Claude, ChatGPT 등)에게 붙여 넣기.
-   지침에는 현재 데이터베이스의 정의항 색인이 들어가므로 AI가 기존 뜻에 연결한다.
-2. AI가 준 JSON을 **AI 결과 반영**에 붙여 넣기 → 추가/수정 목록과 새로 생긴 오류·경고를 확인 → 반영.
-   오류가 있으면 반영되지 않는다. 메시지를 AI에게 돌려주면 된다.
-3. 각 정의항의 **맥락 텍스트**를 복사하면 그 정의의 상위 사슬을 AI 대화에 그대로 넘길 수 있다.
-4. **저장**으로 `definition-db.json` 을 내려받는다(브라우저에도 자동 보관됨). **불러오기**는 DB, 패치, 이전 bionote v3 파일을 모두 받는다.
+### 명령줄 (Node 18+) — AI 에이전트용
 
-### 저장소 (`data/`)
+```sh
+node dbtool.mjs status                          # 규모·오류 수·다음 번호
+node dbtool.mjs map "adenylyl cyclase" 효소#2 CHEBI:15422   # 이름·외부 ID → 정의항 번호
+node dbtool.mjs prompt [자료.txt]                # AI 작성 지침
+node dbtool.mjs merge patch.json --dry          # 관문 통과 여부만 확인
+node dbtool.mjs merge patch.json                # 병합 + data/patches/ 기록
+node dbtool.mjs context PKA                      # 정의 맥락·구조(구성 요소·부위·규칙)·기전 참여
+node dbtool.mjs mechanism "에피네프린에 의한 글리코겐 분해"
+node dbtool.mjs mechanism S000009 --up 3 --down 3
+node dbtool.mjs simulate <경로> --until D… --from D…   # 규칙대로 발화시켜 도달·유도 확인
+node dbtool.mjs limitations [--open|--write|--detect]  # 한계 등록부
+node dbtool.mjs pattern <경로|상위 개념>              # 상위 패턴·사례 경로
+node dbtool.mjs resolution <경로>                     # 혼합 해상도 계획 (R0·R1·R2, 전환 문턱)
+node dbtool.mjs simulate <경로> --rate --scenario s.json [--reservoirs finite|infinite] [--stochastic --seed N]   # 속도 기반 시뮬레이션 (저장소·공급·분해)
+node dbtool.mjs audit-run <경로> [--scenario s.json]  # 감사 (Audit Error + 교정 제안)
+node dbtool.mjs textbook [--write|--check]             # 교과서 부록 생성·검사 (파일 분류 포함)
+node dbtool.mjs audit                           # 매핑·채움 현황 (미매핑, 잔기 모름, 지문 없음)
+node dbtool.mjs augment plan|fetch|build|apply        # 자동 보강 고리 (외부 ID 원본 대조 → 사법부 도장)
+node dbtool.mjs attest                                # 도장 재검증 (digest·증거 sha256·같은 확인 재실행)
+node dbtool.mjs grade [<D…>] [--min parameter]        # 신뢰 지표: (S, D) + 추세 → 등급 분포·미달 목록
+node dbtool.mjs trend [<D…>] [--fetch] [--write]      # 추세 점검 (시간 축): 더 새 원본에 같은 확인을 다시
+node dbtool.mjs fate <세포 상태> --scenario s.json [--report 파일.md]   # 운명 실행 → 과정 보고서
+node dbtool.mjs compare --state <상태> --scenario A.json [--scenario-b B.json|--patch p.json]  # 비교 검토
+node dbtool.mjs vocab locations actions         # 통제 어휘 보기
+node --test tests/*.test.mjs                    # 규칙 테스트
+```
+
+## 파일
 
 | 경로 | 내용 |
 |---|---|
-| `data/db.json` | 실제 데이터베이스. 이 파일이 원본이다. |
-| `data/patches/` | 병합된 패치 기록(시각-이름.json). 누가 언제 무엇을 넣었는지 추적용. |
+| `data/db.json` | 데이터베이스 원본 (형식 **v10**) |
+| `data/fetched/` | 외부 원본 수신함 (도장의 증거 — 고치지 않음). `consensus/` 는 추세 점검용 더 새 원본 |
+| `examples/scenarios/` | 속도 기반 시뮬레이션용 가상 시나리오 (지식이 아님) |
+| `limitations.md` | 한계 등록부 (data/db.json 에서 생성, 직접 고치지 않음) |
+| `data/patches/` | 병합된 패치 기록 |
+| `vocab.js` | 통제 어휘(위치·특징·종 …)·외부 ID 형식·관계의 kind 제약 |
+| `model.js` | [공유] 형식·정규화·색인·참조·속도 법칙 정의 (브라우저와 Node 공용) |
+| `core.js` | [행정] 읽기·질의·시뮬레이션 — 원자료만 |
+| `judicial/` | [사법] 검사·관문·감사·독립 질량 검증·운명 판정·보고서·신원 확인·증명 도장 |
+| `legislative/` | [입법] merge·패치 초안, `clerk.mjs` = 유일한 파일 쓰기 |
+| `orchestrator.js` | 조정자 (행정 실행 → 사법 판정) |
+| `compiler/` | [공유] db + 시나리오 → 불변 IR (정수 번호·기호 도함수 테이프) |
+| `engine/rust/` | [행정] Rust/WASM 운명 엔진 (기본 백엔드, 테이프 해석기 + 결합 Rodas3 — `sh engine/rust/build.sh`). 결정 탐침은 `engine/probe_pool.js` 가 워커마다 WASM 인스턴스로 병렬 |
+| `attestations/registry.json` | 증명 도장 (verified 의 근거, 서기만 씀) — 설계 `docs/design/tripartite-governance.md` |
+| `dbtool.mjs` | 명령줄 도구 |
+| `viewer.html`, `index.html` | 화면 |
+| `SCHEMA.md` | 규칙 명세와 변경 기록 |
+| `docs/textbook/` | 교과서 (00-목차부터), storage-map.json, 자동 생성 부록 |
+| `docs/design/scaling-limits.md` | 규모가 커지면 어디가 먼저 터지는지 **측정** 기록 + 구조/하드웨어 판정 + 쪼개기 방아쇠 |
+| `migrations/` | 형식 변환 스크립트, 옛 ID ↔ 번호 대응표 |
+| `tests/` | 규칙 테스트 |
+| `examples/` | 패치 예시 (`pgm-isomerization.json`: 원천이 규칙을 소유하고 단계는 규칙 참조 + 묶음, 이름·별칭이 번호로 매핑되는 예) |
+| `FEATURES.md` | 특징 층·가설 층 설계 (가설 층은 아직 구현 전) |
+| `DESIGN-v4.md` | 형식 v4 설계 배경: 원천(정의항) 중심 소유, 위치 의존 기전, 종 |
 
-웹 서버(GitHub Pages 등)로 `viewer.html` 을 열면 `data/db.json` 을 자동으로 읽는다.
-파일로 직접 열었다면 **불러오기**로 `data/db.json` 을 선택한다.
-화면에서 반영한 내용은 브라우저에만 남으므로, 저장소에 넣으려면 **저장**한 파일을 `data/db.json` 으로 교체하거나 AI 에이전트에게 패치 병합을 맡긴다.
+## 아직 안 된 것
 
-### 명령줄 (`dbtool.mjs`, Node 18+) — AI 에이전트용
-
-기본 저장소는 `data/db.json` (다른 파일은 `--db 경로`).
-
-```sh
-node dbtool.mjs status                          # 저장소 요약
-node dbtool.mjs prompt   [자료.txt]              # 작성 지침 + 현재 색인
-node dbtool.mjs merge    patch.json [--dry]      # 검사 후 병합 + data/patches/ 에 기록 (오류 있으면 저장 안 함)
-node dbtool.mjs context  효소 [--up 4 --down 1]       # 정의 맥락 + 기전 참여
-node dbtool.mjs mechanism "에피네프린에 의한 글리코겐 분해"   # 경로의 단계를 이어지는 순서로
-node dbtool.mjs mechanism step:6 [--up 3 --down 3]   # 한 단계의 앞뒤 사슬
-node dbtool.mjs validate
-node dbtool.mjs migrate  bionote_v3_묶음.json > patch.json
-```
-
-## 패치 형식 (AI 출력)
-
-```json
-{
-  "format": "definition-db-patch",
-  "version": 1,
-  "terms": {
-    "리보자임": {
-      "aliases": ["ribozyme"],
-      "definientia": [{
-        "id": "리보자임#+1",
-        "text": "촉매 활성을 가진 RNA 분자",
-        "context": "분자생물학",
-        "links": [
-          { "to": "효소#2", "rel": "is_a", "span": "촉매 활성", "note": "넓은 뜻의 효소에만 속함" },
-          { "to": "RNA#1",  "rel": "is_a", "span": "RNA" }
-        ],
-        "by": "Claude", "at": "2026-10-08"
-      }]
-    }
-  },
-  "steps": [{
-    "id": "step:+1", "label": "글리코겐 인산화효소 활성화", "action": "인산화",
-    "agents":  [{ "ref": "인산화효소 키네이스#1", "state": "인산화(활성)" }],
-    "inputs":  [{ "ref": "글리코겐 인산화효소#1", "state": "b형(비인산화)" }, { "ref": "ATP#1", "minor": true }],
-    "outputs": [{ "ref": "글리코겐 인산화효소#1", "state": "a형(인산화)" },  { "ref": "ADP#1", "minor": true }],
-    "context": "간세포 세포질", "part_of": ["에피네프린에 의한 글리코겐 분해#1"]
-  }],
-  "remove": []
-}
-```
-
-- 새 정의항은 `피정의항#+1`, 새 단계는 `step:+1` 같은 임시 id → 병합 때 다음 번호로 바뀌고, 같은 패치 안의 연결도 함께 바뀐다.
-- 기존 id 를 쓰면 그 정의항이 통째로 교체된다. `remove` 의 정의항·단계는 삭제되고 그것을 가리키던 연결도 정리된다.
-
-예시는 [`examples/sample-patch.json`](examples/sample-patch.json). 현재 저장소 내용은 [`data/db.json`](data/db.json).
-
-## 이전 bionote v3 에서 옮기기
-
-v3 의 개념(피정의항·정의항·예시항·공리항)은 그대로 변환된다. 역할은
-상위범주→`is_a`, 구성요소→`has_part`, 조건→`requires`, 대비→`contrasts`, 기능·미정→`refers` 로 바뀌고 공리항은 피정의항 `note` 로 들어간다.
-v3 에는 "어느 뜻"과 "맥락" 정보가 없으므로 변환 후 경고가 뜬다. 지침과 함께 AI에게 보완을 맡기면 된다.
-반응·시간축 탭은 아직 옮기지 않았다.
+- **속도 상수**: 규칙의 `kinetics` 는 **2건**뿐이다(시트르산 회로의 아이소시트르산 탈수소효소·푸마레이스 — 사람 효소의 kcat·Km, 등급 `parameter`). 확인한 값만 넣기 때문이다. 나머지 시뮬레이션 상수는 모두 `hypothetical: true` 시나리오에서 오고, 그 결과는 도달 여부로만 읽는다. (등급 관문이 이걸 강제한다)
+- **관찰 기록**: `observations` **15건**(문헌 kcat·Km 4건 + eQuilibrator ΔG°′ 8건 + 시트르산 생성효소 Km 1건 + 미토콘드리아 기질 NAD 농도·NADH 유도값 2건) — 규칙 상수의 출처(`kinetics.from`)와 시작 농도로 쓰이는 기록이고, 측정 장비에서 포트(`schemas/obs/`)로 들어온 것은 아직 없다. 실측값을 지어내지 않는다.
+- **농도·부피**: 구획 부피 3건(미토콘드리아 181 fL · HeLa 세포질 1600 fL · 섬유아세포 핵 500 fL)과 농도 2건이 정의항 `obs` 에 있어 **시나리오가 주지 않으면 데이터에서 시작량·반응 부피가 정해진다**(`concentration × compartment_volume`). 아직 열두 저장소 중 하나(NAD⁺)뿐이고, 산물로만 등장하는 묶음은 엔진이 데이터를 보지 않는다(L000103). 부피는 관찰 기록으로 받을 수 없다 — 측정량에 부피가 없다(L000102).
+- **추세의 신선도 증명**: 합의 수신함의 원본이 실제로 더 새 것인지는 바이트로 증명할 수 없다(한계 L000085) — 창(365일)으로 만료시키는 것이 지금의 답이다.
+- **역할별 지문**: 정의항의 지문은 하나인데 ChEBI 역할은 여럿이다(한계 L000086).
+- **가설 층**: [`FEATURES.md`](FEATURES.md) 에 설계만 있음. (특징은 v4 에서 정의항의 부위·규칙·관찰로 구현됨)
+- **3차원 구조**: 부위·막 위상·구성 요소는 있지만, PDB 구조 참조·좌표·결합/충돌의 물리 결과는 아직 없음.
+- **수송 단계 예시**: 수송 효과와 검사는 있지만 저장소에 수송 단계는 아직 없음.
+- **저장 방식**: 지금은 JSON 파일 하나. **정의항 약 20만 개에서 `readFileSync(utf8)` 가 던진다**(V8 최대 문자열 537 MB) — 측정과 방아쇠는 [`docs/design/scaling-limits.md`](docs/design/scaling-limits.md). 쪼개는 일은 '파일 나누기' 가 아니라 **검증을 부분 단위로 다시 정의하는 일**이다(봉인이 db 전체 sha256 에 묶여 있다).

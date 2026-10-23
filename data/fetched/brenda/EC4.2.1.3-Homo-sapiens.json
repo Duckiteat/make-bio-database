@@ -1,0 +1,82 @@
+{
+ "source": "BRENDA SOAP getTurnoverNumber·getKmValue·getReference",
+ "ecNumber": "4.2.1.3",
+ "organism": "Homo sapiens",
+ "queried": "2026-10-16",
+ "turnoverNumber": [
+  {
+   "literature": [
+    771307
+   ],
+   "substrate": "citrate",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 7.4, 25?C",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "10.2",
+   "ecNumber": "4.2.1.3",
+   "ligandStructureId": 125
+  },
+  {
+   "literature": [
+    771307
+   ],
+   "substrate": "isocitrate",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 7.4, 25?C",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "14.1",
+   "ecNumber": "4.2.1.3",
+   "ligandStructureId": 242
+  },
+  {
+   "literature": [
+    771307
+   ],
+   "substrate": "cis-aconitate",
+   "turnoverNumberMaximum": null,
+   "commentary": "pH 7.4, 25?C",
+   "organism": "Homo sapiens",
+   "turnoverNumber": "23.8",
+   "ecNumber": "4.2.1.3",
+   "ligandStructureId": 933
+  }
+ ],
+ "kmValue": [
+  {
+   "literature": [
+    771307
+   ],
+   "substrate": "cis-aconitate",
+   "kmValue": "0.0079",
+   "kmValueMaximum": null,
+   "commentary": "pH 7.4, 25?C",
+   "organism": "Homo sapiens",
+   "ecNumber": "4.2.1.3",
+   "ligandStructureId": 933
+  },
+  {
+   "literature": [
+    771307
+   ],
+   "substrate": "isocitrate",
+   "kmValue": "0.1",
+   "kmValueMaximum": null,
+   "commentary": "pH 7.4, 25?C",
+   "organism": "Homo sapiens",
+   "ecNumber": "4.2.1.3",
+   "ligandStructureId": 242
+  },
+  {
+   "literature": [
+    771307
+   ],
+   "substrate": "citrate",
+   "kmValue": "0.95",
+   "kmValueMaximum": null,
+   "commentary": "pH 7.4, 25?C",
+   "organism": "Homo sapiens",
+   "ecNumber": "4.2.1.3",
+   "ligandStructureId": 125
+  }
+ ]
+}

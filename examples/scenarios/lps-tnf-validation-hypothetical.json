@@ -1,0 +1,339 @@
+{
+  "name": "LPS 검증 — 대식세포 TNF 반응 대조군 (사전 등록)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 기전이 그 값에서 어떻게 흐르는지 보기 위한 크기 정도 값. [검증 대조군] 교란 없는 대조군 — 교란은 관찰이 선언. LPS→TLR4→MyD88→NF-κB→TNF 사슬 전체에 완만한(비뻣뻣) 상수를 줘 fate 엔진에서 TNF mRNA 까지 흐르게 한다 — 검증은 방향만 보므로 크기는 위상을 지키는 선에서 낮게 둔다(막 2D 묶음 부피는 유효 부피).",
+  "cell": "macrophage",
+  "volumes": {
+    "extracellular": {
+      "value": {
+        "assume": "A000347"
+      },
+      "unit": "fL"
+    },
+    "cytosol": {
+      "value": {
+        "assume": "A000333"
+      },
+      "unit": "fL"
+    },
+    "nucleoplasm": {
+      "value": {
+        "assume": "A000357"
+      },
+      "unit": "fL"
+    },
+    "plasma_membrane": {
+      "value": {
+        "assume": "A000360"
+      },
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000064|extracellular": {
+      "assume": "A000195"
+    },
+    "D000065|extracellular": {
+      "assume": "A000196"
+    },
+    "D000066|plasma_membrane": {
+      "assume": "A000197"
+    },
+    "D000069|plasma_membrane": {
+      "assume": "A000198"
+    },
+    "D000071|plasma_membrane": {
+      "assume": "A000199"
+    },
+    "D000072|cytosol": {
+      "assume": "A000200"
+    },
+    "D000073|cytosol": {
+      "assume": "A000201"
+    },
+    "D000074|cytosol": {
+      "assume": "A000202"
+    },
+    "D000076|cytosol": {
+      "assume": "A000203"
+    },
+    "D000081|cytosol": {
+      "assume": "A000204"
+    },
+    "D000085|cytosol": {
+      "assume": "A000205"
+    },
+    "D000090|cytosol": {
+      "assume": "A000206"
+    },
+    "D000095|cytosol": {
+      "assume": "A000207"
+    },
+    "D000098|cytosol": {
+      "assume": "A000210"
+    }
+  },
+  "kinetics": {
+    "D000065/rule/lps_binding": {
+      "law": "binding",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "k_on": {
+        "assume": "A000014"
+      },
+      "k_off": {
+        "assume": "A000013"
+      }
+    },
+    "D000065/rule/lps_transfer": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000016"
+      }
+    },
+    "D000066/rule/lps_transfer": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000017"
+      }
+    },
+    "D000070/rule/dimerize": {
+      "law": "binding",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "k_on": {
+        "assume": "A000019"
+      },
+      "k_off": {
+        "assume": "A000018"
+      }
+    },
+    "D000070/rule/tirap_recruit": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000021"
+      }
+    },
+    "D000070/rule/myddosome_nucleation": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000020"
+      }
+    },
+    "D000075/rule/irak1_phos": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000022"
+      }
+    },
+    "D000075/rule/traf6_binding": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000024"
+      }
+    },
+    "D000075/rule/traf6_k63": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000025"
+      }
+    },
+    "D000075/rule/tak1_activation": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000023"
+      }
+    },
+    "D000081/rule/ikkb_s177": {
+      "law": "michaelis_menten",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "kcat": {
+        "assume": "A000027"
+      },
+      "Km": {
+        "assume": "A000026"
+      }
+    },
+    "D000081/rule/ikkb_s181": {
+      "law": "michaelis_menten",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "kcat": {
+        "assume": "A000029"
+      },
+      "Km": {
+        "assume": "A000028"
+      }
+    },
+    "D000085/rule/ikba_s32": {
+      "law": "michaelis_menten",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "kcat": {
+        "assume": "A000031"
+      },
+      "Km": {
+        "assume": "A000030"
+      }
+    },
+    "D000085/rule/ikba_s36": {
+      "law": "michaelis_menten",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "kcat": {
+        "assume": "A000034"
+      },
+      "Km": {
+        "assume": "A000033"
+      }
+    },
+    "D000095/rule/ikba_k48": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000038"
+      }
+    },
+    "D000098/rule/ikba_degradation": {
+      "law": "michaelis_menten",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "kcat": {
+        "assume": "A000042"
+      },
+      "Km": {
+        "assume": "A000041"
+      }
+    },
+    "D000089/rule/nuclear_import": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000036"
+      }
+    },
+    "D000100/rule/kb_binding": {
+      "law": "binding",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "k_on": {
+        "assume": "A000046"
+      },
+      "k_off": {
+        "assume": "A000044"
+      }
+    },
+    "D000100/rule/transcription": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "k": {
+        "assume": "A000048"
+      }
+    },
+    "D000101/rule/turnover": {
+      "law": "mass_action",
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "order": 1,
+      "half_life": {
+        "assume": "A000049"
+      }
+    }
+  },
+  "reservoirs": {
+    "D000032|cytosol": {
+      "assume": "A000266"
+    },
+    "D000033|cytosol": {
+      "assume": "A000268"
+    },
+    "D000034|cytosol": {
+      "assume": "A000270"
+    },
+    "D000037|cytosol": {
+      "assume": "A000278"
+    },
+    "D000122|cytosol": {
+      "assume": "A000283"
+    },
+    "D000077|cytosol": {
+      "assume": "A000282"
+    },
+    "D000013|nucleoplasm": {
+      "assume": "A000264"
+    }
+  },
+  "dt_slow": 60,
+  "t_end": 1800
+}

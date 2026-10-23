@@ -1,0 +1,30 @@
+{
+  "format": "definition-db-patch",
+  "terms": [
+    {
+      "id": "T+1",
+      "names": {
+        "ko": "이유 없는 개념"
+      }
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+1",
+      "term": "T+1",
+      "kind": "concept",
+      "desc": [
+        {
+          "text": "변경 이유 없이 들어오려는 개념",
+          "field": "생화학",
+          "context": {
+            "scope": "거부 말뭉치"
+          },
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    }
+  ]
+}

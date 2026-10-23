@@ -1,0 +1,129 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "senses": [
+    {
+      "id": "D000123",
+      "rule": [
+        {
+          "id": "gtp_regeneration",
+          "type": "supply",
+          "label": "GTP 재생 (GDP + ATP → GTP + ADP)",
+          "consumes": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "G 단백질 순환이 쓴 GDP 를 ATP 의 인산으로 GTP 로 되돌린다 — GTP–GDP 순환을 닫는 공급.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        },
+        {
+          "id": "gdp_regeneration_matrix",
+          "type": "supply",
+          "label": "기질 GDP 재생 (GTP + ADP → GDP + ATP)",
+          "consumes": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "where": [
+            "mito_matrix"
+          ],
+          "text": "NDPK 반응은 가역 — 미토콘드리아 기질에서는 석시닐-CoA 합성효소가 만든 GTP 의 인산을 ADP 로 넘겨 GDP 를 되돌린다 (기질 쪽 아형의 존재·속도는 미확인).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "EC 2.7.4.6 반응식(NTP + NDP 교환, 가역)을 기질의 GTP/ADP 방향에 적용 — 시트르산 회로 소진 시험에서 기질 GDP 고갈이 드러나 추가"
+          }
+        },
+        {
+          "id": "gtp_regeneration_copy",
+          "type": "supply",
+          "label": "같은 공급 규칙 복제",
+          "consumes": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "G 단백질 순환이 쓴 GDP 를 ATP 의 인산으로 GTP 로 되돌린다 — GTP–GDP 순환을 닫는 공급.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000123/rule/gtp_regeneration_copy",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "복제 규칙의 속도 상수",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000123/rule/gtp_regeneration_copy",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "name": "TCA 소진 시험 3 — CO₂ 축적으로 평형 정지 (가상)",
+  "hypothetical": true,
+  "_설명": "모든 단계에 가상 질량 작용 속도(단계마다 1차 상수 약 10 s⁻¹), 아이소시트르산 탈수소효소를 가역(역반응 ∝ [2-옥소글루타르산][CO₂])으로, CO₂ 배출 없음, 아세틸-CoA·GDP·Pi 는 넉넉. 기대: 기질은 남았는데 CO₂ 가 쌓여 역반응이 정반응을 따라잡아 회로 속도가 최고의 5% 아래로(평형 정지 — 1/√t 로 느려지므로 상대 기준 death_frac 0.05). Δt ≤ 0.005 s 에서 수렴(0.005 와 0.0025 의 정지 시각 차 약 1%) — 더 큰 Δt 는 적분 안정성 감사가 잡는다. 모든 값은 가상이다 — 엔진 시험용, data/db.json 에 들어가지 않는다.",
+  "until_death": true,
+  "window": 10,
+  "volumes": {
+    "mito_matrix": {
+      "value": {
+        "assume": "A000352"
+      },
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000149|mito_matrix": {
+      "assume": "A000224"
+    },
+    "D000150|mito_matrix": {
+      "assume": "A000226"
+    },
+    "D000151|mito_matrix": {
+      "assume": "A000228"
+    },
+    "D000152|mito_matrix": {
+      "assume": "A000230"
+    },
+    "D000153|mito_matrix": {
+      "assume": "A000232"
+    },
+    "D000154|mito_matrix": {
+      "assume": "A000234"
+    },
+    "D000155|mito_matrix": {
+      "assume": "A000236"
+    },
+    "D000156|mito_matrix": {
+      "assume": "A000238"
+    },
+    "D000136|mito_matrix": {
+      "assume": "A000216"
+    },
+    "D000135|mito_matrix": {
+      "assume": "A000213"
+    }
+  },
+  "reservoirs": {
+    "D000134|mito_matrix": {
+      "assume": "A000287"
+    },
+    "D000144|mito_matrix": {
+      "assume": "A000292"
+    },
+    "D000145|mito_matrix": {
+      "assume": "A000294"
+    },
+    "D000146|mito_matrix": {
+      "assume": "A000295"
+    },
+    "D000147|mito_matrix": {
+      "assume": "A000297"
+    },
+    "D000036|mito_matrix": {
+      "assume": "A000276"
+    },
+    "D000037|mito_matrix": {
+      "assume": "A000281"
+    },
+    "D000035|mito_matrix": {
+      "assume": "A000272"
+    }
+  },
+  "kinetics": {
+    "D000157/rule/nad_regen": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000071"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000158/rule/fad_regen": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000073"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000149/rule/condense": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000061"
+      },
+      "order": 3,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000150/rule/isomerize": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000062"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000151/rule/oxdecarb": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000063"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      },
+      "reversible": true,
+      "k_r": {
+        "assume": "A000064"
+      }
+    },
+    "D000152/rule/oxdecarb": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000065"
+      },
+      "order": 3,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000153/rule/slp": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000066"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000154/rule/oxidize": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000067"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000155/rule/hydrate": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000068"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000156/rule/oxidize": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000069"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "death_frac": 0.05
+}

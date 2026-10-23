@@ -1,0 +1,84 @@
+{
+  "applied_at": "2026-10-16T16:54:34.808Z",
+  "result": {
+    "added": [
+      "L000114"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000114"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "텔로미어 검증(O000027, Bodnar 1998, 사전 등록 #4)이 안고 있는 맥락 이전과 상수 전제를 데이터로 등록한다. 원문은 사람 섬유아세포와 망막색소상피(RPE)에서 측정했는데 모델 판정은 증식 섬유아세포 상태(D000210)에서만 한다 — 섬유아세포 분은 맞으나 RPE 분은 맥락 이전(V8). 결론(방향 일치)은 유효하되 전제를 숨기지 않는다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000114",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000114",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db",
+  "version": 12,
+  "why": "텔로미어 검증(O000027, Bodnar 1998, 사전 등록 #4)이 안고 있는 맥락 이전과 상수 전제를 데이터로 등록한다. 원문은 사람 섬유아세포와 망막색소상피(RPE)에서 측정했는데 모델 판정은 증식 섬유아세포 상태(D000210)에서만 한다 — 섬유아세포 분은 맞으나 RPE 분은 맥락 이전(V8). 결론(방향 일치)은 유효하되 전제를 숨기지 않는다.",
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000210",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "정성 관찰 O000027(Bodnar et al., 1998 — hTERT 도입이 사람 섬유아세포·RPE 의 텔로미어 단축·노화를 막음)은 사람 섬유아세포와 망막색소상피(RPE) 두 세포에서 측정했는데, 모델은 증식 섬유아세포 상태(D000210)에서만 판정한다. 섬유아세포 분은 세포가 맞으나 RPE 분은 섬유아세포 상태로 판정하는 맥락 이전(V8)이다(observe 가 자동으로 깃발을 단다). 또 상수가 전부 가상이라 방향(telomerase 차단 → 텔로미어 반복 길이 감소)만 결론이고 크기(−1251 단위)는 측정 예측이 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "RPE 세포 상태를 모델에 추가하거나, 섬유아세포만 측정한 1차 문헌 관찰로 바꾸면 RPE 분 맥락 이전이 사라진다. 텔로미어 소모·신장 속도의 실측 상수가 들어오면 크기도 검증 범위에 든다."
+          }
+        ]
+      },
+      "found_in": "TIER A 독립 축 — O000027 텔로미어 검증(사전 등록 #4), node dbtool.mjs observe O000027 --state D000210 --scenario examples/scenarios/telomere-telomerase-validation-hypothetical.json, 2026-10-16",
+      "by": "Claude"
+    }
+  ],
+  "recorded_at": "2026-10-16T16:54:34.055Z"
+}

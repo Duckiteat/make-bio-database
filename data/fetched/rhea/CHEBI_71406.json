@@ -1,0 +1,7 @@
+Reaction identifier	Equation	ChEBI identifier
+RHEA:25269	(R)-noradrenaline + S-adenosyl-L-methionine = (R)-adrenaline + S-adenosyl-L-homocysteine + H(+)	CHEBI:72587;CHEBI:59789;CHEBI:71406;CHEBI:57856;CHEBI:15378
+RHEA:51168	(R)-adrenaline + O2 + H2O = (R)-3,4-dihydroxymandelaldehyde + methylamine + H2O2	CHEBI:71406;CHEBI:15379;CHEBI:15377;CHEBI:180943;CHEBI:59338;CHEBI:16240
+RHEA:72251	(R)-adrenaline + S-adenosyl-L-methionine = (R)-metanephrine + S-adenosyl-L-homocysteine + H(+)	CHEBI:71406;CHEBI:59789;CHEBI:189646;CHEBI:57856;CHEBI:15378
+RHEA:73751	(R)-adrenaline(in) + 2 H(+)(out) = (R)-adrenaline(out) + 2 H(+)(in)	CHEBI:71406;CHEBI:15378
+RHEA:73875	(R)-adrenaline(out) = (R)-adrenaline(in)	CHEBI:71406
+RHEA:83343	(R)-adrenaline + 3'-phosphoadenylyl sulfate = (R)-adrenaline 4'-O-sulfate + adenosine 3',5'-bisphosphate + H(+)	CHEBI:71406;CHEBI:58339;CHEBI:233043;CHEBI:58343;CHEBI:15378

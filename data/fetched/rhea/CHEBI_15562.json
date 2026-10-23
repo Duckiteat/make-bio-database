@@ -1,0 +1,10 @@
+Reaction identifier	Equation	ChEBI identifier
+RHEA:10336	citrate = D-threo-isocitrate	CHEBI:16947;CHEBI:15562
+RHEA:10820	D-threo-isocitrate = D-erythro-isocitrate	CHEBI:15562;CHEBI:15563
+RHEA:13245	D-threo-isocitrate = glyoxylate + succinate	CHEBI:15562;CHEBI:36655;CHEBI:30031
+RHEA:19629	D-threo-isocitrate + NADP(+) = 2-oxoglutarate + CO2 + NADPH	CHEBI:15562;CHEBI:58349;CHEBI:16810;CHEBI:16526;CHEBI:57783
+RHEA:20756	D-threo-isocitrate + (E)-caffeoyl-CoA = 2-[(E)-caffeoyl]-D-threo-isocitrate(3-) + CoA	CHEBI:15562;CHEBI:87136;CHEBI:153067;CHEBI:57287
+RHEA:22144	cis-aconitate + H2O = D-threo-isocitrate	CHEBI:16383;CHEBI:15377;CHEBI:15562
+RHEA:23632	D-threo-isocitrate + NAD(+) = 2-oxoglutarate + CO2 + NADH	CHEBI:15562;CHEBI:57540;CHEBI:16810;CHEBI:16526;CHEBI:57945
+RHEA:25588	D-threo-isocitrate + NADP(+) = (S)-oxalosuccinate + NADPH + H(+)	CHEBI:15562;CHEBI:58349;CHEBI:153066;CHEBI:57783;CHEBI:15378
+RHEA:72471	D-threo-isocitrate(in) + citrate(out) = D-threo-isocitrate(out) + citrate(in)	CHEBI:15562;CHEBI:16947

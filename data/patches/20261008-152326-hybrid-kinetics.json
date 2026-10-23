@@ -1,0 +1,287 @@
+{
+  "applied_at": "2026-10-08T15:23:26.758Z",
+  "result": {
+    "added": [
+      "T000115",
+      "T000116",
+      "D000117",
+      "D000118",
+      "L000017"
+    ],
+    "updated": [
+      "D000070",
+      "L000004",
+      "L000005",
+      "L000006",
+      "L000011"
+    ],
+    "removed": [],
+    "mapped": [
+      {
+        "from": "LPS–TLR4–NF-κB 신호 전달",
+        "to": "D000102",
+        "via": "이름 'LPS–TLR4–NF-κB 신호 전달'"
+      }
+    ]
+  },
+  "format": "definition-db-patch",
+  "version": 6,
+  "_설명": "혼합 해상도 모델·반응 속도 모델(원리) 추가, Kinetic_Gap 해결 경로를 규칙 kinetics 로 바꿈, L000011 해결 경로 교정, 2D 환산 한계 등록, 반응 중심 구조 3FXI 참조",
+  "terms": [
+    {
+      "id": "T+rate",
+      "names": {
+        "ko": "반응 속도 모델",
+        "en": "rate-based kinetic model"
+      }
+    },
+    {
+      "id": "T+hybrid",
+      "names": {
+        "ko": "혼합 해상도 모델",
+        "en": "hybrid-resolution model"
+      }
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+rate",
+      "term": "T+rate",
+      "kind": "principle",
+      "desc": [
+        {
+          "text": "기전 단계를 일어났는지 여부가 아니라 속도 상수와 농도로 정해지는 속도로 진행시키고, 농도는 분자 수를 구획 부피와 아보가드로 수로 나눠 구하는 원리",
+          "field": "세포생물학",
+          "context": {
+            "scope": "기전 시뮬레이션"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "한계 L000004·L000005·L000006(경쟁·시간을 사건 순서로만 정함)과 혼합 해상도 계획의 T3 경쟁에서 설계"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L000004",
+          "how": "규칙 kinetics(binding: k_on·k_off·Kd)가 들어오면 κB 자리 경쟁이 순서가 아니라 농도 × 친화도로 정해진다. 해결 경로가 규칙의 Kd 라 값이 들어오는 순간 자동 resolved."
+        },
+        {
+          "limitation": "L000005",
+          "how": "PDE(michaelis_menten: kcat·Km)와 PKA 활성화(binding: Kd)를 같은 cAMP 농도에서 동시에 적분 — 3차원 구조 없이 T3 경쟁을 R1 에서 푼다."
+        },
+        {
+          "limitation": "L000006",
+          "how": "시간 축(dt 적분)이 생겨 신호가 처음 도달하는 시각·지속·종료를 계산한다. 감사가 Kd=k_off/k_on, 질량 작용 차수, 평형 일치를 검사한다."
+        }
+      ],
+      "note": "값은 SI 정준 단위로 규칙(D…/rule/키)의 kinetics 에 둔다. 측정값이 없는 곳은 \"즉시\" 처리하고 AUDIT_KINETIC_GAP 으로 보고한다. 시험용 값은 시나리오 파일에만 둔다(examples/scenarios)."
+    },
+    {
+      "id": "D+hybrid",
+      "term": "T+hybrid",
+      "kind": "principle",
+      "desc": [
+        {
+          "text": "모든 분자를 3차원으로 다루지 않고, 풀 속 분자는 위치·상태만으로, 부위 사건은 이름 붙은 부위로, 경쟁을 속도 상수로 가를 수 없는 반응 중심만 3차원 구조로 다루며 그 사이의 전환 문턱을 정하는 원리",
+          "field": "세포생물학",
+          "context": {
+            "scope": "기전 시뮬레이션"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Structural_Gap 9건 중 무엇이 실제로 계산에 필요한지 가리기 위해 설계 — 두 경로의 해상도 계획(resolution)에서 R2 가 필요한 단계는 cAMP 경쟁 2개뿐"
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L000010",
+          "how": "마이도솜 조립은 T2(화학량) 문턱으로 R1 이면 충분 — 3차원 구조는 경쟁이 생길 때만 필요하므로 이 한계를 계산 경로 밖의 정확도 과제로 분류한다(부분)."
+        },
+        {
+          "limitation": "L000012",
+          "how": "IKK 의 NEMO 화학량도 T2 — R1 에서 계산되고, 구조는 정확도 과제로 남는다(부분)."
+        },
+        {
+          "limitation": "L000013",
+          "how": "프로테아좀은 분해 사건의 행위자일 뿐 반응 중심 부위가 없어 R0–R1 로 충분 — 소단위 열거는 계산에 필요하지 않다(부분)."
+        },
+        {
+          "limitation": "L000011",
+          "how": "TIRAP 결합(S000016)은 경쟁이 없는 T1 사건이라 R1 로 계산된다. 구조가 필요해지는 문턱은 다른 어댑터와 TIR 발판을 두고 경쟁할 때다(부분)."
+        }
+      ],
+      "note": "전환 문턱(vocab.js resolutionThresholds): T1 부위 사건 → R1, T2 구성 요소 화학량 → R1, T3 경쟁 → 속도 상수가 있으면 R1, 없으면 R2. 하향 전환(반응 중심 → 풀)은 바뀐 부위가 묶음 키에 남아 무손실."
+    },
+    {
+      "id": "D000070",
+      "xrefs": [
+        {
+          "db": "PDB",
+          "id": "3FXI",
+          "status": "asserted",
+          "note": "RCSB 3FXI — 웹 검색으로 항목 설명 확인, 원본 직접 대조는 못 함"
+        }
+      ],
+      "site": {
+        "lps_pocket": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "on": "D000069",
+          "face": "extracellular",
+          "ligand": "D000064",
+          "note": "단위마다 LPS 1분자 (Park et al., 2009, m 자 모양 다량체)",
+          "structure": {
+            "db": "PDB",
+            "id": "3FXI",
+            "note": "사람 TLR4–MD-2–E. coli LPS Ra 다량체 결정 구조(3.1 Å, Park et al., 2009). 사슬·잔기 범위는 아직 기록하지 않음"
+          }
+        },
+        "tir": {
+          "type": "binding_site",
+          "features": [
+            "bound"
+          ],
+          "on": "D000069",
+          "face": "cytosolic",
+          "ligand": "D000071",
+          "note": "가까워진 TIR 도메인이 만든 어댑터 결합 발판 — 단위마다 TIRAP 1분자로 둠"
+        }
+      }
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L000004",
+      "target": "D000100/rule/kb_binding",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NF-κB 가 여러 프로모터의 κB 자리를 두고 경쟁하는데 결합 친화도가 없어 누가 먼저 차지하는지 단계 순서로 정해진다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000100/rule/kb_binding",
+            "params": [
+              "Kd"
+            ]
+          }
+        ]
+      },
+      "found_in": "재사용 시연(NFKBIA 표적 추가)",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L000005",
+      "target": "D000049/rule/camp_hydrolysis",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "cAMP 를 PKA 활성화와 PDE 분해가 나눠 갖는 비율 — 이산 시뮬레이션은 촉매 수로만 정한다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000049/rule/camp_hydrolysis",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000042/rule/camp_release",
+            "params": [
+              "Kd"
+            ]
+          }
+        ]
+      },
+      "found_in": "첫 시뮬레이션: 한 라운드 1회 발화에서 PDE 가 cAMP 를 먼저 다 분해해 PKA 가 켜지지 않음 → 촉매 수만큼 발화로 우회",
+      "by": "Claude",
+      "at": "2026-10-08",
+      "note": "혼합 해상도 계획의 T3 경쟁(cAMP 를 S000006·S000007 이 소비)과 같은 한계 — 속도 상수가 들어오면 3차원 구조 없이 R1 에서 해결된다."
+    },
+    {
+      "id": "L000006",
+      "target": "D000102",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "단계에 시간이 없다 — 신호의 지속·종료(IκBα 재합성, 탈인산화)와 진동을 다룰 수 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000085/rule/ikba_s32",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000098/rule/ikba_degradation",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000089/rule/nuclear_import",
+            "params": [
+              "k",
+              "order"
+            ]
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08"
+    },
+    {
+      "id": "L000011",
+      "target": "D000070/site/tir",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "TIR 발판–TIRAP 결합면과 화학량(단위당 1 로 가정)",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "TLR4 TIR 도메인–TIRAP 복합체 구조(PDB) — 세포 밖 도메인 구조(3FXI)로는 해결되지 않음"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 LPS→NF-κB 스트레스 시험",
+      "by": "Claude",
+      "at": "2026-10-08",
+      "note": "처음 등록 때 해결 경로를 \"다량체의 PDB ID\" 로 적었으나, 다량체에 3FXI(세포 밖 도메인)를 붙이면 잘못 resolved 가 되어 2026-10-08 수정."
+    },
+    {
+      "id": "L+2d",
+      "target": "LPS–TLR4–NF-κB 신호 전달",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "막(2D) 분자가 낀 반응을 인접 3D 구획 부피의 농도로 환산함 — 면적 농도(분자/µm²)와 막 면적이 없다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "세포막 면적(세포 유형별)과 면적 농도 모델 — 2D 반응 속도(k_on 단위 µm²/s)를 담을 어휘"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 속도 기반 시뮬레이터(simulate --rate)의 AUDIT_RESOLUTION",
+      "by": "Claude",
+      "at": "2026-10-08"
+    }
+  ],
+  "steps": [],
+  "remove": []
+}

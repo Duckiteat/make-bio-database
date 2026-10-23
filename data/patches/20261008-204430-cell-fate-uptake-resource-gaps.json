@@ -1,0 +1,113 @@
+{
+  "applied_at": "2026-10-08T20:44:30.574Z",
+  "result": {
+    "added": [
+      "L000067",
+      "L000068"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000067",
+          "L000068"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "세포 운명 엔진의 결핍 시나리오 사후 분석이 제한 요인으로 지목한 저장소(세포질 포도당·기질 팔미토일-CoA)를 Resource_Gap 으로 등록 — 운명 층은 배지 + 수송체를 '완충 저장소'(남은 양이 한 구획분 이상이면 농도 고정, 총량은 유한)로 근사하고, 실제 흡수 경로와 배지 양은 모델 밖",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000067",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000068",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000067",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000068",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "세포 운명 엔진의 결핍 시나리오 사후 분석이 제한 요인으로 지목한 저장소(세포질 포도당·기질 팔미토일-CoA)를 Resource_Gap 으로 등록 — 운명 층은 배지 + 수송체를 '완충 저장소'(남은 양이 한 구획분 이상이면 농도 고정, 총량은 유한)로 근사하고, 실제 흡수 경로와 배지 양은 모델 밖",
+  "limitations": [
+    {
+      "id": "L+glc_uptake",
+      "target": "D000046",
+      "type": "Resource_Gap",
+      "requirement": {
+        "text": "세포 밖 포도당의 흡수(GLUT1 수송)와 배지 포도당 양 — 없으면 운명 층은 세포질 포도당을 완충 저장소(농도 고정·총량 유한)로 두고, 그것이 바닥나면 해당 흐름이 끊겨 효과기 분화가 멈춘다(사후 분석의 제한 요인)",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "GLUT1(SLC2A1) 정의항과 세포막 수송 단계(세포 밖 → 세포질)"
+          },
+          {
+            "kind": "obs",
+            "property": "concentration",
+            "on": "D000046",
+            "location": "extracellular"
+          }
+        ]
+      },
+      "found_in": "세포 운명 엔진 스트레스 시험 — IL-12 + 포도당 결핍(가상 시나리오) 사후 분석"
+    },
+    {
+      "id": "L+fa_uptake",
+      "target": "D000169",
+      "type": "Resource_Gap",
+      "requirement": {
+        "text": "지방산의 흡수·지질 방울 분해와 활성화(아실-CoA 합성효소)·CPT1 유입 — 없으면 운명 층은 기질 팔미토일-CoA 를 완충 저장소로 두고, 그것이 바닥나면 β-산화가 끊겨 기억 전구 분화가 멈춘다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "CD36·지질 방울 지방분해·아실-CoA 합성효소·CPT1A 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 엔진 스트레스 시험 — IL-15 + 지방산 결핍(가상 시나리오) 사후 분석"
+    }
+  ]
+}

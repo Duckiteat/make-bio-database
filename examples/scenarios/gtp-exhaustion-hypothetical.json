@@ -1,0 +1,107 @@
+{
+  "name": "GTP 고갈 가상 시나리오 (공급 없음)",
+  "_설명": "가상 값. 공급 규칙에 속도를 주지 않아 GTP 저장소가 Gs 순환에 소비만 되고 고갈된다 — 엔진이 고갈을 멈춤(stall)으로 처리하고 무너지지 않는지 본다. data/db.json 에 들어가지 않는다.",
+  "hypothetical": true,
+  "cell": "hepatocyte",
+  "volumes": {
+    "cytosol": {
+      "value": {
+        "assume": "A000332"
+      },
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": {
+        "assume": "A000346"
+      },
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000027|extracellular": {
+      "assume": "A000188"
+    },
+    "D000030|plasma_membrane": {
+      "assume": "A000190"
+    },
+    "D000029|nucleotide:GDP_bound|plasma_membrane": {
+      "assume": "A000189"
+    },
+    "D000031|plasma_membrane": {
+      "assume": "A000191"
+    }
+  },
+  "reservoirs": {
+    "D000035|cytosol": {
+      "assume": "A000271"
+    },
+    "D000036|cytosol": {
+      "assume": "A000273"
+    },
+    "D000032|cytosol": {
+      "assume": "A000265"
+    },
+    "D000033|cytosol": {
+      "assume": "A000267"
+    },
+    "D000034|cytosol": {
+      "assume": "A000269"
+    },
+    "D000037|cytosol": {
+      "assume": "A000277"
+    },
+    "D000122|cytosol": {
+      "assume": "A000283"
+    }
+  },
+  "kinetics": {
+    "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000002"
+      },
+      "order": 2,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000001"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000004"
+      },
+      "Km": {
+        "assume": "A000003"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000009"
+      },
+      "Km": {
+        "assume": "A000008"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  }
+}

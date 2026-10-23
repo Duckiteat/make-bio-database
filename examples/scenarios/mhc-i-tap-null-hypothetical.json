@@ -1,0 +1,18 @@
+{
+  "name": "MHC 가상 — 펩타이드 적재 복합체(TAP) 없음 (MHC I 적재 차단)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 기전(MHC I·II 의 합성 → 수송 → 적재 → 제시 → 분해)이 그 값에서 어떻게 흐르는지 보기 위한 크기 정도 값만 둔다. 막(2D) 묶음의 부피는 그 막의 유효 부피다 (한계 L000079).",
+  "base": "mhc-dc-immature-baseline-hypothetical.json",
+  "perturbation": {
+    "type": "knockout",
+    "target": "D000189"
+  },
+  "context": {
+    "role": "baseline",
+    "state": "D000202",
+    "note": "MHC I 쪽만 끊었을 때 빈 MHC I 의 축적과 소포체 연관 분해 — MHC II 표지는 그대로 낮다"
+  },
+  "expect": {
+    "final": "D000202"
+  }
+}

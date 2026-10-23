@@ -1,0 +1,26 @@
+{
+  "format": "definition-db-patch",
+  "why": "거부 말뭉치 — 이 패치는 반드시 거부되어야 한다 (tests/rejections.test.mjs)",
+  "recorded_at": "",
+  "senses": [
+    {
+      "id": "D000086",
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 317,
+          "context": {
+            "scope": "",
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "asserted",
+            "note": "UniProt P25963 표준 서열 길이 — 판매처·2차 자료(creativebiomart, iPTMnet P25963 항목)에서 확인, UniProt 원본은 직접 대조 못 함"
+          },
+          "unit": "aa",
+          "note": "기록 시각 없이 고침"
+        }
+      ]
+    }
+  ]
+}

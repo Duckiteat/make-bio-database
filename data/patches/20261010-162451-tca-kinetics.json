@@ -1,0 +1,960 @@
+{
+  "applied_at": "2026-10-10T16:24:51.060Z",
+  "result": {
+    "added": [
+      "L000096",
+      "L000097",
+      "L000098",
+      "L000099",
+      "L000100",
+      "O000001",
+      "O000002",
+      "O000003",
+      "O000004",
+      "O000005",
+      "O000006",
+      "O000007",
+      "O000008",
+      "O000009",
+      "O000010",
+      "O000011",
+      "O000012",
+      "O000013"
+    ],
+    "updated": [
+      "D000151",
+      "D000155"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000096",
+          "L000097",
+          "L000098",
+          "L000099",
+          "L000100"
+        ],
+        "observations": [
+          "O000001",
+          "O000002",
+          "O000003",
+          "O000004",
+          "O000005",
+          "O000006",
+          "O000007",
+          "O000008",
+          "O000009",
+          "O000010",
+          "O000011",
+          "O000012",
+          "O000013"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000151",
+          "D000155"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000151": [
+          "rule"
+        ],
+        "D000155": [
+          "rule"
+        ]
+      }
+    },
+    "why": "TCA 회로의 속도 상수를 문헌에서 찾아 넣음 — 사람 효소의 kcat·Km 을 권위 출처(UniProt 큐레이션 + 근거 논문 전문)에서 확인한 두 단계(아이소시트르산 탈수소효소·푸마레이스)만 규칙의 속도 법칙으로. 측정값은 관찰 기록(O…)으로 넣고 규칙의 상수는 kinetics.from 으로 그것을 참조하는 파생값이다. 여덟 반응의 ΔG°′ 는 eQuilibrator 3.0 으로 계산해(측정 아님) 관찰 기록으로 남겼다 — 속도 상수가 없는 여섯 규칙은 kinetics 칸을 쓸 수 없기 때문. 사람 값을 찾지 못한 다섯 효소는 다른 종의 값으로 바꿔 넣지 않고 한계로 등록한다",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [
+        "S000033",
+        "S000037"
+      ],
+      "pathways": [
+        "D000148"
+      ],
+      "limitations": [
+        {
+          "id": "L000038",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000043",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000048",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000096",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000097",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000098",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000099",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000100",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000096",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000097",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000098",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000099",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000100",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "why": "TCA 회로의 속도 상수를 문헌에서 찾아 넣음 — 사람 효소의 kcat·Km 을 권위 출처(UniProt 큐레이션 + 근거 논문 전문)에서 확인한 두 단계(아이소시트르산 탈수소효소·푸마레이스)만 규칙의 속도 법칙으로. 측정값은 관찰 기록(O…)으로 넣고 규칙의 상수는 kinetics.from 으로 그것을 참조하는 파생값이다. 여덟 반응의 ΔG°′ 는 eQuilibrator 3.0 으로 계산해(측정 아님) 관찰 기록으로 남겼다 — 속도 상수가 없는 여섯 규칙은 kinetics 칸을 쓸 수 없기 때문. 사람 값을 찾지 못한 다섯 효소는 다른 종의 값으로 바꿔 넣지 않고 한계로 등록한다",
+  "observations": [
+    {
+      "id": "O+idh_kcat",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000151/rule/oxdecarb",
+        "param": "kcat"
+      },
+      "value": 26.7,
+      "unit": "s^-1",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.1
+      },
+      "precision": 0.1,
+      "replicates": 3,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "temperature_K": 298.15,
+        "pH": 7.4
+      },
+      "use": "estimation",
+      "method": "NADH 340 nm 흡광 (33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C) · 사람 재조합 α2βγ 사량체",
+      "note": "UniProt P50213 이 Ma et al., 2017 에서 큐레이션한 값. 논문·UniProt 모두 kcat 의 불확도를 함께 보고하지 않아 sd 는 보고된 유효 숫자의 해상도(0.1 s⁻¹)로 적었다 — 측정 표준 편차가 아니다. 반복 수 3 은 논문 방법의 three independent experiments.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+idh_km",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000151/rule/oxdecarb",
+        "param": "Km"
+      },
+      "value": 0.00235,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.00005
+      },
+      "precision": 0.00005,
+      "replicates": 3,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "temperature_K": 298.15,
+        "pH": 7.4
+      },
+      "use": "estimation",
+      "method": "아이소시트르산 농도를 바꿔 힐 식 V = Vmax·[S]^h/(S0.5^h + [S]^h) 로 맞춘 S0.5 (DL-아이소시트르산)",
+      "note": "보고값 S0.5,ICT = 2.35 ± 0.05 mM, 힐 계수 1.5 (양성 협동성). 이것을 Km 으로 쓰는 것은 미카엘리스–멘텐 근사다. DL 혼합물 농도 기준이라 D-이성질체만 기질이면 유효 농도는 절반이다. 같은 논문의 S0.5(Mn²⁺) 60.2 ± 6.0 µM · S0.5(NAD) 143 ± 5 µM 는 이 형식에 담을 칸이 없다(기질이 여럿인 속도식).",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/srep41882",
+            "citation": "Ma et al., 2017"
+          },
+          {
+            "db": "PMID",
+            "id": "28139779",
+            "citation": "Ma et al., 2017"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+idh_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000151/rule/oxdecarb",
+        "param": "dG0"
+      },
+      "value": 5600,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 6200
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — isocitrate + NAD+ = 2-oxoglutarate + CO2 + NADH",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±6.2 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+fh_kcat",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000155/rule/hydrate",
+        "param": "kcat"
+      },
+      "value": 170,
+      "unit": "s^-1",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 10
+      },
+      "precision": 10,
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 8.5
+      },
+      "use": "estimation",
+      "method": "사람 재조합 FH, 푸마르산 → 말산 방향, pH 8.5",
+      "note": "UniProt P07954 가 Ajalla Aleixo et al., 2019 에서 큐레이션한 값(논문은 공개 접근이 아니어서 표를 직접 읽지 못했다). 불확도·반복 수가 보고되지 않아 sd 는 유효 숫자 해상도(10 s⁻¹), 반복 수는 1 로 적었다 — 측정 표준 편차가 아니다. 반대 방향(말산 → 푸마르산)은 kcat 280 s⁻¹ · Km 1.4 mM.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+fh_km",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000155/rule/hydrate",
+        "param": "Km"
+      },
+      "value": 0.0002,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.0001
+      },
+      "precision": 0.0001,
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 8.5
+      },
+      "use": "estimation",
+      "method": "사람 재조합 FH, 기질 푸마르산, pH 8.5",
+      "note": "보고값 0.2 mM (UniProt P07954 큐레이션, 출처 논문 열람 불가). sd 는 유효 숫자 해상도(0.1 mM) — 측정 표준 편차가 아니다. 측정 pH 8.5 는 미토콘드리아 기질 pH(≈7.8)와 다르다.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+fh_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000155/rule/hydrate",
+        "param": "dG0"
+      },
+      "value": -3400,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 500
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — fumarate + H2O = malate",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±0.5 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+cs_km_oaa",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000149/rule/condense",
+        "param": "Km"
+      },
+      "value": 0.0000036,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 1e-7
+      },
+      "precision": 1e-7,
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "use": "estimation",
+      "method": "사람 재조합 시트르산 생성효소, 기질 옥살로아세트산",
+      "note": "UniProt O75390 이 Schlachter et al., 2019 에서 큐레이션한 값(3.6 µM). 같은 출처의 아세틸-CoA Km 은 7.7 µM 이고, 기질이 둘인 속도식을 담을 칸이 없어 따로 적지 못했다. kcat 은 어느 출처에서도 찾지 못해 이 규칙에는 속도 법칙을 넣지 않았다(L000038 유지). 불확도·반복 수 미보고 — sd 는 유효 숫자 해상도.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter et al., 2019"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+cs_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000149/rule/condense",
+        "param": "dG0"
+      },
+      "value": -35900,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 900
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — oxaloacetate + acetyl-CoA + H2O = citrate + CoA",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±0.9 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+aco_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000150/rule/isomerize",
+        "param": "dG0"
+      },
+      "value": 6800,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 600
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — citrate = isocitrate",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±0.6 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+ogdh_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000152/rule/oxdecarb",
+        "param": "dG0"
+      },
+      "value": -28000,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 7600
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — 2-oxoglutarate + CoA + NAD+ = succinyl-CoA + CO2 + NADH",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±7.6 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+scs_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000153/rule/slp",
+        "param": "dG0"
+      },
+      "value": -1100,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 900
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — succinyl-CoA + GDP + orthophosphate = succinate + GTP + CoA",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±0.9 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+sdh_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000154/rule/oxidize",
+        "param": "dG0"
+      },
+      "value": 39800,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 7000
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — succinate + FAD = fumarate + FADH2",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±7 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다. 모델이 적은 반응식(자유 FAD 를 기질로)의 값이다 — 생리적 반응(succinate + ubiquinone = fumarate + ubiquinol)은 같은 조건에서 −24.1 ± 7.0 kJ/mol 로 부호가 반대다. 효소에 붙은 FAD 를 자유 FAD 로 적은 단순화가 열역학을 뒤집는다(새 한계).",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+mdh_dg0",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000156/rule/oxidize",
+        "param": "dG0"
+      },
+      "value": 29600,
+      "unit": "J/mol",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 600
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 7,
+        "temperature_K": 298.15
+      },
+      "use": "estimation",
+      "method": "eQuilibrator 3.0 성분 기여법 — malate + NAD+ = oxaloacetate + NADH",
+      "note": "계산값(추정)이고 측정값이 아니다. 불확도 ±0.6 kJ/mol 은 eQuilibrator 가 함께 낸 값. 미토콘드리아 기질의 pH(≈7.8)·이온 세기는 데이터에 없어(L000047) 표준 조건 pH 7.0 으로 계산했다.",
+      "evidence": {
+        "level": "computed",
+        "tool": "eQuilibrator 3.0 (equilibrator.weizmann.ac.il, 2026-10-10 조회) — 성분 기여법, pH 7.0 · 이온 세기 0.25 M · pMg 3.0",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1093/nar/gkab1106",
+            "citation": "Beber et al., 2022 (eQuilibrator 3.0)"
+          }
+        ]
+      }
+    }
+  ],
+  "senses": [
+    {
+      "id": "D000151",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxdecarb",
+          "type": "transition",
+          "label": "아이소시트르산 산화적 탈카복실화",
+          "action": "산화",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000138"
+            ],
+            "produces": [
+              "D000139",
+              "D000160"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000144"
+            ],
+            "produces": [
+              "D000145"
+            ]
+          },
+          "regulators": [],
+          "text": "첫 번째 이산화탄소와 첫 번째 NADH.",
+          "evidence": {
+            "level": "asserted"
+          },
+          "kinetics": {
+            "law": "michaelis_menten",
+            "kcat": 26.7,
+            "Km": 0.00235,
+            "dG0": 5600,
+            "from": [
+              {
+                "param": "kcat",
+                "obs": "O+idh_kcat"
+              },
+              {
+                "param": "Km",
+                "obs": "O+idh_km"
+              },
+              {
+                "param": "dG0",
+                "obs": "O+idh_dg0"
+              }
+            ],
+            "context": {
+              "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
+              "species": "9606",
+              "location": "mito_matrix",
+              "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
+            },
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1038/srep41882",
+                  "citation": "Ma et al., 2017"
+                },
+                {
+                  "db": "PMID",
+                  "id": "28139779",
+                  "citation": "Ma et al., 2017"
+                }
+              ],
+              "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000155",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "hydrate",
+          "type": "transition",
+          "label": "푸마르산 수화",
+          "action": "수화",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000142"
+            ],
+            "produces": [
+              "D000143"
+            ]
+          },
+          "regulators": [],
+          "text": "물 분자는 부분 구조가 없어 생략.",
+          "evidence": {
+            "level": "asserted"
+          },
+          "kinetics": {
+            "law": "michaelis_menten",
+            "kcat": 170,
+            "Km": 0.0002,
+            "dG0": -3400,
+            "from": [
+              {
+                "param": "kcat",
+                "obs": "O+fh_kcat"
+              },
+              {
+                "param": "Km",
+                "obs": "O+fh_km"
+              },
+              {
+                "param": "dG0",
+                "obs": "O+fh_dg0"
+              }
+            ],
+            "context": {
+              "scope": "사람 재조합 푸마르산 수화효소 (FH) — 푸마르산 → 말산 방향",
+              "species": "9606",
+              "location": "mito_matrix",
+              "condition": "pH 8.5 (측정 조건, 기질 pH 와 다름) · 온도 미기재 · ΔG°′ 는 pH 7.0 계산"
+            },
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1111/febs.14782",
+                  "citation": "Ajalla Aleixo et al., 2019"
+                },
+                {
+                  "db": "PMID",
+                  "id": "30761759",
+                  "citation": "Ajalla Aleixo et al., 2019"
+                }
+              ],
+              "note": "관찰 기록 O+fh_kcat·O+fh_km·O+fh_dg0 의 파생값"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+tca_notfound",
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "사람 효소의 kcat·Km 을 다섯 효소(아코니테이스·2-옥소글루타르산 탈수소효소 복합체·석시닐-CoA 합성효소·석신산 탈수소효소·말산 탈수소효소)에서 찾지 못했다 — UniProt 큐레이션에 없고(해당 항목의 BIOPHYSICOCHEMICAL PROPERTIES 비어 있음), Europe PMC 전문 검색에서도 사람 값이 아닌 세균·식물·기생충 효소만 나왔다. 시트르산 생성효소는 Km 두 기질(옥살로아세트산 3.6 µM · 아세틸-CoA 7.7 µM, Schlachter et al., 2019)은 확인했지만 kcat 이 없어 속도 법칙을 넣지 못했다(Km 은 관찰 기록으로 남김). 돼지·소 심장 효소의 값으로 바꿔 넣지 않았다 — 종이 다른 값을 사람 값으로 적지 않는다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000150/rule/isomerize",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000152/rule/oxdecarb",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000153/rule/slp",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000154/rule/oxidize",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000156/rule/oxidize",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000149/rule/condense",
+            "params": [
+              "kcat"
+            ]
+          }
+        ]
+      },
+      "found_in": "문헌 조사 2026-10-10 (UniProt 큐레이션 + Europe PMC 전문) — TCA 상수 찾기"
+    },
+    {
+      "id": "L+idh_hill",
+      "target": "D000151/rule/oxdecarb",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "사람 NAD-IDH 는 아이소시트르산에 양성 협동성(힐 계수 1.5)을 보이고 보고된 값은 S0.5 다 — 이것을 미카엘리스–멘텐의 Km 으로 쓰는 것은 근사다. 또 기질이 셋(아이소시트르산·Mn²⁺·NAD)인데 형식의 michaelis_menten 은 기질 하나만 담는다: S0.5(Mn²⁺) 60.2 µM · S0.5(NAD) 143 µM 를 넣을 칸이 없다. 시트르산·ADP 가 S0.5 를 낮추는 알로스테릭 활성화도 표현하지 않았다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "협동성(힐 n)과 기질 여럿을 담는 속도 법칙, 또는 알로스테릭 활성화를 조절 규칙으로 두는 규약 — 어휘·검사·엔진을 함께"
+          }
+        ]
+      },
+      "found_in": "문헌 조사 2026-10-10 — TCA 상수 찾기"
+    },
+    {
+      "id": "L+fh_ph",
+      "target": "D000155/rule/hydrate",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "푸마레이스의 kcat·Km 은 pH 8.5 에서 측정된 값이고 미토콘드리아 기질 pH(≈7.8)의 값이 아니다. 형식의 env(환경 보정 dG_dpH)는 기준 속도가 있는 질량 작용 상수에만 걸리고 michaelis_menten 에는 pH 보정 칸이 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000155/rule/hydrate",
+            "params": [
+              "kcat",
+              "Km"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "기질 pH 조건의 측정값, 또는 michaelis_menten 에 pH 보정을 두는 규약"
+          }
+        ]
+      },
+      "found_in": "문헌 조사 2026-10-10 — TCA 상수 찾기"
+    },
+    {
+      "id": "L+sdh_fad",
+      "target": "D000154/rule/oxidize",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "석신산 산화 단계가 효소에 공유 결합된 FAD 대신 자유 FAD/FADH₂ 를 기질로 적고 있어 열역학이 뒤집힌다 — 같은 조건에서 모델의 반응식은 ΔG°′ = +39.8 ± 7.0 kJ/mol(불리)이고, 생리적 반응(석신산 + 유비퀴논 → 푸마르산 + 유비퀴놀)은 −24.1 ± 7.0 kJ/mol(유리)이다. 유비퀴논·유비퀴놀 정의항과 복합체 II 의 보결기 FAD 를 넣어야 부호가 맞는다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "유비퀴논·유비퀴놀 정의항과, 복합체 II 의 공유 결합 FAD 를 보결기(구성 요소)로 두는 단계 수정"
+          }
+        ]
+      },
+      "found_in": "ΔG°′ 계산 2026-10-10 (eQuilibrator 3.0) — TCA 상수 찾기"
+    },
+    {
+      "id": "L+obs_nosd",
+      "target": "D000148",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "문헌·큐레이션이 kcat·Km 의 불확도와 반복 수를 함께 보고하지 않아, 관찰 기록 네 건(O+idh_kcat·O+fh_kcat·O+fh_km·O+cs_km_oaa)의 sd 를 보고된 유효 숫자의 해상도로 적었다 — 측정 표준 편차가 아니다. 이 값들로 모델–관찰 비교(obs_compare)를 하면 오차 막대가 실제보다 좁거나 넓다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "원 논문 표의 ± 값(또는 원자료) — FEBS J 286:1925 와 Biol Chem 400:1567 은 공개 접근이 아니다"
+          }
+        ]
+      },
+      "found_in": "문헌 조사 2026-10-10 — TCA 상수 찾기"
+    }
+  ]
+}

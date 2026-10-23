@@ -1,0 +1,93 @@
+{
+  "format": "definition-db-patch",
+  "why": "레드팀 시험 — 병합하지 않는다",
+  "senses": [
+    {
+      "id": "D000151",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "oxdecarb",
+          "type": "transition",
+          "label": "아이소시트르산 산화적 탈카복실화",
+          "action": "산화",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000138"
+            ],
+            "produces": [
+              "D000139",
+              "D000160"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000144"
+            ],
+            "produces": [
+              "D000145"
+            ]
+          },
+          "regulators": [],
+          "text": "첫 번째 이산화탄소와 첫 번째 NADH.",
+          "kinetics": {
+            "law": "michaelis_menten",
+            "kcat": 26.7,
+            "Km": 0.00235,
+            "dG0": 5600,
+            "context": {
+              "scope": "사람 재조합 NAD 의존 아이소시트르산 탈수소효소 α2βγ 사량체",
+              "species": "10090",
+              "location": "mito_matrix",
+              "condition": "33 mM Tris-아세트산 pH 7.4 · 2 mM MnCl₂ · 25 °C · S0.5 를 Km 으로 (힐 1.5) · ΔG°′ 는 pH 7.0 계산"
+            },
+            "from": [
+              {
+                "param": "kcat",
+                "obs": "O000001"
+              },
+              {
+                "param": "Km",
+                "obs": "O000002"
+              },
+              {
+                "param": "dG0",
+                "obs": "O000003"
+              }
+            ],
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1038/srep41882",
+                  "citation": "Ma et al., 2017"
+                },
+                {
+                  "db": "PMID",
+                  "id": "28139779",
+                  "citation": "Ma et al., 2017"
+                }
+              ],
+              "note": "관찰 기록 O+idh_kcat·O+idh_km·O+idh_dg0 의 파생값"
+            }
+          },
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    }
+  ]
+}

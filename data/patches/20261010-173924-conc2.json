@@ -1,0 +1,80 @@
+{
+  "applied_at": "2026-10-10T17:39:24.975Z",
+  "result": {
+    "added": [
+      "L000105"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000105"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "데이터 부피를 읽는 엔진이 하나뿐이라는 것을 기록 — simulateRate 는 정의항 obs 의 compartment_volume 을 읽지만 운명 엔진(컴파일러 IR)은 시나리오 volumes 만 본다. 농도·부피를 데이터로 넣은 직후 확인한 비대칭이다",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000105",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000105",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "why": "데이터 부피를 읽는 엔진이 하나뿐이라는 것을 기록 — simulateRate 는 정의항 obs 의 compartment_volume 을 읽지만 운명 엔진(컴파일러 IR)은 시나리오 volumes 만 본다. 농도·부피를 데이터로 넣은 직후 확인한 비대칭이다",
+  "limitations": [
+    {
+      "id": "L+fate_vol",
+      "target": "D000116",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "운명·기전 엔진(compiler/ir_builder.js 의 volOf, engine/fate_engine.js)은 시나리오 volumes 만 본다 — 정의항 obs 의 compartment_volume 을 읽지 않는다. 그래서 섬유아세포 핵 500 fL 처럼 데이터에 있는 부피도 운명 실행에서는 시나리오가 다시 적어 줘야 쓰이고, 시나리오가 없으면 그 단계는 꺼진다(step_volume_unknown). simulateRate(경로)와 운명 엔진(상태)이 같은 데이터를 다르게 대하는 비대칭이다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "컴파일러 volOf 가 정의항 obs(compartment_volume)를 시나리오 다음 순서로 보도록 하는 결정 — 공유 순수 층 변경이므로 사용자 요청이 필요하고, IR 해시·기존 시나리오 궤적이 바뀌지 않는지(시나리오 우선) 확인이 조건"
+          }
+        ]
+      },
+      "found_in": "농도·부피 측정값 수집 2026-10-10 (두 엔진의 부피 조회를 대조)"
+    }
+  ]
+}

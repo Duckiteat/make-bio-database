@@ -1,0 +1,86 @@
+{
+  "name": "TCA 소진 시험 2 — NAD⁺ 고갈 (가상)",
+  "hypothetical": true,
+  "_설명": "NAD⁺ 3002 분자, NADH 재산화 없음(전자 전달계 정지), 아세틸-CoA 넉넉. 기대: 바퀴당 NAD⁺ 3 분자 → 1000 바퀴 + 부분 바퀴 뒤 NAD⁺ 고갈, NADH 3002 축적. 모든 값은 가상이다 — 엔진 시험용, data/db.json 에 들어가지 않는다.",
+  "until_death": true,
+  "window": 1,
+  "volumes": {
+    "mito_matrix": {
+      "value": {
+        "assume": "A000352"
+      },
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000149|mito_matrix": {
+      "assume": "A000223"
+    },
+    "D000150|mito_matrix": {
+      "assume": "A000225"
+    },
+    "D000151|mito_matrix": {
+      "assume": "A000227"
+    },
+    "D000152|mito_matrix": {
+      "assume": "A000229"
+    },
+    "D000153|mito_matrix": {
+      "assume": "A000231"
+    },
+    "D000154|mito_matrix": {
+      "assume": "A000233"
+    },
+    "D000155|mito_matrix": {
+      "assume": "A000235"
+    },
+    "D000156|mito_matrix": {
+      "assume": "A000237"
+    },
+    "D000136|mito_matrix": {
+      "assume": "A000215"
+    },
+    "D000135|mito_matrix": {
+      "assume": "A000212"
+    }
+  },
+  "reservoirs": {
+    "D000134|mito_matrix": {
+      "assume": "A000285"
+    },
+    "D000144|mito_matrix": {
+      "assume": "A000291"
+    },
+    "D000145|mito_matrix": {
+      "assume": "A000294"
+    },
+    "D000146|mito_matrix": {
+      "assume": "A000295"
+    },
+    "D000147|mito_matrix": {
+      "assume": "A000297"
+    },
+    "D000036|mito_matrix": {
+      "assume": "A000274"
+    },
+    "D000037|mito_matrix": {
+      "assume": "A000279"
+    },
+    "D000035|mito_matrix": {
+      "assume": "A000272"
+    }
+  },
+  "kinetics": {
+    "D000158/rule/fad_regen": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000073"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "applied_at": "2026-10-16T05:56:34.111Z",
+  "result": {
+    "added": [
+      "O000022"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "observations": [
+          "O000022"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "정성 관찰 수집 (build-plan 12A, MHC II 가지): HLA-DM 결손 사람 APC 변이세포(2.2.93·9.5.3)에서 MHC II/펩타이드 복합체 형성이 결함(Fling et al., 1994, Nature). MHC I 적재(O000019~21)와 다른 하류라 우연 기준선의 독립 단위를 넓힌다. 초록 사본 data/fetched/europepmc/MED-8139690.json.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "정성 관찰 수집 (build-plan 12A, MHC II 가지): HLA-DM 결손 사람 APC 변이세포(2.2.93·9.5.3)에서 MHC II/펩타이드 복합체 형성이 결함(Fling et al., 1994, Nature). MHC I 적재(O000019~21)와 다른 하류라 우연 기준선의 독립 단위를 넓힌다. 초록 사본 data/fetched/europepmc/MED-8139690.json.",
+  "observations": [
+    {
+      "id": "O+hladm",
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000198"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000201|plasma_membrane"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "These results show that HLA-DMA and -DMB, genes of previously unknown function mapping between HLA-DP and HLA-DQ, are required for the normal assembly of peptides with MHC class II molecules.",
+      "provenance": {
+        "source": {
+          "db": "PMID",
+          "id": "8139690"
+        },
+        "sha256": "bba0141df0ff99dde42b1d9ca2d643db4d58347a149cd311877325901e339e92"
+      },
+      "use": "validation",
+      "experiment": "Fling 1994 — HLA-DM 결손 APC 변이세포 2.2.93·9.5.3",
+      "evidence_at": "1994",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1038/368554a0",
+            "citation": "Fling SP, Arp B, Pious D, 1994, Nature"
+          },
+          {
+            "db": "PMID",
+            "id": "8139690",
+            "citation": "Fling SP, Arp B, Pious D, 1994, Nature"
+          }
+        ]
+      },
+      "note": "HLA-DM 복합체(D000198) 없으면 펩타이드–MHC II 적재가 결함 → 표면 펩타이드–MHC II(D000201) 감소. DM 없이도 CLIP 결합 MHC II 는 표면에 남지만 항원 펩타이드 적재 복합체(D000201)는 준다. 측정 세포는 사람 APC 변이세포(2.2.93·9.5.3, B-LCL 유래) — 모델 수지상 세포 상태에서 판정하면 맥락 이전."
+    }
+  ],
+  "recorded_at": "2026-10-16T05:56:33.846Z"
+}

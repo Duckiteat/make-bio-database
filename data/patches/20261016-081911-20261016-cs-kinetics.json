@@ -1,0 +1,248 @@
+{
+  "applied_at": "2026-10-16T08:19:11.791Z",
+  "result": {
+    "added": [
+      "O000023",
+      "O000024"
+    ],
+    "updated": [
+      "D000149"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "observations": [
+          "O000023",
+          "O000024"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000149"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000149": [
+          "rule"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "실측 속도 상수 수집 (build-plan 12A, route 1 BRENDA): 사람 시트르산 생성효소(EC 2.3.3.1)의 WT kcat 260/s·Km 7.7 µM(아세틸-CoA, pH 8.0)을 BRENDA(lit 756131 = PMID 31141475, Schlachter 2019)에서 받아 관찰로 넣고 condense 규칙에 MM 법칙으로 건다. 기존 한계 L000038·L000096 의 condense kcat·Km 공백을 메운다. OAA 값(kcat 208·Km 3.6 µM)은 BRENDA 증거 파일에.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [
+        "S000031"
+      ],
+      "pathways": [
+        "D000148"
+      ],
+      "limitations": [
+        {
+          "id": "L000038",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000048",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000096",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "실측 속도 상수 수집 (build-plan 12A, route 1 BRENDA): 사람 시트르산 생성효소(EC 2.3.3.1)의 WT kcat 260/s·Km 7.7 µM(아세틸-CoA, pH 8.0)을 BRENDA(lit 756131 = PMID 31141475, Schlachter 2019)에서 받아 관찰로 넣고 condense 규칙에 MM 법칙으로 건다. 기존 한계 L000038·L000096 의 condense kcat·Km 공백을 메운다. OAA 값(kcat 208·Km 3.6 µM)은 BRENDA 증거 파일에.",
+  "observations": [
+    {
+      "id": "O+cs_kcat",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000149/rule/condense",
+        "param": "kcat"
+      },
+      "value": 260,
+      "unit": "s^-1",
+      "uncertainty": {
+        "kind": "measurement",
+        "model": "normal",
+        "sd": 10
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "use": "estimation",
+      "provenance": {
+        "source": {
+          "db": "PMID",
+          "id": "31141475"
+        },
+        "sha256": "0f971698dbecc089df10c159cf13190582de12e5e16d69d2e46880869c873853"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          }
+        ]
+      },
+      "note": "BRENDA EC 2.3.3.1 Homo sapiens 아세틸-CoA 변화 기질, WT, pH 8.0, 온도 미기재(BRENDA 'temperature not specified'); 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC2.3.3.1-Homo-sapiens.json"
+    },
+    {
+      "id": "O+cs_km",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000149/rule/condense",
+        "param": "Km"
+      },
+      "value": 0.0000077,
+      "unit": "M",
+      "uncertainty": {
+        "kind": "measurement",
+        "model": "normal",
+        "sd": 1e-7
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix"
+      },
+      "use": "estimation",
+      "provenance": {
+        "source": {
+          "db": "PMID",
+          "id": "31141475"
+        },
+        "sha256": "0f971698dbecc089df10c159cf13190582de12e5e16d69d2e46880869c873853"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1515/hsz-2019-0106",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          },
+          {
+            "db": "PMID",
+            "id": "31141475",
+            "citation": "Schlachter CR et al., 2019, Biol Chem"
+          }
+        ]
+      },
+      "note": "BRENDA EC 2.3.3.1 Homo sapiens 아세틸-CoA 변화 기질, WT, pH 8.0, 온도 미기재(BRENDA 'temperature not specified'); 불확도 미보고(BRENDA 점값) → sd = 유효 숫자 해상도; 저장 data/fetched/brenda/EC2.3.3.1-Homo-sapiens.json"
+    }
+  ],
+  "senses": [
+    {
+      "id": "D000149",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "condense",
+          "type": "transition",
+          "label": "시트르산 생성",
+          "action": "축합",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000134",
+              "D000136"
+            ],
+            "produces": [
+              "D000137",
+              "D000135"
+            ]
+          },
+          "regulators": [],
+          "text": "아세틸-CoA 의 아세틸기가 옥살로아세트산과 축합해 시트르산이 되고 조효소 A 가 풀려난다 (물 분자는 부분 구조가 없어 생략). 속도는 단일 기질 MM 근사 — core.js 가 첫 law 입력(아세틸-CoA)의 Km 을 쓴다, 옥살로아세트산은 포화 가정(실측 OAA kcat 208/s·Km 3.6 µM 은 BRENDA 증거 파일에).",
+          "kinetics": {
+            "law": "michaelis_menten",
+            "kcat": 260,
+            "Km": 0.0000077,
+            "context": {
+              "scope": "사람 시트르산 생성효소 (EC 2.3.3.1) — BRENDA, 아세틸-CoA 변화 기질, WT, pH 8.0 (온도 미기재)",
+              "species": "9606",
+              "location": "mito_matrix"
+            },
+            "from": [
+              {
+                "param": "kcat",
+                "obs": "O+cs_kcat"
+              },
+              {
+                "param": "Km",
+                "obs": "O+cs_km"
+              }
+            ],
+            "evidence": {
+              "level": "curated",
+              "sources": [
+                {
+                  "db": "DOI",
+                  "id": "10.1515/hsz-2019-0106",
+                  "citation": "Schlachter CR et al., 2019, Biol Chem"
+                },
+                {
+                  "db": "PMID",
+                  "id": "31141475",
+                  "citation": "Schlachter CR et al., 2019, Biol Chem"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-16T08:19:11.396Z"
+}

@@ -1,0 +1,2186 @@
+{
+  "applied_at": "2026-10-10T05:24:42.702Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "D000177",
+      "D000178",
+      "D000179",
+      "D000180",
+      "D000181",
+      "D000182",
+      "D000183",
+      "D000184",
+      "D000185",
+      "D000186",
+      "D000187",
+      "D000188",
+      "D000189",
+      "D000190",
+      "D000191",
+      "D000192",
+      "D000193",
+      "D000194",
+      "D000195",
+      "D000196",
+      "D000197",
+      "D000198",
+      "D000199",
+      "D000200",
+      "D000201",
+      "D000202",
+      "D000203",
+      "D000064",
+      "D000098"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "senses": [
+          "D000177",
+          "D000178",
+          "D000179",
+          "D000180",
+          "D000181",
+          "D000182",
+          "D000183",
+          "D000184",
+          "D000185",
+          "D000186",
+          "D000187",
+          "D000188",
+          "D000189",
+          "D000190",
+          "D000191",
+          "D000192",
+          "D000193",
+          "D000194",
+          "D000195",
+          "D000196",
+          "D000197",
+          "D000198",
+          "D000199",
+          "D000200",
+          "D000201",
+          "D000202",
+          "D000203",
+          "D000064",
+          "D000098"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000177": [
+          "desc"
+        ],
+        "D000178": [
+          "desc"
+        ],
+        "D000179": [
+          "desc",
+          "rule"
+        ],
+        "D000180": [
+          "desc"
+        ],
+        "D000181": [
+          "desc",
+          "rule"
+        ],
+        "D000182": [
+          "desc",
+          "rule"
+        ],
+        "D000183": [
+          "desc"
+        ],
+        "D000184": [
+          "desc"
+        ],
+        "D000185": [
+          "desc"
+        ],
+        "D000186": [
+          "desc"
+        ],
+        "D000187": [
+          "desc"
+        ],
+        "D000188": [
+          "desc"
+        ],
+        "D000189": [
+          "desc",
+          "rule"
+        ],
+        "D000190": [
+          "desc",
+          "rule"
+        ],
+        "D000191": [
+          "desc",
+          "rule"
+        ],
+        "D000192": [
+          "desc",
+          "rule"
+        ],
+        "D000193": [
+          "desc",
+          "rule"
+        ],
+        "D000194": [
+          "desc",
+          "rule"
+        ],
+        "D000195": [
+          "desc",
+          "rule"
+        ],
+        "D000196": [
+          "desc"
+        ],
+        "D000197": [
+          "desc"
+        ],
+        "D000198": [
+          "desc",
+          "rule"
+        ],
+        "D000199": [
+          "desc",
+          "rule"
+        ],
+        "D000200": [
+          "desc",
+          "rule"
+        ],
+        "D000201": [
+          "desc",
+          "rule"
+        ],
+        "D000202": [
+          "xrefs",
+          "desc",
+          "transitions"
+        ],
+        "D000203": [
+          "xrefs",
+          "desc"
+        ],
+        "D000064": [
+          "rule"
+        ],
+        "D000098": [
+          "rule"
+        ]
+      }
+    },
+    "why": "문헌 확인 (2026-10-10, 네트워크 열림): MHC I·II 기전과 수지상 세포 성숙의 근거 여섯 편을 Crossref 로 서지(저자·연도·권·쪽)와 PubMed 로 PMID 까지 대조해 curated 로 올리고, 단순화·화학량이 내 추론인 항목은 abstracted 로 두되 basis 에 확인한 식별자를 적는다. 수지상 세포 두 상태에 EBI OLS 로 확인한 Cell Ontology 번호(CL:0000840·CL:0000841)를 단다.",
+    "impact": {
+      "rules": [
+        "D000065/rule/lps_binding",
+        "D000065/rule/lps_transfer",
+        "D000066/rule/lps_transfer"
+      ],
+      "senses": [
+        "D000065",
+        "D000066",
+        "D000067",
+        "D000068",
+        "D000069",
+        "D000070",
+        "D000102"
+      ],
+      "steps": [
+        "S000012",
+        "S000013",
+        "S000014",
+        "S000027",
+        "S000039",
+        "S000040",
+        "S000041",
+        "S000042",
+        "S000043",
+        "S000044",
+        "S000045",
+        "S000046",
+        "S000047",
+        "S000048",
+        "S000049",
+        "S000050",
+        "S000051",
+        "S000052",
+        "S000053",
+        "S000054",
+        "S000055",
+        "S000056"
+      ],
+      "pathways": [
+        "D000103",
+        "D000105",
+        "D000177",
+        "D000178",
+        "D000102"
+      ],
+      "limitations": [
+        {
+          "id": "L000006",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000013",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000027",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000074",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000075",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000076",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000077",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000078",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000079",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000080",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000081",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000082",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 24
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "문헌 확인 (2026-10-10, 네트워크 열림): MHC I·II 기전과 수지상 세포 성숙의 근거 여섯 편을 Crossref 로 서지(저자·연도·권·쪽)와 PubMed 로 PMID 까지 대조해 curated 로 올리고, 단순화·화학량이 내 추론인 항목은 abstracted 로 두되 basis 에 확인한 식별자를 적는다. 수지상 세포 두 상태에 EBI OLS 로 확인한 Cell Ontology 번호(CL:0000840·CL:0000841)를 단다.",
+  "terms": [],
+  "senses": [
+    {
+      "id": "D000177",
+      "desc": [
+        {
+          "text": "세포 안 단백질이 프로테아좀에서 펩타이드로 잘리고, TAP 이 펩타이드를 소포체로 옮겨 펩타이드 적재 복합체에서 MHC I 에 실은 뒤, 펩타이드–MHC I 이 골지체를 거쳐 세포 표면에 제시되고 세포 안으로 들어가 분해되는 경로",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "dendritic_cell"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000178",
+      "desc": [
+        {
+          "text": "소포체에서 MHC II αβ 가 불변 사슬과 조립되어 엔도솜으로 가고, 불변 사슬이 잘려 CLIP 만 남은 뒤 HLA-DM 이 CLIP 을 펩타이드로 바꿔 실어 펩타이드–MHC II 를 세포 표면에 제시하는 경로",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "dendritic_cell"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000179",
+      "desc": [
+        {
+          "text": "단백질이 잘려 생긴 짧은 펩타이드로, MHC 분자의 홈에 실려 T 세포에 제시된다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "peptidase_loss",
+          "type": "degradation",
+          "label": "세포질 펩타이드 분해 (펩티데이스)",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "cytosol"
+          ],
+          "text": "대부분의 세포질 펩타이드는 TAP 에 닿기 전에 펩티데이스에 잘려 아미노산이 된다 — 아미노산은 모델 밖.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        },
+        {
+          "id": "endosomal_loss",
+          "type": "degradation",
+          "label": "엔도솜 펩타이드 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "endosome_lumen"
+          ],
+          "text": "MHC II 에 실리지 못한 엔도솜 펩타이드는 더 잘려 사라진다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000180",
+      "desc": [
+        {
+          "text": "세포질에서 만들어져 프로테아좀으로 분해되며 MHC I 펩타이드의 원천이 되는 단백질 (잘못 접힌 산물·수명이 다한 단백질)",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "세포 안 항원 원천 단백질 합성 (묶음)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000180",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "source": true,
+          "text": "번역 산물 — 아미노산·ATP 는 모델 밖(source).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 합성을 0차 공급 하나로 근사"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000181",
+      "desc": [
+        {
+          "text": "세포 밖에서 세포 섭취로 엔도솜에 들어와 잘려 MHC II 펩타이드의 원천이 되는 단백질",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "uptake",
+          "type": "transition",
+          "label": "세포 섭취 (엔도사이토시스·거대음세포작용)",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "extracellular",
+            "to": "endosome_lumen"
+          },
+          "regulators": [],
+          "text": "세포 밖 단백질이 섭취 소포에 담겨 엔도솜 내강으로 들어간다 — 소포 형성·융합을 수송 하나로 묶음.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000182",
+      "desc": [
+        {
+          "text": "α1·α2 도메인이 펩타이드 홈을, α3 도메인이 β2-마이크로글로불린 결합면을 이루는 MHC I 의 막관통 중쇄",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "HLA-A 중쇄 합성 (소포체 막으로 동시 번역 삽입)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000182",
+              "n": 1
+            }
+          ],
+          "where": [
+            "er_membrane"
+          ],
+          "source": true,
+          "text": "번역·막 삽입 묶음 — 원료는 모델 밖(source).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "동시 번역 막 삽입을 0차 공급 하나로 근사"
+          }
+        },
+        {
+          "id": "free_hc_loss",
+          "type": "degradation",
+          "label": "짝 없는 중쇄의 소포체 연관 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "er_membrane"
+          ],
+          "text": "β2m 과 짝짓지 못한 중쇄는 ERAD 로 세포질에 빠져나가 분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev-immunol-032712-095910",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              },
+              {
+                "db": "PMID",
+                "id": "23298205",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000183",
+      "desc": [
+        {
+          "text": "MHC I 중쇄의 α3 도메인에 비공유로 붙는 가벼운 사슬로, 중쇄가 펩타이드를 받을 수 있게 접히는 데 필요하다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "β2m 합성 (소포체 내강으로 분비 경로)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000183",
+              "n": 1
+            }
+          ],
+          "where": [
+            "er_lumen"
+          ],
+          "source": true,
+          "text": "원료는 모델 밖(source).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "합성을 0차 공급 하나로 근사"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000184",
+      "desc": [
+        {
+          "text": "TAP2 와 이형 이량체를 이루어 ATP 를 써서 세포질 펩타이드를 소포체 내강으로 나르는 ABC 수송체 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000185",
+      "desc": [
+        {
+          "text": "TAP1 과 이형 이량체를 이루는 ABC 수송체 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000186",
+      "desc": [
+        {
+          "text": "MHC I 을 TAP 곁에 붙잡아 두고 높은 친화도의 펩타이드가 실리도록 고르는 펩타이드 편집 샤페론",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000187",
+      "desc": [
+        {
+          "text": "소포체 내강의 렉틴 샤페론으로, 펩타이드 적재 복합체에서 MHC I 의 글리칸에 붙는다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000188",
+      "desc": [
+        {
+          "text": "타파신과 이황화 결합으로 이어져 펩타이드 적재 복합체의 편집 모듈을 이루는 소포체 산화환원효소",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000189",
+      "desc": [
+        {
+          "text": "TAP 수송체 둘레에 타파신·ERp57·칼레티큘린이 모인 소포체 막 복합체로, 펩타이드를 들여와 MHC I 에 실는다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627",
+                "citation": "Blees et al., 2017"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940",
+                "citation": "Blees et al., 2017"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 수송·적재 가능",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "peptide_import",
+          "type": "transition",
+          "label": "TAP 펩타이드 수송",
+          "action": "수송",
+          "agent": true,
+          "effect": {
+            "type": "transport",
+            "target": "D000179",
+            "from": "cytosol",
+            "to": "er_lumen"
+          },
+          "regulators": [],
+          "text": "TAP1–TAP2 가 세포질 펩타이드를 소포체 내강으로 옮긴다. ATP 소비 화학량은 확인하지 못해 넣지 않음 (Structural_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        },
+        {
+          "id": "peptide_loading",
+          "type": "transition",
+          "label": "MHC I 펩타이드 적재 (타파신 편집)",
+          "action": "결합",
+          "agent": true,
+          "effect": {
+            "type": "associate",
+            "complex": "D000191"
+          },
+          "regulators": [],
+          "text": "펩타이드 적재 복합체에 붙잡힌 빈 MHC I 이 내강의 펩타이드를 받아 펩타이드–MHC I 이 되어 복합체를 떠난다. ERAP1 다듬기·타파신의 편집 경쟁은 이 한 단계에 묶음.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000190",
+      "desc": [
+        {
+          "text": "중쇄와 β2-마이크로글로불린이 조립되었지만 아직 펩타이드가 없는 MHC I 로, 소포체에 머물며 펩타이드를 기다린다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "assembly",
+          "type": "transition",
+          "label": "중쇄–β2m 조립",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "associate"
+          },
+          "regulators": [],
+          "text": "접힌 중쇄의 α3 도메인에 β2m 이 붙는다 (칼넥신 단계는 묶음).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        },
+        {
+          "id": "erad",
+          "type": "degradation",
+          "label": "빈 MHC I 의 소포체 연관 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "er_membrane"
+          ],
+          "text": "펩타이드를 받지 못한 MHC I 은 소포체에 붙잡혀 있다가 분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev-immunol-032712-095910",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              },
+              {
+                "db": "PMID",
+                "id": "23298205",
+                "citation": "Blum, Wearsch & Cresswell, 2013"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000191",
+      "desc": [
+        {
+          "text": "펩타이드를 홈에 실은 MHC I 으로, 소포체를 떠나 골지체를 거쳐 세포 표면에서 CD8 T 세포에 펩타이드를 제시한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "펩타이드 실림 — 제시 가능",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "er_exit",
+          "type": "transition",
+          "label": "소포체 → 골지체 (COPII 소포)",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "er_membrane",
+            "to": "golgi_membrane"
+          },
+          "regulators": [],
+          "text": "안정해진 펩타이드–MHC I 이 소포체 출구에서 소포로 골지체로 간다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        },
+        {
+          "id": "surface_delivery",
+          "type": "transition",
+          "label": "골지체 → 세포 표면",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "golgi_membrane",
+            "to": "plasma_membrane"
+          },
+          "regulators": [],
+          "text": "분비 소포가 세포막에 융합해 펩타이드–MHC I 이 표면에 놓인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        },
+        {
+          "id": "internalization",
+          "type": "transition",
+          "label": "세포 안 섭취 (표면 → 엔도솜)",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "plasma_membrane",
+            "to": "endosome_membrane"
+          },
+          "regulators": [],
+          "text": "표면의 MHC I 이 섭취 소포로 들어간다 (재순환 경로는 묶지 않음).",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "엔도솜·리소좀 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "endosome_membrane"
+          ],
+          "text": "섭취된 MHC I 은 리소좀에서 분해된다 — 펩타이드와 함께 모델 밖으로.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556",
+                "citation": "Neefjes, Jongsma, Paul & Bakke, 2011"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000192",
+      "desc": [
+        {
+          "text": "β 사슬과 함께 펩타이드 홈을 이루는 MHC II 의 막관통 α 사슬",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "HLA-DR α 합성",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000192",
+              "n": 1
+            }
+          ],
+          "where": [
+            "er_membrane"
+          ],
+          "source": true,
+          "text": "원료는 모델 밖(source).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "합성을 0차 공급 하나로 근사"
+          }
+        },
+        {
+          "id": "free_loss",
+          "type": "degradation",
+          "label": "짝 없는 α 사슬 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "er_membrane"
+          ],
+          "text": "조립되지 못한 사슬은 소포체에서 분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000193",
+      "desc": [
+        {
+          "text": "α 사슬과 함께 펩타이드 홈을 이루는 MHC II 의 막관통 β 사슬로, 대립 유전자 다형성이 크다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "HLA-DR β1 합성",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000193",
+              "n": 1
+            }
+          ],
+          "where": [
+            "er_membrane"
+          ],
+          "source": true,
+          "text": "원료는 모델 밖(source).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "합성을 0차 공급 하나로 근사"
+          }
+        },
+        {
+          "id": "free_loss",
+          "type": "degradation",
+          "label": "짝 없는 β 사슬 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "er_membrane"
+          ],
+          "text": "조립되지 못한 사슬은 소포체에서 분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000194",
+      "desc": [
+        {
+          "text": "MHC II αβ 의 홈을 막아 소포체 펩타이드가 실리지 않게 하고, 세포질 꼬리의 신호로 복합체를 엔도솜으로 보내는 막 단백질",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "불변 사슬 합성",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000194",
+              "n": 1
+            }
+          ],
+          "where": [
+            "er_membrane"
+          ],
+          "source": true,
+          "text": "원료는 모델 밖(source).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "합성을 0차 공급 하나로 근사"
+          }
+        },
+        {
+          "id": "free_loss",
+          "type": "degradation",
+          "label": "짝 없는 불변 사슬 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "er_membrane"
+          ],
+          "text": "αβ 와 조립되지 않은 불변 사슬의 소포체 분해.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        },
+        {
+          "id": "clip_turnover",
+          "type": "degradation",
+          "label": "풀려난 CLIP·잘린 불변 사슬 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {
+            "clip": "cleaved"
+          },
+          "where": [
+            "endosome_membrane"
+          ],
+          "text": "HLA-DM 이 떼어 낸 CLIP 과 남은 조각은 엔도솜에서 분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000195",
+      "desc": [
+        {
+          "text": "엔도솜·리소좀의 시스테인 단백질 분해효소로, 불변 사슬을 잘라 CLIP 만 남기고 단백질 항원을 펩타이드로 자른다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "ii_cleavage",
+          "type": "transition",
+          "label": "불변 사슬 절단 (CLIP 남김)",
+          "action": "단백질 절단",
+          "agent": true,
+          "effect": {
+            "type": "modify",
+            "target": "D000200",
+            "site": "clip",
+            "add": [
+              "cleaved"
+            ]
+          },
+          "regulators": [],
+          "text": "엔도솜 내강에서 불변 사슬의 내강 쪽 부분이 단계적으로 잘려 CLIP 만 홈에 남는다 — 여러 단백질 분해효소의 단계를 하나로 묶음.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        },
+        {
+          "id": "antigen_processing",
+          "type": "transition",
+          "label": "엔도솜 항원 절단",
+          "action": "단백질 절단",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000181"
+            ],
+            "produces": [
+              "D000179"
+            ]
+          },
+          "regulators": [],
+          "text": "엔도솜 내강의 단백질 항원을 펩타이드로 자른다 — 원천 단백질 하나당 펩타이드 수는 모름(1 로 둠).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000196",
+      "desc": [
+        {
+          "text": "HLA-DM 이형 이량체의 α 사슬",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000197",
+      "desc": [
+        {
+          "text": "HLA-DM 이형 이량체의 β 사슬",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000198",
+      "desc": [
+        {
+          "text": "펩타이드를 싣지 않는 MHC II 유사 분자로, 엔도솜에서 CLIP 을 떼어 내고 안정한 펩타이드가 실리도록 MHC II 를 편집한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 편집 가능",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "clip_release",
+          "type": "transition",
+          "label": "CLIP 떼어 내기",
+          "action": "해리",
+          "agent": true,
+          "effect": {
+            "type": "dissociate",
+            "complex": "D000200",
+            "requires": [
+              {
+                "site": "clip",
+                "feature": "cleaved"
+              }
+            ]
+          },
+          "regulators": [],
+          "text": "HLA-DM 이 MHC II 홈의 CLIP 을 떼어 낸다 — 홈이 빈 MHC II 와 CLIP 조각이 남는다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        },
+        {
+          "id": "peptide_loading",
+          "type": "transition",
+          "label": "MHC II 펩타이드 적재 (HLA-DM 편집)",
+          "action": "결합",
+          "agent": true,
+          "effect": {
+            "type": "associate",
+            "complex": "D000201"
+          },
+          "regulators": [],
+          "text": "HLA-DM 이 붙잡은 빈 MHC II 에 엔도솜 펩타이드가 실린다 — 편집 경쟁(약한 펩타이드 교체)은 이 한 단계에 묶음.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000199",
+      "desc": [
+        {
+          "text": "α·β 사슬이 조립되었지만 홈에 펩타이드도 불변 사슬도 없는 MHC II 로, 불안정해 펩타이드를 받지 못하면 분해된다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "assembly",
+          "type": "transition",
+          "label": "α–β 조립",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "associate"
+          },
+          "regulators": [],
+          "text": "소포체 막에서 α·β 사슬이 짝을 짓는다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "빈 MHC II 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "endosome_membrane"
+          ],
+          "text": "펩타이드를 받지 못한 빈 αβ 는 엔도솜에서 응집·분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000200",
+      "desc": [
+        {
+          "text": "불변 사슬이 MHC II αβ 의 홈을 막은 복합체로, 소포체에서 펩타이드를 받지 않고 골지체를 거쳐 엔도솜으로 간다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "assembly",
+          "type": "transition",
+          "label": "αβ–불변 사슬 조립",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "associate"
+          },
+          "regulators": [],
+          "text": "불변 사슬이 αβ 의 홈에 CLIP 부분을 끼워 넣는다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        },
+        {
+          "id": "er_exit",
+          "type": "transition",
+          "label": "소포체 → 골지체",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "er_membrane",
+            "to": "golgi_membrane"
+          },
+          "regulators": [],
+          "text": "조립된 복합체가 소포체를 떠난다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        },
+        {
+          "id": "endosomal_sorting",
+          "type": "transition",
+          "label": "골지체 → 엔도솜 (불변 사슬 분류 신호)",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "golgi_membrane",
+            "to": "endosome_membrane"
+          },
+          "regulators": [],
+          "text": "불변 사슬 세포질 꼬리의 류신 신호가 복합체를 엔도솜으로 보낸다 (세포막을 거쳐 섭취되는 길은 묶음).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000201",
+      "desc": [
+        {
+          "text": "펩타이드를 홈에 실은 MHC II 로, 엔도솜에서 세포 표면으로 나가 CD4 T 세포에 펩타이드를 제시한다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "펩타이드 실림 — 제시 가능",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "surface_delivery",
+          "type": "transition",
+          "label": "엔도솜 → 세포 표면",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "endosome_membrane",
+            "to": "plasma_membrane"
+          },
+          "regulators": [],
+          "text": "엔도솜 소관·소포가 세포막에 융합해 펩타이드–MHC II 를 표면에 놓는다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818",
+                "citation": "Roche & Furuta, 2015"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354",
+                "citation": "Roche & Furuta, 2015"
+              }
+            ]
+          }
+        },
+        {
+          "id": "internalization",
+          "type": "transition",
+          "label": "세포 안 섭취 (표면 → 엔도솜, MARCH1 유비퀴틴화)",
+          "action": "수송",
+          "agent": false,
+          "effect": {
+            "type": "transport",
+            "from": "plasma_membrane",
+            "to": "endosome_membrane"
+          },
+          "regulators": [],
+          "text": "미성숙 수지상 세포에서는 MARCH1 이 β 사슬 꼬리를 유비퀴틴화해 표면 MHC II 를 빨리 섭취한다 — 유비퀴틴화·섭취를 수송 하나로 묶음.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). — 서지는 Crossref·PubMed 로 확인(De Gassart et al., 2008 (DOI 10.1073/pnas.0708874105, PMID 18305173)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "엔도솜·리소좀 분해",
+          "fate": "lost",
+          "recycle_to": [],
+          "when": {},
+          "where": [
+            "endosome_membrane"
+          ],
+          "text": "섭취된 펩타이드–MHC II 는 리소좀에서 분해된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000202",
+      "desc": [
+        {
+          "text": "항원을 활발히 섭취·처리하지만 펩타이드–MHC II 를 세포 표면에서 빨리 거둬들여 표면 제시가 낮은 수지상 세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "dendritic_cell"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "D000203",
+          "signals": [
+            "D000064"
+          ],
+          "commitment": {
+            "criterion": "threshold"
+          },
+          "text": "LPS 가 TLR4 를 거쳐 성숙을 일으켜 표면 펩타이드–MHC II 가 쌓인다",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
+          }
+        }
+      ],
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000840",
+          "status": "asserted",
+          "note": "EBI OLS(2026-10-10): immature conventional dendritic cell — \"high levels of antigen uptake via endocytosis, macropinocytosis, and phagocytosis\" (이 상태의 정의와 맞음: 섭취·처리는 활발하고 표면 제시는 낮음)"
+        }
+      ]
+    },
+    {
+      "id": "D000203",
+      "desc": [
+        {
+          "text": "표면 펩타이드–MHC II 가 섭취되지 않고 쌓여 T 세포에 펩타이드를 높게 제시하는 수지상 세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학",
+            "cell": "dendritic_cell"
+          },
+          "links": [],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591",
+                "citation": "Cella et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105",
+                "citation": "De Gassart et al., 2008"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173",
+                "citation": "De Gassart et al., 2008"
+              }
+            ]
+          }
+        }
+      ],
+      "xrefs": [
+        {
+          "db": "CL",
+          "id": "CL:0000841",
+          "status": "asserted",
+          "note": "EBI OLS(2026-10-10): mature conventional dendritic cell — \"a high capacity for antigen presentation\" (이 상태의 정의와 맞음: 표면 펩타이드–MHC II 가 높음)"
+        }
+      ]
+    },
+    {
+      "id": "D000064",
+      "rule": [
+        {
+          "id": "mhc2_surface_retention",
+          "type": "modulation",
+          "label": "LPS ⊣ 표면 MHC II 섭취 (수지상 세포 성숙)",
+          "target": "D000201/rule/internalization",
+          "effect": "inhibits",
+          "at": "extracellular",
+          "via": [],
+          "text": "LPS 가 TLR4 로 수지상 세포를 성숙시키면 MARCH1 이 줄어 표면 펩타이드–MHC II 의 섭취가 느려지고 표면에 쌓인다 — TLR4 → NF-κB → MARCH1 감소의 매개 단계를 조절 하나로 묶음 (Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). — 서지는 Crossref·PubMed 로 확인(Cella et al., 1997 (DOI 10.1038/42030, PMID 9285591) / De Gassart et al., 2008 (DOI 10.1073/pnas.0708874105, PMID 18305173)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000098",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "ikba_degradation",
+          "type": "transition",
+          "label": "IκBα 분해",
+          "action": "단백질 분해",
+          "agent": true,
+          "effect": {
+            "type": "degrade",
+            "complex": "D000090",
+            "component": "D000086",
+            "produces": [
+              "D000099"
+            ],
+            "requires": [
+              {
+                "site": "ikba_ub",
+                "feature": "K48_polyubiquitinated"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033",
+              "D000037"
+            ]
+          },
+          "regulators": [],
+          "text": "26S 프로테아좀이 K48 폴리유비퀴틴화된 IκBα 만 골라 펩타이드로 분해하고, NF-κB 이량체는 풀어 준다. 유비퀴틴은 떼어져 다시 쓰인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ],
+            "note": "유비퀴틴이 재활용된다는 부분과 IκBα 만 분해된다는 표현은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
+          }
+        },
+        {
+          "id": "antigen_processing",
+          "type": "transition",
+          "label": "세포 안 항원 절단 (MHC I 펩타이드 생성)",
+          "action": "단백질 절단",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000180"
+            ],
+            "produces": [
+              "D000179"
+            ]
+          },
+          "regulators": [],
+          "text": "프로테아좀이 세포질 단백질을 펩타이드로 자른다 — 면역프로테아좀 소단위, ATP 소비, 원천 단백질 하나당 펩타이드 수는 다루지 않음 (Structural_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        }
+      ]
+    }
+  ],
+  "steps": [],
+  "remove": [],
+  "limitations": []
+}

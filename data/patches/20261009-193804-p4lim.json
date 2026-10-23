@@ -1,0 +1,135 @@
+{
+  "applied_at": "2026-10-09T19:38:04.451Z",
+  "result": {
+    "added": [
+      "L000071",
+      "L000072",
+      "L000073"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000071",
+          "L000072",
+          "L000073"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "엔진 이식 4단계 ⑥: 4단계(관찰 기록·통계 판정·사건 시각·혼성 확률 층)에서 드러난 한계를 등록 — 묶음 상태 나열의 조합 폭발(확장성 검토), 혼성 확률 층의 근사, 운명 프로그램의 검증용 관찰 공백",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000071",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000072",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000073",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000071",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000072",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000073",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 60
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "엔진 이식 4단계 ⑥: 4단계(관찰 기록·통계 판정·사건 시각·혼성 확률 층)에서 드러난 한계를 등록 — 묶음 상태 나열의 조합 폭발(확장성 검토), 혼성 확률 층의 근사, 운명 프로그램의 검증용 관찰 공백",
+  "limitations": [
+    {
+      "id": "L+combo",
+      "target": "D000118",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "묶음 키가 부위 상태를 하나씩 나열한다(D…|부위:특징|…|위치). 부위 k 개가 각각 두 상태면 한 단백질에 2^k 묶음, 복합체·위치와 곱해진다 — 지금은 부위가 있는 정의항이 최대 4 부위(글리코겐 인산화효소·IκBα), 단계가 쓰는 묶음 77 개·묶음당 특징 최대 3 이라 드러나지 않지만, 다중 인산화 수용체·스캐폴드를 넣으면 상태 수가 계산보다 먼저 한계가 된다. 엔진(희소 LU·IR)은 수만 종까지 견디지만 상태 나열 자체가 상한이다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "상태를 나열하지 않는 규칙 기반 시뮬레이션(BioNetGen·NFsim 계열 네트워크 없는 방식)을 T2 규칙 행위자 층에 — 그 전까지 다중 부위 단백질은 단계가 실제로 쓰는 묶음만 나열하고, 형식 이행 때 관찰 기록(v10)의 condition.states 로 측정값의 부위 상태를 보존한다"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 4단계 확장성 검토 (2026-10-09) — 부품별 규모 한계(희소 LU 기호 분석 n 5000 0.49 s, checkLU, simulateRate 강성, db.json 전체 검사)와 구조적 한계 비교"
+    },
+    {
+      "id": "L+sto",
+      "target": "D000174",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "혼성 확률 층(4단계 ④·⑤)의 근사: ① 성향 = 결정론 속도 법칙을 분자 수로 계산한 값 — 1차·서로 다른 분자의 2차는 정확, 같은 분자 2차는 N² 대 N(N−1) 로 O(1/N), 힐·포화 같은 비기본 법칙은 성향 해석 자체가 근사; ② 빠른 규칙(성향 ≥ sto_fast 1 s⁻¹)과 분자 많은 규칙(≥ sto_ode_min 1e4)은 요동을 평균으로 — 포도당 고갈 뒤 작은 대사 풀의 요동은 없다; ③ 성향 > 0 인데 분자 수 < 화학량인 SSA 발화는 막고 다음을 뽑는다(솎아내기 — 고갈 시나리오에서 ~10⁴ 회); ④ 확률 실행은 결정 탐침(신호 철회 시험)을 하지 않는다 — 요동 아래의 결정 시각·결정 확률은 아직 없다. 운명 비율·도달 시각 분포는 이 근사 위에서만 말한다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "조절 규칙의 매개 단계를 질량 작용 기본 반응으로 풀어(Regulatory_Gap 해결) 성향을 정확히; 빠른 부분의 요동이 필요하면 sto_fast 를 시나리오에서 올리고 비용과 함께 compare; 결정 확률 = 앙상블 철회 탐침(같은 seed 계열에서 신호를 끊은 궤적들의 목표 도달 비율)"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 4단계 ④·⑤ — 해석해·방식 비교·결정론 극한 시험과 실제 운명 프로그램 앙상블 (가상 시나리오)"
+    },
+    {
+      "id": "L+obsgap",
+      "target": "D000174",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "운명 프로그램(활성 CD8 T → 효과기 | 기억 전구)에 검증용(use: validation) 관찰 기록이 하나도 없다 — 도달 시각·운명 비율·T-bet/Eomes 분자 수와 세포 간 퍼짐 모두. 그래서 모든 운명 결과는 가상 상수 위에서 기전이 일관되는지만 말하고, 사법부 관찰 판정(observe)은 합성 관찰로만 시험되었다. 형식 예시(가상 상수): 혼합-최적 대 IL-12 시나리오의 효과기 도달 시각 차는 58 s 라, 3 회 반복 관찰로 가르려면 측정 sd ≤ 36 s 가 필요하다(design).",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "관찰 포트(schemas/obs/observation.schema.json)로 효과기·기억 전구 도달 시각(event_time), 운명 비율(fraction), 표지 분자 수(amount — 생물 변이면 반복 = 세포 수)를 검증용으로 넣고 node dbtool.mjs observe 로 판정; 상수 추정에 쓴 관찰은 검증에 쓰지 않는다"
+          }
+        ]
+      },
+      "found_in": "엔진 이식 4단계 ②·⑥ — 관찰 판정 시험 (합성 관찰 examples/observations/)"
+    }
+  ]
+}

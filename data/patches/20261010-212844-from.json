@@ -1,0 +1,474 @@
+{
+  "applied_at": "2026-10-10T21:28:44.483Z",
+  "result": {
+    "added": [
+      "L000106",
+      "O000016",
+      "O000017",
+      "O000018"
+    ],
+    "updated": [
+      "D000116",
+      "D000144",
+      "D000145"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000106"
+        ],
+        "observations": [
+          "O000016",
+          "O000017",
+          "O000018"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000116",
+          "D000144",
+          "D000145"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000116": [
+          "obs"
+        ],
+        "D000144": [
+          "obs"
+        ],
+        "D000145": [
+          "obs"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "측정값 사슬을 닫는다 — 부피를 관찰 기록으로(새 측정량 volume, L000102 해결) 넣고 정의항 obs 5 건에 from 을 달아 사법부가 값·종·세포를 관찰과 대조하게 한다. 레드팀 시험에서 관찰 기록(O000014 818 µM)은 불변인데 그 파생값만 1200 µM 로 바꾸면 관문이 \"새 오류 0\" 으로 통과시키고 엔진 시작량이 8.916e7 → 1.308e8 로 오염되는 것을 확인했다. kinetics 는 kinetics.from 으로 같은 공격이 막혀 있었고, 차이는 obs 에 참조 칸이 없다는 것뿐이었다. 값은 하나도 바꾸지 않는다 — 기존 5 건의 수치는 그대로이고 출처 연결만 더한다.",
+    "impact": {
+      "rules": [
+        "D000148/rule/lumped_oxidation",
+        "D000151/rule/oxdecarb",
+        "D000152/rule/oxdecarb",
+        "D000156/rule/oxidize",
+        "D000157/rule/nad_regen",
+        "D000170/rule/aerobic_glycolysis",
+        "D000171/rule/pyruvate_reduction",
+        "D000172/rule/palmitoyl_oxidation"
+      ],
+      "senses": [
+        "D000148"
+      ],
+      "steps": [
+        "S000033",
+        "S000034",
+        "S000038"
+      ],
+      "pathways": [
+        "D000148"
+      ],
+      "limitations": [
+        {
+          "id": "L000002",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000039",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": "resolved",
+          "after": "resolved"
+        },
+        {
+          "id": "L000047",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000079",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000080",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000081",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000092",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000101",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000102",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000103",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000104",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000105",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000106",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000106",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "why": "측정값 사슬을 닫는다 — 부피를 관찰 기록으로(새 측정량 volume, L000102 해결) 넣고 정의항 obs 5 건에 from 을 달아 사법부가 값·종·세포를 관찰과 대조하게 한다. 레드팀 시험에서 관찰 기록(O000014 818 µM)은 불변인데 그 파생값만 1200 µM 로 바꾸면 관문이 \"새 오류 0\" 으로 통과시키고 엔진 시작량이 8.916e7 → 1.308e8 로 오염되는 것을 확인했다. kinetics 는 kinetics.from 으로 같은 공격이 막혀 있었고, 차이는 obs 에 참조 칸이 없다는 것뿐이었다. 값은 하나도 바꾸지 않는다 — 기존 5 건의 수치는 그대로이고 출처 연결만 더한다.",
+  "observations": [
+    {
+      "id": "O+v_mx",
+      "observable": {
+        "kind": "volume",
+        "target": "mito_matrix"
+      },
+      "value": 1.81e-13,
+      "unit": "L",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 7.9e-14
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "mito_matrix"
+      },
+      "use": "estimation",
+      "method": "유도: 미토콘드리아 수밀도 0.39/µm³ × 1 개 부피 0.29 µm³ (전자 현미경 형태 계측) × 세포질 부피 1.6 pL",
+      "note": "미토콘드리아 **전체** 부피이고 내막 안 기질 부피의 상한이다 (L000101). sd 는 세포질 부피의 보고된 산포 ±0.7 pL 를 같은 비율로 옮긴 것이고, 수밀도·1 개 부피의 불확도는 원문에 없다.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "PMID",
+            "id": "885911",
+            "citation": "Posakony, England & Attardi, 1977"
+          },
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.06.025",
+            "citation": "Guillaume-Gentil et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27419874",
+            "citation": "Guillaume-Gentil et al., 2016"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+v_cyt",
+      "observable": {
+        "kind": "volume",
+        "target": "cytosol"
+      },
+      "value": 1.6e-12,
+      "unit": "L",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 7e-13
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "cell": "hela_cell",
+        "location": "cytosol"
+      },
+      "use": "estimation",
+      "method": "단일 세포 흡입(SICM 기반 나노피펫)으로 뽑아낸 세포질 부피",
+      "note": "중앙값 1.6 pL · 보고된 산포 ±0.7 pL.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cell.2016.06.025",
+            "citation": "Guillaume-Gentil et al., 2016"
+          },
+          {
+            "db": "PMID",
+            "id": "27419874",
+            "citation": "Guillaume-Gentil et al., 2016"
+          }
+        ]
+      }
+    },
+    {
+      "id": "O+v_nuc",
+      "observable": {
+        "kind": "volume",
+        "target": "nucleoplasm"
+      },
+      "value": 5e-13,
+      "unit": "L",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 1e-13
+      },
+      "replicates": 1,
+      "condition": {
+        "species": "9606",
+        "cell": "fibroblast",
+        "location": "nucleoplasm"
+      },
+      "use": "estimation",
+      "method": "종설에 서술된 섬유아세포 핵 부피 (원 측정 논문이 아니다)",
+      "note": "종설값 500 µm³ — BioNumbers 가 \"better ref needed\" 를 달아 둔 항목이다. 불확도가 보고되지 않아 sd 를 보고된 유효 숫자의 해상도(100 fL)로 적었다 — 측정 표준 편차가 아니다.",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1016/j.cub.2003.10.012",
+            "citation": "Lamond & Sleeman, 2003"
+          },
+          {
+            "db": "PMID",
+            "id": "14588256",
+            "citation": "Lamond & Sleeman, 2003"
+          }
+        ]
+      }
+    }
+  ],
+  "senses": [
+    {
+      "id": "D000116",
+      "obs": [
+        {
+          "property": "compartment_volume",
+          "value": 181,
+          "context": {
+            "scope": "미토콘드리아 전체 부피 (기질의 상한)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "885911",
+                "citation": "Posakony, England & Attardi, 1977"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.06.025",
+                "citation": "Guillaume-Gentil et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27419874",
+                "citation": "Guillaume-Gentil et al., 2016"
+              }
+            ]
+          },
+          "unit": "fL",
+          "note": "관찰 기록 O+v_mx 의 파생값 — 수밀도 × 1 개 부피 × 세포질 부피. 내막 안 기질 부피는 더 작다 (상한)",
+          "from": "O+v_mx"
+        },
+        {
+          "property": "compartment_volume",
+          "value": 1600,
+          "context": {
+            "scope": "세포질 전체 부피 (cytosol 의 상한)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "cytosol"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.06.025",
+                "citation": "Guillaume-Gentil et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27419874",
+                "citation": "Guillaume-Gentil et al., 2016"
+              }
+            ]
+          },
+          "unit": "fL",
+          "note": "관찰 기록 O+v_cyt 의 파생값 — 중앙값 1.6 pL",
+          "from": "O+v_cyt"
+        },
+        {
+          "property": "compartment_volume",
+          "value": 500,
+          "context": {
+            "scope": "섬유아세포 핵 부피",
+            "species": "9606",
+            "cell": "fibroblast",
+            "location": "nucleoplasm"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cub.2003.10.012",
+                "citation": "Lamond & Sleeman, 2003"
+              },
+              {
+                "db": "PMID",
+                "id": "14588256",
+                "citation": "Lamond & Sleeman, 2003"
+              }
+            ]
+          },
+          "unit": "fL",
+          "note": "관찰 기록 O+v_nuc 의 파생값 — 종설 서술값, 원 측정 논문이 아니다",
+          "from": "O+v_nuc"
+        }
+      ]
+    },
+    {
+      "id": "D000144",
+      "obs": [
+        {
+          "property": "concentration",
+          "value": 818,
+          "context": {
+            "scope": "미토콘드리아 기질 절대 정량 (LC/MS)",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.07.040",
+                "citation": "Chen et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27565352",
+                "citation": "Chen et al., 2016"
+              }
+            ]
+          },
+          "unit": "µM",
+          "note": "관찰 기록 O000014 의 파생값",
+          "from": "O000014"
+        }
+      ]
+    },
+    {
+      "id": "D000145",
+      "obs": [
+        {
+          "property": "concentration",
+          "value": 7.36,
+          "context": {
+            "scope": "기질 NADH/NAD 비 0.009 × NAD 818 µM",
+            "species": "9606",
+            "cell": "hela_cell",
+            "location": "mito_matrix"
+          },
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.cell.2016.07.040",
+                "citation": "Chen et al., 2016"
+              },
+              {
+                "db": "PMID",
+                "id": "27565352",
+                "citation": "Chen et al., 2016"
+              }
+            ]
+          },
+          "unit": "µM",
+          "note": "관찰 기록 O000015 의 파생값 — 비와 NAD 가 측정값이고 곱은 유도",
+          "from": "O000015"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+seq_obs",
+      "target": "D000050",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "서열 길이(sequence_length)는 관찰 기록으로 받을 수 없다 — 측정량(vocab.observables)에 대응 항목이 없어서다. 그래서 정의항 obs 45 건의 서열 길이는 새 from 대조(v11)의 대상이 아니고, 값이 바뀌어도 관찰과 어긋나는지 검사되지 않는다. 지금은 모두 evidence.level 이 curated 가 아니어서 from 이 요구되지 않지만, 문헌에서 서열 길이를 가져오면 그 자리에 대조가 없다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "측정량 'sequence_length'(대상 = 묶음 또는 정의항, 단위 aa|nt|bp) 를 둘지 결정 — 서열 길이는 측정이라기보다 참조 서열의 속성이어서 관찰 포트에 맞는지가 먼저다"
+          }
+        ]
+      },
+      "found_in": "안전장치 v11 (레드팀 시나리오 2·4 를 막는 중에 드러남)"
+    }
+  ]
+}

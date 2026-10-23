@@ -1,0 +1,2090 @@
+{
+  "applied_at": "2026-10-08T20:40:35.801Z",
+  "result": {
+    "added": [
+      "T000159",
+      "T000160",
+      "T000161",
+      "T000162",
+      "T000163",
+      "T000164",
+      "T000165",
+      "T000166",
+      "T000167",
+      "T000168",
+      "T000169",
+      "T000170",
+      "T000171",
+      "T000172",
+      "T000173",
+      "T000174",
+      "D000161",
+      "D000162",
+      "D000163",
+      "D000164",
+      "D000165",
+      "D000166",
+      "D000167",
+      "D000168",
+      "D000169",
+      "D000170",
+      "D000171",
+      "D000172",
+      "D000173",
+      "D000174",
+      "D000175",
+      "D000176",
+      "L000049",
+      "L000050",
+      "L000051",
+      "L000052",
+      "L000053",
+      "L000054",
+      "L000055",
+      "L000056",
+      "L000057",
+      "L000058",
+      "L000059",
+      "L000060",
+      "L000061",
+      "L000062",
+      "L000063",
+      "L000064",
+      "L000065",
+      "L000066"
+    ],
+    "updated": [
+      "D000148",
+      "D000134"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "terms": [
+          "T000159",
+          "T000160",
+          "T000161",
+          "T000162",
+          "T000163",
+          "T000164",
+          "T000165",
+          "T000166",
+          "T000167",
+          "T000168",
+          "T000169",
+          "T000170",
+          "T000171",
+          "T000172",
+          "T000173",
+          "T000174"
+        ],
+        "senses": [
+          "D000161",
+          "D000162",
+          "D000163",
+          "D000164",
+          "D000165",
+          "D000166",
+          "D000167",
+          "D000168",
+          "D000169",
+          "D000170",
+          "D000171",
+          "D000172",
+          "D000173",
+          "D000174",
+          "D000175",
+          "D000176"
+        ],
+        "limitations": [
+          "L000049",
+          "L000050",
+          "L000051",
+          "L000052",
+          "L000053",
+          "L000054",
+          "L000055",
+          "L000056",
+          "L000057",
+          "L000058",
+          "L000059",
+          "L000060",
+          "L000061",
+          "L000062",
+          "L000063",
+          "L000064",
+          "L000065",
+          "L000066"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000148",
+          "D000134"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000148": [
+          "rule"
+        ],
+        "D000134": [
+          "rule"
+        ]
+      }
+    },
+    "why": "Mission Expansion — 세포 운명(계통 결정) 층: 활성 CD8 T 세포가 IL-12(해당과정·T-bet) 또는 IL-15(지방산 산화·Eomes) 신호로 효과기/기억 전구 상태로 결정되는 신호 → 대사 → 운명 기전 사슬. 신호·전사 인자·대사 경로(해당과정·젖산 발효·β-산화·ATP 소비·회로 순 반응)·조절 규칙(힐)·세포 상태(서명·대사 프로그램·결정 기준)를 넣고, 추론으로 묶은 매개와 모르는 상수를 한계로 등록",
+    "impact": {
+      "rules": [
+        "D000149/rule/condense",
+        "D000159/rule/accoa_supply"
+      ],
+      "senses": [
+        "D000149"
+      ],
+      "steps": [
+        "S000004",
+        "S000005",
+        "S000008",
+        "S000009",
+        "S000010",
+        "S000011",
+        "S000018",
+        "S000020",
+        "S000021",
+        "S000022",
+        "S000023",
+        "S000024",
+        "S000025",
+        "S000026",
+        "S000027",
+        "S000031",
+        "S000033",
+        "S000034",
+        "S000035",
+        "S000036",
+        "S000038"
+      ],
+      "pathways": [
+        "D000050",
+        "D000051",
+        "D000104",
+        "D000105",
+        "D000148",
+        "D000102"
+      ],
+      "limitations": [
+        {
+          "id": "L000038",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000039",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000048",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000049",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000050",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000051",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000052",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000053",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000054",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000055",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000056",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000057",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000058",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000059",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000060",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000061",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000062",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000063",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000064",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000065",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000066",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000049",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000050",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000051",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000052",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000053",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000054",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000055",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000056",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000057",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000058",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000059",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000060",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000061",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000062",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000063",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000064",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000065",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000066",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "Mission Expansion — 세포 운명(계통 결정) 층: 활성 CD8 T 세포가 IL-12(해당과정·T-bet) 또는 IL-15(지방산 산화·Eomes) 신호로 효과기/기억 전구 상태로 결정되는 신호 → 대사 → 운명 기전 사슬. 신호·전사 인자·대사 경로(해당과정·젖산 발효·β-산화·ATP 소비·회로 순 반응)·조절 규칙(힐)·세포 상태(서명·대사 프로그램·결정 기준)를 넣고, 추론으로 묶은 매개와 모르는 상수를 한계로 등록",
+  "terms": [
+    {
+      "id": "T+il12a",
+      "names": {
+        "ko": "IL-12 p35",
+        "en": "interleukin-12 subunit alpha"
+      },
+      "aliases": [
+        "IL12A",
+        "p35"
+      ]
+    },
+    {
+      "id": "T+il12b",
+      "names": {
+        "ko": "IL-12 p40",
+        "en": "interleukin-12 subunit beta"
+      },
+      "aliases": [
+        "IL12B",
+        "p40"
+      ]
+    },
+    {
+      "id": "T+il12",
+      "names": {
+        "ko": "IL-12",
+        "en": "interleukin-12"
+      },
+      "aliases": [
+        "인터루킨-12",
+        "IL-12p70"
+      ]
+    },
+    {
+      "id": "T+il15",
+      "names": {
+        "ko": "IL-15",
+        "en": "interleukin-15"
+      },
+      "aliases": [
+        "인터루킨-15",
+        "IL15"
+      ]
+    },
+    {
+      "id": "T+tbet",
+      "names": {
+        "ko": "T-bet",
+        "en": "T-box transcription factor TBX21"
+      },
+      "aliases": [
+        "TBX21"
+      ]
+    },
+    {
+      "id": "T+eomes",
+      "names": {
+        "ko": "Eomes",
+        "en": "eomesodermin homolog"
+      },
+      "aliases": [
+        "EOMES",
+        "에오메소더민"
+      ]
+    },
+    {
+      "id": "T+pyr",
+      "names": {
+        "ko": "피루브산",
+        "en": "pyruvate"
+      },
+      "aliases": [
+        "피루브산염"
+      ]
+    },
+    {
+      "id": "T+lac",
+      "names": {
+        "ko": "젖산",
+        "en": "L-lactate"
+      },
+      "aliases": [
+        "L-젖산",
+        "락트산"
+      ]
+    },
+    {
+      "id": "T+palcoa",
+      "names": {
+        "ko": "팔미토일-CoA",
+        "en": "palmitoyl-CoA"
+      },
+      "aliases": [
+        "팔미토일 CoA"
+      ]
+    },
+    {
+      "id": "T+glyc",
+      "names": {
+        "ko": "해당과정",
+        "en": "glycolysis"
+      },
+      "aliases": [
+        "해당 과정",
+        "glycolytic process",
+        "호기성 해당"
+      ]
+    },
+    {
+      "id": "T+fao",
+      "names": {
+        "ko": "지방산 β-산화",
+        "en": "fatty acid beta-oxidation"
+      },
+      "aliases": [
+        "β-산화",
+        "FAO",
+        "베타 산화"
+      ]
+    },
+    {
+      "id": "T+ldh",
+      "names": {
+        "ko": "젖산 탈수소효소",
+        "en": "L-lactate dehydrogenase"
+      },
+      "aliases": [
+        "LDH"
+      ]
+    },
+    {
+      "id": "T+atpdemand",
+      "names": {
+        "ko": "세포 ATP 소비",
+        "en": "cellular ATP demand"
+      },
+      "aliases": [
+        "ATP 수요",
+        "ATP 가수분해 부하"
+      ]
+    },
+    {
+      "id": "T+act",
+      "names": {
+        "ko": "활성화된 CD8 T 세포",
+        "en": "activated CD8 T cell"
+      },
+      "aliases": [
+        "미결정 활성 CD8 T 세포",
+        "early effector CD8 T cell"
+      ]
+    },
+    {
+      "id": "T+eff",
+      "names": {
+        "ko": "효과기 CD8 T 세포",
+        "en": "effector CD8 T cell"
+      },
+      "aliases": [
+        "단기 효과기 CD8 T 세포",
+        "SLEC",
+        "short-lived effector cell"
+      ]
+    },
+    {
+      "id": "T+mem",
+      "names": {
+        "ko": "기억 전구 CD8 T 세포",
+        "en": "memory precursor CD8 T cell"
+      },
+      "aliases": [
+        "MPEC",
+        "memory precursor effector cell"
+      ]
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+il12a",
+      "term": "T+il12a",
+      "kind": "protein",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P29459",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "IL-12 이종 이량체의 p35 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+il12b",
+      "term": "T+il12b",
+      "kind": "protein",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P29460",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "IL-12 이종 이량체의 p40 소단위",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+il12",
+      "term": "T+il12",
+      "kind": "complex",
+      "components": [
+        {
+          "ref": "D+il12a",
+          "n": 1
+        },
+        {
+          "ref": "D+il12b",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "p35 와 p40 이 이황화 결합으로 이어진 이종 이량체 사이토카인으로, 활성화된 CD8 T 세포를 단기 효과기 쪽으로 미는 염증 신호",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2007.07.010",
+                "citation": "Joshi et al., 2007"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "glycolysis_induction",
+          "type": "modulation",
+          "label": "IL-12 → 해당과정 촉진",
+          "target": "D+glyc/rule/aerobic_glycolysis",
+          "effect": "activates",
+          "at": "extracellular",
+          "text": "IL-12 수용체 → STAT4 → mTORC1 활성 → 해당 효소 발현 증가. 매개 단계는 풀지 않음(Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "IL-12·mTOR 신호가 효과기 CD8 T 세포의 해당 대사를 높인다는 문헌의 흐름을 조절 규칙 하나로 묶음"
+          }
+        },
+        {
+          "id": "tbet_induction",
+          "type": "modulation",
+          "label": "IL-12 → T-bet 합성 촉진",
+          "target": "D+tbet/rule/synthesis",
+          "effect": "activates",
+          "at": "extracellular",
+          "text": "IL-12 의 세기에 따라 T-bet 이 단계적으로 늘어 단기 효과기 운명이 정해진다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2007.07.010",
+                "citation": "Joshi et al., 2007"
+              }
+            ]
+          }
+        },
+        {
+          "id": "eomes_repression",
+          "type": "modulation",
+          "label": "IL-12 ⊣ Eomes 합성",
+          "target": "D+eomes/rule/synthesis",
+          "effect": "inhibits",
+          "at": "extracellular",
+          "text": "IL-12 신호는 T-bet 을 올리면서 Eomes 를 낮춘다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "IL-12 가 T-bet 과 Eomes 를 반대로 조절한다는 보고를 억제 조절 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+il15",
+      "term": "T+il15",
+      "kind": "protein",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P40933",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "IL-2/IL-15 수용체 β·공통 γ 사슬로 신호를 보내 기억 CD8 T 세포의 미토콘드리아 지방산 산화를 높이는 사이토카인",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2011.12.007",
+                "citation": "van der Windt et al., 2012"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "fao_induction",
+          "type": "modulation",
+          "label": "IL-15 → 지방산 β-산화 촉진",
+          "target": "D+fao/rule/palmitoyl_oxidation",
+          "effect": "activates",
+          "at": "extracellular",
+          "text": "IL-15 → STAT5 → CPT1A 발현 → 장쇄 아실-CoA 의 미토콘드리아 유입 증가. 매개 단계는 풀지 않음(Regulatory_Gap).",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2011.12.007",
+                "citation": "van der Windt et al., 2012"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+tbet",
+      "term": "T+tbet",
+      "kind": "protein",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9UL17",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "T-box 계열 전사 인자로, 높게 발현되면 CD8 T 세포가 단기 효과기 프로그램(세포독성·IFN-γ)으로 결정된다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2007.07.010",
+                "citation": "Joshi et al., 2007"
+              }
+            ]
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "T-bet 합성 (전사·번역 묶음)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D+tbet",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "source": true,
+          "text": "아미노산·뉴클레오타이드·ATP 는 모델 밖(source). 속도는 조절 규칙들의 힐 배율로 정해진다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "유전자 발현을 0차 합성 하나와 조절 배율로 근사"
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "T-bet 분해",
+          "fate": "lost",
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "프로테아좀 분해 — 아미노산은 모델 밖으로.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 분해를 1차 소실로 근사"
+          }
+        },
+        {
+          "id": "tbet_autoactivation",
+          "type": "modulation",
+          "label": "T-bet → 자기 합성 (양성 되먹임)",
+          "target": "D+tbet/rule/synthesis",
+          "effect": "activates",
+          "at": "nucleoplasm",
+          "text": "T-bet 이 자기 유전자 발현을 유지한다 — 신호가 사라져도 상태를 붙드는 기억의 근원.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "계통 결정 전사 인자의 자기 활성화를 양성 되먹임으로 둠"
+          }
+        },
+        {
+          "id": "eomes_antagonism",
+          "type": "modulation",
+          "label": "T-bet ⊣ Eomes 합성",
+          "target": "D+eomes/rule/synthesis",
+          "effect": "inhibits",
+          "at": "nucleoplasm",
+          "text": "효과기 프로그램이 기억 프로그램을 누른다 (상호 억제 토글).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "T-bet 과 Eomes 의 상호 배타적 우세를 상호 억제로 둠"
+          }
+        },
+        {
+          "id": "glycolysis_maintenance",
+          "type": "modulation",
+          "label": "T-bet → 해당과정 유지",
+          "target": "D+glyc/rule/aerobic_glycolysis",
+          "effect": "activates",
+          "at": "nucleoplasm",
+          "text": "결정된 효과기 프로그램이 해당 대사를 유지한다 (대사 ↔ 운명 되먹임).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "효과기 프로그램과 해당 대사의 상호 강화를 조절 규칙으로 둠"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+eomes",
+      "term": "T+eomes",
+      "kind": "protein",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O95936",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "T-box 계열 전사 인자로, 높게 발현되면 CD8 T 세포가 기억 전구 프로그램(자기 재생·IL-15 반응성)으로 결정된다",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "synthesis",
+          "type": "supply",
+          "label": "Eomes 합성 (전사·번역 묶음)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D+eomes",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "source": true,
+          "text": "아미노산·뉴클레오타이드·ATP 는 모델 밖(source). 속도는 조절 규칙들의 힐 배율로 정해진다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "유전자 발현을 0차 합성 하나와 조절 배율로 근사"
+          }
+        },
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "Eomes 분해",
+          "fate": "lost",
+          "where": [
+            "nucleoplasm"
+          ],
+          "text": "프로테아좀 분해 — 아미노산은 모델 밖으로.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 분해를 1차 소실로 근사"
+          }
+        },
+        {
+          "id": "eomes_autoactivation",
+          "type": "modulation",
+          "label": "Eomes → 자기 합성 (양성 되먹임)",
+          "target": "D+eomes/rule/synthesis",
+          "effect": "activates",
+          "at": "nucleoplasm",
+          "text": "Eomes 가 자기 유전자 발현을 유지한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "계통 결정 전사 인자의 자기 활성화를 양성 되먹임으로 둠"
+          }
+        },
+        {
+          "id": "tbet_antagonism",
+          "type": "modulation",
+          "label": "Eomes ⊣ T-bet 합성",
+          "target": "D+tbet/rule/synthesis",
+          "effect": "inhibits",
+          "at": "nucleoplasm",
+          "text": "기억 프로그램이 효과기 프로그램을 누른다 (상호 억제 토글).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "T-bet 과 Eomes 의 상호 배타적 우세를 상호 억제로 둠"
+          }
+        },
+        {
+          "id": "fao_maintenance",
+          "type": "modulation",
+          "label": "Eomes → 지방산 β-산화 유지",
+          "target": "D+fao/rule/palmitoyl_oxidation",
+          "effect": "activates",
+          "at": "nucleoplasm",
+          "text": "결정된 기억 프로그램이 지방산 산화를 유지한다 (대사 ↔ 운명 되먹임).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "기억 프로그램과 지방산 산화의 상호 강화를 조절 규칙으로 둠"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+pyr",
+      "term": "T+pyr",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "desc": [
+        {
+          "text": "해당과정의 끝 산물인 탄소 세 개짜리 2-옥소산",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (T 세포 대사)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "tbet_licensing",
+          "type": "modulation",
+          "label": "피루브산(해당 흐름) → T-bet 합성 허가",
+          "target": "D+tbet/rule/synthesis",
+          "effect": "activates",
+          "at": "cytosol",
+          "text": "해당 흐름이 효과기 프로그램을 허가한다 — 실제 매개(GAPDH 의 번역 조절, 아세틸-CoA 의 히스톤 아세틸화)는 풀지 않고 피루브산 농도를 흐름의 대리 지표로 씀(Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "포도당 대사가 효과기 기능 유전자 발현을 지탱한다는 문헌의 흐름을 해당 산물 농도의 조절로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+lac",
+      "term": "T+lac",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 조회할 수 없음) — 이온화 상태별 항목 선택도 미정",
+      "desc": [
+        {
+          "text": "피루브산이 NADH 로 환원되어 생기는 탄소 세 개짜리 하이드록시산으로, 해당과정의 NAD⁺ 를 되돌린다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (T 세포 대사)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "export",
+          "type": "degradation",
+          "label": "젖산 배출 (MCT)",
+          "fate": "lost",
+          "where": [
+            "cytosol"
+          ],
+          "text": "단일 카복실산 수송체로 세포 밖으로 나가 계에서 사라진다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "수송체 배출을 1차 소실로 근사"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+palcoa",
+      "term": "T+palcoa",
+      "kind": "small_molecule",
+      "unmapped": "ChEBI 번호를 원본과 대조하지 못함 (네트워크로 ChEBI 를 조회할 수 없음)",
+      "moieties": [
+        {
+          "ref": "D000130",
+          "n": 16
+        },
+        {
+          "ref": "D000131",
+          "n": 1
+        }
+      ],
+      "desc": [
+        {
+          "text": "탄소 열여섯 개 포화 지방산이 조효소 A 에 싸이오에스터로 붙은 활성 지방산으로, β-산화의 기질",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (T 세포 대사)"
+          },
+          "links": [
+            {
+              "to": "D000135",
+              "rel": "refers",
+              "span": "조효소 A"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+glyc",
+      "term": "T+glyc",
+      "kind": "pathway",
+      "xrefs": [
+        {
+          "db": "GO",
+          "id": "GO:0006096",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "세포질에서 포도당 한 분자를 피루브산 두 분자로 나누며 ATP 두 분자와 NADH 두 분자를 내는 경로",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (T 세포 대사)"
+          },
+          "links": [
+            {
+              "to": "D000046",
+              "rel": "refers",
+              "span": "포도당"
+            },
+            {
+              "to": "D+pyr",
+              "rel": "refers",
+              "span": "피루브산"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "aerobic_glycolysis",
+          "type": "supply",
+          "label": "해당과정 (포도당 → 피루브산 2)",
+          "consumes": [
+            {
+              "ref": "D000046",
+              "n": 1
+            },
+            {
+              "ref": "D000144",
+              "n": 2,
+              "saturating": true
+            },
+            {
+              "ref": "D000033",
+              "n": 2,
+              "saturating": true
+            },
+            {
+              "ref": "D000037",
+              "n": 2,
+              "saturating": true
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D+pyr",
+              "n": 2
+            },
+            {
+              "ref": "D000145",
+              "n": 2
+            },
+            {
+              "ref": "D000032",
+              "n": 2
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "열 단계의 순 반응 (물·H⁺ 는 부분 구조가 없어 생략). 탄소 골격은 포도당·피루브산에 선언되지 않아 검사하지 않음(Structural_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "해당과정 열 단계의 순 화학량을 공급 규칙 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+ldh",
+      "term": "T+ldh",
+      "kind": "molecule_class",
+      "tier": "T2",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 1.1.1.27",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "피루브산을 NADH 로 젖산으로 환원해 해당과정의 NAD⁺ 를 되돌리는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (T 세포 대사)"
+          },
+          "links": [
+            {
+              "to": "D+pyr",
+              "rel": "refers",
+              "span": "피루브산"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "pyruvate_reduction",
+          "type": "supply",
+          "label": "피루브산 → 젖산 (NAD⁺ 재생)",
+          "consumes": [
+            {
+              "ref": "D+pyr",
+              "n": 1
+            },
+            {
+              "ref": "D000145",
+              "n": 1,
+              "saturating": true
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D+lac",
+              "n": 1
+            },
+            {
+              "ref": "D000144",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "호기성 해당(바르부르크형)에서 NAD⁺ 를 되돌려 해당과정이 계속 돌게 한다.",
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+fao",
+      "term": "T+fao",
+      "kind": "pathway",
+      "xrefs": [
+        {
+          "db": "GO",
+          "id": "GO:0006635",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "미토콘드리아 기질에서 지방산-CoA 를 탄소 두 개씩 잘라 아세틸-CoA 로 만들며 NADH 와 FADH₂ 를 내는 경로",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학 (T 세포 대사)"
+          },
+          "links": [
+            {
+              "to": "D000134",
+              "rel": "refers",
+              "span": "아세틸-CoA"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "palmitoyl_oxidation",
+          "type": "supply",
+          "label": "팔미토일-CoA β-산화 (7 바퀴 → 아세틸-CoA 8)",
+          "consumes": [
+            {
+              "ref": "D+palcoa",
+              "n": 1
+            },
+            {
+              "ref": "D000135",
+              "n": 7,
+              "saturating": true
+            },
+            {
+              "ref": "D000144",
+              "n": 7,
+              "saturating": true
+            },
+            {
+              "ref": "D000146",
+              "n": 7,
+              "saturating": true
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000134",
+              "n": 8
+            },
+            {
+              "ref": "D000145",
+              "n": 7
+            },
+            {
+              "ref": "D000147",
+              "n": 7
+            }
+          ],
+          "where": [
+            "mito_matrix"
+          ],
+          "text": "β-산화 일곱 바퀴의 순 반응. 지방산 활성화(아실-CoA 합성효소)와 CPT1/CPT2 유입은 상류로 보고 기질을 팔미토일-CoA 로 둠.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "β-산화 일곱 바퀴의 순 화학량(탄소·CoA·NAD·FAD 수지)을 공급 규칙 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+atpdemand",
+      "term": "T+atpdemand",
+      "kind": "process",
+      "desc": [
+        {
+          "text": "세포가 일(합성·수송·운동)에 쓰는 ATP 가수분해를 저장소 소비 하나로 본 것",
+          "field": "생화학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 세포질"
+          },
+          "links": [],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "ATP 를 쓰는 모든 과정의 순 효과를 공급 규칙 하나로 묶음"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "atp_hydrolysis_load",
+          "type": "supply",
+          "label": "ATP 소비 (ATP → ADP + Pi)",
+          "consumes": [
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000033",
+              "n": 1
+            },
+            {
+              "ref": "D000037",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "ADP 를 되돌려 해당과정의 ATP 생산이 계속되게 한다 (물은 생략).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "ATP 를 쓰는 모든 과정의 순 효과를 공급 규칙 하나로 묶음"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000148",
+      "rule": [
+        {
+          "id": "lumped_oxidation",
+          "type": "supply",
+          "label": "아세틸-CoA 완전 산화 (회로 여덟 단계의 순 반응)",
+          "consumes": [
+            {
+              "ref": "D000134",
+              "n": 1
+            },
+            {
+              "ref": "D000144",
+              "n": 3,
+              "saturating": true
+            },
+            {
+              "ref": "D000146",
+              "n": 1,
+              "saturating": true
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000160",
+              "n": 2
+            },
+            {
+              "ref": "D000135",
+              "n": 1
+            },
+            {
+              "ref": "D000145",
+              "n": 3
+            },
+            {
+              "ref": "D000147",
+              "n": 1
+            }
+          ],
+          "where": [
+            "mito_matrix"
+          ],
+          "text": "단계(S000031–S000038)를 하나씩 풀지 않아도 되는 다중 규모 모델(세포 운명 층)용 순 반응 — 옥살로아세트산은 다시 만들어져 소거된다. 석시닐-CoA 합성효소의 GDP + Pi → GTP 는 구아노신 순환을 운명 층 범위 밖에 두려고 뺐다(부분 구조 수지는 유지, Structural_Gap). 단계 시뮬레이션은 이 규칙을 쓰지 않는다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "시트르산 회로 여덟 단계(S000031–S000038)의 화학량을 더해 옥살로아세트산을 소거"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+act",
+      "term": "T+act",
+      "kind": "cell_state",
+      "reference_species": "9606",
+      "desc": [
+        {
+          "text": "항원으로 활성화되어 증식하지만 아직 효과기·기억 어느 쪽으로도 결정되지 않은 CD8 T 세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2007.07.010",
+                "citation": "Joshi et al., 2007"
+              }
+            ]
+          }
+        }
+      ],
+      "signature": [
+        {
+          "ref": "D+tbet",
+          "level": "low",
+          "location": "nucleoplasm"
+        },
+        {
+          "ref": "D+eomes",
+          "level": "low",
+          "location": "nucleoplasm"
+        }
+      ],
+      "metabolome": [
+        {
+          "ref": "D+glyc/rule/aerobic_glycolysis",
+          "level": "low"
+        },
+        {
+          "ref": "D+fao/rule/palmitoyl_oxidation",
+          "level": "low"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "D+eff",
+          "signals": [
+            "D+il12"
+          ],
+          "commitment": {
+            "criterion": "withdrawal"
+          },
+          "text": "IL-12 가 T-bet 을 올리고 해당과정을 켠다",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2007.07.010",
+                "citation": "Joshi et al., 2007"
+              }
+            ]
+          }
+        },
+        {
+          "to": "D+mem",
+          "signals": [
+            "D+il15"
+          ],
+          "commitment": {
+            "criterion": "withdrawal"
+          },
+          "text": "IL-15 가 지방산 산화를 켜고 기억 전구 프로그램을 허가한다",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2011.12.007",
+                "citation": "van der Windt et al., 2012"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+eff",
+      "term": "T+eff",
+      "kind": "cell_state",
+      "reference_species": "9606",
+      "desc": [
+        {
+          "text": "T-bet 이 높고 Eomes 가 낮으며 해당 대사에 기대는, 세포독성 기능을 가진 단기 효과기 CD8 T 세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/j.immuni.2007.07.010",
+                "citation": "Joshi et al., 2007"
+              }
+            ]
+          }
+        }
+      ],
+      "signature": [
+        {
+          "ref": "D+tbet",
+          "level": "high",
+          "location": "nucleoplasm"
+        },
+        {
+          "ref": "D+eomes",
+          "level": "low",
+          "location": "nucleoplasm"
+        }
+      ],
+      "metabolome": [
+        {
+          "ref": "D+glyc/rule/aerobic_glycolysis",
+          "level": "high"
+        },
+        {
+          "ref": "D+ldh/rule/pyruvate_reduction",
+          "level": "high"
+        },
+        {
+          "ref": "D+fao/rule/palmitoyl_oxidation",
+          "level": "low"
+        }
+      ]
+    },
+    {
+      "id": "D+mem",
+      "term": "T+mem",
+      "kind": "cell_state",
+      "reference_species": "9606",
+      "desc": [
+        {
+          "text": "Eomes 가 높고 T-bet 이 낮으며 미토콘드리아 지방산 산화에 기대는, 기억 세포로 남을 CD8 T 세포 상태",
+          "field": "면역학",
+          "context": {
+            "scope": "면역학 (활성화된 CD8 T 세포의 운명 결정)"
+          },
+          "links": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature08097",
+                "citation": "Pearce et al., 2009"
+              }
+            ]
+          }
+        }
+      ],
+      "signature": [
+        {
+          "ref": "D+eomes",
+          "level": "high",
+          "location": "nucleoplasm"
+        },
+        {
+          "ref": "D+tbet",
+          "level": "low",
+          "location": "nucleoplasm"
+        }
+      ],
+      "metabolome": [
+        {
+          "ref": "D+fao/rule/palmitoyl_oxidation",
+          "level": "high"
+        },
+        {
+          "ref": "D000148/rule/lumped_oxidation",
+          "level": "high"
+        },
+        {
+          "ref": "D+glyc/rule/aerobic_glycolysis",
+          "level": "low"
+        }
+      ]
+    },
+    {
+      "id": "D000134",
+      "rule": [
+        {
+          "id": "eomes_licensing",
+          "type": "modulation",
+          "label": "아세틸-CoA(β-산화 흐름) → Eomes 합성 허가",
+          "target": "D+eomes/rule/synthesis",
+          "effect": "activates",
+          "at": "mito_matrix",
+          "text": "지방산 산화 흐름이 기억 프로그램을 허가한다 — 실제 매개(여분 호흡 능력·AMPK)는 풀지 않고 기질 아세틸-CoA 농도를 흐름의 대리 지표로 씀(Regulatory_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "지방산 산화가 기억 CD8 T 세포 형성을 지탱한다는 문헌의 흐름(Pearce 2009, van der Windt 2012)을 기질 농도의 조절로 묶음"
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+r_il12glyc",
+      "target": "D+il12/rule/glycolysis_induction",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "IL-12 → 해당과정 사이의 IL-12 수용체·STAT4·mTORC1 단계가 풀리지 않았고 힐 상수(K·n·fmax)를 모름 — 신호 세기와 해당 흐름의 관계가 가상 시나리오 값에 기댄다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+il12/rule/glycolysis_induction",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "IL-12 수용체(IL12RB1·IL12RB2)·STAT4·mTORC1 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_il12tbet",
+      "target": "D+il12/rule/tbet_induction",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "IL-12 → T-bet 유도의 힐 상수(용량-반응)를 모름",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+il12/rule/tbet_induction",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_il12eomes",
+      "target": "D+il12/rule/eomes_repression",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "IL-12 ⊣ Eomes 억제의 힐 상수를 모르고, 억제 매개(STAT4·T-bet·염색질)가 풀리지 않음",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+il12/rule/eomes_repression",
+            "params": [
+              "K",
+              "n"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "억제 매개 분자의 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_il15fao",
+      "target": "D+il15/rule/fao_induction",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "IL-15 → STAT5 → CPT1A 단계가 풀리지 않았고 힐 상수를 모름",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+il15/rule/fao_induction",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "IL-2/IL-15Rβ·공통 γ 사슬·STAT5·CPT1A 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_toggle",
+      "target": "D+tbet/rule/eomes_antagonism",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "T-bet ⊣ Eomes · Eomes ⊣ T-bet 상호 억제와 두 자기 활성화는 추론(abstracted)이다 — 실제 조절 회로(공동 결합 부위·염색질)와 상수가 없어 쌍안정성의 위치(분리선)가 가상 값으로 정해진다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+tbet/rule/eomes_antagonism",
+            "params": [
+              "K",
+              "n"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+eomes/rule/tbet_antagonism",
+            "params": [
+              "K",
+              "n"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+tbet/rule/tbet_autoactivation",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+eomes/rule/eomes_autoactivation",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "T-bet·Eomes 프로모터·인핸서 결합 근거"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_lic_t",
+      "target": "D+pyr/rule/tbet_licensing",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "해당 흐름 → 효과기 프로그램 허가를 피루브산 농도로 대신함 — 실제 매개(GAPDH 의 IFN-γ mRNA 번역 조절, 포도당 유래 아세틸-CoA 의 히스톤 아세틸화)가 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+pyr/rule/tbet_licensing",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "GAPDH 번역 조절·ACLY·히스톤 아세틸화 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_lic_e",
+      "target": "D000134/rule/eomes_licensing",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "지방산 산화 → 기억 프로그램 허가를 기질 아세틸-CoA 농도로 대신함 — 실제 매개(미토콘드리아 여분 호흡 능력·AMPK)가 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000134/rule/eomes_licensing",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "여분 호흡 능력·AMPK 매개의 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+r_maint",
+      "target": "D+tbet/rule/glycolysis_maintenance",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "결정된 프로그램이 대사를 유지하는 되먹임(T-bet → 해당, Eomes → β-산화)은 추론이며 상수를 모름",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+tbet/rule/glycolysis_maintenance",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+eomes/rule/fao_maintenance",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+k_tsyn",
+      "target": "D+tbet/rule/synthesis",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "T-bet·Eomes 의 기본 합성 속도와 반감기(활성 CD8 T 세포) — 없으면 운명 층의 느린 시간 척도(결정 시각)가 가상 값으로 정해진다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+tbet/rule/synthesis",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+eomes/rule/synthesis",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+tbet/rule/turnover",
+            "params": [
+              "half_life"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+eomes/rule/turnover",
+            "params": [
+              "half_life"
+            ]
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+s_tsyn",
+      "target": "D+tbet",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "전사 인자 합성을 source(계 밖 원료)로 둠 — 번역의 아미노산·ATP·GTP 화학량(서열 길이 × 결합당 비용)을 몰라 합성이 대사 저장소를 소비하지 않는다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "sequence_length",
+            "on": "D+tbet"
+          },
+          {
+            "kind": "obs",
+            "property": "sequence_length",
+            "on": "D+eomes"
+          },
+          {
+            "kind": "manual",
+            "text": "번역 비용(펩타이드 결합당 ATP·GTP)과 아미노산 저장소"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+s_glyc_c",
+      "target": "D+glyc/rule/aerobic_glycolysis",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "포도당·피루브산·젖산에 탄소 골격 단위가 선언되지 않아 해당과정·젖산 발효의 탄소 수지를 검사하지 못함 (포도당은 글리코겐 경로에서 리간드로도 쓰여 함께 고쳐야 함)",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "포도당 6·피루브산 3·젖산 3 탄소 골격 단위 선언과 글리코겐 경로(포도당-1-인산) 수지 정리"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+s_fao_up",
+      "target": "D+fao/rule/palmitoyl_oxidation",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "지방산 활성화(아실-CoA 합성효소, ATP → AMP + PPi)와 CPT1/CPT2 유입을 상류로 묶고 기질을 팔미토일-CoA 로 둠 — 세포질 ATP 비용과 막 수송이 빠졌다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "아실-CoA 합성효소·CPT1A·CPT2·카르니틴 정의항과 수송 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+s_oxphos",
+      "target": "D000148/rule/lumped_oxidation",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "세포 운명 층은 회로를 순 반응으로(석시닐-CoA 합성효소의 GTP 생산 생략), NADH·FADH₂ 재산화를 ATP 생산과 짝짓지 않고 다룸 — P/O 비와 기질 ATP 생산(산화적 인산화)이 없어 기억 세포의 ATP 공급을 계산하지 못한다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "산화적 인산화(ATP 생성효소) 공급 규칙과 NADH 재산화와의 짝(P/O 비)"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+c_cyto",
+      "target": "D+act",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "활성 CD8 T 세포의 구획 부피(세포질·핵질·미토콘드리아 기질)와 포도당·팔미토일-CoA·보조 인자 시작량 — 없으면 시나리오 값(가상)으로 시작한다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D000129",
+            "cell": "cd8_t_cell",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D000129",
+            "cell": "cd8_t_cell",
+            "location": "nucleoplasm"
+          },
+          {
+            "kind": "obs",
+            "property": "compartment_volume",
+            "on": "D000129",
+            "cell": "cd8_t_cell",
+            "location": "mito_matrix"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+k_met",
+      "target": "D+glyc/rule/aerobic_glycolysis",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "T 세포 해당과정·젖산 발효·β-산화·ATP 소비·젖산 배출의 속도 상수 — 없으면 운명 층의 빠른 시간 척도가 가상 값으로 정해진다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+glyc/rule/aerobic_glycolysis",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+ldh/rule/pyruvate_reduction",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+fao/rule/palmitoyl_oxidation",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+atpdemand/rule/atp_hydrolysis_load",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D+lac/rule/export",
+            "params": [
+              "k"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000148/rule/lumped_oxidation",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+id_pyr",
+      "target": "D+pyr",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "피루브산 ChEBI 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+pyr"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+id_lac",
+      "target": "D+lac",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "L-젖산 ChEBI 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+lac"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    },
+    {
+      "id": "L+id_pal",
+      "target": "D+palcoa",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "팔미토일-CoA ChEBI 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "db": "ChEBI",
+            "on": "D+palcoa"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램"
+    }
+  ]
+}

@@ -1,0 +1,1519 @@
+{
+  "applied_at": "2026-10-08T16:49:37.031Z",
+  "result": {
+    "added": [
+      "T000117",
+      "T000118",
+      "T000119",
+      "T000120",
+      "T000121",
+      "T000122",
+      "T000123",
+      "T000124",
+      "T000125",
+      "T000126",
+      "T000127",
+      "D000119",
+      "D000120",
+      "D000121",
+      "D000122",
+      "D000123",
+      "D000124",
+      "D000125",
+      "D000126",
+      "D000127",
+      "D000128",
+      "D000129",
+      "L000019",
+      "L000020",
+      "L000021",
+      "L000022",
+      "L000023",
+      "L000024",
+      "L000025",
+      "L000026",
+      "L000027"
+    ],
+    "updated": [
+      "D000032",
+      "D000033",
+      "D000034",
+      "D000039",
+      "D000035",
+      "D000036",
+      "D000037",
+      "D000048",
+      "D000029",
+      "D000031",
+      "D000075",
+      "D000095",
+      "D000098",
+      "D000101",
+      "D000086",
+      "S000005",
+      "S000020",
+      "S000026",
+      "S000027"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "format": "definition-db-patch",
+  "version": 7,
+  "terms": [
+    {
+      "id": "T+ado",
+      "names": {
+        "ko": "아데노신 부분",
+        "en": "adenosine moiety"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+guo",
+      "names": {
+        "ko": "구아노신 부분",
+        "en": "guanosine moiety"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+pu",
+      "names": {
+        "ko": "인산기 단위",
+        "en": "phosphoryl unit"
+      },
+      "aliases": [
+        "인산 단위"
+      ]
+    },
+    {
+      "id": "T+ppi",
+      "names": {
+        "ko": "피로인산",
+        "en": "diphosphate"
+      },
+      "aliases": [
+        "PPi",
+        "이인산",
+        "pyrophosphate"
+      ]
+    },
+    {
+      "id": "T+ndpk",
+      "names": {
+        "ko": "뉴클레오사이드 이인산 키네이스",
+        "en": "nucleoside-diphosphate kinase"
+      },
+      "aliases": [
+        "NDPK",
+        "NDK"
+      ]
+    },
+    {
+      "id": "T+adk",
+      "names": {
+        "ko": "아데닐산 키네이스",
+        "en": "adenylate kinase"
+      },
+      "aliases": [
+        "AK",
+        "마이오키네이스"
+      ]
+    },
+    {
+      "id": "T+ppase",
+      "names": {
+        "ko": "무기 피로인산가수분해효소",
+        "en": "inorganic diphosphatase"
+      },
+      "aliases": [
+        "PPase",
+        "무기 피로포스파테이스"
+      ]
+    },
+    {
+      "id": "T+atpregen",
+      "names": {
+        "ko": "ATP 재생",
+        "en": "ATP regeneration"
+      },
+      "aliases": [
+        "ADP 인산화",
+        "에너지 대사의 ATP 재생"
+      ]
+    },
+    {
+      "id": "T+ntsupply",
+      "names": {
+        "ko": "뉴클레오타이드 공급",
+        "en": "nucleotide supply"
+      },
+      "aliases": [
+        "뉴클레오타이드 합성·재활용"
+      ]
+    },
+    {
+      "id": "T+lc",
+      "names": {
+        "ko": "생애 주기 모델",
+        "en": "lifecycle model"
+      },
+      "aliases": []
+    },
+    {
+      "id": "T+rv",
+      "names": {
+        "ko": "대사물 저장소 모델",
+        "en": "metabolic reservoir model"
+      },
+      "aliases": []
+    }
+  ],
+  "senses": [
+    {
+      "id": "D+ado",
+      "term": "T+ado",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "아데닌 염기와 리보스로 이루어진 부분 구조로, ATP·ADP·AMP·cAMP 에 하나씩 들어 있다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "note": "부분 구조 수지(moiety balance)의 셈 단위. 원자 수지 대신 반응에서 깨지지 않는 부분을 센다."
+    },
+    {
+      "id": "D+guo",
+      "term": "T+guo",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "구아닌 염기와 리보스로 이루어진 부분 구조로, GTP·GDP 에 하나씩 들어 있다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [
+            {
+              "to": "D000035",
+              "rel": "refers",
+              "span": "GTP"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+pu",
+      "term": "T+pu",
+      "kind": "structure_feature",
+      "desc": [
+        {
+          "text": "인산 하나에 해당하는 부분 구조로, 인산 무수 결합·에스터 결합·자유 인산 어디에 있든 하나로 센다",
+          "field": "생화학",
+          "context": {
+            "scope": "질량 수지의 부분 구조 계산"
+          },
+          "links": [
+            {
+              "to": "D000037",
+              "rel": "refers",
+              "span": "자유 인산"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+ppi",
+      "term": "T+ppi",
+      "kind": "ion",
+      "unmapped": "pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함",
+      "moieties": [
+        {
+          "ref": "D+pu",
+          "n": 2
+        }
+      ],
+      "desc": [
+        {
+          "text": "인산 두 개가 무수 결합으로 이어진 이온으로, ATP 가 AMP 가 되거나 cAMP 가 만들어질 때 떨어져 나온다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000032",
+      "moieties": [
+        {
+          "ref": "D+ado",
+          "n": 1
+        },
+        {
+          "ref": "D+pu",
+          "n": 3
+        }
+      ]
+    },
+    {
+      "id": "D000033",
+      "moieties": [
+        {
+          "ref": "D+ado",
+          "n": 1
+        },
+        {
+          "ref": "D+pu",
+          "n": 2
+        }
+      ]
+    },
+    {
+      "id": "D000034",
+      "moieties": [
+        {
+          "ref": "D+ado",
+          "n": 1
+        },
+        {
+          "ref": "D+pu",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "id": "D000039",
+      "moieties": [
+        {
+          "ref": "D+ado",
+          "n": 1
+        },
+        {
+          "ref": "D+pu",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "id": "D000035",
+      "moieties": [
+        {
+          "ref": "D+guo",
+          "n": 1
+        },
+        {
+          "ref": "D+pu",
+          "n": 3
+        }
+      ]
+    },
+    {
+      "id": "D000036",
+      "moieties": [
+        {
+          "ref": "D+guo",
+          "n": 1
+        },
+        {
+          "ref": "D+pu",
+          "n": 2
+        }
+      ]
+    },
+    {
+      "id": "D000037",
+      "moieties": [
+        {
+          "ref": "D+pu",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "id": "D000048",
+      "moieties": [
+        {
+          "ref": "D+pu",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "id": "D000029",
+      "site": {
+        "nucleotide": {
+          "type": "binding_site",
+          "features": [
+            "GDP_bound",
+            "GTP_bound"
+          ],
+          "on": "D000053",
+          "face": "cytosolic",
+          "note": "α 소단위의 뉴클레오타이드 결합 부위",
+          "ligands": {
+            "GDP_bound": "D000036",
+            "GTP_bound": "D000035"
+          }
+        }
+      }
+    },
+    {
+      "id": "D000031",
+      "rule": [
+        {
+          "id": "active",
+          "type": "meaning",
+          "label": "Gsα 결합 시 활성",
+          "when": {
+            "gs_site": "bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "cyclization",
+          "type": "transition",
+          "label": "cAMP 합성",
+          "action": "고리화",
+          "agent": true,
+          "via_site": "catalytic",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000039",
+              "D+ppi"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 아데닐산 고리화효소가 ATP 를 cAMP 와 피로인산으로 바꾼다. 효소 하나가 많은 cAMP 를 만들어 신호가 증폭된다.",
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000075",
+      "rule": [
+        {
+          "id": "signaling",
+          "type": "meaning",
+          "label": "K63 사슬 발판 형성 — 신호 활성",
+          "when": {
+            "k63_ub": "K63_polyubiquitinated"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "11057907",
+                "citation": "Deng et al., 2000"
+              }
+            ]
+          }
+        },
+        {
+          "id": "assembling",
+          "type": "meaning",
+          "label": "발판 미형성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "K63 사슬이 IKK 활성화에 필요하다는 보고(Deng et al., 2000)에서 추론"
+          }
+        },
+        {
+          "id": "irak1_phos",
+          "type": "transition",
+          "label": "IRAK1 인산화",
+          "action": "인산화",
+          "agent": false,
+          "via_component": "D000073",
+          "effect": {
+            "type": "modify",
+            "site": "irak1_t209",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "마이도솜 안에서 가까워진 IRAK4 가 IRAK1 의 Thr209 를 인산화한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Lin et al., 2010 (DOI 10.1038/nature09121): 조립이 키네이스 도메인을 모아 인산화를 가능하게 함 + Kollewe et al., 2004 (PMID 14625308): Thr209 가 첫 인산화 자리. 두 결과를 이어 IRAK4 → IRAK1 Thr209 로 둔 것은 추론."
+          }
+        },
+        {
+          "id": "traf6_binding",
+          "type": "transition",
+          "label": "TRAF6 모집",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "traf6",
+            "partner": "D000076",
+            "add": [
+              "bound"
+            ],
+            "requires": [
+              {
+                "site": "irak1_t209",
+                "feature": "phosphorylated"
+              }
+            ]
+          },
+          "regulators": [],
+          "text": "인산화된 IRAK1 이 TRAF6 를 끌어들인다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "IRAK1 이 TRAF6 를 모은다는 흐름에서 추론 — 이번 세션에서 직접 문헌을 확인하지 못함"
+          }
+        },
+        {
+          "id": "traf6_k63",
+          "type": "transition",
+          "label": "TRAF6 K63 자가 유비퀴틴화",
+          "action": "유비퀴틴화",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "k63_ub",
+            "partner": "D000077",
+            "add": [
+              "K63_polyubiquitinated"
+            ],
+            "requires": [
+              {
+                "site": "traf6",
+                "feature": "bound"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000034",
+              "D+ppi"
+            ]
+          },
+          "regulators": [],
+          "text": "TRAF6 가 E2 인 Ubc13–Uev1A 와 함께 K63 결합 폴리유비퀴틴 사슬을 만든다. 유비퀴틴 활성화(E1)에서 ATP 가 AMP 로 쓰인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "11057907",
+                "citation": "Deng et al., 2000"
+              }
+            ],
+            "note": "E1·E2(Ubc13–Uev1A)는 정의항으로 두지 않았다. ATP→AMP 는 E1 반응을 합친 것 [Abstracted Logic]."
+          }
+        },
+        {
+          "id": "tak1_activation",
+          "type": "transition",
+          "label": "TAK1 활성화",
+          "action": "인산화",
+          "agent": true,
+          "effect": {
+            "type": "modify",
+            "target": "D000081",
+            "site": "tak1_act",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "K63 사슬 발판에 TAB2 가 결합하면서 TAK1 이 활성화 고리를 자가 인산화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/35085597",
+                "citation": "Wang et al., 2001"
+              }
+            ],
+            "note": "Wang et al. 2001: TAK1 은 TRAF6·Ubc13–Uev1A 에 의존하는 유비퀴틴 의존 키네이스. 발판(마이도솜)을 행위자로 둔 것은 [Abstracted Logic]."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000095",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "ikba_k48",
+          "type": "transition",
+          "label": "IκBα K48 유비퀴틴화",
+          "action": "유비퀴틴화",
+          "agent": true,
+          "via_component": "D000091",
+          "effect": {
+            "type": "modify",
+            "target": "D000090",
+            "site": "ikba_ub",
+            "partner": "D000077",
+            "add": [
+              "K48_polyubiquitinated"
+            ],
+            "requires": [
+              {
+                "site": "ikba_s32",
+                "feature": "phosphorylated"
+              },
+              {
+                "site": "ikba_s36",
+                "feature": "phosphorylated"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000034",
+              "D+ppi"
+            ]
+          },
+          "regulators": [],
+          "text": "βTrCP 가 인산화된 Ser32·Ser36 을 인식하고, SCF 가 IκBα 의 Lys21·Lys22 에 K48 폴리유비퀴틴 사슬을 붙인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/25159",
+                "citation": "Yaron et al., 1998"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.92.24.11259",
+                "citation": "Scherer et al., 1995"
+              }
+            ],
+            "note": "E1·E2 는 정의항으로 두지 않았다. ATP→AMP 는 E1 반응을 합친 것 [Abstracted Logic]."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000098",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "ikba_degradation",
+          "type": "transition",
+          "label": "IκBα 분해",
+          "action": "단백질 분해",
+          "agent": true,
+          "effect": {
+            "type": "degrade",
+            "complex": "D000090",
+            "component": "D000086",
+            "produces": [
+              "D000099"
+            ],
+            "requires": [
+              {
+                "site": "ikba_ub",
+                "feature": "K48_polyubiquitinated"
+              }
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033",
+              "D000037"
+            ]
+          },
+          "regulators": [],
+          "text": "26S 프로테아좀이 K48 폴리유비퀴틴화된 IκBα 만 골라 펩타이드로 분해하고, NF-κB 이량체는 풀어 준다. 유비퀴틴은 떼어져 다시 쓰인다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "18267068",
+                "citation": "Hayden & Ghosh, 2008"
+              }
+            ],
+            "note": "유비퀴틴이 재활용된다는 부분과 IκBα 만 분해된다는 표현은 [Abstracted Logic: Derived from the inferred mechanistic flow]."
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+ndpk",
+      "term": "T+ndpk",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 2.7.4.6",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "ATP 의 말단 인산을 다른 뉴클레오사이드 이인산에 옮겨 삼인산으로 만드는 효소 부류로, GDP 를 GTP 로 되돌린다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000036",
+              "rel": "refers",
+              "span": "GDP"
+            },
+            {
+              "to": "D000035",
+              "rel": "refers",
+              "span": "GTP"
+            }
+          ],
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "gtp_regeneration",
+          "type": "supply",
+          "label": "GTP 재생 (GDP + ATP → GTP + ADP)",
+          "consumes": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "G 단백질 순환이 쓴 GDP 를 ATP 의 인산으로 GTP 로 되돌린다 — GTP–GDP 순환을 닫는 공급.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+adk",
+      "term": "T+adk",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 2.7.4.3",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "ATP 와 AMP 에서 ADP 두 분자를 만드는 효소 부류로, AMP 를 다시 인산화 가능한 형태로 되돌린다",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000034",
+              "rel": "refers",
+              "span": "AMP"
+            },
+            {
+              "to": "D000033",
+              "rel": "refers",
+              "span": "ADP"
+            }
+          ],
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.3 항목(IUBMB/ExplorEnz)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "amp_recharge",
+          "type": "supply",
+          "label": "AMP 재충전 (AMP + ATP → 2 ADP)",
+          "consumes": [
+            {
+              "ref": "D000034",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000033",
+              "n": 2
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "유비퀴틴 활성화·cAMP 분해가 남긴 AMP 를 ADP 로 되돌려 ATP 재생 경로에 넣는다.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.3 항목(IUBMB/ExplorEnz)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+ppase",
+      "term": "T+ppase",
+      "kind": "molecule_class",
+      "xrefs": [
+        {
+          "db": "EC",
+          "id": "EC 3.6.1.1",
+          "status": "asserted"
+        }
+      ],
+      "desc": [
+        {
+          "text": "피로인산을 물로 가수분해해 무기 인산 두 개로 만드는 효소 부류",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D+ppi",
+              "rel": "refers",
+              "span": "피로인산"
+            },
+            {
+              "to": "D000037",
+              "rel": "refers",
+              "span": "무기 인산"
+            }
+          ],
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 3.6.1.1 항목(https://iubmb.qmul.ac.uk/enzyme/EC3/6/1/1.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "ppi_hydrolysis",
+          "type": "supply",
+          "label": "피로인산 가수분해 (PPi → 2 Pi)",
+          "consumes": [
+            {
+              "ref": "D+ppi",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000037",
+              "n": 2
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "물 분자는 부분 구조를 갖지 않으므로 수지에 나타나지 않는다.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 3.6.1.1 항목(https://iubmb.qmul.ac.uk/enzyme/EC3/6/1/1.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+atpregen",
+      "term": "T+atpregen",
+      "kind": "process",
+      "desc": [
+        {
+          "text": "해당 과정의 기질 수준 인산화와 산화적 인산화가 ADP 와 무기 인산으로 ATP 를 다시 만드는 과정을 한 덩어리로 본 것",
+          "field": "생화학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 세포질 ATP 공급"
+          },
+          "links": [
+            {
+              "to": "D000033",
+              "rel": "refers",
+              "span": "ADP"
+            },
+            {
+              "to": "D000037",
+              "rel": "refers",
+              "span": "무기 인산"
+            },
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "atp_supply",
+          "type": "supply",
+          "label": "ATP 재생 (ADP + Pi → ATP)",
+          "consumes": [
+            {
+              "ref": "D000033",
+              "n": 1
+            },
+            {
+              "ref": "D000037",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "포도당·산소 같은 원료와 미토콘드리아는 모델 밖에 둔다 — 이 공급의 속도가 그 모든 것을 대신한다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "해당 과정·산화적 인산화의 순 반응(ADP + Pi → ATP)을 원료를 생략하고 하나의 공급으로 묶음"
+          }
+        }
+      ],
+      "note": "단순화: 원료(포도당·NADH·O₂)를 모델 밖에 두므로 부분 구조(아데노신·인산)만 보존되고 에너지원은 무한으로 가정된다."
+    },
+    {
+      "id": "D+ntsupply",
+      "term": "T+ntsupply",
+      "kind": "process",
+      "desc": [
+        {
+          "text": "새로 합성하거나 분해된 RNA 에서 되찾은 뉴클레오타이드가 핵의 전사용 풀을 채우는 과정",
+          "field": "분자생물학",
+          "context": {
+            "scope": "대사물 저장소 모델 — 핵질 뉴클레오타이드 공급"
+          },
+          "links": [
+            {
+              "to": "D000013",
+              "rel": "refers",
+              "span": "뉴클레오타이드"
+            }
+          ],
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "id": "nt_supply",
+          "type": "supply",
+          "label": "핵질 뉴클레오타이드 공급 (계 밖)",
+          "consumes": [],
+          "produces": [
+            {
+              "ref": "D000013",
+              "n": 1
+            }
+          ],
+          "where": [
+            "nucleoplasm"
+          ],
+          "source": true,
+          "text": "합성 경로(퓨린·피리미딘 생합성)를 모델 밖에 두므로 계 밖에서 들어오는 공급(source)이다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "뉴클레오타이드 생합성·재활용 경로 전체를 0차 공급 하나로 생략"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000101",
+      "rule": [
+        {
+          "id": "turnover",
+          "type": "degradation",
+          "label": "TNF mRNA 분해",
+          "fate": "recycled",
+          "recycle_to": [
+            {
+              "ref": "D000013",
+              "n": "sequence_length",
+              "location": "nucleoplasm"
+            }
+          ],
+          "text": "mRNA 는 분해되어 뉴클레오타이드로 돌아간다. 화학량은 서열 길이(뉴클레오타이드 수)이고, 위치(세포질 이동·분해 장소)는 단순화.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "RNA 분해 산물이 뉴클레오타이드라는 일반 원리를 TNF mRNA 에 적용"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D000086",
+      "rule": [
+        {
+          "id": "basal_turnover",
+          "type": "degradation",
+          "label": "유리 IκBα 기저 분해",
+          "fate": "recycled",
+          "recycle_to": [
+            {
+              "ref": "D000007",
+              "n": "sequence_length",
+              "location": "cytosol"
+            }
+          ],
+          "text": "NF-κB 에 붙지 않은 IκBα 의 기저 분해. 분해된 사슬은 아미노산으로 돌아간다(화학량 = 서열 길이).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "단백질 분해 산물이 아미노산으로 재활용된다는 일반 원리를 유리 IκBα 에 적용"
+          }
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 317,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "asserted",
+            "note": "UniProt P25963 표준 서열 길이 — 판매처·2차 자료(creativebiomart, iPTMnet P25963 항목)에서 확인, UniProt 원본은 직접 대조 못 함"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D+lc",
+      "term": "T+lc",
+      "kind": "principle",
+      "desc": [
+        {
+          "text": "분자는 만들어지고 분해되며, 분해 산물은 계 밖으로 사라지거나 구성 단위로 저장소에 돌아간다는 모델 원리",
+          "field": "생화학",
+          "context": {
+            "scope": "시뮬레이션 엔진 — 분해 규칙(Degradation_Rule)"
+          },
+          "links": [
+            {
+              "to": "D+rv",
+              "rel": "refers",
+              "span": "저장소"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "엔진 설계: 분해 규칙의 1차 속도(k_deg)와 운명(lost|recycled)을 원장으로 질량 감사에 연결"
+          }
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L000006",
+          "how": "분해 규칙(1차 k_deg)이 신호 분자의 소멸 시간을 엔진에 넣는다 — 확인된 반감기가 kinetics 에 들어오면 신호의 지속·종료가 시간으로 계산된다(부분 해결)"
+        },
+        {
+          "limitation": "L+mrna_len",
+          "how": "recycle_to 의 n: sequence_length 가 서열 길이 관찰을 읽어 재활용 화학량을 정한다 — 관찰이 들어오면 자동 해결"
+        }
+      ]
+    },
+    {
+      "id": "D+rv",
+      "term": "T+rv",
+      "kind": "principle",
+      "desc": [
+        {
+          "text": "ATP·GTP·뉴클레오타이드·아미노산 같은 대사물은 구획마다 하나의 유한한 전역 풀이며, 단계가 소비하고 공급 규칙과 재활용이 채운다는 모델 원리",
+          "field": "생화학",
+          "context": {
+            "scope": "시뮬레이션 엔진 — 공급 규칙(Metabolic_Supply_Rule)"
+          },
+          "links": [
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000035",
+              "rel": "refers",
+              "span": "GTP"
+            },
+            {
+              "to": "D000013",
+              "rel": "refers",
+              "span": "뉴클레오타이드"
+            },
+            {
+              "to": "D000007",
+              "rel": "refers",
+              "span": "아미노산"
+            }
+          ],
+          "evidence": {
+            "level": "abstracted",
+            "basis": "엔진 설계: v6 의 무한 풀(bulk)을 유한 저장소 + 공급 규칙 + 부분 구조 수지로 대체"
+          }
+        }
+      ],
+      "addresses": [
+        {
+          "limitation": "L000002",
+          "how": "저장소가 유한해져 소비·고갈·재생이 계산된다. 시작량은 concentration × compartment_volume 관찰에서 읽으므로 L000002 의 관찰이 들어오면 기본값 표시가 사라진다"
+        },
+        {
+          "limitation": "L+atp",
+          "how": "공급 규칙 atp_supply 에 확인된 속도가 들어오면 ATP 재생이 시간으로 계산된다"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "S000005",
+      "rule": "D000031/rule/cyclization",
+      "agents": [
+        {
+          "b": "D000031|gs_site:bound|plasma_membrane"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000032|cytosol"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000039|cytosol"
+        },
+        {
+          "ref": "D+ppi",
+          "location": "cytosol",
+          "minor": true
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000050"
+      ]
+    },
+    {
+      "id": "S000020",
+      "rule": "D000075/rule/traf6_k63",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|traf6:bound|cytosol"
+        },
+        {
+          "b": "D000077|cytosol"
+        },
+        {
+          "b": "D000032|cytosol",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000075|irak1_t209:phosphorylated|k63_ub:K63_polyubiquitinated|traf6:bound|cytosol"
+        },
+        {
+          "b": "D000034|cytosol",
+          "minor": true
+        },
+        {
+          "ref": "D+ppi",
+          "location": "cytosol",
+          "minor": true
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000104"
+      ]
+    },
+    {
+      "id": "S000026",
+      "rule": "D000095/rule/ikba_k48",
+      "agents": [
+        {
+          "b": "D000095|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|cytosol"
+        },
+        {
+          "b": "D000077|cytosol"
+        },
+        {
+          "b": "D000032|cytosol",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|ikba_ub:K48_polyubiquitinated|cytosol"
+        },
+        {
+          "b": "D000034|cytosol",
+          "minor": true
+        },
+        {
+          "ref": "D+ppi",
+          "location": "cytosol",
+          "minor": true
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    },
+    {
+      "id": "S000027",
+      "rule": "D000098/rule/ikba_degradation",
+      "agents": [
+        {
+          "b": "D000098|cytosol"
+        }
+      ],
+      "inputs": [
+        {
+          "b": "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|ikba_ub:K48_polyubiquitinated|cytosol"
+        },
+        {
+          "b": "D000032|cytosol",
+          "minor": true
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000089|cytosol"
+        },
+        {
+          "b": "D000099|cytosol"
+        },
+        {
+          "b": "D000077|cytosol",
+          "minor": true
+        },
+        {
+          "b": "D000033|cytosol",
+          "minor": true
+        },
+        {
+          "ref": "D000037",
+          "location": "cytosol",
+          "minor": true
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000105"
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+atp",
+      "target": "D+atpregen/rule/atp_supply",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "세포질 ATP 재생 속도(세포 유형별) — 없으면 ATP 저장소는 소비만 되고 재생 경로가 꺼져 고갈된다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+atpregen/rule/atp_supply",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+ndpk",
+      "target": "D+ndpk/rule/gtp_regeneration",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NDPK 의 GDP → GTP 재생 속도 — 없으면 GTP–GDP 순환이 닫히지 않는다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+ndpk/rule/gtp_regeneration",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+adk",
+      "target": "D+adk/rule/amp_recharge",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "아데닐산 키네이스의 AMP 재충전 속도 — 없으면 AMP 가 쌓이기만 한다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+adk/rule/amp_recharge",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+ppase",
+      "target": "D+ppase/rule/ppi_hydrolysis",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "무기 피로인산가수분해효소의 PPi 가수분해 속도 — 없으면 PPi 가 쌓이기만 한다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+ppase/rule/ppi_hydrolysis",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+nt",
+      "target": "D+ntsupply/rule/nt_supply",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "핵질 뉴클레오타이드 공급 속도(합성·재활용) — 없으면 전사가 뉴클레오타이드 저장소를 바닥낸다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D+ntsupply/rule/nt_supply",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+mrna_k",
+      "target": "D000101/rule/turnover",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "TNF mRNA 반감기(대식세포, LPS 자극 조건) — 없으면 mRNA 가 분해되지 않고 쌓인다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000101/rule/turnover",
+            "params": [
+              "half_life"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+ikba_k",
+      "target": "D000086/rule/basal_turnover",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "유리 IκBα 의 기저 분해 반감기 — 없으면 유리 IκBα 가 분해되지 않는다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000086/rule/basal_turnover",
+            "params": [
+              "half_life"
+            ]
+          }
+        ]
+      },
+      "found_in": "v7 생애 주기 엔진 도입 — 속도 상수가 없는 공급·분해 규칙은 시뮬레이터가 적용하지 않음 (audit-run 의 AUDIT_KINETIC_GAP·AUDIT_RESOURCE)"
+    },
+    {
+      "id": "L+mrna_len",
+      "target": "D000101",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "TNF mRNA 의 서열 길이(뉴클레오타이드 수, 사람) — 없으면 분해 때 뉴클레오타이드 몇 개가 돌아가는지 몰라 재활용분을 소실로 처리한다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "sequence_length",
+            "on": "D000101"
+          }
+        ]
+      },
+      "found_in": "TNF mRNA 분해 규칙(recycle_to n: sequence_length)에 관찰이 없음"
+    },
+    {
+      "id": "L+prot_atp",
+      "target": "D000098/rule/ikba_degradation",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "프로테아좀이 기질 하나를 분해할 때 쓰는 ATP 수 — 지금은 1 분자(ATP → ADP + Pi)로 둔 단순화라 ATP 저장소 소비가 실제보다 적다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "26S 프로테아좀의 기질당 ATP 가수분해 화학량을 문헌에서 확인해 with 화학량(단계 n)에 반영"
+          }
+        ]
+      },
+      "found_in": "v7 부분 구조 수지 검사가 ATP → ADP 에서 빠진 Pi 를 잡아 규칙을 고치면서 화학량 단순화가 드러남"
+    }
+  ]
+}

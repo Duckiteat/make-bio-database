@@ -1,0 +1,206 @@
+{
+  "applied_at": "2026-10-15T17:22:57.406Z",
+  "result": {
+    "added": [
+      "S000057"
+    ],
+    "updated": [
+      "D000189"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "steps": [
+          "S000057"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000189"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000189": [
+          "rule"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "L000108 닫기 (build-plan 12A): 펩타이드 적재 복합체(D000189)에 조립 단계를 넣어 구성 요소(TAP1·TAP2·타파신·칼레티큘린·ERp57)가 복합체 생성의 입력이 되게 한다 — 구성 요소 하나(타파신)를 끊는 정성 관찰 O000020 이 복합체 기능에 닿도록. 기존 시나리오는 복합체를 직접 심고 이 규칙에 상수를 주지 않으므로 궤적 불변.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [
+        "S000040",
+        "S000042",
+        "S000057"
+      ],
+      "pathways": [
+        "D000177"
+      ],
+      "limitations": [
+        {
+          "id": "L000074",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000078",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000107",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000108",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "L000108 닫기 (build-plan 12A): 펩타이드 적재 복합체(D000189)에 조립 단계를 넣어 구성 요소(TAP1·TAP2·타파신·칼레티큘린·ERp57)가 복합체 생성의 입력이 되게 한다 — 구성 요소 하나(타파신)를 끊는 정성 관찰 O000020 이 복합체 기능에 닿도록. 기존 시나리오는 복합체를 직접 심고 이 규칙에 상수를 주지 않으므로 궤적 불변.",
+  "senses": [
+    {
+      "id": "D000189",
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 수송·적재 가능",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "peptide_import",
+          "type": "transition",
+          "label": "TAP 펩타이드 수송",
+          "action": "수송",
+          "agent": true,
+          "effect": {
+            "type": "transport",
+            "target": "D000179",
+            "from": "cytosol",
+            "to": "er_lumen"
+          },
+          "regulators": [],
+          "text": "TAP1–TAP2 가 세포질 펩타이드를 소포체 내강으로 옮긴다. ATP 소비 화학량은 확인하지 못해 넣지 않음 (Structural_Gap).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        },
+        {
+          "id": "peptide_loading",
+          "type": "transition",
+          "label": "MHC I 펩타이드 적재 (타파신 편집)",
+          "action": "결합",
+          "agent": true,
+          "effect": {
+            "type": "associate",
+            "complex": "D000191"
+          },
+          "regulators": [],
+          "text": "펩타이드 적재 복합체에 붙잡힌 빈 MHC I 이 내강의 펩타이드를 받아 펩타이드–MHC I 이 되어 복합체를 떠난다. ERAP1 다듬기·타파신의 편집 경쟁은 이 한 단계에 묶음.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
+          }
+        },
+        {
+          "id": "assembly",
+          "type": "transition",
+          "label": "펩타이드 적재 복합체 조립",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "associate",
+            "complex": "D000189"
+          },
+          "regulators": [],
+          "text": "TAP1–TAP2 수송체에 타파신이 MHC I 을 연결하고 칼레티큘린·ERp57 이 붙어 적재 복합체가 된다. 단계적 조립(TAP 이량체 → 타파신 가교 → 렉틴 샤페론)을 한 묶음으로 둔다 (Structural_Gap L000108 을 닫는 배선 — 구성 요소 하나를 끊으면 복합체가 서지 못한다). 화학량·순서는 문헌이 아니라 기전 흐름에서 온 추론이다.",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조 — TAP·타파신·칼레티큘린·ERp57·MHC I). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 추론이다."
+          }
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "S+1",
+      "rule": "D000189/rule/assembly",
+      "agents": [],
+      "inputs": [
+        {
+          "ref": "D000184",
+          "features": [],
+          "location": "er_membrane"
+        },
+        {
+          "ref": "D000185",
+          "features": [],
+          "location": "er_membrane"
+        },
+        {
+          "ref": "D000186",
+          "features": [],
+          "location": "er_membrane"
+        },
+        {
+          "ref": "D000187",
+          "features": [],
+          "location": "er_lumen"
+        },
+        {
+          "ref": "D000188",
+          "features": [],
+          "location": "er_lumen"
+        }
+      ],
+      "outputs": [
+        {
+          "ref": "D000189",
+          "features": [],
+          "location": "er_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000177"
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-15T17:22:57.163Z"
+}

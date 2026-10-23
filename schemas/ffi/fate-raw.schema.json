@@ -1,0 +1,1011 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "definition-db/ffi/fate-raw.schema.json",
+  "title": "FateRaw — 운명 엔진(행정부) → 사법부 원자료 계약 (FFI 경계, docs/design/engine-port-roadmap.md 0단계)",
+  "description": "JS·Rust(네이티브·WASM) 어느 엔진이든 simulateFate 는 이 모양을 낸다. 숫자 배열은 Array 또는 Float64Array 둘 다 허용한다. 판결 필드(audit·postMortem·arrest·mass.worst·process.hash)는 금지 — 사법부가 만든다. 배열 길이의 상호 관계는 x-dimensions 에 적고 judicial/contract.js 가 검사한다.",
+  "type": "object",
+  "required": [
+    "source",
+    "states",
+    "dt",
+    "t_end",
+    "keys",
+    "markers",
+    "signals",
+    "rules",
+    "final",
+    "trajectory",
+    "series",
+    "firstReach",
+    "transitions",
+    "commitment",
+    "target",
+    "integrator",
+    "mass",
+    "reservoirs",
+    "volumes",
+    "buffered",
+    "coupling",
+    "process",
+    "events",
+    "facts",
+    "kineticGaps",
+    "modulationGaps",
+    "stats",
+    "irHash"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "$ref": "#/$defs/senseId"
+    },
+    "states": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/senseId"
+      }
+    },
+    "scenario": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hypothetical": {
+      "type": "boolean"
+    },
+    "dt": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "t_end": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/bundle"
+      }
+    },
+    "markers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bundle"
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bundle"
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ref",
+          "kind",
+          "layer",
+          "active",
+          "modulators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "$ref": "#/$defs/ruleRef"
+          },
+          "kind": {
+            "enum": [
+              "supply",
+              "degradation",
+              "step"
+            ]
+          },
+          "layer": {
+            "enum": [
+              "fast",
+              "slow"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "src": {
+            "enum": [
+              "data",
+              "scenario",
+              null
+            ]
+          },
+          "modulators": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "ref",
+                "bundle",
+                "effect",
+                "active"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "ref": {
+                  "$ref": "#/$defs/ruleRef"
+                },
+                "bundle": {
+                  "$ref": "#/$defs/bundle"
+                },
+                "effect": {
+                  "enum": [
+                    "activates",
+                    "inhibits"
+                  ]
+                },
+                "active": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "step": {
+            "type": "string",
+            "pattern": "^S\\d{6}$"
+          },
+          "dir": {
+            "enum": [
+              "f",
+              "r"
+            ]
+          }
+        }
+      }
+    },
+    "final": {
+      "type": "object",
+      "required": [
+        "state",
+        "d",
+        "N"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/senseId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nearest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/senseId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "d": {
+          "type": "number",
+          "minimum": 0
+        },
+        "N": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "trajectory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "t",
+          "d",
+          "cls",
+          "steps",
+          "rejects"
+        ],
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "d": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "cls": {
+            "type": "object"
+          },
+          "steps": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "이 관찰 구간 Δ 안에서 받아들인 Rodas3 단계 수"
+          },
+          "rejects": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "이 구간에서 거부한 단계 수 (오차 > 1 또는 음수 상태)"
+          }
+        }
+      }
+    },
+    "series": {
+      "$ref": "#/$defs/numMatrix"
+    },
+    "firstReach": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "상태별 첫 도달 시각 — 기록 격자에서 감지한 뒤 스냅숏 사이 근 찾기로 정밀화 (4단계 ③). 시작부터 도달해 있으면 0"
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "to",
+          "signals",
+          "criterion",
+          "driven"
+        ],
+        "properties": {
+          "to": {
+            "$ref": "#/$defs/senseId"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/senseId"
+            }
+          },
+          "criterion": {
+            "enum": [
+              "withdrawal",
+              "threshold"
+            ]
+          },
+          "driven": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "commitment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "to",
+          "criterion",
+          "driven"
+        ],
+        "properties": {
+          "to": {
+            "$ref": "#/$defs/senseId"
+          },
+          "criterion": {
+            "enum": [
+              "withdrawal",
+              "threshold"
+            ]
+          },
+          "driven": {
+            "type": "boolean"
+          },
+          "t": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "step": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "monotone": {
+            "type": "boolean"
+          },
+          "skipped": {
+            "type": "boolean"
+          },
+          "horizon": {
+            "type": "number"
+          },
+          "grid": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "t",
+                "pass"
+              ],
+              "properties": {
+                "t": {
+                  "type": "number"
+                },
+                "pass": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "t_grid": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "격자 위 이분 탐색이 찾은 첫 통과 스냅숏 시각 (t 는 그 구간 안에서 commitment_tol 까지 좁힌 시각)"
+          },
+          "tol": {
+            "type": "number",
+            "description": "결정 시각 연속 이분 탐색의 폭 (결합점 commitment_tol)"
+          }
+        }
+      }
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/senseId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "integrator": {
+      "type": "object",
+      "description": "본 실행의 결합 적분 기록 (engine-port-roadmap 1.5단계) — 판정 아님",
+      "required": [
+        "method",
+        "rtol",
+        "atol",
+        "steps",
+        "rejected",
+        "rejectedNeg",
+        "hMinHits",
+        "h",
+        "perInterval"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "const": "rodas3"
+        },
+        "rtol": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "atol": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "steps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejectedNeg": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hMinHits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "h": {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "perInterval": {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "mass": {
+      "description": "엔진 장부 — 사법부는 믿지 않고 다시 센다. 판정 필드(worst·tolerance·series·replayWorst·replaySeries) 금지.",
+      "type": "object",
+      "required": [
+        "moieties",
+        "start",
+        "end",
+        "channels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "moieties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/senseId"
+          }
+        },
+        "start": {
+          "$ref": "#/$defs/numMap"
+        },
+        "end": {
+          "$ref": "#/$defs/numMap"
+        },
+        "channels": {
+          "type": "object",
+          "required": [
+            "lost",
+            "source",
+            "violation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "lost": {
+              "$ref": "#/$defs/numMap"
+            },
+            "source": {
+              "$ref": "#/$defs/numMap"
+            },
+            "violation": {
+              "$ref": "#/$defs/numMap"
+            }
+          }
+        }
+      }
+    },
+    "reservoirs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "start",
+          "min",
+          "end",
+          "state",
+          "watched",
+          "buffered"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "start": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "state": {
+            "enum": [
+              "ok",
+              "empty"
+            ]
+          },
+          "watched": {
+            "type": "boolean"
+          },
+          "buffered": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "volumes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      }
+    },
+    "buffered": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "conc_M",
+          "total"
+        ],
+        "properties": {
+          "conc_M": {
+            "type": "number",
+            "minimum": 0
+          },
+          "total": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "coupling": {
+      "type": "object",
+      "required": [
+        "_source",
+        "saturation_K",
+        "commitment_horizon",
+        "commitment_coarse",
+        "hill_s_floor",
+        "rtol",
+        "atol",
+        "h0",
+        "h_min",
+        "safety",
+        "fac_min",
+        "fac_max",
+        "neg_shrink",
+        "pivot_rel",
+        "commitment_tol",
+        "event_tol"
+      ]
+    },
+    "process": {
+      "type": "object",
+      "required": [
+        "lo",
+        "cumDD",
+        "times",
+        "sig",
+        "cum",
+        "schedule",
+        "signalIdx",
+        "thresholds",
+        "N0",
+        "ruleInfo"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "lo": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "cumDD": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "cum": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "sig": {
+          "$ref": "#/$defs/numMatrix"
+        },
+        "times": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "schedule": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "bundle",
+              "list"
+            ],
+            "properties": {
+              "bundle": {
+                "$ref": "#/$defs/bundle"
+              },
+              "list": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "t",
+                    "n"
+                  ],
+                  "properties": {
+                    "t": {
+                      "type": "number"
+                    },
+                    "n": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "signalIdx": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "low",
+              "high"
+            ],
+            "properties": {
+              "low": {
+                "type": "number"
+              },
+              "high": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "N0": {
+          "$ref": "#/$defs/numVec"
+        },
+        "ruleInfo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "ref",
+              "kind",
+              "layer",
+              "cons",
+              "prods",
+              "src",
+              "kin",
+              "mods"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "ref": {
+                "$ref": "#/$defs/ruleRef"
+              },
+              "kind": {
+                "enum": [
+                  "supply",
+                  "degradation",
+                  "step"
+                ]
+              },
+              "layer": {
+                "enum": [
+                  "fast",
+                  "slow"
+                ]
+              },
+              "src": {
+                "enum": [
+                  "data",
+                  "scenario",
+                  null
+                ]
+              },
+              "kin": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "cons": {
+                "$ref": "#/$defs/stoich"
+              },
+              "prods": {
+                "$ref": "#/$defs/stoich"
+              },
+              "mods": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "ref",
+                    "bundle",
+                    "effect",
+                    "kin"
+                  ],
+                  "properties": {
+                    "ref": {
+                      "$ref": "#/$defs/ruleRef"
+                    },
+                    "bundle": {
+                      "$ref": "#/$defs/bundle"
+                    },
+                    "effect": {
+                      "enum": [
+                        "activates",
+                        "inhibits"
+                      ]
+                    },
+                    "kin": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "step": {
+                "type": "string",
+                "pattern": "^S\\d{6}$"
+              },
+              "dir": {
+                "enum": [
+                  "f",
+                  "r"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "t",
+          "type",
+          "bundle"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "type": {
+            "enum": [
+              "exhausted",
+              "regenerated"
+            ]
+          },
+          "bundle": {
+            "$ref": "#/$defs/bundle"
+          }
+        }
+      },
+      "description": "저장소 고갈·재생 사건. t 는 격자에서 감지한 뒤 직전 스냅숏에서 다시 적분해 근을 찾은 시각 (event_tol 안, 4단계 ③)"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "not_supply",
+              "recycle_ignored",
+              "volume_unknown",
+              "threshold_missing"
+            ]
+          }
+        }
+      }
+    },
+    "kineticGaps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ruleRef"
+      }
+    },
+    "modulationGaps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ruleRef"
+      }
+    },
+    "stats": {
+      "type": "object",
+      "required": [
+        "rhs",
+        "jac",
+        "steps",
+        "rejected",
+        "rejectedNeg",
+        "hMinHits",
+        "singular",
+        "probes",
+        "probeRounds",
+        "probeLanes"
+      ],
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "ix": {
+      "description": "JS 어댑터의 편의 필드(색인 객체) — 계약 밖. 사법부는 이것을 쓰지 않고 model.index(db) 로 자기 색인을 만든다. Rust 엔진은 내지 않는다."
+    },
+    "irHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "엔진이 먹은 IR(compiler/ir_builder.js)의 sha256 — 사법부가 조정자의 IR 과 맞춘다"
+    },
+    "engine": {
+      "enum": [
+        "js",
+        "rust"
+      ],
+      "description": "적분 백엔드 — js(기준 구현·오라클) | rust(engine/rust, WASM). 둘 다 같은 계약"
+    },
+    "stochastic": {
+      "type": "object",
+      "description": "확률 실행의 원자료 (4단계 ④, 시나리오 stochastic 이 있을 때만). 판정 필드 없음 — 사법부가 앙상블로 판정한다.",
+      "required": [
+        "seed",
+        "trajectory",
+        "method",
+        "draws",
+        "switches",
+        "ssaFires",
+        "ssaBlocked",
+        "leapRejects",
+        "rootEvals",
+        "rules"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "seed": {
+          "type": "number"
+        },
+        "trajectory": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "method": {
+          "type": "string"
+        },
+        "draws": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "switches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ssaFires": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ssaBlocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leapRejects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rootEvals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "ref",
+              "mode",
+              "ssa",
+              "leap"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "ref": {
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "ode",
+                  "leap",
+                  "ssa"
+                ]
+              },
+              "ssa": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "leap": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-dimensions": [
+    "series.length == trajectory.length == process.times.length == process.lo.length == process.cumDD.length == process.cum.length == process.sig.length",
+    "series[j].length == process.lo[j].length == process.N0.length == keys.length",
+    "process.cumDD[j].length == 2 * process.ruleInfo.length",
+    "process.cum[j].length == process.ruleInfo.length == rules.length",
+    "process.sig[j].length == process.schedule.length == process.signalIdx.length",
+    "process.signalIdx[q] == keys.indexOf(process.schedule[q].bundle)",
+    "process.times 는 증가하고 마지막 값 ≤ t_end + dt",
+    "모든 묶음 참조(markers·signals·final.N·reservoirs·events·ruleInfo.cons/prods/mods.bundle) ∈ keys"
+  ],
+  "$defs": {
+    "senseId": {
+      "type": "string",
+      "pattern": "^D\\d{6}$"
+    },
+    "bundle": {
+      "type": "string",
+      "pattern": "^D\\d{6}(\\|[^|]+)+$"
+    },
+    "ruleRef": {
+      "type": "string",
+      "pattern": "^D\\d{6}/rule/[a-z0-9_]+$"
+    },
+    "numVec": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "numMatrix": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/numVec"
+      }
+    },
+    "numMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "stoich": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "$ref": "#/$defs/bundle"
+          },
+          {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    }
+  }
+}

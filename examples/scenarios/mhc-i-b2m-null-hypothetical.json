@@ -1,0 +1,18 @@
+{
+  "name": "MHC 가상 — β2-마이크로글로불린 합성 정지",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 기전(MHC I·II 의 합성 → 수송 → 적재 → 제시 → 분해)이 그 값에서 어떻게 흐르는지 보기 위한 크기 정도 값만 둔다. 막(2D) 묶음의 부피는 그 막의 유효 부피다 (한계 L000079).",
+  "base": "mhc-dc-immature-baseline-hypothetical.json",
+  "perturbation": {
+    "type": "block",
+    "target": "D000183/rule/synthesis"
+  },
+  "context": {
+    "role": "baseline",
+    "state": "D000202",
+    "note": "중쇄가 짝을 찾지 못해 소포체에서 분해되는 경로"
+  },
+  "expect": {
+    "final": "D000202"
+  }
+}

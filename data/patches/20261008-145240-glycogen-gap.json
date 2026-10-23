@@ -1,0 +1,92 @@
+{
+  "applied_at": "2026-10-08T14:52:40.315Z",
+  "result": {
+    "added": [
+      "L000016"
+    ],
+    "updated": [
+      "D000116"
+    ],
+    "removed": [],
+    "mapped": [
+      {
+        "from": "에피네프린에 의한 글리코겐 분해",
+        "to": "D000051",
+        "via": "이름 '에피네프린에 의한 글리코겐 분해'"
+      },
+      {
+        "from": "β-아드레날린 수용체",
+        "to": "D000030",
+        "via": "이름 'β-아드레날린 수용체'"
+      },
+      {
+        "from": "단백질 키네이스 A",
+        "to": "D000042",
+        "via": "이름 '단백질 키네이스 A'"
+      },
+      {
+        "from": "글리코겐 인산화효소",
+        "to": "D000044",
+        "via": "이름 '글리코겐 인산화효소'"
+      }
+    ]
+  },
+  "format": "definition-db-patch",
+  "version": 5,
+  "_설명": "simulate 가 요구한 한계 등록: 글리코겐 분해 경로의 시작량도 기본값이다",
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "에피네프린에 의한 글리코겐 분해",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "간세포의 분자별 세포당 분자 수 — 시작량이 기본값 10이라 증폭 정도(수용체 하나당 cAMP·인산화효소 수)를 말할 수 없다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "β-아드레날린 수용체",
+            "cell": "hepatocyte",
+            "location": "plasma_membrane"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "단백질 키네이스 A",
+            "cell": "hepatocyte",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "copy_number",
+            "on": "글리코겐 인산화효소",
+            "cell": "hepatocyte",
+            "location": "cytosol"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 simulate 의 농도 공백 경고 (등록되지 않은 경로)",
+      "by": "Claude",
+      "at": "2026-10-08"
+    }
+  ],
+  "senses": [
+    {
+      "id": "D000116",
+      "addresses": [
+        {
+          "limitation": "L000001",
+          "how": "시뮬레이터가 정의항의 copy_number 관찰(세포·위치 맥락)을 그 묶음의 시작량으로 쓴다. 등록부의 needs 가 바로 그 관찰이라 데이터가 들어오면 한계가 자동으로 resolved 가 되고, 경쟁 결과가 순서가 아니라 데이터로 정해진다."
+        },
+        {
+          "limitation": "L000002",
+          "how": "농도(concentration) × 이 정의항이 갖는 구획 부피(compartment_volume, 세포·위치별) × 아보가드로 수로 분자 수를 계산해 무한 풀을 유한 풀로 바꾼다."
+        },
+        {
+          "limitation": "L+1",
+          "how": "같은 방식 — 간세포 맥락의 copy_number 관찰이 들어오면 글리코겐 경로의 시작량이 데이터로 바뀌고 증폭 배수를 읽을 수 있다."
+        }
+      ]
+    }
+  ]
+}

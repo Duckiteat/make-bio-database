@@ -1,0 +1,284 @@
+{
+  "applied_at": "2026-10-08T18:59:04.657Z",
+  "result": {
+    "added": [
+      "L000044",
+      "L000045",
+      "L000046",
+      "L000047",
+      "L000048"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000044",
+          "L000045",
+          "L000046",
+          "L000047",
+          "L000048"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "why": "형식 v8 도입으로 표현 가능해진 공백 등록: Tier 3 확산 계수, Tier 1 구획 환경(pH·유전율), 시트르산 회로 ΔG°(미시적 가역성·Wegscheider 검사의 입력)",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000044",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000045",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000046",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000047",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000048",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000044",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000045",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000046",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000047",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000048",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 8,
+  "why": "형식 v8 도입으로 표현 가능해진 공백 등록: Tier 3 확산 계수, Tier 1 구획 환경(pH·유전율), 시트르산 회로 ΔG°(미시적 가역성·Wegscheider 검사의 입력)",
+  "limitations": [
+    {
+      "id": "L+dcamp",
+      "target": "D000039",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "cAMP 의 세포질 확산 계수 (SI m^2/s) — 없으면 Tier 3 영역 승격 판단(Damköhler)과 경계 유속을 계산할 수 없다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000039",
+            "location": "cytosol"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    {
+      "id": "L+dnfkb",
+      "target": "D000089",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NF-κB p50–p65 이량체의 세포질·핵질 확산 계수 — 핵 이동 전후 공간 기울기를 Tier 3 로 풀 때 필요",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000089",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000089",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    {
+      "id": "L+datp",
+      "target": "D000032",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "ATP 의 세포질 확산 계수 — Tier 1 연속 장의 청산 시간 상수",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "diffusion_coefficient",
+            "on": "D000032",
+            "location": "cytosol"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    {
+      "id": "L+env",
+      "target": "D000116",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "구획별 pH 와 상대 유전율(세포질·미토콘드리아 기질·핵질) — 없으면 Tier 1 환경 보정 ΔG_env 가 0 (기준 환경)으로 계산된다",
+        "needs": [
+          {
+            "kind": "obs",
+            "property": "pH",
+            "on": "D000116",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "relative_permittivity",
+            "on": "D000116",
+            "location": "cytosol"
+          },
+          {
+            "kind": "obs",
+            "property": "pH",
+            "on": "D000116",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "relative_permittivity",
+            "on": "D000116",
+            "location": "mito_matrix"
+          },
+          {
+            "kind": "obs",
+            "property": "pH",
+            "on": "D000116",
+            "location": "nucleoplasm"
+          },
+          {
+            "kind": "obs",
+            "property": "relative_permittivity",
+            "on": "D000116",
+            "location": "nucleoplasm"
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    },
+    {
+      "id": "L+tcadg",
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시트르산 회로 여덟 단계의 표준 반응 자유 에너지 ΔG°′ (J/mol) — 없으면 역반응 속도를 미시적 가역성으로 정할 수 없고 고리 열역학 검사가 비어 있다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000149/rule/condense",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000150/rule/isomerize",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000151/rule/oxdecarb",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000152/rule/oxdecarb",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000153/rule/slp",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000154/rule/oxidize",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000155/rule/hydrate",
+            "params": [
+              "dG0"
+            ]
+          },
+          {
+            "kind": "kinetics",
+            "rule": "D000156/rule/oxidize",
+            "params": [
+              "dG0"
+            ]
+          }
+        ]
+      },
+      "found_in": "형식 v8 (3 층 엔진): 필드가 생겨 표현 가능해진 공백 — docs/design/hybrid-multiscale-engine.md §6"
+    }
+  ]
+}

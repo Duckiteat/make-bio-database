@@ -1,0 +1,1009 @@
+{
+  "applied_at": "2026-10-10T06:29:04.815Z",
+  "result": {
+    "added": [
+      "L000083"
+    ],
+    "updated": [
+      "D000032",
+      "D000033",
+      "D000034",
+      "D000035",
+      "D000036",
+      "D000039",
+      "D000062",
+      "D000134",
+      "D000135",
+      "D000140",
+      "D000145",
+      "D000146",
+      "D000147",
+      "D000169",
+      "D000046",
+      "D000160",
+      "D000047",
+      "D000064",
+      "D000167",
+      "D000141",
+      "D000027",
+      "D000037",
+      "D000048",
+      "D000122",
+      "D000136",
+      "D000137",
+      "D000138",
+      "D000139",
+      "D000142",
+      "D000143",
+      "D000144",
+      "D000168"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000083"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000032",
+          "D000033",
+          "D000034",
+          "D000035",
+          "D000036",
+          "D000039",
+          "D000062",
+          "D000134",
+          "D000135",
+          "D000140",
+          "D000145",
+          "D000146",
+          "D000147",
+          "D000169",
+          "D000046",
+          "D000160",
+          "D000047",
+          "D000064",
+          "D000167",
+          "D000141",
+          "D000027",
+          "D000037",
+          "D000048",
+          "D000122",
+          "D000136",
+          "D000137",
+          "D000138",
+          "D000139",
+          "D000142",
+          "D000143",
+          "D000144",
+          "D000168"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000032": [
+          "xrefs"
+        ],
+        "D000033": [
+          "xrefs"
+        ],
+        "D000034": [
+          "xrefs"
+        ],
+        "D000035": [
+          "xrefs"
+        ],
+        "D000036": [
+          "xrefs"
+        ],
+        "D000039": [
+          "xrefs"
+        ],
+        "D000062": [
+          "xrefs"
+        ],
+        "D000134": [
+          "xrefs"
+        ],
+        "D000135": [
+          "xrefs"
+        ],
+        "D000140": [
+          "xrefs"
+        ],
+        "D000145": [
+          "xrefs"
+        ],
+        "D000146": [
+          "xrefs"
+        ],
+        "D000147": [
+          "xrefs"
+        ],
+        "D000169": [
+          "xrefs"
+        ],
+        "D000046": [
+          "xrefs"
+        ],
+        "D000160": [
+          "xrefs"
+        ],
+        "D000047": [
+          "xrefs"
+        ],
+        "D000064": [
+          "xrefs"
+        ],
+        "D000167": [
+          "xrefs"
+        ],
+        "D000141": [
+          "xrefs"
+        ],
+        "D000027": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000037": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000048": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000122": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000136": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000137": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000138": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000139": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000142": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000143": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000144": [
+          "xrefs",
+          "unmapped"
+        ],
+        "D000168": [
+          "xrefs",
+          "unmapped"
+        ]
+      }
+    },
+    "why": "ChEBI 항목 세 종류(중성 모체·pH 7.3 우세 이온 종·이온화 상태를 묶은 분류)가 같은 칸에 표시 없이 섞여 있었다 — 분류 항목은 화학식이 없어 수지 대조가 조용히 건너뛰어진다(석신산이 그 상태였다). 역할(role)을 선언해 엔진·상호 운용이 읽는 번호를 physiological 하나로 고정하고, 큐레이션된 반응 DB(Rhea)가 쓰는 종을 그 번호로 넣는다. 새 번호는 asserted 로 들어가고 보강 고리의 항목 조회 + Rhea 참여 확인을 거쳐야 verified 가 된다.",
+    "impact": {
+      "rules": [
+        "D000029/rule/gtpase",
+        "D000030/rule/ligand_binding",
+        "D000030/rule/gs_gef",
+        "D000031/rule/cyclization",
+        "D000042/rule/camp_release",
+        "D000043/rule/gp_phos",
+        "D000044/rule/phosphorolysis",
+        "D000049/rule/camp_hydrolysis",
+        "D000052/rule/gp_dephos",
+        "D000057/rule/phk_phos",
+        "D000065/rule/lps_binding",
+        "D000065/rule/lps_transfer",
+        "D000066/rule/lps_transfer",
+        "D000075/rule/irak1_phos",
+        "D000075/rule/traf6_k63",
+        "D000075/rule/tak1_activation",
+        "D000081/rule/ikkb_s177",
+        "D000081/rule/ikkb_s181",
+        "D000085/rule/ikba_s32",
+        "D000085/rule/ikba_s36",
+        "D000095/rule/ikba_k48",
+        "D000098/rule/ikba_degradation",
+        "D000123/rule/gtp_regeneration",
+        "D000123/rule/gdp_regeneration_matrix",
+        "D000124/rule/amp_recharge",
+        "D000125/rule/ppi_hydrolysis",
+        "D000126/rule/atp_supply",
+        "D000148/rule/lumped_oxidation",
+        "D000149/rule/condense",
+        "D000150/rule/isomerize",
+        "D000151/rule/oxdecarb",
+        "D000152/rule/oxdecarb",
+        "D000153/rule/slp",
+        "D000154/rule/oxidize",
+        "D000155/rule/hydrate",
+        "D000156/rule/oxidize",
+        "D000157/rule/nad_regen",
+        "D000158/rule/fad_regen",
+        "D000159/rule/accoa_supply",
+        "D000170/rule/aerobic_glycolysis",
+        "D000171/rule/pyruvate_reduction",
+        "D000172/rule/palmitoyl_oxidation",
+        "D000173/rule/atp_hydrolysis_load"
+      ],
+      "senses": [
+        "D000028",
+        "D000029",
+        "D000030",
+        "D000031",
+        "D000042",
+        "D000044",
+        "D000049",
+        "D000050",
+        "D000051",
+        "D000053",
+        "D000056",
+        "D000057",
+        "D000065",
+        "D000066",
+        "D000067",
+        "D000068",
+        "D000069",
+        "D000070",
+        "D000097",
+        "D000102",
+        "D000113",
+        "D000119",
+        "D000120",
+        "D000121",
+        "D000123",
+        "D000124",
+        "D000125",
+        "D000126",
+        "D000129",
+        "D000148",
+        "D000149",
+        "D000170",
+        "D000171",
+        "D000172"
+      ],
+      "steps": [
+        "S000001",
+        "S000002",
+        "S000004",
+        "S000005",
+        "S000006",
+        "S000007",
+        "S000008",
+        "S000009",
+        "S000010",
+        "S000011",
+        "S000012",
+        "S000013",
+        "S000014",
+        "S000018",
+        "S000020",
+        "S000021",
+        "S000022",
+        "S000023",
+        "S000024",
+        "S000025",
+        "S000026",
+        "S000027",
+        "S000031",
+        "S000032",
+        "S000033",
+        "S000034",
+        "S000035",
+        "S000036",
+        "S000037",
+        "S000038"
+      ],
+      "pathways": [
+        "D000050",
+        "D000051",
+        "D000103",
+        "D000104",
+        "D000105",
+        "D000148",
+        "D000102"
+      ],
+      "limitations": [
+        {
+          "id": "L000002",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000028",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000029",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000030",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000031",
+          "before": "resolved",
+          "after": "resolved"
+        },
+        {
+          "id": "L000032",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000037",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000039",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000044",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000046",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000054",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000055",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000063",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000064",
+          "before": "resolved",
+          "after": "resolved"
+        },
+        {
+          "id": "L000065",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000066",
+          "before": "resolved",
+          "after": "resolved"
+        },
+        {
+          "id": "L000067",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000068",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000076",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000083",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000028",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000029",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000030",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000032",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000041",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000065",
+          "before": "open",
+          "after": "resolved"
+        },
+        {
+          "id": "L000083",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 28
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "ChEBI 항목 세 종류(중성 모체·pH 7.3 우세 이온 종·이온화 상태를 묶은 분류)가 같은 칸에 표시 없이 섞여 있었다 — 분류 항목은 화학식이 없어 수지 대조가 조용히 건너뛰어진다(석신산이 그 상태였다). 역할(role)을 선언해 엔진·상호 운용이 읽는 번호를 physiological 하나로 고정하고, 큐레이션된 반응 DB(Rhea)가 쓰는 종을 그 번호로 넣는다. 새 번호는 asserted 로 들어가고 보강 고리의 항목 조회 + Rhea 참여 확인을 거쳐야 verified 가 된다.",
+  "terms": [],
+  "senses": [
+    {
+      "id": "D000032",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15422",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP' · 화학식 C10H16N5O13P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15422.json · sha256:a670e0983205",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:30616",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000033",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16761",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP' · 화학식 C10H15N5O10P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_16761.json · sha256:9258c8520c91",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:456216",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000034",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16027",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP' · 화학식 C10H14N5O7P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_16027.json · sha256:598f1aaedc27",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:456215",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000035",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15996",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP' · 화학식 C10H16N5O14P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15996.json · sha256:5cfcfae1d683",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:37565",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000036",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17552",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP' · 화학식 C10H15N5O11P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_17552.json · sha256:90d9c12f49d4",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58189",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000039",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17489",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'cAMP' · 화학식 C10H12N5O6P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_17489.json · sha256:9cd012a699fc",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58165",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000062",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:18405",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyridoxal 5'-phosphate' · 화학식 C8H10NO6P (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_18405.json · sha256:9b5e380134ba",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:597326",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000134",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15351",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'acetyl-CoA' · 화학식 C23H38N7O17P3S (전하 0) · 부분 구조 대조 ok (C23 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15351.json · sha256:ea5d881d8f09",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57288",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000135",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15346",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'coenzyme A' · 화학식 C21H36N7O16P3S (전하 0) · 부분 구조 대조 ok (C21 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15346.json · sha256:6636a1cbaf91",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57287",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000140",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15380",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'succinyl-CoA' · 화학식 C25H40N7O19P3S (전하 0) · 부분 구조 대조 ok (C25 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15380.json · sha256:988fb724e7ef",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57292",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000145",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16908",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'NADH' · 화학식 C21H29N7O14P2 (전하 0) · 부분 구조 대조 ok (C21 N7 P2 S0 일치) · data/fetched/chebi/CHEBI_16908.json · sha256:7ef3a84d9f6b",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57945",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000146",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16238",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FAD' · 화학식 C27H33N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_16238.json · sha256:e39ba5754cbd",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57692",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000147",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17877",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'FADH2' · 화학식 C27H35N9O15P2 (전하 0) · 부분 구조 대조 ok (C27 N9 P2 S0 일치) · data/fetched/chebi/CHEBI_17877.json · sha256:3b7c983bb35e",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58307",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000169",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15525",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'palmitoyl-CoA' · 화학식 C37H66N7O17P3S (전하 0) · 부분 구조 대조 ok (C37 N7 P3 S1 일치) · data/fetched/chebi/CHEBI_15525.json · sha256:7932c5e5c5fa",
+          "role": "parent"
+        },
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57379",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (반응 참여자) — 보강 고리의 항목 조회 + Rhea 참여로 확인할 것"
+        }
+      ]
+    },
+    {
+      "id": "D000046",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:4167",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glucose' · 화학식 C6H12O6 (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_4167.json · sha256:9ef44756c98f",
+          "role": "physiological"
+        }
+      ]
+    },
+    {
+      "id": "D000160",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16526",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'carbon dioxide' · 화학식 CO2 (전하 0) · 부분 구조 대조 ok (C1 N0 P0 S0 일치) · data/fetched/chebi/CHEBI_16526.json · sha256:224182e044aa",
+          "role": "physiological"
+        }
+      ]
+    },
+    {
+      "id": "D000047",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:28087",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glycogen' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_28087.json · sha256:4cb21197f16d",
+          "role": "class"
+        }
+      ]
+    },
+    {
+      "id": "D000064",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16412",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'lipopolysaccharide' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_16412.json · sha256:1761021018cb",
+          "role": "class"
+        }
+      ]
+    },
+    {
+      "id": "D000167",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15361",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'pyruvate' · 화학식 C3H3O3 (전하 -1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_15361.json · sha256:ac954b0b1950",
+          "role": "physiological"
+        }
+      ]
+    },
+    {
+      "id": "D000141",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:30031",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "분류 항목(CHEBI:26806, 화학식 없음)을 pH 7.3 우세 종으로 교체 — 분류 항목은 셀 수 있는 분자의 번호가 될 수 없다 (화학식 대조가 건너뛰어짐)"
+        }
+      ]
+    },
+    {
+      "id": "D000027",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:71406",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (R)-adrenaline — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000037",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:43474",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 hydrogenphosphate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000048",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:58601",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 α-D-glucose 1-phosphate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000122",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:33019",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 diphosphate(3−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000136",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16452",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 oxaloacetate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000137",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16947",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 citrate(3−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000138",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15562",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 D-threo-isocitrate(3−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000139",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16810",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 2-oxoglutarate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000142",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:29806",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 fumarate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000143",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15589",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (S)-malate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000144",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:57540",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 NAD(1−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    },
+    {
+      "id": "D000168",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16651",
+          "status": "asserted",
+          "role": "physiological",
+          "note": "pH 7.3 우세 종 (S)-lactate — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+        }
+      ],
+      "unmapped": ""
+    }
+  ],
+  "steps": [],
+  "remove": [],
+  "limitations": [
+    {
+      "id": "L+charge",
+      "target": "D000129",
+      "type": "Structural_Gap",
+      "found_in": "ChEBI 규약 정리 (2026-10-10) — 모체·우세 종·분류 세 종류가 섞여 있던 것을 역할로 가름",
+      "requirement": {
+        "text": "반응 참여자를 pH 7.3 우세 이온 종으로 적기 시작했지만 전하·양성자 수지는 검사하지 않는다 — 부분 구조 수지는 C·N·P·S 만 세고 H⁺ 를 모델에 두지 않는다(Rhea 반응식은 H⁺ 를 명시한다). 그래서 양성자 소비·생성이 있는 반응의 수지는 \"전하를 뺀 수지\" 로만 맞는다. 또 세포질 ATP·ADP 는 대부분 Mg²⁺ 착물(MgATP²⁻)인데 그것을 별개 종으로 두지 않았다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "수소 이온(H⁺)을 유한 저장소로 두고 pH 와 묶는 방식, 또는 전하 수지 검사(Σq_in = Σq_out)를 규칙 검사에 추가"
+          },
+          {
+            "kind": "manual",
+            "text": "Mg²⁺ 착물 종(MgATP²⁻ 등)과 그 해리 상수"
+          }
+        ]
+      }
+    }
+  ]
+}

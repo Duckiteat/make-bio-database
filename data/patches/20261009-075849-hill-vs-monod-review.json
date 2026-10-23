@@ -1,0 +1,124 @@
+{
+  "applied_at": "2026-10-09T07:58:49.557Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000054",
+      "L000055"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000054",
+          "L000055"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000054": [
+          "note"
+        ],
+        "L000055": [
+          "note"
+        ]
+      }
+    },
+    "why": "비교 검토 결과 기록: 허가 조절(피루브산 → T-bet, 아세틸-CoA → Eomes)의 힐 계수 선택이 결정 시점을 바꾸는데 수치 기준으로는 고를 수 없음을 두 Regulatory_Gap 에 남긴다",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000054",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000055",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 60
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "비교 검토 결과 기록: 허가 조절(피루브산 → T-bet, 아세틸-CoA → Eomes)의 힐 계수 선택이 결정 시점을 바꾸는데 수치 기준으로는 고를 수 없음을 두 Regulatory_Gap 에 남긴다",
+  "limitations": [
+    {
+      "id": "L000054",
+      "target": "D000167/rule/tbet_licensing",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "해당 흐름 → 효과기 프로그램 허가를 피루브산 농도로 대신함 — 실제 매개(GAPDH 의 IFN-γ mRNA 번역 조절, 포도당 유래 아세틸-CoA 의 히스톤 아세틸화)가 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000167/rule/tbet_licensing",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "GAPDH 번역 조절·ACLY·히스톤 아세틸화 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램",
+      "note": "비교 검토 2026-10-09 (dbtool compare, 가상 시나리오 fate-effector-il12): 허가 조절의 힐 계수 n=2 → n=1(Monod 형)로 바꾸면 효과기 결정 시점 1.32 h → 1.02 h, 표지 궤적 차 L2 0.29 — Behavior-Changing. 두 수식 모두 수렴 기준 대비 수치 오차 ≈ 3.5e-4 로 같아 수치로는 고를 수 없음 → n 은 측정(용량-반응)으로만 정한다"
+    },
+    {
+      "id": "L000055",
+      "target": "D000134/rule/eomes_licensing",
+      "type": "Regulatory_Gap",
+      "requirement": {
+        "text": "지방산 산화 → 기억 프로그램 허가를 기질 아세틸-CoA 농도로 대신함 — 실제 매개(미토콘드리아 여분 호흡 능력·AMPK)가 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000134/rule/eomes_licensing",
+            "params": [
+              "K",
+              "n",
+              "fmax"
+            ]
+          },
+          {
+            "kind": "manual",
+            "text": "여분 호흡 능력·AMPK 매개의 정의항과 단계"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램",
+      "note": "비교 검토 2026-10-09 (dbtool compare, 가상 시나리오 fate-effector-il12): 허가 조절의 힐 계수 n=2 → n=1(Monod 형)로 바꾸면 효과기 결정 시점 1.32 h → 1.02 h, 표지 궤적 차 L2 0.29 — Behavior-Changing. 두 수식 모두 수렴 기준 대비 수치 오차 ≈ 3.5e-4 로 같아 수치로는 고를 수 없음 → n 은 측정(용량-반응)으로만 정한다"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "applied_at": "2026-10-08T20:41:41.183Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "D000174",
+      "D000175",
+      "D000176"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "senses": [
+          "D000174",
+          "D000175",
+          "D000176"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000174": [
+          "metabolome"
+        ],
+        "D000175": [
+          "metabolome"
+        ],
+        "D000176": [
+          "metabolome"
+        ]
+      }
+    },
+    "why": "세포 운명 엔진 첫 실행의 사후 분석이 찾은 공백: 세 세포 상태의 대사 프로그램에 ATP 소비(ADP 재생)와 기질 NAD⁺·FAD 재생(전자 전달계)이 없어 세포질 ADP 가 고갈되고 해당과정이 멈춤 — 모든 상태에 공통 대사(ATP 소비·젖산 발효·회로 순 반응·NADH/FADH₂ 재산화)를 수준과 함께 넣는다",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000062",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 9,
+  "why": "세포 운명 엔진 첫 실행의 사후 분석이 찾은 공백: 세 세포 상태의 대사 프로그램에 ATP 소비(ADP 재생)와 기질 NAD⁺·FAD 재생(전자 전달계)이 없어 세포질 ADP 가 고갈되고 해당과정이 멈춤 — 모든 상태에 공통 대사(ATP 소비·젖산 발효·회로 순 반응·NADH/FADH₂ 재산화)를 수준과 함께 넣는다",
+  "senses": [
+    {
+      "id": "D000174",
+      "metabolome": [
+        {
+          "ref": "D000170/rule/aerobic_glycolysis",
+          "level": "low"
+        },
+        {
+          "ref": "D000172/rule/palmitoyl_oxidation",
+          "level": "low"
+        },
+        {
+          "ref": "D000171/rule/pyruvate_reduction",
+          "level": "low"
+        },
+        {
+          "ref": "D000173/rule/atp_hydrolysis_load",
+          "level": "low"
+        },
+        {
+          "ref": "D000148/rule/lumped_oxidation",
+          "level": "low"
+        },
+        {
+          "ref": "D000157/rule/nad_regen",
+          "level": "low"
+        },
+        {
+          "ref": "D000158/rule/fad_regen",
+          "level": "low"
+        }
+      ]
+    },
+    {
+      "id": "D000175",
+      "metabolome": [
+        {
+          "ref": "D000170/rule/aerobic_glycolysis",
+          "level": "high"
+        },
+        {
+          "ref": "D000171/rule/pyruvate_reduction",
+          "level": "high"
+        },
+        {
+          "ref": "D000173/rule/atp_hydrolysis_load",
+          "level": "high"
+        },
+        {
+          "ref": "D000172/rule/palmitoyl_oxidation",
+          "level": "low"
+        },
+        {
+          "ref": "D000148/rule/lumped_oxidation",
+          "level": "low"
+        },
+        {
+          "ref": "D000157/rule/nad_regen",
+          "level": "low"
+        },
+        {
+          "ref": "D000158/rule/fad_regen",
+          "level": "low"
+        }
+      ]
+    },
+    {
+      "id": "D000176",
+      "metabolome": [
+        {
+          "ref": "D000172/rule/palmitoyl_oxidation",
+          "level": "high"
+        },
+        {
+          "ref": "D000148/rule/lumped_oxidation",
+          "level": "high"
+        },
+        {
+          "ref": "D000157/rule/nad_regen",
+          "level": "high"
+        },
+        {
+          "ref": "D000158/rule/fad_regen",
+          "level": "high"
+        },
+        {
+          "ref": "D000170/rule/aerobic_glycolysis",
+          "level": "low"
+        },
+        {
+          "ref": "D000171/rule/pyruvate_reduction",
+          "level": "low"
+        },
+        {
+          "ref": "D000173/rule/atp_hydrolysis_load",
+          "level": "low"
+        }
+      ]
+    }
+  ]
+}

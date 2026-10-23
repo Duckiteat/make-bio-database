@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hmse/v8/boundary-flux-packet.schema.json",
+  "title": "BoundaryFluxPacket — 연속(T1/T3) → 이산(T2) 경계 유속 (형식 v8)",
+  "type": "object",
+  "required": ["region_id", "node_id", "face_set", "interval", "seq", "flux", "mode"],
+  "additionalProperties": false,
+  "properties": {
+    "region_id": { "type": "string" }, "node_id": { "type": "string" }, "face_set": { "type": "string" },
+    "interval": { "type": "object", "required": ["t0", "t1"], "properties": { "t0": { "type": "number", "minimum": 0 }, "t1": { "type": "number", "minimum": 0 } } },
+    "seq": { "type": "integer", "minimum": 1 },
+    "mode": { "enum": ["stochastic", "residual"] },
+    "flux": { "type": "array", "items": { "type": "object", "required": ["key", "mu_out", "mu_in"], "additionalProperties": false, "properties": {
+      "key": { "type": "string" },
+      "mu_out": { "type": "number", "minimum": 0, "description": "기대 분자 수 영역 → 노드 (∫∫ J⁺ dA dt · N_A)" },
+      "mu_in": { "type": "number", "minimum": 0 },
+      "var_c_boundary": { "type": "number", "minimum": 0, "description": "경계 농도 분산 σ²_Γ (M²) — 이산 전이의 잡음 주입" },
+      "k_out": { "type": "integer", "minimum": 0 }, "k_in": { "type": "integer", "minimum": 0 },
+      "residual": { "type": "number", "exclusiveMinimum": -1, "exclusiveMaximum": 1 },
+      "pending": { "type": "integer", "minimum": 0 } } } },
+    "rng_state": { "type": "string", "contentEncoding": "base64" },
+    "digest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": { "digest": { "type": "object", "required": ["total_entities", "hash"], "properties": { "total_entities": { "type": "integer" }, "hash": { "type": "string" },
+    "moiety": { "type": "object", "additionalProperties": { "type": "integer" } } } } }
+}

@@ -1,0 +1,192 @@
+{
+  "name": "텔로미어 검증 — 텔로머레이스 대조군 (사전 등록)",
+  "hypothetical": true,
+  "_설명": "세포 운명 엔진 시험 — 모든 값은 가상이다(data/db.json 에 들어가지 않는다). 반복 단위 1800 → 임계 600 (6 bp/단위 → 10.8 kbp → 3.6 kbp), 분열당 16 단위(= 96 bp), 분열 간격 24 h → 산술 분열 한계 75 회 = 6480000 s. 손상 반응 힐 K 는 임계의 0.9 배(540 단위)에 두어 임계 위에서는 정지 배율이 1 에 머물게 했다. 힐 상수·반감기·부피는 문턱이 드러나도록 고른 값이며 측정값이 아니다 (한계 L000087–L000095).  [검증 대조군] 교란 없는 대조군(telomerase on) — 교란(신장 규칙 차단)은 관찰 O000027 이 선언. 사전 등록 산출물이라 값을 인라인 복사해 해시를 고정.",
+  "cell": "fibroblast",
+  "context": {
+    "role": "requirement",
+    "state": "D000211",
+    "note": "같은 성장 인자에서 텔로머레이스를 켜 소모와 같은 속도로 반복 단위를 더하면 순 소모가 0 이 되어 임계 길이에 닿지 않는다 — 복제 노화에 텔로미어의 순 소모가 필수임을 보인다"
+  },
+  "dt_slow": 21600,
+  "t_end": 8640000,
+  "record_every": 1,
+  "volumes": {
+    "nucleoplasm": {
+      "value": 500,
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": 1,
+      "unit": "pL"
+    }
+  },
+  "amounts": {
+    "D000204|nucleoplasm": 1800,
+    "D000207|nucleoplasm": 200,
+    "D000208|nucleoplasm": 200,
+    "D000013|nucleoplasm": 2000000
+  },
+  "signals": {
+    "D000209|extracellular": [
+      {
+        "t": 0,
+        "n": 6022
+      }
+    ]
+  },
+  "thresholds": {
+    "D000204|nucleoplasm": {
+      "low": 600,
+      "high": 1200
+    },
+    "D000208|nucleoplasm": {
+      "low": 1000,
+      "high": 10000
+    }
+  },
+  "commitment": {
+    "horizon": 86400,
+    "coarse": 864000
+  },
+  "arrest_window": 864000,
+  "event_tol": 0.001,
+  "extra_rules": [
+    "D000206/rule/elongation"
+  ],
+  "kinetics": {
+    "D000205/rule/division_attrition": {
+      "law": "zero_order",
+      "k": 3.843840433272793e-19,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.9183299543686555e-11,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 1200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/synthesis": {
+      "law": "zero_order",
+      "k": 1.2788866362457704e-13,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": 3600,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000209/rule/mitogen_drive": {
+      "law": "hill",
+      "K": 1e-12,
+      "n": 4,
+      "fmax": 100,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000204/rule/short_telomere_ddr": {
+      "law": "hill",
+      "K": 1.7933821925477544e-9,
+      "n": 32,
+      "fmin": 0.02,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/p21_transactivation": {
+      "law": "hill",
+      "K": 1.6605390671738467e-8,
+      "n": 2,
+      "fmax": 200,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/cdk_arrest": {
+      "law": "hill",
+      "K": 2.6568625074781545e-8,
+      "n": 8,
+      "fmin": 0,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000206/rule/elongation": {
+      "law": "zero_order",
+      "k": 6.150144693236469e-16,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "report": {
+    "_설명": "시계열에 함께 보일 비율 — 표지(텔로미어 반복 단위·p21)는 자동"
+  },
+  "protocol": {
+    "question": "텔로머레이스(신장)를 없애면 텔로미어 반복 길이가 줄어드는가 — 모델이 Bodnar 1998(telomerase-negative 대조 클론의 텔로미어 단축)의 방향을 재현하는가?",
+    "matched_experiment": {
+      "source": {
+        "db": "PMID",
+        "id": "9454332"
+      },
+      "system": {
+        "species": "9606",
+        "cell": "사람 섬유아세포·망막색소상피(RPE), telomerase-negative 대조 클론",
+        "condition": "hTERT 미발현 대조 클론은 텔로미어 단축·노화; hTERT 발현 클론은 텔로미어 신장·분열 지속"
+      },
+      "readout_times_s": [
+        8640000
+      ]
+    },
+    "controls": {
+      "negative": {
+        "description": "노화 신호 하류인 p53(D000207) 합성 차단은 텔로미어 반복 길이(D000204)를 줄이지 않아야 한다 — 길이를 바꾸는 것이 교란 종류와 무관하지 않음을 확인. 사전 확인: p53 합성 차단 → no_change(차이 1.9e-9)."
+      }
+    },
+    "readouts": [
+      {
+        "observable": {
+          "kind": "amount",
+          "target": "D000204|nucleoplasm"
+        },
+        "time_s": 8640000
+      }
+    ],
+    "replicates": {
+      "n": 1
+    },
+    "stopping": {
+      "fixed_n": true
+    },
+    "validation": [
+      "O000027"
+    ]
+  }
+}

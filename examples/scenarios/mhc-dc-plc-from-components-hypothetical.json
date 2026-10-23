@@ -1,0 +1,542 @@
+{
+  "name": "MHC 가상 — 적재 복합체를 구성 요소에서 조립 (L000108 배선 확인용)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 기전(MHC I·II 의 합성 → 수송 → 적재 → 제시 → 분해)이 그 값에서 어떻게 흐르는지 보기 위한 크기 정도 값만 둔다. 막(2D) 묶음의 부피는 그 막의 유효 부피다 (한계 L000079). 적재 복합체 D000189 를 직접 심지 않고 구성 요소(TAP1·TAP2·타파신·칼레티큘린·ERp57)에서 조립한다 — 구성 요소를 끊는 교란이 복합체에 닿는지 보는 가상 시나리오. 모든 값은 가상.",
+  "cell": "dendritic_cell",
+  "dt_slow": 60,
+  "t_end": 43200,
+  "volumes": {
+    "extracellular": {
+      "value": {
+        "assume": "A000344"
+      },
+      "unit": "fL"
+    },
+    "cytosol": {
+      "value": {
+        "assume": "A000331"
+      },
+      "unit": "fL"
+    },
+    "er_lumen": {
+      "value": {
+        "assume": "A000339"
+      },
+      "unit": "fL"
+    },
+    "er_membrane": {
+      "value": {
+        "assume": "A000341"
+      },
+      "unit": "fL"
+    },
+    "golgi_lumen": {
+      "value": {
+        "assume": "A000349"
+      },
+      "unit": "fL"
+    },
+    "golgi_membrane": {
+      "value": {
+        "assume": "A000351"
+      },
+      "unit": "fL"
+    },
+    "endosome_lumen": {
+      "value": {
+        "assume": "A000335"
+      },
+      "unit": "fL"
+    },
+    "endosome_membrane": {
+      "value": {
+        "assume": "A000337"
+      },
+      "unit": "fL"
+    },
+    "plasma_membrane": {
+      "value": {
+        "assume": "A000359"
+      },
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000198|endosome_membrane": {
+      "assume": "A000260"
+    },
+    "D000098|cytosol": {
+      "assume": "A000209"
+    },
+    "D000195|endosome_lumen": {
+      "assume": "A000258"
+    },
+    "D000181|extracellular": {
+      "assume": "A000248"
+    },
+    "D000180|cytosol": {
+      "assume": "A000245"
+    },
+    "D000184|er_membrane": {
+      "assume": "A000250"
+    },
+    "D000185|er_membrane": {
+      "assume": "A000251"
+    },
+    "D000186|er_membrane": {
+      "assume": "A000252"
+    },
+    "D000187|er_lumen": {
+      "assume": "A000253"
+    },
+    "D000188|er_lumen": {
+      "assume": "A000254"
+    }
+  },
+  "thresholds": {
+    "D000201|plasma_membrane": {
+      "low": {
+        "assume": "A000305"
+      },
+      "high": {
+        "assume": "A000303"
+      }
+    }
+  },
+  "kinetics": {
+    "D000180/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000123"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000182/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000126"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000183/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000127"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000098/rule/antigen_processing": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000040"
+      },
+      "Km": {
+        "assume": "A000039"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000189/rule/peptide_import": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000131"
+      },
+      "Km": {
+        "assume": "A000130"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000190/rule/assembly": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000135"
+      },
+      "k_off": {
+        "assume": "A000134"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000189/rule/peptide_loading": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000133"
+      },
+      "k_off": {
+        "assume": "A000132"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/er_exit": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000137"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/surface_delivery": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000139"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/internalization": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000138"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000182/rule/free_hc_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000125"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000190/rule/erad": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000136"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000191/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000140"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000179/rule/peptidase_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000122"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000192/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000142"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000193/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000144"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000194/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000147"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000199/rule/assembly": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000158"
+      },
+      "k_off": {
+        "assume": "A000157"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000200/rule/assembly": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000161"
+      },
+      "k_off": {
+        "assume": "A000160"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000200/rule/er_exit": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000163"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000200/rule/endosomal_sorting": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000162"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000181/rule/uptake": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000124"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000195/rule/antigen_processing": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000149"
+      },
+      "Km": {
+        "assume": "A000148"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000195/rule/ii_cleavage": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000152"
+      },
+      "Km": {
+        "assume": "A000151"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000198/rule/clip_release": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000154"
+      },
+      "Km": {
+        "assume": "A000153"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000198/rule/peptide_loading": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000156"
+      },
+      "k_off": {
+        "assume": "A000155"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000201/rule/surface_delivery": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000165"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000201/rule/internalization": {
+      "law": "mass_action",
+      "order": 1,
+      "k": {
+        "assume": "A000164"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000192/rule/free_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000141"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000193/rule/free_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000143"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000194/rule/free_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000146"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000194/rule/clip_turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000145"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000199/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000159"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000201/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000166"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000179/rule/endosomal_loss": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000120"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000064/rule/mhc2_surface_retention": {
+      "law": "hill",
+      "K": {
+        "assume": "A000010"
+      },
+      "n": {
+        "assume": "A000012"
+      },
+      "fmin": {
+        "assume": "A000011"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000189/rule/assembly": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000129"
+      },
+      "k_off": {
+        "assume": "A000128"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "signals": {},
+  "context": {
+    "role": "requirement",
+    "state": "D000202",
+    "note": "적재 복합체를 구성 요소에서 조립 — 구성 요소 knockout 이 복합체에 닿는지 (L000108)"
+  }
+}

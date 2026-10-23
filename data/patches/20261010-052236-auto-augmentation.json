@@ -1,0 +1,2130 @@
+{
+  "applied_at": "2026-10-10T05:22:36.056Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "D000032",
+      "D000033",
+      "D000034",
+      "D000035",
+      "D000036",
+      "D000039",
+      "D000046",
+      "D000047",
+      "D000064",
+      "D000065",
+      "D000066",
+      "D000067",
+      "D000068",
+      "D000071",
+      "D000072",
+      "D000073",
+      "D000074",
+      "D000076",
+      "D000078",
+      "D000079",
+      "D000080",
+      "D000082",
+      "D000083",
+      "D000084",
+      "D000086",
+      "D000087",
+      "D000088",
+      "D000091",
+      "D000092",
+      "D000093",
+      "D000094",
+      "D000161",
+      "D000162",
+      "D000164",
+      "D000165",
+      "D000166",
+      "D000182",
+      "D000183",
+      "D000184",
+      "D000185",
+      "D000186",
+      "D000187",
+      "D000188",
+      "D000192",
+      "D000193",
+      "D000194",
+      "D000195",
+      "D000196",
+      "D000197",
+      "L000028",
+      "L000029",
+      "L000030",
+      "L000032",
+      "L000041",
+      "L000065"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "senses": [
+          "D000032",
+          "D000033",
+          "D000034",
+          "D000035",
+          "D000036",
+          "D000039",
+          "D000046",
+          "D000047",
+          "D000064",
+          "D000065",
+          "D000066",
+          "D000067",
+          "D000068",
+          "D000071",
+          "D000072",
+          "D000073",
+          "D000074",
+          "D000076",
+          "D000078",
+          "D000079",
+          "D000080",
+          "D000082",
+          "D000083",
+          "D000084",
+          "D000086",
+          "D000087",
+          "D000088",
+          "D000091",
+          "D000092",
+          "D000093",
+          "D000094",
+          "D000161",
+          "D000162",
+          "D000164",
+          "D000165",
+          "D000166",
+          "D000182",
+          "D000183",
+          "D000184",
+          "D000185",
+          "D000186",
+          "D000187",
+          "D000188",
+          "D000192",
+          "D000193",
+          "D000194",
+          "D000195",
+          "D000196",
+          "D000197"
+        ],
+        "limitations": [
+          "L000028",
+          "L000029",
+          "L000030",
+          "L000032",
+          "L000041",
+          "L000065"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000032": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000033": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000034": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000035": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000036": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000039": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000046": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000047": [
+          "xrefs"
+        ],
+        "D000064": [
+          "xrefs"
+        ],
+        "D000065": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000066": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000067": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000068": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000071": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000072": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000073": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000074": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000076": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000078": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000079": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000080": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000082": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000083": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000084": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000086": [
+          "xrefs",
+          "fingerprint"
+        ],
+        "D000087": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000088": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000091": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000092": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000093": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000094": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000161": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000162": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000164": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000165": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000166": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000182": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000183": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000184": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000185": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000186": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000187": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000188": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000192": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000193": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000194": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000195": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000196": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "D000197": [
+          "xrefs",
+          "obs",
+          "fingerprint"
+        ],
+        "L000028": [
+          "note"
+        ],
+        "L000029": [
+          "note"
+        ],
+        "L000030": [
+          "note"
+        ],
+        "L000032": [
+          "note"
+        ],
+        "L000041": [
+          "note"
+        ],
+        "L000065": [
+          "note"
+        ]
+      }
+    },
+    "why": "자동 보강 고리 (2026-10-10): 원본(UniProt·ChEBI)에서 받은 73개 파일로 외부 ID 확인 — 검증 49, 거부 1, 모호 12, 수신함에 없음 11. 검증된 것만 status verified·출처 메모·서열 길이·지문을 더하고, asserted 값은 바꾸지 않음",
+    "impact": {
+      "rules": [
+        "D000030/rule/gs_gef",
+        "D000031/rule/cyclization",
+        "D000042/rule/camp_release",
+        "D000043/rule/gp_phos",
+        "D000044/rule/phosphorolysis",
+        "D000049/rule/camp_hydrolysis",
+        "D000052/rule/gp_dephos",
+        "D000057/rule/phk_phos",
+        "D000070/rule/tirap_recruit",
+        "D000075/rule/irak1_phos",
+        "D000075/rule/traf6_binding",
+        "D000075/rule/traf6_k63",
+        "D000075/rule/tak1_activation",
+        "D000081/rule/ikkb_s177",
+        "D000081/rule/ikkb_s181",
+        "D000085/rule/ikba_s32",
+        "D000085/rule/ikba_s36",
+        "D000095/rule/ikba_k48",
+        "D000098/rule/ikba_degradation",
+        "D000123/rule/gtp_regeneration",
+        "D000123/rule/gdp_regeneration_matrix",
+        "D000124/rule/amp_recharge",
+        "D000126/rule/atp_supply",
+        "D000134/rule/eomes_licensing",
+        "D000153/rule/slp",
+        "D000163/rule/tbet_induction",
+        "D000163/rule/eomes_repression",
+        "D000167/rule/tbet_licensing",
+        "D000170/rule/aerobic_glycolysis",
+        "D000173/rule/atp_hydrolysis_load"
+      ],
+      "senses": [
+        "D000028",
+        "D000029",
+        "D000031",
+        "D000042",
+        "D000044",
+        "D000048",
+        "D000049",
+        "D000050",
+        "D000053",
+        "D000056",
+        "D000057",
+        "D000069",
+        "D000070",
+        "D000075",
+        "D000081",
+        "D000085",
+        "D000089",
+        "D000090",
+        "D000095",
+        "D000097",
+        "D000102",
+        "D000113",
+        "D000119",
+        "D000120",
+        "D000122",
+        "D000123",
+        "D000124",
+        "D000126",
+        "D000129",
+        "D000163",
+        "D000170",
+        "D000189",
+        "D000190",
+        "D000198",
+        "D000199",
+        "D000200"
+      ],
+      "steps": [
+        "S000002",
+        "S000005",
+        "S000006",
+        "S000007",
+        "S000008",
+        "S000009",
+        "S000010",
+        "S000011",
+        "S000012",
+        "S000013",
+        "S000014",
+        "S000016",
+        "S000017",
+        "S000018",
+        "S000019",
+        "S000020",
+        "S000021",
+        "S000022",
+        "S000023",
+        "S000024",
+        "S000025",
+        "S000026",
+        "S000027",
+        "S000035",
+        "S000041",
+        "S000046",
+        "S000047",
+        "S000051",
+        "S000052",
+        "S000053"
+      ],
+      "pathways": [
+        "D000050",
+        "D000051",
+        "D000103",
+        "D000104",
+        "D000105",
+        "D000148",
+        "D000177",
+        "D000178",
+        "D000102"
+      ],
+      "limitations": [
+        {
+          "id": "L000002",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000007",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000008",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000025",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000028",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000029",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000030",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000032",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000041",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000044",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000046",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000052",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000053",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000056",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000057",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000058",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000065",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000067",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000074",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000075",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000076",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000077",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 24
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 10,
+  "why": "자동 보강 고리 (2026-10-10): 원본(UniProt·ChEBI)에서 받은 73개 파일로 외부 ID 확인 — 검증 49, 거부 1, 모호 12, 수신함에 없음 11. 검증된 것만 status verified·출처 메모·서열 길이·지문을 더하고, asserted 값은 바꾸지 않음",
+  "senses": [
+    {
+      "id": "D000032",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15422",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP' · 화학식 C10H16N5O13P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15422.json · sha256:a670e0983205"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "ZKHQWZAMYRWXGA-KQYNXXCUSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000033",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16761",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP' · 화학식 C10H15N5O10P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_16761.json · sha256:9258c8520c91"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "XTWYTFMLZFPYCI-KQYNXXCUSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000034",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16027",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP' · 화학식 C10H14N5O7P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_16027.json · sha256:598f1aaedc27"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "UDMBCSSLTHHNCD-KQYNXXCUSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000035",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:15996",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP' · 화학식 C10H16N5O14P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15996.json · sha256:5cfcfae1d683"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "XKMLYUALXHKNFT-UUOKFMHZSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000036",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17552",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP' · 화학식 C10H15N5O11P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_17552.json · sha256:90d9c12f49d4"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "QGWNDRXFNXRZMB-UUOKFMHZSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000039",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:17489",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'cAMP' · 화학식 C10H12N5O6P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_17489.json · sha256:9cd012a699fc"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "IVOMOUWHDPKRLL-KQYNXXCUSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000046",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:4167",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glucose' · 화학식 C6H12O6 (전하 0) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_4167.json · sha256:9ef44756c98f"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "InChIKey",
+        "value": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
+        "status": "verified"
+      }
+    },
+    {
+      "id": "D000047",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:28087",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glycogen' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_28087.json · sha256:4cb21197f16d"
+        }
+      ]
+    },
+    {
+      "id": "D000064",
+      "xrefs": [
+        {
+          "db": "ChEBI",
+          "id": "CHEBI:16412",
+          "status": "verified",
+          "note": "ChEBI 조회 2026-10-10 · 이름 일치 'lipopolysaccharide' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_16412.json · sha256:1761021018cb"
+        }
+      ]
+    },
+    {
+      "id": "D000065",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P18428",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v204, 서열 v3) · 이름 일치 'LBP' · data/fetched/uniprot/P18428.json · sha256:3742d04a3170"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 481,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P18428 서열 v3 (data/fetched/uniprot/P18428.json · sha256:3742d04a3170)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "a36050703246e8fe1045b09ce6bd2b1be79b54f72cee38a45e53047786f0da36",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000066",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P08571",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v233, 서열 v2) · 이름 일치 'CD14' · data/fetched/uniprot/P08571.json · sha256:780766e93853"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 375,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P08571 서열 v2 (data/fetched/uniprot/P08571.json · sha256:780766e93853)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "fda1f9067d25694b653751bb70dac02b6599238f10d69ab7e5848580bcff073e",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000067",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O00206",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v240, 서열 v2) · 이름 일치 'TLR4' · data/fetched/uniprot/O00206.json · sha256:dd22c3dd0d74"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 839,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O00206 서열 v2 (data/fetched/uniprot/O00206.json · sha256:dd22c3dd0d74)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "f94b50d07a54dfafb481d544c5ae3034e5f8c23d13aeffce054621d6e348af4c",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000068",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y6Y9",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v203, 서열 v2) · 이름 일치 'LY96' · data/fetched/uniprot/Q9Y6Y9.json · sha256:e2888a030bf3"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 160,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y6Y9 서열 v2 (data/fetched/uniprot/Q9Y6Y9.json · sha256:e2888a030bf3)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "cc6051cc087ee7754ce05ac28b3e20fc0ba4908ece9a5f529acfbd9a9a5b1314",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000071",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P58753",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v199, 서열 v2) · 이름 일치 'TIRAP' · data/fetched/uniprot/P58753.json · sha256:688361178693"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 221,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P58753 서열 v2 (data/fetched/uniprot/P58753.json · sha256:688361178693)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "535a1443cdc09a629d818b0909d2e14e5f3a9bfb6611484e48699756657929f1",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000072",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q99836",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v231, 서열 v1) · 이름 일치 'MYD88' · data/fetched/uniprot/Q99836.json · sha256:8fa044a948ef"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 296,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q99836 서열 v1 (data/fetched/uniprot/Q99836.json · sha256:8fa044a948ef)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "54431f8a0aa2a42c7810354ab78e06561f7d2d8744a94e1c2a31525fab8aa2f3",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000073",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9NWZ3",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v221, 서열 v1) · 이름 일치 'IRAK4' · data/fetched/uniprot/Q9NWZ3.json · sha256:16ff71e038d0"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 460,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9NWZ3 서열 v1 (data/fetched/uniprot/Q9NWZ3.json · sha256:16ff71e038d0)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "d1e98792da352b2d83ccca532e6144d5e51ae1b39a9c272494a4c18a7d3ec3fd",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000074",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P51617",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v239, 서열 v2) · 이름 일치 'IRAK1' · data/fetched/uniprot/P51617.json · sha256:13445e7ca1e5"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 712,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P51617 서열 v2 (data/fetched/uniprot/P51617.json · sha256:13445e7ca1e5)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "920d53f2ba8db9ed226d6430fe54f562849c9cd1a5c72a52e854cc4e3bc78348",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000076",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y4K3",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v254, 서열 v1) · 이름 일치 'TRAF6' · data/fetched/uniprot/Q9Y4K3.json · sha256:6461e9f53396"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 522,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y4K3 서열 v1 (data/fetched/uniprot/Q9Y4K3.json · sha256:6461e9f53396)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "76a1b3b4f9a241cb2c1c2415ba7851b7f33e2803f817af8c553b845dcb76d2b4",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000078",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O43318",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v249, 서열 v1) · 이름 일치 'MAP3K7' · data/fetched/uniprot/O43318.json · sha256:c46eb813413b"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 606,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O43318 서열 v1 (data/fetched/uniprot/O43318.json · sha256:c46eb813413b)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "ee8f636b23fc543f2ff590c279327e68a0e5edeff759e094a93aae43b8dc3666",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000079",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q15750",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v227, 서열 v1) · 이름 일치 'TAB1' · data/fetched/uniprot/Q15750.json · sha256:87194fee9a2b"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 504,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q15750 서열 v1 (data/fetched/uniprot/Q15750.json · sha256:87194fee9a2b)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "b61b973b956d5372e1c7600e71cade4230e389b0f2fca4727d7d16d49721748b",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000080",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9NYJ8",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v215, 서열 v1) · 이름 일치 'TAB2' · data/fetched/uniprot/Q9NYJ8.json · sha256:69ac0ef1f0e7"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 693,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9NYJ8 서열 v1 (data/fetched/uniprot/Q9NYJ8.json · sha256:69ac0ef1f0e7)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "7f1fbd4468e5a11cdafe3fc64fadd3907e417258259748c8a853a302e670ad01",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000082",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O15111",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v248, 서열 v2) · 이름 일치 'CHUK' · data/fetched/uniprot/O15111.json · sha256:0ea59d13b913"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 745,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O15111 서열 v2 (data/fetched/uniprot/O15111.json · sha256:0ea59d13b913)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "66a19d6e61e3700e188de5520cbf39e9360def63f4ffc08c8610339c4891ed9f",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000083",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O14920",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v252, 서열 v1) · 이름 일치 'IKBKB' · data/fetched/uniprot/O14920.json · sha256:008f4baf1419"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 756,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O14920 서열 v1 (data/fetched/uniprot/O14920.json · sha256:008f4baf1419)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "22705f55903aa2007eb23dc3b4909f6525a7ab6303fb968f9a8f156a8b5d15f3",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000084",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y6K9",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v252, 서열 v2) · 이름 일치 'IKBKG' · data/fetched/uniprot/Q9Y6K9.json · sha256:3353c88c7438"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 419,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y6K9 서열 v2 (data/fetched/uniprot/Q9Y6K9.json · sha256:3353c88c7438)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "d535811c44f71ec5df6056b78f458d9e722640252a60f38687d6fb41809c5218",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000086",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P25963",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v249, 서열 v1) · 이름 일치 'NFKBIA' · data/fetched/uniprot/P25963.json · sha256:e1cf207b6884"
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "760aff0aa84d0845d164d52e523c931034ddf53fe6d70413bbb18d7f3870d1f0",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000087",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q04206",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v268, 서열 v2) · 이름 일치 'RELA' · data/fetched/uniprot/Q04206.json · sha256:584bd6755357"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 551,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q04206 서열 v2 (data/fetched/uniprot/Q04206.json · sha256:584bd6755357)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "314be271367e8b3b3a6c8375cf4abc34a3f04f87ec929c4a224584087f1ad514",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000088",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P19838",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v279, 서열 v2) · 이름 일치 'NFKB1' · data/fetched/uniprot/P19838.json · sha256:b395d7b7895a"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 968,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P19838 서열 v2 (data/fetched/uniprot/P19838.json · sha256:b395d7b7895a)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "38417ef83a638e372531019a12f8209f4135a7bd39ca73770a7efa633eea9362",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000091",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9Y297",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v239, 서열 v1) · 이름 일치 'BTRC' · data/fetched/uniprot/Q9Y297.json · sha256:510357bd1f04"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 605,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9Y297 서열 v1 (data/fetched/uniprot/Q9Y297.json · sha256:510357bd1f04)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "f045bce6f472f39f4ec4d95a94da2de457bcce02327c1d1dc4d1277a1110c45d",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000092",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P63208",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v209, 서열 v2) · 이름 일치 'SKP1' · data/fetched/uniprot/P63208.json · sha256:a9eb295972de"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 163,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P63208 서열 v2 (data/fetched/uniprot/P63208.json · sha256:a9eb295972de)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "c635bfe220025687db0ac9efc3e94874e8c6b9a38133d31887631ad979ae0993",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000093",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q13616",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v229, 서열 v2) · 이름 일치 'CUL1' · data/fetched/uniprot/Q13616.json · sha256:26cd107f0dab"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 776,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q13616 서열 v2 (data/fetched/uniprot/Q13616.json · sha256:26cd107f0dab)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "9f7f5be9884b59b3f3353a61b6950f7672ae672e4ffb01e1bea7cb1f58ff3ff9",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000094",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P62877",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v206, 서열 v1) · 이름 일치 'RBX1' · data/fetched/uniprot/P62877.json · sha256:0f26e1d30099"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 108,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P62877 서열 v1 (data/fetched/uniprot/P62877.json · sha256:0f26e1d30099)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "9987419f96fb514f4fa4958a9f8fc21d6f21cb6c37a372ab693d8f137ad349fd",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000161",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P29459",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v208, 서열 v2) · 이름 일치 'IL12A' · data/fetched/uniprot/P29459.json · sha256:8a9f407b720c"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 219,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P29459 서열 v2 (data/fetched/uniprot/P29459.json · sha256:8a9f407b720c)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "2ce004e921ab5aaa95c5313d2f45d78ad26e8c62127d60cd67c711d876aae7bc",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000162",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P29460",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v249, 서열 v1) · 이름 일치 'IL12B' · data/fetched/uniprot/P29460.json · sha256:9d651a25673c"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 328,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P29460 서열 v1 (data/fetched/uniprot/P29460.json · sha256:9d651a25673c)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "997621c8a338440d7db35c06ca18632dc6cfd6d26c4549a08d0a07eca120b766",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000164",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P40933",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v207, 서열 v1) · 이름 일치 'IL15' · data/fetched/uniprot/P40933.json · sha256:575cb99a7e1d"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 162,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P40933 서열 v1 (data/fetched/uniprot/P40933.json · sha256:575cb99a7e1d)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "eb801922daf84030260c754b2516f6ef584ec257e956d9285e48f4a45ee299a0",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000165",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q9UL17",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v191, 서열 v1) · 이름 일치 'TBX21' · data/fetched/uniprot/Q9UL17.json · sha256:4e86377bcec5"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 535,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q9UL17 서열 v1 (data/fetched/uniprot/Q9UL17.json · sha256:4e86377bcec5)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "8c452c4b47a38905befb2af901284213f2dc6add2a7a5a6cc9dbbdb0dd706a4b",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000166",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O95936",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v198, 서열 v3) · 이름 일치 'EOMES' · data/fetched/uniprot/O95936.json · sha256:ef057934f3f4"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 686,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O95936 서열 v3 (data/fetched/uniprot/O95936.json · sha256:ef057934f3f4)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "84bbceacbca7006c58d43e1409bb2fc036ffd69c321da676226e0ec6a7356a36",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000182",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P04439",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v226, 서열 v2) · 이름 일치 'HLA-A' · data/fetched/uniprot/P04439.json · sha256:bb88d5e380a6"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 365,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P04439 서열 v2 (data/fetched/uniprot/P04439.json · sha256:bb88d5e380a6)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "7b02f3d954c7c3f2e4745b0e62dbcfaf734b97c45b3e54edc23b1a72d30ca8ad",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000183",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P61769",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v221, 서열 v1) · 이름 일치 'B2M' · data/fetched/uniprot/P61769.json · sha256:2c63a677327c"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 119,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P61769 서열 v1 (data/fetched/uniprot/P61769.json · sha256:2c63a677327c)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "c319ce623de7d59e9e73c6daf7ec603d5e5ed48358f54b97d1eccdc3c9bf693b",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000184",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q03518",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v243, 서열 v3) · 이름 일치 'TAP1' · data/fetched/uniprot/Q03518.json · sha256:cd302810de6f"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 748,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q03518 서열 v3 (data/fetched/uniprot/Q03518.json · sha256:cd302810de6f)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "32836215d14e4d6ee77708e3a21894a37c5b42532c826241d645339c8051bfc2",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000185",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "Q03519",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v241, 서열 v1) · 이름 일치 'TAP2' · data/fetched/uniprot/Q03519.json · sha256:80a4ea66b1e8"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 686,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB Q03519 서열 v1 (data/fetched/uniprot/Q03519.json · sha256:80a4ea66b1e8)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "3b6a0c4f9cc223ce302315995c05458c653a0586b432330e6ab0dc1cac4c738e",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000186",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "O15533",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v223, 서열 v2) · 이름 일치 'TAPBP' · data/fetched/uniprot/O15533.json · sha256:bace7ea8eec1"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 448,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB O15533 서열 v2 (data/fetched/uniprot/O15533.json · sha256:bace7ea8eec1)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "15726128aef8fecd5bc747250c168014ca1c8c52da7e1213196e3336840ce656",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000187",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P27797",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v268, 서열 v1) · 이름 일치 'CALR' · data/fetched/uniprot/P27797.json · sha256:4f89fce1fc71"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 417,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P27797 서열 v1 (data/fetched/uniprot/P27797.json · sha256:4f89fce1fc71)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "9e4dcfd5cc4649a55d52b7f6f58a5d66513f3553779f6df1a35c8924e2d62ff3",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000188",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P30101",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v261, 서열 v4) · 이름 일치 'PDIA3' · data/fetched/uniprot/P30101.json · sha256:df3f5db0d1fc"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 505,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P30101 서열 v4 (data/fetched/uniprot/P30101.json · sha256:df3f5db0d1fc)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "2246e027ea031edb3b93e1ea9ac0b693e9fcc25fe5a5d1b2ee7381119fad1162",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000192",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P01903",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v238, 서열 v2) · 이름 일치 'HLA-DRA' · data/fetched/uniprot/P01903.json · sha256:8e1100c07869"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 254,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P01903 서열 v2 (data/fetched/uniprot/P01903.json · sha256:8e1100c07869)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "ba441e701023b22b998f19610fa6074b5c397a848a1d6f6bfdfd289f5ce86163",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000193",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P01911",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v195, 서열 v2) · 이름 일치 'HLA-DRB1' · data/fetched/uniprot/P01911.json · sha256:91f0b0bcaa96"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 266,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P01911 서열 v2 (data/fetched/uniprot/P01911.json · sha256:91f0b0bcaa96)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "6c038ed8f95e0248a1ffd4dbab53c0ff1d973269cc93901237862549053780be",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000194",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P04233",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v250, 서열 v3) · 이름 일치 'CD74' · data/fetched/uniprot/P04233.json · sha256:01b107adc925"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 296,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P04233 서열 v3 (data/fetched/uniprot/P04233.json · sha256:01b107adc925)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "f6909ab67f84bc41d8ef8976b6e5634ebcb9031613d297ac41e582c377b48728",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000195",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P25774",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v228, 서열 v3) · 이름 일치 'CTSS' · data/fetched/uniprot/P25774.json · sha256:7db29ebd785a"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 331,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P25774 서열 v3 (data/fetched/uniprot/P25774.json · sha256:7db29ebd785a)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "acd1c3790427993ba8eea8553653c4d23fb6fe8590d065f65035e0aab0301c0a",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000196",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P28067",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v208, 서열 v2) · 이름 일치 'HLA-DMA' · data/fetched/uniprot/P28067.json · sha256:db5813f7726a"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 261,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P28067 서열 v2 (data/fetched/uniprot/P28067.json · sha256:db5813f7726a)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "4c7e4c736be54da59d92abd056a264e2d097ab97496ebcf1c986bf19653554ec",
+        "status": "computed"
+      }
+    },
+    {
+      "id": "D000197",
+      "xrefs": [
+        {
+          "db": "UniProt",
+          "id": "P28068",
+          "status": "verified",
+          "note": "UniProtKB json 조회 2026-10-10 (Swiss-Prot, 항목 v219, 서열 v2) · 이름 일치 'HLA-DMB' · data/fetched/uniprot/P28068.json · sha256:659f3470fba3"
+        }
+      ],
+      "obs": [
+        {
+          "property": "sequence_length",
+          "value": 263,
+          "unit": "aa",
+          "context": {
+            "species": "9606"
+          },
+          "evidence": {
+            "level": "computed",
+            "tool": "dbtool augment — UniProtKB P28068 서열 v2 (data/fetched/uniprot/P28068.json · sha256:659f3470fba3)"
+          }
+        }
+      ],
+      "fingerprint": {
+        "scheme": "SEQ_SHA256",
+        "value": "1095b780447806c9f8b4493da189ba8ecdada7f9db110d768ee7b8a8787a39dd",
+        "status": "computed"
+      }
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L000028",
+      "target": "D000027",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "에피네프린의 ChEBI 항목(adrenaline 대 (R)-adrenaline)을 원본에서 골라 번호를 확인 — 지금은 unmapped: ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000027",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:233315 Racepinephrine Hydrochloride; CHEBI:28918 (R)-adrenaline; CHEBI:228805 Epinephrine bitartrate; CHEBI:89878 Epinephrine sulfate; CHEBI:165186 Epinephrine glucuronide — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000029",
+      "target": "D000037",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "무기 인산을 대표할 ChEBI 항목(phosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000037",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 없음 — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000030",
+      "target": "D000048",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000048",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:83927 sodium 3-aminopropyl 2-acetamido-2-deoxy-alpha-D-glucose-1-phosphate — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000032",
+      "target": "D000122",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000122",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:85618 EC 2.5.1.31 {ditrans,polycis-undecaprenyl-diphosphate synthase [(2E,6E)-farnesyl-diphosphate specific]} inhibitor; CHEBI:17407 2-trans,6-trans-farnesyl diphosphate; CHEBI:74213 EC 1.17.4.1 (ribonucleoside-diphosphate reductase) inhibitor; CHEBI:84804 EC 2.7.4.6 (nucleoside-diphosphate kinase) inhibitor; CHEBI:57907 all-trans-pentaprenyl diphosphate(3-) — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000041",
+      "target": "D000148",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "시트르산 회로 대사물·보조인자 15종의 ChEBI 번호 — 원본과 대조하지 못해 unmapped",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000134",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000135",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000136",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000137",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000138",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000139",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000140",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000141",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000142",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000143",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000160",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000144",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000145",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000146",
+            "db": "ChEBI"
+          },
+          {
+            "kind": "xref",
+            "on": "D000147",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "시트르산 회로를 넣으면서 (Identity_Gap)",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:50390 EC 1.6.5.2 [NAD(P)H dehydrogenase (quinone)] inhibitor; CHEBI:140378 EC 1.1.1.37 (malate dehydrogenase) inhibitor; CHEBI:35487 EC 1.2.1.3 [aldehyde dehydrogenase (NAD(+))] inhibitor; CHEBI:77108 EC 1.1.1.141 [15-hydroxyprostaglandin dehydrogenase (NAD(+))] inhibitor; CHEBI:50423 EC 1.6.3.1. [NAD(P)H oxidase (H2O2-forming)] inhibitor — 이름이 정확히 하나로 맞을 때만 고른다"
+    },
+    {
+      "id": "L000065",
+      "target": "D000168",
+      "type": "Identity_Gap",
+      "requirement": {
+        "text": "L-젖산 ChEBI 번호를 원본과 대조하지 못함",
+        "needs": [
+          {
+            "kind": "xref",
+            "on": "D000168",
+            "db": "ChEBI"
+          }
+        ]
+      },
+      "found_in": "세포 운명 층(v9) 설계 — CD8 T 세포 효과기/기억 결정 프로그램",
+      "note": "자동 보강 2026-10-10: 이름이 맞는 후보 없음. 검색 후보 CHEBI:232798 sodium L-lactate; CHEBI:83222 methyl (S)-lactate; CHEBI:16651 (S)-lactate; CHEBI:755282 onalespib lactate; CHEBI:760464 magnesium lactate dihydrate, l- — 이름이 정확히 하나로 맞을 때만 고른다"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Reaction identifier	Equation	ChEBI identifier
+RHEA:10224	pyridoxal + ATP = pyridoxal 5'-phosphate + ADP + H(+)	CHEBI:17310;CHEBI:30616;CHEBI:597326;CHEBI:456216;CHEBI:15378
+RHEA:15149	pyridoxine 5'-phosphate + O2 = pyridoxal 5'-phosphate + H2O2	CHEBI:58589;CHEBI:15379;CHEBI:597326;CHEBI:16240
+RHEA:15817	pyridoxamine 5'-phosphate + O2 + H2O = pyridoxal 5'-phosphate + H2O2 + NH4(+)	CHEBI:58451;CHEBI:15379;CHEBI:15377;CHEBI:597326;CHEBI:16240;CHEBI:28938
+RHEA:15877	pyridoxamine 5'-phosphate + 2-oxoglutarate = pyridoxal 5'-phosphate + D-glutamate	CHEBI:58451;CHEBI:16810;CHEBI:597326;CHEBI:29986
+RHEA:20533	pyridoxal 5'-phosphate + H2O = pyridoxal + phosphate	CHEBI:597326;CHEBI:15377;CHEBI:17310;CHEBI:43474
+RHEA:26405	aldehydo-D-ribose 5-phosphate + D-glyceraldehyde 3-phosphate + NH4(+) = pyridoxal 5'-phosphate + phosphate + 4 H2O + H(+)	CHEBI:58273;CHEBI:59776;CHEBI:28938;CHEBI:597326;CHEBI:43474;CHEBI:15377;CHEBI:15378
+RHEA:28562	pyridoxal 5'-phosphate + D-alanine = pyridoxamine 5'-phosphate + pyruvate	CHEBI:597326;CHEBI:57416;CHEBI:58451;CHEBI:15361
+RHEA:30023	pyridoxal 5'-phosphate + L-alanine = pyridoxamine 5'-phosphate + pyruvate	CHEBI:597326;CHEBI:57972;CHEBI:58451;CHEBI:15361
+RHEA:31507	aldehydo-D-ribose 5-phosphate + D-glyceraldehyde 3-phosphate + L-glutamine = pyridoxal 5'-phosphate + L-glutamate + phosphate + 3 H2O + H(+)	CHEBI:58273;CHEBI:59776;CHEBI:58359;CHEBI:597326;CHEBI:29985;CHEBI:43474;CHEBI:15377;CHEBI:15378
+RHEA:59824	pyridoxamine 5'-phosphate + 2-oxoglutarate = pyridoxal 5'-phosphate + L-glutamate	CHEBI:58451;CHEBI:16810;CHEBI:597326;CHEBI:29985

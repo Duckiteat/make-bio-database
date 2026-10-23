@@ -1,0 +1,479 @@
+{
+  "name": "스트레스 — IL-15 + 지방산 결핍 → 분화 정지 (가상)",
+  "hypothetical": true,
+  "_설명": "세포 운명 엔진 시험 — 모든 값은 가상이다(엔진 시험용, data/db.json 에 들어가지 않는다). 부피·농도·속도·힐 상수는 쌍안정성이 드러나도록 고른 값이며 측정값이 아니다.",
+  "cell": "cd8_t_cell",
+  "dt_slow": 60,
+  "t_end": 172800,
+  "record_every": 1,
+  "volumes": {
+    "cytosol": {
+      "value": {
+        "assume": "A000329"
+      },
+      "unit": "fL"
+    },
+    "nucleoplasm": {
+      "value": {
+        "assume": "A000355"
+      },
+      "unit": "fL"
+    },
+    "mito_matrix": {
+      "value": {
+        "assume": "A000353"
+      },
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": {
+        "assume": "A000342"
+      },
+      "unit": "fL"
+    }
+  },
+  "buffered": {
+    "D000046|cytosol": {
+      "conc_M": {
+        "assume": "A000323"
+      },
+      "total": {
+        "assume": "A000325"
+      }
+    },
+    "D000169|mito_matrix": {
+      "conc_M": {
+        "assume": "A000326"
+      },
+      "total": {
+        "assume": "A000327"
+      }
+    }
+  },
+  "amounts": {
+    "D000144|cytosol": {
+      "assume": "A000217"
+    },
+    "D000145|cytosol": {
+      "assume": "A000219"
+    },
+    "D000033|cytosol": {
+      "assume": "A000193"
+    },
+    "D000032|cytosol": {
+      "assume": "A000192"
+    },
+    "D000037|cytosol": {
+      "assume": "A000194"
+    },
+    "D000167|cytosol": {
+      "assume": "A000242"
+    },
+    "D000144|mito_matrix": {
+      "assume": "A000218"
+    },
+    "D000145|mito_matrix": {
+      "assume": "A000220"
+    },
+    "D000146|mito_matrix": {
+      "assume": "A000221"
+    },
+    "D000147|mito_matrix": {
+      "assume": "A000222"
+    },
+    "D000135|mito_matrix": {
+      "assume": "A000214"
+    },
+    "D000134|mito_matrix": {
+      "assume": "A000211"
+    },
+    "D000165|nucleoplasm": {
+      "assume": "A000240"
+    },
+    "D000166|nucleoplasm": {
+      "assume": "A000241"
+    }
+  },
+  "signals": {
+    "D000164|extracellular": [
+      {
+        "t": 0,
+        "n": {
+          "assume": "A000320"
+        }
+      }
+    ]
+  },
+  "thresholds": {
+    "D000165|nucleoplasm": {
+      "low": {
+        "assume": "A000299"
+      },
+      "high": {
+        "assume": "A000298"
+      }
+    },
+    "D000166|nucleoplasm": {
+      "low": {
+        "assume": "A000301"
+      },
+      "high": {
+        "assume": "A000300"
+      }
+    }
+  },
+  "commitment": {
+    "horizon": 86400,
+    "coarse": 7200
+  },
+  "arrest_window": 21600,
+  "kinetics": {
+    "D000170/rule/aerobic_glycolysis": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000115"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000171/rule/pyruvate_reduction": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000116"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000173/rule/atp_hydrolysis_load": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000118"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000168/rule/export": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000114"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000172/rule/palmitoyl_oxidation": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000117"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000148/rule/lumped_oxidation": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000060"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000157/rule/nad_regen": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000070"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000158/rule/fad_regen": {
+      "law": "mass_action",
+      "k": {
+        "assume": "A000072"
+      },
+      "order": 1,
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000160/rule/efflux": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000074"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000165/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000094"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000166/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000106"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000165/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000099"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000166/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000110"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000163/rule/glycolysis_induction": {
+      "law": "hill",
+      "K": {
+        "assume": "A000078"
+      },
+      "n": {
+        "assume": "A000080"
+      },
+      "fmax": {
+        "assume": "A000079"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000163/rule/tbet_induction": {
+      "law": "hill",
+      "K": {
+        "assume": "A000081"
+      },
+      "n": {
+        "assume": "A000083"
+      },
+      "fmax": {
+        "assume": "A000082"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000163/rule/eomes_repression": {
+      "law": "hill",
+      "K": {
+        "assume": "A000075"
+      },
+      "n": {
+        "assume": "A000077"
+      },
+      "fmin": {
+        "assume": "A000076"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000164/rule/fao_induction": {
+      "law": "hill",
+      "K": {
+        "assume": "A000084"
+      },
+      "n": {
+        "assume": "A000086"
+      },
+      "fmax": {
+        "assume": "A000085"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000165/rule/tbet_autoactivation": {
+      "law": "hill",
+      "K": {
+        "assume": "A000095"
+      },
+      "n": {
+        "assume": "A000097"
+      },
+      "fmax": {
+        "assume": "A000096"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000166/rule/eomes_autoactivation": {
+      "law": "hill",
+      "K": {
+        "assume": "A000100"
+      },
+      "n": {
+        "assume": "A000102"
+      },
+      "fmax": {
+        "assume": "A000101"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000165/rule/eomes_antagonism": {
+      "law": "hill",
+      "K": {
+        "assume": "A000087"
+      },
+      "n": {
+        "assume": "A000089"
+      },
+      "fmin": {
+        "assume": "A000088"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000166/rule/tbet_antagonism": {
+      "law": "hill",
+      "K": {
+        "assume": "A000107"
+      },
+      "n": {
+        "assume": "A000109"
+      },
+      "fmin": {
+        "assume": "A000108"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000165/rule/glycolysis_maintenance": {
+      "law": "hill",
+      "K": {
+        "assume": "A000090"
+      },
+      "n": {
+        "assume": "A000092"
+      },
+      "fmax": {
+        "assume": "A000091"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000166/rule/fao_maintenance": {
+      "law": "hill",
+      "K": {
+        "assume": "A000103"
+      },
+      "n": {
+        "assume": "A000105"
+      },
+      "fmax": {
+        "assume": "A000104"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000167/rule/tbet_licensing": {
+      "law": "hill",
+      "K": {
+        "assume": "A000111"
+      },
+      "n": {
+        "assume": "A000113"
+      },
+      "fmax": {
+        "assume": "A000112"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000134/rule/eomes_licensing": {
+      "law": "hill",
+      "K": {
+        "assume": "A000057"
+      },
+      "n": {
+        "assume": "A000059"
+      },
+      "fmax": {
+        "assume": "A000058"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "expect": {
+    "_설명": "실행 전에 적은 가설(예측) — 과정 보고서가 관찰과 대조한다. 입력 해시에 포함되므로 실행 뒤에 바꾸면 해시가 바뀐다.",
+    "final": "D000174",
+    "limiting": "D000169|mito_matrix"
+  },
+  "report": {
+    "ratios": [
+      [
+        "D000032|cytosol",
+        "D000033|cytosol"
+      ]
+    ],
+    "_설명": "시계열에 함께 보일 비율 (ATP/ADP) — 표지 비율(T-bet/Eomes)은 자동"
+  }
+}

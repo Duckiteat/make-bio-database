@@ -1,0 +1,83 @@
+{
+  "applied_at": "2026-10-15T16:30:04.472Z",
+  "result": {
+    "added": [
+      "L000107"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000107"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "관문 A′(build-plan 10) 결과: TAP 결손 정성 관찰 O000019 로 모의 판정은 '맞음' 이지만 탐색 실행 — 검증 규약의 matched_experiment.system.cell 을 초록에서 읽을 수 없어 규약을 세우지 못함. 지어내지 않고 한계로 남긴다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000107",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000107",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "관문 A′(build-plan 10) 결과: TAP 결손 정성 관찰 O000019 로 모의 판정은 '맞음' 이지만 탐색 실행 — 검증 규약의 matched_experiment.system.cell 을 초록에서 읽을 수 없어 규약을 세우지 못함. 지어내지 않고 한계로 남긴다.",
+  "limitations": [
+    {
+      "id": "L+tap_protocol",
+      "target": "D000189",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "정성 관찰 O000019(de la Salle et al., 1994 — 사람 TAP 결손 형제, 표면 class I 이 매우 낮음)는 초록만 받아 측정한 세포 유형(림프구·섬유아세포·B 세포주 등)과 대조 세포를 알 수 없다. 그래서 모의 실험 규약의 대응 실험(matched_experiment.system.cell)을 세울 수 없고, 수지상 세포 상태(D000202)에서 한 모의 판정 '맞음' 은 탐색 실행이다(결론 아님). 판정에는 환자 세포 → 수지상 세포의 맥락 이전(V8)도 끼어 있다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "원문(DOI 10.1126/science.7517574) 방법·그림 설명에서 표면 class I 을 잰 세포 유형과 대조군을 확인 → 관찰 condition.cell 을 새 관찰(O+1)로 다시 넣고 이 관찰은 철회 표시, 그 세포 유형의 시나리오로 규약 선언 → register → observe"
+          }
+        ]
+      },
+      "found_in": "build-plan 10 관문 A′ — node dbtool.mjs observe O000019 --state D000202 --scenario examples/scenarios/mhc-dc-immature-baseline-hypothetical.json"
+    }
+  ],
+  "recorded_at": "2026-10-15T16:30:04.181Z"
+}

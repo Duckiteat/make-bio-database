@@ -1,0 +1,84 @@
+{
+  "applied_at": "2026-10-16T15:26:06.991Z",
+  "result": {
+    "added": [
+      "L000112"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000112"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "타파신(O000020, 사전 등록 #2)·HLA-DM(O000022, 사전 등록 #3)을 결론급 검증으로 올리면서, 이 둘도 β2m(L000111)과 같은 세포 상태 맥락 이전을 안고 있음을 데이터로 등록한다. 세 검증 관찰 모두 사람 B-LCL/버킷림프종 세포주에서 측정됐는데 모델에는 미성숙 수지상 세포 상태(D000202)만 있다. 세트 수준으로 한 번에 묶어 중복을 피한다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000112",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000112",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db",
+  "version": 12,
+  "why": "타파신(O000020, 사전 등록 #2)·HLA-DM(O000022, 사전 등록 #3)을 결론급 검증으로 올리면서, 이 둘도 β2m(L000111)과 같은 세포 상태 맥락 이전을 안고 있음을 데이터로 등록한다. 세 검증 관찰 모두 사람 B-LCL/버킷림프종 세포주에서 측정됐는데 모델에는 미성숙 수지상 세포 상태(D000202)만 있다. 세트 수준으로 한 번에 묶어 중복을 피한다.",
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000202",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "MHC 검증 세트의 결론급 관찰 세 건 — O000021 β2m(Daudi, L000111) · O000020 타파신(220, .220) · O000022 HLA-DM(2.2.93·9.5.3) — 은 모두 사람 B-LCL/버킷림프종 세포주에서 측정됐는데, 모델에는 미성숙 수지상 세포 상태(D000202)만 있다. 그래서 사전 등록 규약 #1·#2·#3 의 모의 판정 '맞음'에는 B 세포주 → 수지상 세포의 맥락 이전(V8)이 공통으로 끼어 있다. 검증한 명제(β2m·타파신은 표면 MHC I 에, HLA-DM 은 표면 MHC II 에 필요)는 세포 유형에 둔감한 상시 생물학이라 이 특정 읽을거리들의 이전 위험은 낮지만, 전제로 남는다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "수지상 세포(또는 모델에 담긴 세포 상태)에서 같은 결손 → 표면 감소를 직접 보인 1차 문헌을 찾아 관찰로 다시 넣거나, B 세포주 상태를 모델에 추가해 측정 세포와 모델 상태를 맞춘다. 그러면 세 건의 맥락 이전이 사라진다."
+          }
+        ]
+      },
+      "found_in": "TIER A 검증 세트 — O000020(사전 등록 #2)·O000022(사전 등록 #3) 결론급 승격, 2026-10-16",
+      "by": "Claude"
+    }
+  ],
+  "recorded_at": "2026-10-16T15:26:06.054Z"
+}

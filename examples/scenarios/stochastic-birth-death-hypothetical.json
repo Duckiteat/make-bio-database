@@ -1,0 +1,46 @@
+{
+  "name": "확률 층 시험 — 출생–사멸 (해석해가 있는 계, 가상)",
+  "hypothetical": true,
+  "_설명": "T-bet 합성(0차)과 분해(1차)만 켠다 — 조절·대사 규칙은 속도 상수가 없어 꺼짐. 정상 분포 Poisson(λ = k·NA·V/γ), 시각 t 의 분포 = Binomial(N₀, e^{−γt}) ⊛ Poisson(λ(1 − e^{−γt})) (정확). 모든 값은 가상 — 엔진·판정 시험용.",
+  "dt_slow": 60,
+  "t_end": 7200,
+  "volumes": {
+    "nucleoplasm": {
+      "value": {
+        "assume": "A000354"
+      },
+      "unit": "fL"
+    }
+  },
+  "amounts": {
+    "D000165|nucleoplasm": {
+      "assume": "A000239"
+    }
+  },
+  "kinetics": {
+    "D000165/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000093"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000165/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000098"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "stochastic": {
+    "seed": 20261009
+  }
+}

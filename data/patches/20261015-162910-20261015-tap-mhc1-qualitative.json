@@ -1,0 +1,98 @@
+{
+  "applied_at": "2026-10-15T16:29:10.546Z",
+  "result": {
+    "added": [
+      "O000019"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "observations": [
+          "O000019"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "관문 A′(build-plan 10): MHC I 적재 차단의 첫 정성 관찰 — 사람 TAP 결손 환자 세포에서 표면 class I 이 매우 낮다(de la Salle et al., 1994, Science). 원문 초록 사본 data/fetched/europepmc/MED-7517574.json (sha256 47e853b8…). 0 층·모의 판정의 검증 관찰로 쓴다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "관문 A′(build-plan 10): MHC I 적재 차단의 첫 정성 관찰 — 사람 TAP 결손 환자 세포에서 표면 class I 이 매우 낮다(de la Salle et al., 1994, Science). 원문 초록 사본 data/fetched/europepmc/MED-7517574.json (sha256 47e853b8…). 0 층·모의 판정의 검증 관찰로 쓴다.",
+  "observations": [
+    {
+      "id": "O+tap_mhc1",
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000189"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000191|plasma_membrane"
+      },
+      "expect": "decrease",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "An inherited human deficiency in the TAP transporter was identified in two siblings suffering from recurrent respiratory bacterial infections. The expression on the cell surface of class I proteins was very low, whereas that of CD1a was normal",
+      "provenance": {
+        "source": {
+          "db": "PMID",
+          "id": "7517574"
+        },
+        "sha256": "47e853b83d11fb06cac63fca264be64f50c579d642393a290deafb49f0bd09b6"
+      },
+      "use": "validation",
+      "experiment": "de la Salle 1994 — TAP 결손 형제 환자 세포",
+      "evidence_at": "1994",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1126/science.7517574",
+            "citation": "de la Salle H et al., 1994, Science"
+          },
+          {
+            "db": "PMID",
+            "id": "7517574",
+            "citation": "de la Salle H et al., 1994, Science"
+          }
+        ]
+      },
+      "note": "교란 대응: 원문은 'TAP transporter' 결손 — 모델에서 TAP1(D000184)·TAP2(D000185)는 펩타이드 적재 복합체(D000189)의 구성 요소라 그 복합체의 knockout 으로 둔다. 읽을 거리: 표면 class I = 펩타이드–MHC I 복합체의 세포막 묶음. 대조군 = 정상인(초록이 비교 대상 세포를 명시하지 않음). 세포 유형은 초록에 없어 condition 에 적지 않음 — 모델의 수지상 세포 상태에서 판정하면 맥락 이전(V8)이다."
+    }
+  ],
+  "recorded_at": "2026-10-15T16:29:10.286Z"
+}

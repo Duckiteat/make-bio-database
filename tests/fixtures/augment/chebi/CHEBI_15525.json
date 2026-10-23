@@ -1,0 +1,16 @@
+{
+ "_fixture": "합성 시험 자료 — 실제 UniProt·ChEBI 값이 아님 (서열·지문은 가짜). tests/rules.test.mjs 의 자동 보강 시험 전용, data/db.json 에 들어가지 않는다.",
+ "_embedded": {
+  "terms": [
+   {
+    "obo_id": "CHEBI:15525",
+    "label": "palmitoyl-CoA",
+    "annotation": {
+     "formula": [
+      "C37H66N7O17P3S"
+     ]
+    }
+   }
+  ]
+ }
+}

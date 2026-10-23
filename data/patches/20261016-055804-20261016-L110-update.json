@@ -1,0 +1,83 @@
+{
+  "applied_at": "2026-10-16T05:58:04.346Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000110"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000110"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000110": [
+          "requirement",
+          "found_in"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "L000110 갱신: 사용자가 모든 도메인을 열었으나(2026-10-16) 정량 속도 자동 수집은 여전히 안 됨을 확인 — 네트워크가 아니라 서비스 쪽 문제였다. 기록을 정확히 한다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000110",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "L000110 갱신: 사용자가 모든 도메인을 열었으나(2026-10-16) 정량 속도 자동 수집은 여전히 안 됨을 확인 — 네트워크가 아니라 서비스 쪽 문제였다. 기록을 정확히 한다.",
+  "limitations": [
+    {
+      "id": "L000110",
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시트르산 회로 효소 반응 규칙(시트르산 생성효소 D000149/condense·숙신산 탈수소효소 D000154·말산 탈수소효소 D000156·석시닐-CoA 합성효소 D000153·2-옥소글루타르산 탈수소효소 D000152·젖산 탈수소효소 D000171)에 실측 속도 상수(kcat·Km)가 없다 — 실측은 IDH(D000151)·FH(D000155) 둘뿐. 2026-10-16 모든 도메인을 연 뒤에도 자동 수집 불가로 확인됨(네트워크가 아닌 서비스 문제): SABIO-RK 는 REST API 폐지(옛 경로 /ui/404), BRENDA 는 WSDL 은 닿으나 계정·SOAP 필요, eQuilibrator 는 api.equilibrator.org 호스트가 502(본 사이트는 200), UniProt 는 사람 CS·IDH2 에 Km 만(기질 미상·kcat 없음), OA 논문 전문(Europe PMC)은 받히지만 절대 kcat/Km 이 그림·보충자료에 잠겨 본문 텍스트로 확인 불가(예: 사람 CS PMC12616816 은 WT 대비 배수만 본문에).",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "둘 중 하나: (1) BRENDA 계정(무료 등록)·credential 을 주면 WSDL 로 효소별 kcat·Km 질의 → 관찰 포트 기록, (2) 사용자가 특정 값(사람 9606, 출처 DOI·PMID, 조건)을 직접 제공 → 관찰 포트 기록. eQuilibrator api 호스트가 복구되면 ΔG° 는 직접 가능. 그 전에는 정량 속도 자원은 보류하고 정성 관찰·서열·위치로 검증 자원을 키운다(route 3)."
+          }
+        ]
+      },
+      "found_in": "build-plan 12A 실측 수집 시도 2026-10-15~16 — 도메인 개방 후 재확인",
+      "resolution": null
+    }
+  ],
+  "recorded_at": "2026-10-16T05:58:04.069Z"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "MHC 가상 — HLA-DM 없음 (CLIP 교체 차단)",
+  "hypothetical": true,
+  "_설명": "모든 값은 가상이다 — 문헌에서 온 값이 아니며 data/db.json 에 들어가지 않는다. 기전(MHC I·II 의 합성 → 수송 → 적재 → 제시 → 분해)이 그 값에서 어떻게 흐르는지 보기 위한 크기 정도 값만 둔다. 막(2D) 묶음의 부피는 그 막의 유효 부피다 (한계 L000079).",
+  "base": "mhc-dc-mature-antigen-hypothetical.json",
+  "perturbation": {
+    "type": "knockout",
+    "target": "D000198"
+  },
+  "context": {
+    "role": "requirement",
+    "state": "D000203",
+    "note": "CLIP 이 떨어지지 않으면 펩타이드가 실리지 못해 표면 제시가 멈추는지"
+  },
+  "expect": {
+    "final": "D000202"
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "applied_at": "2026-10-08T17:56:00.389Z",
+  "result": {
+    "added": [
+      "L000042",
+      "L000043"
+    ],
+    "updated": [
+      "D000123"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000042",
+          "L000043"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000123"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000123": [
+          "rule"
+        ]
+      }
+    },
+    "why": "소진 시험 사후 분석의 제한 요인 등록: 기질 GDP 고갈(재생 경로 없음 → NDPK 기질 쪽 공급 규칙 + Resource_Gap), CO₂ 축적으로 인한 IDH 평형 정지(역반응 속도 미확인 → Kinetic_Gap)",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000020",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000042",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000043",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000042",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000043",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 0,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 7,
+  "why": "소진 시험 사후 분석의 제한 요인 등록: 기질 GDP 고갈(재생 경로 없음 → NDPK 기질 쪽 공급 규칙 + Resource_Gap), CO₂ 축적으로 인한 IDH 평형 정지(역반응 속도 미확인 → Kinetic_Gap)",
+  "senses": [
+    {
+      "id": "D000123",
+      "rule": [
+        {
+          "id": "gtp_regeneration",
+          "type": "supply",
+          "label": "GTP 재생 (GDP + ATP → GTP + ADP)",
+          "consumes": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "where": [
+            "cytosol"
+          ],
+          "text": "G 단백질 순환이 쓴 GDP 를 ATP 의 인산으로 GTP 로 되돌린다 — GTP–GDP 순환을 닫는 공급.",
+          "evidence": {
+            "level": "asserted",
+            "note": "반응식은 IUBMB 효소 목록 EC 2.7.4.6 항목(https://iubmb.qmul.ac.uk/enzyme/EC2/7/4/6.html)과 대조함 — 웹 검색 결과로 확인, 원본 페이지를 직접 내려받지는 못함"
+          }
+        },
+        {
+          "id": "gdp_regeneration_matrix",
+          "type": "supply",
+          "label": "기질 GDP 재생 (GTP + ADP → GDP + ATP)",
+          "consumes": [
+            {
+              "ref": "D000035",
+              "n": 1
+            },
+            {
+              "ref": "D000033",
+              "n": 1
+            }
+          ],
+          "produces": [
+            {
+              "ref": "D000036",
+              "n": 1
+            },
+            {
+              "ref": "D000032",
+              "n": 1
+            }
+          ],
+          "where": [
+            "mito_matrix"
+          ],
+          "text": "NDPK 반응은 가역 — 미토콘드리아 기질에서는 석시닐-CoA 합성효소가 만든 GTP 의 인산을 ADP 로 넘겨 GDP 를 되돌린다 (기질 쪽 아형의 존재·속도는 미확인).",
+          "evidence": {
+            "level": "abstracted",
+            "basis": "EC 2.7.4.6 반응식(NTP + NDP 교환, 가역)을 기질의 GTP/ADP 방향에 적용 — 시트르산 회로 소진 시험에서 기질 GDP 고갈이 드러나 추가"
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+gdp",
+      "target": "D000123/rule/gdp_regeneration_matrix",
+      "type": "Resource_Gap",
+      "requirement": {
+        "text": "미토콘드리아 기질의 GTP → GDP 재생 속도 (NDPK 기질 쪽 아형 또는 석시닐-CoA 합성효소의 ADP 형 아형 비율) — 없으면 석시닐-CoA 합성효소가 기질 GDP 를 다 써서 회로가 GDP 고갈로 멈춘다 (GDP 시작량 = 최대 바퀴 수)",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000123/rule/gdp_regeneration_matrix",
+            "params": [
+              "k"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험 3(가상)의 사후 분석: 기질 GTP 를 GDP 로 되돌리는 경로가 없어 GDP 저장소가 정확히 그 수만큼의 바퀴 뒤 고갈"
+    },
+    {
+      "id": "L+idhrev",
+      "target": "D000151/rule/oxdecarb",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "NAD 의존 아이소시트르산 탈수소효소의 역반응 속도(또는 평형 상수) — 생리 조건에서 거의 비가역으로 알려져 있으나 값이 없어, CO₂ 축적이 회로를 평형으로 멈추게 하는지(가상 시험 3) 데이터로 판정할 수 없다",
+        "needs": [
+          {
+            "kind": "kinetics",
+            "rule": "D000151/rule/oxdecarb",
+            "params": [
+              "k_r"
+            ]
+          }
+        ]
+      },
+      "found_in": "시트르산 회로 소진 시험 3(가상): 가역으로 둔 IDH 가 CO₂ 축적으로 평형(역/정 ≈ 1)에 닿아 정지"
+    }
+  ]
+}

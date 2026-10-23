@@ -1,0 +1,83 @@
+{
+  "applied_at": "2026-10-16T08:26:57.809Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000110"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000110"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000110": [
+          "requirement",
+          "found_in"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "L000110 갱신: 사용자 BRENDA 계정으로 route 1(자동 수집)이 실제로 열림 — 사람 CS kcat·Km 을 받아 넣었다(condense). 다만 사람 특이 kcat 은 BRENDA 에도 희소(SUCL·SDH·MDH 사람 kcat 0)라 나머지 TCA 효소는 여전히 공백.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000110",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 12,
+  "why": "L000110 갱신: 사용자 BRENDA 계정으로 route 1(자동 수집)이 실제로 열림 — 사람 CS kcat·Km 을 받아 넣었다(condense). 다만 사람 특이 kcat 은 BRENDA 에도 희소(SUCL·SDH·MDH 사람 kcat 0)라 나머지 TCA 효소는 여전히 공백.",
+  "limitations": [
+    {
+      "id": "L000110",
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시트르산 회로 효소 반응 규칙의 실측 속도 상수: 2026-10-16 BRENDA(사용자 계정)로 route 1 이 열려 시트르산 생성효소(D000149/condense)에 사람 WT kcat 260/s·Km 7.7 µM(아세틸-CoA, PMID 31141475)을 넣었다 → 실측 kinetics 규칙 3개(IDH·FH·CS). 그러나 사람 특이 kcat 은 BRENDA 에도 희소하다: 석시닐-CoA 합성효소(EC 6.2.1.4)·석신산 탈수소효소(EC 1.3.5.1)·말산 탈수소효소(EC 1.1.1.37) 모두 사람 kcat 0건(MDH 는 사람 Km 6건만), 아코니테이스·OGDH 도 마찬가지. 대부분 kinetics 가 돼지·소·세균 값이라 사람 상수로 쓸 수 없다(다른 종 값 금지).",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "나머지 TCA 효소는 (1) 사람 kcat 을 보고한 1차 문헌을 찾으면 BRENDA·관찰 포트로 넣고, (2) 없으면 다른 종 값은 쓰지 않고 공백으로 두거나 별도 종 맥락으로 기록한다. ΔG° 는 eQuilibrator api 호스트 복구 시 직접."
+          }
+        ]
+      },
+      "found_in": "build-plan 12A — BRENDA route 1 열림, CS 완료, 사람 kcat 희소 확인",
+      "resolution": null
+    }
+  ],
+  "recorded_at": "2026-10-16T08:26:57.519Z"
+}

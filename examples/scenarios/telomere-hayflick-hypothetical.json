@@ -1,0 +1,203 @@
+{
+  "name": "복제 노화 — 성장 인자 있음 → 분열 75 회에 임계 길이, 그 뒤 정지 (가상)",
+  "hypothetical": true,
+  "_설명": "세포 운명 엔진 시험 — 모든 값은 가상이다(data/db.json 에 들어가지 않는다). 반복 단위 1800 → 임계 600 (6 bp/단위 → 10.8 kbp → 3.6 kbp), 분열당 16 단위(= 96 bp), 분열 간격 24 h → 산술 분열 한계 75 회 = 6480000 s. 손상 반응 힐 K 는 임계의 0.9 배(540 단위)에 두어 임계 위에서는 정지 배율이 1 에 머물게 했다. 힐 상수·반감기·부피는 문턱이 드러나도록 고른 값이며 측정값이 아니다 (한계 L000087–L000095).",
+  "cell": "fibroblast",
+  "context": {
+    "role": "cause",
+    "state": "D000211",
+    "note": "성장 인자가 있는 동안 분열이 이어져 텔로미어가 임계 600 단위(3.6 kbp)를 지나고, 손상 반응 → p53 → p21 사슬이 분열을 영구히 멈춘다 — 이 실행이 복제 노화에 이르는 원인을 보인다"
+  },
+  "dt_slow": 21600,
+  "t_end": 8640000,
+  "record_every": 1,
+  "volumes": {
+    "nucleoplasm": {
+      "value": {
+        "assume": "A000356"
+      },
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": {
+        "assume": "A000345"
+      },
+      "unit": "pL"
+    }
+  },
+  "amounts": {
+    "D000204|nucleoplasm": {
+      "assume": "A000261"
+    },
+    "D000207|nucleoplasm": {
+      "assume": "A000262"
+    },
+    "D000208|nucleoplasm": {
+      "assume": "A000263"
+    },
+    "D000013|nucleoplasm": {
+      "assume": "A000187"
+    }
+  },
+  "signals": {
+    "D000209|extracellular": [
+      {
+        "t": 0,
+        "n": {
+          "assume": "A000322"
+        }
+      }
+    ]
+  },
+  "thresholds": {
+    "D000204|nucleoplasm": {
+      "low": {
+        "assume": "A000307"
+      },
+      "high": {
+        "assume": "A000306"
+      }
+    },
+    "D000208|nucleoplasm": {
+      "low": {
+        "assume": "A000311"
+      },
+      "high": {
+        "assume": "A000309"
+      }
+    }
+  },
+  "commitment": {
+    "horizon": 86400,
+    "coarse": 864000
+  },
+  "arrest_window": 864000,
+  "event_tol": 0.001,
+  "kinetics": {
+    "D000205/rule/division_attrition": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000171"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000176"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000177"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/synthesis": {
+      "law": "zero_order",
+      "k": {
+        "assume": "A000182"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/turnover": {
+      "law": "mass_action",
+      "order": 1,
+      "half_life": {
+        "assume": "A000183"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000209/rule/mitogen_drive": {
+      "law": "hill",
+      "K": {
+        "assume": "A000184"
+      },
+      "n": {
+        "assume": "A000186"
+      },
+      "fmax": {
+        "assume": "A000185"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000204/rule/short_telomere_ddr": {
+      "law": "hill",
+      "K": {
+        "assume": "A000167"
+      },
+      "n": {
+        "assume": "A000169"
+      },
+      "fmin": {
+        "assume": "A000168"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000207/rule/p21_transactivation": {
+      "law": "hill",
+      "K": {
+        "assume": "A000173"
+      },
+      "n": {
+        "assume": "A000175"
+      },
+      "fmax": {
+        "assume": "A000174"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000208/rule/cdk_arrest": {
+      "law": "hill",
+      "K": {
+        "assume": "A000178"
+      },
+      "n": {
+        "assume": "A000181"
+      },
+      "fmin": {
+        "assume": "A000179"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
+  },
+  "expect": {
+    "_설명": "실행 전에 적은 가설 — 과정 보고서가 관찰과 대조한다.",
+    "final": "D000211",
+    "divisions_at_crossing": 75,
+    "t_cross_s": 6480000
+  },
+  "report": {
+    "_설명": "시계열에 함께 보일 비율 — 표지(텔로미어 반복 단위·p21)는 자동"
+  }
+}

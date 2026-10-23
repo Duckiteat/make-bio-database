@@ -1,0 +1,40 @@
+{
+  "applied_at": "2026-10-08T15:25:46.750Z",
+  "result": {
+    "added": [
+      "L000018"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": [
+      {
+        "from": "아데닐산 고리화효소",
+        "to": "D000031",
+        "via": "이름 '아데닐산 고리화효소'"
+      }
+    ]
+  },
+  "format": "definition-db-patch",
+  "version": 6,
+  "_설명": "속도 기반 감사(AUDIT_MASS)가 찾은 이중 계산을 한계로 등록",
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "아데닐산 고리화효소/site/gs_site",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "Gs 가 AC 활성화 단계(S000003)에서 행위자로 풀에 남으면서 AC 의 gs_site 리간드로도 세어져 Gαs·Gβ·Gγ 가 두 번 계산된다 — 실제로는 GTP 결합 Gαs 가 AC 에 붙고 Gβγ 가 떨어지며, GTP 가수분해로 Gαs 가 풀려난다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "Gαs·GTP 가 AC 에 흡수되는 결합 단계(partner)와, GTP 가수분해로 Gαs·GDP 가 풀려나 Gβγ 와 다시 모이는 단계·규칙 — L000015 의 Gs 해리 모델과 함께"
+          }
+        ]
+      },
+      "found_in": "2026-10-08 audit-run 에피네프린 경로 (속도 기반 시뮬레이션의 AUDIT_MASS: Gαs·Gβ·Gγ 10 → 20)",
+      "note": "사건 기반 검사(validate)는 결합 상대(partner)가 있는 modify 만 보존을 검사해서 이 경우를 놓쳤다 — 속도 기반 감사의 실체 집계에서 드러남.",
+      "by": "Claude",
+      "at": "2026-10-08"
+    }
+  ]
+}
