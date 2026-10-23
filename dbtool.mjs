@@ -70,15 +70,19 @@ const readJSON = (p) => DefDB.parseLoose(readFileSync(p, 'utf8'));
 // 형식 v12: 값이 바뀌는 병합의 기록 시각 — 병합 전에 패치에 찍어 관문이 봉인한다(패치 기록에 남아 재생해도 같다). 이미 있으면 그대로
 const stamped = (patch) => (patch && typeof patch === 'object' && !patch.recorded_at ? { ...patch, recorded_at: new Date().toISOString() } : patch);
 // 시나리오 읽기: 파생 시나리오(기준 + 교란 한 줄, build-plan 9)는 같은 폴더의 기준을 읽어 교란을 건 실제 입력으로 푼다 (컴파일러 derive)
+//   가정 번호({ assume: A… })는 원장(data/assumptions.jsonl)으로 숫자로 푼다 — 읽기는 scenarios.js, 풀기는 컴파일러(compiler/assumptions.js)
+const SCN = req('./scenarios.js');
 const resolveScenario = (path, sid, db) => {
-  const sc = readJSON(path), PT = req('./compiler/perturb.js');
-  if (!PT.isDerived(sc)) return { scenario: sc, text: readFileSync(path, 'utf8') };
+  let L; try { L = SCN.load(path); } catch (e) { return { error: e.message }; }
+  const sc = L.scenario, PT = req('./compiler/perturb.js');
+  if (!PT.isDerived(sc)) return { scenario: sc, text: L.text, used: L.used };
   if (!sid) return { error: `파생 시나리오 ${path} 는 세포 상태가 있는 실행(fate · observe · compare)에서만 — 교란이 그 계의 규칙·묶음을 보고 풀린다` };
   const bp = join(dirname(path), String(sc.base));
   if (!existsSync(bp)) return { error: `파생 시나리오 ${path}: 기준 '${sc.base}' 이 없음` };
-  const v = PT.derive(db, sid, sc, readJSON(bp));
+  let B; try { B = SCN.load(bp); } catch (e) { return { error: `파생 시나리오 ${path}: ${e.message}` }; }
+  const v = PT.derive(db, sid, sc, B.scenario);
   if (v.error) return { error: `파생 시나리오 ${path}: ${v.error}` };
-  return { scenario: v.scenario, text: JSON.stringify(v.scenario, null, 2) + '\n', derived: v };
+  return { scenario: v.scenario, text: JSON.stringify(v.scenario, null, 2) + '\n', derived: v, used: B.used };
 };
 const loadScenario = (path, sid, db) => {
   const r = resolveScenario(path, sid, db);
@@ -88,6 +92,7 @@ const loadScenario = (path, sid, db) => {
 };
 // 시나리오 → 실행 대상(시작 세포 상태·경로) 색인 — 시나리오 파일은 대상을 담지 않는다(사전 등록 해시 보존)
 const SCENARIO_DIR = join(HERE, 'examples', 'scenarios'), SUBJECTS = join(SCENARIO_DIR, 'subjects.json');
+const scenarioFiles = () => Object.fromEntries(readdirSync(SCENARIO_DIR).filter((f) => f.endsWith('.json') && f !== 'subjects.json').sort().map((f) => [f, readJSON(join(SCENARIO_DIR, f))])); // 날 시나리오(번호 그대로)
 const subjectOf = (path) => { const m = existsSync(SUBJECTS) ? readJSON(SUBJECTS).subjects : {}; return m[basename(path)] || null; };
 // 통제 토큰 청중 (--audience ko|en|both): 사전 라벨러를 행정부 번역 함수에 주입 (16A). 없으면 기본 한글
 const audienceOpt = () => { if (!flags.audience || flags.audience === true) return {}; try { return { label: req('./dictionary.js').labeler({ audience: flags.audience }) }; } catch (e) { die(e.message); } };
@@ -136,8 +141,10 @@ switch (cmd) {
     for (const f of r.attestations.failed) console.log(`오류  증명 ${f.key}: ${f.reasons.join(' · ')}`);
     const dict = req('./judicial/dictionary_audit.js').audit(CLERK.readDictionary(dirname(DB_PATH))); // 사전 봉인 (16A) — 사슬·revises·렌더 모호·덮임
     if (!dict.ok) for (const e of dict.errors) console.log(`오류  사전 ${e}`);
+    const AA = req('./judicial/assumption_audit.js'), asm = AA.audit(CLERK.readAssumptions(dirname(DB_PATH)), loadDB(), scenarioFiles()); // 가정 원장 (49) — 사슬·기록·시나리오 번호 풀기
+    if (!asm.ok) for (const e of asm.errors) console.log(`오류  가정 ${e}`);
     console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}${(r.attestations.stale || []).length ? `, 지난 도장 ${r.attestations.stale.length}` : ''}`);
-    if (r.attestations.failed.length || !dict.ok) process.exit(1);
+    if (r.attestations.failed.length || !dict.ok || !asm.ok) process.exit(1);
     process.exit(r.errors.length ? 1 : 0);
   }
   case 'merge': {
@@ -383,7 +390,7 @@ switch (cmd) {
       if (!target) die(`대상 없음 — --target 을 주거나 ${rel(SUBJECTS)} 에 등록`);
       const tg = DefDB.resolveRef(DefDB.index(db), target); if (tg.error) die(tg.error);
       const r = resolveScenario(f, (db.senses[tg.id] || {}).kind === 'cell_state' ? tg.id : null, db); if (r.error) die(r.error);
-      const v = SO.sceneOrigin(db, r.scenario, { target: tg.id }); if (v.error) die(v.error);
+      const v = SO.sceneOrigin(db, r.scenario, { target: tg.id, used: r.used }); if (v.error) die(v.error);
       for (const [k, n] of Object.entries(v.count)) tot[k] = (tot[k] || 0) + n;
       rows.push([basename(f), v]);
       if (!flags.all) console.log(SO.sceneOriginText(v, basename(f)));
@@ -393,6 +400,28 @@ switch (cmd) {
       for (const [f, v] of rows) console.log(`| ${f} | ${v.count.measured || 0} | ${v.count.abstracted || 0} | ${v.count.assumed || 0} | ${v.count.unrecorded || 0} |`);
       console.log(`| **합계** | ${tot.measured || 0} | ${tot.abstracted || 0} | ${tot.assumed || 0} | ${tot.unrecorded || 0} |`);
     }
+    break;
+  }
+  case 'assume': { // 가정 원장 (build-plan 49): 인자 없으면 사슬·기록·시나리오 번호 판정 · uses <A…> 거꾸로 색인 · add <기록.json|jsonl> 은 사법부 검사 → 봉인 → 서기
+    const AA = req('./judicial/assumption_audit.js'), dataDir = dirname(DB_PATH), events = CLERK.readAssumptions(dataDir), db = loadDB();
+    if (args[0] === 'uses') {
+      if (!args[1]) die('사용법: assume uses <A…>');
+      const u = AA.uses(events, scenarioFiles(), args[1]); if (u.error) die(u.error);
+      const s = u.record.slot;
+      console.log(`${u.record.id} [${s.kind} ${s.key} · ${s.param}${s.cell ? ` (${s.cell})` : ''}] = ${u.record.value}${u.record.unit ? ' ' + u.record.unit : ''} · 기원 ${u.record.origin}${u.record.limitations.length ? ` (${u.record.limitations.join(', ')})` : ''}`);
+      console.log(`  번호로 가리킴 ${u.ref.length}: ${u.ref.join(', ') || '없음'}`);
+      console.log(`  인라인 숫자가 같음(등록된 시나리오 — 번호 없이 내용으로 이어짐) ${u.content.length}: ${u.content.join(', ') || '없음'}`);
+      if (u.revisedBy.length) console.log(`  이 기록을 고친 새 번호: ${u.revisedBy.join(', ')} — 가리키는 쪽은 따라가지 않는다(옛 숫자 그대로)`);
+      break;
+    }
+    if (args[0] !== 'add') { const a = AA.audit(events, db, scenarioFiles()); console.log(AA.auditText(a)); process.exit(a.ok ? 0 : 1); }
+    if (!args[1]) die('사용법: assume [uses <A…> | add <기록.json|.jsonl>] — 기록 칸: ' + AA.PROPOSAL_FIELDS.filter((f) => f !== 'migrated').join(' · '));
+    const txt = readFileSync(args[1], 'utf8').trim();
+    const proposals = txt.startsWith('[') ? JSON.parse(txt) : txt.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
+    const v = AA.checkProposals(events, proposals, db);
+    if (!v.ok) { console.log(`가정 기록 거부: ${v.errors.length}\n` + v.errors.map((e) => '  ✗ ' + e).join('\n')); process.exit(1); }
+    const out = CLERK.appendAssumptions({ dataDir, proposals, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, proposals, { issuer: 'judicial/assumption_audit.js#checkProposals' }) });
+    console.log(`가정 기록 ${out.length}개 추가 (입법 서기): ${out[0].id}–${out[out.length - 1].id} · head ${out[out.length - 1].root.slice(0, 12)}…`);
     break;
   }
   case 'dictionary': { // 사전 봉인 (16A): 인자 없으면 사슬·덮임 판정, add <항목.json|jsonl> 은 사법부 검사 → 봉인 → 서기가 사슬에 추가
@@ -409,10 +438,14 @@ switch (cmd) {
   }
   case 'register': { // 사전 등록 (build-plan 3): 검증에 쓸 시나리오를 실행 전에 — 사법부 규약 구조 판정이 통과한 것만 서기가 사슬에 남긴다
     if (!args[0]) die('사용법: register <시나리오.json>');
-    const PROTO = req('./judicial/protocol.js'), db = loadDB(), sc = JSON.parse(readFileSync(args[0], 'utf8')), v = PROTO.protocolStructure(db, sc);
+    // 새 등록은 가정을 번호로만 (build-plan 49) — 인라인 숫자는 원장과 이어지지 않아 나중에 연결이 약해진다. 해시는 번호를 푼 내용에
+    const AS = req('./compiler/assumptions.js'), raw = readJSON(args[0]), inl = AS.slots(raw).filter((x) => typeof x.value === 'number');
+    if (inl.length) die(`등록 거부: 인라인 가상 숫자 ${inl.length}개 (${inl.slice(0, 3).map((x) => `${x.kind} ${x.key} · ${x.param}`).join(', ')}${inl.length > 3 ? ' …' : ''}) — 가정 원장 번호로 가리켜야 한다 (node dbtool.mjs assume)`);
+    let L; try { L = SCN.load(args[0]); } catch (e) { die(e.message); }
+    const PROTO = req('./judicial/protocol.js'), db = loadDB(), sc = L.scenario, v = PROTO.protocolStructure(db, sc);
     console.log(v.declared ? (v.ok ? '규약 구조: 통과' : `규약 구조: 위반 ${v.problems.length}\n` + v.problems.map((x) => '  ✗ ' + x).join('\n')) : '규약(protocol) 없음 — 등록할 수 없음');
     if (!v.ok) process.exit(1);
-    const e = CLERK.registerPrereg({ dataDir: dirname(DB_PATH), scenario: sc, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, sc, { issuer: 'judicial/protocol.js#protocolStructure' }) });
+    const e = CLERK.registerPrereg({ dataDir: dirname(DB_PATH), scenario: sc, assumptions: [...new Set(L.used.map((u) => u.id))].sort(), seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, sc, { issuer: 'judicial/protocol.js#protocolStructure' }) });
     console.log(`사전 등록 #${e.seq} (입법 서기): ${e.at} · 시나리오 sha256 ${e.scenario_sha256.slice(0, 12)}… — 이 시나리오를 고치면 미등록이 된다`);
     break;
   }
@@ -677,7 +710,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | dictionary | origin | qualgraph | retraction | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | assume | dictionary | origin | qualgraph | retraction | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

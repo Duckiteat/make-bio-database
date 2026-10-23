@@ -10,6 +10,7 @@
 //   ⑦ JS = Rust: 궤적 상대 ≤ 1e-12, 끝 상태·도달 시각 같음
 //   ⑧ 필수성: 성장 인자를 끊거나 텔로머레이스로 순 소모를 0 으로 만들면 노화에 이르지 못한다
 //   ⑨ 상수 등급 관문: 이 실행의 상수는 모두 가상 — hypothetical 선언을 빼면 판정이 거부한다
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import test from 'node:test';
 import assert from 'node:assert';
 import { createRequire } from 'node:module';
@@ -27,7 +28,7 @@ const SRC = 'D000210', SEN = 'D000211';
 const TEL = 'D000204|nucleoplasm', ATTR = 'D000205/rule/division_attrition';
 const L0 = 1800, LCRIT = 600, DL = 16, TDIV = 86400;      // 시나리오의 설계 수치 (가상)
 const EXP_N = (L0 - LCRIT) / DL, EXP_T = EXP_N * TDIV;     // 산술 분열 한계 75 회 · 6 480 000 s
-const scen = (n) => JSON.parse(fs.readFileSync(new URL(`../examples/scenarios/telomere-${n}-hypothetical.json`, import.meta.url)));
+const scen = (n) => SCN.read(new URL(`../examples/scenarios/telomere-${n}-hypothetical.json`, import.meta.url));
 const run = (sc, opt) => { const r = F.simulateFate(DB, SRC, Object.assign({ engine: 'rust', scenario: sc }, opt || {})); assert.ok(!r.error, r.error); return r; };
 const telOf = (r) => r.keys.indexOf(TEL);
 const cumOf = (r) => { const j = r.process.ruleInfo.findIndex((x) => x.ref === ATTR); return r.process.cum.map((c) => c[j]); };

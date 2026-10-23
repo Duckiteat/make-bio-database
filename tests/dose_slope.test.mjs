@@ -3,6 +3,7 @@
 //   ② 관찰 검사: 용량 축 없음·값 하나·없는 규칙은 거부
 //   ③ 연산자·조정자: 결정론 모델에서 분열 수의 초기 길이 기울기 ≈ 1/ΔL (L000116 — 이 측정은 지금 ΔL 을 다시 잴 뿐임을 숫자로)
 //   ④ 추정용 관찰은 판정하지 않음 (순환 방지 — 기존 규칙이 새 측정 유형에도)
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -10,7 +11,7 @@ import { createRequire } from 'node:module';
 const req = createRequire(import.meta.url);
 const M = req('../model.js'), J = req('../judicial/judicial.js'), PT = req('../compiler/perturb.js'), PA = req('../judicial/perturb_audit.js'), ORCH = req('../orchestrator.js'), OP = req('../compiler/obs_operator.js');
 const RAW = JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')), DB = M.normalize(RAW);
-const SC = JSON.parse(readFileSync(new URL('../examples/scenarios/telomere-hayflick-hypothetical.json', import.meta.url), 'utf8'));
+const SC = SCN.read(new URL('../examples/scenarios/telomere-hayflick-hypothetical.json', import.meta.url));
 const TEL = 'D000204|nucleoplasm', DIV = 'D000205/rule/division_attrition';
 const obs = (extra) => Object.assign({ observable: { kind: 'dose_slope', target: DIV, dose: { target: TEL, values: [1500, 1800, 2100] } }, value: 0.06, unit: '1', uncertainty: { kind: 'combined', model: 'normal', sd: 0.012 }, replicates: 1, use: 'validation', condition: { species: '9606' }, evidence: { level: 'curated', sources: [{ db: 'PMID', id: '1438199', citation: 'Allsopp et al., 1992' }] } }, extra || {});
 
@@ -59,6 +60,6 @@ test('⑤ 첫 장면 기원 — ΔL 은 숫자 출처 없음, 핵질 부피는 �
   assert.ok(row('volumes', 'nucleoplasm').limitations.includes('L000092'));
   assert.equal(row('signals', 'D000209|extracellular').origin, 'unrecorded', '조절 한계는 신호 양의 기원이 아님');
   assert.equal(row('amounts', TEL).origin, 'assumed');
-  const tca = SO.sceneOrigin(RAW, JSON.parse(readFileSync(new URL('../examples/scenarios/tca-measured-kinetics-hypothetical.json', import.meta.url), 'utf8')), { target: 'D000148' });
+  const tca = SO.sceneOrigin(RAW, SCN.read(new URL('../examples/scenarios/tca-measured-kinetics-hypothetical.json', import.meta.url)), { target: 'D000148' });
   assert.ok(tca.count.measured >= 4, 'TCA 실측 kinetics 는 measured');
 });

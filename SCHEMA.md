@@ -587,10 +587,20 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 - **번호 이동** (2차): 최상위 `moved { 옛 번호: { to: [번호…], kind: merge | split, at, why } }` — 있을 때만 직렬화. 패치 `moved` 를 병합이 처리(옛 번호를 표에서 빼고, 합쳐진 정의항을 가리키던 설명 연결은 대상으로 옮김, 시각 = 패치 `recorded_at`). 이동된 번호를 가리키는 패치는 병합 단계에서 대상을 알려 주며 거부, 정의 층(개념·정의항·단계·한계)에 남은 참조는 사법부 `validateMoved` 가 거부. 값·관찰(불변 층)은 옛 번호를 그대로 둔다. `resolveRef`·`followMoved` 는 이동을 따라간다(나뉜 번호는 하나를 고르라고 답함).
 - **아직**: 기존 기록의 `evidence_at` 채우기(근거에서 읽을 수 있는 연도 — 데이터 패치로).
 
+## 8O. 가정 원장 — 시나리오의 가상 숫자 (2026-10-23, build-plan 49 · `docs/design/structure-realignment.md` §3)
+
+- **자리**: db.json 밖 `data/assumptions.jsonl`. db 는 확인된 사실만, 가정은 여기. 가정이 db 값(V…)이 되는 길은 관찰(O…)뿐.
+- **기록**: `{ seq, at, id: 'A' + 여섯 자리 순번, slot { kind: kinetics | amounts | reservoirs | thresholds | signals | buffered | volumes, key, param, cell? }, value, unit, origin: abstracted | assumed | unrecorded, limitations [L…], basis, range? { low, high }, revises? A…, migrated?, prev, root }`. 칸(param): kinetics = `model.KIN_VALUE_FIELDS` · thresholds = low·high · buffered = conc_M·total · signals = `n@<t>` · volumes = value(세포마다 다른 자리) · 그 밖 n. 단위: 분자 수 `molecules`, 완충 농도 `M`, 부피는 시나리오의 단위, 속도 상수는 null(법칙마다 SI).
+- **시나리오**: 숫자 자리에 `{ "assume": "A…" }`. 풀기는 `compiler/assumptions.resolve`(순수), 읽기는 `scenarios.js`. 번호 없는 시나리오는 파일 그대로(글자까지).
+- **불변**: 고치기는 revises 단 새 번호. 풀기는 revises 를 따라가지 않는다. 번호는 자기 자리에만 — 다른 자리에 붙이면 거부.
+- **사법부**: `judicial/assumption_audit.js` — 사슬(seq·prev·root·번호=순번·재사용 없음) · 기록(자리 종류·칸·대상 존재·유한·부호·단위·기원·assumed 의 열린 한계·근거 문장·범위·revises 같은 자리 다른 값·같은 자리 같은 값 중복 금지) · 모든 시나리오 풀기. `validate` 가 부른다.
+- **등록**: 해시는 번호를 푼 시나리오 — 번호의 숫자까지 고정. 새 등록은 인라인 가상 숫자 거부.
+
 ## 변경 기록
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-23 | (가정 원장) | `data/assumptions.jsonl` 신설(§8O) — 추가만 하는 사슬 `seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root`, 첫 prev = sha256('assumptions\n'). 시나리오 숫자 자리에 `{ "assume": "A…" }`. 사전 등록 사건에 선택 칸 `assumptions`(번호 목록). 변환 `migrations/012-assumption-ledger.mjs`(미등록 시나리오 34 개 · 숫자 자리 1 696 → 기록 360, 무손실 확인). db.json 형식·버전 불변 |
 | 2026-10-23 | 12 (측정 유형) | 측정량 `dose_slope`(대상 규칙 진행량, `observable.dose { target, values }`, 단위 1, 보존 분류 non_conserved/sensitivity) · 교란 `set_amount { target: 묶음, n }`(+ dose_series of set_amount) · `schemas/obs` 갱신. 추가 필드만 — 기존 db 불변 |
 | 2026-10-23 | 12 (가 스키마) | 한계 구조 필드 `symptom`·`downstream_blocked`·`resolution_trigger`·`prohibited_bypasses`(선택, 추가 필드만 — 없으면 직렬화 불변, 버전 번호 그대로) · 어휘 `resolutionTriggers` · 사법부 검사 5 자리 + 재검토 후보 `reviewCandidates`. 데이터: L000113 에 원문의 증상 수치·막힌 하류(D000103·104·105)를 칸으로 |
 | 2026-10-23 | (사전) | `data/dictionary.jsonl` 형식: 한 줄 한 레코드 → **추가만 하는 사슬**(한 줄 한 사건 `seq·at·…항목·revises?·prev·root`, root = sha256(prev + '\n' + 정준 JSON), 첫 prev = sha256('dictionary\n')). 쓰기는 입법 서기(구역 registry)만 — 사법부 `judicial/dictionary_audit.js` 봉인 뒤. 고치기는 `revises` 단 새 사건. db.json 형식·버전 불변. 변환 `migrations/011-dictionary-chain.mjs`(무손실, 109 사건) |

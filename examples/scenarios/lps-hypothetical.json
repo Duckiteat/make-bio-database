@@ -5,39 +5,77 @@
   "cell": "macrophage",
   "volumes": {
     "extracellular": {
-      "value": 10000,
+      "value": {
+        "assume": "A000347"
+      },
       "unit": "fL"
     },
     "cytosol": {
-      "value": 1000,
+      "value": {
+        "assume": "A000333"
+      },
       "unit": "fL"
     },
     "nucleoplasm": {
-      "value": 300,
+      "value": {
+        "assume": "A000357"
+      },
       "unit": "fL"
     }
   },
   "amounts": {
-    "D000064|extracellular": 60000,
-    "D000065|extracellular": 100000,
-    "D000066|plasma_membrane": 50000,
-    "D000069|plasma_membrane": 10000,
-    "D000071|plasma_membrane": 10000,
-    "D000072|cytosol": 60000,
-    "D000073|cytosol": 40000,
-    "D000074|cytosol": 40000,
-    "D000076|cytosol": 20000,
-    "D000081|cytosol": 20000,
-    "D000085|cytosol": 50000,
-    "D000090|cytosol": 100000,
-    "D000095|cytosol": 20000,
-    "D000098|cytosol": 100000
+    "D000064|extracellular": {
+      "assume": "A000195"
+    },
+    "D000065|extracellular": {
+      "assume": "A000196"
+    },
+    "D000066|plasma_membrane": {
+      "assume": "A000197"
+    },
+    "D000069|plasma_membrane": {
+      "assume": "A000198"
+    },
+    "D000071|plasma_membrane": {
+      "assume": "A000199"
+    },
+    "D000072|cytosol": {
+      "assume": "A000200"
+    },
+    "D000073|cytosol": {
+      "assume": "A000201"
+    },
+    "D000074|cytosol": {
+      "assume": "A000202"
+    },
+    "D000076|cytosol": {
+      "assume": "A000203"
+    },
+    "D000081|cytosol": {
+      "assume": "A000204"
+    },
+    "D000085|cytosol": {
+      "assume": "A000205"
+    },
+    "D000090|cytosol": {
+      "assume": "A000206"
+    },
+    "D000095|cytosol": {
+      "assume": "A000207"
+    },
+    "D000098|cytosol": {
+      "assume": "A000210"
+    }
   },
   "kinetics": {
     "D000065/rule/lps_binding": {
       "law": "binding",
-      "k_on": 1000000,
-      "k_off": 0.001,
+      "k_on": {
+        "assume": "A000015"
+      },
+      "k_off": {
+        "assume": "A000013"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -45,8 +83,12 @@
     },
     "D000085/rule/ikba_s32": {
       "law": "michaelis_menten",
-      "kcat": 1,
-      "Km": 1e-7,
+      "kcat": {
+        "assume": "A000032"
+      },
+      "Km": {
+        "assume": "A000030"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -54,8 +96,12 @@
     },
     "D000085/rule/ikba_s36": {
       "law": "michaelis_menten",
-      "kcat": 1,
-      "Km": 1e-7,
+      "kcat": {
+        "assume": "A000035"
+      },
+      "Km": {
+        "assume": "A000033"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -63,8 +109,12 @@
     },
     "D000098/rule/ikba_degradation": {
       "law": "michaelis_menten",
-      "kcat": 0.5,
-      "Km": 1e-7,
+      "kcat": {
+        "assume": "A000043"
+      },
+      "Km": {
+        "assume": "A000041"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -72,7 +122,9 @@
     },
     "D000089/rule/nuclear_import": {
       "law": "mass_action",
-      "k": 0.05,
+      "k": {
+        "assume": "A000037"
+      },
       "order": 1,
       "evidence": {
         "level": "predicted",
@@ -81,8 +133,12 @@
     },
     "D000100/rule/kb_binding": {
       "law": "binding",
-      "k_on": 10000000,
-      "k_off": 0.01,
+      "k_on": {
+        "assume": "A000047"
+      },
+      "k_off": {
+        "assume": "A000045"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -90,7 +146,9 @@
     },
     "D000126/rule/atp_supply": {
       "law": "mass_action",
-      "k": 1000,
+      "k": {
+        "assume": "A000054"
+      },
       "order": 2,
       "evidence": {
         "level": "predicted",
@@ -99,7 +157,9 @@
     },
     "D000124/rule/amp_recharge": {
       "law": "mass_action",
-      "k": 1000,
+      "k": {
+        "assume": "A000051"
+      },
       "order": 2,
       "evidence": {
         "level": "predicted",
@@ -108,7 +168,9 @@
     },
     "D000125/rule/ppi_hydrolysis": {
       "law": "mass_action",
-      "k": 10,
+      "k": {
+        "assume": "A000053"
+      },
       "order": 1,
       "evidence": {
         "level": "predicted",
@@ -117,7 +179,9 @@
     },
     "D000127/rule/nt_supply": {
       "law": "zero_order",
-      "k": 1e-9,
+      "k": {
+        "assume": "A000056"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -126,7 +190,9 @@
     "D000101/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1800,
+      "half_life": {
+        "assume": "A000049"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -134,12 +200,26 @@
     }
   },
   "reservoirs": {
-    "D000032|cytosol": 100000000,
-    "D000033|cytosol": 10000000,
-    "D000034|cytosol": 1000000,
-    "D000037|cytosol": 100000000,
-    "D000122|cytosol": 0,
-    "D000077|cytosol": 1000000,
-    "D000013|nucleoplasm": 100000
+    "D000032|cytosol": {
+      "assume": "A000266"
+    },
+    "D000033|cytosol": {
+      "assume": "A000268"
+    },
+    "D000034|cytosol": {
+      "assume": "A000270"
+    },
+    "D000037|cytosol": {
+      "assume": "A000278"
+    },
+    "D000122|cytosol": {
+      "assume": "A000283"
+    },
+    "D000077|cytosol": {
+      "assume": "A000282"
+    },
+    "D000013|nucleoplasm": {
+      "assume": "A000264"
+    }
   }
 }

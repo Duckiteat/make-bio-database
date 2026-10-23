@@ -35,7 +35,7 @@ const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부
 
 // 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
 export const ZONES = {
-  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl', 'data/assumptions.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
   attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
   evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
@@ -124,15 +124,15 @@ export function sealGenesis({ dbPath, db, seal, note }) {
 //   사법부(judicial/protocol.js protocolStructure)가 규약 구조를 통과시킨 봉인이 있을 때만 쓴다. 판정(실행보다 앞선 등록인가)은 사법부.
 const PREREG = 'preregistrations.jsonl', PREREG_GENESIS = sha('preregistration\n');
 export function readPrereg(dataDir) { const f = join(dataDir, PREREG); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; }
-export function registerPrereg({ dataDir, scenario, seal }) {
+export function registerPrereg({ dataDir, scenario, seal, assumptions }) {
   if (!ATT.checkSeal(seal)) refuse('규약 판정 봉인이 없거나 변조됨');
   if (!seal.ok) refuse(`규약 판정이 거부 (위반 ${seal.errors})`);
   if (sha(JSON.stringify(scenario, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 시나리오와 등록하려는 시나리오가 다름');
-  const entries = readPrereg(dataDir), h = sha(ATT.canon(scenario));
+  const entries = readPrereg(dataDir), h = sha(ATT.canon(scenario)); // 시나리오는 가정 번호를 푼 내용 — 해시가 번호의 숫자까지 고정한다 (가정 번호 목록은 assumptions 로 함께)
   const dup = entries.find((e) => e.scenario_sha256 === h);
   if (dup) refuse(`이미 등록된 시나리오 (#${dup.seq}, ${dup.at})`);
   const last = entries[entries.length - 1];
-  const body = { seq: entries.length + 1, at: new Date().toISOString(), scenario_sha256: h, name: scenario.name || '', question: (scenario.protocol || {}).question || '', prev: last ? last.root : PREREG_GENESIS };
+  const body = { seq: entries.length + 1, at: new Date().toISOString(), scenario_sha256: h, name: scenario.name || '', question: (scenario.protocol || {}).question || '', ...(assumptions && assumptions.length ? { assumptions } : {}), prev: last ? last.root : PREREG_GENESIS };
   const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) }, f = join(dataDir, PREREG);
   put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + JSON.stringify(ev) + '\n');
   return ev;
@@ -150,6 +150,26 @@ export function appendDictionary({ dataDir, proposals, seal }) {
   let prev = events.length ? events[events.length - 1].root : DICT_GENESIS;
   for (const p of proposals) {
     const body = { seq: events.length + out.length + 1, at, ...p, prev };
+    const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+    out.push(ev); prev = ev.root;
+  }
+  put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + out.map((e) => JSON.stringify(e)).join('\n') + '\n');
+  return out;
+}
+
+// 가정 원장 (build-plan 49): data/assumptions.jsonl 은 추가만 하는 사슬. 사법부(judicial/assumption_audit.js checkProposals)가 새 기록을
+//   통과시킨 봉인이 있을 때만 붙인다. 번호 A… 는 서기가 차례로 붙인다 — 지우거나 고쳐 쓰지 않는다(고치기는 revises 단 새 번호).
+const ASSUME = 'assumptions.jsonl', ASSUME_GENESIS = sha('assumptions\n');
+export function readAssumptions(dataDir) { const f = join(dataDir, ASSUME); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []; }
+export function appendAssumptions({ dataDir, proposals, seal }) {
+  if (!ATT.checkSeal(seal)) refuse('가정 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse(`가정 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 기록과 쓰려는 기록이 다름');
+  const events = readAssumptions(dataDir), f = join(dataDir, ASSUME), at = new Date().toISOString(), out = [];
+  let prev = events.length ? events[events.length - 1].root : ASSUME_GENESIS;
+  for (const p of proposals) {
+    const seq = events.length + out.length + 1;
+    const body = { seq, at, id: 'A' + String(seq).padStart(6, '0'), ...p, prev };
     const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
     out.push(ev); prev = ev.root;
   }

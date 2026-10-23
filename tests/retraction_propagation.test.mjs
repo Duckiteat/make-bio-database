@@ -3,6 +3,7 @@
 //   ② 철회 파생 그래프가 사전 등록 결론까지 잇는다
 //   ③ 재검증은 무엇이 바뀌었나에 키잉: 메모만 다른 대체 = 같음, 값이 바뀌면·근거 철회면 재검증 필요
 //   ④ 보고서에 실린 의존 블록은 왕복한다
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -13,7 +14,7 @@ const M = req('../model.js'), J = req('../judicial/judicial.js'), ER = req('../j
 const ROOT = new URL('..', import.meta.url).pathname;
 const RAW = JSON.parse(readFileSync(join(ROOT, 'data/db.json'), 'utf8'));
 const clone = (x) => JSON.parse(JSON.stringify(x));
-const sc = (f) => JSON.parse(readFileSync(join(ROOT, 'examples/scenarios', f), 'utf8'));
+const sc = (f) => SCN.read(join(ROOT, 'examples/scenarios', f));
 const prereg = readFileSync(join(ROOT, 'data/preregistrations.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const retract = (db, oid) => { const d = clone(db); d.observations[oid].retracted = { note: '시험 철회' }; return d; };
 

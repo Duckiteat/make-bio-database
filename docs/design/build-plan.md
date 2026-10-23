@@ -119,7 +119,7 @@
 
 | # | 작업 | 자리 | 끝나는 조건 | 상태 |
 |---|---|---|---|---|
-| 49 | **가정 원장** `data/assumptions.jsonl`(A…, 추가 전용 사슬, revises) + 시나리오 번호 참조 + 컴파일러 풀기 | 입법·서기 `registry` · `judicial/assumption_audit.js` · `compiler/ir_builder.js` · `migrations/012` | 미등록 시나리오 변환 전후 IR 해시·궤적 비트 동일 · 등록 5건 불변 · 감사 거부 시험 | ☐ |
+| 49 | **가정 원장** `data/assumptions.jsonl`(A…, 추가 전용 사슬, revises) + 시나리오 번호 참조 + 컴파일러 풀기 | 입법·서기 `registry` · `judicial/assumption_audit.js` · `compiler/assumptions.js` · `scenarios.js` · `migrations/012` | 미등록 시나리오 변환 전후 풀린 시나리오 동일 · 등록 5건 불변 · 감사 거부 시험 | ☑ 2026-10-23 — 시나리오 34개·숫자 자리 1,696 → 기록 360(assumed 208·unrecorded 152), 무손실. 연결 규약: 번호는 자기 자리에만·최신 따라가기 없음·새 등록은 인라인 숫자 거부·사전 등록 사건에 번호 목록. `assume`·`assume uses`·`assume add`, validate 포함. 시험 `tests/assumptions.test.mjs`(8). 첫 장면 기원에 저장소 양(reservoirs)도 셈(합계 실측 12·추상 40·가정 1,108·기원 없음 540, 43 시나리오) |
 | 50 | **판정 원장** `data/verdicts.jsonl`(gate · validation 행) + `verdicts --recheck` + 자동결정률 | 서기 `registry` · 조정자 · 사법부 | 재실행 일치 · 변조 거부 시험 · 자동결정률 출력 | ☐ |
 | 51 | **입력 귀속** (TIER A): 가정 범위 양 끝 파생 실행 → 강건/민감, 범위는 등록 때 고정 | `compiler/perturb.js`(`set_assumption`) · 조정자 · 사법부 | 해석적으로 아는 계에서 강건·민감 둘 다 · 등록 검증 5건에 귀속 보고 | ☐ |
 | 52 | **측정법 어휘** `vocab.assays` + 관찰 `assay` + 측정 공유 깃발 | `vocab.js` · `schemas/obs/` · `migrations/013` · `chanceBaseline` | 미등록 측정법 거부 · 공유 깃발 시험 | ☐ |

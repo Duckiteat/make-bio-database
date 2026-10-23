@@ -5,42 +5,90 @@
   "window": 1,
   "report": {
     "expect": [
-      { "step": "S000033", "value": 1335, "unit": "회/s", "tol": 0.05, "note": "kcat·[E]/2 = 26.7×100/2, 반포화" }
+      {
+        "step": "S000033",
+        "value": 1335,
+        "unit": "회/s",
+        "tol": 0.05,
+        "note": "kcat·[E]/2 = 26.7×100/2, 반포화"
+      }
     ]
   },
   "volumes": {
     "mito_matrix": {
-      "value": 100,
+      "value": {
+        "assume": "A000352"
+      },
       "unit": "fL"
     }
   },
   "amounts": {
-    "D000149|mito_matrix": 100,
-    "D000150|mito_matrix": 100,
-    "D000151|mito_matrix": 100,
-    "D000152|mito_matrix": 100,
-    "D000153|mito_matrix": 100,
-    "D000154|mito_matrix": 100,
-    "D000155|mito_matrix": 100,
-    "D000156|mito_matrix": 100
+    "D000149|mito_matrix": {
+      "assume": "A000223"
+    },
+    "D000150|mito_matrix": {
+      "assume": "A000225"
+    },
+    "D000151|mito_matrix": {
+      "assume": "A000227"
+    },
+    "D000152|mito_matrix": {
+      "assume": "A000229"
+    },
+    "D000153|mito_matrix": {
+      "assume": "A000231"
+    },
+    "D000154|mito_matrix": {
+      "assume": "A000233"
+    },
+    "D000155|mito_matrix": {
+      "assume": "A000235"
+    },
+    "D000156|mito_matrix": {
+      "assume": "A000237"
+    }
   },
   "reservoirs": {
-    "D000138|mito_matrix": 141520308,
-    "D000134|mito_matrix": 60221408,
-    "D000135|mito_matrix": 60221408,
-    "D000136|mito_matrix": 6022141,
-    "D000144|mito_matrix": 180664223,
-    "D000145|mito_matrix": 0,
-    "D000146|mito_matrix": 6022141,
-    "D000147|mito_matrix": 0,
-    "D000036|mito_matrix": 60221408,
-    "D000037|mito_matrix": 602214076,
-    "D000035|mito_matrix": 0
+    "D000138|mito_matrix": {
+      "assume": "A000290"
+    },
+    "D000134|mito_matrix": {
+      "assume": "A000286"
+    },
+    "D000135|mito_matrix": {
+      "assume": "A000288"
+    },
+    "D000136|mito_matrix": {
+      "assume": "A000289"
+    },
+    "D000144|mito_matrix": {
+      "assume": "A000293"
+    },
+    "D000145|mito_matrix": {
+      "assume": "A000294"
+    },
+    "D000146|mito_matrix": {
+      "assume": "A000296"
+    },
+    "D000147|mito_matrix": {
+      "assume": "A000297"
+    },
+    "D000036|mito_matrix": {
+      "assume": "A000275"
+    },
+    "D000037|mito_matrix": {
+      "assume": "A000280"
+    },
+    "D000035|mito_matrix": {
+      "assume": "A000272"
+    }
   },
   "kinetics": {
     "D000158/rule/fad_regen": {
       "law": "mass_action",
-      "k": 50,
+      "k": {
+        "assume": "A000073"
+      },
       "order": 1,
       "evidence": {
         "level": "predicted",

@@ -370,6 +370,23 @@
     observation_added: { label: '새 관찰이 들어오면', note: '한계의 at 이후 대상·막힌 하류를 재는 관찰(O…)이 기록되면 다시 본다' },
     value_recorded:    { label: '새 값이 기록되면', note: '한계의 at 이후 대상·막힌 하류에 값(V…)이 새로 기록되면 다시 본다' },
   },
+  // 첫 장면 기원 (judicial/scene_origin.js 분류 · 가정 원장 origin) — 실험의 시작 숫자가 어디서 왔나
+  sceneOrigins: {
+    measured:   { label: '실측에 매임', note: 'db 값이 관찰(O…)·실측 근거에 매임 — 가정 원장에는 없다(측정값은 db 값 V…)' },
+    abstracted: { label: 'db 에 있으나 숫자 출처 없음(추상·추론)', note: '근거가 추상·추론 — 숫자의 출처가 기록되지 않음' },
+    assumed:    { label: '가상 값 — 한계로 등록됨', note: '그 대상을 다루는 열린 한계(L…)가 있음' },
+    unrecorded: { label: '가상 값 — 기원 기록 없음', note: '어떤 한계도 다루지 않음 — 가정 원장에는 변환(012)이 옛 값을 들일 때만' },
+  },
+  // 가정 원장의 자리 종류 (data/assumptions.jsonl slot.kind · compiler/assumptions.js 가 숫자 위치·단위를 안다)
+  assumptionSlots: {
+    kinetics:   { label: '속도 상수' },
+    amounts:    { label: '시작량' },
+    reservoirs: { label: '저장소 양' },
+    thresholds: { label: '문턱' },
+    signals:    { label: '신호 양' },
+    buffered:   { label: '완충 농도·총량' },
+    volumes:    { label: '부피 (세포마다)' },
+  },
   // ── 판결·보고의 통제 토큰 (16A: 토큰 → 사람말 표는 여기 — 토큰 → 동작·숫자·정책 표는 로직 곁에) ──
   // 기전 참여 역할 (model.js ROLE 보기 · core.js·viewer 표시)
   bundleRoles: {

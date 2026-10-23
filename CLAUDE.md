@@ -37,7 +37,7 @@
 - 경로 뒤 `pattern <경로>`; 상위 개념 없는 패턴이 두 경로 이상 → kind process + `motif`.
 - 시뮬레이션 보고에 "농도 공백"(기본값·무한 풀) 명시 — 도달 여부만 말함.
 - 해상도: `resolution <경로>`. R2 는 속도 상수로 못 가르는 반응 중심만. 경쟁은 Kd·kcat·Km 먼저.
-- 속도 상수: 규칙 `kinetics` 에 SI, 문헌 값은 관찰(O…) 먼저 + `kinetics.from`(묶은 상수 `lumped` 도 원 관찰 참조). 미확인 값 금지(시험값은 `examples/scenarios/` `hypothetical: true` 만). 다른 종 값을 사람 값으로 적지 않음 → 한계. 불확도 미보고면 sd = 유효 숫자 해상도 + `note`. 넣은 뒤 궤적 전후 비교 보고.
+- 속도 상수: 규칙 `kinetics` 에 SI, 문헌 값은 관찰(O…) 먼저 + `kinetics.from`(묶은 상수 `lumped` 도 원 관찰 참조). 미확인 값 금지(시험값은 가정 원장 `data/assumptions.jsonl` 의 번호 A… 를 `hypothetical: true` 시나리오가 `{assume}` 로 가리킴 — `assume add` 감사·봉인 뒤 서기만, 고치기는 revises 새 번호, 가리키는 쪽은 최신을 따라가지 않음, 새 등록은 인라인 가상 숫자 거부). 다른 종 값을 사람 값으로 적지 않음 → 한계. 불확도 미보고면 sd = 유효 숫자 해상도 + `note`. 넣은 뒤 궤적 전후 비교 보고.
 - 등급은 계산(`judicial/reliability.js`, `grade`): 점수를 데이터에 쓰지 않음, S×D 곱 금지. 보고 시 쓴 값의 등급 명시.
 - 추세(`judicial/trend.js`): 웹 검색 결과 저장 금지. `trend --fetch`(→ `data/fetched/consensus/`) → `trend` → `--write`. 도장은 `vocab.consensus.window_days` 뒤 다시 unchecked. mismatch 면 값 유지·`legacy`·Consensus_Gap.
 - 등급 문턱(기본 `parameter`) 미달 데이터 상수 = AUDIT_KINETIC. 시나리오 값은 `hypothetical: true` 때만. 문턱은 `min_grade` 로 올리기만.

@@ -1,4 +1,5 @@
 // 매핑·검사 규칙 테스트 (형식 v4): 규칙이 느슨해지면 여기서 실패한다.   실행: node --test tests/*.test.mjs
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -452,7 +453,7 @@ test('구획 농도 모델: copy_number 관찰 → 시작량, 농도 × 구획 �
 });
 
 // ===== 형식 v6: 혼합 해상도 · 반응 속도 · 감사 =====
-const scenario = (f) => JSON.parse(readFileSync(new URL(`../examples/scenarios/${f}`, import.meta.url), 'utf8'));
+const scenario = (f) => SCN.read(new URL(`../examples/scenarios/${f}`, import.meta.url));
 const TNFG = id('TNF 유전자'), PKAR = id('PKA'), PDE = id('포스포다이에스터레이스');
 const withKin = (owner, rid, kinetics) => ({ id: owner, rule: BASE.senses[owner].rule.map((r) => (r.id === rid ? { ...r, kinetics } : r)) });
 const pred = { level: 'predicted', confidence: 0 };
@@ -1079,7 +1080,7 @@ test('v9 힐 배율: 활성화 1 → fmax, 억제 1 → fmin, s = K 에서 절�
   assert.ok(Math.abs(DefDB.hillFactor('inhibits', ki, 2e-9) - 0.6) < 1e-12 && DefDB.hillFactor('inhibits', ki, 1) < 0.2001);
 });
 test('v9 계 조립: 상태 전이로 닿는 세 상태, 빠른 층(대사)·느린 층(표지 합성·분해), 조절 12 개, 신호 묶음', () => {
-  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8'));
+  const sc = SCN.read(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url));
   const A = FATE.assemble(BASE, ACTD, sc);
   assert.deepEqual(A.states, [ACTD, EFFD, id('기억 전구 CD8 T 세포')]);
   assert.equal(A.rules.filter((r) => r.slow).length, 4);
@@ -1269,7 +1270,7 @@ test('신뢰 지표 ②: 관문은 쓰인 상수의 등급을 보고 미달을 �
 });
 test('신뢰 지표 ②: 속도 감사가 같은 판정을 낸다 — 가상 상수를 선언 없이 쓰면 Audit Error', () => {
   const path = '에피네프린에 의한 글리코겐 분해';
-  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/camp-competition-hypothetical.json', import.meta.url), 'utf8'));
+  const sc = SCN.read(new URL('../examples/scenarios/camp-competition-hypothetical.json', import.meta.url));
   const raw = DefDB.simulateRate(BASE, path, { scenario: sc, t_end: 10, dt: 0.01 });
   assert.ok(!raw.error, raw.error);
   assert.ok(raw.kinUsed.length && raw.kinUsed.every((u) => u.kin.src === 'scenario'), '이 저장소의 속도 상수는 모두 가상 시나리오에서 온다 (확인한 값만 데이터에 넣는다)');
@@ -1419,7 +1420,7 @@ test('원자 수(elements)는 구조 요소만·원소 기호·0 이상 정수, 
   assert.ok(!/coenzyme A moiety|nicotinamide/.test(readFileSync(new URL('../judicial/identity.js', import.meta.url), 'utf8')), '엔진은 생물 이름을 모른다');
 });
 test('비교 검토: 같은 조절을 하나 더 넣는 패치는 결과가 같고 복잡도만 늘어 Optimization-Negative (질량 ≤ 1e-14)', () => {
-  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8')); sc.t_end = 3 * 3600; sc.commitment = { horizon: 3 * 3600, coarse: 3600 };
+  const sc = SCN.read(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url)); sc.t_end = 3 * 3600; sc.commitment = { horizon: 3 * 3600, coarse: 3600 };
   const d = JSON.parse(JSON.stringify(BASE)); d.senses[IL12D].rule.push({ ...d.senses[IL12D].rule[0], id: 'dup_copy' });
   const r = ORCH.compare(BASE, d, ACTD, sc, sc, { refHours: 0.5 });
   assert.equal(r.verdict, 'Optimization-Negative', r.why);
@@ -1432,7 +1433,7 @@ const PRP = req('../judicial/process_report.js'), FA = req('../judicial/fate_aud
 // 조정자 흐름: 컴파일(IR) → 엔진(IR 소비) → 사법부(같은 IR 검증)
 const judged = (sc, o) => { const ir = IRB.buildFateIR(BASE, ACTD, sc); return FA.judgeFate(BASE, FATE.simulateFate(BASE, ACTD, { scenario: sc, ir, ...(o || {}) }), { scenario: sc, ir }); };
 test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차·운명 전환)·구간 [기간|원인|우세 표지|비용]·무결성 증명서·인과 추적, 원장은 매 단계 ≤ 1e-14', () => {
-  const txt = readFileSync(new URL('../examples/scenarios/fate-mixed-glucose-withheld-hypothetical.json', import.meta.url), 'utf8'), sc = JSON.parse(txt);
+  const txt = SCN.text(new URL('../examples/scenarios/fate-mixed-glucose-withheld-hypothetical.json', import.meta.url)), sc = JSON.parse(txt);
   const r = judged(sc, { commitment: false });
   const again = judged(JSON.parse(txt), { commitment: false });
   assert.equal(r.process.hash, again.process.hash, '결정론');
@@ -1447,7 +1448,7 @@ test('과정 보고서: 변곡점(신호·결정·도달·고갈·비율 교차�
   for (const h of ['## 1. 요약', '## 2. 단계별 전개', '## 3. 무결성 증명서', '## 4. 인과 추적', '## 5. 기술 부록']) assert.ok(md.includes(h), h);
 });
 test('과정 보고서: 규칙 밖 개입은 FAIL — 저장소를 몰래 바꾸면 재생 검사가, 신호를 일정 밖에서 바꾸면 신호 검사가, 해시가 다르면 결정론이 잡는다', () => {
-  const txt = readFileSync(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url), 'utf8'), sc = JSON.parse(txt); sc.t_end = 3 * 3600;
+  const txt = SCN.text(new URL('../examples/scenarios/fate-effector-il12-hypothetical.json', import.meta.url)), sc = JSON.parse(txt); sc.t_end = 3 * 3600;
   const r = judged(sc, { commitment: false });
   // 기록된 원자료를 변조해 보고서가 FAIL 하는지 (엔진 원장 대신 기록을 바꾼 '개입' 흉내)
   const tampered = { ...r, mass: { ...r.mass, replaySeries: r.mass.replaySeries.map((v, j) => (j === 50 ? 1e-9 : v)) } };
