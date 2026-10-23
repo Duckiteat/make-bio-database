@@ -535,7 +535,8 @@ switch (cmd) {
         else sourceChecks[s.key] = 'error'; // DOI 등은 수신함으로 로컬 확인 불가 → 통합가 재확인
       }
     }
-    const res = CA.auditCollection(db, entries, { sourceChecks });
+    const texts = req('./inbox.js').textsFor(entries, dirname(DB_PATH)); // 인용–원문 대조 (58): 수신함 원문만, 네트워크 없음
+    const res = CA.auditCollection(db, entries, { sourceChecks, texts });
     if (flags.json) console.log(JSON.stringify(res, null, 2));
     else console.log(CA.auditText(res));
     if (res.verdict === 'REJECTED' || res.verdict === 'INCOMPLETE' || res.verdict === 'BLOCKED') process.exitCode = 1; // PASS·REVIEW_REQUIRED 는 0

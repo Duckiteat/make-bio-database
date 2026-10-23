@@ -145,7 +145,7 @@
 
 | # | 일 | 왜 | 끝나는 조건 |
 |---|---|---|---|
-| ① | **전문 수신함 형식 + 인용–전문 자동 대조** | 에이전트 출력이 들어올 자리. work-verification "#5 내용 진실"(인용이 원문에 있나)이 전문이 없어 미구현이었다 | `PMC-<id>.xml` 형식 · `verify-collection` 이 인용을 전문 본문(태그 제거·공백 정규화)과 대조 — 없으면 REJECTED, 전문 없음이면 REVIEW · 거부 시험 |
+| ① | **전문 수신함 형식 + 인용–전문 자동 대조** | 에이전트 출력이 들어올 자리. work-verification "#5 내용 진실"(인용이 원문에 있나)이 전문이 없어 미구현이었다 | `PMC-<id>.xml` 형식 · `verify-collection` 이 인용을 전문 본문(태그 제거·공백 정규화)과 대조 — 없으면 REJECTED, 전문 없음이면 REVIEW · 거부 시험 — **☑ 2026-10-23** (`collection_audit.quoteCheck` + `inbox.js`, dbtool·query 둘 다) |
 | ② | **정량 판정의 맥락 이전 표시** | 전문에서 나올 값은 대부분 생쥐 세포다. 정성 경로에만 있고 정량 경로(`observeFate`)에는 없다 | 정량 판정에 `context_transfer` · 시험 |
 | ③ | 받기 기록 형식 | 도구가 쓰는 실행 기록(work-verification #10) | 수신함 옆 `data/fetched/<원천>/FETCH_LOG.jsonl`(추가 전용 사슬) · 사법부 대조 |
 

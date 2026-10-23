@@ -1,0 +1,1006 @@
+
+<!DOCTYPE article
+  PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD with MathML3 v1.4 20241031//EN" "JATS-archivearticle1-4-mathml3.dtd">
+<article article-type="research-article" xml:lang="en" dtd-version="1.4"><front><journal-meta><journal-id journal-id-type="nlm-ta">J Cell Biol</journal-id><journal-id journal-id-type="iso-abbrev">J. Cell Biol</journal-id><journal-id journal-id-type="pmc-domain-id">482</journal-id><journal-id journal-id-type="pmc-domain">jcellbiol</journal-id><journal-id journal-id-type="nlm-id">0375356</journal-id><journal-title-group><journal-title>The Journal of Cell Biology</journal-title></journal-title-group><issn pub-type="ppub">0021-9525</issn><issn pub-type="epub">1540-8140</issn><?publisher_abbrev rockup?><publisher><publisher-name>The Rockefeller University Press</publisher-name></publisher></journal-meta><article-meta><article-id pub-id-type="pmcid">PMC2120915</article-id><article-id pub-id-type="pmcid-ver">PMC2120915.1</article-id><article-id pub-id-type="pmcaid">2120915</article-id><article-id pub-id-type="pmcaiid">2120915</article-id><article-id pub-id-type="pmid">8698806</article-id><article-id pub-id-type="doi">10.1083/jcb.134.1.1</article-id><article-id pub-id-type="publisher-id">96293346</article-id><article-version article-version-type="pmc-version">1</article-version><article-categories><subj-group subj-group-type="heading"><subject>Articles</subject></subj-group></article-categories><title-group><article-title>In situ analysis of changes in telomere size during replicative aging and cell transformation</article-title></title-group><pub-date pub-type="ppub"><day>1</day><month>7</month><year>1996</year></pub-date><volume>134</volume><issue>1</issue><issue-id pub-id-type="pmc-issue-id">155704</issue-id><fpage>1</fpage><lpage>12</lpage><pub-history><event event-type="pmc-release"><date><day>01</day><month>01</month><year>1997</year></date></event><event event-type="pmc-live"><date><day>01</day><month>05</month><year>2008</year></date></event><event event-type="pmc-last-change"><date iso-8601-date="2019-10-21 16:56:11.387"><day>21</day><month>10</month><year>2019</year></date></event></pub-history><permissions><license license-type="openaccess"><ali:license_ref xmlns:ali="http://www.niso.org/schemas/ali/1.0/" specific-use="textmining" content-type="ccbyncsalicense">https://creativecommons.org/licenses/by-nc-sa/4.0/</ali:license_ref><license-p>This article is distributed under the terms of an Attribution–Noncommercial–Share Alike–No Mirror Sites license for the first six months after the publication date (see <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="http://www.rupress.org/terms">http://www.rupress.org/terms</ext-link>). After six months it is available under a Creative Commons License (Attribution–Noncommercial–Share Alike 4.0 Unported license, as described at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by-nc-sa/4.0/">http://creativecommons.org/licenses/by-nc-sa/4.0/</ext-link>).</license-p></license></permissions><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" content-type="pmc-pdf" xlink:href="jc13411.pdf"><?pdf-name jc13411.pdf?><?pdf-size 6702501?><?pdf-md5 e466af14b74f870c5bcff25edbe7a070?><?pdf-image-server-status NEVER_LOAD?><?pdf-cloudpmc-urn urn:app:d6e0/2120915/e466af14b74f/jc13411.pdf?></self-uri><abstract><p>Telomeres have been shown to gradually shorten during replicative aging in human somatic cells by Southern analysis. This study examines telomere shortening at the single cell level by fluorescence in situ hybridization (FISH). FISH and confocal microscopy of interphase human diploid fibroblasts (HDFs) demonstrate that telomeres are distributed throughout the nucleus with an interchromosomal heterogeneity in size. Analysis of HDFs at increasing population doubling levels shows a gradual increase in spot size, intensity, and detectability of telomeric signal. FISH of metaphase chromosomes prepared from young and old HDFs shows a heterogeneity in detection frequency for telomeres on chromosomes 1, 9, 15, and Y. The interchromosomal distribution of detection frequencies was similar for cells at early and late passage. The telomeric detection frequency for metaphase chromosomes also decreased with age. These observations suggest that telomeres shorten at similar rates in normal human somatic cels. T-antigen transformed HDFs near crisis contained telomere signals that were low compared to nontransformed HDFs. A large intracellular heterogeneity in telomere lengths was detected in two telomerase-negative cell lines compared to normal somatic cells and the telomerase-positive 293 cell line. Many telomerase-negative immortal cells had telomeric signals stronger than those in young HDFs, suggesting a different mechanism for telomere length regulation in telomerase-negative immortal cells. These studies provide an in situ demonstration of interchromosomal heterogeneity in telomere lengths. Furthermore, FISH is a reliable and sensitive method for detecting changes in telomere size at the single cell level.</p></abstract><custom-meta-group><custom-meta><meta-name>pmc-status-qastatus</meta-name><meta-value>0</meta-value></custom-meta><custom-meta><meta-name>pmc-status-live</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-status-embargo</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-status-released</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-open-access</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-manuscript</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-legally-suppressed</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-pdf</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-supplement</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-pdf-only</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-suppress-copyright</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-real-version</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-scanned-article</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-in-epmc</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-license-ref</meta-name><meta-value>CC BY-NC-SA</meta-value></custom-meta></custom-meta-group></article-meta></front><body><preformat preformat-type="pmc-pdf-text" xml:space="preserve">
+					In Situ Analysis of Changes in Telomere Size during Replicative
+Aging and Cell Transformation
+Scott Henderson,* Richard Allsopp,~ David Spector,* Sy-Shi Wang*and Calvin Harley~
+*Cold Spring Harbor Laboratory, Cold Spring Harbor, New York 11724;~Geron Corp., Menlo Park, California 94025; and
+McMaster University, Hamilton, Ontario Canada L8N 325
+Abstract. Telomeres have been shown to gradually
+shorten during replicative aging in human somatic cells
+by Southern analysis. This study examines telomere
+shortening at the single cell level by fluorescence in situ
+hybridization (FISH). FISH and confocal microscopy
+of interphase human diploid fibroblasts (HDFs) dem-
+onstrate that telomeres are distributed throughout the
+nucleus with an interchromosomal heterogeneity in
+size. Analysis of HDFs at increasing population dou-
+bling levels shows a gradual decrease in spot size, inten-
+sity, and detectability of telomeric signal. FISH of
+metaphase chromosomes prepared from young and old
+HDFs shows a heterogeneity in detection frequency for
+telomeres on chromosomes 1, 9, 15, and Y. The inter-
+chromosomal distribution of detection frequencies was
+similar for cells at early and late passage. The telomeric
+detection frequency for metaphase chromosomes also
+decreased with age. These observations suggest that
+telomeres shorten at similar rates in normal human so-
+matic ceils. T-antigen transformed HDFs near crisis
+contained telomere signals that were low compared to
+nontransformed HDFs. A large intracellular heteroge-
+neity in telomere lengths was detected in two telom-
+erase-negative cell lines compared to normal somatic
+cells and the telomerase-positive 293 cell line. Many te-
+lomerase-negative immortal cells had telomeric signals
+stronger than those in young HDFs, suggesting a differ-
+ent mechanism for telomere length regulation in telom-
+erase-negative immortal cells. These studies provide an
+in situ demonstration of interchromosomal heterogene-
+ity in telomere lengths. Furthermore, FISH is a reliable
+and sensitive method for detecting changes in telomere
+size at the single cell level.
+N
+ORMALeukaryotic somatic cells can only undergo a
+finite number of divisions in vitro, also known as
+the Hayrick limit. This phenomenon was origi-
+nally described as senescence at the cellular level over 30
+years ago (Hayflick and Moorhead, 1961), and has now
+been established as a senescence process in higher eukary-
+otes (Martin et al., 1970; Dell'Orco et al., 1973; Goldstein,
+1974; for reviews see Stanulis-Praeger, 1987; Finch, 1990;
+Goldstein, 1990). Numerous models have been proposed
+to explain the cause(s) of cell senescence (for reviews see
+Stanulis-Praeger, 1987; Finch, 1990; Goldstein, 1990). One
+of these models is based upon the loss of telomeric DNA
+that occurs during replicative aging of somatic cells, which
+provides an intrinsic biological clock to explain cell senes-
+cence (Harley, 1991).
+Telomeres are physical elements located at the ends of
+all eukaryotic chromosomes and are essential for genetic
+stability (Muller, 1938; McClintock, 1941; Lundblad and
+Please address all correspondence to S. Henderson, Mount Sinai School of
+Medicine, Department of Cell Biology and Anatomy, Box 1007, One
+Gustave L. Levy Place, New York, NY 10029. Tel.: (212) 241-5018. Fax:
+(212) 860-1174.
+S. Henderson and R. Allsopp contributed equally to this work.
+Szostak, 1989; for reviews see Blackburn, 1991; Gilson et al.,
+1993; Sandell and Zakian, 1993). Telomeres differentiate
+chromosome ends from double-stranded DNA breaks and
+protect them from nuclease degradation or aberrant re-
+combination (Muller, 1938; McClintock, 1941; Henderson
+et al., 1990; Bourgain and Katinka, 1991). Telomeres may
+also play a role in the subnuclear organization of chroma-
+tin (for review see Gilson et al., 1993) and may facilitate
+chromosome pairing during meiosis (Sen and Gilbert,
+1988). Telomeres are composed of specialized chromatin
+(Tommerup et al., 1994; Blackburn, 1991), the DNA com-
+ponent of which consists of repetitive sequences that are
+G-rich in the 5'---~3' strand (Blackburn, 1991). The telo-
+meric DNA sequence of vertebrates is (TFAGGG)n
+(Meyne et al., 1989). The terminal restriction fragment
+(TRF)1 length of DNA from normal somatic cells from
+young adults is typically in the 8-10-kbp range in adults
+(de Lange et al., 1990; Harley et al., 1990; Hastie et al.,
+1990; Vaziri et al., 1993). However, 4-5 kbp of the TRF in
+normal cells are estimated to be composed of nontelo-
+1. Abbreviations used in this paper: HDF, human diploid fibroblast; FISH,
+fluorescence in situ hybridization; PDL, population doubling time; TRF,
+terminal restriction fragment.
+(c) The Rockefeller University Press, 0021-9525/96/07/1/12 $2.00
+The Journal of Cell Biology, Volume 134, Number 1, July 1996 1-12 1
+meric and telomere-like sequences (Allshire et al., 1989;
+Brown et al., 1990; de Lange et al., 1990; Weber et al.,
+1990; Wells et al., 1990; Levy et al., 1992). Thus, the length
+of the terminal TTAGGG tract (i.e., telomeric DNA
+length) in these cells is N6-3 kbp (see Fig. 1 A).
+Without a special mechanism to complete telomere rep-
+lication, the ends of chromosomes are predicted to gradu-
+ally shorten with replicative age (Olovnikov, 1971, 1973).
+This hypothesis was based upon the inability of the DNA
+replication machinery to completely replicate the ends of
+linear DNA molecules (Watson, 1972; for review see
+Blackburn, 1991). Recently, this hypothesis has been
+shown to be correct in studies by us and others which have
+revealed that the amount of telomeric DNA decreases
+during replicative aging of various human somatic cell
+types both in vitro and in vivo (Harley et al., 1990; Hastie
+et al., 1990; Lindsey et al., 1991; Allsopp et al., 1992;
+Counter et al., 1992; Vaziri et al., 1993, 1994; Chang and
+Harley, 1995; Weng et al., 1995). These observations are
+consistent with the telomere hypothesis of cell aging (Har-
+ley, 1991), which proposes that the shortening of one or
+more telomeres below a certain length (Tc) critical for
+proper telomere structure and function will induce irre-
+versible cell cycle arrest (cell senescence or the M1 check-
+point) (see Fig. 1 B).
+Telomere length is maintained in immortal cell popula-
+tions including the germ line by telomerase, a protein/
+RNA complex capable of synthesizing telomeric DNA de
+novo (Greider and Blackburn, 1985; for review see Black-
+burn, 1991). The RNA component of telomerase contains
+a short motif which corresponds to the telomeric DNA
+sequence and which provides a template for the addition
+of telomeric DNA onto the 3' terminus of chromosomal
+ends (Greider and Blackburn, 1989; Feng et al., 1995). Te-
+lomerase has been detected in various human cell lines
+and tumor tissue (Counter et al., 1992; Counter et al.,
+1994a,b; Kim et al., 1994), as well as human germ line tis-
+sue (Kim et al., 1994) and appears to be either absent or
+present at very low levels in most adult somatic tissues
+(Counter et al., 1992; Kim et al., 1994; Broccoli et al., 1995;
+Chiu et al., 1996; Counter et al., 1995; Hiyama et al., 1995).
+After transformed cells have bypassed cell senescence, te-
+lomere length continues to shorten and the frequency of
+dicentric chromosomes formed via end to end fusion in-
+creases until cells reach crisis (i.e., M2 checkpoint; Fig. 1
+B) (Counter et al., 1992, 1994a). These observations have
+led to the suggestion that telomere shortening may also
+have a causal role in crisis (Harley, 1991; Wright and Shay,
+1995). In addition, in transformed human cells which have
+acquired the ability to bypass the M1 checkpoint, the ex-
+pression of telomerase has been shown to coincide with
+the maintenance of telomere length, suggesting that te-
+lomerase is essential for immortalization (i.e., the survival
+beyond crisis or the M2 checkpoint when most cells die)
+(Counter et al., 1992, 1994a). Recently, a small number of
+human cell lines which have no detectable telomerase ac-
+tivity have been identified (Kim et al., 1994; Murnane et al.,
+1994; Bryan et al., 1995). The mechanism of telomere
+length maintenance in these special cases has yet to be de-
+termined.
+All of our previous analyses of telomeric DNA length
+have used Southern hybridization with a telomere-specific
+probe. However, it is not possible to analyze the lengths of
+individual telomeres by this technique due to the hetero-
+geneity in telomere length that exists in a cell population.
+In this study, we have used fluorescence in situ hybridiza-
+tion (FISH) to evaluate the relative loss of telomeric DNA
+from individual chromosomal ends on an individual cellu-
+lar basis during replicative aging of normal and trans-
+formed human fibroblasts.
+Materials and Methods
+Cell Culture
+BJ cells (fetal male human foreskin fibroblast), $2C cells (adult skin fibro-
+blast), IMR90 cells (female human lung diploid fibroblast; Amer. Type
+Culture Collection, Rockville, MD No. CCL 186), SW26 cells (SV40-
+transfected IMR90 cells at precrisis stage), and SW26i cells (stable postcri-
+sis immortal line from SW26) were cultured in DMEM/M199 (4:1)
+(GIBCO/BRL, Gaithersburg, MD) supplemented with either 10% FBS or
+10% BCS and 1% penicillin/streptomycin or 1% gentamycin, respectively.
+WI-38 cells (female human lung diploid fibroblast; ATCC No. CCL 35)
+were cultured in MEM supplemented with 10% FBS and 1% penicillin/
+streptomycin. WI38-VA13 cells (SV40-transformed human WI-38 fibro-
+blasts; ATCC #CCL 75.l) were cultured in DMEM supplemented with
+10% FBS and 1% penicillin/streptomycin.
+For interphase FISH analysis of human fibroblast strains and trans-
+formed cell lines, cells were plated and grown on 22-mm2 acid-washed
+glass coverslips (1.5 thickness) in 35-rnm culture dishes.
+Probes
+For interphase FISH analysis, a genomic telomere probe (pHuR93/ATCC
+No. 61076; Moyzis et al., 1988) and a probe to the subtelomeric region of the
+long arm of chromosome 13 (pEE3A; Murnane and Yu, 1993) were la-
+beled with either biotin-16-dUTP (Boehringer Mannheim Corp., India-
+napolis, IN), digoxigenin-ll-dUTP (Boehringer Mannheim), fluorescein-
+12-dUTP (Boehringer Mannheim), or tetramethyl-rhodamine-6-dUTP
+(Boehringer Mannheim) by nick translation (Langer et al., 1981). A
+digoxigenin-labeled probe for the subtelomeric region of the long arm of
+chromosome 14 (Tel 14q; cat. No. P5428-DIG) was purchased from Oneor
+(Gaithersburg, MD). For FISH analysis of metaphase chromosomes,
+the telomeric probe pBLrep4 (a PCR-generated (TTAGGG)n probe of
+~600 bp, provided by W. Wright and J.W. Shay, University of Texas
+Southwestern Medical Center, Dallas, TX) labeled with either biotin-16-
+dUTP or digoxigenin-ll-dUTP was used.
+In Situ Hybridization and Detection
+Interphase Nuclei. Cells grown on coverslips in 35-mm culture dishes
+were rinsed briefly in PBS, pH 7.4, and then fixed in 2.5% formaldehyde
+plus 5 mM MgC12 in PBS, pH 7.4, for 10 min at room temperature. After
+fixation, the cells were washed three times (10 min each) with 0.3 M gly-
+cine in PBS, pH 7.4, permeabilized with 0.2% Triton X-100 in PBS for 5
+min, and then washed three times (10 min each) in PBS, pH 7.4. To pre-
+serve nuclear morphology, hypotonic swelling, cell lysing, ethanol dehy-
+dration, and air drying, steps commonly employed during in situ hybrid-
+ization protocols, were not used.
+The cells were then washed with 2x SSC at room temperature before
+denaturation of cellular DNA in 70% deionized formamide in 2 x SSC at
+80C for 10 min. After denaturation, the cells were washed immediately
+with ice-cold 70% deionized fonnamide in 2 x SSC followed by a wash in
+2X SSC.
+Labeled telomere probe (100 ng in a 10-~1 vol of 1x SSC) was dried in
+a SpeedVac (Savant DNA 100), and then resuspended in 10 p,l of 100%
+deionized formamide. For double label studies, the labeled telomere
+probe was dried along with 400 ng (in a 10-1xlvol of 1x SSC) of labeled
+pEE3A and resuspended in 10 /xl of 100% deionized formamide. The
+probes were denatured by heating in an 80C waterbath for 10 min and
+then were placed immediately on ice. Hybridization buffer was added to
+The Journal of Cell Biology, Volume 134, 1996 2
+each probe to give a final volume of 20 ~1 and a final concentration of
+50% formamide, 2x SSC, 2x Denhardt's solution, 10% dextran sulfate,
+and 50 mM Tris, pH 7.5. In other double label studies, the telomere probe
+was dried and resuspended in 5 p.l of 100% deionized formamide, dena-
+tured, placed in a 10-td volume of hybridization buffer, and added to 10 p.1
+of Oncor Tel 14q probe in hybridization buffer (20 I~1final volume).
+The probes in hybridization buffer (20 ~1 total volume) were added to
+the cells on coverslips, inverted onto glass microscope slides, and sealed
+with rubber cement. After incubation overnight at 37C, the coverslips
+were washed twice (30 rain each) in 50% formamide in 2x SSC at 37C
+and then washed (30 min) in 2X SSC at 37C followed by washes at room
+temperature in 2x SSC.
+The coverslips were then incubated for 60 min at room temperature in
+2x SSC plus 1% BSA plus one or more of the following: fluorescein avi-
+din DN (5 Ixg/ml) (Vector Laboratories Inc., Burlingame, CA), and FITC-
+or rhodamine-conjugated anti-digoxigenin antibodies (50 p~g/ml) (Boehr-
+inger Mannheim). No further amplification of signal was used for inter-
+phase FISH analysis. After labeling, the cells were washed for 5 min each
+with 2x SSC, followed by PBS, 0.1% Triton X-100 in PBS, and finally
+three washes with PBS, pH 7.4. Coverslips were mounted in 9:1 glycerol:
+PBS containing 0.1% p-phenylenediamine buffered to pH 8.0 with 0.5 M
+carbonate/bicarbonate buffer (Johnson and Nogueira Araujo, 1981).
+Cells were imaged with a Zeiss confocal laser scanning microscope,
+equipped with a 100x/1.3 NA oil immersion lens, an Argon Ion laser (k =
+488 nm) and a Helium/Neon laser (k = 543 nm).
+Metaphase Chromosomes. Metaphase spreads were prepared using
+standard methanol/acetic acid fixation methods. DNA was denatured by
+immersing slides in 70% deionized formamide/2x SSC heated to 72C for
+2.5 rain. After denaturation, slides were immediately transferred through
+a series of ice-cold ethanol washes (70%, 95%, and 100% solutions; 3 rain
+each) and then allowed to air dry. 120 ng of telomeric probe was dried
+down and resuspended in formamide and denatured as described above.
+When using a biotinylated telomeric probe, the hybridization protocol
+and subsequent washes were essentially done as described above for inter-
+phase cells, except that the posthybridization washes were done at 44C
+and for 5 min each. Also, the fluorescent signal was amplified by incubat-
+ing the slides at RT in PNM buffer (0.I M phosphate, pH 8.0/0.1% NP-40
+plus 5% dried milk powder) containing 5 IJ,g/ml biotinylated antiavidin
+(Vector Laboratories Inc.) for 20 min. The slides were then washed (5 min
+each) in 4x SSC, 4x SSC/0.1% Triton X-100, 4x SSC, PN buffer (PNM
+buffer without dried milk powder). The slides were incubated once more
+with FITC-avidin in PNM buffer (final concentration, 5 Ixg/ml) at RT for
+20 min followed by the same wash steps used to remove unbound biotiny-
+lated antiavidin. DAPI/distamycin A (DA) staining was then performed
+as described by Schweizer et al. (1978). DAPI and nonfluorescent DA
+both bind preferentially, but with different affinities, to A-T rich DNA se-
+quences (Schweizer et al., 1978). Because DA is nonfluorescent, it obliter-
+ates DAPI fluorescence at all chromosomal regions except at certain con-
+stitutive heterochromatic regions at the constrictions of chromosomes 1, 9,
+16, the short arm of chromosome 15 and the long ann of the Y chromo-
+some, thus allowing the specific identification of these chromosomes.
+Slides were mounted in antifade mounting medium (as described above)
+containing 0.8 ixg/ml propidium iodide.
+When using a digoxigenin-labeled telomeric probe, FISH was per-
+formed essentially as described by Trask et al. (1991), except PNM buffer
+was used instead of PN buffer containing 4% goat serum.
+Chromosomes were imaged with a Zeiss ICR-35 inverted fluorescence
+microscope equipped with a 100x/1.4 NA oil immersion lens and a UV fil-
+ter set, a fluorescein filter set and a fluorescein/rhodamine dual filter set.
+Photomicrographs were taken with a Canon F12 camera using Kodak Ek-
+tachrome'~400 ASA slide film. Photomicrographs of telomeric signals and
+DAPI/DA staining were taken at exposure times of 30 s and 10 s, respec-
+tively.
+In some studies, cells were analyzed by a naive observer to control for
+potential bias in scoring telomeres. The interchromosomal distribution of
+detection frequencies in such studies was essentially identical to that in
+standard analyses.
+Southern Analysis of TRFLength
+For all HDF strains and cell lines, Southern analysis of terminal restriction
+fragment (TRF) length was performed as described previously (Allsopp
+et al., 1992; Allsopp and Harley, 1995), except that the oligonucleotide
+(TFAGGG)3 was used as a probe instead of (CCCTAA)3.
+Results
+TelomereSize and Distribution in InterphaseNuclei
+Previous measurements of telomere dynamics have typi-
+cally relied on measurements of the overall distribution of
+terminal restriction fragment (TRF) lengths. However, se-
+quence analyses of TRFs and analysis of changes in mean
+TRF length vs loss of signal strength for telomere-binding
+probes have shown that TRFs consists of both TTAGGG
+and non-TTAGGG sequences (de Lange et al., 1990; Levy
+et al., 1992). Fig. i illustrates the structure of a typical TRF
+and the diffuse pattern of TRF sizes detected on a Southern
+blot by hybridization to a radioactive telomeric oligonu-
+cleotide. Analysis of data such as these led to the hypothe-
+sis that in the absense of telomerase, critical telomere loss
+on one or more chromosomes is causally linked to cell cy-
+cle exit at senescence (M1) and ultimately to cell death at
+crisis (M2) (Fig. 1, A and B, see also Allsopp et al., 1992).
+At crisis, telomeres may be critically short on nearly all
+chromosomes (Fig. 1 B). Unlike most telomerase-positive
+immortalized cells which maintain short, stable telomeres
+postcrisis (Counter et al., 1992, 1994a,b), many telomerase-
+negative cells which survive crisis tend to have longer and
+more heterogeneous TRFs (Fig. 1 C).
+Since TRF size distributions reflect chromosomal and
+cellular heterogeneityin both TI'AGGG and non-TTAGGG
+lengths, we decided to use in situ hybridization to analyze
+changes in telomere size (and interchromosomal variance
+in telomere size) on an individual cell basis. We examined
+normal human fibroblasts hybridized in situ with a probe
+to telomeric DNA by serial optical sectioning and three-
+dimensional reconstruction by confocal laser scanning
+microscopy. We found that telomeres are distributed
+throughout the nuclear volume and are not restricted ex-
+clusively to the nuclear periphery (Fig. 2). We found simi-
+lar results in a variety of human cells in culture (e.g., nor,
+mal fibroblasts, endothelial cells, transformed fibroblasts,
+and cancer cell lines) as well as in sections of human tissue
+(pancreas, thyroid, and muscle) (data not shown). Further-
+more, our findings also show that there is heterogeneity in
+the size of telomeres within interphase nuclei (Fig. 2).
+There is no apparent relationship between the size of the
+telomere hybridization signal and the distance of the telo-
+mere from the nuclear periphery, indicating that the vari-
+ance in the size of the spot is not due to accessibility of the
+probe into the volume of the nucleus.
+Changesin TelomereSize duringReplicativeAging
+Telomeres have been shown to shorten during replicative
+aging in a variety of human cell types. Interphase FISH
+analysis of telomeres in cells of the human diploid fibro-
+blast (HDF) strain BJ at various population doubling levels
+(PDLs) showed a decrease in signal detection frequency,
+signal intensity, and spot size (all measurements correlated
+with telomere length) during replicative aging (Fig. 3).
+Changes in spot size and intensity are apparent over as few
+as four population doublings (e.g., Fig. 3, e and f), corre-
+sponding to a change in telomere size range of ~200-500
+bp. These findings are consistent with the decrease in TRF
+length and signal intensity with increasing PDL observed in
+Southern analysis of TRFs from a population of cells (Fig.
+Henderson et al. In Situ Analysis of Changes in Telornere Size 3
+1 C). In late passage cells, only a minority of the telomeres
+are detected by FISH and have intensities less than the
+strongest signals observed in early passage cells (Fig. 3);
+these signals presumably correspond to the telomeres of
+chromosomes with the strongest signals in early passage
+cells. Furthermore, the interchromosomal heterogeneity
+of the telomere signal persists with aging. These observa-
+tions suggest a similar rate of loss of telomeric DNA for all
+chromosomal ends. Also, the remaining detectable telom-
+eric signals in late passage and senescent cells were ob-
+served to occur randomly within the nuclear volume, indi-
+cating that there is no relationship between the telomere
+position within the nuclear volume and telomere size or
+susceptibility to loss of DNA with replicative aging.
+Given that all chromosomes appear to lose telomeric
+DNA at a similar rate and the heterogeneity of telomere
+signals persist with replicative aging, we attempted to de-
+termine if telomere spot size is associated with the end of a
+specific chromosome. Analysis of young and old fibro-
+blasts hybridized simultaneously with probes to the telo-
+meric repeat and a subtelomeric region of the long arm of
+chromosome 14 indicated that there is no apparent corre-
+lation between the size of the detectable telomeric signal
+and a specific chromosome end at any given population
+doubling level (Fig. 4, a-d). Similar results were found for
+the long arm of chromosome 13 (data not shown). This
+suggests that there is an intercellular heterogeneity of spe-
+cific chromosome telomeres at any given replicative age (i.e.,
+the telomeres of any particular chromosome may vary in
+size from cell to cell) in a nonclonal population of cells.
+These findings on the changes in size and detectability
+of individual telomeres with increasing PDL and on the
+variance in size of individual telomeres at any given PDL
+are supported by the frequencies of detection of telomeres
+for particular chromosomes in metaphase spreads. FISH
+analysis of metaphase chromosomes from early and late
+passage cells was performed. As was observed in the inter-
+phase FISH analysis, telomere signal was reduced at late
+Figure1. The telomere hypothesis of cell aging and immortaliza-
+tion. (A) A model of the sequence composition for a typical TRF
+is illustrated. The TRF is composed of a terminal (TTAGGG)n
+tract (T) and a proximal sequence devoid of cleavable restriction
+sites (X). The X portion of the TRF is likely composed of nonte-
+lomeric sequences (open boxes), as well as degenerate telomeric
+sequences (shaded boxes) and pure telomeric sequences (black
+boxes). (B) Changes in telomere length with increasing popula-
+tion doublings are represented for germ line, normal somatic, and
+immortalized somatic cells. Telomere length is maintained in germ
+line cells by telomerase. In contrast, the observed decrease in
+telomere length in normal somatic cells is consistent with the ab-
+sence or very low level of telomerase in these cells. At the Hayflick
+limit (M1), mean TRF length ranges from 6-8 kbp, depending on
+cell type. We hypothesize that at M1 one or more telomeres have
+shortened below a critical length required for maintenance of
+proper telomere structure and function, signaling a check point in
+cell growth. Mean telomere length (i.e., T) at this point is esti-
+mated to be 2-4 kbp. Partiallytransformed cells which bypass this
+checkpoint without activation of telomerase continue to lose telo-
+meric DNA until crisis (M2), when cells have criticallyshortened
+telomeres on many chromosomes. Cells which survive crisis ac-
+quire the ability to maintain or increase telomere length presum-
+ably due to genetic alterations. (C) Analysis of TRF length dur-
+ing replicative aging of HDF strains and upon immortalization of
+SV40-transformed HDFs. Genomic DNA was isolated from
+IMR90, SW26, SW26-i, WI38, and WI38-VA13 cells at the PDLs
+indicated above each lane and digested with the restriction en-
+zymes HinfI and RsaI. Southern analysis of TRF length was per-
+formed as described (Allsopp et al., 1992; Allsopp and Harley,
+1995). There exists a broad distribution in TRF size (indicated by
+bracket in lane 1) in a cell population due to both interchromo-
+somal heterogeneity and intercellular heterogeneity in the size of
+both the X and T portion of the TRF (Harley et al., 1990; Levy et
+al., 1992). Sizes of molecular weight markers are indicated.
+TheJournalofCellBiology,Volume134,1996 4
+Figure2. Telomeres of vary-
+ing sizes are found distrib-
+uted throughout the nuclear
+volume. Interphase normal
+human dermal skin fibro-
+blasts ($2C cells, PDL 38)
+were hybridized in situ with a
+FITC-tagged DNA probe
+complementary to the telo-
+meric repeat. Serial optical
+sections were taken at 0.5-
+pLm intervals through the
+depth of the nucleus by con-
+focal laser scanning micros-
+copy. The three-dimensional
+volume was reconstructed
+by superimposing the serial
+images and then the volume
+images were projected -+6 as
+a stereo pair. The size of each
+hybridized telomere spot appears to be independent of its distance from the nuclear periphery or the depth along the z-axis of optical
+sectioning. This suggests that all regions within the nuclear volume are equally accessible to the hybridization probe and that differ-
+ences in hybridization spot size reflect differences in telomere size for each of the chromosome ends. Bar, 10 ~m.
+passage relative to early passage (Fig. 5). Moreover, the
+detection frequency for telomeres on chromosomes 1, 9,
+15, and the Y chromosome as identified by DAPUDA
+staining were all less at late passage (Table I). Also, the
+frequency of detection of telomeric signal varied from telo-
+mere to telomere (Table I), which further supports the ex-
+istence of intraceUular heterogeneity in telomere size as
+indicated by the variability in telomere signal size and in-
+tensity observed in interphase cells (Fig. 3). The distribu-
+tion in telomere size, as indicated by detection frequency,
+appears to be similar for late passage and early passage
+cells (Table I), thus providing further evidence for a simi-
+lar rate of shortening for all telomeres.
+Changes in Teloraere Sizefollowing
+Cell Transformation
+To assess interchromosomal changes in telomere size fol-
+lowing transformation, FISH analysis was performed on
+early and late passage IMR90 cells and the SV40-trans-
+formed counterpart cells, both pre- (SW26) and postcrisis
+(SW26-i). As was found in the analysis of interphase nuclei
+of other normal fibroblast strains, there was a heterogene-
+ity in the size and distribution of telomere signal within
+any nucleus as well as an apparent uniform decrease in sig-
+nal size and intensity with replicative aging (Fig. 6). After
+transformation, and before crisis, the telomere signal con-
+tinued to decrease. Similar results were observed in FISH
+analysis of metaphase chromosomes from IMR90 cells at
+early passage and SW26 cells near crisis (Table I). As
+shown in Fig. 6, telomere detectability decreases in SW26
+cells near crisis. This observation is in agreement with the
+short TRF length observed for these cells relative to
+IMR90 cells at early passage or senescence (Fig. 1 C).
+In SW26 cells, one copy of chromosome 9 was observed to
+be associated in a dicentric at a frequency of ~20-30% (R.
+Allsopp, data not shown). This dicentric appeared to be
+formed by the end-to-end association, as indicated by the
+presence of telomeric signal at the junction site, between the
+long arm of chromosome 9 and another smaller chromosome.
+Postcrisis, the detectability of the telomeric signals in
+SW26-i clones which were telomerase negative (Kim et al.,
+1994) was very heterogeneous (Fig. 6) (Fig. 4, i-l). There
+was a stabilization of the detectability of telomeric signals
+in interphase nuclei, and in many cells, the signals in-
+creased to sizes and intensities greater than those in the
+early passage IMR90 cells. A similarly large heterogeneity
+of telomeric signal was observed in an SV40-transformed
+WI38 cell line (WI38-VA13) as well (Fig. 4, e-h). After
+performing this analysis on WI38VA13 cells, we discov-
+ered, as have others (Bryan et al., 1995), that these cells
+are also telomerase negative (R. Allsopp, data not shown).
+Southern analysis of TRF length in these two cell lines also
+showed a large heterogeneity in telomere length relative
+to that of the pre-crisis and normal counterpart cells (Fig.
+1 C). Hybridization with a chromosome specific, subtelo-
+meric probe showed no apparent clustering of telomeric or
+subtelomeric signals (Fig. 4, g, h, k, and l) which argues
+against the possibility that the large telomeric signals in
+these cell lines is due to telomere clustering. Also, as was
+the case for normal HDFs, in a population of cells, there
+was no apparent relationship between an individual chro-
+mosome and its increase in size of the telomeric signal fol-
+lowing immortalization, suggesting that the increase in sig-
+nal is not telomere specific (Fig. 4, e-l).
+Discussion
+Previous analysis, by Southern hybridization, has shown
+that in somatic cells, the mean TRF length decreases dur-
+ing cell division in vitro and in vivo (Harley et al., 1990;
+Hastie et al., 1990; Lindsey et al., 1991; Allsopp et al.,
+1992; Counter et al., 1992; Vaziri et al., 1993, 1994; Chang
+and Harley, 1995; for a review see Harley and Villepon-
+teau, 1995). These observations are the basis for the hy-
+pothesis that, due to the absence of the enzyme telomerase
+in somatic cells, the shortening of one or more telomeres
+below a critical length during replicative aging will lead to
+cell senescence (Harley, 1991). However, these biochemi-
+Henderson et al. In Situ Analysis of Changes in Telomere Size 5
+The Journal of Cell Biology, Volume 134, 1996 6
+cal studies were performed on large and often heteroge-
+neous populations of cells. Furthermore, what is measured
+by Southern analysis is a mean TRF length of all telomeres
+within the population and thus, makes no allowances for
+any potential intercellular variability, or more impor-
+tantly, interchromosomal variability in telomere length or
+rate of telomere shortening. This study examines the
+changes in telomere length during replicative aging at the
+level of single cells and single chromosomes.
+Three-dimensional FISH analysis of telomere distribu-
+tion in interphase HDFs using confocal laser scanning mi-
+croscopy (CLSM) shows that within the interphase nu-
+cleus, telomeres are distributed throughout the nuclear
+volume. This finding agrees with previous studies by oth-
+ers (Manuelidis and Borden, 1988; Billia and de Boni,
+1991; Ferguson and Ward, 1992; Vourc'h et al., 1993;
+Zalensky et al., 1995) on the non-Rabl distribution of telo-
+meres in mammalian nuclei. These results differ from the
+localization of telomeres in many plant nuclei, where telo-
+meres are found at one pole of the nucleus (i.e., a "Rabl"
+configuration) (Anamthawat-Jrnsson and Heslop-Harri-
+son, 1990; Rawlins and Shaw, 1990; Rawlins et al., 1991;
+Schwarzacher and Heslop-Harrison, 1991; Fussell, 1992;
+Werner et al,, 1992). The distribution of telomeres is in all
+likelihood, not static. Vourc'h et al. (1993) have shown a
+coordinated movement of centromeres and telomeres rel-
+ative to the cell cycle in synchronized lymphocytes. The
+significance of this movement remains to be determined.
+Possibly, the movement affects the placement of specific
+subchromosomal regions containing expressed genes in a
+particular environment in order to facilitate or enhance
+gene expression at given times during the cell cycle. It has
+been shown that telomeric DNA binds to nuclear matrix
+proteins (de Lange, 1992; Markova et al., 1994). Thus, te-
+lomeres may act as elements anchoring the chromosomes
+to the nuclear matrix and/or to other putative intranuclear
+motors, allowing for coordinated chromosomal move-
+ment.
+FISH analysis of telomere sizes in interphase cells and
+on metaphase chromosomes shows that the detectability
+of individual telomeres in a cell is heterogeneous, suggest-
+ing that different telomeres have different lengths. In in-
+terphase nuclei, the variability in the distribution of larger
+vs smaller spots within the nuclear volume countermands
+the argument that intranuclear differences in hybridiza-
+tion spot size may be related to the penetrability of the
+probe within the nuclear volume. The probe appears to be
+equally accessible to the deeper parts of the nuclear vol-
+ume, suggesting that intranuclear differences in spot size
+reflect chromosomal differences in telomere size. How-
+ever, we cannot rule out the possibility of intranuclear and
+interchromosomal differences in telomeric chromatin struc-
+ture which may interfere with probe accessibility. It is also
+possible that the variable detectability is accounted for by
+interchromosomal differences in the amount of subtermi-
+nal (TTAGGG)n and telomere-like DNA (see Fig. 1).
+Brown et al. (1990) and Wells et al. (1990) have examined
+the interchromosomal distribution of human genomic
+DNA clones containing telomeric sequences and telo-
+mere-like sequences which map to subterminal loci. The
+distribution of these cloned sequences does not corre-
+spond to the distribution of detectable telomeric signals
+observed in this study, in support of the interpretation that
+the heterogeneity in detectability of individual telomeres
+reflects variability in telomere length. However, the distri-
+bution of some subterminal sequences has also been
+shown to be polymorphic (Brown et al., 1990). Additional
+work using improved methods of measuring true distal
+(TFAGGG)n length will be required to resolve these is-
+sues.
+It has been previously shown that the detectability of
+the sequence probed using FISH correlates with the target
+size (Lichter et al., 1991). In this study, we have been able
+to observe changes in telomere size by FISH (i.e., changes
+in hybridization spot size, intensity, and detectability) over
+as few as four population doublings in BJ cells. The rate of
+telomere shortening in these cells is ~40 bp per popula-
+tion doubling (Allsopp, R., unpublished data). Thus, we
+are able to detect by FISH changes in telomere length as
+small as ~150 bp. Also, using a similar technique to stain
+individual telomeres (primed in situ labeling or PRINS),
+Therkelsen et al. (1995) have observed an inverse correla-
+tion between detection frequency of individual telomeres
+and donor age in human lymphocytes. These observations
+show that staining of telomeres by FISH and other in situ
+procedures using fluorescent tags can provide a reliable
+and sensitive method for detection of changes in telomere
+length in individual cells.
+Both interphase and metaphase FISH analysis show de-
+creases in signal detectability over replicative aging. The
+persistence of intranuclear heterogeneity of telomere
+spots (and the corresponding decrease in spot size, inten-
+sity, and detectability with time) in interphase FISH analy-
+sis, suggests that all telomeres shorten at similar, perhaps
+equivalent, rates. Also, Southern analysis of TRF length
+for some HDF strains has revealed that for many HDF
+strains, the distribution of TRF lengths is multi-modal,
+where each mode probably reflects a fraction of the telo-
+meres in the genome. The rate of shortening of these
+modes and of the entire TRF length distribution appear to
+Figure 3. The signal from telomeres hybridized in situ decreases in size,intensity, and detectability with replicative aging in culture. BJ
+cells sampled at population doublings of (a) 28, (b) 34, (c) 47, (d) 63, (e) 89, and (J) 93 were hybridized in situ with a digoxigenin-tagged
+DNA probe complementary to the telomere repeat and subsequently labeled with rhodamine-tagged anti-digoxigenin antibodies. Sin-
+gle optical sections were taken by confocal laser scanning microscopy through the midplane of each nucleus. FISH analysis was per-
+formed at the same time under identical conditions on cells at each PDL. All confocal microscope settings (i.e., brightness, contrast,
+gain, offset, and pinhole size) were maintained at identical values between each of the samples studied. The heterogeneity in telomere
+size within any one nucleus persists withreplicative aging. However, there is a gradual decrease in spot size, intensity (images a'-f, cor-
+responding to images a-f, are color encoded with a 12-step lookup table scaled according to signal intensity) and detectability with rep-
+licative aging, such that only the largest telomeres remain detectable in the oldest cells studied. Similar results were obtained for the fi-
+broblast strain $2C (data not shown). Bar, 10 ixm.
+Hendersonetal.In SituAnalysisof Changes in TelornereSize 7
+Figure 4. There is no apparent relationship between the long arm of chromosome 14 and the size of the nearest hybridized telomere
+spot during replicative aging of fibroblasts or following SV40 transformation of fibroblasts. Cells were hybridized in situ with
+rhodamine-tagged DNA probes complementary to the telomere repeat and digoxigenin-taggedprobes to the long arm of chromosome
+14. Cells were subsequently labeled with FITC-conjugated antibodies to digoxigenin. Optical sections were taken in each channel (i.e.,
+rhodamine and FITC) at the focal plane of chromosome 14 hybridization.The optical sections showing telomere and chromosome 14hy-
+bridization were superimposed and pseudocolored. In nonclonal populations of young (a and b) and old (c and d) fibroblasts (BJ
+cells), there appears to be no correlation between the end of the long arm of chromosome 14 and the size of the nearest telomere spot, in-
+dicatingan intercellularheterogeneity of chromosome-specifictelomeres at any givenreplicative age. In random nonclonal populations
+of normal fibroblasts (WI-38) (e and f) and SV40 immortalized counterparts (WI-38 VA13) (g and h), there appears to be no corre-
+lation between the end of the long arm of chromosome 14 and the size of the nearest telomere spot. No apparent relationship was ob-
+served between the long arm of chromosome 14 and the size of the nearest hybridized telomere spot either before (i and j) or after (k
+and l) crisis in SV40-transformed IMR90 fibroblasts. This intercellularheterogeneity in telomere size for 14q suggests that telomere am-
+plificationafter a crisis is not chromosome-specific. Bars, 10 ixm.
+be similar (Allsopp and Harley, 1995 and Prowse, K., per-
+sonal communication), providing further evidence that the
+rate of shortening is similar for all telomeres. However,
+our study does not reveal whether the telomeres with a
+strong or weak signal in a specific cell at early passage give
+rise to telomeres with a correspondingly strong or weak
+signal in senescent cells. The simultaneous analysis of all
+92 telomeres in the human genome in clonal cell popula-
+TheJournalofCellBiology,Volume134,1996 8
+Figure 5. Telomere detectability decreases on individual metaphase chromosomes during replicative aging of the HDF strain BJ.
+Metaphase spreads prepared from BJ cells at (a) early passage (PDL 24) and (b) late passage (PDL 82) were hybridized in situ with a
+digoxigenin-tagged telomeric DNA probe, and the signal was amplified and subsequently detected with FITC-conjugated anti-digoxige-
+nin antibodies as described in Materials and Methods. FISH analysis was performed at the same time under identical conditions for cells
+at each PDL. Photomicrographs showing telomeric signal (left) and DAPI/DA staining (right) are shown. Chromosomes 1, 9, 15, and the
+Y chromosome as identified by DAPI/DA staining are indicated.
+tions will provide stronger evidence as to whether all te-
+lomeres shorten at equivalent rates.
+The large interchromosomal heterogeneity in telomeric
+signal intensity in the SV40 immortalized SW26i and
+WI38VA13 cells correlates with an absence of detectable
+telomerase in these cells (Kim et al., 1994; Bryan et al.,
+1995 and data not shown). Also, other studies indicate that
+there is an association between a lack of telomerase activ-
+ity and large heterogeneity in TRF lengths in human cell
+lines immortalized using SV40 or by other means (Mur-
+nane et al., 1994; Bryan et al., 1995). In contrast, telom-
+erase-positive 293 cells have shorter, more homogeneous
+TRF lengths and FISH telomere signals (Henderson, S.,
+and R. Allsopp, data not shown). However, the composi-
+tion of the TRFs in telomerase-negative cell lines is un-
+known. The data presented here suggest that the large het-
+erogeneity in TRF length in telomerase-negative cell lines
+is accounted for by variability of the size of the terminal
+TTAGGG tract. The alternative possibility is that degen-
+erate TFAGGG sequences of variable lengths, perhaps in
+combination with pure TTAGGG sequences, have been
+added on to the telomeric termini in these cells. Addi-
+tional work will be required to determine the exact com-
+position and mechanism of synthesis of the telomeric
+DNA in telomerase-negative immortal cells and also to
+determine whether large intracellular heterogeneity in te-
+lomere length is unique to these cells.
+Two predictions of the telomere hypothesis are (1) the
+shortening of one or more telomeres below a critical
+length, Tc, will induce cell senescence, and (2) the accumu-
+lation of critically shortened telomeres to a threshold level
+will initiate crisis in transformed cells which have bypassed
+cell senescence (Harley, 1991). We have previously calcu-
+lated the mean telomere length at senescence, which pro-
+vides an upper estimate of Tc, to be ~2-4 kbp (Allsopp
+and Harley, 1995 and unpublished data). However, if in-
+terchromosomal heterogeneity in telomere length exists as
+suggested in this study, then Tc will be less than the mean
+telomere length. Since there is a large distribution of
+lengths for each individual telomere in a cell population at
+any given PDL (Prowse, K., personal communication), it is
+even possible that cell senescence may be induced by the
+complete loss of telomeric DNA from the ends of one or a
+few chromosomes.
+Henderson et al. In Situ Analysis of Changes in Telomere Size 9
+Table I. Quantitative Analysis of Telomeric Signal on
+Individual Metaphase Chromosomes for Early and Late
+Passage BJ Cells, Early Passage IMR90 Cells, and SW26 Cells
+Near Crisis
+Percent detectability*
+1 9 15 Y
+Chromosome p q p q p q p q
+Early passage* 88** 74 68 78 89 60 85 54
+Late passages 58 43 32 44 76 40 48 27
+IMR90* 791 84 86 71 87 72 - -
+SW261 39 39 37 26 58 30 - -
+*Chromosomes were identified by DAPI/DA staining. Although chromosome 16 is
+also identified by DAPI/DA staining, percent detectability of telomefic signals was
+not assessed for this chromosome due to difficulty in distinguishing between the long
+and short arms.
+~The percent detectability is significantly less for early passage BJ cells and IMR90
+cells than for late passage BJ cells and SW26 cells, respectively (P &lt; 0.0001, paired t
+test).
+Late passage cells were analyzed at PDL 75-82.
+1SW26 cells were analyzed at PDL 63. Crisis occurred at PDL 66.
+**Values were calculatedusing data from five experiments using either a biotinylated
+telomeric probe or a digoxigenin-labeledprobe (qualitatively similar results were ob-
+tained for both probes).
+A critically short telomere may be analogous to a dou-
+ble-stranded DNA break. Recently, di Leonardo et al.
+(1994) provided evidence suggesting that the presence of a
+single double-stranded DNA break in a cell is capable of
+inducing irreversible cell cycle arrest in human cells. Thus,
+replicative senescence may be initiated by the signaling of
+a DNA damage pathway. Furthermore, chromosome ends
+which lack telomeres are highly fusogenic, and therefore
+the accumulation of critically shortened telomeres in se-
+nescent and transformed cells could explain the accumula-
+tion of dicentric chromosomes in these cells (Benn, 1976;
+Sherwood et al., 1989; Counter et al., 1992, 1994a). This
+prediction is supported by the preliminary observations
+that the telomere on 9q appears to be relatively short in
+IMR90 and SW26 cells (Table I), and that one copy of
+chromosome 9 is frequently engaged in an end-to-end di-
+centric involving 9q in SW26 cells (R. Allsopp, data not
+shown). Additional work will be required to confirm whether
+or not chromosomes with short telomeres engage in end-
+to-end associations more frequently than chromosomes
+with long telomeres.
+In summary, FISH has been shown to be a sensitive and
+useful method for detecting changes in length of individual
+telomeres and for semiquanitative analysis of the relative
+lengths of individual telomeres. The data from analysis of
+individual cells supports the previously observed loss of
+telomeric DNA during replicative aging as detected by
+Southern analysis of TRFs. Furthermore, it indicates that
+Figure6. Telomere size stabilizes, and in some cases, increases in
+transformed cells following immortalization. Optical sections
+generated by confocal laser scanning microscopy show that telo-
+mere hybridization signals (as detected by FISH of digoxigenin-
+tagged telomeric DNA probes) decrease in size, intensity, and
+detectability in IMR90 fibroblasts with replicative aging (a, early,
+PDL 25; b, late, PDL 58). After SV40 transfection, and before
+crisis, telomeres further decrease in size (c, SW26 cells, PDL 62).
+After crisis, in the immortalized cell line, telomeres are seen to
+maintain or increase (d, SW26-I cells) in size. FISH analysis was
+performed at the same time under identical conditions for both
+cell strains. A similar increase in telomere size is observed in
+SV40-transformed WI-38 fibroblasts (Fig. 4, e-h). Bar, 10 Ixm.
+The Journal of Cell Biology, Volume 134, 1996 10
+all telomeres shorten at similar, perhaps equivalent, aver-
+age rates and that different telomeres have different
+lengths. Analysis of telomere lengths by FISH may be par-
+ticularly useful when dealing with small cell populations or
+heterogeneous cell populations, including tissues. Further-
+more, interphase FISH may prove useful in analysis of telo-
+mere length in small populations of cells that do not divide
+or divide infrequently. Thus, FISH has diagnostic applica-
+tions for analysis of telomere length, replicative age, and
+remaining replicative capacity in somatic cells, including
+stem cells, in both normal and diseased states.
+The authors are grateful to Woody Wright and Jerry Shay for kindly pro-
+viding the plasmid pBLrep4 and to John Murnane for providing the plas-
+mid pEE3A. We also thank Choy-Pik Chiu for helpful comments on the
+manuscript.
+This study was supported by grants to C.B. Harley from the National
+Institutes of Health (AG-09383) as well as the Allied Signal Award (C.B.
+Harley). S.C. Henderson and D.L. Spector were funded by grants from
+the Culpeper Foundation and the Council for Tobacco Research
+(3295R1). R.C. Allsopp holds a Medical Research Council of Canada Stu-
+dentship.
+Received for publication 23 January 1996 and in revised form 17 April
+1996.
+References
+Allshire, R.C., M. Dempster, and N.D. Hastie. 1989. Human telomeres contain
+at least three types of G-rich repeat distributed non-randomly. Nucleic Acids
+Res. 17:4611-4627.
+Allsopp, R.C., and C.B. Harley. 1995. Evidence for a critical telomere length in
+senescent human fibroblasts. Exp. Cell Res. 219:130-136.
+Allsopp, R.C., H. Vaziri, C. Patterson, S. Goldstein, E.V. Younglai, A.B.
+Futcher, C.W. Greider, and C.B. Harley. 1992. Telomere length predicts
+replicative capacity of human fibroblasts. Proc. Natl. Acad. Sci. USA. 89:
+10114-10118.
+Anamthawat-J6nsson, K., and J.S. Heslop-Harrison. 1990. Centromeres, telo-
+meres and chromatin in the interphase nucleus of cereals. Caryologia. 43:
+205-213.
+Benn, P.A. 1976. Specific chromosome aberrations in senescent fibroblast cell
+lines derived from human embryos. Am. J. Human Genet. 28:465-473.
+Billia, F., and U. de Boni. 1991. Localization of centromeric satellite and telo-
+meric DNA sequences in dorsal root ganglion neurons, in vitro. Z Cell Sci.
+100:219-226.
+Blackburn, E.H. 1991. Structure and function of telomeres. Nature (Lond.).
+350:56%573.
+Bourgain, F.M., and M.D. Katinka. 1991. Telomeres inhibit end to end fusion
+and enhance maintenance of linear DNA molecules injected into the Para-
+mecium primaurelia macronucleus. Nucleic Acids Res. 19:1541-1547.
+Broccoli, D., J.W. Young, and T. de Lange. 1995. Telomerase activity in normal
+and malignant hematopoietic cells. Proc. Natl. Acad. Sci. USA. 92:9082-
+9086.
+Brown, W.R.A., P.J. MacKinnon, A. Villasant6, N. Spurr, V.J. Buckle, and M.J.
+Dobson. 1990. Structure and polymorphism of human telomere-associated
+DNA. Cell. 63:119-132.
+Bryan, T.M., A. Englezou, J. Gupta, S. Bacchetti, and R.R. Reddel. 1995. Telo-
+mere elongation in immortal human ceils without detectable telomerase ac-
+tivity. EMBO (Eur. Mol. Biol. Organ.) Z 14:4240-4248.
+Chang, E., and C.B. Harley. 1995. Telomere length and replicative aging in hu-
+man vascular tissues. Proc. Natl. Acad. Sci. USA. 92:11190-11194.
+Chiu, C. P., W. Dragowska, N.W. Kim, H. Vaziri, J. Yui, T.E. Thomas, C.B.
+Harley, and P.M. Lansdorp. 1996. Differential expression of telomerase ac-
+tivity in hemopoietic progenitors from adult human bone marrow. Stem
+Cells. 14:239-248.
+Counter, C.M,, A.A. Avilion, C.E. LeFeuvre, N.G. Stewart, C.W. Greider, C.B,
+Harley, and S. Bacchetti. 1992. Telomere shortening associated with chro-
+mosome instability is arrested in immortal cell which express telomerase ac-
+tivity. EMBO (Eur. Mol. Biol. Organ.) J. 11:1921-1929.
+Counter, C.M., F.M. Botelho, P. Wang, C.B. Harley, and S. Bacchetti. 1994a.
+Stabilization of short telomeres and telomerase activity accompany immor-
+talization of Epstein-Barr virus-transformed human B lymphocytes. Z Virol.
+68:3410-3414.
+Counter, C.M., H.W. Hirte, S. Bacchetti, and C.B. Harley. 1994b. Telomerase
+activity in human ovarian carcinoma. Proc. Natl. Acad. Sci. USA. 91:2900-
+2904.
+Counter, C.M., J. Gupta, C.B. Harley, B. Leber, and S. Bacchetti. 1995. Telom-
+erase activity in normal leukocytes and in hematologic malignancies. Blood.
+85:2315-2320.
+de Lange, T. 1992. Human telomeres are attached to the nuclear matrix.
+EMBO (Eur. Mol. biol. Organ.) J. 11:717-724.
+de Lange, T., L. Sbiue, R. Myers, D.R. Cox, S.L. Naylor, A.M. Killery, and H.E.
+Varmus. 1990. Structure and variability of human chromosome ends. Mol.
+Cell Biol. 10:518-527.
+Dell'Orco, R.T., J.G. Mertens, and P.F. Kruse. 1973. Doubling potential, calen-
+dar time, and senescence of human diploid cells in culture. Exp. Cell Res. 77:
+356-360.
+di Leonardo, A., S.P. Linke, K. Clarkin, and G.M. Wahl. 1994. DNA damage
+triggers a prolonged p53-dependent G1 arrest and long-term induction Cipl
+in normal human fibroblasts. Genes Dev. 8:2540-2551.
+Feng, J., W.D. Funk, S.-S. Wang, S.L. Weinrich, A.A. Avilion, C.-P. Chiu, R.R.
+Adams, E, Chang, R.C. Allsopp, J. Yu, et al. 1995. The RNA component of
+human telomerase. Science (Wash. DC). 269:1236-1241.
+Ferguson, M., and D.C. Ward. 1992. Cell cycle dependent chromosomal move-
+ment in pre-mitotic human T-lymphocyte nuclei. Chromosoma. 101:557-565.
+Finch, C.E. 1990. Longevity, Senescence and the Genome. University of Chi-
+cago Press, Chicago, 1L. 416-423.
+Fussell, C.P. 1992. Rabl distribution of interphase and prophase telomeres in
+Allium cepa not altered by colchicine and/or ultracentrifugation. Am. J. Bot-
+any. 79:771-777,
+Gilson, E., T. LaRoche, and S.M. Gasser. 1993. Telomeres and the functional
+architecture of the nucleus. Trends Cell Biol. 3:128-134.
+Goldstein, S. 1974. Aging in vitro: growth of cultured cells from the Galapagos
+tortoise. Exp. Cell Res. 83:297-302.
+Goldstein, S. 1990. Replicative senescence: the human fibroblast comes of age.
+Science (Wash. DC). 249:1129-1133.
+Greider, C.W., and E.H, Blackburn. 1985. Identification of a specific telomere
+terminal transferase activity in Tetrahymena extracts. Cell. 43:405-413.
+Greider, C.W., and E.H. Blackburn. 1989. A telomeric sequence in the RNA of
+Tetrahymena telomerase required for telomere repeat synthesis. Nature
+(Lond.). 337:331-337.
+Harley, C.B. 1991. Telomere loss: mitotic clock or genetic time bomb? Mutat.
+Res. 256:271-282.
+Harley, C.B., and B. Villeponteau. 1995. Telomeres and telomerase in aging
+and cancer. Curr. Opin. Genet. Dev. 5:249-255.
+Harley, C.B., A.B. Futcher, and C. W. Greider. 1990. Telomeres shorten during
+aging of human fibroblasts. Nature (Lond.). 345:458-460.
+Hastie, N.D., M. Dempster, M.G. Dunlop, A.M. Thompson, D.K. Green, and
+R.C. Allshire. 1990. Telomere reduction in human colorectal carcinoma and
+with aging. Nature (Lond.). 346:866-868.
+Hayflick, L., and P. Moorhead. 1961. The serial cultivation of human diploid
+cell strains. Exp. Cell Res. 25:585-621.
+Henderson, E.R., M. Moore, and B. A. Malcolm. 1990. Telomere G-strand
+structure and function analyzed by chemical protection, base analogue sub-
+stitution, and utilization by telomerase in vitro. Biochemistry. 29:732-737.
+Hiyama, E., K. Hiyama, T. Yokohama, Y. Matsuura, M.A. Piatyszek, and J.W.
+Shay. 1995. Correlating telomerase activity levels with human neuroblas-
+toma outcomes. Nature Med. 1:249-255.
+Johnson, G.D., and G.M.d.C. Nogueira Araujo. 1981. A simple method of re-
+ducing the fading of immunofluorescence during microscopy. J. lmmun.
+Methods. 43:349-350.
+Kim, N.W., M.A. Piatyszek, K,R. Prowse, C.B. Harley, M.D. West, P.L.C. Ho,
+G.M. Coviello, W.E. Wright, S.L. Weinrich, and J.W. Shay. 1994. Specific as-
+sociation of human telomerase activity with immortal cells and cancer. Sci-
+ence (Wash. DC), 266:2011-2015.
+Langer, P.R., A.A. Waldrop, and D.C. Ward. 1981. Enzymatic synthesis of bi-
+otin labeled polynucleotides: novel nucleic acid affinity probes. Proc. Natl.
+Acad. Sci. USA. 78:6633-6637.
+Levy, M.Z., R.C. Allsopp, A.B. Futcher, C.W. Greider, and C.B. Harley. 1992.
+Telomere end-replication problem and cell aging. J.Mol. Biol. 225:951-960.
+Lichter, P., A.L. Boyle, T. Cremer, and D.C. Ward. 1991. Analysis of genes and
+chromosomes by nonisotopic in situ hybridization. GA TA. 8:24-35.
+Lindsey, J., N.I. McGill, L.A. Lindsey, D.K. Green, and H.J. Cooke. 1991. In
+vivo loss of telomeric repeats with age in humans. Mutat. Res. 256:45-48.
+Lundblad, V., and J.W. Szostak. 1989. A mutant with a defect in telomere elon-
+gation leads to senescence in yeast. Cell. 57:633-643.
+Manuelidis, L., and J. Borden. 1988. Reproducible compartmentalization of in-
+dividual chromosome domains in human CNS cells revealed by in situ hy-
+bridization and three-dimensional reconstruction. Chromosoma. 96:397-410.
+Markova, D., R. Donev, C. Patriotis, and L. Djondjurov. 1994. Interphase chro-
+mosomes of Friend-S cells are attached to the matrix structures through the
+centromeric/telomeric regions. DNA Cell Biol. 13:941-951.
+Martin, G.M., C.M. Sprague, and E.J. Epstein. 1970. Replicative life-span of
+cultivated human cells. Lab. Invest. 23:86-92.
+McClintock, B. 1941. The stability of broken chromosomes in Zea mays. Genet-
+ics. 41:234-282.
+Meyne, J., R.L. Ratliff, and R.K. Moyzis. 1989. Conservation of the human telo-
+mere sequence (TTAGGG)n among vertebrates. Proc. Natl. Acad. Sci.
+USA. 86:7049-7053.
+Moyzis, R.K., J.M. Buckingham, L.S. Cram, M. Dani, L.L. Deaven, M.D. Jones,
+J. Meyne, R.L. Ratliff, and J.R. Wu. 1988. A highly conserved repetitive
+DNA sequence. (TTAGGG)n, present at the telomeres of human chromo-
+somes. Proc. Natl. Acad. Sci. USA. 85:6622-6626.
+Henderson et al. In Situ Analysis of Changes in Telomere Size 11
+Muller, H.J. 1938.The remakingof chromosomes. Collecting Net. 13:182-193.
+Murnane, J.P., and L.-C. Yu. 1993.Acquisitionof telomere repeat sequences by
+transfected DNA integrated at the site of a chromosomal break. Mol. Cell,
+Biol. 13:977-983.
+Murnane, J.P., L. Sabatier, B.A. Marder, and W.F. Morgan. 1994.Telomere dy-
+namics in an immortal human cell line. EMBO (Eur. Mol. Biol. Organ.) Z
+13:4953--4962.
+Olovnikov,A.M. 1971.Principleof marginotomyin template synthesisof poly-
+nucleotides. Dokl. Acad. Nauk. S.S.S.R. 201:1496-1499.
+Olovnikov, A.M. 1973. A theory of marginotomy. The incomplete copying of
+template margin in enzymic synthesis of polynucleotidesand biologicalsig-
+nificance of the phenomenon. Z Theor. Biol. 41:181-190.
+Rawlins, D.J., and P.J. Shaw. 1990. Localization of ribosomal and telomeric
+DNA sequences in intact plant nuclei by in situ hybridization and three-
+dimensionaloptical microscopy. J. Micros. 157:83-89.
+Rawlins, D.J., M.I. Highett, and P.J. Shaw. 1991. Localization of telomeres in
+plant interphase nuclei by in situ hybridizationand 3D confocal microscopy.
+Chromosoma. 100:424-431.
+Sandell, L., and V.A. Zakian. 1993. Loss of a yeast telomere: arrest, recovery,
+and chromosome loss. Cell. 75:729-739.
+Schwarzacher, T., and J.S. Heslop-Harrison. 1991.In situ hybridizationto plant
+telomeres using synthetic oligomers. Genome. 34:317-323.
+Schweizer, D., P. Ambros, and M. Andrle. 1978.Modification of DAPI banding
+on human chromosomes by prestaining with a DNA-binding oligopeptide
+antibiotic, distamycinA. Exp. Cell. Res. 111:327-332.
+Sen, D., and W. Gilbert. 1988. Formation of parallel four-stranded complexes
+by guanine-rich motifs in DNA and its implications for meiosis. Nature
+(Lond.). 334:410-414.
+Sherwood, S., D. Rush, J.L. Ellsworth, and R.T. Schimke. 1989.Definingcellu-
+lar senescence in IMR-90 cells: a flow cytometric analysis. Proc. Natl. Acad.
+Sci. USA. 85:9086-9090.
+Stanulis-Praeger, B. 1987.Cellularsenescence revisited: a review. Mech. Ageing
+Dev. 38:1--48.
+Therkelsen, A.J., A. Nielsen, J. Koch, J. Hindkj~er, and S. Klvraa. 1995.Stain-
+ing of human telomeres with primed in situ labeling (PRINS). Cytogenet.
+Cell Genet. 68:115-118.
+Tommerup, H., A. Dousmanis, and T. de Lange. 1994. Unusual chromatin in
+human telomeres. Mol. Cell Biol. 14:5777-5785.
+Trask, B.J., H. Massa, S. Kenwrick, and J. Gitschier. 1991. Mapping of human
+chromosome Xq28 by two-color fluorescence in situ hybridization of DNA
+sequences to interphase cell nuclei. Am. J. Hum. Genet. 48:1-15.
+Vaziri, H., W. Dragowska, R.C. Allsopp, T.E. Thomas, C.B. Harley, and P.M.
+Lansdorp. 1994. Evidence for a mitotic clock in human hemopoietic stem
+cells: loss of telomeric DNA with age. Proc. Natl. Acad. Sci. USA. 91:9857-
+9860.
+Vaziri, H., F. Schaeehter, I. Uchida, W.L., Z. Xiaoming, R. Effros, D. Choen,
+and C.B. Harley. 1993. Loss of telomeric DNA during aging of normal and
+trisomy 21 human lymphocytes. Am. J. Hum. Genet. 52:661--667.
+Vourc'h, C., D. Taruscio, A.L. Boyle, and D.C. Ward. 1993. Cell cycle-depen-
+dent distribution of telomeres, centromeres, and chromosome-specific sub-
+satellitedomains in the interphase nucleus of mouse lymphocytes. Exp. Cell
+Res. 205:142-151.
+Watson, J.D. 1972. Origin of concatemeric T7 DNA. Nature New Biol. 239:
+197-201.
+Weber, B,, C. Collins, C. Robbins, R.E. Magenis, A.D. Delaney, J.W. Gray, and
+M.R. Hayden. 1990. Characterization and organization of DNA sequences
+adjacent to the human telomere associated repeat (TI~AGGG)n. Nucleic
+Acids Res. 18:3353-3361.
+Wells, R.A., G.G. Germino, S. Krishna, V.J. Buckle, and S.T. Reeders. 1990.
+Telomere-related sequences at interstitial sites in the human genome. Ge-
+nomics. 8:699-704.
+Weng, N.-P., B. Levine, B.L. June, and R.J. Hodes. 1995. Human naive and
+memory T lymphocytes differ in telomeric length and replicativepotential.
+Proc. Natl. Acad. Sci. USA. 92:11091-11094.
+Werner, J.E., R.S. Kota, B.S. Gill, and T.R. Endo. 1992. Distribution of telo-
+meric repeats and their role in the healing of broken chromosome ends in
+wheat. Genorne. 35:844~48.
+Wright, W.E., and J.W. Shay. 1995.Time, telomeres and tumours: is cellularse-
+nescence more than an anticancer mechanism? Trends Cell Biol. 5:293-297.
+Zalensky, A.O., M.J. Allen, A. Kobayashi, I.A. Zalenskaya, R. Balhorn, and
+E.M. Bradbury. 1995. Well-defined genome architecture in the human
+sperm nucleus. Chromosoma, 103:577-590.
+The Journal of Cell Biology, Volume 134, 1996 12
+
+				</preformat></body><back><ref-list content-type="selected-references"><ref id="PDF_00792"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Allshire</surname><given-names>R. C.</given-names></name><name><surname>Dempster</surname><given-names>M.</given-names></name><name><surname>Hastie</surname><given-names>N. D.</given-names></name></person-group><article-title>Human telomeres contain at least three types of G-rich repeat distributed non-randomly.</article-title><volume>17</volume><issue>12</issue><day>26</day><month>6</month><year>1989</year><fpage>4611</fpage><lpage>4627</lpage><source>Nucleic Acids Res</source><pub-id pub-id-type="pmcid">PMC318019</pub-id><pub-id pub-id-type="pmid">2664709</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/nar/17.12.4611</pub-id></element-citation></ref><ref id="PDF_00795"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Allsopp</surname><given-names>R. C.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Evidence for a critical telomere length in senescent human fibroblasts.</article-title><volume>219</volume><issue>1</issue><month>7</month><year>1995</year><fpage>130</fpage><lpage>136</lpage><source>Exp Cell Res</source><pub-id pub-id-type="pmid">7628529</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1006/excr.1995.1213</pub-id></element-citation></ref><ref id="PDF_00797"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Allsopp</surname><given-names>R. C.</given-names></name><name><surname>Vaziri</surname><given-names>H.</given-names></name><name><surname>Patterson</surname><given-names>C.</given-names></name><name><surname>Goldstein</surname><given-names>S.</given-names></name><name><surname>Younglai</surname><given-names>E. V.</given-names></name><name><surname>Futcher</surname><given-names>A. B.</given-names></name><name><surname>Greider</surname><given-names>C. W.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Telomere length predicts replicative capacity of human fibroblasts.</article-title><volume>89</volume><issue>21</issue><day>1</day><month>11</month><year>1992</year><fpage>10114</fpage><lpage>10118</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC50288</pub-id><pub-id pub-id-type="pmid">1438199</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.89.21.10114</pub-id></element-citation></ref><ref id="PDF_00804"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Benn</surname><given-names>P. A.</given-names></name></person-group><article-title>Specific chromosome aberrations in senescent fibroblast cell lines derived from human embryos.</article-title><volume>28</volume><issue>5</issue><month>9</month><year>1976</year><fpage>465</fpage><lpage>473</lpage><source>Am J Hum Genet</source><pub-id pub-id-type="pmcid">PMC1685103</pub-id><pub-id pub-id-type="pmid">984042</pub-id></element-citation></ref><ref id="PDF_00806"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Billia</surname><given-names>F.</given-names></name><name><surname>de Boni</surname><given-names>U.</given-names></name></person-group><article-title>Localization of centromeric satellite and telomeric DNA sequences in dorsal root ganglion neurons, in vitro.</article-title><volume>100</volume><issue>Pt 1</issue><month>9</month><year>1991</year><fpage>219</fpage><lpage>226</lpage><source>J Cell Sci</source><pub-id pub-id-type="pmid">1795027</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1242/jcs.100.1.219</pub-id></element-citation></ref><ref id="PDF_00809"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Blackburn</surname><given-names>E. H.</given-names></name></person-group><article-title>Structure and function of telomeres.</article-title><volume>350</volume><issue>6319</issue><day>18</day><month>4</month><year>1991</year><fpage>569</fpage><lpage>573</lpage><source>Nature</source><pub-id pub-id-type="pmid">1708110</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/350569a0</pub-id></element-citation></ref><ref id="PDF_00811"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Bourgain</surname><given-names>F. M.</given-names></name><name><surname>Katinka</surname><given-names>M. D.</given-names></name></person-group><article-title>Telomeres inhibit end to end fusion and enhance maintenance of linear DNA molecules injected into the Paramecium primaurelia macronucleus.</article-title><volume>19</volume><issue>7</issue><day>11</day><month>4</month><year>1991</year><fpage>1541</fpage><lpage>1547</lpage><source>Nucleic Acids Res</source><pub-id pub-id-type="pmcid">PMC333913</pub-id><pub-id pub-id-type="pmid">1851293</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/nar/19.7.1541</pub-id></element-citation></ref><ref id="PDF_00814"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Broccoli</surname><given-names>D.</given-names></name><name><surname>Young</surname><given-names>J. W.</given-names></name><name><surname>de Lange</surname><given-names>T.</given-names></name></person-group><article-title>Telomerase activity in normal and malignant hematopoietic cells.</article-title><volume>92</volume><issue>20</issue><day>26</day><month>9</month><year>1995</year><fpage>9082</fpage><lpage>9086</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC40928</pub-id><pub-id pub-id-type="pmid">7568077</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.92.20.9082</pub-id></element-citation></ref><ref id="PDF_00817"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Brown</surname><given-names>W. R.</given-names></name><name><surname>MacKinnon</surname><given-names>P. J.</given-names></name><name><surname>Villasanté</surname><given-names>A.</given-names></name><name><surname>Spurr</surname><given-names>N.</given-names></name><name><surname>Buckle</surname><given-names>V. J.</given-names></name><name><surname>Dobson</surname><given-names>M. J.</given-names></name></person-group><article-title>Structure and polymorphism of human telomere-associated DNA.</article-title><volume>63</volume><issue>1</issue><day>5</day><month>10</month><year>1990</year><fpage>119</fpage><lpage>132</lpage><source>Cell</source><pub-id pub-id-type="pmid">2208276</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0092-8674(90)90293-n</pub-id></element-citation></ref><ref id="PDF_00820"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Bryan</surname><given-names>T. M.</given-names></name><name><surname>Englezou</surname><given-names>A.</given-names></name><name><surname>Gupta</surname><given-names>J.</given-names></name><name><surname>Bacchetti</surname><given-names>S.</given-names></name><name><surname>Reddel</surname><given-names>R. R.</given-names></name></person-group><article-title>Telomere elongation in immortal human cells without detectable telomerase activity.</article-title><volume>14</volume><issue>17</issue><day>1</day><month>9</month><year>1995</year><fpage>4240</fpage><lpage>4248</lpage><source>EMBO J</source><pub-id pub-id-type="pmcid">PMC394507</pub-id><pub-id pub-id-type="pmid">7556065</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1002/j.1460-2075.1995.tb00098.x</pub-id></element-citation></ref><ref id="PDF_00823"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Chang</surname><given-names>E.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Telomere length and replicative aging in human vascular tissues.</article-title><volume>92</volume><issue>24</issue><day>21</day><month>11</month><year>1995</year><fpage>11190</fpage><lpage>11194</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC40597</pub-id><pub-id pub-id-type="pmid">7479963</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.92.24.11190</pub-id></element-citation></ref><ref id="PDF_00825"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Chiu</surname><given-names>C. P.</given-names></name><name><surname>Dragowska</surname><given-names>W.</given-names></name><name><surname>Kim</surname><given-names>N. W.</given-names></name><name><surname>Vaziri</surname><given-names>H.</given-names></name><name><surname>Yui</surname><given-names>J.</given-names></name><name><surname>Thomas</surname><given-names>T. E.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Lansdorp</surname><given-names>P. M.</given-names></name></person-group><article-title>Differential expression of telomerase activity in hematopoietic progenitors from adult human bone marrow.</article-title><volume>14</volume><issue>2</issue><month>3</month><year>1996</year><fpage>239</fpage><lpage>248</lpage><source>Stem Cells</source><pub-id pub-id-type="pmid">8991544</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1002/stem.140239</pub-id></element-citation></ref><ref id="PDF_00829"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Counter</surname><given-names>C. M.</given-names></name><name><surname>Avilion</surname><given-names>A. A.</given-names></name><name><surname>LeFeuvre</surname><given-names>C. E.</given-names></name><name><surname>Stewart</surname><given-names>N. G.</given-names></name><name><surname>Greider</surname><given-names>C. W.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Bacchetti</surname><given-names>S.</given-names></name></person-group><article-title>Telomere shortening associated with chromosome instability is arrested in immortal cells which express telomerase activity.</article-title><volume>11</volume><issue>5</issue><month>5</month><year>1992</year><fpage>1921</fpage><lpage>1929</lpage><source>EMBO J</source><pub-id pub-id-type="pmcid">PMC556651</pub-id><pub-id pub-id-type="pmid">1582420</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1002/j.1460-2075.1992.tb05245.x</pub-id></element-citation></ref><ref id="PDF_00833"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Counter</surname><given-names>C. M.</given-names></name><name><surname>Botelho</surname><given-names>F. M.</given-names></name><name><surname>Wang</surname><given-names>P.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Bacchetti</surname><given-names>S.</given-names></name></person-group><article-title>Stabilization of short telomeres and telomerase activity accompany immortalization of Epstein-Barr virus-transformed human B lymphocytes.</article-title><volume>68</volume><issue>5</issue><month>5</month><year>1994</year><fpage>3410</fpage><lpage>3414</lpage><source>J Virol</source><pub-id pub-id-type="pmcid">PMC236835</pub-id><pub-id pub-id-type="pmid">8151802</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1128/jvi.68.5.3410-3414.1994</pub-id></element-citation></ref><ref id="PDF_00840"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Counter</surname><given-names>C. M.</given-names></name><name><surname>Gupta</surname><given-names>J.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Leber</surname><given-names>B.</given-names></name><name><surname>Bacchetti</surname><given-names>S.</given-names></name></person-group><article-title>Telomerase activity in normal leukocytes and in hematologic malignancies.</article-title><volume>85</volume><issue>9</issue><day>1</day><month>5</month><year>1995</year><fpage>2315</fpage><lpage>2320</lpage><source>Blood</source><pub-id pub-id-type="pmid">7727765</pub-id></element-citation></ref><ref id="PDF_00837"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Counter</surname><given-names>C. M.</given-names></name><name><surname>Hirte</surname><given-names>H. W.</given-names></name><name><surname>Bacchetti</surname><given-names>S.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Telomerase activity in human ovarian carcinoma.</article-title><volume>91</volume><issue>8</issue><day>12</day><month>4</month><year>1994</year><fpage>2900</fpage><lpage>2904</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC43481</pub-id><pub-id pub-id-type="pmid">8159676</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.91.8.2900</pub-id></element-citation></ref><ref id="PDF_00848"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Dell'Orco</surname><given-names>R. T.</given-names></name><name><surname>Mertens</surname><given-names>J. G.</given-names></name><name><surname>Kruse</surname><given-names>P. F.</given-names><suffix>Jr</suffix></name></person-group><article-title>Doubling potential, calendar time, and senescence of human diploid cells in culture.</article-title><volume>77</volume><issue>1</issue><day>15</day><month>3</month><year>1973</year><fpage>356</fpage><lpage>360</lpage><source>Exp Cell Res</source><pub-id pub-id-type="pmid">4570356</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0014-4827(73)90588-0</pub-id></element-citation></ref><ref id="PDF_00851"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Di Leonardo</surname><given-names>A.</given-names></name><name><surname>Linke</surname><given-names>S. P.</given-names></name><name><surname>Clarkin</surname><given-names>K.</given-names></name><name><surname>Wahl</surname><given-names>G. M.</given-names></name></person-group><article-title>DNA damage triggers a prolonged p53-dependent G1 arrest and long-term induction of Cip1 in normal human fibroblasts.</article-title><volume>8</volume><issue>21</issue><day>1</day><month>11</month><year>1994</year><fpage>2540</fpage><lpage>2551</lpage><source>Genes Dev</source><pub-id pub-id-type="pmid">7958916</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1101/gad.8.21.2540</pub-id></element-citation></ref><ref id="PDF_00854"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Feng</surname><given-names>J.</given-names></name><name><surname>Funk</surname><given-names>W. D.</given-names></name><name><surname>Wang</surname><given-names>S. S.</given-names></name><name><surname>Weinrich</surname><given-names>S. L.</given-names></name><name><surname>Avilion</surname><given-names>A. A.</given-names></name><name><surname>Chiu</surname><given-names>C. P.</given-names></name><name><surname>Adams</surname><given-names>R. R.</given-names></name><name><surname>Chang</surname><given-names>E.</given-names></name><name><surname>Allsopp</surname><given-names>R. C.</given-names></name><name><surname>Yu</surname><given-names>J.</given-names></name></person-group><article-title>The RNA component of human telomerase.</article-title><volume>269</volume><issue>5228</issue><day>1</day><month>9</month><year>1995</year><fpage>1236</fpage><lpage>1241</lpage><source>Science</source><pub-id pub-id-type="pmid">7544491</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1126/science.7544491</pub-id></element-citation></ref><ref id="PDF_00857"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Ferguson</surname><given-names>M.</given-names></name><name><surname>Ward</surname><given-names>D. C.</given-names></name></person-group><article-title>Cell cycle dependent chromosomal movement in pre-mitotic human T-lymphocyte nuclei.</article-title><volume>101</volume><issue>9</issue><month>8</month><year>1992</year><fpage>557</fpage><lpage>565</lpage><source>Chromosoma</source><pub-id pub-id-type="pmid">1521500</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1007/BF00660315</pub-id></element-citation></ref><ref id="PDF_00864"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Gilson</surname><given-names>E.</given-names></name><name><surname>Laroche</surname><given-names>T.</given-names></name><name><surname>Gasser</surname><given-names>S. M.</given-names></name></person-group><article-title>Telomeres and the functional architecture of the nucleus.</article-title><volume>3</volume><issue>4</issue><month>4</month><year>1993</year><fpage>128</fpage><lpage>134</lpage><source>Trends Cell Biol</source><pub-id pub-id-type="pmid">14731767</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0962-8924(93)90175-z</pub-id></element-citation></ref><ref id="PDF_00868"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Goldstein</surname><given-names>S.</given-names></name></person-group><article-title>Replicative senescence: the human fibroblast comes of age.</article-title><volume>249</volume><issue>4973</issue><day>7</day><month>9</month><year>1990</year><fpage>1129</fpage><lpage>1133</lpage><source>Science</source><pub-id pub-id-type="pmid">2204114</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1126/science.2204114</pub-id></element-citation></ref><ref id="PDF_00872"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Greider</surname><given-names>C. W.</given-names></name><name><surname>Blackburn</surname><given-names>E. H.</given-names></name></person-group><article-title>A telomeric sequence in the RNA of Tetrahymena telomerase required for telomere repeat synthesis.</article-title><volume>337</volume><issue>6205</issue><day>26</day><month>1</month><year>1989</year><fpage>331</fpage><lpage>337</lpage><source>Nature</source><pub-id pub-id-type="pmid">2463488</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/337331a0</pub-id></element-citation></ref><ref id="PDF_00870"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Greider</surname><given-names>C. W.</given-names></name><name><surname>Blackburn</surname><given-names>E. H.</given-names></name></person-group><article-title>Identification of a specific telomere terminal transferase activity in Tetrahymena extracts.</article-title><volume>43</volume><issue>2 Pt 1</issue><month>12</month><year>1985</year><fpage>405</fpage><lpage>413</lpage><source>Cell</source><pub-id pub-id-type="pmid">3907856</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0092-8674(85)90170-9</pub-id></element-citation></ref><ref id="PDF_00879"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Futcher</surname><given-names>A. B.</given-names></name><name><surname>Greider</surname><given-names>C. W.</given-names></name></person-group><article-title>Telomeres shorten during ageing of human fibroblasts.</article-title><volume>345</volume><issue>6274</issue><day>31</day><month>5</month><year>1990</year><fpage>458</fpage><lpage>460</lpage><source>Nature</source><pub-id pub-id-type="pmid">2342578</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/345458a0</pub-id></element-citation></ref><ref id="PDF_00875"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Telomere loss: mitotic clock or genetic time bomb?</article-title><volume>256</volume><issue>2-6</issue><season>Mar-Nov</season><year>1991</year><fpage>271</fpage><lpage>282</lpage><source>Mutat Res</source><pub-id pub-id-type="pmid">1722017</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0921-8734(91)90018-7</pub-id></element-citation></ref><ref id="PDF_00877"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Villeponteau</surname><given-names>B.</given-names></name></person-group><article-title>Telomeres and telomerase in aging and cancer.</article-title><volume>5</volume><issue>2</issue><month>4</month><year>1995</year><fpage>249</fpage><lpage>255</lpage><source>Curr Opin Genet Dev</source><pub-id pub-id-type="pmid">7613096</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0959-437x(95)80016-6</pub-id></element-citation></ref><ref id="PDF_00881"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Hastie</surname><given-names>N. D.</given-names></name><name><surname>Dempster</surname><given-names>M.</given-names></name><name><surname>Dunlop</surname><given-names>M. G.</given-names></name><name><surname>Thompson</surname><given-names>A. M.</given-names></name><name><surname>Green</surname><given-names>D. K.</given-names></name><name><surname>Allshire</surname><given-names>R. C.</given-names></name></person-group><article-title>Telomere reduction in human colorectal carcinoma and with ageing.</article-title><volume>346</volume><issue>6287</issue><day>30</day><month>8</month><year>1990</year><fpage>866</fpage><lpage>868</lpage><source>Nature</source><pub-id pub-id-type="pmid">2392154</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/346866a0</pub-id></element-citation></ref><ref id="PDF_00886"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Henderson</surname><given-names>E. R.</given-names></name><name><surname>Moore</surname><given-names>M.</given-names></name><name><surname>Malcolm</surname><given-names>B. A.</given-names></name></person-group><article-title>Telomere G-strand structure and function analyzed by chemical protection, base analogue substitution, and utilization by telomerase in vitro.</article-title><volume>29</volume><issue>3</issue><day>23</day><month>1</month><year>1990</year><fpage>732</fpage><lpage>737</lpage><source>Biochemistry</source><pub-id pub-id-type="pmid">2337592</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1021/bi00455a020</pub-id></element-citation></ref><ref id="PDF_00889"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Hiyama</surname><given-names>E.</given-names></name><name><surname>Hiyama</surname><given-names>K.</given-names></name><name><surname>Yokoyama</surname><given-names>T.</given-names></name><name><surname>Matsuura</surname><given-names>Y.</given-names></name><name><surname>Piatyszek</surname><given-names>M. A.</given-names></name><name><surname>Shay</surname><given-names>J. W.</given-names></name></person-group><article-title>Correlating telomerase activity levels with human neuroblastoma outcomes.</article-title><volume>1</volume><issue>3</issue><month>3</month><year>1995</year><fpage>249</fpage><lpage>255</lpage><source>Nat Med</source><pub-id pub-id-type="pmid">7585042</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/nm0395-249</pub-id></element-citation></ref><ref id="PDF_00892"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Johnson</surname><given-names>G. D.</given-names></name><name><surname>Nogueira Araujo</surname><given-names>G. M.</given-names></name></person-group><article-title>A simple method of reducing the fading of immunofluorescence during microscopy.</article-title><volume>43</volume><issue>3</issue><year>1981</year><fpage>349</fpage><lpage>350</lpage><source>J Immunol Methods</source><pub-id pub-id-type="pmid">7019347</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0022-1759(81)90183-6</pub-id></element-citation></ref><ref id="PDF_00895"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Kim</surname><given-names>N. W.</given-names></name><name><surname>Piatyszek</surname><given-names>M. A.</given-names></name><name><surname>Prowse</surname><given-names>K. R.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>West</surname><given-names>M. D.</given-names></name><name><surname>Ho</surname><given-names>P. L.</given-names></name><name><surname>Coviello</surname><given-names>G. M.</given-names></name><name><surname>Wright</surname><given-names>W. E.</given-names></name><name><surname>Weinrich</surname><given-names>S. L.</given-names></name><name><surname>Shay</surname><given-names>J. W.</given-names></name></person-group><article-title>Specific association of human telomerase activity with immortal cells and cancer.</article-title><volume>266</volume><issue>5193</issue><day>23</day><month>12</month><year>1994</year><fpage>2011</fpage><lpage>2015</lpage><source>Science</source><pub-id pub-id-type="pmid">7605428</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1126/science.7605428</pub-id></element-citation></ref><ref id="PDF_00899"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Langer</surname><given-names>P. R.</given-names></name><name><surname>Waldrop</surname><given-names>A. A.</given-names></name><name><surname>Ward</surname><given-names>D. C.</given-names></name></person-group><article-title>Enzymatic synthesis of biotin-labeled polynucleotides: novel nucleic acid affinity probes.</article-title><volume>78</volume><issue>11</issue><month>11</month><year>1981</year><fpage>6633</fpage><lpage>6637</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC349103</pub-id><pub-id pub-id-type="pmid">6273878</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.78.11.6633</pub-id></element-citation></ref><ref id="PDF_00902"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Levy</surname><given-names>M. Z.</given-names></name><name><surname>Allsopp</surname><given-names>R. C.</given-names></name><name><surname>Futcher</surname><given-names>A. B.</given-names></name><name><surname>Greider</surname><given-names>C. W.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Telomere end-replication problem and cell aging.</article-title><volume>225</volume><issue>4</issue><day>20</day><month>6</month><year>1992</year><fpage>951</fpage><lpage>960</lpage><source>J Mol Biol</source><pub-id pub-id-type="pmid">1613801</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0022-2836(92)90096-3</pub-id></element-citation></ref><ref id="PDF_00904"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Lichter</surname><given-names>P.</given-names></name><name><surname>Boyle</surname><given-names>A. L.</given-names></name><name><surname>Cremer</surname><given-names>T.</given-names></name><name><surname>Ward</surname><given-names>D. C.</given-names></name></person-group><article-title>Analysis of genes and chromosomes by nonisotopic in situ hybridization.</article-title><volume>8</volume><issue>1</issue><month>2</month><year>1991</year><fpage>24</fpage><lpage>35</lpage><source>Genet Anal Tech Appl</source><pub-id pub-id-type="pmid">2043382</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/1050-3862(91)90005-c</pub-id></element-citation></ref><ref id="PDF_00906"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Lindsey</surname><given-names>J.</given-names></name><name><surname>McGill</surname><given-names>N. I.</given-names></name><name><surname>Lindsey</surname><given-names>L. A.</given-names></name><name><surname>Green</surname><given-names>D. K.</given-names></name><name><surname>Cooke</surname><given-names>H. J.</given-names></name></person-group><article-title>In vivo loss of telomeric repeats with age in humans.</article-title><volume>256</volume><issue>1</issue><month>1</month><year>1991</year><fpage>45</fpage><lpage>48</lpage><source>Mutat Res</source><pub-id pub-id-type="pmid">1944386</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0921-8734(91)90032-7</pub-id></element-citation></ref><ref id="PDF_00908"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Lundblad</surname><given-names>V.</given-names></name><name><surname>Szostak</surname><given-names>J. W.</given-names></name></person-group><article-title>A mutant with a defect in telomere elongation leads to senescence in yeast.</article-title><volume>57</volume><issue>4</issue><day>19</day><month>5</month><year>1989</year><fpage>633</fpage><lpage>643</lpage><source>Cell</source><pub-id pub-id-type="pmid">2655926</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0092-8674(89)90132-3</pub-id></element-citation></ref><ref id="PDF_00910"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Manuelidis</surname><given-names>L.</given-names></name><name><surname>Borden</surname><given-names>J.</given-names></name></person-group><article-title>Reproducible compartmentalization of individual chromosome domains in human CNS cells revealed by in situ hybridization and three-dimensional reconstruction.</article-title><volume>96</volume><issue>6</issue><year>1988</year><fpage>397</fpage><lpage>410</lpage><source>Chromosoma</source><pub-id pub-id-type="pmid">3219911</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1007/BF00303033</pub-id></element-citation></ref><ref id="PDF_00913"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Markova</surname><given-names>D.</given-names></name><name><surname>Donev</surname><given-names>R.</given-names></name><name><surname>Patriotis</surname><given-names>C.</given-names></name><name><surname>Djondjurov</surname><given-names>L.</given-names></name></person-group><article-title>Interphase chromosomes of Friend-S cells are attached to the matrix structures through the centromeric/telomeric regions.</article-title><volume>13</volume><issue>9</issue><month>9</month><year>1994</year><fpage>941</fpage><lpage>951</lpage><source>DNA Cell Biol</source><pub-id pub-id-type="pmid">7522463</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1089/dna.1994.13.941</pub-id></element-citation></ref><ref id="PDF_00916"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Martin</surname><given-names>G. M.</given-names></name><name><surname>Sprague</surname><given-names>C. A.</given-names></name><name><surname>Epstein</surname><given-names>C. J.</given-names></name></person-group><article-title>Replicative life-span of cultivated human cells. Effects of donor's age, tissue, and genotype.</article-title><volume>23</volume><issue>1</issue><month>7</month><year>1970</year><fpage>86</fpage><lpage>92</lpage><source>Lab Invest</source><pub-id pub-id-type="pmid">5431223</pub-id></element-citation></ref><ref id="PDF_00918"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>McClintock</surname><given-names>B</given-names></name></person-group><article-title>The Stability of Broken Ends of Chromosomes in Zea Mays.</article-title><volume>26</volume><issue>2</issue><month>3</month><year>1941</year><fpage>234</fpage><lpage>282</lpage><source>Genetics</source><pub-id pub-id-type="pmcid">PMC1209127</pub-id><pub-id pub-id-type="pmid">17247004</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/genetics/26.2.234</pub-id></element-citation></ref><ref id="PDF_00920"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Meyne</surname><given-names>J.</given-names></name><name><surname>Ratliff</surname><given-names>R. L.</given-names></name><name><surname>Moyzis</surname><given-names>R. K.</given-names></name></person-group><article-title>Conservation of the human telomere sequence (TTAGGG)n among vertebrates.</article-title><volume>86</volume><issue>18</issue><month>9</month><year>1989</year><fpage>7049</fpage><lpage>7053</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC297991</pub-id><pub-id pub-id-type="pmid">2780561</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.86.18.7049</pub-id></element-citation></ref><ref id="PDF_00923"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Moyzis</surname><given-names>R. K.</given-names></name><name><surname>Buckingham</surname><given-names>J. M.</given-names></name><name><surname>Cram</surname><given-names>L. S.</given-names></name><name><surname>Dani</surname><given-names>M.</given-names></name><name><surname>Deaven</surname><given-names>L. L.</given-names></name><name><surname>Jones</surname><given-names>M. D.</given-names></name><name><surname>Meyne</surname><given-names>J.</given-names></name><name><surname>Ratliff</surname><given-names>R. L.</given-names></name><name><surname>Wu</surname><given-names>J. R.</given-names></name></person-group><article-title>A highly conserved repetitive DNA sequence, (TTAGGG)n, present at the telomeres of human chromosomes.</article-title><volume>85</volume><issue>18</issue><month>9</month><year>1988</year><fpage>6622</fpage><lpage>6626</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC282029</pub-id><pub-id pub-id-type="pmid">3413114</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.85.18.6622</pub-id></element-citation></ref><ref id="PDF_00932"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Murnane</surname><given-names>J. P.</given-names></name><name><surname>Sabatier</surname><given-names>L.</given-names></name><name><surname>Marder</surname><given-names>B. A.</given-names></name><name><surname>Morgan</surname><given-names>W. F.</given-names></name></person-group><article-title>Telomere dynamics in an immortal human cell line.</article-title><volume>13</volume><issue>20</issue><day>17</day><month>10</month><year>1994</year><fpage>4953</fpage><lpage>4962</lpage><source>EMBO J</source><pub-id pub-id-type="pmcid">PMC395436</pub-id><pub-id pub-id-type="pmid">7957062</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1002/j.1460-2075.1994.tb06822.x</pub-id></element-citation></ref><ref id="PDF_00929"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Murnane</surname><given-names>J. P.</given-names></name><name><surname>Yu</surname><given-names>L. C.</given-names></name></person-group><article-title>Acquisition of telomere repeat sequences by transfected DNA integrated at the site of a chromosome break.</article-title><volume>13</volume><issue>2</issue><month>2</month><year>1993</year><fpage>977</fpage><lpage>983</lpage><source>Mol Cell Biol</source><pub-id pub-id-type="pmcid">PMC358982</pub-id><pub-id pub-id-type="pmid">8423817</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1128/mcb.13.2.977-983.1993</pub-id></element-citation></ref><ref id="PDF_00937"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Olovnikov</surname><given-names>A. M.</given-names></name></person-group><article-title>A theory of marginotomy. The incomplete copying of template margin in enzymic synthesis of polynucleotides and biological significance of the phenomenon.</article-title><volume>41</volume><issue>1</issue><day>14</day><month>9</month><year>1973</year><fpage>181</fpage><lpage>190</lpage><source>J Theor Biol</source><pub-id pub-id-type="pmid">4754905</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0022-5193(73)90198-7</pub-id></element-citation></ref><ref id="PDF_00935"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Olovnikov</surname><given-names>A. M.</given-names></name></person-group><article-title xml:lang="rus">Printsip marginotomii v matrichnom sinteze polinukleotidov.</article-title><volume>201</volume><issue>6</issue><year>1971</year><fpage>1496</fpage><lpage>1499</lpage><source>Dokl Akad Nauk SSSR</source><pub-id pub-id-type="pmid">5158754</pub-id></element-citation></ref><ref id="PDF_00940"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Rawlins</surname><given-names>D. J.</given-names></name><name><surname>Shaw</surname><given-names>P. J.</given-names></name></person-group><article-title>Localization of ribosomal and telomeric DNA sequences in intact plant nuclei by in-situ hybridization and three-dimensional optical microscopy.</article-title><volume>157</volume><issue>Pt 1</issue><month>1</month><year>1990</year><fpage>83</fpage><lpage>89</lpage><source>J Microsc</source><pub-id pub-id-type="pmid">2299663</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1111/j.1365-2818.1990.tb02949.x</pub-id></element-citation></ref><ref id="PDF_00946"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Sandell</surname><given-names>L. L.</given-names></name><name><surname>Zakian</surname><given-names>V. A.</given-names></name></person-group><article-title>Loss of a yeast telomere: arrest, recovery, and chromosome loss.</article-title><volume>75</volume><issue>4</issue><day>19</day><month>11</month><year>1993</year><fpage>729</fpage><lpage>739</lpage><source>Cell</source><pub-id pub-id-type="pmid">8242745</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0092-8674(93)90493-a</pub-id></element-citation></ref><ref id="PDF_00950"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Schweizer</surname><given-names>D.</given-names></name><name><surname>Ambros</surname><given-names>P.</given-names></name><name><surname>Andrle</surname><given-names>M.</given-names></name></person-group><article-title>Modification of DAPI banding on human chromosomes by prestaining with a DNA-binding oligopeptide antibiotic, distamycin A.</article-title><volume>111</volume><issue>2</issue><month>2</month><year>1978</year><fpage>327</fpage><lpage>332</lpage><source>Exp Cell Res</source><pub-id pub-id-type="pmid">75107</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0014-4827(78)90177-5</pub-id></element-citation></ref><ref id="PDF_00956"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Sherwood</surname><given-names>S. W.</given-names></name><name><surname>Rush</surname><given-names>D.</given-names></name><name><surname>Ellsworth</surname><given-names>J. L.</given-names></name><name><surname>Schimke</surname><given-names>R. T.</given-names></name></person-group><article-title>Defining cellular senescence in IMR-90 cells: a flow cytometric analysis.</article-title><volume>85</volume><issue>23</issue><month>12</month><year>1988</year><fpage>9086</fpage><lpage>9090</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC282668</pub-id><pub-id pub-id-type="pmid">3194411</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.85.23.9086</pub-id></element-citation></ref><ref id="PDF_00866"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Soldstein</surname><given-names>S.</given-names></name></person-group><article-title>Aging in vitro. Growth of cultured cells from the Galapagos tortoise.</article-title><volume>83</volume><issue>2</issue><month>2</month><year>1974</year><fpage>297</fpage><lpage>302</lpage><source>Exp Cell Res</source><pub-id pub-id-type="pmid">4816902</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0014-4827(74)90342-5</pub-id></element-citation></ref><ref id="PDF_00959"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Stanulis-Praeger</surname><given-names>B. M.</given-names></name></person-group><article-title>Cellular senescence revisited: a review.</article-title><volume>38</volume><issue>1</issue><month>3</month><year>1987</year><fpage>1</fpage><lpage>48</lpage><source>Mech Ageing Dev</source><pub-id pub-id-type="pmid">2439851</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0047-6374(87)90109-6</pub-id></element-citation></ref><ref id="PDF_00961"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Therkelsen</surname><given-names>A. J.</given-names></name><name><surname>Nielsen</surname><given-names>A.</given-names></name><name><surname>Koch</surname><given-names>J.</given-names></name><name><surname>Hindkjaer</surname><given-names>J.</given-names></name><name><surname>Kølvraa</surname><given-names>S.</given-names></name></person-group><article-title>Staining of human telomeres with primed in situ labeling (PRINS).</article-title><volume>68</volume><issue>1-2</issue><year>1995</year><fpage>115</fpage><lpage>118</lpage><source>Cytogenet Cell Genet</source><pub-id pub-id-type="pmid">7525160</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1159/000133903</pub-id></element-citation></ref><ref id="PDF_00964"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Tommerup</surname><given-names>H.</given-names></name><name><surname>Dousmanis</surname><given-names>A.</given-names></name><name><surname>de Lange</surname><given-names>T.</given-names></name></person-group><article-title>Unusual chromatin in human telomeres.</article-title><volume>14</volume><issue>9</issue><month>9</month><year>1994</year><fpage>5777</fpage><lpage>5785</lpage><source>Mol Cell Biol</source><pub-id pub-id-type="pmcid">PMC359103</pub-id><pub-id pub-id-type="pmid">8065312</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1128/mcb.14.9.5777-5785.1994</pub-id></element-citation></ref><ref id="PDF_00966"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Trask</surname><given-names>B. J.</given-names></name><name><surname>Massa</surname><given-names>H.</given-names></name><name><surname>Kenwrick</surname><given-names>S.</given-names></name><name><surname>Gitschier</surname><given-names>J.</given-names></name></person-group><article-title>Mapping of human chromosome Xq28 by two-color fluorescence in situ hybridization of DNA sequences to interphase cell nuclei.</article-title><volume>48</volume><issue>1</issue><month>1</month><year>1991</year><fpage>1</fpage><lpage>15</lpage><source>Am J Hum Genet</source><pub-id pub-id-type="pmcid">PMC1682740</pub-id><pub-id pub-id-type="pmid">1985451</pub-id></element-citation></ref><ref id="PDF_00969"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Vaziri</surname><given-names>H.</given-names></name><name><surname>Dragowska</surname><given-names>W.</given-names></name><name><surname>Allsopp</surname><given-names>R. C.</given-names></name><name><surname>Thomas</surname><given-names>T. E.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name><name><surname>Lansdorp</surname><given-names>P. M.</given-names></name></person-group><article-title>Evidence for a mitotic clock in human hematopoietic stem cells: loss of telomeric DNA with age.</article-title><volume>91</volume><issue>21</issue><day>11</day><month>10</month><year>1994</year><fpage>9857</fpage><lpage>9860</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC44916</pub-id><pub-id pub-id-type="pmid">7937905</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.91.21.9857</pub-id></element-citation></ref><ref id="PDF_00973"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Vaziri</surname><given-names>H.</given-names></name><name><surname>Schächter</surname><given-names>F.</given-names></name><name><surname>Uchida</surname><given-names>I.</given-names></name><name><surname>Wei</surname><given-names>L.</given-names></name><name><surname>Zhu</surname><given-names>X.</given-names></name><name><surname>Effros</surname><given-names>R.</given-names></name><name><surname>Cohen</surname><given-names>D.</given-names></name><name><surname>Harley</surname><given-names>C. B.</given-names></name></person-group><article-title>Loss of telomeric DNA during aging of normal and trisomy 21 human lymphocytes.</article-title><volume>52</volume><issue>4</issue><month>4</month><year>1993</year><fpage>661</fpage><lpage>667</lpage><source>Am J Hum Genet</source><pub-id pub-id-type="pmcid">PMC1682068</pub-id><pub-id pub-id-type="pmid">8460632</pub-id></element-citation></ref><ref id="PDF_00976"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Vourc'h</surname><given-names>C.</given-names></name><name><surname>Taruscio</surname><given-names>D.</given-names></name><name><surname>Boyle</surname><given-names>A. L.</given-names></name><name><surname>Ward</surname><given-names>D. C.</given-names></name></person-group><article-title>Cell cycle-dependent distribution of telomeres, centromeres, and chromosome-specific subsatellite domains in the interphase nucleus of mouse lymphocytes.</article-title><volume>205</volume><issue>1</issue><month>3</month><year>1993</year><fpage>142</fpage><lpage>151</lpage><source>Exp Cell Res</source><pub-id pub-id-type="pmid">8453988</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1006/excr.1993.1068</pub-id></element-citation></ref><ref id="PDF_00980"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Watson</surname><given-names>J. D.</given-names></name></person-group><article-title>Origin of concatemeric T7 DNA.</article-title><volume>239</volume><issue>94</issue><day>18</day><month>10</month><year>1972</year><fpage>197</fpage><lpage>201</lpage><source>Nat New Biol</source><pub-id pub-id-type="pmid">4507727</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/newbio239197a0</pub-id></element-citation></ref><ref id="PDF_00982"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Weber</surname><given-names>B.</given-names></name><name><surname>Collins</surname><given-names>C.</given-names></name><name><surname>Robbins</surname><given-names>C.</given-names></name><name><surname>Magenis</surname><given-names>R. E.</given-names></name><name><surname>Delaney</surname><given-names>A. D.</given-names></name><name><surname>Gray</surname><given-names>J. W.</given-names></name><name><surname>Hayden</surname><given-names>M. R.</given-names></name></person-group><article-title>Characterization and organization of DNA sequences adjacent to the human telomere associated repeat (TTAGGG)n.</article-title><volume>18</volume><issue>11</issue><day>11</day><month>6</month><year>1990</year><fpage>3353</fpage><lpage>3361</lpage><source>Nucleic Acids Res</source><pub-id pub-id-type="pmcid">PMC330944</pub-id><pub-id pub-id-type="pmid">2356126</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/nar/18.11.3353</pub-id></element-citation></ref><ref id="PDF_00986"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Wells</surname><given-names>R. A.</given-names></name><name><surname>Germino</surname><given-names>G. G.</given-names></name><name><surname>Krishna</surname><given-names>S.</given-names></name><name><surname>Buckle</surname><given-names>V. J.</given-names></name><name><surname>Reeders</surname><given-names>S. T.</given-names></name></person-group><article-title>Telomere-related sequences at interstitial sites in the human genome.</article-title><volume>8</volume><issue>4</issue><month>12</month><year>1990</year><fpage>699</fpage><lpage>704</lpage><source>Genomics</source><pub-id pub-id-type="pmid">2276741</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0888-7543(90)90257-u</pub-id></element-citation></ref><ref id="PDF_00989"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Weng</surname><given-names>N. P.</given-names></name><name><surname>Levine</surname><given-names>B. L.</given-names></name><name><surname>June</surname><given-names>C. H.</given-names></name><name><surname>Hodes</surname><given-names>R. J.</given-names></name></person-group><article-title>Human naive and memory T lymphocytes differ in telomeric length and replicative potential.</article-title><volume>92</volume><issue>24</issue><day>21</day><month>11</month><year>1995</year><fpage>11091</fpage><lpage>11094</lpage><source>Proc Natl Acad Sci U S A</source><pub-id pub-id-type="pmcid">PMC40577</pub-id><pub-id pub-id-type="pmid">7479943</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.92.24.11091</pub-id></element-citation></ref><ref id="PDF_00995"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Wright</surname><given-names>W. E.</given-names></name><name><surname>Shay</surname><given-names>J. W.</given-names></name></person-group><article-title>Time, telomeres and tumours: is cellular senescence more than an anticancer mechanism?</article-title><volume>5</volume><issue>8</issue><month>8</month><year>1995</year><fpage>293</fpage><lpage>297</lpage><source>Trends Cell Biol</source><pub-id pub-id-type="pmid">14732086</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/s0962-8924(00)89044-3</pub-id></element-citation></ref><ref id="PDF_00997"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Zalensky</surname><given-names>A. O.</given-names></name><name><surname>Allen</surname><given-names>M. J.</given-names></name><name><surname>Kobayashi</surname><given-names>A.</given-names></name><name><surname>Zalenskaya</surname><given-names>I. A.</given-names></name><name><surname>Balhórn</surname><given-names>R.</given-names></name><name><surname>Bradbury</surname><given-names>E. M.</given-names></name></person-group><article-title>Well-defined genome architecture in the human sperm nucleus.</article-title><volume>103</volume><issue>9</issue><month>5</month><year>1995</year><fpage>577</fpage><lpage>590</lpage><source>Chromosoma</source><pub-id pub-id-type="pmid">7587580</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1007/BF00357684</pub-id></element-citation></ref><ref id="PDF_00843"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>de Lange</surname><given-names>T.</given-names></name></person-group><article-title>Human telomeres are attached to the nuclear matrix.</article-title><volume>11</volume><issue>2</issue><month>2</month><year>1992</year><fpage>717</fpage><lpage>724</lpage><source>EMBO J</source><pub-id pub-id-type="pmcid">PMC556504</pub-id><pub-id pub-id-type="pmid">1537344</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1002/j.1460-2075.1992.tb05104.x</pub-id></element-citation></ref><ref id="PDF_00845"><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>de Lange</surname><given-names>T.</given-names></name><name><surname>Shiue</surname><given-names>L.</given-names></name><name><surname>Myers</surname><given-names>R. M.</given-names></name><name><surname>Cox</surname><given-names>D. R.</given-names></name><name><surname>Naylor</surname><given-names>S. L.</given-names></name><name><surname>Killery</surname><given-names>A. M.</given-names></name><name><surname>Varmus</surname><given-names>H. E.</given-names></name></person-group><article-title>Structure and variability of human chromosome ends.</article-title><volume>10</volume><issue>2</issue><month>2</month><year>1990</year><fpage>518</fpage><lpage>527</lpage><source>Mol Cell Biol</source><pub-id pub-id-type="pmcid">PMC360828</pub-id><pub-id pub-id-type="pmid">2300052</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1128/mcb.10.2.518-527.1990</pub-id></element-citation></ref></ref-list></back></article>

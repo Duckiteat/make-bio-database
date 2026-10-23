@@ -14,7 +14,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = process.env.BIODB_DATA ? resolve(process.env.BIODB_DATA) : join(ROOT, 'data');
 const C = require('../core.js'), J = require('../judicial/judicial.js'), QG = require('../judicial/qual_graph.js');
 const SO = require('../judicial/scene_origin.js'), AA = require('../judicial/assumption_audit.js'), CA = require('../judicial/collection_audit.js');
-const SCN = require('../scenarios.js');
+const SCN = require('../scenarios.js'), INBOX = require('../inbox.js');
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 const FILES = ['db.json', 'assumptions.jsonl', 'dictionary.jsonl', 'preregistrations.jsonl'];
 const SCENARIO_DIR = join(ROOT, 'examples', 'scenarios');
@@ -71,12 +71,12 @@ const tools = [
       if (!files.length) throw new Error('pmid 또는 pmcid 가 필요함');
       const rows = files.map((f) => existsSync(f) ? { file: relative(ROOT, f), bytes: statSync(f).size, sha256: sha(readFileSync(f)) } : { file: relative(ROOT, f), missing: true });
       return { text: rows.map((r) => r.missing ? `없음 ${r.file}` : `있음 ${r.file} · ${r.bytes} B · sha256 ${r.sha256.slice(0, 12)}…`).join('\n'), data: rows }; } },
-  { name: 'verify_collection', roles: ALL, description: '후보 판정 (verify-collection) — 핸드오프 .jsonl 글을 받아 PASS·REVIEW_REQUIRED·INCOMPLETE·BLOCKED·REJECTED', inputSchema: { type: 'object', properties: { jsonl: str('핸드오프 후보, 한 줄 한 JSON') }, required: ['jsonl'] },
+  { name: 'verify_collection', roles: ALL, description: '후보 판정 (verify-collection) — 핸드오프 .jsonl 글을 받아 PASS·REVIEW_REQUIRED·INCOMPLETE·BLOCKED·REJECTED. 인용은 수신함 초록·전문과 글자 그대로 대조(전문에 없으면 REJECTED)', inputSchema: { type: 'object', properties: { jsonl: str('핸드오프 후보, 한 줄 한 JSON') }, required: ['jsonl'] },
     run: (a) => { const db = S().db, lines = need(a, 'jsonl').split('\n').map((x) => x.trim()).filter((x) => x && !x.startsWith('//'));
       const entries = lines.map((x, i) => { try { return JSON.parse(x); } catch (e) { throw new Error(`${i + 1}행이 JSON 이 아님`); } }).filter((o) => o && typeof o === 'object' && !('_task' in o) && !('_meta' in o));
       const epDir = join(DATA, 'fetched', 'europepmc'), sourceChecks = {};
       for (const s of CA.sourcesOf(entries)) if (sourceChecks[s.key] == null) sourceChecks[s.key] = s.db === 'PMID' && existsSync(join(epDir, `MED-${s.id}.json`)) ? 'resolves' : 'error';
-      const res = CA.auditCollection(db, entries, { sourceChecks });
+      const res = CA.auditCollection(db, entries, { sourceChecks, texts: INBOX.textsFor(entries, DATA) });
       return { text: CA.auditText(res), data: { verdict: res.verdict }, isError: false }; } },
 ];
 

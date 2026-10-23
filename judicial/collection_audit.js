@@ -5,12 +5,12 @@
 // 원칙: 작업자 자기선언을 완료로 인정하지 않는다 — 완료는 이 판정기가 정한다.
 //   자동으로 확인 가능한 조건만 PASS. 내용 진실(인용이 원문에 있나·DOI 해석·관련성)은 자동 불가 →
 //   REVIEW_REQUIRED 로 통합가/사람에게 넘긴다(엔진 형식으로 다 막는 척하지 않기).
-// 지금 자동으로 되는 것: 구조·필드 완전성 · "검색/못찾음/접근불가/읽음/값있음" 구별 · 출처 형식 ·
+// 지금 자동으로 되는 것: 인용–원문 대조(부르는 쪽이 수신함 원문을 넘길 때, build-plan 58) · 구조·필드 완전성 · "검색/못찾음/접근불가/읽음/값있음" 구별 · 출처 형식 ·
 //   근거 없는 값 거부 · 상태-내용 불일치 거부 · 재사용 대상의 db 존재·철회 확인(결정론 재-도출).
 //
 // 항목(entry) 계약:
 //   { target?, outcome, value?, unit?, species?, cell?, time?, uncertainty?, use?,
-//     source?: {db,id}, quote?, verified?: bool, reuse?: {ref}, note? }
+//     source?: {db,id}, pmcid?, quote?, transcribed?: bool(그림·표 전사), verified?: bool, reuse?: {ref}, note? }
 //   outcome ∈ not_searched|not_found|unreadable|read_no_value|read_value|ambiguous|reused
 
 const STATUSES = Object.freeze(['PASS', 'INCOMPLETE', 'BLOCKED', 'REJECTED', 'REVIEW_REQUIRED']);
@@ -58,6 +58,12 @@ function auditEntry(db, e, i, opt = {}) {
   // 상태-내용 구별: 값 없다고 선언한 outcome 에 값이 있으면 모순 (조사 안함 vs 못찾음 vs 접근불가 혼동 방지)
   if (NO_VALUE_OUTCOMES.includes(e.outcome) && hasValue) push('reject', `${e.outcome} 인데 값이 있음 — 상태와 내용 불일치`);
 
+  // 인용–원문 대조 (build-plan 58, work-verification #5): 부르는 쪽이 수신함 원문을 넘기면(opt.texts) 인용이 글자 그대로 있는지 본다.
+  //   전문이 있는데 없으면 거부(없는 인용), 초록만 있고 거기 없으면 사람 확인(전문에 있을 수 있음), 원문이 없으면 사람 확인.
+  if (e.quote && hasSrc && opt.texts) {
+    const q = quoteCheck(e.quote, opt.texts[`${src.db}:${src.id}`], { transcribed: e.transcribed === true });
+    if (q.sev) push(q.sev, q.msg);
+  }
   // 값 후보는 통합가 1차 출처 재확인 전까지 자동 PASS 금지 (꼼수 #13)
   if (hasValue && e.verified !== true) push('review', '값 후보 — 1차 출처 재확인 필요(통합가)');
 
@@ -72,6 +78,34 @@ function auditEntry(db, e, i, opt = {}) {
     }
   }
   return { id, outcome: e.outcome || null, issues };
+}
+
+// 원문 정규화 — 태그·엔터티를 걷고 같은 글자로 맞춘다 (대조는 정규화한 글 안의 부분 문자열).
+//   전문 XML 은 참고문헌 목록(<ref-list>)을 뺀다 — 남의 논문 제목이 인용과 맞아도 이 논문의 문장이 아니다.
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', minus: '-', ndash: '-', mdash: '-', times: '×', plusmn: '±', micro: 'µ' };
+function normText(raw) {
+  return String(raw || '')
+    .replace(/<ref-list[\s\S]*?<\/ref-list>/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d))
+    .replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? m)
+    .normalize('NFKC')
+    .replace(/[\u2010-\u2015\u2212\uFE63\uFF0D]/g, '-')
+    .replace(/[\u2018\u2019\u201B\u2032]/g, "'").replace(/[\u201C\u201D\u2033]/g, '"')
+    .replace(/\s+/g, ' ').trim().toLowerCase();
+}
+// 인용 하나 대 원문 { abstract?, fulltext? } (부르는 쪽이 수신함에서 읽어 넘김) → { where, sev?, msg? }
+function quoteCheck(quote, texts, opt = {}) {
+  if (opt.transcribed) return { where: null, sev: 'review', msg: '그림·표 전사 값 — 글로 대조할 수 없음, 사람이 원본 그림을 확인' };
+  const q = normText(quote);
+  if (q.length < 12) return { where: null, sev: 'review', msg: `인용이 너무 짧아(${q.length}자) 대조가 뜻이 없음 — 문장 단위로` };
+  const t = texts || {};
+  if (t.fulltext && normText(t.fulltext).includes(q)) return { where: 'fulltext' };
+  if (t.abstract && normText(t.abstract).includes(q)) return { where: 'abstract' };
+  if (t.fulltext) return { where: null, sev: 'reject', msg: '인용이 원문에 없음 — 수신함의 초록·전문 어디에도 같은 문장이 없다(없는 인용·고쳐 쓴 인용)' };
+  if (t.abstract) return { where: null, sev: 'review', msg: '인용이 초록에 없음 — 전문이 수신함에 없어 확인할 수 없음(공개 전문이면 fetch_fulltext, 아니면 사람)' };
+  return { where: null, sev: 'review', msg: '원문이 수신함에 없음 — 인용을 대조할 수 없음(fetch_abstract·fetch_fulltext 먼저)' };
 }
 
 // 전체 판정 — 작업자가 적어 둔 상태 선언은 무시하고 여기서 다시 정한다.
@@ -157,4 +191,4 @@ function verifyFetchLog(events, currentSha) {
   return { ok: !errors.length, errors, events: (events || []).length, files: last.size, head: prev };
 }
 
-module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText, sourcesOf, parseRunlog, crossCheckRun, verifyFetchLog, FETCH_GENESIS };
+module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText, sourcesOf, parseRunlog, crossCheckRun, verifyFetchLog, FETCH_GENESIS, normText, quoteCheck };
