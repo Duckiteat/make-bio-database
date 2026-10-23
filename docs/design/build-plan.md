@@ -132,4 +132,9 @@
 | 59 | **정량 판정 맥락 이전** (§6 ②) | 조정자 `observeFate` · `judicial/protocol.js` | 정량 판정에 context_transfer · 시험 | ☑ 2026-10-23 — `orchestrator.quantContext`(측정 = 관찰 condition, 판정 = 시나리오·세포 상태·기준 종, 종·세포만) · `obs_compare.verdictText` 가 표시 · 판정은 막지 않음 · 시험 `dose_slope ⑥`(생쥐 10090 → 사람 9606). 종 정책은 보류 |
 | 60 | **받기 기록** `FETCH_LOG.jsonl` (§6 ③) | 서기 · 사법부 | 추가 전용 사슬 · 대조 시험 | ☑ 2026-10-23 — 서기 `appendFetchLog`, 사법부 `verifyFetchLog`(사슬 + 받은 뒤 파일 그대로), validate 포함 |
 | 61 | **MCP 서버** — query·fetch + 입출력기 clerk (`outsourcing-and-mcp.md` §4.3, lab 은 56 뒤) | `mcp/` · 서기(`handoff` 구역·`writerLock`·XML 받기) | 프로토콜·역할 거부·단일 작성자·쓰기 없음 시험 | ☑ 2026-10-23 — 외부 패키지 없음, 시험 `tests/mcp.test.mjs`(8). 첫 실사용: O'Dea 2007(PMID 17486138) 공개 전문 받음, Allsopp 1995 유료 거부 |
+| 62 | **종이 비면 통과하던 구멍** — 상수·정의항 obs 와 관찰의 종 대조가 '둘 다 있을 때만' 작동. 새 상수·관찰은 종 필수, 없음은 '모름'(사람 아님) | `judicial/judicial.js`(종 대조 2곳) | 종 없는 상수·관찰 거부 픽스처 | ☐ |
+| 63 | **수집 후보에 종 필수** — 값 후보(read_value·ambiguous)에 species 없으면 INCOMPLETE | `judicial/collection_audit.js` | 거부 시험 | ☐ |
+| 64 | **다른 종 판정은 '가설 생성' 까지만** — 측정 종 ≠ 판정 종이면 사전 등록과 무관하게 판정 수준 상한 `hypothesis_generating`(검토 의견 2026-10-23: 서열 일치도 표시·종 차이 기록부는 짓지 않음 — 숫자가 거짓 신뢰, 기록부는 모르는 차이를 못 잡음). 같은 종·다른 세포는 표시만 | `judicial/protocol.js`·`qual_compare`·`obs_compare` · 증거 보고서 | 생쥐 측정 판정 상한 시험 · 지금 검증 5건(전부 9606) 불변 | ☐ |
+| (보류) | **종 계보 계산 · 가정 `derived_from`** — 조각이 기대는 측정들의 종 집합을 철회 그래프로 계산. 지금은 관찰 28개 전부 9606, 다른 종이 상수로 가는 길은 관문이 막음 → 계산할 대상 없음. **다시 열 조건**: 사람 아닌 관찰이 처음 db 에 들어오거나, 측정에서 정했다는 가정이 처음 생길 때. 저장소는 종·역으로 나누지 않음(차이는 맥락 열쇠 — 종·세포·조건, 개인 차이는 condition 정의항 + 불확도 `biological`) | — | — | 보류 |
+| 65 | **보고서에 실험 계획서·가설·결과** — 지금 증거 보고서는 '질문' 을 시나리오 이름으로 쓰고 규약은 한 줄, 검증 결과(observe)는 싣지 않음. 손으로 쓴 검증 보고서만 계획서를 담음 | `judicial/evidence_report.js`·`process_report.js` · 조정자(판정 결과 전달) | 등록 시나리오 5건 보고서에 규약 전 칸·가설·판정·음성 대조 · 손 보고서와 같은 내용이 생성으로 | ☐ |
 | 57 | **LPS 기준해 → 운명 엔진 QSSA** (L000113 을 공간 엔진에서 떼어냄) | 조정자 · 47번 | 기준해 1회 또는 한계 기록 · 축약 TOST | ☐ |
