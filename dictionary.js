@@ -25,7 +25,8 @@ const REGISTERS = {
 };
 const qid = (reg, key) => `${reg}/${key}`;
 
-// overlay(JSONL) 로드 — 한 줄 한 레코드, (register, key) 마다 하나. 권위는 정준 텍스트, 지금은 읽기 전용 커밋 파일(입법 구역·sha 봉인 배선은 다음 단계).
+// overlay(JSONL) 로드 — 추가만 하는 사슬(한 줄 한 사건). 같은 토큰의 뒤 사건(revises)이 현재 값이다.
+//   사슬 무결성·revises·덮임 판정은 사법부(judicial/dictionary_audit.js), 쓰기는 입법 서기(appendDictionary)만 — 여기서는 읽기만.
 function loadOverlay() {
   const file = path.join(__dirname, 'data', 'dictionary.jsonl');
   const map = new Map();
@@ -34,8 +35,7 @@ function loadOverlay() {
     if (!s || s.startsWith('//')) continue;
     const o = JSON.parse(s);
     if (!REGISTERS[o.register]) throw new Error(`사전 overlay 의 register 어휘 밖: '${o.register}' (${o.key})`);
-    if (map.has(qid(o.register, o.key))) throw new Error(`사전 중복 항목: ${qid(o.register, o.key)}`);
-    map.set(qid(o.register, o.key), o);
+    map.set(qid(o.register, o.key), o); // 마지막 사건이 현재 값
   }
   return map;
 }

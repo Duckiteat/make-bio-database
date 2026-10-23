@@ -590,6 +590,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-23 | (사전) | `data/dictionary.jsonl` 형식: 한 줄 한 레코드 → **추가만 하는 사슬**(한 줄 한 사건 `seq·at·…항목·revises?·prev·root`, root = sha256(prev + '\n' + 정준 JSON), 첫 prev = sha256('dictionary\n')). 쓰기는 입법 서기(구역 registry)만 — 사법부 `judicial/dictionary_audit.js` 봉인 뒤. 고치기는 `revises` 단 새 사건. db.json 형식·버전 불변. 변환 `migrations/011-dictionary-chain.mjs`(무손실, 109 사건) |
 | 2026-10-15 | 12 (2차) | §8N 정성 관찰(`kind: qualitative`)·관찰 `experiment`·`evidence_at`·`recorded_at`·`provenance.source` · 맥락 열쇠(`contextKeys`·`contextKey`, 조건 = 정의항 번호 목록) · 번호 이동 `moved`. 버전 번호는 그대로(추가 필드만, 기존 db 직렬화 불변). 데이터: 자유 문장 조건 6 건 → `scope` (값 대체 기록, IR 해시 238 조합 같음) |
 | 2026-10-15 | **12** | 값 층 분리(§8N): `values { V… }`·`kinetic_law`·보기(열거되지 않는 obs·kinetics)·병합의 대체·철회 접기·`recorded_at` 필수·`asOf`·사법부 `validateValues`·`valueImmutability`. 데이터: 값 기록 58(정의항 obs 52 · 속도 칸 6) — 보기 무손실, IR 해시 238 조합 같음, 등급 분포 같음. 변환은 사건 사슬의 `migration` 사건 #1 (`migrations/010-v10-to-v12-values.js`) |
 | 2026-10-10 | **11** | 측정값 사슬과 래칫(§8M, 레드팀 7/7 차단): 정의항 `obs` 에 `from`(관찰 기록 참조) — 측정량이 있는 속성의 `curated` 값은 필수이고 단위 환산 뒤 값·종·세포·위치를 관찰과 대조(`checkSenseObsFrom`) · 파생값 삭제 금지(관찰이 `retracted` 일 때만) · 새 측정량 `volume`(대상 위치, 단위 L — L000102 해결) · 단위 환산표 하나로(`vocab.unitFactors`, `core.js`·`model.js` 가 그 표를 읽음 — 값 동일, 궤적 비트 불변) · 물리적 상한(`vocab.physicalBounds`) · `kinetics.from` 에 종·위치 대조 · Patch Report `measured_changed`(측정값 전후) · 거부 말뭉치 11 + 래칫(`tests/fixtures/FLOOR.json`, `skip` 금지) · 관찰 계약에 `volume` |

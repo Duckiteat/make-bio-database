@@ -87,9 +87,9 @@
     {
       "path": "data/dictionary.jsonl",
       "class": "law",
-      "format": "JSON Lines — 통제 토큰 overlay 한 줄씩: key·register·label_en·meaning_en·xref·since",
-      "writer": "사람·AI (입법 구역·sha 봉인 배선은 build-plan 16A 다음 단계 — 지금은 읽기 전용 커밋 파일)",
-      "readers": "dictionary.js",
+      "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·register·key·label_en·meaning_en·xref·since·revises?·prev·root (root = sha256(prev + 정준 JSON))",
+      "writer": "입법 서기 appendDictionary (구역 registry) — judicial/dictionary_audit.js checkProposals 봉인이 있을 때만 (`dictionary add`). 손으로 고치지 않는다",
+      "readers": "dictionary.js (마지막 사건이 현재 값) · judicial/dictionary_audit.js (validate·dictionary)",
       "interpret": "사전 overlay — 통제 토큰의 en 라벨·의미·외부 온톨로지 앵커(xref). ko 는 vocab.js(권위)에서 병합한다(복제 없음). 고유 개념(gap 타입 등)은 우리가 en 을 저술하므로 xref null, 외부 개념은 xref 로 검증. 설계 dictionary-and-translation.md."
     },
     {
@@ -237,6 +237,14 @@
       "node": "JUDICIAL_CORE",
       "governance": "Judicial",
       "refactor_strategy": "validate·관문·감사(auditRate). 모든 감사 항목에 결함 태그(judicial/fault.js)를 만드는 곳에서 명시 — 메시지에서 추측하지 않는다."
+    },
+    {
+      "path": "judicial/dictionary_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool validate·dictionary, tests/dictionary_seal",
+      "interpret": "[사법] 사전 봉인 — data/dictionary.jsonl 사슬 무결성(seq·prev·root)·revises(고치기는 현재 root 를 가리키는 새 사건)·렌더 모호(두 토큰이 같은 렌더 문자열)·덮임(vocab register 토큰마다 영어 항목). 새 항목은 checkProposals 가 통과시켜야 서기가 붙인다. 판정만 — 읽기·쓰기 없음."
     },
     {
       "path": "judicial/verifier.js",
@@ -911,6 +919,14 @@
       "writer": "사람·AI (규칙을 바꿀 때 거부 테스트 추가)",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "규칙이 실제로 거부하는지, 시뮬레이션·감사가 기대대로인지."
+    },
+    {
+      "path": "tests/dictionary_seal.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "사전 봉인 거부 시험 — 변조·삭제·잘못된 새 항목(register·키·빈 영어·날짜·사슬 칸·중복·revises·렌더 충돌·xref)·봉인 없는/다른 쓰기를 거부하고, revises 고치기는 붙이기만 하는지."
     },
     {
       "path": "tests/governance.test.mjs",

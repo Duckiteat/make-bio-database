@@ -35,7 +35,7 @@ const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부
 
 // 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
 export const ZONES = {
-  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
   attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
   evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
@@ -136,6 +136,25 @@ export function registerPrereg({ dataDir, scenario, seal }) {
   const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) }, f = join(dataDir, PREREG);
   put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + JSON.stringify(ev) + '\n');
   return ev;
+}
+
+// 사전 (build-plan 16A): data/dictionary.jsonl 은 추가만 하는 사슬. 사법부(judicial/dictionary_audit.js checkProposals)가 새 항목을
+//   통과시킨 봉인이 있을 때만 사건을 붙인다 — 지우거나 고쳐 쓰지 않는다(고치기는 revises 단 새 사건).
+const DICT = 'dictionary.jsonl', DICT_GENESIS = sha('dictionary\n');
+export function readDictionary(dataDir) { const f = join(dataDir, DICT); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim() && !l.trim().startsWith('//')).map((l) => JSON.parse(l)) : []; }
+export function appendDictionary({ dataDir, proposals, seal }) {
+  if (!ATT.checkSeal(seal)) refuse('사전 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse(`사전 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 항목과 쓰려는 항목이 다름');
+  const events = readDictionary(dataDir), f = join(dataDir, DICT), at = new Date().toISOString(), out = [];
+  let prev = events.length ? events[events.length - 1].root : DICT_GENESIS;
+  for (const p of proposals) {
+    const body = { seq: events.length + out.length + 1, at, ...p, prev };
+    const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+    out.push(ev); prev = ev.root;
+  }
+  put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + out.map((e) => JSON.stringify(e)).join('\n') + '\n');
+  return out;
 }
 
 export function readLog(dataDir) {
