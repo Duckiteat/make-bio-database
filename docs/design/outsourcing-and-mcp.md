@@ -27,7 +27,7 @@
 
 | 일 | 맡길 곳 | 들어오는 문 | 안쪽 확인 |
 |---|---|---|---|
-| **전문 받기** | 전문 에이전트(사용자가 만듦, §5) | 수신함 | 수신함 sha256 · 받기 기록 · 인용–전문 자동 대조(§6 ①) |
+| **전문 받기** | 판단은 전문 에이전트(사용자가 만듦, §5), 실제 받기는 우리 `fetch` 도구(§4.4) | 수신함 | 수신함 sha256 · 받기 기록 · 인용–전문 자동 대조(§6 ①) |
 | 문헌 검색·후보 수집 | 수집가(싼 모델) | 핸드오프 `.jsonl` | `verify-collection`(구조·출처·근거 없는 값) → 통합가가 1차 출처로 재확인 |
 | 정성 관찰 후보 | 수집가 | 핸드오프 | 인용이 수신함 원문과 글자 그대로 같은지(지금 초록, §6 ① 뒤 전문) |
 | 외부 DB 원본(UniProt·ChEBI·Rhea·BRENDA) | 받기 고리 `augment plan → fetch` | 수신함 | 신원 판정(`judicial/identity.js`) · 도장 |
@@ -39,42 +39,71 @@
 | 외부 재현(38, SBML·SED-ML) | 외부 도구(COPASI 등) | 보고서 | 같은 궤적이 나오는지 사법부가 대조 |
 | **판정·쓰기·결함 태그·규칙** | — | — | 안에 둔다 |
 
-## 4. MCP 분리
+## 4. MCP 분리 — 효율 기준 (2026-10-23 측정)
 
-### 4.1 두 묶음, 시기가 다르다
+### 4.1 잰 값 (이 컨테이너, 4 코어)
 
-post-build §1 은 MCP 분해를 "적분장(27–37) 이후"로 두었다. 그 문서가 다룬 것은 **계산 쪽**(엔진·컴파일러·검증기)이다. **수집 쪽**은 엔진 솔기와 무관하고 지금 병목이므로 먼저 한다.
-
-| 묶음 | 시기 | 서버 |
+| 무엇 | 값 | 뜻 |
 |---|---|---|
-| **수집 쪽** | **지금** | `fetch` · `query` · `handoff` |
-| 통합가 전용 | 수집 쪽과 함께, 권한 분리 | `integrate` |
-| 계산 쪽 | 엔진 경계(56) 뒤, 본격 분해는 27–37 뒤 | `compile` · `run` · `verify` · `report` |
+| Node 부팅 (`node -e 0`) | 174 ms | CLI 호출마다 낸다 |
+| db 정규화 + 색인 | 45 + 7 ms | 호출마다 다시 한다 |
+| 조회 명령 (`map`·`assume uses`) | 146–190 ms | 거의 전부 부팅·정규화 비용 |
+| `status` · `attest` | 766 · 1 121 ms | 증명 도장 재검증이 대부분 — db 가 같으면 결과도 같다 |
+| `validate` | 641 ms | |
+| 운명 실행 1회 (텔로미어) | 64–77 ms, IR 5.8 KB → 원자료 **690 KB** (120 배) | 원자료가 입력보다 훨씬 크다 |
+| 확률 앙상블 50회 | 출생–사멸 2.4 s (원자료 회당 0.49 MB) · 혼합 최적 **26.9 s (회당 5.9 MB → 약 290 MB)** | 길고 무겁다 |
+| 일괄 보고 | `evidence --all` 5.4 s · `origin --all` 2.7 s | 묶음 작업 |
+| Europe PMC 받기 | 검색 0.8 s · 전문 XML 1.9 s | 네트워크가 정한다, CPU 는 놂 |
 
-### 4.2 수집 쪽 서버
+### 4.2 나누는 기준 다섯
 
-| 서버 | 도구 | 하는 일 | 쓰기 |
-|---|---|---|---|
-| `fetch` | `resolve_access(pmid)` · `fetch_fulltext(pmcid)` · `fetch_abstract(pmid)` · `fetch_record(db, id)` | 공개 여부 판정(OA·PMC 무료 열람·유료) → 공개 전문은 원본 XML 을 수신함에, 그 밖은 받지 않고 상태만 | 서기 `fetchToInbox`(증거 구역)만. **받기 기록**(URL·시각·HTTP 상태·sha256)을 도구가 남긴다 |
-| `query` | `map` · `context` · `mechanism` · `limitations` · `coverage` · `origin` · `assume_uses` · `qualgraph` | 읽기 전용 조회 — 지금 dbtool 명령을 JSON 으로 | 없음 |
-| `handoff` | `submit_candidates(jsonl)` · `audit(handoff)` | 후보를 핸드오프에 붙이고 `verify-collection` 판정을 돌려준다 | `workspace/handoff/` 만 |
+1. **상태**: db·색인·원장을 메모리에 두면 호출마다 약 220 ms(부팅 + 정규화·색인)가 빠진다 → 조회는 **오래 사는 서버 하나**에.
+2. **자원의 종류**: 받기는 네트워크 대기(초 단위, CPU 0), 실행은 CPU(코어 전부) → **같은 프로세스에 두지 않는다**. 받기가 실행 대기열을 막거나 실행이 받기를 굶기지 않게.
+3. **데이터 중력**: 원자료는 입력의 120 배이고 앙상블은 수백 MB → 실행과 검증은 **같은 기계**에, 밖으로는 판결·해시·요약(수 KB)만. post-build §1 ②·④ 그대로다.
+4. **권한**: 권위 쓰기는 **단일 작성자** 하나, 수집 에이전트에는 보이지도 않게.
+5. **무효화 열쇠 하나**: db sha256 + 가정·사전·사전 등록 원장 head. 작성자가 바꾸면 다른 서버는 다음 호출에서 다시 읽는다(664 KB sha 는 ms 단위). 도장 재검증 결과도 이 열쇠로 캐시한다.
 
-### 4.3 통합가 전용 (권한으로 막음)
+### 4.3 서버 넷
 
-`integrate` 서버: `apply_patch` · `register` · `assume_add` · `dictionary_add` · `attest`. 수집 쪽 에이전트의 설정에는 **이 서버가 아예 없다** — 신뢰가 아니라 구조로 막는다(PROMPTS §3′ B 의 설정 거부와 같은 생각). 통합가가 1차 출처 재확인을 끝낸 것만 이 서버로 들어간다.
+| 서버 | 무엇 | 상태 | 자원 | 주고받는 크기 | 쓰기 | 누가 씀 |
+|---|---|---|---|---|---|---|
+| **`collect`** | 조회(map·context·limitations·coverage·origin·assume uses·qualgraph…) · 보고서 **글 생성**(파일 쓰기 없이 텍스트로) · 후보 제출과 `verify-collection` 판정 | db·색인·원장·도장 캐시를 메모리에 | 가벼운 CPU, 복제 가능 | 작음(JSON) | `workspace/handoff/` 만 | 수집 에이전트·통합가 |
+| **`fetch`** | 공개 여부 판정 · 공개 전문·초록·DB 원본 받기 · 받기 기록 | 없음 (db 안 읽음) | 네트워크, 비동기 동시 요청 + 원천별 속도 제한 | 작음(파일 경로·sha) | 서기 `fetchToInbox`(증거 구역) + `FETCH_LOG` | 수집 에이전트 |
+| **`lab`** | 컴파일 → 실행 → 사법부 검증 → 판결. 긴 일은 **작업 대기열**(제출 → 작업 번호 → 상태 → 판결) | 원자료 저장소(로컬, 해시로) | CPU 코어 전부 (워커 = 코어 − 1) | 들어올 때 시나리오 수 KB, 나갈 때 판결·해시 수 KB | 원자료 캐시만 (`cache` 구역, 계획 19·29) | 통합가 (나중에 수집 쪽 탐색 실행도) |
+| **`integrate`** | 패치 적용 · 등록 · 가정·사전 추가 · 도장 · 보고서 파일 쓰기 | 쓰기 잠금 하나 | 거의 없음, 드묾 | 작음 | 권위 쓰기 전부 (서기) | 통합가만 |
 
-### 4.4 지금 명령의 분류
+**`lab` 안쪽**: 조정자(`orchestrator.js`)가 MCP 앞문이다. 엔진(Rust/WASM 워커)과 사법부 검증기는 **같은 기계의 다른 프로세스**로 두고, 원자료는 로컬 저장소에 해시로 넘긴다. 검증기를 따로 띄우면 "불신·검증" 모델이 더 강해지고(post-build §1), 원자료가 네트워크를 지나지 않는다.
 
-| 분류 | 명령 |
+### 4.4 에이전트와 도구를 가른다 — 외주화의 효율 핵심
+
+**외주화할 것은 "판단하는 머리"(무엇을 찾고, 무엇을 읽고, 무엇이 후보인가)이고, 실제 받기·기록은 우리 `fetch` 도구가 한다.** 외부 에이전트가 직접 받아서 파일을 넘겨주면, 그 파일이 진짜 그 URL 에서 왔는지 다시 받아 확인해야 한다(work-verification: 외부 행동은 표본 재-fetch — 비싸다). 받기를 우리 도구가 하면 받기 기록이 곧 증거라서 재확인이 필요 없다. 그래서:
+
+- 사용자가 만드는 전문 에이전트 = `fetch`·`collect` 도구를 부르는 클라이언트. 에이전트 안에 HTTP 코드를 두지 않는다.
+- 에이전트가 쓰는 모델·위치는 자유(외주). 도구 서버는 저장소 곁(우리).
+
+### 4.5 서버를 더 쪼개지 않는 이유
+
+- 엔진마다(rate·fate·field) 서버를 두지 않는다 — IR·컴파일러·탐침 풀을 공유하고, 쪼개면 원자료가 프로세스 사이를 오간다(post-build §1 ①).
+- 사법부 모듈마다 서버를 두지 않는다 — 판정 하나가 여러 모듈을 같은 원자료 위에서 부른다.
+- `collect` 와 `fetch` 는 합치지 않는다 — 기준 2(네트워크 대기 대 메모리 상태)와 기준 4(db 를 안 보는 쪽이 더 좁은 권한).
+
+### 4.6 지금 명령의 자리
+
+| 서버 | 명령 |
 |---|---|
-| 읽기 (→ `query`) | status · map · audit · vocab · context · mechanism · pattern · resolution · grade · origin · qualgraph · retraction · evidence · limitations(--check·--detect·--coverage) · assume · assume uses · dictionary · log · prompt · report · textbook --check |
-| 결정론 계산 (→ 나중에 `run`·`verify`) | simulate · fate · observe · compare · audit-run · augment build · verify-collection · verify-run |
-| 받기 (→ `fetch`) | augment fetch |
-| 권위 쓰기 (→ `integrate`) | merge · augment apply · register · assume add · dictionary add · attest · trend --write · limitations --write · textbook --write |
+| `collect` | status · map · audit · vocab · context · mechanism · pattern · resolution · grade · origin · qualgraph · retraction · evidence(글) · limitations(--check·--detect·--coverage) · assume · assume uses · dictionary · log · prompt · report · textbook --check · verify-collection · verify-run |
+| `fetch` | augment fetch · (새) 전문·초록 받기 |
+| `lab` | simulate · fate · observe · compare · audit-run · augment build · (새) 앙상블·스윕·입력 귀속 작업 |
+| `integrate` | merge · augment apply · register · assume add · dictionary add · attest · trend --write · limitations --write · textbook --write · 보고서 파일 쓰기 |
 
-### 4.5 계산 쪽 서버의 전제 (지금 막힌 것)
+### 4.7 순서와 전제
 
-post-build §1 의 네 제약(굵은 솔기만 · 데이터 중력 · 내부 stdio · 바이트 대신 해시) 그대로다. 그 전에 **엔진 경계(56)** 를 고쳐야 한다 — 지금 운명 엔진은 IR 을 못 받으면 스스로 조립하고 db 를 읽는다. 이대로 `run` 서버로 떼면 엔진이 db 전체를 받아야 해서 "IR 만 주고받는다"가 깨진다.
+| 단계 | 무엇 | 전제 |
+|---|---|---|
+| 1 | `fetch` + `collect` (수집 쪽) | 58–60(받는 쪽). 엔진과 무관해 지금 가능 |
+| 2 | `integrate` | 통합가 권한 분리 — 서기 함수를 그대로 감쌈 |
+| 3 | `lab` | **엔진 경계(56)** — 지금 운명 엔진은 IR 을 못 받으면 db 를 읽는다. 그대로 떼면 실행 프로세스가 db 전체를 들고 있어야 한다 |
+| 4 | 계산 외주(앙상블을 다른 기계로) | 결정론 + seed → 표본 재실행 대조. 큰 원자료는 그 기계에 남기고 판결만 |
 
 ## 5. 전문 에이전트 명세 (사용자가 만들 것)
 
@@ -82,7 +111,7 @@ post-build §1 의 네 제약(굵은 솔기만 · 데이터 중력 · 내부 std
 |---|---|
 | 입력 | 과제 목록: PMID(또는 PMCID) · 무엇을 찾나(한계 L… 의 needs, 측정량·단위·종·세포) |
 | 1. 공개 여부 | Europe PMC 조회 — `isOpenAccess`·`inPMC`·`pmcid` |
-| 2. 공개 전문(OA=Y) | `fullTextXML` 원본을 수신함 `data/fetched/europepmc/PMC-<id>.xml` 에 (서기 받기 고리) |
+| 2. 공개 전문(OA=Y) | `fetch` 도구의 `fetch_fulltext` 를 부른다 — 도구가 `fullTextXML` 원본을 수신함 `data/fetched/europepmc/PMC-<id>.xml` 에 넣고 받기 기록을 남긴다. **에이전트 안에 HTTP 코드를 두지 않는다**(§4.4) |
 | 3. PMC 무료 열람(OA=N, inPMC=Y) | **본문을 저장하지 않는다**(저작권). 읽고 찾은 문장만 인용으로, 원본은 sha256 만 |
 | 4. 유료 | 받지 않는다. `RETRIEVAL_TASKS.md` 후보로 남겨 사람이 받아 올린다. **로그인이 필요한 곳(학교 계정 등)은 쓰지 않는다** |
 | 출력 | 핸드오프 `.jsonl` 후보 — 값·단위·종·세포·불확도·반복 수 · 출처(PMID·PMCID) · **원문 인용 + 위치**(XML 절·표·그림 번호) · 접근 상태(OA·free·paywalled) · 받기 기록 |
@@ -102,5 +131,5 @@ post-build §1 의 네 제약(굵은 솔기만 · 데이터 중력 · 내부 std
 ## 7. 열린 것
 
 - **종 정책**: 생쥐 측정을 검증용으로 허용하고 맥락 이전을 표시할지(추천 (나)) — ② 가 그 전제다.
-- MCP 서버 구현 자리 — 저장소 안(`mcp/`)에 둘지, 사용자가 만드는 에이전트 쪽에 둘지. 권위 서버(`integrate`)는 반드시 저장소 안이다.
+- ~~MCP 서버 구현 자리~~ → §4.4 로 정함: 도구 서버 넷(`collect`·`fetch`·`lab`·`integrate`)은 저장소 곁(`mcp/`, 삼권 시험이 덮도록), 에이전트는 어디든.
 - 외부 계산 서비스의 비용과 위치 — post-build §1 ②(데이터 중력)에 따라 엔진·컴파일러·검증기는 함께 둔다.
