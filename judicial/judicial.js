@@ -1235,6 +1235,7 @@
       byObs.get(o).push({ value: vid, subject, property: v.property, unit: v.unit || null, derivation: v.derivation });
     }
     const stepsOf = (ref) => Object.keys(db.steps).filter((sid) => db.steps[sid].rule === ref);
+    const conclusionsOf = (oid) => Object.entries(opt.scenarios || {}).filter(([, sc]) => sc && sc.protocol && (sc.protocol.validation || []).includes(oid)).map(([file, sc]) => ({ file, name: sc.name || '' }));
     const rows = [];
     for (const oid of [...retracted].sort()) {
       const vals = byObs.get(oid) || [];
@@ -1243,8 +1244,14 @@
       const steps = uniq(rules.flatMap(stepsOf));
       const pathways = uniq(steps.flatMap((sid) => db.steps[sid].part_of || []));
       const o = db.observations[oid];
-      rows.push({ obs: oid, retracted: already.has(oid), assumed: assume.has(oid) && !already.has(oid), note: (o && o.retracted && o.retracted.note) || '', values: vals, rules, steps, pathways });
+      rows.push({ obs: oid, retracted: already.has(oid), assumed: assume.has(oid) && !already.has(oid), note: (o && o.retracted && o.retracted.note) || '', values: vals, rules, steps, pathways, conclusions: conclusionsOf(oid) });
     }
+    // 값에 기대지 않는 철회도 결론을 흔든다: 사전 등록 규약의 검증 세트 관찰 (시나리오는 부르는 쪽이 opt.scenarios 로 넘긴다 — 사법부는 파일을 읽지 않음)
+    for (const oid of [...retracted].sort()) if (!rows.some((r) => r.obs === oid) && conclusionsOf(oid).length) {
+      const o = db.observations[oid];
+      rows.push({ obs: oid, retracted: already.has(oid), assumed: assume.has(oid) && !already.has(oid), note: (o && o.retracted && o.retracted.note) || '', values: [], rules: [], steps: [], pathways: [], conclusions: conclusionsOf(oid) });
+    }
+    rows.sort((a, b) => a.obs.localeCompare(b.obs));
     return { rows, retractedCount: already.size, assumedCount: assume.size };
   }
   function retractionText(db, opt = {}) {
@@ -1256,6 +1263,7 @@
       out.push(`  ✗ ${row.obs} ${row.assumed ? '철회 가정' : '철회됨'}${row.note ? ' — ' + row.note : ''}`);
       for (const v of row.values) out.push(`      근거 철회됨 → 값 ${v.value} (${v.subject} · ${v.property}${v.unit ? ' ' + v.unit : ''}${v.derivation === 'lumped' ? ' · 묶음' : ''})`);
       if (row.steps.length) out.push(`      → 단계 ${row.steps.join('·')}${row.pathways.length ? ' → 경로 ' + row.pathways.join('·') : ''} 의 시뮬레이션 결론은 근거 철회된 상수에 의존`);
+      for (const c of row.conclusions || []) out.push(`      → 사전 등록 검증 결론 재검증 필요: ${c.file}${c.name ? ` 「${c.name}」` : ''} (검증 세트에 ${row.obs})`);
     }
     return out.join('\n');
   }

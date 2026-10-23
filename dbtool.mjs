@@ -404,6 +404,8 @@ switch (cmd) {
   case 'retraction': { // 파생 그래프 · 철회 전파 (build-plan 13): 철회된(또는 <O…> 로 철회를 가정한) 관찰에 기댄 현재 값·상수·단계·경로 — 읽기만, db 불변
     const db = loadDB(), ids = args.filter((a) => /^O\d{6}$/.test(a));
     const opt = ids.length ? { assume: ids } : {};
+    // 사전 등록 검증 결론까지 잇기: 대상 색인의 시나리오를 넘긴다 (사법부는 파일을 읽지 않음)
+    opt.scenarios = existsSync(SUBJECTS) ? Object.fromEntries(Object.keys(readJSON(SUBJECTS).subjects).map((f) => [f, readJSON(join(SCENARIO_DIR, f))])) : {};
     if (flags.json) console.log(JSON.stringify(J.retractionImpact(db, opt), null, 2));
     else console.log(J.retractionText(db, opt));
     break;
@@ -427,6 +429,13 @@ switch (cmd) {
       const rep = ER.evidenceReport(db, r.scenario, { target: tg.id, scenarioText: r.text, dbText, sim, derived: r.derived, prereg });
       return { rep, simError };
     };
+    if (flags.recheck) { // 결론의 재검증 (build-plan 13): 보고서에 실린 의존 지문을 지금 db 와 대조 — 값 내용이 바뀌었거나 근거가 철회됐으면 '재검증 필요' (라벨, 차단 아님)
+      const DEP = req('./judicial/dependency.js'), files = [flags.recheck, ...args].filter((x) => x && x !== true);
+      if (!files.length) die('사용법: evidence --recheck <보고서.md...>');
+      let bad = 0;
+      for (const f of files) { const deps = DEP.parseDepsBlock(readFileSync(f, 'utf8')); if (!deps) { console.log(`${f}: 의존 지문 블록 없음 — 이 기능 전에 만든 보고서 (다시 만들어야 대조할 수 있음)`); continue; } const r = DEP.recheck(db, deps); if (r.revalidate) bad++; console.log(DEP.recheckText(r, f)); }
+      process.exit(bad ? 1 : 0);
+    }
     if (flags.all) {
       const files = Object.keys(readJSON(SUBJECTS).subjects).sort();
       const rows = files.map((f) => { const x = one(join(SCENARIO_DIR, f), subjectOf(f)); return { file: f, subject: subjectOf(f), rep: x.rep || { error: x.error } }; });

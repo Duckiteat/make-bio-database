@@ -247,6 +247,14 @@
       "interpret": "[사법] 사전 봉인 — data/dictionary.jsonl 사슬 무결성(seq·prev·root)·revises(고치기는 현재 root 를 가리키는 새 사건)·렌더 모호(두 토큰이 같은 렌더 문자열)·덮임(vocab register 토큰마다 영어 항목). 새 항목은 checkProposals 가 통과시켜야 서기가 붙인다. 판정만 — 읽기·쓰기 없음."
     },
     {
+      "path": "judicial/dependency.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/evidence_report.js, dbtool evidence --recheck, tests/retraction_propagation",
+      "interpret": "[사법] 결론의 의존 지문과 재검증 (build-plan 13) — 값은 내용(대상·속성·값·단위·맥락) 지문, 관찰은 철회 여부. 지금 db 와 대조해 같음·같음(기록만 대체)·값이 바뀜·근거 철회됨·없음. 재검증은 라벨이지 차단이 아니다. 판정만."
+    },
+    {
       "path": "judicial/verifier.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -935,6 +943,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "가 스키마 구조 필드 — 정규화 보존(없으면 불변)·재검토 후보(at 이후 새 관찰·값, 철회·manual·미래 at 제외)·병합 관문과 분리."
+    },
+    {
+      "path": "tests/retraction_propagation.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "철회 → 결론 — 검증 세트 관찰 철회 시 등록 결론 재검증 필요, 파생 그래프가 등록 결론까지, 재검증은 내용 키잉(메모 대체는 같음), 의존 블록 왕복."
     },
     {
       "path": "tests/governance.test.mjs",

@@ -12,6 +12,7 @@ const V = require('../vocab.js');
 const REL = require('./reliability.js');
 const DICT = require('../dictionary.js'); // 통제 토큰(닫는 방법·판정 수준)의 라벨·의미는 사전 조회 — 코드에 문구를 두지 않는다 (build-plan 16A)
 const PROTO = require('./protocol.js');
+const DEP = require('./dependency.js'); // 결론의 의존 지문·재검증 (build-plan 13)
 const IRB = require('../compiler/ir_builder.js'); // 세포 상태 계의 규칙 집합 — 엔진이 먹는 것과 같은 조립(공유 순수 층)
 const { limitationStatus } = require('./judicial.js');
 const sha = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(x)).digest('hex');
@@ -143,6 +144,9 @@ function evidenceReport(db, scenario, opt = {}) {
   // 판정 수준: 규약 선언만으로는 검증이 아니다 — 사전 등록부(입력 해시)와 맞아야 한다(protocolVerdict). 규약 검사가 hypothetical 보다 앞선다
   //   (검증 시나리오도 농도·상수는 가상이다 — 그때 결론은 규약이 선언한 검증 세트의 판정이지, 가상 숫자 자체가 아니다)
   const pv = PROTO.protocolVerdict(db, scenario, { prereg: opt.prereg || [] });
+  // 의존 지문: 실행에 쓴 db 상수의 현재 값 + 그 근거 관찰 + 규약의 검증 세트. 철회·값 변경은 라벨로 (차단 아님)
+  const dependencies = DEP.dependencies(db, { subjects: values.map((v) => v.rule), observations: [...values.flatMap((v) => v.fromObs), ...((pv.declared && pv.validation) || [])] });
+  const revalidation = DEP.recheck(db, dependencies);
   let judgment;
   const J = (key, why, extra) => Object.assign({ key, level: DICT.entry(key).label_ko, why: why || DICT.entry(key).meaning_ko }, extra || {});
   if (pv.declared && opt.prereg == null) judgment = J('registration_unchecked');
@@ -151,6 +155,10 @@ function evidenceReport(db, scenario, opt = {}) {
     judgment = J('validated_registered', null, { protocol: pv });
     judgment.level = `${DICT.entry('validated_registered').label_ko.replace(/\)$/, '')} #${pv.registered.seq})`;
     judgment.why = `등록된 모의 실험 규약 아래 — 일치 결론은 검증 세트 ${vs.join('·') || '(비어 있음)'} 로만${hyp ? '. 농도·상수는 가상 값이므로 결론은 그 관찰의 판정(방향·유무 등)이지 실행의 숫자가 아니다' : ''}`;
+  } else if (pv.declared && pv.registered && pv.problems.length && pv.problems.every((x) => /철회된 관찰/.test(x))) {
+    // 등록은 유효하고 문제가 검증 세트 관찰의 철회뿐 — 위반이 아니라 근거가 사라진 결론: 재검증 필요 (라벨)
+    const gone = revalidation.bad.filter((b) => b.kind === 'observation' && (pv.validation || []).includes(b.id));
+    judgment = J('revalidation_required', `등록된 검증 세트의 근거가 철회됨 — ${gone.map((b) => `${b.id}${b.note ? ` (${b.note})` : ''}`).join(' · ')}. 등록 #${pv.registered.seq} 의 결론은 이 관찰 없이 다시 세워야 한다`, { protocol: pv });
   } else if (pv.declared) judgment = J('protocol_violation', pv.problems.join(' · '), { protocol: pv });
   else judgment = hyp
     ? J('hypothesis_generating', '시나리오가 hypothetical — 농도·부피 등 가상 값을 쓰므로 관찰과의 일치를 주장하지 않는다 (설계 P6)')
@@ -225,7 +233,7 @@ function evidenceReport(db, scenario, opt = {}) {
   return {
     summary, flux,
     target: { id: target, label: L(target), kind: targetKind }, states: states.map((id) => ({ id, label: L(id) })),
-    perturbation, excluded, noneWord: NONE.word,
+    perturbation, excluded, noneWord: NONE.word, dependencies, revalidation,
     scenario: { name: scenario.name || '(이름 없음)', note: scenario._설명 || scenario.note || '', hypothetical: hyp, window: scenario.window || null },
     chain, values, assumptions, failures, judgment, criteria,
     fingerprint: {
@@ -267,7 +275,9 @@ function evidenceReportMarkdown(rep) {
   o.push('> **［핵심 실행 결과 요약］**  ');
   o.push(`> **질문** — ${s0.question}  `);
   o.push(`> **결론** — ${s0.verdict}${s0.detail.length ? ' (' + s0.detail.join(' · ') + ')' : ''}  `);
-  o.push(`> **판정 수준** — ${s0.judgment} · ${s0.coverage}`, '');
+  o.push(`> **판정 수준** — ${s0.judgment} · ${s0.coverage}${rep.revalidation && rep.revalidation.revalidate ? '  ' : ''}`);
+  if (rep.revalidation && rep.revalidation.revalidate) o.push(`> **⚠ 재검증 필요** — 근거 ${rep.revalidation.bad.length}개가 철회·변경됨 (8절)`);
+  o.push('');
 
   o.push('## 1. 무엇을 물었나', '');
   o.push(`- 대상: **${rep.target.label}** (${rep.target.id}${rep.target.kind ? ' · ' + rep.target.kind : ''})`);
@@ -362,6 +372,9 @@ function evidenceReportMarkdown(rep) {
   o.push('## 8. 재현', '');
   o.push(`- db sha256: \`${rep.reproduce.dbSha}…\` · 시나리오 sha256: \`${rep.reproduce.scenarioSha}…\`${rep.reproduce.asOf ? ` · 기준 시각(asOf) ${rep.reproduce.asOf}` : ''}`);
   o.push('- 이 보고서는 읽기 전용 판결(사법부)이다 — db·엔진을 바꾸지 않는다. 시뮬레이션 과정·무결성 증명서는 `fate --report`(운명) 또는 `simulate --rate`(속도)로.');
+  const dp = rep.dependencies;
+  o.push(`- 의존 지문 \`${dp.digest}\` — 값 ${dp.values.length} · 관찰 ${dp.observations.length}. 나중에 \`node dbtool.mjs evidence --recheck <이 파일>\` 이 지금 db 와 대조해 값 내용이 바뀌었거나 근거가 철회됐으면 '재검증 필요' 를 표시한다(메모만 고친 대체는 같음).`);
+  if (rep.revalidation.revalidate) o.push('', DEP.recheckText(rep.revalidation, '생성 시점'));
   o.push('');
 
   // 부록 A — 판정 기준 (본문 흐름을 가리지 않도록 뒤로)
@@ -381,6 +394,7 @@ function evidenceReportMarkdown(rep) {
   o.push('', `**적용 문턱: ${rep.criteria.threshold}**${rep.criteria.threshold === rep.criteria.thresholdDefault ? ' (기본)' : ' (시나리오가 올림)'} — 이 값 미만의 상수를 "데이터" 로 쓰면 위반이다.`, '');
   o.push('왜 이렇게 잡았나:', '');
   for (const b of rep.criteria.basis) o.push(`- ${b}`);
+  o.push('', DEP.depsBlock(rep.dependencies));
   return o.join('\n');
 }
 

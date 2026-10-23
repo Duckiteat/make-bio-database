@@ -448,6 +448,7 @@
     registration_unchecked: { label: '규약 선언됨 (등록 미확인)', note: '사전 등록부를 받지 않아 등록 여부를 확인하지 못함 — 확인 전에는 검증 결론으로 읽지 않는다' },
     hypothesis_generating:  { label: '가설 생성 / 탐색', note: '규약 없는 가상(hypothetical) 실행 — 관찰과의 일치를 주장하지 않는다 (설계 P6)' },
     exploratory:            { label: '탐색 (규약 없음)', note: '사전 등록 규약이 없어 관찰과의 일치 결론을 내지 않는다' },
+    revalidation_required:  { label: '재검증 필요 (근거 철회됨)', note: '등록된 검증 세트의 관찰이 철회됨 — 결론을 다시 세우기 전에는 검증으로 읽지 않는다(차단이 아니라 라벨)' },
   },
   // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)
   kineticUnits: { k_on: 'M^-1 s^-1', k_off: 's^-1', kcat: 's^-1', Kd: 'M', Km: 'M', K: 'M', half_life: 's', n: '1', fmax: '1', fmin: '1', dG_act: 'J/mol', dG0: 'J/mol' },
