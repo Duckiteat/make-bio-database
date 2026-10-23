@@ -552,6 +552,7 @@
     if (arr(ob.also).length) o.observable.also = arr(ob.also).map(str);
     if (str(ob.denominator)) o.observable.denominator = str(ob.denominator);
     if (num(ob.threshold) !== undefined) o.observable.threshold = num(ob.threshold);
+    if (isObj(ob.dose)) o.observable.dose = { target: str(ob.dose.target), values: arr(ob.dose.values).map(num) };
     o.value = num(b.value);
     o.unit = str(b.unit);
     const u = isObj(b.uncertainty) ? b.uncertainty : {};

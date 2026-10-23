@@ -60,9 +60,24 @@ function predict(o, raws) {
     const r = raw.firstReach[ob.target];
     if (ob.kind === 'fraction') return r != null && (t == null || r <= t) ? 1 : 0;
     if (ob.kind === 'event_time') return r != null ? r : Infinity;
-    return NaN; // kinetic_constant 는 실행에서 나오지 않음 — 추정용 관찰
+    return NaN; // kinetic_constant 는 실행에서 나오지 않음 — 추정용 관찰 · dose_slope 는 실행 여럿에서 (doseSlope)
   });
 }
+// 규칙 누적 진행량(실행 끝) — 0차 공급의 진행량 1 = 사건 1회 (예: 분열 1회, §8L)
+function progress(raw, ruleRef) {
+  const info = raw.process && raw.process.ruleInfo, cum = raw.process && raw.process.cum;
+  const i = info ? info.findIndex((r) => r.ref === ruleRef) : -1;
+  if (i < 0 || !cum || !cum.length) return NaN;
+  return cum[cum.length - 1][i];
+}
+// 용량 반응 기울기: [{ dose, raw }] → 진행량의 최소제곱 기울기 (용량 = 시작 분자 수). 실행이 결정론이면 값 하나
+function doseSlope(o, runs) {
+  const xs = runs.map((r) => r.dose), ys = runs.map((r) => progress(r.raw, o.observable.target));
+  if (ys.some((y) => !Number.isFinite(y)) || new Set(xs).size < 2) return NaN;
+  const n = xs.length, mx = xs.reduce((s, x) => s + x, 0) / n, my = ys.reduce((s, y) => s + y, 0) / n;
+  let sxy = 0, sxx = 0; for (let k = 0; k < n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) ** 2; }
+  return sxy / sxx;
+}
 
-return Object.freeze({ calibrate, hash, canon, predict, at });
+return Object.freeze({ calibrate, hash, canon, predict, at, progress, doseSlope });
 });

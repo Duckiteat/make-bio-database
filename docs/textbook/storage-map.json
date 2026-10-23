@@ -255,6 +255,14 @@
       "interpret": "[사법] 결론의 의존 지문과 재검증 (build-plan 13) — 값은 내용(대상·속성·값·단위·맥락) 지문, 관찰은 철회 여부. 지금 db 와 대조해 같음·같음(기록만 대체)·값이 바뀜·근거 철회됨·없음. 재검증은 라벨이지 차단이 아니다. 판정만."
     },
     {
+      "path": "judicial/scene_origin.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool origin, tests/dose_slope",
+      "interpret": "[사법] 첫 장면 기원 — 시나리오 시작 입력·계의 db 숫자마다 measured·abstracted·assumed(종류가 맞는 열린 한계)·unrecorded. 계의 규칙은 컴파일러 조립과 같음. 판정만."
+    },
+    {
       "path": "judicial/verifier.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -951,6 +959,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "철회 → 결론 — 검증 세트 관찰 철회 시 등록 결론 재검증 필요, 파생 그래프가 등록 결론까지, 재검증은 내용 키잉(메모 대체는 같음), 의존 블록 왕복."
+    },
+    {
+      "path": "tests/dose_slope.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "용량 반응 기울기 — set_amount 교란과 사법 재구성, 관찰 검사 거부, 결정론 기울기 ≈ 1/ΔL(L000116 동어반복), 추정용 판정 거부, 첫 장면 기원 분류."
     },
     {
       "path": "tests/governance.test.mjs",

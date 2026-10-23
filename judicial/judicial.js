@@ -249,7 +249,7 @@
     if (c.temperature_K != null && !(c.temperature_K > 0)) E(w, '온도(K)는 0 보다 커야 함');
     if (c.pH != null && !(c.pH >= 0 && c.pH <= 14)) E(w, 'pH 는 0–14');
   }
-  const PERTURB_TARGET = { knockout: 'sense', block: 'rule', inhibit: 'rule', clamp: 'bundle' }; // compiler/perturb.js 와 같은 교란 (dose_series 는 관찰 하나가 아님)
+  const PERTURB_TARGET = { knockout: 'sense', block: 'rule', inhibit: 'rule', clamp: 'bundle', set_amount: 'bundle' }; // compiler/perturb.js 와 같은 교란 (dose_series 는 관찰 하나가 아님)
   // 정성 관찰의 대상 하나 — 읽을 거리 종류가 정한 대상 종류
   function checkObsTarget(db, ix, kind, t, w, E) {
     const tk = (V.observables[kind] || {}).target;
@@ -318,6 +318,17 @@
     }
     if (ob.kind === 'ratio') { if (!ob.denominator) E(w, 'ratio 측정에는 분모 묶음(observable.denominator)이 필요함'); else checkBundle(db, ix, ob.denominator, `${w} 분모`, E); }
     if (ob.kind === 'fraction_above' && !(ob.threshold >= 0)) E(w, 'fraction_above 측정에는 게이팅 문턱(threshold ≥ 0, 분자 수)이 필요함');
+    if (ov && ov.target === 'rule_progress') {
+      const t = parseTarget(ob.target);
+      if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `진행량을 읽을 규칙 '${ob.target}' 없음 — D…/rule/키`);
+      const ds = ob.dose;
+      if (!ds || !ds.target) E(w, 'dose_slope 측정에는 용량 축 observable.dose { target: 묶음, values: [분자 수…] } 이 필요함');
+      else {
+        checkBundle(db, ix, ds.target, `${w} 용량 축`, E);
+        const vs = ds.values || [];
+        if (new Set(vs).size < 2 || !vs.every((x) => Number.isFinite(x) && x >= 0)) E(w, 'dose.values 는 서로 다른 0 이상의 분자 수 두 개 이상 (기울기를 정할 수 있게)');
+      }
+    }
     if (!Number.isFinite(o.value)) E(w, '값(value)이 수가 아님');
     const want = ov && obsUnit(db, o);
     if (ov && want && o.unit !== want) E(w, `단위 '${o.unit}' — 이 측정량의 SI 정준 단위는 '${want}' (값은 SI 로 환산해 저장)`);

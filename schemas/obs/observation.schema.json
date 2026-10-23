@@ -39,7 +39,8 @@
                 "volume",
                 "kinetic_constant",
                 "ratio",
-                "fraction_above"
+                "fraction_above",
+                "dose_slope"
               ]
             },
             "target": {
@@ -60,6 +61,15 @@
             "threshold": {
               "type": "number",
               "minimum": 0
+            },
+            "dose": {
+              "type": "object",
+              "required": ["target", "values"],
+              "additionalProperties": false,
+              "properties": {
+                "target": { "type": "string", "minLength": 1 },
+                "values": { "type": "array", "minItems": 2, "items": { "type": "number", "minimum": 0 } }
+              }
             }
           }
         },

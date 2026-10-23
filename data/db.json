@@ -6,7 +6,7 @@
       "T": 211,
       "D": 213,
       "S": 58,
-      "L": 116,
+      "L": 117,
       "O": 28,
       "V": 69
     }
@@ -20055,6 +20055,36 @@
       },
       "found_in": "사용자 질문(2026-10-16): '텔로미어가 줄 때 똑같은 개수인가 확률적으로 다른 개수인가' — 현재 모델은 결정론 고정 ΔL. Baird 2003·Hemann 2001 로 분포임을 확인, 확률 앙상블 scout(sd 7.67일) 로 틀 가용 확인.",
       "by": "Claude"
+    },
+    "L000116": {
+      "target": "D000205/rule/division_attrition",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "분열당 소실 화학량 ΔL = 16 단위(96 bp)는 db 규칙에 있으나 숫자의 출처가 기록되지 않았다(근거 abstracted — 바탕 Harley 1990 은 정성 관찰). 같은 날 등록된 L000087 이 Allsopp 1992 의 1 kbp 당 10 배가를 언급하고, 96 bp 는 1/0.096 kbp ≈ 10.4 PD/kbp 로 그 기울기와 맞는다. 또 결정론 모델에서 정지까지 분열 수의 초기 길이 기울기는 구조상 정확히 1/ΔL 이다. 그래서 Allsopp 1992 그림 2C 기울기(10 ± 2 PD/kbp)로 검증하면 ΔL 을 정한 자료로 같은 ΔL 을 다시 재는 순환·동어반복이 될 수 있다 — 검증이 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "둘 중 하나: (1) ΔL 을 기울기와 독립인 1차 측정(Harley 1990 계대별 TRF 의 bp/PD — 전문 필요)으로 정하고 Allsopp 1992 기울기는 검증에 남긴다, 또는 (2) Allsopp 1992 를 ΔL 추정용(use estimation)으로 쓰고 검증은 독립 자료(Allsopp & Harley 1995 클론 7.2 PD/kbp — 기울기 불확도 전문 필요, 또는 확률 소모·염색체별 최단 텔로미어처럼 기울기가 1/ΔL 이 아닌 계)로 한다."
+          }
+        ]
+      },
+      "found_in": "첫 장면 기원 감사 (dbtool origin, 2026-10-23) — TASK-004 정량 후보 대조",
+      "by": "Claude",
+      "at": "2026-10-23T03:33:29.495Z",
+      "symptom": {
+        "slope_model_pd_per_kbp": 10.42,
+        "slope_allsopp1992_pd_per_kbp": 10,
+        "slope_allsopp1992_se_pd_per_kbp": 2,
+        "delta_l_bp": 96
+      },
+      "downstream_blocked": [
+        "D000210"
+      ],
+      "resolution_trigger": "observation_added",
+      "prohibited_bypasses": [
+        "Allsopp 1992 기울기로 ΔL 을 맞추고 같은 기울기로 검증하기",
+        "ΔL 의 출처를 사후에 Allsopp 1992 로 적어 넣어 순환을 숨기기"
+      ]
     }
   },
   "observations": {

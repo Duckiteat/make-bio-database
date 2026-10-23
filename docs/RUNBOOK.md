@@ -106,6 +106,7 @@ node dbtool.mjs evidence <시나리오.json> [--target <경로|상태>] [--repor
 node dbtool.mjs dictionary                         # 사전 봉인 판정 (사슬·revises·렌더 모호·vocab 덮임) — validate 에도 포함
 node dbtool.mjs dictionary add <항목.json|.jsonl>  # 새 영어 항목: 사법부 검사 → 봉인 → 서기가 사슬에 추가 (고치기는 revises: 현재 root)
 node dbtool.mjs evidence --recheck <보고서.md...>   # 보고서의 의존 지문을 지금 db 와 대조 — 값 내용 변경·근거 철회면 '재검증 필요' (종료 1)
+node dbtool.mjs origin <시나리오.json> | --all   # 첫 장면 기원: 시작 입력·계의 db 숫자마다 실측·숫자출처없음·가상(한계 등록)·가상(기원 없음)
 node dbtool.mjs evidence --all [--report 파일.md]   # 시나리오 전부의 판정 수준 색인 표 (새 시나리오는 subjects.json 에 대상을 같은 커밋에 등록)
 node dbtool.mjs log                            # 델타 기록: 사슬 무결성 + 기원부터 재생 = 지금 db (기원은 log --genesis 로 한 번)
 node dbtool.mjs verify-collection <핸드오프.jsonl> [--check-sources]   # 수집 작업 검증: 구조·구별·출처 형식·재사용 db 존재 → PASS/INCOMPLETE/BLOCKED/REJECTED/REVIEW_REQUIRED (읽기만). 값 후보는 자동 PASS 안 됨. --check-sources 는 출처(PMID)를 로컬 수신함(data/fetched/)과 대조(네트워크 금지 governance) — 없으면 통합가가 augment fetch 로 1차 출처 확인
@@ -253,7 +254,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 288/288 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 293/293 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)

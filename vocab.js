@@ -335,6 +335,9 @@
     kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param', conservation: { class: 'non_conserved', reason: 'measured_parameter' } },
     ratio:            { label: '비 (두 형태·대상의 몫 — 정규화 밴드 강도·활성 분율·fold-change, 무차원)', target: 'bundle', unit: '1', conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
     fraction_above:   { label: '문턱 넘은 비율 (%양성 — 게이팅 문턱 이상 실행의 비, 0–1)', target: 'bundle', unit: '1', conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
+    // 용량 반응 기울기: dose.target 묶음의 시작량을 dose.values 로 바꿔 돌릴 때, 대상 규칙의 누적 진행량(실행 끝)의 최소제곱 기울기 — 분자 수당 진행량(무차원).
+    //   예: 초기 텔로미어 반복 단위 수당 정지까지 분열 수. 문헌 단위(PD/kbp 등)는 반복 단위 크기로 환산해 넣는다(환산은 관찰 note 에)
+    dose_slope:       { label: '용량 반응 기울기 (시작량을 바꿀 때 규칙 누적 진행량의 기울기, 무차원)', target: 'rule_progress', unit: '1', conservation: { class: 'non_conserved', reason: 'sensitivity' } },
   },
   // 보존 분류 (오차 3채널 doctrine 의 기저 — build-plan 20–25, 설계 conservation-classes.md). class 는 표현 독립:
   // 보존 법칙의 유무로 정의한다(정수 원장이 정확-0 이든 Rodas3 가 상대 1e-14 로 근사하든 같은 class).

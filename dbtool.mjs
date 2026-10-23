@@ -373,6 +373,28 @@ switch (cmd) {
     if (min) process.exit(pick.every((r) => REL.meets(r, min)) ? 0 : 1);
     break;
   }
+  case 'origin': { // 첫 장면 기원 감사: 시나리오 시작 입력·계의 db 숫자마다 출처 분류 (measured·abstracted·assumed·unrecorded) — 읽기만
+    const SO = req('./judicial/scene_origin.js'), db = loadDB();
+    const files = flags.all ? Object.keys(readJSON(SUBJECTS).subjects).sort().map((f) => join(SCENARIO_DIR, f)) : args;
+    if (!files.length) die('사용법: origin <시나리오.json> [--target <상태|경로>] · origin --all');
+    const tot = {}, rows = [];
+    for (const f of files) {
+      const target = flags.target && flags.target !== true ? flags.target : subjectOf(f);
+      if (!target) die(`대상 없음 — --target 을 주거나 ${rel(SUBJECTS)} 에 등록`);
+      const tg = DefDB.resolveRef(DefDB.index(db), target); if (tg.error) die(tg.error);
+      const r = resolveScenario(f, (db.senses[tg.id] || {}).kind === 'cell_state' ? tg.id : null, db); if (r.error) die(r.error);
+      const v = SO.sceneOrigin(db, r.scenario, { target: tg.id }); if (v.error) die(v.error);
+      for (const [k, n] of Object.entries(v.count)) tot[k] = (tot[k] || 0) + n;
+      rows.push([basename(f), v]);
+      if (!flags.all) console.log(SO.sceneOriginText(v, basename(f)));
+    }
+    if (flags.all) {
+      console.log('| 시나리오 | 실측 | 숫자 출처 없음(db) | 가상·한계 등록 | 가상·기원 없음 |\n|---|---|---|---|---|');
+      for (const [f, v] of rows) console.log(`| ${f} | ${v.count.measured || 0} | ${v.count.abstracted || 0} | ${v.count.assumed || 0} | ${v.count.unrecorded || 0} |`);
+      console.log(`| **합계** | ${tot.measured || 0} | ${tot.abstracted || 0} | ${tot.assumed || 0} | ${tot.unrecorded || 0} |`);
+    }
+    break;
+  }
   case 'dictionary': { // 사전 봉인 (16A): 인자 없으면 사슬·덮임 판정, add <항목.json|jsonl> 은 사법부 검사 → 봉인 → 서기가 사슬에 추가
     const DA = req('./judicial/dictionary_audit.js'), dataDir = dirname(DB_PATH), events = CLERK.readDictionary(dataDir);
     if (args[0] !== 'add') { const a = DA.audit(events); console.log(DA.auditText(a)); process.exit(a.ok ? 0 : 1); }
@@ -655,7 +677,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | dictionary | qualgraph | retraction | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | dictionary | origin | qualgraph | retraction | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

@@ -4,7 +4,7 @@
 // 컴파일러 코드를 쓰지 않고 기준 시나리오·기준 IR 에서 **독립적으로 다시 세워** 대조한다.
 //   ① 선언 재구성 — 교란 선언(knockout·block·inhibit·clamp)이 기준에서 만들어야 할 변경을 사법부가 직접 계산:
 //      knockout = 기준 IR 에서 그 분자의 묶음 전부(시작량 0) · 그 분자를 만드는 규칙 전부(제외) · 그 분자의 신호(0)
-//      block = 그 규칙 하나 · inhibit = 이전 배율 / (1 + dose/Ki) · clamp = 그 묶음 완충(농도, 비지 않는 총량)
+//      block = 그 규칙 하나 · inhibit = 이전 배율 / (1 + dose/Ki) · clamp = 그 묶음 완충(농도, 비지 않는 총량) · set_amount = 그 묶음 시작량 n
 //   ② 시나리오 차이 — 교란 시나리오 = 기준 시나리오 + ① 의 변경, 그 밖의 필드는 모두 같음
 //   ③ IR 차이 — 묶음·상태·표지·신호·결합점 같음, 규칙 = 기준 규칙 − 제외 규칙(남은 규칙은 배율 말고 같음), 완충은 고정한 묶음만 다름,
 //      기록의 기준 IR 해시 = 기준 IR 해시, 기록 해시·IR 해시가 내용과 맞음
@@ -37,6 +37,9 @@ function expectedChange(baseSc, baseIR, p) {
   } else if (p.type === 'clamp') {
     if (!baseIR.keys.includes(p.target) || !(p.conc_M >= 0)) return { error: 'clamp 선언이 기준 IR·값 조건에 맞지 않음' };
     ch.buffered[p.target] = { conc_M: p.conc_M };
+  } else if (p.type === 'set_amount') {
+    if (!baseIR.keys.includes(p.target) || !(Number.isFinite(p.n) && p.n >= 0)) return { error: 'set_amount 선언이 기준 IR·값 조건에 맞지 않음' };
+    ch.amounts[p.target] = p.n;
   } else return { error: `판정할 수 없는 교란 '${p.type}'` };
   return { change: ch };
 }

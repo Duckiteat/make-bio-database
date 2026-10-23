@@ -368,7 +368,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 - **최상위 `observations`**: `{ O000001: {...} }`. 번호는 `meta.next.O` 로만 배정하고, 패치에서는 임시 번호 `O+1` 을 쓴다.
 - **필드**
-  - `observable { kind, target, param?, denominator?, also? }`: 측정량(`vocab.observables`). 대상은 종류에 따라 다름 — amount·concentration 은 묶음 키, fraction·event_time 은 cell_state 정의항, kinetic_constant 는 `D…/rule/키` 와 `param`, `ratio` 는 두 묶음의 몫(target/denominator, 무차원 unit 1 — 정규화 밴드·활성 분율·fold-change), `fraction_above` 는 게이팅 문턱(threshold, 분자 수) 이상인 실행의 비(%양성, 앙상블 평균이 0–1). `also`(묶음 키 목록)는 측정이 못 가르는 형태를 합산한다(amount·concentration·ratio 분자·fraction_above).
+  - `observable { kind, target, param?, denominator?, also? }`: 측정량(`vocab.observables`). 대상은 종류에 따라 다름 — amount·concentration 은 묶음 키, fraction·event_time 은 cell_state 정의항, kinetic_constant 는 `D…/rule/키` 와 `param`, `ratio` 는 두 묶음의 몫(target/denominator, 무차원 unit 1 — 정규화 밴드·활성 분율·fold-change), `fraction_above` 는 게이팅 문턱(threshold, 분자 수) 이상인 실행의 비(%양성, 앙상블 평균이 0–1), `dose_slope` 는 규칙(target `D…/rule/키`)의 누적 진행량을 용량 축 `dose { target: 묶음, values: [서로 다른 분자 수 ≥ 2] }` 의 시작량에 대해 최소제곱한 기울기(무차원 unit 1). `also`(묶음 키 목록)는 측정이 못 가르는 형태를 합산한다(amount·concentration·ratio 분자·fraction_above).
   - `value`·`unit`: SI 정준 단위만. 단위는 molecule · M · 1 · s, 속도 상수는 `vocab.kineticUnits` 를 따르고 k·k0·k_r 은 `M^(1−order) s^-1`.
   - `uncertainty { kind: measurement | biological | combined, model: normal | lognormal | poisson, sd ≥ 0 }`: 필수. 값만 있는 관찰은 받지 않는다. poisson 은 amount 에만, lognormal 은 값 > 0 에만.
   - `replicates`(1 이상의 정수), `precision`·`detection_limit`·`saturation`(선택, 0 이상). 검출 한계 아래 값은 상한 검정, 포화 상한 위 값은 하한 검정 — 장치의 눈먼 곳을 판정에 담는다(`judicial/obs_compare.js`). 정성 관찰 `readout.instrument_resolution`(선택, 0 이상)은 측정이 가르는 최소 차이로, 모의 분해능 바닥(수치 오차 + 양자)을 그 값까지 올린다.
@@ -591,6 +591,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-23 | 12 (측정 유형) | 측정량 `dose_slope`(대상 규칙 진행량, `observable.dose { target, values }`, 단위 1, 보존 분류 non_conserved/sensitivity) · 교란 `set_amount { target: 묶음, n }`(+ dose_series of set_amount) · `schemas/obs` 갱신. 추가 필드만 — 기존 db 불변 |
 | 2026-10-23 | 12 (가 스키마) | 한계 구조 필드 `symptom`·`downstream_blocked`·`resolution_trigger`·`prohibited_bypasses`(선택, 추가 필드만 — 없으면 직렬화 불변, 버전 번호 그대로) · 어휘 `resolutionTriggers` · 사법부 검사 5 자리 + 재검토 후보 `reviewCandidates`. 데이터: L000113 에 원문의 증상 수치·막힌 하류(D000103·104·105)를 칸으로 |
 | 2026-10-23 | (사전) | `data/dictionary.jsonl` 형식: 한 줄 한 레코드 → **추가만 하는 사슬**(한 줄 한 사건 `seq·at·…항목·revises?·prev·root`, root = sha256(prev + '\n' + 정준 JSON), 첫 prev = sha256('dictionary\n')). 쓰기는 입법 서기(구역 registry)만 — 사법부 `judicial/dictionary_audit.js` 봉인 뒤. 고치기는 `revises` 단 새 사건. db.json 형식·버전 불변. 변환 `migrations/011-dictionary-chain.mjs`(무손실, 109 사건) |
 | 2026-10-15 | 12 (2차) | §8N 정성 관찰(`kind: qualitative`)·관찰 `experiment`·`evidence_at`·`recorded_at`·`provenance.source` · 맥락 열쇠(`contextKeys`·`contextKey`, 조건 = 정의항 번호 목록) · 번호 이동 `moved`. 버전 번호는 그대로(추가 필드만, 기존 db 직렬화 불변). 데이터: 자유 문장 조건 6 건 → `scope` (값 대체 기록, IR 해시 238 조합 같음) |
