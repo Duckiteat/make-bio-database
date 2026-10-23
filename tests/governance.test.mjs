@@ -474,3 +474,28 @@ test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란)
   assert.match(ER.evidenceReport(BASE, edited, { target: 'D000202', prereg }).judgment.level, /규약 위반/, '등록 뒤 고치면 검증 아님');
   assert.match(rep.judgment.level, /가설 생성/, '규약 없는 가상 → 가설 생성');
 });
+
+// 시나리오 → 대상 색인은 시나리오 폴더와 정확히 같아야 한다 (빠진 것·남는 것·없는 대상 거부) — 모든 시나리오가 비지 않은 보고서를 낸다
+test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못된 대상 없음, 42개 모두 보고서', () => {
+  const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js');
+  const dir = join(ROOT, 'examples/scenarios'), idx = JSON.parse(readFileSync(join(dir, 'subjects.json'), 'utf8')).subjects;
+  const files = readdirSync(dir).filter((f) => f.endsWith('.json') && f !== 'subjects.json').sort();
+  assert.deepEqual(Object.keys(idx).sort(), files, '색인과 시나리오 폴더가 다름 — 빠지거나 남는 항목');
+  const prereg = readFileSync(join(ROOT, 'data/preregistrations.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const levels = {};
+  for (const f of files) {
+    const sid = idx[f], kind = (BASE.senses[sid] || {}).kind;
+    assert.ok(['cell_state', 'pathway'].includes(kind), `${f}: 대상 ${sid} 는 세포 상태·경로가 아님`);
+    let sc = JSON.parse(readFileSync(join(dir, f), 'utf8')), derived = null;
+    if (PT.isDerived(sc)) { derived = PT.derive(BASE, sid, sc, JSON.parse(readFileSync(join(dir, sc.base), 'utf8'))); assert.ok(!derived.error, `${f}: ${derived.error}`); sc = derived.scenario; }
+    const rep = ER.evidenceReport(BASE, sc, { target: sid, derived, prereg });
+    assert.ok(!rep.error, `${f}: ${rep.error}`);
+    assert.ok(rep.chain.length > 0, `${f}: 사슬이 비었다`);
+    levels[f] = rep.judgment.level;
+  }
+  // 등록된 검증 시나리오 = 판정 수준 '검증' (그 밖은 검증이 아니다)
+  const regd = files.filter((f) => /^검증/.test(levels[f]));
+  assert.deepEqual(regd, ['mhc-i-b2m-validation-hypothetical.json', 'mhc-i-tapasin-validation-hypothetical.json', 'mhc-ii-hladm-validation-hypothetical.json', 'telomere-telomerase-validation-hypothetical.json']);
+  // 경로 사슬은 하위 경로 단계까지 (LPS 경로 D000102 는 단계를 하위 경로 D000103–105 에 둔다)
+  assert.ok(ER.evidenceReport(BASE, JSON.parse(readFileSync(join(dir, 'lps-hypothetical.json'), 'utf8')), { target: 'D000102', prereg }).chain.length >= 19);
+});

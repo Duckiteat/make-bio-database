@@ -65,7 +65,7 @@ function evidenceReport(db, scenario, opt = {}) {
   // 실행에 쓰이는 상수: 시나리오 덮어쓰기가 db 보다 앞선다 (엔진·컴파일러의 kinOf 와 같은 우선순위)
   const kinUse = (ref) => (scenario.kinetics || {})[ref] ? { k: scenario.kinetics[ref], src: 'scenario' } : { k: (ruleOf(ref) || {}).kinetics || null, src: 'data' };
 
-  // 사슬 고리 원재료 — 경로: part_of 가 대상인 단계(번호순) · 세포 상태: 컴파일러가 조립한 계(공급·분해·기전 단계·조절), 엔진이 먹는 것과 같은 집합
+  // 사슬 고리 원재료 — 경로: part_of 위계 아래 단계(반응 순서) · 세포 상태: 컴파일러가 조립한 계(공급·분해·기전 단계·조절), 엔진이 먹는 것과 같은 집합
   let links = [], states = [], excluded = [];
   if (targetKind === 'cell_state') {
     const A = IRB.assemble(db, target, scenario);
@@ -83,7 +83,7 @@ function evidenceReport(db, scenario, opt = {}) {
       }
     }
   } else {
-    for (const sid of Object.keys(db.steps).filter((s) => (db.steps[s].part_of || []).includes(target)).sort()) {
+    for (const sid of ix.stepsIn(target)) { // part_of 위계 아래 모든 하위 경로의 단계, 반응 순서(위상 정렬) — 속도 실행과 같은 집합
       const ref = db.steps[sid].rule, eff = (ruleOf(ref) || {}).effect || {};
       links.push({ sid, kind: 'step', ref, inputs: (eff.consumes || []).map(L), outputs: (eff.produces || []).map(L) });
     }
@@ -383,9 +383,27 @@ function evidenceReportMarkdown(rep) {
   return o.join('\n');
 }
 
+// 판정 수준 색인 — 시나리오 전부를 한 표로 (build-plan 12 "기존 시나리오 전부에 판정 수준"). rows = [{ file, subject, rep }], rep 는 evidenceReport 결과 그대로
+function evidenceIndexMarkdown(rows) {
+  const ok = rows.filter((r) => !r.rep.error), bad = rows.filter((r) => r.rep.error);
+  const level = (r) => r.rep.judgment.level.replace(/ \(사전 등록 #\d+\)/, '');
+  const count = {}; for (const r of ok) count[level(r)] = (count[level(r)] || 0) + 1;
+  const o = ['# 증거 보고서 색인 — 시나리오별 판정 수준', ''];
+  o.push(`시나리오 ${rows.length}개 · 보고서 ${ok.length} · 실패 ${bad.length}. 판정 수준: ${Object.entries(count).map(([k, n]) => `${k} ${n}`).join(' · ')}.`, '');
+  o.push('> 판정 수준은 등록 확인(사전 등록부의 입력 해시)에서 나온다 — 규약 선언만으로는 검증이 아니다. 고리 수는 실행이 쓰는 규칙(경로 단계 또는 세포 상태 계의 공급·분해·기전 단계·조절)이고, 실측 고리만 "데이터에 매여 있다". 대상은 `examples/scenarios/subjects.json`.', '');
+  o.push('| 시나리오 | 대상 | 판정 수준 | 고리 (실측 · 가정/추상 · 상수 없음) | 열린 한계 | 교란 |', '|---|---|---|---|---|---|');
+  for (const r of ok) {
+    const c = r.rep.chain, m = c.filter((x) => x.measured).length, n = c.filter((x) => x.closure === 'none').length;
+    const p = r.rep.perturbation ? `${r.rep.perturbation.perturbation.type} ${r.rep.perturbation.perturbation.target || ''}`.trim() : '—';
+    o.push(`| \`${r.file}\` | ${r.rep.target.label} (${r.subject}) | ${r.rep.judgment.level} | ${c.length} (${m} · ${c.length - m - n} · ${n} ${r.rep.noneWord}) | ${r.rep.failures.length} | ${p} |`);
+  }
+  if (bad.length) { o.push('', '## 보고서를 내지 못한 시나리오 (숨기지 않음)', ''); for (const r of bad) o.push(`- \`${r.file}\` (${r.subject || '대상 없음'}): ${r.rep.error}`); }
+  return o.join('\n');
+}
+
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.DefDBEvidenceReport = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
-  return { evidenceReport, evidenceReportMarkdown, closureOfRule };
+  return { evidenceReport, evidenceReportMarkdown, evidenceIndexMarkdown, closureOfRule };
 });

@@ -70,17 +70,25 @@ const readJSON = (p) => DefDB.parseLoose(readFileSync(p, 'utf8'));
 // 형식 v12: 값이 바뀌는 병합의 기록 시각 — 병합 전에 패치에 찍어 관문이 봉인한다(패치 기록에 남아 재생해도 같다). 이미 있으면 그대로
 const stamped = (patch) => (patch && typeof patch === 'object' && !patch.recorded_at ? { ...patch, recorded_at: new Date().toISOString() } : patch);
 // 시나리오 읽기: 파생 시나리오(기준 + 교란 한 줄, build-plan 9)는 같은 폴더의 기준을 읽어 교란을 건 실제 입력으로 푼다 (컴파일러 derive)
-const loadScenario = (path, sid, db) => {
+const resolveScenario = (path, sid, db) => {
   const sc = readJSON(path), PT = req('./compiler/perturb.js');
   if (!PT.isDerived(sc)) return { scenario: sc, text: readFileSync(path, 'utf8') };
-  if (!sid) die(`파생 시나리오 ${path} 는 세포 상태가 있는 실행(fate · observe · compare)에서만 — 교란이 그 계의 규칙·묶음을 보고 풀린다`);
+  if (!sid) return { error: `파생 시나리오 ${path} 는 세포 상태가 있는 실행(fate · observe · compare)에서만 — 교란이 그 계의 규칙·묶음을 보고 풀린다` };
   const bp = join(dirname(path), String(sc.base));
-  if (!existsSync(bp)) die(`파생 시나리오 ${path}: 기준 '${sc.base}' 이 없음`);
+  if (!existsSync(bp)) return { error: `파생 시나리오 ${path}: 기준 '${sc.base}' 이 없음` };
   const v = PT.derive(db, sid, sc, readJSON(bp));
-  if (v.error) die(`파생 시나리오 ${path}: ${v.error}`);
-  console.log(`※ 파생 시나리오: 기준 ${sc.base} + 교란 ${JSON.stringify(sc.perturbation)} (교란 기록 ${v.record.hash.slice(0, 12)}…)`);
+  if (v.error) return { error: `파생 시나리오 ${path}: ${v.error}` };
   return { scenario: v.scenario, text: JSON.stringify(v.scenario, null, 2) + '\n', derived: v };
 };
+const loadScenario = (path, sid, db) => {
+  const r = resolveScenario(path, sid, db);
+  if (r.error) die(r.error);
+  if (r.derived) console.log(`※ 파생 시나리오: 기준 ${r.derived.base} + 교란 ${JSON.stringify(r.derived.record.perturbation)} (교란 기록 ${r.derived.record.hash.slice(0, 12)}…)`);
+  return r;
+};
+// 시나리오 → 실행 대상(시작 세포 상태·경로) 색인 — 시나리오 파일은 대상을 담지 않는다(사전 등록 해시 보존)
+const SCENARIO_DIR = join(HERE, 'examples', 'scenarios'), SUBJECTS = join(SCENARIO_DIR, 'subjects.json');
+const subjectOf = (path) => { const m = existsSync(SUBJECTS) ? readJSON(SUBJECTS).subjects : {}; return m[basename(path)] || null; };
 const loadDB = () => (existsSync(DB_PATH) ? DefDB.normalize(readJSON(DB_PATH)) : DefDB.emptyDB());
 const rel = (p) => relative(process.cwd(), p) || p;
 const printIssues = (errors, warnings) => {
@@ -381,22 +389,41 @@ switch (cmd) {
     else console.log(J.retractionText(db, opt));
     break;
   }
-  case 'evidence': { // 증거·방법 보고서 (build-plan 12): 시나리오 + 대상 경로 → 인과·값표·닫는 방법·판정 수준·실패·사고패턴·삼각 결론 (읽기만)
-    if (!args[0] || !flags.target) die('사용법: evidence <시나리오.json> --target <경로|상태 번호·이름> [--report 파일.md]');
-    const ER = req('./judicial/evidence_report.js'), db = loadDB();
-    const ix = DefDB.index(DefDB.normalize(db)), tg = DefDB.resolveRef(ix, flags.target === true ? '' : flags.target);
-    if (tg.error) die(tg.error);
-    // 파생 시나리오는 세포 상태 계에서 풀린다 (교란이 그 계의 규칙·묶음을 본다)
-    const { scenario, text: scenarioText, derived } = loadScenario(args[0], (db.senses[tg.id] || {}).kind === 'cell_state' ? tg.id : null, db);
-    // 흐름 비교용 원자료는 조정자가 돌린다 (사법부 evidence_report 는 읽기만) — 경로 대상일 때만
-    let sim = null;
-    if ((db.senses[tg.id] || {}).kind === 'pathway') {
-      try { const raw = ORCH.runRate(db, tg.id, { scenario, t_end: scenario.window || 1, dt: scenario.dt || 0.001 }); sim = { cum: raw.cum, window: scenario.window || 1 }; }
-      catch (e) { console.error('⚠ 흐름 비교용 속도 실행 실패(보고서는 흐름 표 없이 계속): ' + e.message); }
+  case 'evidence': { // 증거·방법 보고서 (build-plan 12): 시나리오 + 대상 → 인과·값표·닫는 방법·판정 수준·실패·사고패턴·삼각 결론 (읽기만)
+    // 대상: --target 이 없으면 examples/scenarios/subjects.json 색인 · --all 은 색인의 모든 시나리오 → 판정 수준 색인 표
+    const ER = req('./judicial/evidence_report.js'), db = loadDB(), ix = DefDB.index(DefDB.normalize(db));
+    const prereg = CLERK.readPrereg(dirname(DB_PATH)), dbText = readFileSync(DB_PATH, 'utf8');
+    const one = (path, targetRef) => {
+      const tg = DefDB.resolveRef(ix, targetRef || '');
+      if (tg.error) return { error: tg.error };
+      const kind = (db.senses[tg.id] || {}).kind;
+      const r = resolveScenario(path, kind === 'cell_state' ? tg.id : null, db);
+      if (r.error) return { error: r.error };
+      // 흐름 비교용 원자료는 조정자가 돌린다 (사법부 evidence_report 는 읽기만) — 경로 대상일 때만
+      let sim = null, simError = null;
+      if (kind === 'pathway') {
+        try { const raw = ORCH.runRate(db, tg.id, { scenario: r.scenario, t_end: r.scenario.window || 1, dt: r.scenario.dt || 0.001 }); sim = { cum: raw.cum, window: r.scenario.window || 1 }; }
+        catch (e) { simError = e.message; }
+      }
+      const rep = ER.evidenceReport(db, r.scenario, { target: tg.id, scenarioText: r.text, dbText, sim, derived: r.derived, prereg });
+      return { rep, simError };
+    };
+    if (flags.all) {
+      const files = Object.keys(readJSON(SUBJECTS).subjects).sort();
+      const rows = files.map((f) => { const x = one(join(SCENARIO_DIR, f), subjectOf(f)); return { file: f, subject: subjectOf(f), rep: x.rep || { error: x.error } }; });
+      const md = ER.evidenceIndexMarkdown(rows);
+      console.log(md);
+      if (flags.report && flags.report !== true) { CLERK.writeReport(flags.report, md); console.log('\n보고서 (입법 서기): ' + flags.report); }
+      break;
     }
-    const rep = ER.evidenceReport(db, scenario, { target: tg.id, scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), sim, derived, prereg: CLERK.readPrereg(dirname(DB_PATH)) });
-    const md = ER.evidenceReportMarkdown(rep);
-    if (flags.json) console.log(JSON.stringify(rep, null, 2));
+    if (!args[0]) die('사용법: evidence <시나리오.json> [--target <경로|상태 번호·이름>] [--report 파일.md] · evidence --all [--report 파일.md]');
+    const target = flags.target && flags.target !== true ? flags.target : subjectOf(args[0]);
+    if (!target) die(`대상 없음 — --target 을 주거나 ${rel(SUBJECTS)} 에 '${basename(args[0])}' 를 등록한다`);
+    const x = one(args[0], target);
+    if (x.error) die(x.error);
+    if (x.simError) console.error('⚠ 흐름 비교용 속도 실행 실패(보고서는 흐름 표 없이 계속): ' + x.simError);
+    const md = ER.evidenceReportMarkdown(x.rep);
+    if (flags.json) console.log(JSON.stringify(x.rep, null, 2));
     else console.log(md);
     if (flags.report && flags.report !== true) { CLERK.writeReport(flags.report, md); console.log('\n보고서 (입법 서기): ' + flags.report); }
     break;

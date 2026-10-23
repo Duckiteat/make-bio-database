@@ -1113,6 +1113,14 @@
       "interpret": "병합되지 않은 예시 패치. pgm-isomerization.json 은 이름·별칭 매핑을 보여 준다."
     },
     {
+      "path": "examples/scenarios/subjects.json",
+      "class": "scenario",
+      "format": "JSON { subjects: { 시나리오 파일명: 대상 D… } }",
+      "writer": "사람·AI (시나리오를 더할 때 같은 커밋)",
+      "readers": "evidence (--target 생략·--all), tests/governance ⑭″",
+      "interpret": "시나리오 → 실행 대상(시작 세포 상태 또는 경로). 시나리오 파일이 아니다 — 대상을 시나리오 안에 두면 사전 등록 해시가 바뀌므로 여기에만. 폴더와 정확히 같아야 한다(빠짐·남음은 시험이 거부)."
+    },
+    {
       "path": "examples/scenarios/*.json",
       "class": "scenario",
       "format": "시나리오 JSON (volumes·amounts·reservoirs·kinetics, 선택: reservoir_mode·stochastic·seed·until_death·window·death_frac)",
