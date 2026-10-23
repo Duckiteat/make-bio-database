@@ -351,6 +351,22 @@
     emergent_time:       { label: '창발 시각 (event_time — 참조 없음)', note: '첫 도달 시각 같은 창발량. 참조 정답이 없어 예산으로만.' },
     measured_parameter:  { label: '측정 파라미터 (kcat·Km·Kd·반감기·부피 세팅)', note: '경험적으로 측정·설정된 입력. 불확도를 달고 들어오며 보존 법칙이 없다.' },
   },
+  // 닫는 방법 (설계 §13.2 B) — 실행에 쓰인 상수를 우리가 어떻게 아는가. 증거 보고서가 고리마다 붙인다 (judicial/evidence_report.js)
+  closureMethods: {
+    measure:     { label: '문헌 실측값', note: '이 종·이 반응에서 실제로 잰 값 — 결론의 단단한 바닥' },
+    computed:    { label: '측정에서 도구로 계산', note: '측정에서 도구로 계산 — 측정만큼 믿되 도구 가정을 짊어짐' },
+    abstraction: { label: '묶음·추상 (기전 경계)', note: '기전을 묶어 한 상수로 — 세부는 접혔고, 그 경계는 Structural_Gap 으로 등록' },
+    assumed:     { label: '가정 (실측 아님)', note: '실측이 아닌 추정 — 결론은 여기에 조건부, 재면 바뀔 수 있음' },
+    none:        { label: '속도 상수 없음', note: '속도 상수가 없다 — 경로 속도 실행에선 사건 기반(즉시), 운명 엔진에선 그 규칙이 꺼짐(Kinetic_Gap). 시간·병목·그 고리의 효과를 말할 수 없음' },
+  },
+  // 판정 수준 — 실행의 결론을 어디까지 말할 수 있나. 규약 선언이 아니라 사전 등록 확인에서 정한다 (judicial/protocol.protocolVerdict)
+  judgmentLevels: {
+    validated_registered:   { label: '검증 (사전 등록)', note: '등록된 모의 실험 규약 아래 — 일치 결론은 규약의 검증 세트로만' },
+    protocol_violation:     { label: '탐색 (규약 위반 — 검증 결론 불가)', note: '규약을 선언했으나 등록되지 않았거나 등록 뒤 고침 — 검증 결론을 내지 않는다' },
+    registration_unchecked: { label: '규약 선언됨 (등록 미확인)', note: '사전 등록부를 받지 않아 등록 여부를 확인하지 못함 — 확인 전에는 검증 결론으로 읽지 않는다' },
+    hypothesis_generating:  { label: '가설 생성 / 탐색', note: '규약 없는 가상(hypothetical) 실행 — 관찰과의 일치를 주장하지 않는다 (설계 P6)' },
+    exploratory:            { label: '탐색 (규약 없음)', note: '사전 등록 규약이 없어 관찰과의 일치 결론을 내지 않는다' },
+  },
   // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)
   kineticUnits: { k_on: 'M^-1 s^-1', k_off: 's^-1', kcat: 's^-1', Kd: 'M', Km: 'M', K: 'M', half_life: 's', n: '1', fmax: '1', fmin: '1', dG_act: 'J/mol', dG0: 'J/mol' },
   uncertaintyKinds: {

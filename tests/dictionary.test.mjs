@@ -64,7 +64,7 @@ test('④ 병합 형태 — ko(vocab 권위) + en(overlay) 한 항목, 사실 �
 
 test('⑤ register 확장 — gapTypes·observables·qualitativeExpectations 일반화(모든 키 overlay·왕복)', () => {
   const V = req('../vocab.js');
-  const regs = ['gapTypes', 'observables', 'qualitativeExpectations', 'conservationClasses', 'conservationReasons'];
+  const regs = ['gapTypes', 'observables', 'qualitativeExpectations', 'conservationClasses', 'conservationReasons', 'closureMethods', 'judgmentLevels'];
   for (const r of regs) assert.ok(D.registers.includes(r), `register ${r} 누락`);
   // 모든 register 의 모든 키가 사전에 등록(overlay 있음) 돼 있어야 — 조각화가 통제 토큰 전체로 퍼짐
   const want = regs.flatMap((r) => Object.keys(V[r]));

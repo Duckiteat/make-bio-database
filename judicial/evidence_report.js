@@ -10,6 +10,7 @@ const crypto = require('crypto');
 const M = require('../model.js');
 const V = require('../vocab.js');
 const REL = require('./reliability.js');
+const DICT = require('../dictionary.js'); // 통제 토큰(닫는 방법·판정 수준)의 라벨·의미는 사전 조회 — 코드에 문구를 두지 않는다 (build-plan 16A)
 const PROTO = require('./protocol.js');
 const IRB = require('../compiler/ir_builder.js'); // 세포 상태 계의 규칙 집합 — 엔진이 먹는 것과 같은 조립(공유 순수 층)
 const { limitationStatus } = require('./judicial.js');
@@ -17,20 +18,23 @@ const sha = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x 
 const fmt = (x) => (x == null || !Number.isFinite(x) ? '—' : Math.abs(x) >= 1e5 || (Math.abs(x) < 1e-3 && x !== 0) ? x.toExponential(3) : (+x.toPrecision(5)).toString());
 
 // 닫는 방법 (설계 §13 B 분류): measure(재서 닫음) · computed(측정에서 도구 계산) · transfer/assumed(실측 아님) · abstraction(기전 경계·묶음) · none(속도 상수 없음 → 사건 기반)
+// 반환 = { closure: 토큰(vocab.closureMethods), detail: 이 고리에서의 세부(R2), label: 사전 라벨 + 세부, measured }
+const closureLabel = (key, detail) => `${key} — ${DICT.entry(key).label_ko}${detail ? ' · ' + detail : ''}`;
+const closure = (key, detail, measured) => ({ closure: key, detail: detail || null, label: closureLabel(key, detail), measured });
 function closureOfRule(rule) {
   const k = rule && rule.kinetics;
-  if (!k) return { closure: 'none', label: '없음 — 속도 상수가 없어 사건 기반(즉시)으로 처리', measured: false };
-  if (k.lumped) return { closure: 'abstraction', label: 'abstraction — 묶은 상수(lumped), 원 관찰에서 재계산', measured: false };
+  if (!k) return closure('none', null, false);
+  if (k.lumped) return closure('abstraction', '묶은 상수(lumped), 원 관찰에서 재계산', false);
   const lvl = k.evidence && k.evidence.level;
-  if (lvl === 'curated') return { closure: 'measure', label: 'measure — 문헌 실측값', measured: true };
-  if (lvl === 'computed') return { closure: 'computed', label: 'computed — 측정에서 도구로 계산', measured: true };
-  if (lvl === 'predicted') return { closure: 'assumed', label: 'assumed — 예측값(실측 아님)', measured: false };
-  if (lvl === 'abstracted') return { closure: 'abstraction', label: 'abstraction — 추론으로 대체', measured: false };
-  return { closure: 'assumed', label: `${lvl || '?'} — 실측 아님`, measured: false };
+  if (lvl === 'curated') return closure('measure', null, true);
+  if (lvl === 'computed') return closure('computed', null, true);
+  if (lvl === 'predicted') return closure('assumed', '예측값', false);
+  if (lvl === 'abstracted') return closure('abstraction', '추론으로 대체', false);
+  return closure('assumed', `근거 수준 ${lvl || '?'}`, false);
 }
 // 실행에 실제로 쓰인 상수의 닫는 방법: 시나리오가 덮어쓴 값은 db 근거와 무관하게 가정(시나리오 값은 hypothetical 만 허용)
 function closureOfUse(k, src) {
-  if (k && src === 'scenario') return { closure: 'assumed', label: 'assumed — 시나리오가 지정한 가상 값(실측 아님)', measured: false };
+  if (k && src === 'scenario') return closure('assumed', '시나리오가 지정한 가상 값', false);
   return closureOfRule({ kinetics: k || null });
 }
 const PARAM_KO = { kcat: '최대 회전수 kcat', Km: '반포화 농도 Km', k: '속도 상수 k', k_r: '역반응 속도 k_r', k_on: '결합 속도 k_on', k_off: '해리 속도 k_off', Kd: '해리 상수 Kd', k0: '전지수 인자 k0', dG_act: '활성화 에너지 ΔG‡', dG0: '표준 반응 자유에너지 ΔG°′', half_life: '반감기', K: '힐 반포화 K', n: '힐 계수 n', fmax: '최대 배율 fmax', fmin: '최소 배율 fmin' };
@@ -42,13 +46,8 @@ function labelRef(ix, db, ref) {
   if (t && t.sub === 'rule') { const d = db.senses[t.base], r = d && d.rule.find((x) => x.id === t.key); return `${ix.label(t.base)}${r && r.label ? ' · ' + r.label : ''} (${ref})`; }
   return `${ix.label((t && t.base) || ref)} (${ref})`;
 }
-const CLOSURE_SELF = { // 사고 패턴: 각 닫는 방법이 결론에 어떤 무게를 싣는지 (독자가 스스로 판단하도록)
-  measure: '이 종·이 반응에서 실제로 잰 값 — 결론의 단단한 바닥',
-  computed: '측정에서 도구로 계산 — 측정만큼 믿되 도구 가정을 짊어짐',
-  abstraction: '기전을 묶어 한 상수로 — 세부는 접혔고, 그 경계는 Structural_Gap 으로 등록',
-  assumed: '실측이 아닌 추정 — 결론은 여기에 조건부, 재면 바뀔 수 있음',
-  none: '속도 상수가 없어 이 단계는 즉시 처리 — 시간·병목을 이 단계로는 말할 수 없음',
-};
+// 사고 패턴: 각 닫는 방법이 결론에 싣는 무게 = 사전의 의미(vocab.closureMethods.note) — 독자가 스스로 판단하도록
+const closureMeaning = () => Object.fromEntries(Object.keys(require('../vocab.js').closureMethods).map((k) => [k, DICT.entry(k).meaning_ko]));
 
 function evidenceReport(db, scenario, opt = {}) {
   db = M.normalize(db);
@@ -145,15 +144,17 @@ function evidenceReport(db, scenario, opt = {}) {
   //   (검증 시나리오도 농도·상수는 가상이다 — 그때 결론은 규약이 선언한 검증 세트의 판정이지, 가상 숫자 자체가 아니다)
   const pv = PROTO.protocolVerdict(db, scenario, { prereg: opt.prereg || [] });
   let judgment;
-  if (pv.declared && opt.prereg == null) judgment = { level: '규약 선언됨 (등록 미확인)', why: '사전 등록부를 받지 않아 등록 여부를 확인하지 못했다 — 확인 전에는 검증 결론으로 읽지 않는다' };
+  const J = (key, why, extra) => Object.assign({ key, level: DICT.entry(key).label_ko, why: why || DICT.entry(key).meaning_ko }, extra || {});
+  if (pv.declared && opt.prereg == null) judgment = J('registration_unchecked');
   else if (pv.declared && pv.ok) {
     const vs = pv.validation.map((o) => `${o}${(db.observations[o] || {}).kind === 'qualitative' ? '(정성)' : ''}`);
-    judgment = { level: `검증 (사전 등록 #${pv.registered.seq})`, protocol: pv,
-      why: `등록된 모의 실험 규약 아래 — 일치 결론은 검증 세트 ${vs.join('·') || '(비어 있음)'} 로만${hyp ? '. 농도·상수는 가상 값이므로 결론은 그 관찰의 판정(방향·유무 등)이지 실행의 숫자가 아니다' : ''}` };
-  } else if (pv.declared) judgment = { level: '탐색 (규약 위반 — 검증 결론 불가)', why: pv.problems.join(' · '), protocol: pv };
+    judgment = J('validated_registered', null, { protocol: pv });
+    judgment.level = `${DICT.entry('validated_registered').label_ko.replace(/\)$/, '')} #${pv.registered.seq})`;
+    judgment.why = `등록된 모의 실험 규약 아래 — 일치 결론은 검증 세트 ${vs.join('·') || '(비어 있음)'} 로만${hyp ? '. 농도·상수는 가상 값이므로 결론은 그 관찰의 판정(방향·유무 등)이지 실행의 숫자가 아니다' : ''}`;
+  } else if (pv.declared) judgment = J('protocol_violation', pv.problems.join(' · '), { protocol: pv });
   else judgment = hyp
-    ? { level: '가설 생성 / 탐색', why: '시나리오가 hypothetical — 농도·부피 등 가상 값을 쓰므로 관찰과의 일치를 주장하지 않는다 (설계 P6)' }
-    : { level: '탐색 (규약 없음)', why: '사전 등록 규약이 없어 관찰과의 일치 결론을 내지 않는다' };
+    ? J('hypothesis_generating', '시나리오가 hypothetical — 농도·부피 등 가상 값을 쓰므로 관찰과의 일치를 주장하지 않는다 (설계 P6)')
+    : J('exploratory');
   const usedGrades = new Set([...chain.map((c) => c.grade), ...values.map((v) => v.grade && v.grade.grade)].filter(Boolean));
   const criteria = {
     threshold: scenario.min_grade || REL.DEFAULT_MIN, // 이 실행에 적용된 등급 문턱 (시나리오가 올릴 수만, 내릴 수 없음)
@@ -188,8 +189,8 @@ function evidenceReport(db, scenario, opt = {}) {
   // 6·7. 사고 패턴(지문) + 삼각 결론
   // 상수 없는 고리의 뜻은 실행 방식마다 다르다: 경로 속도 실행은 사건 기반(즉시)으로 돌리고, 운명 엔진(세포 상태)은 그 규칙을 끈다(Kinetic_Gap)
   const NONE = targetKind === 'cell_state'
-    ? { word: '꺼짐', label: '없음 — 속도 상수가 없어 이 실행에서 꺼짐(Kinetic_Gap)', mean: '속도 상수가 없어 이 실행에서 꺼진 규칙 — 그 고리의 효과는 결과에 없다' }
-    : { word: '사건기반', label: closureOfRule(null).label, mean: CLOSURE_SELF.none };
+    ? { word: '꺼짐', label: closureLabel('none', '이 실행에서 꺼짐(Kinetic_Gap)') }
+    : { word: '사건기반', label: closureLabel('none', '사건 기반(즉시)으로 처리') };
   for (const c of chain) if (c.closure === 'none') c.closureLabel = NONE.label;
   const measured = chain.filter((c) => c.measured), eventBased = chain.filter((c) => c.closure === 'none');
   const gained = measured.map((c) => `${c.enzyme} — ${c.reaction}: 실측 속도(${c.closure}) · 등급 ${c.grade || '—'}`);
@@ -234,7 +235,7 @@ function evidenceReport(db, scenario, opt = {}) {
         '추정에 쓴 관찰은 검증에 쓰지 않는다(순환 판정 방지) · 규약 없는 실행은 일치 결론을 내지 않는다',
         '실측값은 지어내지 않는다 — 없으면 사건 기반/가상으로 두고 그 사실을 보고한다',
       ],
-      closureMeaning: Object.assign({}, CLOSURE_SELF, { none: NONE.mean }),
+      closureMeaning: closureMeaning(),
     },
     triad: {
       gained: gained.length ? gained : ['(이 경로에서 실측으로 닫힌 단계 없음)'],
@@ -386,10 +387,9 @@ function evidenceReportMarkdown(rep) {
 // 판정 수준 색인 — 시나리오 전부를 한 표로 (build-plan 12 "기존 시나리오 전부에 판정 수준"). rows = [{ file, subject, rep }], rep 는 evidenceReport 결과 그대로
 function evidenceIndexMarkdown(rows) {
   const ok = rows.filter((r) => !r.rep.error), bad = rows.filter((r) => r.rep.error);
-  const level = (r) => r.rep.judgment.level.replace(/ \(사전 등록 #\d+\)/, '');
-  const count = {}; for (const r of ok) count[level(r)] = (count[level(r)] || 0) + 1;
+  const count = {}; for (const r of ok) count[r.rep.judgment.key] = (count[r.rep.judgment.key] || 0) + 1; // 토큰으로 센다(라벨 문자열 아님)
   const o = ['# 증거 보고서 색인 — 시나리오별 판정 수준', ''];
-  o.push(`시나리오 ${rows.length}개 · 보고서 ${ok.length} · 실패 ${bad.length}. 판정 수준: ${Object.entries(count).map(([k, n]) => `${k} ${n}`).join(' · ')}.`, '');
+  o.push(`시나리오 ${rows.length}개 · 보고서 ${ok.length} · 실패 ${bad.length}. 판정 수준: ${Object.entries(count).map(([k, n]) => `${DICT.entry(k).label_ko} ${n}`).join(' · ')}.`, '');
   o.push('> 판정 수준은 등록 확인(사전 등록부의 입력 해시)에서 나온다 — 규약 선언만으로는 검증이 아니다. 고리 수는 실행이 쓰는 규칙(경로 단계 또는 세포 상태 계의 공급·분해·기전 단계·조절)이고, 실측 고리만 "데이터에 매여 있다". 대상은 `examples/scenarios/subjects.json`.', '');
   o.push('| 시나리오 | 대상 | 판정 수준 | 고리 (실측 · 가정/추상 · 상수 없음) | 열린 한계 | 교란 |', '|---|---|---|---|---|---|');
   for (const r of ok) {

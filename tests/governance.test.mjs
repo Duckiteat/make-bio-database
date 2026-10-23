@@ -477,7 +477,7 @@ test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란)
 
 // 시나리오 → 대상 색인은 시나리오 폴더와 정확히 같아야 한다 (빠진 것·남는 것·없는 대상 거부) — 모든 시나리오가 비지 않은 보고서를 낸다
 test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못된 대상 없음, 42개 모두 보고서', () => {
-  const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js');
+  const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), DICT = req('../dictionary.js');
   const dir = join(ROOT, 'examples/scenarios'), idx = JSON.parse(readFileSync(join(dir, 'subjects.json'), 'utf8')).subjects;
   const files = readdirSync(dir).filter((f) => f.endsWith('.json') && f !== 'subjects.json').sort();
   assert.deepEqual(Object.keys(idx).sort(), files, '색인과 시나리오 폴더가 다름 — 빠지거나 남는 항목');
@@ -491,10 +491,13 @@ test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못
     const rep = ER.evidenceReport(BASE, sc, { target: sid, derived, prereg });
     assert.ok(!rep.error, `${f}: ${rep.error}`);
     assert.ok(rep.chain.length > 0, `${f}: 사슬이 비었다`);
-    levels[f] = rep.judgment.level;
+    levels[f] = rep.judgment.key;
+    // 통제 토큰은 사전에 등록된 것만 (16A — 보고서가 문구를 지어내지 않고 사전을 조회)
+    assert.ok(DICT.entry(rep.judgment.key).label_ko && !DICT.entry(rep.judgment.key).error, `${f}: 판정 수준 토큰 ${rep.judgment.key} 사전 미등록`);
+    for (const c of rep.chain) assert.ok(c.closureLabel.startsWith(`${c.closure} — ${DICT.entry(c.closure).label_ko}`), `${f}: 닫는 방법 라벨이 사전에서 오지 않음 (${c.closureLabel})`);
   }
   // 등록된 검증 시나리오 = 판정 수준 '검증' (그 밖은 검증이 아니다)
-  const regd = files.filter((f) => /^검증/.test(levels[f]));
+  const regd = files.filter((f) => levels[f] === 'validated_registered');
   assert.deepEqual(regd, ['mhc-i-b2m-validation-hypothetical.json', 'mhc-i-tapasin-validation-hypothetical.json', 'mhc-ii-hladm-validation-hypothetical.json', 'telomere-telomerase-validation-hypothetical.json']);
   // 경로 사슬은 하위 경로 단계까지 (LPS 경로 D000102 는 단계를 하위 경로 D000103–105 에 둔다)
   assert.ok(ER.evidenceReport(BASE, JSON.parse(readFileSync(join(dir, 'lps-hypothetical.json'), 'utf8')), { target: 'D000102', prereg }).chain.length >= 19);
