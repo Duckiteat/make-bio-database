@@ -112,3 +112,19 @@
 | 46 | **강성 프로파일 진단**: 이미 emit 하는 integrator/stats(steps·rejected·hMinHits·단계당 벽시간·LU)로 "왜 느린가" 분류(시간척도 분리 / 거부 폭주 / 대형 LU) → 축약 적용 여부 판정 | `judicial/` 감사 | L000113 재현에 프로파일 분류가 붙음 | ☑ 2026-10-22 — `judicial/stiffness.js`: integrator 진단(steps·rejected·hMinHits·h.min/max)+활성 규칙 수로 분류(`h_min_floor`=NUMERICAL·`rejection_storm`·`timescale_separation`·`lu_cost`·`well_conditioned`). 느림은 결과지 결함 아님 — hMinHits>0(정확도 타협)만 NUMERICAL. 정상 시나리오=well_conditioned·합성 h_min_floor=NUMERICAL 시험. **정직한 한계: L000113(42종 LPS)은 등록된 한계라 실행 가능한 아티팩트가 아니고(코퍼스 최대 nAct 13<40), lu_cost·h_min_floor 분기는 합성으로만 검증** — 적분장(27–37)이 LPS 를 돌리면 자동 부착 |
 | 47 | **모델 축약 연산자 (QSSA·부분평형) — 강성 실마리**: 관찰 해상도 아래 빠른 모드를 대수 제약으로 접는 선언적 IR 변환(perturb 형제). 전체-대-축약을 관찰 연산자 통해 TOST 검증 | `compiler/`(IR 변환) · `judicial/`(동등 검증) | 전체=축약 TOST 통과 + 선언 밖 변화 거부 · 강성 제거를 프로파일(46)로 확인 | ◐ 2026-10-22 — 축약 인증 틀: `reductionCheck`(조정자)→`reductionVerdict`(사법부). 관찰 무관 규칙 제거(exclude_rules) + 전체 대 축약 상대 L2 ≤ δ(관찰 해상도)로 동등 검증 + 선언 밖 변화 거부(활성 규칙 = 전체 − drop) + 전후 강성 프로파일(46). 안전 축약 동등·결과 바꾸는 축약 거부 시험. **진짜 QSSA(대수 제약으로 ODE 를 접어 강성 제거)는 DAE 엔진 필요 → 적분장(27–37)으로 미룸**; 지금은 엔진이 표현 가능한 관찰-무관 규칙 제거만 |
 | 48 | **사각 지도 유지**: 맞댈 연산자 없는 엔진 출력 → 등록된 관측 공백(한계). 정량 검증 관찰 0 추적, 데이터 수집은 12A 고리로 | `limitations` · `judicial/` | `limitations --detect` 관측 공백 후보 0 | ☑ 2026-10-22 — judicial `coverageMap`/`coverageMapText` + `dbtool limitations --coverage`: 실행이 내는 6 측정량마다 정량·정성 검증 관찰 수, 정량 0=사각. 현재 **6/6 정량 사각**(amount 만 정성 5) — Phase 0 머리기사를 라이브 질의로. 한계 target 은 엔티티(D…/S…)여야 해 합성 target 공백은 못 등록하므로 detect 에 등록 불가 후보를 더하지 않음(detect 0 유지) — 엔티티별 공백은 obs_compare 가 Observation_Gap 으로. 데이터 수집은 12A <br>2026-10-23 ②: **TASK-004 정량 후보 + 첫 장면 기원** — 텔로미어 정량 후보 7(+전문 1: Allsopp 1992 그림 2C 10 ± 2 PD/kbp) · 측정 유형 `dose_slope` + 교란 `set_amount` · 첫 장면 기원 감사(`origin`: 42 시나리오 입력 1 618 중 실측 12, 기원 없음 484) · 순환 위험 L000116(ΔL 숫자 출처 없음, 결정론 기울기 = 1/ΔL). **정량 사각은 아직 6/6** — 독립 ΔL(Harley 1990 전문) 또는 1/ΔL 이 아닌 계가 먼저 |
+
+## 7부 — 구조 재편 (가정·판정·측정법을 1급으로)
+
+> 2026-10-23 사용자와 토의해 합의했다. 설계와 이유는 `structure-realignment.md`. 진단: 저장소가 **아는 것**은 번호·출처로 담지만, **가정한 것**(시나리오 속도 상수 기입 794개 중 서로 다른 값 124개, 신원 없음), **판정한 것**(결론이 보고서 글로만 남음 → 자동결정률을 셀 수 없음), **측정법**(자유 문장)은 1급 기록이 아니다. 북극성 대조 순서는 설계 §10. 무료 정성 관찰 수집(12A)은 나란히 간다. 거둔 제안: P3–P5 삭제(37번 조건 유지), 큰 파일 쪼개기(닿을 때만).
+
+| # | 작업 | 자리 | 끝나는 조건 | 상태 |
+|---|---|---|---|---|
+| 49 | **가정 원장** `data/assumptions.jsonl`(A…, 추가 전용 사슬, revises) + 시나리오 번호 참조 + 컴파일러 풀기 | 입법·서기 `registry` · `judicial/assumption_audit.js` · `compiler/ir_builder.js` · `migrations/012` | 미등록 시나리오 변환 전후 IR 해시·궤적 비트 동일 · 등록 5건 불변 · 감사 거부 시험 | ☐ |
+| 50 | **판정 원장** `data/verdicts.jsonl`(gate · validation 행) + `verdicts --recheck` + 자동결정률 | 서기 `registry` · 조정자 · 사법부 | 재실행 일치 · 변조 거부 시험 · 자동결정률 출력 | ☐ |
+| 51 | **입력 귀속** (TIER A): 가정 범위 양 끝 파생 실행 → 강건/민감, 범위는 등록 때 고정 | `compiler/perturb.js`(`set_assumption`) · 조정자 · 사법부 | 해석적으로 아는 계에서 강건·민감 둘 다 · 등록 검증 5건에 귀속 보고 | ☐ |
+| 52 | **측정법 어휘** `vocab.assays` + 관찰 `assay` + 측정 공유 깃발 | `vocab.js` · `schemas/obs/` · `migrations/013` · `chanceBaseline` | 미등록 측정법 거부 · 공유 깃발 시험 | ☐ |
+| 53 | **불일치 원인 분류** `vocab.discrepancyCauses`(24번 흡수) — 기본 `undetermined`, 맥락은 반사실 재실행 | 사법부 · 조정자 | 분류 전 '원인 미정' 시험 · 원인별 합성 시험 | ☐ |
+| 54 | **재검토 감지 정밀화** — `needs` 의 속성·규칙 단위 매칭 | `judicial.reviewCandidates` | 거짓 경보 사례(D000210 → L000116) 시험 | ☐ |
+| 55 | **두 갈래 차이 측정 → 하나로** (`simulateRate` 대 운명 엔진) | 조정자 · 사법부 → 행정 | 차이 보고 · 하나로 옮기면 기존 보고 결과 대조 | ☐ |
+| 56 | **엔진 경계** — 운명 엔진은 IR 만 | `engine/fate_engine.js` · `compiler/` · 조정자 | 궤적 비트 · `rust_engine.test` | ☐ |
+| 57 | **LPS 기준해 → 운명 엔진 QSSA** (L000113 을 공간 엔진에서 떼어냄) | 조정자 · 47번 | 기준해 1회 또는 한계 기록 · 축약 TOST | ☐ |
