@@ -79,7 +79,7 @@ const hasDOI = (ev) => (ev.sources || []).some((x) => ['DOI', 'PMID'].includes(x
 // 출처 논문의 상태 — 부르는 쪽이 수신함에서 읽어 ctx.literature 로 넘긴다({ 'PMID:1': { kind: 'journal'|'preprint', retracted } }, 사법부는 파일을 읽지 않음)
 //   철회가 하나라도 있으면 S0 · 학술지 확인이 하나라도 있으면 S3.confirmed · 알려진 것이 원고뿐이면 S2 · 기록이 없으면 S3.unconfirmed
 function litS(sources, ctx) {
-  const L = (ctx && ctx.literature) || {}, st = (sources || []).filter((x) => ['DOI', 'PMID'].includes(x.db) && x.id).map((x) => L[`${x.db}:${x.id}`]).filter(Boolean);
+  const L = (ctx && ctx.literature) || {}, st = (sources || []).filter((x) => ['DOI', 'PMID'].includes(x.db) && x.id).map((x) => L[`${x.db}:${x.db === 'DOI' ? String(x.id).toLowerCase() : x.id}`]).filter(Boolean); // DOI 는 대소문자 무관
   if (st.some((x) => x.retracted)) return { s: 0, cs: 'S0.retracted' };
   if (st.some((x) => x.kind === 'journal')) return { s: 3, cs: 'S3.confirmed' };
   if (st.length && st.every((x) => x.kind === 'preprint')) return { s: 2, cs: 'S2.preprint' };

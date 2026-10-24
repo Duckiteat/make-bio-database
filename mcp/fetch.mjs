@@ -57,6 +57,15 @@ const tools = [
       const file = join(EPMC, `PMC-${rec.pmcid.slice(3)}.xml`), r = await get(file, `${API}/${rec.pmcid}/fullTextXML`, a.refetch);
       if (!r.ok) return { text: `전문 받기 실패 (${r.error || '형식'}) — 받기 기록 #${r.log.seq}`, isError: true };
       return { text: `전문 ${relp(file)} · ${r.log.bytes} B · sha256 ${(r.log.sha256 || '').slice(0, 12)}… · 받기 기록 #${r.log.seq}${r.log.cached ? ' (이미 있음)' : ''}`, data: { pmcid: rec.pmcid, inbox: relp(file), bytes: r.log.bytes, sha256: r.log.sha256, log_seq: r.log.seq } }; } },
+  { name: 'resolve_doi', roles: W, description: 'DOI 로 Europe PMC 기록을 찾아 수신함(DOI-<정리한 DOI>.json)에 받고, PubMed 번호가 있으면 그 초록(MED-<pmid>.json)도 받는다 — 둘 다 받기 기록', inputSchema: { type: 'object', properties: { doi: { type: 'string' }, refetch: { type: 'boolean' } }, required: ['doi'] },
+    run: async (a) => { const doi = need(a, 'doi', /^10\.\d{4,9}\/\S+$/), file = join(EPMC, `DOI-${doi.replace(/[^A-Za-z0-9._-]/g, '_')}.json`);
+      const r = await get(file, `${API}/search?query=DOI:%22${encodeURIComponent(doi)}%22&resultType=core&format=json`, a.refetch);
+      if (!r.ok) return { text: `DOI 검색 실패 (${r.error || '형식'}) — 받기 기록 #${r.log.seq}`, isError: true };
+      const hits = (JSON.parse(readFileSync(file, 'utf8')).resultList || {}).result || [], med = hits.find((x) => x.source === 'MED' && x.pmid);
+      if (!hits.length) return { text: `DOI ${doi}: Europe PMC 에 기록 없음 (받기 기록 #${r.log.seq}) — 확인하지 못함`, data: { doi, found: false } };
+      if (!med) return { text: `DOI ${doi}: 기록 ${hits.length} 개, PubMed 학술지 기록 없음 (원천 ${[...new Set(hits.map((x) => x.source))].join(',')})`, data: { doi, found: true, pmid: null, sources: hits.map((x) => x.source) } };
+      const ab = await abstract(med.pmid, false), acc = access(ab.rec);
+      return { text: `DOI ${doi} → PMID ${med.pmid} — ${ACCESS_KO[acc]} · 초록 ${relp(ab.file)} (받기 기록 #${r.log.seq}·#${ab.log.seq})`, data: { doi, pmid: med.pmid, access: acc, inbox: relp(ab.file) } }; } },
 ];
 
 serve({ name: 'biodb-fetch', version: '1', instructions: '바깥 원천 받기 — 공개 전문·초록만, 받을 때마다 받기 기록. db 를 읽거나 바꾸지 않는다.', tools: tools.map((t) => ({ ...t, roles: t.roles.filter((r) => ROLES.includes(r)) })) });
