@@ -1259,7 +1259,7 @@ test('신뢰 지표 ②: 관문은 쓰인 상수의 등급을 보고 미달을 �
   assert.ok(ok.ok && ok.rows[0].grade === 'parameter', REL.constantText(ok));
   const bad = REL.constantVerdict(ir({ src: 'data', k: 1, evidence: { level: 'asserted' } }), {});
   assert.equal(bad.ok, false);
-  assert.match(bad.violations[0].msg, /등급 reference < parameter \(S2D3\)/, '출처 없이 적은 상수는 참고 등급 — 계산에 쓸 수 없다');
+  assert.match(bad.violations[0].msg, /등급 reference < parameter \(S2D2\)/, '출처 없이 적은 상수는 참고 등급 — 계산에 쓸 수 없다 (2026-10-24: asserted 는 D2)');
   // 문턱은 시나리오가 올릴 수 있다: parameter 로는 통과하던 값이 anchor 문턱에서는 미달
   assert.equal(REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), { min_grade: 'anchor' }).ok, false);
   assert.match(REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), { min_grade: '최고' }).error, /등급 문턱/);

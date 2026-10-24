@@ -2,8 +2,8 @@
 //
 // 두 축을 **독립으로** 둔다. 곱(S×D)은 보고용 숫자일 뿐 판정에 쓰지 않는다 — (2,4) 와 (4,2) 가 같은 8 이 되어
 // "블로그가 전한 실측" 과 "권위 DB 에서 온 추론" 을 가르지 못하기 때문이다. 관문은 쌍을 사전식으로 본다.
-//   S 출처 (Source)  4 권위 DB + 사법부 도장(digest·증거 sha256·재확인) · 3 동료 심사 문헌 식별자(DOI·PMID) · 2 그 밖(출처 없음·추론·예측) · 0 확인 불가
-//   D 성질 (Data)    4 추적 가능한 실측·도구가 원본에서 계산한 값 · 3 요약 상수·정체성 사실 · 2 추론·단순화·출처 없는 값
+//   S 출처 (Source)  4 권위 DB + 사법부 도장(digest·증거 sha256·재확인) · 3 문헌 식별자(DOI·PMID — 수신함 기록으로 학술지 확인 S3.confirmed · 미확인 S3.unconfirmed, 원고는 S2 · 철회는 S0) · 2 그 밖(출처 없음·추론·예측) · 0 확인 불가
+//   D 성질 (Data)    4 추적 가능한 실측·도구가 원본에서 계산한 값 · 3 요약 상수·정체성 사실 · 2 추론·단순화·출처 없이 적은 값
 // 등급은 **권한의 이름**이다 (진리의 이름이 아니다 — 이 저장소는 검증 엔진이지 진리 선언기가 아니다):
 //   anchor 기준값 · parameter 매개변수 · bounded 구간값(오차 막대와 함께) · legacy 지난값 · reference 참고(계산 금지) · blocked 차단(한계로만)
 // 점수는 손으로 매기지 않는다 — 도장·근거·관찰 기록에서 계산한다. 그래서 데이터가 스스로 등급을 높일 수 없다.
@@ -30,7 +30,10 @@ const ORDER = ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked
 const CRITERIA = Object.freeze({
   'S4.stamp':     { axis: 'S', level: 4, when: '외부 ID·지문이 원본과 대조되고 유효한 사법부 도장이 있음', why: '사법부가 원본과 직접 대조한 것만 최고 출처 — 데이터가 스스로 출처를 올릴 수 없게 (도장은 digest·증거 sha256·재확인)' },
   'S4.tool':      { axis: 'S', level: 4, when: '도장받은 원본 파일(sha256 일치)에서 도구가 계산한 값', why: '원본이 도장받았고 같은 도구로 다시 계산하면 같은 값 — 원본과 같은 출처로 본다' },
-  'S3.doi':       { axis: 'S', level: 3, when: '근거·관찰 출처에 DOI 또는 PMID 식별자', why: null, open: 'DOI 는 심사 전 원고(bioRxiv 등)와 철회된 논문에도 있다 — 식별자만으로는 동료 심사 여부를 가르지 못함 (기준 재검토 대기)' },
+  'S3.confirmed': { axis: 'S', level: 3, when: '출처 식별자(DOI·PMID)의 수신함 기록(Europe PMC)이 학술지 논문(MED)이고 철회 표시가 없음', why: '논문이 학술지에 실렸고 철회되지 않았음을 원본 기록으로 확인 — 심사를 거친 문헌' },
+  'S3.unconfirmed': { axis: 'S', level: 3, when: '출처 식별자(DOI·PMID)는 있으나 수신함 기록이 없어 학술지·철회 여부를 확인하지 못함', why: '식별자로 되짚을 수 있는 문헌 — 2026-10-24 결정: 확인 전이라 내리지 않음(내리면 parameter 139 개가 한꺼번에 떨어짐), 대신 확인된 것과 갈라 두고 높은 용도(build-plan 72 검증 근거·기준)는 S3.confirmed 를 요구', open: '확인되지 않은 식별자를 언제까지 S3 로 둘지 미정 — 수집(fetch_abstract)으로 확인을 채운다' },
+  'S2.preprint':  { axis: 'S', level: 2, when: '출처의 수신함 기록이 심사 전 원고(Europe PMC PPR)뿐', why: 'DOI 가 있어도 동료 심사를 거치지 않았다 — 식별자가 심사를 보증하지 않는다' },
+  'S0.retracted': { axis: 'S', level: 0, when: '출처 논문의 수신함 기록에 철회 표시(Retracted Publication)', why: '논문이 철회되면 그 논문에 기댄 근거는 무효 — 관찰 철회(S0.void)와 같은 급' },
   'S2.unsourced': { axis: 'S', level: 2, when: '식별자 없는 문헌 근거 · 예측 모델 · 출처 없이 적음 · 근거 없음 · 원본과 대조하지 않은 외부 ID · 도장 없는 지문', why: '누가 말했는지 확인할 수 없다 — 모순은 아니므로 차단하지 않고 계산에서만 뺀다' },
   'S0.void':      { axis: 'S', level: 0, when: '철회된 관찰 · 도장 없는 verified · 지난 도장 · 외부 ID 없음(unmapped)', why: '확인할 수 없거나 확인이 무효가 됨 — 근거를 주장할 수 없으니 한계로만 남긴다' },
   'D4.measured':  { axis: 'D', level: 4, when: '관찰 기록에 불확도와 반복 수 ≥ 1', why: '측정 조건과 퍼짐이 적혀 있어 다시 잴 수 있다', open: '반복 1 회의 문턱 이유 미정 — 반복의 독립성은 D 가 아니라 I 축(build-plan 71, 52 뒤)이 맡는다' },
@@ -38,7 +41,7 @@ const CRITERIA = Object.freeze({
   'D3.curated':   { axis: 'D', level: 3, when: '문헌에서 옮긴 값(curated)', why: '정리된 값 — 원래 측정의 퍼짐·조건은 이 기록에 없다' },
   'D3.identity':  { axis: 'D', level: 3, when: '외부 ID (정체성 사실)', why: '같은 것을 가리킨다는 사실 — 측정값이 아니므로 D4 가 아니다 (그래서 외부 ID 의 상한은 parameter)' },
   'D3.obs_bare':  { axis: 'D', level: 3, when: '불확도나 반복 수가 없는 관찰', why: '측정이지만 퍼짐을 모른다' },
-  'D3.asserted':  { axis: 'D', level: 3, when: '출처 없이 적은 값(asserted)', why: null, open: '근거 없이 적은 값이 문헌 요약 상수와 같은 D3 — 축의 뜻이 흐려짐 (S2 라 등급은 reference 까지라 실제 피해는 작음, 기준 재검토 대기)' },
+  'D2.asserted':  { axis: 'D', level: 2, when: '출처 없이 적은 값(asserted)', why: '근거가 없으면 무엇을 어떻게 얻은 값인지도 모른다 — 정리된 문헌 값(D3)으로 볼 근거가 없다 (2026-10-24 결정: D3 → D2, 이미 S2 라 등급은 reference 그대로)' },
   'D2.inferred':  { axis: 'D', level: 2, when: '추론·단순화(abstracted) · 예측 모델 · 근거 없음 · 외부 ID 없음', why: '직접 잰 값이 아니다' },
   'T.match':      { axis: 'T', level: 'match', when: '같은 신원 확인을 더 새 원본(합의 수신함)에 다시 돌려 같은 결론', why: '"그때 맞았다" 가 아니라 "지금도 합의와 같다" — 재현되지 않는 웹 검색 대신 같은 확인을 다시 돌린다' },
   'T.mismatch':   { axis: 'T', level: 'mismatch', when: '새 원본에서 결론이나 값이 달라짐', why: '값을 지우지 않고 지난값으로 — 왜 달라졌는지가 데이터 (Consensus_Gap)' },
@@ -73,27 +76,36 @@ function gradeOf(s, d, trend) {
 const stampKey = (sense, field, ns, value) => `${sense}|${field}|${ns}:${value}`;
 const hasDOI = (ev) => (ev.sources || []).some((x) => ['DOI', 'PMID'].includes(x.db) && x.id);
 // 도구가 원본에서 계산한 값: 그 원본 파일의 sha256 이 유효한 도장의 증거와 같으면 권위 DB 에서 온 것으로 본다
+// 출처 논문의 상태 — 부르는 쪽이 수신함에서 읽어 ctx.literature 로 넘긴다({ 'PMID:1': { kind: 'journal'|'preprint', retracted } }, 사법부는 파일을 읽지 않음)
+//   철회가 하나라도 있으면 S0 · 학술지 확인이 하나라도 있으면 S3.confirmed · 알려진 것이 원고뿐이면 S2 · 기록이 없으면 S3.unconfirmed
+function litS(sources, ctx) {
+  const L = (ctx && ctx.literature) || {}, st = (sources || []).filter((x) => ['DOI', 'PMID'].includes(x.db) && x.id).map((x) => L[`${x.db}:${x.id}`]).filter(Boolean);
+  if (st.some((x) => x.retracted)) return { s: 0, cs: 'S0.retracted' };
+  if (st.some((x) => x.kind === 'journal')) return { s: 3, cs: 'S3.confirmed' };
+  if (st.length && st.every((x) => x.kind === 'preprint')) return { s: 2, cs: 'S2.preprint' };
+  return { s: 3, cs: 'S3.unconfirmed' };
+}
 const toolSha = (ev) => { const m = /sha256:([0-9a-f]{6,64})/.exec(ev.tool || ''); return m ? m[1] : null; };
 
 function scoreEvidence(ev, ctx) {
   if (!ev || !ev.level) return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: '근거가 없음' };
-  if (ev.level === 'curated') return { s: hasDOI(ev) ? 3 : 2, d: 3, cs: hasDOI(ev) ? 'S3.doi' : 'S2.unsourced', cd: 'D3.curated', why: hasDOI(ev) ? `문헌 ${(ev.sources || []).map((x) => `${x.db}:${x.id}`).join(', ')}` : '문헌이라 적혀 있지만 식별자가 없음' };
+  if (ev.level === 'curated') return { ...(hasDOI(ev) ? litS(ev.sources, ctx) : { s: 2, cs: 'S2.unsourced' }), d: 3, cd: 'D3.curated', why: hasDOI(ev) ? `문헌 ${(ev.sources || []).map((x) => `${x.db}:${x.id}`).join(', ')}` : '문헌이라 적혀 있지만 식별자가 없음' };
   if (ev.level === 'computed') {
     const sha = toolSha(ev), ok = sha && ctx.evidenceShas.some((x) => x.startsWith(sha));
     return { s: ok ? 4 : 2, d: 4, cs: ok ? 'S4.tool' : 'S2.unsourced', cd: 'D4.computed', why: ok ? `도구가 도장받은 원본에서 계산 (${ev.tool || ''}`.slice(0, 120) + ')' : '도구 계산인데 원본 증거를 찾을 수 없음' };
   }
-  if (ev.level === 'abstracted') return { s: hasDOI(ev) || /DOI|PMID/.test(ev.basis || '') ? 3 : 2, d: 2, cs: hasDOI(ev) || /DOI|PMID/.test(ev.basis || '') ? 'S3.doi' : 'S2.unsourced', cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
+  if (ev.level === 'abstracted') return { ...(hasDOI(ev) ? litS(ev.sources, ctx) : /DOI|PMID/.test(ev.basis || '') ? { s: 3, cs: 'S3.unconfirmed' } : { s: 2, cs: 'S2.unsourced' }), d: 2, cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
   if (ev.level === 'predicted') return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: `예측 모델 출력 (신뢰도 ${ev.confidence != null ? ev.confidence : '없음'})` };
-  return { s: 2, d: 3, cs: 'S2.unsourced', cd: 'D3.asserted', why: '출처 없이 적음 (asserted)' };
+  return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.asserted', why: '출처 없이 적음 (asserted)' };
 }
 
 // ----- 항목 모으기 -----
 // 등급을 다는 것은 "쓸 수 있는가" 를 물을 수 있는 것뿐이다: 외부 ID·지문(정체성) · 근거를 가진 주장 · 속도 상수 · 관찰 기록.
 // 관찰 기록의 (S,D): 출처가 문헌 식별자면 S3(철회면 S0, 그 밖 S2) · 불확도와 반복 수가 있으면 D4(실측) 아니면 D3
-function scoreObservation(o) {
-  const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db);
-  return { s: o.retracted ? 0 : doi ? 3 : 2, d: o.uncertainty && o.replicates >= 1 ? 4 : 3,
-    cs: o.retracted ? 'S0.void' : doi ? 'S3.doi' : 'S2.unsourced', cd: o.uncertainty && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare',
+function scoreObservation(o, ctx) {
+  const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db), lit = doi ? litS([src], ctx) : null;
+  return { s: o.retracted ? 0 : doi ? lit.s : 2, d: o.uncertainty && o.replicates >= 1 ? 4 : 3,
+    cs: o.retracted ? 'S0.void' : doi ? lit.cs : 'S2.unsourced', cd: o.uncertainty && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare',
     why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · 반복 ${o.replicates || 0}` };
 }
 
@@ -102,7 +114,7 @@ function items(db, opt) {
   const ix = M.index(db);
   const valid = new Set(opt.attestations || []), stale = new Set((opt.stale || []).map((x) => (typeof x === 'string' ? x : x.key)));
   const evidenceShas = (opt.stamps || []).map((st) => (st.evidence || {}).sha256).filter(Boolean);
-  const ctx = { evidenceShas };
+  const ctx = { evidenceShas, literature: opt.literature || {} };
   // 추세 축 (judicial/trend.js): 창 안의 유효한 추세 도장만 'match'·'mismatch' 로 온다. 없으면 'unchecked' — 그래서 anchor 가 나오지 않는다.
   const trends = opt.trend || {};
   const tr = (sense, ns, value) => trends[`${sense}|${ns}:${value}`] || 'unchecked';
@@ -134,7 +146,7 @@ function items(db, opt) {
   }
   // 관찰 기록 (v10): 불확도·반복 수가 있는 실측 — 철회된 것은 차단
   for (const [oid, o] of Object.entries(db.observations || {})) {
-    const sc = scoreObservation(o);
+    const sc = scoreObservation(o, ctx);
     add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || o.readout || {}).kind || '?'} (${o.use || '?'})`, s: sc.s, d: sc.d, cs: sc.cs, cd: sc.cd, trend: 'unchecked', why: sc.why });
   }
   return out;
@@ -197,7 +209,7 @@ function criteriaText(rows) {
 const DEFAULT_MIN = 'parameter';
 function constants(ir, sc, opt) {
   sc = sc || {}; opt = opt || {};
-  const ctx = { evidenceShas: (opt.stamps || []).map((st) => (st.evidence || {}).sha256).filter(Boolean) };
+  const ctx = { evidenceShas: (opt.stamps || []).map((st) => (st.evidence || {}).sha256).filter(Boolean), literature: opt.literature || {} };
   const out = [];
   const one = (ref, kind, k) => {
     if (!k) return;

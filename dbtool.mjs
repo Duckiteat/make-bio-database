@@ -373,7 +373,7 @@ switch (cmd) {
   case 'grade': {
     // 신뢰 지표 (사법부 judicial/reliability.js): 도장·근거·관찰에서 (S, D) 를 계산해 등급을 낸다 — 저장하지 않는다
     const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
-    const rows = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps, trend: flags.quick ? {} : trendMap(db, reg) });
+    const rows = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps, trend: flags.quick ? {} : trendMap(db, reg), literature: req('./inbox.js').literatureStatus(dirname(DB_PATH)) }); // 출처 논문 상태(학술지·원고·철회)는 수신함에서
     const target = args[0] ? DefDB.resolveRef(DefDB.index(DefDB.normalize(db)), args[0]) : null;
     if (target && target.error) die(target.error);
     const pick = target ? rows.filter((r) => r.sense === target.id) : rows;

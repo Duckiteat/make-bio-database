@@ -22,7 +22,7 @@ test('② 기준 번호의 단계가 실제 점수와 같다 — 점수 갈래�
     assert.equal(REL.CRITERIA[r.ct].level, r.trend || 'unchecked');
   }
   const e = REL.scoreEvidence({ level: 'curated', sources: [{ db: 'PMID', id: '1' }] }, { evidenceShas: [] });
-  assert.equal(e.cs, 'S3.doi'); assert.equal(e.cd, 'D3.curated');
+  assert.equal(e.cs, 'S3.unconfirmed'); assert.equal(e.cd, 'D3.curated');
   assert.equal(REL.scoreObservation({ retracted: { note: 'x' }, provenance: { source: { db: 'PMID', id: '1' } } }).cs, 'S0.void');
 });
 
@@ -36,7 +36,29 @@ test('③ 기준마다 이유가 있거나, 이유 미정이 무엇인지 적혀
 
 test('④ 출력에 기준·이유·이유 미정 수가 드러난다', () => {
   const t = REL.criteriaText(rows);
-  assert.match(t, /이유 미정:\*\* DOI 는 심사 전 원고/);
+  assert.match(t, /S3\.unconfirmed/);
   assert.match(t, /이유 미정 \d+ \(기준 \d+ · 정책 \d+\)/);
   assert.match(REL.gradeText(rows), /## 기준과 이유/);
+});
+
+// 2026-10-24 결정: S3 을 확인된 것·확인 안 된 것으로 가르고, 원고·철회는 확인되면 바로 내림 · 근거 없이 적은 값은 D2 — 등급은 그대로
+test('⑤ 출처 논문 상태: 학술지 확인 → S3.confirmed · 기록 없음 → S3.unconfirmed · 원고뿐 → S2 · 철회 → S0', () => {
+  const ev = { level: 'curated', sources: [{ db: 'PMID', id: '9' }] };
+  const at = (lit) => REL.scoreEvidence(ev, { evidenceShas: [], literature: lit });
+  assert.deepEqual([at({ 'PMID:9': { kind: 'journal', retracted: false } }).cs, at({}).cs], ['S3.confirmed', 'S3.unconfirmed']);
+  assert.deepEqual([at({ 'PMID:9': { kind: 'preprint', retracted: false } }).s, at({ 'PMID:9': { kind: 'preprint' } }).cs], [2, 'S2.preprint']);
+  assert.deepEqual([at({ 'PMID:9': { kind: 'journal', retracted: true } }).s, at({ 'PMID:9': { kind: 'journal', retracted: true } }).cs], [0, 'S0.retracted']);
+  const o = { provenance: { source: { db: 'PMID', id: '9' } }, uncertainty: { sd: 1 }, replicates: 3 };
+  assert.equal(REL.scoreObservation(o, { literature: { 'PMID:9': { kind: 'journal', retracted: true } } }).s, 0, '철회 논문의 관찰은 S0');
+});
+
+test('⑥ 근거 없이 적은 값은 D2 — 등급은 reference 그대로 · 수신함 실물로 학술지 확인이 붙는다', () => {
+  const a = REL.scoreEvidence({ level: 'asserted' }, { evidenceShas: [] });
+  assert.deepEqual([a.s, a.d, a.cd, REL.gradeOf(a.s, a.d, 'unchecked')], [2, 2, 'D2.asserted', 'reference']);
+  const lit = req('../inbox.js').literatureStatus(new URL('../data', import.meta.url).pathname);
+  assert.deepEqual(lit['PMID:7664836'], { kind: 'journal', retracted: false }, 'Allsopp 1995 — 수신함 초록이 학술지 기록');
+  const withLit = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps, literature: lit });
+  assert.ok(withLit.some((r) => r.cs === 'S3.confirmed'));
+  const g = (rs) => JSON.stringify(REL.summary(rs).byGrade);
+  assert.equal(g(withLit), g(rows), '확인을 붙여도 지금 등급 분포는 그대로');
 });

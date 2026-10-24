@@ -21,7 +21,7 @@ const seal = (p, good = true) => ATT.sealVerdict({ ok: good, errors: good ? [] :
 test('① 지금 사슬은 통과 — vocab 의 모든 토큰에 영어 항목', () => {
   const a = DA.audit(EVENTS);
   assert.ok(a.ok, a.errors.join('\n'));
-  assert.equal(a.tokens, a.events, '고치기 전이라 사건 수 = 토큰 수');
+  assert.equal(a.tokens, a.events - EVENTS.filter((e) => e.revises).length, '토큰 수 = 사건 수 − 고친 사건 수 (고치기는 새 토큰이 아님)');
 });
 
 test('② 변조·삭제는 거부', () => {
@@ -61,7 +61,7 @@ test('④ 고치기는 revises 로 — 서기는 봉인 있을 때만 사슬 끝
     assert.equal(out[0].seq, events.length + 1);
     const after = CLERK.readDictionary(dir), a = DA.audit(after);
     assert.ok(a.ok, a.errors.join('\n'));
-    assert.equal(a.tokens, events.length, '고치기는 토큰을 늘리지 않음');
+    assert.equal(a.tokens, DA.audit(events).tokens, '고치기는 토큰을 늘리지 않음');
     assert.equal(DA.current(after).cur.get('stiffnessFlags/well_conditioned').label_en, ok.label_en, '마지막 사건이 현재 값');
     assert.equal(after.length, events.length + 1, '지우지 않고 붙임');
   } finally { rmSync(dir, { recursive: true, force: true }); }

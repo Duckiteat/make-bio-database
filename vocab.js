@@ -443,7 +443,7 @@
     K: { label: '힐 반포화 K' }, n: { label: '힐 계수 n' }, fmax: { label: '최대 배율 fmax' }, fmin: { label: '최소 배율 fmin' },
   },
   // 신뢰 지표 척도·등급의 뜻 (judicial/reliability.js — 등급을 정하는 규칙과 그 설명 rule 은 로직 곁에 남는다)
-  sourceScale: { 4: { label: '권위 DB + 사법부 도장' }, 3: { label: '동료 심사 문헌(DOI·PMID)' }, 2: { label: '출처 없음·추론·예측' }, 0: { label: '확인 불가' } },
+  sourceScale: { 4: { label: '권위 DB + 사법부 도장' }, 3: { label: '문헌 식별자(DOI·PMID) — 학술지 확인(S3.confirmed) 또는 미확인(S3.unconfirmed)' }, 2: { label: '출처 없음·추론·예측' }, 0: { label: '확인 불가' } },
   dataScale:   { 4: { label: '추적 가능한 실측·도구 계산' }, 3: { label: '요약 상수·정체성 사실' }, 2: { label: '추론·단순화·출처 없는 값' } },
   reliabilityGrades: {
     anchor:    { label: '기준값', note: '시뮬레이션의 고정점으로 쓸 수 있음' },

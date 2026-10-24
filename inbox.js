@@ -25,4 +25,21 @@ function textsFor(entries, dataDir) {
   return out;
 }
 
-module.exports = { textsFor };
+// 출처 논문의 상태 (신뢰 지표 S 축, judicial/reliability.js litS) — 수신함 초록 기록에서: 학술지(MED)·원고(PPR)·철회 표시.
+//   { 'PMID:123': { kind, retracted }, 'DOI:10.x/y': … } — 기록이 없는 식별자는 넣지 않는다(확인 못 함 = 없음, 지어내지 않음)
+const RETRACTED = /retracted publication/i;
+function literatureStatus(dataDir) {
+  const dir = path.join(dataDir, 'fetched', 'europepmc'), out = {};
+  if (!fs.existsSync(dir)) return out;
+  for (const f of fs.readdirSync(dir).filter((n) => /^MED-\d+\.json$/.test(n))) {
+    const r = ((JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')).resultList || {}).result || [])[0];
+    if (!r) continue;
+    const types = (((r.pubTypeList || {}).pubType) || []).map(String);
+    const st = { kind: r.source === 'PPR' ? 'preprint' : 'journal', retracted: types.some((t) => RETRACTED.test(t)) };
+    if (r.pmid) out[`PMID:${r.pmid}`] = st;
+    if (r.doi) out[`DOI:${r.doi}`] = st;
+  }
+  return out;
+}
+
+module.exports = { textsFor, literatureStatus };
