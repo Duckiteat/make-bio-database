@@ -94,7 +94,8 @@ function scoreEvidence(ev, ctx) {
     const sha = toolSha(ev), ok = sha && ctx.evidenceShas.some((x) => x.startsWith(sha));
     return { s: ok ? 4 : 2, d: 4, cs: ok ? 'S4.tool' : 'S2.unsourced', cd: 'D4.computed', why: ok ? `도구가 도장받은 원본에서 계산 (${ev.tool || ''}`.slice(0, 120) + ')' : '도구 계산인데 원본 증거를 찾을 수 없음' };
   }
-  if (ev.level === 'abstracted') return { ...(hasDOI(ev) ? litS(ev.sources, ctx) : /DOI|PMID/.test(ev.basis || '') ? { s: 3, cs: 'S3.unconfirmed' } : { s: 2, cs: 'S2.unsourced' }), d: 2, cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
+  // 출처는 sources 칸의 식별자로만 — 설명 문장에 'DOI' 글자가 있는 것으로는 S3 이 아니다 (2026-10-24: "DOI/PMID 는 확인하지 못함" 이라 적힌 규칙이 S3 을 받던 버그)
+  if (ev.level === 'abstracted') return { ...(hasDOI(ev) ? litS(ev.sources, ctx) : { s: 2, cs: 'S2.unsourced' }), d: 2, cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
   if (ev.level === 'predicted') return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: `예측 모델 출력 (신뢰도 ${ev.confidence != null ? ev.confidence : '없음'})` };
   return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.asserted', why: '출처 없이 적음 (asserted)' };
 }

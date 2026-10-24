@@ -62,3 +62,11 @@ test('⑥ 근거 없이 적은 값은 D2 — 등급은 reference 그대로 · �
   const g = (rs) => JSON.stringify(REL.summary(rs).byGrade);
   assert.equal(g(withLit), g(rows), '확인을 붙여도 지금 등급 분포는 그대로');
 });
+
+test('⑦ 출처는 sources 칸의 식별자로만 — 문장 속 "DOI" 글자로는 S3 이 아니다 · 옮긴 뒤 추론 규칙에 문장만 DOI 인 것이 없다', () => {
+  assert.equal(REL.scoreEvidence({ level: 'abstracted', basis: 'Kagan 2006 — DOI/PMID 는 이번 세션에서 확인하지 못함' }, { evidenceShas: [] }).s, 2);
+  assert.equal(REL.scoreEvidence({ level: 'abstracted', basis: 'x', sources: [{ db: 'PMID', id: '15149599' }] }, { evidenceShas: [], literature: { 'PMID:15149599': { kind: 'journal', retracted: false } } }).cs, 'S3.confirmed');
+  const left = [];
+  for (const [sid, d] of Object.entries(db.senses)) for (const r of d.rule || []) { const ev = r.evidence || {}; if (ev.level === 'abstracted' && !(ev.sources || []).length && /10\.\d{4,9}\/|PMID[: ]*\d/.test(ev.basis || '')) left.push(`${sid}/rule/${r.id}`); }
+  assert.deepEqual(left, [], '식별자가 문장에만 있는 추론 규칙');
+});
