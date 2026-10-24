@@ -471,6 +471,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - 등급은 **권한의 이름**이다: `anchor` 기준값(S4 ∧ D4 ∧ 추세 일치 — 시뮬레이션의 고정점) · `parameter` 매개변수(S ≥ 3 ∧ D ≥ 3) · `bounded` 구간값(S4 ∧ D2 — 오차 막대와 함께) · `legacy` 지난값(추세 불일치 — 지우지 않고 비교에만) · `reference` 참고(계산 금지) · `blocked` 차단(한계로만).
 - 추세 점검(시간 축)은 아래 ③ — 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해). 2026-10-24 현재 `anchor` 74 개는 **전부 구조 지문**이다 — 추세 점검이 신원(외부 ID·지문)에만 돌아 생물 값은 늘 `unchecked` 이기 때문(기준 `T.scope`, build-plan 71).
 - **기준과 이유는 한 표**: 점수 갈래마다 번호·조건·이유가 `judicial/reliability.js` 의 `CRITERIA`(S·D·T)·`GRADE_WHY`·`POLICY_OPEN` 에 있고, 항목마다 `cs`·`cd`·`ct` 로 자기 기준 번호를 단다. 이유가 확립되지 않은 기준은 이유를 지어내지 않고 `open`(무엇이 미정인지)으로 드러낸다 — 2026-10-24 이유 미정 7(S3.doi · D4.measured 문턱 · D3.asserted · T.unchecked 창 365일 · T.scope · 등급 순번 · 기본 문턱). `dbtool grade` 끝에 표가 나온다.
+- **이유의 종류** (2026-10-24): 기준·등급·정책마다 `basis` — `vocab.reasonBasis`(원칙·실증·외부 표준·운영·결정). 결정이면 why 에 날짜. 같은 날 이유를 정한 셋: `D4.measured`(반복 1 — 독립성은 I 축), `T.unchecked`(창 = 원천별 판 주기), 정책 `default_min`(parameter — 그 아래면 결론이 근거를 주장할 수 없고, anchor 면 외부 ID·속도 상수가 닿지 못함). 남은 이유 미정 3(S3.unconfirmed 유지 기한 · T.scope · 등급 순번). `POLICY_OPEN` → `POLICY`.
 - `node dbtool.mjs grade [<D…>] [--min <등급>]` — 등급 분포·쌍 분포·항목별 표, `--min` 미달이 있으면 종료 코드 1.
 
 ### 관문 (②) — 시뮬레이션이 읽는 상수의 등급
@@ -496,7 +497,7 @@ S·D 는 "그때 맞았다" 까지만 말한다. 등급 `anchor`(기준값)는 "
 | 합의 수신함 | `data/fetched/consensus/` — 같은 과제 이름 규약. 신원 수신함(`data/fetched/`)은 신원 도장의 증거이므로 **덮지 않는다**. 받기는 입법 서기(`dbtool trend --fetch`) |
 | 판정 | 새 원본으로 신원 확인을 다시 돌려 같은 결론·같은 값이면 `match`, 결론이나 값이 달라지면 `mismatch`, 새 원본이 없으면 `unchecked` |
 | 도장 | 날짜가 박힌 claim `trend` — 주체·판정·증거 파일 sha256·점검일·발급 모듈 코드 sha256·digest. 같은 등록부(`attestations/registry.json`)에 살지만 신원 도장과 다른 주장이라 검증 모듈이 다르다(`verifyTrendStamp`) |
-| 만료 | 점검일이 합의 창(`vocab.consensus.window_days` = 365일)보다 오래되면 다시 `unchecked` — **`anchor` 는 영구하지 않다** |
+| 만료 | 점검일이 도장 원천의 합의 창(`vocab.consensus.sources` — 판 주기: UniProt 56일 · ChEBI 31일, 증거 종류로 원천을 고름)보다 오래되면 다시 `unchecked` — **`anchor` 는 영구하지 않다**. 창이 없는 원천은 만료 |
 | `mismatch` | 값을 지우지 않는다. 등급이 `legacy`(지난값, 비교에만)로 내려가고 `Consensus_Gap` 한계 후보가 된다 — 왜 달라졌는지(원본의 개정 / 우리 쪽 오류)가 데이터다 |
 
 지금 분포: 주체 170 중 match 170 · mismatch 0 → **지문 70개가 `anchor`** (S4 ∧ D4 ∧ 추세 일치). 외부 ID 는 정체성 사실(D3)이므로 추세가 맞아도 `parameter` 가 상한이다.
@@ -601,6 +602,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-24 | (이유의 종류 · 원천별 창) | `vocab.reasonBasis`(원칙·실증·외부 표준·운영·결정) · 기준·등급·정책마다 `basis` · `POLICY_OPEN` → `POLICY`(why·open) · `vocab.consensus.window_days` → `consensus.sources`(원천별 판 주기·증거 종류·출처) — 점수·등급 불변. db 형식 불변 |
 | 2026-10-24 | (신뢰 기준 표) | 신뢰 지표 항목에 기준 번호 `cs`·`cd`·`ct`(계산 결과, 저장 안 함) · `reliability.CRITERIA`·`GRADE_WHY`·`POLICY_OPEN` — 점수·등급 불변. db 형식 불변 |
 | 2026-10-23 | (받기 기록) | `data/fetched/<원천>/FETCH_LOG.jsonl` 신설 — 받기마다 한 사건, 추가 전용 사슬 `seq·at·url·file·ok·bytes?·sha256?·error?·cached?·prev·root`(첫 prev = sha256('fetchlog\n')). 수신함에 공개 전문 `europepmc/PMC-{번호}.xml`. 서기 구역 `handoff`(`workspace/handoff/`). db.json 형식·버전 불변 |
 | 2026-10-23 | (가정 원장) | `data/assumptions.jsonl` 신설(§8O) — 추가만 하는 사슬 `seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root`, 첫 prev = sha256('assumptions\n'). 시나리오 숫자 자리에 `{ "assume": "A…" }`. 사전 등록 사건에 선택 칸 `assumptions`(번호 목록). 변환 `migrations/012-assumption-ledger.mjs`(미등록 시나리오 34 개 · 숫자 자리 1 696 → 기록 360, 무손실 확인). db.json 형식·버전 불변 |

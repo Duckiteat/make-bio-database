@@ -235,10 +235,28 @@
   // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
   thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
-  // ===== 합의 창 (추세 점검, judicial/trend.js) =====
-  // 추세 도장은 상하지 않는 사실이 아니다 — 점검일이 이 창(일)보다 오래되면 다시 '점검하지 않음' 이 되어 등급 anchor 가 내려간다.
-  // 창을 늘리면 오래된 점검이 기준값을 떠받치고, 줄이면 다시 받아야 한다. 권위 DB(UniProt·ChEBI)의 판 주기(8주)의 여유 배수로 둔다.
-  consensus: { window_days: 365, label: '추세 점검이 유효한 기간 (일)' },
+  // ===== 합의 창 (추세 점검, judicial/trend.js) — 원천별 (2026-10-24 결정) =====
+  // 추세 도장은 "그 원본의 그 판과 같다" 까지만 주장한다. 원천이 다음 판을 낼 수 있는 시점을 지나면 '지금도 합의와 같다' 는 확인되지 않은 것 →
+  // 다시 '점검하지 않음' 이 되어 anchor 가 내려간다. 그래서 창 = 원천이 공표한 판 주기(일). 도장의 증거 종류(evidence.kind)로 원천을 고른다.
+  // 표에 없는 원천의 도장은 창이 없으므로 만료로 본다(창을 지어내지 않음). basis 는 reasonBasis 의 열쇠.
+  consensus: {
+    label: '추세 점검이 유효한 기간 (일, 원천별)',
+    sources: {
+      uniprot: { days: 56, evidence: ['uniprot_entry'], basis: ['standard', 'principle', 'decision'], why: 'UniProtKB 는 8 주마다 새 판(2020 년부터, 1 월·여름은 늦어질 수 있음 — 늦어지면 창이 먼저 닫혀 다시 받을 뿐 잘못 통과하지 않는다)', ref: 'https://terminology.hl7.org/NamingSystem-UniProt.html' },
+      chebi:   { days: 31, evidence: ['chebi_entity'], basis: ['standard', 'principle', 'decision'], why: 'ChEBI 는 매달 새 판과 내려받기 파일을 낸다(온톨로지 파일은 매일이지만 항목 대조는 월 판 기준) — 달의 최대 일수', ref: 'https://www.ebi.ac.uk/chebi/downloads' },
+    },
+  },
+
+  // ===== 이유의 종류 (신뢰 지표 기준·등급·정책의 basis, judicial/reliability.js) — 2026-10-24 결정 =====
+  // 기준마다 "왜" 를 적을 뿐 아니라 그 이유가 어떤 종류인지 가른다 — 원칙에서 나온 것과 편의·결정에서 나온 것을 섞지 않게.
+  //   결정(decision)이 붙은 이유는 사용자 결정의 날짜를 why 에 적는다. 이유가 없으면 basis 를 비우지 않고 open 으로 드러낸다.
+  reasonBasis: {
+    principle:   { label: '원칙', note: '북극성(실측에 매여 있다 · 확인하지 않은 것은 확인된 것이 아니다)이나 삼권 분립에서 바로 나온다 — 바꾸면 체계의 뜻이 바뀐다' },
+    empirical:   { label: '실증', note: '저장소의 데이터·측정 결과에서 나온다(분포·비교) — 데이터가 바뀌면 다시 본다' },
+    standard:    { label: '외부 표준', note: '원천·학계가 공표한 관행·주기·형식에서 나온다 — 출처 주소를 적는다' },
+    operational: { label: '운영', note: '비용·속도·구현의 편의 — 원칙이 아니므로 더 나은 길이 있으면 바꾼다' },
+    decision:    { label: '결정', note: '사용자가 고른 것(날짜와 함께) — 대안이 있었고 그중 하나를 택했다' },
+  },
 
   // ===== 생애 주기 (Lifecycle) — 정의항의 lifecycle 필드 (형식 v7) =====
   // k_deg (s⁻¹, 1차 분해) 또는 half_life (s), k_syn (분자/s/세포, 0차 합성). fate: 분해 산물이 어디로 가나.

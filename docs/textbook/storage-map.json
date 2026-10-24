@@ -548,7 +548,7 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "legislative/clerk.mjs (도장 검증), dbtool.mjs, tests",
-      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 창(vocab consensus.window_days)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
+      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 원천별 창(vocab consensus.sources — 판 주기)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
     },
     {
       "path": "judicial/stiffness.js",

@@ -1,6 +1,7 @@
 // 신뢰 지표의 기준 표 (judicial/reliability.js CRITERIA, build-plan 71·73) — 기준마다 조건과 이유가 분리되어 있고, 점수와 어긋나지 않는다
 //   ① 모든 항목이 S·D·T 기준 번호를 달고, 번호는 표에 있다 ② 번호의 단계 = 실제 점수 (갈래와 표가 어긋나면 실패)
 //   ③ 기준마다 이유(why) 또는 이유 미정(open) — 둘 다 없으면 실패 ④ 이유 미정 목록이 출력에 드러난다
+//   ⑧ 이유마다 종류(basis, vocab.reasonBasis) — 결정이면 날짜 ⑨ 합의 창은 원천별(판 주기) — 창이 없는 원천은 만료
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
@@ -69,4 +70,33 @@ test('⑦ 출처는 sources 칸의 식별자로만 — 문장 속 "DOI" 글자�
   const left = [];
   for (const [sid, d] of Object.entries(db.senses)) for (const r of d.rule || []) { const ev = r.evidence || {}; if (ev.level === 'abstracted' && !(ev.sources || []).length && /10\.\d{4,9}\/|PMID[: ]*\d/.test(ev.basis || '')) left.push(`${sid}/rule/${r.id}`); }
   assert.deepEqual(left, [], '식별자가 문장에만 있는 추론 규칙');
+});
+
+// 2026-10-24 결정: 이유를 종류로 가른다 (원칙·실증·외부 표준·운영·결정)
+test('⑧ 기준·등급·정책의 이유마다 종류가 있다 — 종류는 어휘 안 · 결정이면 날짜 · 이유가 있으면 종류도 있다', () => {
+  const RB = req('../model.js').VOCAB.reasonBasis;
+  const all = [...Object.entries(REL.CRITERIA), ...Object.entries(REL.GRADE_WHY).map(([k, x]) => [`등급 ${k}`, x]), ...Object.entries(REL.POLICY).map(([k, x]) => [`정책 ${k}`, x])];
+  for (const [id, x] of all) {
+    assert.ok(Array.isArray(x.basis), `${id}: basis 없음`);
+    for (const b of x.basis) assert.ok(RB[b], `${id}: 이유의 종류 '${b}' 가 vocab.reasonBasis 에 없음`);
+    if (x.why) assert.ok(x.basis.length, `${id}: 이유는 있는데 종류가 없음`);
+    if (x.basis.includes('decision')) assert.match(x.why || '', /\d{4}-\d{2}-\d{2} 결정/, `${id}: 결정이면 날짜`);
+  }
+  assert.ok(!REL.CRITERIA['D4.measured'].open && !REL.POLICY.default_min.open && !REL.CRITERIA['T.unchecked'].open, '2026-10-24 에 이유를 정한 셋');
+  assert.match(REL.criteriaText(rows), /이유의 종류 \(vocab\.reasonBasis\): 원칙 \d+/);
+});
+
+test('⑨ 합의 창은 원천별 판 주기 — 같은 나이라도 원천마다 만료가 다르고, 창이 없는 원천은 만료', () => {
+  const TRD = req('../judicial/trend.js'), C = req('../model.js').VOCAB.consensus.sources;
+  assert.equal(TRD.sourceOf('uniprot_entry'), 'uniprot'); assert.equal(TRD.sourceOf('chebi_entity'), 'chebi'); assert.equal(TRD.sourceOf('nope'), null);
+  for (const [k, x] of Object.entries(C)) assert.ok(Number.isInteger(x.days) && x.days > 0 && x.why && /^https:\/\//.test(x.ref) && x.basis.length, `원천 ${k}: 창·이유·출처`);
+  const at = (today) => TRD.verdicts(db, reg, { root: ROOT, reverify: false, today });
+  const stampDay = Date.parse('2026-10-10'), plus = (n) => new Date(stampDay + n * 86400000).toISOString().slice(0, 10);
+  const src = (r) => [...new Set(r.expired.map((e) => e.source))].sort();
+  assert.equal(at(plus(C.chebi.days)).expired.length, 0, '창 끝날까지는 유효');
+  const mid = at(plus(C.chebi.days + 1));
+  assert.deepEqual(src(mid), ['chebi'], 'ChEBI 창(31일)을 넘기면 ChEBI 도장만 만료');
+  assert.ok(Object.keys(mid.map).length > 0, 'UniProt 도장은 아직 유효');
+  assert.deepEqual(src(at(plus(C.uniprot.days + 1))), ['chebi', 'uniprot']);
+  assert.equal(Object.keys(at(plus(C.uniprot.days + 1)).map).length, 0);
 });

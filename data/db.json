@@ -19651,7 +19651,7 @@
       "target": "D000032",
       "type": "Consensus_Gap",
       "requirement": {
-        "text": "추세 점검은 더 새 원본(합의 수신함)에 같은 확인을 다시 돌린 결과다. 그런데 그 원본이 실제로 더 새 것인지는 바이트만으로 증명할 수 없다 — 받은 날짜는 도장의 issued_at(점검한 쪽의 주장)이고, 원본이 한 바이트도 안 바뀌었을 때와 파일을 옮겨 놓았을 때를 구별하지 못한다. 그래서 추세 도장은 '그날 그 바이트로 같은 확인을 다시 돌렸다' 까지만 주장하고, 합의 창(vocab consensus.window_days = 365일)을 넘기면 다시 unchecked 가 되어 anchor 가 내려간다. 권위 DB 가 주는 판 번호(UniProt entryVersion·sequenceVersion)는 도장의 근거 문구에 적지만 아직 판정에 쓰지 않는다.",
+        "text": "추세 점검은 더 새 원본(합의 수신함)에 같은 확인을 다시 돌린 결과다. 그런데 그 원본이 실제로 더 새 것인지는 바이트만으로 증명할 수 없다 — 받은 날짜는 도장의 issued_at(점검한 쪽의 주장)이고, 원본이 한 바이트도 안 바뀌었을 때와 파일을 옮겨 놓았을 때를 구별하지 못한다. 그래서 추세 도장은 '그날 그 바이트로 같은 확인을 다시 돌렸다' 까지만 주장하고, 그 원천의 합의 창(vocab consensus.sources — 원천이 공표한 판 주기: UniProt 56일 · ChEBI 31일, 2026-10-24 부터)을 넘기면 다시 unchecked 가 되어 anchor 가 내려간다. 권위 DB 가 주는 판 번호(UniProt entryVersion·sequenceVersion)는 도장의 근거 문구에 적지만 아직 판정에 쓰지 않는다.",
         "needs": [
           {
             "kind": "manual",

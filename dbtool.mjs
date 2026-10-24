@@ -589,7 +589,7 @@ switch (cmd) {
         else if (r.stale) console.log(`  · 지난 추세 도장 ${r.key}: ${r.reasons.join(' · ')}`);
         else { console.log(`  ✗ ${r.key}: ${r.reasons.join(' · ')}`); tbad++; }
       }
-      for (const e of tv.expired) console.log(`  ⌛ 만료 ${e.key}: 점검 ${e.age}일 전 > 합의 창 ${tv.window}일 — 다시 받아 점검할 것`);
+      for (const e of tv.expired) console.log(`  ⌛ 만료 ${e.key}: 점검 ${e.age}일 전 > ${e.source ? `${e.source} 합의 창 ${e.window}일(판 주기)` : '원천에 합의 창이 없음'} — 다시 받아 점검할 것 (trend --fetch)`);
       console.log(`— 추세 도장 ${v.trend.length}: 유효 ${Object.keys(tv.map).length}, 만료 ${tv.expired.length}, 무효 ${tbad}`);
     }
     console.log(`— 증명 도장 ${reg.stamps.length - v.trend.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}${(v.stale || []).length ? `, 지난 도장 ${v.stale.length} (데이터에서 빠진 주체 — 계보 기록)` : ''}`);

@@ -1339,9 +1339,10 @@ test('추세 점검 ③: 합의 수신함의 새 원본으로 판정하고, 창�
   const r = TRD.check(BASE, { registry: reg, root: ROOT, reverify: false, memo: false });
   assert.ok(r.byVerdict.match > 0, `match ${r.byVerdict.match || 0}`);
   assert.equal(r.byVerdict.mismatch || 0, 0, `합의와 다른 값 ${JSON.stringify(r.rows.filter((x) => x.verdict === 'mismatch').slice(0, 3))}`);
-  assert.equal(r.window, DefDB.VOCAB.consensus.window_days);
+  assert.deepEqual(r.window, Object.fromEntries(Object.entries(DefDB.VOCAB.consensus.sources).map(([k, x]) => [k, x.days])));
   // 창 안: 유효한 추세 도장이 등급의 추세 축이 되고 지문(S4·D4)이 기준값으로 올라간다
-  const v = TRD.verdicts(BASE, reg, { root: ROOT, reverify: false });
+  // 날짜를 도장 직후로 고정 — 시험은 판정 논리를 보고, 오늘의 신선도는 `attest` 가 본다 (창이 원천의 판 주기라 짧다)
+  const v = TRD.verdicts(BASE, reg, { root: ROOT, reverify: false, today: '2026-10-11' });
   assert.ok(Object.keys(v.map).length > 0 && Object.values(v.map).every((x) => x === 'match'));
   const sum = REL.summary(REL.items(BASE, { ...ATTR0(BASE), trend: v.map }));
   assert.ok(sum.byGrade.anchor > 0, `기준값 ${sum.byGrade.anchor}`);

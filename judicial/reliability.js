@@ -26,42 +26,44 @@ const ORDER = ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked
 
 // ----- 기준 표 (2026-10-24, build-plan 71·73): 점수를 매기는 갈래마다 번호 · 조건(when) · 이유(why) -----
 //   이유가 확립되지 않은 기준은 why: null + open(무엇이 미정인지) — 이유를 지어내지 않는다. 기준 자체를 바꾸는 것은 사용자 결정.
+//   basis = 이유의 종류(vocab.reasonBasis: 원칙·실증·외부 표준·운영·결정) — 원칙에서 나온 이유와 편의·결정에서 나온 이유를 섞지 않는다.
 //   점수 함수는 갈래마다 이 번호(cs·cd)를 단다 — 기록마다 "어떤 기준으로, 왜" 를 따라갈 수 있게.
 const CRITERIA = Object.freeze({
-  'S4.stamp':     { axis: 'S', level: 4, when: '외부 ID·지문이 원본과 대조되고 유효한 사법부 도장이 있음', why: '사법부가 원본과 직접 대조한 것만 최고 출처 — 데이터가 스스로 출처를 올릴 수 없게 (도장은 digest·증거 sha256·재확인)' },
-  'S4.tool':      { axis: 'S', level: 4, when: '도장받은 원본 파일(sha256 일치)에서 도구가 계산한 값', why: '원본이 도장받았고 같은 도구로 다시 계산하면 같은 값 — 원본과 같은 출처로 본다' },
-  'S3.confirmed': { axis: 'S', level: 3, when: '출처 식별자(DOI·PMID)의 수신함 기록(Europe PMC)이 학술지 논문(MED)이고 철회 표시가 없음', why: '논문이 학술지에 실렸고 철회되지 않았음을 원본 기록으로 확인 — 심사를 거친 문헌' },
-  'S3.unconfirmed': { axis: 'S', level: 3, when: '출처 식별자(DOI·PMID)는 있으나 수신함 기록이 없어 학술지·철회 여부를 확인하지 못함', why: '식별자로 되짚을 수 있는 문헌 — 2026-10-24 결정: 확인 전이라 내리지 않음(내리면 parameter 139 개가 한꺼번에 떨어짐), 대신 확인된 것과 갈라 두고 높은 용도(build-plan 72 검증 근거·기준)는 S3.confirmed 를 요구', open: '확인되지 않은 식별자를 언제까지 S3 로 둘지 미정 — 수집(fetch_abstract)으로 확인을 채운다' },
-  'S2.preprint':  { axis: 'S', level: 2, when: '출처의 수신함 기록이 심사 전 원고(Europe PMC PPR)뿐', why: 'DOI 가 있어도 동료 심사를 거치지 않았다 — 식별자가 심사를 보증하지 않는다' },
-  'S0.retracted': { axis: 'S', level: 0, when: '출처 논문의 수신함 기록에 철회 표시(Retracted Publication)', why: '논문이 철회되면 그 논문에 기댄 근거는 무효 — 관찰 철회(S0.void)와 같은 급' },
-  'S2.unsourced': { axis: 'S', level: 2, when: '식별자 없는 문헌 근거 · 예측 모델 · 출처 없이 적음 · 근거 없음 · 원본과 대조하지 않은 외부 ID · 도장 없는 지문', why: '누가 말했는지 확인할 수 없다 — 모순은 아니므로 차단하지 않고 계산에서만 뺀다' },
-  'S0.void':      { axis: 'S', level: 0, when: '철회된 관찰 · 도장 없는 verified · 지난 도장 · 외부 ID 없음(unmapped)', why: '확인할 수 없거나 확인이 무효가 됨 — 근거를 주장할 수 없으니 한계로만 남긴다' },
-  'D4.measured':  { axis: 'D', level: 4, when: '관찰 기록에 불확도와 반복 수 ≥ 1', why: '측정 조건과 퍼짐이 적혀 있어 다시 잴 수 있다', open: '반복 1 회의 문턱 이유 미정 — 반복의 독립성은 D 가 아니라 I 축(build-plan 71, 52 뒤)이 맡는다' },
-  'D4.computed':  { axis: 'D', level: 4, when: '도구가 원본에서 계산한 값 · 구조 지문', why: '같은 원본과 도구로 다시 계산하면 같은 값 — 추적 가능' },
-  'D3.curated':   { axis: 'D', level: 3, when: '문헌에서 옮긴 값(curated)', why: '정리된 값 — 원래 측정의 퍼짐·조건은 이 기록에 없다' },
-  'D3.identity':  { axis: 'D', level: 3, when: '외부 ID (정체성 사실)', why: '같은 것을 가리킨다는 사실 — 측정값이 아니므로 D4 가 아니다 (그래서 외부 ID 의 상한은 parameter)' },
-  'D3.obs_bare':  { axis: 'D', level: 3, when: '불확도나 반복 수가 없는 관찰', why: '측정이지만 퍼짐을 모른다' },
-  'D2.asserted':  { axis: 'D', level: 2, when: '출처 없이 적은 값(asserted)', why: '근거가 없으면 무엇을 어떻게 얻은 값인지도 모른다 — 정리된 문헌 값(D3)으로 볼 근거가 없다 (2026-10-24 결정: D3 → D2, 이미 S2 라 등급은 reference 그대로)' },
-  'D2.inferred':  { axis: 'D', level: 2, when: '추론·단순화(abstracted) · 예측 모델 · 근거 없음 · 외부 ID 없음', why: '직접 잰 값이 아니다' },
-  'T.match':      { axis: 'T', level: 'match', when: '같은 신원 확인을 더 새 원본(합의 수신함)에 다시 돌려 같은 결론', why: '"그때 맞았다" 가 아니라 "지금도 합의와 같다" — 재현되지 않는 웹 검색 대신 같은 확인을 다시 돌린다' },
-  'T.mismatch':   { axis: 'T', level: 'mismatch', when: '새 원본에서 결론이나 값이 달라짐', why: '값을 지우지 않고 지난값으로 — 왜 달라졌는지가 데이터 (Consensus_Gap)' },
-  'T.unchecked':  { axis: 'T', level: 'unchecked', when: '새 원본이 없거나 점검일이 합의 창(vocab.consensus.window_days)보다 오래됨', why: '확인하지 않은 것은 확인된 것이 아니다 — anchor 는 영구하지 않다', open: '창 365 일의 이유 미정 — 값의 종류마다 합의가 바뀌는 속도가 다르다(서열 대 속도 상수)' },
-  'T.scope':      { axis: 'T', level: '범위', when: '추세 점검은 유효한 신원 도장이 있는 외부 ID·지문에만 — 설명·규칙·속도 상수·관찰은 늘 unchecked', why: '도장이 없으면 S 가 이미 낮아 추세를 물을 자리가 아니다', open: '문헌 값(S3)에는 이 이유가 맞지 않음 — 생물 값이 anchor 에 오를 길이 없다 (build-plan 71: 값에도 T 축)' },
+  'S4.stamp':     { basis: ['principle'], axis: 'S', level: 4, when: '외부 ID·지문이 원본과 대조되고 유효한 사법부 도장이 있음', why: '사법부가 원본과 직접 대조한 것만 최고 출처 — 데이터가 스스로 출처를 올릴 수 없게 (도장은 digest·증거 sha256·재확인)' },
+  'S4.tool':      { basis: ['principle'], axis: 'S', level: 4, when: '도장받은 원본 파일(sha256 일치)에서 도구가 계산한 값', why: '원본이 도장받았고 같은 도구로 다시 계산하면 같은 값 — 원본과 같은 출처로 본다' },
+  'S3.confirmed': { basis: ['principle', 'standard'], axis: 'S', level: 3, when: '출처 식별자(DOI·PMID)의 수신함 기록(Europe PMC)이 학술지 논문(MED)이고 철회 표시가 없음', why: '논문이 학술지에 실렸고 철회되지 않았음을 원본 기록으로 확인 — 심사를 거친 문헌' },
+  'S3.unconfirmed': { basis: ['decision', 'empirical'], axis: 'S', level: 3, when: '출처 식별자(DOI·PMID)는 있으나 수신함 기록이 없어 학술지·철회 여부를 확인하지 못함', why: '식별자로 되짚을 수 있는 문헌 — 2026-10-24 결정: 확인 전이라 내리지 않음(내리면 parameter 139 개가 한꺼번에 떨어짐), 대신 확인된 것과 갈라 두고 높은 용도(build-plan 72 검증 근거·기준)는 S3.confirmed 를 요구', open: '확인되지 않은 식별자를 언제까지 S3 로 둘지 미정 — 수집(fetch_abstract)으로 확인을 채운다' },
+  'S2.preprint':  { basis: ['standard', 'principle'], axis: 'S', level: 2, when: '출처의 수신함 기록이 심사 전 원고(Europe PMC PPR)뿐', why: 'DOI 가 있어도 동료 심사를 거치지 않았다 — 식별자가 심사를 보증하지 않는다' },
+  'S0.retracted': { basis: ['principle'], axis: 'S', level: 0, when: '출처 논문의 수신함 기록에 철회 표시(Retracted Publication)', why: '논문이 철회되면 그 논문에 기댄 근거는 무효 — 관찰 철회(S0.void)와 같은 급' },
+  'S2.unsourced': { basis: ['principle'], axis: 'S', level: 2, when: '식별자 없는 문헌 근거 · 예측 모델 · 출처 없이 적음 · 근거 없음 · 원본과 대조하지 않은 외부 ID · 도장 없는 지문', why: '누가 말했는지 확인할 수 없다 — 모순은 아니므로 차단하지 않고 계산에서만 뺀다' },
+  'S0.void':      { basis: ['principle'], axis: 'S', level: 0, when: '철회된 관찰 · 도장 없는 verified · 지난 도장 · 외부 ID 없음(unmapped)', why: '확인할 수 없거나 확인이 무효가 됨 — 근거를 주장할 수 없으니 한계로만 남긴다' },
+  'D4.measured':  { basis: ['principle', 'decision'], axis: 'D', level: 4, when: '관찰 기록에 불확도와 반복 수 ≥ 1', why: '측정 조건과 퍼짐(불확도)·반복 수가 적혀 있어 다시 잴 수 있다. 문턱이 반복 1 회인 것은 D 축이 \"무엇을 어떻게 잰 기록인가\" 만 묻기 때문 — 몇 번, 서로 독립으로 쟀는가는 I 축(build-plan 71, 52 뒤)이 따로 맡는다. 반복 수를 D 에 넣으면 두 축이 섞여 \"축을 곱하지 않는다\" 가 깨진다 (2026-10-24 결정: 문턱 그대로, 이유 적기)' },
+  'D4.computed':  { basis: ['principle'], axis: 'D', level: 4, when: '도구가 원본에서 계산한 값 · 구조 지문', why: '같은 원본과 도구로 다시 계산하면 같은 값 — 추적 가능' },
+  'D3.curated':   { basis: ['principle'], axis: 'D', level: 3, when: '문헌에서 옮긴 값(curated)', why: '정리된 값 — 원래 측정의 퍼짐·조건은 이 기록에 없다' },
+  'D3.identity':  { basis: ['principle'], axis: 'D', level: 3, when: '외부 ID (정체성 사실)', why: '같은 것을 가리킨다는 사실 — 측정값이 아니므로 D4 가 아니다 (그래서 외부 ID 의 상한은 parameter)' },
+  'D3.obs_bare':  { basis: ['principle'], axis: 'D', level: 3, when: '불확도나 반복 수가 없는 관찰', why: '측정이지만 퍼짐을 모른다' },
+  'D2.asserted':  { basis: ['principle', 'decision'], axis: 'D', level: 2, when: '출처 없이 적은 값(asserted)', why: '근거가 없으면 무엇을 어떻게 얻은 값인지도 모른다 — 정리된 문헌 값(D3)으로 볼 근거가 없다 (2026-10-24 결정: D3 → D2, 이미 S2 라 등급은 reference 그대로)' },
+  'D2.inferred':  { basis: ['principle'], axis: 'D', level: 2, when: '추론·단순화(abstracted) · 예측 모델 · 근거 없음 · 외부 ID 없음', why: '직접 잰 값이 아니다' },
+  'T.match':      { basis: ['principle'], axis: 'T', level: 'match', when: '같은 신원 확인을 더 새 원본(합의 수신함)에 다시 돌려 같은 결론', why: '"그때 맞았다" 가 아니라 "지금도 합의와 같다" — 재현되지 않는 웹 검색 대신 같은 확인을 다시 돌린다' },
+  'T.mismatch':   { basis: ['principle'], axis: 'T', level: 'mismatch', when: '새 원본에서 결론이나 값이 달라짐', why: '값을 지우지 않고 지난값으로 — 왜 달라졌는지가 데이터 (Consensus_Gap)' },
+  'T.unchecked':  { basis: ['principle', 'standard', 'decision'], axis: 'T', level: 'unchecked', when: '새 원본이 없거나 점검일이 그 원천의 합의 창(vocab.consensus.sources — 원천의 판 주기: UniProt 56 일 · ChEBI 31 일)보다 오래됨 · 창이 없는 원천', why: '확인하지 않은 것은 확인된 것이 아니다 — anchor 는 영구하지 않다' + ' — 창은 원천이 다음 판을 낼 수 있는 시점: 그 뒤의 \"지금\" 은 확인하지 않은 것 (2026-10-24 결정: 365 일 하나 → 원천별 판 주기)' },
+  'T.scope':      { basis: ['principle'], axis: 'T', level: '범위', when: '추세 점검은 유효한 신원 도장이 있는 외부 ID·지문에만 — 설명·규칙·속도 상수·관찰은 늘 unchecked', why: '도장이 없으면 S 가 이미 낮아 추세를 물을 자리가 아니다', open: '문헌 값(S3)에는 이 이유가 맞지 않음 — 생물 값이 anchor 에 오를 길이 없다 (build-plan 71: 값에도 T 축)' },
 });
 // 등급 규칙의 이유 (조건은 gradeOf, 이름·쓰임은 vocab)
 const GRADE_WHY = Object.freeze({
-  anchor:    { why: '고정점은 출처·성질이 최상이고 지금도 합의와 같아야 — 셋 중 하나라도 빠지면 고정점이 흔들린다' },
-  parameter: { why: '문헌 이상의 출처와 정리된 값 이상의 성질 — 주 매개변수로 쓰되 추세 미점검이면 함께 보고' },
-  bounded:   { why: '출처는 최상인데 값은 추론·단순화 — 쓰려면 오차 막대가 있어야 한다' },
-  legacy:    { why: '과거 합의 — 지우지 않고 비교에만 (판정을 재현하려면 옛 값이 필요)' },
-  reference: { why: '출처나 성질이 낮음 — 계산에 쓰면 결론이 근거를 주장할 수 없다, 서술에만' },
-  blocked:   { why: '확인 불가·모순 — 계산·인용 모두 금지, 한계로만' },
+  anchor:    { basis: ['principle'], why: '고정점은 출처·성질이 최상이고 지금도 합의와 같아야 — 셋 중 하나라도 빠지면 고정점이 흔들린다' },
+  parameter: { basis: ['principle'], why: '문헌 이상의 출처와 정리된 값 이상의 성질 — 주 매개변수로 쓰되 추세 미점검이면 함께 보고' },
+  bounded:   { basis: ['principle'], why: '출처는 최상인데 값은 추론·단순화 — 쓰려면 오차 막대가 있어야 한다' },
+  legacy:    { basis: ['principle'], why: '과거 합의 — 지우지 않고 비교에만 (판정을 재현하려면 옛 값이 필요)' },
+  reference: { basis: ['principle'], why: '출처나 성질이 낮음 — 계산에 쓰면 결론이 근거를 주장할 수 없다, 서술에만' },
+  blocked:   { basis: ['principle'], why: '확인 불가·모순 — 계산·인용 모두 금지, 한계로만' },
 });
-const POLICY_OPEN = Object.freeze({
-  order:       { what: '등급 순번 ORDER (meets)', open: '쌍으로 비교할 수 없는 bounded(S4,D2)와 parameter(S3,D3)의 위아래를 정해 버린다 — 문턱을 순번이 아니라 축 조건으로 (build-plan 73)' },
-  default_min: { what: `기본 문턱 DEFAULT_MIN`, open: '시뮬레이션이 쓰는 상수의 최저선을 parameter 로 둔 이유 미정' },
+// 정책 (등급을 어디에 쓰나) — 기준과 같은 칸: basis · why · 남은 open
+const POLICY = Object.freeze({
+  order:       { what: '등급 순번 ORDER (meets)', basis: [], why: null, open: '쌍으로 비교할 수 없는 bounded(S4,D2)와 parameter(S3,D3)의 위아래를 정해 버린다 — 문턱을 순번이 아니라 축 조건으로 (build-plan 73)' },
+  default_min: { what: '기본 문턱 DEFAULT_MIN = parameter', basis: ['principle', 'empirical', 'decision'],
+    why: '시뮬레이션 결론이 "실측에 매여 있다" 고 말하려면 쓴 상수가 모두 심사 문헌 이상 출처(S ≥ 3)·정리된 값 이상(D ≥ 3)이어야 — 그 아래(reference)를 쓰면 결론이 근거를 주장할 수 없다(등급 reference 의 이유). 그 위(anchor)를 기본으로 두면 외부 ID(D3 정체성)·속도 상수(추세 축 없음)가 구조적으로 닿지 못해 모든 실행이 막힌다. 더 엄격한 문턱은 시나리오 min_grade 로 올리기만 (2026-10-24 결정: parameter 유지)' },
 });
-
 function gradeOf(s, d, trend) {
   if (!s) return 'blocked';
   if (trend === 'mismatch') return 'legacy';
@@ -190,15 +192,19 @@ function gradeText(rows, opt) {
   return L.join('\n');
 }
 
-// 기준과 이유 — 기준마다 쓰인 항목 수, 이유 미정은 따로 센다
+// 기준과 이유 — 기준마다 이유의 종류·쓰인 항목 수, 이유 미정은 따로 센다
+const kinds = (b) => (b && b.length ? b.map((k) => M.VOCAB.reasonBasis[k].label).join('·') : '—');
+const reason = (x) => (x.why ? x.why + (x.open ? ` · **미정:** ${x.open}` : '') : `**이유 미정:** ${x.open}`);
 function criteriaText(rows) {
   const used = {}; for (const r of rows || []) for (const c of [r.cs, r.cd, r.ct]) if (c) used[c] = (used[c] || 0) + 1;
-  const L = ['## 기준과 이유 (`judicial/reliability.js` CRITERIA)', '', '| 기준 | 축·단계 | 조건 | 이유 | 쓰인 항목 |', '|---|---|---|---|---|'];
-  for (const [id, c] of Object.entries(CRITERIA)) L.push(`| ${id} | ${c.axis} ${c.level} | ${c.when} | ${c.why ? c.why + (c.open ? ` · **미정:** ${c.open}` : '') : `**이유 미정:** ${c.open}`} | ${used[id] || 0} |`);
-  L.push('', '| 등급 | 조건 | 이유 |', '|---|---|---|', ...ORDER.map((g) => `| ${g} | ${RULE[g]} | ${GRADE_WHY[g].why} |`));
-  L.push('', '| 정책 | 이유 미정 |', '|---|---|', ...Object.values(POLICY_OPEN).map((x) => `| ${x.what} | ${x.open} |`));
-  const open = Object.values(CRITERIA).filter((c) => c.open).length + Object.keys(POLICY_OPEN).length;
-  L.push('', `이유 미정 ${open} (기준 ${Object.values(CRITERIA).filter((c) => c.open).length} · 정책 ${Object.keys(POLICY_OPEN).length}) — 이유를 지어내지 않고 드러낸다. 기준을 바꾸는 것은 사용자 결정.`);
+  const L = ['## 기준과 이유 (`judicial/reliability.js` CRITERIA)', '', '| 기준 | 축·단계 | 조건 | 이유의 종류 | 이유 | 쓰인 항목 |', '|---|---|---|---|---|---|'];
+  for (const [id, c] of Object.entries(CRITERIA)) L.push(`| ${id} | ${c.axis} ${c.level} | ${c.when} | ${kinds(c.basis)} | ${reason(c)} | ${used[id] || 0} |`);
+  L.push('', '| 등급 | 조건 | 이유의 종류 | 이유 |', '|---|---|---|---|', ...ORDER.map((g) => `| ${g} | ${RULE[g]} | ${kinds(GRADE_WHY[g].basis)} | ${GRADE_WHY[g].why} |`));
+  L.push('', '| 정책 | 이유의 종류 | 이유 |', '|---|---|---|', ...Object.values(POLICY).map((x) => `| ${x.what} | ${kinds(x.basis)} | ${reason(x)} |`));
+  const nc = Object.values(CRITERIA).filter((c) => c.open).length, np = Object.values(POLICY).filter((x) => x.open).length;
+  const tally = {}; for (const x of [...Object.values(CRITERIA), ...Object.values(GRADE_WHY), ...Object.values(POLICY)]) for (const b of x.basis) tally[b] = (tally[b] || 0) + 1;
+  L.push('', `이유의 종류 (vocab.reasonBasis): ${Object.keys(M.VOCAB.reasonBasis).map((b) => `${M.VOCAB.reasonBasis[b].label} ${tally[b] || 0}`).join(' · ')}`);
+  L.push('', `이유 미정 ${nc + np} (기준 ${nc} · 정책 ${np}) — 이유를 지어내지 않고 드러낸다. 기준을 바꾸는 것은 사용자 결정.`);
   return L.join('\n');
 }
 
@@ -237,5 +243,5 @@ function constantVerdict(ir, sc, opt) {
 }
 const constantText = (v) => (v.error ? v.error : `문턱 ${v.min}${v.hypothetical ? ' · 시나리오는 hypothetical (가상 값 허용)' : ''} · 상수 ${v.n} (${Object.entries(v.byGrade).map(([g, n]) => `${g} ${n}`).join(' · ') || '없음'})${v.violations.length ? ` · 위반 ${v.violations.length}: ${v.violations.slice(0, 3).map((x) => `${x.ref} ${x.msg}`).join(' / ')}` : ''}`);
 
-return Object.freeze({ CRITERIA, GRADE_WHY, POLICY_OPEN, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
+return Object.freeze({ CRITERIA, GRADE_WHY, POLICY, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
 });
