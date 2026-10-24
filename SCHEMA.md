@@ -469,7 +469,8 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 - **곱(S × D)은 판정에 쓰지 않는다.** (2,4) 와 (4,2) 가 모두 8 이 되어 "출처가 약한 실측" 과 "권위 DB 에서 온 추론" 을 가르지 못한다. 보고서에 참고 숫자로만 적고, 관문은 쌍을 사전식으로 본다.
 - 등급은 **권한의 이름**이다: `anchor` 기준값(S4 ∧ D4 ∧ 추세 일치 — 시뮬레이션의 고정점) · `parameter` 매개변수(S ≥ 3 ∧ D ≥ 3) · `bounded` 구간값(S4 ∧ D2 — 오차 막대와 함께) · `legacy` 지난값(추세 불일치 — 지우지 않고 비교에만) · `reference` 참고(계산 금지) · `blocked` 차단(한계로만).
-- 추세 점검(시간 축)은 아직 없다 — 모든 항목의 `trend` 가 `unchecked` 이므로 **지금은 `anchor` 가 하나도 없다**. 추세 점검이 들어오면 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해).
+- 추세 점검(시간 축)은 아래 ③ — 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해). 2026-10-24 현재 `anchor` 74 개는 **전부 구조 지문**이다 — 추세 점검이 신원(외부 ID·지문)에만 돌아 생물 값은 늘 `unchecked` 이기 때문(기준 `T.scope`, build-plan 71).
+- **기준과 이유는 한 표**: 점수 갈래마다 번호·조건·이유가 `judicial/reliability.js` 의 `CRITERIA`(S·D·T)·`GRADE_WHY`·`POLICY_OPEN` 에 있고, 항목마다 `cs`·`cd`·`ct` 로 자기 기준 번호를 단다. 이유가 확립되지 않은 기준은 이유를 지어내지 않고 `open`(무엇이 미정인지)으로 드러낸다 — 2026-10-24 이유 미정 7(S3.doi · D4.measured 문턱 · D3.asserted · T.unchecked 창 365일 · T.scope · 등급 순번 · 기본 문턱). `dbtool grade` 끝에 표가 나온다.
 - `node dbtool.mjs grade [<D…>] [--min <등급>]` — 등급 분포·쌍 분포·항목별 표, `--min` 미달이 있으면 종료 코드 1.
 
 ### 관문 (②) — 시뮬레이션이 읽는 상수의 등급
@@ -483,7 +484,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 | 문턱 | 기본 `parameter`. 시나리오 `min_grade` 로 올릴 수 있다(등급 이름 하나). 모르는 이름이면 판정하지 않고 그 사실을 Audit Error 로 낸다 |
 | 보고 | 과정 보고서의 무결성 증명서에 한 줄(상수 등급), §5 기술 부록에 분포. 운명 판정의 `grades` (`judicial/reliability.js` `constantVerdict`) |
 
-지금 이 저장소의 규칙 `kinetics` 는 0건이다 — 확인한 속도 상수가 없으므로 모든 상수가 `hypothetical` 시나리오에서 온다. 그래서 `src: 'data'` 분기는 시험에서만 돌고, 확인된 상수가 들어오는 날 그대로 작동한다.
+2026-10-24 현재 규칙 `kinetics` 중 등급 `parameter` 는 4 개(TCA 실측 고리)뿐이고, 나머지 상수는 모두 `hypothetical` 시나리오(가정 원장)에서 온다.
 
 ### 추세 축 (③) — 지금도 합의와 같은가 (`judicial/trend.js`, `dbtool trend`)
 
@@ -600,6 +601,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-24 | (신뢰 기준 표) | 신뢰 지표 항목에 기준 번호 `cs`·`cd`·`ct`(계산 결과, 저장 안 함) · `reliability.CRITERIA`·`GRADE_WHY`·`POLICY_OPEN` — 점수·등급 불변. db 형식 불변 |
 | 2026-10-23 | (받기 기록) | `data/fetched/<원천>/FETCH_LOG.jsonl` 신설 — 받기마다 한 사건, 추가 전용 사슬 `seq·at·url·file·ok·bytes?·sha256?·error?·cached?·prev·root`(첫 prev = sha256('fetchlog\n')). 수신함에 공개 전문 `europepmc/PMC-{번호}.xml`. 서기 구역 `handoff`(`workspace/handoff/`). db.json 형식·버전 불변 |
 | 2026-10-23 | (가정 원장) | `data/assumptions.jsonl` 신설(§8O) — 추가만 하는 사슬 `seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root`, 첫 prev = sha256('assumptions\n'). 시나리오 숫자 자리에 `{ "assume": "A…" }`. 사전 등록 사건에 선택 칸 `assumptions`(번호 목록). 변환 `migrations/012-assumption-ledger.mjs`(미등록 시나리오 34 개 · 숫자 자리 1 696 → 기록 360, 무손실 확인). db.json 형식·버전 불변 |
 | 2026-10-23 | 12 (측정 유형) | 측정량 `dose_slope`(대상 규칙 진행량, `observable.dose { target, values }`, 단위 1, 보존 분류 non_conserved/sensitivity) · 교란 `set_amount { target: 묶음, n }`(+ dose_series of set_amount) · `schemas/obs` 갱신. 추가 필드만 — 기존 db 불변 |

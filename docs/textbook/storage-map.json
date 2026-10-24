@@ -1036,6 +1036,14 @@
       "interpret": "MCP 시험 — 프로토콜 · query 가 dbtool 과 같은 글·메모리 사본·파일 바뀌면 다시 읽음 · 역할 거부 · 단일 작성자 · 핸드오프 추가만 · 받기 기록 변조·파일 바뀜 · mcp 서버의 파일 쓰기 없음 · fetch 인자 검사."
     },
     {
+      "path": "tests/reliability_criteria.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "신뢰 기준 표 시험 — 모든 항목이 기준 번호를 달고, 번호의 단계가 실제 점수와 같으며, 기준마다 이유 또는 '이유 미정' 이 적혀 있는지."
+    },
+    {
       "path": "tests/gap_schema.test.mjs",
       "class": "verification",
       "format": "node:test",

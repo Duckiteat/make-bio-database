@@ -24,6 +24,41 @@ const RULE = {
 const GRADES = Object.freeze(Object.fromEntries(Object.entries(M.VOCAB.reliabilityGrades).map(([k, g]) => [k, Object.freeze({ label: g.label, use: g.note, rule: RULE[k] })])));
 const ORDER = ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked'];
 
+// ----- 기준 표 (2026-10-24, build-plan 71·73): 점수를 매기는 갈래마다 번호 · 조건(when) · 이유(why) -----
+//   이유가 확립되지 않은 기준은 why: null + open(무엇이 미정인지) — 이유를 지어내지 않는다. 기준 자체를 바꾸는 것은 사용자 결정.
+//   점수 함수는 갈래마다 이 번호(cs·cd)를 단다 — 기록마다 "어떤 기준으로, 왜" 를 따라갈 수 있게.
+const CRITERIA = Object.freeze({
+  'S4.stamp':     { axis: 'S', level: 4, when: '외부 ID·지문이 원본과 대조되고 유효한 사법부 도장이 있음', why: '사법부가 원본과 직접 대조한 것만 최고 출처 — 데이터가 스스로 출처를 올릴 수 없게 (도장은 digest·증거 sha256·재확인)' },
+  'S4.tool':      { axis: 'S', level: 4, when: '도장받은 원본 파일(sha256 일치)에서 도구가 계산한 값', why: '원본이 도장받았고 같은 도구로 다시 계산하면 같은 값 — 원본과 같은 출처로 본다' },
+  'S3.doi':       { axis: 'S', level: 3, when: '근거·관찰 출처에 DOI 또는 PMID 식별자', why: null, open: 'DOI 는 심사 전 원고(bioRxiv 등)와 철회된 논문에도 있다 — 식별자만으로는 동료 심사 여부를 가르지 못함 (기준 재검토 대기)' },
+  'S2.unsourced': { axis: 'S', level: 2, when: '식별자 없는 문헌 근거 · 예측 모델 · 출처 없이 적음 · 근거 없음 · 원본과 대조하지 않은 외부 ID · 도장 없는 지문', why: '누가 말했는지 확인할 수 없다 — 모순은 아니므로 차단하지 않고 계산에서만 뺀다' },
+  'S0.void':      { axis: 'S', level: 0, when: '철회된 관찰 · 도장 없는 verified · 지난 도장 · 외부 ID 없음(unmapped)', why: '확인할 수 없거나 확인이 무효가 됨 — 근거를 주장할 수 없으니 한계로만 남긴다' },
+  'D4.measured':  { axis: 'D', level: 4, when: '관찰 기록에 불확도와 반복 수 ≥ 1', why: '측정 조건과 퍼짐이 적혀 있어 다시 잴 수 있다', open: '반복 1 회의 문턱 이유 미정 — 반복의 독립성은 D 가 아니라 I 축(build-plan 71, 52 뒤)이 맡는다' },
+  'D4.computed':  { axis: 'D', level: 4, when: '도구가 원본에서 계산한 값 · 구조 지문', why: '같은 원본과 도구로 다시 계산하면 같은 값 — 추적 가능' },
+  'D3.curated':   { axis: 'D', level: 3, when: '문헌에서 옮긴 값(curated)', why: '정리된 값 — 원래 측정의 퍼짐·조건은 이 기록에 없다' },
+  'D3.identity':  { axis: 'D', level: 3, when: '외부 ID (정체성 사실)', why: '같은 것을 가리킨다는 사실 — 측정값이 아니므로 D4 가 아니다 (그래서 외부 ID 의 상한은 parameter)' },
+  'D3.obs_bare':  { axis: 'D', level: 3, when: '불확도나 반복 수가 없는 관찰', why: '측정이지만 퍼짐을 모른다' },
+  'D3.asserted':  { axis: 'D', level: 3, when: '출처 없이 적은 값(asserted)', why: null, open: '근거 없이 적은 값이 문헌 요약 상수와 같은 D3 — 축의 뜻이 흐려짐 (S2 라 등급은 reference 까지라 실제 피해는 작음, 기준 재검토 대기)' },
+  'D2.inferred':  { axis: 'D', level: 2, when: '추론·단순화(abstracted) · 예측 모델 · 근거 없음 · 외부 ID 없음', why: '직접 잰 값이 아니다' },
+  'T.match':      { axis: 'T', level: 'match', when: '같은 신원 확인을 더 새 원본(합의 수신함)에 다시 돌려 같은 결론', why: '"그때 맞았다" 가 아니라 "지금도 합의와 같다" — 재현되지 않는 웹 검색 대신 같은 확인을 다시 돌린다' },
+  'T.mismatch':   { axis: 'T', level: 'mismatch', when: '새 원본에서 결론이나 값이 달라짐', why: '값을 지우지 않고 지난값으로 — 왜 달라졌는지가 데이터 (Consensus_Gap)' },
+  'T.unchecked':  { axis: 'T', level: 'unchecked', when: '새 원본이 없거나 점검일이 합의 창(vocab.consensus.window_days)보다 오래됨', why: '확인하지 않은 것은 확인된 것이 아니다 — anchor 는 영구하지 않다', open: '창 365 일의 이유 미정 — 값의 종류마다 합의가 바뀌는 속도가 다르다(서열 대 속도 상수)' },
+  'T.scope':      { axis: 'T', level: '범위', when: '추세 점검은 유효한 신원 도장이 있는 외부 ID·지문에만 — 설명·규칙·속도 상수·관찰은 늘 unchecked', why: '도장이 없으면 S 가 이미 낮아 추세를 물을 자리가 아니다', open: '문헌 값(S3)에는 이 이유가 맞지 않음 — 생물 값이 anchor 에 오를 길이 없다 (build-plan 71: 값에도 T 축)' },
+});
+// 등급 규칙의 이유 (조건은 gradeOf, 이름·쓰임은 vocab)
+const GRADE_WHY = Object.freeze({
+  anchor:    { why: '고정점은 출처·성질이 최상이고 지금도 합의와 같아야 — 셋 중 하나라도 빠지면 고정점이 흔들린다' },
+  parameter: { why: '문헌 이상의 출처와 정리된 값 이상의 성질 — 주 매개변수로 쓰되 추세 미점검이면 함께 보고' },
+  bounded:   { why: '출처는 최상인데 값은 추론·단순화 — 쓰려면 오차 막대가 있어야 한다' },
+  legacy:    { why: '과거 합의 — 지우지 않고 비교에만 (판정을 재현하려면 옛 값이 필요)' },
+  reference: { why: '출처나 성질이 낮음 — 계산에 쓰면 결론이 근거를 주장할 수 없다, 서술에만' },
+  blocked:   { why: '확인 불가·모순 — 계산·인용 모두 금지, 한계로만' },
+});
+const POLICY_OPEN = Object.freeze({
+  order:       { what: '등급 순번 ORDER (meets)', open: '쌍으로 비교할 수 없는 bounded(S4,D2)와 parameter(S3,D3)의 위아래를 정해 버린다 — 문턱을 순번이 아니라 축 조건으로 (build-plan 73)' },
+  default_min: { what: `기본 문턱 DEFAULT_MIN`, open: '시뮬레이션이 쓰는 상수의 최저선을 parameter 로 둔 이유 미정' },
+});
+
 function gradeOf(s, d, trend) {
   if (!s) return 'blocked';
   if (trend === 'mismatch') return 'legacy';
@@ -41,15 +76,15 @@ const hasDOI = (ev) => (ev.sources || []).some((x) => ['DOI', 'PMID'].includes(x
 const toolSha = (ev) => { const m = /sha256:([0-9a-f]{6,64})/.exec(ev.tool || ''); return m ? m[1] : null; };
 
 function scoreEvidence(ev, ctx) {
-  if (!ev || !ev.level) return { s: 2, d: 2, why: '근거가 없음' };
-  if (ev.level === 'curated') return { s: hasDOI(ev) ? 3 : 2, d: 3, why: hasDOI(ev) ? `문헌 ${(ev.sources || []).map((x) => `${x.db}:${x.id}`).join(', ')}` : '문헌이라 적혀 있지만 식별자가 없음' };
+  if (!ev || !ev.level) return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: '근거가 없음' };
+  if (ev.level === 'curated') return { s: hasDOI(ev) ? 3 : 2, d: 3, cs: hasDOI(ev) ? 'S3.doi' : 'S2.unsourced', cd: 'D3.curated', why: hasDOI(ev) ? `문헌 ${(ev.sources || []).map((x) => `${x.db}:${x.id}`).join(', ')}` : '문헌이라 적혀 있지만 식별자가 없음' };
   if (ev.level === 'computed') {
     const sha = toolSha(ev), ok = sha && ctx.evidenceShas.some((x) => x.startsWith(sha));
-    return { s: ok ? 4 : 2, d: 4, why: ok ? `도구가 도장받은 원본에서 계산 (${ev.tool || ''}`.slice(0, 120) + ')' : '도구 계산인데 원본 증거를 찾을 수 없음' };
+    return { s: ok ? 4 : 2, d: 4, cs: ok ? 'S4.tool' : 'S2.unsourced', cd: 'D4.computed', why: ok ? `도구가 도장받은 원본에서 계산 (${ev.tool || ''}`.slice(0, 120) + ')' : '도구 계산인데 원본 증거를 찾을 수 없음' };
   }
-  if (ev.level === 'abstracted') return { s: hasDOI(ev) || /DOI|PMID/.test(ev.basis || '') ? 3 : 2, d: 2, why: '추론·단순화 (기전 흐름에서)' };
-  if (ev.level === 'predicted') return { s: 2, d: 2, why: `예측 모델 출력 (신뢰도 ${ev.confidence != null ? ev.confidence : '없음'})` };
-  return { s: 2, d: 3, why: '출처 없이 적음 (asserted)' };
+  if (ev.level === 'abstracted') return { s: hasDOI(ev) || /DOI|PMID/.test(ev.basis || '') ? 3 : 2, d: 2, cs: hasDOI(ev) || /DOI|PMID/.test(ev.basis || '') ? 'S3.doi' : 'S2.unsourced', cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
+  if (ev.level === 'predicted') return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: `예측 모델 출력 (신뢰도 ${ev.confidence != null ? ev.confidence : '없음'})` };
+  return { s: 2, d: 3, cs: 'S2.unsourced', cd: 'D3.asserted', why: '출처 없이 적음 (asserted)' };
 }
 
 // ----- 항목 모으기 -----
@@ -58,6 +93,7 @@ function scoreEvidence(ev, ctx) {
 function scoreObservation(o) {
   const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db);
   return { s: o.retracted ? 0 : doi ? 3 : 2, d: o.uncertainty && o.replicates >= 1 ? 4 : 3,
+    cs: o.retracted ? 'S0.void' : doi ? 'S3.doi' : 'S2.unsourced', cd: o.uncertainty && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare',
     why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · 반복 ${o.replicates || 0}` };
 }
 
@@ -71,21 +107,21 @@ function items(db, opt) {
   const trends = opt.trend || {};
   const tr = (sense, ns, value) => trends[`${sense}|${ns}:${value}`] || 'unchecked';
   const out = [];
-  const add = (o) => { o.grade = gradeOf(o.s, o.d, o.trend || 'unchecked'); out.push(o); };
+  const add = (o) => { o.grade = gradeOf(o.s, o.d, o.trend || 'unchecked'); o.ct = `T.${o.trend || 'unchecked'}`; out.push(o); };
   for (const [sid, d] of Object.entries(db.senses)) {
     const label = ix.label(sid);
     // 외부 ID: 도장이 유효하면 S4·D3 (정체성 사실), asserted 면 S2, 지난 도장·unmapped 는 S0
     for (const x of d.xrefs) {
       const key = stampKey(sid, 'xref', x.db, x.id);
       const s = x.status === 'verified' ? (valid.has(key) ? 4 : 0) : 2;
-      add({ sense: sid, label, what: 'xref', target: `${x.db}:${x.id}${x.role ? ` (${x.role})` : ''}`, s, d: 3, trend: tr(sid, x.db, x.id),
+      add({ sense: sid, label, what: 'xref', target: `${x.db}:${x.id}${x.role ? ` (${x.role})` : ''}`, s, d: 3, cs: s === 4 ? 'S4.stamp' : s === 0 ? 'S0.void' : 'S2.unsourced', cd: 'D3.identity', trend: tr(sid, x.db, x.id),
         why: s === 4 ? '원본 대조 + 유효한 도장' : s === 0 ? (stale.has(key) ? '지난 도장 — 주체가 데이터에서 빠짐' : 'verified 인데 유효한 도장이 없음') : '원본과 대조하지 않음 (asserted)' });
     }
-    if (d.unmapped) add({ sense: sid, label, what: 'identity', target: '외부 ID 없음', s: 0, d: 2, why: `unmapped: ${String(d.unmapped).slice(0, 60)}` });
+    if (d.unmapped) add({ sense: sid, label, what: 'identity', target: '외부 ID 없음', s: 0, d: 2, cs: 'S0.void', cd: 'D2.inferred', why: `unmapped: ${String(d.unmapped).slice(0, 60)}` });
     if (d.fingerprint) {
       const f = d.fingerprint, key = stampKey(sid, 'fingerprint', f.scheme, f.value);
       const s = f.status === 'verified' || f.status === 'computed' ? (valid.has(key) ? 4 : 2) : 2;
-      add({ sense: sid, label, what: 'fingerprint', target: `${f.scheme}`, s, d: 4, trend: tr(sid, f.scheme, f.value), why: s === 4 ? '원본·도구 계산 + 유효한 도장' : '도장 없음' });
+      add({ sense: sid, label, what: 'fingerprint', target: `${f.scheme}`, s, d: 4, cs: s === 4 ? 'S4.stamp' : 'S2.unsourced', cd: 'D4.computed', trend: tr(sid, f.scheme, f.value), why: s === 4 ? '원본·도구 계산 + 유효한 도장' : '도장 없음' });
     }
     for (const [i, x] of (d.desc || []).entries()) { const r = scoreEvidence(x.evidence, ctx); add({ sense: sid, label, what: 'desc', target: `설명 ${i + 1}`, ...r, trend: 'unchecked' }); }
     for (const r0 of d.rule || []) {
@@ -99,7 +135,7 @@ function items(db, opt) {
   // 관찰 기록 (v10): 불확도·반복 수가 있는 실측 — 철회된 것은 차단
   for (const [oid, o] of Object.entries(db.observations || {})) {
     const sc = scoreObservation(o);
-    add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || o.readout || {}).kind || '?'} (${o.use || '?'})`, s: sc.s, d: sc.d, trend: 'unchecked', why: sc.why });
+    add({ sense: oid, label: oid, what: 'observation', target: `${(o.observable || o.readout || {}).kind || '?'} (${o.use || '?'})`, s: sc.s, d: sc.d, cs: sc.cs, cd: sc.cd, trend: 'unchecked', why: sc.why });
   }
   return out;
 }
@@ -137,6 +173,19 @@ function gradeText(rows, opt) {
   const byTrend = {};
   for (const r of rows) byTrend[r.trend || 'unchecked'] = (byTrend[r.trend || 'unchecked'] || 0) + 1;
   L.push('', `추세 축 (\`dbtool trend\`): ${Object.entries(byTrend).map(([k, n]) => `${k} ${n}`).join(' · ')}. \`unchecked\` 인 항목에서는 \`anchor\` 가 나오지 않고, 창을 넘긴 추세 도장은 다시 \`unchecked\` 다.`);
+  L.push('', criteriaText(rows));
+  return L.join('\n');
+}
+
+// 기준과 이유 — 기준마다 쓰인 항목 수, 이유 미정은 따로 센다
+function criteriaText(rows) {
+  const used = {}; for (const r of rows || []) for (const c of [r.cs, r.cd, r.ct]) if (c) used[c] = (used[c] || 0) + 1;
+  const L = ['## 기준과 이유 (`judicial/reliability.js` CRITERIA)', '', '| 기준 | 축·단계 | 조건 | 이유 | 쓰인 항목 |', '|---|---|---|---|---|'];
+  for (const [id, c] of Object.entries(CRITERIA)) L.push(`| ${id} | ${c.axis} ${c.level} | ${c.when} | ${c.why ? c.why + (c.open ? ` · **미정:** ${c.open}` : '') : `**이유 미정:** ${c.open}`} | ${used[id] || 0} |`);
+  L.push('', '| 등급 | 조건 | 이유 |', '|---|---|---|', ...ORDER.map((g) => `| ${g} | ${RULE[g]} | ${GRADE_WHY[g].why} |`));
+  L.push('', '| 정책 | 이유 미정 |', '|---|---|', ...Object.values(POLICY_OPEN).map((x) => `| ${x.what} | ${x.open} |`));
+  const open = Object.values(CRITERIA).filter((c) => c.open).length + Object.keys(POLICY_OPEN).length;
+  L.push('', `이유 미정 ${open} (기준 ${Object.values(CRITERIA).filter((c) => c.open).length} · 정책 ${Object.keys(POLICY_OPEN).length}) — 이유를 지어내지 않고 드러낸다. 기준을 바꾸는 것은 사용자 결정.`);
   return L.join('\n');
 }
 
@@ -175,5 +224,5 @@ function constantVerdict(ir, sc, opt) {
 }
 const constantText = (v) => (v.error ? v.error : `문턱 ${v.min}${v.hypothetical ? ' · 시나리오는 hypothetical (가상 값 허용)' : ''} · 상수 ${v.n} (${Object.entries(v.byGrade).map(([g, n]) => `${g} ${n}`).join(' · ') || '없음'})${v.violations.length ? ` · 위반 ${v.violations.length}: ${v.violations.slice(0, 3).map((x) => `${x.ref} ${x.msg}`).join(' / ')}` : ''}`);
 
-return Object.freeze({ DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
+return Object.freeze({ CRITERIA, GRADE_WHY, POLICY_OPEN, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
 });
