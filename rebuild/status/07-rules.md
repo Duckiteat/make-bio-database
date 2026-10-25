@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 460 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 910 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 497 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 집행
 
@@ -11,26 +11,29 @@
 | machine | 182 |
 | text | 120 |
 | none | 0 |
-| unchecked | 158 |
+| unchecked | 195 |
 
 ## 한 규칙이 적힌 곳
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 248 |
+| 1 곳 | 277 |
 | 2 곳 | 104 |
-| 3 곳 | 62 |
-| 4 곳 | 28 |
-| 5 곳 이상 | 18 |
+| 3 곳 | 60 |
+| 4 곳 | 33 |
+| 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 65 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 76 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
 | RULE-0004 | common · author | 연결은 번호로만 |
 | RULE-0010 | common · develop | 부분 구조 수지 ΣIn=ΣOut 상대 1e-14 (규칙 검사·운명 원장) |
+| RULE-0018 | author · develop | 권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤 |
 | RULE-0019 | author · develop | 역할 BIODB_ROLE 기본 collector (핸드오프만) |
 | RULE-0024 | common · author | 그 밖의 로그인(학교 계정 등)은 쓰지 않는다 |
+| RULE-0026 | author · develop | 행정부는 관찰을 읽지 않는다; 예측 표본은 조정자가 compiler/obs_operator.js 로 |
+| RULE-0027 | author · inspect | 'verified' 는 attestations/registry.json 의 유효 도장으로만, 없으면 관문 거부 |
 | RULE-0039 | common · baseline · inspect | FINDING 은 고치지 않는다 — 결과(고갈·정지)를 결함으로 고치지 않음 |
 | RULE-0040 | common · author · baseline | DATA_GAP 은 한계 등록 |
 | RULE-0041 | common · author · baseline | DOMAIN_CONFLICT 는 근거와 함께 데이터 패치 |
@@ -47,7 +50,10 @@
 | RULE-0067 | common · author | 수신함은 해석만, 실행 금지 |
 | RULE-0081 | baseline · inspect | 시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함 |
 | RULE-0085 | author · develop | 미확인 값 금지 — 시험값은 가정 원장 번호 A… 를 hypothetical 시나리오가 {assume} 로 |
+| RULE-0086 | author · develop | 가정 원장 쓰기는 assume add 감사·봉인 뒤 서기만 |
+| RULE-0087 | author · develop | 가정 고치기는 revises 새 번호, 가리키는 쪽은 최신을 따라가지 않음 |
 | RULE-0088 | author · baseline | 새 사전 등록은 인라인 가상 숫자 거부 |
+| RULE-0092 | common · author · develop | 등급은 계산(judicial/reliability.js, grade) — 점수를 데이터에 쓰지 않음 |
 | RULE-0093 | common · inspect | S×D 곱으로 판정하지 않음 |
 | RULE-0094 | common · baseline | 보고 시 쓴 값의 등급 명시 |
 | RULE-0100 | baseline · inspect | 결론은 가장 약한 근거를 따름 (acceptance_review — 보고서·observe·fate) |
@@ -57,6 +63,7 @@
 | RULE-0109 | common · author | 도구 추정(computed·predicted)은 실측이 아님 (D2.estimate) |
 | RULE-0111 | author · baseline | 추정용을 검증에 쓰지 않음 |
 | RULE-0112 | author · baseline | 합성 관찰은 examples/observations/ 만 |
+| RULE-0115 | author · inspect | 정성 관찰은 1차 문헌(DOI·PMID) provenance.source + 원문 quote 필수 |
 | RULE-0119 | author · baseline | 정성 판정은 우연 기준선과 함께 보고 |
 | RULE-0124 | author · develop | 패치는 obs·kinetics 로 쓰고 병합이 대체·철회로 접음 (값 기록 불변) |
 | RULE-0125 | author · develop | values·moved 직접 쓰기 금지 |
@@ -89,8 +96,12 @@
 | RULE-0201 | common · develop | 새 규칙엔 거부 시험 |
 | RULE-0202 | author · develop | 거부 패치는 tests/fixtures/rejections/ + EXPECT.json |
 | RULE-0203 | author · develop | 바닥값 tests/fixtures/FLOOR.json — 내려가면 실패 |
-| RULE-0205 | author · develop | 새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋 |
+| RULE-0205 | author · develop · inspect | 새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋 |
+| RULE-0212 | common · develop | 오류는 판결·보고서로만 내고, 고치는 것은 에이전트가 새 패치로 (읽기 전용 되먹임) |
+| RULE-0220 | author · develop | 새 가정 기록은 unrecorded 일 수 없다 — 열린 한계를 달고 assumed 로 |
+| RULE-0221 | baseline · develop | 탐색 실행(미등록)은 인라인 숫자를 허용하되 첫 장면 기원 감사가 unrecorded 로 센다 |
 | RULE-0228 | develop · inspect | 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두 부름 (74·75·76) |
+| RULE-0289 | author · inspect | 후보마다 값·단위·종·세포·시각·불확도·출처+인용·use·규약 가능 |
 | RULE-0291 | author · inspect | 값을 적으면 source + quote 필수 |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)

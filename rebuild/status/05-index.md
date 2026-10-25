@@ -30,10 +30,10 @@
 | `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 286 · 10 · 34 | 10 · 없음 0 |
 | `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 95 · 22 · 12 | 20 · 없음 2 |
 | `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 163 · 5 · 31 | 5 · 없음 0 |
-| `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 8592 · 7277 · 3 | — |
+| `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 8693 · 7277 · 3 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 4 · 1 · 3 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 27 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 460 · 460 · 1 | 460 · 없음 0 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 497 · 497 · 1 | 497 · 없음 0 |
 | `decision` | planned | token | `^DEC-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `change` | planned | token | `^CHG-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `plan_item` | planned | token | `^PLAN-\d{3}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
