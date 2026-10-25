@@ -9,6 +9,7 @@
 const crypto = require('crypto');
 const M = require('../model.js');
 const V = require('../vocab.js');
+const ACC = require('./acceptance.js');
 const REL = require('./reliability.js');
 const DICT = require('../dictionary.js'); // 통제 토큰(닫는 방법·판정 수준)의 라벨·의미는 사전 조회 — 코드에 문구를 두지 않는다 (build-plan 16A)
 const PROTO = require('./protocol.js');
@@ -155,6 +156,12 @@ function evidenceReport(db, scenario, opt = {}) {
     judgment = J('validated_registered', null, { protocol: pv });
     judgment.level = `${DICT.entry('validated_registered').label_ko.replace(/\)$/, '')} #${pv.registered.seq})`;
     judgment.why = `등록된 모의 실험 규약 아래 — 일치 결론은 검증 세트 ${vs.join('·') || '(비어 있음)'} 로만${hyp ? '. 농도·상수는 가상 값이므로 결론은 그 관찰의 판정(방향·유무 등)이지 실행의 숫자가 아니다' : ''}`;
+    // 인정 (build-plan 72): 결론은 가장 약한 근거를 따른다 — 검증 세트 관찰이 검증 근거로 인정되지 않으면 인정 재검토 필요. 인정 표를 받지 않으면 '확인 안 함' 으로 남긴다
+    if (opt.acceptance) {
+      const w = ACC.weakest(opt.acceptance, pv.validation);
+      judgment.acceptance = w;
+      if (!w.ok) judgment = J('acceptance_review', `등록 #${pv.registered.seq} 의 검증 세트 중 검증 근거로 인정되지 않은 관찰: ${w.missing.map((m) => `${m.id} (${m.status}${m.reasons.length ? ` — ${m.reasons.join(' · ')}` : ''})`).join(' / ')}`, { protocol: pv, acceptance: w });
+    } else judgment.acceptance = null;
   } else if (pv.declared && pv.registered && pv.problems.length && pv.problems.every((x) => /철회된 관찰/.test(x))) {
     // 등록은 유효하고 문제가 검증 세트 관찰의 철회뿐 — 위반이 아니라 근거가 사라진 결론: 재검증 필요 (라벨)
     const gone = revalidation.bad.filter((b) => b.kind === 'observation' && (pv.validation || []).includes(b.id));

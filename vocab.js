@@ -247,6 +247,15 @@
     },
   },
 
+  // ===== 인정의 용도 (judicial/acceptance.js, build-plan 72) — 인정은 (기록, 용도) 순서쌍. 조건 표는 로직 곁(acceptance.USES) =====
+  acceptanceUses: {
+    describe: { label: '서술', note: '설명·인용에 쓴다 — 계산에는 쓰지 않는다' },
+    compare:  { label: '비교', note: '지난 합의·다른 값과 견준다 — 추세 불일치도 허용' },
+    estimate: { label: '추정', note: '시뮬레이션의 매개변수로 쓴다 — 기준 종의 값만' },
+    evidence: { label: '검증 근거', note: '모의 실험 결과와 대조하는 관찰 — 승인 도장 필요, 추정에 쓴 관찰은 안 됨' },
+    standard: { label: '기준', note: '다른 값을 재는 고정점 — 승인 + 독립 단위 ≥ 2 (I 축 전에는 닿지 못함)' },
+  },
+
   // ===== 이유의 종류 (신뢰 지표 기준·등급·정책의 basis, judicial/reliability.js) — 2026-10-24 결정 =====
   // 기준마다 "왜" 를 적을 뿐 아니라 그 이유가 어떤 종류인지 가른다 — 원칙에서 나온 것과 편의·결정에서 나온 것을 섞지 않게.
   //   결정(decision)이 붙은 이유는 사용자 결정의 날짜를 why 에 적는다. 이유가 없으면 basis 를 비우지 않고 open 으로 드러낸다.
@@ -481,6 +490,7 @@
   },
   // 판정 수준 — 실행의 결론을 어디까지 말할 수 있나. 규약 선언이 아니라 사전 등록 확인에서 정한다 (judicial/protocol.protocolVerdict)
   judgmentLevels: {
+    acceptance_review:      { label: '인정 재검토 필요 (근거가 검증 근거로 인정되지 않음)', note: '등록된 검증 세트의 관찰 중 검증 근거 용도로 인정되지 않은 것이 있음(승인 없음·축이 내려감) — 결론은 가장 약한 근거를 따른다 (build-plan 72)' },
     validated_registered:   { label: '검증 (사전 등록)', note: '등록된 모의 실험 규약 아래 — 일치 결론은 규약의 검증 세트로만' },
     protocol_violation:     { label: '탐색 (규약 위반 — 검증 결론 불가)', note: '규약을 선언했으나 등록되지 않았거나 등록 뒤 고침 — 검증 결론을 내지 않는다' },
     registration_unchecked: { label: '규약 선언됨 (등록 미확인)', note: '사전 등록부를 받지 않아 등록 여부를 확인하지 못함 — 확인 전에는 검증 결론으로 읽지 않는다' },

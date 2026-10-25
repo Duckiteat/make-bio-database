@@ -24,6 +24,7 @@ import { createHash } from 'node:crypto';
 const require = createRequire(import.meta.url);
 const ATT = require('../judicial/attestation.js');
 const TR = require('../judicial/trend.js'); // 추세 도장(claim 'trend')의 검증은 이 쪽 — 주장마다 맞는 사법부 모듈로 보낸다
+const ACC = require('../judicial/acceptance.js'); // 승인 도장(claim 'accept') — 축·관계 조건을 넘는 승인은 쓰지 않는다
 const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '..');
 const sha = (x) => createHash('sha256').update(x).digest('hex');
 const serialize = (db) => JSON.stringify(db, null, 2) + '\n';
@@ -187,11 +188,13 @@ export function readLog(dataDir) {
 
 // ② 증명 등록부: 도장마다 사법부 검증(digest + 증거 재확인)을 다시 거친 뒤에만 추가.
 //    주장(claim)에 따라 검증 모듈이 다르다 — 'verified' 는 신원(attestation), 'trend' 는 추세(trend). 검증 함수를 부르는 쪽이 고르게 하지 않는다.
-export function appendAttestations({ root, stamps, db }) {
+export function appendAttestations({ root, stamps, db, context }) {
   root = root || ROOT;
   const reg = ATT.readRegistry(root);
   for (const st of stamps) {
-    const v = st.claim === 'trend' ? TR.verifyTrendStamp(st, db, { root, reverify: true, registry: reg }) : ATT.verifyStamp(st, db, { root, reverify: true });
+    const v = st.claim === 'trend' ? TR.verifyTrendStamp(st, db, { root, reverify: true, registry: reg })
+      : st.claim === 'accept' ? ACC.checkIssue(st, db, context) // context = 신뢰 지표 입력(도장·문헌 상태·추세) — 부르는 쪽이 모은다
+      : ATT.verifyStamp(st, db, { root, reverify: true });
     if (!v.ok) refuse(`도장 ${v.key}: ${v.reasons.join(' · ')}`);
     reg.stamps = reg.stamps.filter((x) => ATT.subjectKey(x.subject) !== v.key);
     reg.stamps.push(st);

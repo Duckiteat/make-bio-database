@@ -46,6 +46,8 @@ const tools = [
     run: (a) => dbtool(['assume', 'add', outside(need(a, 'path'))]) },
   { name: 'dictionary_add', roles: INT, description: '사전에 항목 추가 — 사법부 검사 → 봉인 → 서기', inputSchema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
     run: (a) => dbtool(['dictionary', 'add', outside(need(a, 'path'))]) },
+  { name: 'accept', roles: INT, description: '높은 용도(검증 근거·기준) 승인·철회 도장 — 이유 필수, 축·관계 조건을 넘는 승인은 서기가 거부. 역할(BIODB_ROLE)이 승인자로 기록된다', inputSchema: { type: 'object', properties: { ids: { type: 'array', items: { type: 'string' } }, use: { type: 'string', enum: ['evidence', 'standard'] }, reason: { type: 'string' }, revoke: { type: 'boolean' } }, required: ['ids', 'use', 'reason'] },
+    run: (a) => { const ids = a.ids; if (!Array.isArray(ids) || !ids.length || !ids.every((x) => /^O\d{6}$/.test(x))) throw new Error('ids 는 관찰 번호(O…) 목록'); return dbtool(['accept', ...ids, '--use', need(a, 'use'), '--reason', need(a, 'reason'), ...(a.revoke ? ['--revoke'] : [])]); } },
   { name: 'attest', roles: INT, description: '증명 등록부 재검증', inputSchema: { type: 'object', properties: {} }, run: () => dbtool(['attest']) },
   { name: 'write_derived', roles: INT, description: '파생 문서 다시 쓰기 — limitations.md 또는 교과서 부록', inputSchema: { type: 'object', properties: { kind: { type: 'string', enum: ['limitations', 'textbook'] } }, required: ['kind'] },
     run: (a) => dbtool(a.kind === 'textbook' ? ['textbook', '--write'] : ['limitations', '--write']) },
