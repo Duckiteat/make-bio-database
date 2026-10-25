@@ -168,8 +168,8 @@
 {"from": "RULE-0157", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계에서 이유를 찾지 못했다"}
 {"from": "RULE-0158", "rel": "decided_by", "to": "CHG-0056", "by": "judged", "anchor": "2026-10-10 · 텔로미어 소모와 복제 노화 (헤이플릭 한계) — 형식·엔진 바꾸지 않음"}
 {"from": "RULE-0159", "rel": "because", "to": "U0374", "by": "judged"}
-{"from": "RULE-0160", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계에서 이유를 찾지 못했다"}
-{"from": "RULE-0161", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계에서 이유를 찾지 못했다"}
+{"from": "RULE-0160", "rel": "because", "to": "U1610", "by": "judged"}
+{"from": "RULE-0161", "rel": "decided_by", "to": "L000070", "by": "judged"}
 {"from": "RULE-0162", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계에서 이유를 찾지 못했다"}
 {"from": "RULE-0163", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계에서 이유를 찾지 못했다"}
 {"from": "RULE-0164", "rel": "decided_by", "to": "CHG-0056", "by": "judged", "anchor": "2026-10-10 · 텔로미어 소모와 복제 노화 (헤이플릭 한계) — 형식·엔진 바꾸지 않음"}

@@ -1,0 +1,55 @@
+{"rule": "RULE-0314", "issue": "stale", "evidence": "\"시험 195개\" — 지금 349 (tests/fixtures/FLOOR.json)", "proposal": "숫자를 지우고 관리 파일이 센다"}
+{"rule": "RULE-0468", "issue": "stale", "evidence": "\"한계 115개\" — 지금 124 (data/db.json limitations)", "proposal": "숫자를 지운다"}
+{"rule": "RULE-0299", "issue": "stale", "evidence": "작업 브랜치 `sonnet/*` — 그런 브랜치는 없고, 결정 ② 는 `collector/*` + 문지기 훅 (RULE-0287 과 모순으로 이미 기록)", "proposal": "7 단계에서 collector/* 로 고치고 훅으로 집행"}
+{"rule": "RULE-0274", "issue": "stale", "evidence": "\"settings.json 권한으로 거부\" — 실제 .claude/settings.json 은 apply·merge·register·push 를 묻기(ask)만 하고 git commit 은 허용, 규칙 파일 쓰기는 막지 않음. 설정 파일 하나를 모든 역할이 같이 쓴다", "proposal": "7 단계 문지기 훅(모드·역할별 쓰기 금지)으로 실제로 막거나, 문장을 \"묻는다\" 로 고친다"}
+{"rule": "RULE-0275", "issue": "stale", "evidence": "\"settings.json 권한으로 거부\" — 실제 .claude/settings.json 은 apply·merge·register·push 를 묻기(ask)만 하고 git commit 은 허용, 규칙 파일 쓰기는 막지 않음. 설정 파일 하나를 모든 역할이 같이 쓴다", "proposal": "7 단계 문지기 훅(모드·역할별 쓰기 금지)으로 실제로 막거나, 문장을 \"묻는다\" 로 고친다"}
+{"rule": "RULE-0001", "issue": "obsolete_by_design", "evidence": "CLAUDE.md ↔ agent-rules.md 두 곳에 같은 규칙 — 재건이 규칙 장부 하나로 바꾼다", "proposal": "6 단계에서 은퇴 (규칙은 장부 한 곳)"}
+{"rule": "RULE-0193", "issue": "obsolete_by_design", "evidence": "CLAUDE.md ↔ agent-rules.md 두 곳에 같은 규칙 — 재건이 규칙 장부 하나로 바꾼다", "proposal": "6 단계에서 은퇴 (규칙은 장부 한 곳)"}
+{"rule": "RULE-0142", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0143", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0144", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0145", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0146", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0147", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0148", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0149", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0150", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0151", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0237", "issue": "unused_layer", "evidence": "P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368)", "proposal": "적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인"}
+{"rule": "RULE-0138", "issue": "no_consumer", "evidence": "tier 는 정의항 156 개에 있고 사법부가 검사하지만, 엔진·컴파일러·simulateRate 어느 것도 읽지 않는다", "proposal": "적분장 엔진 전까지 \"예약 칸\" 으로 표시하거나 필수를 푼다 — 규칙 변경이라 사용자 결정"}
+{"rule": "RULE-0139", "issue": "no_consumer", "evidence": "pH·유전율은 simulateRate 환경 보정이 쓰지만, 확산 계수는 데이터 0 건이고 읽는 코드가 없다", "proposal": "확산 부분은 \"예약\" 으로 표시"}
+{"rule": "RULE-0082", "issue": "naming_collision", "evidence": "\"R2\" 가 두 뜻 — 해상도 R2(반응 중심) 와 사전의 R2(원문 통과, RULE-0463)", "proposal": "해상도 쪽 이름을 바꾸고 번호 사전에 둘 다 등록"}
+{"rule": "RULE-0453", "issue": "naming_collision", "evidence": "\"등급 1–6\" 이 두 체계 — 교과서 06 의 읽기 등급(curated…가상 값) 과 신뢰 지표의 6 칸(anchor…blocked, RULE-0426·0434)", "proposal": "읽기 표를 \"근거 수준\" 으로 부르거나 신뢰 지표로 합친다"}
+{"rule": "RULE-0227", "issue": "unreachable", "evidence": "기준(standard)은 I 축(build-plan 52) 전에는 어떤 기록도 닿지 못한다 — 지금은 지배하는 대상이 없다", "proposal": "I 축이 생길 때까지 \"예약\" 으로 표시"}
+{"rule": "RULE-0465", "issue": "unreachable", "evidence": "SQLite 색인(16)·뷰어 조각(19) 은 아직 코드가 없다", "proposal": "계획 항목으로 옮기고 규칙에서 뺀다"}
+{"rule": "RULE-0252", "issue": "unclear", "evidence": "\"두 해상도를 지킨다\" — 무엇을 하면 어기는지 문장에 없음 (RULE-0068·0069 와 겹침)", "proposal": "0068·0069 의 사본으로 묶는다"}
+{"rule": "RULE-0469", "issue": "unclear", "evidence": "\"손으로 뿌리지 않음(drift)\" — 앞 문장 없이 떨어져 나온 조각, 무엇을 뿌리는지 없음", "proposal": "원문 앞 줄과 합쳐 다시 쓴다"}
+{"rule": "RULE-0284", "issue": "unclear", "evidence": "\"사람 눈으로도 한 번 본다\" — 누가·언제 보는지 없고 집행할 수 없음", "proposal": "점검·검증(inspect) 모드의 확인 항목으로 옮기거나 지운다"}
+{"rule": "RULE-0307", "issue": "unclear", "evidence": "\"상주 세션이면 이 표에 append\" — 어느 표인지 문장 밖에서만 알 수 있음, 상주 세션 방식(B)은 결정 ② 와 겹침", "proposal": "7 단계에서 수집가 쓰기 자리를 하나로 정리"}
+{"rule": "RULE-0010", "issue": "number_unexplained", "evidence": "상대 1e-14 — 배정도 반올림 수준이라는 근거가 어디에도 적혀 있지 않음", "proposal": "숫자 기록(수식 기록, 6 단계)에 근거를 단다"}
+{"rule": "RULE-0037", "issue": "number_unexplained", "evidence": "상대 1e-14 — 배정도 반올림 수준이라는 근거가 어디에도 적혀 있지 않음", "proposal": "숫자 기록(수식 기록, 6 단계)에 근거를 단다"}
+{"rule": "RULE-0052", "issue": "number_unexplained", "evidence": "수렴 기준 = 허용 오차 1/1000 — 왜 1000 배인지 기록 없음", "proposal": "같음"}
+{"rule": "RULE-0162", "issue": "number_unexplained", "evidence": "이득 < 1e-5 · 시간 +5% — 문턱의 근거 기록 없음", "proposal": "같음"}
+{"rule": "RULE-0090", "issue": "number_unexplained", "evidence": "미보고 불확도 sd = 유효 숫자 해상도 — 관례인지 근거 기록 없음", "proposal": "같음"}
+{"rule": "RULE-0196", "issue": "loosely_followed", "evidence": "\"주석은 계약·이유만, 이력은 CHANGES\" — 코드 주석에 날짜·\"예전\" 같은 이력이 약 30 줄", "proposal": "5c 에서 판정 시험으로 올릴지 정한다"}
+{"rule": "RULE-0013", "issue": "broken_before", "evidence": "CHG-0050: 경로 경계가 표시뿐이었고 실제 구멍 둘(commitMerge dbPath·fetchToInbox)", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0014", "issue": "broken_before", "evidence": "CHG-0050: 경로 경계가 표시뿐이었고 실제 구멍 둘(commitMerge dbPath·fetchToInbox)", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0165", "issue": "broken_before", "evidence": "CHG-0067: why 필수·미등록 한계·정제 점검이 CLI 에만 있어 직접 호출로 건너뜀", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0190", "issue": "broken_before", "evidence": "CHG-0067: why 필수·미등록 한계·정제 점검이 CLI 에만 있어 직접 호출로 건너뜀", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0105", "issue": "broken_before", "evidence": "CHG-0194: \"문턱은 올리기만\" 이 글로만 있어 reference 문턱이 통과", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0106", "issue": "broken_before", "evidence": "CHG-0194: \"문턱은 올리기만\" 이 글로만 있어 reference 문턱이 통과", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0229", "issue": "broken_before", "evidence": "CHG-0194: \"문턱은 올리기만\" 이 글로만 있어 reference 문턱이 통과", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0084", "issue": "broken_before", "evidence": "CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0127", "issue": "broken_before", "evidence": "CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0444", "issue": "broken_before", "evidence": "CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0109", "issue": "broken_before", "evidence": "CHG-0192: 계산값(eQuilibrator ΔG°′ 8 개)이 실측 등급을 받음", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0231", "issue": "broken_before", "evidence": "CHG-0192: 계산값(eQuilibrator ΔG°′ 8 개)이 실측 등급을 받음", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0433", "issue": "broken_before", "evidence": "CHG-0186: DOI 글자만 있으면 S3 — 원고·철회 논문도 포함", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0100", "issue": "broken_before", "evidence": "CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0101", "issue": "broken_before", "evidence": "CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0102", "issue": "broken_before", "evidence": "CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0228", "issue": "broken_before", "evidence": "CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0456", "issue": "broken_before", "evidence": "CHG-0077: p ≥ α 를 일치로 셈 — 오차 막대가 크면 무엇이든 일치", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0486", "issue": "broken_before", "evidence": "CHG-0077: p ≥ α 를 일치로 셈 — 오차 막대가 크면 무엇이든 일치", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0494", "issue": "broken_before", "evidence": "CHG-0180: 시나리오 점검의 기준이 에이전트 지식이었음", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}
+{"rule": "RULE-0096", "issue": "broken_before", "evidence": "CHG-0190: 365 일 창은 근거 없는 숫자였음", "proposal": "지금 집행 방식을 5c 에서 거부 시험으로 확인"}

@@ -1,0 +1,127 @@
+# 규칙 검토
+
+> 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
+
+원본: `rebuild/rules/review.jsonl` (55 행 · 규칙 55). 규칙이 가리키는 파일·명령·이름·숫자를 지금 저장소와 대조하고, 실제로 쓰이는지·뜻이 서는지 본 결과. 6 단계 옛 규칙 대조에서 사용자가 확인할 목록이다 — 여기서 규칙을 고치지 않는다.
+
+| 종류 | 규칙 |
+|---|---|
+| 현실과 안 맞음 | 5 |
+| 재건이 없앨 것 | 2 |
+| 쓰이지 않는 층 | 11 |
+| 검사만 하고 쓰는 곳 없음 | 2 |
+| 이름이 두 뜻 | 2 |
+| 아직 닿을 대상이 없음 | 2 |
+| 뜻이 서지 않음 | 4 |
+| 숫자 근거 없음 | 5 |
+| 느슨하게 지켜짐 | 1 |
+| 실제로 구멍이 났던 규칙 | 21 |
+
+## 현실과 안 맞음 `stale` — 5
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0314 | text | 규칙은 `tests/` 의 시험 195개가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다. | "시험 195개" — 지금 349 (tests/fixtures/FLOOR.json) | 숫자를 지우고 관리 파일이 센다 |
+| RULE-0468 | unchecked | **하지 말 것**: 한계 115개·db 서술문을 **영어로 일괄 이관 금지**(반경 크고 신뢰 이득 작음) · 병기를 레코드 | "한계 115개" — 지금 124 (data/db.json limitations) | 숫자를 지운다 |
+| RULE-0299 | text | **본체(main) 금지.** 커밋·push 는 자기 작업 브랜치(`sonnet/*` 등)에만. `main` 에 쓰지 않는다 | 작업 브랜치 `sonnet/*` — 그런 브랜치는 없고, 결정 ② 는 `collector/*` + 문지기 훅 (RULE-0287 과 모순으로 이미 기록) | 7 단계에서 collector/* 로 고치고 훅으로 집행 |
+| RULE-0274 | machine | **B (상주 Sonnet 세션, 독립 실행 시):** `.claude/settings.json` 권한으로 **거부**한다 — | "settings.json 권한으로 거부" — 실제 .claude/settings.json 은 apply·merge·register·push 를 묻기(ask)만 하고 git commit 은 허용, 규칙 파일 쓰기는 막지 않음. 설정 파일 하나를 모든 역할이 같이 쓴다 | 7 단계 문지기 훅(모드·역할별 쓰기 금지)으로 실제로 막거나, 문장을 "묻는다" 로 고친다 |
+| RULE-0275 | machine | `register` · `git commit`·`git push` · 규칙 파일(vocab·model·core·judicial | "settings.json 권한으로 거부" — 실제 .claude/settings.json 은 apply·merge·register·push 를 묻기(ask)만 하고 git commit 은 허용, 규칙 파일 쓰기는 막지 않음. 설정 파일 하나를 모든 역할이 같이 쓴다 | 7 단계 문지기 훅(모드·역할별 쓰기 금지)으로 실제로 막거나, 문장을 "묻는다" 로 고친다 |
+
+## 재건이 없앨 것 `obsolete_by_design` — 2
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0001 | text | 규칙을 바꾸면 CLAUDE.md 와 agent-rules.md 를 같은 커밋에서 | CLAUDE.md ↔ agent-rules.md 두 곳에 같은 규칙 — 재건이 규칙 장부 하나로 바꾼다 | 6 단계에서 은퇴 (규칙은 장부 한 곳) |
+| RULE-0193 | text | 구조 변경 → SCHEMA.md, 작업 규칙 → CLAUDE.md + agent-rules.md, 실패·공백 → limitat | CLAUDE.md ↔ agent-rules.md 두 곳에 같은 규칙 — 재건이 규칙 장부 하나로 바꾼다 | 6 단계에서 은퇴 (규칙은 장부 한 곳) |
+
+## 쓰이지 않는 층 `unused_layer` — 11
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0142 | text | 실행 상태는 db 가 아니라 시나리오 domains·engine/ | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0143 | machine | P3 변경 → node tests/p3_end_to_end.js (\|ΔN\|<1) | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0144 | machine | 원장은 거래로만, 장은 원장에 맞춰 재척도 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0145 | machine | P4 대리 출력은 같은 단계 OOD 통과 시만 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0146 | text | P4 속도는 tests/p4_benchmark.js FV 부분 단계 수와 함께 보고 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0147 | machine | P4 L2<2% + tests/p4_end_to_end.js | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0148 | unchecked | P5 경로는 engine/p5_dynamic_gate.js 의 N_sub·히스테리시스·γ 로만 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0149 | machine | P5 전이마다 exactAnchor ≤1e-15 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0150 | unchecked | mode:'fv' 결과 비트 불변 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0151 | machine | P5 변경 → tests/p5_dynamic_promotion.js, 속도는 구간별 N_sub 와 (N_sub<15 ≈1×) | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+| RULE-0237 | machine | 충격·OOD 는 같은 단계 강등 + W 냉각 | P3–P5 층(engine/devs_scheduler.js·hmse·fv_solver·fno_surrogate·p5_dynamic_gate)은 시험만 부르고 실제 경로(운명 엔진·simulateRate·dbtool)는 쓰지 않는다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않음(U0368) | 적분장(field) 모드로 보관하거나 층 정리(build-plan 85) 때 은퇴 — 사용자 확인 |
+
+## 검사만 하고 쓰는 곳 없음 `no_consumer` — 2
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0138 | machine | 분자 정의항 tier(T1\|T2) 필수 | tier 는 정의항 156 개에 있고 사법부가 검사하지만, 엔진·컴파일러·simulateRate 어느 것도 읽지 않는다 | 적분장 엔진 전까지 "예약 칸" 으로 표시하거나 필수를 푼다 — 규칙 변경이라 사용자 결정 |
+| RULE-0139 | machine | 확산·pH·유전율은 위치(context.location) + SI | pH·유전율은 simulateRate 환경 보정이 쓰지만, 확산 계수는 데이터 0 건이고 읽는 코드가 없다 | 확산 부분은 "예약" 으로 표시 |
+
+## 이름이 두 뜻 `naming_collision` — 2
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0082 | text | R2 는 속도 상수로 못 가르는 반응 중심만, 경쟁은 Kd·kcat·Km 먼저 | "R2" 가 두 뜻 — 해상도 R2(반응 중심) 와 사전의 R2(원문 통과, RULE-0463) | 해상도 쪽 이름을 바꾸고 번호 사전에 둘 다 등록 |
+| RULE-0453 | unchecked | 6 \| 시나리오의 **가상 값** (`hypothetical: true`) \| 엔진이 작동한다는 것만. 생물학적 결론 금지 | "등급 1–6" 이 두 체계 — 교과서 06 의 읽기 등급(curated…가상 값) 과 신뢰 지표의 6 칸(anchor…blocked, RULE-0426·0434) | 읽기 표를 "근거 수준" 으로 부르거나 신뢰 지표로 합친다 |
+
+## 아직 닿을 대상이 없음 `unreachable` — 2
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0227 | machine | 기준(standard)은 독립 단위 ≥ 2 — I 축(52) 전에는 아무것도 닿지 못함 | 기준(standard)은 I 축(build-plan 52) 전에는 어떤 기록도 닿지 못한다 — 지금은 지배하는 대상이 없다 | I 축이 생길 때까지 "예약" 으로 표시 |
+| RULE-0465 | unchecked | 한 줄: **정준 텍스트 = 권위(봉인·감사) · SQLite 색인(16) = 파생 질의 · 뷰어(19) = 렌더.** 셋을  | SQLite 색인(16)·뷰어 조각(19) 은 아직 코드가 없다 | 계획 항목으로 옮기고 규칙에서 뺀다 |
+
+## 뜻이 서지 않음 `unclear` — 4
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0252 | text | 두 해상도를 지킨다 | "두 해상도를 지킨다" — 무엇을 하면 어기는지 문장에 없음 (RULE-0068·0069 와 겹침) | 0068·0069 의 사본으로 묶는다 |
+| RULE-0469 | unchecked | 손으로 뿌리지 않음(drift). | "손으로 뿌리지 않음(drift)" — 앞 문장 없이 떨어져 나온 조각, 무엇을 뿌리는지 없음 | 원문 앞 줄과 합쳐 다시 쓴다 |
+| RULE-0284 | machine | `tests/rejections.test.mjs` 가 자동으로 잡지만, 사람 눈으로도 한 번 본다. | "사람 눈으로도 한 번 본다" — 누가·언제 보는지 없고 집행할 수 없음 | 점검·검증(inspect) 모드의 확인 항목으로 옮기거나 지운다 |
+| RULE-0307 | text | (서브에이전트면 **파일에 쓰지 말고 반환**, 상주 세션이면 이 표에 append). **금지**: `augment appl | "상주 세션이면 이 표에 append" — 어느 표인지 문장 밖에서만 알 수 있음, 상주 세션 방식(B)은 결정 ② 와 겹침 | 7 단계에서 수집가 쓰기 자리를 하나로 정리 |
+
+## 숫자 근거 없음 `number_unexplained` — 5
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0010 | machine | 부분 구조 수지 ΣIn=ΣOut 상대 1e-14 (규칙 검사·운명 원장) | 상대 1e-14 — 배정도 반올림 수준이라는 근거가 어디에도 적혀 있지 않음 | 숫자 기록(수식 기록, 6 단계)에 근거를 단다 |
+| RULE-0037 | machine | 속도 법칙 변경 = 컴파일러·테이프 명세·judicial/derivative.js 재구성 같은 커밋, 도함수 ≤1e-14 | 상대 1e-14 — 배정도 반올림 수준이라는 근거가 어디에도 적혀 있지 않음 | 숫자 기록(수식 기록, 6 단계)에 근거를 단다 |
+| RULE-0052 | machine | 수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000 (orchestrator.refScenario) | 수렴 기준 = 허용 오차 1/1000 — 왜 1000 배인지 기록 없음 | 같음 |
+| RULE-0162 | machine | compare: 결과 같고 비용만 늘며 이득 <1e-5 → Optimization-Negative, 넣지 않음 | 이득 < 1e-5 · 시간 +5% — 문턱의 근거 기록 없음 | 같음 |
+| RULE-0090 | text | 불확도 미보고면 sd = 유효 숫자 해상도 + note | 미보고 불확도 sd = 유효 숫자 해상도 — 관례인지 근거 기록 없음 | 같음 |
+
+## 느슨하게 지켜짐 `loosely_followed` — 1
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0196 | text | 주석은 계약·이유만, 이력은 CHANGES.md | "주석은 계약·이유만, 이력은 CHANGES" — 코드 주석에 날짜·"예전" 같은 이력이 약 30 줄 | 5c 에서 판정 시험으로 올릴지 정한다 |
+
+## 실제로 구멍이 났던 규칙 `broken_before` — 21
+
+| 규칙 | 집행 | 내용 | 근거 | 제안 |
+|---|---|---|---|---|
+| RULE-0013 | machine | 파일 쓰기는 legislative/clerk.mjs 만, 모든 쓰기는 put(구역, 파일) | CHG-0050: 경로 경계가 표시뿐이었고 실제 구멍 둘(commitMerge dbPath·fetchToInbox) | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0014 | machine | 새 쓰기는 구역을 고르거나 새로 선언, put 우회 금지 | CHG-0050: 경로 경계가 표시뿐이었고 실제 구멍 둘(commitMerge dbPath·fetchToInbox) | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0165 | machine | 정제 점검 자동 — 새 중복·미등록 모순은 관문 거부 | CHG-0067: why 필수·미등록 한계·정제 점검이 CLI 에만 있어 직접 호출로 건너뜀 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0190 | machine | why 없음·미등록 한계 후보·새 정제 문제는 관문(patchPolicy) 거부 | CHG-0067: why 필수·미등록 한계·정제 점검이 CLI 에만 있어 직접 호출로 건너뜀 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0105 | machine | 문턱은 min_grade 로 올리기만 — 낮추거나 비교 못 하는 등급은 관문 거부 | CHG-0194: "문턱은 올리기만" 이 글로만 있어 reference 문턱이 통과 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0106 | machine | 문턱 비교는 순번이 아니라 축 조건 (reliability.THRESHOLD) | CHG-0194: "문턱은 올리기만" 이 글로만 있어 reference 문턱이 통과 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0229 | machine | bounded(S4,D2)와 parameter(S3,D3)는 서로의 문턱을 넘지 못한다 | CHG-0194: "문턱은 올리기만" 이 글로만 있어 reference 문턱이 통과 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0084 | machine | 문헌 값은 관찰(O…) 먼저 + kinetics.from (lumped 도 원 관찰 참조) | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0127 | machine | 정의항 obs 의 curated 측정값은 from: 'O…' | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0444 | unchecked | (`checkSenseObsFrom` — `checkKineticsFrom` 의 거울). 철회된 관찰이나 `use: valid | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0109 | machine | 도구 추정(computed·predicted)은 실측이 아님 (D2.estimate) | CHG-0192: 계산값(eQuilibrator ΔG°′ 8 개)이 실측 등급을 받음 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0231 | machine | 미보고 반복 수는 D3, 비교는 1 회로 본다 | CHG-0192: 계산값(eQuilibrator ΔG°′ 8 개)이 실측 등급을 받음 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0433 | unchecked | `evidence` 검증 근거 \| S ≥ 3 ∧ D ≥ 2 ∧ 불일치 아님 \| 기준 종 · 확인된 문헌(S3.unconfi | CHG-0186: DOI 글자만 있으면 S3 — 원고·철회 논문도 포함 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0100 | machine | 결론은 가장 약한 근거를 따름 (acceptance_review — 보고서·observe·fate) | CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0101 | machine | 시뮬레이션 관문도 같은 판정 (문턱 ∧ '추정' accepted, 종 = kinetics.context.species) | CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0102 | machine | 승인 도장은 추가만 (마지막이 유효) | CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0228 | unchecked | 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두  | CHG-0198: 관문과 인정이 따로 판정, 승인 경과가 덮어써짐 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0456 | unchecked | 판정 셋: **CONSISTENT**(FINDING — 가설 하나면 선언된 허용 차이 δ 안임을 동등성 검정(TOST)으로 * | CHG-0077: p ≥ α 를 일치로 셈 — 오차 막대가 크면 무엇이든 일치 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0486 | unchecked | CONSISTENT \| (사전 등록된 규약의 검증 세트 관찰만 — build-plan 3) 가설 하나: 선언된 δ(근거 등급 | CHG-0077: p ≥ α 를 일치로 셈 — 오차 막대가 크면 무엇이든 일치 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0494 | unchecked | **에이전트의 지식은 기준이 아니다** — 기준은 출처가 있는 관찰로만. 에이전트 지식은 §5 처럼 "후보" 를 만드는 데까지 | CHG-0180: 시나리오 점검의 기준이 에이전트 지식이었음 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+| RULE-0096 | machine | 추세 도장은 원천별 창 vocab.consensus.sources 뒤 다시 unchecked | CHG-0190: 365 일 창은 근거 없는 숫자였음 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 |
+
+## 형식 오류
+
+없음
