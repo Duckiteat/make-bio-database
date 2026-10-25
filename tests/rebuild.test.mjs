@@ -81,3 +81,9 @@ test('⑩ 맥락: 규칙마다 이유 판정 행이 있고, 연결 대상 종류
   assert.match(t, /## 표 줄인데 머리가 없는 규칙 \(0 이어야 함\)\n\n없음\n/);
   assert.match(t, /## 형식 오류\n\n없음\n/);
 });
+
+test('⑪ 집행 변이 시험: 형식 오류가 없고, 놓친 규칙은 모두 검토 목록(enforcement_gap)에 있고, 모든 machine 규칙을 시험했다', () => {
+  const t = build()['10-enforcement.md'];
+  assert.match(t, /## 형식 오류\n\n없음\n/);
+  assert.match(t, /## 아직 시험 안 함 — 0\n/);
+});
