@@ -1511,6 +1511,22 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "관리 파일이 최신 · rebuild/ 밖 코드가 rebuild/ 를 읽지 않음 · 구역 · 장부 형식."
+    },
+    {
+      "path": "rebuild/index.mjs",
+      "class": "management",
+      "format": "Node ES 모듈",
+      "writer": "사람·AI",
+      "readers": "rebuild/status.mjs · tests/rebuild.test.mjs",
+      "interpret": "번호 사전 계산기 — 이름공간 표를 읽고 저장소의 번호 모양 토큰을 세어 참조 색인을 계산(저장 안 함). 미등록 모양·겹침·정의 안 된 참조·코드에 따로 적은 형식을 드러낸다."
+    },
+    {
+      "path": "rebuild/index/*",
+      "class": "management",
+      "format": "JSON Lines — namespaces.jsonl 한 줄 한 이름공간 {ns, status, shape, pattern|pattern_from, examples, issuer, store, immutable, scan, scan_in?, defined_by?, members_from?, note?} · exceptions.jsonl {file, token, reason}",
+      "writer": "사람·AI (손으로, 형식 검사)",
+      "readers": "rebuild/index.mjs",
+      "interpret": "번호 사전 원본(PLAN §4′) — 번호 종류마다 형식·발급자·자리·불변 규칙. 형식은 가능하면 코드 정의를 가리킨다(pattern_from)."
     }
   ],
   "governance": {

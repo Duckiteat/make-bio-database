@@ -3,12 +3,16 @@
 //   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
 //   ③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만
 //   ④ 분류 장부에 형식 오류가 없다
+//   ⑤–⑦ 번호 사전 (rebuild/index): 표 형식 · 예시가 자기 이름공간에만 · 저장소의 번호 모양이 모두 이름공간 하나에
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { build, ROOT, STATUS } from '../rebuild/status.mjs';
 import * as CLERK from '../legislative/clerk.mjs';
+import * as IDX from '../rebuild/index.mjs';
+
+const X = IDX.build();
 
 test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () => {
   const out = build();
@@ -35,4 +39,19 @@ test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만', () => {
 test('④ 분류 장부에 형식 오류가 없다', () => {
   const t = build()['04-ledger.md'];
   assert.match(t, /## 형식 오류\n\n없음\n/, '장부 형식 오류 — rebuild/status/04-ledger.md 를 본다');
+});
+
+test('⑤ 번호 사전: 이름공간 표에 형식 오류가 없고, 형식은 모두 정규식으로 풀린다', () => {
+  assert.deepEqual(X.bad, []);
+  assert.ok(X.rows.length >= 40, `이름공간 ${X.rows.length}`);
+  for (const r of X.rows) if (r.shape !== 'vocab') assert.ok(r.re instanceof RegExp, r.ns);
+});
+
+test('⑥ 번호 사전: 예시는 자기 이름공간에만 맞는다 (형식끼리 겹치지 않는다)', () => {
+  assert.deepEqual(X.exampleIssues, []);
+});
+
+test('⑦ 번호 사전: 저장소의 번호 모양 토큰은 모두 이름공간 하나에 맞는다 (새 번호 종류는 표에 먼저)', () => {
+  assert.deepEqual(X.unknown, [], '미등록 번호 모양 — rebuild/index/namespaces.jsonl 에 이름공간을 올리거나 exceptions.jsonl 에 이유와 함께');
+  assert.deepEqual(X.overlap, [], '두 이름공간에 맞는 토큰');
 });

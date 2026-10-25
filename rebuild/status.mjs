@@ -10,6 +10,7 @@ import { execFileSync } from 'node:child_process';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as CLERK from '../legislative/clerk.mjs';
+import * as IDX from './index.mjs'; // 번호 사전 — 파일 목록·이름공간을 한 곳에서
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const STATUS = 'rebuild/status/';
@@ -30,11 +31,7 @@ const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 
 
 // ── 저장소 파일 목록 (추적 + 무시되지 않은 새 파일, 관리 파일 자신은 뺌 — 자기 크기를 세면 고정점이 없다)
 function files() {
-  let list;
-  try { list = execFileSync('git', ['ls-files', '-co', '--exclude-standard', '-z'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 << 20 }).split('\0').filter(Boolean); }
-  catch { const walk = (d) => readdirSync(join(ROOT, d), { withFileTypes: true }).flatMap((e) => (['.git', 'node_modules', 'target'].includes(e.name) ? [] : e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)])); list = walk(''); }
-  return [...new Set(list)].filter((p) => !p.startsWith(STATUS) && !p.endsWith('.part') && existsSync(join(ROOT, p))).sort()
-    .map((p) => ({ path: p, bytes: statSync(join(ROOT, p)).size }));
+  return IDX.repoFiles().map((p) => ({ path: p, bytes: statSync(join(ROOT, p)).size }));
 }
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 const lines = (p) => read(p).split('\n').length - (read(p).endsWith('\n') ? 1 : 0);
@@ -44,8 +41,8 @@ const table = (head, rows) => [`| ${head.join(' | ')} |`, `|${head.map(() => '--
 const sum = (xs) => xs.reduce((a, b) => a + b, 0);
 
 // ── 장부 (rebuild/ledger/*.jsonl)
-function ledger() {
-  const units = [], bad = [];
+function ledger(reg) {
+  const units = [], bad = [], U = (reg.find((r) => r.ns === 'ledger_unit') || {}).re || /^U\d{4,}$/;
   const fs = existsSync(LEDGER_DIR) ? readdirSync(LEDGER_DIR).filter((f) => f.endsWith('.jsonl')).sort() : [];
   const seen = new Set();
   for (const f of fs) read(join('rebuild/ledger', f)).split('\n').forEach((ln, i) => {
@@ -53,7 +50,7 @@ function ledger() {
     const at = `${f}:${i + 1}`;
     let u; try { u = JSON.parse(ln); } catch { bad.push(`${at} JSON 아님`); return; }
     const why = [];
-    if (!/^U\d{4,}$/.test(u.id || '')) why.push('id');
+    if (!U.test(u.id || '')) why.push('id');
     else if (seen.has(u.id)) why.push('id 중복'); else seen.add(u.id);
     if (!u.src || !/:\d+/.test(u.src)) why.push('src(파일:줄)');
     if (!u.text) why.push('text');
@@ -80,7 +77,7 @@ function codeCounts(all) {
 }
 
 function build() {
-  const all = files(), by = Object.fromEntries(all.map((f) => [f.path, f.bytes])), L = ledger(), C = codeCounts(all);
+  const X = IDX.build(), all = files(), by = Object.fromEntries(all.map((f) => [f.path, f.bytes])), L = ledger(X.rows), C = codeCounts(all);
   const docs = all.filter((f) => f.path.endsWith('.md') && !/^(data|rebuild|tests)\//.test(f.path));
   const classified = new Set(L.units.map((u) => u.src.replace(/:\d+.*$/, '')));
   const todo = docs.filter((d) => !GENERATED.includes(d.path) && !classified.has(d.path));
@@ -100,8 +97,11 @@ function build() {
     ['MCP 도구', `${sum(C.mcp.map((m) => m.tools.length))} (${C.mcp.map((m) => `${m.file.replace(/^mcp\/|\.mjs$/g, '')} ${m.tools.length}`).join(' · ')})`],
     ['판정 거부 자리 E( (규칙 번호 없음)', String(sum(C.judicial.map((j) => j.sites)))],
     ['시험 (test·it) / 거부 말뭉치', `${sum(C.tests.map((t) => t.n))} / ${C.fixtures}`],
+    ['번호 이름공간', `${X.rows.length} (${IDX.STATUS.map((st) => `${st} ${X.rows.filter((r) => r.status === st).length}`).join(' · ')})`],
+    ['미등록 번호 모양 / 겹침 / 예외', `${X.unknown.length} / ${X.overlap.length} / ${X.exceptions}`],
+    ['같은 번호 형식을 코드에 따로 적은 곳', String(X.duplicates.length)],
   ];
-  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md)\n`;
+  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md)\n`;
 
   // 01 파일
   const dirs = {};
@@ -129,6 +129,13 @@ function build() {
   const enf = ENFORCE.map((e) => [e, String(L.units.filter((u) => u.kind === 'rule' && u.enforce === e).length)]);
   const src = Object.entries(unitsBy).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([s, n]) => [`\`${s}\``, String(n)]);
   out['04-ledger.md'] = `# 분류 장부 (rebuild/ledger/*.jsonl)\n\n${note}\n장부 파일: ${L.files.join(' · ') || '없음'} · 단위 ${L.units.length}\n\n## 모드 × 종류\n\n${table(['모드', ...KINDS.map((k) => KIND_KO[k]), '합'], mk)}\n\n규칙이 하나도 없는 모드: ${empty.join(' · ') || '없음'}\n\n## 규칙의 집행\n\n${table(['집행', '규칙 수'], enf)}\n\n## 출처 문서별\n\n${src.length ? table(['문서', '단위'], src) : '(아직 없음)'}\n\n## 형식 오류\n\n${L.bad.length ? L.bad.map((b) => '- ' + b).join('\n') : '없음'}\n`;
+  // 05 번호 사전 (rebuild/index/namespaces.jsonl + 계산된 참조 색인)
+  const nsRows = X.rows.map((r) => { const st = X.stats[r.ns], d = X.dangling[r.ns];
+    return [`\`${r.ns}\``, r.status, r.shape, `\`${r.pattern || r.pattern_from || '—'}\``.replace(/\|/g, '\\|'), r.issuer, `\`${r.store}\``, r.scan ? `${st.n} · ${st.distinct} · ${st.files}` : '—',
+      d ? `${d.defined} · 없음 ${d.missing.length}${d.moved.length ? ` · 옮김 ${d.moved.length}` : ''}` : '—']; });
+  const dl = Object.entries(X.dangling).filter(([, d]) => d.missing.length).map(([ns, d]) => `- \`${ns}\`: ${d.missing.join(' · ')}`);
+  const li = (xs) => (xs.length ? xs.map((x) => '- ' + x).join('\n') : '없음');
+  out['05-index.md'] = `# 번호 사전\n\n${note}\n원본: \`rebuild/index/namespaces.jsonl\` (이름공간 ${X.rows.length}) · 예외 \`rebuild/index/exceptions.jsonl\` (${X.exceptions}). 참조 색인은 저장하지 않고 계산한다.\n\n## 이름공간\n\n토큰 = 저장소에 나온 수 · 고유 · 파일 / 정의 = 정의된 수 · 가리켜졌는데 정의 안 됨\n\n${table(['이름공간', '상태', '모양', '형식', '발급', '자리', '토큰', '정의'], nsRows)}\n\n## 미등록 번호 모양 (0 이어야 함)\n\n${li(X.unknown)}\n\n## 겹침 (0 이어야 함)\n\n${li([...X.overlap, ...X.exampleIssues])}\n\n## 가리켜졌는데 정의되지 않은 번호 (지운 번호·시험용 가짜 번호·다음 번호 포함 — 정보)\n\n${dl.length ? dl.join('\n') : '없음'}\n\n## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)\n\n${li(X.duplicates)}\n\n## 이름공간 표 형식 오류\n\n${li(X.bad)}\n`;
   return out;
 }
 

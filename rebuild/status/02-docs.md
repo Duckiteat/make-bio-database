@@ -4,7 +4,7 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 233.6 | 217 |  | 미분류 |
+| `CHANGES.md` | 234.8 | 218 |  | 미분류 |
 | `CLAUDE.md` | 17.7 | 84 | 입구 | 미분류 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 미분류 |
 | `FEATURES.md` | 14.1 | 193 |  | 미분류 |
@@ -66,7 +66,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 미분류 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 미분류 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 미분류 |
-| `docs/textbook/90-부록-자동생성.md` | 111.2 | 803 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 112.0 | 805 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 미분류 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 미분류 |

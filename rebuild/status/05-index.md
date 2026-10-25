@@ -1,0 +1,107 @@
+# 번호 사전
+
+> 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
+
+원본: `rebuild/index/namespaces.jsonl` (이름공간 51) · 예외 `rebuild/index/exceptions.jsonl` (2). 참조 색인은 저장하지 않고 계산한다.
+
+## 이름공간
+
+토큰 = 저장소에 나온 수 · 고유 · 파일 / 정의 = 정의된 수 · 가리켜졌는데 정의 안 됨
+
+| 이름공간 | 상태 | 모양 | 형식 | 발급 | 자리 | 토큰 | 정의 |
+|---|---|---|---|---|---|---|---|
+| `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1204 · 212 · 23 | 210 · 없음 2 |
+| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 9806 · 214 · 220 | 212 · 없음 2 |
+| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 598 · 58 · 51 | 57 · 없음 1 |
+| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2165 · 126 · 149 | 124 · 없음 2 |
+| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 598 · 34 · 79 | 28 · 없음 6 |
+| `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 85 · 72 · 6 | 68 · 없음 4 |
+| `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2068 · 363 · 38 | 360 · 없음 3 |
+| `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1758 · 505 · 90 | — |
+| `sub_ref` | active | composite | `^D\d{6}/(site\|rule\|desc\|obs)/[A-Za-z0-9_]+$` | sense owner key | `data/db.json#senses.*.site|rule|desc|obs` | — | — |
+| `bundle_key` | active | composite | `^D\d{6}(\\|[a-z0-9_]+:[A-Za-z0-9_]+)*\\|[a-z_]+$` | derived (not issued) | `computed from sense+site+location` | — | — |
+| `event` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/log/events.jsonl` | — | — |
+| `preregistration` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/preregistrations.jsonl` | — | — |
+| `dictionary_entry` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/dictionary.jsonl` | — | — |
+| `fetch_log` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/fetched/*/FETCH_LOG.jsonl` | — | — |
+| `attestation` | active | chain | `^[0-9a-f]{64}$` | judicial attestation (digest) | `attestations/registry.json` | — | — |
+| `patch_record` | active | file | `^\d{8}-\d{6}-.+\.json$` | clerk commitMerge | `data/patches/` | — | — |
+| `vocab_token` | active | vocab | `—` | human (vocab.js, user request) | `vocab.js` | — | — |
+| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 229 · 10 · 32 | 10 · 없음 0 |
+| `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 95 · 22 · 12 | 20 · 없음 2 |
+| `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 63 · 5 · 29 | 5 · 없음 0 |
+| `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 1 · 1 · 1 | — |
+| `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 2 · 1 · 2 | — |
+| `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 22 · 10 · 9 | — |
+| `rule` | planned | token | `^RULE-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `decision` | planned | token | `^DEC-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `change` | planned | token | `^CHG-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `plan_item` | planned | token | `^PLAN-\d{3}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `switch` | planned | token | `^SW-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `formula` | planned | token | `^EQ-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `environment` | planned | token | `^E\d{6}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
+| `feature_legacy` | legacy | token | `^F\d{6}$` | none (FEATURES.md 초안) | `FEATURES.md (구현 안 됨)` | 6 · 5 · 1 | — |
+| `hypothesis_legacy` | legacy | token | `^H\d{6}$` | none (FEATURES.md 초안) | `FEATURES.md (구현 안 됨)` | 3 · 2 · 2 | — |
+| `ext_uniprot` | external | token | `vocab.xrefs.UniProt.pattern` | UniProt | `data/db.json#senses.*.xrefs` | 1221 · 55 · 32 | — |
+| `ext_chebi` | external | token | `vocab.xrefs.ChEBI.pattern` | ChEBI | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_pubchem` | external | token | `vocab.xrefs.PubChem.pattern` | PubChem | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_pdb` | external | token | `vocab.xrefs.PDB.pattern` | PDB | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_ec` | external | token | `vocab.xrefs.EC.pattern` | EC | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_go` | external | token | `vocab.xrefs.GO.pattern` | GO | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_reactome` | external | token | `vocab.xrefs.Reactome.pattern` | Reactome | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_kegg` | external | token | `vocab.xrefs.KEGG.pattern` | KEGG | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_ncbigene` | external | token | `vocab.xrefs.NCBIGene.pattern` | NCBIGene | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_cl` | external | token | `vocab.xrefs.CL.pattern` | CL | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_interpro` | external | token | `vocab.xrefs.InterPro.pattern` | InterPro | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_pmid` | external | token | `vocab.xrefs.PMID.pattern` | PMID | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_doi` | external | token | `vocab.xrefs.DOI.pattern` | DOI | `data/db.json#senses.*.xrefs` | — | — |
+| `ext_pmc` | external | token | `^PMC\d+$` | PubMed Central | `evidence.sources / inbox` | 12 · 5 · 8 | — |
+| `fp_inchikey` | active | composite | `vocab.fingerprints.InChIKey.pattern` | tool (computed) | `data/db.json#senses.*.fingerprint` | — | — |
+| `fp_seq_sha256` | active | composite | `vocab.fingerprints.SEQ_SHA256.pattern` | tool (computed) | `data/db.json#senses.*.fingerprint` | — | — |
+| `fp_complex` | active | composite | `vocab.fingerprints.COMPLEX.pattern` | tool (computed) | `data/db.json#senses.*.fingerprint` | — | — |
+| `ext_taxon` | external | vocab | `^\d+$` | NCBI Taxonomy | `vocab.taxa` | — | — |
+
+## 미등록 번호 모양 (0 이어야 함)
+
+없음
+
+## 겹침 (0 이어야 함)
+
+없음
+
+## 가리켜졌는데 정의되지 않은 번호 (지운 번호·시험용 가짜 번호·다음 번호 포함 — 정보)
+
+- `term`: T000211 · T999999
+- `sense`: D000213 · D999999
+- `step`: S000058
+- `limitation`: L000125 · L999999
+- `observation`: O000029 · O000999 · O900001 · O900002 · O900003 · O999999
+- `value`: V000069 · V900000 · V999998 · V999999
+- `assumption`: A000500 · A000999 · A999999
+- `criterion`: D3.asserted · S3.doi
+
+## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)
+
+- compiler/perturb.js:29 /^D\d{6}$/
+- dbtool.mjs:468 /^O\d{6}$/
+- dbtool.mjs:475 /^O\d{6}$/
+- dbtool.mjs:615 /^O\d{6}$/
+- dbtool.mjs:719 /^O\d{6}$/
+- dbtool.mjs:732 /^O\d{6}$/
+- dbtool.mjs:739 /^O\d{6}$/
+- dbtool.mjs:739 /^O\d{6}$/
+- judicial/acceptance.js:49 /^O\d{6}$/
+- judicial/assumption_audit.js:16 /^A\d{6}$/
+- judicial/judicial.js:228 /^[TDS]\d{6}$/
+- mcp/clerk.mjs:50 /^O\d{6}$/
+- mcp/query.mjs:61 /^A\d{6}$/
+- model.js:44 /^T\d{6}$/
+- model.js:44 /^D\d{6}$/
+- model.js:44 /^S\d{6}$/
+- model.js:44 /^L\d{6}$/
+- model.js:44 /^O\d{6}$/
+
+## 이름공간 표 형식 오류
+
+없음
