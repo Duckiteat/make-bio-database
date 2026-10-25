@@ -1534,7 +1534,15 @@
       "format": "JSON Lines — 한 줄 한 규칙 {id: RULE-…, text, modes[], enforce, unit, copies[], where?, note?}",
       "writer": "재건 5 단계 (분류 장부에서)",
       "readers": "rebuild/status.mjs",
-      "interpret": "규칙 장부 — 원래 규칙 단위마다 번호 하나, 같은 규칙의 사본은 copies 로 묶음. 6 단계에서 규칙의 원본이 된다."
+      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl). 6 단계에서 규칙의 원본이 된다."
+    },
+    {
+      "path": "rebuild/archive/*",
+      "class": "management",
+      "format": "JSON — 은퇴한 층 하나 {id, what, retired{at,by,why}, rules[], code[], tests[], references[], design[], state_now, revive[]}",
+      "writer": "재건 (사용자가 은퇴를 정할 때)",
+      "readers": "rebuild/status.mjs (은퇴 규칙이 보관 파일에 있는지)",
+      "interpret": "은퇴한 규칙과 그 층을 나중에 되살릴 수 있게 한곳에 모은 기록"
     }
   ],
   "governance": {

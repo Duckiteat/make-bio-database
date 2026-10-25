@@ -182,12 +182,19 @@ function build() {
     if (!(r.modes || []).every((m) => MODES.includes(m))) rbad.push(`${r.id}: 모드`);
   }
   const judged = L.units.filter((u) => u.kind === 'rule' && u.by !== 'heur' && !u.same_as).map((u) => u.id), noRule = judged.filter((x) => !seenU.has(x));
+  // 은퇴(retired)·예약(reserved) — 은퇴 규칙은 보관 파일에 있어야 하고, 예약은 이유(note)가 있어야 한다
+  for (const r of rules7) {
+    if (r.retired) { const a = r.retired.archive; if (!a || !existsSync(join(ROOT, a))) rbad.push(`${r.id}: 은퇴 보관 파일 '${a}' 없음`); else if (!read(a).includes(`"${r.id}"`)) rbad.push(`${r.id}: 보관 파일 ${a} 에 이 규칙이 없음`); }
+    if (r.reserved && !(r.reserved.note && r.reserved.for)) rbad.push(`${r.id}: 예약에 note·for 가 없음`);
+  }
+  const retired7 = rules7.filter((r) => r.retired), reserved7 = rules7.filter((r) => r.reserved);
+  const lifeText = `살아 있는 규칙 ${rules7.length - retired7.length} · 은퇴 ${retired7.length}${retired7.length ? ' (' + [...new Set(retired7.map((r) => r.retired.archive))].map((a) => `\`${a}\``).join(' · ') + ')' : ''} · 예약 ${reserved7.length}${reserved7.length ? '\n\n' + table(['규칙', '예약 대상', '맥락'], reserved7.map((r) => [r.id, r.reserved.for, r.reserved.note.replace(/\|/g, '\\|')])) : ''}`;
   const enf7 = ENFORCE.map((e) => [e, String(rules7.filter((r) => r.enforce === e).length)]);
   const multi7 = rules7.filter((r) => r.modes.length > 1), places7 = rules7.map((r) => 1 + (r.copies || []).length);
   const hist = [1, 2, 3, 4, 5].map((k) => [k === 5 ? '5 곳 이상' : `${k} 곳`, String(places7.filter((p) => (k === 5 ? p >= 5 : p === k)).length)]);
   const heurRules = L.units.filter((u) => u.kind === 'rule' && u.by === 'heur').length;
   const bundled = Object.entries(bundle).filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
-  out['07-rules.md'] = `# 규칙 장부\n\n${note}\n원본: \`${RP}\` · 규칙 ${rules7.length} (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 ${heurRules} 은 아직 장부에 묶지 않음.\n\n## 집행\n\n${table(['집행', '규칙'], enf7)}\n\n## 한 규칙이 적힌 곳\n\n${table(['곳', '규칙'], hist)}\n\n## 여러 모드에 걸친 규칙 ${multi7.length} (6 단계 모드 문서에서 빠지면 안 되는 것)\n\n${multi7.length ? table(['규칙', '모드', '내용'], multi7.map((r) => [r.id, r.modes.join(' · '), r.text.replace(/\|/g, '\\|').slice(0, 120)])) : '없음'}\n\n## 규칙 여러 개를 한 문장에 묶은 사본 ${bundled.length} (나누면 6 단계 모드 문서가 정확해짐)\n\n${bundled.length ? bundled.slice(0, 30).map(([u, n]) => `${u} (${uid[u].src}) → 규칙 ${n}`).join(' · ') + (bundled.length > 30 ? ' · …' : '') : '없음'}\n\n## 장부에 없는 판단 규칙 단위 (0 이어야 함)\n\n${noRule.length ? noRule.join(' · ') : '없음'}\n\n## 형식 오류\n\n${rbad.length ? rbad.map((x) => '- ' + x).join('\n') : '없음'}\n`;
+  out['07-rules.md'] = `# 규칙 장부\n\n${note}\n원본: \`${RP}\` · 규칙 ${rules7.length} (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 ${heurRules} 은 아직 장부에 묶지 않음.\n\n## 은퇴 · 예약\n\n${lifeText}\n\n## 집행\n\n${table(['집행', '규칙'], enf7)}\n\n## 한 규칙이 적힌 곳\n\n${table(['곳', '규칙'], hist)}\n\n## 여러 모드에 걸친 규칙 ${multi7.length} (6 단계 모드 문서에서 빠지면 안 되는 것)\n\n${multi7.length ? table(['규칙', '모드', '내용'], multi7.map((r) => [r.id, r.modes.join(' · '), r.text.replace(/\|/g, '\\|').slice(0, 120)])) : '없음'}\n\n## 규칙 여러 개를 한 문장에 묶은 사본 ${bundled.length} (나누면 6 단계 모드 문서가 정확해짐)\n\n${bundled.length ? bundled.slice(0, 30).map(([u, n]) => `${u} (${uid[u].src}) → 규칙 ${n}`).join(' · ') + (bundled.length > 30 ? ' · …' : '') : '없음'}\n\n## 장부에 없는 판단 규칙 단위 (0 이어야 함)\n\n${noRule.length ? noRule.join(' · ') : '없음'}\n\n## 형식 오류\n\n${rbad.length ? rbad.map((x) => '- ' + x).join('\n') : '없음'}\n`;
 
   // 08 맥락 (PLAN §5′) — ① 자리 맥락(단위 ctx, 원문에서 계산) ② 관계 맥락(rebuild/rules/links.jsonl, 규칙마다 판정 행 하나 이상)
   const LP = 'rebuild/rules/links.jsonl', links = existsSync(join(ROOT, LP)) ? read(LP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
@@ -197,9 +204,11 @@ function build() {
   const chgHead = (t) => { const k = +t.slice(4); return k >= 1 && k <= chgRows.length ? chgRows[chgRows.length - k].split('|')[1].trim() : null; };
   const lims = new Set(Object.keys(JSON.parse(read('data/db.json')).limitations || {}));
   const codeHead = (t) => { const f = t.slice(5); return existsSync(join(ROOT, f)) && /^\s*(\/\/|\/\*)/.test(read(f)); };
-  const far = (t) => (/^CHG-\d{4}$/.test(t) && chgHead(t) !== null) || (/^code:/.test(t) && codeHead(t)) || lims.has(t);
+  const isReport = (t) => /^docs\/reports\//.test(uid[t]?.src || ''); // 보고서 문장은 휴리스틱으로 대부분 history — 이유로도 경위로도 이을 수 있다
+  const isPatch = (t) => /^patch:[^/]+\.json$/.test(t) && existsSync(join(ROOT, 'data', 'patches', t.slice(6)));
+  const far = (t) => (/^CHG-\d{4}$/.test(t) && chgHead(t) !== null) || (/^code:/.test(t) && codeHead(t)) || lims.has(t) || isReport(t) || isPatch(t);
   const TARGET = { because: (t) => uid[t]?.kind === 'reason' || far(t), decided_by: (t) => uid[t]?.kind === 'history' || /^TASK-\d{3}$/.test(t) || far(t), contradicts: (t) => ruleId.has(t), supersedes: (t) => ruleId.has(t) || !!uid[t], exception_of: (t) => ruleId.has(t) };
-  const srcOf = (t) => (!t ? '규칙 문장 안' : /^U/.test(t) ? '문서' : /^CHG-/.test(t) ? '변경 기록' : /^code:/.test(t) ? '코드 머리 주석' : /^L\d/.test(t) ? '한계' : '과제');
+  const srcOf = (t) => (!t ? '규칙 문장 안' : isReport(t) ? '보고서' : /^patch:/.test(t) ? '패치 why' : /^U/.test(t) ? '문서' : /^CHG-/.test(t) ? '변경 기록' : /^code:/.test(t) ? '코드 머리 주석' : /^L\d/.test(t) ? '한계' : '과제');
   const NO_TARGET = ['inline', 'none'], BY = ['judged', 'auto'];
   const judgedR = new Set();
   links.forEach((l, i) => {
@@ -217,9 +226,9 @@ function build() {
   const relOf = (r) => new Set(links.filter((l) => l.from === r.id).map((l) => l.rel));
   const why = rules7.filter((r) => { const s = relOf(r); return s.has('because') || s.has('inline'); });
   const onlyHist = rules7.filter((r) => { const s = relOf(r); return s.has('decided_by') && !s.has('because') && !s.has('inline'); });
-  const none = rules7.filter((r) => relOf(r).has('none'));
+  const none = rules7.filter((r) => relOf(r).has('none') && !r.retired);
   const relRows = ['because', 'inline', 'decided_by', 'none', 'contradicts', 'supersedes', 'exception_of'].map((k) => [k, String(links.filter((l) => l.rel === k).length), String(new Set(links.filter((l) => l.rel === k).map((l) => l.from)).size)]);
-  const srcRows = ['문서', '규칙 문장 안', '변경 기록', '코드 머리 주석', '한계', '과제'].map((k) => { const ls = links.filter((l) => ['because', 'inline', 'decided_by'].includes(l.rel) && srcOf(l.to) === k); return [k, String(ls.length), String(new Set(ls.map((l) => l.from)).size)]; });
+  const srcRows = ['문서', '규칙 문장 안', '변경 기록', '코드 머리 주석', '한계', '보고서', '패치 why', '과제'].map((k) => { const ls = links.filter((l) => ['because', 'inline', 'decided_by'].includes(l.rel) && srcOf(l.to) === k); return [k, String(ls.length), String(new Set(ls.map((l) => l.from)).size)]; });
   const dupL = Object.entries(links.reduce((a, l) => { const k = `${l.from}|${l.rel}|${l.to || ''}`; a[k] = (a[k] || 0) + 1; return a; }, {})).filter(([, n]) => n > 1).map(([k]) => '겹친 연결 ' + k);
   lbad.push(...dupL);
   const noneByMode = MODES.map((m) => [MODE_KO[m] + ` \`${m}\``, String(rules7.filter((r) => r.modes.includes(m)).length), String(why.filter((r) => r.modes.includes(m)).length), String(none.filter((r) => r.modes.includes(m)).length)]);
@@ -237,16 +246,16 @@ function build() {
     ['코드 블록 안(code)', String(ru.filter((u) => u.ctx?.code).length)],
   ];
   const contra = links.filter((l) => l.rel === 'contradicts').map((l) => `${l.from} ↔ ${l.to} — ${l.basis || ''}`);
-  out['08-context.md'] = `# 맥락\n\n${note}\n규칙 ${rules7.length} 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 \`ctx\` 에 둔다. ② 관계 맥락은 \`${LP}\` (${links.length} 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서.\n\n## ① 자리 맥락 (규칙의 원래 단위)\n\n${table(['무엇', '규칙'], posRows)}\n\n## ② 관계 맥락\n\n${table(['관계', '행', '규칙'], relRows)}\n\n이유가 있는 규칙 ${why.length} · 경위만 있는 규칙 ${onlyHist.length} · 이유를 찾지 못한 규칙 ${none.length} (문서 근처·변경 기록·코드 머리 주석·한계를 모두 본 뒤)\n\n## 이유가 있던 자리\n\n${table(['자리', '연결', '규칙'], srcRows)}\n\n## 모드별 — 이유를 찾지 못한 규칙 (6 단계 모드 문서에서 이유를 채울 곳)\n\n${table(['모드', '규칙', '이유 있음', '이유 없음'], noneByMode)}\n\n## 모순\n\n${li(contra)}\n\n## 문장 조각인 규칙 ${frag.length} (앞 줄과 함께 읽어야 뜻이 선다)\n\n${frag.length ? frag.map((r) => `${r.id} ← ${uid[r.unit].ctx.sentence_of}`).join(' · ') : '없음'}\n\n## 판정 행이 없는 규칙 (0 이어야 함)\n\n${noJudge.length ? noJudge.join(' · ') : '없음'}\n\n## 표 줄인데 머리가 없는 규칙 (0 이어야 함)\n\n${tableNoHead.length ? tableNoHead.join(' · ') : '없음'}\n\n## 형식 오류\n\n${li([...lbad, ...cbad])}\n`;
+  out['08-context.md'] = `# 맥락\n\n${note}\n규칙 ${rules7.length} 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 \`ctx\` 에 둔다. ② 관계 맥락은 \`${LP}\` (${links.length} 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서.\n\n## ① 자리 맥락 (규칙의 원래 단위)\n\n${table(['무엇', '규칙'], posRows)}\n\n## ② 관계 맥락\n\n${table(['관계', '행', '규칙'], relRows)}\n\n이유가 있는 규칙 ${why.length} · 경위만 있는 규칙 ${onlyHist.length} · 이유를 찾지 못한 규칙 ${none.length} (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)\n\n## 이유가 있던 자리\n\n${table(['자리', '연결', '규칙'], srcRows)}\n\n## 모드별 — 이유를 찾지 못한 규칙 (6 단계 모드 문서에서 이유를 채울 곳)\n\n${table(['모드', '규칙', '이유 있음', '이유 없음'], noneByMode)}\n\n## 모순\n\n${li(contra)}\n\n## 문장 조각인 규칙 ${frag.length} (앞 줄과 함께 읽어야 뜻이 선다)\n\n${frag.length ? frag.map((r) => `${r.id} ← ${uid[r.unit].ctx.sentence_of}`).join(' · ') : '없음'}\n\n## 판정 행이 없는 규칙 (0 이어야 함)\n\n${noJudge.length ? noJudge.join(' · ') : '없음'}\n\n## 표 줄인데 머리가 없는 규칙 (0 이어야 함)\n\n${tableNoHead.length ? tableNoHead.join(' · ') : '없음'}\n\n## 형식 오류\n\n${li([...lbad, ...cbad])}\n`;
 
   // 09 규칙 검토 (rebuild/rules/review.jsonl) — 현실과 안 맞거나 존재 의의가 흐린 규칙. 6 단계 옛 규칙 대조의 확인 목록
   const VP = 'rebuild/rules/review.jsonl', review = existsSync(join(ROOT, VP)) ? read(VP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
-  const ISSUE = { stale: '현실과 안 맞음', obsolete_by_design: '재건이 없앨 것', unused_layer: '쓰이지 않는 층', no_consumer: '검사만 하고 쓰는 곳 없음', naming_collision: '이름이 두 뜻', unreachable: '아직 닿을 대상이 없음', unclear: '뜻이 서지 않음', number_unexplained: '숫자 근거 없음', loosely_followed: '느슨하게 지켜짐', broken_before: '실제로 구멍이 났던 규칙' };
-  const vbad = review.flatMap((x, i) => [!ruleId.has(x.rule) && `review.jsonl:${i + 1} 없는 규칙 ${x.rule}`, !ISSUE[x.issue] && `review.jsonl:${i + 1} 모르는 종류 '${x.issue}'`, !(x.evidence && x.proposal) && `review.jsonl:${i + 1} 근거·제안이 없음`].filter(Boolean));
+  const ISSUE = { stale: '현실과 안 맞음', obsolete_by_design: '재건이 없앨 것', unused_layer: '쓰이지 않는 층', no_consumer: '검사만 하고 쓰는 곳 없음', naming_collision: '이름이 두 뜻', unreachable: '아직 닿을 대상이 없음', unclear: '뜻이 서지 않음', number_unexplained: '숫자 근거 없음', loosely_followed: '느슨하게 지켜짐', weakness_reported: '보고서가 지적한 약점', broken_before: '실제로 구멍이 났던 규칙' };
+  const vbad = review.flatMap((x, i) => [!ruleId.has(x.rule) && `review.jsonl:${i + 1} 없는 규칙 ${x.rule}`, !ISSUE[x.issue] && `review.jsonl:${i + 1} 모르는 종류 '${x.issue}'`, !(x.evidence && x.proposal) && `review.jsonl:${i + 1} 근거·제안이 없음`, x.decision && !(x.decision.at && x.decision.by && x.decision.choice) && `review.jsonl:${i + 1} 결정에 at·by·choice 가 없음`].filter(Boolean));
   const rmap = Object.fromEntries(rules7.map((r) => [r.id, r]));
   const vSec = Object.entries(ISSUE).map(([k, ko]) => { const xs = review.filter((x) => x.issue === k); if (!xs.length) return '';
-    return `## ${ko} \`${k}\` — ${new Set(xs.map((x) => x.rule)).size}\n\n${table(['규칙', '집행', '내용', '근거', '제안'], xs.map((x) => [x.rule, rmap[x.rule]?.enforce || '?', (rmap[x.rule]?.text || '').replace(/\|/g, '\\|').slice(0, 70), x.evidence.replace(/\|/g, '\\|'), x.proposal.replace(/\|/g, '\\|')]))}\n\n`; }).join('');
-  out['09-review.md'] = `# 규칙 검토\n\n${note}\n원본: \`${VP}\` (${review.length} 행 · 규칙 ${new Set(review.map((x) => x.rule)).size}). 규칙이 가리키는 파일·명령·이름·숫자를 지금 저장소와 대조하고, 실제로 쓰이는지·뜻이 서는지 본 결과. 6 단계 옛 규칙 대조에서 사용자가 확인할 목록이다 — 여기서 규칙을 고치지 않는다.\n\n${table(['종류', '규칙'], Object.entries(ISSUE).map(([k, ko]) => [ko, String(new Set(review.filter((x) => x.issue === k).map((x) => x.rule)).size)]))}\n\n${vSec}## 형식 오류\n\n${li(vbad)}\n`;
+    return `## ${ko} \`${k}\` — ${new Set(xs.map((x) => x.rule)).size}\n\n${table(['규칙', '집행', '내용', '근거', '제안', '결정'], xs.map((x) => [x.rule, rmap[x.rule]?.enforce || '?', (rmap[x.rule]?.text || '').replace(/\|/g, '\\|').slice(0, 70), x.evidence.replace(/\|/g, '\\|'), x.proposal.replace(/\|/g, '\\|'), x.decision ? `${x.decision.at} ${x.decision.by}: ${x.decision.choice}`.replace(/\|/g, '\\|') : '—']))}\n\n`; }).join('');
+  out['09-review.md'] = `# 규칙 검토\n\n${note}\n원본: \`${VP}\` (${review.length} 행 · 규칙 ${new Set(review.map((x) => x.rule)).size}). 규칙이 가리키는 파일·명령·이름·숫자를 지금 저장소와 대조하고, 실제로 쓰이는지·뜻이 서는지 본 결과. 6 단계 옛 규칙 대조에서 사용자가 확인할 목록이다 — 여기서 규칙을 고치지 않는다. 결정된 것 ${review.filter((x) => x.decision).length} 행.\n\n${table(['종류', '규칙'], Object.entries(ISSUE).map(([k, ko]) => [ko, String(new Set(review.filter((x) => x.issue === k).map((x) => x.rule)).size)]))}\n\n${vSec}## 형식 오류\n\n${li(vbad)}\n`;
   rows.push(['규칙 검토 — 확인할 규칙', String(new Set(review.map((x) => x.rule)).size)]);
   rows.push(['규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함', `${why.length} / ${onlyHist.length} / ${none.length}`]);
   out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md) · [09 규칙 검토](09-review.md)\n`;
