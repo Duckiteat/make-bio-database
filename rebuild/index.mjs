@@ -97,6 +97,7 @@ export function build() {
     let set = null;
     if (kind === 'db') set = new Set(Object.keys(db[arg] || {}));
     else if (kind === 'jsonl') set = new Set(jsonl(join(ROOT, arg)).map(([l]) => JSON.parse(l)[field]));
+    else if (kind === 'changes') { const n = readFileSync(join(ROOT, arg), 'utf8').split('\n').filter((l) => l.startsWith('| 20')).length; set = new Set(Array.from({ length: n }, (_, i) => 'CHG-' + String(i + 1).padStart(4, '0'))); }
     else if (kind === 'files') set = new Set(files.filter((f) => f.startsWith(arg.replace(/\*$/, ''))).map((f) => (f.match(/TASK-\d{3}/) || [])[0]).filter(Boolean));
     if (r.members_from === 'reliability.CRITERIA') set = new Set(Object.keys(req('../judicial/reliability.js').CRITERIA));
     if (r.members_from && r.members_from.startsWith('code:')) {

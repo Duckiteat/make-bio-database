@@ -192,7 +192,14 @@ function build() {
   // 08 맥락 (PLAN §5′) — ① 자리 맥락(단위 ctx, 원문에서 계산) ② 관계 맥락(rebuild/rules/links.jsonl, 규칙마다 판정 행 하나 이상)
   const LP = 'rebuild/rules/links.jsonl', links = existsSync(join(ROOT, LP)) ? read(LP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
   const ruleId = new Set(rules7.map((r) => r.id)), lbad = [];
-  const TARGET = { because: (t) => uid[t]?.kind === 'reason', decided_by: (t) => uid[t]?.kind === 'history' || /^(L\d{6}|TASK-\d{3})$/.test(t), contradicts: (t) => ruleId.has(t), supersedes: (t) => ruleId.has(t) || !!uid[t], exception_of: (t) => ruleId.has(t) };
+  // 먼 곳 대상: CHG-…(CHANGES.md 행, 아래부터 순번 — anchor 가 그 행 첫 칸과 같아야) · code:경로(머리 주석이 있는 코드 파일) · L…(한계)
+  const chgRows = read('CHANGES.md').split('\n').filter((l) => l.startsWith('| 20'));
+  const chgHead = (t) => { const k = +t.slice(4); return k >= 1 && k <= chgRows.length ? chgRows[chgRows.length - k].split('|')[1].trim() : null; };
+  const lims = new Set(Object.keys(JSON.parse(read('data/db.json')).limitations || {}));
+  const codeHead = (t) => { const f = t.slice(5); return existsSync(join(ROOT, f)) && /^\s*(\/\/|\/\*)/.test(read(f)); };
+  const far = (t) => (/^CHG-\d{4}$/.test(t) && chgHead(t) !== null) || (/^code:/.test(t) && codeHead(t)) || lims.has(t);
+  const TARGET = { because: (t) => uid[t]?.kind === 'reason' || far(t), decided_by: (t) => uid[t]?.kind === 'history' || /^TASK-\d{3}$/.test(t) || far(t), contradicts: (t) => ruleId.has(t), supersedes: (t) => ruleId.has(t) || !!uid[t], exception_of: (t) => ruleId.has(t) };
+  const srcOf = (t) => (!t ? '규칙 문장 안' : /^U/.test(t) ? '문서' : /^CHG-/.test(t) ? '변경 기록' : /^code:/.test(t) ? '코드 머리 주석' : /^L\d/.test(t) ? '한계' : '과제');
   const NO_TARGET = ['inline', 'none'], BY = ['judged', 'auto'];
   const judgedR = new Set();
   links.forEach((l, i) => {
@@ -202,6 +209,7 @@ function build() {
     if (NO_TARGET.includes(l.rel)) { if (l.to !== undefined) lbad.push(`${at} ${l.rel} 는 to 가 없다`); }
     else if (!TARGET[l.rel]) lbad.push(`${at} 모르는 관계 '${l.rel}'`);
     else if (!TARGET[l.rel](l.to)) lbad.push(`${at} ${l.rel} → ${l.to} (대상 종류가 맞지 않음)`);
+    if (/^CHG-/.test(l.to || '') && l.anchor !== chgHead(l.to)) lbad.push(`${at} ${l.to} 의 anchor '${l.anchor}' ≠ 그 행 '${chgHead(l.to)}' (행이 바뀌었거나 번호가 밀림)`);
     if (l.by === 'auto' && l.basis !== 'in_text') lbad.push(`${at} 자동 연결은 본문 번호(in_text)만 — 문단 근처는 판정한다`);
     judgedR.add(l.from);
   });
@@ -211,6 +219,9 @@ function build() {
   const onlyHist = rules7.filter((r) => { const s = relOf(r); return s.has('decided_by') && !s.has('because') && !s.has('inline'); });
   const none = rules7.filter((r) => relOf(r).has('none'));
   const relRows = ['because', 'inline', 'decided_by', 'none', 'contradicts', 'supersedes', 'exception_of'].map((k) => [k, String(links.filter((l) => l.rel === k).length), String(new Set(links.filter((l) => l.rel === k).map((l) => l.from)).size)]);
+  const srcRows = ['문서', '규칙 문장 안', '변경 기록', '코드 머리 주석', '한계', '과제'].map((k) => { const ls = links.filter((l) => ['because', 'inline', 'decided_by'].includes(l.rel) && srcOf(l.to) === k); return [k, String(ls.length), String(new Set(ls.map((l) => l.from)).size)]; });
+  const dupL = Object.entries(links.reduce((a, l) => { const k = `${l.from}|${l.rel}|${l.to || ''}`; a[k] = (a[k] || 0) + 1; return a; }, {})).filter(([, n]) => n > 1).map(([k]) => '겹친 연결 ' + k);
+  lbad.push(...dupL);
   const noneByMode = MODES.map((m) => [MODE_KO[m] + ` \`${m}\``, String(rules7.filter((r) => r.modes.includes(m)).length), String(why.filter((r) => r.modes.includes(m)).length), String(none.filter((r) => r.modes.includes(m)).length)]);
   // 자리 맥락: 규칙의 원래 단위 기준
   const ru = rules7.map((r) => uid[r.unit]).filter(Boolean), cbad = [];
@@ -226,9 +237,9 @@ function build() {
     ['코드 블록 안(code)', String(ru.filter((u) => u.ctx?.code).length)],
   ];
   const contra = links.filter((l) => l.rel === 'contradicts').map((l) => `${l.from} ↔ ${l.to} — ${l.basis || ''}`);
-  out['08-context.md'] = `# 맥락\n\n${note}\n규칙 ${rules7.length} 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 \`ctx\` 에 둔다. ② 관계 맥락은 \`${LP}\` (${links.length} 행) — 규칙마다 판정 행이 하나 이상이다. 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서.\n\n## ① 자리 맥락 (규칙의 원래 단위)\n\n${table(['무엇', '규칙'], posRows)}\n\n## ② 관계 맥락\n\n${table(['관계', '행', '규칙'], relRows)}\n\n이유가 있는 규칙 ${why.length} · 경위만 있는 규칙 ${onlyHist.length} · 이유가 원문에 없는 규칙 ${none.length}\n\n## 모드별 — 이유가 원문에 없는 규칙 (6 단계 모드 문서에서 이유를 채울 곳)\n\n${table(['모드', '규칙', '이유 있음', '이유 없음'], noneByMode)}\n\n## 모순\n\n${li(contra)}\n\n## 문장 조각인 규칙 ${frag.length} (앞 줄과 함께 읽어야 뜻이 선다)\n\n${frag.length ? frag.map((r) => `${r.id} ← ${uid[r.unit].ctx.sentence_of}`).join(' · ') : '없음'}\n\n## 판정 행이 없는 규칙 (0 이어야 함)\n\n${noJudge.length ? noJudge.join(' · ') : '없음'}\n\n## 표 줄인데 머리가 없는 규칙 (0 이어야 함)\n\n${tableNoHead.length ? tableNoHead.join(' · ') : '없음'}\n\n## 형식 오류\n\n${li([...lbad, ...cbad])}\n`;
+  out['08-context.md'] = `# 맥락\n\n${note}\n규칙 ${rules7.length} 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 \`ctx\` 에 둔다. ② 관계 맥락은 \`${LP}\` (${links.length} 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서.\n\n## ① 자리 맥락 (규칙의 원래 단위)\n\n${table(['무엇', '규칙'], posRows)}\n\n## ② 관계 맥락\n\n${table(['관계', '행', '규칙'], relRows)}\n\n이유가 있는 규칙 ${why.length} · 경위만 있는 규칙 ${onlyHist.length} · 이유를 찾지 못한 규칙 ${none.length} (문서 근처·변경 기록·코드 머리 주석·한계를 모두 본 뒤)\n\n## 이유가 있던 자리\n\n${table(['자리', '연결', '규칙'], srcRows)}\n\n## 모드별 — 이유를 찾지 못한 규칙 (6 단계 모드 문서에서 이유를 채울 곳)\n\n${table(['모드', '규칙', '이유 있음', '이유 없음'], noneByMode)}\n\n## 모순\n\n${li(contra)}\n\n## 문장 조각인 규칙 ${frag.length} (앞 줄과 함께 읽어야 뜻이 선다)\n\n${frag.length ? frag.map((r) => `${r.id} ← ${uid[r.unit].ctx.sentence_of}`).join(' · ') : '없음'}\n\n## 판정 행이 없는 규칙 (0 이어야 함)\n\n${noJudge.length ? noJudge.join(' · ') : '없음'}\n\n## 표 줄인데 머리가 없는 규칙 (0 이어야 함)\n\n${tableNoHead.length ? tableNoHead.join(' · ') : '없음'}\n\n## 형식 오류\n\n${li([...lbad, ...cbad])}\n`;
 
-  rows.push(['규칙 맥락 — 이유 있음 / 경위만 / 원문에 없음', `${why.length} / ${onlyHist.length} / ${none.length}`]);
+  rows.push(['규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함', `${why.length} / ${onlyHist.length} / ${none.length}`]);
   out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md)\n`;
 
   // 06 파일 → 모드 (rebuild/index/file-modes.jsonl, 첫 규칙이 이긴다)
