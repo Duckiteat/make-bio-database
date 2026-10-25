@@ -1527,6 +1527,14 @@
       "writer": "사람·AI (손으로, 형식 검사)",
       "readers": "rebuild/index.mjs",
       "interpret": "번호 사전 원본(PLAN §4′) — 번호 종류마다 형식·발급자·자리·불변 규칙. 형식은 가능하면 코드 정의를 가리킨다(pattern_from). file-modes.jsonl 은 파일마다 주로 건드리는 모드."
+    },
+    {
+      "path": "rebuild/rules/*",
+      "class": "management",
+      "format": "JSON Lines — 한 줄 한 규칙 {id: RULE-…, text, modes[], enforce, unit, copies[], where?, note?}",
+      "writer": "재건 5 단계 (분류 장부에서)",
+      "readers": "rebuild/status.mjs",
+      "interpret": "규칙 장부 — 원래 규칙 단위마다 번호 하나, 같은 규칙의 사본은 copies 로 묶음. 6 단계에서 규칙의 원본이 된다."
     }
   ],
   "governance": {

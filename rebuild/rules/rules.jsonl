@@ -1,0 +1,314 @@
+{"id": "RULE-0001", "text": "규칙을 바꾸면 CLAUDE.md 와 agent-rules.md 를 같은 커밋에서", "modes": ["develop"], "enforce": "text", "unit": "U0002", "copies": ["U0243"], "note": "사본 동기화 규칙 — 재건으로 없어질 규칙"}
+{"id": "RULE-0002", "text": "명령은 저장소 최상위에서", "modes": ["common"], "enforce": "text", "unit": "U0004", "copies": ["U0434"]}
+{"id": "RULE-0003", "text": "큰 파일(db.json·CHANGES.md·limitations.md)은 통째로 읽지 말고 조회 명령·grep", "modes": ["common"], "enforce": "text", "unit": "U0005", "copies": ["U0248", "U0451", "U0453", "U0616", "U0770"]}
+{"id": "RULE-0004", "text": "연결은 번호로만", "modes": ["common", "author"], "enforce": "machine", "unit": "U0007", "copies": ["U0245", "U1186"], "where": "judicial/judicial.js validate (참조 해석·없는 번호 거부)"}
+{"id": "RULE-0005", "text": "행정(core.js·engine/*)은 읽기·시뮬레이션만", "modes": ["develop"], "enforce": "machine", "unit": "U0009", "copies": ["U0251", "U0440"], "where": "tests/governance.test.mjs ②"}
+{"id": "RULE-0006", "text": "행정은 파일 쓰기 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0010", "copies": ["U0251"], "where": "tests/governance.test.mjs ①"}
+{"id": "RULE-0007", "text": "행정은 검사·승인·'verified'·AUDIT_*·사후 분석·질량 판정 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0011", "copies": ["U0251"], "where": "tests/governance.test.mjs ②"}
+{"id": "RULE-0008", "text": "행정은 사법·입법·조정자 호출 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0012", "copies": ["U0251"], "where": "tests/governance.test.mjs ②"}
+{"id": "RULE-0009", "text": "엔진은 분자·위치·부분 구조 이름을 모른다 — 사실은 데이터·어휘에", "modes": ["develop"], "enforce": "unchecked", "unit": "U0013", "copies": ["U0375"]}
+{"id": "RULE-0010", "text": "부분 구조 수지 ΣIn=ΣOut 상대 1e-14 (규칙 검사·운명 원장)", "modes": ["common", "develop"], "enforce": "machine", "unit": "U0014", "copies": ["U0375"], "where": "judicial/judicial.js moietyImbalance · judicial/verifier.js ③"}
+{"id": "RULE-0011", "text": "수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 engine/coupling.js 등록부에서만, 엔진에 기본값 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0015", "copies": ["U0265"], "where": "tests/governance.test.mjs ⑥"}
+{"id": "RULE-0012", "text": "입법(legislative/)은 정의·수정·초안만(순수)", "modes": ["develop"], "enforce": "machine", "unit": "U0016", "copies": ["U0253", "U0441"], "where": "tests/governance.test.mjs ①"}
+{"id": "RULE-0013", "text": "파일 쓰기는 legislative/clerk.mjs 만, 모든 쓰기는 put(구역, 파일)", "modes": ["develop"], "enforce": "machine", "unit": "U0017", "copies": ["U0253", "U0441"], "where": "tests/governance.test.mjs ① · ④′"}
+{"id": "RULE-0014", "text": "새 쓰기는 구역을 고르거나 새로 선언, put 우회 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0019", "copies": ["U0255"], "where": "tests/governance.test.mjs ④′"}
+{"id": "RULE-0015", "text": "db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만", "modes": ["develop"], "enforce": "machine", "unit": "U0020", "copies": ["U0254"], "where": "tests/governance.test.mjs ④"}
+{"id": "RULE-0016", "text": "증명 등록부는 도장 재검증 뒤에만 쓴다", "modes": ["develop"], "enforce": "machine", "unit": "U0021", "copies": ["U0254"], "where": "tests/governance.test.mjs ④ · legislative/clerk.mjs appendAttestations"}
+{"id": "RULE-0017", "text": "dbtool.mjs 포함 다른 파일에 쓰기 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0022", "copies": ["U0254"], "where": "tests/governance.test.mjs ①"}
+{"id": "RULE-0018", "text": "권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤", "modes": ["develop"], "enforce": "machine", "unit": "U0024", "copies": ["U0423"], "where": "tests/mcp.test.mjs (단일 작성자)"}
+{"id": "RULE-0019", "text": "역할 BIODB_ROLE 기본 collector (핸드오프만)", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0025", "copies": ["U0423"], "where": "mcp/protocol.mjs · tests/mcp.test.mjs (역할 거부)"}
+{"id": "RULE-0020", "text": "mcp 서버는 파일을 직접 쓰지 않는다", "modes": ["develop"], "enforce": "machine", "unit": "U0026", "copies": ["U0423"], "where": "tests/governance.test.mjs ①"}
+{"id": "RULE-0021", "text": "유료 원천은 받지 않는다", "modes": ["author"], "enforce": "unchecked", "unit": "U0027", "copies": [], "note": "fetch 의 resolve_access 가 거르는지 확인 필요"}
+{"id": "RULE-0022", "text": "계정 원천은 BRENDA 하나, fetch 의 brenda_kinetics 로만", "modes": ["author"], "enforce": "text", "unit": "U0028", "copies": ["U0419", "U0825", "U0826"]}
+{"id": "RULE-0023", "text": "BRENDA 계정은 환경 변수 BRENDA_EMAIL·BRENDA_PASSWORD_SHA256 — 출력·받기 기록·수신함·저장소·채팅에 남기지 않음", "modes": ["author"], "enforce": "machine", "unit": "U0029", "copies": ["U0419", "U0827"], "where": "tests/mcp.test.mjs ⑩ ⑪ · legislative/clerk.mjs postToInbox"}
+{"id": "RULE-0024", "text": "그 밖의 로그인(학교 계정 등)은 쓰지 않는다", "modes": ["common", "author"], "enforce": "text", "unit": "U0030", "copies": ["U0419"]}
+{"id": "RULE-0025", "text": "사법(judicial/)은 검증·증명·감사·보고만, 엔진 실행·데이터/엔진 수정 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0031", "copies": ["U0258", "U0442"], "where": "tests/governance.test.mjs ③"}
+{"id": "RULE-0026", "text": "행정부는 관찰을 읽지 않는다; 예측 표본은 조정자가 compiler/obs_operator.js 로", "modes": ["develop"], "enforce": "machine", "unit": "U0032", "copies": ["U0260"], "where": "tests/governance.test.mjs ②′"}
+{"id": "RULE-0027", "text": "'verified' 는 attestations/registry.json 의 유효 도장으로만, 없으면 관문 거부", "modes": ["author"], "enforce": "machine", "unit": "U0033", "copies": ["U0262"], "where": "tests/governance.test.mjs ④ · judicial/judicial.js checkAttestations"}
+{"id": "RULE-0028", "text": "엔진 실행이 필요한 감사는 조정자 orchestrator.js 가 원자료 → 사법부", "modes": ["develop"], "enforce": "unchecked", "unit": "U0035", "copies": ["U0264"]}
+{"id": "RULE-0029", "text": "엔진 출력 모양을 바꾸면 schemas/ffi/fate-raw.schema.json 같은 커밋", "modes": ["develop"], "enforce": "machine", "unit": "U0036", "copies": ["U0266"], "where": "tests/governance.test.mjs ⑦ · judicial/contract.js", "note": "같은 커밋 자체는 글뿐, 어긋나면 계약 검사가 실패"}
+{"id": "RULE-0030", "text": "엔진 이득은 node tests/bench_engine.js 기준선과 함께 보고", "modes": ["develop"], "enforce": "text", "unit": "U0038", "copies": ["U0269"]}
+{"id": "RULE-0031", "text": "컴파일러는 공유 순수 층(db+시나리오 → 불변 IR) — 쓰기·판정·엔진·권력 모듈 호출 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0039", "copies": ["U0270", "U0443"], "where": "tests/governance.test.mjs ⑧"}
+{"id": "RULE-0032", "text": "엔진은 IR 만 먹고 원자료에 irHash", "modes": ["develop"], "enforce": "machine", "unit": "U0040", "copies": ["U0270"], "where": "tests/governance.test.mjs ⑧"}
+{"id": "RULE-0033", "text": "희소 LU 기호 분석 sparse_lu.js 는 사법부 checkLU 가 검증", "modes": ["develop"], "enforce": "machine", "unit": "U0041", "copies": ["U0270"], "where": "tests/governance.test.mjs ⑧"}
+{"id": "RULE-0034", "text": "교란은 컴파일러 perturb.js 가 시나리오 exclude_rules·rule_scale 로만, 엔진 불변", "modes": ["develop"], "enforce": "machine", "unit": "U0042", "copies": ["U0387"], "where": "tests/perturb.test.mjs · judicial/perturb_audit.js"}
+{"id": "RULE-0035", "text": "perturb_audit 가 '교란 외에는 대조군과 같음' 을 독립 대조", "modes": ["baseline"], "enforce": "machine", "unit": "U0043", "copies": ["U0391"], "where": "judicial/perturb_audit.js"}
+{"id": "RULE-0036", "text": "simulateRate 결과는 IR 전후 비트 동일", "modes": ["develop"], "enforce": "unchecked", "unit": "U0044", "copies": ["U0270"]}
+{"id": "RULE-0037", "text": "속도 법칙 변경 = 컴파일러·테이프 명세·judicial/derivative.js 재구성 같은 커밋, 도함수 ≤1e-14", "modes": ["develop"], "enforce": "machine", "unit": "U0045", "copies": ["U0270"], "where": "tests/governance.test.mjs ⑧ (도함수 대조)", "note": "같은 커밋은 글뿐"}
+{"id": "RULE-0038", "text": "모든 감사 항목에 fault 태그 (judicial/fault.js)", "modes": ["common"], "enforce": "machine", "unit": "U0046", "copies": ["U0272", "U0522", "U0559"], "where": "tests/governance.test.mjs ⑨"}
+{"id": "RULE-0039", "text": "FINDING 은 고치지 않는다 — 결과(고갈·정지)를 결함으로 고치지 않음", "modes": ["common", "baseline", "inspect"], "enforce": "text", "unit": "U0047", "copies": ["U0272", "U0553", "U0560", "U0702"]}
+{"id": "RULE-0040", "text": "DATA_GAP 은 한계 등록", "modes": ["common", "author", "baseline"], "enforce": "text", "unit": "U0048", "copies": ["U0272", "U0560"]}
+{"id": "RULE-0041", "text": "DOMAIN_CONFLICT 는 근거와 함께 데이터 패치", "modes": ["common", "author", "baseline"], "enforce": "text", "unit": "U0049", "copies": ["U0272", "U0560"]}
+{"id": "RULE-0042", "text": "NUMERICAL 은 결합점·솔버에서 — db 생물 상수 변경 금지", "modes": ["common", "develop", "inspect"], "enforce": "text", "unit": "U0050", "copies": ["U0272", "U0552", "U0561", "U0702"]}
+{"id": "RULE-0043", "text": "ENGINE_DEFECT 는 엔진, COMPILER_DEFECT 는 compiler/", "modes": ["common", "develop"], "enforce": "text", "unit": "U0051", "copies": ["U0272", "U0561"]}
+{"id": "RULE-0044", "text": "토큰 → 사람말 표(라벨·의미)는 vocab.js 에만 + en 은 data/dictionary.jsonl (register/key), 코드는 보기만", "modes": ["develop"], "enforce": "machine", "unit": "U0052", "copies": ["U0274"], "where": "tests/governance.test.mjs ⑮", "note": "부분 집행"}
+{"id": "RULE-0045", "text": "토큰 → 동작·숫자·정책 표와 규칙 설명은 로직 곁", "modes": ["develop"], "enforce": "text", "unit": "U0053", "copies": ["U0274"]}
+{"id": "RULE-0046", "text": "사전은 vocab 만 읽는다", "modes": ["develop"], "enforce": "machine", "unit": "U0054", "copies": ["U0274"], "where": "tests/governance.test.mjs ⑮"}
+{"id": "RULE-0047", "text": "결함은 storage-map.json 노드 안에서 고친다 — 래퍼·임시 플래그·사후 잘라내기 금지", "modes": ["develop"], "enforce": "text", "unit": "U0055", "copies": ["U0278"]}
+{"id": "RULE-0048", "text": "비교용 경로는 판정 뒤 삭제", "modes": ["develop"], "enforce": "text", "unit": "U0056", "copies": ["U0278"]}
+{"id": "RULE-0049", "text": "Rust 소스 변경 → sh engine/rust/build.sh 산출물 같은 커밋", "modes": ["develop", "field"], "enforce": "machine", "unit": "U0058", "copies": ["U0279"], "where": "tests/rust_engine.test.mjs ① (소스 해시)"}
+{"id": "RULE-0050", "text": "Rust 변경 → rust_engine.test 통과 (궤적 ≤rtol·운명·시각 같음·byteLength 불변·네이티브=WASM 비트·루프 할당 0)", "modes": ["develop", "field"], "enforce": "machine", "unit": "U0059", "copies": ["U0279"], "where": "tests/rust_engine.test.mjs"}
+{"id": "RULE-0051", "text": "알고리즘 변경은 두 백엔드 같은 커밋", "modes": ["develop", "field"], "enforce": "machine", "unit": "U0060", "copies": ["U0279"], "where": "tests/rust_engine.test.mjs (JS=Rust 동등)"}
+{"id": "RULE-0052", "text": "수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000 (orchestrator.refScenario)", "modes": ["baseline", "field"], "enforce": "machine", "unit": "U0062", "copies": ["U0279"], "where": "orchestrator.js refScenario"}
+{"id": "RULE-0053", "text": "사건·결정 시각은 직전 스냅숏에서 advance 재적분 + 근 찾기·이분, 격자 Δ 로 되돌리지 않음", "modes": ["develop", "field"], "enforce": "unchecked", "unit": "U0063", "copies": ["U0279"]}
+{"id": "RULE-0054", "text": "탐침(probe_pool)은 (상태, t0) 순수 함수, lanes 무관 직렬과 동일", "modes": ["develop", "field"], "enforce": "machine", "unit": "U0064", "copies": ["U0279"], "where": "tests/rust_engine.test.mjs ⑦"}
+{"id": "RULE-0055", "text": "확률: 출생–사멸 JS=Rust 비트, 운명 프로그램은 두 표본 검정, 네이티브=WASM 비트", "modes": ["develop", "field"], "enforce": "machine", "unit": "U0065", "copies": ["U0279"], "where": "tests/stochastic.test.mjs · tests/rust_engine.test.mjs"}
+{"id": "RULE-0056", "text": "data/db.json 직접 편집 금지", "modes": ["common"], "enforce": "machine", "unit": "U0066", "copies": ["U0283", "U0444", "U0549"], "where": ".claude/settings.json deny Edit/Write(data/db.json) · legislative/clerk.mjs (봉인)"}
+{"id": "RULE-0057", "text": "--allow-warnings 는 사용자 허락 시만", "modes": ["author"], "enforce": "text", "unit": "U0069", "copies": ["U0290", "U0557"]}
+{"id": "RULE-0058", "text": "db.json·patches 함께 커밋", "modes": ["author"], "enforce": "text", "unit": "U0070", "copies": ["U0291"]}
+{"id": "RULE-0059", "text": "패치 최상위 why 필수", "modes": ["author"], "enforce": "machine", "unit": "U0071", "copies": ["U0532", "U1192"], "where": "judicial/judicial.js patchPolicy · rejections 5a"}
+{"id": "RULE-0060", "text": "새 항목은 임시 번호(T+1·D+1·S+1·O+1)", "modes": ["author"], "enforce": "machine", "unit": "U0072", "copies": ["U0307", "U0546", "U0675", "U1187"], "where": "legislative/legislative.js merge (없는 번호 거부)"}
+{"id": "RULE-0061", "text": "meta.next 손대지 않음", "modes": ["author"], "enforce": "machine", "unit": "U0073", "copies": ["U0307", "U0546", "U0675"], "where": "judicial/judicial.js validate (meta.next > 쓰인 번호)"}
+{"id": "RULE-0062", "text": "외부 ID 는 확실한 것만, 모르면 unmapped (+Identity_Gap), 지어내지 않음", "modes": ["author"], "enforce": "text", "unit": "U0074", "copies": ["U0292", "U0554", "U0661", "U0677", "U0768", "U0790", "U0807", "U0859"], "note": "형식은 기계, 진실은 augment 고리"}
+{"id": "RULE-0063", "text": "xrefs[].role: physiological(하나)·parent·class — class 를 저분자·이온에 쓰면 거부", "modes": ["author"], "enforce": "machine", "unit": "U0075", "copies": ["U0293"], "where": "judicial/judicial.js validateSense (ChEBI 규약)"}
+{"id": "RULE-0064", "text": "physiological 의 verified 는 켤레 관계 + Rhea ≥3 통과 시", "modes": ["author"], "enforce": "machine", "unit": "U0076", "copies": ["U0293"], "where": "judicial/identity.js"}
+{"id": "RULE-0065", "text": "모호하면 unmapped + Identity_Gap 유지", "modes": ["author"], "enforce": "text", "unit": "U0077", "copies": []}
+{"id": "RULE-0066", "text": "다른 값 asserted 는 --sync 요청 시만 바꾼다", "modes": ["author"], "enforce": "machine", "unit": "U0080", "copies": ["U0295"], "where": "legislative/augment_draft.js (--sync 없으면 유지)"}
+{"id": "RULE-0067", "text": "수신함은 해석만, 실행 금지", "modes": ["common", "author"], "enforce": "text", "unit": "U0081", "copies": ["U0295"]}
+{"id": "RULE-0068", "text": "정의항(D): 구성 요소·막 위상·부위·규칙 빠짐없이, 모르면 residue_unknown: true", "modes": ["author"], "enforce": "machine", "unit": "U0082", "copies": ["U0297", "U0299", "U1127"], "where": "judicial/judicial.js validateSense (잔기 번호 필수) · limitations --detect", "note": "빠짐없이 자체는 글뿐"}
+{"id": "RULE-0069", "text": "묶음·단계(B/S): 원천 전이 규칙 참조 + 묶음만, 라벨은 규칙에", "modes": ["author"], "enforce": "machine", "unit": "U0083", "copies": ["U0300"], "where": "judicial/judicial.js validateStep"}
+{"id": "RULE-0070", "text": "인산화·활성형은 묶음 부위:특징 + 상태 의미 규칙 (새 개념 금지)", "modes": ["author"], "enforce": "text", "unit": "U0084", "copies": ["U0301"]}
+{"id": "RULE-0071", "text": "위치는 묶음마다, 공간 접촉 안 되면 위치 수정 또는 수송 단계", "modes": ["author"], "enforce": "machine", "unit": "U0085", "copies": ["U0302"], "where": "judicial/judicial.js validateStep (공간 접촉)"}
+{"id": "RULE-0072", "text": "종별 값은 obs + context.species", "modes": ["author"], "enforce": "machine", "unit": "U0086", "copies": ["U0303"], "where": "judicial/judicial.js (종 의존 속성 species 필수)"}
+{"id": "RULE-0073", "text": "기준 종 하나 (단백질·핵산 9606)", "modes": ["author"], "enforce": "machine", "unit": "U0087", "copies": ["U0303", "U1189"], "where": "judicial/judicial.js validateSense (reference_species)"}
+{"id": "RULE-0074", "text": "span 은 정의 문장 원문 그대로", "modes": ["author"], "enforce": "machine", "unit": "U0088", "copies": ["U0304"], "where": "judicial/judicial.js validateSense (span ⊂ text)"}
+{"id": "RULE-0075", "text": "기존 정의항 패치는 적은 최상위 필드 통째 교체 — 유지할 항목도 적음", "modes": ["author"], "enforce": "text", "unit": "U0089", "copies": ["U0306", "U0544", "U0676"], "note": "측정 파생값 삭제는 기계가 막음(§8M)"}
+{"id": "RULE-0076", "text": "구조 지문(InChIKey·서열 해시)은 도구 계산값만 computed 로", "modes": ["author"], "enforce": "text", "unit": "U0090", "copies": ["U0309"]}
+{"id": "RULE-0077", "text": "실패·우회·추정·단순화는 한계 데이터로 — 패치 limitations [Target|Type|Requirement]+needs", "modes": ["author"], "enforce": "text", "unit": "U0091", "copies": ["U0310", "U0685"]}
+{"id": "RULE-0078", "text": "limitations --detect 후보 0 (병합 조건)", "modes": ["author"], "enforce": "machine", "unit": "U0093", "copies": ["U0310"], "where": "judicial/judicial.js patchPolicy · CI limitations --detect"}
+{"id": "RULE-0079", "text": "상위 개념은 addresses:[{limitation,how}] 또는 gap_review 필수", "modes": ["author"], "enforce": "machine", "unit": "U0095", "copies": ["U0311", "U0678"], "where": "judicial/judicial.js validateSense (motif)"}
+{"id": "RULE-0080", "text": "상위 개념 없는 패턴이 두 경로 이상이면 kind process + motif", "modes": ["author"], "enforce": "text", "unit": "U0097", "copies": ["U0312"]}
+{"id": "RULE-0081", "text": "시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함", "modes": ["baseline"], "enforce": "text", "unit": "U0098", "copies": ["U0313", "U0446", "U0520", "U0589"], "note": "보고서 생성기로 옮길 후보"}
+{"id": "RULE-0082", "text": "R2 는 속도 상수로 못 가르는 반응 중심만, 경쟁은 Kd·kcat·Km 먼저", "modes": ["author"], "enforce": "text", "unit": "U0100", "copies": ["U0314"]}
+{"id": "RULE-0083", "text": "속도 상수는 규칙 kinetics 에 SI 정준 단위", "modes": ["author"], "enforce": "machine", "unit": "U0101", "copies": ["U0315"], "where": "judicial/judicial.js kineticIssues"}
+{"id": "RULE-0084", "text": "문헌 값은 관찰(O…) 먼저 + kinetics.from (lumped 도 원 관찰 참조)", "modes": ["author"], "enforce": "machine", "unit": "U0102", "copies": ["U0315", "U0350", "U0547", "U0548", "U0663"], "where": "judicial/judicial.js checkKineticsFrom · rejections 2a·2a2·2a3"}
+{"id": "RULE-0085", "text": "미확인 값 금지 — 시험값은 가정 원장 번호 A… 를 hypothetical 시나리오가 {assume} 로", "modes": ["author"], "enforce": "machine", "unit": "U0103", "copies": ["U0315"], "where": "judicial/assumption_audit.js · judicial/reliability.js constantVerdict"}
+{"id": "RULE-0086", "text": "가정 원장 쓰기는 assume add 감사·봉인 뒤 서기만", "modes": ["author"], "enforce": "machine", "unit": "U0104", "copies": ["U0315"], "where": "judicial/assumption_audit.js checkProposals · legislative/clerk.mjs"}
+{"id": "RULE-0087", "text": "가정 고치기는 revises 새 번호, 가리키는 쪽은 최신을 따라가지 않음", "modes": ["author"], "enforce": "machine", "unit": "U0105", "copies": ["U0315"], "where": "judicial/assumption_audit.js · compiler/assumptions.js resolve"}
+{"id": "RULE-0088", "text": "새 사전 등록은 인라인 가상 숫자 거부", "modes": ["author", "baseline"], "enforce": "machine", "unit": "U0106", "copies": ["U0315"], "where": "judicial/protocol.js · tests/assumptions.test.mjs"}
+{"id": "RULE-0089", "text": "다른 종 값을 사람 값으로 적지 않음 → 한계", "modes": ["author"], "enforce": "machine", "unit": "U0107", "copies": ["U0315", "U0555", "U0662", "U0858", "U0868"], "where": "judicial/judicial.js 종 대조 · rejections 4b·4d·4e", "note": "둘 다 종이 있을 때만(build-plan 62)"}
+{"id": "RULE-0090", "text": "불확도 미보고면 sd = 유효 숫자 해상도 + note", "modes": ["author"], "enforce": "text", "unit": "U0108", "copies": ["U0315", "U0664"]}
+{"id": "RULE-0091", "text": "상수를 넣은 뒤 궤적 전후 비교 보고", "modes": ["author"], "enforce": "text", "unit": "U0109", "copies": ["U0315", "U0667"], "note": "보고서 생성기 후보"}
+{"id": "RULE-0092", "text": "등급은 계산(judicial/reliability.js, grade) — 점수를 데이터에 쓰지 않음", "modes": ["common"], "enforce": "machine", "unit": "U0110", "copies": ["U0324"], "where": "judicial/reliability.js (저장 없음)", "note": "데이터에 점수 칸이 없음"}
+{"id": "RULE-0093", "text": "S×D 곱으로 판정하지 않음", "modes": ["common"], "enforce": "machine", "unit": "U0111", "copies": ["U0324"], "where": "judicial/reliability.js THRESHOLD · tests/reliability_criteria.test.mjs"}
+{"id": "RULE-0094", "text": "보고 시 쓴 값의 등급 명시", "modes": ["common", "baseline"], "enforce": "machine", "unit": "U0112", "copies": ["U0324", "U0446", "U0589"], "where": "judicial/process_report.js 무결성 증명서 상수 등급 줄", "note": "fate 보고서만, 그 밖은 글뿐"}
+{"id": "RULE-0095", "text": "웹 검색 결과 저장 금지", "modes": ["inspect"], "enforce": "text", "unit": "U0113", "copies": ["U0329"]}
+{"id": "RULE-0096", "text": "추세 도장은 원천별 창 vocab.consensus.sources 뒤 다시 unchecked", "modes": ["inspect"], "enforce": "machine", "unit": "U0115", "copies": ["U0329"], "where": "judicial/trend.js windowDays · tests/reliability_criteria.test.mjs"}
+{"id": "RULE-0097", "text": "mismatch 면 값 유지·legacy·Consensus_Gap", "modes": ["inspect"], "enforce": "machine", "unit": "U0116", "copies": ["U0329"], "where": "judicial/reliability.js (legacy) · judicial/trend.js"}
+{"id": "RULE-0098", "text": "인정 = (기록, 용도) — 서술·비교·추정은 계산", "modes": ["inspect"], "enforce": "machine", "unit": "U0117", "copies": ["U0335"], "where": "judicial/reliability.js accept"}
+{"id": "RULE-0099", "text": "검증 근거·기준은 승인 도장 (사람·integrator, 이유 필수, 축·관계 조건을 넘지 못함)", "modes": ["inspect"], "enforce": "machine", "unit": "U0118", "copies": ["U0335"], "where": "judicial/acceptance.js checkIssue · tests/acceptance.test.mjs"}
+{"id": "RULE-0100", "text": "결론은 가장 약한 근거를 따름 (acceptance_review — 보고서·observe·fate)", "modes": ["baseline", "inspect"], "enforce": "machine", "unit": "U0119", "copies": ["U0335"], "where": "judicial/evidence_report.js · obs_compare · qual_compare · process_report"}
+{"id": "RULE-0101", "text": "시뮬레이션 관문도 같은 판정 (문턱 ∧ '추정' accepted, 종 = kinetics.context.species)", "modes": ["baseline", "inspect"], "enforce": "machine", "unit": "U0120", "copies": ["U0335"], "where": "judicial/reliability.js gateMessage"}
+{"id": "RULE-0102", "text": "승인 도장은 추가만 (마지막이 유효)", "modes": ["inspect"], "enforce": "machine", "unit": "U0121", "copies": ["U0335"], "where": "legislative/clerk.mjs appendAttestations · judicial/acceptance.js table"}
+{"id": "RULE-0103", "text": "등급 문턱(기본 parameter) 미달 데이터 상수 = AUDIT_KINETIC", "modes": ["baseline"], "enforce": "machine", "unit": "U0123", "copies": ["U0340"], "where": "judicial/reliability.js constantVerdict · judicial/judicial.js auditRate"}
+{"id": "RULE-0104", "text": "시나리오 값은 hypothetical: true 때만", "modes": ["baseline"], "enforce": "machine", "unit": "U0124", "copies": ["U0340", "U0638"], "where": "judicial/reliability.js constantVerdict"}
+{"id": "RULE-0105", "text": "문턱은 min_grade 로 올리기만 — 낮추거나 비교 못 하는 등급은 관문 거부", "modes": ["baseline"], "enforce": "machine", "unit": "U0125", "copies": ["U0340"], "where": "judicial/reliability.js gateMinError · tests/reliability_criteria.test.mjs ⑫"}
+{"id": "RULE-0106", "text": "문턱 비교는 순번이 아니라 축 조건 (reliability.THRESHOLD)", "modes": ["baseline"], "enforce": "machine", "unit": "U0126", "copies": ["U0340"], "where": "judicial/reliability.js meets · tests/reliability_criteria.test.mjs ⑪"}
+{"id": "RULE-0107", "text": "실측값은 observations(O+1): 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처·용도", "modes": ["author"], "enforce": "machine", "unit": "U0127", "copies": ["U0347"], "where": "judicial/judicial.js validateObservation · schemas/obs/observation.schema.json"}
+{"id": "RULE-0108", "text": "반복 수가 원문에 없으면 null — 1 로 적지 않음", "modes": ["author"], "enforce": "text", "unit": "U0128", "copies": ["U0347"], "note": "null 은 기계가 받지만 1 로 적은 거짓은 못 잡음"}
+{"id": "RULE-0109", "text": "도구 추정(computed·predicted)은 실측이 아님 (D2.estimate)", "modes": ["common", "author"], "enforce": "machine", "unit": "U0129", "copies": ["U0347"], "where": "judicial/reliability.js scoreObservation"}
+{"id": "RULE-0110", "text": "관찰 수정·삭제 금지 (retracted 만)", "modes": ["author"], "enforce": "machine", "unit": "U0130", "copies": ["U0347"], "where": "judicial/judicial.js observationImmutability · rejections 3b"}
+{"id": "RULE-0111", "text": "추정용을 검증에 쓰지 않음", "modes": ["author", "baseline"], "enforce": "machine", "unit": "U0131", "copies": ["U0347"], "where": "judicial/judicial.js checkKineticsFrom · judicial/protocol.js"}
+{"id": "RULE-0112", "text": "합성 관찰은 examples/observations/ 만", "modes": ["author"], "enforce": "machine", "unit": "U0132", "copies": ["U0347"], "where": "judicial/judicial.js validateObservation (hypothetical 거부)"}
+{"id": "RULE-0113", "text": "측정은 포트(schemas/obs/)로", "modes": ["author"], "enforce": "machine", "unit": "U0133", "copies": ["U0347"], "where": "judicial/contract.js checkObservation"}
+{"id": "RULE-0114", "text": "정성 관찰은 kind: qualitative — 교란·readout·expect", "modes": ["author"], "enforce": "machine", "unit": "U0134", "copies": ["U0355"], "where": "judicial/judicial.js validateQualitative"}
+{"id": "RULE-0115", "text": "정성 관찰은 1차 문헌(DOI·PMID) provenance.source + 원문 quote 필수", "modes": ["author"], "enforce": "machine", "unit": "U0135", "copies": ["U0355"], "where": "judicial/judicial.js validateQualitative"}
+{"id": "RULE-0116", "text": "정성 관찰은 use: validation 만, 수치 근거 금지", "modes": ["author"], "enforce": "machine", "unit": "U0136", "copies": ["U0355"], "where": "judicial/judicial.js validateQualitative · checkKineticsFrom"}
+{"id": "RULE-0117", "text": "교과서·추론은 정성 관찰이 아님 (한계·메모로)", "modes": ["author"], "enforce": "text", "unit": "U0137", "copies": ["U0355"]}
+{"id": "RULE-0118", "text": "같은 실험은 experiment 로 묶음", "modes": ["author"], "enforce": "text", "unit": "U0138", "copies": ["U0355"]}
+{"id": "RULE-0119", "text": "정성 판정은 우연 기준선과 함께 보고", "modes": ["author", "baseline"], "enforce": "machine", "unit": "U0142", "copies": ["U0355", "U0508"], "where": "judicial/qual_compare.js (chance)"}
+{"id": "RULE-0120", "text": "결론은 등록 규약의 검증 세트만", "modes": ["baseline"], "enforce": "machine", "unit": "U0143", "copies": ["U0508"], "where": "judicial/protocol.js · judicial/evidence_report.js (판정 수준)"}
+{"id": "RULE-0121", "text": "맥락 열쇠는 contextKeys 여섯 칸, condition 은 정의항 번호 목록 (문장은 scope)", "modes": ["author"], "enforce": "machine", "unit": "U0144", "copies": ["U0355"], "where": "judicial/judicial.js checkContextKeys"}
+{"id": "RULE-0122", "text": "번호를 합치거나 나눌 땐 패치 moved (지우고 새로 만들지 않음)", "modes": ["author"], "enforce": "text", "unit": "U0145", "copies": ["U0355"]}
+{"id": "RULE-0123", "text": "이동된 번호는 쓰지 않음", "modes": ["author"], "enforce": "machine", "unit": "U0146", "copies": ["U0355"], "where": "judicial/judicial.js validateMoved"}
+{"id": "RULE-0124", "text": "패치는 obs·kinetics 로 쓰고 병합이 대체·철회로 접음 (값 기록 불변)", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0148", "copies": ["U0344"], "where": "judicial/judicial.js valueImmutability"}
+{"id": "RULE-0125", "text": "values·moved 직접 쓰기 금지", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0149", "copies": ["U0344"], "where": "legislative/legislative.js merge · rejections 6a"}
+{"id": "RULE-0126", "text": "값이 바뀌면 recorded_at 필요 (dbtool 이 찍음)", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0150", "copies": ["U0344"], "where": "judicial/judicial.js validateValues · rejections 6b"}
+{"id": "RULE-0127", "text": "정의항 obs 의 curated 측정값은 from: 'O…'", "modes": ["author"], "enforce": "machine", "unit": "U0152", "copies": ["U0350"], "where": "judicial/judicial.js checkSenseObsFrom · rejections 2b"}
+{"id": "RULE-0128", "text": "단위는 vocab.unitFactors 만", "modes": ["author"], "enforce": "machine", "unit": "U0153", "copies": ["U0350"], "where": "judicial/judicial.js obsUnit · rejections 4a"}
+{"id": "RULE-0129", "text": "값은 vocab.physicalBounds 안", "modes": ["author"], "enforce": "machine", "unit": "U0154", "copies": ["U0350"], "where": "judicial/judicial.js checkBound · rejections 4c"}
+{"id": "RULE-0130", "text": "from 달린 obs 는 관찰 retracted 뒤에만 삭제", "modes": ["author"], "enforce": "machine", "unit": "U0155", "copies": ["U0350", "U0545"], "where": "judicial/judicial.js (파생값 삭제 거부) · rejections 3"}
+{"id": "RULE-0131", "text": "환산표는 하나 (엔진과 사법부가 같은 것)", "modes": ["author", "develop"], "enforce": "unchecked", "unit": "U0156", "copies": ["U0350"]}
+{"id": "RULE-0132", "text": "Audit Error 는 한계를 채우거나 등록", "modes": ["author", "baseline"], "enforce": "text", "unit": "U0158", "copies": ["U0360"]}
+{"id": "RULE-0133", "text": "재생은 supply, 소멸은 degradation(lost|recycled)", "modes": ["author"], "enforce": "machine", "unit": "U0159", "copies": ["U0361"], "where": "judicial/judicial.js validateSupply · validateDegradation"}
+{"id": "RULE-0134", "text": "고갈은 결과로 보고 (결함 아님)", "modes": ["author", "baseline"], "enforce": "text", "unit": "U0160", "copies": ["U0361"]}
+{"id": "RULE-0135", "text": "재생 경로 없으면 supply 정의 또는 Kinetic_Gap", "modes": ["author"], "enforce": "text", "unit": "U0161", "copies": ["U0361"]}
+{"id": "RULE-0136", "text": "제한 요인 등록: 고갈 → Resource_Gap, 평형·속도 → Kinetic_Gap", "modes": ["author"], "enforce": "text", "unit": "U0163", "copies": ["U0362"]}
+{"id": "RULE-0137", "text": "안정성 감사가 나오면 Δt 줄여 수렴할 때만 보고", "modes": ["author", "baseline"], "enforce": "text", "unit": "U0164", "copies": ["U0362"]}
+{"id": "RULE-0138", "text": "분자 정의항 tier(T1|T2) 필수", "modes": ["author"], "enforce": "machine", "unit": "U0165", "copies": ["U0363"], "where": "judicial/judicial.js validateSense (tier)"}
+{"id": "RULE-0139", "text": "확산·pH·유전율은 위치(context.location) + SI", "modes": ["author"], "enforce": "machine", "unit": "U0166", "copies": ["U0363"], "where": "judicial/judicial.js validateObservation (location 필수)"}
+{"id": "RULE-0140", "text": "가역 반응은 dG0 (k_r 지어내지 않음)", "modes": ["author"], "enforce": "machine", "unit": "U0167", "copies": ["U0363"], "where": "judicial/judicial.js kineticIssues (미시적 가역성)"}
+{"id": "RULE-0141", "text": "닫힌 고리 ΣΔG°=0 (AUDIT_THERMO)", "modes": ["author"], "enforce": "machine", "unit": "U0168", "copies": ["U0363"], "where": "judicial/judicial.js thermoLoops"}
+{"id": "RULE-0142", "text": "실행 상태는 db 가 아니라 시나리오 domains·engine/", "modes": ["author", "field"], "enforce": "text", "unit": "U0169", "copies": ["U0363"]}
+{"id": "RULE-0143", "text": "P3 변경 → node tests/p3_end_to_end.js (|ΔN|<1)", "modes": ["field"], "enforce": "machine", "unit": "U0170", "copies": ["U0364"], "where": "tests/p3_end_to_end.js · CI"}
+{"id": "RULE-0144", "text": "원장은 거래로만, 장은 원장에 맞춰 재척도", "modes": ["field"], "enforce": "machine", "unit": "U0171", "copies": ["U0364"], "where": "tests/p3_end_to_end.js"}
+{"id": "RULE-0145", "text": "P4 대리 출력은 같은 단계 OOD 통과 시만", "modes": ["field"], "enforce": "machine", "unit": "U0172", "copies": ["U0365"], "where": "tests/p4_end_to_end.js"}
+{"id": "RULE-0146", "text": "P4 속도는 tests/p4_benchmark.js FV 부분 단계 수와 함께 보고", "modes": ["field"], "enforce": "text", "unit": "U0173", "copies": ["U0365"]}
+{"id": "RULE-0147", "text": "P4 L2<2% + tests/p4_end_to_end.js", "modes": ["field"], "enforce": "machine", "unit": "U0174", "copies": ["U0365"], "where": "tests/p4_end_to_end.js · CI"}
+{"id": "RULE-0148", "text": "P5 경로는 engine/p5_dynamic_gate.js 의 N_sub·히스테리시스·γ 로만", "modes": ["field"], "enforce": "unchecked", "unit": "U0175", "copies": ["U0366"]}
+{"id": "RULE-0149", "text": "P5 전이마다 exactAnchor ≤1e-15", "modes": ["field"], "enforce": "machine", "unit": "U0176", "copies": ["U0366"], "where": "tests/p5_dynamic_promotion.js"}
+{"id": "RULE-0150", "text": "mode:'fv' 결과 비트 불변", "modes": ["field"], "enforce": "unchecked", "unit": "U0177", "copies": ["U0366"]}
+{"id": "RULE-0151", "text": "P5 변경 → tests/p5_dynamic_promotion.js, 속도는 구간별 N_sub 와 (N_sub<15 ≈1×)", "modes": ["field"], "enforce": "machine", "unit": "U0178", "copies": ["U0366"], "where": "tests/p5_dynamic_promotion.js · CI", "note": "속도 조건이 벽시계에 매여 부하에서 흔들림(2026-10-25)"}
+{"id": "RULE-0152", "text": "운명은 cell_state + modulation 사슬 (표지 직접 금지)", "modes": ["author"], "enforce": "text", "unit": "U0179", "copies": ["U0369"]}
+{"id": "RULE-0153", "text": "매개 단계를 묶으면 Regulatory_Gap", "modes": ["author"], "enforce": "machine", "unit": "U0180", "copies": ["U0369"], "where": "judicial/judicial.js detectGaps (힐 상수 없는 조절)", "note": "부분"}
+{"id": "RULE-0154", "text": "미확인 상수는 hypothetical", "modes": ["author"], "enforce": "machine", "unit": "U0181", "copies": ["U0369"], "where": "judicial/reliability.js constantVerdict"}
+{"id": "RULE-0155", "text": "운명 보고 시 결정 시점·정지 원인·'상수는 가상'", "modes": ["author", "baseline"], "enforce": "machine", "unit": "U0182", "copies": ["U0369", "U0516"], "where": "judicial/process_report.js"}
+{"id": "RULE-0156", "text": "운명 층 변경 → node tests/fate_suite.js", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0183", "copies": ["U0369"], "where": "tests/fate_suite.js · CI"}
+{"id": "RULE-0157", "text": "근거 없는 비생리 계통 경로 금지", "modes": ["author"], "enforce": "text", "unit": "U0184", "copies": ["U0369"]}
+{"id": "RULE-0158", "text": "분열 = 0차 supply 누적 진행량 (새 규칙 종류·가짜 분자 금지)", "modes": ["author"], "enforce": "text", "unit": "U0185", "copies": ["U0372"]}
+{"id": "RULE-0159", "text": "억제 힐 K = 임계값 −10 %", "modes": ["author", "baseline"], "enforce": "text", "unit": "U0186", "copies": ["U0372", "U0641"], "note": "rules-regulation-tests §7: 글뿐"}
+{"id": "RULE-0160", "text": "활성 힐 기준선 1 → 1/fmax 근사 + 한계", "modes": ["author"], "enforce": "text", "unit": "U0187", "copies": ["U0372"]}
+{"id": "RULE-0161", "text": "도달 시각은 Δ 바꿔 확인", "modes": ["author", "baseline"], "enforce": "text", "unit": "U0188", "copies": ["U0372", "U0643"]}
+{"id": "RULE-0162", "text": "compare: 결과 같고 비용만 늘며 이득 <1e-5 → Optimization-Negative, 넣지 않음", "modes": ["develop"], "enforce": "machine", "unit": "U0189", "copies": ["U0377"], "where": "judicial/compare.js", "note": "넣지 않음 자체는 글뿐"}
+{"id": "RULE-0163", "text": "결과가 바뀌면 관찰로 고르고, 없으면 Gap note", "modes": ["develop"], "enforce": "text", "unit": "U0190", "copies": ["U0377"]}
+{"id": "RULE-0164", "text": "기존 supply·modulation 으로 되면 새 규칙 종류 금지", "modes": ["develop"], "enforce": "text", "unit": "U0191", "copies": ["U0377"]}
+{"id": "RULE-0165", "text": "정제 점검 자동 — 새 중복·미등록 모순은 관문 거부", "modes": ["author"], "enforce": "machine", "unit": "U0192", "copies": ["U0379"], "where": "judicial/judicial.js refineCheck · patchPolicy · rejections 5c"}
+{"id": "RULE-0166", "text": "의도한 단순화는 Structural_Gap", "modes": ["author"], "enforce": "text", "unit": "U0194", "copies": ["U0379"]}
+{"id": "RULE-0167", "text": "기전은 세포 상태 mechanisms 에 걸어 운명 엔진으로 (따로 돌리는 길 금지)", "modes": ["author"], "enforce": "text", "unit": "U0195", "copies": ["U0381"]}
+{"id": "RULE-0168", "text": "결합 적분은 질량 작용·가역 결합(정·역)·MM 만, 나머지는 Kinetic_Gap", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0196", "copies": ["U0381"], "where": "compiler/ir_builder.js (step_law_unsupported) · tests/mhc.test.mjs"}
+{"id": "RULE-0169", "text": "막 단계는 volumes[막]", "modes": ["author", "baseline"], "enforce": "machine", "unit": "U0197", "copies": ["U0381"], "where": "compiler/ir_builder.js"}
+{"id": "RULE-0170", "text": "simulateRate 와 서로 기준 금지 (L000081)", "modes": ["author", "baseline"], "enforce": "text", "unit": "U0198", "copies": ["U0381"]}
+{"id": "RULE-0171", "text": "기전 층 변경 → node --test tests/mhc.test.mjs", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0199", "copies": ["U0381"], "where": "tests/mhc.test.mjs"}
+{"id": "RULE-0172", "text": "운명·기전 시나리오에 context {role: cause|requirement|baseline, state, note}", "modes": ["baseline"], "enforce": "machine", "unit": "U0200", "copies": ["U0383", "U0639"], "where": "judicial/fate_audit.js (선언·실행 일관성)"}
+{"id": "RULE-0173", "text": "보고는 맥락과 함께", "modes": ["baseline"], "enforce": "machine", "unit": "U0201", "copies": ["U0383", "U0517"], "where": "judicial/process_report.js", "note": "fate 보고서만"}
+{"id": "RULE-0174", "text": "교란 실험은 복사본 금지 — 파생 시나리오 { base, perturbation }", "modes": ["baseline"], "enforce": "machine", "unit": "U0202", "copies": ["U0353"], "where": "compiler/perturb.js derive (다른 필드 거부)", "note": "복사본 자체는 막지 못함"}
+{"id": "RULE-0175", "text": "확률은 stochastic {seed} (실행 전)", "modes": ["baseline"], "enforce": "machine", "unit": "U0203", "copies": ["U0385"], "where": "judicial/stoch_audit.js (seed 재현)"}
+{"id": "RULE-0176", "text": "확률은 앙상블로만 판정, 궤적 하나로 결론 금지", "modes": ["baseline"], "enforce": "text", "unit": "U0204", "copies": ["U0385"]}
+{"id": "RULE-0177", "text": "확률 방식·문턱 변경 → tests/stochastic.test.mjs", "modes": ["baseline", "develop"], "enforce": "machine", "unit": "U0205", "copies": ["U0385"], "where": "tests/stochastic.test.mjs"}
+{"id": "RULE-0178", "text": "확률 없으면 결정론 비트 불변", "modes": ["baseline", "develop"], "enforce": "machine", "unit": "U0206", "copies": ["U0385"], "where": "tests/stochastic.test.mjs"}
+{"id": "RULE-0179", "text": "검증은 사전 등록된 모의 실험 규약 아래에서만", "modes": ["baseline"], "enforce": "machine", "unit": "U0207", "copies": ["U0393", "U0498"], "where": "judicial/protocol.js · judicial/evidence_report.js (판정 수준)"}
+{"id": "RULE-0180", "text": "규약 protocol: 실제 실험 대응·음성 대조 필수·검정력 반복 수·검증 세트·중단 규칙", "modes": ["baseline"], "enforce": "machine", "unit": "U0208", "copies": ["U0393"], "where": "judicial/protocol.js"}
+{"id": "RULE-0181", "text": "register 로 실행 전 등록, 고치면 미등록", "modes": ["baseline"], "enforce": "machine", "unit": "U0209", "copies": ["U0393", "U0652"], "where": "judicial/protocol.js · data/preregistrations.jsonl scenario_sha256"}
+{"id": "RULE-0182", "text": "규약 없는 실행은 탐색 실행 (일치 결론 불가)", "modes": ["baseline"], "enforce": "machine", "unit": "U0210", "copies": ["U0393", "U0498"], "where": "judicial/evidence_report.js"}
+{"id": "RULE-0183", "text": "운명 결과는 fate --report 과정 보고서로만, 끝 상태만 말하지 않음", "modes": ["baseline"], "enforce": "text", "unit": "U0211", "copies": ["U0396"]}
+{"id": "RULE-0184", "text": "무결성 증명서 FAIL 이면 실패로 보고", "modes": ["baseline"], "enforce": "text", "unit": "U0212", "copies": ["U0396", "U0515", "U0524", "U0556", "U0631"], "note": "판정은 기계(rc=1), 보고는 글"}
+{"id": "RULE-0185", "text": "예측은 실행 전 expect, 실행 뒤 변경 금지", "modes": ["baseline"], "enforce": "machine", "unit": "U0213", "copies": ["U0396", "U0640", "U0653"], "where": "시나리오 입력 해시 · 사전 등록"}
+{"id": "RULE-0186", "text": "옮겨 다니는 분자에 moieties, 빠진 산물(PPi·Pi)은 규칙·단계(minor)에", "modes": ["author"], "enforce": "machine", "unit": "U0214", "copies": ["U0400"], "where": "judicial/judicial.js moietyImbalance"}
+{"id": "RULE-0187", "text": "source: true 는 원료가 모델 밖일 때만", "modes": ["author"], "enforce": "text", "unit": "U0215", "copies": ["U0400"]}
+{"id": "RULE-0188", "text": "반감기·공급 속도·서열 길이는 확인 값만", "modes": ["author"], "enforce": "text", "unit": "U0216", "copies": ["U0400"]}
+{"id": "RULE-0189", "text": "데이터 패치 why → Patch Report 자동 (data/patches/ 의 report)", "modes": ["author"], "enforce": "machine", "unit": "U0217", "copies": ["U0402"], "where": "judicial/judicial.js patchReport"}
+{"id": "RULE-0190", "text": "why 없음·미등록 한계 후보·새 정제 문제는 관문(patchPolicy) 거부", "modes": ["author"], "enforce": "machine", "unit": "U0218", "copies": ["U0402"], "where": "judicial/judicial.js patchPolicy · rejections 5a·5b·5c"}
+{"id": "RULE-0191", "text": "코드·형식·어휘·문서 구조 변경은 CHANGES.md 맨 위 한 행 (Scope·Why·Impact·Verification), 같은 커밋", "modes": ["develop"], "enforce": "text", "unit": "U0219", "copies": ["U0403", "U0583"]}
+{"id": "RULE-0192", "text": "사용자 보고는 네 칸 표, 산문 요약 금지", "modes": ["common"], "enforce": "text", "unit": "U0220", "copies": ["U0404", "U0587", "U0588"]}
+{"id": "RULE-0193", "text": "구조 변경 → SCHEMA.md, 작업 규칙 → CLAUDE.md + agent-rules.md, 실패·공백 → limitations.md", "modes": ["develop"], "enforce": "text", "unit": "U0221", "copies": ["U0405"], "note": "사본 동기화 — 재건으로 바뀔 규칙"}
+{"id": "RULE-0194", "text": "문서는 해당 절만 고침", "modes": ["develop"], "enforce": "text", "unit": "U0222", "copies": ["U0405"]}
+{"id": "RULE-0195", "text": "논리를 깨면 감지·수정·기록까지 한 작업", "modes": ["common"], "enforce": "text", "unit": "U0224", "copies": ["U0409"]}
+{"id": "RULE-0196", "text": "주석은 계약·이유만, 이력은 CHANGES.md", "modes": ["develop"], "enforce": "text", "unit": "U0225", "copies": []}
+{"id": "RULE-0197", "text": "vocab·model·core·judicial·legislative 규칙은 사용자 요청 시만", "modes": ["author", "develop"], "enforce": "text", "unit": "U0226", "copies": ["U0410", "U0593", "U0665"]}
+{"id": "RULE-0198", "text": "데이터를 통과시키려고 규칙을 느슨하게 하지 않음", "modes": ["develop"], "enforce": "machine", "unit": "U0227", "copies": ["U0410", "U0445", "U0550", "U0595"], "where": "tests/rejections.test.mjs (거부 말뭉치) · FLOOR"}
+{"id": "RULE-0199", "text": "엔진·공유 기계를 바꿨으면 전체 시험", "modes": ["common", "develop"], "enforce": "text", "unit": "U0229", "copies": ["U0411"]}
+{"id": "RULE-0200", "text": "어느 경우든 node dbtool.mjs validate", "modes": ["common"], "enforce": "machine", "unit": "U0231", "copies": ["U0411"], "where": "CI validate"}
+{"id": "RULE-0201", "text": "새 규칙엔 거부 시험", "modes": ["common", "develop"], "enforce": "text", "unit": "U0232", "copies": ["U0411"]}
+{"id": "RULE-0202", "text": "거부 패치는 tests/fixtures/rejections/ + EXPECT.json", "modes": ["develop"], "enforce": "machine", "unit": "U0233", "copies": ["U0414"], "where": "tests/rejections.test.mjs ①"}
+{"id": "RULE-0203", "text": "바닥값 tests/fixtures/FLOOR.json — 내려가면 실패", "modes": ["develop"], "enforce": "machine", "unit": "U0234", "copies": ["U0414"], "where": "tests/rejections.test.mjs ②"}
+{"id": "RULE-0204", "text": "skip·todo 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0235", "copies": ["U0414", "U0551"], "where": "tests/rejections.test.mjs ③"}
+{"id": "RULE-0205", "text": "새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋", "modes": ["develop"], "enforce": "text", "unit": "U0236", "copies": ["U0414", "U0586"]}
+{"id": "RULE-0206", "text": "형식 변경 → migrations/ 스크립트 + SCHEMA.md 변경 기록", "modes": ["develop"], "enforce": "machine", "unit": "U0237", "copies": ["U0416", "U0584"], "where": "judicial/judicial.js validate (version 일치)", "note": "스크립트 존재·변경 기록은 글뿐"}
+{"id": "RULE-0207", "text": "index.html = viewer.html 복사본", "modes": ["develop"], "enforce": "machine", "unit": "U0238", "copies": ["U0417"], "where": "CI cmp index.html viewer.html"}
+{"id": "RULE-0208", "text": "알고리즘·형식·상호작용 변경 → docs/textbook/ 해당 장 같은 커밋", "modes": ["develop"], "enforce": "text", "unit": "U0239", "copies": ["U0418"]}
+{"id": "RULE-0209", "text": "현재 값은 textbook --write 로 생성", "modes": ["develop"], "enforce": "machine", "unit": "U0240", "copies": ["U0418"], "where": "CI textbook --check"}
+{"id": "RULE-0210", "text": "파일 추가·이동 → storage-map.json 에 분류", "modes": ["develop"], "enforce": "machine", "unit": "U0241", "copies": ["U0418", "U0585"], "where": "dbtool textbook --check · CI"}
+{"id": "RULE-0211", "text": "저장소 밖 사본은 구역 밖이다", "modes": ["develop"], "enforce": "machine", "unit": "U0257", "copies": [], "where": "tests/governance.test.mjs ④′"}
+{"id": "RULE-0212", "text": "오류는 판결·보고서로만 내고, 고치는 것은 에이전트가 새 패치로 (읽기 전용 되먹임)", "modes": ["common"], "enforce": "machine", "unit": "U0261", "copies": [], "where": "tests/governance.test.mjs ③"}
+{"id": "RULE-0213", "text": "사법부(judicial/contract.js)는 계약을 어긴 원자료를 판정하지 않는다", "modes": ["develop"], "enforce": "machine", "unit": "U0267", "copies": [], "where": "judicial/contract.js · tests/governance.test.mjs ⑦"}
+{"id": "RULE-0214", "text": "수치 문제를 데이터로 맞추지 않는다", "modes": ["develop"], "enforce": "text", "unit": "U0273", "copies": []}
+{"id": "RULE-0215", "text": "같은 문구를 코드에 복사하지 않는다 (모듈은 M.labelsOf 보기만)", "modes": ["develop"], "enforce": "text", "unit": "U0276", "copies": []}
+{"id": "RULE-0216", "text": "확인을 통과한 것만 verified", "modes": ["author"], "enforce": "machine", "unit": "U0296", "copies": [], "where": "judicial/identity.js"}
+{"id": "RULE-0217", "text": "근거가 문장에 없으면 연결을 빼거나 문장을 고친다", "modes": ["author"], "enforce": "machine", "unit": "U0305", "copies": [], "where": "judicial/judicial.js validateSense (span)"}
+{"id": "RULE-0218", "text": "번호를 직접 지어내지 않는다", "modes": ["author"], "enforce": "machine", "unit": "U0308", "copies": [], "where": "legislative/legislative.js merge"}
+{"id": "RULE-0219", "text": "가정 번호는 자기 자리(종류·열쇠·칸·부피는 세포)에만 — 다른 칸에 옮겨 붙이면 풀기 거부", "modes": ["author"], "enforce": "machine", "unit": "U0318", "copies": [], "where": "compiler/assumptions.js resolve · judicial/assumption_audit.js"}
+{"id": "RULE-0220", "text": "새 가정 기록은 unrecorded 일 수 없다 — 열린 한계를 달고 assumed 로", "modes": ["author"], "enforce": "machine", "unit": "U0320", "copies": [], "where": "judicial/assumption_audit.js checkRecord"}
+{"id": "RULE-0221", "text": "탐색 실행(미등록)은 인라인 숫자를 허용하되 첫 장면 기원 감사가 unrecorded 로 센다", "modes": ["baseline"], "enforce": "machine", "unit": "U0321", "copies": [], "where": "judicial/scene_origin.js"}
+{"id": "RULE-0222", "text": "종이 다른 값(돼지·소 심장 효소)은 찾지 못한 것으로 한계 등록", "modes": ["author"], "enforce": "text", "unit": "U0322", "copies": []}
+{"id": "RULE-0223", "text": "합의 수신함(data/fetched/consensus/)은 신원 수신함을 덮지 않는다", "modes": ["inspect"], "enforce": "machine", "unit": "U0331", "copies": [], "where": "legislative/clerk.mjs (consensus 경로)"}
+{"id": "RULE-0224", "text": "표에 없는 원천은 창이 없으니 만료 — 창을 지어내지 않는다", "modes": ["inspect"], "enforce": "machine", "unit": "U0333", "copies": [], "where": "judicial/trend.js windowDays"}
+{"id": "RULE-0225", "text": "승인은 사람과 integrator (2026-10-25 결정 — 자동결정률을 위해), 수집가는 못 한다", "modes": ["inspect"], "enforce": "machine", "unit": "U0336", "copies": [], "where": "judicial/acceptance.js verifyAcceptStamp"}
+{"id": "RULE-0226", "text": "나중에 축이 내려가면 도장이 있어도 '재검토'", "modes": ["inspect"], "enforce": "machine", "unit": "U0337", "copies": [], "where": "judicial/acceptance.js table"}
+{"id": "RULE-0227", "text": "기준(standard)은 독립 단위 ≥ 2 — I 축(52) 전에는 아무것도 닿지 못함", "modes": ["inspect"], "enforce": "machine", "unit": "U0338", "copies": [], "where": "judicial/reliability.js USES"}
+{"id": "RULE-0228", "text": "판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두 부름 (74·75·76)", "modes": ["develop"], "enforce": "unchecked", "unit": "U0339", "copies": []}
+{"id": "RULE-0229", "text": "bounded(S4,D2)와 parameter(S3,D3)는 서로의 문턱을 넘지 못한다", "modes": ["baseline"], "enforce": "machine", "unit": "U0342", "copies": [], "where": "judicial/reliability.js THRESHOLD"}
+{"id": "RULE-0230", "text": "무결성 증명서가 상수 등급 판정을 한 줄로 싣고, 미달이면 FAIL", "modes": ["baseline"], "enforce": "machine", "unit": "U0343", "copies": [], "where": "judicial/process_report.js"}
+{"id": "RULE-0231", "text": "미보고 반복 수는 D3, 비교는 1 회로 본다", "modes": ["inspect"], "enforce": "machine", "unit": "U0349", "copies": [], "where": "judicial/reliability.js scoreObservation · judicial/obs_compare.js"}
+{"id": "RULE-0232", "text": "지식(개념·기전)은 직접 패치, 측정은 포트", "modes": ["author"], "enforce": "text", "unit": "U0351", "copies": []}
+{"id": "RULE-0233", "text": "같은 열쇠의 현재 값은 하나뿐", "modes": ["author"], "enforce": "machine", "unit": "U0356", "copies": [], "where": "judicial/judicial.js checkContextKeys"}
+{"id": "RULE-0234", "text": "결정론은 차이가 분해능(수치 오차 + 분자 1 개)을 넘어야 방향이 있고, 앙상블은 검정으로", "modes": ["baseline"], "enforce": "machine", "unit": "U0357", "copies": [], "where": "judicial/qual_compare.js"}
+{"id": "RULE-0235", "text": "보이지 못한 것은 불일치가 아니다", "modes": ["baseline"], "enforce": "machine", "unit": "U0358", "copies": [], "where": "judicial/qual_compare.js"}
+{"id": "RULE-0236", "text": "효과 없음은 앙상블에서 동등성 허용 차이 δ 가 있어야 보인다", "modes": ["baseline"], "enforce": "machine", "unit": "U0359", "copies": [], "where": "judicial/qual_compare.js"}
+{"id": "RULE-0237", "text": "충격·OOD 는 같은 단계 강등 + W 냉각", "modes": ["field"], "enforce": "machine", "unit": "U0367", "copies": [], "where": "tests/p5_dynamic_promotion.js"}
+{"id": "RULE-0238", "text": "운명 보고에 결정 시점은 신호 철회 시험으로", "modes": ["baseline"], "enforce": "machine", "unit": "U0371", "copies": [], "where": "engine/fate_engine.js (결정 탐침) · judicial/process_report.js"}
+{"id": "RULE-0239", "text": "화학·생물 사실(부분 구조 원자 수 elements, 기본 위치 defaultVolumeLocation)은 데이터나 어휘에", "modes": ["develop"], "enforce": "unchecked", "unit": "U0376", "copies": []}
+{"id": "RULE-0240", "text": "사법부가 선언과 실행의 일관성을 판정, 어긋나면 무결성 증명서 FAIL", "modes": ["baseline"], "enforce": "machine", "unit": "U0384", "copies": [], "where": "judicial/fate_audit.js"}
+{"id": "RULE-0241", "text": "운명 비율(구간)·도달 시각 분포·표지 퍼짐(Fano)은 judicial/stoch_audit.js", "modes": ["baseline"], "enforce": "machine", "unit": "U0386", "copies": [], "where": "judicial/stoch_audit.js"}
+{"id": "RULE-0242", "text": "억제는 경쟁·비경쟁을 가리지 않는 단순 배율", "modes": ["baseline"], "enforce": "text", "unit": "U0390", "copies": [], "note": "단순화 — 한계 후보"}
+{"id": "RULE-0243", "text": "perturb_audit 는 컴파일러 코드를 쓰지 않고 기준에서 교란 결과를 다시 세운다", "modes": ["develop"], "enforce": "machine", "unit": "U0392", "copies": [], "where": "judicial/perturb_audit.js"}
+{"id": "RULE-0244", "text": "규약 칸: 흉내 내는 실험의 출처·종·세포·조건·측정 시점, 음성 대조, 측정량, 검정력 반복 수, 검증 관찰, 허용 차이 δ, 중단 규칙", "modes": ["baseline"], "enforce": "machine", "unit": "U0395", "copies": [], "where": "judicial/protocol.js"}
+{"id": "RULE-0245", "text": "FAIL 조건: 원장·재생 1e-14 초과 · 신호가 일정과 다름 · 궤적 해시 다름 · 쓰인 상수가 입력과 다름", "modes": ["baseline"], "enforce": "machine", "unit": "U0398", "copies": [], "where": "judicial/process_report.js · judicial/verifier.js"}
+{"id": "RULE-0246", "text": "unmapped 외부 ID 도 한계(Identity_Gap)", "modes": ["author"], "enforce": "machine", "unit": "U0406", "copies": [], "where": "judicial/judicial.js detectGaps"}
+{"id": "RULE-0247", "text": "요청 본문은 서기 postToInbox 가 curl 표준 입력으로, 응답에 계정이 되돌아오면 저장 전에 지운다", "modes": ["author"], "enforce": "machine", "unit": "U0421", "copies": [], "where": "legislative/clerk.mjs postToInbox · tests/mcp.test.mjs ⑪"}
+{"id": "RULE-0248", "text": "남는 위험: 같은 환경의 셸은 환경 변수를 읽을 수 있다 — BRENDA 전용 비밀번호", "modes": ["author"], "enforce": "text", "unit": "U0422", "copies": []}
+{"id": "RULE-0249", "text": "받기는 도구의 기록이 증거 — 유료·PMC 무료 열람본은 저작권 때문에 받지 않음", "modes": ["author"], "enforce": "unchecked", "unit": "U0425", "copies": []}
+{"id": "RULE-0250", "text": "목록에 없는 도구는 부르는 자리에서도 거부", "modes": ["author"], "enforce": "machine", "unit": "U0426", "copies": [], "where": "mcp/protocol.mjs · tests/mcp.test.mjs"}
+{"id": "RULE-0251", "text": "--allow-warnings 는 사람 역할만 (MCP)", "modes": ["author"], "enforce": "machine", "unit": "U0427", "copies": [], "where": "mcp/clerk.mjs"}
+{"id": "RULE-0252", "text": "두 해상도를 지킨다", "modes": ["author"], "enforce": "text", "unit": "U0431", "copies": []}
+{"id": "RULE-0253", "text": "읽기·검증·시뮬레이션·시험은 허가를 묻지 않는다. 데이터를 바꾸는 명령과 `git push` 는 묻는다(`.claude/settings.json`).", "modes": ["common"], "enforce": "machine", "unit": "U0436", "copies": [], "where": ".claude/settings.json"}
+{"id": "RULE-0254", "text": "fate 인자는 시작 상태 — 끝 상태로 부르면 무결성 FAIL · rc=1", "modes": ["baseline"], "enforce": "unchecked", "unit": "U0464", "copies": []}
+{"id": "RULE-0255", "text": "규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP 사례 L000107).", "modes": ["baseline"], "enforce": "text", "unit": "U0500", "copies": []}
+{"id": "RULE-0256", "text": "`속도 상수 없음 → 즉시` | 그 단계는 순간에 끝난다(상수 미확인) — 시간 척도를 결론으로 쓰지 말라", "modes": ["baseline"], "enforce": "text", "unit": "U0521", "copies": []}
+{"id": "RULE-0257", "text": "PR 만들기 | | 사용자가 명시로 요청할 때만", "modes": ["common"], "enforce": "text", "unit": "U0558", "copies": []}
+{"id": "RULE-0258", "text": "아래는 혼자 밀지 말고 물어본다 — 틀리면 되돌리기 어렵거나, 규약상 사용자 요청이 필요하다.", "modes": ["common"], "enforce": "text", "unit": "U0590", "copies": []}
+{"id": "RULE-0259", "text": "**숫자가 설명되지 않을 때** — 멈춤·늦음·NaN·`AUDIT_*`·무결성 FAIL 의 원인을 모를 때", "modes": ["common"], "enforce": "text", "unit": "U0591", "copies": []}
+{"id": "RULE-0260", "text": "**결함 태그가 갈릴 때** — \"데이터를 고칠까 코드를 고칠까\" 가 애매하면 `NUMERICAL` 로 가정하고 묻는다", "modes": ["common"], "enforce": "text", "unit": "U0592", "copies": []}
+{"id": "RULE-0261", "text": "**형식(SCHEMA)을 바꿔야 할 때** — 이관 스크립트·계약·시험이 함께 움직인다", "modes": ["develop"], "enforce": "text", "unit": "U0594", "copies": []}
+{"id": "RULE-0262", "text": "**관문이 통과시켰는데 결과가 이상할 때** — 새 구멍일 수 있다. 재현 절차와 함께 보고한다", "modes": ["common"], "enforce": "text", "unit": "U0596", "copies": []}
+{"id": "RULE-0263", "text": "\"통과하게 만들어라\" 는 절대 쓰지 않는다 — 규칙을 느슨하게 만든다", "modes": ["common"], "enforce": "text", "unit": "U0625", "copies": []}
+{"id": "RULE-0264", "text": "쓸 말: 거부되면 메시지를 그대로 가져오고 데이터를 고쳐라", "modes": ["common"], "enforce": "text", "unit": "U0626", "copies": []}
+{"id": "RULE-0265", "text": "저장소에 접근하지 못하는 AI(웹 챗 등)는 **두 가지에만** 쓴다. 나머지는 손해가 더 크다.", "modes": ["common"], "enforce": "text", "unit": "U0705", "copies": []}
+{"id": "RULE-0266", "text": "상수·외부 ID 를 \"대충 아는 값\" 으로 받기 | 지어낸 값이 들어오면 전체 설계의 전제가 무너진다. **반드시 원 논문 식별자로 대조한다**", "modes": ["common"], "enforce": "text", "unit": "U0709", "copies": [], "note": "다른 AI 에게 맡기지 말 것"}
+{"id": "RULE-0267", "text": "결함 태그를 고르게 하기 | 저장소의 규약을 모른다 — 수치 문제를 데이터로 맞추라고 답하기 쉽다", "modes": ["common"], "enforce": "text", "unit": "U0710", "copies": [], "note": "다른 AI 에게 맡기지 말 것"}
+{"id": "RULE-0268", "text": "패치 JSON 을 직접 쓰게 하기 | 관문의 형식을 모른다. 거부 메시지를 돌려줘도 규칙을 느슨하게 하자고 답한다", "modes": ["common"], "enforce": "text", "unit": "U0711", "copies": [], "note": "다른 AI 에게 맡기지 말 것"}
+{"id": "RULE-0269", "text": "내 결론을 주고 검토 요청 | 그 결론을 확인해 주는 답이 돌아온다. 코드만 주고 판단은 받지 않는다", "modes": ["common"], "enforce": "text", "unit": "U0712", "copies": [], "note": "다른 AI 에게 맡기지 말 것"}
+{"id": "RULE-0270", "text": "다른 AI 에게서 온 값은 전부 후보 — 원 논문에서 직접 확인한 것만", "modes": ["author"], "enforce": "text", "unit": "U0713", "copies": []}
+{"id": "RULE-0271", "text": "확인하지 못하면 한계로 등록한다 — 그게 이 저장소가 다른 데이터베이스와 다른 점이다.", "modes": ["author"], "enforce": "text", "unit": "U0714", "copies": []}
+{"id": "RULE-0272", "text": "단위는 **묶음(batch)** — 항목마다 핑퐁하지 않는다.", "modes": ["author"], "enforce": "text", "unit": "U0716", "copies": []}
+{"id": "RULE-0273", "text": "**A (서브에이전트, 지금 기본):** 보고만 — 구조적으로 apply·commit 불가. 설정 0. 묶음마다 통합가가 띄운다.", "modes": ["author"], "enforce": "text", "unit": "U0721", "copies": []}
+{"id": "RULE-0274", "text": "**B (상주 Sonnet 세션, 독립 실행 시):** `.claude/settings.json` 권한으로 **거부**한다 — `augment apply`·`merge`·", "modes": ["author"], "enforce": "machine", "unit": "U0722", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0275", "text": "`register` · `git commit`·`git push` · 규칙 파일(vocab·model·core·judicial·legislative) 쓰기 · `data/db.json` 쓰기.", "modes": ["author"], "enforce": "machine", "unit": "U0723", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0276", "text": "후보는 전부 후보 — 1차 출처로 재확인한 것만 패치가 된다", "modes": ["inspect"], "enforce": "text", "unit": "U0734", "copies": []}
+{"id": "RULE-0277", "text": "핸드오프 파일 상태를 `verified`/`rejected`/`applied` 로 바꾼다. 수집가 파일은 **untrusted 입력**으로 다룬다.", "modes": ["inspect"], "enforce": "text", "unit": "U0735", "copies": []}
+{"id": "RULE-0278", "text": "\"통과하게 만들어라\" · \"오류를 없애라\" | 규칙을 느슨하게 하는 길이 가장 빠르다 | \"거부 메시지대로 데이터를 고쳐라\"", "modes": ["common"], "enforce": "text", "unit": "U0745", "copies": [], "note": "프롬프트에 쓰지 않을 문장"}
+{"id": "RULE-0279", "text": "\"시험을 초록으로 만들어라\" | `skip` 이 가장 빠르다 (래칫이 잡지만, 시간을 버린다) | \"시험이 무엇을 요구하는지 보고해라\"", "modes": ["common"], "enforce": "text", "unit": "U0746", "copies": [], "note": "프롬프트에 쓰지 않을 문장"}
+{"id": "RULE-0280", "text": "\"적당한 값을 넣어\" · \"대략\" | 지어낸 값이 데이터가 된다 | \"확인된 값만, 없으면 한계로\"", "modes": ["common"], "enforce": "text", "unit": "U0747", "copies": [], "note": "프롬프트에 쓰지 않을 문장"}
+{"id": "RULE-0281", "text": "\"알아서 해\" | 범위가 번지고 규칙을 건드린다 | 산출물 하나를 적는다", "modes": ["common"], "enforce": "text", "unit": "U0748", "copies": [], "note": "프롬프트에 쓰지 않을 문장"}
+{"id": "RULE-0282", "text": "\"빠르게\" | 검증을 건너뛴다 | 검증 명령을 ④에 적는다", "modes": ["common"], "enforce": "text", "unit": "U0749", "copies": [], "note": "프롬프트에 쓰지 않을 문장"}
+{"id": "RULE-0283", "text": "규칙 파일이 바뀌었는데 사용자 요청이 없었다면 그 작업은 거부", "modes": ["inspect"], "enforce": "text", "unit": "U0761", "copies": []}
+{"id": "RULE-0284", "text": "`tests/rejections.test.mjs` 가 자동으로 잡지만, 사람 눈으로도 한 번 본다.", "modes": ["inspect"], "enforce": "machine", "unit": "U0762", "copies": [], "where": "tests/rejections.test.mjs"}
+{"id": "RULE-0285", "text": "수집가는 후보를 workspace/handoff/ 에 적기만, 적용·커밋·판단은 통합가", "modes": ["author"], "enforce": "text", "unit": "U0765", "copies": []}
+{"id": "RULE-0286", "text": "수집가 쓰기는 workspace/ 안에서만, 규칙·코드·db 는 읽기만", "modes": ["author"], "enforce": "machine", "unit": "U0766", "copies": [], "where": "workspace/collector.settings.json · legislative/clerk.mjs handoff"}
+{"id": "RULE-0287", "text": "수집가 금지 명령: augment apply·merge·register·git commit·push", "modes": ["author"], "enforce": "machine", "unit": "U0767", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0288", "text": "인용·값은 지정 1차 출처 API 응답에서만, 웹 검색 스니펫·2차 리뷰 금지 (TASK-002 교훈)", "modes": ["author"], "enforce": "text", "unit": "U0769", "copies": []}
+{"id": "RULE-0289", "text": "후보마다 값·단위·종·세포·시각·불확도·출처+인용·use·규약 가능", "modes": ["author"], "enforce": "machine", "unit": "U0780", "copies": [], "where": "judicial/collection_audit.js"}
+{"id": "RULE-0290", "text": "`outcome` ∈ `not_searched|not_found|unreadable|read_no_value|read_value|ambiguous|reused`.", "modes": ["author"], "enforce": "machine", "unit": "U0786", "copies": [], "where": "judicial/collection_audit.js"}
+{"id": "RULE-0291", "text": "값을 적으면 source + quote 필수", "modes": ["author"], "enforce": "machine", "unit": "U0787", "copies": [], "where": "judicial/collection_audit.js"}
+{"id": "RULE-0292", "text": "완료는 수집가가 아니라 판정기가 정한다 — 값 후보는 1차 출처 재확인 전 PASS 아님", "modes": ["inspect"], "enforce": "machine", "unit": "U0789", "copies": [], "where": "judicial/collection_audit.js"}
+{"id": "RULE-0293", "text": "> **아예 분리**돼 있다. 작업자는 저장소 전체를 **읽을** 수 있으나 **쓰기는 여기(`workspace/`)뿐**이고,", "modes": ["author"], "enforce": "machine", "unit": "U0799", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0294", "text": "검증·적용·본체 병합은 통합가", "modes": ["inspect"], "enforce": "text", "unit": "U0800", "copies": []}
+{"id": "RULE-0295", "text": "**쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model.js`·`core.js`·`judicial/`·`legislative/`·", "modes": ["author"], "enforce": "machine", "unit": "U0801", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0296", "text": "`compiler/`·`engine/`·테스트·형식 파일을 수정하지 않는다(읽기만).", "modes": ["author"], "enforce": "machine", "unit": "U0802", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0297", "text": "**적용·등록 금지.** `node dbtool.mjs augment apply`·`merge`·`register` 를 돌리지 않는다. 데이터는 통합가가", "modes": ["author"], "enforce": "machine", "unit": "U0803", "copies": [], "where": "workspace/collector.settings.json"}
+{"id": "RULE-0298", "text": "1차 출처로 검증해 패치로 넣는다.", "modes": ["inspect"], "enforce": "text", "unit": "U0804", "copies": []}
+{"id": "RULE-0299", "text": "**본체(main) 금지.** 커밋·push 는 자기 작업 브랜치(`sonnet/*` 등)에만. `main` 에 쓰지 않는다", "modes": ["author"], "enforce": "text", "unit": "U0805", "copies": [], "note": "모순: START-HERE 는 commit·push 금지, 여기는 자기 브랜치(sonnet/*)에만 허용"}
+{"id": "RULE-0300", "text": "보이게 못박는다. `data/fetched/`(원본 수신함)는 별개로 쓰기 보호이며 `augment plan→fetch→build→apply`", "modes": ["author"], "enforce": "machine", "unit": "U0818", "copies": [], "where": ".claude/settings.json"}
+{"id": "RULE-0301", "text": "**인용·값은 지정 1차 출처 API가 반환한 내용에서만** 뽑는다. **웹 검색 스니펫·2차 리뷰·블로그를 값·인용", "modes": ["author"], "enforce": "text", "unit": "U0823", "copies": []}
+{"id": "RULE-0302", "text": "근거로 쓰지 마라.** 못 찾으면 `not_found`, 접근 안 되면 `unreadable` — 지어내거나 스니펫으로 메우지 않는다.", "modes": ["author"], "enforce": "text", "unit": "U0824", "copies": []}
+{"id": "RULE-0303", "text": "나머지는 엔드포인트를 통합가가 확인해 이 표를 갱신하기 전까지 \"통합가 필요\"로 표시한다.", "modes": ["author"], "enforce": "text", "unit": "U0834", "copies": []}
+{"id": "RULE-0304", "text": "한 번에 하나 — 작업자가 그 묶음을 혼자 끝내고 `workspace/handoff/` 로 넘긴다(항목마다 핑퐁하지 않는다).", "modes": ["inspect"], "enforce": "text", "unit": "U0844", "copies": []}
+{"id": "RULE-0305", "text": "작업자 출력은 전부 **후보**다. 통합가가 1차 출처(PMC 전문·UniProt)로 **직접 재확인**한 뒤에만 패치가 된다.", "modes": ["inspect"], "enforce": "text", "unit": "U0860", "copies": []}
+{"id": "RULE-0306", "text": "(원본 대조 fetch 파이프라인·패치 적용은 통합가가 — 작업자는 수집·반환까지.)", "modes": ["inspect"], "enforce": "text", "unit": "U0861", "copies": []}
+{"id": "RULE-0307", "text": "(서브에이전트면 **파일에 쓰지 말고 반환**, 상주 세션이면 이 표에 append). **금지**: `augment apply`·`merge`·", "modes": ["author"], "enforce": "text", "unit": "U1063", "copies": []}
+{"id": "RULE-0308", "text": "\"후보\"다 — 베끼지 않는다). 통과분만 패치 → `validate` → `augment apply` → 커밋. 상태를 바꾼다.", "modes": ["author"], "enforce": "text", "unit": "U1067", "copies": []}
+{"id": "RULE-0309", "text": "**통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막 결합 방식·부위 종류·특징·변화 종류·활성·종(NCBI)·조직·세포·관찰 속성·근거 수준은 목록의 값만. 별칭은 표준 값으로 바뀐다.", "modes": ["author"], "enforce": "text", "unit": "U1184", "copies": [], "note": "SCHEMA 요약 사본"}
+{"id": "RULE-0310", "text": "**이름 하나 = 개념 하나**: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키면 오류. 새 이름이 기존 별칭과 같으면 기존 개념으로 합쳐진다.", "modes": ["author"], "enforce": "text", "unit": "U1185", "copies": [], "note": "SCHEMA 요약 사본"}
+{"id": "RULE-0311", "text": "**외부 ID·구조 지문·잔기 번호**: 형식·kind 검사, 같은 ID·지문 중복 금지. 모르면 지어내지 말고 `unmapped`·`residue_unknown`.", "modes": ["author"], "enforce": "text", "unit": "U1188", "copies": [], "note": "SCHEMA 요약 사본"}
+{"id": "RULE-0312", "text": "**구조**: 구성 요소는 복합체만, 부위의 `on` 은 구성 요소, 막 면은 그 막에 있는 면, 막 결합 분자는 2D 위치에만.", "modes": ["author"], "enforce": "text", "unit": "U1190", "copies": [], "note": "SCHEMA 요약 사본"}
+{"id": "RULE-0313", "text": "**단계는 규칙의 적용**: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.", "modes": ["author"], "enforce": "text", "unit": "U1191", "copies": [], "note": "SCHEMA 요약 사본"}
+{"id": "RULE-0314", "text": "규칙은 `tests/` 의 시험 195개가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.", "modes": ["author"], "enforce": "text", "unit": "U1193", "copies": [], "note": "SCHEMA 요약 사본"}

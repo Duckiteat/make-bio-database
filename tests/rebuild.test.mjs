@@ -66,3 +66,9 @@ test('⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지
   assert.match(t, /## 규칙에 맞지 않는 파일 \(0 이어야 함\)\n\n없음\n/, 'rebuild/index/file-modes.jsonl 에 규칙을 더한다');
   assert.match(t, /## 아무 파일에도 맞지 않는 규칙 · 모르는 모드\n\n없음\n/);
 });
+
+test('⑨ 규칙 장부: 번호·단위가 맞고, 판단 규칙 단위는 모두 RULE 하나에 있다', () => {
+  const t = build()['07-rules.md'];
+  assert.match(t, /## 장부에 없는 판단 규칙 단위 \(0 이어야 함\)\n\n없음\n/);
+  assert.match(t, /## 형식 오류\n\n없음\n/);
+});

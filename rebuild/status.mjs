@@ -114,8 +114,9 @@ function build() {
     ['번호 이름공간', `${X.rows.length} (${IDX.STATUS.map((st) => `${st} ${X.rows.filter((r) => r.status === st).length}`).join(' · ')})`],
     ['미등록 번호 모양 / 겹침 / 예외', `${X.unknown.length} / ${X.overlap.length} / ${X.exceptions}`],
     ['같은 번호 형식을 코드에 따로 적은 곳', String(X.duplicates.length)],
+    ['규칙 장부 RULE', String(existsSync(join(ROOT, 'rebuild/rules/rules.jsonl')) ? read('rebuild/rules/rules.jsonl').split('\n').filter((l) => l.trim()).length : 0)],
   ];
-  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md)\n`;
+  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md)\n`;
 
   // 01 파일
   const dirs = {};
@@ -167,6 +168,27 @@ function build() {
   const dl = Object.entries(X.dangling).filter(([, d]) => d.missing.length).map(([ns, d]) => `- \`${ns}\`: ${d.missing.join(' · ')}`);
   const li = (xs) => (xs.length ? xs.map((x) => '- ' + x).join('\n') : '없음');
   out['05-index.md'] = `# 번호 사전\n\n${note}\n원본: \`rebuild/index/namespaces.jsonl\` (이름공간 ${X.rows.length}) · 예외 \`rebuild/index/exceptions.jsonl\` (${X.exceptions}). 참조 색인은 저장하지 않고 계산한다.\n\n## 이름공간\n\n토큰 = 저장소에 나온 수 · 고유 · 파일 / 정의 = 정의된 수 · 가리켜졌는데 정의 안 됨\n\n${table(['이름공간', '상태', '모양', '형식', '발급', '자리', '토큰', '정의'], nsRows)}\n\n## 미등록 번호 모양 (0 이어야 함)\n\n${li(X.unknown)}\n\n## 겹침 (0 이어야 함)\n\n${li([...X.overlap, ...X.exampleIssues])}\n\n## 가리켜졌는데 정의되지 않은 번호 (지운 번호·시험용 가짜 번호·다음 번호 포함 — 정보)\n\n${dl.length ? dl.join('\n') : '없음'}\n\n## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)\n\n${li(X.duplicates)}\n\n## 이름공간 표 형식 오류\n\n${li(X.bad)}\n`;
+  // 07 규칙 장부 (rebuild/rules/rules.jsonl) — 판단으로 매긴 원래 규칙 단위마다 RULE 하나, 사본은 copies
+  const RP = 'rebuild/rules/rules.jsonl', rules7 = existsSync(join(ROOT, RP)) ? read(RP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
+  const uid = Object.fromEntries(L.units.map((u) => [u.id, u])), rbad = [], seenR = new Set(), seenU = new Map(), bundle = {};
+  const RULE_RE = (X.rows.find((r) => r.ns === 'rule') || {}).re || /^RULE-\d{4}$/;
+  for (const r of rules7) {
+    if (!RULE_RE.test(r.id) || seenR.has(r.id)) rbad.push(`${r.id}: 번호`); seenR.add(r.id);
+    const u = uid[r.unit];
+    if (!u) { rbad.push(`${r.id}: 없는 단위 ${r.unit}`); continue; }
+    if (u.kind !== 'rule') rbad.push(`${r.id}: ${r.unit} 는 규칙 단위가 아님`);
+    if (seenU.has(r.unit)) rbad.push(`원래 단위 ${r.unit} 가 ${seenU.get(r.unit)} · ${r.id} 둘에`); seenU.set(r.unit, r.id);
+    for (const x of r.copies || []) { if (!uid[x]) rbad.push(`${r.id}: 없는 단위 ${x}`); bundle[x] = (bundle[x] || 0) + 1; }
+    if (!(r.modes || []).every((m) => MODES.includes(m))) rbad.push(`${r.id}: 모드`);
+  }
+  const judged = L.units.filter((u) => u.kind === 'rule' && u.by !== 'heur' && !u.same_as).map((u) => u.id), noRule = judged.filter((x) => !seenU.has(x));
+  const enf7 = ENFORCE.map((e) => [e, String(rules7.filter((r) => r.enforce === e).length)]);
+  const multi7 = rules7.filter((r) => r.modes.length > 1), places7 = rules7.map((r) => 1 + (r.copies || []).length);
+  const hist = [1, 2, 3, 4, 5].map((k) => [k === 5 ? '5 곳 이상' : `${k} 곳`, String(places7.filter((p) => (k === 5 ? p >= 5 : p === k)).length)]);
+  const heurRules = L.units.filter((u) => u.kind === 'rule' && u.by === 'heur').length;
+  const bundled = Object.entries(bundle).filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
+  out['07-rules.md'] = `# 규칙 장부\n\n${note}\n원본: \`${RP}\` · 규칙 ${rules7.length} (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 ${heurRules} 은 아직 장부에 묶지 않음.\n\n## 집행\n\n${table(['집행', '규칙'], enf7)}\n\n## 한 규칙이 적힌 곳\n\n${table(['곳', '규칙'], hist)}\n\n## 여러 모드에 걸친 규칙 ${multi7.length} (6 단계 모드 문서에서 빠지면 안 되는 것)\n\n${multi7.length ? table(['규칙', '모드', '내용'], multi7.map((r) => [r.id, r.modes.join(' · '), r.text.replace(/\|/g, '\\|').slice(0, 120)])) : '없음'}\n\n## 규칙 여러 개를 한 문장에 묶은 사본 ${bundled.length} (나누면 6 단계 모드 문서가 정확해짐)\n\n${bundled.length ? bundled.slice(0, 30).map(([u, n]) => `${u} (${uid[u].src}) → 규칙 ${n}`).join(' · ') + (bundled.length > 30 ? ' · …' : '') : '없음'}\n\n## 장부에 없는 판단 규칙 단위 (0 이어야 함)\n\n${noRule.length ? noRule.join(' · ') : '없음'}\n\n## 형식 오류\n\n${rbad.length ? rbad.map((x) => '- ' + x).join('\n') : '없음'}\n`;
+
   // 06 파일 → 모드 (rebuild/index/file-modes.jsonl, 첫 규칙이 이긴다)
   const fm = read('rebuild/index/file-modes.jsonl').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
   const glob = (p) => new RegExp('^' + p.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$');
