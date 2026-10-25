@@ -1041,6 +1041,14 @@
       "interpret": "가정 원장 시험 — 사슬 변조·삭제·번호 바꾸기 · 다른 자리 옮겨 붙이기·없는 번호 거부 · 최신 따라가기 없음 · 새 기록 거부 사유별 · 서기 봉인·순번 · 인라인 숫자 등록 거부 · 거꾸로 색인 · 변환 결과."
     },
     {
+      "path": "tests/mutation/run.mjs",
+      "class": "verification",
+      "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",
+      "writer": "사람·AI",
+      "readers": "사람 (rebuild/status/10-enforcement.md 의 다시 돌리기)",
+      "interpret": "집행 변이 시험 — rebuild/rules/enforcement.jsonl 의 행마다 저장소 밖 git 사본에서 집행 자리를 망가뜨리고 시험이 빨개지는지(caught) 통과하는지(missed) 본다. 저장소 안은 읽기만."
+    },
+    {
       "path": "tests/mcp.test.mjs",
       "class": "verification",
       "format": "node:test",
@@ -1533,8 +1541,8 @@
       "class": "management",
       "format": "JSON Lines — 한 줄 한 규칙 {id: RULE-…, text, modes[], enforce, unit, copies[], where?, note?}",
       "writer": "재건 5 단계 (분류 장부에서)",
-      "readers": "rebuild/status.mjs",
-      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl). 6 단계에서 규칙의 원본이 된다."
+      "readers": "rebuild/status.mjs · tests/mutation/run.mjs (enforcement.jsonl)",
+      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림). 6 단계에서 규칙의 원본이 된다."
     },
     {
       "path": "rebuild/archive/*",

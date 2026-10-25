@@ -17,10 +17,10 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 182 |
-| text | 120 |
+| machine | 260 |
+| text | 235 |
 | none | 0 |
-| unchecked | 195 |
+| unchecked | 2 |
 
 ## 한 규칙이 적힌 곳
 

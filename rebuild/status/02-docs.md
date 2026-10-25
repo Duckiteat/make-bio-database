@@ -66,7 +66,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 112.9 | 807 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 113.5 | 808 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |

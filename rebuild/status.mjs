@@ -250,15 +250,31 @@ function build() {
 
   // 09 규칙 검토 (rebuild/rules/review.jsonl) — 현실과 안 맞거나 존재 의의가 흐린 규칙. 6 단계 옛 규칙 대조의 확인 목록
   const VP = 'rebuild/rules/review.jsonl', review = existsSync(join(ROOT, VP)) ? read(VP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
-  const ISSUE = { stale: '현실과 안 맞음', obsolete_by_design: '재건이 없앨 것', unused_layer: '쓰이지 않는 층', no_consumer: '검사만 하고 쓰는 곳 없음', naming_collision: '이름이 두 뜻', unreachable: '아직 닿을 대상이 없음', unclear: '뜻이 서지 않음', number_unexplained: '숫자 근거 없음', loosely_followed: '느슨하게 지켜짐', weakness_reported: '보고서가 지적한 약점', broken_before: '실제로 구멍이 났던 규칙' };
+  const ISSUE = { stale: '현실과 안 맞음', obsolete_by_design: '재건이 없앨 것', unused_layer: '쓰이지 않는 층', no_consumer: '검사만 하고 쓰는 곳 없음', naming_collision: '이름이 두 뜻', unreachable: '아직 닿을 대상이 없음', unclear: '뜻이 서지 않음', number_unexplained: '숫자 근거 없음', loosely_followed: '느슨하게 지켜짐', weakness_reported: '보고서가 지적한 약점', broken_before: '실제로 구멍이 났던 규칙', enforcement_gap: '망가뜨려도 시험이 못 잡음' };
   const vbad = review.flatMap((x, i) => [!ruleId.has(x.rule) && `review.jsonl:${i + 1} 없는 규칙 ${x.rule}`, !ISSUE[x.issue] && `review.jsonl:${i + 1} 모르는 종류 '${x.issue}'`, !(x.evidence && x.proposal) && `review.jsonl:${i + 1} 근거·제안이 없음`, x.decision && !(x.decision.at && x.decision.by && x.decision.choice) && `review.jsonl:${i + 1} 결정에 at·by·choice 가 없음`].filter(Boolean));
   const rmap = Object.fromEntries(rules7.map((r) => [r.id, r]));
   const vSec = Object.entries(ISSUE).map(([k, ko]) => { const xs = review.filter((x) => x.issue === k); if (!xs.length) return '';
     return `## ${ko} \`${k}\` — ${new Set(xs.map((x) => x.rule)).size}\n\n${table(['규칙', '집행', '내용', '근거', '제안', '결정'], xs.map((x) => [x.rule, rmap[x.rule]?.enforce || '?', (rmap[x.rule]?.text || '').replace(/\|/g, '\\|').slice(0, 70), x.evidence.replace(/\|/g, '\\|'), x.proposal.replace(/\|/g, '\\|'), x.decision ? `${x.decision.at} ${x.decision.by}: ${x.decision.choice}`.replace(/\|/g, '\\|') : '—']))}\n\n`; }).join('');
   out['09-review.md'] = `# 규칙 검토\n\n${note}\n원본: \`${VP}\` (${review.length} 행 · 규칙 ${new Set(review.map((x) => x.rule)).size}). 규칙이 가리키는 파일·명령·이름·숫자를 지금 저장소와 대조하고, 실제로 쓰이는지·뜻이 서는지 본 결과. 6 단계 옛 규칙 대조에서 사용자가 확인할 목록이다 — 여기서 규칙을 고치지 않는다. 결정된 것 ${review.filter((x) => x.decision).length} 행.\n\n${table(['종류', '규칙'], Object.entries(ISSUE).map(([k, ko]) => [ko, String(new Set(review.filter((x) => x.issue === k).map((x) => x.rule)).size)]))}\n\n${vSec}## 형식 오류\n\n${li(vbad)}\n`;
+  // 10 집행 변이 시험 (rebuild/rules/enforcement.jsonl · tests/mutation/run.mjs) — machine 규칙의 집행 자리를 망가뜨려 시험이 빨개지는지
+  const EP = 'rebuild/rules/enforcement.jsonl', mut = existsSync(join(ROOT, EP)) ? read(EP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
+  const OPS = ['disable', 'replace', 'inject', 'delete', 'static', 'test_only'];
+  const RES = { caught: '잡음', missed: '놓침 (집행 구멍)', present: '설정에 있음', present_template: '본보기에만 있음 (켜지지 않음)', absent: '설정에 없음', test_passes: '시험 통과 (자리 변이 없음)', test_fails: '시험 실패', error: '변이 자리 못 찾음' };
+  const gapRev = new Set(review.filter((x) => x.issue === 'enforcement_gap').map((x) => x.rule)), seenE = new Set();
+  const ebad = mut.flatMap((x, i) => { const at = `enforcement.jsonl:${i + 1}`, dup = seenE.has(x.rule); seenE.add(x.rule);
+    return [!ruleId.has(x.rule) && `${at} 없는 규칙 ${x.rule}`, ruleId.has(x.rule) && rmap[x.rule].enforce !== 'machine' && `${at} ${x.rule} 은 machine 이 아님`, dup && `${at} ${x.rule} 이 두 번`,
+      !OPS.includes(x.op) && `${at} 모르는 op '${x.op}'`, !RES[x.result] && `${at} 모르는 결과 '${x.result}'`, !x.at && `${at} at(시험한 날) 없음`,
+      x.op !== 'test_only' && !(x.file && existsSync(join(ROOT, x.file))) && `${at} 파일 없음 ${x.file}`,
+      x.result === 'missed' && !gapRev.has(x.rule) && `${at} ${x.rule} 놓침인데 review.jsonl 에 enforcement_gap 이 없음`].filter(Boolean); });
+  const machine = rules7.filter((r) => r.enforce === 'machine' && !r.retired), untested = machine.filter((r) => !seenE.has(r.id));
+  const eRows = Object.entries(RES).map(([k, ko]) => [ko + ` \`${k}\``, String(mut.filter((x) => x.result === k).length)]).filter((r) => r[1] !== '0');
+  const eSec = Object.keys(RES).map((k) => { const xs = mut.filter((x) => x.result === k); if (!xs.length) return '';
+    return `## ${RES[k]} \`${k}\` — ${xs.length}\n\n${table(['규칙', '내용', '변이', '파일', '빨개진 시험 · 메모'], xs.map((x) => [x.rule, (rmap[x.rule]?.text || '').replace(/\|/g, '\\|').slice(0, 60), x.op, x.file || (x.tests || []).join(' '), (x.red || x.error || x.note || '').replace(/\|/g, '\\|').slice(0, 90)]))}\n\n`; }).join('');
+  out['10-enforcement.md'] = `# 집행 변이 시험\n\n${note}\n원본: \`${EP}\` (${mut.length} 행) · 다시 돌리기: \`node tests/mutation/run.mjs --spec ${EP} --check --jobs 3\`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 \`rebuild/rules/review.jsonl\` 의 \`enforcement_gap\` 으로 사용자 확인을 기다린다.\n\n${table(['결과', '규칙'], [...eRows, ['아직 시험 안 함 (machine)', String(untested.length)]])}\n\n## 형식 오류\n\n${ebad.length ? ebad.map((x) => '- ' + x).join('\n') : '없음'}\n\n${eSec}## 아직 시험 안 함 — ${untested.length}\n\n${untested.length ? table(['규칙', '집행 자리'], untested.map((r) => [r.id, (r.where || '').replace(/\|/g, '\\|').slice(0, 100)])) : '없음'}\n`;
+  rows.push(['집행 변이 시험 — 잡음 / 놓침 / 아직 안 함', `${mut.filter((x) => x.result === 'caught').length} / ${mut.filter((x) => x.result === 'missed').length} / ${untested.length}`]);
   rows.push(['규칙 검토 — 확인할 규칙', String(new Set(review.map((x) => x.rule)).size)]);
   rows.push(['규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함', `${why.length} / ${onlyHist.length} / ${none.length}`]);
-  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md) · [09 규칙 검토](09-review.md)\n`;
+  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md) · [09 규칙 검토](09-review.md) · [10 집행 시험](10-enforcement.md)\n`;
 
   // 06 파일 → 모드 (rebuild/index/file-modes.jsonl, 첫 규칙이 이긴다)
   const fm = read('rebuild/index/file-modes.jsonl').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
