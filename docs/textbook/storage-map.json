@@ -65,6 +65,11 @@
       "label": "증명 등록부 (사법부 도장)",
       "rule": "'verified' 의 유일한 근거. 사법부(judicial/attestation.js)가 발급한 도장을 입법 서기만 기록한다. 도장마다 digest·증거 파일 sha256·같은 확인 재실행으로 검증되며, 데이터는 스스로 verified 를 선언할 수 없다. 손으로 고치면 digest 가 깨져 무효가 된다.",
       "zone": "product"
+    },
+    "management": {
+      "label": "재건 관리 (읽기 점검용)",
+      "rule": "재건(rebuilding-project)을 관리하는 파일. 사람과 AI 가 읽어 점검하는 데만 쓰고, 다른 코드가 읽거나 입력으로 쓰지 않는다(tests/rebuild.test.mjs). status/ 는 생성물(손으로 고치지 않음), ledger/ 는 분류 장부(중간 파일).",
+      "zone": "design"
     }
   },
   "files": [
@@ -1466,6 +1471,46 @@
       "writer": "입법 서기만 (appendAttestations — 사법부 도장, 재검증 뒤)",
       "readers": "judicial/attestation.js validStamps → validate(db, { attestations })",
       "interpret": "도장: subject(정의항·필드·종류:값) · claim verified · evidence(수신함 파일·sha256) · issuer(모듈·코드 sha256) · issued_at · digest. validate 는 status verified 마다 유효한 도장을 요구한다."
+    },
+    {
+      "path": "rebuild/PLAN.md",
+      "class": "management",
+      "format": "Markdown",
+      "writer": "사람·AI",
+      "readers": "사람·AI (읽기만)",
+      "interpret": "재건 계획 — 미션·진단·모드 다섯·세션 규칙·새 구조·분류 방법·관리 파일·단계. 지금 숫자는 status/ 에."
+    },
+    {
+      "path": "rebuild/status.mjs",
+      "class": "management",
+      "format": "Node ES 모듈",
+      "writer": "사람·AI",
+      "readers": "훅(Stop)·CI·tests/rebuild.test.mjs",
+      "interpret": "관리 파일 생성기 — 저장소를 세어 status/*.md 를 서기 구역 rebuild 로 쓴다(--write), 낡았는지 본다(--check)."
+    },
+    {
+      "path": "rebuild/status/*",
+      "class": "management",
+      "format": "Markdown (생성물)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeStatus)",
+      "readers": "사람·AI (읽기 점검만)",
+      "interpret": "파일·문서·명령·판정·분류 진행의 개수와 크기. 시각 없음 — 같은 저장소면 같은 내용."
+    },
+    {
+      "path": "rebuild/ledger/*",
+      "class": "management",
+      "format": "JSON Lines — 한 줄 한 단위 {id, src, text, mode, kind, enforce, where?, note?}",
+      "writer": "분류 작업 (PLAN §5)",
+      "readers": "rebuild/status.mjs",
+      "interpret": "분류 장부(중간 파일) — 문서의 문장 하나를 모드·종류·집행으로 분류한 기록."
+    },
+    {
+      "path": "tests/rebuild.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "관리 파일이 최신 · rebuild/ 밖 코드가 rebuild/ 를 읽지 않음 · 구역 · 장부 형식."
     }
   ],
   "governance": {

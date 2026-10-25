@@ -44,6 +44,7 @@ export const ZONES = {
   report:      { label: '사용자 보고서', deny: ['data', 'attestations', 'judicial', 'legislative', 'engine', 'compiler', 'migrations', 'schemas', 'tests'], rule: '위치는 사용자가 정한다 — 저장소의 코드·데이터·증명 위치에는 쓰지 않는다' },
   draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
+  rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/'], rule: '생성기(rebuild/status.mjs)가 계산한 관리 파일만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
 // 구역 검사 — 통과한 절대 경로를 돌려준다. 저장소 밖은 구역 표가 다루지 않는다(위 머리말).
@@ -226,6 +227,12 @@ export function insertChangesRow(row, root) {
 // ⑤ 사용자가 요청한 보고서 파일 (예: fate --report 파일.md) — 저장소의 데이터·코드·증명 위치에는 쓰지 않는다
 export function writeReport(file, content) {
   return put('report', resolve(file), content);
+}
+
+// ⑤′ 재건 관리 파일 (rebuild/status 안의 .md) — 읽기 점검용, 다른 코드가 입력으로 쓰지 않는다
+export function writeStatus(name, content, root) {
+  if (!/^[0-9a-z-]+\.md$/.test(name)) refuse(`관리 파일 이름 '${name}' — 소문자·숫자·하이픈 .md 만`);
+  return put('rebuild', join(root || ROOT, 'rebuild', 'status', name), content);
 }
 
 // ⑥ 임시 산출물 (패치 초안·리팩터링 제안) — 저장소 밖 임시 폴더에만

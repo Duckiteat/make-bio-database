@@ -43,6 +43,8 @@ jobs:
           python3 engine/interfaces/hmse.py --selftest
           printf '#include "engine/interfaces/hmse.hpp"\nint main(){return 0;}\n' > /tmp/hmse_check.cpp
           g++ -std=c++20 -fsyntax-only -Wall -Wextra -I. /tmp/hmse_check.cpp
+      - name: 재건 관리 파일 최신 (rebuild/status)
+        run: node rebuild/status.mjs --check
       - name: 교과서 부록 최신·모든 파일 분류
         run: node dbtool.mjs textbook --check
       - name: index.html 이 viewer.html 과 같은지

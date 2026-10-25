@@ -1,0 +1,38 @@
+// 재건 관리 파일 (rebuild/PLAN.md §6) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
+//   ① 관리 파일이 지금 저장소와 같다 (개수·크기·건수가 바뀌면 갱신돼야 함)
+//   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
+//   ③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만
+//   ④ 분류 장부에 형식 오류가 없다
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { build, ROOT, STATUS } from '../rebuild/status.mjs';
+import * as CLERK from '../legislative/clerk.mjs';
+
+test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () => {
+  const out = build();
+  const stale = Object.entries(out).filter(([n, t]) => { const p = join(ROOT, STATUS, n); return !existsSync(p) || readFileSync(p, 'utf8') !== t; }).map(([n]) => n);
+  assert.deepEqual(stale, [], '관리 파일이 낡음 — node rebuild/status.mjs --write');
+  const extra = readdirSync(join(ROOT, STATUS)).filter((f) => !out[f]);
+  assert.deepEqual(extra, [], '생성기가 만들지 않는 파일이 관리 폴더에 있음');
+});
+
+test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는다', () => {
+  const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'target', 'rebuild'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
+  const code = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p) && p !== 'tests/rebuild.test.mjs');
+  const users = code.filter((p) => /rebuild\//.test(readFileSync(join(ROOT, p), 'utf8')));
+  assert.deepEqual(users, ['legislative/clerk.mjs'], 'rebuild/ 를 가리키는 코드');
+  const clerk = readFileSync(join(ROOT, 'legislative/clerk.mjs'), 'utf8').split('\n').filter((l) => /rebuild\//.test(l));
+  assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
+});
+
+test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/']);
+  for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
+});
+
+test('④ 분류 장부에 형식 오류가 없다', () => {
+  const t = build()['04-ledger.md'];
+  assert.match(t, /## 형식 오류\n\n없음\n/, '장부 형식 오류 — rebuild/status/04-ledger.md 를 본다');
+});

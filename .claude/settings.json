@@ -2,8 +2,13 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Read", "Glob", "Grep", "Edit", "Write", "MultiEdit", "NotebookEdit",
-
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "MultiEdit",
+      "NotebookEdit",
       "Bash(node dbtool.mjs status:*)",
       "Bash(node dbtool.mjs prompt:*)",
       "Bash(node dbtool.mjs map:*)",
@@ -28,19 +33,34 @@
       "Bash(node dbtool.mjs limitations --detect:*)",
       "Bash(node dbtool.mjs textbook --check:*)",
       "Bash(node dbtool.mjs log:*)",
-
       "Bash(node --test:*)",
       "Bash(node tests/:*)",
       "Bash(node -e:*)",
       "Bash(node migrations/:*)",
-
-      "Bash(git status:*)", "Bash(git diff:*)", "Bash(git log:*)",
-      "Bash(git show:*)", "Bash(git add:*)", "Bash(git commit:*)",
-
-      "Bash(ls:*)", "Bash(cat:*)", "Bash(head:*)", "Bash(tail:*)",
-      "Bash(sed -n:*)", "Bash(grep:*)", "Bash(rg:*)", "Bash(find:*)",
-      "Bash(wc:*)", "Bash(du:*)", "Bash(diff:*)", "Bash(sha256sum:*)",
-      "Bash(mkdir:*)", "Bash(cp:*)", "Bash(sort:*)", "Bash(cut:*)", "Bash(jq:*)"
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(sed -n:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(du:*)",
+      "Bash(diff:*)",
+      "Bash(sha256sum:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(sort:*)",
+      "Bash(cut:*)",
+      "Bash(jq:*)",
+      "Bash(node rebuild/status.mjs:*)"
     ],
     "ask": [
       "Bash(node dbtool.mjs merge:*)",
@@ -56,16 +76,39 @@
       "Bash(sh engine/rust/build.sh:*)"
     ],
     "deny": [
-      "Edit(data/db.json)", "Write(data/db.json)",
-      "Edit(data/patches/**)", "Write(data/patches/**)",
-      "Edit(data/log/**)", "Write(data/log/**)",
-      "Edit(data/preregistrations.jsonl)", "Write(data/preregistrations.jsonl)",
-      "Edit(attestations/**)", "Write(attestations/**)",
-      "Edit(data/fetched/**)", "Write(data/fetched/**)",
+      "Edit(data/db.json)",
+      "Write(data/db.json)",
+      "Edit(data/patches/**)",
+      "Write(data/patches/**)",
+      "Edit(data/log/**)",
+      "Write(data/log/**)",
+      "Edit(data/preregistrations.jsonl)",
+      "Write(data/preregistrations.jsonl)",
+      "Edit(attestations/**)",
+      "Write(attestations/**)",
+      "Edit(data/fetched/**)",
+      "Write(data/fetched/**)",
       "Bash(rm -rf:*)",
-      "Bash(git reset --hard:*)", "Bash(git clean:*)",
-      "Bash(git checkout --:*)", "Bash(git push --force:*)",
-      "Read(.env)", "Read(.env.*)", "Read(**/id_rsa)", "Read(**/*.pem)"
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(git checkout --:*)",
+      "Bash(git push --force:*)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/id_rsa)",
+      "Read(**/*.pem)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node rebuild/status.mjs --write >/dev/null 2>&1 || true"
+          }
+        ]
+      }
     ]
   }
 }
