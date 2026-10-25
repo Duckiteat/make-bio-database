@@ -482,7 +482,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 |---|---|
 | `src: 'data'` | 그 상수의 근거로 (S, D) 를 계산해 등급을 내고, **문턱 미달이면 Audit Error**(`AUDIT_KINETIC` · fault `DATA_GAP`) |
 | `src: 'scenario'` | 시나리오가 준 값은 등급 밖(`hypothetical`) — 시나리오가 `hypothetical: true` 를 선언했을 때만 허용, 아니면 미달과 같이 거부 |
-| 문턱 | 기본 `parameter`. 시나리오 `min_grade` 로 올릴 수 있다(등급 이름 하나). 모르는 이름이면 판정하지 않고 그 사실을 Audit Error 로 낸다 |
+| 문턱 | 기본 `parameter`. 시나리오 `min_grade` 로 올릴 수만 있다(등급 이름 하나 — 지금 `anchor`·`parameter`). 모르는 이름이나 기본보다 엄격하지 않은 등급이면 판정하지 않고 그 사실을 Audit Error 로 낸다. 비교는 축 조건 `THRESHOLD`(등급마다 S·D 바닥과 허용 추세의 합) — 순번 `ORDER` 는 표의 열 순서일 뿐 (2026-10-25, build-plan 73) |
 | 보고 | 과정 보고서의 무결성 증명서에 한 줄(상수 등급), §5 기술 부록에 분포. 운명 판정의 `grades` (`judicial/reliability.js` `constantVerdict`) |
 
 2026-10-24 현재 규칙 `kinetics` 중 등급 `parameter` 는 4 개(TCA 실측 고리)뿐이고, 나머지 상수는 모두 `hypothetical` 시나리오(가정 원장)에서 온다.
@@ -602,6 +602,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-25 | (문턱 = 축 조건) | `reliability.meets` 가 순번 대신 `THRESHOLD`(축 바닥의 합)로, 행의 s·d·trend 를 받음 · `atLeast`·`gateMinError` — 관문 문턱은 기본보다 엄격한 것만(낮은 `min_grade` 거부). 판정이 바뀐 곳은 문턱 bounded 에서 parameter 행뿐(전수 시험). db 형식 불변 |
 | 2026-10-25 | (반복 수 미보고 · 추정값) | 정량 관찰 `replicates` 에 `null`(미보고) 허용 — 계약 `schemas/obs/observation.schema.json`·관문·정규화·`obs_compare`(1 회로 봄). 신뢰 기준 `D2.estimate`(관찰의 근거 수준이 computed·predicted). 기존 기록 불변(이주 없음 — 관찰은 고치지 않음), 2차 정리 속도 상수 관찰 7 의 반복 수 1 은 한계 3건(Observation_Gap) |
 | 2026-10-24 | (이유의 종류 · 원천별 창) | `vocab.reasonBasis`(원칙·실증·외부 표준·운영·결정) · 기준·등급·정책마다 `basis` · `POLICY_OPEN` → `POLICY`(why·open) · `vocab.consensus.window_days` → `consensus.sources`(원천별 판 주기·증거 종류·출처) — 점수·등급 불변. db 형식 불변 |
 | 2026-10-24 | (신뢰 기준 표) | 신뢰 지표 항목에 기준 번호 `cs`·`cd`·`ct`(계산 결과, 저장 안 함) · `reliability.CRITERIA`·`GRADE_WHY`·`POLICY_OPEN` — 점수·등급 불변. db 형식 불변 |

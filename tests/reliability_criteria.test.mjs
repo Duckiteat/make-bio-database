@@ -119,3 +119,29 @@ test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받�
   const a = OC.verdict(n, [n.value * 1.1]).A, b = OC.verdict(one, [one.value * 1.1]).A;
   assert.ok(a && Number.isFinite(a.se) && a.se === b.se, `미보고는 1 회와 같은 표준 오차 (${a && a.se} · ${b && b.se})`);
 });
+
+// build-plan 73 (2026-10-25): 문턱 = 축 조건 — 순번 비교와 다른 곳은 비교할 수 없는 쌍뿐 · 관문 문턱은 올리기만
+test('⑪ 문턱은 축 조건: 모든 (S,D,T) 에서 순번 비교와 같고, 다른 곳은 bounded↔parameter 쌍뿐 · 등급은 제 문턱을 넘는다', () => {
+  const diff = [];
+  for (const s of [0, 2, 3, 4]) for (const d of [2, 3, 4]) for (const trend of ['match', 'mismatch', 'unchecked']) {
+    const g = REL.gradeOf(s, d, trend), row = { s, d, trend };
+    assert.ok(REL.meets(row, g), `S${s}D${d} ${trend} 은 제 등급 ${g} 의 문턱을 넘어야`);
+    for (const min of REL.ORDER) {
+      const old = REL.ORDER.indexOf(g) <= REL.ORDER.indexOf(min);
+      if (REL.meets(row, min) !== old) diff.push(`${g}(S${s}D${d},${trend})→${min}`);
+    }
+  }
+  assert.deepEqual([...new Set(diff.map((x) => x.replace(/\(.*\)/, '')))], ['parameter→bounded'], diff.join(' '));
+  assert.ok(!REL.meets({ s: 3, d: 3 }, 'bounded') && !REL.meets({ s: 4, d: 2 }, 'parameter'), '비교할 수 없는 쌍은 서로의 문턱을 넘지 못한다');
+  assert.ok(REL.meets({ s: 4, d: 4, trend: 'match' }, 'bounded') && REL.meets({ s: 4, d: 4, trend: 'match' }, 'parameter'));
+  assert.throws(() => REL.meets({ grade: 'parameter' }, 'parameter'), /축 값/);
+});
+
+test('⑫ 관문 문턱은 올리기만: 기본보다 느슨하거나 비교할 수 없는 문턱은 거부 · 지금 데이터의 판정은 그대로', () => {
+  assert.deepEqual(REL.ORDER.filter((g) => !REL.gateMinError(g)), ['anchor', 'parameter']);
+  for (const g of ['bounded', 'legacy', 'reference', 'blocked']) assert.match(REL.gateMinError(g), /올리기만/);
+  assert.match(REL.gateMinError('최고'), /모름/);
+  const ir = { rules: [{ ref: 'D000001/rule/x', kind: 'mass_action', k: { src: 'data', k: 1, evidence: { level: 'asserted' } } }] };
+  assert.match(REL.constantVerdict(ir, { min_grade: 'reference' }).error, /올리기만/, '내린 문턱으로 근거 없는 상수를 통과시키지 못한다');
+  assert.equal(REL.constantVerdict(ir, {}).ok, false);
+});

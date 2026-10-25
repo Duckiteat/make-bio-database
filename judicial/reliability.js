@@ -61,7 +61,8 @@ const GRADE_WHY = Object.freeze({
 });
 // 정책 (등급을 어디에 쓰나) — 기준과 같은 칸: basis · why · 남은 open
 const POLICY = Object.freeze({
-  order:       { what: '등급 순번 ORDER (meets)', basis: [], why: null, open: '쌍으로 비교할 수 없는 bounded(S4,D2)와 parameter(S3,D3)의 위아래를 정해 버린다 — 문턱을 순번이 아니라 축 조건으로 (build-plan 73)' },
+  order:       { what: '문턱 비교 meets = 축 조건 THRESHOLD', basis: ['principle'], why: '축은 곱 순서(부분 순서)라 한 줄로 세울 수 없다 — 문턱은 "S ≥ s ∧ D ≥ d ∧ 허용 추세" 바닥들의 합으로 비교해, bounded(S4,D2)와 parameter(S3,D3)는 서로의 문턱을 넘지 못한다. ORDER 는 보고서의 열 순서일 뿐 (build-plan 73, 2026-10-25)' },
+  raise_only:  { what: '관문 문턱은 올리기만 (gateMinError)', basis: ['principle'], why: '시나리오가 문턱을 내리면 근거 없는 상수로 결론을 낼 수 있다 — min_grade 는 기본보다 엄격한(atLeast) 등급만: 지금 anchor·parameter (2026-10-25, 규칙은 있었으나 집행되지 않던 것)' },
   default_min: { what: '기본 문턱 DEFAULT_MIN = parameter', basis: ['principle', 'empirical', 'decision'],
     why: '시뮬레이션 결론이 "실측에 매여 있다" 고 말하려면 쓴 상수가 모두 심사 문헌 이상 출처(S ≥ 3)·정리된 값 이상(D ≥ 3)이어야 — 그 아래(reference)를 쓰면 결론이 근거를 주장할 수 없다(등급 reference 의 이유). 그 위(anchor)를 기본으로 두면 외부 ID(D3 정체성)·속도 상수(추세 축 없음)가 구조적으로 닿지 못해 모든 실행이 막힌다. 더 엄격한 문턱은 시나리오 min_grade 로 올리기만 (2026-10-24 결정: parameter 유지)' },
 });
@@ -170,8 +171,29 @@ function summary(rows) {
   }
   return { n: rows.length, byGrade, byPair, byWhat };
 }
-// 관문: 쌍을 사전식으로 — 곱으로 가르지 않는다
-const meets = (row, min) => ORDER.indexOf(row.grade) <= ORDER.indexOf(min);
+// 문턱 = 축 조건 (build-plan 73): 등급마다 "이 등급 이상" 을 축의 바닥(S ≥ s ∧ D ≥ d ∧ 허용 추세)들의 합으로.
+//   순번(ORDER)으로 비교하면 쌍으로 비교할 수 없는 bounded(S4,D2)와 parameter(S3,D3)의 위아래가 정해져 버린다 —
+//   바닥은 곱 순서라 둘 다 서로의 문턱을 넘지 못한다. 나머지 등급의 문턱 판정은 순번 비교와 같다(시험이 전수 대조).
+const T_ALL = ['match', 'mismatch', 'unchecked'], T_OK = ['match', 'unchecked'];
+const THRESHOLD = Object.freeze({
+  anchor:    [{ s: 4, d: 4, t: ['match'] }],
+  parameter: [{ s: 3, d: 3, t: T_OK }],
+  bounded:   [{ s: 4, d: 2, t: T_OK }],
+  legacy:    [{ s: 3, d: 3, t: T_OK }, { s: 4, d: 2, t: T_OK }, { s: 2, d: 2, t: ['mismatch'] }], // 과거 합의까지 — 추세가 어긋난 것은 S 가 살아 있으면 모두(gradeOf 의 legacy)
+  reference: [{ s: 2, d: 2, t: T_ALL }],
+  blocked:   [{ s: 0, d: 0, t: T_ALL }],
+});
+const fits = (s, d, t, f) => s >= f.s && d >= f.d && f.t.includes(t);
+// 행은 축 값(s·d·trend)으로 판정한다 — 등급 이름만으로는 문턱을 물을 수 없다
+function meets(row, min) {
+  if (!THRESHOLD[min]) throw new Error(`등급 문턱 '${min}' — ${ORDER.join(' | ')}`);
+  if (!Number.isFinite(row.s) || !Number.isFinite(row.d)) throw new Error('meets: 행에 축 값(s·d)이 없음');
+  return THRESHOLD[min].some((f) => fits(row.s, row.d, row.trend || 'unchecked', f));
+}
+// a 가 b 보다 엄격하거나 같은가: a 의 모든 바닥이 b 의 어떤 바닥 안에 든다 (관문 문턱은 올리기만 — CLAUDE.md)
+const atLeast = (a, b) => THRESHOLD[a].every((fa) => THRESHOLD[b].some((fb) => fa.s >= fb.s && fa.d >= fb.d && fa.t.every((t) => fb.t.includes(t))));
+// 관문이 받는 문턱: 등급 이름이고 기본보다 느슨하지 않아야 한다. 오류 문장 또는 null
+const gateMinError = (min) => (!THRESHOLD[min] ? `등급 문턱 '${min}' 을 모름 — ${ORDER.join(' | ')}` : !atLeast(min, DEFAULT_MIN) ? `등급 문턱 '${min}' 은 기본(${DEFAULT_MIN})보다 엄격하지 않음 — 문턱은 올리기만 (${ORDER.filter((g) => atLeast(g, DEFAULT_MIN)).join(' | ')})` : null);
 
 function gradeText(rows, opt) {
   opt = opt || {};
@@ -236,8 +258,8 @@ function constants(ir, sc, opt) {
 }
 function constantVerdict(ir, sc, opt) {
   sc = sc || {}; opt = opt || {};
-  const min = opt.min || sc.min_grade || DEFAULT_MIN;
-  if (!ORDER.includes(min)) return { error: `등급 문턱 '${min}' — ${ORDER.join(' | ')}` };
+  const min = opt.min || sc.min_grade || DEFAULT_MIN, bad = gateMinError(min);
+  if (bad) return { error: bad };
   const rows = constants(ir, sc, opt), hypo = !!sc.hypothetical;
   const violations = rows.filter((r) => (r.grade === 'hypothetical' ? !hypo : !meets(r, min)))
     .map((r) => ({ ...r, msg: r.grade === 'hypothetical' ? '가상 값인데 시나리오가 hypothetical 을 선언하지 않음' : `등급 ${r.grade} < ${min} (S${r.s}D${r.d}) — ${r.why}` }));
@@ -247,5 +269,5 @@ function constantVerdict(ir, sc, opt) {
 }
 const constantText = (v) => (v.error ? v.error : `문턱 ${v.min}${v.hypothetical ? ' · 시나리오는 hypothetical (가상 값 허용)' : ''} · 상수 ${v.n} (${Object.entries(v.byGrade).map(([g, n]) => `${g} ${n}`).join(' · ') || '없음'})${v.violations.length ? ` · 위반 ${v.violations.length}: ${v.violations.slice(0, 3).map((x) => `${x.ref} ${x.msg}`).join(' / ')}` : ''}`);
 
-return Object.freeze({ CRITERIA, GRADE_WHY, POLICY, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
+return Object.freeze({ CRITERIA, GRADE_WHY, POLICY, THRESHOLD, atLeast, gateMinError, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
 });

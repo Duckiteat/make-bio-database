@@ -1213,8 +1213,8 @@ test('신뢰 지표: 등급은 쌍을 사전식으로 — 곱이 같아도 뜻�
   assert.equal(REL.gradeOf(4, 4, 'match'), 'anchor');
   assert.equal(REL.gradeOf(4, 4, 'mismatch'), 'legacy', '추세가 어긋나도 버리지 않고 지난값으로');
   assert.equal(REL.gradeOf(0, 4, 'match'), 'blocked');
-  // 관문은 등급 순서로 (anchor → blocked)
-  assert.ok(REL.meets({ grade: 'parameter' }, 'parameter') && !REL.meets({ grade: 'reference' }, 'parameter'));
+  // 관문은 축 조건으로 (build-plan 73) — 행의 축 값으로 판정
+  assert.ok(REL.meets({ s: 3, d: 3 }, 'parameter') && !REL.meets({ s: 2, d: 3 }, 'parameter'));
   assert.deepEqual(REL.ORDER, ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked']);
 });
 test('신뢰 지표: S 는 도장·문헌 식별자에서, D 는 실측·도구 계산에서 계산된다', () => {
