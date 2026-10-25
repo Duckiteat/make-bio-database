@@ -8,7 +8,7 @@
 |---|---|---|
 | data | 433 | 16296.1 |
 | docs | 58 | 1196.0 |
-| (최상위) | 18 | 866.9 |
+| (최상위) | 18 | 867.5 |
 | judicial | 28 | 528.4 |
 | tests | 76 | 501.9 |
 | attestations | 1 | 299.0 |
@@ -20,7 +20,7 @@
 | compiler | 7 | 49.0 |
 | schemas | 6 | 43.6 |
 | mcp | 4 | 34.7 |
-| rebuild | 3 | 26.2 |
+| rebuild | 3 | 28.7 |
 | .claude | 1 | 3.2 |
 | .github | 1 | 2.6 |
 
@@ -41,7 +41,7 @@
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `CHANGES.md` | 232.9 |
+| `CHANGES.md` | 233.6 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
