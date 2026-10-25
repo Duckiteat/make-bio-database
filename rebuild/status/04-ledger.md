@@ -2,18 +2,18 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-장부 파일: units.jsonl · 단위 1262
+장부 파일: units.jsonl · 단위 2545
 
 ## 모드 × 종류
 
 | 모드 | 규칙 | 절차 | 이유 | 현재 숫자 | 역사 | 합 |
 |---|---|---|---|---|---|---|
-| 공통 `common` | 50 | 76 | 73 | 39 | 60 | 298 |
-| 정보 작성 `author` | 189 | 199 | 22 | 11 | 101 | 522 |
-| 기초시험 `baseline` | 75 | 43 | 10 | 20 | 2 | 150 |
-| 디벨롭 `develop` | 112 | 15 | 15 | 5 | 2 | 149 |
-| 적분장 `field` | 14 | 0 | 2 | 0 | 2 | 18 |
-| 점검·검증 `inspect` | 25 | 59 | 4 | 2 | 35 | 125 |
+| 공통 `common` | 80 | 76 | 86 | 39 | 97 | 378 |
+| 정보 작성 `author` | 603 | 230 | 186 | 16 | 104 | 1139 |
+| 기초시험 `baseline` | 168 | 51 | 22 | 22 | 2 | 265 |
+| 디벨롭 `develop` | 387 | 30 | 99 | 9 | 7 | 532 |
+| 적분장 `field` | 31 | 0 | 2 | 1 | 2 | 36 |
+| 점검·검증 `inspect` | 69 | 66 | 17 | 7 | 36 | 195 |
 
 규칙이 하나도 없는 모드: 없음
 
@@ -24,7 +24,7 @@
 | machine | 269 |
 | text | 181 |
 | none | 0 |
-| unchecked | 15 |
+| unchecked | 888 |
 
 집행 자리 확인 (machine 288): 파일·이름 확인 278 · 글로만 적힘 10 · 못 찾음 0
 
@@ -36,9 +36,18 @@
 |---|---|
 | `CLAUDE.md` | 241 |
 | `README.md` | 153 |
+| `SCHEMA.md` | 427 |
 | `docs/PROMPTS.md` | 151 |
 | `docs/RUNBOOK.md` | 180 |
 | `docs/design/agent-rules.md` | 190 |
+| `docs/textbook/01-원칙과-구조.md` | 55 |
+| `docs/textbook/02-저장-위치와-방식.md` | 81 |
+| `docs/textbook/03-데이터-모델.md` | 116 |
+| `docs/textbook/04-알고리즘.md` | 232 |
+| `docs/textbook/05-상호작용.md` | 94 |
+| `docs/textbook/06-출력-해석.md` | 115 |
+| `docs/textbook/07-AI-작업-절차.md` | 117 |
+| `docs/textbook/08-한계와-진화.md` | 46 |
 | `workspace/README.md` | 25 |
 | `workspace/SOURCES.md` | 22 |
 | `workspace/START-HERE.md` | 32 |
@@ -61,15 +70,26 @@
 
 사본 단위(same_as) 183 · 사본이 있는 원래 단위 237 · 한 규칙이 적힌 곳 최대 9
 
+매긴 방식: 판단 1262 · 휴리스틱 1283 (`by: heur` — 검토 전, 5 단계에서 규칙부터 다시 봄) · 수식 후보(EQ) 56
+
 ## 단위가 없는 줄 (제목·표 머리·빈 줄 제외 — 0 이어야 1 단계 끝)
 
 | 문서 | 단위가 있는 줄 | 빠진 줄 |
 |---|---|---|
 | `CLAUDE.md` | 74 | 없음 |
 | `README.md` | 153 | 없음 |
+| `SCHEMA.md` | 427 | 없음 |
 | `docs/PROMPTS.md` | 151 | 없음 |
 | `docs/RUNBOOK.md` | 178 | 없음 |
 | `docs/design/agent-rules.md` | 92 | 없음 |
+| `docs/textbook/01-원칙과-구조.md` | 55 | 없음 |
+| `docs/textbook/02-저장-위치와-방식.md` | 81 | 없음 |
+| `docs/textbook/03-데이터-모델.md` | 116 | 없음 |
+| `docs/textbook/04-알고리즘.md` | 232 | 없음 |
+| `docs/textbook/05-상호작용.md` | 94 | 없음 |
+| `docs/textbook/06-출력-해석.md` | 115 | 없음 |
+| `docs/textbook/07-AI-작업-절차.md` | 117 | 없음 |
+| `docs/textbook/08-한계와-진화.md` | 46 | 없음 |
 | `workspace/README.md` | 25 | 없음 |
 | `workspace/SOURCES.md` | 22 | 없음 |
 | `workspace/START-HERE.md` | 31 | 없음 |

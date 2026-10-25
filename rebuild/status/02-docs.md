@@ -4,12 +4,12 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 236.4 | 220 |  | 미분류 |
+| `CHANGES.md` | 237.2 | 221 |  | 미분류 |
 | `CLAUDE.md` | 17.7 | 84 | 입구 | 분류됨 241 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 미분류 |
 | `FEATURES.md` | 14.1 | 193 |  | 미분류 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
-| `SCHEMA.md` | 100.2 | 659 |  | 미분류 |
+| `SCHEMA.md` | 100.2 | 659 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 미분류 |
@@ -58,14 +58,14 @@
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 미분류 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 4.8 | 45 | 입구 | 미분류 |
-| `docs/textbook/01-원칙과-구조.md` | 9.3 | 101 |  | 미분류 |
-| `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 미분류 |
-| `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 미분류 |
-| `docs/textbook/04-알고리즘.md` | 64.6 | 374 |  | 미분류 |
-| `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 미분류 |
-| `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 미분류 |
-| `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 미분류 |
-| `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 미분류 |
+| `docs/textbook/01-원칙과-구조.md` | 9.3 | 101 |  | 분류됨 55 |
+| `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
+| `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 분류됨 116 |
+| `docs/textbook/04-알고리즘.md` | 64.6 | 374 |  | 분류됨 232 |
+| `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
+| `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 분류됨 115 |
+| `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
+| `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
 | `docs/textbook/90-부록-자동생성.md` | 112.0 | 805 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |

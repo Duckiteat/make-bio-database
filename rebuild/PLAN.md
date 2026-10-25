@@ -103,7 +103,7 @@
 ```json
 { "id": "U0001", "src": "CLAUDE.md:12", "text": "원문 그대로(긴 문장은 요지 + 원문 위치)",
   "mode": "author|baseline|develop|field|inspect|common", "kind": "rule|procedure|reason|value|history",
-  "enforce": "machine|text|none|unchecked", "same_as": ["U… — 이 단위가 다른 단위의 사본이면"], "where": "집행 자리(파일·함수·시험) — machine 일 때", "note": "" }
+  "enforce": "machine|text|none|unchecked", "by": "heur (휴리스틱으로 매김 — 검토 전, 없으면 판단)", "same_as": ["U… — 이 단위가 다른 단위의 사본이면"], "where": "집행 자리(파일·함수·시험) — machine 일 때", "note": "" }
 ```
 
 종류가 처리를 정한다:
@@ -138,7 +138,7 @@
 | 0′ | 번호 사전 | 이름공간 표(지금 있는 번호 종류 전부) · 참조 색인 계산 · 미등록 번호 모양·겹침 검사 · 관리 파일에 이름공간별 개수 | 저장소의 번호 모양 토큰이 모두 이름공간 하나에 맞음 · 겹침 0 | ☑ 2026-10-25 — `rebuild/index/namespaces.jsonl` · `rebuild/index.mjs` · 관리 파일 05 · 시험 ⑤–⑦ |
 | 1 | 분류 1차 | CLAUDE.md + agent-rules → 장부 | 모든 문장이 단위 하나 이상 · 모드별 개수와 빈 모드가 관리 파일에 | ☑ 2026-10-25 — 단위 431 (CLAUDE.md 241 · agent-rules 190, 그중 사본 98) · 집행 칸에 `unchecked` 추가 · 집행 자리 존재 확인 · 빠진 줄 검사 |
 | 2 | 분류 2차 | RUNBOOK · PROMPTS · START-HERE · workspace · README | 같음 | ☑ 2026-10-25 — 단위 831 (문서 19개, 누계 1262) · 빠진 줄 0 · 드러난 모순: workspace/README 는 작업자 commit·push 를 자기 브랜치에 허용, START-HERE 는 금지 |
-| 3 | 분류 3차 | SCHEMA · 교과서 1–8 | 같음 | ☐ |
+| 3 | 분류 3차 | SCHEMA · 교과서 1–8 | 같음 | ☑ 2026-10-25 — 단위 1283 (SCHEMA 427 · 교과서 856, 누계 2545) · 빠진 줄 0 · **휴리스틱 분류**(`by: heur`, 줄 모양·절 제목으로) — 형식 규칙은 모두 `unchecked`, 5 단계에서 규칙부터 다시 봄 · 수식 후보 56 표시 |
 | 4 | 분류 4차 | 설계 문서 · build-plan · 보고서 · 코드 머리 주석 | 같음 + 파일마다 모드(누가 건드리나) | ☐ |
 | 5 | 규칙 번호 | 장부의 `rule` 에 번호 · 판정 코드 오류가 번호를 냄 · 거부 말뭉치가 번호로 맞춤 | 규칙마다 집행 지점·시험, 집행 없는 규칙 목록 | ☐ |
 | 6 | 새 구조 | 중심 문서 · 모드 문서 5 · 전환 기록 형식 · 명령 장부 · 상태 기록 · **수식 기록** · **읽기 모드 렌더러**(L0·L1·L2, 조회만) · 관리 파일을 JSON 원본 + 렌더로 | 새 세션이 처음 읽는 양 전후 · 규칙 하나가 적힌 곳 = 1 · 읽기 모드 출력이 원본에서 바이트 동일하게 재생성 · 수식 기록 없는 계산은 '없음' 으로 드러남 | ☐ |

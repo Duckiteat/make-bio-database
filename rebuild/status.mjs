@@ -154,9 +154,11 @@ function build() {
     const miss = ls.map((l, i) => [l, i + 1]).filter(([l, n]) => l.trim() && !/^\|?\s*:?-{3}/.test(ls[n] || '') && !/^#{1,6} /.test(l) && !/^\|?\s*-{3}/.test(l) && !/^\|[^|]*\|\s*$/.test(l) && !/^```/.test(l) && !/^>\s*$/.test(l) && !have.has(n)).map(([, n]) => n);
     return [`\`${s}\``, String(have.size), miss.length ? miss.join(' · ') : '없음'];
   });
+  const heur = L.units.filter((u) => u.by === 'heur').length, eqs = L.units.filter((u) => /수식 후보/.test(u.note || '')).length;
+  const byText = `매긴 방식: 판단 ${L.units.length - heur} · 휴리스틱 ${heur} (\`by: heur\` — 검토 전, 5 단계에서 규칙부터 다시 봄) · 수식 후보(EQ) ${eqs}`;
   const dupText = `사본 단위(same_as) ${copies.length} · 사본이 있는 원래 단위 ${multi} · 한 규칙이 적힌 곳 최대 ${multi ? Math.max(...places) + 1 : 1}${badRef.length ? ' · 없는 단위를 가리킴: ' + badRef.join(', ') : ''}`;
   const src = Object.entries(unitsBy).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([s, n]) => [`\`${s}\``, String(n)]);
-  out['04-ledger.md'] = `# 분류 장부 (rebuild/ledger/*.jsonl)\n\n${note}\n장부 파일: ${L.files.join(' · ') || '없음'} · 단위 ${L.units.length}\n\n## 모드 × 종류\n\n${table(['모드', ...KINDS.map((k) => KIND_KO[k]), '합'], mk)}\n\n규칙이 하나도 없는 모드: ${empty.join(' · ') || '없음'}\n\n## 규칙의 집행\n\n${table(['집행', '규칙 수'], enf)}\n\n${wtext}\n\n## 출처 문서별\n\n${src.length ? table(['문서', '단위'], src) : '(아직 없음)'}\n\n## 사본\n\n${dupText}\n\n## 단위가 없는 줄 (제목·표 머리·빈 줄 제외 — 0 이어야 1 단계 끝)\n\n${covRows.length ? table(['문서', '단위가 있는 줄', '빠진 줄'], covRows) : '(아직 없음)'}\n\n## 형식 오류\n\n${L.bad.length ? L.bad.map((b) => '- ' + b).join('\n') : '없음'}\n`;
+  out['04-ledger.md'] = `# 분류 장부 (rebuild/ledger/*.jsonl)\n\n${note}\n장부 파일: ${L.files.join(' · ') || '없음'} · 단위 ${L.units.length}\n\n## 모드 × 종류\n\n${table(['모드', ...KINDS.map((k) => KIND_KO[k]), '합'], mk)}\n\n규칙이 하나도 없는 모드: ${empty.join(' · ') || '없음'}\n\n## 규칙의 집행\n\n${table(['집행', '규칙 수'], enf)}\n\n${wtext}\n\n## 출처 문서별\n\n${src.length ? table(['문서', '단위'], src) : '(아직 없음)'}\n\n## 사본\n\n${dupText}\n\n${byText}\n\n## 단위가 없는 줄 (제목·표 머리·빈 줄 제외 — 0 이어야 1 단계 끝)\n\n${covRows.length ? table(['문서', '단위가 있는 줄', '빠진 줄'], covRows) : '(아직 없음)'}\n\n## 형식 오류\n\n${L.bad.length ? L.bad.map((b) => '- ' + b).join('\n') : '없음'}\n`;
   // 05 번호 사전 (rebuild/index/namespaces.jsonl + 계산된 참조 색인)
   const nsRows = X.rows.map((r) => { const st = X.stats[r.ns], d = X.dangling[r.ns];
     return [`\`${r.ns}\``, r.status, r.shape, `\`${r.pattern || r.pattern_from || '—'}\``.replace(/\|/g, '\\|'), r.issuer, `\`${r.store}\``, r.scan ? `${st.n} · ${st.distinct} · ${st.files}` : '—',

@@ -8,10 +8,10 @@
 |---|---|---|
 | data | 433 | 16296.1 |
 | docs | 58 | 1197.9 |
-| (최상위) | 18 | 870.3 |
+| (최상위) | 18 | 871.1 |
+| rebuild | 6 | 850.0 |
 | judicial | 28 | 528.4 |
 | tests | 76 | 503.5 |
-| rebuild | 6 | 391.1 |
 | attestations | 1 | 299.0 |
 | engine | 26 | 298.8 |
 | examples | 47 | 289.6 |
@@ -30,11 +30,11 @@
 |---|---|
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
+| `rebuild/ledger/units.jsonl` | 794.3 |
 | `data/db.json` | 676.4 |
 | `data/log/genesis-db.json` | 608.9 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `rebuild/ledger/units.jsonl` | 336.1 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
@@ -42,7 +42,7 @@
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `CHANGES.md` | 236.4 |
+| `CHANGES.md` | 237.2 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
