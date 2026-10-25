@@ -43,4 +43,35 @@ function literatureStatus(dataDir) {
   return out;
 }
 
-module.exports = { textsFor, literatureStatus };
+// BRENDA SOAP 응답 해석 (수신함 data/fetched/brenda/*.xml — 받기는 mcp/fetch.mjs 의 brenda_kinetics 가 서기로).
+//   응답은 SOAP 인코딩 배열: <return …><item …><kmValue>…</kmValue><substrate>…</substrate><literature><item>756131</item></literature>…</item>…</return>
+//   kind 'km' → kmValue(BRENDA 관례 단위 mM), 'kcat' → turnoverNumber(s⁻¹). 해석만 — 단위 환산·종 판정은 하지 않는다(통합가·관문 몫).
+const xmlText = (x) => String(x).replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&').trim();
+const field = (block, name) => { const m = block.match(new RegExp(`<(?:\\w+:)?${name}\\b[^>]*?(?:/>|>([\\s\\S]*?)</(?:\\w+:)?${name}>)`)); return m ? (m[1] == null ? '' : m[1]) : null; };
+function brendaFault(xml) { const m = String(xml).match(/<faultstring[^>]*>([\s\S]*?)<\/faultstring>/); return m ? xmlText(m[1]) : null; }
+function topItems(xml) {
+  const ret = (String(xml).match(/<(?:\w+:)?return\b[^>]*>([\s\S]*)<\/(?:\w+:)?return>/) || [])[1];
+  if (ret == null) return [];
+  const out = []; let depth = 0, start = -1; const re = /<(\/)?item\b[^>]*?(\/)?>/g; let m;
+  while ((m = re.exec(ret))) {
+    if (m[2]) continue; // <item/>
+    if (!m[1]) { if (depth === 0) start = m.index; depth++; } else { depth--; if (depth === 0 && start >= 0) { out.push(ret.slice(start, re.lastIndex)); start = -1; } }
+  }
+  return out;
+}
+function brendaRows(xml, kind) {
+  const valueName = kind === 'kcat' ? 'turnoverNumber' : 'kmValue';
+  return topItems(xml).map((b) => {
+    const lit = field(b, 'literature');
+    const literature = lit == null ? [] : (lit.match(/<item\b[^>]*>([\s\S]*?)<\/item>/g) || []).map(xmlText).filter(Boolean).concat(/<item\b/.test(lit) ? [] : [xmlText(lit)].filter(Boolean));
+    const g = (n) => { const v = field(b, n); return v == null || xmlText(v) === '' ? null : xmlText(v); };
+    return { kind, value: g(valueName), valueMax: g(valueName + 'Maximum'), unit: kind === 'kcat' ? 's^-1' : 'mM', substrate: g('substrate'), organism: g('organism'), commentary: g('commentary'), ecNumber: g('ecNumber'), ligandStructureId: g('ligandStructureId'), literature };
+  }).filter((r) => r.value != null);
+}
+function brendaReference(xml) {
+  const b = (String(xml).match(/<(?:\w+:)?reference\b[^>]*>([\s\S]*)<\/(?:\w+:)?reference>/) || [])[1] || String(xml);
+  const g = (n) => { const v = field(b, n); return v == null ? null : xmlText(v); };
+  return { pubmedId: g('pubmedId') || null, title: g('title'), year: g('year'), authors: g('authors'), journal: g('journal') };
+}
+
+module.exports = { textsFor, literatureStatus, brendaRows, brendaReference, brendaFault };

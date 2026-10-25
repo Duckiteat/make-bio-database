@@ -66,7 +66,7 @@
 |---|---|---|---|
 | UniProt 큐레이션(사람 11 단백질) | 공개 · 무료 · 1 차 논문 PMID 동반 | 있음: CS(kcat·Km 아세틸-CoA·Km 옥살로아세트산), FH(정·역 kcat·Km), IDH3(kcat·S0.5 아이소시트르산 — NAD⁺ Km 없음), ACO2(이미 BRENDA 로). **없음: OGDH · SUCLG1/2 · SDHA · MDH2** | `rest.uniprot.org` 조회 |
 | SABIO-RK | 공개 운동학 DB | **막힘** — 옛 REST 폐지(10-16 확인), 10-25 에도 오류 쪽지로 넘어감 | `2026-10-16-kinetics-sourcing.md` |
-| BRENDA | 가장 큰 운동학 DB | 계정 필요 — 통합가 전용(`workspace/SOURCES.md`). 10-16 사용자 계정으로 본 사람 값: SCS Km 1 · MDH Km 6 · SDH 0 · 사람 kcat 거의 없음 — **증거 파일로 저장 안 됨** | `2026-10-16-kinetics-brenda.md` |
+| BRENDA | 가장 큰 운동학 DB | 계정 필요 — 2026-10-25 부터 `fetch` 의 `brenda_kinetics`(계정은 환경 변수, 수집가도 사용). 10-16 사용자 계정으로 본 사람 값: SCS Km 1 · MDH Km 6 · SDH 0 · 사람 kcat 거의 없음 — **증거 파일로 저장 안 됨** | `2026-10-16-kinetics-brenda.md` |
 | Europe PMC 1 차 문헌 검색(MDH2·OGDH·SCS·SDH, 사람) | 초록에 kcat·Km 이 있는 사람 효소 논문 | 상위 결과에 사람 정제 효소 운동학이 드묾. 오래된 값은 대부분 돼지·소 심장 → 종 규칙상 사람 값으로 못 씀 | 검색 결과 |
 | 기질 대사물(Chen 2016, PMID 27565352, HeLa) | 100 개 넘는 기질 대사물 절대 정량 + 호흡 사슬 교란 | **(가)의 가장 좋은 후보.** 다만 PMC 무료 열람(공개 전문 아님) → 사람이 보충 자료에서 옮김 | Europe PMC |
 | 효소 양(Nagaraj 2011, PMID 22068331, HeLa 단백체 복제 수) | 공개 전문(PMC3261714) | 있음 — 다만 값은 보충 자료 표에 있고 `fetch` 서버는 보충 파일을 받지 못함(도구 공백) | Europe PMC |

@@ -1428,6 +1428,14 @@
       "interpret": "[거부 말뭉치] 반드시 거부되어야 하는 패치들 — 2026-10-10 레드팀 시험에서 성공했던 7 건과 막혔던 4 건. 규칙을 느슨하게 하면 이 중 하나가 통과해 버려서 빨개진다(SCHEMA §8M). 데이터베이스에 넣으면 안 되는 내용이다."
     },
     {
+      "path": "tests/fixtures/brenda/km-sample.xml",
+      "class": "verification",
+      "format": "XML (SOAP 인코딩 배열)",
+      "writer": "사람·AI",
+      "readers": "tests/mcp.test.mjs ⑫ (inbox.brendaRows)",
+      "interpret": "BRENDA getKmValue 응답의 합성 시험 자료 — WSDL 형식대로 만든 것이라 실제 응답이 아니다. 첫 실제 응답으로 해석기를 확인하면 그 응답(계정 정보 지운 것)으로 바꾼다."
+    },
+    {
       "path": "tests/fixtures/FLOOR.json",
       "class": "verification",
       "format": "JSON (바닥값)",
