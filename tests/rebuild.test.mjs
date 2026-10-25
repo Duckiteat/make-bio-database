@@ -3,6 +3,7 @@
 //   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
 //   ③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만
 //   ④ 분류 장부에 형식 오류가 없다
+//   ⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다
 //   ⑤–⑦ 번호 사전 (rebuild/index): 표 형식 · 예시가 자기 이름공간에만 · 저장소의 번호 모양이 모두 이름공간 하나에
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -58,4 +59,10 @@ test('⑥ 번호 사전: 예시는 자기 이름공간에만 맞는다 (형식�
 test('⑦ 번호 사전: 저장소의 번호 모양 토큰은 모두 이름공간 하나에 맞는다 (새 번호 종류는 표에 먼저)', () => {
   assert.deepEqual(X.unknown, [], '미등록 번호 모양 — rebuild/index/namespaces.jsonl 에 이름공간을 올리거나 exceptions.jsonl 에 이유와 함께');
   assert.deepEqual(X.overlap, [], '두 이름공간에 맞는 토큰');
+});
+
+test('⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다', () => {
+  const t = build()['06-file-modes.md'];
+  assert.match(t, /## 규칙에 맞지 않는 파일 \(0 이어야 함\)\n\n없음\n/, 'rebuild/index/file-modes.jsonl 에 규칙을 더한다');
+  assert.match(t, /## 아무 파일에도 맞지 않는 규칙 · 모르는 모드\n\n없음\n/);
 });

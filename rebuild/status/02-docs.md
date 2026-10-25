@@ -4,60 +4,60 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 237.2 | 221 |  | 미분류 |
+| `CHANGES.md` | 238.0 | 222 |  | 분류됨 1 |
 | `CLAUDE.md` | 17.7 | 84 | 입구 | 분류됨 241 |
-| `DESIGN-v4.md` | 18.2 | 258 |  | 미분류 |
-| `FEATURES.md` | 14.1 | 193 |  | 미분류 |
+| `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
+| `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
 | `SCHEMA.md` | 100.2 | 659 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 분류됨 180 |
-| `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 미분류 |
+| `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
 | `docs/design/agent-rules.md` | 44.3 | 116 |  | 분류됨 190 |
-| `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 미분류 |
-| `docs/design/build-plan.md` | 64.1 | 164 |  | 미분류 |
-| `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 미분류 |
-| `docs/design/conservation-classes.md` | 5.7 | 76 |  | 미분류 |
-| `docs/design/dictionary-and-translation.md` | 15.8 | 203 |  | 미분류 |
-| `docs/design/direction.md` | 6.2 | 46 | 입구 | 미분류 |
-| `docs/design/engine-port-roadmap.md` | 53.2 | 564 |  | 미분류 |
-| `docs/design/format-v12.md` | 10.1 | 101 |  | 미분류 |
-| `docs/design/hybrid-multiscale-engine.md` | 35.8 | 340 |  | 미분류 |
-| `docs/design/integral-field-engine.md` | 45.9 | 391 |  | 미분류 |
-| `docs/design/observation-port.md` | 6.0 | 68 |  | 미분류 |
-| `docs/design/outsourcing-and-mcp.md` | 18.1 | 158 |  | 미분류 |
-| `docs/design/post-build-directions.md` | 5.4 | 35 |  | 미분류 |
-| `docs/design/rules-regulation-tests.md` | 9.7 | 112 |  | 미분류 |
-| `docs/design/scaling-limits.md` | 8.3 | 102 |  | 미분류 |
-| `docs/design/structure-realignment.md` | 20.6 | 208 |  | 미분류 |
-| `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 미분류 |
-| `docs/design/tripartite-governance.md` | 11.1 | 133 |  | 미분류 |
-| `docs/design/work-verification.md` | 11.6 | 136 |  | 미분류 |
-| `docs/project-overview.md` | 2.9 | 26 |  | 미분류 |
-| `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 미분류 |
-| `docs/reports/2026-10-15-mhc1-qualitative-batch.md` | 2.9 | 26 |  | 미분류 |
-| `docs/reports/2026-10-16-cs-kinetics-detail.md` | 6.8 | 78 |  | 미분류 |
-| `docs/reports/2026-10-16-evidence-tca-measured-kinetics.md` | 23.8 | 201 |  | 미분류 |
-| `docs/reports/2026-10-16-kinetics-brenda.md` | 2.1 | 35 |  | 미분류 |
-| `docs/reports/2026-10-16-kinetics-sourcing.md` | 2.4 | 23 |  | 미분류 |
-| `docs/reports/2026-10-16-mhc2-qualitative.md` | 1.9 | 22 |  | 미분류 |
-| `docs/reports/2026-10-16-telomere-deterministic-vs-stochastic.md` | 5.7 | 62 |  | 미분류 |
-| `docs/reports/2026-10-16-telomere-per-chromosome-design-trail.md` | 6.2 | 83 |  | 미분류 |
-| `docs/reports/2026-10-16-validation-mhc-i-b2m.md` | 10.8 | 141 |  | 미분류 |
-| `docs/reports/2026-10-16-validation-set-mhc.md` | 7.9 | 102 |  | 미분류 |
-| `docs/reports/2026-10-16-validation-telomere.md` | 7.6 | 112 |  | 미분류 |
-| `docs/reports/2026-10-17-work-verification.md` | 7.6 | 93 |  | 미분류 |
-| `docs/reports/2026-10-22-phase0-reality-validation-audit.md` | 10.0 | 123 |  | 미분류 |
-| `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 | 1631 |  | 미분류 |
-| `docs/reports/2026-10-23-evidence-index-all-scenarios.md` | 7.0 | 51 |  | 미분류 |
-| `docs/reports/2026-10-23-validation-telomere-quiescence.md` | 4.1 | 42 |  | 미분류 |
-| `docs/reports/2026-10-25-architecture-analysis.md` | 20.4 | 166 |  | 미분류 |
-| `docs/reports/2026-10-25-compute-efficiency.md` | 4.6 | 49 |  | 미분류 |
-| `docs/reports/2026-10-25-reliability-verification-criteria.md` | 21.6 | 136 |  | 미분류 |
-| `docs/reports/2026-10-25-structure-evaluation.md` | 8.5 | 69 |  | 미분류 |
-| `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 미분류 |
-| `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 미분류 |
-| `docs/textbook/00-목차.md` | 4.8 | 45 | 입구 | 미분류 |
+| `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
+| `docs/design/build-plan.md` | 64.1 | 164 |  | 분류됨 120 |
+| `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
+| `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
+| `docs/design/dictionary-and-translation.md` | 15.8 | 203 |  | 분류됨 121 |
+| `docs/design/direction.md` | 6.2 | 46 | 입구 | 분류됨 26 |
+| `docs/design/engine-port-roadmap.md` | 53.2 | 564 |  | 분류됨 369 |
+| `docs/design/format-v12.md` | 10.1 | 101 |  | 분류됨 61 |
+| `docs/design/hybrid-multiscale-engine.md` | 35.8 | 340 |  | 분류됨 231 |
+| `docs/design/integral-field-engine.md` | 45.9 | 391 |  | 분류됨 235 |
+| `docs/design/observation-port.md` | 6.0 | 68 |  | 분류됨 35 |
+| `docs/design/outsourcing-and-mcp.md` | 18.1 | 158 |  | 분류됨 80 |
+| `docs/design/post-build-directions.md` | 5.4 | 35 |  | 분류됨 18 |
+| `docs/design/rules-regulation-tests.md` | 9.7 | 112 |  | 분류됨 61 |
+| `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
+| `docs/design/structure-realignment.md` | 20.6 | 208 |  | 분류됨 102 |
+| `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
+| `docs/design/tripartite-governance.md` | 11.1 | 133 |  | 분류됨 95 |
+| `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
+| `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
+| `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
+| `docs/reports/2026-10-15-mhc1-qualitative-batch.md` | 2.9 | 26 |  | 분류됨 13 |
+| `docs/reports/2026-10-16-cs-kinetics-detail.md` | 6.8 | 78 |  | 분류됨 45 |
+| `docs/reports/2026-10-16-evidence-tca-measured-kinetics.md` | 23.8 | 201 |  | 분류됨 133 |
+| `docs/reports/2026-10-16-kinetics-brenda.md` | 2.1 | 35 |  | 분류됨 21 |
+| `docs/reports/2026-10-16-kinetics-sourcing.md` | 2.4 | 23 |  | 분류됨 12 |
+| `docs/reports/2026-10-16-mhc2-qualitative.md` | 1.9 | 22 |  | 분류됨 10 |
+| `docs/reports/2026-10-16-telomere-deterministic-vs-stochastic.md` | 5.7 | 62 |  | 분류됨 30 |
+| `docs/reports/2026-10-16-telomere-per-chromosome-design-trail.md` | 6.2 | 83 |  | 분류됨 47 |
+| `docs/reports/2026-10-16-validation-mhc-i-b2m.md` | 10.8 | 141 |  | 분류됨 83 |
+| `docs/reports/2026-10-16-validation-set-mhc.md` | 7.9 | 102 |  | 분류됨 55 |
+| `docs/reports/2026-10-16-validation-telomere.md` | 7.6 | 112 |  | 분류됨 60 |
+| `docs/reports/2026-10-17-work-verification.md` | 7.6 | 93 |  | 분류됨 59 |
+| `docs/reports/2026-10-22-phase0-reality-validation-audit.md` | 10.0 | 123 |  | 분류됨 58 |
+| `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 | 1631 |  | 분류됨 1517 |
+| `docs/reports/2026-10-23-evidence-index-all-scenarios.md` | 7.0 | 51 |  | 분류됨 45 |
+| `docs/reports/2026-10-23-validation-telomere-quiescence.md` | 4.1 | 42 |  | 분류됨 18 |
+| `docs/reports/2026-10-25-architecture-analysis.md` | 20.4 | 166 |  | 분류됨 87 |
+| `docs/reports/2026-10-25-compute-efficiency.md` | 4.6 | 49 |  | 분류됨 24 |
+| `docs/reports/2026-10-25-reliability-verification-criteria.md` | 21.6 | 136 |  | 분류됨 78 |
+| `docs/reports/2026-10-25-structure-evaluation.md` | 8.5 | 69 |  | 분류됨 34 |
+| `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
+| `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
+| `docs/textbook/00-목차.md` | 4.8 | 45 | 입구 | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.3 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 분류됨 116 |
@@ -66,7 +66,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 112.0 | 805 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 112.2 | 805 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |

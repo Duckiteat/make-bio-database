@@ -52,7 +52,7 @@ function ledger(reg) {
     const why = [];
     if (!U.test(u.id || '')) why.push('id');
     else if (seen.has(u.id)) why.push('id 중복'); else seen.add(u.id);
-    if (!u.src || !/:\d+/.test(u.src)) why.push('src(파일:줄)');
+    if (!u.src || !/:(\d+|\*)$/.test(u.src.replace(/:\d+.*$/, (m) => m.split(' ')[0]))) why.push('src(파일:줄 또는 파일:* — 자라는 기록은 파일 전체)');
     if (!u.text) why.push('text');
     if (!MODES.includes(u.mode)) why.push('mode');
     if (!KINDS.includes(u.kind)) why.push('kind');
@@ -93,7 +93,7 @@ function codeCounts(all) {
 function build() {
   const X = IDX.build(), all = files(), by = Object.fromEntries(all.map((f) => [f.path, f.bytes])), L = ledger(X.rows), C = codeCounts(all);
   const docs = all.filter((f) => f.path.endsWith('.md') && !/^(data|rebuild|tests)\//.test(f.path));
-  const classified = new Set(L.units.map((u) => u.src.replace(/:\d+.*$/, '')));
+  const classified = new Set(L.units.map((u) => u.src.replace(/:(\d+.*|\*)$/, '')));
   const todo = docs.filter((d) => !GENERATED.includes(d.path) && !classified.has(d.path));
   const out = {};
   const note = '> 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.\n';
@@ -115,7 +115,7 @@ function build() {
     ['미등록 번호 모양 / 겹침 / 예외', `${X.unknown.length} / ${X.overlap.length} / ${X.exceptions}`],
     ['같은 번호 형식을 코드에 따로 적은 곳', String(X.duplicates.length)],
   ];
-  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md)\n`;
+  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md)\n`;
 
   // 01 파일
   const dirs = {};
@@ -125,7 +125,7 @@ function build() {
   out['01-files.md'] = `# 파일\n\n${note}\n## 최상위 폴더별\n\n${table(['폴더', '파일', 'KB'], dirRows)}\n\n## 큰 파일 25\n\n${table(['파일', 'KB'], big)}\n`;
 
   // 02 문서
-  const unitsBy = {}; for (const u of L.units) { const s = u.src.replace(/:\d+.*$/, ''); unitsBy[s] = (unitsBy[s] || 0) + 1; }
+  const unitsBy = {}; for (const u of L.units) { const s = u.src.replace(/:(\d+.*|\*)$/, ''); unitsBy[s] = (unitsBy[s] || 0) + 1; }
   const docRows = docs.map((d) => [`\`${d.path}\``, kb(d.bytes), String(lines(d.path)), ENTRY.includes(d.path) ? '입구' : '', GENERATED.includes(d.path) ? '생성물' : unitsBy[d.path] ? `분류됨 ${unitsBy[d.path]}` : '미분류']);
   out['02-docs.md'] = `# 문서 (.md)\n\n${note}\n${table(['문서', 'KB', '줄', '입구', '분류'], docRows)}\n`;
 
@@ -149,6 +149,7 @@ function build() {
   const refd = {}; for (const u of copies) for (const r of u.same_as) refd[r] = (refd[r] || 0) + 1;
   const places = Object.values(refd), multi = places.length;
   const covRows = Object.keys(unitsBy).sort().map((s) => {
+    if (L.units.some((u) => u.src === s + ':*')) return [`\`${s}\``, '파일 전체', '없음'];
     const have = new Set(L.units.filter((u) => u.src.replace(/:\d+.*$/, '') === s).map((u) => +u.src.split(':')[1]));
     const ls = read(s).split('\n');
     const miss = ls.map((l, i) => [l, i + 1]).filter(([l, n]) => l.trim() && !/^\|?\s*:?-{3}/.test(ls[n] || '') && !/^#{1,6} /.test(l) && !/^\|?\s*-{3}/.test(l) && !/^\|[^|]*\|\s*$/.test(l) && !/^```/.test(l) && !/^>\s*$/.test(l) && !have.has(n)).map(([, n]) => n);
@@ -166,6 +167,14 @@ function build() {
   const dl = Object.entries(X.dangling).filter(([, d]) => d.missing.length).map(([ns, d]) => `- \`${ns}\`: ${d.missing.join(' · ')}`);
   const li = (xs) => (xs.length ? xs.map((x) => '- ' + x).join('\n') : '없음');
   out['05-index.md'] = `# 번호 사전\n\n${note}\n원본: \`rebuild/index/namespaces.jsonl\` (이름공간 ${X.rows.length}) · 예외 \`rebuild/index/exceptions.jsonl\` (${X.exceptions}). 참조 색인은 저장하지 않고 계산한다.\n\n## 이름공간\n\n토큰 = 저장소에 나온 수 · 고유 · 파일 / 정의 = 정의된 수 · 가리켜졌는데 정의 안 됨\n\n${table(['이름공간', '상태', '모양', '형식', '발급', '자리', '토큰', '정의'], nsRows)}\n\n## 미등록 번호 모양 (0 이어야 함)\n\n${li(X.unknown)}\n\n## 겹침 (0 이어야 함)\n\n${li([...X.overlap, ...X.exampleIssues])}\n\n## 가리켜졌는데 정의되지 않은 번호 (지운 번호·시험용 가짜 번호·다음 번호 포함 — 정보)\n\n${dl.length ? dl.join('\n') : '없음'}\n\n## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)\n\n${li(X.duplicates)}\n\n## 이름공간 표 형식 오류\n\n${li(X.bad)}\n`;
+  // 06 파일 → 모드 (rebuild/index/file-modes.jsonl, 첫 규칙이 이긴다)
+  const fm = read('rebuild/index/file-modes.jsonl').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
+  const glob = (p) => new RegExp('^' + p.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$');
+  const rules = fm.map((r) => ({ ...r, re: glob(r.pattern), n: 0, b: 0 })), unmatched = [], badMode = fm.filter((r) => !MODES.includes(r.mode)).map((r) => r.pattern);
+  const perMode = Object.fromEntries(MODES.map((m) => [m, { n: 0, b: 0 }]));
+  for (const f of all) { const r = rules.find((x) => x.re.test(f.path)); if (!r) { unmatched.push(f.path); continue; } r.n++; r.b += f.bytes; if (perMode[r.mode]) { perMode[r.mode].n++; perMode[r.mode].b += f.bytes; } }
+  const unused = rules.filter((r) => !r.n).map((r) => r.pattern);
+  out['06-file-modes.md'] = `# 파일 → 모드\n\n${note}\n원본: \`rebuild/index/file-modes.jsonl\` (규칙 ${fm.length}, 위에서부터 첫 규칙이 이긴다). 파일마다 어느 모드가 주로 건드리는지.\n\n## 모드별\n\n${table(['모드', '파일', 'KB'], MODES.map((m) => [MODE_KO[m] + ` \`${m}\``, String(perMode[m].n), kb(perMode[m].b)]))}\n\n## 규칙별\n\n${table(['형식', '모드', '파일', 'KB', '왜'], rules.map((r) => [`\`${r.pattern}\``, r.mode, String(r.n), kb(r.b), r.why]))}\n\n## 규칙에 맞지 않는 파일 (0 이어야 함)\n\n${unmatched.length ? unmatched.map((x) => '- ' + x).join('\n') : '없음'}\n\n## 아무 파일에도 맞지 않는 규칙 · 모르는 모드\n\n${[...unused, ...badMode.map((x) => x + ' (모드)')].map((x) => '- ' + x).join('\n') || '없음'}\n`;
   return out;
 }
 

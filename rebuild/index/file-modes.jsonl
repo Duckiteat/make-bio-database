@@ -1,0 +1,57 @@
+{"pattern": "rebuild/**", "mode": "common", "why": "재건 관리 — 모든 모드가 읽기만"}
+{"pattern": "data/fetched/**", "mode": "author", "why": "수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조)"}
+{"pattern": "data/db.json", "mode": "author", "why": "지식 원본 — 패치·관문으로만"}
+{"pattern": "data/patches/**", "mode": "author", "why": "병합 기록"}
+{"pattern": "data/log/**", "mode": "author", "why": "델타 기록"}
+{"pattern": "data/assumptions.jsonl", "mode": "author", "why": "가정 원장"}
+{"pattern": "data/dictionary.jsonl", "mode": "develop", "why": "말 사전 — 통제 토큰의 영어"}
+{"pattern": "data/preregistrations.jsonl", "mode": "baseline", "why": "사전 등록부"}
+{"pattern": "attestations/**", "mode": "inspect", "why": "증명 도장 — 승인 도장은 점검·검증이 남긴다"}
+{"pattern": "workspace/tasks/**", "mode": "inspect", "why": "과제 — 통합가가 쓴다"}
+{"pattern": "workspace/handoff/NEXT-*", "mode": "common", "why": "세션 넘김 — 전환 기록이 대신할 것"}
+{"pattern": "workspace/**", "mode": "author", "why": "수집가 작업 공간"}
+{"pattern": "examples/scenarios/**", "mode": "baseline", "why": "시나리오 — 기초시험이 돌린다"}
+{"pattern": "examples/**", "mode": "author", "why": "예시 패치·합성 관찰"}
+{"pattern": "engine/fv_solver.js", "mode": "field", "why": "P3 장"}
+{"pattern": "engine/hmse.js", "mode": "field", "why": "3 층 실행 층"}
+{"pattern": "engine/devs_scheduler.js", "mode": "field", "why": "P3 스케줄러"}
+{"pattern": "engine/fno_surrogate.js", "mode": "field", "why": "P4 대리 모델"}
+{"pattern": "engine/ood_detector.js", "mode": "field", "why": "P4 OOD"}
+{"pattern": "engine/p5_dynamic_gate.js", "mode": "field", "why": "P5 관문"}
+{"pattern": "engine/async_fallback_worker.js", "mode": "field", "why": "P4 비동기 대체"}
+{"pattern": "engine/interfaces/**", "mode": "field", "why": "v8 인터페이스"}
+{"pattern": "schemas/v8/**", "mode": "field", "why": "v8 영역 패킷"}
+{"pattern": "engine/**", "mode": "develop", "why": "운명 엔진·Rust·결합점"}
+{"pattern": "compiler/**", "mode": "develop", "why": "컴파일러"}
+{"pattern": "judicial/**", "mode": "develop", "why": "사법부 코드"}
+{"pattern": "legislative/**", "mode": "develop", "why": "입법부 코드"}
+{"pattern": "mcp/**", "mode": "develop", "why": "MCP 서버"}
+{"pattern": "migrations/**", "mode": "develop", "why": "형식 변환"}
+{"pattern": "schemas/obs/**", "mode": "author", "why": "관찰 포트 계약"}
+{"pattern": "schemas/**", "mode": "develop", "why": "원자료 계약"}
+{"pattern": "core.js", "mode": "develop", "why": "행정"}
+{"pattern": "model.js", "mode": "develop", "why": "공유"}
+{"pattern": "vocab.js", "mode": "develop", "why": "통제 어휘 — 사용자 요청 시만"}
+{"pattern": "dictionary.js", "mode": "develop", "why": "번역기"}
+{"pattern": "orchestrator.js", "mode": "develop", "why": "조정자"}
+{"pattern": "dbtool.mjs", "mode": "develop", "why": "명령줄"}
+{"pattern": "scenarios.js", "mode": "develop", "why": "시나리오 읽기"}
+{"pattern": "inbox.js", "mode": "develop", "why": "수신함 해석"}
+{"pattern": "tests/p3_end_to_end.js", "mode": "field", "why": "P3 종단"}
+{"pattern": "tests/p4_*", "mode": "field", "why": "P4"}
+{"pattern": "tests/p5_*", "mode": "field", "why": "P5"}
+{"pattern": "tests/fixtures/rejections/**", "mode": "develop", "why": "거부 말뭉치"}
+{"pattern": "tests/**", "mode": "develop", "why": "시험"}
+{"pattern": "viewer.html", "mode": "inspect", "why": "화면 — 사람이 읽는 자리"}
+{"pattern": "index.html", "mode": "inspect", "why": "화면 복사본"}
+{"pattern": "docs/reports/**", "mode": "inspect", "why": "보고서 — 읽기·점검"}
+{"pattern": "docs/textbook/**", "mode": "common", "why": "교과서 — 재건으로 읽기 모드가 대신할 글"}
+{"pattern": "docs/design/**", "mode": "common", "why": "설계 문서 — 장부 단위가 모드를 따로 가짐"}
+{"pattern": "docs/**", "mode": "common", "why": "안내 문서"}
+{"pattern": "limitations.md", "mode": "author", "why": "한계 등록부 (생성물)"}
+{"pattern": "CHANGES.md", "mode": "develop", "why": "변경 기록"}
+{"pattern": "SCHEMA.md", "mode": "author", "why": "형식"}
+{"pattern": "*.md", "mode": "common", "why": "최상위 문서"}
+{"pattern": ".claude/**", "mode": "common", "why": "도구 설정"}
+{"pattern": ".github/**", "mode": "develop", "why": "CI"}
+{"pattern": ".gitignore", "mode": "develop", "why": "설정"}
