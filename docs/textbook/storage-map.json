@@ -543,12 +543,20 @@
       "interpret": "신뢰 지표 — 도장·근거·관찰 기록에서 (S 출처, D 성질) 쌍을 계산하고 등급(anchor·parameter·bounded·legacy·reference·blocked)을 낸다. 점수를 저장하지 않는다(계산되는 것). 곱 S×D 는 보고용 숫자일 뿐 판정에 쓰지 않는다 — (2,4) 와 (4,2) 가 겹치기 때문. 추세 축(시간)은 judicial/trend.js 가 판정해 opt.trend 로 들어온다 — 없으면 unchecked 이고 anchor 가 나오지 않는다."
     },
     {
+      "path": "judicial/acceptance.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "legislative/clerk.mjs (승인 도장 발급 검사), judicial/evidence_report.js (가장 약한 근거), dbtool.mjs accept·attest, mcp/clerk.mjs accept, tests",
+      "interpret": "[사법] 인정 (build-plan 72) — 인정은 (기록, 용도) 순서쌍. 용도 다섯(서술·비교·추정·검증 근거·기준)마다 축 조건(S·D·T) ∧ 관계 조건(기준 종 · 추정에 쓰지 않음 · 확인된 문헌) ∧ 높은 용도는 승인 도장(claim 'accept', 사람·통합 에이전트, 이유 필수). 승인은 축 조건을 넘지 못하고, 축이 내려가면 '재검토'. 결론은 가장 약한 근거를 따른다."
+    },
+    {
       "path": "judicial/trend.js",
       "class": "law",
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "legislative/clerk.mjs (도장 검증), dbtool.mjs, tests",
-      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 창(vocab consensus.window_days)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
+      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 원천별 창(vocab consensus.sources — 판 주기)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
     },
     {
       "path": "judicial/stiffness.js",
@@ -1034,6 +1042,22 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "MCP 시험 — 프로토콜 · query 가 dbtool 과 같은 글·메모리 사본·파일 바뀌면 다시 읽음 · 역할 거부 · 단일 작성자 · 핸드오프 추가만 · 받기 기록 변조·파일 바뀜 · mcp 서버의 파일 쓰기 없음 · fetch 인자 검사."
+    },
+    {
+      "path": "tests/acceptance.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "인정 시험 — 지금 표(추정 = anchor·parameter, 검증 근거 = 승인된 정성 관찰 6, 기준 0) · 승인·재검토·철회 · 승인이 축 조건을 넘으면 서기 거부 · 역할·이유·변조 · 관계 조건 · 가장 약한 근거로 보고서 판정."
+    },
+    {
+      "path": "tests/reliability_criteria.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "신뢰 기준 표 시험 — 모든 항목이 기준 번호를 달고, 번호의 단계가 실제 점수와 같으며, 기준마다 이유 또는 '이유 미정' 이 적혀 있는지."
     },
     {
       "path": "tests/gap_schema.test.mjs",

@@ -52,7 +52,7 @@ test('③ 검정력: 비중심 χ² 공식 = 모의 기각률, z 검정 필요 �
   const se = S.requiredSE(1); close(S.powerZ(1, se), 0.8, 1e-5, '필요 표준 오차에서 검정력 0.8 (반대쪽 꼬리 몫만큼 위)'); assert.ok(S.powerZ(1, se) >= 0.8);
 });
 
-const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'computed', tool: 'synthetic' }, provenance: { source: { db: 'DOI', id: '10.0000/synthetic-obs' } } }, o);
+const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'curated', sources: [{ db: 'DOI', id: '10.0000/synthetic-obs' }] }, provenance: { source: { db: 'DOI', id: '10.0000/synthetic-obs' } } }, o);
 
 test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백', () => {
   // 표준 오차 25 (sd 50 / √4). 가설 하나의 일치는 선언된 δ 로만 (M1) — δ 는 근거 등급이 붙는 값

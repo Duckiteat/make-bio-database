@@ -344,7 +344,7 @@
       if (nm.positive && !(o.value > 0)) E(w, `잡음 모형 ${u.model} 은(는) 값 > 0 에만`);
     }
     if (!(u.sd >= 0 && Number.isFinite(u.sd))) E(w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
-    if (!(Number.isInteger(o.replicates) && o.replicates >= 1)) E(w, '반복 수(replicates)는 1 이상의 정수');
+    if (!(o.replicates === null || (Number.isInteger(o.replicates) && o.replicates >= 1))) E(w, '반복 수(replicates)는 1 이상의 정수 — 원문에 없으면 null(미보고), 1 로 적지 않는다');
     for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E(w, `${k} 는 0 이상`);
     const c = o.condition;
     if (!c.species) E(w, '조건에 종(condition.species)이 없음');
@@ -1635,8 +1635,8 @@
     // ②′ 상수 등급 (신뢰 지표 ②, judicial/reliability.js): 쓰인 상수마다 등급을 계산하고 문턱 미달을 판정한다.
     //   가상 값(시나리오가 준 상수)은 등급 밖이므로 시나리오가 hypothetical 을 선언했을 때만 허용한다 — 원자료가 그 선언을 싣고 온다.
     {
-      const min = r.min_grade || RELI.DEFAULT_MIN, ctx = { evidenceShas: [] };
-      if (!RELI.ORDER.includes(min)) AE('DATA_GAP', 'AUDIT_KINETIC', '상수 등급', `등급 문턱 '${min}' 을 모름 — ${RELI.ORDER.join(' | ')}`, '시나리오의 min_grade 를 등급 이름 하나로 적을 것');
+      const min = r.min_grade || RELI.DEFAULT_MIN, ctx = { evidenceShas: [] }, minBad = RELI.gateMinError(min);
+      if (minBad) AE('DATA_GAP', 'AUDIT_KINETIC', '상수 등급', minBad, '시나리오의 min_grade 를 기본 이상의 등급 이름 하나로 적거나 지울 것');
       else for (const u of r.kinUsed) {
         const k = u.kin || {}, where = u.step ? `${u.step} ${ix.ruleOf(u.ref).label}` : u.ref;
         if (k.src === 'scenario') {
@@ -1644,7 +1644,7 @@
           continue;
         }
         const sd = RELI.scoreEvidence(k.evidence, ctx), g = RELI.gradeOf(sd.s, sd.d, 'unchecked');
-        if (!RELI.meets({ grade: g }, min)) AE('DATA_GAP', 'AUDIT_KINETIC', where, `상수 등급 ${g} < ${min} (S${sd.s}D${sd.d}) — ${sd.why}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
+        if (!RELI.meets({ s: sd.s, d: sd.d }, min)) AE('DATA_GAP', 'AUDIT_KINETIC', where, `상수 등급 ${g} < ${min} (S${sd.s}D${sd.d}) — ${sd.why}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
       }
     }
     // ③ 국소 수지: 발화한 단계의 한 번당 실체·부분 구조 변화 (첫 발화 시각)

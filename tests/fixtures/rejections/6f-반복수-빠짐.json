@@ -1,0 +1,44 @@
+{
+  "why": "레드팀 — 반복 수를 빼 버린 관찰 (미보고는 null 로 적어야 함)",
+  "observations": [
+    {
+      "id": "O+1",
+      "observable": {
+        "kind": "kinetic_constant",
+        "target": "D000155/rule/hydrate",
+        "param": "kcat"
+      },
+      "value": 170,
+      "unit": "s^-1",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 10
+      },
+      "precision": 10,
+      "condition": {
+        "species": "9606",
+        "location": "mito_matrix",
+        "pH": 8.5
+      },
+      "method": "사람 재조합 FH, 푸마르산 → 말산 방향, pH 8.5",
+      "use": "estimation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1111/febs.14782",
+            "citation": "Ajalla Aleixo et al., 2019"
+          },
+          {
+            "db": "PMID",
+            "id": "30761759",
+            "citation": "Ajalla Aleixo et al., 2019"
+          }
+        ]
+      },
+      "note": "UniProt P07954 가 Ajalla Aleixo et al., 2019 에서 큐레이션한 값(논문은 공개 접근이 아니어서 표를 직접 읽지 못했다). 불확도·반복 수가 보고되지 않아 sd 는 유효 숫자 해상도(10 s⁻¹), 반복 수는 1 로 적었다 — 측정 표준 편차가 아니다. 반대 방향(말산 → 푸마르산)은 kcat 280 s⁻¹ · Km 1.4 mM."
+    }
+  ]
+}

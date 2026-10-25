@@ -235,10 +235,37 @@
   // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
   thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
-  // ===== 합의 창 (추세 점검, judicial/trend.js) =====
-  // 추세 도장은 상하지 않는 사실이 아니다 — 점검일이 이 창(일)보다 오래되면 다시 '점검하지 않음' 이 되어 등급 anchor 가 내려간다.
-  // 창을 늘리면 오래된 점검이 기준값을 떠받치고, 줄이면 다시 받아야 한다. 권위 DB(UniProt·ChEBI)의 판 주기(8주)의 여유 배수로 둔다.
-  consensus: { window_days: 365, label: '추세 점검이 유효한 기간 (일)' },
+  // ===== 합의 창 (추세 점검, judicial/trend.js) — 원천별 (2026-10-24 결정) =====
+  // 추세 도장은 "그 원본의 그 판과 같다" 까지만 주장한다. 원천이 다음 판을 낼 수 있는 시점을 지나면 '지금도 합의와 같다' 는 확인되지 않은 것 →
+  // 다시 '점검하지 않음' 이 되어 anchor 가 내려간다. 그래서 창 = 원천이 공표한 판 주기(일). 도장의 증거 종류(evidence.kind)로 원천을 고른다.
+  // 표에 없는 원천의 도장은 창이 없으므로 만료로 본다(창을 지어내지 않음). basis 는 reasonBasis 의 열쇠.
+  consensus: {
+    label: '추세 점검이 유효한 기간 (일, 원천별)',
+    sources: {
+      uniprot: { days: 56, evidence: ['uniprot_entry'], basis: ['standard', 'principle', 'decision'], why: 'UniProtKB 는 8 주마다 새 판(2020 년부터, 1 월·여름은 늦어질 수 있음 — 늦어지면 창이 먼저 닫혀 다시 받을 뿐 잘못 통과하지 않는다)', ref: 'https://terminology.hl7.org/NamingSystem-UniProt.html' },
+      chebi:   { days: 31, evidence: ['chebi_entity'], basis: ['standard', 'principle', 'decision'], why: 'ChEBI 는 매달 새 판과 내려받기 파일을 낸다(온톨로지 파일은 매일이지만 항목 대조는 월 판 기준) — 달의 최대 일수', ref: 'https://www.ebi.ac.uk/chebi/downloads' },
+    },
+  },
+
+  // ===== 인정의 용도 (judicial/acceptance.js, build-plan 72) — 인정은 (기록, 용도) 순서쌍. 조건 표는 로직 곁(acceptance.USES) =====
+  acceptanceUses: {
+    describe: { label: '서술', note: '설명·인용에 쓴다 — 계산에는 쓰지 않는다' },
+    compare:  { label: '비교', note: '지난 합의·다른 값과 견준다 — 추세 불일치도 허용' },
+    estimate: { label: '추정', note: '시뮬레이션의 매개변수로 쓴다 — 기준 종의 값만' },
+    evidence: { label: '검증 근거', note: '모의 실험 결과와 대조하는 관찰 — 승인 도장 필요, 추정에 쓴 관찰은 안 됨' },
+    standard: { label: '기준', note: '다른 값을 재는 고정점 — 승인 + 독립 단위 ≥ 2 (I 축 전에는 닿지 못함)' },
+  },
+
+  // ===== 이유의 종류 (신뢰 지표 기준·등급·정책의 basis, judicial/reliability.js) — 2026-10-24 결정 =====
+  // 기준마다 "왜" 를 적을 뿐 아니라 그 이유가 어떤 종류인지 가른다 — 원칙에서 나온 것과 편의·결정에서 나온 것을 섞지 않게.
+  //   결정(decision)이 붙은 이유는 사용자 결정의 날짜를 why 에 적는다. 이유가 없으면 basis 를 비우지 않고 open 으로 드러낸다.
+  reasonBasis: {
+    principle:   { label: '원칙', note: '북극성(실측에 매여 있다 · 확인하지 않은 것은 확인된 것이 아니다)이나 삼권 분립에서 바로 나온다 — 바꾸면 체계의 뜻이 바뀐다' },
+    empirical:   { label: '실증', note: '저장소의 데이터·측정 결과에서 나온다(분포·비교) — 데이터가 바뀌면 다시 본다' },
+    standard:    { label: '외부 표준', note: '원천·학계가 공표한 관행·주기·형식에서 나온다 — 출처 주소를 적는다' },
+    operational: { label: '운영', note: '비용·속도·구현의 편의 — 원칙이 아니므로 더 나은 길이 있으면 바꾼다' },
+    decision:    { label: '결정', note: '사용자가 고른 것(날짜와 함께) — 대안이 있었고 그중 하나를 택했다' },
+  },
 
   // ===== 생애 주기 (Lifecycle) — 정의항의 lifecycle 필드 (형식 v7) =====
   // k_deg (s⁻¹, 1차 분해) 또는 half_life (s), k_syn (분자/s/세포, 0차 합성). fate: 분해 산물이 어디로 가나.
@@ -443,7 +470,7 @@
     K: { label: '힐 반포화 K' }, n: { label: '힐 계수 n' }, fmax: { label: '최대 배율 fmax' }, fmin: { label: '최소 배율 fmin' },
   },
   // 신뢰 지표 척도·등급의 뜻 (judicial/reliability.js — 등급을 정하는 규칙과 그 설명 rule 은 로직 곁에 남는다)
-  sourceScale: { 4: { label: '권위 DB + 사법부 도장' }, 3: { label: '동료 심사 문헌(DOI·PMID)' }, 2: { label: '출처 없음·추론·예측' }, 0: { label: '확인 불가' } },
+  sourceScale: { 4: { label: '권위 DB + 사법부 도장' }, 3: { label: '문헌 식별자(DOI·PMID) — 학술지 확인(S3.confirmed) 또는 미확인(S3.unconfirmed)' }, 2: { label: '출처 없음·추론·예측' }, 0: { label: '확인 불가' } },
   dataScale:   { 4: { label: '추적 가능한 실측·도구 계산' }, 3: { label: '요약 상수·정체성 사실' }, 2: { label: '추론·단순화·출처 없는 값' } },
   reliabilityGrades: {
     anchor:    { label: '기준값', note: '시뮬레이션의 고정점으로 쓸 수 있음' },
@@ -463,6 +490,7 @@
   },
   // 판정 수준 — 실행의 결론을 어디까지 말할 수 있나. 규약 선언이 아니라 사전 등록 확인에서 정한다 (judicial/protocol.protocolVerdict)
   judgmentLevels: {
+    acceptance_review:      { label: '인정 재검토 필요 (근거가 검증 근거로 인정되지 않음)', note: '등록된 검증 세트의 관찰 중 검증 근거 용도로 인정되지 않은 것이 있음(승인 없음·축이 내려감) — 결론은 가장 약한 근거를 따른다 (build-plan 72)' },
     validated_registered:   { label: '검증 (사전 등록)', note: '등록된 모의 실험 규약 아래 — 일치 결론은 규약의 검증 세트로만' },
     protocol_violation:     { label: '탐색 (규약 위반 — 검증 결론 불가)', note: '규약을 선언했으나 등록되지 않았거나 등록 뒤 고침 — 검증 결론을 내지 않는다' },
     registration_unchecked: { label: '규약 선언됨 (등록 미확인)', note: '사전 등록부를 받지 않아 등록 여부를 확인하지 못함 — 확인 전에는 검증 결론으로 읽지 않는다' },

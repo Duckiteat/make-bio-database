@@ -1213,8 +1213,8 @@ test('신뢰 지표: 등급은 쌍을 사전식으로 — 곱이 같아도 뜻�
   assert.equal(REL.gradeOf(4, 4, 'match'), 'anchor');
   assert.equal(REL.gradeOf(4, 4, 'mismatch'), 'legacy', '추세가 어긋나도 버리지 않고 지난값으로');
   assert.equal(REL.gradeOf(0, 4, 'match'), 'blocked');
-  // 관문은 등급 순서로 (anchor → blocked)
-  assert.ok(REL.meets({ grade: 'parameter' }, 'parameter') && !REL.meets({ grade: 'reference' }, 'parameter'));
+  // 관문은 축 조건으로 (build-plan 73) — 행의 축 값으로 판정
+  assert.ok(REL.meets({ s: 3, d: 3 }, 'parameter') && !REL.meets({ s: 2, d: 3 }, 'parameter'));
   assert.deepEqual(REL.ORDER, ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked']);
 });
 test('신뢰 지표: S 는 도장·문헌 식별자에서, D 는 실측·도구 계산에서 계산된다', () => {
@@ -1259,7 +1259,7 @@ test('신뢰 지표 ②: 관문은 쓰인 상수의 등급을 보고 미달을 �
   assert.ok(ok.ok && ok.rows[0].grade === 'parameter', REL.constantText(ok));
   const bad = REL.constantVerdict(ir({ src: 'data', k: 1, evidence: { level: 'asserted' } }), {});
   assert.equal(bad.ok, false);
-  assert.match(bad.violations[0].msg, /등급 reference < parameter \(S2D3\)/, '출처 없이 적은 상수는 참고 등급 — 계산에 쓸 수 없다');
+  assert.match(bad.violations[0].msg, /등급 reference < parameter \(S2D2\)/, '출처 없이 적은 상수는 참고 등급 — 계산에 쓸 수 없다 (2026-10-24: asserted 는 D2)');
   // 문턱은 시나리오가 올릴 수 있다: parameter 로는 통과하던 값이 anchor 문턱에서는 미달
   assert.equal(REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), { min_grade: 'anchor' }).ok, false);
   assert.match(REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), { min_grade: '최고' }).error, /등급 문턱/);
@@ -1339,9 +1339,10 @@ test('추세 점검 ③: 합의 수신함의 새 원본으로 판정하고, 창�
   const r = TRD.check(BASE, { registry: reg, root: ROOT, reverify: false, memo: false });
   assert.ok(r.byVerdict.match > 0, `match ${r.byVerdict.match || 0}`);
   assert.equal(r.byVerdict.mismatch || 0, 0, `합의와 다른 값 ${JSON.stringify(r.rows.filter((x) => x.verdict === 'mismatch').slice(0, 3))}`);
-  assert.equal(r.window, DefDB.VOCAB.consensus.window_days);
+  assert.deepEqual(r.window, Object.fromEntries(Object.entries(DefDB.VOCAB.consensus.sources).map(([k, x]) => [k, x.days])));
   // 창 안: 유효한 추세 도장이 등급의 추세 축이 되고 지문(S4·D4)이 기준값으로 올라간다
-  const v = TRD.verdicts(BASE, reg, { root: ROOT, reverify: false });
+  // 날짜를 도장 직후로 고정 — 시험은 판정 논리를 보고, 오늘의 신선도는 `attest` 가 본다 (창이 원천의 판 주기라 짧다)
+  const v = TRD.verdicts(BASE, reg, { root: ROOT, reverify: false, today: '2026-10-11' });
   assert.ok(Object.keys(v.map).length > 0 && Object.values(v.map).every((x) => x === 'match'));
   const sum = REL.summary(REL.items(BASE, { ...ATTR0(BASE), trend: v.map }));
   assert.ok(sum.byGrade.anchor > 0, `기준값 ${sum.byGrade.anchor}`);

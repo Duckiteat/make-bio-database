@@ -124,7 +124,7 @@
           "type": "number"
         },
         "replicates": {
-          "type": "integer",
+          "type": ["integer", "null"],
           "minimum": 1
         },
         "condition": {

@@ -371,7 +371,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
   - `observable { kind, target, param?, denominator?, also? }`: 측정량(`vocab.observables`). 대상은 종류에 따라 다름 — amount·concentration 은 묶음 키, fraction·event_time 은 cell_state 정의항, kinetic_constant 는 `D…/rule/키` 와 `param`, `ratio` 는 두 묶음의 몫(target/denominator, 무차원 unit 1 — 정규화 밴드·활성 분율·fold-change), `fraction_above` 는 게이팅 문턱(threshold, 분자 수) 이상인 실행의 비(%양성, 앙상블 평균이 0–1), `dose_slope` 는 규칙(target `D…/rule/키`)의 누적 진행량을 용량 축 `dose { target: 묶음, values: [서로 다른 분자 수 ≥ 2] }` 의 시작량에 대해 최소제곱한 기울기(무차원 unit 1). `also`(묶음 키 목록)는 측정이 못 가르는 형태를 합산한다(amount·concentration·ratio 분자·fraction_above).
   - `value`·`unit`: SI 정준 단위만. 단위는 molecule · M · 1 · s, 속도 상수는 `vocab.kineticUnits` 를 따르고 k·k0·k_r 은 `M^(1−order) s^-1`.
   - `uncertainty { kind: measurement | biological | combined, model: normal | lognormal | poisson, sd ≥ 0 }`: 필수. 값만 있는 관찰은 받지 않는다. poisson 은 amount 에만, lognormal 은 값 > 0 에만.
-  - `replicates`(1 이상의 정수), `precision`·`detection_limit`·`saturation`(선택, 0 이상). 검출 한계 아래 값은 상한 검정, 포화 상한 위 값은 하한 검정 — 장치의 눈먼 곳을 판정에 담는다(`judicial/obs_compare.js`). 정성 관찰 `readout.instrument_resolution`(선택, 0 이상)은 측정이 가르는 최소 차이로, 모의 분해능 바닥(수치 오차 + 양자)을 그 값까지 올린다.
+  - `replicates`(1 이상의 정수, 원문에 없으면 `null` = 미보고 — 1 로 채우지 않음. 신뢰 지표는 D3, 비교는 1 회로 봄), `precision`·`detection_limit`·`saturation`(선택, 0 이상). 검출 한계 아래 값은 상한 검정, 포화 상한 위 값은 하한 검정 — 장치의 눈먼 곳을 판정에 담는다(`judicial/obs_compare.js`). 정성 관찰 `readout.instrument_resolution`(선택, 0 이상)은 측정이 가르는 최소 차이로, 모의 분해능 바닥(수치 오차 + 양자)을 그 값까지 올린다.
   - `condition { species(필수), location, cell, temperature_K, pH, time_s, states:[묶음 키] }`.
   - `calibration { kind: identity | linear(a, b) | table(points) }` + `raw`: 값은 `compiler/obs_operator.js` 로 다시 계산되어 `value` 와 같아야 한다(상대 1e-12). 표의 범위 밖이면 거부.
   - `provenance.sha256`(원본 파일), `method`, `note`.
@@ -464,12 +464,14 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 축 | 값 | 어디서 계산되나 |
 |---|---|---|
-| S 출처 | 4 권위 DB + 유효한 사법부 도장 · 3 동료 심사 문헌 식별자(DOI·PMID) · 2 그 밖(출처 없음·추론·예측) · 0 확인 불가(도장 없는 verified·지난 도장·unmapped·철회) | 증명 등록부(`attestations/registry.json`)와 근거의 `sources` |
-| D 성질 | 4 추적 가능한 실측·도구가 도장받은 원본에서 계산한 값 · 3 요약 상수·정체성 사실 · 2 추론·단순화·출처 없는 값 | 관찰 기록(v10 — 불확도·반복 수)·`evidence.level`·`tool` 의 sha256 |
+| S 출처 | 4 권위 DB + 유효한 사법부 도장 · 3 문헌 식별자(DOI·PMID) — 수신함 기록으로 학술지 확인(`S3.confirmed`) 또는 미확인(`S3.unconfirmed`) · 2 그 밖(출처 없음·추론·예측, 심사 전 원고 `S2.preprint`) · 0 확인 불가(도장 없는 verified·지난 도장·unmapped·철회, 철회 논문 `S0.retracted`) | 증명 등록부(`attestations/registry.json`)와 근거의 `sources` |
+| D 성질 | 4 추적 가능한 실측·도구가 도장받은 원본에서 계산한 값 · 3 요약 상수·정체성 사실 · 2 추론·단순화·출처 없이 적은 값(asserted — 2026-10-24 D3 → D2) | 관찰 기록(v10 — 불확도·반복 수)·`evidence.level`·`tool` 의 sha256 |
 
 - **곱(S × D)은 판정에 쓰지 않는다.** (2,4) 와 (4,2) 가 모두 8 이 되어 "출처가 약한 실측" 과 "권위 DB 에서 온 추론" 을 가르지 못한다. 보고서에 참고 숫자로만 적고, 관문은 쌍을 사전식으로 본다.
 - 등급은 **권한의 이름**이다: `anchor` 기준값(S4 ∧ D4 ∧ 추세 일치 — 시뮬레이션의 고정점) · `parameter` 매개변수(S ≥ 3 ∧ D ≥ 3) · `bounded` 구간값(S4 ∧ D2 — 오차 막대와 함께) · `legacy` 지난값(추세 불일치 — 지우지 않고 비교에만) · `reference` 참고(계산 금지) · `blocked` 차단(한계로만).
-- 추세 점검(시간 축)은 아직 없다 — 모든 항목의 `trend` 가 `unchecked` 이므로 **지금은 `anchor` 가 하나도 없다**. 추세 점검이 들어오면 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해).
+- 추세 점검(시간 축)은 아래 ③ — 날짜가 박힌 도장으로 기록한다(재현되지 않는 웹 검색 결과를 상태로 저장하지 않기 위해). 2026-10-24 현재 `anchor` 74 개는 **전부 구조 지문**이다 — 추세 점검이 신원(외부 ID·지문)에만 돌아 생물 값은 늘 `unchecked` 이기 때문(기준 `T.scope`, build-plan 71).
+- **기준과 이유는 한 표**: 점수 갈래마다 번호·조건·이유가 `judicial/reliability.js` 의 `CRITERIA`(S·D·T)·`GRADE_WHY`·`POLICY_OPEN` 에 있고, 항목마다 `cs`·`cd`·`ct` 로 자기 기준 번호를 단다. 이유가 확립되지 않은 기준은 이유를 지어내지 않고 `open`(무엇이 미정인지)으로 드러낸다 — 2026-10-24 이유 미정 7(S3.doi · D4.measured 문턱 · D3.asserted · T.unchecked 창 365일 · T.scope · 등급 순번 · 기본 문턱). `dbtool grade` 끝에 표가 나온다.
+- **이유의 종류** (2026-10-24): 기준·등급·정책마다 `basis` — `vocab.reasonBasis`(원칙·실증·외부 표준·운영·결정). 결정이면 why 에 날짜. 같은 날 이유를 정한 셋: `D4.measured`(반복 1 — 독립성은 I 축), `T.unchecked`(창 = 원천별 판 주기), 정책 `default_min`(parameter — 그 아래면 결론이 근거를 주장할 수 없고, anchor 면 외부 ID·속도 상수가 닿지 못함). 남은 이유 미정 3(S3.unconfirmed 유지 기한 · T.scope · 등급 순번). `POLICY_OPEN` → `POLICY`.
 - `node dbtool.mjs grade [<D…>] [--min <등급>]` — 등급 분포·쌍 분포·항목별 표, `--min` 미달이 있으면 종료 코드 1.
 
 ### 관문 (②) — 시뮬레이션이 읽는 상수의 등급
@@ -480,10 +482,10 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 |---|---|
 | `src: 'data'` | 그 상수의 근거로 (S, D) 를 계산해 등급을 내고, **문턱 미달이면 Audit Error**(`AUDIT_KINETIC` · fault `DATA_GAP`) |
 | `src: 'scenario'` | 시나리오가 준 값은 등급 밖(`hypothetical`) — 시나리오가 `hypothetical: true` 를 선언했을 때만 허용, 아니면 미달과 같이 거부 |
-| 문턱 | 기본 `parameter`. 시나리오 `min_grade` 로 올릴 수 있다(등급 이름 하나). 모르는 이름이면 판정하지 않고 그 사실을 Audit Error 로 낸다 |
+| 문턱 | 기본 `parameter`. 시나리오 `min_grade` 로 올릴 수만 있다(등급 이름 하나 — 지금 `anchor`·`parameter`). 모르는 이름이나 기본보다 엄격하지 않은 등급이면 판정하지 않고 그 사실을 Audit Error 로 낸다. 비교는 축 조건 `THRESHOLD`(등급마다 S·D 바닥과 허용 추세의 합) — 순번 `ORDER` 는 표의 열 순서일 뿐 (2026-10-25, build-plan 73) |
 | 보고 | 과정 보고서의 무결성 증명서에 한 줄(상수 등급), §5 기술 부록에 분포. 운명 판정의 `grades` (`judicial/reliability.js` `constantVerdict`) |
 
-지금 이 저장소의 규칙 `kinetics` 는 0건이다 — 확인한 속도 상수가 없으므로 모든 상수가 `hypothetical` 시나리오에서 온다. 그래서 `src: 'data'` 분기는 시험에서만 돌고, 확인된 상수가 들어오는 날 그대로 작동한다.
+2026-10-24 현재 규칙 `kinetics` 중 등급 `parameter` 는 4 개(TCA 실측 고리)뿐이고, 나머지 상수는 모두 `hypothetical` 시나리오(가정 원장)에서 온다.
 
 ### 추세 축 (③) — 지금도 합의와 같은가 (`judicial/trend.js`, `dbtool trend`)
 
@@ -495,11 +497,28 @@ S·D 는 "그때 맞았다" 까지만 말한다. 등급 `anchor`(기준값)는 "
 | 합의 수신함 | `data/fetched/consensus/` — 같은 과제 이름 규약. 신원 수신함(`data/fetched/`)은 신원 도장의 증거이므로 **덮지 않는다**. 받기는 입법 서기(`dbtool trend --fetch`) |
 | 판정 | 새 원본으로 신원 확인을 다시 돌려 같은 결론·같은 값이면 `match`, 결론이나 값이 달라지면 `mismatch`, 새 원본이 없으면 `unchecked` |
 | 도장 | 날짜가 박힌 claim `trend` — 주체·판정·증거 파일 sha256·점검일·발급 모듈 코드 sha256·digest. 같은 등록부(`attestations/registry.json`)에 살지만 신원 도장과 다른 주장이라 검증 모듈이 다르다(`verifyTrendStamp`) |
-| 만료 | 점검일이 합의 창(`vocab.consensus.window_days` = 365일)보다 오래되면 다시 `unchecked` — **`anchor` 는 영구하지 않다** |
+| 만료 | 점검일이 도장 원천의 합의 창(`vocab.consensus.sources` — 판 주기: UniProt 56일 · ChEBI 31일, 증거 종류로 원천을 고름)보다 오래되면 다시 `unchecked` — **`anchor` 는 영구하지 않다**. 창이 없는 원천은 만료 |
 | `mismatch` | 값을 지우지 않는다. 등급이 `legacy`(지난값, 비교에만)로 내려가고 `Consensus_Gap` 한계 후보가 된다 — 왜 달라졌는지(원본의 개정 / 우리 쪽 오류)가 데이터다 |
 
 지금 분포: 주체 170 중 match 170 · mismatch 0 → **지문 70개가 `anchor`** (S4 ∧ D4 ∧ 추세 일치). 외부 ID 는 정체성 사실(D3)이므로 추세가 맞아도 `parameter` 가 상한이다.
 추세 도장이 증명하지 못하는 것: 원본이 **실제로 더 새 것인지**는 바이트로 알 수 없다 (한계 L000085) — 그래서 창으로 만료시킨다.
+
+### 인정 (④) — (기록, 용도) (`judicial/acceptance.js`, `dbtool accept`, build-plan 72)
+
+등급은 기록 하나의 성질이고, **인정은 그 기록을 어디에 쓰느냐까지 묻는 순서쌍**이다. 저장하지 않고 계산한다(승인 도장만 저장).
+
+| 용도 (`vocab.acceptanceUses`) | 축 조건 | 관계 조건 | 승인 |
+|---|---|---|---|
+| `describe` 서술 | S ≥ 2 | — | 없음 |
+| `compare` 비교 | S ≥ 3 ∧ D ≥ 2 (추세 불일치 허용) | — | 없음 |
+| `estimate` 추정 | S ≥ 3 ∧ D ≥ 3 ∧ 불일치 아님 · S4 ∧ D2 는 조건부(오차 막대) | 기준 종 | 없음 |
+| `evidence` 검증 근거 | S ≥ 3 ∧ D ≥ 2 ∧ 불일치 아님 | 기준 종 · 확인된 문헌(S3.unconfirmed 불가) · 추정에 쓰지 않은 관찰 기록만 | 필요 |
+| `standard` 기준 | S4 ∧ D4 ∧ 추세 일치 | 기준 종 · 확인된 문헌 · 독립 단위 ≥ 2(I 축 — 아직 없어 닿지 못함) | 필요 |
+
+- 상태: `accepted` · `conditional` · `needs_approval`(조건은 맞고 승인 없음) · `review`(승인이 있는데 축·관계가 내려감) · `rejected`.
+- 승인 도장: 증명 등록부의 claim `accept` — `{ subject { sense: O…, field: 'accept', ns: 용도, value: O… }, verdict approved | revoked, by human | integrator, reason, issuer, issued_at, digest }`. 주체는 관찰 기록만. 승인은 축·관계 조건을 넘지 못한다(서기 `appendAttestations` 가 `checkIssue` 로 거부). 철회는 같은 주체의 revoked 도장(새 것이 대신함).
+- 결론은 가장 약한 근거를 따른다: 증거 보고서에서 등록된 검증 세트의 관찰 하나라도 `evidence` 로 인정되지 않으면 판정 수준이 `acceptance_review`(인정 재검토 필요). 관찰의 `use` 는 신청이지 인정이 아니다.
+- 등급 6칸은 자동 인정의 상한: anchor·parameter → 추정 · bounded → 추정(조건부) · legacy → 비교 · reference → 서술(S3D2 는 비교까지) · blocked → 없음.
 
 ## 8J. 외부 ID 의 역할 — ChEBI 규약 (형식 v10 확장, 2026-10-10)
 
@@ -600,6 +619,11 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-25 | (인정 = 기록·용도) | 새 `judicial/acceptance.js`(용도 5 · 축·관계 조건 · 승인 도장 claim `accept` · 가장 약한 근거) · `vocab.acceptanceUses` · 판정 수준 `acceptance_review`(사전 #116) · `dbtool accept` · MCP clerk `accept` · 증명 등록부에 승인 도장 6(정성 관찰, 2026-10-25 일괄) · `validStamps().accept` · 증거 보고서 `judgment.acceptance`. db 형식 불변 (§8K 인정) |
+| 2026-10-25 | (문턱 = 축 조건) | `reliability.meets` 가 순번 대신 `THRESHOLD`(축 바닥의 합)로, 행의 s·d·trend 를 받음 · `atLeast`·`gateMinError` — 관문 문턱은 기본보다 엄격한 것만(낮은 `min_grade` 거부). 판정이 바뀐 곳은 문턱 bounded 에서 parameter 행뿐(전수 시험). db 형식 불변 |
+| 2026-10-25 | (반복 수 미보고 · 추정값) | 정량 관찰 `replicates` 에 `null`(미보고) 허용 — 계약 `schemas/obs/observation.schema.json`·관문·정규화·`obs_compare`(1 회로 봄). 신뢰 기준 `D2.estimate`(관찰의 근거 수준이 computed·predicted). 기존 기록 불변(이주 없음 — 관찰은 고치지 않음), 2차 정리 속도 상수 관찰 7 의 반복 수 1 은 한계 3건(Observation_Gap) |
+| 2026-10-24 | (이유의 종류 · 원천별 창) | `vocab.reasonBasis`(원칙·실증·외부 표준·운영·결정) · 기준·등급·정책마다 `basis` · `POLICY_OPEN` → `POLICY`(why·open) · `vocab.consensus.window_days` → `consensus.sources`(원천별 판 주기·증거 종류·출처) — 점수·등급 불변. db 형식 불변 |
+| 2026-10-24 | (신뢰 기준 표) | 신뢰 지표 항목에 기준 번호 `cs`·`cd`·`ct`(계산 결과, 저장 안 함) · `reliability.CRITERIA`·`GRADE_WHY`·`POLICY_OPEN` — 점수·등급 불변. db 형식 불변 |
 | 2026-10-23 | (받기 기록) | `data/fetched/<원천>/FETCH_LOG.jsonl` 신설 — 받기마다 한 사건, 추가 전용 사슬 `seq·at·url·file·ok·bytes?·sha256?·error?·cached?·prev·root`(첫 prev = sha256('fetchlog\n')). 수신함에 공개 전문 `europepmc/PMC-{번호}.xml`. 서기 구역 `handoff`(`workspace/handoff/`). db.json 형식·버전 불변 |
 | 2026-10-23 | (가정 원장) | `data/assumptions.jsonl` 신설(§8O) — 추가만 하는 사슬 `seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root`, 첫 prev = sha256('assumptions\n'). 시나리오 숫자 자리에 `{ "assume": "A…" }`. 사전 등록 사건에 선택 칸 `assumptions`(번호 목록). 변환 `migrations/012-assumption-ledger.mjs`(미등록 시나리오 34 개 · 숫자 자리 1 696 → 기록 360, 무손실 확인). db.json 형식·버전 불변 |
 | 2026-10-23 | 12 (측정 유형) | 측정량 `dose_slope`(대상 규칙 진행량, `observable.dose { target, values }`, 단위 1, 보존 분류 non_conserved/sensitivity) · 교란 `set_amount { target: 묶음, n }`(+ dose_series of set_amount) · `schemas/obs` 갱신. 추가 필드만 — 기존 db 불변 |

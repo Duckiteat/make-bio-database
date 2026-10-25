@@ -114,6 +114,9 @@ const REL = req('./judicial/reliability.js'); // 사법부 — 신뢰 지표 (S�
 const TR = req('./judicial/trend.js');        // 사법부 — 추세 점검 (시간 축: 합의와 같은가)
 // 추세 축: 창 안의 유효한 추세 도장만 (없으면 'unchecked' — anchor 가 나오지 않는다)
 const trendMap = (db, reg) => TR.verdicts(db, reg, { root: HERE }).map;
+// 신뢰 지표의 입력 한 벌 (도장·지난 도장·문헌 상태·추세) — grade·accept·보고서가 같은 것을 쓴다
+const relInput = (db, reg, quick) => { const v = ATT.validStamps(db, reg, { root: HERE, reverify: !quick }); return { attestations: v.keys, stale: v.stale, stamps: reg.stamps, trend: quick ? {} : trendMap(db, reg), literature: req('./inbox.js').literatureStatus(dirname(DB_PATH)) }; };
+const ACC = req('./judicial/acceptance.js'); // 사법부 — 인정 (기록, 용도)
 
 switch (cmd) {
   case 'status': {
@@ -372,8 +375,8 @@ switch (cmd) {
   }
   case 'grade': {
     // 신뢰 지표 (사법부 judicial/reliability.js): 도장·근거·관찰에서 (S, D) 를 계산해 등급을 낸다 — 저장하지 않는다
-    const db = loadDB(), reg = ATT.readRegistry(HERE), v = ATT.validStamps(db, reg, { root: HERE, reverify: !flags.quick });
-    const rows = REL.items(db, { attestations: v.keys, stale: v.stale, stamps: reg.stamps, trend: flags.quick ? {} : trendMap(db, reg) });
+    const db = loadDB(), reg = ATT.readRegistry(HERE);
+    const rows = REL.items(db, relInput(db, reg, flags.quick)); // 출처 논문 상태(학술지·원고·철회)는 수신함에서
     const target = args[0] ? DefDB.resolveRef(DefDB.index(DefDB.normalize(db)), args[0]) : null;
     if (target && target.error) die(target.error);
     const pick = target ? rows.filter((r) => r.sense === target.id) : rows;
@@ -488,7 +491,8 @@ switch (cmd) {
         try { const raw = ORCH.runRate(db, tg.id, { scenario: r.scenario, t_end: r.scenario.window || 1, dt: r.scenario.dt || 0.001 }); sim = { cum: raw.cum, window: r.scenario.window || 1 }; }
         catch (e) { simError = e.message; }
       }
-      const rep = ER.evidenceReport(db, r.scenario, { target: tg.id, scenarioText: r.text, dbText, sim, derived: r.derived, prereg });
+      const reg = ATT.readRegistry(HERE), acceptance = ACC.table(db, { ...relInput(db, reg), registry: reg }); // 결론은 가장 약한 근거의 인정을 따른다
+      const rep = ER.evidenceReport(db, r.scenario, { target: tg.id, scenarioText: r.text, dbText, sim, derived: r.derived, prereg, acceptance });
       return { rep, simError };
     };
     if (flags.recheck) { // 결론의 재검증 (build-plan 13): 보고서에 실린 의존 지문을 지금 db 와 대조 — 값 내용이 바뀌었거나 근거가 철회됐으면 '재검증 필요' (라벨, 차단 아님)
@@ -589,11 +593,29 @@ switch (cmd) {
         else if (r.stale) console.log(`  · 지난 추세 도장 ${r.key}: ${r.reasons.join(' · ')}`);
         else { console.log(`  ✗ ${r.key}: ${r.reasons.join(' · ')}`); tbad++; }
       }
-      for (const e of tv.expired) console.log(`  ⌛ 만료 ${e.key}: 점검 ${e.age}일 전 > 합의 창 ${tv.window}일 — 다시 받아 점검할 것`);
+      for (const e of tv.expired) console.log(`  ⌛ 만료 ${e.key}: 점검 ${e.age}일 전 > ${e.source ? `${e.source} 합의 창 ${e.window}일(판 주기)` : '원천에 합의 창이 없음'} — 다시 받아 점검할 것 (trend --fetch)`);
       console.log(`— 추세 도장 ${v.trend.length}: 유효 ${Object.keys(tv.map).length}, 만료 ${tv.expired.length}, 무효 ${tbad}`);
     }
-    console.log(`— 증명 도장 ${reg.stamps.length - v.trend.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}${(v.stale || []).length ? `, 지난 도장 ${v.stale.length} (데이터에서 빠진 주체 — 계보 기록)` : ''}`);
-    process.exit(v.failed.length + tbad ? 1 : 0);
+    // 승인 도장(claim 'accept', build-plan 72) — 형식·digest·역할·이유. 축이 내려간 승인은 무효가 아니라 '재검토'(accept 표에서)
+    let abad = 0;
+    for (const st of v.accept) { const r = ACC.verifyAcceptStamp(st, db); if (r.ok) console.log(`  ✓ ${r.key} (승인 ${st.verdict} · ${st.by} · ${st.issued_at})`); else if (!r.stale) { console.log(`  ✗ ${r.key}: ${r.reasons.join(' · ')}`); abad++; } }
+    if (v.accept.length) console.log(`— 승인 도장 ${v.accept.length}: 무효 ${abad}`);
+    console.log(`— 증명 도장 ${reg.stamps.length - v.trend.length - v.accept.length}: 유효 ${v.keys.length}, 무효 ${v.failed.length}${(v.stale || []).length ? `, 지난 도장 ${v.stale.length} (데이터에서 빠진 주체 — 계보 기록)` : ''}`);
+    process.exit(v.failed.length + tbad + abad ? 1 : 0);
+  }
+  case 'accept': {
+    // 인정 (사법부 judicial/acceptance.js, build-plan 72): 인자 없으면 (기록, 용도) 표. <O…>… --use evidence --reason "…" 은 승인 도장,
+    //   --revoke 는 철회. 승인 역할은 BIODB_ROLE(human 기본 · integrator) — collector 는 못 한다. 축·관계 조건을 넘는 승인은 서기가 거부
+    const db = loadDB(), reg = ATT.readRegistry(HERE), input = relInput(db, reg);
+    const ids = args.filter((a) => /^O\d{6}$/.test(a));
+    if (!ids.length) { const t = ACC.table(db, { ...input, registry: reg }); console.log(ACC.text(t)); process.exit(t.invalid.length ? 1 : 0); }
+    const use = flags.use, reason = flags.reason && flags.reason !== true ? String(flags.reason) : '';
+    if (!ACC.HIGH.includes(use)) die(`--use ${ACC.HIGH.join(' | ')} (서술·비교·추정은 승인 없이 계산된다)`);
+    const by = process.env.BIODB_ROLE || 'human', date = new Date().toISOString().slice(0, 10);
+    const stamps = ids.map((id) => ACC.issue({ id, use, by, reason, date, verdict: flags.revoke ? 'revoked' : 'approved' }));
+    const f = CLERK.appendAttestations({ root: HERE, stamps, db, context: input });
+    console.log(`승인 도장 ${stamps.length} (${flags.revoke ? '철회' : '승인'} · ${use} · ${by}) 기록 (입법 서기): ${rel(f)}`);
+    break;
   }
   case 'trend': {
     // 추세 점검 (사법부 judicial/trend.js): 더 새 원본에 같은 확인을 다시 돌려 합의와 같은지 — 받기·등록부 쓰기는 입법 서기

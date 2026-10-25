@@ -558,7 +558,7 @@
     const u = isObj(b.uncertainty) ? b.uncertainty : {};
     o.uncertainty = { kind: str(u.kind), model: str(u.model), sd: num(u.sd) };
     for (const k of ['precision', 'detection_limit', 'saturation', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
-    o.replicates = num(b.replicates);
+    o.replicates = b.replicates === null ? null : num(b.replicates); // null = 원문에 반복 수가 없음(미보고) — 1 로 적지 않는다
     o.condition = normObsCondition(b.condition);
     if (isObj(b.calibration)) {
       const cal = { kind: str(b.calibration.kind) };

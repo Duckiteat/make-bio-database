@@ -6,7 +6,7 @@
 //   ② 합의 수신함(data/fetched/consensus/)에 원본을 다시 받는다. 신원 수신함(data/fetched/)은 도장의 증거이므로 덮지 않는다.
 //   ③ 판정: 그 새 원본으로 신원 확인을 다시 돌려 같은 결론이 나오면 `match`, 결론이나 값이 달라지면 `mismatch`, 원본이 없으면 `unchecked`.
 //   ④ 기록: 날짜가 박힌 도장(claim 'trend') — 주체·판정·증거 파일 sha256·점검일·발급 모듈 코드 sha256. 재검증은 digest + 증거 sha256 + 같은 판정 재실행.
-// 도장은 영구하지 않다: 점검일이 합의 창(vocab consensus.window_days)보다 오래되면 다시 `unchecked` 가 되어 anchor 가 내려간다.
+// 도장은 영구하지 않다: 점검일이 원천별 합의 창(vocab consensus.sources — 원천의 판 주기)보다 오래되면 다시 `unchecked` 가 되어 anchor 가 내려간다.
 // `mismatch` 는 값을 지우라는 뜻이 아니다 — 등급이 `legacy`(지난값)로 내려가고 `Consensus_Gap` 한계로 등록한다 (지난값은 비교에 쓴다).
 // 이 파일은 판정만 한다: 받기·쓰기 없음(받기·등록부 쓰기는 입법 서기 legislative/clerk.mjs).
 'use strict';
@@ -24,7 +24,11 @@ const VERDICTS = M.labelsOf(M.VOCAB.trendVerdicts); // 추세 판정 토큰 → 
 const sha = (x) => crypto.createHash('sha256').update(x).digest('hex');
 const codeSha = () => sha(fs.readFileSync(path.join(__dirname, 'trend.js')));
 const day = (s) => Math.floor(Date.parse(s + (/T/.test(s) ? '' : 'T00:00:00Z')) / 86400000);
-const windowDays = () => V.consensus.window_days;
+// 합의 창은 원천별 (vocab.consensus.sources): 도장의 증거 종류 → 원천 → 그 원천의 판 주기(일). 표에 없으면 null(창 없음 = 만료)
+const SOURCES = V.consensus.sources;
+const windowDays = () => Object.fromEntries(Object.entries(SOURCES).map(([k, s]) => [k, s.days]));
+const sourceOf = (kind) => Object.keys(SOURCES).find((k) => SOURCES[k].evidence.includes(kind)) || null;
+const windowText = (w) => Object.entries(w).map(([k, d]) => `${k} ${d}일`).join(' · ');
 
 // 점검 대상: 유효한 신원 도장(claim 'verified')의 주체. 도장 없는 값은 S 가 이미 낮으므로 추세를 물을 자리가 아니다.
 // db 는 **부르는 쪽이 준 객체 그대로** 넘긴다 — validStamps 가 객체 신원으로 판정을 기억하므로,
@@ -120,7 +124,8 @@ function verdicts(db, registry, opt) {
     if (!v.ok) continue;
     const age = day(opt.today) - day(st.issued_at);
     // 추세 점검은 상하지 않는 사실이 아니다 — 창(일)을 넘기면 다시 '점검하지 않음' 이다
-    if (age > w) { expired.push({ key: v.key, age }); continue; }
+    const src = sourceOf((st.evidence || {}).kind), win = src ? w[src] : null;
+    if (win == null || age > win) { expired.push({ key: v.key, age, source: src, window: win }); continue; }
     out[`${st.subject.sense}|${st.subject.ns}:${st.subject.value}`] = st.verdict;
   }
   return { map: out, expired, window: w, today: opt.today };
@@ -158,7 +163,7 @@ function gapCandidates(db, rows) {
 
 function text(r, opt) {
   opt = opt || {};
-  const L = [`# 추세 점검 (Trend Check) — 주체 ${r.n}, 합의 창 ${r.window}일, 점검일 ${r.today}`, ''];
+  const L = [`# 추세 점검 (Trend Check) — 주체 ${r.n}, 합의 창 ${windowText(r.window)}, 점검일 ${r.today}`, ''];
   L.push('추세 점검은 웹 검색 결과를 저장하지 않는다 — 더 새 원본을 합의 수신함에 받아 **같은 확인을 다시 돌린** 결과다. 창을 넘긴 도장은 다시 `unchecked` 이므로 `anchor` 는 영구하지 않다.', '');
   L.push('| 판정 | 뜻 | 수 |', '|---|---|---|');
   for (const k of ['match', 'mismatch', 'unchecked']) L.push(`| ${k} | ${VERDICTS[k]} | ${r.byVerdict[k] || 0} |`);
@@ -175,4 +180,4 @@ function text(r, opt) {
   return L.join('\n');
 }
 
-module.exports = { CONSENSUS, VERDICTS, subjects, resetDB, plan, check, issue, verdicts, verifyTrendStamp, gapCandidates, text, windowDays };
+module.exports = { CONSENSUS, VERDICTS, subjects, resetDB, plan, check, issue, verdicts, verifyTrendStamp, gapCandidates, text, windowDays, sourceOf };

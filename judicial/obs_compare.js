@@ -20,9 +20,12 @@ const S = require('./stats.js');
 const RELI = require('./reliability.js');
 const PROTO = require('./protocol.js');
 
+// 반복 수 미보고(null)는 한 번 잰 것으로 본다 — 표준 오차가 가장 넓은 쪽(보수적), 반복을 지어내지 않음
+const reps = (o) => (o.replicates == null ? 1 : o.replicates);
+
 // 비교 척도로 옮긴 예측·관찰과 분산 성분
 function scale(o, samples) {
-  const u = o.uncertainty, r = o.replicates, log = u.model === 'lognormal';
+  const u = o.uncertainty, r = reps(o), log = u.model === 'lognormal';
   const finite = samples.filter(Number.isFinite), censored = samples.length - finite.length;
   const xs = log ? finite.map((v) => Math.log(v)) : finite;
   const n = xs.length, mu = n ? S.mean(xs) : NaN, s2 = S.variance(xs);
@@ -135,14 +138,14 @@ function verdict(o, predA, predB, opt) {
     } else {
       out.discrimination = { delta, se, power: se > 0 ? S.powerZ(delta, se, opt.alpha) : delta ? 1 : 0, scale: A.scale };
       // 필요한 정밀도: 지금 반복 수에서 sd, 지금 sd 에서 반복 수 (몬테카를로 분산은 빼고 — 앙상블을 늘려 줄일 수 있음)
-      const seReq = S.requiredSE(delta, opt.alpha, opt.power), r = o.replicates, mc = Math.max(scale(o, predA).mc, scale(o, predB).mc);
+      const seReq = S.requiredSE(delta, opt.alpha, opt.power), r = reps(o), mc = Math.max(scale(o, predA).mc, scale(o, predB).mc);
       const noiseReq = seReq * seReq - mc;
       out.required = { se: seReq, sd_at_replicates: noiseReq > 0 ? Math.sqrt(noiseReq * r) : 0, replicates_at_sd: noiseReq > 0 ? Math.ceil((o.uncertainty.sd ** 2) / noiseReq) : Infinity, scale: A.scale,
         note: delta === 0 ? '두 가설의 예측이 같음 — 이 측정량으로는 어떤 정밀도로도 가를 수 없음' : noiseReq > 0 ? '' : '모델 쪽 몬테카를로 오차가 이미 필요한 표준 오차보다 큼 — 앙상블을 늘려야 함' };
     }
   }
   out.fault = { CONSISTENT: 'FINDING', CONFLICT: 'DOMAIN_CONFLICT', INDISTINGUISHABLE: 'DATA_GAP' }[out.verdict];
-  if (out.verdict === 'INDISTINGUISHABLE' && out.required) out.limitation = { type: 'Observation_Gap', requirement: `두 가설을 가르려면 ${out.required.scale === 'ln' ? 'ln 척도 ' : ''}표준 오차 ≤ ${fmt(out.required.se)} (지금 ${fmt(Math.max(A.se, out.B.se))}): 반복 ${o.replicates} 회면 sd ≤ ${fmt(out.required.sd_at_replicates)}, 지금 sd 면 반복 ≥ ${out.required.replicates_at_sd}` };
+  if (out.verdict === 'INDISTINGUISHABLE' && out.required) out.limitation = { type: 'Observation_Gap', requirement: `두 가설을 가르려면 ${out.required.scale === 'ln' ? 'ln 척도 ' : ''}표준 오차 ≤ ${fmt(out.required.se)} (지금 ${fmt(Math.max(A.se, out.B.se))}): 반복 ${reps(o)} 회${o.replicates == null ? '(미보고 — 1 회로 봄)' : ''}면 sd ≤ ${fmt(out.required.sd_at_replicates)}, 지금 sd 면 반복 ≥ ${out.required.replicates_at_sd}` };
   return out;
 }
 const fmt = (x) => (Number.isFinite(x) ? Number(x.toPrecision(4)).toString() : String(x));

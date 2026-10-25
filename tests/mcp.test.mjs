@@ -115,5 +115,13 @@ test('⑧ fetch 인자 검사 (네트워크 없음): PMID 형식이 아니면 �
   const { out } = call('fetch.mjs', [tool('fetch_fulltext', { pmid: 'PMC123; rm -rf' }), { method: 'tools/list' }]);
   assert.equal(out[0].result.isError, true);
   assert.match(text(out[0]), /형식이 아님/);
-  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext']);
+  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext', 'resolve_doi']);
+});
+
+test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 DOI 검색 기록도 출처 상태로 읽힌다', () => {
+  const { out } = call('fetch.mjs', [tool('resolve_doi', { doi: 'not-a-doi' })]);
+  assert.equal(out[0].result.isError, true);
+  assert.match(text(out[0]), /형식이 아님/);
+  const lit = req('../inbox.js').literatureStatus(join(ROOT, 'data'));
+  assert.deepEqual(lit['DOI:10.1038/nature07830'], { kind: 'journal', retracted: false }, 'DOI 검색으로 확인된 학술지 기록 (소문자 열쇠)');
 });
