@@ -151,7 +151,7 @@ function build() {
   const covRows = Object.keys(unitsBy).sort().map((s) => {
     const have = new Set(L.units.filter((u) => u.src.replace(/:\d+.*$/, '') === s).map((u) => +u.src.split(':')[1]));
     const ls = read(s).split('\n');
-    const miss = ls.map((l, i) => [l, i + 1]).filter(([l, n]) => l.trim() && !/^\|?\s*:?-{3}/.test(ls[n] || '') && !/^#{1,6} /.test(l) && !/^\|?\s*-{3}/.test(l) && !/^\|[^|]*\|\s*$/.test(l) && !/^```/.test(l) && !have.has(n)).map(([, n]) => n);
+    const miss = ls.map((l, i) => [l, i + 1]).filter(([l, n]) => l.trim() && !/^\|?\s*:?-{3}/.test(ls[n] || '') && !/^#{1,6} /.test(l) && !/^\|?\s*-{3}/.test(l) && !/^\|[^|]*\|\s*$/.test(l) && !/^```/.test(l) && !/^>\s*$/.test(l) && !have.has(n)).map(([, n]) => n);
     return [`\`${s}\``, String(have.size), miss.length ? miss.join(' · ') : '없음'];
   });
   const dupText = `사본 단위(same_as) ${copies.length} · 사본이 있는 원래 단위 ${multi} · 한 규칙이 적힌 곳 최대 ${multi ? Math.max(...places) + 1 : 1}${badRef.length ? ' · 없는 단위를 가리킴: ' + badRef.join(', ') : ''}`;

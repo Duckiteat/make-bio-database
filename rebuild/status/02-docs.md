@@ -4,14 +4,14 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 235.6 | 219 |  | 미분류 |
+| `CHANGES.md` | 236.4 | 220 |  | 미분류 |
 | `CLAUDE.md` | 17.7 | 84 | 입구 | 분류됨 241 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 미분류 |
 | `FEATURES.md` | 14.1 | 193 |  | 미분류 |
-| `README.md` | 24.7 | 233 |  | 미분류 |
+| `README.md` | 24.7 | 233 |  | 분류됨 153 |
 | `SCHEMA.md` | 100.2 | 659 |  | 미분류 |
-| `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 미분류 |
-| `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 미분류 |
+| `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 분류됨 151 |
+| `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 미분류 |
 | `docs/design/agent-rules.md` | 44.3 | 116 |  | 분류됨 190 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 미분류 |
@@ -68,20 +68,20 @@
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 미분류 |
 | `docs/textbook/90-부록-자동생성.md` | 112.0 | 805 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
-| `workspace/README.md` | 2.8 | 39 |  | 미분류 |
-| `workspace/SOURCES.md` | 3.2 | 35 |  | 미분류 |
-| `workspace/START-HERE.md` | 4.6 | 57 | 입구 | 미분류 |
-| `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 미분류 |
-| `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 미분류 |
-| `workspace/handoff/HANDOFF-template.md` | 2.2 | 30 |  | 미분류 |
-| `workspace/handoff/HANDOFF-tnf-mrna-halflife.md` | 2.7 | 33 |  | 미분류 |
-| `workspace/handoff/HANDOFF-validation-precondition.md` | 2.2 | 37 |  | 미분류 |
-| `workspace/handoff/NEXT-2026-10-23.md` | 1.7 | 19 |  | 미분류 |
-| `workspace/handoff/NEXT-2026-10-25.md` | 4.8 | 49 |  | 미분류 |
-| `workspace/tasks/README.md` | 0.8 | 10 |  | 미분류 |
-| `workspace/tasks/TASK-001-tnf-mrna-halflife.md` | 1.2 | 18 |  | 미분류 |
-| `workspace/tasks/TASK-002-ikba-halflife.md` | 1.1 | 17 |  | 미분류 |
-| `workspace/tasks/TASK-003-tca-enzyme-kinetics.md` | 4.9 | 37 |  | 미분류 |
-| `workspace/tasks/TASK-004-telomere-quantitative.md` | 2.9 | 25 |  | 미분류 |
-| `workspace/tasks/TASK-005-tca-flux-validation.md` | 2.2 | 24 |  | 미분류 |
-| `workspace/tasks/TASK-TYPES.md` | 1.9 | 19 |  | 미분류 |
+| `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
+| `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
+| `workspace/START-HERE.md` | 4.6 | 57 | 입구 | 분류됨 32 |
+| `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
+| `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
+| `workspace/handoff/HANDOFF-template.md` | 2.2 | 30 |  | 분류됨 16 |
+| `workspace/handoff/HANDOFF-tnf-mrna-halflife.md` | 2.7 | 33 |  | 분류됨 17 |
+| `workspace/handoff/HANDOFF-validation-precondition.md` | 2.2 | 37 |  | 분류됨 19 |
+| `workspace/handoff/NEXT-2026-10-23.md` | 1.7 | 19 |  | 분류됨 11 |
+| `workspace/handoff/NEXT-2026-10-25.md` | 4.8 | 49 |  | 분류됨 26 |
+| `workspace/tasks/README.md` | 0.8 | 10 |  | 분류됨 8 |
+| `workspace/tasks/TASK-001-tnf-mrna-halflife.md` | 1.2 | 18 |  | 분류됨 11 |
+| `workspace/tasks/TASK-002-ikba-halflife.md` | 1.1 | 17 |  | 분류됨 10 |
+| `workspace/tasks/TASK-003-tca-enzyme-kinetics.md` | 4.9 | 37 |  | 분류됨 25 |
+| `workspace/tasks/TASK-004-telomere-quantitative.md` | 2.9 | 25 |  | 분류됨 15 |
+| `workspace/tasks/TASK-005-tca-flux-validation.md` | 2.2 | 24 |  | 분류됨 13 |
+| `workspace/tasks/TASK-TYPES.md` | 1.9 | 19 |  | 분류됨 13 |

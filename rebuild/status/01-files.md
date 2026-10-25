@@ -8,13 +8,13 @@
 |---|---|---|
 | data | 433 | 16296.1 |
 | docs | 58 | 1197.9 |
-| (최상위) | 18 | 869.6 |
+| (최상위) | 18 | 870.3 |
 | judicial | 28 | 528.4 |
 | tests | 76 | 503.5 |
+| rebuild | 6 | 391.1 |
 | attestations | 1 | 299.0 |
 | engine | 26 | 298.8 |
 | examples | 47 | 289.6 |
-| rebuild | 6 | 150.1 |
 | workspace | 21 | 69.8 |
 | legislative | 3 | 65.2 |
 | migrations | 13 | 59.8 |
@@ -34,6 +34,7 @@
 | `data/log/genesis-db.json` | 608.9 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
+| `rebuild/ledger/units.jsonl` | 336.1 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
@@ -41,7 +42,7 @@
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `CHANGES.md` | 235.6 |
+| `CHANGES.md` | 236.4 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
@@ -52,4 +53,3 @@
 | `data/fetched/uniprot/Q9Y6K9.json` | 166.6 |
 | `judicial/judicial.js` | 166.3 |
 | `data/fetched/consensus/uniprot/O14746.json` | 145.9 |
-| `data/fetched/uniprot/O14746.json` | 145.9 |
