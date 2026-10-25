@@ -234,6 +234,53 @@ function criteriaText(rows) {
   return L.join('\n');
 }
 
+// ===== 인정의 용도 (build-plan 72·74) — (기록, 용도) 판정은 여기 하나: judicial/acceptance.js(표·승인 도장)와 관문(constantVerdict)이 같이 부른다 =====
+// 용도별 조건 (동작 표 — 라벨·뜻은 vocab.acceptanceUses). floors: 하나라도 맞으면 축 조건 통과. conditional: 맞으면 조건부.
+//   sameSpecies: 기록의 종이 기준 종과 같아야(다른 종 값은 서술·비교에만 — 64 전까지 기준 종 하나)
+//   confirmed: 출처가 확인된 문헌·도장이어야(S3.unconfirmed 는 높은 용도에 못 씀, 2026-10-24 결정)
+//   notEstimated: 추정에 쓴 관찰은 검증 근거가 될 수 없다(순환) · approval: 승인 도장 필요 · independence: 독립 단위 수(I 축) 요구
+const USES = Object.freeze({
+  describe: { floors: [{ s: 2, d: 2, t: T_ALL }] },
+  compare:  { floors: [{ s: 3, d: 2, t: T_ALL }] },
+  estimate: { floors: [{ s: 3, d: 3, t: T_OK }], conditional: [{ s: 4, d: 2, t: T_OK, why: '출처는 최상이나 값이 추론 — 오차 막대가 있을 때만' }], sameSpecies: true },
+  evidence: { floors: [{ s: 3, d: 2, t: T_OK }], sameSpecies: true, confirmed: true, notEstimated: true, approval: true },
+  standard: { floors: [{ s: 4, d: 4, t: ['match'] }], sameSpecies: true, confirmed: true, approval: true, independence: 2 },
+});
+const fitsRow = (r, f) => fits(r.s, r.d, r.trend || 'unchecked', f);
+
+// 기록의 종: 관찰은 조건의 종, 정의항 obs 는 맥락의 종, 그 밖은 정의항의 기준 종. 모르면 null
+function speciesOf(db, row) {
+  if (row.species) return String(row.species); // 부르는 쪽이 아는 종(관문의 상수: kinetics.context.species)
+  if (!db) return null;
+  if (row.what === 'observation') return ((db.observations[row.sense] || {}).condition || {}).species || null;
+  const s = db.senses[row.sense] || {};
+  if (row.what === 'obs') { const o = (s.obs || []).find((x) => x.property === row.target); if (o && o.context && o.context.species) return String(o.context.species); }
+  if (row.what === 'kinetics') { const ru = (s.rule || []).find((x) => `${row.sense}/rule/${x.id}` === row.target); if (ru && ru.kinetics && ru.kinetics.context && ru.kinetics.context.species) return String(ru.kinetics.context.species); }
+  return s.reference_species ? String(s.reference_species) : null;
+}
+// 한 (기록, 용도) 의 인정. ctx = { db(정규화), ref(기준 종), estimated(Set), approvals(Map 열쇠 → 도장) }
+//   status: accepted · conditional · needs_approval(축·관계는 맞고 승인이 없음) · review(승인이 있는데 축·관계가 내려감) · rejected
+function accept(row, use, ctx) {
+  const u = USES[use];
+  if (!u) throw new Error(`용도 '${use}' — ${Object.keys(USES).join(' | ')}`);
+  const reasons = [], cond = [];
+  const axisOk = u.floors.some((f) => fitsRow(row, f)), condHit = !axisOk && (u.conditional || []).find((f) => fitsRow(row, f));
+  if (!axisOk && !condHit) reasons.push(`축 조건 미달: S${row.s}D${row.d} ${row.trend || 'unchecked'} — 필요 ${u.floors.map((f) => `S≥${f.s}∧D≥${f.d}${f.t.length < 3 ? `∧T∈{${f.t.join(',')}}` : ''}`).join(' 또는 ')}`);
+  if (condHit) cond.push(condHit.why);
+  if (u.confirmed && row.cs === 'S3.unconfirmed') reasons.push('출처 문헌이 확인되지 않음(S3.unconfirmed) — 높은 용도는 학술지 확인이 필요');
+  if (u.sameSpecies) { const sp = speciesOf(ctx.db, row); if (sp && sp !== ctx.ref) reasons.push(`종 ${sp} ≠ 기준 종 ${ctx.ref} — 다른 종 값은 서술·비교에만`); }
+  if (u.notEstimated && row.what === 'observation' && (ctx.estimated || new Set()).has(row.sense)) reasons.push('추정에 쓴 관찰 — 같은 관찰로 검증하면 순환');
+  if (u.notEstimated && row.what !== 'observation') reasons.push('검증 근거는 관찰 기록만');
+  if (u.independence) reasons.push(`독립 단위 ≥ ${u.independence} 필요 — I 축이 아직 없다(build-plan 52·71)`);
+  const st = u.approval ? (ctx.approvals || new Map()).get(`${row.sense}|${use}`) : null;
+  let status;
+  if (reasons.length) status = st ? 'review' : 'rejected';
+  else if (u.approval && !st) status = 'needs_approval';
+  else status = cond.length ? 'conditional' : 'accepted';
+  return { use, status, ok: status === 'accepted' || status === 'conditional', reasons, conditions: cond, approval: st ? { by: st.by, at: st.issued_at, reason: st.reason } : null };
+}
+
+
 // ===== 관문 (②): 시뮬레이션이 읽는 상수의 등급 =====
 // IR 은 규칙마다 쓰인 상수를 evidence·src 와 함께 싣는다 — 사법부는 그 IR 만 보고 판정한다 (엔진을 부르지 않음).
 //   src 'data'     → 그 상수의 근거로 등급을 계산하고, 문턱(기본 parameter) 미달이면 위반
@@ -248,7 +295,7 @@ function constants(ir, sc, opt) {
     if (!k) return;
     if (k.src === 'scenario') { out.push({ ref, kind, src: 'scenario', grade: 'hypothetical', s: null, d: null, why: '시나리오가 준 가상 값 — 등급 밖' }); return; }
     const r = scoreEvidence(k.evidence, ctx);
-    out.push({ ref, kind, src: k.src || 'data', ...r, grade: gradeOf(r.s, r.d, 'unchecked') });
+    out.push({ ref, kind, src: k.src || 'data', ...r, species: (k.context || {}).species || null, grade: gradeOf(r.s, r.d, 'unchecked') });
   };
   for (const R of ir.rules || []) {
     one(R.ref, R.kind, R.k);
@@ -256,18 +303,24 @@ function constants(ir, sc, opt) {
   }
   return out;
 }
+// 데이터 상수 하나의 관문 판정: 문턱(축 조건) ∧ 인정 '추정' accepted. 위반 문장 또는 null — 관문 두 곳(constantVerdict · judicial 감사)이 이것 하나를 쓴다
+function gateMessage(r, min) {
+  if (!meets({ ...r, trend: 'unchecked' }, min)) return `등급 ${r.grade || gradeOf(r.s, r.d, 'unchecked')} < ${min} (S${r.s}D${r.d}) — ${r.why || ''}`;
+  const a = accept({ ...r, what: 'kinetics', trend: 'unchecked' }, 'estimate', { ref: String(M.VOCAB.defaultReferenceSpecies) });
+  return a.status === 'accepted' ? null : `추정으로 인정되지 않음 (${a.status}${a.reasons.length ? ' — ' + a.reasons.join(' · ') : a.conditions.length ? ' — ' + a.conditions.join(' · ') : ''})`;
+}
 function constantVerdict(ir, sc, opt) {
   sc = sc || {}; opt = opt || {};
   const min = opt.min || sc.min_grade || DEFAULT_MIN, bad = gateMinError(min);
   if (bad) return { error: bad };
   const rows = constants(ir, sc, opt), hypo = !!sc.hypothetical;
-  const violations = rows.filter((r) => (r.grade === 'hypothetical' ? !hypo : !meets(r, min)))
-    .map((r) => ({ ...r, msg: r.grade === 'hypothetical' ? '가상 값인데 시나리오가 hypothetical 을 선언하지 않음' : `등급 ${r.grade} < ${min} (S${r.s}D${r.d}) — ${r.why}` }));
+  // 데이터 상수 = 문턱(축 조건) ∧ 인정 '추정' accepted — 관문과 인정 표가 같은 판정 (build-plan 74). 조건부(오차 막대)는 관문이 볼 수 없어 통과시키지 않는다
+  const violations = rows.map((r) => ({ r, m: r.grade === 'hypothetical' ? (hypo ? null : '가상 값인데 시나리오가 hypothetical 을 선언하지 않음') : gateMessage(r, min) })).filter((x) => x.m).map(({ r, m }) => ({ ...r, msg: m }));
   const byGrade = {};
   for (const r of rows) byGrade[r.grade] = (byGrade[r.grade] || 0) + 1;
   return { min, hypothetical: hypo, n: rows.length, byGrade, rows, violations, ok: !violations.length };
 }
 const constantText = (v) => (v.error ? v.error : `문턱 ${v.min}${v.hypothetical ? ' · 시나리오는 hypothetical (가상 값 허용)' : ''} · 상수 ${v.n} (${Object.entries(v.byGrade).map(([g, n]) => `${g} ${n}`).join(' · ') || '없음'})${v.violations.length ? ` · 위반 ${v.violations.length}: ${v.violations.slice(0, 3).map((x) => `${x.ref} ${x.msg}`).join(' / ')}` : ''}`);
 
-return Object.freeze({ CRITERIA, GRADE_WHY, POLICY, THRESHOLD, atLeast, gateMinError, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
+return Object.freeze({ USES, accept, speciesOf, gateMessage, CRITERIA, GRADE_WHY, POLICY, THRESHOLD, atLeast, gateMinError, criteriaText, DEFAULT_MIN, constants, constantVerdict, constantText, S_LABEL, D_LABEL, GRADES, ORDER, gradeOf, scoreEvidence, scoreObservation, items, summary, meets, gradeText });
 });

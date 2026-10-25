@@ -239,13 +239,13 @@ function observeQualitative(db, o, state, sc, opt) {
       if (det) numerical = gap(evs(cRaws)[0], evs(cRef)[0]) + (pRaws ? gap(evs(pRaws)[0], evs(pRef)[0]) : 0);
       const quantum = 0, resolution = Math.max(numerical || 0, rd.instrument_resolution || 0); // 순서의 분해능은 시각의 수치 오차 — 분자 양자는 시각에 쓰지 않는다 (장치 해상도가 선언되면 그 바닥)
       main = { quantum, numerical, resolution };
-      r = QC.judgeQualitative({ o, control: { events: evs(cRaws) }, perturbed: pRaws ? { events: evs(pRaws) } : null, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId });
+      r = QC.judgeQualitative({ o, control: { events: evs(cRaws) }, perturbed: pRaws ? { events: evs(pRaws) } : null, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, acceptance: opt.acceptance });
       const arm = pRaws || cRaws;
       pool = cands.map((t) => ({ target: t, events: eventsOf(arm, t), resolution }));
     } else {
       main = inputFor(rd.target);
       const eq = (p.equivalence || []).find((e) => e.observable && e.observable.kind === rd.kind && e.observable.target === rd.target);
-      r = QC.judgeQualitative({ o, control: main.control, perturbed: main.perturbed, resolution: main.resolution, quantum: main.quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq });
+      r = QC.judgeQualitative({ o, control: main.control, perturbed: main.perturbed, resolution: main.resolution, quantum: main.quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq, acceptance: opt.acceptance });
       pool = cands.map(inputFor);
     }
     const emp = QC.empiricalChance(o, pool), uniform = r.chance;

@@ -196,7 +196,9 @@ export function appendAttestations({ root, stamps, db, context }) {
       : st.claim === 'accept' ? ACC.checkIssue(st, db, context) // context = 신뢰 지표 입력(도장·문헌 상태·추세) — 부르는 쪽이 모은다
       : ATT.verifyStamp(st, db, { root, reverify: true });
     if (!v.ok) refuse(`도장 ${v.key}: ${v.reasons.join(' · ')}`);
-    reg.stamps = reg.stamps.filter((x) => ATT.subjectKey(x.subject) !== v.key);
+    // 승인 도장(claim 'accept')은 추가만 — 승인·철회의 경과가 등록부에 남고, 같은 주체의 마지막 도장이 유효 (build-plan 76). 다른 주장은 같은 주체를 갈아 끼운다
+    if (st.claim === 'accept') { if (reg.stamps.some((x) => x.digest === st.digest)) refuse(`도장 ${v.key}: 같은 승인 도장이 이미 있음`); }
+    else reg.stamps = reg.stamps.filter((x) => ATT.subjectKey(x.subject) !== v.key);
     reg.stamps.push(st);
   }
   reg.stamps.sort((a, b) => ATT.subjectKey(a.subject).localeCompare(ATT.subjectKey(b.subject)));

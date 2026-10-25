@@ -11,29 +11,10 @@ const REL = require('./reliability.js');
 const ATT = require('./attestation.js');
 
 const ISSUER = 'judicial/acceptance.js';
-const T_ALL = ['match', 'mismatch', 'unchecked'], T_OK = ['match', 'unchecked'];
-// 용도별 조건 (동작 표 — 라벨·뜻은 vocab.acceptanceUses). floors: 하나라도 맞으면 축 조건 통과. conditional: 맞으면 조건부.
-//   sameSpecies: 기록의 종이 기준 종과 같아야(다른 종 값은 서술·비교에만 — 64 전까지 기준 종 하나)
-//   confirmed: 출처가 확인된 문헌·도장이어야(S3.unconfirmed 는 높은 용도에 못 씀, 2026-10-24 결정)
-//   notEstimated: 추정에 쓴 관찰은 검증 근거가 될 수 없다(순환) · approval: 승인 도장 필요 · independence: 독립 단위 수(I 축) 요구
-const USES = Object.freeze({
-  describe: { floors: [{ s: 2, d: 2, t: T_ALL }] },
-  compare:  { floors: [{ s: 3, d: 2, t: T_ALL }] },
-  estimate: { floors: [{ s: 3, d: 3, t: T_OK }], conditional: [{ s: 4, d: 2, t: T_OK, why: '출처는 최상이나 값이 추론 — 오차 막대가 있을 때만' }], sameSpecies: true },
-  evidence: { floors: [{ s: 3, d: 2, t: T_OK }], sameSpecies: true, confirmed: true, notEstimated: true, approval: true },
-  standard: { floors: [{ s: 4, d: 4, t: ['match'] }], sameSpecies: true, confirmed: true, approval: true, independence: 2 },
-});
+const { USES, accept } = REL; // 용도별 판정은 reliability 하나 — 관문(constantVerdict)과 같은 함수 (build-plan 74)
 const HIGH = Object.keys(USES).filter((u) => USES[u].approval);
 const APPROVERS = ['human', 'integrator']; // 승인할 수 있는 역할 (2026-10-25 결정: 통합 에이전트도 — 사람은 나중에 철회할 수 있다)
-const fits = (r, f) => r.s >= f.s && r.d >= f.d && f.t.includes(r.trend || 'unchecked');
 
-// 기록의 종: 관찰은 조건의 종, 정의항 obs 는 맥락의 종, 그 밖은 정의항의 기준 종. 모르면 null
-function speciesOf(db, row) {
-  if (row.what === 'observation') return ((db.observations[row.sense] || {}).condition || {}).species || null;
-  const s = db.senses[row.sense] || {};
-  if (row.what === 'obs') { const o = (s.obs || []).find((x) => x.property === row.target); if (o && o.context && o.context.species) return String(o.context.species); }
-  return s.reference_species ? String(s.reference_species) : null;
-}
 // 추정에 쓰인 관찰: use 가 estimation 이거나, 어떤 값(속도 상수·정의항 obs)의 from 이 가리킴
 function estimatedObservations(db) {
   const out = new Set(Object.entries(db.observations || {}).filter(([, o]) => o.use === 'estimation').map(([id]) => id));
@@ -46,28 +27,6 @@ function estimatedObservations(db) {
 
 const subjectOf = (id, use) => ({ sense: id, field: 'accept', ns: use, value: id });
 const keyOf = (id, use) => ATT.subjectKey(subjectOf(id, use));
-
-// 한 (기록, 용도) 의 인정. ctx = { db(정규화), ref(기준 종), estimated(Set), approvals(Map 열쇠 → 도장) }
-//   status: accepted · conditional · needs_approval(축·관계는 맞고 승인이 없음) · review(승인이 있는데 축·관계가 내려감) · rejected
-function accept(row, use, ctx) {
-  const u = USES[use];
-  if (!u) throw new Error(`용도 '${use}' — ${Object.keys(USES).join(' | ')}`);
-  const reasons = [], cond = [];
-  const axisOk = u.floors.some((f) => fits(row, f)), condHit = !axisOk && (u.conditional || []).find((f) => fits(row, f));
-  if (!axisOk && !condHit) reasons.push(`축 조건 미달: S${row.s}D${row.d} ${row.trend || 'unchecked'} — 필요 ${u.floors.map((f) => `S≥${f.s}∧D≥${f.d}${f.t.length < 3 ? `∧T∈{${f.t.join(',')}}` : ''}`).join(' 또는 ')}`);
-  if (condHit) cond.push(condHit.why);
-  if (u.confirmed && row.cs === 'S3.unconfirmed') reasons.push('출처 문헌이 확인되지 않음(S3.unconfirmed) — 높은 용도는 학술지 확인이 필요');
-  if (u.sameSpecies) { const sp = speciesOf(ctx.db, row); if (sp && sp !== ctx.ref) reasons.push(`종 ${sp} ≠ 기준 종 ${ctx.ref} — 다른 종 값은 서술·비교에만`); }
-  if (u.notEstimated && row.what === 'observation' && ctx.estimated.has(row.sense)) reasons.push('추정에 쓴 관찰 — 같은 관찰로 검증하면 순환');
-  if (u.notEstimated && row.what !== 'observation') reasons.push('검증 근거는 관찰 기록만');
-  if (u.independence) reasons.push(`독립 단위 ≥ ${u.independence} 필요 — I 축이 아직 없다(build-plan 52·71)`);
-  const st = u.approval ? (ctx.approvals || new Map()).get(keyOf(row.sense, use)) : null;
-  let status;
-  if (reasons.length) status = st ? 'review' : 'rejected';
-  else if (u.approval && !st) status = 'needs_approval';
-  else status = cond.length ? 'conditional' : 'accepted';
-  return { use, status, ok: status === 'accepted' || status === 'conditional', reasons, conditions: cond, approval: st ? { by: st.by, at: st.issued_at, reason: st.reason } : null };
-}
 
 // 승인 도장: { subject, claim 'accept', verdict 'approved'|'revoked', by, reason, issuer, issued_at, digest }
 function issue({ id, use, by, reason, date, verdict }) {
@@ -114,7 +73,10 @@ function table(db, opt) {
   // 축 조건은 여기서 묻지 않는다 — 발급 때 서기가 막고, 그 뒤 축이 내려간 것은 accept 가 review 로 드러낸다(도장은 남김)
   for (const st of ((opt.registry || {}).stamps || []).filter((x) => x.claim === 'accept')) {
     const v = verifyAcceptStamp(st, db, { base });
-    if (v.ok && st.verdict === 'approved') ctx.approvals.set(v.key, st);
+    // 등록부 순서(같은 주체는 추가된 순서)대로 — 마지막 도장이 유효: 승인은 넣고 철회는 뺀다
+    const k = `${st.subject.sense}|${st.subject.ns}`;
+    if (v.ok && st.verdict === 'approved') ctx.approvals.set(k, st);
+    else if (v.ok && st.verdict === 'revoked') ctx.approvals.delete(k);
     else if (!v.ok) bad.push({ key: v.key, reasons: v.reasons });
   }
   const out = rows.map((r) => ({ row: r, uses: Object.fromEntries(Object.keys(USES).map((u) => [u, accept(r, u, ctx)])) }));

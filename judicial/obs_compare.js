@@ -78,6 +78,9 @@ function equivalence(o, A, opt) {
   if (!pv || !pv.declared) return { shown: false, requirement: '모의 실험 규약이 없음(탐색 실행) — 일치를 결론으로 쓰려면 protocol 을 선언하고 실행 전에 사전 등록 (node dbtool.mjs register <시나리오>)' };
   if (!pv.ok) return { shown: false, requirement: '모의 실험 규약 위반: ' + pv.problems.join(' · ') };
   if (!opt.observationId || !(pv.validation || []).includes(opt.observationId)) return { shown: false, requirement: `관찰 ${opt.observationId || '(파일 — 번호 없음)'} 이 사전 등록된 검증 세트(protocol.validation)에 없음 — 결과를 본 뒤 고른 관찰은 검증에 쓰지 않는다` };
+  // 인정 (build-plan 75): 부르는 쪽이 인정을 넘겼으면 검증 근거로 인정된 관찰만 결론 (넘기지 않으면 확인 안 함)
+  const ac = opt.acceptance;
+  if (ac && !ac.ok) return { shown: false, requirement: `관찰 ${opt.observationId} 이 검증 근거로 인정되지 않음 (${ac.status}${ac.reasons && ac.reasons.length ? ' — ' + ac.reasons.join(' · ') : ''}) — 결론은 가장 약한 근거를 따른다 (node dbtool.mjs accept)` };
   if (o.detection_limit != null && o.value <= o.detection_limit) {
     const shown = A.p >= 1 - alpha;
     return { kind: 'below_limit', shown, p: 1 - A.p, requirement: shown ? '' : `예측이 검출 한계 아래라고 확신할 수 없음 (확률 ${fmt(A.p)} < ${fmt(1 - alpha)}) — 예측 퍼짐을 줄이거나 더 낮은 검출 한계의 관찰 필요` };

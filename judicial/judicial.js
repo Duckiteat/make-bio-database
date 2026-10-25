@@ -1643,8 +1643,8 @@
           if (!r.hypothetical) AE('DATA_GAP', 'AUDIT_KINETIC', where, '상수 등급: 시나리오가 준 가상 값인데 시나리오가 hypothetical 을 선언하지 않음 — 가상 값은 등급 밖이다', '시나리오에 hypothetical: true 를 적거나, 확인한 상수를 규칙의 kinetics 로 데이터에 넣을 것');
           continue;
         }
-        const sd = RELI.scoreEvidence(k.evidence, ctx), g = RELI.gradeOf(sd.s, sd.d, 'unchecked');
-        if (!RELI.meets({ s: sd.s, d: sd.d }, min)) AE('DATA_GAP', 'AUDIT_KINETIC', where, `상수 등급 ${g} < ${min} (S${sd.s}D${sd.d}) — ${sd.why}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
+        const sd = RELI.scoreEvidence(k.evidence, ctx), msg = RELI.gateMessage({ ...sd, species: (k.context || {}).species || null }, min);
+        if (msg) AE('DATA_GAP', 'AUDIT_KINETIC', where, `상수 ${msg}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
       }
     }
     // ③ 국소 수지: 발화한 단계의 한 번당 실체·부분 구조 변화 (첫 발화 시각)

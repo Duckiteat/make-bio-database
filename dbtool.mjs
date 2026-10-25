@@ -117,6 +117,8 @@ const trendMap = (db, reg) => TR.verdicts(db, reg, { root: HERE }).map;
 // 신뢰 지표의 입력 한 벌 (도장·지난 도장·문헌 상태·추세) — grade·accept·보고서가 같은 것을 쓴다
 const relInput = (db, reg, quick) => { const v = ATT.validStamps(db, reg, { root: HERE, reverify: !quick }); return { attestations: v.keys, stale: v.stale, stamps: reg.stamps, trend: quick ? {} : trendMap(db, reg), literature: req('./inbox.js').literatureStatus(dirname(DB_PATH)) }; };
 const ACC = req('./judicial/acceptance.js'); // 사법부 — 인정 (기록, 용도)
+// 관찰 하나의 '검증 근거' 인정 — observe·fate 판정이 증거 보고서와 같은 규칙(가장 약한 근거)을 따르게 (build-plan 75)
+const acceptanceOf = (db, id) => { if (!id) return null; const reg = ATT.readRegistry(HERE), t = ACC.table(db, { ...relInput(db, reg), registry: reg }), x = t.rows.find((y) => y.row.what === 'observation' && y.row.sense === id); return x ? x.uses.evidence : { ok: false, status: 'rejected', reasons: ['관찰이 신뢰 지표에 없음'] }; };
 
 switch (cmd) {
   case 'status': {
@@ -153,8 +155,11 @@ switch (cmd) {
       for (const e of ev) if (e.file) { const abs = join(HERE, e.file); cur[e.file] = existsSync(abs) ? createHash('sha256').update(readFileSync(abs)).digest('hex') : null; }
       const v = CA.verifyFetchLog(ev, cur); if (!v.ok) { flog.ok = false; for (const e of v.errors) { flog.errors.push(e); console.log(`오류  받기 기록 ${src}: ${e}`); } }
     }
-    console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}${(r.attestations.stale || []).length ? `, 지난 도장 ${r.attestations.stale.length}` : ''}`);
-    if (r.attestations.failed.length || !dict.ok || !asm.ok || !flog.ok) process.exit(1);
+    // 승인 도장 (build-plan 76): 형식·digest·역할·이유 — 변조된 승인은 validate 에서도 실패
+    const accBad = (r.attestations.accept || []).map((st) => ACC.verifyAcceptStamp(st, loadDB())).filter((x) => !x.ok && !x.stale);
+    for (const x of accBad) console.log(`오류  승인 도장 ${x.key}: ${x.reasons.join(' · ')}`);
+    console.log(`— 오류 ${r.errors.length}, 경고 ${r.warnings.length} · 유효한 증명 도장 ${r.attestations.keys.length}${r.attestations.failed.length ? `, 무효 ${r.attestations.failed.length}` : ''}${(r.attestations.stale || []).length ? `, 지난 도장 ${r.attestations.stale.length}` : ''}${(r.attestations.accept || []).length ? ` · 승인 도장 ${r.attestations.accept.length}${accBad.length ? `, 무효 ${accBad.length}` : ''}` : ''}`);
+    if (r.attestations.failed.length || accBad.length || !dict.ok || !asm.ok || !flog.ok) process.exit(1);
     process.exit(r.errors.length ? 1 : 0);
   }
   case 'merge': {
@@ -699,7 +704,8 @@ switch (cmd) {
       numerics = { hours: s2.t_end / 3600, l2: FA.markerL2(r, ref), refMs };
     }
     const protocol = req('./judicial/protocol.js').protocolVerdict(db, JSON.parse(scenarioText), { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() });
-    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again, numerics, protocol });
+    const acceptance = protocol && protocol.declared && protocol.ok ? (() => { const reg = ATT.readRegistry(HERE); return ACC.weakest(ACC.table(db, { ...relInput(db, reg), registry: reg }), protocol.validation || []); })() : null;
+    const rep = PR.processReport(r, { scenario: JSON.parse(scenarioText), scenarioText, dbText: readFileSync(DB_PATH, 'utf8'), rerunHash: again, numerics, protocol, acceptance });
     const md = PR.processReportMarkdown(rep);
     console.log(md);
     console.log(J.refineText(db).text);
@@ -724,13 +730,13 @@ switch (cmd) {
     const scA = loadScenario(flags.scenario, x.id, db).scenario, scB = flags['scenario-b'] && flags['scenario-b'] !== true ? loadScenario(flags['scenario-b'], x.id, db).scenario : null;
     if (o.kind === 'qualitative') { // 정성 모의 판정 (build-plan 8): 교란은 관찰이 선언, 대조군 = --scenario
       const QC = req('./judicial/qual_compare.js'), oid = /^O\d{6}$/.test(args[0]) ? args[0] : null;
-      const q = ORCH.observeQualitative(db, o, x.id, scA, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: oid });
+      const q = ORCH.observeQualitative(db, o, x.id, scA, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: oid, acceptance: acceptanceOf(db, oid) });
       if (q.error) die('오류: ' + q.error);
       console.log(req('./judicial/protocol.js').protocolText(q.protocol) + '\n');
       console.log(QC.qualCompareText([Object.assign(q, { id: oid || '(파일)' })], QC.chanceBaseline([q])));
       process.exit(q.outcome === 'invalid' ? 1 : 0);
     }
-    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null });
+    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null, acceptance: /^O\d{6}$/.test(args[0]) ? acceptanceOf(db, args[0]) : null });
     console.log(req('./judicial/protocol.js').protocolText(req('./judicial/protocol.js').protocolVerdict(db, scA, { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() })) + '\n');
     console.log(OC.verdictText(v));
     process.exit(v.error ? 1 : 0);

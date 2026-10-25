@@ -548,7 +548,7 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "legislative/clerk.mjs (승인 도장 발급 검사), judicial/evidence_report.js (가장 약한 근거), dbtool.mjs accept·attest, mcp/clerk.mjs accept, tests",
-      "interpret": "[사법] 인정 (build-plan 72) — 인정은 (기록, 용도) 순서쌍. 용도 다섯(서술·비교·추정·검증 근거·기준)마다 축 조건(S·D·T) ∧ 관계 조건(기준 종 · 추정에 쓰지 않음 · 확인된 문헌) ∧ 높은 용도는 승인 도장(claim 'accept', 사람·통합 에이전트, 이유 필수). 승인은 축 조건을 넘지 못하고, 축이 내려가면 '재검토'. 결론은 가장 약한 근거를 따른다."
+      "interpret": "[사법] 인정 (build-plan 72) — 인정은 (기록, 용도) 순서쌍. 용도 다섯(서술·비교·추정·검증 근거·기준)마다 축 조건(S·D·T) ∧ 관계 조건(기준 종 · 추정에 쓰지 않음 · 확인된 문헌) ∧ 높은 용도는 승인 도장(claim 'accept', 사람·통합 에이전트, 이유 필수). 승인은 축 조건을 넘지 못하고, 축이 내려가면 '재검토'. 결론은 가장 약한 근거를 따른다. 용도별 판정 함수(USES·accept)는 reliability.js 에 있고 이 파일은 표·승인 도장·가장 약한 근거를 맡는다."
     },
     {
       "path": "judicial/trend.js",
