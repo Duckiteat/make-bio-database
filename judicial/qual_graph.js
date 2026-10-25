@@ -159,7 +159,7 @@ function qualGraphVerdict(db, opt) {
   return { rows, counts, index: claimIndex(db), graph: { nodes: G.adj.size, edges: [...G.adj.values()].reduce((t, l) => t + l.length, 0) } };
 }
 
-const LABEL = { supported: '구조 지지', no_path: '경로 없음 (Structural_Gap 후보)', contradiction_candidate: '모순 후보', mixed: '부호 섞임 (모의 판정 필요)', tension: '긴장 (경로 있음 · 효과 없음 주장)', not_applicable: '0 층 판정 대상 아님', undetermined: '판정 못 함 (탐색 상한)' };
+const LABEL = M.labelsOf(V.qualGraphVerdicts); // 판정 토큰 → 라벨 (표는 vocab)
 function qualGraphText(v) {
   const out = [`정성 그래프 0 층 판정 — 기전 그래프 노드 ${v.graph.nodes} · 간선 ${v.graph.edges} · 정성 관찰 ${v.rows.length}`];
   if (!v.rows.length) out.push('  (정성 관찰 없음)');

@@ -1,0 +1,20 @@
+{
+  "why": "레드팀 — 가 스키마 구조 필드를 어겨 넣기",
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000148",
+      "type": "Kinetic_Gap",
+      "requirement": {
+        "text": "시험용 한계",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "시험"
+          }
+        ]
+      },
+      "resolution_trigger": "observation_added"
+    }
+  ]
+}

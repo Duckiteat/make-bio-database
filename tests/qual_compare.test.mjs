@@ -3,6 +3,7 @@
 //   ② 우연 기준선: 포아송 이항 P(K ≥ k) 를 손으로 아는 경우와 대조 · 경험적 우연 확률(같은 실행의 다른 읽을 거리)
 //   ③ 조정자 결정론: 합성 규칙을 막으면 그 산물이 줄어듦 (교란 차이 검사 통과 · 분해능 = 수치 오차 + 분자 1 개)
 //   ④ 조정자 앙상블: 출생–사멸(해석해) — 합성 절반이면 평균이 절반 E(t)/2 만큼 줄어듦, 거의 0 인 교란은 δ 로 효과 없음을 보임
+import SCN from '../scenarios.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -12,6 +13,7 @@ const req = createRequire(import.meta.url);
 const QC = req('../judicial/qual_compare.js'), S = req('../judicial/stats.js'), C = req('../core.js'), IRB = req('../compiler/ir_builder.js'), ORCH = req('../orchestrator.js');
 const ROOT = new URL('..', import.meta.url), json = (p) => JSON.parse(readFileSync(new URL(p, ROOT), 'utf8'));
 const DB = C.normalize(json('data/db.json'));
+const scen = (p) => SCN.read(new URL(p, ROOT)); // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 const Q = (expect, extra) => Object.assign({ kind: 'qualitative', readout: { kind: 'amount', target: 'X|c' }, expect, condition: { species: '9606' } }, extra || {});
 const judge = (o, x, y, extra) => QC.judgeQualitative(Object.assign({ o, control: x, perturbed: y, resolution: 1, quantum: 1 }, extra || {}));
 
@@ -89,7 +91,7 @@ test('② 경험적 우연 확률: 같은 실행의 다른 읽을 거리에 같�
 });
 
 test('③ 조정자 결정론: 합성 규칙을 막으면 산물이 줄어듦 — 교란 차이 검사 통과, 분해능 = 수치 오차 + 분자 1 개', () => {
-  const SRC = 'D000202', SC = json('examples/scenarios/mhc-dc-maturation-lps-hypothetical.json'), A = IRB.assemble(DB, SRC, SC);
+  const SRC = 'D000202', SC = scen('examples/scenarios/mhc-dc-maturation-lps-hypothetical.json'), A = IRB.assemble(DB, SRC, SC);
   const R = A.rules.find((x) => x.k && x.kind !== 'degradation' && x.prods.length === 1 && !x.cons.length && !A.signals.includes(x.prods[0].b));
   const o = (expect) => Q(expect, { perturbation: { type: 'block', target: R.ref }, readout: { kind: 'amount', target: R.prods[0].b } });
   const r = ORCH.observeQualitative(DB, o('decrease'), SRC, SC);
@@ -107,7 +109,7 @@ test('③ 조정자 결정론: 합성 규칙을 막으면 산물이 줄어듦 �
 });
 
 test('④ 조정자 앙상블: 출생–사멸 해석해 — 합성 절반이면 평균이 E(t)/2 줄어듦, 거의 0 인 교란은 δ 로 효과 없음', () => {
-  const BD = json('examples/scenarios/stochastic-birth-death-hypothetical.json'), B = 'D000165|nucleoplasm', RU = 'D000165/rule/synthesis';
+  const BD = scen('examples/scenarios/stochastic-birth-death-hypothetical.json'), B = 'D000165|nucleoplasm', RU = 'D000165/rule/synthesis';
   const G = Math.LN2 / 3600, NAV = 6.02214076e23 * 1e-13, lam = (BD.kinetics[RU].k * NAV) / G, E = lam * (1 - Math.exp(-G * BD.t_end)) - 0; // N0 = 0
   const o = (expect, dose) => Q(expect, { perturbation: { type: 'inhibit', target: RU, Ki_M: 1e-6, dose_M: dose }, readout: { kind: 'amount', target: B } });
   const half = ORCH.observeQualitative(DB, o('decrease', 1e-6), 'D000174', BD, { n: 40 });

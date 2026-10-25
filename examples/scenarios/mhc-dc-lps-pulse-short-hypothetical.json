@@ -7,60 +7,96 @@
   "t_end": 43200,
   "volumes": {
     "extracellular": {
-      "value": 10000,
+      "value": {
+        "assume": "A000344"
+      },
       "unit": "fL"
     },
     "cytosol": {
-      "value": 1000,
+      "value": {
+        "assume": "A000331"
+      },
       "unit": "fL"
     },
     "er_lumen": {
-      "value": 100,
+      "value": {
+        "assume": "A000339"
+      },
       "unit": "fL"
     },
     "er_membrane": {
-      "value": 30,
+      "value": {
+        "assume": "A000341"
+      },
       "unit": "fL"
     },
     "golgi_lumen": {
-      "value": 30,
+      "value": {
+        "assume": "A000349"
+      },
       "unit": "fL"
     },
     "golgi_membrane": {
-      "value": 10,
+      "value": {
+        "assume": "A000351"
+      },
       "unit": "fL"
     },
     "endosome_lumen": {
-      "value": 20,
+      "value": {
+        "assume": "A000335"
+      },
       "unit": "fL"
     },
     "endosome_membrane": {
-      "value": 10,
+      "value": {
+        "assume": "A000337"
+      },
       "unit": "fL"
     },
     "plasma_membrane": {
-      "value": 30,
+      "value": {
+        "assume": "A000359"
+      },
       "unit": "fL"
     }
   },
   "amounts": {
-    "D000189|er_membrane": 2000,
-    "D000198|endosome_membrane": 2000,
-    "D000098|cytosol": 20000,
-    "D000195|endosome_lumen": 5000,
-    "D000181|extracellular": 2000000,
-    "D000180|cytosol": 20000
+    "D000189|er_membrane": {
+      "assume": "A000256"
+    },
+    "D000198|endosome_membrane": {
+      "assume": "A000260"
+    },
+    "D000098|cytosol": {
+      "assume": "A000209"
+    },
+    "D000195|endosome_lumen": {
+      "assume": "A000258"
+    },
+    "D000181|extracellular": {
+      "assume": "A000248"
+    },
+    "D000180|cytosol": {
+      "assume": "A000245"
+    }
   },
   "thresholds": {
     "D000201|plasma_membrane": {
-      "low": 2000,
-      "high": 20000
+      "low": {
+        "assume": "A000305"
+      },
+      "high": {
+        "assume": "A000303"
+      }
     }
   },
   "kinetics": {
     "D000180/rule/synthesis": {
       "law": "zero_order",
-      "k": 8.302695335869233e-11,
+      "k": {
+        "assume": "A000123"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -68,7 +104,9 @@
     },
     "D000182/rule/synthesis": {
       "law": "zero_order",
-      "k": 1.1070260447825641e-9,
+      "k": {
+        "assume": "A000126"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -76,7 +114,9 @@
     },
     "D000183/rule/synthesis": {
       "law": "zero_order",
-      "k": 3.3210781343476934e-10,
+      "k": {
+        "assume": "A000127"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -84,8 +124,12 @@
     },
     "D000098/rule/antigen_processing": {
       "law": "michaelis_menten",
-      "kcat": 0.05,
-      "Km": 3.3210781343476934e-8,
+      "kcat": {
+        "assume": "A000040"
+      },
+      "Km": {
+        "assume": "A000039"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -93,8 +137,12 @@
     },
     "D000189/rule/peptide_import": {
       "law": "michaelis_menten",
-      "kcat": 0.02,
-      "Km": 3.3210781343476934e-8,
+      "kcat": {
+        "assume": "A000131"
+      },
+      "Km": {
+        "assume": "A000130"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -102,8 +150,12 @@
     },
     "D000190/rule/assembly": {
       "law": "binding",
-      "k_on": 75276.7595,
-      "k_off": 0.0001,
+      "k_on": {
+        "assume": "A000135"
+      },
+      "k_off": {
+        "assume": "A000134"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -111,8 +163,12 @@
     },
     "D000189/rule/peptide_loading": {
       "law": "binding",
-      "k_on": 75276.7595,
-      "k_off": 0.0001,
+      "k_on": {
+        "assume": "A000133"
+      },
+      "k_off": {
+        "assume": "A000132"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -121,7 +177,9 @@
     "D000191/rule/er_exit": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0016666666666666668,
+      "k": {
+        "assume": "A000137"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -130,7 +188,9 @@
     "D000191/rule/surface_delivery": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0033333333333333335,
+      "k": {
+        "assume": "A000139"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -139,7 +199,9 @@
     "D000191/rule/internalization": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0002777777777777778,
+      "k": {
+        "assume": "A000138"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -148,7 +210,9 @@
     "D000182/rule/free_hc_loss": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1800,
+      "half_life": {
+        "assume": "A000125"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -157,7 +221,9 @@
     "D000190/rule/erad": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 3600,
+      "half_life": {
+        "assume": "A000136"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -166,7 +232,9 @@
     "D000191/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1800,
+      "half_life": {
+        "assume": "A000140"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -175,7 +243,9 @@
     "D000179/rule/peptidase_loss": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 60,
+      "half_life": {
+        "assume": "A000122"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -183,7 +253,9 @@
     },
     "D000192/rule/synthesis": {
       "law": "zero_order",
-      "k": 1.1070260447825641e-9,
+      "k": {
+        "assume": "A000142"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -191,7 +263,9 @@
     },
     "D000193/rule/synthesis": {
       "law": "zero_order",
-      "k": 1.1070260447825641e-9,
+      "k": {
+        "assume": "A000144"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -199,7 +273,9 @@
     },
     "D000194/rule/synthesis": {
       "law": "zero_order",
-      "k": 2.2140520895651282e-9,
+      "k": {
+        "assume": "A000147"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -207,8 +283,12 @@
     },
     "D000199/rule/assembly": {
       "law": "binding",
-      "k_on": 22583.027850000006,
-      "k_off": 0.0001,
+      "k_on": {
+        "assume": "A000158"
+      },
+      "k_off": {
+        "assume": "A000157"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -216,8 +296,12 @@
     },
     "D000200/rule/assembly": {
       "law": "binding",
-      "k_on": 22583.027850000006,
-      "k_off": 0.0001,
+      "k_on": {
+        "assume": "A000161"
+      },
+      "k_off": {
+        "assume": "A000160"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -226,7 +310,9 @@
     "D000200/rule/er_exit": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0016666666666666668,
+      "k": {
+        "assume": "A000163"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -235,7 +321,9 @@
     "D000200/rule/endosomal_sorting": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0033333333333333335,
+      "k": {
+        "assume": "A000162"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -244,7 +332,9 @@
     "D000181/rule/uptake": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0008333333333333334,
+      "k": {
+        "assume": "A000124"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -252,8 +342,12 @@
     },
     "D000195/rule/antigen_processing": {
       "law": "michaelis_menten",
-      "kcat": 0.05,
-      "Km": 0.0000016605390671738465,
+      "kcat": {
+        "assume": "A000149"
+      },
+      "Km": {
+        "assume": "A000148"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -261,8 +355,12 @@
     },
     "D000195/rule/ii_cleavage": {
       "law": "michaelis_menten",
-      "kcat": 0.02,
-      "Km": 4.151347667934616e-7,
+      "kcat": {
+        "assume": "A000152"
+      },
+      "Km": {
+        "assume": "A000151"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -270,8 +368,12 @@
     },
     "D000198/rule/clip_release": {
       "law": "michaelis_menten",
-      "kcat": 0.05,
-      "Km": 8.302695335869232e-7,
+      "kcat": {
+        "assume": "A000154"
+      },
+      "Km": {
+        "assume": "A000153"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -279,8 +381,12 @@
     },
     "D000198/rule/peptide_loading": {
       "law": "binding",
-      "k_on": 15055.351900000001,
-      "k_off": 0.0001,
+      "k_on": {
+        "assume": "A000156"
+      },
+      "k_off": {
+        "assume": "A000155"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -289,7 +395,9 @@
     "D000201/rule/surface_delivery": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.0033333333333333335,
+      "k": {
+        "assume": "A000165"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -298,7 +406,9 @@
     "D000201/rule/internalization": {
       "law": "mass_action",
       "order": 1,
-      "k": 0.016666666666666666,
+      "k": {
+        "assume": "A000164"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -307,7 +417,9 @@
     "D000192/rule/free_loss": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1800,
+      "half_life": {
+        "assume": "A000141"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -316,7 +428,9 @@
     "D000193/rule/free_loss": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1800,
+      "half_life": {
+        "assume": "A000143"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -325,7 +439,9 @@
     "D000194/rule/free_loss": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1800,
+      "half_life": {
+        "assume": "A000146"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -334,7 +450,9 @@
     "D000194/rule/clip_turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 600,
+      "half_life": {
+        "assume": "A000145"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -343,7 +461,9 @@
     "D000199/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1200,
+      "half_life": {
+        "assume": "A000159"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -352,7 +472,9 @@
     "D000201/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 3600,
+      "half_life": {
+        "assume": "A000166"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -361,7 +483,9 @@
     "D000179/rule/endosomal_loss": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 120,
+      "half_life": {
+        "assume": "A000120"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -369,9 +493,15 @@
     },
     "D000064/rule/mhc2_surface_retention": {
       "law": "hill",
-      "K": 9.96323440304308e-9,
-      "n": 2,
-      "fmin": 0.02,
+      "K": {
+        "assume": "A000010"
+      },
+      "n": {
+        "assume": "A000012"
+      },
+      "fmin": {
+        "assume": "A000011"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -382,15 +512,21 @@
     "D000064|extracellular": [
       {
         "t": 0,
-        "n": 0
+        "n": {
+          "assume": "A000312"
+        }
       },
       {
         "t": 1800,
-        "n": 300000
+        "n": {
+          "assume": "A000315"
+        }
       },
       {
         "t": 5400,
-        "n": 0
+        "n": {
+          "assume": "A000316"
+        }
       }
     ]
   },

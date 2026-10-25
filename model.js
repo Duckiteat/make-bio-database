@@ -32,9 +32,11 @@
     refers:       { axis: null, label: '정의에 사용', inverse: '이 개념을 사용하는 정의' },
   };
   const UP_OF = { has_kind: 'is_a', has_part: 'part_of', has_instance: 'instance_of' };
-  const AXIS_UP = { kind: '상위 범주', part: '전체', instance: '유형' };
-  const AXIS_DOWN = { kind: '하위 범주', part: '구성요소', instance: '사례' };
-  const ROLE = { agent: '촉매/행위자', input: '소비(입력)', output: '생성(출력)', regulator: '조절자' };
+  // 토큰 → 라벨 보기 (표는 vocab: hierarchyUp·hierarchyDown·bundleRoles)
+  const labelsOf = (T) => Object.fromEntries(Object.entries(T).map(([k, v]) => [k, v.label]));
+  const AXIS_UP = labelsOf(V.hierarchyUp);
+  const AXIS_DOWN = labelsOf(V.hierarchyDown);
+  const ROLE = labelsOf(V.bundleRoles);
   const EFFECT_TYPES = ['modify', 'convert', 'dissociate', 'associate', 'transport', 'transfer', 'degrade'];
   // 동일성 보존을 검사하는 효과 (화학 변환이 없는 물리적 변화)
   const CONSERVING = new Set(['dissociate', 'associate', 'transport', 'transfer', 'degrade']);
@@ -514,6 +516,11 @@
     const r = isObj(l.requirement) ? l.requirement : { text: str(l.requirement) };
     const o = { target: str(l.target), type: str(l.type), requirement: { text: str(r.text), needs: arr(r.needs).map(normNeed) } };
     for (const k of ['found_in', 'note', 'by', 'at']) if (str(l[k])) o[k] = str(l[k]);
+    // 구조 필드 (16A 가 스키마): 증상(정량 키 → 수) · 막힌 하류(번호) · 재검토 조건(통제 토큰) · 금지된 우회(저장만 — 관문 강제 안 함). requirement.text(R2)는 그대로
+    if (isObj(l.symptom)) o.symptom = Object.fromEntries(Object.entries(l.symptom).map(([k, v]) => [str(k), typeof v === 'number' ? v : Number(v)]));
+    if (arr(l.downstream_blocked).length) o.downstream_blocked = arr(l.downstream_blocked).map(str);
+    if (str(l.resolution_trigger)) o.resolution_trigger = str(l.resolution_trigger);
+    if (arr(l.prohibited_bypasses).length) o.prohibited_bypasses = arr(l.prohibited_bypasses).map(str);
     if (isObj(l.resolution)) o.resolution = { note: str(l.resolution.note), evidence: normEvidence(l.resolution.evidence) };
     return o;
   }
@@ -545,12 +552,13 @@
     if (arr(ob.also).length) o.observable.also = arr(ob.also).map(str);
     if (str(ob.denominator)) o.observable.denominator = str(ob.denominator);
     if (num(ob.threshold) !== undefined) o.observable.threshold = num(ob.threshold);
+    if (isObj(ob.dose)) o.observable.dose = { target: str(ob.dose.target), values: arr(ob.dose.values).map(num) };
     o.value = num(b.value);
     o.unit = str(b.unit);
     const u = isObj(b.uncertainty) ? b.uncertainty : {};
     o.uncertainty = { kind: str(u.kind), model: str(u.model), sd: num(u.sd) };
     for (const k of ['precision', 'detection_limit', 'saturation', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
-    o.replicates = num(b.replicates);
+    o.replicates = b.replicates === null ? null : num(b.replicates); // null = 원문에 반복 수가 없음(미보고) — 1 로 적지 않는다
     o.condition = normObsCondition(b.condition);
     if (isObj(b.calibration)) {
       const cal = { kind: str(b.calibration.kind) };
@@ -924,7 +932,7 @@
   }
 
   return Object.freeze({ VOCAB: V, NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
-    FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
+    FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, labelsOf, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
     isStepId, isObj, clone, str, arr, uniq, RESERVED, RES_RE, MOLECULAR, isParticipantKind, GREEK, normName,
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,

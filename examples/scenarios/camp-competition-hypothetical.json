@@ -3,9 +3,49 @@
   "hypothetical": true,
   "_설명": "가상 값. PKA 활성화(cAMP 4분자 협동 결합)에 binding 법칙을 잘못 쓴 예와 Kd 가 k_off/k_on 과 맞지 않는 예를 일부러 넣어 감사가 잡는지 본다.",
   "cell": "hepatocyte",
-  "volumes": { "cytosol": { "value": 4000, "unit": "fL" }, "extracellular": { "value": 10000, "unit": "fL" } },
+  "volumes": {
+    "cytosol": {
+      "value": {
+        "assume": "A000332"
+      },
+      "unit": "fL"
+    },
+    "extracellular": {
+      "value": {
+        "assume": "A000346"
+      },
+      "unit": "fL"
+    }
+  },
   "kinetics": {
-    "D000049/rule/camp_hydrolysis": { "law": "michaelis_menten", "kcat": 5, "Km": 1e-6, "evidence": { "level": "predicted", "confidence": 0 } },
-    "D000042/rule/camp_release": { "law": "binding", "k_on": 1e7, "k_off": 1, "Kd": 1e-9, "evidence": { "level": "predicted", "confidence": 0 } }
+    "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": {
+        "assume": "A000009"
+      },
+      "Km": {
+        "assume": "A000008"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    },
+    "D000042/rule/camp_release": {
+      "law": "binding",
+      "k_on": {
+        "assume": "A000007"
+      },
+      "k_off": {
+        "assume": "A000006"
+      },
+      "Kd": {
+        "assume": "A000005"
+      },
+      "evidence": {
+        "level": "predicted",
+        "confidence": 0
+      }
+    }
   }
 }

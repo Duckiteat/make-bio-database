@@ -79,9 +79,11 @@ function judgeQualitative(input, opt) {
   const want = isOrder ? 'order' : ex;
   const outcome = r.observed === want ? 'match' : r.observed === 'not_shown' || r.observed === 'undefined' ? 'not_shown' : 'mismatch';
   // 결론: 사전 등록된 규약의 검증 세트에 있는 관찰만 (obs_compare 와 같은 규칙)
-  const pv = input.protocol, conclusive = !!(pv && pv.declared && pv.ok && input.observationId && (pv.validation || []).includes(input.observationId));
-  return Object.assign(row, { observed: r.observed, outcome, conclusive, detail: r, why: r.why || null,
-    requirement: conclusive ? '' : !pv || !pv.declared ? '모의 실험 규약이 없음(탐색 실행) — 결론으로 쓰려면 protocol 선언 후 실행 전 사전 등록' : !pv.ok ? '규약 위반: ' + pv.problems.join(' · ') : `관찰 ${input.observationId || '(번호 없음)'} 이 사전 등록된 검증 세트에 없음` });
+  //   + 인정 (build-plan 75): 부르는 쪽이 인정을 넘겼으면 검증 근거로 인정된 관찰만 (넘기지 않으면 acceptance null — 확인 안 함)
+  const pv = input.protocol, ac = input.acceptance || null, inSet = !!(pv && pv.declared && pv.ok && input.observationId && (pv.validation || []).includes(input.observationId));
+  const conclusive = inSet && (!ac || ac.ok);
+  return Object.assign(row, { observed: r.observed, outcome, conclusive, acceptance: ac, detail: r, why: r.why || null,
+    requirement: conclusive ? '' : !pv || !pv.declared ? '모의 실험 규약이 없음(탐색 실행) — 결론으로 쓰려면 protocol 선언 후 실행 전 사전 등록' : !pv.ok ? '규약 위반: ' + pv.problems.join(' · ') : !inSet ? `관찰 ${input.observationId || '(번호 없음)'} 이 사전 등록된 검증 세트에 없음` : `관찰 ${input.observationId} 이 검증 근거로 인정되지 않음 (${ac.status}${ac.reasons && ac.reasons.length ? ' — ' + ac.reasons.join(' · ') : ''}) — 결론은 가장 약한 근거를 따른다 (node dbtool.mjs accept)` });
 }
 
 // 경험적 우연 확률 (영 가설 = '이 모델에서 아무 읽을 거리나 골랐을 때'): 같은 실행의 다른 후보(같은 종류의 묶음·세포 상태)에
@@ -139,7 +141,7 @@ function chanceBaseline(rows) {
   return { n: judged.length, units: units.length, k, expected_by_chance: expected, p_at_least: units.length ? pAtLeast : null, not_judged: rows.length - judged.length, non_independent: nonIndependent };
 }
 
-const OUT = { match: '맞음', mismatch: '틀림', not_shown: '보이지 못함', invalid: '무효' };
+const OUT = Object.fromEntries(Object.entries(V.qualOutcomes).map(([k, v]) => [k, v.label])); // 결과 토큰 → 라벨 (표는 vocab)
 function qualCompareText(rows, base) {
   const out = ['정성 모의 판정'];
   for (const r of rows) {

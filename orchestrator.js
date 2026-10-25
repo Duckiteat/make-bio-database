@@ -16,6 +16,7 @@ const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
 const LOGA = require('./judicial/log_audit.js');
 const PROTO = require('./judicial/protocol.js');
+const V = require('./vocab.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const STF = require('./judicial/stiffness.js');
 const OC = require('./judicial/obs_compare.js');
@@ -127,7 +128,22 @@ function reductionCheck(db, state, sc, drop, bundles, opt) {
 
 // ----- 관찰 판정 (4단계 ②): 행정부 실행 → 관찰 연산자(컴파일러)로 측정량 → 사법부 판정. 엔진은 관찰을 보지 않는다 -----
 // 시나리오 A (필수)·B (선택 — 경쟁 가설). 시나리오에 stochastic 이 있으면 앙상블(opt.n 궤적, 기본 50) — 생물 변이(퍼짐)까지 판정
+// V8 맥락 이전 — 정량 판정 (build-plan 59): 측정 맥락 = 관찰 자신의 조건(condition, 없으면 규약 matched_experiment.system),
+//   판정 맥락 = 시나리오(species·cell) → 없으면 판정 세포 상태의 세포 · 기준 종. 판정을 막지 않는 공개 전제(정성 경로와 같은 급).
+//   비교는 종·세포 두 열쇠만 — 시뮬레이션이 위치·온도·pH 를 하나로 선언하지 않아 나머지는 늘 '비교 못 함' 이 된다.
+function quantContext(db, o, state, sc) {
+  const sense = db.senses[state] || {}, cond = o.condition || {}, sys = ((sc.protocol || {}).matched_experiment || {}).system || {};
+  const stateCell = (sense.desc || []).map((d) => d.context && d.context.cell).find(Boolean);
+  const measured = { species: cond.species || sys.species || null, cell: cond.cell || sys.cell || null };
+  const judged = { species: sc.species || sense.reference_species || V.defaultReferenceSpecies, cell: sc.cell || stateCell || null };
+  return PROTO.contextTransfer(measured, judged);
+}
+
 function observeFate(db, o, state, scA, scB, opt) {
+  const out = observeFateRaw(db, o, state, scA, scB, opt);
+  return out && !out.error ? Object.assign(out, { context_transfer: quantContext(db, o, state, scA) }) : out;
+}
+function observeFateRaw(db, o, state, scA, scB, opt) {
   opt = opt || {};
   if (o.kind === 'qualitative') return { error: '정성 관찰은 observeQualitative 로 (build-plan 8)' };
   const runs = (sc) => {
@@ -139,6 +155,23 @@ function observeFate(db, o, state, scA, scB, opt) {
   const pv = PROTO.protocolVerdict(db, scA, { prereg: opt.prereg || [], runAt: new Date().toISOString() });
   const p = scA.protocol || {}, eq = (p.equivalence || []).find((e) => e.observable && o.observable && e.observable.kind === o.observable.kind && e.observable.target === o.observable.target);
   if (pv.declared && scA.stochastic && p.replicates && p.replicates.n) opt = Object.assign({}, opt, { n: p.replicates.n });
+  if (o.observable.kind === 'dose_slope') { // 용량 반응 기울기: 시작량 계열(컴파일러 set_amount) → 교란 차이 검사(사법부) → 실행(행정부) → 기울기(관찰 연산자) → 판정
+    if (scB) return { error: 'dose_slope 는 가설 하나(scA)로만 — 가설 비교는 시나리오마다 따로' };
+    const PT = require('./compiler/perturb.js'), PA = require('./judicial/perturb_audit.js'), d = o.observable.dose;
+    const v = PT.perturbedIR(db, state, scA, { type: 'dose_series', of: { type: 'set_amount', target: d.target }, doses: d.values });
+    if (v.error) return { error: v.error };
+    const series = [];
+    for (const x of v.variants) {
+      if (!x.ir) return { error: x.error };
+      const a = PA.verifyPerturbation({ baseScenario: scA, baseIR: v.base, scenario: x.scenario, ir: x.ir, record: x.record });
+      if (!a.ok) return { error: `용량 ${x.record.perturbation.n}: 교란 차이 검사 실패 — ${(a.problems || []).join('; ')}` };
+      try { for (const raw of runs(x.scenario)) series.push({ dose: x.record.perturbation.n, raw }); } catch (e) { return { error: e.message }; }
+    }
+    const slope = OBSOP.doseSlope(o, series);
+    const out = OC.verdict(o, [slope], null, Object.assign({}, opt, { equivalence: eq, protocol: pv, observationId: opt.observationId }));
+    out.dose_series = series.map((s) => ({ dose: s.dose, progress: OBSOP.progress(s.raw, o.observable.target) }));
+    return out;
+  }
   try { return OC.verdict(o, OBSOP.predict(o, runs(scA)), scB ? OBSOP.predict(o, runs(scB)) : null, Object.assign({}, opt, { equivalence: eq, protocol: pv, observationId: opt.observationId })); }
   catch (e) { return { error: e.message }; }
 }
@@ -206,13 +239,13 @@ function observeQualitative(db, o, state, sc, opt) {
       if (det) numerical = gap(evs(cRaws)[0], evs(cRef)[0]) + (pRaws ? gap(evs(pRaws)[0], evs(pRef)[0]) : 0);
       const quantum = 0, resolution = Math.max(numerical || 0, rd.instrument_resolution || 0); // 순서의 분해능은 시각의 수치 오차 — 분자 양자는 시각에 쓰지 않는다 (장치 해상도가 선언되면 그 바닥)
       main = { quantum, numerical, resolution };
-      r = QC.judgeQualitative({ o, control: { events: evs(cRaws) }, perturbed: pRaws ? { events: evs(pRaws) } : null, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId });
+      r = QC.judgeQualitative({ o, control: { events: evs(cRaws) }, perturbed: pRaws ? { events: evs(pRaws) } : null, resolution, quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, acceptance: opt.acceptance });
       const arm = pRaws || cRaws;
       pool = cands.map((t) => ({ target: t, events: eventsOf(arm, t), resolution }));
     } else {
       main = inputFor(rd.target);
       const eq = (p.equivalence || []).find((e) => e.observable && e.observable.kind === rd.kind && e.observable.target === rd.target);
-      r = QC.judgeQualitative({ o, control: main.control, perturbed: main.perturbed, resolution: main.resolution, quantum: main.quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq });
+      r = QC.judgeQualitative({ o, control: main.control, perturbed: main.perturbed, resolution: main.resolution, quantum: main.quantum, perturbationAudit: audit, protocol: pv, observationId: opt.observationId, equivalence: eq, acceptance: opt.acceptance });
       pool = cands.map(inputFor);
     }
     const emp = QC.empiricalChance(o, pool), uniform = r.chance;

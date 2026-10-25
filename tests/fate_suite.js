@@ -8,6 +8,7 @@
 //   I 확률 앙상블 (4단계 ④·⑤): 혼합-최적 + 확률 층 — 운명 비율이 결정론과 맞고, 도달 시각 분포가 결정론 값을 감싸고, 모든 궤적의 원장이 맞음
 // 실행: node tests/fate_suite.js [--quick] [--engine js|rust]   (시나리오 examples/scenarios/fate-*-hypothetical.json — 가상 값, 엔진 시험용)
 'use strict';
+const SCN = require('../scenarios.js'); // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 const { readFileSync } = require('fs');
 const path = require('path');
 const F = require('../engine/fate_engine.js');
@@ -21,7 +22,7 @@ const ROOT = path.join(__dirname, '..');
 const db = JSON.parse(readFileSync(path.join(ROOT, 'data/db.json'), 'utf8'));
 const SRC = 'D000174', EFF = 'D000175', MEM = 'D000176';
 const TBET = 'D000165|nucleoplasm', EOMES = 'D000166|nucleoplasm', GLC = 'D000046|cytosol', PAL = 'D000169|mito_matrix';
-const scen = (name, over) => Object.assign(JSON.parse(readFileSync(path.join(ROOT, `examples/scenarios/fate-${name}-hypothetical.json`), 'utf8')), over || {});
+const scen = (name, over) => Object.assign(SCN.read(path.join(ROOT, `examples/scenarios/fate-${name}-hypothetical.json`)), over || {});
 const h = (s) => (s == null ? '—' : `${(s / 3600).toFixed(2)} h`);
 
 function run(opt) {
@@ -86,7 +87,7 @@ function run(opt) {
   // H 과정 분석 보고서: 모든 실행이 무결성 증명서 PASS (원장·재생 매 단계 ≤ 1e-14, 신호 = 일정, 결정론, 출처) + 실행 전에 적은 예측(expect)과 일치
   const reports = {};
   for (const [k, r] of Object.entries(runs)) {
-    const scText = readFileSync(path.join(ROOT, `examples/scenarios/fate-${names[k]}-hypothetical.json`), 'utf8');
+    const scText = SCN.text(path.join(ROOT, `examples/scenarios/fate-${names[k]}-hypothetical.json`));
     const again = F.simulateFate(db, SRC, { scenario: JSON.parse(scText), commitment: false, ...E });
     const rep = PR.processReport(r, { scenario: JSON.parse(scText), scenarioText: scText, rerunHash: FA.trajectoryHash(again) });
     reports[k] = rep;
@@ -97,7 +98,7 @@ function run(opt) {
   }
   // I 확률 앙상블 (Rust/WASM, 궤적 20 — 앙상블 판정은 사법부 stoch_audit)
   const SA = require('../judicial/stoch_audit.js');
-  const stoSc = JSON.parse(readFileSync(path.join(ROOT, 'examples/scenarios/stochastic-mixed-optimal-hypothetical.json'), 'utf8'));
+  const stoSc = SCN.read(path.join(ROOT, 'examples/scenarios/stochastic-mixed-optimal-hypothetical.json'));
   const ens = ORCH.runEnsemble(db, SRC, stoSc, opt.quick ? 8 : 20, { commitment: false }), sum = SA.ensembleSummary(ens), det = runs.mix || sim('mix', 'mixed-optimal');
   const fr = sum.fate[det.final.state] || { k: 0, ci: [0, 0] }, rr = sum.reach[EFF];
   check('I 확률 앙상블', `혼합-최적: 결정론 끝 상태(${det.final.state})의 앙상블 비율 구간이 1 을 포함`, fr.ci[1] >= 1, `${fr.k}/${sum.n}, 95% ${(fr.ci[0] * 100).toFixed(1)}–${(fr.ci[1] * 100).toFixed(1)}%`);

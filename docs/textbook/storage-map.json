@@ -87,10 +87,18 @@
     {
       "path": "data/dictionary.jsonl",
       "class": "law",
-      "format": "JSON Lines — 통제 토큰 overlay 한 줄씩: key·register·label_en·meaning_en·xref·since",
-      "writer": "사람·AI (입법 구역·sha 봉인 배선은 build-plan 16A 다음 단계 — 지금은 읽기 전용 커밋 파일)",
-      "readers": "dictionary.js",
+      "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·register·key·label_en·meaning_en·xref·since·revises?·prev·root (root = sha256(prev + 정준 JSON))",
+      "writer": "입법 서기 appendDictionary (구역 registry) — judicial/dictionary_audit.js checkProposals 봉인이 있을 때만 (`dictionary add`). 손으로 고치지 않는다",
+      "readers": "dictionary.js (마지막 사건이 현재 값) · judicial/dictionary_audit.js (validate·dictionary)",
       "interpret": "사전 overlay — 통제 토큰의 en 라벨·의미·외부 온톨로지 앵커(xref). ko 는 vocab.js(권위)에서 병합한다(복제 없음). 고유 개념(gap 타입 등)은 우리가 en 을 저술하므로 xref null, 외부 개념은 xref 로 검증. 설계 dictionary-and-translation.md."
+    },
+    {
+      "path": "data/assumptions.jsonl",
+      "class": "law",
+      "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root (root = sha256(prev + 정준 JSON))",
+      "writer": "입법 서기 appendAssumptions (구역 registry) — judicial/assumption_audit.js checkProposals 봉인이 있을 때만 (`assume add`). 변환 012 가 처음 만듦. 손으로 고치지 않는다",
+      "readers": "scenarios.js (시나리오 번호 풀기) · judicial/assumption_audit.js (validate·assume)",
+      "interpret": "가정 원장 (build-plan 49) — 시나리오의 가상 숫자에 신원(A…)을 준다. db 는 확인된 사실만, 가정은 여기. 고치기는 revises 단 새 번호, 가리키는 쪽은 최신을 따라가지 않는다. SCHEMA §8O · 설계 structure-realignment.md §3."
     },
     {
       "path": "data/log/*",
@@ -136,8 +144,56 @@
       "format": "Node CommonJS (읽기 전용 모듈)",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "tests/dictionary.test.mjs (이후 dbtool·보고서 렌더러가 소비)",
-      "interpret": "[표현 층] 사전·번역기 (build-plan 16A) — 통제 토큰(R1)은 vocab(ko 권위) + data/dictionary.jsonl(en overlay) 병합 조회, 자유 서술(R2)은 원문 통과. 핵심 규칙: 조회(lookup)하지 추론(infer)하지 않는다. 읽기 전용 — 쓰기·판정·엔진 없음. 설계 dictionary-and-translation.md.",
+      "interpret": "[표현 층] 사전·번역기 (build-plan 16A) — 통제 토큰(R1)은 vocab(ko 권위) + data/dictionary.jsonl(en overlay) 병합 조회 — 신원은 register/key(맨 키는 한 register 에만 있을 때), 자유 서술(R2)은 원문 통과. 핵심 규칙: 조회(lookup)하지 추론(infer)하지 않는다. vocab 만 읽는다(사법·행정 모듈을 부르지 않음). 읽기 전용 — 쓰기·판정·엔진 없음. 설계 dictionary-and-translation.md.",
       "refactor_strategy": "통제 토큰 register 를 더할 때(faultChannels·observables·expect) REGISTERS 에만 추가. 번역기는 조회·통과만 — 생성 금지. core.js 질의 표현기 통합은 16A 이후 단계."
+    },
+    {
+      "path": "scenarios.js",
+      "class": "law",
+      "format": "Node CommonJS (읽기 전용 모듈)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool (resolveScenario·register·origin) · tests (시나리오 읽기)",
+      "interpret": "시나리오 읽기 — 파일 + 가정 원장을 읽어 compiler/assumptions.resolve 로 번호를 푼다. 번호 없는 시나리오는 파일 글자 그대로(입력 해시 불변). 풀리지 않으면 예외 — 숫자를 지어내지 않음. 읽기 전용 — 쓰기·판정·엔진 없음."
+    },
+    {
+      "path": "inbox.js",
+      "class": "law",
+      "format": "Node CommonJS (읽기 전용 모듈)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool verify-collection · mcp/query.mjs verify_collection",
+      "interpret": "수신함 읽기 — 핸드오프 후보의 출처(PMID)마다 초록(MED-*.json 제목+abstractText)과 공개 전문(PMC-*.xml, 후보 pmcid 또는 초록 기록의 pmcid)을 모아 사법부 인용 대조(collection_audit.quoteCheck)에 넘긴다. 받기·쓰기·판정 없음."
+    },
+    {
+      "path": "mcp/protocol.mjs",
+      "class": "law",
+      "format": "Node ESM",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "mcp/query.mjs·fetch.mjs·clerk.mjs",
+      "interpret": "[MCP] 공통 틀 — 표준 입출력 JSON-RPC 2.0(initialize·ping·tools/list·tools/call), 역할(BIODB_ROLE, 기본 collector)별 도구 거르기와 부르는 자리의 거부. 외부 패키지 없음. 파일 쓰기 없음."
+    },
+    {
+      "path": "mcp/query.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(에이전트)",
+      "interpret": "[MCP] query — db·색인·원장을 메모리에 두고 읽기만(map·context·mechanism·pattern·limitations·origin·assume_uses·qualgraph·retraction·inbox·verify_collection). 무효화 열쇠 = 파일 (크기, 수정 시각). 쓰기 없음."
+    },
+    {
+      "path": "mcp/fetch.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(에이전트)",
+      "interpret": "[MCP] fetch — 접근 판정과 공개 전문·초록 받기. 받기는 입법 서기 fetchToInbox(증거 구역), 받을 때마다 FETCH_LOG 사슬. db 를 읽지 않음. 유료·무료 열람본은 받지 않음."
+    },
+    {
+      "path": "mcp/clerk.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(통합가·사람·수집가)",
+      "interpret": "[MCP] clerk — 입출력기, 저장소를 바꾸는 유일한 문. 단일 작성자 잠금(서기 writerLock), 권위 쓰기는 dbtool 명령(사법부 재판정 → 서기), 수집가는 put_handoff 만, --allow-warnings 는 사람만."
     },
     {
       "path": "model.js",
@@ -160,6 +216,17 @@
       "node": "COMPILER_PERTURB",
       "governance": "Shared",
       "refactor_strategy": "교란은 시나리오 선언 필드로만 — 엔진 코드를 바꾸지 않는다. 새 교란 종류는 여기와 사법부 재구성(derivative)·교란 차이 검사(build-plan 5)를 같은 커밋에서."
+    },
+    {
+      "path": "compiler/assumptions.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "scenarios.js · judicial/assumption_audit.js · migrations/012 · tests/assumptions",
+      "interpret": "[공유·컴파일러] build-plan 49 — 가정 원장 풀기: 시나리오 숫자 자리(slots)를 세고 { assume: A… } 를 원장 숫자로 바꾼다. 자리가 다르면·없는 번호면·단위가 다르면 거부, 번호가 없으면 같은 객체. revises 를 따라가지 않음. 순수 — 파일·쓰기·판정·엔진 없음.",
+      "node": "COMPILER_ASSUMPTIONS",
+      "governance": "Shared",
+      "refactor_strategy": "새 숫자 자리 종류는 UNIT·paramOk·slots 와 vocab.assumptionSlots 를 같은 커밋에서. 풀린 결과는 엔진 입력과 비트로 같아야 한다."
     },
     {
       "path": "compiler/ir_builder.js",
@@ -237,6 +304,38 @@
       "node": "JUDICIAL_CORE",
       "governance": "Judicial",
       "refactor_strategy": "validate·관문·감사(auditRate). 모든 감사 항목에 결함 태그(judicial/fault.js)를 만드는 곳에서 명시 — 메시지에서 추측하지 않는다."
+    },
+    {
+      "path": "judicial/dictionary_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool validate·dictionary, tests/dictionary_seal",
+      "interpret": "[사법] 사전 봉인 — data/dictionary.jsonl 사슬 무결성(seq·prev·root)·revises(고치기는 현재 root 를 가리키는 새 사건)·렌더 모호(두 토큰이 같은 렌더 문자열)·덮임(vocab register 토큰마다 영어 항목). 새 항목은 checkProposals 가 통과시켜야 서기가 붙인다. 판정만 — 읽기·쓰기 없음."
+    },
+    {
+      "path": "judicial/assumption_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool validate·assume, tests/assumptions",
+      "interpret": "[사법] 가정 원장 감사 — 사슬(seq·prev·root·번호=순번) · 기록(자리·칸·대상·부호·단위·기원·assumed 의 열린 한계·근거·범위·revises·중복) · 모든 시나리오 번호 풀기 · 거꾸로 색인(uses). 새 기록은 checkProposals 가 통과시켜야 서기가 붙인다. 판정만 — 읽기·쓰기 없음."
+    },
+    {
+      "path": "judicial/dependency.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "judicial/evidence_report.js, dbtool evidence --recheck, tests/retraction_propagation",
+      "interpret": "[사법] 결론의 의존 지문과 재검증 (build-plan 13) — 값은 내용(대상·속성·값·단위·맥락) 지문, 관찰은 철회 여부. 지금 db 와 대조해 같음·같음(기록만 대체)·값이 바뀜·근거 철회됨·없음. 재검증은 라벨이지 차단이 아니다. 판정만."
+    },
+    {
+      "path": "judicial/scene_origin.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool origin, tests/dose_slope",
+      "interpret": "[사법] 첫 장면 기원 — 시나리오 시작 입력·계의 db 숫자마다 measured·abstracted·assumed(종류가 맞는 열린 한계)·unrecorded. 계의 규칙은 컴파일러 조립과 같음. 판정만."
     },
     {
       "path": "judicial/verifier.js",
@@ -444,12 +543,28 @@
       "interpret": "신뢰 지표 — 도장·근거·관찰 기록에서 (S 출처, D 성질) 쌍을 계산하고 등급(anchor·parameter·bounded·legacy·reference·blocked)을 낸다. 점수를 저장하지 않는다(계산되는 것). 곱 S×D 는 보고용 숫자일 뿐 판정에 쓰지 않는다 — (2,4) 와 (4,2) 가 겹치기 때문. 추세 축(시간)은 judicial/trend.js 가 판정해 opt.trend 로 들어온다 — 없으면 unchecked 이고 anchor 가 나오지 않는다."
     },
     {
+      "path": "judicial/acceptance.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "legislative/clerk.mjs (승인 도장 발급 검사), judicial/evidence_report.js (가장 약한 근거), dbtool.mjs accept·attest, mcp/clerk.mjs accept, tests",
+      "interpret": "[사법] 인정 (build-plan 72) — 인정은 (기록, 용도) 순서쌍. 용도 다섯(서술·비교·추정·검증 근거·기준)마다 축 조건(S·D·T) ∧ 관계 조건(기준 종 · 추정에 쓰지 않음 · 확인된 문헌) ∧ 높은 용도는 승인 도장(claim 'accept', 사람·통합 에이전트, 이유 필수). 승인은 축 조건을 넘지 못하고, 축이 내려가면 '재검토'. 결론은 가장 약한 근거를 따른다. 용도별 판정 함수(USES·accept)는 reliability.js 에 있고 이 파일은 표·승인 도장·가장 약한 근거를 맡는다."
+    },
+    {
       "path": "judicial/trend.js",
       "class": "law",
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "legislative/clerk.mjs (도장 검증), dbtool.mjs, tests",
-      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 창(vocab consensus.window_days)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
+      "interpret": "[사법] 추세 점검 — 신뢰 지표의 시간 축. 더 새 원본(합의 수신함 data/fetched/consensus/)에 같은 신원 확인을 다시 돌려 match·mismatch·unchecked 를 판정하고, 날짜가 박힌 도장(claim 'trend')을 낸다. 웹 검색 결과를 상태로 저장하지 않는다. 원천별 창(vocab consensus.sources — 판 주기)을 넘긴 도장은 다시 unchecked — anchor 는 영구하지 않다. mismatch 는 값을 지우지 않고 legacy 로 내리고 Consensus_Gap 후보가 된다."
+    },
+    {
+      "path": "judicial/stiffness.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js (reductionCheck·진단), tests",
+      "interpret": "[사법] 강성 프로파일 진단 (build-plan 46) — 운명 엔진의 적분 진단(steps·rejected·hMinHits·h.min/max)과 활성 규칙 수로 '왜 느린가'를 분류한다(h_min_floor = NUMERICAL·rejection_storm·timescale_separation·lu_cost·well_conditioned). 느림은 결과지 결함이 아니다 — 최소 단계 바닥(hMinHits>0, 정확도 타협)만 NUMERICAL 후보. 판정만, 엔진 실행·데이터 수정·쓰기 없음."
     },
     {
       "path": "data/fetched/consensus/*/*",
@@ -905,6 +1020,70 @@
       "interpret": "규칙이 실제로 거부하는지, 시뮬레이션·감사가 기대대로인지."
     },
     {
+      "path": "tests/dictionary_seal.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "사전 봉인 거부 시험 — 변조·삭제·잘못된 새 항목(register·키·빈 영어·날짜·사슬 칸·중복·revises·렌더 충돌·xref)·봉인 없는/다른 쓰기를 거부하고, revises 고치기는 붙이기만 하는지."
+    },
+    {
+      "path": "tests/assumptions.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "가정 원장 시험 — 사슬 변조·삭제·번호 바꾸기 · 다른 자리 옮겨 붙이기·없는 번호 거부 · 최신 따라가기 없음 · 새 기록 거부 사유별 · 서기 봉인·순번 · 인라인 숫자 등록 거부 · 거꾸로 색인 · 변환 결과."
+    },
+    {
+      "path": "tests/mcp.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "MCP 시험 — 프로토콜 · query 가 dbtool 과 같은 글·메모리 사본·파일 바뀌면 다시 읽음 · 역할 거부 · 단일 작성자 · 핸드오프 추가만 · 받기 기록 변조·파일 바뀜 · mcp 서버의 파일 쓰기 없음 · fetch 인자 검사."
+    },
+    {
+      "path": "tests/acceptance.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "인정 시험 — 지금 표(추정 = anchor·parameter, 검증 근거 = 승인된 정성 관찰 6, 기준 0) · 승인·재검토·철회 · 승인이 축 조건을 넘으면 서기 거부 · 역할·이유·변조 · 관계 조건 · 가장 약한 근거로 보고서 판정."
+    },
+    {
+      "path": "tests/reliability_criteria.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "신뢰 기준 표 시험 — 모든 항목이 기준 번호를 달고, 번호의 단계가 실제 점수와 같으며, 기준마다 이유 또는 '이유 미정' 이 적혀 있는지."
+    },
+    {
+      "path": "tests/gap_schema.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "가 스키마 구조 필드 — 정규화 보존(없으면 불변)·재검토 후보(at 이후 새 관찰·값, 철회·manual·미래 at 제외)·병합 관문과 분리."
+    },
+    {
+      "path": "tests/retraction_propagation.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "철회 → 결론 — 검증 세트 관찰 철회 시 등록 결론 재검증 필요, 파생 그래프가 등록 결론까지, 재검증은 내용 키잉(메모 대체는 같음), 의존 블록 왕복."
+    },
+    {
+      "path": "tests/dose_slope.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "용량 반응 기울기 — set_amount 교란과 사법 재구성, 관찰 검사 거부, 결정론 기울기 ≈ 1/ΔL(L000116 동어반복), 추정용 판정 거부, 첫 장면 기원 분류."
+    },
+    {
       "path": "tests/governance.test.mjs",
       "class": "verification",
       "format": "node:test",
@@ -1103,6 +1282,14 @@
       "writer": "사람·AI",
       "readers": "사람·AI (작성 예), tests",
       "interpret": "병합되지 않은 예시 패치. pgm-isomerization.json 은 이름·별칭 매핑을 보여 준다."
+    },
+    {
+      "path": "examples/scenarios/subjects.json",
+      "class": "scenario",
+      "format": "JSON { subjects: { 시나리오 파일명: 대상 D… } }",
+      "writer": "사람·AI (시나리오를 더할 때 같은 커밋)",
+      "readers": "evidence (--target 생략·--all), tests/governance ⑭″",
+      "interpret": "시나리오 → 실행 대상(시작 세포 상태 또는 경로). 시나리오 파일이 아니다 — 대상을 시나리오 안에 두면 사전 등록 해시가 바뀌므로 여기에만. 폴더와 정확히 같아야 한다(빠짐·남음은 시험이 거부)."
     },
     {
       "path": "examples/scenarios/*.json",

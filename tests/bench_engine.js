@@ -6,6 +6,7 @@
 //   simulateRate: 준비(정규화·색인·조립) 대 적분 루프
 // 실행: node tests/bench_engine.js [--repeat 3]   (쓰기 없음 — 표를 콘솔에)
 'use strict';
+const SCN = require('../scenarios.js'); // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 const { readFileSync } = require('fs');
 const path = require('path');
 const C = require('../core.js');
@@ -14,7 +15,7 @@ const F = require('../engine/fate_engine.js');
 const ROOT = path.join(__dirname, '..');
 const db = C.normalize(JSON.parse(readFileSync(path.join(ROOT, 'data/db.json'), 'utf8')));
 const rep = +(process.argv[process.argv.indexOf('--repeat') + 1] || 3) || 3;
-const scen = (f) => JSON.parse(readFileSync(path.join(ROOT, 'examples/scenarios', f), 'utf8'));
+const scen = (f) => SCN.read(path.join(ROOT, 'examples/scenarios', f));
 const best = (f) => { let ms = Infinity, r; for (let i = 0; i < rep; i++) { const t0 = process.hrtime.bigint(); r = f(); ms = Math.min(ms, Number(process.hrtime.bigint() - t0) / 1e6); } return { r, ms }; };
 
 function fateRows() {

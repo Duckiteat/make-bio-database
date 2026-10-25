@@ -8,6 +8,7 @@
 //   ⑦ 확률 실행: 같은 (seed, 궤적) 재현, 발화 수는 음이 아닌 정수
 //   ⑧ 경계: 모든 저장소 0 에서 시작해도 음수가 생기지 않음
 //   ⑨ 상수 등급 관문: 가상 상수는 hypothetical 선언 아래에서만 — 선언을 빼면 판정이 거부(궤적은 그대로)
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import test from 'node:test';
 import assert from 'node:assert';
 import { createRequire } from 'node:module';
@@ -24,7 +25,7 @@ const PR = require('../judicial/process_report.js');
 const DB = JSON.parse(fs.readFileSync(new URL('../data/db.json', import.meta.url)));
 const SRC = 'D000202', TARGET = 'D000203';
 const PT = require('../compiler/perturb.js'), PA = require('../judicial/perturb_audit.js');
-const raw = (file) => JSON.parse(fs.readFileSync(new URL(`../examples/scenarios/${file}`, import.meta.url)));
+const raw = (file) => SCN.read(new URL(`../examples/scenarios/${file}`, import.meta.url));
 // 파생 시나리오(기준 + 교란 한 줄, build-plan 9)는 기준을 읽어 교란을 건 실제 입력으로
 const scen = (name) => { const sc = raw(`${name}.json`); if (!PT.isDerived(sc)) return sc; const v = PT.derive(C.normalize(DB), SRC, sc, raw(sc.base)); assert.ok(!v.error, v.error); return v.scenario; };
 const MAT = 'mhc-dc-maturation-lps-hypothetical';

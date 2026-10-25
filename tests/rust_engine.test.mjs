@@ -4,6 +4,7 @@
 //   ⑥ 사법부: Rust 원자료도 계약·독립 질량 검증·IR 검사를 통과
 //   ⑦ 2단계 병렬 탐침: lanes 와 무관하게 결정 시각·격자·탐침 끝 상태가 직렬과 비트 단위로 같음 (WASM 워커 · 네이티브 스레드)
 // 실행: node --test tests/*.test.mjs   (네이티브 비교는 cargo 가 있을 때 — CI 는 Rust 를 설치한다)
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
@@ -17,7 +18,7 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const C = req('../core.js'), F = req('../engine/fate_engine.js'), RB = req('../engine/fate_rust.js'), IRB = req('../compiler/ir_builder.js');
 const FA = req('../judicial/fate_audit.js'), K = req('../judicial/contract.js'), VER = req('../judicial/verifier.js'), ORCH = req('../orchestrator.js');
 const BASE = C.normalize(JSON.parse(readFileSync(join(ROOT, 'data/db.json'), 'utf8')));
-const SC = readdirSync(join(ROOT, 'examples/scenarios')).filter((f) => f.startsWith('fate-')).map((f) => ({ f, sc: JSON.parse(readFileSync(join(ROOT, 'examples/scenarios', f), 'utf8')) }));
+const SC = readdirSync(join(ROOT, 'examples/scenarios')).filter((f) => f.startsWith('fate-')).map((f) => ({ f, sc: SCN.read(join(ROOT, 'examples/scenarios', f)) }));
 const RUST = join(ROOT, 'engine/rust');
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 const relWorst = (a, b) => { let w = 0; for (let j = 0; j < a.series.length; j++) for (let i = 0; i < a.keys.length; i++) { const x = a.series[j][i], y = b.series[j][i]; w = Math.max(w, Math.abs(x - y) / Math.max(1, Math.abs(x))); } return w; };
@@ -132,7 +133,7 @@ test('⑥ 사법부는 Rust 원자료도 같은 기준으로 판정 — 계약·
 
 test('⑧ 확률 층 (4단계 ⑤): 출생–사멸은 JS = Rust 비트 · 운명 프로그램은 같은 분포 · 네이티브 = WASM 비트 · 루프 할당 0', (t) => {
   const SA = req('../judicial/stoch_audit.js');
-  const BD = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/stochastic-birth-death-hypothetical.json'), 'utf8'));
+  const BD = SCN.read(join(ROOT, 'examples/scenarios/stochastic-birth-death-hypothetical.json'));
   const leap = { ...BD, amounts: { 'D000165|nucleoplasm': 1000 }, kinetics: { ...BD.kinetics, 'D000165/rule/synthesis': { ...BD.kinetics['D000165/rule/synthesis'], k: BD.kinetics['D000165/rule/synthesis'].k * 40 } } };
   // 연속 부분이 자명한 계: 같은 (seed, 궤적) → 두 백엔드의 발화·궤적이 비트 단위로 같다
   for (const sc of [BD, leap]) for (const trajectory of [0, 1, 2]) {

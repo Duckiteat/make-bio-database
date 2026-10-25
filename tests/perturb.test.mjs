@@ -3,6 +3,7 @@
 //   ② block · inhibit(배율 1/(1+dose/Ki), 사법부 법칙 재구성 ≤ 1e-14) · clamp(완충) · dose_series
 //   ③ 교란 IR 해시 = f(기준 IR 해시, 교란 기록) · 없는 대상은 오류 · 엔진 코드는 바뀌지 않음(IR 만 먹음)
 //   ④ 사법부 교란 차이 검사(build-plan 5): 기준에서 독립 재구성 — 선언 밖 차이·빠진 생성 규칙·꾸민 배율·다른 대조군을 잡는다
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
@@ -11,7 +12,7 @@ const fs = require('fs');
 const C = require('../core.js'), F = require('../engine/fate_engine.js'), IRB = require('../compiler/ir_builder.js'), PT = require('../compiler/perturb.js'), DER = require('../judicial/derivative.js'), PA = require('../judicial/perturb_audit.js');
 const DB = C.normalize(JSON.parse(fs.readFileSync(new URL('../data/db.json', import.meta.url))));
 const SRC = 'D000202';
-const SC = JSON.parse(fs.readFileSync(new URL('../examples/scenarios/mhc-dc-maturation-lps-hypothetical.json', import.meta.url)));
+const SC = SCN.read(new URL('../examples/scenarios/mhc-dc-maturation-lps-hypothetical.json', import.meta.url));
 const A = IRB.assemble(DB, SRC, SC), base = IRB.buildFateIR(DB, SRC, SC);
 const baseOf = (b) => b.split('|')[0];
 // 시험 대상: 계 안에서 무언가가 만드는 분자 하나, 속도 상수가 있는 규칙 하나, 묶음 하나 (데이터에서 고름 — 이름을 박지 않음)

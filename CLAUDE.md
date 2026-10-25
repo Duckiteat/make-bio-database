@@ -8,13 +8,15 @@
 - 행정 `core.js`·`engine/*`: 읽기·시뮬레이션만. 파일 쓰기·검사·승인·`'verified'`·`AUDIT_*`·사후 분석·질량 판정 금지. 사법·입법·조정자 호출 금지.
 - 엔진은 이름을 모른다: 분자·위치·부분 구조 이름 금지 — 사실은 데이터·어휘에. 부분 구조 수지 ΣIn=ΣOut 상대 1e-14(규칙 검사·운명 원장).
 - 수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만. 엔진에 기본값 금지.
-- 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`(db.json·patches·log·사전 등록부)·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
+- 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`(db.json·patches·log·사전 등록부)·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖)·`handoff`(`workspace/handoff/`, 후보 추가만). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
+- MCP `mcp/`(`docs/design/outsourcing-and-mcp.md` §4): 서버는 자원 기준 — `query`(메모리 상주 읽기)·`fetch`(공개 전문·초록 받기 + `FETCH_LOG` 받기 기록)·`lab`(56 뒤). 권한은 입출력기 `clerk` 하나(단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤). 역할 `BIODB_ROLE` 기본 `collector`(핸드오프만). mcp 서버는 파일을 직접 쓰지 않음(governance ①). 유료·로그인 원천은 받지 않음.
 - 사법 `judicial/`: 검증·증명·감사·보고만. 엔진 실행·데이터/엔진 수정 금지 — 판결·보고서로만. 행정부는 관찰을 읽지 않음; 예측 표본은 조정자가 `compiler/obs_operator.js` 로.
 - `'verified'` 는 `attestations/registry.json` 의 유효 도장으로만(`augment apply` 발급, `node dbtool.mjs attest` 재검증). 없으면 관문 거부.
 - 엔진 실행이 필요한 감사는 조정자 `orchestrator.js` 가 원자료 → 사법부.
 - 엔진 출력 모양을 바꾸면 `schemas/ffi/fate-raw.schema.json` 같은 커밋. 이식은 `docs/design/engine-port-roadmap.md`, 이득은 `node tests/bench_engine.js` 기준선과.
 - 컴파일러 `compiler/`: 공유 순수 층(db+시나리오 → 불변 IR). 쓰기·판정·엔진·권력 모듈 호출 금지. 엔진은 IR 만 먹고 원자료에 `irHash`. 희소 LU 기호 분석 `sparse_lu.js`(사법부 `checkLU` 검증), 경로 IR `rate_ir.js`, 교란 연산자 `perturb.js`(시나리오 `exclude_rules`·`rule_scale` 로만 — 엔진 불변, 사법부 재구성 + `judicial/perturb_audit.js` 가 '교란 외에는 대조군과 같음' 을 독립 대조) — `simulateRate` 결과는 IR 전후 비트 동일. 속도 법칙 변경 = 컴파일러·테이프 명세·`judicial/derivative.js` 재구성 같은 커밋(도함수 ≤1e-14).
 - 결함은 `fault` 태그대로(`judicial/fault.js`): FINDING 고치지 않음 · DATA_GAP 한계 등록 · DOMAIN_CONFLICT 근거와 데이터 패치 · NUMERICAL 결합점·솔버(db 생물 상수 변경 금지) · ENGINE_DEFECT 엔진 · COMPILER_DEFECT `compiler/`. 결과(고갈·정지)를 결함으로 고치지 않음.
+- 표·로직 분리: 토큰 → 사람말 표(라벨·의미)는 `vocab.js` 에만 + en 은 `data/dictionary.jsonl`(register/key), 코드는 보기만 계산. 토큰 → 동작·숫자·정책 표(부호·정규식·계수·쓰기 허용)와 규칙 설명은 로직 곁. 사전은 vocab 만 읽음(governance ⑮).
 - 군더더기 금지: `storage-map.json` 노드 안에서 고침. 래퍼·임시 플래그·사후 잘라내기 금지. 비교용 경로는 판정 뒤 삭제.
 - Rust(`engine/rust/`): 기본 백엔드, JS `fate_engine.run` 은 오라클, 둘 다 IR 테이프만. 소스 변경 → `sh engine/rust/build.sh` 산출물 같은 커밋 + `tests/rust_engine.test.mjs`(궤적 ≤rtol·운명·시각 같음·byteLength 불변·네이티브=WASM 비트·루프 할당 0). 알고리즘 변경은 두 백엔드 같은 커밋. 적분은 결합 Rodas3, 정확도는 `integrator.rtol·atol`(`dt_slow` 는 기록 간격). 수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000(`orchestrator.refScenario`). 사건·결정 시각은 직전 스냅숏에서 `advance` 재적분 + 근 찾기·이분(`event_tol`·`commitment_tol`), 격자 Δ 로 되돌리지 않음. 탐침(`engine/probe_pool.js`, 워커마다 WASM)은 (상태, t0) 순수 함수, lanes 무관 직렬과 동일. 확률: 출생–사멸 JS=Rust 비트, 운명 프로그램은 두 표본 검정, 네이티브=WASM 비트.
 
@@ -36,11 +38,12 @@
 - 경로 뒤 `pattern <경로>`; 상위 개념 없는 패턴이 두 경로 이상 → kind process + `motif`.
 - 시뮬레이션 보고에 "농도 공백"(기본값·무한 풀) 명시 — 도달 여부만 말함.
 - 해상도: `resolution <경로>`. R2 는 속도 상수로 못 가르는 반응 중심만. 경쟁은 Kd·kcat·Km 먼저.
-- 속도 상수: 규칙 `kinetics` 에 SI, 문헌 값은 관찰(O…) 먼저 + `kinetics.from`(묶은 상수 `lumped` 도 원 관찰 참조). 미확인 값 금지(시험값은 `examples/scenarios/` `hypothetical: true` 만). 다른 종 값을 사람 값으로 적지 않음 → 한계. 불확도 미보고면 sd = 유효 숫자 해상도 + `note`. 넣은 뒤 궤적 전후 비교 보고.
+- 속도 상수: 규칙 `kinetics` 에 SI, 문헌 값은 관찰(O…) 먼저 + `kinetics.from`(묶은 상수 `lumped` 도 원 관찰 참조). 미확인 값 금지(시험값은 가정 원장 `data/assumptions.jsonl` 의 번호 A… 를 `hypothetical: true` 시나리오가 `{assume}` 로 가리킴 — `assume add` 감사·봉인 뒤 서기만, 고치기는 revises 새 번호, 가리키는 쪽은 최신을 따라가지 않음, 새 등록은 인라인 가상 숫자 거부). 다른 종 값을 사람 값으로 적지 않음 → 한계. 불확도 미보고면 sd = 유효 숫자 해상도 + `note`. 넣은 뒤 궤적 전후 비교 보고.
 - 등급은 계산(`judicial/reliability.js`, `grade`): 점수를 데이터에 쓰지 않음, S×D 곱 금지. 보고 시 쓴 값의 등급 명시.
-- 추세(`judicial/trend.js`): 웹 검색 결과 저장 금지. `trend --fetch`(→ `data/fetched/consensus/`) → `trend` → `--write`. 도장은 `vocab.consensus.window_days` 뒤 다시 unchecked. mismatch 면 값 유지·`legacy`·Consensus_Gap.
-- 등급 문턱(기본 `parameter`) 미달 데이터 상수 = AUDIT_KINETIC. 시나리오 값은 `hypothetical: true` 때만. 문턱은 `min_grade` 로 올리기만.
-- 실측값은 `observations`(O+1): 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처·용도(`estimation|validation`). 수정·삭제 금지(`retracted` 만). 추정용을 검증에 쓰지 않음. 합성 관찰은 `examples/observations/` 만. 측정은 포트(`schemas/obs/`)로.
+- 추세(`judicial/trend.js`): 웹 검색 결과 저장 금지. `trend --fetch`(→ `data/fetched/consensus/`) → `trend` → `--write`. 도장은 원천별 창 `vocab.consensus.sources`(원천의 판 주기) 뒤 다시 unchecked. mismatch 면 값 유지·`legacy`·Consensus_Gap.
+- 인정(`judicial/acceptance.js`, `accept`): (기록, 용도) — 서술·비교·추정은 계산, 검증 근거·기준은 승인 도장(사람·integrator, 이유 필수, 축·관계 조건을 넘지 못함). 결론은 가장 약한 근거를 따름(`acceptance_review` — 보고서·observe·fate 모두). 시뮬레이션 관문도 같은 판정(문턱 ∧ '추정' accepted, 속도 상수의 종 = `kinetics.context.species`). 승인 도장은 추가만(마지막이 유효). 관찰 `use` 는 신청일 뿐.
+- 등급 문턱(기본 `parameter`) 미달 데이터 상수 = AUDIT_KINETIC. 시나리오 값은 `hypothetical: true` 때만. 문턱은 `min_grade` 로 올리기만(anchor·parameter — 낮추거나 비교 못 하는 등급은 관문 거부). 문턱 비교는 순번이 아니라 축 조건(`reliability.THRESHOLD`).
+- 실측값은 `observations`(O+1): 값(SI)·불확도(크기·유형·잡음 모형)·반복 수(원문에 없으면 `null` — 1 로 적지 않음)·조건(종)·출처·용도(`estimation|validation`). 도구 추정(`computed`·`predicted`)은 실측이 아님(D2.estimate). 수정·삭제 금지(`retracted` 만). 추정용을 검증에 쓰지 않음. 합성 관찰은 `examples/observations/` 만. 측정은 포트(`schemas/obs/`)로.
 - 정성 관찰(v12): `kind: qualitative` — 교란·`readout`·`expect`, 1차 문헌(DOI·PMID) `provenance.source` + 원문 `quote` 필수, `use: validation` 만, 수치 근거 금지. 교과서·추론은 정성 관찰 아님(한계·메모). 같은 실험은 `experiment` 로 묶음. 넣은 뒤 `qualgraph` — 경로 없음은 Structural_Gap 후보, 모순 후보는 근거와 데이터 대조. "구조 지지" 는 일치가 아님. 모의 판정은 `observe <O…> --state --scenario 대조군` — 맞음·틀림·보이지 못함(불일치 아님)·무효, 우연 기준선과 함께 보고, 결론은 등록 규약의 검증 세트만.
 - 맥락 열쇠(v12): `contextKeys` 여섯 칸, `condition` 은 정의항 번호 목록(문장은 `scope`). 번호를 합치거나 나눌 땐 패치 `moved`(지우고 새로 만들지 않음), 이동된 번호는 쓰지 않음.
 - 값 층(v12, SCHEMA §8N): 수치는 `values`(V…)에만 저장, `obs`·`kinetics` 는 정규화가 붙이는 보기. 패치는 지금처럼 obs·kinetics 로 쓰고 병합이 대체·철회로 접음(값 기록 불변) — `values`·`moved` 직접 쓰기 금지, 값이 바뀌면 `recorded_at` 필요(dbtool 이 찍음). 그날 기준은 `model.asOf`.
@@ -68,7 +71,7 @@
 - 코드·형식·어휘·문서 구조: `CHANGES.md` 맨 위 한 행 — Scope · Why · Impact · Verification, 같은 커밋.
 - **사용자 보고: 같은 네 칸 표. 산문 요약 금지.**
 - 구조 변경 → `SCHEMA.md`, 작업 규칙 → 이 파일 + `docs/design/agent-rules.md`, 실패·unmapped·공백 → `limitations.md`(`--write`). 문서는 해당 절만 고침.
-- 세션 시작: `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록.
+- 세션 시작: `docs/design/direction.md`(방향·우선순위·왜 그 순서) → 철학(`authority-and-comprehension`·`tripartite-governance`·`dictionary-and-translation`·`conservation-classes`·`work-verification`) → `CHANGES.md` 위 몇 행 → `limitations.md` → `SCHEMA.md` 변경 기록.
 - 논리를 깨면 감지·수정·기록까지 한 작업.
 - 주석은 계약·이유만. 이력은 `CHANGES.md`.
 

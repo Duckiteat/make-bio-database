@@ -1,6 +1,7 @@
 // 사법부 통계·관찰 판정 (4단계 ②) — judicial/stats.js · judicial/obs_compare.js · compiler/obs_operator.js predict
 //   ① 특수 함수가 알려진 값과 같음 ② 귀무 가설 아래 기각률 ≈ α (검정이 보정되어 있음) ③ 검정력 공식 = 모의 기각률
 //   ④ 관찰 3 판정(CONSISTENT·CONFLICT·INDISTINGUISHABLE)과 필요한 정밀도 ⑤ 관찰 연산자: 운명 원자료 → 측정량
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -51,7 +52,7 @@ test('③ 검정력: 비중심 χ² 공식 = 모의 기각률, z 검정 필요 �
   const se = S.requiredSE(1); close(S.powerZ(1, se), 0.8, 1e-5, '필요 표준 오차에서 검정력 0.8 (반대쪽 꼬리 몫만큼 위)'); assert.ok(S.powerZ(1, se) >= 0.8);
 });
 
-const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'computed', tool: 'synthetic' }, provenance: { source: { db: 'DOI', id: '10.0000/synthetic-obs' } } }, o);
+const obs = (o) => Object.assign({ observable: { kind: 'amount', target: 'D000165|nucleoplasm' }, value: 1000, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 50 }, replicates: 4, condition: { species: '9606' }, use: 'validation', evidence: { level: 'curated', sources: [{ db: 'DOI', id: '10.0000/synthetic-obs' }] }, provenance: { source: { db: 'DOI', id: '10.0000/synthetic-obs' } } }, o);
 
 test('④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백', () => {
   // 표준 오차 25 (sd 50 / √4). 가설 하나의 일치는 선언된 δ 로만 (M1) — δ 는 근거 등급이 붙는 값
@@ -140,7 +141,7 @@ test('④′ 동등성(TOST, M1): δ 근거 등급 · 정밀도 부족 · 차가
 
 test('⑤ 관찰 연산자: 운명 원자료(결정론) → 분자 수(격자 보간)·농도·비율·도달 시각', () => {
   const db = DefDB.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
-  const sc = JSON.parse(readFileSync(new URL('../examples/scenarios/fate-mixed-optimal-hypothetical.json', import.meta.url), 'utf8'));
+  const sc = SCN.read(new URL('../examples/scenarios/fate-mixed-optimal-hypothetical.json', import.meta.url));
   const raw = F.simulateFate(db, 'D000174', { scenario: sc, engine: 'js', commitment: false });
   const k = raw.keys.indexOf('D000165|nucleoplasm'), T = raw.process.times, j = 100;
   assert.equal(OP.predict(obs({ condition: { species: '9606', time_s: T[j] } }), [raw])[0], raw.series[j][k], '기록점에서는 그 값');

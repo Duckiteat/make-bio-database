@@ -1,0 +1,127 @@
+// MCP 서버 (설계 docs/design/outsourcing-and-mcp.md §4.3) — 서버 셋 중 query·fetch + 입출력기 clerk.
+//   ① 프로토콜: initialize·tools/list·모르는 메서드·알림 ② query: dbtool 과 같은 글 · 메모리 사본을 다시 읽지 않음 · 파일이 바뀌면 다시 읽음
+//   ③ 역할: 기본은 가장 좁은 collector · 목록에 없는 도구는 부르는 자리에서도 거부 ④ clerk 단일 작성자 ⑤ 핸드오프는 추가만·이름 검사
+//   ⑥ 받기 기록 검사: 사슬 변조·받은 뒤 파일 바뀜 ⑦ 삼권: query·fetch 는 파일을 직접 쓰지 않는다 ⑧ fetch 인자 검사(네트워크 없음)
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { spawnSync, spawn } from 'node:child_process';
+import { readFileSync, mkdtempSync, cpSync, rmSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
+const req = createRequire(import.meta.url);
+const ROOT = new URL('..', import.meta.url).pathname;
+const CA = req('../judicial/collection_audit.js'), ATT = req('../judicial/attestation.js');
+const sha = (x) => createHash('sha256').update(x).digest('hex');
+
+// 서버에 요청 줄들을 보내고 답(id 순)을 받는다
+function call(server, msgs, env = {}) {
+  const input = msgs.map((m, i) => JSON.stringify({ jsonrpc: '2.0', ...(m.method.startsWith('notifications/') ? {} : { id: i + 1 }), ...m })).join('\n') + '\n';
+  const r = spawnSync(process.execPath, [join(ROOT, 'mcp', server)], { input, encoding: 'utf8', env: { ...process.env, BIODB_ROLE: '', ...env }, cwd: ROOT, timeout: 60000 });
+  return { status: r.status, stderr: r.stderr, out: r.stdout.trim().split('\n').filter(Boolean).map((l) => JSON.parse(l)) };
+}
+const tool = (name, args) => ({ method: 'tools/call', params: { name, arguments: args || {} } });
+const text = (m) => m.result.content[0].text;
+
+test('① 프로토콜: initialize 답 · 알림에는 답하지 않음 · 모르는 메서드는 -32601', () => {
+  const { out } = call('query.mjs', [{ method: 'initialize', params: { protocolVersion: '2025-06-18' } }, { method: 'notifications/initialized' }, { method: 'nope' }]);
+  assert.equal(out.length, 2);
+  assert.equal(out[0].result.protocolVersion, '2025-06-18');
+  assert.ok(out[0].result.capabilities.tools);
+  assert.equal(out[1].error.code, -32601);
+});
+
+test('② query: dbtool map 과 같은 글 · 같은 파일이면 다시 읽지 않음 · db 가 바뀌면 다시 읽음', () => {
+  const { out } = call('query.mjs', [tool('map', { ref: 'D000210' }), tool('summary'), tool('summary')]);
+  const cli = spawnSync(process.execPath, [join(ROOT, 'dbtool.mjs'), 'map', 'D000210'], { encoding: 'utf8', cwd: ROOT }).stdout.trim();
+  assert.equal(text(out[0]).trim(), cli);
+  assert.equal(out[1].result.structuredContent.loads, 1);
+  assert.equal(out[2].result.structuredContent.loads, 1, '두 번째 호출은 메모리 사본');
+  const dir = mkdtempSync(join(tmpdir(), 'mcpq-'));
+  try {
+    cpSync(join(ROOT, 'data'), dir, { recursive: true, filter: (s) => !s.includes('/fetched/') });
+    const db = join(dir, 'db.json');
+    // 같은 서버 안에서 db 를 바꾸면 다음 호출이 다시 읽는다 — 요청 사이에 파일을 바꾸려고 대화형으로 띄운다
+    const p = spawn(process.execPath, [join(ROOT, 'mcp', 'query.mjs')], { env: { ...process.env, BIODB_DATA: dir }, cwd: ROOT });
+    return new Promise((done, fail) => {
+      let buf = '', step = 0;
+      p.stdout.on('data', (d) => {
+        buf += d; const lines = buf.split('\n'); buf = lines.pop();
+        for (const l of lines) {
+          const m = JSON.parse(l); step++;
+          if (step === 1) { assert.equal(m.result.structuredContent.loads, 1); const t = JSON.parse(readFileSync(db, 'utf8')); t.meta.note_test = 'x'; writeFileSync(db, JSON.stringify(t)); p.stdin.write(JSON.stringify({ jsonrpc: '2.0', id: 2, ...tool('summary') }) + '\n'); }
+          else { try { assert.equal(m.result.structuredContent.loads, 2, '파일이 바뀌어 다시 읽음'); done(); } catch (e) { fail(e); } finally { p.kill(); rmSync(dir, { recursive: true, force: true }); } }
+        }
+      });
+      p.stdin.write(JSON.stringify({ jsonrpc: '2.0', id: 1, ...tool('summary') }) + '\n');
+    });
+  } catch (e) { rmSync(dir, { recursive: true, force: true }); throw e; }
+});
+
+test('③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부', () => {
+  const c = call('clerk.mjs', [{ method: 'tools/list' }, tool('merge', { paths: ['/tmp/none.json'] })]);
+  assert.deepEqual(c.out[0].result.tools.map((t) => t.name), ['put_handoff']);
+  assert.equal(c.out[1].result.isError, true);
+  assert.match(text(c.out[1]), /역할 collector 에게 없음/);
+  const i = call('clerk.mjs', [{ method: 'tools/list' }], { BIODB_ROLE: 'integrator' });
+  assert.ok(i.out[0].result.tools.some((t) => t.name === 'merge'));
+  const m = call('clerk.mjs', [tool('merge', { paths: ['/tmp/none.json'], allow_warnings: true })], { BIODB_ROLE: 'integrator' });
+  assert.match(text(m.out[0]), /사람 역할만/);
+  const bad = call('query.mjs', [{ method: 'tools/list' }], { BIODB_ROLE: 'admin' });
+  assert.notEqual(bad.status, 0);
+});
+
+test('④ clerk 단일 작성자: 하나가 떠 있으면 둘째는 시작하지 않는다', async () => {
+  const first = spawn(process.execPath, [join(ROOT, 'mcp', 'clerk.mjs')], { env: { ...process.env, BIODB_ROLE: 'integrator' }, cwd: ROOT });
+  await new Promise((r) => setTimeout(r, 400));
+  try {
+    const second = spawnSync(process.execPath, [join(ROOT, 'mcp', 'clerk.mjs')], { input: '', encoding: 'utf8', env: { ...process.env, BIODB_ROLE: 'integrator' }, cwd: ROOT, timeout: 10000 });
+    assert.equal(second.status, 1);
+    assert.match(second.stderr, /이미 떠 있음/);
+  } finally { first.kill(); await new Promise((r) => first.on('exit', r)); }
+});
+
+test('⑤ 핸드오프: 이름 검사 · 붙이기만 (앞 줄 그대로)', () => {
+  const name = `mcp-test-${process.pid}`, f = join(ROOT, 'workspace', 'handoff', `${name}.jsonl`);
+  try {
+    const bad = call('clerk.mjs', [tool('put_handoff', { name: '../x', lines: [{ a: 1 }] })]);
+    assert.match(text(bad.out[0]), /소문자·숫자·하이픈/);
+    call('clerk.mjs', [tool('put_handoff', { name, lines: [{ n: 1 }] })]);
+    call('clerk.mjs', [tool('put_handoff', { name, lines: [{ n: 2 }, { n: 3 }] })]);
+    assert.deepEqual(readFileSync(f, 'utf8').trim().split('\n').map((l) => JSON.parse(l).n), [1, 2, 3]);
+  } finally { if (existsSync(f)) unlinkSync(f); }
+});
+
+test('⑥ 받기 기록 검사: 통과 · 사슬 변조 · 받은 뒤 파일이 바뀜 · 파일이 사라짐', () => {
+  let prev = CA.FETCH_GENESIS; const ev = [];
+  for (const [i, f] of ['a.xml', 'b.json'].entries()) { const body = { seq: i + 1, at: '2026-10-23T00:00:00.000Z', url: `https://x/${f}`, file: `data/fetched/t/${f}`, ok: true, bytes: 3, sha256: sha(f), prev }; const e = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) }; ev.push(e); prev = e.root; }
+  const cur = { 'data/fetched/t/a.xml': sha('a.xml'), 'data/fetched/t/b.json': sha('b.json') };
+  assert.ok(CA.verifyFetchLog(ev, cur).ok);
+  const t = JSON.parse(JSON.stringify(ev)); t[0].url = 'https://evil/';
+  assert.match(CA.verifyFetchLog(t, cur).errors.join(), /root 재계산 불일치/);
+  assert.match(CA.verifyFetchLog(ev, { ...cur, 'data/fetched/t/a.xml': sha('other') }).errors.join(), /받은 뒤 내용이 바뀜/);
+  assert.match(CA.verifyFetchLog(ev, { ...cur, 'data/fetched/t/b.json': null }).errors.join(), /파일이 없음/);
+});
+
+test('⑦ 삼권: query·fetch 는 파일을 직접 쓰지 않는다 — 쓰기는 입법 서기(clerk.mjs)를 지난다', () => {
+  const W = /\b(writeFileSync|appendFileSync|renameSync|unlinkSync|mkdirSync|writeSync|createWriteStream|rmSync)\b/;
+  for (const f of ['mcp/query.mjs', 'mcp/fetch.mjs', 'mcp/protocol.mjs']) assert.ok(!W.test(readFileSync(join(ROOT, f), 'utf8')), `${f}: 파일 쓰기 함수`);
+  assert.ok(!/legislative\/clerk/.test(readFileSync(join(ROOT, 'mcp/query.mjs'), 'utf8')), 'query 는 서기를 부르지 않는다(읽기 전용)');
+  assert.ok(!/child_process/.test(readFileSync(join(ROOT, 'mcp/query.mjs'), 'utf8')) && !/child_process/.test(readFileSync(join(ROOT, 'mcp/fetch.mjs'), 'utf8')));
+});
+
+test('⑧ fetch 인자 검사 (네트워크 없음): PMID 형식이 아니면 받기 전에 거부', () => {
+  const { out } = call('fetch.mjs', [tool('fetch_fulltext', { pmid: 'PMC123; rm -rf' }), { method: 'tools/list' }]);
+  assert.equal(out[0].result.isError, true);
+  assert.match(text(out[0]), /형식이 아님/);
+  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext', 'resolve_doi']);
+});
+
+test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 DOI 검색 기록도 출처 상태로 읽힌다', () => {
+  const { out } = call('fetch.mjs', [tool('resolve_doi', { doi: 'not-a-doi' })]);
+  assert.equal(out[0].result.isError, true);
+  assert.match(text(out[0]), /형식이 아님/);
+  const lit = req('../inbox.js').literatureStatus(join(ROOT, 'data'));
+  assert.deepEqual(lit['DOI:10.1038/nature07830'], { kind: 'journal', retracted: false }, 'DOI 검색으로 확인된 학술지 기록 (소문자 열쇠)');
+});

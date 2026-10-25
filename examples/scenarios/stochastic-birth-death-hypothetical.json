@@ -6,17 +6,23 @@
   "t_end": 7200,
   "volumes": {
     "nucleoplasm": {
-      "value": 100,
+      "value": {
+        "assume": "A000354"
+      },
       "unit": "fL"
     }
   },
   "amounts": {
-    "D000165|nucleoplasm": 0
+    "D000165|nucleoplasm": {
+      "assume": "A000239"
+    }
   },
   "kinetics": {
     "D000165/rule/synthesis": {
       "law": "zero_order",
-      "k": 1.5986082953072132e-13,
+      "k": {
+        "assume": "A000093"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -25,7 +31,9 @@
     "D000165/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 3600,
+      "half_life": {
+        "assume": "A000098"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0

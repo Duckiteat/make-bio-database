@@ -18,10 +18,14 @@
 'use strict';
 const S = require('./stats.js');
 const RELI = require('./reliability.js');
+const PROTO = require('./protocol.js');
+
+// 반복 수 미보고(null)는 한 번 잰 것으로 본다 — 표준 오차가 가장 넓은 쪽(보수적), 반복을 지어내지 않음
+const reps = (o) => (o.replicates == null ? 1 : o.replicates);
 
 // 비교 척도로 옮긴 예측·관찰과 분산 성분
 function scale(o, samples) {
-  const u = o.uncertainty, r = o.replicates, log = u.model === 'lognormal';
+  const u = o.uncertainty, r = reps(o), log = u.model === 'lognormal';
   const finite = samples.filter(Number.isFinite), censored = samples.length - finite.length;
   const xs = log ? finite.map((v) => Math.log(v)) : finite;
   const n = xs.length, mu = n ? S.mean(xs) : NaN, s2 = S.variance(xs);
@@ -74,6 +78,9 @@ function equivalence(o, A, opt) {
   if (!pv || !pv.declared) return { shown: false, requirement: '모의 실험 규약이 없음(탐색 실행) — 일치를 결론으로 쓰려면 protocol 을 선언하고 실행 전에 사전 등록 (node dbtool.mjs register <시나리오>)' };
   if (!pv.ok) return { shown: false, requirement: '모의 실험 규약 위반: ' + pv.problems.join(' · ') };
   if (!opt.observationId || !(pv.validation || []).includes(opt.observationId)) return { shown: false, requirement: `관찰 ${opt.observationId || '(파일 — 번호 없음)'} 이 사전 등록된 검증 세트(protocol.validation)에 없음 — 결과를 본 뒤 고른 관찰은 검증에 쓰지 않는다` };
+  // 인정 (build-plan 75): 부르는 쪽이 인정을 넘겼으면 검증 근거로 인정된 관찰만 결론 (넘기지 않으면 확인 안 함)
+  const ac = opt.acceptance;
+  if (ac && !ac.ok) return { shown: false, requirement: `관찰 ${opt.observationId} 이 검증 근거로 인정되지 않음 (${ac.status}${ac.reasons && ac.reasons.length ? ' — ' + ac.reasons.join(' · ') : ''}) — 결론은 가장 약한 근거를 따른다 (node dbtool.mjs accept)` };
   if (o.detection_limit != null && o.value <= o.detection_limit) {
     const shown = A.p >= 1 - alpha;
     return { kind: 'below_limit', shown, p: 1 - A.p, requirement: shown ? '' : `예측이 검출 한계 아래라고 확신할 수 없음 (확률 ${fmt(A.p)} < ${fmt(1 - alpha)}) — 예측 퍼짐을 줄이거나 더 낮은 검출 한계의 관찰 필요` };
@@ -134,14 +141,14 @@ function verdict(o, predA, predB, opt) {
     } else {
       out.discrimination = { delta, se, power: se > 0 ? S.powerZ(delta, se, opt.alpha) : delta ? 1 : 0, scale: A.scale };
       // 필요한 정밀도: 지금 반복 수에서 sd, 지금 sd 에서 반복 수 (몬테카를로 분산은 빼고 — 앙상블을 늘려 줄일 수 있음)
-      const seReq = S.requiredSE(delta, opt.alpha, opt.power), r = o.replicates, mc = Math.max(scale(o, predA).mc, scale(o, predB).mc);
+      const seReq = S.requiredSE(delta, opt.alpha, opt.power), r = reps(o), mc = Math.max(scale(o, predA).mc, scale(o, predB).mc);
       const noiseReq = seReq * seReq - mc;
       out.required = { se: seReq, sd_at_replicates: noiseReq > 0 ? Math.sqrt(noiseReq * r) : 0, replicates_at_sd: noiseReq > 0 ? Math.ceil((o.uncertainty.sd ** 2) / noiseReq) : Infinity, scale: A.scale,
         note: delta === 0 ? '두 가설의 예측이 같음 — 이 측정량으로는 어떤 정밀도로도 가를 수 없음' : noiseReq > 0 ? '' : '모델 쪽 몬테카를로 오차가 이미 필요한 표준 오차보다 큼 — 앙상블을 늘려야 함' };
     }
   }
   out.fault = { CONSISTENT: 'FINDING', CONFLICT: 'DOMAIN_CONFLICT', INDISTINGUISHABLE: 'DATA_GAP' }[out.verdict];
-  if (out.verdict === 'INDISTINGUISHABLE' && out.required) out.limitation = { type: 'Observation_Gap', requirement: `두 가설을 가르려면 ${out.required.scale === 'ln' ? 'ln 척도 ' : ''}표준 오차 ≤ ${fmt(out.required.se)} (지금 ${fmt(Math.max(A.se, out.B.se))}): 반복 ${o.replicates} 회면 sd ≤ ${fmt(out.required.sd_at_replicates)}, 지금 sd 면 반복 ≥ ${out.required.replicates_at_sd}` };
+  if (out.verdict === 'INDISTINGUISHABLE' && out.required) out.limitation = { type: 'Observation_Gap', requirement: `두 가설을 가르려면 ${out.required.scale === 'ln' ? 'ln 척도 ' : ''}표준 오차 ≤ ${fmt(out.required.se)} (지금 ${fmt(Math.max(A.se, out.B.se))}): 반복 ${reps(o)} 회${o.replicates == null ? '(미보고 — 1 회로 봄)' : ''}면 sd ≤ ${fmt(out.required.sd_at_replicates)}, 지금 sd 면 반복 ≥ ${out.required.replicates_at_sd}` };
   return out;
 }
 const fmt = (x) => (Number.isFinite(x) ? Number(x.toPrecision(4)).toString() : String(x));
@@ -167,6 +174,7 @@ function verdictText(v) {
       : '동등성: 판정 안 함 (아래 사유)');
   }
   if (v.preferred) lines.push(`관찰이 고른 가설: ${v.preferred}`);
+  if (v.context_transfer) lines.push('', PROTO.contextTransferText(v.context_transfer)); // V8 맥락 이전 (build-plan 59)
   if (v.limitation) lines.push('', `→ 한계 후보 ${v.limitation.type}: ${v.limitation.requirement}`);
   return lines.join('\n');
 }

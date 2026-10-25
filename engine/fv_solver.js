@@ -1,10 +1,15 @@
-// Phase P3 — 3차원 유한 체적(FV) 반응·확산(·이류) 풀이기. Tier 3 영역용, engine/hmse.js 의 정수 원장에 닻을 내린다.
-// docs/design/hybrid-multiscale-engine.md §2.3·§B(불변식 1·3). 상태 변수는 칸마다 '분자 수'(실수) — 농도 = 분자 수 / 칸 부피.
-//   확산: 면 유속 F_ij = (D/h²)(n_j − n_i) — 두 칸에 같은 크기 반대 부호로 더해지므로 보존형(중심 차분).
-//   이류(선택): 면 값은 MUSCL 재구성 + minmod 유속 제한자(진동·음수·비물리적 엔트로피 생성 억제), 역시 면 유속 형태라 보존형.
+// Phase P3 / T3 — 3차원 유한 체적(FV) 반응·확산(·이류) 풀이기. Tier 3 영역용, engine/hmse.js 의 정수 원장에 닻을 내린다.
+// docs/design/hybrid-multiscale-engine.md §2.3·§B(불변식 1·3), docs/design/integral-field-engine.md §2·§9 단계 1.
+//   확산: 면 유속 F_ij = (D/h²)(n_j − n_i) — 두 칸에 같은 크기 반대 부호(보존형 중심 차분).
+//   이류(선택): MUSCL 재구성 + minmod 유속 제한자, 역시 면 유속 형태라 보존형.
 //   반응: 칸 안 1차 변환 from → to, Δ = n_from(1 − e^{−kΔt}) — 종 사이 이동이라 부분 구조 보존.
-//   경계: 기준 경계(geometry_template)로 만든 활성 칸 마스크 밖으로는 유속 0 (닫힌 벽). 인터페이스 면만 BoundaryEngine 이 정수로 연다.
-//   원장 닻: 매 단계 끝에 종마다 Σ n = N_ledger (정수) 가 되도록 재척도. 종 사이 반응량은 최대 나머지 반올림으로 정수화해 지역 거래로 원장에 반영.
+//   경계: 기준 경계(geometry_template) 활성 칸 마스크 밖으로 유속 0. 인터페이스 면만 BoundaryEngine 이 정수로 연다.
+//
+// 정수 장 (integral-field-engine §9 단계 1, 기본): 칸 값 = i64 분자 수(양자 1, Float64Array 로 보유 — 칸당 ≪2²⁹ 라 정확).
+//   수송: 면마다 실수 유속을 **면별 잔여 누산기(carry)** 로 정수화해 대칭 정수 이동(d[p]+=m·d[q]−=m) — Σ칸 이 구성상 정확 보존.
+//   반응: 칸마다 carry 로 정수화, 장에서 옮긴 정수 m 을 **그대로** 원장 지역 거래로 — 장·원장이 같은 정수라 Σ칸 = N_ledger 가 정확.
+//   경계: 정수 dnOut 을 인터페이스 칸에 정수 분배(비례 재척도 아님). → **재척도(anchor) 불필요**: 보존이 1e-14 근사가 아니라 정확한 0.
+//   실수 모드(opt.integer === false): 예전 거동(실수 장 + 매 단계 재척도) — 정수 장과의 L2 대조 기준.
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(require('./hmse.js'));
   else root.FV = factory(root.HMSE);
@@ -28,7 +33,10 @@
   }
 
   // spec: { n, h_m, template, species: { key: { D: m^2/s } }, reactions: [{ from, to, k: s^-1 }], velocity: [vx,vy,vz] m/s, interfaceFace: 'x+' }
-  function createRegion(spec, initialCounts) {
+  // opt: { integer: true } — 정수 장(기본). false 면 실수 장 + 재척도(L2 기준).
+  function createRegion(spec, initialCounts, opt) {
+    const integer = !!(opt && opt.integer); // 단계 1: 정수 장은 opt-in. P4/P5 가 저마다 정수화되기 전까지 기본은 실수(기존 시험 유지, integral-field-engine §9)
+
     const n = spec.n, N3 = n * n * n, mask = templateMask(spec.template, n);
     const idx = (i, j, k) => (i * n + j) * n + k;
     const active = []; for (let p = 0; p < N3; p++) if (mask[p]) active.push(p);
@@ -51,7 +59,13 @@
       active.forEach((p, a) => { f[p] = w[a]; });
       fields[key] = f;
     }
-    return { spec, n, mask, active, faces, iface, fields, idx, vox_m3: spec.h_m ** 3, stats: { substeps: 0, maxRescale: 0 } };
+    // 잔여 누산기 (정수 모드): 면별 수송 carry · 칸별 반응 carry — 부분 단계·거시 단계를 가로질러 들고 다닌다
+    const fluxCarry = {}, reactCarry = {};
+    if (integer) {
+      for (const key of Object.keys(spec.species)) fluxCarry[key] = new Float64Array(faces.length);
+      for (const r of spec.reactions || []) reactCarry[`${r.from}>${r.to}`] = new Float64Array(N3);
+    }
+    return { spec, n, mask, active, faces, iface, fields, idx, vox_m3: spec.h_m ** 3, integer, fluxCarry, reactCarry, stats: { substeps: 0, maxRescale: 0, negClips: 0 } };
   }
 
   // 안정 조건: 명시적 확산 6DΔt/h² ≤ 1/2·… → 부분 단계 수
@@ -63,37 +77,66 @@
   }
   const minmod = (a, b) => (a * b <= 0 ? 0 : Math.abs(a) < Math.abs(b) ? a : b);
 
-  // 확산 + 이류 한 부분 단계 (보존형)
-  function transport(region, key, dt) {
+  // 면 하나의 실수 유속 (p 로 들어오는 양; q → p 가 양수) — 확산 + 이류(MUSCL)
+  function faceFlux(region, key, fi, dt) {
     const f = region.fields[key], D = region.spec.species[key].D || 0, h = region.spec.h_m, n = region.n;
-    const v = region.spec.velocity || [0, 0, 0], d = new Float64Array(f.length), stride = [n * n, n, 1];
-    for (const [p, q, ax] of region.faces) {
-      let F = (D / (h * h)) * (f[q] - f[p]) * dt; // p 로 들어오는 양 (q → p 가 양수)
-      if (v[ax]) {
-        // MUSCL: 위쪽 칸의 기울기를 minmod 로 제한해 면 값 재구성, 면 유속 = v·n_face / h (분자 수 단위)
-        const up = v[ax] > 0 ? p : q, s = stride[ax], sign = v[ax] > 0 ? 1 : -1;
-        const prev = up - sign * s, next = up + sign * s;
-        const fu = f[up], fprev = prev >= 0 && prev < f.length && region.mask[prev] ? f[prev] : fu, fnext = next >= 0 && next < f.length && region.mask[next] ? f[next] : fu;
-        const face = Math.max(0, fu + 0.5 * minmod(fu - fprev, fnext - fu));
-        F -= sign * (Math.abs(v[ax]) / h) * face * dt; // v>0: p → q 로 나감, v<0: q → p 로 들어옴
-      }
-      d[p] += F; d[q] -= F;
+    const v = region.spec.velocity || [0, 0, 0], stride = [n * n, n, 1];
+    const [p, q, ax] = region.faces[fi];
+    let F = (D / (h * h)) * (f[q] - f[p]) * dt;
+    if (v[ax]) {
+      const up = v[ax] > 0 ? p : q, s = stride[ax], sign = v[ax] > 0 ? 1 : -1;
+      const prev = up - sign * s, next = up + sign * s;
+      const fu = f[up], fprev = prev >= 0 && prev < f.length && region.mask[prev] ? f[prev] : fu, fnext = next >= 0 && next < f.length && region.mask[next] ? f[next] : fu;
+      const face = Math.max(0, fu + 0.5 * minmod(fu - fprev, fnext - fu));
+      F -= sign * (Math.abs(v[ax]) / h) * face * dt;
     }
-    for (const p of region.active) f[p] = Math.max(0, f[p] + d[p]); // 안정 조건 아래에서 음수는 반올림 오차뿐
+    return F;
   }
 
-  // 반응: 칸마다 1차 변환. 실수 반응량의 합을 돌려줌 (정수화는 원장 쪽에서)
+  // 확산 + 이류 한 부분 단계 (보존형). 정수 모드: 면별 carry 로 정수화해 대칭 정수 이동 — Σ 가 정확히 불변.
+  function transport(region, key, dt) {
+    const f = region.fields[key], d = new Float64Array(f.length);
+    if (region.integer) {
+      // 면을 훑으며 정수 이동을 소스 칸 내용으로 상한(incremental sweep) — 못 옮긴 양은 carry 로 다음 단계에. 비음수·정확 보존·결정론 모두.
+      const cr = region.fluxCarry[key];
+      for (let fi = 0; fi < region.faces.length; fi++) {
+        const [p, q] = region.faces[fi];
+        const want = faceFlux(region, key, fi, dt) + cr[fi]; // q→p 가 양수
+        let m = Math.trunc(want);
+        if (m > 0) { if (m > f[q]) m = f[q]; } // q → p, 소스 q
+        else if (m < 0) { if (-m > f[p]) m = -f[p]; } // p → q, 소스 p
+        cr[fi] = want - m;
+        if (m) { f[p] += m; f[q] -= m; }
+      }
+    } else {
+      for (let fi = 0; fi < region.faces.length; fi++) { const F = faceFlux(region, key, fi, dt), [p, q] = region.faces[fi]; d[p] += F; d[q] -= F; }
+      for (const p of region.active) f[p] = Math.max(0, f[p] + d[p]);
+    }
+  }
+
+  // 반응: 칸마다 1차 변환. 정수 모드: 칸별 carry 로 정수화(장에서 옮긴 정수 m 을 그대로 원장에). 실수 모드: 실수 이동량 합(정수화는 reconcile).
   function react(region, dt) {
     const moved = {};
     for (const r of region.spec.reactions || []) {
-      const a = region.fields[r.from], b = region.fields[r.to], frac = 1 - Math.exp(-r.k * dt);
-      let tot = 0; for (const p of region.active) { const x = a[p] * frac; a[p] -= x; b[p] += x; tot += x; }
-      moved[`${r.from}>${r.to}`] = (moved[`${r.from}>${r.to}`] || 0) + tot;
+      const a = region.fields[r.from], b = region.fields[r.to], frac = 1 - Math.exp(-r.k * dt), key = `${r.from}>${r.to}`;
+      let tot = 0;
+      if (region.integer) {
+        const rc = region.reactCarry[key];
+        for (const p of region.active) {
+          const want = a[p] * frac + rc[p];
+          let m = Math.trunc(want); if (m > a[p]) m = a[p]; // 있는 것보다 많이 못 옮김 (나머지는 carry 로 다음 단계에)
+          rc[p] = want - m;
+          if (m) { a[p] -= m; b[p] += m; tot += m; }
+        }
+      } else {
+        for (const p of region.active) { const x = a[p] * frac; a[p] -= x; b[p] += x; tot += x; }
+      }
+      moved[key] = (moved[key] || 0) + tot;
     }
     return moved;
   }
 
-  // 한 거시 단계 = integrate(장만 진행, 원장 무관 — 비동기 일꾼에서도 돌 수 있음) + reconcile(반응량 정수화 → 지역 거래 → 원장 닻)
+  // 한 거시 단계 = integrate(장만 진행, 원장 무관) + reconcile(반응량을 원장에 반영 + (실수 모드만) 재척도)
   function integrate(region, dt) {
     const ns = substepsFor(region, dt), sdt = dt / ns, movedTot = {};
     for (let s = 0; s < ns; s++) {
@@ -103,16 +146,19 @@
     region.stats.substeps += ns;
     return { substeps: ns, moved: movedTot };
   }
-  // 반응량 정수화: 실수 반응량 + 이월을 내림하고 나머지는 이월 (부분 구조 보존: from −m, to +m), 원장보다 많이 바꿀 수 없음
+  // 반응량 → 원장. 정수 모드: moved 가 이미 정수(장에서 옮긴 그 수)라 그대로 지역 거래. 실수 모드: 내림 + carry 로 정수화.
   function reconcile(region, movedTot, ledger) {
     const L = ledger.state.ledgers[ledger.domainId].counts, deltas = {};
-    region.carry = region.carry || {};
-    for (const r of region.spec.reactions || []) {
-      const key = `${r.from}>${r.to}`;
-      const want = (movedTot[key] || 0) + (region.carry[key] || 0);
-      let m = Math.floor(want); region.carry[key] = want - m;
-      m = Math.min(m, (L[r.from] || 0) + (deltas[r.from] || 0));
-      if (m > 0) { deltas[r.from] = (deltas[r.from] || 0) - m; deltas[r.to] = (deltas[r.to] || 0) + m; }
+    if (region.integer) {
+      for (const r of region.spec.reactions || []) { const m = movedTot[`${r.from}>${r.to}`] || 0; if (m) { deltas[r.from] = (deltas[r.from] || 0) - m; deltas[r.to] = (deltas[r.to] || 0) + m; } }
+    } else {
+      region.carry = region.carry || {};
+      for (const r of region.spec.reactions || []) {
+        const key = `${r.from}>${r.to}`, want = (movedTot[key] || 0) + (region.carry[key] || 0);
+        let m = Math.floor(want); region.carry[key] = want - m;
+        m = Math.min(m, (L[r.from] || 0) + (deltas[r.from] || 0));
+        if (m > 0) { deltas[r.from] = (deltas[r.from] || 0) - m; deltas[r.to] = (deltas[r.to] || 0) + m; }
+      }
     }
     let reactionTx = null;
     if (Object.keys(deltas).length) {
@@ -128,9 +174,11 @@
     return { substeps: r.substeps, reactionTx: reconcile(region, r.moved, ledger) };
   }
 
-  // 원장 닻 (불변식 1): ∫Ω C dΩ = Σ 칸 분자 수 = N_ledger — 모양은 유지하고 크기만 맞춘다
+  // 원장 닻 (불변식 1): ∫Ω C dΩ = Σ 칸 분자 수 = N_ledger. 정수 모드는 구성상 이미 정확 → 재척도 없음(검증만, 모양·크기 불변).
+  //   실수 모드만 모양 유지하고 크기를 원장에 맞춰 재척도(부동 소수 표류 보정).
   function anchor(region, ledger) {
     const L = ledger.state.ledgers[ledger.domainId].counts;
+    if (region.integer) return; // 정수 수송(대칭)·정수 반응(장=원장)·정수 경계 → Σ칸 = N_ledger 가 이미 정확. 재척도 금지(정수 깨짐).
     for (const [key, f] of Object.entries(region.fields)) {
       const target = L[key] || 0;
       let s = 0; for (const p of region.active) s += f[p];
@@ -141,13 +189,26 @@
 
   // 인터페이스 칸의 분자 수 합 (경계 유속 계산용)
   function interfaceAmount(region, key) { let s = 0; for (const p of region.iface) s += region.fields[key][p]; return s; }
-  // 정수 이동을 장에 반영: 나가면 인터페이스 칸에서 비례 차감, 들어오면 인터페이스 칸에 고르게
+  // 정수 이동(dnOut)을 장에 반영. 정수 모드: 인터페이스 칸에 정수 분배(비례 재척도 아님) — 장·원장이 같은 정수.
   function applyInterfaceTransfer(region, key, dnOut) {
     const f = region.fields[key];
-    if (dnOut > 0) { const s = interfaceAmount(region, key); if (s > 0) { const fac = Math.max(0, 1 - dnOut / s); for (const p of region.iface) f[p] *= fac; } }
-    else if (dnOut < 0) { const add = -dnOut / region.iface.length; for (const p of region.iface) f[p] += add; }
+    if (!region.integer) {
+      if (dnOut > 0) { const s = interfaceAmount(region, key); if (s > 0) { const fac = Math.max(0, 1 - dnOut / s); for (const p of region.iface) f[p] *= fac; } }
+      else if (dnOut < 0) { const add = -dnOut / region.iface.length; for (const p of region.iface) f[p] += add; }
+      return;
+    }
+    if (dnOut > 0) {
+      // 나감: 현재 칸 내용 비례 정수 분배, 칸 내용으로 상한. 상한에 걸려 남으면 내용 있는 칸에서 라운드로빈으로 정확히 dnOut 채움.
+      const w = region.iface.map((p) => f[p]), avail = w.reduce((a, b) => a + b, 0), take = Math.min(dnOut, avail);
+      const rem = HMSE.distributeCounts(w, take); let left = take;
+      region.iface.forEach((p, a) => { const t = Math.min(rem[a], f[p]); f[p] -= t; left -= t; });
+      for (let g = 0; left > 0 && g < region.iface.length * 64; g++) { const p = region.iface[g % region.iface.length]; if (f[p] > 0) { f[p]--; left--; } }
+    } else if (dnOut < 0) {
+      const add = HMSE.distributeCounts(region.iface.map(() => 1), -dnOut);
+      region.iface.forEach((p, a) => { f[p] += add[a]; });
+    }
   }
   function totals(region) { const t = {}; for (const [k, f] of Object.entries(region.fields)) { let s = 0; for (const p of region.active) s += f[p]; t[k] = s; } return t; }
 
-  return { templateMask, createRegion, substepsFor, transport, react, integrate, reconcile, step, anchor, interfaceAmount, applyInterfaceTransfer, totals, minmod };
+  return { templateMask, createRegion, substepsFor, faceFlux, transport, react, integrate, reconcile, step, anchor, interfaceAmount, applyInterfaceTransfer, totals, minmod };
 });

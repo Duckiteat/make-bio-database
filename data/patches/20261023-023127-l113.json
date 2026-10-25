@@ -1,0 +1,98 @@
+{
+  "applied_at": "2026-10-23T02:31:27.855Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000113"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000113"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000113": [
+          "symptom",
+          "downstream_blocked",
+          "resolution_trigger",
+          "prohibited_bypasses"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "가 스키마 구조 필드 첫 적용 (build-plan 16A) — L000113 의 원문에 이미 적힌 증상 수치·막힌 하류를 구조 칸으로 옮긴다(requirement.text 는 그대로). 재검토는 엔진 능력(적분장 27–37)을 기다리므로 manual.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000113",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "why": "가 스키마 구조 필드 첫 적용 (build-plan 16A) — L000113 의 원문에 이미 적힌 증상 수치·막힌 하류를 구조 칸으로 옮긴다(requirement.text 는 그대로). 재검토는 엔진 능력(적분장 27–37)을 기다리므로 manual.",
+  "limitations": [
+    {
+      "id": "L000113",
+      "target": "D000212",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "대식세포 상태(D000212)는 LPS→TLR4→MyD88→NF-κB→TNF 경로(D000103·104·105)를 기전으로 감싸 구조적으로 유효하고, 완결 kinetics 시나리오(examples/scenarios/lps-tnf-validation-hypothetical.json)도 22/22 단계를 살려 뒀다. 그러나 fate 엔진의 결합 Rodas3 적분이 이 42종 뻣뻣한 신호 연쇄를 tractable 하게 풀지 못한다 — 모의 60초도 벽시간 60초를 넘겨(완만한 비뻣뻣 상수에서도) 정성 검증(observeQualitative, 대조군+교란+기준 4회 적분)을 돌릴 수 없다. MHC 경로(같은 규모)는 수 초에 돌므로, 이 사슬 특유의 뻣뻣함/결합 구조 문제다. 그래서 LPS 축의 1차 문헌 정성 관찰(TLR4·MyD88 녹아웃 → TNF↓, IκBα 녹아웃 → TNF↑)을 지금은 결론급으로 검증할 수 없다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "적분장 엔진(build-plan 27–37, T3 정수 장·T4 사건 트리거·희소 LU)이 서면 이 뻣뻣한 연쇄를 tractable 하게 풀 수 있는지 재측정한다. 또는 이 사슬에서 병리적 뻣뻣함의 원천(특정 종의 빠른 전이·결합 루프)을 진단해 시나리오·결합점 등록부(engine/coupling.js)에서 수치 선택을 조정한다 — 엔진 소스는 사용자 요청 시만."
+          }
+        ]
+      },
+      "found_in": "TIER A 확장 — LPS 축 대식세포 상태(D000212) 신설 후 fate 성능 측정, 2026-10-16. simulateFate(D000212, lps-tnf-validation) 모의 60초 > 벽시간 60초",
+      "by": "Claude",
+      "symptom": {
+        "sim_time_s": 60,
+        "wall_time_exceeded_s": 60,
+        "species_n": 42,
+        "steps_n": 22
+      },
+      "downstream_blocked": [
+        "D000103",
+        "D000104",
+        "D000105"
+      ],
+      "resolution_trigger": "manual",
+      "prohibited_bypasses": [
+        "엔진 소스를 사용자 요청 없이 고쳐 돌아가게 만들기"
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-23T02:31:27.567Z"
+}

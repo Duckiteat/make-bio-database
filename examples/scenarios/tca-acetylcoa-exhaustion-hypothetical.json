@@ -6,36 +6,76 @@
   "window": 1,
   "volumes": {
     "mito_matrix": {
-      "value": 100,
+      "value": {
+        "assume": "A000352"
+      },
       "unit": "fL"
     }
   },
   "amounts": {
-    "D000149|mito_matrix": 100,
-    "D000150|mito_matrix": 100,
-    "D000151|mito_matrix": 100,
-    "D000152|mito_matrix": 100,
-    "D000153|mito_matrix": 100,
-    "D000154|mito_matrix": 100,
-    "D000155|mito_matrix": 100,
-    "D000156|mito_matrix": 100,
-    "D000136|mito_matrix": 10,
-    "D000135|mito_matrix": 100
+    "D000149|mito_matrix": {
+      "assume": "A000223"
+    },
+    "D000150|mito_matrix": {
+      "assume": "A000225"
+    },
+    "D000151|mito_matrix": {
+      "assume": "A000227"
+    },
+    "D000152|mito_matrix": {
+      "assume": "A000229"
+    },
+    "D000153|mito_matrix": {
+      "assume": "A000231"
+    },
+    "D000154|mito_matrix": {
+      "assume": "A000233"
+    },
+    "D000155|mito_matrix": {
+      "assume": "A000235"
+    },
+    "D000156|mito_matrix": {
+      "assume": "A000237"
+    },
+    "D000136|mito_matrix": {
+      "assume": "A000215"
+    },
+    "D000135|mito_matrix": {
+      "assume": "A000212"
+    }
   },
   "reservoirs": {
-    "D000134|mito_matrix": 1000,
-    "D000144|mito_matrix": 1000000,
-    "D000145|mito_matrix": 0,
-    "D000146|mito_matrix": 100000,
-    "D000147|mito_matrix": 0,
-    "D000036|mito_matrix": 100000,
-    "D000037|mito_matrix": 1000000,
-    "D000035|mito_matrix": 0
+    "D000134|mito_matrix": {
+      "assume": "A000284"
+    },
+    "D000144|mito_matrix": {
+      "assume": "A000292"
+    },
+    "D000145|mito_matrix": {
+      "assume": "A000294"
+    },
+    "D000146|mito_matrix": {
+      "assume": "A000295"
+    },
+    "D000147|mito_matrix": {
+      "assume": "A000297"
+    },
+    "D000036|mito_matrix": {
+      "assume": "A000274"
+    },
+    "D000037|mito_matrix": {
+      "assume": "A000279"
+    },
+    "D000035|mito_matrix": {
+      "assume": "A000272"
+    }
   },
   "kinetics": {
     "D000157/rule/nad_regen": {
       "law": "mass_action",
-      "k": 50,
+      "k": {
+        "assume": "A000071"
+      },
       "order": 1,
       "evidence": {
         "level": "predicted",
@@ -44,7 +84,9 @@
     },
     "D000158/rule/fad_regen": {
       "law": "mass_action",
-      "k": 50,
+      "k": {
+        "assume": "A000073"
+      },
       "order": 1,
       "evidence": {
         "level": "predicted",

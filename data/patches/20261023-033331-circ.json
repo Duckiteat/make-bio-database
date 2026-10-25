@@ -1,0 +1,97 @@
+{
+  "applied_at": "2026-10-23T03:33:31.093Z",
+  "result": {
+    "added": [
+      "L000116"
+    ],
+    "updated": [],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000116"
+        ]
+      },
+      "updated": {},
+      "removed": {},
+      "fields": {}
+    },
+    "measured_changed": [],
+    "why": "첫 장면 기원 감사(origin, 2026-10-23)에서 드러난 순환·동어반복 위험을 등록 — 분열당 소실 화학량 ΔL 의 숫자 출처가 없고, 정량 검증 후보(Allsopp 1992 기울기)가 그 ΔL 과 구조상 같은 양이다. TASK-004 정량 검증을 들이기 전에 무엇이 독립이어야 하는지 못박는다.",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000116",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000116",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "why": "첫 장면 기원 감사(origin, 2026-10-23)에서 드러난 순환·동어반복 위험을 등록 — 분열당 소실 화학량 ΔL 의 숫자 출처가 없고, 정량 검증 후보(Allsopp 1992 기울기)가 그 ΔL 과 구조상 같은 양이다. TASK-004 정량 검증을 들이기 전에 무엇이 독립이어야 하는지 못박는다.",
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000205/rule/division_attrition",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "분열당 소실 화학량 ΔL = 16 단위(96 bp)는 db 규칙에 있으나 숫자의 출처가 기록되지 않았다(근거 abstracted — 바탕 Harley 1990 은 정성 관찰). 같은 날 등록된 L000087 이 Allsopp 1992 의 1 kbp 당 10 배가를 언급하고, 96 bp 는 1/0.096 kbp ≈ 10.4 PD/kbp 로 그 기울기와 맞는다. 또 결정론 모델에서 정지까지 분열 수의 초기 길이 기울기는 구조상 정확히 1/ΔL 이다. 그래서 Allsopp 1992 그림 2C 기울기(10 ± 2 PD/kbp)로 검증하면 ΔL 을 정한 자료로 같은 ΔL 을 다시 재는 순환·동어반복이 될 수 있다 — 검증이 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "둘 중 하나: (1) ΔL 을 기울기와 독립인 1차 측정(Harley 1990 계대별 TRF 의 bp/PD — 전문 필요)으로 정하고 Allsopp 1992 기울기는 검증에 남긴다, 또는 (2) Allsopp 1992 를 ΔL 추정용(use estimation)으로 쓰고 검증은 독립 자료(Allsopp & Harley 1995 클론 7.2 PD/kbp — 기울기 불확도 전문 필요, 또는 확률 소모·염색체별 최단 텔로미어처럼 기울기가 1/ΔL 이 아닌 계)로 한다."
+          }
+        ]
+      },
+      "found_in": "첫 장면 기원 감사 (dbtool origin, 2026-10-23) — TASK-004 정량 후보 대조",
+      "at": "2026-10-23T03:33:29.495Z",
+      "by": "Claude",
+      "symptom": {
+        "slope_model_pd_per_kbp": 10.42,
+        "slope_allsopp1992_pd_per_kbp": 10,
+        "slope_allsopp1992_se_pd_per_kbp": 2,
+        "delta_l_bp": 96
+      },
+      "downstream_blocked": [
+        "D000210"
+      ],
+      "resolution_trigger": "observation_added",
+      "prohibited_bypasses": [
+        "Allsopp 1992 기울기로 ΔL 을 맞추고 같은 기울기로 검증하기",
+        "ΔL 의 출처를 사후에 Allsopp 1992 로 적어 넣어 순환을 숨기기"
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-23T03:33:30.856Z"
+}

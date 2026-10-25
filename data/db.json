@@ -6,8 +6,8 @@
       "T": 211,
       "D": 213,
       "S": 58,
-      "L": 116,
-      "O": 28,
+      "L": 125,
+      "O": 29,
       "V": 69
     }
   },
@@ -5130,6 +5130,24 @@
           "text": "LPS 가 TLR4 로 수지상 세포를 성숙시키면 MARCH1 이 줄어 표면 펩타이드–MHC II 의 섭취가 느려지고 표면에 쌓인다 — TLR4 → NF-κB → MARCH1 감소의 매개 단계를 조절 하나로 묶음 (Regulatory_Gap).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/42030"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105"
+              },
+              {
+                "db": "PMID",
+                "id": "9285591"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173"
+              }
+            ],
             "basis": "Cella et al., 1997, Nature 388:782 (염증 자극 뒤 수지상 세포 표면에 MHC-II 복합체가 쌓임). / De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). — 서지는 Crossref·PubMed 로 확인(Cella et al., 1997 (DOI 10.1038/42030, PMID 9285591) / De Gassart et al., 2008 (DOI 10.1073/pnas.0708874105, PMID 18305173)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
@@ -5358,6 +5376,16 @@
           "text": "CD14 가 LPS 를 세포막 바깥면에서 TLR4–MD-2 의 MD-2 소수성 주머니로 넘긴다.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1084/jem.189.11.1777"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/nature07830"
+              }
+            ],
             "basis": "MD-2 가 TLR4 의 LPS 반응성에 필요하고(Shimazu et al., 1999, DOI 10.1084/jem.189.11.1777), LPS 가 MD-2 주머니에 결합함(Park et al., 2009, DOI 10.1038/nature07830). CD14 → MD-2 직접 전달을 보인 문헌은 이번 세션에서 확인하지 못함."
           }
         }
@@ -6228,6 +6256,16 @@
           "text": "마이도솜 안에서 가까워진 IRAK4 가 IRAK1 의 Thr209 를 인산화한다.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature09121"
+              },
+              {
+                "db": "PMID",
+                "id": "14625308"
+              }
+            ],
             "basis": "Lin et al., 2010 (DOI 10.1038/nature09121): 조립이 키네이스 도메인을 모아 인산화를 가능하게 함 + Kollewe et al., 2004 (PMID 14625308): Thr209 가 첫 인산화 자리. 두 결과를 이어 IRAK4 → IRAK1 Thr209 로 둔 것은 추론."
           }
         },
@@ -8191,6 +8229,16 @@
           "text": "프로테아좀이 세포질 단백질을 펩타이드로 자른다 — 면역프로테아좀 소단위, ATP 소비, 원천 단백질 하나당 펩타이드 수는 다루지 않음 (Structural_Gap).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556"
+              }
+            ],
             "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
@@ -13010,6 +13058,16 @@
           "text": "세포 밖 단백질이 섭취 소포에 담겨 엔도솜 내강으로 들어간다 — 소포 형성·융합을 수송 하나로 묶음.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354"
+              }
+            ],
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
@@ -13550,6 +13608,16 @@
           "text": "TAP1–TAP2 가 세포질 펩타이드를 소포체 내강으로 옮긴다. ATP 소비 화학량은 확인하지 못해 넣지 않음 (Structural_Gap).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940"
+              }
+            ],
             "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
@@ -13567,6 +13635,16 @@
           "text": "펩타이드 적재 복합체에 붙잡힌 빈 MHC I 이 내강의 펩타이드를 받아 펩타이드–MHC I 이 되어 복합체를 떠난다. ERAP1 다듬기·타파신의 편집 경쟁은 이 한 단계에 묶음.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940"
+              }
+            ],
             "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
@@ -13584,6 +13662,16 @@
           "text": "TAP1–TAP2 수송체에 타파신이 MHC I 을 연결하고 칼레티큘린·ERp57 이 붙어 적재 복합체가 된다. 단계적 조립(TAP 이량체 → 타파신 가교 → 렉틴 샤페론)을 한 묶음으로 둔다 (Structural_Gap L000108 을 닫는 배선 — 구성 요소 하나를 끊으면 복합체가 서지 못한다). 화학량·순서는 문헌이 아니라 기전 흐름에서 온 추론이다.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature24627"
+              },
+              {
+                "db": "PMID",
+                "id": "29107940"
+              }
+            ],
             "basis": "Blees et al., 2017, Nature 551:525 (사람 MHC-I 펩타이드 적재 복합체 구조 — TAP·타파신·칼레티큘린·ERp57·MHC I). — 서지는 Crossref·PubMed 로 확인(Blees et al., 2017 (DOI 10.1038/nature24627, PMID 29107940)). 이 항목의 단순화·화학량은 추론이다."
           }
         }
@@ -13653,6 +13741,16 @@
           "text": "접힌 중쇄의 α3 도메인에 β2m 이 붙는다 (칼넥신 단계는 묶음).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3084"
+              },
+              {
+                "db": "PMID",
+                "id": "22076556"
+              }
+            ],
             "basis": "Neefjes, Jongsma, Paul & Bakke, 2011, Nat Rev Immunol 11:823 (MHC I·II 항원 제시 경로 총설). — 서지는 Crossref·PubMed 로 확인(Neefjes, Jongsma, Paul & Bakke, 2011 (DOI 10.1038/nri3084, PMID 22076556)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
@@ -14306,6 +14404,16 @@
           "text": "엔도솜 내강에서 불변 사슬의 내강 쪽 부분이 단계적으로 잘려 CLIP 만 홈에 남는다 — 여러 단백질 분해효소의 단계를 하나로 묶음.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354"
+              }
+            ],
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
@@ -14328,6 +14436,16 @@
           "text": "엔도솜 내강의 단백질 항원을 펩타이드로 자른다 — 원천 단백질 하나당 펩타이드 수는 모름(1 로 둠).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354"
+              }
+            ],
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
@@ -14547,6 +14665,16 @@
           "text": "HLA-DM 이 붙잡은 빈 MHC II 에 엔도솜 펩타이드가 실린다 — 편집 경쟁(약한 펩타이드 교체)은 이 한 단계에 묶음.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354"
+              }
+            ],
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
@@ -14798,6 +14926,16 @@
           "text": "불변 사슬 세포질 꼬리의 류신 신호가 복합체를 엔도솜으로 보낸다 (세포막을 거쳐 섭취되는 길은 묶음).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nri3818"
+              },
+              {
+                "db": "PMID",
+                "id": "25720354"
+              }
+            ],
             "basis": "Roche & Furuta, 2015, Nat Rev Immunol 15:203 (MHC-II 항원 처리·제시 총설). — 서지는 Crossref·PubMed 로 확인(Roche & Furuta, 2015 (DOI 10.1038/nri3818, PMID 25720354)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         }
@@ -14910,6 +15048,16 @@
           "text": "미성숙 수지상 세포에서는 MARCH1 이 β 사슬 꼬리를 유비퀴틴화해 표면 MHC II 를 빨리 섭취한다 — 유비퀴틴화·섭취를 수송 하나로 묶음.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.0708874105"
+              },
+              {
+                "db": "PMID",
+                "id": "18305173"
+              }
+            ],
             "basis": "De Gassart et al., 2008, PNAS 105:3491 (수지상 세포 성숙 때 MARCH1 감소로 표면 MHC-II 가 안정화). — 서지는 Crossref·PubMed 로 확인(De Gassart et al., 2008 (DOI 10.1073/pnas.0708874105, PMID 18305173)). 이 항목의 단순화·화학량은 문헌이 아니라 기전 흐름에서 온 추론이다."
           }
         },
@@ -15217,6 +15365,16 @@
           "text": "반복 단위가 많으면(긴 텔로미어) p53 이 쌓이지 않고, 임계 길이 아래로 내려가면 손상 반응이 켜져 p53 이 쌓인다 — 억제 힐의 K 가 임계 길이이고 n 이 문턱의 급격함이다. 셸터린(TRF2) 이탈·ATM·CHK2·MDM2 단계를 조절 하나로 묶음(Regulatory_Gap).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599"
+              }
+            ],
             "basis": "Herbig et al., 2004, Mol Cell 14:501 (텔로미어 단축이 ATM–p53–p21 경로로 노화를 일으킴, p16 은 아님) 의 앞 구간을 '반복 단위 농도에 대한 억제 힐' 하나로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인했고, 임계 길이와 n 은 문헌 값이 아니다."
           }
         }
@@ -15287,6 +15445,16 @@
           "text": "이 규칙의 진행량 1 = 분열 1회다. 분열마다 반복 단위 16 개(96 염기쌍)가 복제되지 않고 떨어져 나가며, 절단된 가닥의 뉴클레오타이드(단위당 양쪽 가닥 12 개)는 핵의 풀로 돌아간다. 속도(0차)는 분열 간격의 역수이고, 조절 배율이 분열 허가(성장 인자)와 정지(p21)를 정한다.",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/345458a0"
+              },
+              {
+                "db": "PMID",
+                "id": "2342578"
+              }
+            ],
             "basis": "말단 복제 문제로 분열마다 텔로미어가 줄어든다는 관찰(Harley et al., 1990, Nature 345:458 — DOI 10.1038/345458a0 / PMID 2342578 로 확인)을 '분열 1회 = 반복 단위 ΔL 소모' 의 0차 공급 규칙 하나로 묶었다. 떨어져 나간 가닥이 뉴클레오타이드로 되돌아간다는 산물 쪽은 문헌 값이 아니라 수지를 닫기 위한 기전 흐름의 추론이다."
           }
         }
@@ -15370,6 +15538,16 @@
           "text": "뉴클레오타이드로 반복 단위를 새로 더한다(단위당 양쪽 가닥 12 개). 정상 섬유아세포의 대사 프로그램에는 들어 있지 않다 — 시나리오가 extra_rules 로 켤 때만 돈다(불멸화 시험).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.279.5349.349"
+              },
+              {
+                "db": "PMID",
+                "id": "9454332"
+              }
+            ],
             "basis": "텔로머레이스를 넣으면 텔로미어가 유지되고 수명이 늘어난다는 관찰(Bodnar et al., 1998, Science 279:349 — DOI 10.1126/science.279.5349.349 / PMID 9454332 로 확인)을 '반복 단위 1 개 생성' 의 0차 공급 하나로 묶었다. 연장 속도·처리성은 문헌 값이 아니다."
           }
         }
@@ -15473,6 +15651,16 @@
           "text": "p53 이 CDKN1A 를 전사 활성화해 p21 이 쌓인다 — 전사·번역 단계를 조절 하나로 묶음(Regulatory_Gap).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599"
+              }
+            ],
             "basis": "Herbig et al., 2004, Mol Cell 14:501 (텔로미어 단축 → ATM → p53 → p21 상향, G1 정지) 의 사슬 중 p53 → p21 구간을 힐 배율 하나로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인했고, 힐 상수(K·n·fmax)는 문헌 값이 아니다."
           }
         }
@@ -15576,6 +15764,16 @@
           "text": "p21 이 사이클린 E–CDK2 를 막고 Rb 가 인산화되지 않아 S 기로 들어가지 못한다 — 분열이 멈추면 텔로미어 소모도 멈춘다. CDK2·사이클린 E·Rb 단계를 조절 하나로 묶음(Regulatory_Gap).",
           "evidence": {
             "level": "abstracted",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(04)00256-4"
+              },
+              {
+                "db": "PMID",
+                "id": "15149599"
+              }
+            ],
             "basis": "Herbig et al., 2004 (p21 상향에 따른 G1 정지)를 '분열 규칙의 배율 → 0' 으로 묶었다. 서지는 DOI 10.1016/s1097-2765(04)00256-4 / PMID 15149599 로 확인. CDK 억제의 힐 상수는 문헌 값이 아니다."
           }
         }
@@ -19453,7 +19651,7 @@
       "target": "D000032",
       "type": "Consensus_Gap",
       "requirement": {
-        "text": "추세 점검은 더 새 원본(합의 수신함)에 같은 확인을 다시 돌린 결과다. 그런데 그 원본이 실제로 더 새 것인지는 바이트만으로 증명할 수 없다 — 받은 날짜는 도장의 issued_at(점검한 쪽의 주장)이고, 원본이 한 바이트도 안 바뀌었을 때와 파일을 옮겨 놓았을 때를 구별하지 못한다. 그래서 추세 도장은 '그날 그 바이트로 같은 확인을 다시 돌렸다' 까지만 주장하고, 합의 창(vocab consensus.window_days = 365일)을 넘기면 다시 unchecked 가 되어 anchor 가 내려간다. 권위 DB 가 주는 판 번호(UniProt entryVersion·sequenceVersion)는 도장의 근거 문구에 적지만 아직 판정에 쓰지 않는다.",
+        "text": "추세 점검은 더 새 원본(합의 수신함)에 같은 확인을 다시 돌린 결과다. 그런데 그 원본이 실제로 더 새 것인지는 바이트만으로 증명할 수 없다 — 받은 날짜는 도장의 issued_at(점검한 쪽의 주장)이고, 원본이 한 바이트도 안 바뀌었을 때와 파일을 옮겨 놓았을 때를 구별하지 못한다. 그래서 추세 도장은 '그날 그 바이트로 같은 확인을 다시 돌렸다' 까지만 주장하고, 그 원천의 합의 창(vocab consensus.sources — 원천이 공표한 판 주기: UniProt 56일 · ChEBI 31일, 2026-10-24 부터)을 넘기면 다시 unchecked 가 되어 anchor 가 내려간다. 권위 DB 가 주는 판 번호(UniProt entryVersion·sequenceVersion)는 도장의 근거 문구에 적지만 아직 판정에 쓰지 않는다.",
         "needs": [
           {
             "kind": "manual",
@@ -20009,7 +20207,22 @@
         ]
       },
       "found_in": "TIER A 확장 — LPS 축 대식세포 상태(D000212) 신설 후 fate 성능 측정, 2026-10-16. simulateFate(D000212, lps-tnf-validation) 모의 60초 > 벽시간 60초",
-      "by": "Claude"
+      "by": "Claude",
+      "symptom": {
+        "sim_time_s": 60,
+        "wall_time_exceeded_s": 60,
+        "species_n": 42,
+        "steps_n": 22
+      },
+      "downstream_blocked": [
+        "D000103",
+        "D000104",
+        "D000105"
+      ],
+      "resolution_trigger": "manual",
+      "prohibited_bypasses": [
+        "엔진 소스를 사용자 요청 없이 고쳐 돌아가게 만들기"
+      ]
     },
     "L000114": {
       "target": "D000210",
@@ -20040,6 +20253,148 @@
       },
       "found_in": "사용자 질문(2026-10-16): '텔로미어가 줄 때 똑같은 개수인가 확률적으로 다른 개수인가' — 현재 모델은 결정론 고정 ΔL. Baird 2003·Hemann 2001 로 분포임을 확인, 확률 앙상블 scout(sd 7.67일) 로 틀 가용 확인.",
       "by": "Claude"
+    },
+    "L000116": {
+      "target": "D000205/rule/division_attrition",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "분열당 소실 화학량 ΔL = 16 단위(96 bp)는 db 규칙에 있으나 숫자의 출처가 기록되지 않았다(근거 abstracted — 바탕 Harley 1990 은 정성 관찰). 같은 날 등록된 L000087 이 Allsopp 1992 의 1 kbp 당 10 배가를 언급하고, 96 bp 는 1/0.096 kbp ≈ 10.4 PD/kbp 로 그 기울기와 맞는다. 또 결정론 모델에서 정지까지 분열 수의 초기 길이 기울기는 구조상 정확히 1/ΔL 이다. 그래서 Allsopp 1992 그림 2C 기울기(10 ± 2 PD/kbp)로 검증하면 ΔL 을 정한 자료로 같은 ΔL 을 다시 재는 순환·동어반복이 될 수 있다 — 검증이 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "둘 중 하나: (1) ΔL 을 기울기와 독립인 1차 측정(Harley 1990 계대별 TRF 의 bp/PD — 전문 필요)으로 정하고 Allsopp 1992 기울기는 검증에 남긴다, 또는 (2) Allsopp 1992 를 ΔL 추정용(use estimation)으로 쓰고 검증은 독립 자료(Allsopp & Harley 1995 클론 7.2 PD/kbp — 기울기 불확도 전문 필요, 또는 확률 소모·염색체별 최단 텔로미어처럼 기울기가 1/ΔL 이 아닌 계)로 한다."
+          }
+        ]
+      },
+      "found_in": "첫 장면 기원 감사 (dbtool origin, 2026-10-23) — TASK-004 정량 후보 대조",
+      "by": "Claude",
+      "at": "2026-10-23T03:33:29.495Z",
+      "symptom": {
+        "slope_model_pd_per_kbp": 10.42,
+        "slope_allsopp1992_pd_per_kbp": 10,
+        "slope_allsopp1992_se_pd_per_kbp": 2,
+        "delta_l_bp": 96
+      },
+      "downstream_blocked": [
+        "D000210"
+      ],
+      "resolution_trigger": "observation_added",
+      "prohibited_bypasses": [
+        "Allsopp 1992 기울기로 ΔL 을 맞추고 같은 기울기로 검증하기",
+        "ΔL 의 출처를 사후에 Allsopp 1992 로 적어 넣어 순환을 숨기기"
+      ]
+    },
+    "L000117": {
+      "target": "D000155",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "속도 상수 관찰 O000004·O000005 의 반복 수가 1 로 적혀 있는데, 출처가 2차 정리(UniProt·BRENDA 큐레이션)라 실제로 한 번 잰 것인지 원문에 반복 수가 없는 것(미보고)인지 기록에서 가를 수 없다. 관찰은 고치지 않으므로(수정 금지) 값은 그대로 두고, 신뢰 지표는 D4.measured 로 매긴다 — 2026-10-25 부터 원문에 없는 반복 수는 null(미보고)로 적는다. 비교(obs_compare)의 표준 오차는 1 회 기준이라 보수적이다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "원 논문에서 반복 수(n)를 확인 — 있으면 그 n 으로 새 관찰(O+1)을 넣고 옛 관찰은 retracted(대체), 없으면 replicates: null 로 새 관찰"
+          }
+        ]
+      },
+      "found_in": "신뢰 기준 D4 검토 (2026-10-25) — 반복 수 1 이 한 번·미보고·계산값을 섞는다는 분석"
+    },
+    "L000118": {
+      "target": "D000149",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "속도 상수 관찰 O000007·O000023·O000024 의 반복 수가 1 로 적혀 있는데, 출처가 2차 정리(UniProt·BRENDA 큐레이션)라 실제로 한 번 잰 것인지 원문에 반복 수가 없는 것(미보고)인지 기록에서 가를 수 없다. 관찰은 고치지 않으므로(수정 금지) 값은 그대로 두고, 신뢰 지표는 D4.measured 로 매긴다 — 2026-10-25 부터 원문에 없는 반복 수는 null(미보고)로 적는다. 비교(obs_compare)의 표준 오차는 1 회 기준이라 보수적이다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "원 논문에서 반복 수(n)를 확인 — 있으면 그 n 으로 새 관찰(O+1)을 넣고 옛 관찰은 retracted(대체), 없으면 replicates: null 로 새 관찰"
+          }
+        ]
+      },
+      "found_in": "신뢰 기준 D4 검토 (2026-10-25) — 반복 수 1 이 한 번·미보고·계산값을 섞는다는 분석"
+    },
+    "L000119": {
+      "target": "D000150",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "속도 상수 관찰 O000025·O000026 의 반복 수가 1 로 적혀 있는데, 출처가 2차 정리(UniProt·BRENDA 큐레이션)라 실제로 한 번 잰 것인지 원문에 반복 수가 없는 것(미보고)인지 기록에서 가를 수 없다. 관찰은 고치지 않으므로(수정 금지) 값은 그대로 두고, 신뢰 지표는 D4.measured 로 매긴다 — 2026-10-25 부터 원문에 없는 반복 수는 null(미보고)로 적는다. 비교(obs_compare)의 표준 오차는 1 회 기준이라 보수적이다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "원 논문에서 반복 수(n)를 확인 — 있으면 그 n 으로 새 관찰(O+1)을 넣고 옛 관찰은 retracted(대체), 없으면 replicates: null 로 새 관찰"
+          }
+        ]
+      },
+      "found_in": "신뢰 기준 D4 검토 (2026-10-25) — 반복 수 1 이 한 번·미보고·계산값을 섞는다는 분석"
+    },
+    "L000120": {
+      "target": "D000148",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "기질에서 같은 반응을 하는 평행 효소가 모델에 없다 — NADP 의존 아이소시트르산 탈수소효소(IDH2)는 NAD 의존 IDH3 와 나란히 아이소시트르산을 쓰고, ATP 를 만드는 석시닐-CoA 합성효소(SUCLA2)는 GTP 를 만드는 SUCLG2 와 나란히 석시닐-CoA 를 쓴다. 정량 검증에서 흐름이 한 효소로만 지나가는 것으로 계산되어, 단백체 정량의 효소 양을 어느 효소에 넣을지에 따라 흐름 예측이 달라진다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "IDH2·SUCLA2 를 평행 단계로 넣을지(보조 인자 NADP⁺/NADPH·ATP/ADP 경계 포함), 넣지 않으면 단백체 정량에서 IDH3·SUCLG2 만 쓰고 그 근사를 판정 보고에 적는 규칙"
+          }
+        ]
+      },
+      "found_in": "TCA 정량 검증 설계 점검 (2026-10-25, docs/design/tca-validation-protocol.md)"
+    },
+    "L000121": {
+      "target": "D000148",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "보충·유출 반응(anaplerosis·cataplerosis)이 없다 — 글루타민 → 글루탐산 → 2-옥소글루타르산 유입, 시트르산 세포질 유출, 말산·아스파르트산 교환 등. 경계 보조 인자를 측정 농도로 고정해도 중간물 풀의 정상 상태는 이 유입·유출에 매이므로, 이것 없이 예측한 중간물 농도는 닫힌 회로의 값이다(암세포주 HeLa 는 글루타민 유입이 크다고 알려져 있으나 값은 아직 데이터에 없다).",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "같은 세포·같은 조건의 글루타민 유입·시트르산 유출 흐름 측정(동위원소 추적 또는 소비 속도) — 있으면 경계 흐름으로 고정, 없으면 판정 보고에 닫힌 회로 근사로 적음"
+          }
+        ]
+      },
+      "found_in": "TCA 정량 검증 설계 점검 (2026-10-25, docs/design/tca-validation-protocol.md)"
+    },
+    "L000122": {
+      "target": "D000148",
+      "type": "Concentration_Gap",
+      "requirement": {
+        "text": "측정 대사물 농도는 총량(자유 + 단백질 결합)이고 속도 법칙에 들어가는 것은 자유 농도다. 특히 NADH 는 상당 부분이 단백질에 결합해 있다고 알려져 있다. 경계 보조 인자를 측정 총농도로 고정하면 자유 농도를 과대평가할 수 있다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "기질의 자유/결합 비율(NADH 형광 수명 측정 등) 출처 — 없으면 총농도로 고정하고 판정 보고에 그 근사를 적음"
+          }
+        ]
+      },
+      "found_in": "TCA 정량 검증 설계 점검 (2026-10-25, docs/design/tca-validation-protocol.md)"
+    },
+    "L000123": {
+      "target": "D000148",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "기질을 고르게 섞인 한 구획으로 본다. 사람 시트르산 생성효소–말산 탈수소효소 2 복합체(메타볼론, PMID 42323719, 2026)처럼 효소 사이에서 중간물이 직접 넘어가면(통로화) 측정된 자유 옥살로아세트산 농도가 시트르산 생성효소의 실제 기질 농도가 아니다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "통로화 정도의 정량(넘어가는 비율) 출처 — 없으면 고르게 섞임 근사를 판정 보고에 적음"
+          }
+        ]
+      },
+      "found_in": "TCA 정량 검증 설계 점검 (2026-10-25, docs/design/tca-validation-protocol.md)"
+    },
+    "L000124": {
+      "target": "D000148",
+      "type": "Observation_Gap",
+      "requirement": {
+        "text": "정량 검증의 입력(경계 보조 인자 농도)과 예측 대상(중간물 농도)이 같은 실험(Chen et al., 2016, PMID 27565352, HeLa 기질 대사물 절대 정량)에서 나온다 — 다른 읽을거리라 순환은 아니지만 측정 오차·분리 과정의 영향을 공유해 독립성이 낮다. 또 이 논문은 PMC 무료 열람(공개 전문 아님)이라 값은 사람이 읽고 인용·sha256 으로만 넣는다(자동 수신 불가).",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "같은 대사물을 다른 연구실·다른 방법으로 잰 측정 하나(독립 검증) · Chen 2016 의 값은 사람이 보충 자료에서 옮김"
+          }
+        ]
+      },
+      "found_in": "TCA 정량 검증 설계 점검 (2026-10-25, docs/design/tca-validation-protocol.md)"
     }
   },
   "observations": {
@@ -21100,6 +21455,49 @@
       "evidence_at": "1998",
       "recorded_at": "2026-10-16T16:47:46.134Z",
       "note": "교란 대응: 원문의 telomerase-negative 대조 클론을 모델의 '텔로머레이스 신장 규칙(D000206/rule/elongation) 차단'으로 둔다(telomerase 를 켜는 것은 그 규칙을 더하는 것이므로, 끄는 것은 그것을 빼는 block). 읽을거리 = 텔로미어 반복 단위(D000204) 양 감소 = 원문의 'telomere shortening'. 측정 세포는 사람 섬유아세포·망막색소상피(RPE) — 모델의 증식 섬유아세포 상태(D000210)에서 판정하면 RPE 분은 맥락 이전(V8). 노화 도달 자체(상태 D000211)는 후보 상태가 적어 우연 기준선이 약하므로, 반복 길이 감소를 읽을거리로 택했다."
+    },
+    "O000028": {
+      "kind": "qualitative",
+      "perturbation": {
+        "type": "knockout",
+        "target": "D000209"
+      },
+      "readout": {
+        "kind": "amount",
+        "target": "D000204|nucleoplasm"
+      },
+      "expect": "increase",
+      "condition": {
+        "species": "9606"
+      },
+      "quote": "the rate of telomere shortening over time for HDFs held quiescent was not statistically significant (m = -12 bp/day, P = 0.16) while that for serially passaged cells was significant (m = -34 bp/day, P = 0.017)",
+      "provenance": {
+        "sha256": "110c86c0923dce8bca2a8c33bae0861f5f492d5f0386ff0eef1aafbee3405907",
+        "source": {
+          "db": "PMID",
+          "id": "7664836"
+        }
+      },
+      "use": "validation",
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "DOI",
+            "id": "10.1006/excr.1995.1306",
+            "citation": "Allsopp RC et al., 1995, Exp Cell Res"
+          },
+          {
+            "db": "PMID",
+            "id": "7664836",
+            "citation": "Allsopp RC et al., 1995, Exp Cell Res"
+          }
+        ]
+      },
+      "experiment": "Allsopp 1995 — 정지 대 계대 사람 이배체 섬유아세포 텔로미어 소실",
+      "evidence_at": "1995",
+      "recorded_at": "2026-10-23T07:47:38.982Z",
+      "note": "교란 대응: 원문의 '정지(quiescent)로 둔' 섬유아세포를 모델의 성장 인자(FGF2, D000209) knockout — 분열 허가가 꺼짐 — 으로 둔다. 원문이 정지를 어떻게 만들었는지(혈청 제거·접촉 억제)는 초록에 없어(전문 유료) 이 대응은 해석이다. 대조 = 계대 배양(성장 인자 있음). 읽을거리 = 텔로미어 반복 단위(D000204) 양: 정지 쪽이 덜 줄어 대조보다 많다 = increase. 원문 정지군의 −12 bp/day 는 유의하지 않음(P 0.16)이지 0 이라는 증명이 아니므로 '더 많다(덜 줄었다)' 방향만 주장한다. 정량값(−34·−12 bp/day)은 TASK-004 후보 #10·#11 에 따로."
     }
   },
   "values": {

@@ -1,0 +1,34 @@
+{
+  "why": "레드팀 — 용량 축 없는 기울기 관찰",
+  "observations": [
+    {
+      "id": "O+1",
+      "observable": {
+        "kind": "dose_slope",
+        "target": "D000205/rule/division_attrition"
+      },
+      "value": 0.06,
+      "unit": "1",
+      "uncertainty": {
+        "kind": "combined",
+        "model": "normal",
+        "sd": 0.012
+      },
+      "replicates": 1,
+      "use": "validation",
+      "condition": {
+        "species": "9606"
+      },
+      "evidence": {
+        "level": "curated",
+        "sources": [
+          {
+            "db": "PMID",
+            "id": "1438199",
+            "citation": "Allsopp et al., 1992"
+          }
+        ]
+      }
+    }
+  ]
+}

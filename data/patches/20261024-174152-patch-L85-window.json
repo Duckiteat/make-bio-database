@@ -1,0 +1,83 @@
+{
+  "applied_at": "2026-10-24T17:41:52.694Z",
+  "result": {
+    "added": [],
+    "updated": [
+      "L000085"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {},
+      "updated": {
+        "limitations": [
+          "L000085"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "L000085": [
+          "requirement"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "합의 창을 365일 하나에서 원천별 판 주기(UniProt 8주 · ChEBI 월)로 바꾼 사용자 결정(2026-10-24)에 맞춰, 창을 적은 한계 문장을 고친다 — 한계의 요구·필요는 그대로",
+    "impact": {
+      "rules": [],
+      "senses": [],
+      "steps": [],
+      "pathways": [],
+      "limitations": [
+        {
+          "id": "L000085",
+          "before": "open",
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 1,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "why": "합의 창을 365일 하나에서 원천별 판 주기(UniProt 8주 · ChEBI 월)로 바꾼 사용자 결정(2026-10-24)에 맞춰, 창을 적은 한계 문장을 고친다 — 한계의 요구·필요는 그대로",
+  "limitations": [
+    {
+      "id": "L000085",
+      "target": "D000032",
+      "type": "Consensus_Gap",
+      "requirement": {
+        "text": "추세 점검은 더 새 원본(합의 수신함)에 같은 확인을 다시 돌린 결과다. 그런데 그 원본이 실제로 더 새 것인지는 바이트만으로 증명할 수 없다 — 받은 날짜는 도장의 issued_at(점검한 쪽의 주장)이고, 원본이 한 바이트도 안 바뀌었을 때와 파일을 옮겨 놓았을 때를 구별하지 못한다. 그래서 추세 도장은 '그날 그 바이트로 같은 확인을 다시 돌렸다' 까지만 주장하고, 그 원천의 합의 창(vocab consensus.sources — 원천이 공표한 판 주기: UniProt 56일 · ChEBI 31일, 2026-10-24 부터)을 넘기면 다시 unchecked 가 되어 anchor 가 내려간다. 권위 DB 가 주는 판 번호(UniProt entryVersion·sequenceVersion)는 도장의 근거 문구에 적지만 아직 판정에 쓰지 않는다.",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "원본의 발행 시점을 원본 자신이 말하는 값으로 받기 — UniProt entryVersion·lastAnnotationUpdateDate, ChEBI 항목의 수정 날짜를 해석해 '저장된 값이 참조한 판 < 지금 판' 을 판정에 쓰는 규칙"
+          },
+          {
+            "kind": "manual",
+            "text": "또는 서명된 응답(권위 DB 의 타임스탬프·체크섬 목록)처럼 받은 쪽이 지어낼 수 없는 신선도 증거"
+          }
+        ]
+      },
+      "found_in": "추세 점검 도입 (2026-10-10) — 등급 anchor 를 열면서 '지금도 합의와 같은가' 를 무엇으로 증명하는지 따지다 드러남"
+    }
+  ],
+  "recorded_at": "2026-10-24T17:41:51.373Z"
+}

@@ -20,13 +20,17 @@
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION,
   } = M;
 
-  function mapText(db, query) {
+  // 통제 토큰 라벨은 opt.label(표 이름, 키) 로 — 기본은 vocab 한글(vlabel). CLI 는 사전 라벨러(dictionary.labeler)를 주입해
+  //   청중(en·병기)을 고른다. 행정부는 사전(파일 읽기)을 부르지 않는다 — 번역 함수는 주입받기만 (build-plan 16A)
+  const labeler = (opt) => (opt && typeof opt.label === 'function' ? opt.label : vlabel);
+  function mapText(db, query, opt) {
+    const T = labeler(opt);
     db = normalize(db);
     const ix = index(db), r = resolveRef(ix, query);
     if (r.error) return r.error;
     const d = ix.senses.get(r.id), t = db.terms[d.term];
     return [`${query} → ${r.id}  (${r.via})`,
-      `  ${ix.label(r.id)}  개념 ${d.term} · 뜻 ${d.n} [${d.kind}${d.reference_species ? ' · 기준 종 ' + vlabel('taxa', d.reference_species) : ''}] ${d.desc[0] ? d.desc[0].text : ''}`,
+      `  ${ix.label(r.id)}  개념 ${d.term} · 뜻 ${d.n} [${d.kind}${d.reference_species ? ' · 기준 종 ' + T('taxa', d.reference_species) : ''}] ${d.desc[0] ? d.desc[0].text : ''}`,
       `  이름: ${t.names.ko}${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' · 별칭 ' + t.aliases.join(', ') : ''}`,
       d.xrefs.length ? '  외부 ID: ' + d.xrefs.map((y) => `${xrefLabel(y)}(${y.status})`).join(', ') : '',
       d.unmapped ? '  미매핑: ' + d.unmapped : '',
@@ -44,6 +48,7 @@
 
   function contextText(db, target, opt) {
     opt = Object.assign({ up: 4, down: 1 }, opt || {});
+    const T = labeler(opt);
     db = normalize(db);
     const ix = index(db), tg = targets(ix, target);
     if (tg.error) return tg.error;
@@ -51,26 +56,26 @@
     for (const id of tg.ids) {
       const d = ix.senses.get(id), t = db.terms[d.term];
       out.push(line(ix, id));
-      out.push(`  개념 ${d.term}: ${t.names.ko}${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' · 별칭 ' + t.aliases.join(', ') : ''}${d.reference_species ? ` · 기준 종 ${vlabel('taxa', d.reference_species)}` : ''}`);
+      out.push(`  개념 ${d.term}: ${t.names.ko}${t.names.en ? ' / ' + t.names.en : ''}${t.aliases.length ? ' · 별칭 ' + t.aliases.join(', ') : ''}${d.reference_species ? ` · 기준 종 ${T('taxa', d.reference_species)}` : ''}`);
       if (d.xrefs.length) out.push('  외부 ID: ' + d.xrefs.map((y) => `${xrefLabel(y)}${y.status === 'verified' ? '' : '(미대조)'}`).join(', '));
       if (d.fingerprint) out.push(`  지문: ${d.fingerprint.scheme} ${d.fingerprint.value}`);
       if (d.unmapped) out.push('  미매핑: ' + d.unmapped);
       // 구조 (지식 해상도)
-      if (d.membrane) out.push(`  ▣ 막 위상: ${vlabel('associations', d.membrane.association)}${d.membrane.location ? ' · ' + vlabel('locations', d.membrane.location) : ''}${d.membrane.side ? ' · ' + vlabel('faces', d.membrane.side) : ''}`);
+      if (d.membrane) out.push(`  ▣ 막 위상: ${T('associations', d.membrane.association)}${d.membrane.location ? ' · ' + T('locations', d.membrane.location) : ''}${d.membrane.side ? ' · ' + T('faces', d.membrane.side) : ''}`);
       for (const c of d.components) out.push(`  ▣ 구성 요소: ${L(c.ref)} (${c.ref}) ×${c.n}${c.role ? ' · ' + c.role : ''}`);
-      for (const [k, s] of Object.entries(d.site)) out.push(`  ◇ 부위 ${id}/site/${k}: ${vlabel('siteTypes', s.type)}${s.numbering ? ' ' + Object.entries(s.numbering).map(([tx, r]) => `${vlabel('taxa', tx)} ${r}`).join(', ') : ''}${s.residue_unknown ? ' (잔기 모름)' : ''}${s.on ? ' · 구성 요소 ' + L(s.on) : ''}${s.face ? ' · ' + vlabel('faces', s.face) : ''}${s.ligand ? ' · 리간드 ' + L(s.ligand) : ''} · 특징 ${s.features.map((f) => vlabel('features', f)).join('/')}`);
+      for (const [k, s] of Object.entries(d.site)) out.push(`  ◇ 부위 ${id}/site/${k}: ${T('siteTypes', s.type)}${s.numbering ? ' ' + Object.entries(s.numbering).map(([tx, r]) => `${T('taxa', tx)} ${r}`).join(', ') : ''}${s.residue_unknown ? ' (잔기 모름)' : ''}${s.on ? ' · 구성 요소 ' + L(s.on) : ''}${s.face ? ' · ' + T('faces', s.face) : ''}${s.ligand ? ' · 리간드 ' + L(s.ligand) : ''} · 특징 ${s.features.map((f) => T('features', f)).join('/')}`);
       for (const r of d.rule) out.push('  ⚖ ' + ruleLine(ix, id, r));
       // 세포 상태 (v9)
-      if ((d.signature || []).length) out.push('  ◎ 표지 서명: ' + d.signature.map((m) => `${L(m.ref)}@${vlabel('locations', m.location)} ${m.level === 'high' ? '높음' : '낮음'}`).join(' · '));
+      if ((d.signature || []).length) out.push('  ◎ 표지 서명: ' + d.signature.map((m) => `${L(m.ref)}@${T('locations', m.location)} ${m.level === 'high' ? '높음' : '낮음'}`).join(' · '));
       for (const m of d.metabolome || []) out.push(`  ◎ 대사 프로그램 ${m.level === 'high' ? '높음' : '낮음'}: ${m.ref} ${L(m.ref.split('/')[0])}`);
       for (const tr of d.transitions || []) out.push(`  ⇒ 전이 → ${L(tr.to)} (${tr.to}) · 신호 ${tr.signals.map(L).join(', ')} · 결정 기준 ${tr.commitment.criterion}${tr.text ? ' — ' + tr.text : ''} [${tr.evidence.level}]`);
       for (const [mid, md] of ix.senses) for (const r of md.rule) if (r.type === 'modulation' && String(r.target).startsWith(id + '/rule/')) out.push(`  ⇐ 조절받음 ${r.target.split('/').pop()}: ${L(mid)} ${r.effect === 'inhibits' ? '⊣' : '→'} (${mid}/rule/${r.id})`);
       d.desc.forEach((ds, i) => { if (i > 0) out.push(`  ✎ 설명 ${i + 1}: ${ds.text} 〈${ds.field} · ${ds.context.scope}〉`); });
-      for (const b of d.obs) out.push(`  ☉ 관찰 ${vlabel('obsProperties', b.property)} = ${b.value}${b.unit ? ' ' + b.unit : ''} 〈${[b.context.species && vlabel('taxa', b.context.species), b.context.tissue && vlabel('tissues', b.context.tissue), b.context.cell && vlabel('cells', b.context.cell), b.context.condition].filter(Boolean).join(' · ')}〉 [${b.evidence.level}]`);
+      for (const b of d.obs) out.push(`  ☉ 관찰 ${T('obsProperties', b.property)} = ${b.value}${b.unit ? ' ' + b.unit : ''} 〈${[b.context.species && T('taxa', b.context.species), b.context.tissue && T('tissues', b.context.tissue), b.context.cell && T('cells', b.context.cell), b.context.condition].filter(Boolean).join(' · ')}〉 [${b.evidence.level}]`);
       const climb = (n, depth, pad, seen) => {
         if (depth >= opt.up) return;
         for (const e of ix.parents(n)) {
-          out.push(`${pad}↑ ${AXIS_UP[e.axis]}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, e.parent)}`);
+          out.push(`${pad}↑ ${T('hierarchyUp', e.axis)}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, e.parent)}`);
           if (seen.has(e.parent)) { out.push(pad + '   (순환)'); continue; }
           climb(e.parent, depth + 1, pad + '   ', new Set([...seen, e.parent]));
         }
@@ -78,7 +83,7 @@
       climb(id, 0, '  ', new Set([id]));
       const sink = (n, depth, pad) => {
         if (depth >= opt.down) return;
-        for (const e of ix.children(n)) { out.push(`${pad}↓ ${AXIS_DOWN[e.axis]}: ${line(ix, e.child)}`); sink(e.child, depth + 1, pad + '   '); }
+        for (const e of ix.children(n)) { out.push(`${pad}↓ ${T('hierarchyDown', e.axis)}: ${line(ix, e.child)}`); sink(e.child, depth + 1, pad + '   '); }
       };
       sink(id, 0, '  ');
       for (const e of ix.sides(id)) {
@@ -86,7 +91,7 @@
         if (e.from === id) out.push(`  ↔ ${rr.label || e.rel}${e.link.span ? ` ("${e.link.span}")` : ''}: ${line(ix, e.target)}`);
         else out.push(`  ↔ ${rr.inverse || e.rel}: ${line(ix, e.from)}`);
       }
-      for (const ro of ix.roles(id)) out.push(`  ⚙ ${ROLE[ro.role]} [${ix.bundleLabel(ro.p.b)}]: ${stepLine(ix, ro.id)}`);
+      for (const ro of ix.roles(id)) out.push(`  ⚙ ${T('bundleRoles', ro.role)} [${ix.bundleLabel(ro.p.b)}]: ${stepLine(ix, ro.id)}`);
       const inPath = ix.stepsIn(id);
       if (inPath.length) out.push(`  ⚙ 이 경로에 속한 기전 단계 ${inPath.length}개 — mechanism 으로 순서대로 보기`);
       out.push('');
@@ -240,7 +245,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     for (const [k, m] of Object.entries(MOTIFS)) { const hits = m.detect(c); if (hits.length) found[k] = hits; }
     return { trajectory: trajectory(c), found, steps: c.ids };
   }
-  function patternText(db, target) {
+  function patternText(db, target, opt) {
+    const T = labeler(opt);
     db = normalize(db);
     const ix = index(db), tg = targets(ix, target);
     if (tg.error) return tg.error;
@@ -257,7 +263,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       }
       const r = findMotifs(db, id, ix);
       if (!r.steps.length) { out.push(`${id} ${ix.label(id)}: 단계가 없음`); continue; }
-      out.push(`[${id} ${ix.label(id)}] 단계 ${r.steps.length}개`, `  위치 궤적: ${r.trajectory.map((l) => vlabel('locations', l)).join(' → ')}`, '  찾은 패턴:');
+      out.push(`[${id} ${ix.label(id)}] 단계 ${r.steps.length}개`, `  위치 궤적: ${r.trajectory.map((l) => T('locations', l)).join(' → ')}`, '  찾은 패턴:');
       for (const [k, hits] of Object.entries(r.found)) out.push(`    · ${MOTIFS[k].label} (${k}) ×${hits.length} — ${hits.map((h) => h.steps.map((s) => `${s} ${ix.label(s)}`).join(' → ')).join(' | ')}` + (conceptOf(k).length ? `\n        상위 개념: ${conceptOf(k).join(', ')}` : '\n        상위 개념 없음 — 반복되면 kind process + motif 로 정의항을 만들 것'));
     }
     return out.join('\n');

@@ -34,7 +34,7 @@
 ```bash
 node dbtool.mjs status          # 규모 한 줄 요약 (가장 싼 조회 — 개념·정의항·규칙·관찰·한계 수)
 node dbtool.mjs map <이름>       # 개념이 이미 있나 — 번호(D…)를 찾는다
-node dbtool.mjs context D000144 # 그 정의항의 부위·규칙·관찰
+node dbtool.mjs context D000144 # 그 정의항의 부위·규칙·관찰 (map·context·mechanism·pattern 에 --audience en|both: 통제 토큰을 사전 영어로, 없으면 [en 미등록])
 node dbtool.mjs mechanism 시트르산회로   # 단계 사슬·묶음 키
 ```
 
@@ -102,7 +102,12 @@ node dbtool.mjs observe <O…|관찰.json> --state <상태> --scenario A.json [-
 node dbtool.mjs report data/patches/<기록>.json    # 지난 패치의 Patch Report
 node dbtool.mjs register <시나리오.json>        # 모의 실험 규약 사전 등록 (검증에 쓰는 실행은 실행 전에 — 고치면 미등록)
 node dbtool.mjs qualgraph [O…] [--json]         # 정성 그래프 0 층 판정: 교란 대상 → 읽을 거리 경로 부호 대 주장 (지지·경로 없음·모순 후보·부호 섞임) — 구조만, 일치 아님
-node dbtool.mjs evidence <시나리오.json> --target <경로|상태> [--report 파일.md] [--json]   # 증거·방법 보고서: 인과·값표(등급·출처·닫는 방법)·판정 수준·실패(열린 한계)·사고패턴·얻은 것/다음/바닥의 불안정함 — 읽기만
+node dbtool.mjs evidence <시나리오.json> [--target <경로|상태>] [--report 파일.md] [--json]   # 증거·방법 보고서: 인과·값표(등급·출처·닫는 방법)·판정 수준·실패(열린 한계)·사고패턴·얻은 것/다음/바닥의 불안정함 — 읽기만. --target 생략 시 examples/scenarios/subjects.json
+node dbtool.mjs dictionary                         # 사전 봉인 판정 (사슬·revises·렌더 모호·vocab 덮임) — validate 에도 포함
+node dbtool.mjs dictionary add <항목.json|.jsonl>  # 새 영어 항목: 사법부 검사 → 봉인 → 서기가 사슬에 추가 (고치기는 revises: 현재 root)
+node dbtool.mjs evidence --recheck <보고서.md...>   # 보고서의 의존 지문을 지금 db 와 대조 — 값 내용 변경·근거 철회면 '재검증 필요' (종료 1)
+node dbtool.mjs origin <시나리오.json> | --all   # 첫 장면 기원: 시작 입력·계의 db 숫자마다 실측·숫자출처없음·가상(한계 등록)·가상(기원 없음)
+node dbtool.mjs evidence --all [--report 파일.md]   # 시나리오 전부의 판정 수준 색인 표 (새 시나리오는 subjects.json 에 대상을 같은 커밋에 등록)
 node dbtool.mjs log                            # 델타 기록: 사슬 무결성 + 기원부터 재생 = 지금 db (기원은 log --genesis 로 한 번)
 node dbtool.mjs verify-collection <핸드오프.jsonl> [--check-sources]   # 수집 작업 검증: 구조·구별·출처 형식·재사용 db 존재 → PASS/INCOMPLETE/BLOCKED/REJECTED/REVIEW_REQUIRED (읽기만). 값 후보는 자동 PASS 안 됨. --check-sources 는 출처(PMID)를 로컬 수신함(data/fetched/)과 대조(네트워크 금지 governance) — 없으면 통합가가 augment fetch 로 1차 출처 확인
 node dbtool.mjs verify-run <transcript.output> --handoff <핸드오프.jsonl>   # 실행 기록 대조: 서브에이전트 실제 도구 호출 vs 주장(값/읽음인데 WebFetch·Read 0 이면 깃발). best-effort — 내 세션 서브에이전트 한정·과정 완전 증명 아님
@@ -125,6 +130,17 @@ node dbtool.mjs evidence <검증>.json --target <경로|상태> --report <보고
 ```
 
 판정 결과: **맞음 · 틀림 · 보이지 못함(불일치 아님) · 무효**. 결론은 등록 규약의 검증 세트 관찰만, 우연 기준선 P(K≥k) 와 함께.
+
+### MCP 서버 (에이전트용, `docs/design/outsourcing-and-mcp.md` §4)
+
+```
+BIODB_ROLE=collector  node mcp/query.mjs    # 읽기 — map·context·limitations·origin·assume_uses·inbox·verify_collection …
+BIODB_ROLE=collector  node mcp/fetch.mjs    # 받기 — resolve_access·fetch_abstract·fetch_fulltext (공개 전문만)·resolve_doi, 받기 기록 FETCH_LOG.jsonl
+BIODB_ROLE=integrator node mcp/clerk.mjs    # 쓰기 — 수집가는 put_handoff 만, 통합가는 merge·register·assume_add … (하나만 뜸)
+```
+
+Claude Code 등 MCP 클라이언트 설정 예(`.mcp.json` — 저장소에 두지 않고 쓰는 쪽에서):
+`{"mcpServers":{"biodb-query":{"command":"node","args":["mcp/query.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-fetch":{"command":"node","args":["mcp/fetch.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-clerk":{"command":"node","args":["mcp/clerk.mjs"],"env":{"BIODB_ROLE":"collector"}}}}`
 
 ---
 
@@ -249,10 +265,10 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 271/271 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 336/336 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
-node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음
+node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)
 node dbtool.mjs attest                 # 도장 재검증
 node dbtool.mjs textbook --check       # 부록 최신 · 모든 파일 분류됨
 node tests/fate_suite.js --quick       # 54/54

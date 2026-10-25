@@ -13,36 +13,58 @@
   "record_every": 1,
   "volumes": {
     "nucleoplasm": {
-      "value": 500,
+      "value": {
+        "assume": "A000356"
+      },
       "unit": "fL"
     },
     "extracellular": {
-      "value": 1,
+      "value": {
+        "assume": "A000345"
+      },
       "unit": "pL"
     }
   },
   "amounts": {
-    "D000204|nucleoplasm": 1800,
-    "D000207|nucleoplasm": 200,
-    "D000208|nucleoplasm": 200,
-    "D000013|nucleoplasm": 2000000
+    "D000204|nucleoplasm": {
+      "assume": "A000261"
+    },
+    "D000207|nucleoplasm": {
+      "assume": "A000262"
+    },
+    "D000208|nucleoplasm": {
+      "assume": "A000263"
+    },
+    "D000013|nucleoplasm": {
+      "assume": "A000187"
+    }
   },
   "signals": {
     "D000209|extracellular": [
       {
         "t": 0,
-        "n": 6022
+        "n": {
+          "assume": "A000322"
+        }
       }
     ]
   },
   "thresholds": {
     "D000204|nucleoplasm": {
-      "low": 600,
-      "high": 1200
+      "low": {
+        "assume": "A000307"
+      },
+      "high": {
+        "assume": "A000306"
+      }
     },
     "D000208|nucleoplasm": {
-      "low": 1000,
-      "high": 10000
+      "low": {
+        "assume": "A000311"
+      },
+      "high": {
+        "assume": "A000309"
+      }
     }
   },
   "commitment": {
@@ -54,7 +76,9 @@
   "kinetics": {
     "D000205/rule/division_attrition": {
       "law": "zero_order",
-      "k": 3.843840433272793e-19,
+      "k": {
+        "assume": "A000171"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -62,7 +86,9 @@
     },
     "D000207/rule/synthesis": {
       "law": "zero_order",
-      "k": 1.9183299543686555e-11,
+      "k": {
+        "assume": "A000176"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -71,7 +97,9 @@
     "D000207/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 1200,
+      "half_life": {
+        "assume": "A000177"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -79,7 +107,9 @@
     },
     "D000208/rule/synthesis": {
       "law": "zero_order",
-      "k": 1.2788866362457704e-13,
+      "k": {
+        "assume": "A000182"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -88,7 +118,9 @@
     "D000208/rule/turnover": {
       "law": "mass_action",
       "order": 1,
-      "half_life": 3600,
+      "half_life": {
+        "assume": "A000183"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -96,9 +128,15 @@
     },
     "D000209/rule/mitogen_drive": {
       "law": "hill",
-      "K": 1e-12,
-      "n": 4,
-      "fmax": 100,
+      "K": {
+        "assume": "A000184"
+      },
+      "n": {
+        "assume": "A000186"
+      },
+      "fmax": {
+        "assume": "A000185"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -106,9 +144,15 @@
     },
     "D000204/rule/short_telomere_ddr": {
       "law": "hill",
-      "K": 1.7933821925477544e-9,
-      "n": 32,
-      "fmin": 0.02,
+      "K": {
+        "assume": "A000167"
+      },
+      "n": {
+        "assume": "A000169"
+      },
+      "fmin": {
+        "assume": "A000168"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -116,9 +160,15 @@
     },
     "D000207/rule/p21_transactivation": {
       "law": "hill",
-      "K": 1.6605390671738467e-8,
-      "n": 2,
-      "fmax": 200,
+      "K": {
+        "assume": "A000173"
+      },
+      "n": {
+        "assume": "A000175"
+      },
+      "fmax": {
+        "assume": "A000174"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0
@@ -126,9 +176,15 @@
     },
     "D000208/rule/cdk_arrest": {
       "law": "hill",
-      "K": 2.6568625074781545e-8,
-      "n": 8,
-      "fmin": 0,
+      "K": {
+        "assume": "A000178"
+      },
+      "n": {
+        "assume": "A000181"
+      },
+      "fmin": {
+        "assume": "A000179"
+      },
       "evidence": {
         "level": "predicted",
         "confidence": 0

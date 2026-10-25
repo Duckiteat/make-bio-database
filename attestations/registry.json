@@ -8033,6 +8033,108 @@
       },
       "issued_at": "2026-10-10",
       "digest": "2eb6eabde3dff593a84fd58526494f4607e138c4f54967df899fde52efa8bd81"
+    },
+    {
+      "subject": {
+        "sense": "O000019",
+        "field": "accept",
+        "ns": "evidence",
+        "value": "O000019"
+      },
+      "claim": "accept",
+      "verdict": "approved",
+      "by": "human",
+      "reason": "사전 등록 검증 #1–#5 의 검증 세트로 이미 쓰인 정성 관찰 — 인정(build-plan 72) 도입 때 일괄 기록 (2026-10-25 사용자 결정: 한 번에 승인 기록 남기기)",
+      "issuer": {
+        "module": "judicial/acceptance.js"
+      },
+      "issued_at": "2026-10-25",
+      "digest": "3f0dd3f72e04752fcdd9431710417096fc294566448147222d9989976d482e2a"
+    },
+    {
+      "subject": {
+        "sense": "O000020",
+        "field": "accept",
+        "ns": "evidence",
+        "value": "O000020"
+      },
+      "claim": "accept",
+      "verdict": "approved",
+      "by": "human",
+      "reason": "사전 등록 검증 #1–#5 의 검증 세트로 이미 쓰인 정성 관찰 — 인정(build-plan 72) 도입 때 일괄 기록 (2026-10-25 사용자 결정: 한 번에 승인 기록 남기기)",
+      "issuer": {
+        "module": "judicial/acceptance.js"
+      },
+      "issued_at": "2026-10-25",
+      "digest": "455a004dc979684347abbed58eb8fa8e0c4552502535b4089400d846fab4df05"
+    },
+    {
+      "subject": {
+        "sense": "O000021",
+        "field": "accept",
+        "ns": "evidence",
+        "value": "O000021"
+      },
+      "claim": "accept",
+      "verdict": "approved",
+      "by": "human",
+      "reason": "사전 등록 검증 #1–#5 의 검증 세트로 이미 쓰인 정성 관찰 — 인정(build-plan 72) 도입 때 일괄 기록 (2026-10-25 사용자 결정: 한 번에 승인 기록 남기기)",
+      "issuer": {
+        "module": "judicial/acceptance.js"
+      },
+      "issued_at": "2026-10-25",
+      "digest": "661d4acbd17cdb523b50d857617fdec1380f91b0d821bc7ca7cd30c7108c2ef5"
+    },
+    {
+      "subject": {
+        "sense": "O000022",
+        "field": "accept",
+        "ns": "evidence",
+        "value": "O000022"
+      },
+      "claim": "accept",
+      "verdict": "approved",
+      "by": "human",
+      "reason": "사전 등록 검증 #1–#5 의 검증 세트로 이미 쓰인 정성 관찰 — 인정(build-plan 72) 도입 때 일괄 기록 (2026-10-25 사용자 결정: 한 번에 승인 기록 남기기)",
+      "issuer": {
+        "module": "judicial/acceptance.js"
+      },
+      "issued_at": "2026-10-25",
+      "digest": "1326be09813b39a2557c3afba848b4c45c5b8f14c6fa951d636efae896249196"
+    },
+    {
+      "subject": {
+        "sense": "O000027",
+        "field": "accept",
+        "ns": "evidence",
+        "value": "O000027"
+      },
+      "claim": "accept",
+      "verdict": "approved",
+      "by": "human",
+      "reason": "사전 등록 검증 #1–#5 의 검증 세트로 이미 쓰인 정성 관찰 — 인정(build-plan 72) 도입 때 일괄 기록 (2026-10-25 사용자 결정: 한 번에 승인 기록 남기기)",
+      "issuer": {
+        "module": "judicial/acceptance.js"
+      },
+      "issued_at": "2026-10-25",
+      "digest": "3e5fe30120f6f4a8d9f31cc7b7b7e2216eeae47d4775598397157dfeb3446d96"
+    },
+    {
+      "subject": {
+        "sense": "O000028",
+        "field": "accept",
+        "ns": "evidence",
+        "value": "O000028"
+      },
+      "claim": "accept",
+      "verdict": "approved",
+      "by": "human",
+      "reason": "사전 등록 검증 #1–#5 의 검증 세트로 이미 쓰인 정성 관찰 — 인정(build-plan 72) 도입 때 일괄 기록 (2026-10-25 사용자 결정: 한 번에 승인 기록 남기기)",
+      "issuer": {
+        "module": "judicial/acceptance.js"
+      },
+      "issued_at": "2026-10-25",
+      "digest": "4c76fef98dfc011d89638e7452d5014ec0967e5e8c467f8c883b57cb97d384a3"
     }
   ]
 }

@@ -235,10 +235,37 @@
   // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
   thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
-  // ===== 합의 창 (추세 점검, judicial/trend.js) =====
-  // 추세 도장은 상하지 않는 사실이 아니다 — 점검일이 이 창(일)보다 오래되면 다시 '점검하지 않음' 이 되어 등급 anchor 가 내려간다.
-  // 창을 늘리면 오래된 점검이 기준값을 떠받치고, 줄이면 다시 받아야 한다. 권위 DB(UniProt·ChEBI)의 판 주기(8주)의 여유 배수로 둔다.
-  consensus: { window_days: 365, label: '추세 점검이 유효한 기간 (일)' },
+  // ===== 합의 창 (추세 점검, judicial/trend.js) — 원천별 (2026-10-24 결정) =====
+  // 추세 도장은 "그 원본의 그 판과 같다" 까지만 주장한다. 원천이 다음 판을 낼 수 있는 시점을 지나면 '지금도 합의와 같다' 는 확인되지 않은 것 →
+  // 다시 '점검하지 않음' 이 되어 anchor 가 내려간다. 그래서 창 = 원천이 공표한 판 주기(일). 도장의 증거 종류(evidence.kind)로 원천을 고른다.
+  // 표에 없는 원천의 도장은 창이 없으므로 만료로 본다(창을 지어내지 않음). basis 는 reasonBasis 의 열쇠.
+  consensus: {
+    label: '추세 점검이 유효한 기간 (일, 원천별)',
+    sources: {
+      uniprot: { days: 56, evidence: ['uniprot_entry'], basis: ['standard', 'principle', 'decision'], why: 'UniProtKB 는 8 주마다 새 판(2020 년부터, 1 월·여름은 늦어질 수 있음 — 늦어지면 창이 먼저 닫혀 다시 받을 뿐 잘못 통과하지 않는다)', ref: 'https://terminology.hl7.org/NamingSystem-UniProt.html' },
+      chebi:   { days: 31, evidence: ['chebi_entity'], basis: ['standard', 'principle', 'decision'], why: 'ChEBI 는 매달 새 판과 내려받기 파일을 낸다(온톨로지 파일은 매일이지만 항목 대조는 월 판 기준) — 달의 최대 일수', ref: 'https://www.ebi.ac.uk/chebi/downloads' },
+    },
+  },
+
+  // ===== 인정의 용도 (judicial/acceptance.js, build-plan 72) — 인정은 (기록, 용도) 순서쌍. 조건 표는 로직 곁(acceptance.USES) =====
+  acceptanceUses: {
+    describe: { label: '서술', note: '설명·인용에 쓴다 — 계산에는 쓰지 않는다' },
+    compare:  { label: '비교', note: '지난 합의·다른 값과 견준다 — 추세 불일치도 허용' },
+    estimate: { label: '추정', note: '시뮬레이션의 매개변수로 쓴다 — 기준 종의 값만' },
+    evidence: { label: '검증 근거', note: '모의 실험 결과와 대조하는 관찰 — 승인 도장 필요, 추정에 쓴 관찰은 안 됨' },
+    standard: { label: '기준', note: '다른 값을 재는 고정점 — 승인 + 독립 단위 ≥ 2 (I 축 전에는 닿지 못함)' },
+  },
+
+  // ===== 이유의 종류 (신뢰 지표 기준·등급·정책의 basis, judicial/reliability.js) — 2026-10-24 결정 =====
+  // 기준마다 "왜" 를 적을 뿐 아니라 그 이유가 어떤 종류인지 가른다 — 원칙에서 나온 것과 편의·결정에서 나온 것을 섞지 않게.
+  //   결정(decision)이 붙은 이유는 사용자 결정의 날짜를 why 에 적는다. 이유가 없으면 basis 를 비우지 않고 open 으로 드러낸다.
+  reasonBasis: {
+    principle:   { label: '원칙', note: '북극성(실측에 매여 있다 · 확인하지 않은 것은 확인된 것이 아니다)이나 삼권 분립에서 바로 나온다 — 바꾸면 체계의 뜻이 바뀐다' },
+    empirical:   { label: '실증', note: '저장소의 데이터·측정 결과에서 나온다(분포·비교) — 데이터가 바뀌면 다시 본다' },
+    standard:    { label: '외부 표준', note: '원천·학계가 공표한 관행·주기·형식에서 나온다 — 출처 주소를 적는다' },
+    operational: { label: '운영', note: '비용·속도·구현의 편의 — 원칙이 아니므로 더 나은 길이 있으면 바꾼다' },
+    decision:    { label: '결정', note: '사용자가 고른 것(날짜와 함께) — 대안이 있었고 그중 하나를 택했다' },
+  },
 
   // ===== 생애 주기 (Lifecycle) — 정의항의 lifecycle 필드 (형식 v7) =====
   // k_deg (s⁻¹, 1차 분해) 또는 half_life (s), k_syn (분자/s/세포, 0차 합성). fate: 분해 산물이 어디로 가나.
@@ -335,6 +362,9 @@
     kinetic_constant: { label: '속도·조절 상수 (규칙의 kinetics 한 칸)', target: 'rule', unit: 'param', conservation: { class: 'non_conserved', reason: 'measured_parameter' } },
     ratio:            { label: '비 (두 형태·대상의 몫 — 정규화 밴드 강도·활성 분율·fold-change, 무차원)', target: 'bundle', unit: '1', conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
     fraction_above:   { label: '문턱 넘은 비율 (%양성 — 게이팅 문턱 이상 실행의 비, 0–1)', target: 'bundle', unit: '1', conservation: { class: 'non_conserved', reason: 'derived_scaled' } },
+    // 용량 반응 기울기: dose.target 묶음의 시작량을 dose.values 로 바꿔 돌릴 때, 대상 규칙의 누적 진행량(실행 끝)의 최소제곱 기울기 — 분자 수당 진행량(무차원).
+    //   예: 초기 텔로미어 반복 단위 수당 정지까지 분열 수. 문헌 단위(PD/kbp 등)는 반복 단위 크기로 환산해 넣는다(환산은 관찰 note 에)
+    dose_slope:       { label: '용량 반응 기울기 (시작량을 바꿀 때 규칙 누적 진행량의 기울기, 무차원)', target: 'rule_progress', unit: '1', conservation: { class: 'non_conserved', reason: 'sensitivity' } },
   },
   // 보존 분류 (오차 3채널 doctrine 의 기저 — build-plan 20–25, 설계 conservation-classes.md). class 는 표현 독립:
   // 보존 법칙의 유무로 정의한다(정수 원장이 정확-0 이든 Rodas3 가 상대 1e-14 로 근사하든 같은 class).
@@ -350,6 +380,123 @@
     sensitivity:         { label: '민감도 (야코비안 ∂rate/∂N — 실체 아님)', note: '동역학의 도함수. 실체가 아니라 감도이므로 보존 대상이 아니다.' },
     emergent_time:       { label: '창발 시각 (event_time — 참조 없음)', note: '첫 도달 시각 같은 창발량. 참조 정답이 없어 예산으로만.' },
     measured_parameter:  { label: '측정 파라미터 (kcat·Km·Kd·반감기·부피 세팅)', note: '경험적으로 측정·설정된 입력. 불확도를 달고 들어오며 보존 법칙이 없다.' },
+  },
+  // 결함 채널 (judicial/fault.js 가 태그·확인에 쓰는 표 — 표는 여기, 로직은 거기). label·note(고치는 곳)·fix(고치는 층)
+  faultChannels: {
+    FINDING:         { label: '결과 (결함 아님)', note: '고치지 않는다 — 결과로 보고. 재생 경로가 없으면 한계(Resource_Gap 등)로 등록', fix: 'none' },
+    DATA_GAP:        { label: '데이터 공백', note: '한계 등록부에 등록하고, 확인된 값만 패치로 채운다 (지어내지 않음)', fix: 'limitation' },
+    DOMAIN_CONFLICT: { label: '데이터 모순 (규칙·화학량·상수·관찰 사이)', note: '근거와 함께 데이터 패치 (입법) — 모순의 어느 쪽이 틀렸는지 근거로 정함', fix: 'data' },
+    NUMERICAL:       { label: '수치 문제', note: 'engine/coupling.js 결합점 또는 솔버 단계 제어 (행정) — 생물 상수(db.json)를 바꾸지 않는다', fix: 'numerics' },
+    ENGINE_DEFECT:   { label: '엔진 결함', note: '엔진 코드 (행정) — 데이터·결합점을 바꿔 덮지 않는다', fix: 'engine' },
+    COMPILER_DEFECT: { label: '컴파일러 결함', note: 'compiler/ (IR·기호 미분·테이프) — 엔진·데이터를 바꿔 덮지 않는다', fix: 'compiler' },
+  },
+  // 한계의 재검토 조건 (limitations[].resolution_trigger, 설계 dictionary-and-translation §10) — 열린 한계를 언제 다시 볼지.
+  //   자동 조건은 한계의 at(등록 시각) 이후에 대상·막힌 하류(downstream_blocked)에 새로 기록된 것을 본다 — 해결 판정이 아니라 '다시 볼 때' 표시
+  resolutionTriggers: {
+    manual:            { label: '사람이 판단', note: '자동 재검토 없음 — 형식으로 확인할 수 없는 조건' },
+    observation_added: { label: '새 관찰이 들어오면', note: '한계의 at 이후 대상·막힌 하류를 재는 관찰(O…)이 기록되면 다시 본다' },
+    value_recorded:    { label: '새 값이 기록되면', note: '한계의 at 이후 대상·막힌 하류에 값(V…)이 새로 기록되면 다시 본다' },
+  },
+  // 첫 장면 기원 (judicial/scene_origin.js 분류 · 가정 원장 origin) — 실험의 시작 숫자가 어디서 왔나
+  sceneOrigins: {
+    measured:   { label: '실측에 매임', note: 'db 값이 관찰(O…)·실측 근거에 매임 — 가정 원장에는 없다(측정값은 db 값 V…)' },
+    abstracted: { label: 'db 에 있으나 숫자 출처 없음(추상·추론)', note: '근거가 추상·추론 — 숫자의 출처가 기록되지 않음' },
+    assumed:    { label: '가상 값 — 한계로 등록됨', note: '그 대상을 다루는 열린 한계(L…)가 있음' },
+    unrecorded: { label: '가상 값 — 기원 기록 없음', note: '어떤 한계도 다루지 않음 — 가정 원장에는 변환(012)이 옛 값을 들일 때만' },
+  },
+  // 가정 원장의 자리 종류 (data/assumptions.jsonl slot.kind · compiler/assumptions.js 가 숫자 위치·단위를 안다)
+  assumptionSlots: {
+    kinetics:   { label: '속도 상수' },
+    amounts:    { label: '시작량' },
+    reservoirs: { label: '저장소 양' },
+    thresholds: { label: '문턱' },
+    signals:    { label: '신호 양' },
+    buffered:   { label: '완충 농도·총량' },
+    volumes:    { label: '부피 (세포마다)' },
+  },
+  // ── 판결·보고의 통제 토큰 (16A: 토큰 → 사람말 표는 여기 — 토큰 → 동작·숫자·정책 표는 로직 곁에) ──
+  // 기전 참여 역할 (model.js ROLE 보기 · core.js·viewer 표시)
+  bundleRoles: {
+    agent:     { label: '촉매/행위자' },
+    input:     { label: '소비(입력)' },
+    output:    { label: '생성(출력)' },
+    regulator: { label: '조절자' },
+  },
+  // 개념 위계 축의 위·아래 이름 (model.js AXIS_UP·AXIS_DOWN 보기)
+  hierarchyUp:   { kind: { label: '상위 범주' }, part: { label: '전체' }, instance: { label: '유형' } },
+  hierarchyDown: { kind: { label: '하위 범주' }, part: { label: '구성요소' }, instance: { label: '사례' } },
+  // 운명·기전 시나리오 context.role (judicial/process_report.js)
+  contextRoles: {
+    cause:       { label: '원인', note: '그 상태에 이르는 원인 — 전이 신호가 켜져 있고 그 상태에 도달' },
+    requirement: { label: '필수성', note: '같은 신호에서 무엇을 끊으면 도달하지 못함' },
+    baseline:    { label: '일반 상황', note: '시작 상태, 구동된 전이 없음' },
+  },
+  // 정성 그래프 0 층 판정 (judicial/qual_graph.js)
+  qualGraphVerdicts: {
+    supported:               { label: '구조 지지' },
+    no_path:                 { label: '경로 없음 (Structural_Gap 후보)' },
+    contradiction_candidate: { label: '모순 후보' },
+    mixed:                   { label: '부호 섞임 (모의 판정 필요)' },
+    tension:                 { label: '긴장 (경로 있음 · 효과 없음 주장)' },
+    not_applicable:          { label: '0 층 판정 대상 아님' },
+    undetermined:            { label: '판정 못 함 (탐색 상한)' },
+  },
+  // 정성 모의 판정 결과 (judicial/qual_compare.js)
+  qualOutcomes: {
+    match:     { label: '맞음' },
+    mismatch:  { label: '틀림' },
+    not_shown: { label: '보이지 못함' },
+    invalid:   { label: '무효' },
+  },
+  // 추세 판정 (judicial/trend.js) — 키 집합은 추세 도장의 verdict 어휘이기도 하다
+  trendVerdicts: {
+    match:     { label: '합의와 같음' },
+    mismatch:  { label: '합의와 다름 — 지난값' },
+    unchecked: { label: '점검하지 않음' },
+  },
+  // 강성 프로파일 표지 (judicial/stiffness.js)
+  stiffnessFlags: {
+    h_min_floor:          { label: '최소 단계 바닥(정확도 타협)' },
+    rejection_storm:      { label: '단계 거부 폭주' },
+    timescale_separation: { label: '시간척도 분리(강성 흡수)' },
+    lu_cost:              { label: '큰 활성 집합(LU 비용)' },
+    well_conditioned:     { label: '양호' },
+  },
+  // 속도 상수 칸의 사람 이름 (judicial/evidence_report.js 값 표)
+  kineticParams: {
+    kcat: { label: '최대 회전수 kcat' }, Km: { label: '반포화 농도 Km' }, k: { label: '속도 상수 k' }, k_r: { label: '역반응 속도 k_r' },
+    k_on: { label: '결합 속도 k_on' }, k_off: { label: '해리 속도 k_off' }, Kd: { label: '해리 상수 Kd' }, k0: { label: '전지수 인자 k0' },
+    dG_act: { label: '활성화 에너지 ΔG‡' }, dG0: { label: '표준 반응 자유에너지 ΔG°′' }, half_life: { label: '반감기' },
+    K: { label: '힐 반포화 K' }, n: { label: '힐 계수 n' }, fmax: { label: '최대 배율 fmax' }, fmin: { label: '최소 배율 fmin' },
+  },
+  // 신뢰 지표 척도·등급의 뜻 (judicial/reliability.js — 등급을 정하는 규칙과 그 설명 rule 은 로직 곁에 남는다)
+  sourceScale: { 4: { label: '권위 DB + 사법부 도장' }, 3: { label: '문헌 식별자(DOI·PMID) — 학술지 확인(S3.confirmed) 또는 미확인(S3.unconfirmed)' }, 2: { label: '출처 없음·추론·예측' }, 0: { label: '확인 불가' } },
+  dataScale:   { 4: { label: '추적 가능한 실측·도구 계산' }, 3: { label: '요약 상수·정체성 사실' }, 2: { label: '추론·단순화·출처 없는 값' } },
+  reliabilityGrades: {
+    anchor:    { label: '기준값', note: '시뮬레이션의 고정점으로 쓸 수 있음' },
+    parameter: { label: '매개변수', note: '주 매개변수로 쓸 수 있음 (추세 미점검이면 함께 보고)' },
+    bounded:   { label: '구간값', note: '오차 막대와 함께만 쓸 수 있음' },
+    legacy:    { label: '지난값', note: '비교 분석에만 (지우지 않는다)' },
+    reference: { label: '참고', note: '계산에 쓰지 않음 — 서술에만' },
+    blocked:   { label: '차단', note: '계산·인용 금지 — 한계로만 남긴다' },
+  },
+  // 닫는 방법 (설계 §13.2 B) — 실행에 쓰인 상수를 우리가 어떻게 아는가. 증거 보고서가 고리마다 붙인다 (judicial/evidence_report.js)
+  closureMethods: {
+    measure:     { label: '문헌 실측값', note: '이 종·이 반응에서 실제로 잰 값 — 결론의 단단한 바닥' },
+    computed:    { label: '측정에서 도구로 계산', note: '측정에서 도구로 계산 — 측정만큼 믿되 도구 가정을 짊어짐' },
+    abstraction: { label: '묶음·추상 (기전 경계)', note: '기전을 묶어 한 상수로 — 세부는 접혔고, 그 경계는 Structural_Gap 으로 등록' },
+    assumed:     { label: '가정 (실측 아님)', note: '실측이 아닌 추정 — 결론은 여기에 조건부, 재면 바뀔 수 있음' },
+    none:        { label: '속도 상수 없음', note: '속도 상수가 없다 — 경로 속도 실행에선 사건 기반(즉시), 운명 엔진에선 그 규칙이 꺼짐(Kinetic_Gap). 시간·병목·그 고리의 효과를 말할 수 없음' },
+  },
+  // 판정 수준 — 실행의 결론을 어디까지 말할 수 있나. 규약 선언이 아니라 사전 등록 확인에서 정한다 (judicial/protocol.protocolVerdict)
+  judgmentLevels: {
+    acceptance_review:      { label: '인정 재검토 필요 (근거가 검증 근거로 인정되지 않음)', note: '등록된 검증 세트의 관찰 중 검증 근거 용도로 인정되지 않은 것이 있음(승인 없음·축이 내려감) — 결론은 가장 약한 근거를 따른다 (build-plan 72)' },
+    validated_registered:   { label: '검증 (사전 등록)', note: '등록된 모의 실험 규약 아래 — 일치 결론은 규약의 검증 세트로만' },
+    protocol_violation:     { label: '탐색 (규약 위반 — 검증 결론 불가)', note: '규약을 선언했으나 등록되지 않았거나 등록 뒤 고침 — 검증 결론을 내지 않는다' },
+    registration_unchecked: { label: '규약 선언됨 (등록 미확인)', note: '사전 등록부를 받지 않아 등록 여부를 확인하지 못함 — 확인 전에는 검증 결론으로 읽지 않는다' },
+    hypothesis_generating:  { label: '가설 생성 / 탐색', note: '규약 없는 가상(hypothetical) 실행 — 관찰과의 일치를 주장하지 않는다 (설계 P6)' },
+    exploratory:            { label: '탐색 (규약 없음)', note: '사전 등록 규약이 없어 관찰과의 일치 결론을 내지 않는다' },
+    revalidation_required:  { label: '재검증 필요 (근거 철회됨)', note: '등록된 검증 세트의 관찰이 철회됨 — 결론을 다시 세우기 전에는 검증으로 읽지 않는다(차단이 아니라 라벨)' },
   },
   // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)
   kineticUnits: { k_on: 'M^-1 s^-1', k_off: 's^-1', kcat: 's^-1', Kd: 'M', Km: 'M', K: 'M', half_life: 's', n: '1', fmax: '1', fmin: '1', dG_act: 'J/mol', dG0: 'J/mol' },

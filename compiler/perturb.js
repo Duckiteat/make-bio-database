@@ -6,7 +6,8 @@
 //   block    { target: 규칙 ref }  그 규칙 제외 (항체·돌연변이) — 가역 단계면 정·역 모두
 //   inhibit  { target: 규칙 ref, Ki_M, dose_M }  속도에 1/(1 + dose/Ki) 를 곱한다 (경쟁·비경쟁을 가리지 않는 단순 배율 — 한계)
 //   clamp    { target: 묶음, conc_M }  농도 고정 = 완충 저장소(buffered) 를 무한에 가까운 총량으로
-//   dose_series { of: { type: inhibit | clamp, target, … }, doses: [M, …] }  용량마다 교란 시나리오 하나
+//   set_amount { target: 묶음, n }   시작량을 n 분자로 (용량 계열의 축 — 초기 조건만 바꾸고 규칙·신호는 그대로)
+//   dose_series { of: { type: inhibit | clamp | set_amount, target, … }, doses: [M 또는 분자 수, …] }  용량마다 교란 시나리오 하나
 // 대상이 이 계(시작 상태에서 닿는 상태들의 규칙·묶음)에 없으면 오류 — 없는 것을 끈 실험은 대조군과 같아 아무것도 보이지 않는다.
 'use strict';
 const crypto = require('crypto');
@@ -43,7 +44,11 @@ function applyOne(db, sid, sc, p) {
     if (!A.bundles.includes(p.target)) return { error: `clamp 대상 묶음 ${p.target} 이 이 계에 없음` };
     if (!(p.conc_M >= 0)) return { error: 'clamp 에는 conc_M ≥ 0 (몰 농도) 필요' };
     change.buffered[p.target] = { conc_M: p.conc_M, total: CLAMP_TOTAL };
-  } else return { error: `알 수 없는 교란 '${p.type}' — knockout | block | inhibit | clamp | dose_series` };
+  } else if (p.type === 'set_amount') {
+    if (!A.bundles.includes(p.target)) return { error: `set_amount 대상 묶음 ${p.target} 이 이 계에 없음` };
+    if (!(Number.isFinite(p.n) && p.n >= 0)) return { error: 'set_amount 에는 n ≥ 0 (분자 수) 필요' };
+    change.amounts[p.target] = p.n;
+  } else return { error: `알 수 없는 교란 '${p.type}' — knockout | block | inhibit | clamp | set_amount | dose_series` };
   if (change.exclude_rules.length) out.exclude_rules = [...new Set([...(sc.exclude_rules || []), ...change.exclude_rules])].sort();
   for (const f of ['amounts', 'signals', 'rule_scale', 'buffered']) if (Object.keys(change[f]).length) out[f] = Object.assign({}, sc[f] || {}, change[f]);
   return { scenario: out, change };
@@ -52,11 +57,11 @@ function applyOne(db, sid, sc, p) {
 // 교란 선언 하나(dose_series 면 여럿) → [{ scenario, record }]. record = { base_scenario_sha256, perturbation, change, hash }
 function perturb(db, sid, sc, p) {
   const list = p && p.type === 'dose_series'
-    ? (Array.isArray(p.doses) && p.doses.length && p.of && ['inhibit', 'clamp'].includes(p.of.type)
-      ? p.doses.map((d) => Object.assign({}, p.of, p.of.type === 'inhibit' ? { dose_M: d } : { conc_M: d }))
+    ? (Array.isArray(p.doses) && p.doses.length && p.of && ['inhibit', 'clamp', 'set_amount'].includes(p.of.type)
+      ? p.doses.map((d) => Object.assign({}, p.of, p.of.type === 'inhibit' ? { dose_M: d } : p.of.type === 'clamp' ? { conc_M: d } : { n: d }))
       : null)
     : [p];
-  if (!list) return { error: 'dose_series 에는 of { type: inhibit | clamp, … } 와 doses [M, …] 가 필요' };
+  if (!list) return { error: 'dose_series 에는 of { type: inhibit | clamp | set_amount, … } 와 doses [M 또는 분자 수, …] 가 필요' };
   const base = sha(IRB.canon(sc)), out = [];
   for (const q of list) {
     const r = applyOne(db, sid, sc, q);

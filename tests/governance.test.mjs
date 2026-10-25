@@ -5,6 +5,7 @@
 //   ④ 증명 등록부: 도장 없는 'verified' 거부, 변조·위조 도장 거부 · 서기는 봉인 없는 쓰기를 거부
 //   ②′ 행정부는 관찰을 모른다 (4단계) · ⑤ 독립 검증: 원자료를 몰래 바꾸면 사법부 검증기가 잡는다 · ⑥ 결합점 등록부: 엔진을 고치지 않고 값을 데이터 쪽으로
 // 실행: node --test tests/*.test.mjs
+import SCN from '../scenarios.js'; // 시나리오 읽기 — 가정 번호를 원장으로 푼다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, rmSync } from 'node:fs';
@@ -74,13 +75,13 @@ test('② 행정부는 관찰을 모른다: 관찰 기록·관찰 연산자·관
 });
 
 test('② 행정부 결과에는 판결 필드가 없다 (원자료만)', () => {
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/lps-hypothetical.json'), 'utf8'));
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/lps-hypothetical.json'));
   const pid = Object.keys(BASE.senses).find((k) => BASE.senses[k].kind === 'pathway' && /TLR4|LPS/.test(JSON.stringify(BASE.terms[BASE.senses[k].term])));
   const r = C.simulateRate(BASE, pid, { scenario: sc, t_end: 1, dt: 0.01 });
   assert.match(r.irHash, /^[0-9a-f]{64}$/, '경로 시뮬레이션도 IR(compiler/rate_ir.js) 위에서 돈다');
   for (const k of ['audit', 'postMortem', 'cycles']) assert.ok(!(k in r), `simulateRate.${k}`);
   assert.ok(Array.isArray(r.facts) && r.series[1].ledger, '원자료: 사실·기록점 원장');
-  const fsc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json'), 'utf8')); fsc.t_end = 2 * 3600;
+  const fsc = SCN.read(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json')); fsc.t_end = 2 * 3600;
   const f = F.simulateFate(BASE, 'D000174', { scenario: fsc, commitment: false });
   for (const k of ['audit', 'postMortem', 'arrest']) assert.ok(!(k in f), `simulateFate.${k}`);
   for (const k of ['worst', 'tolerance', 'series', 'replayWorst', 'replaySeries']) assert.ok(!(k in f.mass), `simulateFate.mass.${k}`);
@@ -213,7 +214,7 @@ test('④″ CI 설정이 실제로 파싱되는가 — 검사가 조용히 죽�
 });
 
 test('⑤ 독립 검증: 엔진 원자료를 몰래 바꾸면 사법부 검증기·판결이 잡는다', () => {
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json'), 'utf8')); sc.t_end = 2 * 3600;
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json')); sc.t_end = 2 * 3600;
   const raw = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false });
   const ok = FA.judgeFate(BASE, raw, { scenario: sc });
   assert.ok(ok.verification.pass && ok.mass.worst <= 1e-14 && ok.mass.replayWorst <= 1e-14);
@@ -233,7 +234,7 @@ test('⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값,
   const p = COUPLING.resolve({ integrator: { rtol: 1e-8 } }, { rtol: 1e-7, atol: 0.1 });
   assert.equal(p.rtol, 1e-8); assert.equal(p._source.rtol, 'scenario');
   assert.equal(p.atol, 0.1); assert.equal(p._source.atol, 'data');
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json'), 'utf8')); sc.t_end = 1800;
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/fate-effector-il12-hypothetical.json')); sc.t_end = 1800;
   const a = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false, coupling: { rtol: 1e-9 } });
   assert.ok(b.integrator.steps > a.integrator.steps && b.integrator.rtol === 1e-9, '데이터 쪽 값이 엔진 단계 제어를 바꿈');
   assert.equal(b.coupling._source.rtol, 'data');
@@ -242,7 +243,7 @@ test('⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값,
 
 test('⑦ 원자료 계약 (FFI): 엔진 출력은 schemas/ffi/fate-raw.schema.json 을 지키고, 어기면 사법부가 판정하지 않는다', () => {
   const K = req('../judicial/contract.js');
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8')); sc.t_end = 3 * 3600;
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json')); sc.t_end = 3 * 3600;
   const raw = F.simulateFate(BASE, 'D000174', { scenario: sc });
   const ok = K.checkFateRaw(raw);
   assert.ok(ok.ok, JSON.stringify(ok.violations.slice(0, 3)));
@@ -267,7 +268,7 @@ test('⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사�
     assert.ok(!WRITE.test(s), `${p}: 파일을 씀`);
     assert.ok(!/require\(['"][./]*(judicial|legislative|orchestrator|core\.js|engine\/fate)/.test(s), `${p}: 권력 모듈·엔진을 부름`);
   }
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8')); sc.t_end = 2 * 3600;
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json')); sc.t_end = 2 * 3600;
   const ir = IRB.buildFateIR(BASE, 'D000174', sc);
   assert.equal(IRB.buildFateIR(BASE, 'D000174', sc).hash, ir.hash, 'IR 은 결정론적');
   assert.ok(ir.jac.sizes.nA === ir.jac.active.length && ir.jac.nnz < ir.jac.sizes.nA ** 2, '희소 패턴');
@@ -307,11 +308,11 @@ test('⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 
   assert.ok(all.length > 0 && FT.untagged(all).length === 0, JSON.stringify(FT.untagged(all).slice(0, 2)));
   // 큰 Δt → 적분 안정성 감사는 NUMERICAL (생물 상수를 고치라고 하지 않음)
   const tca = paths.find((p) => /시트르산 회로/.test(BASE.terms[BASE.senses[p].term].names.ko));
-  const stiff = ORCH.runRate(BASE, tca, { scenario: JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/tca-co2-equilibrium-hypothetical.json'), 'utf8')), t_end: 300, dt: 0.1 });
+  const stiff = ORCH.runRate(BASE, tca, { scenario: SCN.read(join(ROOT, 'examples/scenarios/tca-co2-equilibrium-hypothetical.json')), t_end: 300, dt: 0.1 });
   assert.ok(stiff.audit.some((a) => a.fault === 'NUMERICAL' && /Δt/.test(a.msg)), '큰 Δt → NUMERICAL');
   assert.ok(stiff.audit.filter((a) => /사후 분석/.test(a.msg)).every((a) => a.fault === 'FINDING'), '사후 분석(정지 원인)은 결과');
   // 운명: 분화 정지는 FINDING · 부피 공백은 DATA_GAP · 원자료 변조는 ENGINE_DEFECT · IR 변조는 COMPILER_DEFECT
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'), 'utf8'));
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/fate-effector-glucose-withheld-hypothetical.json'));
   const v = ORCH.runFate(BASE, 'D000174', { scenario: { ...sc, commitment: { horizon: 3600, coarse: 3600 } } });
   assert.ok(v.audit.length && FT.untagged(v.audit).length === 0);
   assert.ok(v.audit.some((a) => a.code === 'AUDIT_FATE' && a.fault === 'FINDING'), '고갈로 인한 정지는 결과');
@@ -322,8 +323,8 @@ test('⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 
   assert.ok(FA.judgeFate(BASE, { ...raw, series }, { scenario: s2, ir }).audit.some((a) => a.code === 'AUDIT_MASS' && a.fault === 'ENGINE_DEFECT'));
   const badIR = JSON.parse(JSON.stringify(ir)); badIR.jac.rate[0][1] *= 1.001; badIR.hash = IRB.irHash(badIR);
   assert.ok(FA.judgeFate(BASE, raw, { scenario: s2, ir: badIR }).audit.some((a) => a.fault === 'COMPILER_DEFECT' || (a.fault === 'ENGINE_DEFECT' && /IR/.test(a.msg))));
-  for (const f of Object.keys(FT.FAULTS)) assert.ok(FT.FAULTS[f].route && FT.FAULTS[f].label);
-  assert.match(FT.FAULTS.NUMERICAL.route, /생물 상수\(db\.json\)를 바꾸지 않는다/);
+  for (const f of Object.keys(FT.FAULTS)) assert.ok(FT.FAULTS[f].note && FT.FAULTS[f].label);
+  assert.match(FT.FAULTS.NUMERICAL.note, /생물 상수\(db\.json\)를 바꾸지 않는다/);
 });
 
 test('⑩ 델타 기록 (S1): 기원 봉인 → 병합마다 사건 추가 → 재생 = db · 사건·스냅숏·db 변조를 사법부가 잡는다', async () => {
@@ -402,7 +403,7 @@ test('⑬ 사법부: 철회 전파 — 관찰에 기댄 값·단계·경로를 �
 // 증거·방법 보고서 (build-plan 12 / 설계 §13.4): 읽기 전용 판결 — 인과·값표·닫는 방법·판정 수준·실패·사고패턴·삼각 결론
 test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, 실패를 숨기지 않는다 (읽기만, db 불변)', () => {
   const ER = req('../judicial/evidence_report.js');
-  const sc = JSON.parse(readFileSync(join(ROOT, 'examples/scenarios/tca-measured-kinetics-hypothetical.json'), 'utf8'));
+  const sc = SCN.read(join(ROOT, 'examples/scenarios/tca-measured-kinetics-hypothetical.json'));
   const before = JSON.stringify(BASE);
   const rep = ER.evidenceReport(BASE, sc, { target: 'D000148' });
   assert.equal(before, JSON.stringify(BASE), '보고서는 db 를 바꾸지 않는다');
@@ -442,4 +443,75 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   for (const h of ['## 1.', '## 2.', '## 3.', '## 4.', '## 5.', '## 6.', '## 7.', '## 8.']) assert.ok(md.includes(h), `절 ${h}`);
   // 대상 없으면 오류 (판결을 내지 않음)
   assert.ok(ER.evidenceReport(BASE, sc, {}).error, '대상 없으면 오류');
+});
+
+// 보고서가 경로만이 아니라 세포 상태·교란·검증 시나리오에서도 비지 않고 맞는 판정 수준을 낸다 (2026-10-22 회귀: 0 고리·가정 없음·검증이 '탐색' 으로)
+test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준', () => {
+  const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), IRB = req('../compiler/ir_builder.js');
+  const json = (f) => SCN.read(join(ROOT, 'examples/scenarios', f));
+  const prereg = readFileSync(join(ROOT, 'data/preregistrations.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  // ① 세포 상태: 사슬 = 컴파일러가 조립한 계(엔진이 먹는 것)와 같은 규칙 집합, 시나리오가 덮어쓴 상수는 가정
+  const tel = json('telomere-hayflick-hypothetical.json');
+  const rep = ER.evidenceReport(BASE, tel, { target: 'D000210', prereg });
+  const A = IRB.assemble(BASE, 'D000210', tel);
+  const want = new Set(A.rules.map((R) => R.ref)), got = new Set(rep.chain.filter((c) => c.kind !== 'modulation').map((c) => c.rule));
+  assert.deepEqual([...got].sort(), [...want].sort(), '사슬 고리 = 조립된 계의 규칙');
+  assert.ok(rep.chain.some((c) => c.kind === 'modulation' && c.effect === 'inhibits'), '조절 고리(⊣)가 사슬에 있다');
+  assert.ok(rep.chain.every((c) => c.src !== 'scenario' || c.closure === 'assumed'), '시나리오 상수는 assumed');
+  assert.equal(rep.states.map((s) => s.id).join(','), 'D000210,D000211');
+  assert.ok(rep.failures.length > 0, '계의 열린 한계가 보인다');
+  // ② 파생 시나리오: 풀린 입력의 가정 값 + 교란 기록이 보인다
+  const raw = json('mhc-i-tap-null-hypothetical.json'), d = PT.derive(BASE, 'D000202', raw, json(raw.base));
+  const rp = ER.evidenceReport(BASE, d.scenario, { target: 'D000202', derived: d, prereg });
+  assert.ok(rp.assumptions.length > 0, '기준에서 풀린 가정 값');
+  assert.equal(rp.perturbation.perturbation.type, 'knockout');
+  assert.ok(rp.excluded.includes('D000189/rule/assembly'), '교란이 뺀 규칙');
+  assert.ok(ER.evidenceReportMarkdown(rp).includes('**교란 실험**'));
+  // ③ 판정 수준: 등록된 규약 → 검증 (hypothetical 이어도), 등록부 없으면 미확인, 고친 규약 → 위반
+  const b2m = json('mhc-i-b2m-validation-hypothetical.json');
+  assert.match(ER.evidenceReport(BASE, b2m, { target: 'D000202', prereg }).judgment.level, /^검증 \(사전 등록 #1\)/);
+  assert.match(ER.evidenceReport(BASE, b2m, { target: 'D000202' }).judgment.level, /등록 미확인/);
+  const edited = Object.assign({}, b2m, { name: b2m.name + ' (고침)' });
+  assert.match(ER.evidenceReport(BASE, edited, { target: 'D000202', prereg }).judgment.level, /규약 위반/, '등록 뒤 고치면 검증 아님');
+  assert.match(rep.judgment.level, /가설 생성/, '규약 없는 가상 → 가설 생성');
+});
+
+// 시나리오 → 대상 색인은 시나리오 폴더와 정확히 같아야 한다 (빠진 것·남는 것·없는 대상 거부) — 모든 시나리오가 비지 않은 보고서를 낸다
+// 데이터(표)와 로직의 분리 (16A): 통제 토큰 표는 vocab 에만, 사전은 vocab 만 읽는다 — 어느 권력 층이 사전을 써도 다른 층으로 가는 우회로가 아니다
+test('⑮ 표·로직 분리 — 사전은 vocab 만 읽고, 결함 표는 vocab.faultChannels 에만', () => {
+  const s = src('dictionary.js');
+  const reqs = [...s.matchAll(/require\(['"]([^'"]+)['"]\)/g)].map((m) => m[1]);
+  assert.deepEqual(reqs.filter((r) => !['fs', 'path', './vocab.js'].includes(r)), [], `사전이 vocab 밖 모듈을 부름: ${reqs}`);
+  const f = src('judicial/fault.js');
+  assert.ok(!/\blabel\s*:/.test(f), 'judicial/fault.js 에 표 리터럴(label:)이 있음 — 표는 vocab.faultChannels 로');
+  const V = req('../vocab.js'), FT = req('../judicial/fault.js'), DICT = req('../dictionary.js');
+  assert.equal(FT.FAULTS, V.faultChannels, '결함 표 = vocab 표 그 자체(복사본 아님)');
+  for (const k of Object.keys(V.faultChannels)) assert.ok(!DICT.entry(k).error, `결함 채널 ${k} 사전 미등록`);
+});
+
+test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못된 대상 없음, 42개 모두 보고서', () => {
+  const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), DICT = req('../dictionary.js');
+  const dir = join(ROOT, 'examples/scenarios'), idx = JSON.parse(readFileSync(join(dir, 'subjects.json'), 'utf8')).subjects;
+  const files = readdirSync(dir).filter((f) => f.endsWith('.json') && f !== 'subjects.json').sort();
+  assert.deepEqual(Object.keys(idx).sort(), files, '색인과 시나리오 폴더가 다름 — 빠지거나 남는 항목');
+  const prereg = readFileSync(join(ROOT, 'data/preregistrations.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const levels = {};
+  for (const f of files) {
+    const sid = idx[f], kind = (BASE.senses[sid] || {}).kind;
+    assert.ok(['cell_state', 'pathway'].includes(kind), `${f}: 대상 ${sid} 는 세포 상태·경로가 아님`);
+    let sc = JSON.parse(readFileSync(join(dir, f), 'utf8')), derived = null;
+    if (PT.isDerived(sc)) { derived = PT.derive(BASE, sid, sc, JSON.parse(readFileSync(join(dir, sc.base), 'utf8'))); assert.ok(!derived.error, `${f}: ${derived.error}`); sc = derived.scenario; }
+    const rep = ER.evidenceReport(BASE, sc, { target: sid, derived, prereg });
+    assert.ok(!rep.error, `${f}: ${rep.error}`);
+    assert.ok(rep.chain.length > 0, `${f}: 사슬이 비었다`);
+    levels[f] = rep.judgment.key;
+    // 통제 토큰은 사전에 등록된 것만 (16A — 보고서가 문구를 지어내지 않고 사전을 조회)
+    assert.ok(DICT.entry(rep.judgment.key).label_ko && !DICT.entry(rep.judgment.key).error, `${f}: 판정 수준 토큰 ${rep.judgment.key} 사전 미등록`);
+    for (const c of rep.chain) assert.ok(c.closureLabel.startsWith(`${c.closure} — ${DICT.entry(c.closure).label_ko}`), `${f}: 닫는 방법 라벨이 사전에서 오지 않음 (${c.closureLabel})`);
+  }
+  // 등록된 검증 시나리오 = 판정 수준 '검증' (그 밖은 검증이 아니다)
+  const regd = files.filter((f) => levels[f] === 'validated_registered');
+  assert.deepEqual(regd, ['mhc-i-b2m-validation-hypothetical.json', 'mhc-i-tapasin-validation-hypothetical.json', 'mhc-ii-hladm-validation-hypothetical.json', 'telomere-quiescence-validation-hypothetical.json', 'telomere-telomerase-validation-hypothetical.json']);
+  // 경로 사슬은 하위 경로 단계까지 (LPS 경로 D000102 는 단계를 하위 경로 D000103–105 에 둔다)
+  assert.ok(ER.evidenceReport(BASE, JSON.parse(readFileSync(join(dir, 'lps-hypothetical.json'), 'utf8')), { target: 'D000102', prereg }).chain.length >= 19);
 });
