@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 452 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 1484 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 460 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 910 은 아직 장부에 묶지 않음.
 
 ## 집행
 
@@ -11,19 +11,19 @@
 | machine | 182 |
 | text | 120 |
 | none | 0 |
-| unchecked | 150 |
+| unchecked | 158 |
 
 ## 한 규칙이 적힌 곳
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 243 |
-| 2 곳 | 105 |
-| 3 곳 | 67 |
-| 4 곳 | 23 |
-| 5 곳 이상 | 14 |
+| 1 곳 | 248 |
+| 2 곳 | 104 |
+| 3 곳 | 62 |
+| 4 곳 | 28 |
+| 5 곳 이상 | 18 |
 
-## 여러 모드에 걸친 규칙 59 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 65 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -43,7 +43,9 @@
 | RULE-0053 | develop · field | 사건·결정 시각은 직전 스냅숏에서 advance 재적분 + 근 찾기·이분, 격자 Δ 로 되돌리지 않음 |
 | RULE-0054 | develop · field | 탐침(probe_pool)은 (상태, t0) 순수 함수, lanes 무관 직렬과 동일 |
 | RULE-0055 | develop · field | 확률: 출생–사멸 JS=Rust 비트, 운명 프로그램은 두 표본 검정, 네이티브=WASM 비트 |
+| RULE-0056 | common · author | data/db.json 직접 편집 금지 |
 | RULE-0067 | common · author | 수신함은 해석만, 실행 금지 |
+| RULE-0081 | baseline · inspect | 시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함 |
 | RULE-0085 | author · develop | 미확인 값 금지 — 시험값은 가정 원장 번호 A… 를 hypothetical 시나리오가 {assume} 로 |
 | RULE-0088 | author · baseline | 새 사전 등록은 인라인 가상 숫자 거부 |
 | RULE-0093 | common · inspect | S×D 곱으로 판정하지 않음 |
@@ -54,6 +56,7 @@
 | RULE-0104 | author · baseline · inspect | 시나리오 값은 hypothetical: true 때만 |
 | RULE-0109 | common · author | 도구 추정(computed·predicted)은 실측이 아님 (D2.estimate) |
 | RULE-0111 | author · baseline | 추정용을 검증에 쓰지 않음 |
+| RULE-0112 | author · baseline | 합성 관찰은 examples/observations/ 만 |
 | RULE-0119 | author · baseline | 정성 판정은 우연 기준선과 함께 보고 |
 | RULE-0124 | author · develop | 패치는 obs·kinetics 로 쓰고 병합이 대체·철회로 접음 (값 기록 불변) |
 | RULE-0125 | author · develop | values·moved 직접 쓰기 금지 |
@@ -76,8 +79,10 @@
 | RULE-0170 | author · baseline | simulateRate 와 서로 기준 금지 (L000081) |
 | RULE-0171 | author · develop | 기전 층 변경 → node --test tests/mhc.test.mjs |
 | RULE-0172 | author · baseline | 운명·기전 시나리오에 context {role: cause\|requirement\|baseline, state, note} |
+| RULE-0174 | author · baseline | 교란 실험은 복사본 금지 — 파생 시나리오 { base, perturbation } |
 | RULE-0177 | baseline · develop | 확률 방식·문턱 변경 → tests/stochastic.test.mjs |
 | RULE-0178 | baseline · develop | 확률 없으면 결정론 비트 불변 |
+| RULE-0182 | author · baseline | 규약 없는 실행은 탐색 실행 (일치 결론 불가) |
 | RULE-0183 | author · baseline | 운명 결과는 fate --report 과정 보고서로만, 끝 상태만 말하지 않음 |
 | RULE-0197 | author · develop | vocab·model·core·judicial·legislative 규칙은 사용자 요청 시만 |
 | RULE-0199 | common · develop | 엔진·공유 기계를 바꿨으면 전체 시험 |
@@ -86,6 +91,7 @@
 | RULE-0203 | author · develop | 바닥값 tests/fixtures/FLOOR.json — 내려가면 실패 |
 | RULE-0205 | author · develop | 새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋 |
 | RULE-0228 | develop · inspect | 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두 부름 (74·75·76) |
+| RULE-0291 | author · inspect | 값을 적으면 source + quote 필수 |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 

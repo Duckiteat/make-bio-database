@@ -7,7 +7,7 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 8 | 2664.8 |
+| rebuild | 8 | 2706.3 |
 | docs | 58 | 1198.9 |
 | (최상위) | 18 | 873.1 |
 | judicial | 28 | 528.4 |
@@ -28,7 +28,7 @@
 
 | 파일 | KB |
 |---|---|
-| `rebuild/ledger/units.jsonl` | 2487.7 |
+| `rebuild/ledger/units.jsonl` | 2526.9 |
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 676.4 |
