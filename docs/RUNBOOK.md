@@ -135,7 +135,7 @@ node dbtool.mjs evidence <검증>.json --target <경로|상태> --report <보고
 
 ```
 BIODB_ROLE=collector  node mcp/query.mjs    # 읽기 — map·context·limitations·origin·assume_uses·inbox·verify_collection …
-BIODB_ROLE=collector  node mcp/fetch.mjs    # 받기 — resolve_access·fetch_abstract·fetch_fulltext (공개 전문만)·resolve_doi, 받기 기록 FETCH_LOG.jsonl
+BIODB_ROLE=collector  node mcp/fetch.mjs    # 받기 — resolve_access·fetch_abstract·fetch_fulltext (공개 전문만)·resolve_doi·brenda_kinetics(계정 = 환경 변수 BRENDA_EMAIL·BRENDA_PASSWORD_SHA256), 받기 기록 FETCH_LOG.jsonl
 BIODB_ROLE=integrator node mcp/clerk.mjs    # 쓰기 — 수집가는 put_handoff 만, 통합가는 merge·register·assume_add … (하나만 뜸)
 ```
 
@@ -265,7 +265,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 336/336 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 339/339 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)

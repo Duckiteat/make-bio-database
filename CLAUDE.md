@@ -9,7 +9,7 @@
 - 엔진은 이름을 모른다: 분자·위치·부분 구조 이름 금지 — 사실은 데이터·어휘에. 부분 구조 수지 ΣIn=ΣOut 상대 1e-14(규칙 검사·운명 원장).
 - 수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 `engine/coupling.js` 등록부에서만. 엔진에 기본값 금지.
 - 입법 `legislative/`: 정의·수정·초안만(순수). 파일 쓰기는 `legislative/clerk.mjs` 만, 모든 쓰기는 `put(구역, 파일)` — 구역 `registry`(db.json·patches·log·사전 등록부)·`attestation`·`evidence`·`derived`·`report`·`draft`(저장소 밖)·`handoff`(`workspace/handoff/`, 후보 추가만). 새 쓰기는 구역 선택/선언, 우회 금지(governance ④′). db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만, 등록부는 도장 재검증 뒤만. `dbtool.mjs` 포함 다른 파일에 쓰기 금지.
-- MCP `mcp/`(`docs/design/outsourcing-and-mcp.md` §4): 서버는 자원 기준 — `query`(메모리 상주 읽기)·`fetch`(공개 전문·초록 받기 + `FETCH_LOG` 받기 기록)·`lab`(56 뒤). 권한은 입출력기 `clerk` 하나(단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤). 역할 `BIODB_ROLE` 기본 `collector`(핸드오프만). mcp 서버는 파일을 직접 쓰지 않음(governance ①). 유료·로그인 원천은 받지 않음.
+- MCP `mcp/`(`docs/design/outsourcing-and-mcp.md` §4): 서버는 자원 기준 — `query`(메모리 상주 읽기)·`fetch`(공개 전문·초록 받기 + `FETCH_LOG` 받기 기록)·`lab`(56 뒤). 권한은 입출력기 `clerk` 하나(단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤). 역할 `BIODB_ROLE` 기본 `collector`(핸드오프만). mcp 서버는 파일을 직접 쓰지 않음(governance ①). 유료 원천은 받지 않음. 계정 원천은 BRENDA 하나, `fetch` 의 `brenda_kinetics` 로만(계정 = 환경 변수 `BRENDA_EMAIL`·`BRENDA_PASSWORD_SHA256`, 출력·받기 기록·수신함·저장소·채팅에 남기지 않음 — 서기 `postToInbox` 가 본문은 표준 입력으로, 응답은 지워서). 그 밖의 로그인(학교 계정 등)은 쓰지 않음.
 - 사법 `judicial/`: 검증·증명·감사·보고만. 엔진 실행·데이터/엔진 수정 금지 — 판결·보고서로만. 행정부는 관찰을 읽지 않음; 예측 표본은 조정자가 `compiler/obs_operator.js` 로.
 - `'verified'` 는 `attestations/registry.json` 의 유효 도장으로만(`augment apply` 발급, `node dbtool.mjs attest` 재검증). 없으면 관문 거부.
 - 엔진 실행이 필요한 감사는 조정자 `orchestrator.js` 가 원자료 → 사법부.

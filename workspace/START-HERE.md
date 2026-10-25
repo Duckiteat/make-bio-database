@@ -11,7 +11,7 @@
 1. **쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model.js`·`core.js`·`judicial/`·`legislative/`·`compiler/`·`engine/`·테스트 — **읽기만**, 절대 수정 금지.
 2. **이 명령들 금지**: `node dbtool.mjs augment apply`·`merge`·`register` · `git commit`·`git push`.
 3. **지어내지 마라.** 값·DOI·종·세포를 상상하지 않는다. 조회·원문으로 확인 못 하면 **"없음"** 이라고 쓴다. 이게 가장 중요하다.
-   - **인용·값은 지정 1차 출처 API(`workspace/SOURCES.md`)가 반환한 내용에서만.** 웹 검색 스니펫·2차 리뷰를 값·인용 근거로 쓰지 마라(TASK-002 교훈: 스니펫 인용이 원문에 없어 검증 불패). 초록에 값이 없으면 "전문 필요"로 표시. 계정 필요 출처(BRENDA 등)는 손대지 말고 "통합가 필요"로.
+   - **인용·값은 지정 1차 출처 API(`workspace/SOURCES.md`)가 반환한 내용에서만.** 웹 검색 스니펫·2차 리뷰를 값·인용 근거로 쓰지 마라(TASK-002 교훈: 스니펫 인용이 원문에 없어 검증 불패). 초록에 값이 없으면 "전문 필요"로 표시. 계정 필요 출처는 직접 손대지 마라 — BRENDA 만 `fetch` 서버의 `brenda_kinetics` 도구로 부른다(계정은 도구 안, 너는 보지 않는다). 그 밖은 "통합가 필요"로.
 4. **큰 파일 통째로 읽지 마라.** `data/db.json`(675KB)·`CHANGES.md`·`limitations.md` — 아래 조회 명령으로 필요한 줄만.
 
 ## 2. 쓸 명령 (이게 전부)

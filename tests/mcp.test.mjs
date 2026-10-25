@@ -115,7 +115,7 @@ test('⑧ fetch 인자 검사 (네트워크 없음): PMID 형식이 아니면 �
   const { out } = call('fetch.mjs', [tool('fetch_fulltext', { pmid: 'PMC123; rm -rf' }), { method: 'tools/list' }]);
   assert.equal(out[0].result.isError, true);
   assert.match(text(out[0]), /형식이 아님/);
-  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext', 'resolve_doi']);
+  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext', 'resolve_doi', 'brenda_kinetics']);
 });
 
 test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 DOI 검색 기록도 출처 상태로 읽힌다', () => {
@@ -124,4 +124,47 @@ test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 
   assert.match(text(out[0]), /형식이 아님/);
   const lit = req('../inbox.js').literatureStatus(join(ROOT, 'data'));
   assert.deepEqual(lit['DOI:10.1038/nature07830'], { kind: 'journal', retracted: false }, 'DOI 검색으로 확인된 학술지 기록 (소문자 열쇠)');
+});
+
+// 2026-10-25 사용자 결정: 수집가도 BRENDA 를 — 단 계정 정보는 도구 안(환경 변수)에만, 출력·기록·수신함에 남지 않는다
+test('⑩ BRENDA 도구: 수집가에게 보임 · 계정 없으면 사람이 할 일을 알림 · 해시가 아니면 거부 · EC 형식 검사', () => {
+  const env = { BRENDA_EMAIL: '', BRENDA_PASSWORD_SHA256: '' };
+  const { out } = call('fetch.mjs', [{ method: 'tools/list' }, tool('brenda_kinetics', { ec: '1.1.1.37' }), tool('brenda_kinetics', { ec: 'x' })], env);
+  assert.ok(out[0].result.tools.some((t) => t.name === 'brenda_kinetics'), '기본 역할 collector 에게 보임');
+  assert.match(text(out[1]), /BRENDA_EMAIL · BRENDA_PASSWORD_SHA256/); assert.match(text(out[1]), /채팅·저장소에 넣지 않는다/);
+  assert.match(text(out[2]), /형식이 아님/);
+  const raw = call('fetch.mjs', [tool('brenda_kinetics', { ec: '1.1.1.37' })], { BRENDA_EMAIL: 'a@b.cd', BRENDA_PASSWORD_SHA256: 'myRawPassword' });
+  assert.match(text(raw.out[0]), /SHA256 16진수/); assert.doesNotMatch(JSON.stringify(raw.out), /myRawPassword/);
+});
+
+test('⑪ 서기 POST 받기: 본문은 표준 입력으로만 · 응답에 되돌아온 계정 정보는 지움 · 오류 본문도 지움', async () => {
+  // 메아리 서버는 다른 프로세스에 — 서기의 curl 이 이 프로세스를 막는다(동기 호출)
+  const echo = `const h=require('http');const s=h.createServer((q,r)=>{let b='';q.on('data',d=>b+=d);q.on('end',()=>{const bad=/fail/.test(q.url);r.writeHead(bad?500:200,{'Content-Type':'text/xml'});r.end(bad?'<faultstring>echo '+b+'</faultstring>':'<return>'+b+'</return>')})});s.listen(0,'127.0.0.1',()=>console.log(s.address().port))`;
+  const child = spawn(process.execPath, ['-e', echo]);
+  const port = await new Promise((r) => child.stdout.once('data', (d) => r(+String(d).trim())));
+  const dir = mkdtempSync(join(tmpdir(), 'post-')), prev = process.env.NO_PROXY, prevl = process.env.no_proxy;
+  process.env.NO_PROXY = process.env.no_proxy = '127.0.0.1,localhost';
+  try {
+    const CLERK = await import('../legislative/clerk.mjs');
+    const secret = 'secret-user@example.org', hash = sha('pw'), body = `<email>${secret}</email><password>${hash}</password>`;
+    const post = (path) => CLERK.postToInbox([{ file: join(dir, 'x' + path.length), url: `http://127.0.0.1:${port}${path}`, label: 'test', body, redact: [secret, hash] }], { timeout: 10 })[0];
+    const ok = post('/ok'), bad = post('/fail');
+    assert.ok(ok.ok, ok.error); const saved = readFileSync(ok.file, 'utf8');
+    assert.match(saved, /\[REDACTED\]/); assert.ok(!saved.includes(secret) && !saved.includes(hash), '응답에 되돌아온 계정 정보가 지워짐');
+    assert.equal(bad.ok, false); assert.match(bad.error, /HTTP 500/); assert.ok(!bad.error.includes(secret) && !bad.error.includes(hash));
+  } finally {
+    child.kill(); rmSync(dir, { recursive: true, force: true });
+    if (prev == null) delete process.env.NO_PROXY; else process.env.NO_PROXY = prev;
+    if (prevl == null) delete process.env.no_proxy; else process.env.no_proxy = prevl;
+  }
+});
+
+test('⑫ BRENDA 응답 해석: 기록마다 값·기질·종·문헌 · 빈 칸은 null · 오류 문구', () => {
+  const I = req('../inbox.js');
+  const x = readFileSync(join(ROOT, 'tests/fixtures/brenda/km-sample.xml'), 'utf8');
+  const rows = I.brendaRows(x, 'km');
+  assert.deepEqual(rows.map((r) => [r.value, r.substrate, r.organism, r.literature.join('+'), r.valueMax]), [['0.0077', 'acetyl-CoA', 'Homo sapiens', '756131', null], ['0.0036', 'oxaloacetate', 'Homo sapiens', '1+2', null]]);
+  assert.equal(rows[0].unit, 'mM');
+  assert.equal(I.brendaFault('<faultstring>Username or password is wrong</faultstring>'), 'Username or password is wrong');
+  assert.equal(I.brendaReference('<reference><pubmedId>31141475</pubmedId><title>t</title></reference>').pubmedId, '31141475');
 });

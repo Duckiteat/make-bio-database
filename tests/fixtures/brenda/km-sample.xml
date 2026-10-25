@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 합성 시험 자료 (실제 응답 아님) — WSDL brenda_zeep.wsdl 의 kmValueObject 형식대로 만든 SOAP 인코딩 배열. 실제 응답으로 해석기를 확인하면 이 파일을 실제 응답(계정 정보 지운 것)으로 바꾼다 -->
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="ws.brenda" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+<SOAP-ENV:Body><ns1:getKmValueResponse><return SOAP-ENC:arrayType="ns1:kmValueObject[2]" xsi:type="ns1:ArrayOfKmValues">
+<item xsi:type="ns1:kmValueObject"><literature SOAP-ENC:arrayType="xsd:int[1]" xsi:type="SOAP-ENC:Array"><item xsi:type="xsd:int">756131</item></literature><substrate xsi:type="xsd:string">acetyl-CoA</substrate><kmValue xsi:type="xsd:string">0.0077</kmValue><kmValueMaximum xsi:nil="true"/><commentary xsi:type="xsd:string">wild type, pH 8.0</commentary><organism xsi:type="xsd:string">Homo sapiens</organism><ecNumber xsi:type="xsd:string">2.3.3.1</ecNumber><ligandStructureId xsi:type="xsd:string">187</ligandStructureId></item>
+<item xsi:type="ns1:kmValueObject"><literature><item>1</item><item>2</item></literature><substrate>oxaloacetate</substrate><kmValue>0.0036</kmValue><kmValueMaximum></kmValueMaximum><organism>Homo sapiens</organism></item>
+</return></ns1:getKmValueResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>

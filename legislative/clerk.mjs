@@ -254,6 +254,31 @@ export function fetchToInbox(tasks, opt) {
   return out;
 }
 
+// ⑦′ POST 받기 (계정 원천 — BRENDA SOAP): 요청 본문(계정 정보 포함)은 curl 표준 입력으로만 넘겨 프로세스 인자·기록에 남기지 않는다.
+//   받은 응답에 계정 정보가 되돌아오면(오류 문구 등) 저장 전에 지운다(redact). 기록(FETCH_LOG)에는 주소와 표지(label)만 — 본문은 적지 않는다.
+//   task = { file(확장자 제외), url, body, headers: [..], ext, label, redact: [문자열] }
+export function postToInbox(tasks, opt) {
+  opt = Object.assign({ timeout: 30 }, opt || {});
+  return tasks.map((t) => {
+    if (t.present && !opt.refetch) return { task: t, ok: true, cached: true, file: t.present, url: t.label || t.url };
+    const dest = zoned('evidence', t.file + (t.ext || '.xml')), tmp = dest + '.part';
+    mkdirSync(dirname(dest), { recursive: true });
+    const scrub = (x) => (t.redact || []).filter((r) => r && r.length >= 4).reduce((acc, r) => acc.split(r).join('[REDACTED]'), String(x));
+    try {
+      // -f 를 쓰지 않는다 — SOAP 은 오류를 HTTP 500 + 본문(faultstring)으로 돌려준다. 상태 코드는 -w 로 받는다
+      const code = +execFileSync('curl', ['-sS', '-m', String(opt.timeout), ...(t.headers || []).flatMap((h) => ['-H', h]), '--data-binary', '@-', '-o', tmp, '-w', '%{http_code}', t.url], { input: t.body, stdio: ['pipe', 'pipe', 'pipe'] }).toString().trim();
+      const text = scrub(readFileSync(tmp, 'utf8'));
+      unlinkSync(tmp);
+      if (!(code >= 200 && code < 300)) { const f = (text.match(/<faultstring[^>]*>([\s\S]*?)<\/faultstring>/) || [])[1]; return { task: t, ok: false, url: t.label || t.url, error: `HTTP ${code}${f ? ': ' + f.trim().slice(0, 200) : ''}` }; }
+      put('evidence', dest, text);
+      return { task: t, ok: true, file: dest, url: t.label || t.url };
+    } catch (e) {
+      try { unlinkSync(tmp); } catch (_) { /* 없음 */ }
+      return { task: t, ok: false, url: t.label || t.url, error: scrub(String(e.stderr || e.message).trim().split('\n').pop()) };
+    }
+  });
+}
+
 // ⑧ 받기 기록 (build-plan 60 · outsourcing-and-mcp.md §6 ③): 받기마다 한 사건 — 도구가 쓰는 실행 기록이라 받은 쪽의 말 대신 증거가 된다.
 //   data/fetched/<원천>/FETCH_LOG.jsonl, 추가만 하는 사슬 { seq, at, url, file, ok, bytes?, sha256?, error?, cached?, prev, root }, 첫 prev = sha256('fetchlog\n').
 export const FETCH_LOG = 'FETCH_LOG.jsonl', FETCH_GENESIS = sha('fetchlog\n');
