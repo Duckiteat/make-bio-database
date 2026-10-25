@@ -4,6 +4,7 @@
 //   ③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만
 //   ④ 분류 장부에 형식 오류가 없다
 //   ⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다
+//   ⑩ 맥락: 규칙마다 이유 판정(because·inline·decided_by·none) · 대상 종류 · 표 머리
 //   ⑤–⑦ 번호 사전 (rebuild/index): 표 형식 · 예시가 자기 이름공간에만 · 저장소의 번호 모양이 모두 이름공간 하나에
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -70,5 +71,12 @@ test('⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지
 test('⑨ 규칙 장부: 번호·단위가 맞고, 판단 규칙 단위는 모두 RULE 하나에 있다', () => {
   const t = build()['07-rules.md'];
   assert.match(t, /## 장부에 없는 판단 규칙 단위 \(0 이어야 함\)\n\n없음\n/);
+  assert.match(t, /## 형식 오류\n\n없음\n/);
+});
+
+test('⑩ 맥락: 규칙마다 이유 판정 행이 있고, 연결 대상 종류가 맞고, 표 줄 규칙은 머리를 가진다', () => {
+  const t = build()['08-context.md'];
+  assert.match(t, /## 판정 행이 없는 규칙 \(0 이어야 함\)\n\n없음\n/);
+  assert.match(t, /## 표 줄인데 머리가 없는 규칙 \(0 이어야 함\)\n\n없음\n/);
   assert.match(t, /## 형식 오류\n\n없음\n/);
 });

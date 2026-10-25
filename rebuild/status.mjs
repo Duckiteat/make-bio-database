@@ -116,7 +116,7 @@ function build() {
     ['같은 번호 형식을 코드에 따로 적은 곳', String(X.duplicates.length)],
     ['규칙 장부 RULE', String(existsSync(join(ROOT, 'rebuild/rules/rules.jsonl')) ? read('rebuild/rules/rules.jsonl').split('\n').filter((l) => l.trim()).length : 0)],
   ];
-  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md)\n`;
+  // 요약(00)은 08 맥락까지 계산한 뒤 아래에서 만든다
 
   // 01 파일
   const dirs = {};
@@ -188,6 +188,48 @@ function build() {
   const heurRules = L.units.filter((u) => u.kind === 'rule' && u.by === 'heur').length;
   const bundled = Object.entries(bundle).filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
   out['07-rules.md'] = `# 규칙 장부\n\n${note}\n원본: \`${RP}\` · 규칙 ${rules7.length} (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 ${heurRules} 은 아직 장부에 묶지 않음.\n\n## 집행\n\n${table(['집행', '규칙'], enf7)}\n\n## 한 규칙이 적힌 곳\n\n${table(['곳', '규칙'], hist)}\n\n## 여러 모드에 걸친 규칙 ${multi7.length} (6 단계 모드 문서에서 빠지면 안 되는 것)\n\n${multi7.length ? table(['규칙', '모드', '내용'], multi7.map((r) => [r.id, r.modes.join(' · '), r.text.replace(/\|/g, '\\|').slice(0, 120)])) : '없음'}\n\n## 규칙 여러 개를 한 문장에 묶은 사본 ${bundled.length} (나누면 6 단계 모드 문서가 정확해짐)\n\n${bundled.length ? bundled.slice(0, 30).map(([u, n]) => `${u} (${uid[u].src}) → 규칙 ${n}`).join(' · ') + (bundled.length > 30 ? ' · …' : '') : '없음'}\n\n## 장부에 없는 판단 규칙 단위 (0 이어야 함)\n\n${noRule.length ? noRule.join(' · ') : '없음'}\n\n## 형식 오류\n\n${rbad.length ? rbad.map((x) => '- ' + x).join('\n') : '없음'}\n`;
+
+  // 08 맥락 (PLAN §5′) — ① 자리 맥락(단위 ctx, 원문에서 계산) ② 관계 맥락(rebuild/rules/links.jsonl, 규칙마다 판정 행 하나 이상)
+  const LP = 'rebuild/rules/links.jsonl', links = existsSync(join(ROOT, LP)) ? read(LP).split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
+  const ruleId = new Set(rules7.map((r) => r.id)), lbad = [];
+  const TARGET = { because: (t) => uid[t]?.kind === 'reason', decided_by: (t) => uid[t]?.kind === 'history' || /^(L\d{6}|TASK-\d{3})$/.test(t), contradicts: (t) => ruleId.has(t), supersedes: (t) => ruleId.has(t) || !!uid[t], exception_of: (t) => ruleId.has(t) };
+  const NO_TARGET = ['inline', 'none'], BY = ['judged', 'auto'];
+  const judgedR = new Set();
+  links.forEach((l, i) => {
+    const at = `links.jsonl:${i + 1}`;
+    if (!ruleId.has(l.from)) lbad.push(`${at} 없는 규칙 ${l.from}`);
+    if (!BY.includes(l.by)) lbad.push(`${at} by '${l.by}'`);
+    if (NO_TARGET.includes(l.rel)) { if (l.to !== undefined) lbad.push(`${at} ${l.rel} 는 to 가 없다`); }
+    else if (!TARGET[l.rel]) lbad.push(`${at} 모르는 관계 '${l.rel}'`);
+    else if (!TARGET[l.rel](l.to)) lbad.push(`${at} ${l.rel} → ${l.to} (대상 종류가 맞지 않음)`);
+    if (l.by === 'auto' && l.basis !== 'in_text') lbad.push(`${at} 자동 연결은 본문 번호(in_text)만 — 문단 근처는 판정한다`);
+    judgedR.add(l.from);
+  });
+  const noJudge = rules7.filter((r) => !judgedR.has(r.id)).map((r) => r.id);
+  const relOf = (r) => new Set(links.filter((l) => l.from === r.id).map((l) => l.rel));
+  const why = rules7.filter((r) => { const s = relOf(r); return s.has('because') || s.has('inline'); });
+  const onlyHist = rules7.filter((r) => { const s = relOf(r); return s.has('decided_by') && !s.has('because') && !s.has('inline'); });
+  const none = rules7.filter((r) => relOf(r).has('none'));
+  const relRows = ['because', 'inline', 'decided_by', 'none', 'contradicts', 'supersedes', 'exception_of'].map((k) => [k, String(links.filter((l) => l.rel === k).length), String(new Set(links.filter((l) => l.rel === k).map((l) => l.from)).size)]);
+  const noneByMode = MODES.map((m) => [MODE_KO[m] + ` \`${m}\``, String(rules7.filter((r) => r.modes.includes(m)).length), String(why.filter((r) => r.modes.includes(m)).length), String(none.filter((r) => r.modes.includes(m)).length)]);
+  // 자리 맥락: 규칙의 원래 단위 기준
+  const ru = rules7.map((r) => uid[r.unit]).filter(Boolean), cbad = [];
+  for (const u of L.units) for (const k of ['lead', 'sentence_of']) { const v = u.ctx?.[k]; if (v && !uid[v] && !/:\d+$/.test(v)) cbad.push(`${u.id}: ctx.${k} '${v}'`); }
+  const tableNoHead = ru.filter((u) => /^\s*\|/.test(read(u.src.replace(/:\d+$/, '')).split('\n')[+u.src.split(':')[1] - 1] || '') && !u.ctx?.table).map((u) => u.id);
+  const frag = rules7.filter((r) => uid[r.unit]?.ctx?.sentence_of);
+  const posRows = [
+    ['절 경로(path)', String(ru.filter((u) => u.ctx?.path?.length).length)],
+    ['표 줄 — 머리와 칸(table)', String(ru.filter((u) => u.ctx?.table).length)],
+    ['목록 항목 — 머리 문장(lead)', String(ru.filter((u) => u.ctx?.lead).length)],
+    ['여러 줄 문장의 첫 줄 — 문장 전체(sentence)', String(ru.filter((u) => u.ctx?.sentence).length)],
+    ['문장 조각 — 앞 줄에서 이어짐(sentence_of)', String(frag.length)],
+    ['코드 블록 안(code)', String(ru.filter((u) => u.ctx?.code).length)],
+  ];
+  const contra = links.filter((l) => l.rel === 'contradicts').map((l) => `${l.from} ↔ ${l.to} — ${l.basis || ''}`);
+  out['08-context.md'] = `# 맥락\n\n${note}\n규칙 ${rules7.length} 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 \`ctx\` 에 둔다. ② 관계 맥락은 \`${LP}\` (${links.length} 행) — 규칙마다 판정 행이 하나 이상이다. 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서.\n\n## ① 자리 맥락 (규칙의 원래 단위)\n\n${table(['무엇', '규칙'], posRows)}\n\n## ② 관계 맥락\n\n${table(['관계', '행', '규칙'], relRows)}\n\n이유가 있는 규칙 ${why.length} · 경위만 있는 규칙 ${onlyHist.length} · 이유가 원문에 없는 규칙 ${none.length}\n\n## 모드별 — 이유가 원문에 없는 규칙 (6 단계 모드 문서에서 이유를 채울 곳)\n\n${table(['모드', '규칙', '이유 있음', '이유 없음'], noneByMode)}\n\n## 모순\n\n${li(contra)}\n\n## 문장 조각인 규칙 ${frag.length} (앞 줄과 함께 읽어야 뜻이 선다)\n\n${frag.length ? frag.map((r) => `${r.id} ← ${uid[r.unit].ctx.sentence_of}`).join(' · ') : '없음'}\n\n## 판정 행이 없는 규칙 (0 이어야 함)\n\n${noJudge.length ? noJudge.join(' · ') : '없음'}\n\n## 표 줄인데 머리가 없는 규칙 (0 이어야 함)\n\n${tableNoHead.length ? tableNoHead.join(' · ') : '없음'}\n\n## 형식 오류\n\n${li([...lbad, ...cbad])}\n`;
+
+  rows.push(['규칙 맥락 — 이유 있음 / 경위만 / 원문에 없음', `${why.length} / ${onlyHist.length} / ${none.length}`]);
+  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md)\n`;
 
   // 06 파일 → 모드 (rebuild/index/file-modes.jsonl, 첫 규칙이 이긴다)
   const fm = read('rebuild/index/file-modes.jsonl').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
