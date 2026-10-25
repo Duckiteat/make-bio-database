@@ -100,3 +100,22 @@ test('⑨ 합의 창은 원천별 판 주기 — 같은 나이라도 원천마�
   assert.deepEqual(src(at(plus(C.uniprot.days + 1))), ['chebi', 'uniprot']);
   assert.equal(Object.keys(at(plus(C.uniprot.days + 1)).map).length, 0);
 });
+
+// 2026-10-25 결정: 반복 수 1 이 '한 번·미보고·계산값' 을 섞던 것을 가른다 — 문턱(≥1)은 그대로
+test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부', () => {
+  const est = Object.values(db.observations).filter((o) => o.kind !== 'qualitative' && (o.evidence || {}).level === 'computed');
+  assert.ok(est.length > 0 && est.every((o) => REL.scoreObservation(o, {}).cd === 'D2.estimate'), 'eQuilibrator 추정은 실측이 아니다');
+  const base = JSON.parse(JSON.stringify(db.observations.O000004));
+  assert.equal(REL.scoreObservation(base, {}).cd, 'D4.measured');
+  const unrep = { ...base, replicates: null };
+  assert.deepEqual([REL.scoreObservation(unrep, {}).cd, REL.scoreObservation(unrep, {}).d], ['D3.obs_bare', 3]);
+  const J = req('../judicial/judicial.js'), M = req('../model.js');
+  const ndb = M.normalize(db), ix = M.index(ndb);
+  const errs = (o) => { const out = []; J.validateObservation(ndb, ix, 'O000999', M.normObservation(o), (w, m) => out.push(m), () => {}); return out.join(' '); };
+  assert.doesNotMatch(errs(unrep), /반복 수/, 'null(미보고)은 받는다');
+  assert.match(errs({ ...base, replicates: undefined }), /반복 수/);
+  assert.match(errs({ ...base, replicates: 0 }), /반복 수/);
+  const OC = req('../judicial/obs_compare.js'), n = M.normObservation({ ...unrep, use: 'validation' }), one = M.normObservation({ ...base, replicates: 1, use: 'validation' });
+  const a = OC.verdict(n, [n.value * 1.1]).A, b = OC.verdict(one, [one.value * 1.1]).A;
+  assert.ok(a && Number.isFinite(a.se) && a.se === b.se, `미보고는 1 회와 같은 표준 오차 (${a && a.se} · ${b && b.se})`);
+});

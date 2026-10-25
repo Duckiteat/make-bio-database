@@ -41,8 +41,9 @@ const CRITERIA = Object.freeze({
   'D4.computed':  { basis: ['principle'], axis: 'D', level: 4, when: '도구가 원본에서 계산한 값 · 구조 지문', why: '같은 원본과 도구로 다시 계산하면 같은 값 — 추적 가능' },
   'D3.curated':   { basis: ['principle'], axis: 'D', level: 3, when: '문헌에서 옮긴 값(curated)', why: '정리된 값 — 원래 측정의 퍼짐·조건은 이 기록에 없다' },
   'D3.identity':  { basis: ['principle'], axis: 'D', level: 3, when: '외부 ID (정체성 사실)', why: '같은 것을 가리킨다는 사실 — 측정값이 아니므로 D4 가 아니다 (그래서 외부 ID 의 상한은 parameter)' },
-  'D3.obs_bare':  { basis: ['principle'], axis: 'D', level: 3, when: '불확도나 반복 수가 없는 관찰', why: '측정이지만 퍼짐을 모른다' },
+  'D3.obs_bare':  { basis: ['principle'], axis: 'D', level: 3, when: '불확도가 없거나 반복 수가 미보고(null)인 관찰', why: '측정이지만 퍼짐을 모른다' },
   'D2.asserted':  { basis: ['principle', 'decision'], axis: 'D', level: 2, when: '출처 없이 적은 값(asserted)', why: '근거가 없으면 무엇을 어떻게 얻은 값인지도 모른다 — 정리된 문헌 값(D3)으로 볼 근거가 없다 (2026-10-24 결정: D3 → D2, 이미 S2 라 등급은 reference 그대로)' },
+  'D2.estimate':  { basis: ['principle', 'decision'], axis: 'D', level: 2, when: '관찰 기록이지만 근거 수준이 도구 추정(computed·predicted) — 예: eQuilibrator 성분 기여법 ΔG°′', why: '모형의 추정이지 잰 값이 아니다 — 불확도가 있어도 측정의 퍼짐이 아니라 모형 오차다. 구조 지문(D4.computed)은 원본의 정확한 함수라 다르다 (2026-10-25 결정: 계산값이 D4.measured 를 받던 결함)' },
   'D2.inferred':  { basis: ['principle'], axis: 'D', level: 2, when: '추론·단순화(abstracted) · 예측 모델 · 근거 없음 · 외부 ID 없음', why: '직접 잰 값이 아니다' },
   'T.match':      { basis: ['principle'], axis: 'T', level: 'match', when: '같은 신원 확인을 더 새 원본(합의 수신함)에 다시 돌려 같은 결론', why: '"그때 맞았다" 가 아니라 "지금도 합의와 같다" — 재현되지 않는 웹 검색 대신 같은 확인을 다시 돌린다' },
   'T.mismatch':   { basis: ['principle'], axis: 'T', level: 'mismatch', when: '새 원본에서 결론이나 값이 달라짐', why: '값을 지우지 않고 지난값으로 — 왜 달라졌는지가 데이터 (Consensus_Gap)' },
@@ -105,11 +106,14 @@ function scoreEvidence(ev, ctx) {
 // ----- 항목 모으기 -----
 // 등급을 다는 것은 "쓸 수 있는가" 를 물을 수 있는 것뿐이다: 외부 ID·지문(정체성) · 근거를 가진 주장 · 속도 상수 · 관찰 기록.
 // 관찰 기록의 (S,D): 출처가 문헌 식별자면 S3(철회면 S0, 그 밖 S2) · 불확도와 반복 수가 있으면 D4(실측) 아니면 D3
+const ESTIMATE = new Set(['computed', 'predicted']); // 관찰의 근거 수준 중 측정이 아닌 것 (동작 표 — 라벨은 vocab.evidenceLevels)
 function scoreObservation(o, ctx) {
   const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db), lit = doi ? litS([src], ctx) : null;
-  return { s: o.retracted ? 0 : doi ? lit.s : 2, d: o.uncertainty && o.replicates >= 1 ? 4 : 3,
-    cs: o.retracted ? 'S0.void' : doi ? lit.cs : 'S2.unsourced', cd: o.uncertainty && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare',
-    why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · 반복 ${o.replicates || 0}` };
+  // 관찰 칸에 있어도 도구의 추정(evidence.level computed·predicted)은 측정이 아니다 → D2.estimate
+  const est = ESTIMATE.has((o.evidence || {}).level), cd = est ? 'D2.estimate' : o.uncertainty && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare';
+  return { s: o.retracted ? 0 : doi ? lit.s : 2, d: CRITERIA[cd].level,
+    cs: o.retracted ? 'S0.void' : doi ? lit.cs : 'S2.unsourced', cd,
+    why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · ${est ? '도구 추정값' : `반복 ${o.replicates == null ? '미보고' : o.replicates}`}` };
 }
 
 function items(db, opt) {

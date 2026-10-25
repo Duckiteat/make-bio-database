@@ -371,7 +371,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
   - `observable { kind, target, param?, denominator?, also? }`: 측정량(`vocab.observables`). 대상은 종류에 따라 다름 — amount·concentration 은 묶음 키, fraction·event_time 은 cell_state 정의항, kinetic_constant 는 `D…/rule/키` 와 `param`, `ratio` 는 두 묶음의 몫(target/denominator, 무차원 unit 1 — 정규화 밴드·활성 분율·fold-change), `fraction_above` 는 게이팅 문턱(threshold, 분자 수) 이상인 실행의 비(%양성, 앙상블 평균이 0–1), `dose_slope` 는 규칙(target `D…/rule/키`)의 누적 진행량을 용량 축 `dose { target: 묶음, values: [서로 다른 분자 수 ≥ 2] }` 의 시작량에 대해 최소제곱한 기울기(무차원 unit 1). `also`(묶음 키 목록)는 측정이 못 가르는 형태를 합산한다(amount·concentration·ratio 분자·fraction_above).
   - `value`·`unit`: SI 정준 단위만. 단위는 molecule · M · 1 · s, 속도 상수는 `vocab.kineticUnits` 를 따르고 k·k0·k_r 은 `M^(1−order) s^-1`.
   - `uncertainty { kind: measurement | biological | combined, model: normal | lognormal | poisson, sd ≥ 0 }`: 필수. 값만 있는 관찰은 받지 않는다. poisson 은 amount 에만, lognormal 은 값 > 0 에만.
-  - `replicates`(1 이상의 정수), `precision`·`detection_limit`·`saturation`(선택, 0 이상). 검출 한계 아래 값은 상한 검정, 포화 상한 위 값은 하한 검정 — 장치의 눈먼 곳을 판정에 담는다(`judicial/obs_compare.js`). 정성 관찰 `readout.instrument_resolution`(선택, 0 이상)은 측정이 가르는 최소 차이로, 모의 분해능 바닥(수치 오차 + 양자)을 그 값까지 올린다.
+  - `replicates`(1 이상의 정수, 원문에 없으면 `null` = 미보고 — 1 로 채우지 않음. 신뢰 지표는 D3, 비교는 1 회로 봄), `precision`·`detection_limit`·`saturation`(선택, 0 이상). 검출 한계 아래 값은 상한 검정, 포화 상한 위 값은 하한 검정 — 장치의 눈먼 곳을 판정에 담는다(`judicial/obs_compare.js`). 정성 관찰 `readout.instrument_resolution`(선택, 0 이상)은 측정이 가르는 최소 차이로, 모의 분해능 바닥(수치 오차 + 양자)을 그 값까지 올린다.
   - `condition { species(필수), location, cell, temperature_K, pH, time_s, states:[묶음 키] }`.
   - `calibration { kind: identity | linear(a, b) | table(points) }` + `raw`: 값은 `compiler/obs_operator.js` 로 다시 계산되어 `value` 와 같아야 한다(상대 1e-12). 표의 범위 밖이면 거부.
   - `provenance.sha256`(원본 파일), `method`, `note`.
@@ -602,6 +602,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-25 | (반복 수 미보고 · 추정값) | 정량 관찰 `replicates` 에 `null`(미보고) 허용 — 계약 `schemas/obs/observation.schema.json`·관문·정규화·`obs_compare`(1 회로 봄). 신뢰 기준 `D2.estimate`(관찰의 근거 수준이 computed·predicted). 기존 기록 불변(이주 없음 — 관찰은 고치지 않음), 2차 정리 속도 상수 관찰 7 의 반복 수 1 은 한계 3건(Observation_Gap) |
 | 2026-10-24 | (이유의 종류 · 원천별 창) | `vocab.reasonBasis`(원칙·실증·외부 표준·운영·결정) · 기준·등급·정책마다 `basis` · `POLICY_OPEN` → `POLICY`(why·open) · `vocab.consensus.window_days` → `consensus.sources`(원천별 판 주기·증거 종류·출처) — 점수·등급 불변. db 형식 불변 |
 | 2026-10-24 | (신뢰 기준 표) | 신뢰 지표 항목에 기준 번호 `cs`·`cd`·`ct`(계산 결과, 저장 안 함) · `reliability.CRITERIA`·`GRADE_WHY`·`POLICY_OPEN` — 점수·등급 불변. db 형식 불변 |
 | 2026-10-23 | (받기 기록) | `data/fetched/<원천>/FETCH_LOG.jsonl` 신설 — 받기마다 한 사건, 추가 전용 사슬 `seq·at·url·file·ok·bytes?·sha256?·error?·cached?·prev·root`(첫 prev = sha256('fetchlog\n')). 수신함에 공개 전문 `europepmc/PMC-{번호}.xml`. 서기 구역 `handoff`(`workspace/handoff/`). db.json 형식·버전 불변 |

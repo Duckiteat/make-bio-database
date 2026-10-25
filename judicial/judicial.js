@@ -344,7 +344,7 @@
       if (nm.positive && !(o.value > 0)) E(w, `잡음 모형 ${u.model} 은(는) 값 > 0 에만`);
     }
     if (!(u.sd >= 0 && Number.isFinite(u.sd))) E(w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
-    if (!(Number.isInteger(o.replicates) && o.replicates >= 1)) E(w, '반복 수(replicates)는 1 이상의 정수');
+    if (!(o.replicates === null || (Number.isInteger(o.replicates) && o.replicates >= 1))) E(w, '반복 수(replicates)는 1 이상의 정수 — 원문에 없으면 null(미보고), 1 로 적지 않는다');
     for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E(w, `${k} 는 0 이상`);
     const c = o.condition;
     if (!c.species) E(w, '조건에 종(condition.species)이 없음');
