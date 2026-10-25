@@ -9,7 +9,7 @@
 | data | 433 | 16296.1 |
 | rebuild | 11 | 4975.7 |
 | docs | 58 | 1201.1 |
-| (최상위) | 18 | 877.3 |
+| (최상위) | 18 | 878.1 |
 | judicial | 28 | 528.4 |
 | tests | 77 | 511.3 |
 | attestations | 1 | 299.0 |
@@ -42,7 +42,7 @@
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `CHANGES.md` | 243.4 |
+| `CHANGES.md` | 244.2 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |

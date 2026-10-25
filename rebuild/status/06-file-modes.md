@@ -11,7 +11,7 @@
 | 공통 `common` | 53 | 5894.1 |
 | 정보 작성 `author` | 449 | 16506.4 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 158 | 2031.2 |
+| 디벨롭 `develop` | 158 | 2032.0 |
 | 적분장 `field` | 17 | 137.3 |
 | 점검·검증 `inspect` | 33 | 748.4 |
 
@@ -70,7 +70,7 @@
 | `docs/design/**` | common | 21 | 406.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 3 | 42.8 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 243.4 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 244.2 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 100.2 | 형식 |
 | `*.md` | common | 4 | 74.6 | 최상위 문서 |
 | `.claude/**` | common | 1 | 3.2 | 도구 설정 |
