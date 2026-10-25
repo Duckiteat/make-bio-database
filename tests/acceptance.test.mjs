@@ -93,3 +93,51 @@ test('⑥ 결론은 가장 약한 근거를 따른다 — 검증 세트 관찰�
   assert.equal(none.judgment.key, 'acceptance_review'); assert.match(none.judgment.why, /O000021 \(needs_approval/);
   assert.equal(ER.evidenceReport(BASE, b2m, { target: 'D000202', prereg }).judgment.acceptance, null, '인정 표를 받지 않으면 확인 안 함으로');
 });
+
+// build-plan 74 (2026-10-25): 관문 = 인정 '추정' — 두 판정이 같은 함수
+test('⑦ 관문은 인정의 추정 조건을 본다: 다른 종 상수 거부 · 조건부(오차 막대)도 관문은 통과시키지 않음 · 사람 상수는 그대로', () => {
+  const DOI = { level: 'curated', sources: [{ db: 'PMID', id: '31141475' }] };
+  const ir = (k) => ({ rules: [{ ref: 'D000149/rule/condense', kind: 'mm', k: { src: 'data', kcat: 1, evidence: DOI, ...k } }] });
+  assert.equal(REL.constantVerdict(ir({ context: { species: '9606' } }), {}).ok, true);
+  const m = REL.constantVerdict(ir({ context: { species: '10090' } }), {});
+  assert.equal(m.ok, false); assert.match(m.violations[0].msg, /기준 종/);
+  assert.match(REL.gateMessage({ s: 4, d: 2, cs: 'S4.stamp' }, 'parameter'), /등급/, 'S4D2 는 문턱에서 먼저 막힘');
+  // 같은 판정: 인정 표의 추정과 관문이 같은 함수
+  assert.equal(ACC.accept, REL.accept);
+  const C = req('../core.js');
+  const base = C.normalize(JSON.parse(JSON.stringify(db)));
+  const rule = base.senses.D000149.rule.find((r) => r.id === 'condense');
+  rule.kinetics.context.species = '10090';
+  assert.equal(REL.speciesOf(base, { what: 'kinetics', sense: 'D000149', target: 'D000149/rule/condense' }), '10090', '속도 상수의 종은 kinetics.context.species');
+});
+
+// build-plan 75 (2026-10-25): observe·fate 판정도 가장 약한 근거 — 인정되지 않은 관찰은 결론이 아니다
+test('⑧ 정성·정량 판정의 결론은 인정을 따른다 — 인정되지 않으면 결론 아님 · 넘기지 않으면 확인 안 함(그대로)', () => {
+  const QC = req('../judicial/qual_compare.js');
+  const pv = { declared: true, ok: true, problems: [], validation: ['O000009'] };
+  const Q = { kind: 'qualitative', readout: { kind: 'amount', target: 'X|c' }, expect: 'decrease', condition: { species: '9606' } };
+  const j = (extra) => QC.judgeQualitative(Object.assign({ o: Q, control: { values: [100] }, perturbed: { values: [90] }, resolution: 1, quantum: 1, protocol: pv, observationId: 'O000009' }, extra));
+  assert.equal(j({}).conclusive, true, '인정을 넘기지 않으면 예전 그대로');
+  assert.equal(j({ acceptance: { ok: true, status: 'accepted', reasons: [] } }).conclusive, true);
+  const no = j({ acceptance: { ok: false, status: 'needs_approval', reasons: [] } });
+  assert.equal(no.conclusive, false); assert.match(no.requirement, /검증 근거로 인정되지 않음 \(needs_approval\)/);
+  const PR = req('../judicial/process_report.js');
+  assert.match(readFileSync(join(ROOT, 'judicial/process_report.js'), 'utf8'), /검증 세트 관찰이 검증 근거로 인정됨/, '운명 과정 보고서에도 인정 점검 줄');
+  assert.ok(PR.processReport);
+});
+
+// build-plan 76 (2026-10-25): 승인 도장은 추가만 — 경과가 등록부에 남고 마지막 도장이 유효
+test('⑨ 승인 이력: 승인 → 철회 → 재승인이 등록부에 모두 남고 마지막이 유효 · 같은 도장은 거부', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'acc-h-')); mkdirSync(join(dir, 'attestations'));
+  try {
+    const put = (o) => CLERK.appendAttestations({ root: dir, db, context: input, stamps: [stamp(o)] });
+    const now = () => ATT.readRegistry(dir);
+    put({ reason: '첫 승인' }); put({ verdict: 'revoked', reason: '철회' });
+    assert.equal(obsRow(ACC.table(db, { ...input, registry: now() }), 'O000019').uses.evidence.status, 'needs_approval', '철회가 마지막');
+    put({ reason: '다시 승인' });
+    const reg2 = now(), mine = reg2.stamps.filter((x) => x.claim === 'accept');
+    assert.deepEqual(mine.map((x) => x.reason), ['첫 승인', '철회', '다시 승인'], '경과가 순서대로 남음');
+    assert.equal(obsRow(ACC.table(db, { ...input, registry: reg2 }), 'O000019').uses.evidence.status, 'accepted');
+    assert.throws(() => put({ reason: '다시 승인' }), /이미 있음/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});

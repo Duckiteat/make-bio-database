@@ -518,6 +518,7 @@ S·D 는 "그때 맞았다" 까지만 말한다. 등급 `anchor`(기준값)는 "
 - 상태: `accepted` · `conditional` · `needs_approval`(조건은 맞고 승인 없음) · `review`(승인이 있는데 축·관계가 내려감) · `rejected`.
 - 승인 도장: 증명 등록부의 claim `accept` — `{ subject { sense: O…, field: 'accept', ns: 용도, value: O… }, verdict approved | revoked, by human | integrator, reason, issuer, issued_at, digest }`. 주체는 관찰 기록만. 승인은 축·관계 조건을 넘지 못한다(서기 `appendAttestations` 가 `checkIssue` 로 거부). 철회는 같은 주체의 revoked 도장(새 것이 대신함).
 - 결론은 가장 약한 근거를 따른다: 증거 보고서에서 등록된 검증 세트의 관찰 하나라도 `evidence` 로 인정되지 않으면 판정 수준이 `acceptance_review`(인정 재검토 필요). 관찰의 `use` 는 신청이지 인정이 아니다.
+- **판정 하나** (2026-10-25, build-plan 74·75): 용도별 판정(`USES`·`accept`)은 `judicial/reliability.js` 에 하나 — 인정 표·시뮬레이션 관문(`gateMessage`: 문턱 ∧ '추정' accepted, 조건부는 관문이 오차 막대를 볼 수 없어 불통과)·`observe`·`fate --report`·증거 보고서가 같은 함수를 쓴다. 속도 상수의 종은 `kinetics.context.species`. 승인 도장은 추가만 — 같은 주체의 마지막 도장이 유효(승인 → 철회 → 재승인 경과가 등록부에 남음), 같은 도장은 거부, `validate` 도 승인 도장을 검사(76).
 - 등급 6칸은 자동 인정의 상한: anchor·parameter → 추정 · bounded → 추정(조건부) · legacy → 비교 · reference → 서술(S3D2 는 비교까지) · blocked → 없음.
 
 ## 8J. 외부 ID 의 역할 — ChEBI 규약 (형식 v10 확장, 2026-10-10)
@@ -619,6 +620,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-10-25 | (판정 하나) | 용도별 판정을 `reliability` 로 옮김(`USES`·`accept`·`speciesOf`·`gateMessage`) · 관문 두 곳이 인정 '추정' 을 봄(다른 종 상수 거부) · `obs_compare`·`qual_compare` 결론이 인정을 따름 · 운명 과정 보고서 점검 줄 · 승인 도장 추가 전용 · `validate` 승인 도장 검사. db 형식 불변 (build-plan 74·75·76) |
 | 2026-10-25 | (인정 = 기록·용도) | 새 `judicial/acceptance.js`(용도 5 · 축·관계 조건 · 승인 도장 claim `accept` · 가장 약한 근거) · `vocab.acceptanceUses` · 판정 수준 `acceptance_review`(사전 #116) · `dbtool accept` · MCP clerk `accept` · 증명 등록부에 승인 도장 6(정성 관찰, 2026-10-25 일괄) · `validStamps().accept` · 증거 보고서 `judgment.acceptance`. db 형식 불변 (§8K 인정) |
 | 2026-10-25 | (문턱 = 축 조건) | `reliability.meets` 가 순번 대신 `THRESHOLD`(축 바닥의 합)로, 행의 s·d·trend 를 받음 · `atLeast`·`gateMinError` — 관문 문턱은 기본보다 엄격한 것만(낮은 `min_grade` 거부). 판정이 바뀐 곳은 문턱 bounded 에서 parameter 행뿐(전수 시험). db 형식 불변 |
 | 2026-10-25 | (반복 수 미보고 · 추정값) | 정량 관찰 `replicates` 에 `null`(미보고) 허용 — 계약 `schemas/obs/observation.schema.json`·관문·정규화·`obs_compare`(1 회로 봄). 신뢰 기준 `D2.estimate`(관찰의 근거 수준이 computed·predicted). 기존 기록 불변(이주 없음 — 관찰은 고치지 않음), 2차 정리 속도 상수 관찰 7 의 반복 수 1 은 한계 3건(Observation_Gap) |

@@ -128,6 +128,8 @@ function processReport(r, ctx) {
   if (cx.declared) chk(`시나리오 맥락 선언 — ${ROLE[cx.role] || cx.role} (${L(cx.state)})`, cx.consistent, cx.consistent ? (cx.role === 'baseline' ? '시작 상태 · 구동된 전이 없음' : '목표 상태로 가는 전이의 신호가 켜져 있음') : cx.problems.join(' · '));
   // 모의 실험 규약 (build-plan 3): 선언했다면 사전 등록·대조군·반복 수·검증 세트를 지켜야 한다 — 어기면 FAIL. 없으면 탐색 실행(증명서 줄 없음, 요약에 표시)
   if (ctx.protocol && ctx.protocol.declared) chk('모의 실험 규약 — 사전 등록(실행 전)·음성 대조·반복 수(검정력)·검증 세트(추정과 분리)·중단 규칙', ctx.protocol.ok, ctx.protocol.ok ? `등록 #${ctx.protocol.registered.seq} (${ctx.protocol.registered.at})` : ctx.protocol.problems.join(' · '));
+  // 인정 (build-plan 75): 등록된 검증 세트의 관찰이 검증 근거로 인정되는가 — 결론은 가장 약한 근거 (부르는 쪽이 acceptance.weakest 를 넘김)
+  if (ctx.protocol && ctx.protocol.declared && ctx.protocol.ok && ctx.acceptance) chk('검증 세트 관찰이 검증 근거로 인정됨 (가장 약한 근거)', ctx.acceptance.ok, ctx.acceptance.ok ? '모두 인정' : ctx.acceptance.missing.map((m) => `${m.id} ${m.status}`).join(' · '));
   const pass = checks.every((c) => c.ok !== false);
   // ===== 예측과의 차이 =====
   const expect = sc.expect || {}, disc = [];
