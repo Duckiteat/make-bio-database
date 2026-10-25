@@ -19,7 +19,7 @@ workspace/handoff/HANDOFF-tca-kinetics.md 의 과제 A(속도 상수 15 칸)와 
 
 | # | 대상 규칙 | 효소 (EC · UniProt) | 상수 | 기질 · 조건 메모 | 원천 순서 | 상태 |
 |---|---|---|---|---|---|---|
-| A1 | `D000151/rule/oxdecarb` | NAD 의존 아이소시트르산 탈수소효소 IDH3 (1.1.1.41 · P50213/O43837/P51553) | Km | NAD⁺ | 1 차 논문(아이소시트르산 값의 출처 — 관찰 O000001·O000002 의 논문 Ma et al., 2017 부터) | open |
+| A1 | `D000151/rule/oxdecarb` | NAD 의존 아이소시트르산 탈수소효소 IDH3 (1.1.1.41 · P50213/O43837/P51553) | Km | NAD⁺ | 1 차 논문(아이소시트르산 값의 출처 — 관찰 O000001·O000002 의 논문 Ma et al., 2017, PMID 28139779 부터) | open |
 | A2 | `D000152/rule/oxdecarb` | 2-옥소글루타르산 탈수소효소 복합체 OGDH (1.2.4.2 · Q02218 + DLST P36957 · DLD P09622) | kcat | 복합체 전체 반응 | 1 차 논문 · BRENDA(사용자) | open |
 | A3 | 〃 | 〃 | Km | 2-옥소글루타르산 | 〃 | open |
 | A4 | 〃 | 〃 | Km | CoA | 〃 | open |
