@@ -4,8 +4,8 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 234.8 | 218 |  | 미분류 |
-| `CLAUDE.md` | 17.7 | 84 | 입구 | 미분류 |
+| `CHANGES.md` | 235.6 | 219 |  | 미분류 |
+| `CLAUDE.md` | 17.7 | 84 | 입구 | 분류됨 241 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 미분류 |
 | `FEATURES.md` | 14.1 | 193 |  | 미분류 |
 | `README.md` | 24.7 | 233 |  | 미분류 |
@@ -13,7 +13,7 @@
 | `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 미분류 |
 | `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 미분류 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 미분류 |
-| `docs/design/agent-rules.md` | 44.3 | 116 |  | 미분류 |
+| `docs/design/agent-rules.md` | 44.3 | 116 |  | 분류됨 190 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 미분류 |
 | `docs/design/build-plan.md` | 64.1 | 164 |  | 미분류 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 미분류 |

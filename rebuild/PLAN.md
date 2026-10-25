@@ -103,7 +103,7 @@
 ```json
 { "id": "U0001", "src": "CLAUDE.md:12", "text": "원문 그대로(긴 문장은 요지 + 원문 위치)",
   "mode": "author|baseline|develop|field|inspect|common", "kind": "rule|procedure|reason|value|history",
-  "enforce": "machine|text|none", "where": "집행 자리(파일·함수·시험) — machine 일 때", "note": "" }
+  "enforce": "machine|text|none|unchecked", "same_as": ["U… — 이 단위가 다른 단위의 사본이면"], "where": "집행 자리(파일·함수·시험) — machine 일 때", "note": "" }
 ```
 
 종류가 처리를 정한다:
@@ -136,7 +136,7 @@
 |---|---|---|---|---|
 | 0 | 터 닦기 | 브랜치 · 이 계획 · 관리 파일 생성기·구역·훅·시험 | `rebuild.test` 통과 · 전체 시험 통과 | ☑ 2026-10-25 |
 | 0′ | 번호 사전 | 이름공간 표(지금 있는 번호 종류 전부) · 참조 색인 계산 · 미등록 번호 모양·겹침 검사 · 관리 파일에 이름공간별 개수 | 저장소의 번호 모양 토큰이 모두 이름공간 하나에 맞음 · 겹침 0 | ☑ 2026-10-25 — `rebuild/index/namespaces.jsonl` · `rebuild/index.mjs` · 관리 파일 05 · 시험 ⑤–⑦ |
-| 1 | 분류 1차 | CLAUDE.md + agent-rules → 장부 | 모든 문장이 단위 하나 이상 · 모드별 개수와 빈 모드가 관리 파일에 | ☐ |
+| 1 | 분류 1차 | CLAUDE.md + agent-rules → 장부 | 모든 문장이 단위 하나 이상 · 모드별 개수와 빈 모드가 관리 파일에 | ☑ 2026-10-25 — 단위 431 (CLAUDE.md 241 · agent-rules 190, 그중 사본 98) · 집행 칸에 `unchecked` 추가 · 집행 자리 존재 확인 · 빠진 줄 검사 |
 | 2 | 분류 2차 | RUNBOOK · PROMPTS · START-HERE · workspace · README | 같음 | ☐ |
 | 3 | 분류 3차 | SCHEMA · 교과서 1–8 | 같음 | ☐ |
 | 4 | 분류 4차 | 설계 문서 · build-plan · 보고서 · 코드 머리 주석 | 같음 + 파일마다 모드(누가 건드리나) | ☐ |
