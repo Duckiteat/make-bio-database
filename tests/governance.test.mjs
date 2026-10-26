@@ -238,7 +238,13 @@ test('⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값,
   const a = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false, coupling: { rtol: 1e-9 } });
   assert.ok(b.integrator.steps > a.integrator.steps && b.integrator.rtol === 1e-9, '데이터 쪽 값이 엔진 단계 제어를 바꿈');
   assert.equal(b.coupling._source.rtol, 'data');
-  for (const e of COUPLING.REGISTRY) if (typeof e.default === 'number' && e.key !== 'saturation_K') assert.ok(!new RegExp(`\\b${e.scenario.split('.').pop()}\\b\\s*\\|\\|\\s*${e.default}\\b`).test(src('engine/fate_engine.js')), `엔진에 ${e.key} 기본값이 박혀 있음`);
+  // 엔진 파일 모두(engine/*.js·mjs, 등록부 제외)에서 `이름 || 숫자`·`이름 ?? 숫자` 의 숫자를 값으로 비교한다 — 1e-6 과 0.000001 은 같은 기본값
+  const DEF = new Map(COUPLING.REGISTRY.filter((e) => typeof e.default === 'number' && e.key !== 'saturation_K').map((e) => [e.scenario.split('.').pop(), e]));
+  for (const f of readdirSync(join(ROOT, 'engine')).filter((x) => /\.m?js$/.test(x) && x !== 'coupling.js'))
+    for (const m of src('engine/' + f).matchAll(/\b(\w+)\s*(?:\|\||\?\?)\s*(-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)(?![\w.])/gi)) {
+      const e = DEF.get(m[1]);
+      assert.ok(!(e && Number(m[2]) === e.default), `engine/${f}: 엔진에 ${e && e.key} 기본값이 박혀 있음 (${m[0]}) — 값은 engine/coupling.js 등록부에서만`);
+    }
 });
 
 test('⑦ 원자료 계약 (FFI): 엔진 출력은 schemas/ffi/fate-raw.schema.json 을 지키고, 어기면 사법부가 판정하지 않는다', () => {

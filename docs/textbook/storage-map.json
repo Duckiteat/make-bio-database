@@ -1041,6 +1041,14 @@
       "interpret": "가정 원장 시험 — 사슬 변조·삭제·번호 바꾸기 · 다른 자리 옮겨 붙이기·없는 번호 거부 · 최신 따라가기 없음 · 새 기록 거부 사유별 · 서기 봉인·순번 · 인라인 숫자 등록 거부 · 거꾸로 색인 · 변환 결과."
     },
     {
+      "path": "tests/enforcement_gaps.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI (변이 시험이 놓친 규칙마다)",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "집행 구멍 메우기 — 변이 시험에서 집행 자리를 망가뜨려도 빨개지지 않던 규칙마다 그 자리를 직접 찌르는 시험. 시험 이름에 RULE 번호."
+    },
+    {
       "path": "tests/mutation/run.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",

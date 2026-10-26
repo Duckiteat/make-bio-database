@@ -2,12 +2,12 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (253 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (254 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 191 |
-| 놓침 (집행 구멍) `missed` | 21 |
+| 잡음 `caught` | 209 |
+| 놓침 (집행 구멍) `missed` | 4 |
 | 설정에 있음 `present` | 8 |
 | 본보기에만 있음 (켜지지 않음) `present_template` | 7 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
@@ -17,7 +17,7 @@
 
 없음
 
-## 잡음 `caught` — 191
+## 잡음 `caught` — 209
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -26,6 +26,7 @@
 | RULE-0007 | 행정은 검사·승인·'verified'·AUDIT_*·사후 분석·질량 판정 금지 | inject | core.js | ② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코드·verified 선언이 없다 |
 | RULE-0008 | 행정은 사법·입법·조정자 호출 금지 | inject | core.js | ② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코드·verified 선언이 없다 |
 | RULE-0010 | 부분 구조 수지 ΣIn=ΣOut 상대 1e-14 (규칙 검사·운명 원장) | replace | judicial/judicial.js | 현재 저장소는 오류·경고 없음 |
+| RULE-0011 | 수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 engine/coupling.js 등록부에서만, 엔진에 | inject | engine/fate_engine.js | ⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값, 엔진 코드를 고치지 않고 값이 바뀐다 |
 | RULE-0012 | 입법(legislative/)은 정의·수정·초안만(순수) | inject | legislative/legislative.js | ③ 사법부: 엔진을 실행하지 않고 쓰지 않는다 · 입법 초안은 검사하지 않는다 |
 | RULE-0013 | 파일 쓰기는 legislative/clerk.mjs 만, 모든 쓰기는 put(구역, 파일) | inject | orchestrator.js | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
 | RULE-0014 | 새 쓰기는 구역을 고르거나 새로 선언, put 우회 금지 | inject | legislative/clerk.mjs | ④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안의 다른 구역에 쓰려 하면 거부된다 |
@@ -43,6 +44,7 @@
 | RULE-0029 | 엔진 출력 모양을 바꾸면 schemas/ffi/fate-raw.schema.json 같은 커밋 | replace | judicial/fate_audit.js | ⑦ 원자료 계약 (FFI): 엔진 출력은 schemas/ffi/fate-raw.schema.json 을 지키고, 어기면 사법부가 판정하지 않는다 |
 | RULE-0031 | 컴파일러는 공유 순수 층(db+시나리오 → 불변 IR) — 쓰기·판정·엔진·권력 모듈 호출 금지 | inject | compiler/tape.js | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
 | RULE-0032 | 엔진은 IR 만 먹고 원자료에 irHash | replace | engine/fate_engine.js | ⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사법부가 해시·법칙·기호 도함수를 독립 검증 |
+| RULE-0033 | 희소 LU 기호 분석 sparse_lu.js 는 사법부 checkLU 가 검증 | replace | judicial/derivative.js | RULE-0033 희소 LU 기호 분석은 사법부 checkLU 가 검증 — 대각 위치가 틀린 패턴은 거부 |
 | RULE-0035 | perturb_audit 가 '교란 외에는 대조군과 같음' 을 독립 대조 | replace | judicial/perturb_audit.js | ④ 교란 차이 검사: 교란 외에는 대조군과 같다 — 사법부 독립 재구성 |
 | RULE-0037 | 속도 법칙 변경 = 컴파일러·테이프 명세·judicial/derivative.js 재구성 같은 커밋, 도함수 | replace | judicial/derivative.js | ⑧ 컴파일러 IR (0.5단계): 순수 · 엔진은 IR 만 먹음 · 사법부가 해시·법칙·기호 도함수를 독립 검증 |
 | RULE-0038 | 모든 감사 항목에 fault 태그 (judicial/fault.js) | replace | judicial/fate_audit.js | ⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 결과는 FINDING, 엔진·컴파일러·수치·데이터 결함은 각자의 층으로 |
@@ -52,6 +54,7 @@
 | RULE-0060 | 새 항목은 임시 번호(T+1·D+1·S+1·O+1) | disable | legislative/legislative.js | 없는 번호로 수정하면 거부 |
 | RULE-0061 | meta.next 손대지 않음 | disable | judicial/judicial.js | 번호 배정기가 쓰인 번호보다 작으면 오류 |
 | RULE-0063 | xrefs[].role: physiological(하나)·parent·class — class 를 저분자·이 | disable | judicial/judicial.js | 외부 ID 역할: 분류 항목은 셀 수 있는 분자의 번호가 될 수 없고, 역할이 겹치거나 physiological 이 없으면 거부 |
+| RULE-0064 | physiological 의 verified 는 켤레 관계 + Rhea ≥3 통과 시 | replace | judicial/identity.js | RULE-0064 physiological 의 확인은 Rhea 반응 참여 ≥ 3 — 2 회면 거부 |
 | RULE-0068 | 정의항(D): 구성 요소·막 위상·부위·규칙 빠짐없이, 모르면 residue_unknown: true | disable | judicial/judicial.js | 단백질·핵산의 수식 부위는 기준 종 잔기 번호, 모르면 residue_unknown 명시 |
 | RULE-0069 | 묶음·단계(B/S): 원천 전이 규칙 참조 + 묶음만, 라벨은 규칙에 | disable | judicial/judicial.js | 규칙 참조·보조 기질·조절자는 원천 규칙에 정의된 것만 |
 | RULE-0071 | 위치는 묶음마다, 공간 접촉 안 되면 위치 수정 또는 수송 단계 | disable | judicial/judicial.js | 공간 접촉: 세포 밖 에피네프린은 세포질의 분자와 반응할 수 없음 |
@@ -80,16 +83,20 @@
 | RULE-0107 | 실측값은 observations(O+1): 값(SI)·불확도(크기·유형·잡음 모형)·반복 수·조건(종)·출처 | disable | judicial/judicial.js | ② 관문: 올바른 관찰은 통과(O 번호 배정), 합성·불확도 없음·SI 아님·보정 불일치는 거부 |
 | RULE-0109 | 도구 추정(computed·predicted)은 실측이 아님 (D2.estimate) | replace | judicial/reliability.js | ⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부 |
 | RULE-0110 | 관찰 수정·삭제 금지 (retracted 만) | replace | judicial/judicial.js | ④ 변경 불가: 관찰은 바꾸거나 지울 수 없고, 철회 표시만 더할 수 있음 |
+| RULE-0111 | 추정용을 검증에 쓰지 않음 | disable | judicial/judicial.js | RULE-0111 추정용만 모델 값의 출처: 검증용(validation) 관찰을 정의항 obs 의 from 으로 쓰면 거부 |
 | RULE-0112 | 합성 관찰은 examples/observations/ 만 | disable | judicial/judicial.js | ② 관문: 올바른 관찰은 통과(O 번호 배정), 합성·불확도 없음·SI 아님·보정 불일치는 거부 |
 | RULE-0113 | 측정은 포트(schemas/obs/)로 | replace | judicial/contract.js | ① 계약: 합성 예시는 모양을 지키고, 값만 있는 관찰은 모양에서 거부 |
+| RULE-0114 | 정성 관찰은 kind: qualitative — 교란·readout·expect | disable | judicial/judicial.js | RULE-0114 정성 관찰: 읽을 거리 대상(readout.target)이 없으면 거부 |
 | RULE-0115 | 정성 관찰은 1차 문헌(DOI·PMID) provenance.source + 원문 quote 필수 | disable | judicial/judicial.js | ① 정성 관찰: 구절·1차 문헌·교란·읽을 거리·용도 위반은 거부 |
 | RULE-0116 | 정성 관찰은 use: validation 만, 수치 근거 금지 | disable | judicial/judicial.js | ① 정성 관찰: 구절·1차 문헌·교란·읽을 거리·용도 위반은 거부 |
 | RULE-0119 | 정성 판정은 우연 기준선과 함께 보고 | replace | judicial/qual_compare.js | ① 유무 · 단조 · 순서 · 무효 · 결론 조건 |
 | RULE-0120 | 결론은 등록 규약의 검증 세트만 | replace | judicial/protocol.js | ① 규약 구조: 완결하면 통과, 빠지면 사유 |
 | RULE-0121 | 맥락 열쇠는 contextKeys 여섯 칸, condition 은 정의항 번호 목록 (문장은 scope) | disable | judicial/judicial.js | ③ 맥락 열쇠: 여섯 칸 · 빈 칸 null · 조건 정렬 · 자유 문장은 열쇠 밖 |
+| RULE-0123 | 이동된 번호는 쓰지 않음 | disable | judicial/judicial.js | RULE-0123 이동된 번호는 다시 쓰지 않는다: 이동 표에 있는 번호가 아직 표에 있으면 거부 |
 | RULE-0124 | 패치는 obs·kinetics 로 쓰고 병합이 대체·철회로 접음 (값 기록 불변) | replace | judicial/judicial.js | ④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다 |
 | RULE-0125 | values·moved 직접 쓰기 금지 | disable | legislative/legislative.js | ① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그대로다 |
 | RULE-0126 | 값이 바뀌면 recorded_at 필요 (dbtool 이 찍음) | disable | judicial/judicial.js | ④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다 |
+| RULE-0127 | 정의항 obs 의 curated 측정값은 from: 'O…' | disable | judicial/judicial.js | RULE-0127 정의항 obs 의 문헌(curated) 측정값은 관찰 기록(from)을 가리켜야 한다 |
 | RULE-0128 | 단위는 vocab.unitFactors 만 | disable | judicial/judicial.js | ② 관문: 올바른 관찰은 통과(O 번호 배정), 합성·불확도 없음·SI 아님·보정 불일치는 거부 |
 | RULE-0129 | 값은 vocab.physicalBounds 안 | disable | judicial/judicial.js | ① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그대로다 |
 | RULE-0130 | from 달린 obs 는 관찰 retracted 뒤에만 삭제 | replace | judicial/judicial.js | ④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다 |
@@ -98,15 +105,19 @@
 | RULE-0139 | 확산·pH·유전율은 위치(context.location) + SI | disable | judicial/judicial.js | v8 관찰: 확산 계수·pH·이온 세기·유전율은 위치 필수, SI 단위, 값 범위 |
 | RULE-0140 | 가역 반응은 dG0 (k_r 지어내지 않음) | replace | judicial/judicial.js | v8 열역학: 전이 상태 이론 일치, 미시적 가역성(k/k_r = exp(−ΔG°/RT)), dG_act ≥ 0 |
 | RULE-0141 | 닫힌 고리 ΣΔG°=0 (AUDIT_THERMO) | replace | judicial/judicial.js | v8 Wegscheider: 닫힌 고리의 ΣΔG° ≠ 0 이면 AUDIT_THERMO |
+| RULE-0153 | 매개 단계를 묶으면 Regulatory_Gap | replace | judicial/judicial.js | RULE-0153 힐 상수 없는 조절 규칙은 한계가 없으면 Regulatory_Gap 후보가 된다 |
 | RULE-0154 | 미확인 상수는 hypothetical | replace | judicial/reliability.js | 신뢰 지표 ②: 관문은 쓰인 상수의 등급을 보고 미달을 거부한다 (가상 값은 hypothetical 선언 아래에서만) |
 | RULE-0162 | compare: 결과 같고 비용만 늘며 이득 <1e-5 → Optimization-Negative, 넣지 않 | replace | judicial/compare.js | 비교 검토: 같은 조절을 하나 더 넣는 패치는 결과가 같고 복잡도만 늘어 Optimization-Negative (질량 ≤ 1e-14) |
 | RULE-0165 | 정제 점검 자동 — 새 중복·미등록 모순은 관문 거부 | replace | judicial/judicial.js | ① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그대로다 |
+| RULE-0168 | 결합 적분은 질량 작용·가역 결합(정·역)·MM 만, 나머지는 Kinetic_Gap | replace | compiler/ir_builder.js | RULE-0168 결합 적분은 질량 작용·가역 결합·MM 만 — 다른 법칙의 단계는 끄고 사실(step_law_unsupported)로 보고 |
+| RULE-0169 | 막 단계는 volumes[막] | replace | compiler/ir_builder.js | RULE-0169 막에서만 일어나는 단계의 반응 부피는 시나리오 volumes[막] 이다 |
 | RULE-0172 | 운명·기전 시나리오에 context {role: cause\|requirement\|baseline, sta | replace | judicial/fate_audit.js | MHC ④: 맥락 선언(원인·필수성·일반 상황)이 실행과 맞아야 한다 — 틀린 선언은 판정 실패 |
 | RULE-0174 | 교란 실험은 복사본 금지 — 파생 시나리오 { base, perturbation } | replace | compiler/perturb.js | MHC ⑩: null 시나리오 = 기준 + 교란 한 줄 (build-plan 9) — 교란 차이 검사 통과 · 필수성은 같은 대조군과 비교 |
 | RULE-0175 | 확률은 stochastic {seed} (실행 전) | replace | judicial/stoch_audit.js | ④ 재현·정수 발화·원장: 같은 (seed, 궤적) → 같은 해시, 다른 궤적 → 다름, 사법부 감사 결함 없음 |
 | RULE-0179 | 검증은 사전 등록된 모의 실험 규약 아래에서만 | replace | judicial/protocol.js | ⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준 |
 | RULE-0180 | 규약 protocol: 실제 실험 대응·음성 대조 필수·검정력 반복 수·검증 세트·중단 규칙 | replace | judicial/protocol.js | ① 규약 구조: 완결하면 통과, 빠지면 사유 |
 | RULE-0181 | register 로 실행 전 등록, 고치면 미등록 | replace | judicial/protocol.js | ⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준 |
+| RULE-0182 | 규약 없는 실행은 탐색 실행 (일치 결론 불가) | replace | judicial/protocol.js | RULE-0182 규약 없는 실행은 탐색 실행: 규약 판정이 통과로 나오지 않는다 |
 | RULE-0186 | 옮겨 다니는 분자에 moieties, 빠진 산물(PPi·Pi)은 규칙·단계(minor)에 | replace | judicial/judicial.js | 현재 저장소는 오류·경고 없음 |
 | RULE-0190 | why 없음·미등록 한계 후보·새 정제 문제는 관문(patchPolicy) 거부 | replace | judicial/judicial.js | ① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그대로다 |
 | RULE-0198 | 데이터를 통과시키려고 규칙을 느슨하게 하지 않음 | delete | tests/fixtures/rejections/ | ① 거부 말뭉치: 나쁜 패치가 모두 거부되고, 사유가 그대로다 |
@@ -121,6 +132,8 @@
 | RULE-0218 | 번호를 직접 지어내지 않는다 | disable | legislative/legislative.js | 없는 번호로 수정하면 거부 |
 | RULE-0219 | 가정 번호는 자기 자리(종류·열쇠·칸·부피는 세포)에만 — 다른 칸에 옮겨 붙이면 풀기 거부 | replace | compiler/assumptions.js | ② 풀기: 번호를 다른 자리에 옮겨 붙이면·없는 번호면 거부 · 번호 없는 시나리오는 같은 객체와 같은 글자 |
 | RULE-0220 | 새 가정 기록은 unrecorded 일 수 없다 — 열린 한계를 달고 assumed 로 | disable | judicial/assumption_audit.js | ④ 새 기록 검사: 통과 1 + 거부 사유별 |
+| RULE-0223 | 합의 수신함(data/fetched/consensus/)은 신원 수신함을 덮지 않는다 | replace | judicial/trend.js | RULE-0223 합의 수신함은 신원 수신함의 하위 폴더이고 같은 폴더가 아니다 (신원 도장의 증거를 덮지 않음) |
+| RULE-0224 | 표에 없는 원천은 창이 없으니 만료 — 창을 지어내지 않는다 | replace | judicial/trend.js | RULE-0224 창 표에 없는 원천의 추세 도장은 만료 — 창을 지어내지 않는다 |
 | RULE-0225 | 승인은 사람과 integrator (2026-10-25 결정 — 자동결정률을 위해), 수집가는 못 한다 | replace | judicial/acceptance.js | ④ 도장 검사: 수집가 역할 · 이유 없음 · 변조 · 관찰이 아닌 주체 · 승인 없이 되는 용도는 거부 |
 | RULE-0226 | 나중에 축이 내려가면 도장이 있어도 '재검토' | replace | judicial/reliability.js | ② 승인 없음 → needs_approval · 승인 → accepted · 축이 내려가면 review · 철회 → needs_approval |
 | RULE-0227 | 기준(standard)은 독립 단위 ≥ 2 — I 축(52) 전에는 아무것도 닿지 못함 | replace | judicial/reliability.js | ③ 승인은 축·관계 조건을 넘지 못한다 — 서기가 쓰지 않는다 |
@@ -137,6 +150,7 @@
 | RULE-0250 | 목록에 없는 도구는 부르는 자리에서도 거부 | replace | mcp/protocol.mjs | ③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부 |
 | RULE-0251 | --allow-warnings 는 사람 역할만 (MCP) | replace | mcp/clerk.mjs | ③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부 |
 | RULE-0286 | 수집가 쓰기는 workspace/ 안에서만, 규칙·코드·db 는 읽기만 | replace | legislative/clerk.mjs | ⑤ 핸드오프: 이름 검사 · 붙이기만 (앞 줄 그대로) |
+| RULE-0289 | 후보마다 값·단위·종·세포·시각·불확도·출처+인용·use·규약 가능 | replace | judicial/collection_audit.js | RULE-0289 수집 후보: read_value 인데 값이 없으면 INCOMPLETE (출처·인용이 있어도 검토로 넘기지 않음) |
 | RULE-0290 | `outcome` ∈ `not_searched\|not_found\|unreadable\|read_no_va | replace | judicial/collection_audit.js | ⑦ outcome 누락·빈 입력 → INCOMPLETE |
 | RULE-0291 | 값을 적으면 source + quote 필수 | replace | judicial/collection_audit.js | ③ 근거 없는 값 → REJECTED (꼼수: 미확인을 사실처럼) |
 | RULE-0292 | 완료는 수집가가 아니라 판정기가 정한다 — 값 후보는 1차 출처 재확인 전 PASS 아님 | replace | judicial/collection_audit.js | ② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지) |
@@ -144,6 +158,7 @@
 | RULE-0323 | 패치의 새 별칭이 다른 개념의 이름이면 거부. 이름에 `#` `@` `\|` `/` 금지. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0324 | 이미 뜻이 있는 개념에 새 뜻을 더하려면 `distinction`(기존 뜻과의 차이)이 필수. 없으면 거부. | replace | legislative/legislative.js | 띄어쓰기만 다른 이름은 기존 개념으로 매핑되고, 설명 없는 새 뜻 추가는 거부 |
 | RULE-0325 | 정의항을 다른 개념으로 옮길 수 없다. | replace | legislative/legislative.js | 정의항을 다른 개념으로 옮길 수 없음 |
+| RULE-0330 | 목록에 없는 값은 거부되고 가까운 값을 제안한다. 목록에 값을 추가하는 것은 사람이 `vocab.js` 를  | replace | model.js | RULE-0330 어휘 목록에 없는 값은 거부하고 가까운 값을 제안한다 (전체 목록이 아니라 비슷한 값) |
 | RULE-0331 | **참여자 종류**(protein, complex, nucleic_acid, small_molecule, m | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0332 | 구성 요소(`components`)는 `complex` 만 가지며, 구성 요소는 참여자 종류여야 한다. 구성 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0333 | 단계의 `part_of` 대상은 `pathway` 정의항이어야 한다. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
@@ -178,6 +193,7 @@
 | RULE-0370 | **Requirement**: 사람이 읽는 `text` + 기계가 확인하는 해결 경로 `needs`. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0371 | `obs`: 그 정의항에 그 관찰(세포·위치 맥락)이 들어오면 충족 · `residue`: 그 부위에 기준  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0372 | **구조 필드 (가 스키마, 2026-10-23, 선택)**: `symptom`(정량 증상 — 키 소문자·숫 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0374 | 시뮬레이터는 기본값·무한 풀로 시작량을 정한 묶음을 표시하고, 그 경로의 Concentration_Gap 이 | replace | judicial/judicial.js | RULE-0374 시뮬레이션 보고는 기본값·무한 풀 시작량을 농도 공백으로 표시하고 등록된 한계를 적는다 |
 | RULE-0377 | 해상도 일관성: 부위의 구조 참조는 정의항 `xrefs` 의 같은 PDB 여야 한다. 좌표 자체는 저장하지  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0378 | 법칙(`kineticLaws`): `mass_action`(k, order — 차수 = 반응물 분자 수 +  | replace | judicial/judicial.js | 속도 무결성: 법칙·필수 상수·Kd = k_off/k_on·두 분자 결합·효소 규칙 |
 | RULE-0379 | 속도 무결성: Kd 와 k_off/k_on 이 10% 안에서 맞아야 하고, 차수·분자 수·효소 조건이 맞아야 | replace | judicial/judicial.js | 속도 무결성: 법칙·필수 상수·Kd = k_off/k_on·두 분자 결합·효소 규칙 |
@@ -203,41 +219,26 @@
 | RULE-0418 | 같은 지문은 정의항 하나에만 붙는다. `status`: `computed`(도구로 계산) / `asserte | replace | judicial/judicial.js | ④ 증명 등록부: 도장 없는 verified 는 오류, 변조·위조 도장은 무효 |
 | RULE-0421 | 이전 형식(v2·v3) 패치(`terms` 가 객체, `definientia`, `states`)는 거부된다 | replace | legislative/legislative.js | 이전 형식 패치(v2·v3)는 거부 |
 | RULE-0422 | 매핑 오류 또는 검사 오류가 새로 생김 \| 거부 | replace | legislative/clerk.mjs | ④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다 |
+| RULE-0436 | 모체만 적힌 저분자 \| 경고 — 반응 참여자(physiological)를 함께 적는 것이 규약 | replace | judicial/judicial.js | RULE-0436 저분자에 ChEBI 모체(parent)만 있으면 경고 — 반응 참여자(physiological)를 함께 적는 규약 |
 | RULE-0440 | 막 이동 경로 `membrane.route` \| 막 단백질이 분비·섭취 경로에서 거쳐 가는 다른 막들. 묶 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0441 | 소모된 것의 행방 \| 공급 규칙은 생성물이 필요하다(`produces` 필수). 떨어져 나간 반복 단위는  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0442 | 분열 허가·정지 \| 조절 규칙(힐)의 배율. 허가는 신호의 **활성**(`activates`), 정지는 억 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0446 | **값 기록**: `{ subject: D… \| D…/rule/키, property, value { dis | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0447 | **두 시간**: `recorded_at`(기록 시각)·`evidence_at`(근거 시각). `model. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0448 | **사법부**: `validateValues`(대상·속성 어휘·분포·유도 방식·기록 시각·근거 관찰·대체 사 | replace | legislative/legislative.js | ④ 변경 불가: 관찰은 바꾸거나 지울 수 없고, 철회 표시만 더할 수 있음 |
+| RULE-0451 | **기록**: `{ seq, at, id: 'A' + 여섯 자리 순번, slot { kind: kinetic | replace | judicial/assumption_audit.js | RULE-0451 가정 원장: 기원(origin) 어휘 밖의 새 기록은 거부 |
 | RULE-0452 | **사법부**: `judicial/assumption_audit.js` — 사슬(seq·prev·root·번 | replace | judicial/assumption_audit.js | ④ 새 기록 검사: 통과 1 + 거부 사유별 |
 | RULE-0482 | → 이들은 **REVIEW_REQUIRED**로 두고 "완료"로 적지 않는다. | replace | judicial/collection_audit.js | ② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지) |
 | RULE-0489 | `subject`: 정의항 `D…` · 규칙 `D…/rule/키` · 묶음 키 · 위치(`vocab.loca | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 
-## 놓침 (집행 구멍) `missed` — 21
+## 놓침 (집행 구멍) `missed` — 4
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
-| RULE-0011 | 수치 선택(정칙화·문턱·탐침 격자·뉴턴 허용 오차)은 engine/coupling.js 등록부에서만, 엔진에 | inject | engine/fate_engine.js |  |
-| RULE-0033 | 희소 LU 기호 분석 sparse_lu.js 는 사법부 checkLU 가 검증 | replace | judicial/derivative.js |  |
 | RULE-0052 | 수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000 (orchestrator.refScenario) | replace | orchestrator.js |  |
-| RULE-0064 | physiological 의 verified 는 켤레 관계 + Rhea ≥3 통과 시 | replace | judicial/identity.js |  |
 | RULE-0066 | 다른 값 asserted 는 --sync 요청 시만 바꾼다 | replace | legislative/augment_draft.js |  |
-| RULE-0111 | 추정용을 검증에 쓰지 않음 | disable | judicial/judicial.js |  |
-| RULE-0114 | 정성 관찰은 kind: qualitative — 교란·readout·expect | disable | judicial/judicial.js |  |
-| RULE-0123 | 이동된 번호는 쓰지 않음 | disable | judicial/judicial.js |  |
-| RULE-0127 | 정의항 obs 의 curated 측정값은 from: 'O…' | disable | judicial/judicial.js |  |
-| RULE-0153 | 매개 단계를 묶으면 Regulatory_Gap | replace | judicial/judicial.js |  |
-| RULE-0168 | 결합 적분은 질량 작용·가역 결합(정·역)·MM 만, 나머지는 Kinetic_Gap | replace | compiler/ir_builder.js |  |
-| RULE-0169 | 막 단계는 volumes[막] | replace | compiler/ir_builder.js |  |
-| RULE-0182 | 규약 없는 실행은 탐색 실행 (일치 결론 불가) | replace | judicial/protocol.js |  |
-| RULE-0223 | 합의 수신함(data/fetched/consensus/)은 신원 수신함을 덮지 않는다 | replace | judicial/trend.js |  |
-| RULE-0224 | 표에 없는 원천은 창이 없으니 만료 — 창을 지어내지 않는다 | replace | judicial/trend.js |  |
 | RULE-0245 | FAIL 조건: 원장·재생 1e-14 초과 · 신호가 일정과 다름 · 궤적 해시 다름 · 쓰인 상수가 입력과 | replace | judicial/process_report.js |  |
-| RULE-0289 | 후보마다 값·단위·종·세포·시각·불확도·출처+인용·use·규약 가능 | replace | judicial/collection_audit.js |  |
 | RULE-0327 | 가리키는 개념의 뜻이 여러 개면 거부하고 후보를 보여 준다. 없는 이름이면 거부하고 비슷한 이름을 제안한다. | replace | legislative/legislative.js |  |
-| RULE-0374 | 시뮬레이터는 기본값·무한 풀로 시작량을 정한 묶음을 표시하고, 그 경로의 Concentration_Gap 이 | replace | judicial/judicial.js |  |
-| RULE-0436 | 모체만 적힌 저분자 \| 경고 — 반응 참여자(physiological)를 함께 적는 것이 규약 | replace | judicial/judicial.js |  |
-| RULE-0451 | **기록**: `{ seq, at, id: 'A' + 여섯 자리 순번, slot { kind: kinetic | replace | judicial/assumption_audit.js |  |
 
 ## 설정에 있음 `present` — 8
 
