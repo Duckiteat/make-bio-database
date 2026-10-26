@@ -30,6 +30,7 @@
     // 결합 Rosenbrock(Rodas3) 단계 제어 — engine-port-roadmap 1.5단계. 오차 = max_i |e_i| / (atol + rtol·max(|N_i|, |N_i'|))
     { key: 'rtol', scenario: 'integrator.rtol', default: 1e-6, unit: '1', meaning: '국소 오차 상대 허용 (내장 2차 추정 대비)', layer: 'numerics' },
     { key: 'atol', scenario: 'integrator.atol', default: 1e-2, unit: '분자', meaning: '국소 오차 절대 허용 (0 근처 저장소)', layer: 'numerics' },
+    { key: 'ref_tol_factor', scenario: 'integrator.ref_factor', default: 1e-3, unit: '1', meaning: '수렴 기준해의 허용 오차 배율 — 같은 적분기를 rtol·atol × 이 값으로 다시 돌려 수치 오차의 기준으로 삼는다 (orchestrator.refScenario). 엔진은 읽지 않음', layer: 'numerics' },
     { key: 'h0', scenario: 'integrator.h0', default: 1, unit: 's', meaning: '실행(본 실행·탐침)의 첫 시도 단계', layer: 'numerics' },
     { key: 'h_min', scenario: 'integrator.h_min', default: 1e-6, unit: 's', meaning: '최소 단계 — 여기서도 거부되면 받아들이고 hMinHits 로 센다 (사법부 NUMERICAL 감사)', layer: 'numerics' },
     { key: 'safety', scenario: 'integrator.safety', default: 0.9, unit: '1', meaning: '단계 갱신 h·safety·err^(−1/3) 의 안전 계수', layer: 'numerics' },

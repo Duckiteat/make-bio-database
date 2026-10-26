@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 54 | 5983.6 |
+| 공통 `common` | 54 | 5985.4 |
 | 정보 작성 `author` | 449 | 16506.4 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 159 | 2045.9 |
+| 디벨롭 `develop` | 159 | 2051.6 |
 | 적분장 `field` | 17 | 137.3 |
 | 점검·검증 `inspect` | 33 | 748.4 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 12 | 5064.4 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 12 | 5065.8 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -42,7 +42,7 @@
 | `engine/async_fallback_worker.js` | field | 1 | 3.5 | P4 비동기 대체 |
 | `engine/interfaces/**` | field | 2 | 21.3 | v8 인터페이스 |
 | `schemas/v8/**` | field | 4 | 7.5 | v8 영역 패킷 |
-| `engine/**` | develop | 17 | 200.0 | 운명 엔진·Rust·결합점 |
+| `engine/**` | develop | 17 | 200.3 | 운명 엔진·Rust·결합점 |
 | `compiler/**` | develop | 7 | 49.0 | 컴파일러 |
 | `judicial/**` | develop | 28 | 528.4 | 사법부 코드 |
 | `legislative/**` | develop | 3 | 65.2 | 입법부 코드 |
@@ -54,7 +54,7 @@
 | `model.js` | develop | 1 | 67.2 | 공유 |
 | `vocab.js` | develop | 1 | 54.2 | 통제 어휘 — 사용자 요청 시만 |
 | `dictionary.js` | develop | 1 | 7.6 | 번역기 |
-| `orchestrator.js` | develop | 1 | 23.0 | 조정자 |
+| `orchestrator.js` | develop | 1 | 23.3 | 조정자 |
 | `dbtool.mjs` | develop | 1 | 77.3 | 명령줄 |
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
@@ -62,15 +62,15 @@
 | `tests/p4_*` | field | 2 | 11.2 | P4 |
 | `tests/p5_*` | field | 1 | 12.7 | P5 |
 | `tests/fixtures/rejections/**` | develop | 26 | 32.5 | 거부 말뭉치 |
-| `tests/**` | develop | 48 | 459.7 | 시험 |
+| `tests/**` | develop | 48 | 463.7 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 23 | 367.0 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 11 | 386.0 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
-| `docs/design/**` | common | 21 | 406.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
+| `docs/textbook/**` | common | 11 | 386.3 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/design/**` | common | 21 | 406.2 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 3 | 42.8 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 246.2 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 247.4 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 100.2 | 형식 |
 | `*.md` | common | 4 | 74.6 | 최상위 문서 |
 | `.claude/**` | common | 1 | 3.2 | 도구 설정 |

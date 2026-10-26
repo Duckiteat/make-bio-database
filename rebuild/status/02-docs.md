@@ -4,7 +4,7 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 246.2 | 232 |  | 분류됨 1 |
+| `CHANGES.md` | 247.4 | 233 |  | 분류됨 1 |
 | `CLAUDE.md` | 17.7 | 84 | 입구 | 분류됨 241 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -20,7 +20,7 @@
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
 | `docs/design/dictionary-and-translation.md` | 15.8 | 203 |  | 분류됨 121 |
 | `docs/design/direction.md` | 6.2 | 46 | 입구 | 분류됨 26 |
-| `docs/design/engine-port-roadmap.md` | 53.2 | 564 |  | 분류됨 369 |
+| `docs/design/engine-port-roadmap.md` | 53.4 | 564 |  | 분류됨 369 |
 | `docs/design/format-v12.md` | 10.1 | 101 |  | 분류됨 61 |
 | `docs/design/hybrid-multiscale-engine.md` | 35.8 | 340 |  | 분류됨 231 |
 | `docs/design/integral-field-engine.md` | 45.9 | 391 |  | 분류됨 235 |
@@ -66,7 +66,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 113.8 | 809 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 114.0 | 810 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |

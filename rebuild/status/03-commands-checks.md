@@ -68,7 +68,7 @@
 | `tests/dictionary.test.mjs` | 8 |
 | `tests/dictionary_seal.test.mjs` | 4 |
 | `tests/dose_slope.test.mjs` | 6 |
-| `tests/enforcement_gaps.test.mjs` | 17 |
+| `tests/enforcement_gaps.test.mjs` | 21 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/governance.test.mjs` | 21 |
 | `tests/mcp.test.mjs` | 12 |

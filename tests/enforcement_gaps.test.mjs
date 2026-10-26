@@ -157,3 +157,49 @@ test('RULE-0330 어휘 목록에 없는 값은 거부하고 가까운 값을 제
   assert.match(M.mapVocab('locations', 'cytosl').error, /가능한 값: cytosol$/);
   assert.deepEqual(M.mapVocab('kinds', 'protein'), { key: 'protein' });
 });
+
+test('RULE-0052 수렴 기준해는 그 시나리오 적분 허용 오차의 1/1000 (등록부 ref_tol_factor) — 고정 숫자가 아님', () => {
+  const COUPLING = req('../engine/coupling.js');
+  const f = COUPLING.resolve({}).ref_tol_factor;
+  assert.equal(f, 1e-3);
+  assert.deepEqual(ORCH.refScenario({}).integrator, { rtol: 1e-9, atol: 1e-5 }, '기본 허용 오차에서는 예전 값과 비트까지 같다');
+  const tight = ORCH.refScenario({ integrator: { rtol: 1e-8, atol: 1e-4 }, t_end: 5 });
+  assert.deepEqual(tight.integrator, { rtol: 1e-8 * f, atol: 1e-4 * f }, '시나리오가 좁히면 기준해도 따라 좁아진다');
+  assert.equal(tight.t_end, 5, '다른 칸은 그대로');
+});
+
+test('RULE-0066 자동 보강은 원본 값이 asserted 값과 달라도 --sync 없이는 바꾸지 않는다', () => {
+  const DRAFT = req('../legislative/augment_draft.js'), sid = 'D000053';
+  const old = BASE.senses[sid].obs.find((o) => o.property === 'sequence_length' && o.context.species === '9606');
+  const up = BASE.senses[sid].xrefs.find((x) => x.db === 'UniProt');
+  assert.ok(old && up);
+  const verdict = { rows: [{ outcome: 'verified', kind: 'uniprot_entry', sense: sid, detail: '시험', src: '시험', facts: { db: 'UniProt', from: up.id, id: up.id, format: 'json', length: old.value + 1, taxon: '9606' } }], tasks: [] };
+  const len = (d) => { const s = d.patch.senses.find((x) => x.id === sid); return (s && s.obs ? s.obs : BASE.senses[sid].obs).find((o) => o.property === 'sequence_length' && o.context.species === '9606').value; };
+  const keep = DRAFT.draftPatch(BASE, verdict, { date: '2026-10-26' });
+  assert.equal(len(keep), old.value, 'sync 없음 — 값 유지');
+  assert.match(keep.rows[0].detail, /서열 길이 충돌/);
+  assert.equal(len(DRAFT.draftPatch(BASE, verdict, { date: '2026-10-26', sync: true })), old.value + 1, 'sync — 원본 값으로');
+});
+
+test('RULE-0327 뜻이 여러 개인 이름은 거부하고 후보를 보이고, 없는 이름은 비슷한 이름을 제안하고, 여러 개념과 겹치는 이름은 패치에서 거부', () => {
+  const multi = [...IX.termSenses].find(([, v]) => v.length > 1), name = BASE.terms[multi[0]].names.ko;
+  const r = C.resolveRef(IX, name);
+  assert.ok(r.error && multi[1].every((d) => r.error.includes(d)), r.error);
+  assert.match(C.resolveRef(IX, '에피네프란').error, /비슷한 이름: 에피네프린/);
+  const LEG = req('../legislative/legislative.js'), d = JSON.parse(JSON.stringify(RAW)), [a, b] = Object.keys(d.terms);
+  for (const t of [a, b]) d.terms[t].aliases = [...(d.terms[t].aliases || []), '겹친 이름'];
+  const m = LEG.merge(C.normalize(d), { format: 'definition-db-patch', version: 9, why: '시험', recorded_at: '2026-10-26T00:00:00.000Z', senses: [{ id: 'D+1', term: '겹친 이름', kind: 'protein', tier: 'T1', desc: [{ text: '시험', field: '생화학', context: { scope: '시험' } }] }] });
+  assert.ok(m.report.errors.some((e) => /이름 '겹친 이름' 이 여러 개념과 겹침/.test(e.msg)), JSON.stringify(m.report.errors.slice(0, 3)));
+});
+
+test('RULE-0245 무결성 증명서: 엔진 감사에 AUDIT_MASS 가 있으면 FAIL', () => {
+  const F = req('../engine/fate_engine.js'), FA = req('../judicial/fate_audit.js'), PR = req('../judicial/process_report.js');
+  const ir = IRB.buildFateIR(C.normalize(RAW), SRC, MAT), r = F.simulateFate(RAW, SRC, { engine: 'rust', scenario: MAT, ir });
+  assert.ok(!r.error, r.error);
+  const v = FA.judgeFate(RAW, r, { scenario: MAT, ir }), rerunHash = FA.trajectoryHash(F.simulateFate(RAW, SRC, { engine: 'rust', scenario: MAT, ir }));
+  assert.ok(PR.processReport(v, { scenario: MAT, ir, rerunHash }).pass, '오염 전에는 통과');
+  const bad = { ...v, audit: [...v.audit, { code: 'AUDIT_MASS', fault: 'ENGINE_DEFECT', where: '시험', msg: '부분 구조 수지 어긋남 (시험)', suggestion: '' }] };
+  const rep = PR.processReport(bad, { scenario: MAT, ir, rerunHash });
+  assert.equal(rep.pass, false);
+  assert.ok(rep.checks.some((c) => /AUDIT_MASS 없음/.test(c.name) && c.ok === false));
+});

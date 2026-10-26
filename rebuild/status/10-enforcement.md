@@ -6,8 +6,7 @@
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 209 |
-| 놓침 (집행 구멍) `missed` | 4 |
+| 잡음 `caught` | 213 |
 | 설정에 있음 `present` | 8 |
 | 본보기에만 있음 (켜지지 않음) `present_template` | 7 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
@@ -17,7 +16,7 @@
 
 없음
 
-## 잡음 `caught` — 209
+## 잡음 `caught` — 213
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -50,11 +49,13 @@
 | RULE-0038 | 모든 감사 항목에 fault 태그 (judicial/fault.js) | replace | judicial/fate_audit.js | ⑨ 결함 출처 태그: 모든 감사 항목이 6 분류 중 하나 — 결과는 FINDING, 엔진·컴파일러·수치·데이터 결함은 각자의 층으로 |
 | RULE-0044 | 토큰 → 사람말 표(라벨·의미)는 vocab.js 에만 + en 은 data/dictionary.jsonl  | inject | dictionary.js | ⑮ 표·로직 분리 — 사전은 vocab 만 읽고, 결함 표는 vocab.faultChannels 에만 |
 | RULE-0046 | 사전은 vocab 만 읽는다 | inject | dictionary.js | ⑮ 표·로직 분리 — 사전은 vocab 만 읽고, 결함 표는 vocab.faultChannels 에만 |
+| RULE-0052 | 수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000 (orchestrator.refScenario) | replace | orchestrator.js | RULE-0052 수렴 기준해는 그 시나리오 적분 허용 오차의 1/1000 (등록부 ref_tol_factor) — 고정 숫자가 아님 |
 | RULE-0059 | 패치 최상위 why 필수 | replace | judicial/judicial.js | ④‴ 봉인 = 병합 규약: dbtool 을 거치지 않아도 why·미등록 한계·정제 점검이 관문에서 막힌다 (판정이 CLI 에만 있으면 서기 경로가 건너뛴다) |
 | RULE-0060 | 새 항목은 임시 번호(T+1·D+1·S+1·O+1) | disable | legislative/legislative.js | 없는 번호로 수정하면 거부 |
 | RULE-0061 | meta.next 손대지 않음 | disable | judicial/judicial.js | 번호 배정기가 쓰인 번호보다 작으면 오류 |
 | RULE-0063 | xrefs[].role: physiological(하나)·parent·class — class 를 저분자·이 | disable | judicial/judicial.js | 외부 ID 역할: 분류 항목은 셀 수 있는 분자의 번호가 될 수 없고, 역할이 겹치거나 physiological 이 없으면 거부 |
 | RULE-0064 | physiological 의 verified 는 켤레 관계 + Rhea ≥3 통과 시 | replace | judicial/identity.js | RULE-0064 physiological 의 확인은 Rhea 반응 참여 ≥ 3 — 2 회면 거부 |
+| RULE-0066 | 다른 값 asserted 는 --sync 요청 시만 바꾼다 | replace | legislative/augment_draft.js | RULE-0066 자동 보강은 원본 값이 asserted 값과 달라도 --sync 없이는 바꾸지 않는다 |
 | RULE-0068 | 정의항(D): 구성 요소·막 위상·부위·규칙 빠짐없이, 모르면 residue_unknown: true | disable | judicial/judicial.js | 단백질·핵산의 수식 부위는 기준 종 잔기 번호, 모르면 residue_unknown 명시 |
 | RULE-0069 | 묶음·단계(B/S): 원천 전이 규칙 참조 + 묶음만, 라벨은 규칙에 | disable | judicial/judicial.js | 규칙 참조·보조 기질·조절자는 원천 규칙에 정의된 것만 |
 | RULE-0071 | 위치는 묶음마다, 공간 접촉 안 되면 위치 수정 또는 수송 단계 | disable | judicial/judicial.js | 공간 접촉: 세포 밖 에피네프린은 세포질의 분자와 반응할 수 없음 |
@@ -145,6 +146,7 @@
 | RULE-0240 | 사법부가 선언과 실행의 일관성을 판정, 어긋나면 무결성 증명서 FAIL | replace | judicial/fate_audit.js | MHC ④: 맥락 선언(원인·필수성·일반 상황)이 실행과 맞아야 한다 — 틀린 선언은 판정 실패 |
 | RULE-0243 | perturb_audit 는 컴파일러 코드를 쓰지 않고 기준에서 교란 결과를 다시 세운다 | replace | judicial/perturb_audit.js | ④ 교란 차이 검사: 교란 외에는 대조군과 같다 — 사법부 독립 재구성 |
 | RULE-0244 | 규약 칸: 흉내 내는 실험의 출처·종·세포·조건·측정 시점, 음성 대조, 측정량, 검정력 반복 수, 검증 관 | replace | judicial/protocol.js | ① 규약 구조: 완결하면 통과, 빠지면 사유 |
+| RULE-0245 | FAIL 조건: 원장·재생 1e-14 초과 · 신호가 일정과 다름 · 궤적 해시 다름 · 쓰인 상수가 입력과 | replace | judicial/process_report.js | RULE-0245 무결성 증명서: 엔진 감사에 AUDIT_MASS 가 있으면 FAIL |
 | RULE-0246 | unmapped 외부 ID 도 한계(Identity_Gap) | replace | judicial/judicial.js | ④‴ 봉인 = 병합 규약: dbtool 을 거치지 않아도 why·미등록 한계·정제 점검이 관문에서 막힌다 (판정이 CLI 에만 있으면 서기 경로가 건너뛴다) |
 | RULE-0247 | 요청 본문은 서기 postToInbox 가 curl 표준 입력으로, 응답에 계정이 되돌아오면 저장 전에 지운 | replace | legislative/clerk.mjs | ⑪ 서기 POST 받기: 본문은 표준 입력으로만 · 응답에 되돌아온 계정 정보는 지움 · 오류 본문도 지움 |
 | RULE-0250 | 목록에 없는 도구는 부르는 자리에서도 거부 | replace | mcp/protocol.mjs | ③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부 |
@@ -158,6 +160,7 @@
 | RULE-0323 | 패치의 새 별칭이 다른 개념의 이름이면 거부. 이름에 `#` `@` `\|` `/` 금지. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0324 | 이미 뜻이 있는 개념에 새 뜻을 더하려면 `distinction`(기존 뜻과의 차이)이 필수. 없으면 거부. | replace | legislative/legislative.js | 띄어쓰기만 다른 이름은 기존 개념으로 매핑되고, 설명 없는 새 뜻 추가는 거부 |
 | RULE-0325 | 정의항을 다른 개념으로 옮길 수 없다. | replace | legislative/legislative.js | 정의항을 다른 개념으로 옮길 수 없음 |
+| RULE-0327 | 가리키는 개념의 뜻이 여러 개면 거부하고 후보를 보여 준다. 없는 이름이면 거부하고 비슷한 이름을 제안한다. | replace | legislative/legislative.js | RULE-0327 뜻이 여러 개인 이름은 거부하고 후보를 보이고, 없는 이름은 비슷한 이름을 제안하고, 여러 개념과 겹치는 이름은 패치에서 거부 |
 | RULE-0330 | 목록에 없는 값은 거부되고 가까운 값을 제안한다. 목록에 값을 추가하는 것은 사람이 `vocab.js` 를  | replace | model.js | RULE-0330 어휘 목록에 없는 값은 거부하고 가까운 값을 제안한다 (전체 목록이 아니라 비슷한 값) |
 | RULE-0331 | **참여자 종류**(protein, complex, nucleic_acid, small_molecule, m | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0332 | 구성 요소(`components`)는 `complex` 만 가지며, 구성 요소는 참여자 종류여야 한다. 구성 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
@@ -230,15 +233,6 @@
 | RULE-0452 | **사법부**: `judicial/assumption_audit.js` — 사슬(seq·prev·root·번 | replace | judicial/assumption_audit.js | ④ 새 기록 검사: 통과 1 + 거부 사유별 |
 | RULE-0482 | → 이들은 **REVIEW_REQUIRED**로 두고 "완료"로 적지 않는다. | replace | judicial/collection_audit.js | ② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지) |
 | RULE-0489 | `subject`: 정의항 `D…` · 규칙 `D…/rule/키` · 묶음 키 · 위치(`vocab.loca | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
-
-## 놓침 (집행 구멍) `missed` — 4
-
-| 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
-|---|---|---|---|---|
-| RULE-0052 | 수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000 (orchestrator.refScenario) | replace | orchestrator.js |  |
-| RULE-0066 | 다른 값 asserted 는 --sync 요청 시만 바꾼다 | replace | legislative/augment_draft.js |  |
-| RULE-0245 | FAIL 조건: 원장·재생 1e-14 초과 · 신호가 일정과 다름 · 궤적 해시 다름 · 쓰인 상수가 입력과 | replace | judicial/process_report.js |  |
-| RULE-0327 | 가리키는 개념의 뜻이 여러 개면 거부하고 후보를 보여 준다. 없는 이름이면 거부하고 비슷한 이름을 제안한다. | replace | legislative/legislative.js |  |
 
 ## 설정에 있음 `present` — 8
 

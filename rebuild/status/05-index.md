@@ -11,13 +11,13 @@
 | 이름공간 | 상태 | 모양 | 형식 | 발급 | 자리 | 토큰 | 정의 |
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1221 · 212 · 24 | 210 · 없음 2 |
-| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10309 · 214 · 223 | 212 · 없음 2 |
+| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10310 · 214 · 223 | 212 · 없음 2 |
 | `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 662 · 58 · 52 | 57 · 없음 1 |
 | `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2571 · 126 · 154 | 124 · 없음 2 |
 | `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 746 · 34 · 80 | 28 · 없음 6 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 85 · 72 · 6 | 68 · 없음 4 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2072 · 363 · 39 | 360 · 없음 3 |
-| `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1850 · 505 · 93 | — |
+| `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1851 · 505 · 94 | — |
 | `sub_ref` | active | composite | `^D\d{6}/(site\|rule\|desc\|obs)/[A-Za-z0-9_]+$` | sense owner key | `data/db.json#senses.*.site|rule|desc|obs` | — | — |
 | `bundle_key` | active | composite | `^D\d{6}(\\|[a-z0-9_]+:[A-Za-z0-9_]+)*\\|[a-z_]+$` | derived (not issued) | `computed from sense+site+location` | — | — |
 | `event` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/log/events.jsonl` | — | — |
@@ -27,15 +27,15 @@
 | `attestation` | active | chain | `^[0-9a-f]{64}$` | judicial attestation (digest) | `attestations/registry.json` | — | — |
 | `patch_record` | active | file | `^\d{8}-\d{6}-.+\.json$` | clerk commitMerge | `data/patches/` | — | — |
 | `vocab_token` | active | vocab | `—` | human (vocab.js, user request) | `vocab.js` | — | — |
-| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 315 · 10 · 36 | 10 · 없음 0 |
+| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 319 · 10 · 37 | 10 · 없음 0 |
 | `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 95 · 22 · 12 | 20 · 없음 2 |
 | `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 349 · 5 · 32 | 5 · 없음 0 |
 | `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 9987 · 7277 · 7 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 6 · 1 · 3 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 1443 · 497 · 7 | 497 · 없음 0 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 1456 · 497 · 8 | 497 · 없음 0 |
 | `decision` | planned | token | `^DEC-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
-| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 225 · 없음 0 |
+| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 226 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
 | `plan_item` | planned | token | `^PLAN-\d{3}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
