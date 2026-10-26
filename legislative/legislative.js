@@ -27,15 +27,15 @@
     const db = normalize(clone(dbIn));
     // why: 변경 이유를 보고에 옮겨 적는다(판정은 사법부 관문이 한다 — 입법부는 검사하지 않는다)
     const report = { added: [], updated: [], removed: [], idmap: {}, mapped: [], errors: [], why: isObj(patchIn) ? str(patchIn.why) : '' };
-    const ERR = (where, msg) => report.errors.push({ where, msg });
+    const ERR = (rule, where, msg) => report.errors.push({ where, msg, rule }); // rule: 집행하는 규칙 번호
     const MAP = (from, to, via) => report.mapped.push({ from, to, via });
-    if (!isObj(patchIn)) { ERR('패치', 'JSON 객체가 아님'); return { db, report }; }
-    if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states) || isObj(patchIn.limitations)) { ERR('패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
-    if ('values' in patchIn) ERR('패치', '값 층(values)은 패치가 직접 쓰지 않는다 — 값은 정의항 obs·규칙 kinetics 로 적으면 병합이 대체·철회 기록으로 접는다 (형식 v12)');
+    if (!isObj(patchIn)) { ERR('RULE-0505', '패치', 'JSON 객체가 아님'); return { db, report }; }
+    if (isObj(patchIn.terms) || patchIn.definientia || isObj(patchIn.states) || isObj(patchIn.limitations)) { ERR('RULE-0421', '패치', '이전 형식 패치 — v4 는 terms·senses·steps 배열 (prompt 참고)'); return { db, report }; }
+    if ('values' in patchIn) ERR('RULE-0125', '패치', '값 층(values)은 패치가 직접 쓰지 않는다 — 값은 정의항 obs·규칙 kinetics 로 적으면 병합이 대체·철회 기록으로 접는다 (형식 v12)');
     // 이동된 번호를 가리키는 패치는 받지 않는다 — 이동 대상을 알려 준다 (형식 v12 §6, moved 의 키 자체는 제외)
     if (db.moved) {
       const { moved: _m, why: _w, ...body } = patchIn, hit = new Set();
-      for (const x of JSON.stringify(body).match(/[TDS]\d{6}/g) || []) if (db.moved[x] && !hit.has(x)) { hit.add(x); ERR(x, `이동된 번호 (${db.moved[x].kind}) — ${db.moved[x].to.join('·')} 를 쓸 것`); }
+      for (const x of JSON.stringify(body).match(/[TDS]\d{6}/g) || []) if (db.moved[x] && !hit.has(x)) { hit.add(x); ERR('RULE-0123', x, `이동된 번호 (${db.moved[x].kind}) — ${db.moved[x].to.join('·')} 를 쓸 것`); }
     }
     const alloc = (p) => fmtId(p, db.meta.next[p]++);
     const ix0 = index(db);
@@ -45,17 +45,17 @@
     const claimNames = (tid, names) => {
       for (const n of names.filter(Boolean)) {
         const owner = findTerm(n).filter((x) => x !== tid);
-        if (owner.length) ERR(`${tid}(${db.terms[tid] ? db.terms[tid].names.ko : n})`, `이름 '${n}' 은(는) 이미 ${owner.map((o) => `${o}(${db.terms[o].names.ko})`).join(', ')} 의 이름 — 같은 개념이면 그 개념을 쓸 것`);
+        if (owner.length) ERR('RULE-0323', `${tid}(${db.terms[tid] ? db.terms[tid].names.ko : n})`, `이름 '${n}' 은(는) 이미 ${owner.map((o) => `${o}(${db.terms[o].names.ko})`).join(', ')} 의 이름 — 같은 개념이면 그 개념을 쓸 것`);
         else nameOwner.set(normName(n), tid);
       }
     };
     // 1. 개념
     for (const raw of arr(patchIn.terms)) {
-      if (!isObj(raw)) { ERR('terms', '개념 항목이 객체가 아님'); continue; }
+      if (!isObj(raw)) { ERR('RULE-0505', 'terms', '개념 항목이 객체가 아님'); continue; }
       const pt = normTerm(raw), rid = str(raw.id);
       if (rid && !isTemp('T', rid)) {
         const t = db.terms[rid];
-        if (!t) { ERR(rid, '없는 개념 번호 — 새 개념은 임시 번호(T+1)를 쓸 것'); continue; }
+        if (!t) { ERR('RULE-0218', rid, '없는 개념 번호 — 새 개념은 임시 번호(T+1)를 쓸 것'); continue; }
         if (pt.names.ko && pt.names.ko !== t.names.ko) t.aliases.push(t.names.ko);
         t.names = { ...t.names, ...Object.fromEntries(Object.entries(pt.names).filter(([, v]) => v)) };
         t.aliases = uniq([...t.aliases, ...pt.aliases]).filter((a) => a !== t.names.ko && a !== t.names.en);
@@ -64,7 +64,7 @@
         report.updated.push(rid);
         continue;
       }
-      if (!pt.names.ko) { ERR(rid || 'terms', '새 개념에 names.ko 가 없음'); continue; }
+      if (!pt.names.ko) { ERR('RULE-0505', rid || 'terms', '새 개념에 names.ko 가 없음'); continue; }
       const same = uniq([pt.names.ko, pt.names.en].filter(Boolean).flatMap((n) => lookupName(ix0, n)));
       if (same.length === 1) {
         const tid = same[0], t = db.terms[tid];
@@ -76,7 +76,7 @@
         t.aliases = uniq([...t.aliases, ...extra]).filter((a) => a !== t.names.ko && a !== t.names.en);
         continue;
       }
-      if (same.length > 1) { ERR(pt.names.ko, `이름이 여러 개념과 겹침: ${same.join(', ')}`); continue; }
+      if (same.length > 1) { ERR('RULE-0323', pt.names.ko, `이름이 여러 개념과 겹침: ${same.join(', ')}`); continue; }
       const tid = alloc('T');
       if (rid) report.idmap[rid] = tid;
       db.terms[tid] = pt;
@@ -89,12 +89,12 @@
       const r = str(ref);
       if (report.idmap[r]) return report.idmap[r];
       if (db.terms[r]) return r;
-      if (/^T(\+|\d)/.test(r)) { ERR(where, `개념 '${r}' 없음`); return null; }
-      if (!r) { ERR(where, 'term 없음'); return null; }
+      if (/^T(\+|\d)/.test(r)) { ERR('RULE-0218', where, `개념 '${r}' 없음`); return null; }
+      if (!r) { ERR('RULE-0500', where, 'term 없음'); return null; }
       const h = findTerm(r);
       if (h.length === 1) { MAP(r, h[0], '이름'); return h[0]; }
-      if (h.length > 1) { ERR(where, `이름 '${r}' 이 여러 개념과 겹침`); return null; }
-      if (RESERVED.test(r)) { ERR(where, `이름 '${r}' 에 # @ | / 를 쓸 수 없음`); return null; }
+      if (h.length > 1) { ERR('RULE-0327', where, `이름 '${r}' 이 여러 개념과 겹침`); return null; }
+      if (RESERVED.test(r)) { ERR('RULE-0323', where, `이름 '${r}' 에 # @ | / 를 쓸 수 없음`); return null; }
       const tid = alloc('T');
       db.terms[tid] = { names: { ko: r }, aliases: [] };
       nameOwner.set(normName(r), tid);
@@ -102,12 +102,12 @@
       return tid;
     };
     for (const raw of arr(patchIn.senses)) {
-      if (!isObj(raw)) { ERR('senses', '정의항 항목이 객체가 아님'); continue; }
+      if (!isObj(raw)) { ERR('RULE-0505', 'senses', '정의항 항목이 객체가 아님'); continue; }
       const d = normSense(raw), rid = str(raw.id);
       if (rid && !isTemp('D', rid)) {
         const old = db.senses[rid];
-        if (!old) { ERR(rid, '없는 정의항 번호 — 새 정의항은 임시 번호(D+1)를 쓸 것'); continue; }
-        if (raw.term && termOf(raw.term, rid) !== old.term) { ERR(rid, '정의항을 다른 개념으로 옮길 수 없음'); continue; }
+        if (!old) { ERR('RULE-0060', rid, '없는 정의항 번호 — 새 정의항은 임시 번호(D+1)를 쓸 것'); continue; }
+        if (raw.term && termOf(raw.term, rid) !== old.term) { ERR('RULE-0325', rid, '정의항을 다른 개념으로 옮길 수 없음'); continue; }
         const merged = clone(old);
         merged.obs = clone(old.obs); // v12: obs 는 값 층의 보기(열거되지 않음)라 clone 이 빼먹는다 — 적지 않은 obs 는 그대로
         for (const k of SENSE_FIELDS) if (d._given[k]) { if (d[k] === undefined) delete merged[k]; else merged[k] = d[k]; }
@@ -118,14 +118,14 @@
         const okey2 = (o) => `${o.property}|${o.context.location || ''}|${o.context.cell || ''}|${o.context.species || ''}`;
         const lost = old.obs.filter((o) => o.from && !nd.obs.some((x) => okey2(x) === okey2(o)))
           .filter((o) => !(db.observations[o.from] && db.observations[o.from].retracted));
-        if (lost.length) { ERR(rid, `측정의 파생값은 지울 수 없음 — ${lost.map((o) => `${o.property} ${o.value}${o.unit ? ' ' + o.unit : ''} (출처 ${o.from})`).join(' · ')}. 잘못된 측정이면 그 관찰 기록에 retracted 를 표시한 뒤에 지운다`); continue; }
+        if (lost.length) { ERR('RULE-0130', rid, `측정의 파생값은 지울 수 없음 — ${lost.map((o) => `${o.property} ${o.value}${o.unit ? ' ' + o.unit : ''} (출처 ${o.from})`).join(' · ')}. 잘못된 측정이면 그 관찰 기록에 retracted 를 표시한 뒤에 지운다`); continue; }
         db.senses[rid] = nd; report.updated.push(rid); touched.push([rid, nd]);
         continue;
       }
       const tid = termOf(raw.term, rid || 'senses');
       if (!tid) continue;
       if (preSenses.get(tid) && !d.distinction) {
-        ERR(rid || tid, `'${db.terms[tid].names.ko}'(${tid}) 에는 이미 뜻이 있음 (${ix0.termSenses.get(tid).join(', ')}) — 고치려면 기존 번호를, 새 뜻이면 distinction 에 차이를 적을 것`);
+        ERR('RULE-0324', rid || tid, `'${db.terms[tid].names.ko}'(${tid}) 에는 이미 뜻이 있음 (${ix0.termSenses.get(tid).join(', ')}) — 고치려면 기존 번호를, 새 뜻이면 distinction 에 차이를 적을 것`);
         continue;
       }
       d.term = tid;
@@ -137,11 +137,11 @@
     // 3. 단계
     const touchedSteps = [];
     for (const raw of arr(patchIn.steps)) {
-      if (!isObj(raw)) { ERR('steps', '단계 항목이 객체가 아님'); continue; }
+      if (!isObj(raw)) { ERR('RULE-0505', 'steps', '단계 항목이 객체가 아님'); continue; }
       const st = normStep(raw), rid = str(raw.id);
       let id;
       if (rid && !isTemp('S', rid)) {
-        if (!db.steps[rid]) { ERR(rid, '없는 단계 번호 — 새 단계는 임시 번호(S+1)를 쓸 것'); continue; }
+        if (!db.steps[rid]) { ERR('RULE-0060', rid, '없는 단계 번호 — 새 단계는 임시 번호(S+1)를 쓸 것'); continue; }
         id = rid; report.updated.push(id);
       } else { id = alloc('S'); if (rid) report.idmap[rid] = id; report.added.push(id); }
       db.steps[id] = st; touchedSteps.push([id, st]);
@@ -149,11 +149,11 @@
     // 3b. 한계
     const touchedLimits = [];
     for (const raw of arr(patchIn.limitations)) {
-      if (!isObj(raw)) { ERR('limitations', '한계 항목이 객체가 아님'); continue; }
+      if (!isObj(raw)) { ERR('RULE-0505', 'limitations', '한계 항목이 객체가 아님'); continue; }
       const l = normLimitation(raw), rid = str(raw.id);
       let id;
       if (rid && !isTemp('L', rid)) {
-        if (!db.limitations[rid]) { ERR(rid, '없는 한계 번호 — 새 한계는 임시 번호(L+1)를 쓸 것'); continue; }
+        if (!db.limitations[rid]) { ERR('RULE-0060', rid, '없는 한계 번호 — 새 한계는 임시 번호(L+1)를 쓸 것'); continue; }
         id = rid; report.updated.push(id);
       } else { id = alloc('L'); if (rid) report.idmap[rid] = id; report.added.push(id); }
       db.limitations[id] = l; touchedLimits.push([id, l]);
@@ -161,13 +161,13 @@
     // 3c. 관찰 기록 (v10, docs/design/observation-port.md) — 새 기록만. 기존 번호에는 철회 표시(retracted)만 더할 수 있다
     const touchedObs = [];
     for (const raw of arr(patchIn.observations)) {
-      if (!isObj(raw)) { ERR('observations', '관찰 항목이 객체가 아님'); continue; }
+      if (!isObj(raw)) { ERR('RULE-0505', 'observations', '관찰 항목이 객체가 아님'); continue; }
       const rid = str(raw.id);
       if (rid && !isTemp('O', rid)) {
         const o = db.observations[rid];
-        if (!o) { ERR(rid, '없는 관찰 번호 — 새 관찰은 임시 번호(O+1)를 쓸 것'); continue; }
+        if (!o) { ERR('RULE-0060', rid, '없는 관찰 번호 — 새 관찰은 임시 번호(O+1)를 쓸 것'); continue; }
         const extra = Object.keys(raw).filter((k) => !['id', 'retracted'].includes(k));
-        if (extra.length || !isObj(raw.retracted)) { ERR(rid, `관찰 기록은 바꿀 수 없음 — 기존 번호에는 retracted 만 (적은 필드: ${extra.join(', ') || '없음'})`); continue; }
+        if (extra.length || !isObj(raw.retracted)) { ERR('RULE-0448', rid, `관찰 기록은 바꿀 수 없음 — 기존 번호에는 retracted 만 (적은 필드: ${extra.join(', ') || '없음'})`); continue; }
         db.observations[rid] = { ...o, retracted: normObservation({ retracted: raw.retracted }).retracted };
         report.updated.push(rid);
         continue;
@@ -181,14 +181,14 @@
       if (!r) return r;
       if (report.idmap[r]) return report.idmap[r];
       const x = resolveRef(ix, r);
-      if (x.error) { ERR(where, x.error); return r; }
+      if (x.error) { ERR('RULE-0004', where, x.error); return r; }
       if (x.via !== 'id') MAP(r, x.id, x.via);
       return x.id;
     };
     const voc = (table, value, where) => {
       if (value == null || value === '') return value;
       const m = mapVocab(table, value);
-      if (m.error) { ERR(where, m.error); return value; }
+      if (m.error) { ERR('RULE-0330', where, m.error); return value; }
       if (m.mapped) MAP(value, m.key, VNAME[table]);
       return m.key;
     };
@@ -279,7 +279,7 @@
     }
     for (const [id, st] of touchedSteps) {
       const m = st.rule.match(/^(.*)\/rule\/(.+)$/);
-      if (!m) ERR(id, `규칙 참조 '${st.rule}' 형식 — 'D…/rule/키' 또는 { owner, id }`);
+      if (!m) ERR('RULE-0069', id, `규칙 참조 '${st.rule}' 형식 — 'D…/rule/키' 또는 { owner, id }`);
       else st.rule = `${ref(m[1], `${id} 규칙 소유자`)}/rule/${m[2]}`;
       for (const k of ['agents', 'inputs', 'outputs', 'regulators']) for (const p of st[k]) {
         if (p.b) {
@@ -288,7 +288,7 @@
           continue;
         }
         const raw = p.raw; delete p.raw;
-        const feats = raw.features.map((f) => { const i = f.indexOf(':'); return i > 0 ? { site: f.slice(0, i), feature: voc('features', f.slice(i + 1), id) } : (ERR(id, `특징 '${f}' 형식 — '부위:특징'`), null); }).filter(Boolean);
+        const feats = raw.features.map((f) => { const i = f.indexOf(':'); return i > 0 ? { site: f.slice(0, i), feature: voc('features', f.slice(i + 1), id) } : (ERR('RULE-0359', id, `특징 '${f}' 형식 — '부위:특징'`), null); }).filter(Boolean);
         p.b = bundleKey({ base: ref(raw.ref, `${id} 참여자`), features: feats, location: voc('locations', raw.location, id) });
       }
       st.part_of = st.part_of.map((p) => ref(p, `${id} 소속 경로`));
@@ -358,7 +358,7 @@
     for (const r of arr(patchIn.remove).map(str)) {
       if (db.steps[r]) { delete db.steps[r]; report.removed.push(r); continue; }
       if (db.limitations[r]) { delete db.limitations[r]; report.removed.push(r); continue; }
-      if (db.observations[r]) { ERR(r, '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시'); continue; }
+      if (db.observations[r]) { ERR('RULE-0110', r, '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시'); continue; }
       if (db.terms[r]) {
         for (const [sid, s] of Object.entries(db.senses)) if (s.term === r) { delete db.senses[sid]; gone.add(sid); report.removed.push(sid); }
         delete db.terms[r]; report.removed.push(r); continue;
@@ -369,14 +369,14 @@
         if (!Object.values(db.senses).some((s) => s.term === tid)) { delete db.terms[tid]; report.removed.push(tid); }
         continue;
       }
-      ERR(r, '삭제 대상 없음 (번호로 지정할 것)');
+      ERR('RULE-0505', r, '삭제 대상 없음 (번호로 지정할 것)');
     }
     // 5b. 번호 이동 (형식 v12 §6): { "D000123": { to: ["D000045"], kind: "merge" | "split", why } } — 옛 번호는 지우고 이동 기록을 남긴다.
     //   옛 번호를 가리키던 참조는 같은 패치가 새 번호로 고쳐 적어야 한다(사법부가 남은 참조를 거부). 값은 대상이 사라져 철회된다
     if (isObj(patchIn.moved)) for (const [from, m] of Object.entries(patchIn.moved)) {
       const t = ({ T: db.terms, D: db.senses, S: db.steps })[from[0]];
-      if (!isObj(m) || !t || !t[from]) { ERR(from, '이동할 번호가 없음 (개념·정의항·단계 번호로)'); continue; }
-      if (db.moved && db.moved[from]) { ERR(from, '이미 이동된 번호'); continue; }
+      if (!isObj(m) || !t || !t[from]) { ERR('RULE-0122', from, '이동할 번호가 없음 (개념·정의항·단계 번호로)'); continue; }
+      if (db.moved && db.moved[from]) { ERR('RULE-0122', from, '이미 이동된 번호'); continue; }
       if (from[0] === 'D') { const tid = db.senses[from].term; delete db.senses[from]; gone.add(from); if (!Object.values(db.senses).some((x) => x.term === tid)) { delete db.terms[tid]; report.removed.push(tid); } }
       else delete t[from];
       report.removed.push(from);
@@ -423,7 +423,7 @@
       const dead = subject.includes('/rule/') ? !liveRules.has(subject) : !db.senses[subject];
       if (dead) for (const [id] of list) if (!db.values[id].retracted) retract(id, `대상이 없어짐 — ${why || '이유 없음'}`);
     }
-    if ((ops.added.length || ops.superseded.length) && !recordedAt) ERR('패치', '값이 바뀌는데 recorded_at 이 없음 — 병합 전에 dbtool 이 찍는다 (형식 v12, 재생 결정론)');
+    if ((ops.added.length || ops.superseded.length) && !recordedAt) ERR('RULE-0126', '패치', '값이 바뀌는데 recorded_at 이 없음 — 병합 전에 dbtool 이 찍는다 (형식 v12, 재생 결정론)');
     report.values = ops;
     M.attachViews(db);
   }

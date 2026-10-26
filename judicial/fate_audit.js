@@ -31,11 +31,11 @@ function concFns(r) {
 function judgeFate(db, r, ctx) {
   db = M.normalize(db);
   ctx = ctx || {};
-  const ix = M.index(db), sc = ctx.scenario || {}, audit = [], AE = (fault, code, where, msg, suggestion) => audit.push({ code, fault, where, msg, suggestion }); // fault: judicial/fault.js
+  const ix = M.index(db), sc = ctx.scenario || {}, audit = [], AE = (rule, fault, code, where, msg, suggestion) => audit.push({ code, fault, where, msg, suggestion, rule }); // fault: judicial/fault.js
   // ⓪ 원자료 계약 (schemas/ffi/fate-raw.schema.json) — 어긴 원자료는 판정하지 않는다 (JS·Rust 어느 엔진이든 같은 계약)
   const contract = checkFateRaw(r);
   if (!contract.ok) {
-    for (const x of contract.violations.slice(0, 10)) AE('ENGINE_DEFECT', 'AUDIT_SCHEMA', x.path, `원자료 계약 위반: ${x.msg}`, '엔진(행정부) 출력이 FFI 계약과 다름 — 엔진 오류');
+    for (const x of contract.violations.slice(0, 10)) AE('RULE-0213', 'ENGINE_DEFECT', 'AUDIT_SCHEMA', x.path, `원자료 계약 위반: ${x.msg}`, '엔진(행정부) 출력이 FFI 계약과 다름 — 엔진 오류');
     return { error: `원자료 계약 위반 ${contract.violations.length}건 — 판정하지 않음 (${contract.violations.slice(0, 3).map((x) => `${x.path}: ${x.msg}`).join(' · ')})`, audit, contract };
   }
   // ⓪-2 IR·기호 도함수 (조정자가 넘긴 IR 이 있을 때): 해시·엔진이 먹은 IR 과 같은지·법칙 충실도·자동미분 대비 도함수
@@ -45,30 +45,30 @@ function judgeFate(db, r, ctx) {
     irCheck.consumed = r.irHash === ctx.ir.hash;
     irCheck.ruleOrder = ctx.ir.rules.map((x) => x.ref).join() === r.process.ruleInfo.map((x) => x.ref).join();
     irCheck.ok = irCheck.ok && irCheck.consumed && irCheck.ruleOrder;
-    if (!irCheck.consumed) AE('ENGINE_DEFECT', 'AUDIT_SCHEMA', 'IR', `엔진이 먹은 IR(${String(r.irHash).slice(0, 12)})이 조정자가 넘긴 IR(${ctx.ir.hash.slice(0, 12)})과 다름`, '같은 IR 로 다시 실행');
-    if (!irCheck.hashOK || irCheck.problems.length || !irCheck.ruleOrder) AE('COMPILER_DEFECT', 'AUDIT_SCHEMA', 'IR', `IR 충실도 위반: ${[...(irCheck.hashOK ? [] : ['해시']), ...(irCheck.ruleOrder ? [] : ['규칙 순서']), ...irCheck.problems].slice(0, 4).join(' · ')}`, '컴파일러(compiler/ir_builder.js) 오류 또는 IR 변조');
-    if (irCheck.missingDeps.length || irCheck.rateWorst > irCheck.tolerance || irCheck.derivWorst > irCheck.tolerance || irCheck.factorWorst > irCheck.tolerance || irCheck.fdWorst > irCheck.fdTolerance) AE('COMPILER_DEFECT', 'AUDIT_KINETIC', 'IR', `기호 도함수 검사 실패 — 속도 ${irCheck.rateWorst.toExponential(1)} · 도함수 ${irCheck.derivWorst.toExponential(1)} · 배율 ${irCheck.factorWorst.toExponential(1)} · 유한차분 ${irCheck.fdWorst.toExponential(1)}${irCheck.missingDeps.length ? ` · 빠진 의존 ${irCheck.missingDeps.slice(0, 3).join(', ')}` : ''}`, '컴파일러의 미분 규칙 오류');
+    if (!irCheck.consumed) AE('RULE-0032', 'ENGINE_DEFECT', 'AUDIT_SCHEMA', 'IR', `엔진이 먹은 IR(${String(r.irHash).slice(0, 12)})이 조정자가 넘긴 IR(${ctx.ir.hash.slice(0, 12)})과 다름`, '같은 IR 로 다시 실행');
+    if (!irCheck.hashOK || irCheck.problems.length || !irCheck.ruleOrder) AE('RULE-0032', 'COMPILER_DEFECT', 'AUDIT_SCHEMA', 'IR', `IR 충실도 위반: ${[...(irCheck.hashOK ? [] : ['해시']), ...(irCheck.ruleOrder ? [] : ['규칙 순서']), ...irCheck.problems].slice(0, 4).join(' · ')}`, '컴파일러(compiler/ir_builder.js) 오류 또는 IR 변조');
+    if (irCheck.missingDeps.length || irCheck.rateWorst > irCheck.tolerance || irCheck.derivWorst > irCheck.tolerance || irCheck.factorWorst > irCheck.tolerance || irCheck.fdWorst > irCheck.fdTolerance) AE('RULE-0037', 'COMPILER_DEFECT', 'AUDIT_KINETIC', 'IR', `기호 도함수 검사 실패 — 속도 ${irCheck.rateWorst.toExponential(1)} · 도함수 ${irCheck.derivWorst.toExponential(1)} · 배율 ${irCheck.factorWorst.toExponential(1)} · 유한차분 ${irCheck.fdWorst.toExponential(1)}${irCheck.missingDeps.length ? ` · 빠진 의존 ${irCheck.missingDeps.slice(0, 3).join(', ')}` : ''}`, '컴파일러의 미분 규칙 오류');
   }
   const rules = r.process.ruleInfo, { distance, rawDistance } = distanceFns(db, r), { at, concAt, factorsAt } = concFns(r);
   // ① 원자료 사실
   for (const f of r.facts) {
-    if (f.kind === 'not_supply') AE('DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.ref, '공급 규칙이 아님 — 계에서 뺌');
-    else if (f.kind === 'step_rule_missing') AE('DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.step, `단계의 규칙 ${f.ref} 이 없음 — 계에서 뺌`);
-    else if (f.kind === 'step_law_unsupported') AE('DATA_GAP', 'AUDIT_KINETIC', f.step, `속도 법칙 ${f.law} 는 기전 단계의 결합 적분에서 아직 다루지 않음 — 단계를 끔`, J.gapSuggest(db, ix, f.ref, 'Kinetic_Gap'));
-    else if (f.kind === 'step_volume_unknown') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.step, `반응 부피(${f.location || '3D 참여자 없음'})를 몰라 단계를 끔`, J.gapSuggest(db, ix, f.ref, 'Concentration_Gap'));
-    else if (f.kind === 'recycle_ignored') AE('DATA_GAP', 'AUDIT_SCHEMA', f.ref, '재활용 분해는 운명 층에서 아직 다루지 않음 — 소실로 처리');
-    else if (f.kind === 'volume_unknown') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, `구획 ${f.location} 부피를 모름 — 농도 0 으로 계산`, J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
-    else if (f.kind === 'threshold_missing') AE('DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, '표지 문턱(thresholds[묶음] = { high, low })이 없음 — 상태를 판정할 수 없음', J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
+    if (f.kind === 'not_supply') AE('RULE-0133', 'DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.ref, '공급 규칙이 아님 — 계에서 뺌');
+    else if (f.kind === 'step_rule_missing') AE('RULE-0360', 'DOMAIN_CONFLICT', 'AUDIT_SCHEMA', f.step, `단계의 규칙 ${f.ref} 이 없음 — 계에서 뺌`);
+    else if (f.kind === 'step_law_unsupported') AE('RULE-0168', 'DATA_GAP', 'AUDIT_KINETIC', f.step, `속도 법칙 ${f.law} 는 기전 단계의 결합 적분에서 아직 다루지 않음 — 단계를 끔`, J.gapSuggest(db, ix, f.ref, 'Kinetic_Gap'));
+    else if (f.kind === 'step_volume_unknown') AE('RULE-0169', 'DATA_GAP', 'AUDIT_CONCENTRATION', f.step, `반응 부피(${f.location || '3D 참여자 없음'})를 몰라 단계를 끔`, J.gapSuggest(db, ix, f.ref, 'Concentration_Gap'));
+    else if (f.kind === 'recycle_ignored') AE('RULE-0385', 'DATA_GAP', 'AUDIT_SCHEMA', f.ref, '재활용 분해는 운명 층에서 아직 다루지 않음 — 소실로 처리');
+    else if (f.kind === 'volume_unknown') AE('RULE-0081', 'DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, `구획 ${f.location} 부피를 모름 — 농도 0 으로 계산`, J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
+    else if (f.kind === 'threshold_missing') AE('RULE-0152', 'DATA_GAP', 'AUDIT_CONCENTRATION', f.bundle, '표지 문턱(thresholds[묶음] = { high, low })이 없음 — 상태를 판정할 수 없음', J.gapSuggest(db, ix, r.source, 'Concentration_Gap'));
   }
   // ② 독립 질량 검증
   const v = verifyFate(db, r);
-  for (const x of v.stoichMismatch) AE('ENGINE_DEFECT', 'AUDIT_MASS', x.ref, `화학량 대조 실패 — ${x.msg}`, '엔진이 데이터베이스 규칙과 다른 화학량을 썼음: 엔진 오류');
-  for (const x of v.violations) AE('DOMAIN_CONFLICT', 'AUDIT_MASS', x.moiety, `부분 구조 ${ix.label(x.moiety)} 가 균형 잡히지 않은 규칙으로 ${x.amount.toExponential(3)} 만큼 바뀜`, '규칙의 소비·생성을 고치거나 source/소실로 명시');
-  if (v.replayWorst > v.tolerance) AE('ENGINE_DEFECT', 'AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${v.replayWorst.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
-  if (v.worst > v.tolerance) AE('ENGINE_DEFECT', 'AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${v.worst.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
-  for (const x of v.negatives) AE('ENGINE_DEFECT', 'AUDIT_MASS', x.bundle, `음수 양 ${x.value}`, '엔진 오류');
+  for (const x of v.stoichMismatch) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', x.ref, `화학량 대조 실패 — ${x.msg}`, '엔진이 데이터베이스 규칙과 다른 화학량을 썼음: 엔진 오류');
+  for (const x of v.violations) AE('RULE-0010', 'DOMAIN_CONFLICT', 'AUDIT_MASS', x.moiety, `부분 구조 ${ix.label(x.moiety)} 가 균형 잡히지 않은 규칙으로 ${x.amount.toExponential(3)} 만큼 바뀜`, '규칙의 소비·생성을 고치거나 source/소실로 명시');
+  if (v.replayWorst > v.tolerance) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${v.replayWorst.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
+  if (v.worst > v.tolerance) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${v.worst.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
+  for (const x of v.negatives) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', x.bundle, `음수 양 ${x.value}`, '엔진 오류');
   // ②-2 수치: 최소 단계에서도 오차·양수성 시험을 통과하지 못해 그대로 받아들인 단계, 특이 행렬 (원장은 맞지만 적분기가 한계에 닿음 — 결합점·솔버 쪽)
-  if (r.stats.hMinHits > 0 || r.stats.singular > 0) AE('NUMERICAL', 'AUDIT_KINETIC', '수치', `Rodas3 최소 단계(h_min)에서 허용 오차를 넘긴 채 받아들인 단계 ${r.stats.hMinHits}회 · 특이 행렬 ${r.stats.singular}회 (받아들인 ${r.stats.steps}, 거부 ${r.stats.rejected}, 그중 음수 ${r.stats.rejectedNeg})`, '결합점(integrator.rtol·atol·h_min) 또는 솔버 단계 제어를 조정 — 생물 상수는 바꾸지 않는다');
+  if (r.stats.hMinHits > 0 || r.stats.singular > 0) AE('RULE-0137', 'NUMERICAL', 'AUDIT_KINETIC', '수치', `Rodas3 최소 단계(h_min)에서 허용 오차를 넘긴 채 받아들인 단계 ${r.stats.hMinHits}회 · 특이 행렬 ${r.stats.singular}회 (받아들인 ${r.stats.steps}, 거부 ${r.stats.rejected}, 그중 음수 ${r.stats.rejectedNeg})`, '결합점(integrator.rtol·atol·h_min) 또는 솔버 단계 제어를 조정 — 생물 상수는 바꾸지 않는다');
   // ③ 분화 정지
   const target = r.target, traj = r.trajectory;
   let arrest = null;
@@ -82,16 +82,16 @@ function judgeFate(db, r, ctx) {
   // ④ 사후 분석
   const sigOn = new Set(r.process.schedule.filter((s) => s.list.some((e) => e.n > 0)).map((s) => s.bundle.split('|')[0]));
   const pm = target && !r.firstReach[target] ? postMortem(db, ix, r, { target, concAt, at, sigOn }) : null;
-  if (pm) AE('FINDING', 'AUDIT_FATE', target, `분화 정지 — ${ix.label(target)} 에 도달하지 못함 (원인 ${pm.cause}${pm.limiting ? ', 제한 ' + pm.limiting.label : ''})`, pm.suggestion);
+  if (pm) AE('RULE-0039', 'FINDING', 'AUDIT_FATE', target, `분화 정지 — ${ix.label(target)} 에 도달하지 못함 (원인 ${pm.cause}${pm.limiting ? ', 제한 ' + pm.limiting.label : ''})`, pm.suggestion);
   // ⑤ 소비만 되는 저장소 (재생 경로 없음)
-  for (const [b, x] of Object.entries(r.reservoirs)) { const prod = rules.some((R) => R.prods.some((q) => q[0] === b)); if (!prod && !x.buffered) AE('DATA_GAP', 'AUDIT_RESOURCE', b, `${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (시작 ${+x.start.toPrecision(4)}, 끝 ${+x.end.toPrecision(4)})`, fateSuggest(db, ix, b, 'Resource_Gap', rules)); }
+  for (const [b, x] of Object.entries(r.reservoirs)) { const prod = rules.some((R) => R.prods.some((q) => q[0] === b)); if (!prod && !x.buffered) AE('RULE-0135', 'DATA_GAP', 'AUDIT_RESOURCE', b, `${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (시작 ${+x.start.toPrecision(4)}, 끝 ${+x.end.toPrecision(4)})`, fateSuggest(db, ix, b, 'Resource_Gap', rules)); }
   // ⑥ 상수 등급 (신뢰 지표 ②): 시뮬레이션이 읽은 상수마다 등급을 계산해 문턱(기본 parameter) 미달을 잡는다.
   //   가상 값(시나리오)은 등급 밖 — 시나리오가 hypothetical 을 선언했을 때만 허용한다. 엔진·데이터를 고치지 않고 판결로만 낸다.
   let grades = null;
   if (ctx.ir) {
     grades = REL.constantVerdict(ctx.ir, sc, { stamps: ctx.stamps });
-    if (grades.error) AE('DATA_GAP', 'AUDIT_KINETIC', '상수 등급', grades.error);
-    else for (const x of grades.violations.slice(0, 10)) AE('DATA_GAP', 'AUDIT_KINETIC', x.ref, `상수 등급: ${x.msg}`, x.grade === 'hypothetical' ? '시나리오에 hypothetical: true 를 적거나 확인된 상수를 데이터에 넣을 것' : J.gapSuggest(db, ix, x.ref, 'Kinetic_Gap'));
+    if (grades.error) AE('RULE-0103', 'DATA_GAP', 'AUDIT_KINETIC', '상수 등급', grades.error);
+    else for (const x of grades.violations.slice(0, 10)) AE('RULE-0103', 'DATA_GAP', 'AUDIT_KINETIC', x.ref, `상수 등급: ${x.msg}`, x.grade === 'hypothetical' ? '시나리오에 hypothetical: true 를 적거나 확인된 상수를 데이터에 넣을 것' : J.gapSuggest(db, ix, x.ref, 'Kinetic_Gap'));
   }
   // ⑦ 궤적 해시 (결정론 판정용 지문)
   const hash = trajectoryHash(r);
@@ -217,17 +217,17 @@ function fateText(r) {
 function contextVerdict(r, sc) {
   const c = (sc || {}).context;
   if (!c) return { declared: false };
-  const role = c.role, state = c.state, out = { declared: true, role, state, note: c.note || null, problems: [] };
-  if (!['cause', 'requirement', 'baseline'].includes(role)) out.problems.push(`맥락 role '${role}' — cause | requirement | baseline`);
-  if (!r.states.includes(state)) out.problems.push(`맥락 상태 '${state}' 가 이 실행의 상태 집합에 없음`);
+  const role = c.role, state = c.state, out = { declared: true, role, state, note: c.note || null, problems: [], rules: [] }, prob = (rule, m) => { out.problems.push(m); out.rules.push(rule); }; // rules[i] = problems[i] 의 규칙 번호
+  if (!['cause', 'requirement', 'baseline'].includes(role)) prob('RULE-0172', `맥락 role '${role}' — cause | requirement | baseline`);
+  if (!r.states.includes(state)) prob('RULE-0172', `맥락 상태 '${state}' 가 이 실행의 상태 집합에 없음`);
   const driven = r.transitions.filter((t) => t.driven);
   if (role === 'cause' || role === 'requirement') {
-    if (state === r.source) out.problems.push(`${role} 의 대상은 시작 상태가 아니라 전이의 목표여야 함`);
-    else if (!driven.some((t) => t.to === state)) out.problems.push(`'${state}' 로 가는 전이의 신호가 일정에서 켜지지 않음 — ${role === 'cause' ? '원인' : '필수성'}을 보이는 실행이 아님`);
+    if (state === r.source) prob('RULE-0172', `${role} 의 대상은 시작 상태가 아니라 전이의 목표여야 함`);
+    else if (!driven.some((t) => t.to === state)) prob('RULE-0172', `'${state}' 로 가는 전이의 신호가 일정에서 켜지지 않음 — ${role === 'cause' ? '원인' : '필수성'}을 보이는 실행이 아님`);
     out.outcome = role === 'cause' ? r.firstReach[state] != null : r.firstReach[state] == null;
   } else if (role === 'baseline') {
-    if (state !== r.source) out.problems.push('baseline 의 대상은 시작 상태여야 함');
-    if (driven.length) out.problems.push(`전이 신호가 켜짐 (${driven.map((t) => t.to).join(', ')}) — 일반 상황이 아님`);
+    if (state !== r.source) prob('RULE-0172', 'baseline 의 대상은 시작 상태여야 함');
+    if (driven.length) prob('RULE-0172', `전이 신호가 켜짐 (${driven.map((t) => t.to).join(', ')}) — 일반 상황이 아님`);
     out.outcome = r.final.state === state && (r.trajectory || []).every((x) => x.cls.state === state || x.cls.state == null);
   }
   out.consistent = !out.problems.length;

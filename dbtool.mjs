@@ -721,7 +721,7 @@ switch (cmd) {
       const rawO = readJSON(args[0]), shape = K.checkObservation(rawO);
       if (!shape.ok) die('관찰 계약 위반 (schemas/obs/observation.schema.json):\n' + shape.violations.map((v) => `  ${v.path}: ${v.msg}`).join('\n'));
       o = DefDB.normalize({ ...db, observations: { O999999: rawO } }).observations.O999999;
-      const E = [], ix = DefDB.index(db); J.validateObservation(db, ix, 'O999999', o, (w, msg) => E.push(msg), () => {});
+      const E = [], ix = DefDB.index(db); J.validateObservation(db, ix, 'O999999', o, (rule, w, msg) => E.push(msg), () => {});
       const real = E.filter((m) => !/합성\(hypothetical\)/.test(m));
       if (real.length) die('관찰 의미 검사 실패:\n' + real.map((m) => '  ' + m).join('\n'));
       if (o.hypothetical) console.log('※ 합성(hypothetical) 관찰 — 판정 시험용. 데이터베이스에는 넣을 수 없다.\n');

@@ -87,3 +87,34 @@ test('⑪ 집행 변이 시험: 형식 오류가 없고, 놓친 규칙은 모두
   assert.match(t, /## 형식 오류\n\n없음\n/);
   assert.match(t, /## 아직 시험 안 함 — 0\n/);
 });
+
+test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인자가 살아 있는 RULE 번호 (5d)', () => {
+  const rules = new Map(readFileSync(join(ROOT, 'rebuild/rules/rules.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).map((r) => [r.id, r]));
+  // 파일 → 오류를 내는 도우미 (정의 줄은 '= (rule,' 로 시작해 건너뛴다)
+  //   객체로 쌓는 모듈은 오류 객체의 rule 칸, 문자열로 쌓는 모듈은 같은 순서의 rules 목록 (rules[i] ↔ errors[i])
+  const SITES = { 'judicial/judicial.js': ['E', 'W', 'AE'], 'legislative/legislative.js': ['ERR'], 'legislative/clerk.mjs': ['refuse'], 'judicial/fate_audit.js': ['AE', 'prob'], 'judicial/contract.js': ['E'],
+    'judicial/assumption_audit.js': ['E', 'err'], 'judicial/dictionary_audit.js': ['err'], 'judicial/log_audit.js': ['err'], 'judicial/protocol.js': ['prob'], 'judicial/collection_audit.js': ['push', 'err'],
+    'judicial/derivative.js': ['err'], 'judicial/identity.js': ['fail'], 'judicial/perturb_audit.js': ['P'] };
+  const bad = [], used = new Set(); let n = 0;
+  for (const [f, names] of Object.entries(SITES)) {
+    const lines = readFileSync(join(ROOT, f), 'utf8').split('\n');
+    lines.forEach((line, i) => {
+      if (/^\s*\/\//.test(line)) return;
+      for (const m of line.matchAll(new RegExp(`(?<![.\\w$])(${names.join('|')})\\(\\s*([^,)]*)`, 'g'))) {
+        if (/=\s*$/.test(line.slice(0, m.index))) continue; // 도우미 정의
+        n++;
+        const id = (m[2].match(/^'(RULE-\d{4})'$/) || [])[1];
+        if (!id && /^(?:[\w.]+\.)?rules\[\w+\]$|^rule$/.test(m[2].trim())) continue; // 앞 검사가 정한 번호를 그대로 넘김
+        if (!id) bad.push(`${f}:${i + 1} ${m[1]}( 첫 인자가 규칙 번호가 아님: ${m[2].slice(0, 40)}`);
+        else if (!rules.has(id)) bad.push(`${f}:${i + 1} 없는 규칙 ${id}`);
+        else if (rules.get(id).retired) bad.push(`${f}:${i + 1} 은퇴한 규칙 ${id}`);
+        else used.add(id);
+      }
+    });
+  }
+  assert.deepEqual(bad, [], `검사 자리 ${n}`);
+  assert.ok(n >= 550, `검사 자리가 ${n} — 자리를 지웠는지 본다`);
+  // 거꾸로: 코드에서 찾은 규칙(from_code)은 코드 어딘가에서 쓰인다
+  const orphan = [...rules.values()].filter((r) => r.from_code && !used.has(r.id) && !readdirSync(join(ROOT, 'judicial')).some((x) => readFileSync(join(ROOT, 'judicial', x), 'utf8').includes(`'${r.id}'`)));
+  assert.deepEqual(orphan.map((r) => r.id), [], '코드에서 찾은 규칙인데 코드가 쓰지 않음');
+});

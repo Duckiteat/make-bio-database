@@ -36,16 +36,16 @@ function usedAsEvidence(db) {
 
 // ① + ② + ③ — 등록과 무관한 구조 판정 (등록 전에 서기가 봉인을 받을 때 쓴다)
 function protocolStructure(db, sc) {
-  const p = (sc || {}).protocol, problems = [];
-  if (!p) return { declared: false, ok: false, problems: ['규약(protocol) 없음 — 탐색 실행'] };
-  const need = (cond, msg) => { if (!cond) problems.push(msg); };
+  const p = (sc || {}).protocol, problems = [], rules = [], prob = (rule, m) => { problems.push(m); rules.push(rule); }; // rules[i] = problems[i] 를 집행하는 규칙 번호
+  if (!p) return { declared: false, ok: false, problems: ['규약(protocol) 없음 — 탐색 실행'], rules: ['RULE-0182'] };
+  const need = (cond, msg, rule = 'RULE-0244') => { if (!cond) prob(rule, msg); }; // 규약 칸 (RULE-0244)
   need(typeof p.question === 'string' && p.question.trim(), 'question 이 없음 — 무엇을 보이려는지');
   const m = p.matched_experiment || {};
   need(m.source && ['DOI', 'PMID'].includes(m.source.db) && m.source.id, 'matched_experiment.source 가 DOI·PMID 가 아님 — 흉내 내는 실제 실험의 출처');
   need(m.system && m.system.species && m.system.cell && m.system.condition, 'matched_experiment.system 에 species·cell·condition 이 다 있어야 함');
   need(Array.isArray(m.readout_times_s) && m.readout_times_s.length && m.readout_times_s.every((t) => t >= 0), 'matched_experiment.readout_times_s 가 없음 — 실제 실험의 측정 시점(s)');
   const c = p.controls || {};
-  need(c.negative && typeof c.negative === 'object' && c.negative.description, 'controls.negative 가 없음 — 음성 대조(일어나지 않아야 할 조건)는 필수');
+  need(c.negative && typeof c.negative === 'object' && c.negative.description, 'controls.negative 가 없음 — 음성 대조(일어나지 않아야 할 조건)는 필수', 'RULE-0180');
   need(Array.isArray(p.readouts) && p.readouts.length, 'readouts 가 없음');
   for (const [i, r] of (p.readouts || []).entries()) {
     need(r.observable && OBS_KINDS.includes(r.observable.kind) && r.observable.target, `readouts[${i}]: observable { kind: ${OBS_KINDS.join('|')}, target } 필요`);
@@ -55,37 +55,37 @@ function protocolStructure(db, sc) {
   // ② 반복 수
   const stoch = !!sc.stochastic, r = p.replicates || {}, req = stoch ? requiredReplicates(r) : 1;
   if (stoch) {
-    need(Number.isInteger(r.n) && r.n > 0, 'replicates.n 이 없음 — 확률 실행의 앙상블 크기');
-    need(req != null, 'replicates 에 effect_size·sd(예상 효과 크기·예상 퍼짐)가 없어 검정력으로 n 을 정할 수 없음');
-    if (req != null && Number.isInteger(r.n)) need(r.n >= req, `replicates.n ${r.n} < 검정력 요구 ${req} (Δ ${r.effect_size}, σ ${r.sd}, α ${r.alpha != null ? r.alpha : S.ALPHA}, 검정력 ${r.power != null ? r.power : S.POWER})`);
-  } else need(r.n == null || r.n === 1, '결정론 실행인데 replicates.n ≠ 1');
-  need(p.stopping && p.stopping.fixed_n === true, 'stopping.fixed_n: true 필요 — 결과를 보고 반복 수를 바꾸지 않는다');
+    need(Number.isInteger(r.n) && r.n > 0, 'replicates.n 이 없음 — 확률 실행의 앙상블 크기', 'RULE-0180');
+    need(req != null, 'replicates 에 effect_size·sd(예상 효과 크기·예상 퍼짐)가 없어 검정력으로 n 을 정할 수 없음', 'RULE-0180');
+    if (req != null && Number.isInteger(r.n)) need(r.n >= req, `replicates.n ${r.n} < 검정력 요구 ${req} (Δ ${r.effect_size}, σ ${r.sd}, α ${r.alpha != null ? r.alpha : S.ALPHA}, 검정력 ${r.power != null ? r.power : S.POWER})`, 'RULE-0180');
+  } else need(r.n == null || r.n === 1, '결정론 실행인데 replicates.n ≠ 1', 'RULE-0180');
+  need(p.stopping && p.stopping.fixed_n === true, 'stopping.fixed_n: true 필요 — 결과를 보고 반복 수를 바꾸지 않는다', 'RULE-0180');
   // ③ 검증 세트
   const used = usedAsEvidence(db), obs = db.observations || {};
-  need(Array.isArray(p.validation) && p.validation.length, 'validation 이 없음 — 검증 관찰 번호 목록');
+  need(Array.isArray(p.validation) && p.validation.length, 'validation 이 없음 — 검증 관찰 번호 목록', 'RULE-0180');
   for (const id of p.validation || []) {
     const o = obs[id];
-    if (!o) { problems.push(`validation ${id}: 관찰 기록이 없음`); continue; }
-    if (o.use !== 'validation') problems.push(`validation ${id}: 용도가 ${o.use} — 추정용 관찰로 검증하면 순환`);
-    if (o.retracted) problems.push(`validation ${id}: 철회된 관찰`);
-    if (used.has(id)) problems.push(`validation ${id}: 어떤 값의 근거(from)로 쓰이고 있음 — 추정·검증 분리 위반`);
+    if (!o) { prob('RULE-0120', `validation ${id}: 관찰 기록이 없음`); continue; }
+    if (o.use !== 'validation') prob('RULE-0120', `validation ${id}: 용도가 ${o.use} — 추정용 관찰로 검증하면 순환`);
+    if (o.retracted) prob('RULE-0120', `validation ${id}: 철회된 관찰`);
+    if (used.has(id)) prob('RULE-0120', `validation ${id}: 어떤 값의 근거(from)로 쓰이고 있음 — 추정·검증 분리 위반`);
   }
   if (p.equivalence) for (const [i, e] of p.equivalence.entries()) need(e.observable && e.delta > 0, `equivalence[${i}]: { observable, delta > 0, scale, evidence } 필요`);
-  if (sc.equivalence) problems.push('equivalence 는 protocol 안에만 둔다 (최상위 equivalence 는 쓰지 않음)');
-  return { declared: true, ok: !problems.length, problems, required_n: req, hash: scenarioHash(sc) };
+  if (sc.equivalence) prob('RULE-0180', 'equivalence 는 protocol 안에만 둔다 (최상위 equivalence 는 쓰지 않음)');
+  return { declared: true, ok: !problems.length, problems, rules, required_n: req, hash: scenarioHash(sc) };
 }
 
 // 사전 등록부 사슬: 사건 = { seq, at, scenario_sha256, name, question, prev } · root = sha256(prev + '\n' + 정준 JSON), 첫 prev = PREREG_GENESIS
 function verifyPreregChain(entries) {
-  const errors = []; let prev = PREREG_GENESIS;
+  const errors = [], rules = [], err = (rule, m) => { errors.push(m); rules.push(rule); }; let prev = PREREG_GENESIS;
   entries.forEach((e, i) => {
     const { root, ...body } = e;
-    if (e.seq !== i + 1) errors.push(`등록 ${i + 1}: seq ${e.seq} — 빠지거나 끼운 등록`);
-    if (e.prev !== prev) errors.push(`등록 ${i + 1}: prev 가 직전 루트와 다름 — 사슬이 끊김`);
-    if (root !== sha(body.prev + '\n' + ATT.canon(body))) errors.push(`등록 ${i + 1}: root 재계산 불일치 — 내용이 바뀜`);
+    if (e.seq !== i + 1) err('RULE-0506', `등록 ${i + 1}: seq ${e.seq} — 빠지거나 끼운 등록`);
+    if (e.prev !== prev) err('RULE-0506', `등록 ${i + 1}: prev 가 직전 루트와 다름 — 사슬이 끊김`);
+    if (root !== sha(body.prev + '\n' + ATT.canon(body))) err('RULE-0506', `등록 ${i + 1}: root 재계산 불일치 — 내용이 바뀜`);
     prev = root;
   });
-  return { ok: !errors.length, errors, head: prev };
+  return { ok: !errors.length, errors, rules, head: prev };
 }
 
 // 전체 판정: 구조 + 사전 등록(실행 시각 runAt 보다 앞선 등록) — ctx = { prereg: [등록 사건], runAt: ISO 시각 }
@@ -94,10 +94,11 @@ function protocolVerdict(db, sc, ctx) {
   const out = protocolStructure(db, sc);
   if (!out.declared) return out;
   const chain = verifyPreregChain(ctx.prereg || []);
-  if (!chain.ok) out.problems.push(...chain.errors.map((e) => '사전 등록부: ' + e));
+  const prob = (rule, m) => { out.problems.push(m); out.rules.push(rule); };
+  if (!chain.ok) chain.errors.forEach((e, i) => prob(chain.rules[i], '사전 등록부: ' + e));
   const hit = (ctx.prereg || []).find((e) => e.scenario_sha256 === out.hash);
-  if (!hit) out.problems.push('사전 등록되지 않은 시나리오 — 등록 뒤 고쳤거나 등록하지 않음 (node dbtool.mjs register <시나리오>)');
-  else if (ctx.runAt && !(Date.parse(hit.at) < Date.parse(ctx.runAt))) out.problems.push(`등록 시각 ${hit.at} 이 실행 시각 ${ctx.runAt} 보다 앞서지 않음`);
+  if (!hit) prob('RULE-0179', '사전 등록되지 않은 시나리오 — 등록 뒤 고쳤거나 등록하지 않음 (node dbtool.mjs register <시나리오>)');
+  else if (ctx.runAt && !(Date.parse(hit.at) < Date.parse(ctx.runAt))) prob('RULE-0179', `등록 시각 ${hit.at} 이 실행 시각 ${ctx.runAt} 보다 앞서지 않음`);
   out.registered = hit ? { seq: hit.seq, at: hit.at } : null;
   out.ok = !out.problems.length;
   out.validation = ((sc.protocol || {}).validation || []).slice();

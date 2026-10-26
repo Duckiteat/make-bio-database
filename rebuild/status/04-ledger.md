@@ -125,7 +125,7 @@
 | 문서 | 단위가 있는 줄 | 빠진 줄 |
 |---|---|---|
 | `CHANGES.md` | 파일 전체 | 없음 |
-| `CLAUDE.md` | 74 | 없음 |
+| `CLAUDE.md` | 74 | 85 |
 | `DESIGN-v4.md` | 152 | 없음 |
 | `FEATURES.md` | 122 | 없음 |
 | `README.md` | 153 | 없음 |
@@ -133,7 +133,7 @@
 | `docs/PROMPTS.md` | 151 | 없음 |
 | `docs/RUNBOOK.md` | 178 | 없음 |
 | `docs/design/abstraction-boundary.md` | 31 | 없음 |
-| `docs/design/agent-rules.md` | 92 | 없음 |
+| `docs/design/agent-rules.md` | 92 | 114 · 117 |
 | `docs/design/authority-and-comprehension.md` | 22 | 없음 |
 | `docs/design/build-plan.md` | 120 | 없음 |
 | `docs/design/cell-fate-engine.md` | 76 | 없음 |
@@ -181,7 +181,7 @@
 | `docs/textbook/01-원칙과-구조.md` | 55 | 없음 |
 | `docs/textbook/02-저장-위치와-방식.md` | 81 | 없음 |
 | `docs/textbook/03-데이터-모델.md` | 116 | 없음 |
-| `docs/textbook/04-알고리즘.md` | 232 | 없음 |
+| `docs/textbook/04-알고리즘.md` | 232 | 89 · 92 · 97 · 98 · 106 · 118 · 128 · 136 · 137 · 143 · 148 · 155 · 158 · 169 · 180 · 187 · 191 · 192 · 198 · 199 · 204 · 211 · 228 · 229 · 236 · 237 · 241 · 242 · 252 · 253 · 260 · 261 · 267 · 268 · 272 · 273 · 278 · 286 · 289 · 294 · 306 · 309 · 313 · 316 · 320 · 328 · 331 · 337 · 338 · 342 · 347 · 354 · 355 · 360 · 363 · 370 · 371 · 375 |
 | `docs/textbook/05-상호작용.md` | 94 | 없음 |
 | `docs/textbook/06-출력-해석.md` | 115 | 없음 |
 | `docs/textbook/07-AI-작업-절차.md` | 117 | 없음 |

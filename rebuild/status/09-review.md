@@ -128,7 +128,7 @@
 | RULE-0229 | machine | bounded(S4,D2)와 parameter(S3,D3)는 서로의 문턱을 넘지 못한다 | CHG-0194: "문턱은 올리기만" 이 글로만 있어 reference 문턱이 통과 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
 | RULE-0084 | machine | 문헌 값은 관찰(O…) 먼저 + kinetics.from (lumped 도 원 관찰 참조) | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
 | RULE-0127 | machine | 정의항 obs 의 curated 측정값은 from: 'O…' | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
-| RULE-0444 | text | (`checkSenseObsFrom` — `checkKineticsFrom` 의 거울). 철회된 관찰이나 `use: valid | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
+| RULE-0444 | machine | (`checkSenseObsFrom` — `checkKineticsFrom` 의 거울). 철회된 관찰이나 `use: valid | CHG-0062: 레드팀 공격 11 건 중 7 건 통과 — 정의항 obs 가 관찰과 안 묶임 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
 | RULE-0109 | machine | 도구 추정(computed·predicted)은 실측이 아님 (D2.estimate) | CHG-0192: 계산값(eQuilibrator ΔG°′ 8 개)이 실측 등급을 받음 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
 | RULE-0231 | machine | 미보고 반복 수는 D3, 비교는 1 회로 본다 | CHG-0192: 계산값(eQuilibrator ΔG°′ 8 개)이 실측 등급을 받음 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |
 | RULE-0433 | text | `evidence` 검증 근거 \| S ≥ 3 ∧ D ≥ 2 ∧ 불일치 아님 \| 기준 종 · 확인된 문헌(S3.unconfi | CHG-0186: DOI 글자만 있으면 S3 — 원고·철회 논문도 포함 | 지금 집행 방식을 5c 에서 거부 시험으로 확인 | — |

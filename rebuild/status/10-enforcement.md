@@ -10,7 +10,7 @@
 | 설정에 있음 `present` | 8 |
 | 본보기에만 있음 (켜지지 않음) `present_template` | 7 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
-| 아직 시험 안 함 (machine) | 0 |
+| 아직 시험 안 함 (machine) | 21 |
 
 ## 형식 오류
 
@@ -290,6 +290,28 @@
 | RULE-0241 | 운명 비율(구간)·도달 시각 분포·표지 퍼짐(Fano)은 judicial/stoch_audit.js | test_only | tests/stochastic.test.mjs |  |
 | RULE-0284 | `tests/rejections.test.mjs` 가 자동으로 잡지만, 사람 눈으로도 한 번 본다. | test_only | tests/rejections.test.mjs |  |
 
-## 아직 시험 안 함 — 0
+## 아직 시험 안 함 — 21
 
-없음
+| 규칙 | 집행 자리 |
+|---|---|
+| RULE-0309 | judicial/judicial.js checkEvidence · judicial/judicial.js checkContext · judicial/judicial.js valida |
+| RULE-0311 | judicial/judicial.js validateSense |
+| RULE-0312 | judicial/judicial.js validateSense |
+| RULE-0334 | judicial/judicial.js validate · judicial/judicial.js validateSense |
+| RULE-0359 | legislative/legislative.js merge |
+| RULE-0435 | judicial/judicial.js validateSense |
+| RULE-0444 | judicial/judicial.js checkSenseObsFrom |
+| RULE-0498 | judicial/judicial.js validate · validateSense · validateStep · validateObservation · validateLimitat |
+| RULE-0499 | judicial/judicial.js validate (개념 기본 칸) |
+| RULE-0500 | judicial/judicial.js validateSense (정의항 기본 칸) |
+| RULE-0501 | judicial/judicial.js validateSense (설명 칸) |
+| RULE-0502 | judicial/judicial.js validateSense (규칙 기본 칸) |
+| RULE-0503 | judicial/judicial.js validateSense · validateStep (전제 조건) |
+| RULE-0504 | judicial/judicial.js validateSense (obs 값) |
+| RULE-0505 | legislative/legislative.js merge (패치 모양) |
+| RULE-0506 | judicial/log_audit.js · collection_audit.js verifyFetchLog · dictionary_audit.js · protocol.js verif |
+| RULE-0507 | legislative/clerk.mjs commitMigration · sealGenesis · registerPrereg · appendDictionary |
+| RULE-0508 | judicial/collection_audit.js verifyFetchLog |
+| RULE-0509 | judicial/log_audit.js replayVerdict |
+| RULE-0510 | judicial/dictionary_audit.js checkProposals |
+| RULE-0511 | judicial/identity.js verifyIdentity |

@@ -7,16 +7,16 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 12 | 5065.8 |
-| docs | 58 | 1202.3 |
-| (최상위) | 18 | 881.6 |
-| judicial | 28 | 528.4 |
-| tests | 78 | 527.2 |
+| rebuild | 12 | 5077.4 |
+| docs | 58 | 1203.6 |
+| (최상위) | 18 | 881.9 |
+| judicial | 28 | 538.8 |
+| tests | 78 | 531.1 |
 | engine | 26 | 299.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | workspace | 21 | 69.8 |
-| legislative | 3 | 65.2 |
+| legislative | 3 | 66.2 |
 | migrations | 13 | 59.8 |
 | compiler | 7 | 49.0 |
 | schemas | 6 | 43.6 |
@@ -47,9 +47,9 @@
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
+| `judicial/judicial.js` | 172.3 |
 | `data/fetched/consensus/uniprot/Q04206.json` | 167.2 |
 | `data/fetched/uniprot/Q04206.json` | 167.2 |
 | `data/fetched/consensus/uniprot/Q9Y6K9.json` | 166.6 |
 | `data/fetched/uniprot/Q9Y6K9.json` | 166.6 |
-| `judicial/judicial.js` | 166.3 |
 | `data/fetched/consensus/uniprot/O14746.json` | 145.9 |

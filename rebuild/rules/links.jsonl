@@ -517,3 +517,17 @@
 {"from": "RULE-0496", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
 {"from": "RULE-0497", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
 {"from": "RULE-0299", "rel": "contradicts", "to": "RULE-0287", "by": "judged", "basis": "결정 ② 로 정리 (7 단계)"}
+{"from": "RULE-0498", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0499", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0500", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0501", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0502", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0503", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0504", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0505", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0506", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0507", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0508", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0509", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0510", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0511", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}

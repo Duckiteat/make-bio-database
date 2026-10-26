@@ -50,18 +50,18 @@ function check(v, s, root, p, out) {
 
 // x-dimensions (운명 원자료): 길이 관계와 묶음 참조
 function dimensionsFate(r) {
-  const out = [], E = (msg) => out.push({ path: 'x-dimensions', msg }), P = r.process || {}, nB = (r.keys || []).length, nR = (P.ruleInfo || []).length, nT = (r.series || []).length;
+  const out = [], E = (rule, msg) => out.push({ path: 'x-dimensions', msg, rule }), P = r.process || {}, nB = (r.keys || []).length, nR = (P.ruleInfo || []).length, nT = (r.series || []).length;
   const same = [['trajectory', r.trajectory], ['process.times', P.times], ['process.lo', P.lo], ['process.cumDD', P.cumDD], ['process.cum', P.cum], ['process.sig', P.sig]];
-  for (const [n, a] of same) if (!a || a.length !== nT) E(`${n} 길이 ${a ? a.length : '없음'} ≠ series 길이 ${nT}`);
-  const rowLen = (name, a, want) => { if (!a) return; for (let j = 0; j < a.length; j++) if (!a[j] || a[j].length !== want) { E(`${name}[${j}] 길이 ${a[j] ? a[j].length : '없음'} ≠ ${want}`); return; } };
+  for (const [n, a] of same) if (!a || a.length !== nT) E('RULE-0213', `${n} 길이 ${a ? a.length : '없음'} ≠ series 길이 ${nT}`);
+  const rowLen = (name, a, want) => { if (!a) return; for (let j = 0; j < a.length; j++) if (!a[j] || a[j].length !== want) { E('RULE-0213', `${name}[${j}] 길이 ${a[j] ? a[j].length : '없음'} ≠ ${want}`); return; } };
   rowLen('series', r.series, nB); rowLen('process.lo', P.lo, nB); rowLen('process.cumDD', P.cumDD, 2 * nR); rowLen('process.cum', P.cum, nR); rowLen('process.sig', P.sig, (P.schedule || []).length);
-  if (!P.N0 || P.N0.length !== nB) E(`process.N0 길이 ≠ keys 길이 ${nB}`);
-  if ((r.rules || []).length !== nR) E(`rules 길이 ${(r.rules || []).length} ≠ ruleInfo 길이 ${nR}`);
-  if ((P.signalIdx || []).length !== (P.schedule || []).length) E('signalIdx 길이 ≠ schedule 길이');
-  (P.schedule || []).forEach((s, q) => { if ((r.keys || []).indexOf(s.bundle) !== (P.signalIdx || [])[q]) E(`signalIdx[${q}] 가 keys 의 ${s.bundle} 위치가 아님`); });
-  const T = P.times || []; for (let j = 1; j < T.length; j++) if (!(T[j] > T[j - 1])) { E(`process.times 가 증가하지 않음 (${j})`); break; }
-  if (T.length && T[T.length - 1] > r.t_end + r.dt + 1e-9) E('process.times 마지막 값 > t_end + dt');
-  const K = new Set(r.keys || []), ref = (where, b) => { if (!K.has(b)) E(`${where} 의 묶음 ${b} ∉ keys`); };
+  if (!P.N0 || P.N0.length !== nB) E('RULE-0213', `process.N0 길이 ≠ keys 길이 ${nB}`);
+  if ((r.rules || []).length !== nR) E('RULE-0213', `rules 길이 ${(r.rules || []).length} ≠ ruleInfo 길이 ${nR}`);
+  if ((P.signalIdx || []).length !== (P.schedule || []).length) E('RULE-0213', 'signalIdx 길이 ≠ schedule 길이');
+  (P.schedule || []).forEach((s, q) => { if ((r.keys || []).indexOf(s.bundle) !== (P.signalIdx || [])[q]) E('RULE-0213', `signalIdx[${q}] 가 keys 의 ${s.bundle} 위치가 아님`); });
+  const T = P.times || []; for (let j = 1; j < T.length; j++) if (!(T[j] > T[j - 1])) { E('RULE-0213', `process.times 가 증가하지 않음 (${j})`); break; }
+  if (T.length && T[T.length - 1] > r.t_end + r.dt + 1e-9) E('RULE-0213', 'process.times 마지막 값 > t_end + dt');
+  const K = new Set(r.keys || []), ref = (where, b) => { if (!K.has(b)) E('RULE-0213', `${where} 의 묶음 ${b} ∉ keys`); };
   for (const b of [...(r.markers || []), ...(r.signals || [])]) ref('markers/signals', b);
   for (const b of Object.keys((r.final || {}).N || {})) ref('final.N', b);
   for (const b of Object.keys(r.reservoirs || {})) ref('reservoirs', b);
@@ -74,6 +74,7 @@ function dimensionsFate(r) {
 function checkFateRaw(r) {
   const schema = loadSchema('fate-raw.schema.json'), out = [];
   check(r, schema, schema, '$', out);
+  for (const v of out) v.rule = 'RULE-0213'; // 모양 검사는 계약 하나 — 사법부는 계약을 어긴 원자료를 판정하지 않는다
   if (!out.length) out.push(...dimensionsFate(r));
   return { ok: !out.length, violations: out.slice(0, 50), schema: schema.$id };
 }
@@ -83,6 +84,7 @@ function checkObservation(o) {
   const schema = loadSchema('observation.schema.json', path.join(__dirname, '..', 'schemas', 'obs')), out = [];
   // 형식 v12: 정량·정성 두 모양 — kind 로 고른다 (anyOf 로 묶으면 어긋난 칸을 말해 주지 못한다)
   check(o, schema.$defs[o && o.kind === 'qualitative' ? 'qualitative' : 'quantitative'], schema, '$', out);
+  for (const v of out) v.rule = 'RULE-0113'; // 측정은 포트(schemas/obs/)로
   return { ok: !out.length, violations: out.slice(0, 50), schema: schema.$id };
 }
 

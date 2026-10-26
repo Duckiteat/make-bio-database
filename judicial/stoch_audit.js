@@ -14,8 +14,8 @@ function auditTrajectory(db, r, ctx) {
   const v = FA.judgeFate(db, r, ctx || {}), items = [];
   if (v.error) return { error: v.error, audit: v.audit };
   const st = r.stochastic;
-  if (!st) items.push({ code: 'AUDIT_STOCH', fault: 'ENGINE_DEFECT', where: '원자료', msg: '확률 실행인데 stochastic 원자료가 없음' });
-  else for (const x of st.rules) if (!(Number.isInteger(x.ssa) && x.ssa >= 0 && Number.isInteger(x.leap) && x.leap >= 0)) items.push({ code: 'AUDIT_STOCH', fault: 'ENGINE_DEFECT', where: x.ref, msg: `발화 수가 음이 아닌 정수가 아님 (ssa ${x.ssa}, leap ${x.leap})` });
+  if (!st) items.push({ rule: 'RULE-0241', code: 'AUDIT_STOCH', fault: 'ENGINE_DEFECT', where: '원자료', msg: '확률 실행인데 stochastic 원자료가 없음' });
+  else for (const x of st.rules) if (!(Number.isInteger(x.ssa) && x.ssa >= 0 && Number.isInteger(x.leap) && x.leap >= 0)) items.push({ rule: 'RULE-0241', code: 'AUDIT_STOCH', fault: 'ENGINE_DEFECT', where: x.ref, msg: `발화 수가 음이 아닌 정수가 아님 (ssa ${x.ssa}, leap ${x.leap})` });
   return { verdict: v, audit: [...v.audit, ...items], hash: v.process.hash };
 }
 

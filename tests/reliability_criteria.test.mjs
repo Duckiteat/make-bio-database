@@ -111,7 +111,7 @@ test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받�
   assert.deepEqual([REL.scoreObservation(unrep, {}).cd, REL.scoreObservation(unrep, {}).d], ['D3.obs_bare', 3]);
   const J = req('../judicial/judicial.js'), M = req('../model.js');
   const ndb = M.normalize(db), ix = M.index(ndb);
-  const errs = (o) => { const out = []; J.validateObservation(ndb, ix, 'O000999', M.normObservation(o), (w, m) => out.push(m), () => {}); return out.join(' '); };
+  const errs = (o) => { const out = []; J.validateObservation(ndb, ix, 'O000999', M.normObservation(o), (rule, w, m) => out.push(m), () => {}); return out.join(' '); };
   assert.doesNotMatch(errs(unrep), /반복 수/, 'null(미보고)은 받는다');
   assert.match(errs({ ...base, replicates: undefined }), /반복 수/);
   assert.match(errs({ ...base, replicates: 0 }), /반복 수/);

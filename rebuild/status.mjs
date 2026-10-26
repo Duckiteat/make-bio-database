@@ -174,6 +174,7 @@ function build() {
   const RULE_RE = (X.rows.find((r) => r.ns === 'rule') || {}).re || /^RULE-\d{4}$/;
   for (const r of rules7) {
     if (!RULE_RE.test(r.id) || seenR.has(r.id)) rbad.push(`${r.id}: 번호`); seenR.add(r.id);
+    if (r.from_code) { if (r.unit) rbad.push(`${r.id}: 코드에서 찾은 규칙(from_code)인데 단위가 있음`); if (r.enforce !== 'machine' || !r.where) rbad.push(`${r.id}: 코드에서 찾은 규칙은 machine + where`); if (!(r.modes || []).every((m) => MODES.includes(m))) rbad.push(`${r.id}: 모드`); continue; } // 5d — 문서 단위 없이 코드의 검사 자리에서 온 규칙
     const u = uid[r.unit];
     if (!u) { rbad.push(`${r.id}: 없는 단위 ${r.unit}`); continue; }
     if (u.kind !== 'rule') rbad.push(`${r.id}: ${r.unit} 는 규칙 단위가 아님`);

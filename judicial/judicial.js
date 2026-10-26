@@ -55,49 +55,49 @@
   }
   function checkEvidence(e, where, E) {
     const lv = V.evidenceLevels[e.level];
-    if (!lv) { E(where, `근거 수준 '${e.level}' 은(는) 어휘에 없음 (${Object.keys(V.evidenceLevels).join(', ')})`); return; }
+    if (!lv) { E('RULE-0309', where, `근거 수준 '${e.level}' 은(는) 어휘에 없음 (${Object.keys(V.evidenceLevels).join(', ')})`); return; }
     const srcs = e.sources || [];
     if (lv.requires === 'source') {
-      if (!srcs.length) E(where, `근거 수준 curated 는 출처(source: DOI 또는 PMID)가 필요함 — 출처가 없으면 asserted, 추론이면 abstracted`);
-      for (const x of srcs) if (!x.citation) E(where, `출처 ${x.db}:${x.id} 에 citation("저자, 연도")이 없음`);
+      if (!srcs.length) E('RULE-0344', where, `근거 수준 curated 는 출처(source: DOI 또는 PMID)가 필요함 — 출처가 없으면 asserted, 추론이면 abstracted`);
+      for (const x of srcs) if (!x.citation) E('RULE-0344', where, `출처 ${x.db}:${x.id} 에 citation("저자, 연도")이 없음`);
     }
-    if (lv.requires === 'basis' && !e.basis) E(where, `${lv.label} 은(는) 무엇에서 추론했는지(basis)를 적어야 함`);
-    if (lv.requires === 'tool' && !e.tool) E(where, `근거 수준 computed 는 도구(tool)가 필요함`);
-    if (lv.requires === 'confidence' && !(e.confidence >= 0 && e.confidence <= 1)) E(where, `근거 수준 predicted 는 0–1 의 confidence 가 필요함`);
-    if (e.confidence != null && e.level !== 'predicted') E(where, 'confidence 는 predicted 에만');
+    if (lv.requires === 'basis' && !e.basis) E('RULE-0345', where, `${lv.label} 은(는) 무엇에서 추론했는지(basis)를 적어야 함`);
+    if (lv.requires === 'tool' && !e.tool) E('RULE-0346', where, `근거 수준 computed 는 도구(tool)가 필요함`);
+    if (lv.requires === 'confidence' && !(e.confidence >= 0 && e.confidence <= 1)) E('RULE-0346', where, `근거 수준 predicted 는 0–1 의 confidence 가 필요함`);
+    if (e.confidence != null && e.level !== 'predicted') E('RULE-0346', where, 'confidence 는 predicted 에만');
     for (const x of srcs) {
-      if (!['DOI', 'PMID'].includes(x.db)) E(where, `출처 종류 '${x.db}' — 문헌 출처는 DOI 또는 PMID`);
-      else if (!new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(where, `출처 ${x.db} '${x.id}' 형식 틀림`);
+      if (!['DOI', 'PMID'].includes(x.db)) E('RULE-0344', where, `출처 종류 '${x.db}' — 문헌 출처는 DOI 또는 PMID`);
+      else if (!new RegExp(V.xrefs[x.db].pattern).test(x.id)) E('RULE-0344', where, `출처 ${x.db} '${x.id}' 형식 틀림`);
     }
   }
   function checkContext(c, where, E) {
-    if (c.species && !V.taxa[c.species]) E(where, `종 '${c.species}' 은(는) 종 어휘에 없음`);
-    if (c.tissue && !V.tissues[c.tissue]) E(where, `조직 '${c.tissue}' 은(는) 어휘에 없음`);
-    if (c.cell && !V.cells[c.cell]) E(where, `세포 '${c.cell}' 은(는) 어휘에 없음`);
-    if (c.location && !V.locations[c.location]) E(where, `위치 '${c.location}' 은(는) 위치 어휘에 없음`);
+    if (c.species && !V.taxa[c.species]) E('RULE-0309', where, `종 '${c.species}' 은(는) 종 어휘에 없음`);
+    if (c.tissue && !V.tissues[c.tissue]) E('RULE-0309', where, `조직 '${c.tissue}' 은(는) 어휘에 없음`);
+    if (c.cell && !V.cells[c.cell]) E('RULE-0309', where, `세포 '${c.cell}' 은(는) 어휘에 없음`);
+    if (c.location && !V.locations[c.location]) E('RULE-0309', where, `위치 '${c.location}' 은(는) 위치 어휘에 없음`);
   }
   // opt.attestations: 사법부가 검증한 도장 열쇠 목록 (judicial/attestation.js validStamps().keys). 주면 'verified' 마다 도장을 요구한다.
   function validate(db, opt) {
     const errors = [], warnings = [];
-    const E = (where, msg) => errors.push({ where, msg }), W = (where, msg) => warnings.push({ where, msg });
-    if (db._version) E('데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
+    const E = (rule, where, msg) => errors.push({ where, msg, rule }), W = (rule, where, msg) => warnings.push({ where, msg, rule }); // rule: 집행하는 규칙 번호 (rebuild 규칙 장부)
+    if (db._version) E('RULE-0206', '데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
     for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations], ['V', db.values || {}]]) {
       const max = Math.max(0, ...Object.keys(table).map((id) => parseInt(id.slice(1), 10) || 0));
-      if (db.meta.next[p] <= max) E('meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
+      if (db.meta.next[p] <= max) E('RULE-0061', 'meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
     }
     for (const hits of ix.names.values()) {
       const terms = uniq(hits.map((h) => h.term));
-      if (terms.length > 1) E(terms.map((t) => `${t}(${ix.termName(t)})`).join(' / '), `이름 충돌 '${hits.map((h) => h.name).join("' ≈ '")}' — 같은 개념이면 합치고, 다른 개념이면 이름을 구별해야 함`);
+      if (terms.length > 1) E('RULE-0323', terms.map((t) => `${t}(${ix.termName(t)})`).join(' / '), `이름 충돌 '${hits.map((h) => h.name).join("' ≈ '")}' — 같은 개념이면 합치고, 다른 개념이면 이름을 구별해야 함`);
     }
-    for (const [k, ids] of ix.xrefs) if (uniq(ids).length > 1) E(uniq(ids).join(' / '), `외부 ID ${k.slice(k.indexOf(':') + 1)} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
-    for (const [k, ids] of ix.fps) if (uniq(ids).length > 1) E(uniq(ids).join(' / '), `구조 지문 ${k} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
+    for (const [k, ids] of ix.xrefs) if (uniq(ids).length > 1) E('RULE-0414', uniq(ids).join(' / '), `외부 ID ${k.slice(k.indexOf(':') + 1)} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
+    for (const [k, ids] of ix.fps) if (uniq(ids).length > 1) E('RULE-0414', uniq(ids).join(' / '), `구조 지문 ${k} 가 여러 정의항에 붙음 — 같은 실체면 합칠 것`);
     for (const [tid, t] of Object.entries(db.terms)) {
       const w = `${tid}(${t.names.ko || '?'})`;
-      if (!isId('T', tid)) E(tid, "개념 번호는 'T' + 숫자 6자리");
-      if (!t.names.ko) E(w, '한국어 이름(names.ko) 없음');
-      for (const n of [t.names.ko, t.names.en, ...t.aliases].filter(Boolean)) if (RESERVED.test(n)) E(w, `이름 '${n}' 에 # @ | / 를 쓸 수 없음`);
-      if (!ix.termSenses.get(tid).length) E(w, '정의항(뜻)이 없는 개념');
+      if (!isId('T', tid)) E('RULE-0498', tid, "개념 번호는 'T' + 숫자 6자리");
+      if (!t.names.ko) E('RULE-0499', w, '한국어 이름(names.ko) 없음');
+      for (const n of [t.names.ko, t.names.en, ...t.aliases].filter(Boolean)) if (RESERVED.test(n)) E('RULE-0323', w, `이름 '${n}' 에 # @ | / 를 쓸 수 없음`);
+      if (!ix.termSenses.get(tid).length) E('RULE-0499', w, '정의항(뜻)이 없는 개념');
     }
     for (const [id, d] of Object.entries(db.senses)) validateSense(db, ix, id, d, E, W);
     // 개념 위계 순환
@@ -105,7 +105,7 @@
     for (const e of ix.edges) if (e.axis && e.status === 'ok') { if (!parentsOf.has(e.child)) parentsOf.set(e.child, []); parentsOf.get(e.child).push(e.parent); }
     const state = new Map();
     const dfs = (n, path) => {
-      if (state.get(n) === 1) { E(n, '위계 순환: ' + [...path.slice(path.indexOf(n)), n].map(L).join(' → ')); return; }
+      if (state.get(n) === 1) { E('RULE-0334', n, '위계 순환: ' + [...path.slice(path.indexOf(n)), n].map(L).join(' → ')); return; }
       if (state.get(n) === 2) return;
       state.set(n, 1); path.push(n);
       for (const p of parentsOf.get(n) || []) dfs(p, path);
@@ -130,9 +130,9 @@
     if (!claims.length) return;
     const keys = opt && opt.attestations;
     // 경고 문구에 건수를 넣지 않는다 — 관문은 (where, msg) 로 '새 경고' 를 가리므로, 건수가 바뀌면 같은 경고가 새 경고로 보인다
-    if (!keys) { W('증명 등록부', "status 'verified' 항목을 증명 등록부와 대조하지 않음 — node dbtool.mjs validate (attestations/registry.json) 로 확인할 것"); return; }
+    if (!keys) { W('RULE-0027', '증명 등록부', "status 'verified' 항목을 증명 등록부와 대조하지 않음 — node dbtool.mjs validate (attestations/registry.json) 로 확인할 것"); return; }
     const have = new Set(keys);
-    for (const c of claims) if (!have.has(c.key)) E(c.where, "status 'verified' 인데 사법부 증명(attestations/registry.json 의 유효한 도장)이 없음 — 데이터는 스스로 verified 를 선언할 수 없음 (augment apply 가 판결과 함께 도장을 발급)");
+    for (const c of claims) if (!have.has(c.key)) E('RULE-0027', c.where, "status 'verified' 인데 사법부 증명(attestations/registry.json 의 유효한 도장)이 없음 — 데이터는 스스로 verified 를 선언할 수 없음 (augment apply 가 판결과 함께 도장을 발급)");
   }
 
   // ===== 관찰 기록 (v10, docs/design/observation-port.md) =====
@@ -143,10 +143,10 @@
   function checkBound(dim, si, w, what, E) {
     const B = V.physicalBounds[dim];
     if (!B || !Number.isFinite(si)) return;
-    if (B.integer && !Number.isInteger(si)) E(w, `${what}: 값 ${si} 은(는) 정수여야 함`);
+    if (B.integer && !Number.isInteger(si)) E('RULE-0129', w, `${what}: 값 ${si} 은(는) 정수여야 함`);
     const lowBad = B.exclusiveMin ? !(si > B.min) : !(si >= B.min);
-    if (lowBad) E(w, `${what}: 값 ${si} 이(가) 물리적 하한 ${B.min} ${B.exclusiveMin ? '초과' : '이상'} 이 아님 — ${B.why}`);
-    if (si > B.max) E(w, `${what}: 값 ${si} 이(가) 물리적 상한 ${B.max} 를 넘음 — ${B.why} (단위를 잘못 적었는지 확인)`);
+    if (lowBad) E('RULE-0129', w, `${what}: 값 ${si} 이(가) 물리적 하한 ${B.min} ${B.exclusiveMin ? '초과' : '이상'} 이 아님 — ${B.why}`);
+    if (si > B.max) E('RULE-0129', w, `${what}: 값 ${si} 이(가) 물리적 상한 ${B.max} 를 넘음 — ${B.why} (단위를 잘못 적었는지 확인)`);
   }
   // 정의항 obs 의 값을 정준 단위로. 차원·단위를 모르면 null (그 자리에서 이미 단위 오류가 난다)
   function obsSI(P, b) {
@@ -181,26 +181,26 @@
         const w0 = `${id} (${v.subject} · ${v.property}) 맥락`, c = v.context || {};
         checkContextKeys(db, c, w0, E);
         const k = `${v.subject}|${v.property}|${M.contextKey(c)}${v.value.dist === 'categorical' ? '|' + v.value.level : ''}`;
-        if (keys.has(k)) E(w0, `같은 열쇠(대상·속성·맥락)의 현재 값이 둘 — ${keys.get(k)} 과 겹침 (새 값은 supersedes 로)`);
+        if (keys.has(k)) E('RULE-0233', w0, `같은 열쇠(대상·속성·맥락)의 현재 값이 둘 — ${keys.get(k)} 과 겹침 (새 값은 supersedes 로)`);
         keys.set(k, id);
       }
       const w = `${id} (${v.subject} · ${v.property})`, isRule = v.subject.includes('/rule/');
-      if (isRule ? !laws.has(v.subject) && !v.retracted : !db.senses[v.subject] && !v.retracted) E(w, isRule ? '대상 규칙이 없거나 법칙 모양(kinetic_law)이 없음' : '대상 정의항이 없음');
-      if (isRule ? !KIN.includes(v.property) : !V.obsProperties[v.property]) E(w, `속성 '${v.property}' 이 ${isRule ? '속도 칸' : '관찰 속성 어휘'}에 없음`);
-      if (!VALUE_DISTS.includes(v.value.dist)) E(w, `분포 '${v.value.dist}' — ${VALUE_DISTS.join(' | ')}`);
-      else if (v.value.dist === 'categorical' ? v.value.level == null : !Number.isFinite(v.value.mean) && v.value.dist !== 'interval') E(w, '분포에 값(mean 또는 level)이 없음');
-      if ((v.value.dist === 'normal' || v.value.dist === 'lognormal') && !(v.value.sd >= 0)) E(w, `${v.value.dist} 분포에 sd ≥ 0 이 없음`);
-      if (v.value.dist === 'interval' && !(v.value.low <= v.value.high)) E(w, '구간 low ≤ high 가 아님');
-      if (!DERIVATIONS.includes(v.derivation)) E(w, `유도 방식 '${v.derivation}' — ${DERIVATIONS.join(' | ')}`);
-      if (!v.recorded_at || Number.isNaN(Date.parse(v.recorded_at))) E(w, '기록 시각(recorded_at)이 없음 — 값은 언제 들어왔는지가 데이터다 (두 시간)');
-      for (const o of v.from || []) if (!db.observations[o]) E(w, `근거 관찰 ${o} 이 없음`);
+      if (isRule ? !laws.has(v.subject) && !v.retracted : !db.senses[v.subject] && !v.retracted) E('RULE-0489', w, isRule ? '대상 규칙이 없거나 법칙 모양(kinetic_law)이 없음' : '대상 정의항이 없음');
+      if (isRule ? !KIN.includes(v.property) : !V.obsProperties[v.property]) E('RULE-0448', w, `속성 '${v.property}' 이 ${isRule ? '속도 칸' : '관찰 속성 어휘'}에 없음`);
+      if (!VALUE_DISTS.includes(v.value.dist)) E('RULE-0448', w, `분포 '${v.value.dist}' — ${VALUE_DISTS.join(' | ')}`);
+      else if (v.value.dist === 'categorical' ? v.value.level == null : !Number.isFinite(v.value.mean) && v.value.dist !== 'interval') E('RULE-0446', w, '분포에 값(mean 또는 level)이 없음');
+      if ((v.value.dist === 'normal' || v.value.dist === 'lognormal') && !(v.value.sd >= 0)) E('RULE-0448', w, `${v.value.dist} 분포에 sd ≥ 0 이 없음`);
+      if (v.value.dist === 'interval' && !(v.value.low <= v.value.high)) E('RULE-0448', w, '구간 low ≤ high 가 아님');
+      if (!DERIVATIONS.includes(v.derivation)) E('RULE-0448', w, `유도 방식 '${v.derivation}' — ${DERIVATIONS.join(' | ')}`);
+      if (!v.recorded_at || Number.isNaN(Date.parse(v.recorded_at))) E('RULE-0126', w, '기록 시각(recorded_at)이 없음 — 값은 언제 들어왔는지가 데이터다 (두 시간)');
+      for (const o of v.from || []) if (!db.observations[o]) E('RULE-0448', w, `근거 관찰 ${o} 이 없음`);
       if (v.supersedes) {
         const old = vals[v.supersedes];
-        if (!old) E(w, `대체 대상 ${v.supersedes} 이 없음`);
+        if (!old) E('RULE-0448', w, `대체 대상 ${v.supersedes} 이 없음`);
         else {
-          if (old.subject !== v.subject || old.property !== v.property) E(w, `대체 대상 ${v.supersedes} 의 대상·속성이 다름`);
-          if (v.supersedes >= id) E(w, `대체 대상 ${v.supersedes} 이 이 기록보다 뒤 — 대체는 앞선 기록만`);
-          if (superseders.has(v.supersedes)) E(w, `${v.supersedes} 을 ${superseders.get(v.supersedes)} 도 대체함 — 갈래 이력`);
+          if (old.subject !== v.subject || old.property !== v.property) E('RULE-0448', w, `대체 대상 ${v.supersedes} 의 대상·속성이 다름`);
+          if (v.supersedes >= id) E('RULE-0448', w, `대체 대상 ${v.supersedes} 이 이 기록보다 뒤 — 대체는 앞선 기록만`);
+          if (superseders.has(v.supersedes)) E('RULE-0448', w, `${v.supersedes} 을 ${superseders.get(v.supersedes)} 도 대체함 — 갈래 이력`);
           superseders.set(v.supersedes, id);
         }
       }
@@ -211,10 +211,10 @@
     const out = [];
     for (const [id, v] of Object.entries(before.values || {})) {
       const a = (after.values || {})[id];
-      if (!a) { out.push({ where: id, msg: '값 기록은 지울 수 없음 — 바뀌면 새 기록이 대체(supersedes), 틀리면 retracted' }); continue; }
+      if (!a) { out.push({ rule: 'RULE-0124', where: id, msg: '값 기록은 지울 수 없음 — 바뀌면 새 기록이 대체(supersedes), 틀리면 retracted' }); continue; }
       const strip = (x) => { const { retracted, ...rest } = x; return JSON.stringify(rest); };
-      if (strip(a) !== strip(v)) out.push({ where: id, msg: '값 기록은 바꿀 수 없음 — 새 값은 새 기록(supersedes)으로' });
-      if (v.retracted && JSON.stringify(a.retracted) !== JSON.stringify(v.retracted)) out.push({ where: id, msg: '값의 철회 표시는 바꾸거나 지울 수 없음' });
+      if (strip(a) !== strip(v)) out.push({ rule: 'RULE-0124', where: id, msg: '값 기록은 바꿀 수 없음 — 새 값은 새 기록(supersedes)으로' });
+      if (v.retracted && JSON.stringify(a.retracted) !== JSON.stringify(v.retracted)) out.push({ rule: 'RULE-0124', where: id, msg: '값의 철회 표시는 바꾸거나 지울 수 없음' });
     }
     return out;
   }
@@ -225,280 +225,280 @@
     const mv = db.moved || {}, tableOf = (id) => ({ T: db.terms, D: db.senses, S: db.steps })[String(id)[0]];
     for (const [id, m] of Object.entries(mv)) {
       const w = `이동 ${id}`, mk = V.moveKinds[m.kind];
-      if (!/^[TDS]\d{6}$/.test(id)) E(w, '이동할 수 있는 번호는 개념(T)·정의항(D)·단계(S)');
-      else if (tableOf(id)[id]) E(w, '이동된 번호가 아직 표에 있음 — 번호는 재사용하지 않음');
-      if (!mk) E(w, `이동 종류 '${m.kind}' — ${Object.keys(V.moveKinds).join(' | ')}`);
-      else if (m.kind === 'merge' ? m.to.length !== 1 : m.to.length < mk.targets) E(w, `${m.kind} 대상 수 ${m.to.length} — ${mk.label}`);
-      for (const t of m.to) if (String(t)[0] !== String(id)[0] || !(tableOf(t) || {})[t]) E(w, `이동 대상 '${t}' 은(는) 같은 종류의 지금 있는 번호가 아님 (사슬이면 마지막 번호를)`);
-      if (!m.why) E(w, '이동 사유(why)가 없음');
-      if (!m.at || Number.isNaN(Date.parse(m.at))) E(w, '이동 시각(at)이 없음');
+      if (!/^[TDS]\d{6}$/.test(id)) E('RULE-0122', w, '이동할 수 있는 번호는 개념(T)·정의항(D)·단계(S)');
+      else if (tableOf(id)[id]) E('RULE-0123', w, '이동된 번호가 아직 표에 있음 — 번호는 재사용하지 않음');
+      if (!mk) E('RULE-0122', w, `이동 종류 '${m.kind}' — ${Object.keys(V.moveKinds).join(' | ')}`);
+      else if (m.kind === 'merge' ? m.to.length !== 1 : m.to.length < mk.targets) E('RULE-0122', w, `${m.kind} 대상 수 ${m.to.length} — ${mk.label}`);
+      for (const t of m.to) if (String(t)[0] !== String(id)[0] || !(tableOf(t) || {})[t]) E('RULE-0122', w, `이동 대상 '${t}' 은(는) 같은 종류의 지금 있는 번호가 아님 (사슬이면 마지막 번호를)`);
+      if (!m.why) E('RULE-0122', w, '이동 사유(why)가 없음');
+      if (!m.at || Number.isNaN(Date.parse(m.at))) E('RULE-0122', w, '이동 시각(at)이 없음');
     }
     if (!Object.keys(mv).length) return;
     const seen = new Set(), text = JSON.stringify([db.terms, db.senses, db.steps, db.limitations]);
-    for (const x of text.match(/[TDS]\d{6}/g) || []) if (mv[x] && !seen.has(x)) { seen.add(x); E(x, `이동된 번호를 가리킴 (${mv[x].kind}) — ${mv[x].to.join('·')} 를 쓸 것`); }
+    for (const x of text.match(/[TDS]\d{6}/g) || []) if (mv[x] && !seen.has(x)) { seen.add(x); E('RULE-0123', x, `이동된 번호를 가리킴 (${mv[x].kind}) — ${mv[x].to.join('·')} 를 쓸 것`); }
   }
   // 맥락 열쇠 칸 (형식 v12 §5): 조건은 정의항 번호 목록(이동된 번호 금지), 온도·pH 범위. 종 필수는 부르는 쪽이 정한다
   function checkContextKeys(db, c, w, E) {
     if (c.condition != null) {
-      if (!Array.isArray(c.condition)) E(w, `조건(condition)은 정의항 번호 목록 — 문장 '${String(c.condition).slice(0, 40)}' 은(는) scope(맥락 설명)·note 로 (맥락 열쇠에 자유 문장을 넣지 않음)`);
+      if (!Array.isArray(c.condition)) E('RULE-0121', w, `조건(condition)은 정의항 번호 목록 — 문장 '${String(c.condition).slice(0, 40)}' 은(는) scope(맥락 설명)·note 로 (맥락 열쇠에 자유 문장을 넣지 않음)`);
       else for (const d of c.condition) {
-        if (db.moved && db.moved[d]) E(w, `조건 ${d} 은(는) 이동된 번호 — ${db.moved[d].to.join('·')} 를 쓸 것`);
-        else if (!isId('D', d) || !db.senses[d]) E(w, `조건 '${d}' 은(는) 있는 정의항 번호가 아님`);
+        if (db.moved && db.moved[d]) E('RULE-0121', w, `조건 ${d} 은(는) 이동된 번호 — ${db.moved[d].to.join('·')} 를 쓸 것`);
+        else if (!isId('D', d) || !db.senses[d]) E('RULE-0121', w, `조건 '${d}' 은(는) 있는 정의항 번호가 아님`);
       }
     }
-    if (c.temperature_K != null && !(c.temperature_K > 0)) E(w, '온도(K)는 0 보다 커야 함');
-    if (c.pH != null && !(c.pH >= 0 && c.pH <= 14)) E(w, 'pH 는 0–14');
+    if (c.temperature_K != null && !(c.temperature_K > 0)) E('RULE-0121', w, '온도(K)는 0 보다 커야 함');
+    if (c.pH != null && !(c.pH >= 0 && c.pH <= 14)) E('RULE-0121', w, 'pH 는 0–14');
   }
   const PERTURB_TARGET = { knockout: 'sense', block: 'rule', inhibit: 'rule', clamp: 'bundle', set_amount: 'bundle' }; // compiler/perturb.js 와 같은 교란 (dose_series 는 관찰 하나가 아님)
   // 정성 관찰의 대상 하나 — 읽을 거리 종류가 정한 대상 종류
   function checkObsTarget(db, ix, kind, t, w, E) {
     const tk = (V.observables[kind] || {}).target;
     if (tk === 'bundle') checkBundle(db, ix, t, w, E);
-    else if (tk === 'cell_state') { const d = db.senses[t]; if (!d || d.kind !== 'cell_state') E(w, `'${t}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
+    else if (tk === 'cell_state') { const d = db.senses[t]; if (!d || d.kind !== 'cell_state') E('RULE-0402', w, `'${t}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
   }
   function validateQualitative(db, ix, w, o, E) {
     const rk = o.readout.kind, rv = V.observables[rk], ex = o.expect, order = ex && typeof ex === 'object';
-    if (!rv || !rv.qualitative) E(w, `읽을 거리(readout.kind) '${rk}' — ${Object.keys(V.observables).filter((k) => V.observables[k].qualitative).join(' | ')} (부피·속도 상수는 정성으로 말하지 않음)`);
+    if (!rv || !rv.qualitative) E('RULE-0114', w, `읽을 거리(readout.kind) '${rk}' — ${Object.keys(V.observables).filter((k) => V.observables[k].qualitative).join(' | ')} (부피·속도 상수는 정성으로 말하지 않음)`);
     if (order) {
       const ev = ex.order || [];
-      if (ev.length < 2 || new Set(ev).size !== ev.length) E(w, '순서 기대(expect.order)는 서로 다른 대상 둘 이상');
-      if (o.readout.target) E(w, '순서 기대에서는 readout.target 을 쓰지 않음 — 대상은 expect.order 에');
+      if (ev.length < 2 || new Set(ev).size !== ev.length) E('RULE-0114', w, '순서 기대(expect.order)는 서로 다른 대상 둘 이상');
+      if (o.readout.target) E('RULE-0114', w, '순서 기대에서는 readout.target 을 쓰지 않음 — 대상은 expect.order 에');
       if (rv) ev.forEach((t, i) => checkObsTarget(db, ix, rk, t, `${w} expect.order[${i}]`, E));
     } else {
       const xv = V.qualitativeExpectations[ex];
-      if (!xv || ex === 'order') E(w, `기대(expect) '${ex}' — ${Object.keys(V.qualitativeExpectations).filter((k) => k !== 'order').join(' | ')} | { order: [대상, …] }`);
-      else if (xv.relative && !o.perturbation) E(w, `기대 '${ex}' 는 대조군과의 비교 — 교란(perturbation)이 필요함`);
-      if (!o.readout.target) E(w, '읽을 거리 대상(readout.target)이 없음');
+      if (!xv || ex === 'order') E('RULE-0114', w, `기대(expect) '${ex}' — ${Object.keys(V.qualitativeExpectations).filter((k) => k !== 'order').join(' | ')} | { order: [대상, …] }`);
+      else if (xv.relative && !o.perturbation) E('RULE-0114', w, `기대 '${ex}' 는 대조군과의 비교 — 교란(perturbation)이 필요함`);
+      if (!o.readout.target) E('RULE-0114', w, '읽을 거리 대상(readout.target)이 없음');
       else if (rv) checkObsTarget(db, ix, rk, o.readout.target, `${w} 읽을 거리`, E);
     }
     const p = o.perturbation;
     if (p) {
       const tk = PERTURB_TARGET[p.type], pw = `${w} 교란`;
-      if (!tk) E(pw, `교란 종류 '${p.type}' — ${Object.keys(PERTURB_TARGET).join(' | ')}`);
-      else if (tk === 'sense') { if (!db.senses[p.target]) E(pw, `knockout 대상 '${p.target}' 은(는) 있는 정의항 번호가 아님`); }
+      if (!tk) E('RULE-0114', pw, `교란 종류 '${p.type}' — ${Object.keys(PERTURB_TARGET).join(' | ')}`);
+      else if (tk === 'sense') { if (!db.senses[p.target]) E('RULE-0114', pw, `knockout 대상 '${p.target}' 은(는) 있는 정의항 번호가 아님`); }
       else if (tk === 'bundle') checkBundle(db, ix, p.target, pw, E);
-      else { const t = parseTarget(p.target); if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(pw, `${p.type} 대상 규칙 '${p.target}' 없음 — D…/rule/키`); }
-      if (p.type === 'inhibit' && !(p.Ki_M > 0 && p.dose_M >= 0)) E(pw, 'inhibit 에는 Ki_M > 0, dose_M ≥ 0 (몰 농도) — 모르면 block');
-      if (p.type === 'clamp' && !(p.conc_M >= 0)) E(pw, 'clamp 에는 conc_M ≥ 0 (몰 농도)');
+      else { const t = parseTarget(p.target); if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E('RULE-0114', pw, `${p.type} 대상 규칙 '${p.target}' 없음 — D…/rule/키`); }
+      if (p.type === 'inhibit' && !(p.Ki_M > 0 && p.dose_M >= 0)) E('RULE-0114', pw, 'inhibit 에는 Ki_M > 0, dose_M ≥ 0 (몰 농도) — 모르면 block');
+      if (p.type === 'clamp' && !(p.conc_M >= 0)) E('RULE-0114', pw, 'clamp 에는 conc_M ≥ 0 (몰 농도)');
     }
-    if (o.replicates != null && !(Number.isInteger(o.replicates) && o.replicates >= 1)) E(w, '반복 수(replicates)는 1 이상의 정수');
+    if (o.replicates != null && !(Number.isInteger(o.replicates) && o.replicates >= 1)) E('RULE-0108', w, '반복 수(replicates)는 1 이상의 정수');
     // 출처: 1차 문헌(DOI·PMID) + 원문 구절 — 교과서·추론은 정성 관찰이 될 수 없다
-    if (!o.quote) E(w, '원문 구절(quote)이 없음 — 정성 관찰은 논문의 해당 문장을 그대로 적는다');
+    if (!o.quote) E('RULE-0115', w, '원문 구절(quote)이 없음 — 정성 관찰은 논문의 해당 문장을 그대로 적는다');
     const src = (o.provenance || {}).source;
-    if (!src || !V.qualitativeSources.includes(src.db)) E(w, `출처(provenance.source.db)는 ${V.qualitativeSources.join(' | ')} — 교과서·추론은 정성 관찰이 될 수 없음 (한계·메모로)`);
-    else if (src.db === 'DOI' ? !/^10\.\d{4,9}\/\S+$/.test(src.id) : !/^\d{1,9}$/.test(src.id)) E(w, `출처 ${src.db} 식별자 '${src.id}' 형식 틀림`);
-    if (o.evidence.level !== 'curated') E(w, `정성 관찰 근거는 curated(문헌) — 지금 ${o.evidence.level}`);
-    if (o.use !== 'validation') E(w, '정성 관찰의 용도는 validation — 상수 추정에 쓰지 않음');
+    if (!src || !V.qualitativeSources.includes(src.db)) E('RULE-0115', w, `출처(provenance.source.db)는 ${V.qualitativeSources.join(' | ')} — 교과서·추론은 정성 관찰이 될 수 없음 (한계·메모로)`);
+    else if (src.db === 'DOI' ? !/^10\.\d{4,9}\/\S+$/.test(src.id) : !/^\d{1,9}$/.test(src.id)) E('RULE-0115', w, `출처 ${src.db} 식별자 '${src.id}' 형식 틀림`);
+    if (o.evidence.level !== 'curated') E('RULE-0115', w, `정성 관찰 근거는 curated(문헌) — 지금 ${o.evidence.level}`);
+    if (o.use !== 'validation') E('RULE-0116', w, '정성 관찰의 용도는 validation — 상수 추정에 쓰지 않음');
   }
   function validateObservation(db, ix, id, o, E, W) {
     const w = id;
-    if (!isId('O', id)) E(id, "관찰 번호는 'O' + 숫자 6자리");
-    if (o.hypothetical) E(w, '합성(hypothetical) 관찰은 데이터베이스에 넣지 않음 — examples/observations/ 에만 (실측값을 지어내지 않음)');
-    if (o.evidence_at && !/^\d{4}(-\d{2}(-\d{2})?)?$/.test(o.evidence_at)) E(w, `근거 시각(evidence_at) '${o.evidence_at}' — YYYY · YYYY-MM · YYYY-MM-DD`);
-    if (o.recorded_at && Number.isNaN(Date.parse(o.recorded_at))) E(w, `기록 시각(recorded_at) '${o.recorded_at}' 을 읽을 수 없음`);
+    if (!isId('O', id)) E('RULE-0498', id, "관찰 번호는 'O' + 숫자 6자리");
+    if (o.hypothetical) E('RULE-0112', w, '합성(hypothetical) 관찰은 데이터베이스에 넣지 않음 — examples/observations/ 에만 (실측값을 지어내지 않음)');
+    if (o.evidence_at && !/^\d{4}(-\d{2}(-\d{2})?)?$/.test(o.evidence_at)) E('RULE-0447', w, `근거 시각(evidence_at) '${o.evidence_at}' — YYYY · YYYY-MM · YYYY-MM-DD`);
+    if (o.recorded_at && Number.isNaN(Date.parse(o.recorded_at))) E('RULE-0447', w, `기록 시각(recorded_at) '${o.recorded_at}' 을 읽을 수 없음`);
     if (o.kind === 'qualitative') {
       validateQualitative(db, ix, w, o, E);
-      if (!o.condition.species) E(w, '조건에 종(condition.species)이 없음');
+      if (!o.condition.species) E('RULE-0107', w, '조건에 종(condition.species)이 없음');
       checkContext(o.condition, w + ' 조건', E);
       checkContextKeys(db, o.condition, w + ' 조건', E);
-      if (o.condition.time_s != null && !(o.condition.time_s >= 0)) E(w, '시각(time_s)은 0 이상');
+      if (o.condition.time_s != null && !(o.condition.time_s >= 0)) E('RULE-0107', w, '시각(time_s)은 0 이상');
       checkEvidence(o.evidence, w, E);
-      if (o.retracted) { if (!o.retracted.note) E(w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
+      if (o.retracted) { if (!o.retracted.note) E('RULE-0107', w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
       return;
     }
     const ob = o.observable, ov = V.observables[ob.kind];
-    if (!ov) E(w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
+    if (!ov) E('RULE-0402', w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
     else if (ov.target === 'bundle') checkBundle(db, ix, ob.target, `${w} 측정 대상`, E);
-    else if (ov.target === 'cell_state') { const d = db.senses[ob.target]; if (!d || d.kind !== 'cell_state') E(w, `측정 대상 '${ob.target}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
-    else if (ov.target === 'location') { if (!V.locations[ob.target]) E(w, `측정 대상 위치 '${ob.target}' 은(는) 위치 어휘에 없음`); }
+    else if (ov.target === 'cell_state') { const d = db.senses[ob.target]; if (!d || d.kind !== 'cell_state') E('RULE-0402', w, `측정 대상 '${ob.target}' 은(는) 세포 상태(cell_state) 정의항이 아님`); }
+    else if (ov.target === 'location') { if (!V.locations[ob.target]) E('RULE-0402', w, `측정 대상 위치 '${ob.target}' 은(는) 위치 어휘에 없음`); }
     else if (ov.target === 'rule') {
       const t = parseTarget(ob.target);
-      if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `측정 대상 규칙 '${ob.target}' 없음 — D…/rule/키`);
-      if (!KIN_FIELDS.includes(ob.param) || ob.param === 'order') E(w, `속도 상수 칸 '${ob.param || ''}' — ${KIN_FIELDS.filter((f) => f !== 'order').join(', ')}`);
+      if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E('RULE-0402', w, `측정 대상 규칙 '${ob.target}' 없음 — D…/rule/키`);
+      if (!KIN_FIELDS.includes(ob.param) || ob.param === 'order') E('RULE-0402', w, `속도 상수 칸 '${ob.param || ''}' — ${KIN_FIELDS.filter((f) => f !== 'order').join(', ')}`);
     }
-    if (ob.kind === 'ratio') { if (!ob.denominator) E(w, 'ratio 측정에는 분모 묶음(observable.denominator)이 필요함'); else checkBundle(db, ix, ob.denominator, `${w} 분모`, E); }
-    if (ob.kind === 'fraction_above' && !(ob.threshold >= 0)) E(w, 'fraction_above 측정에는 게이팅 문턱(threshold ≥ 0, 분자 수)이 필요함');
+    if (ob.kind === 'ratio') { if (!ob.denominator) E('RULE-0402', w, 'ratio 측정에는 분모 묶음(observable.denominator)이 필요함'); else checkBundle(db, ix, ob.denominator, `${w} 분모`, E); }
+    if (ob.kind === 'fraction_above' && !(ob.threshold >= 0)) E('RULE-0402', w, 'fraction_above 측정에는 게이팅 문턱(threshold ≥ 0, 분자 수)이 필요함');
     if (ov && ov.target === 'rule_progress') {
       const t = parseTarget(ob.target);
-      if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `진행량을 읽을 규칙 '${ob.target}' 없음 — D…/rule/키`);
+      if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E('RULE-0402', w, `진행량을 읽을 규칙 '${ob.target}' 없음 — D…/rule/키`);
       const ds = ob.dose;
-      if (!ds || !ds.target) E(w, 'dose_slope 측정에는 용량 축 observable.dose { target: 묶음, values: [분자 수…] } 이 필요함');
+      if (!ds || !ds.target) E('RULE-0402', w, 'dose_slope 측정에는 용량 축 observable.dose { target: 묶음, values: [분자 수…] } 이 필요함');
       else {
         checkBundle(db, ix, ds.target, `${w} 용량 축`, E);
         const vs = ds.values || [];
-        if (new Set(vs).size < 2 || !vs.every((x) => Number.isFinite(x) && x >= 0)) E(w, 'dose.values 는 서로 다른 0 이상의 분자 수 두 개 이상 (기울기를 정할 수 있게)');
+        if (new Set(vs).size < 2 || !vs.every((x) => Number.isFinite(x) && x >= 0)) E('RULE-0402', w, 'dose.values 는 서로 다른 0 이상의 분자 수 두 개 이상 (기울기를 정할 수 있게)');
       }
     }
-    if (!Number.isFinite(o.value)) E(w, '값(value)이 수가 아님');
+    if (!Number.isFinite(o.value)) E('RULE-0107', w, '값(value)이 수가 아님');
     const want = ov && obsUnit(db, o);
-    if (ov && want && o.unit !== want) E(w, `단위 '${o.unit}' — 이 측정량의 SI 정준 단위는 '${want}' (값은 SI 로 환산해 저장)`);
-    if (ov && !want) E(w, '이 측정량의 단위를 정할 수 없음 (대상 규칙의 kinetics.order 필요)');
-    if (['fraction', 'fraction_above'].includes(ob.kind) && !(o.value >= 0 && o.value <= 1)) E(w, '비율은 0–1');
-    if (['amount', 'concentration', 'event_time', 'ratio'].includes(ob.kind) && !(o.value >= 0)) E(w, '분자 수·농도·시각·비는 0 이상');
+    if (ov && want && o.unit !== want) E('RULE-0128', w, `단위 '${o.unit}' — 이 측정량의 SI 정준 단위는 '${want}' (값은 SI 로 환산해 저장)`);
+    if (ov && !want) E('RULE-0128', w, '이 측정량의 단위를 정할 수 없음 (대상 규칙의 kinetics.order 필요)');
+    if (['fraction', 'fraction_above'].includes(ob.kind) && !(o.value >= 0 && o.value <= 1)) E('RULE-0107', w, '비율은 0–1');
+    if (['amount', 'concentration', 'event_time', 'ratio'].includes(ob.kind) && !(o.value >= 0)) E('RULE-0107', w, '분자 수·농도·시각·비는 0 이상');
     if (ov && ov.dim) checkBound(ov.dim, o.value, w, `측정량 ${ob.kind}`, E);
     const u = o.uncertainty, nm = V.noiseModels[u.model];
-    if (!V.uncertaintyKinds[u.kind]) E(w, `불확도 유형 '${u.kind}' — ${Object.keys(V.uncertaintyKinds).join(' | ')} (값만 있는 관찰은 받지 않음)`);
-    if (!nm) E(w, `잡음 모형 '${u.model}' — ${Object.keys(V.noiseModels).join(' | ')}`);
+    if (!V.uncertaintyKinds[u.kind]) E('RULE-0107', w, `불확도 유형 '${u.kind}' — ${Object.keys(V.uncertaintyKinds).join(' | ')} (값만 있는 관찰은 받지 않음)`);
+    if (!nm) E('RULE-0107', w, `잡음 모형 '${u.model}' — ${Object.keys(V.noiseModels).join(' | ')}`);
     else {
-      if (nm.observables && !nm.observables.includes(ob.kind)) E(w, `잡음 모형 ${u.model} 은(는) ${nm.observables.join('·')} 에만`);
-      if (nm.positive && !(o.value > 0)) E(w, `잡음 모형 ${u.model} 은(는) 값 > 0 에만`);
+      if (nm.observables && !nm.observables.includes(ob.kind)) E('RULE-0107', w, `잡음 모형 ${u.model} 은(는) ${nm.observables.join('·')} 에만`);
+      if (nm.positive && !(o.value > 0)) E('RULE-0107', w, `잡음 모형 ${u.model} 은(는) 값 > 0 에만`);
     }
-    if (!(u.sd >= 0 && Number.isFinite(u.sd))) E(w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
-    if (!(o.replicates === null || (Number.isInteger(o.replicates) && o.replicates >= 1))) E(w, '반복 수(replicates)는 1 이상의 정수 — 원문에 없으면 null(미보고), 1 로 적지 않는다');
-    for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E(w, `${k} 는 0 이상`);
+    if (!(u.sd >= 0 && Number.isFinite(u.sd))) E('RULE-0107', w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
+    if (!(o.replicates === null || (Number.isInteger(o.replicates) && o.replicates >= 1))) E('RULE-0108', w, '반복 수(replicates)는 1 이상의 정수 — 원문에 없으면 null(미보고), 1 로 적지 않는다');
+    for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E('RULE-0107', w, `${k} 는 0 이상`);
     const c = o.condition;
-    if (!c.species) E(w, '조건에 종(condition.species)이 없음');
+    if (!c.species) E('RULE-0107', w, '조건에 종(condition.species)이 없음');
     checkContext(c, w + ' 조건', E);
     checkContextKeys(db, c, w + ' 조건', E);
-    if (c.time_s != null && !(c.time_s >= 0)) E(w, '시각(time_s)은 0 이상');
+    if (c.time_s != null && !(c.time_s >= 0)) E('RULE-0107', w, '시각(time_s)은 0 이상');
     for (const b of c.states || []) checkBundle(db, ix, b, `${w} 조건 상태`, E);
     const cal = o.calibration;
     if (cal) {
-      if (!V.calibrationKinds[cal.kind]) E(w, `보정 종류 '${cal.kind}' — ${Object.keys(V.calibrationKinds).join(' | ')}`);
+      if (!V.calibrationKinds[cal.kind]) E('RULE-0403', w, `보정 종류 '${cal.kind}' — ${Object.keys(V.calibrationKinds).join(' | ')}`);
       else if (cal.kind !== 'identity') {
-        if (!Number.isFinite(o.raw)) E(w, `보정 ${cal.kind} 에는 읽은 값(raw)이 필요함 — 값은 보정으로 다시 계산되어야 함`);
-        if (cal.kind === 'linear' && !(Number.isFinite(cal.a) && Number.isFinite(cal.b))) E(w, '선형 보정에는 a·b');
-        if (cal.kind === 'table' && !((cal.points || []).length >= 2 && cal.points.every((q, i) => q.length === 2 && q.every(Number.isFinite) && (!i || q[0] > cal.points[i - 1][0])))) E(w, '보정 표는 raw 오름차순 [raw, 값] 점 두 개 이상');
+        if (!Number.isFinite(o.raw)) E('RULE-0403', w, `보정 ${cal.kind} 에는 읽은 값(raw)이 필요함 — 값은 보정으로 다시 계산되어야 함`);
+        if (cal.kind === 'linear' && !(Number.isFinite(cal.a) && Number.isFinite(cal.b))) E('RULE-0403', w, '선형 보정에는 a·b');
+        if (cal.kind === 'table' && !((cal.points || []).length >= 2 && cal.points.every((q, i) => q.length === 2 && q.every(Number.isFinite) && (!i || q[0] > cal.points[i - 1][0])))) E('RULE-0403', w, '보정 표는 raw 오름차순 [raw, 값] 점 두 개 이상');
         else if (Number.isFinite(o.raw)) {
           const v = OBSOP.calibrate(cal, o.raw);
-          if (!Number.isFinite(v)) E(w, `읽은 값 ${o.raw} 이(가) 보정 범위 밖`);
-          else if (!near(v, o.value)) E(w, `값 ${o.value} 이(가) 보정 결과 ${v} 와 다름 — 관찰 값은 보정으로 다시 계산되어야 함`);
+          if (!Number.isFinite(v)) E('RULE-0403', w, `읽은 값 ${o.raw} 이(가) 보정 범위 밖`);
+          else if (!near(v, o.value)) E('RULE-0403', w, `값 ${o.value} 이(가) 보정 결과 ${v} 와 다름 — 관찰 값은 보정으로 다시 계산되어야 함`);
         }
       }
     }
-    if (o.provenance && o.provenance.sha256 != null && !/^[0-9a-f]{64}$/.test(o.provenance.sha256)) E(w, '원본 sha256 형식 틀림 (16진 64자리)');
-    if (!V.obsUses[o.use]) E(w, `용도 '${o.use}' — estimation | validation (추정에 쓴 관찰을 검증에 쓰지 않음)`);
+    if (o.provenance && o.provenance.sha256 != null && !/^[0-9a-f]{64}$/.test(o.provenance.sha256)) E('RULE-0107', w, '원본 sha256 형식 틀림 (16진 64자리)');
+    if (!V.obsUses[o.use]) E('RULE-0107', w, `용도 '${o.use}' — estimation | validation (추정에 쓴 관찰을 검증에 쓰지 않음)`);
     checkEvidence(o.evidence, w, E);
-    if (!['curated', 'computed'].includes(o.evidence.level)) E(w, `관찰 근거는 curated(문헌) | computed(포트 변환 도구) — 지금 ${o.evidence.level}`);
-    if (o.retracted) { if (!o.retracted.note) E(w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
+    if (!['curated', 'computed'].includes(o.evidence.level)) E('RULE-0404', w, `관찰 근거는 curated(문헌) | computed(포트 변환 도구) — 지금 ${o.evidence.level}`);
+    if (o.retracted) { if (!o.retracted.note) E('RULE-0107', w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
   }
   // 실측 상수 = 관찰 기록의 파생값: kinetics.from 의 관찰이 같은 규칙·같은 칸을 같은 값으로 쟀어야 한다 (lumped 는 원 관찰 참조만)
   function checkKineticsFrom(db, ref, k, rw, E) {
     const from = k.from || [];
     for (const f of from) {
       const o = db.observations[f.obs], fw = `${rw} 속도 출처 ${f.obs}`;
-      if (!o) { E(fw, '관찰 기록 없음'); continue; }
-      if (o.kind === 'qualitative') { E(fw, '정성 관찰은 수치의 근거가 될 수 없음'); continue; }
-      if (o.use !== 'estimation') E(fw, `용도가 ${o.use} 인 관찰은 상수 추정에 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
-      if (o.retracted) E(fw, '철회된 관찰을 참조함');
+      if (!o) { E('RULE-0084', fw, '관찰 기록 없음'); continue; }
+      if (o.kind === 'qualitative') { E('RULE-0084', fw, '정성 관찰은 수치의 근거가 될 수 없음'); continue; }
+      if (o.use !== 'estimation') E('RULE-0405', fw, `용도가 ${o.use} 인 관찰은 상수 추정에 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
+      if (o.retracted) E('RULE-0084', fw, '철회된 관찰을 참조함');
       if (k.lumped) continue;
-      if (o.observable.kind !== 'kinetic_constant' || o.observable.target !== ref || o.observable.param !== f.param) E(fw, `관찰이 이 규칙(${ref})의 '${f.param}' 을(를) 잰 것이 아님`);
-      else if (!near(o.value, k[f.param])) E(fw, `'${f.param}' 값 ${k[f.param]} 이(가) 관찰 값 ${o.value} 와 다름 — 실측 상수는 관찰에서 그대로`);
+      if (o.observable.kind !== 'kinetic_constant' || o.observable.target !== ref || o.observable.param !== f.param) E('RULE-0084', fw, `관찰이 이 규칙(${ref})의 '${f.param}' 을(를) 잰 것이 아님`);
+      else if (!near(o.value, k[f.param])) E('RULE-0084', fw, `'${f.param}' 값 ${k[f.param]} 이(가) 관찰 값 ${o.value} 와 다름 — 실측 상수는 관찰에서 그대로`);
       // v11 — 종·세포 대조: 다른 종에서 잰 값을 이 종의 상수로 적지 않는다 (CLAUDE.md 의 규약을 기계 집행으로)
       const kc = k.context || {}, oc = o.condition || {};
       if (kc.species && oc.species && kc.species !== oc.species)
-        E(fw, `종이 다름 — 상수의 맥락은 '${kc.species}', 관찰은 '${oc.species}' (다른 종의 측정을 이 종의 상수로 적지 않는다)`);
+        E('RULE-0089', fw, `종이 다름 — 상수의 맥락은 '${kc.species}', 관찰은 '${oc.species}' (다른 종의 측정을 이 종의 상수로 적지 않는다)`);
       if (kc.location && oc.location && kc.location !== oc.location)
-        E(fw, `위치가 다름 — 상수의 맥락은 '${kc.location}', 관찰은 '${oc.location}'`);
+        E('RULE-0084', fw, `위치가 다름 — 상수의 맥락은 '${kc.location}', 관찰은 '${oc.location}'`);
     }
-    if (k.lumped && !from.length) E(rw, '묶은 상수(lumped)에는 원 관찰 참조(from)가 필요함 — 기전을 세분할 때 다시 재지 않고 다시 계산하려고');
+    if (k.lumped && !from.length) E('RULE-0084', rw, '묶은 상수(lumped)에는 원 관찰 참조(from)가 필요함 — 기전을 세분할 때 다시 재지 않고 다시 계산하려고');
     if (k.evidence.level === 'curated' && !k.lumped) {
       const have = new Set(from.map((f) => f.param));
       const miss = KIN_FIELDS.filter((p) => p !== 'order' && k[p] != null && !have.has(p));
-      if (miss.length) E(rw, `문헌(curated) 속도 상수 ${miss.join('·')} 에 관찰 기록(kinetics.from)이 없음 — 실측값은 관찰 기록으로 넣고 상수는 그것을 참조 (observation-port.md §1)`);
+      if (miss.length) E('RULE-0084', rw, `문헌(curated) 속도 상수 ${miss.join('·')} 에 관찰 기록(kinetics.from)이 없음 — 실측값은 관찰 기록으로 넣고 상수는 그것을 참조 (observation-port.md §1)`);
     }
   }
   // 정의항 obs ↔ 관찰 기록 (v11) — checkKineticsFrom 의 거울. 측정량 종류·대상·값·종·세포가 모두 같아야 한다.
   function checkSenseObsFrom(db, sid, b, P, ow, E) {
     const o = db.observations[b.from], fw = `${ow} 측정 출처 ${b.from}`;
-    if (!o) { E(fw, '관찰 기록 없음'); return; }
-    if (o.kind === 'qualitative') { E(fw, '정성 관찰은 수치의 근거가 될 수 없음'); return; }
-    if (!P || !P.observable) { E(fw, `'${b.property}' 에는 대응하는 측정량이 없어 관찰 기록을 가리킬 수 없음`); return; }
-    if (o.retracted) E(fw, '철회된 관찰을 참조함');
-    if (o.use !== 'estimation') E(fw, `용도가 ${o.use} 인 관찰은 모델 값의 출처로 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
-    if (o.observable.kind !== P.observable) E(fw, `관찰이 '${P.observable}' 을(를) 잰 것이 아님 (측정량 ${o.observable.kind})`);
+    if (!o) { E('RULE-0444', fw, '관찰 기록 없음'); return; }
+    if (o.kind === 'qualitative') { E('RULE-0444', fw, '정성 관찰은 수치의 근거가 될 수 없음'); return; }
+    if (!P || !P.observable) { E('RULE-0444', fw, `'${b.property}' 에는 대응하는 측정량이 없어 관찰 기록을 가리킬 수 없음`); return; }
+    if (o.retracted) E('RULE-0444', fw, '철회된 관찰을 참조함');
+    if (o.use !== 'estimation') E('RULE-0111', fw, `용도가 ${o.use} 인 관찰은 모델 값의 출처로 쓸 수 없음 — 검증용 관찰은 판정에만 (순환 판정 방지)`);
+    if (o.observable.kind !== P.observable) E('RULE-0444', fw, `관찰이 '${P.observable}' 을(를) 잰 것이 아님 (측정량 ${o.observable.kind})`);
     else {
       // 대상 대조: 묶음 측정량은 이 정의항의 묶음이어야 하고, 위치 측정량은 obs 의 위치여야 한다
       const ovt = (V.observables[o.observable.kind] || {}).target;
       if (ovt === 'bundle' && String(o.observable.target).split('|')[0] !== sid)
-        E(fw, `관찰 대상 '${o.observable.target}' 이(가) 이 정의항(${sid})의 묶음이 아님`);
+        E('RULE-0444', fw, `관찰 대상 '${o.observable.target}' 이(가) 이 정의항(${sid})의 묶음이 아님`);
       if (ovt === 'location' && b.context.location && o.observable.target !== b.context.location)
-        E(fw, `관찰 대상 위치 '${o.observable.target}' 이(가) obs 의 위치 '${b.context.location}' 와 다름`);
+        E('RULE-0444', fw, `관찰 대상 위치 '${o.observable.target}' 이(가) obs 의 위치 '${b.context.location}' 와 다름`);
     }
     const si = obsSI(P, b);
-    if (si != null && !near(si, o.value)) E(fw, `값 ${b.value} ${b.unit} (= ${si} 정준) 이(가) 관찰 값 ${o.value} ${o.unit} 와 다름 — 파생값은 관찰에서 그대로 환산한다`);
+    if (si != null && !near(si, o.value)) E('RULE-0444', fw, `값 ${b.value} ${b.unit} (= ${si} 정준) 이(가) 관찰 값 ${o.value} ${o.unit} 와 다름 — 파생값은 관찰에서 그대로 환산한다`);
     const c = o.condition || {};
     if (b.context.species && c.species && b.context.species !== c.species)
-      E(fw, `종이 다름 — obs 는 '${b.context.species}', 관찰은 '${c.species}' (다른 종의 측정을 이 종의 값으로 적지 않는다)`);
+      E('RULE-0444', fw, `종이 다름 — obs 는 '${b.context.species}', 관찰은 '${c.species}' (다른 종의 측정을 이 종의 값으로 적지 않는다)`);
     if (b.context.cell && c.cell && b.context.cell !== c.cell)
-      E(fw, `세포 유형이 다름 — obs 는 '${b.context.cell}', 관찰은 '${c.cell}'`);
+      E('RULE-0444', fw, `세포 유형이 다름 — obs 는 '${b.context.cell}', 관찰은 '${c.cell}'`);
     if (b.context.location && c.location && b.context.location !== c.location)
-      E(fw, `위치가 다름 — obs 는 '${b.context.location}', 관찰은 '${c.location}'`);
+      E('RULE-0444', fw, `위치가 다름 — obs 는 '${b.context.location}', 관찰은 '${c.location}'`);
   }
   function validateLimitation(db, ix, id, l, E, W) {
     const w = `${id}`;
-    if (!isId('L', id)) E(id, "한계 번호는 'L' + 숫자 6자리");
+    if (!isId('L', id)) E('RULE-0498', id, "한계 번호는 'L' + 숫자 6자리");
     const t = parseTarget(l.target);
-    if (!t) E(w, `대상 '${l.target}' 형식 — D…, D…/site/키, D…/rule/키, S…`);
-    else if (t.base[0] === 'S' ? !db.steps[t.base] : !db.senses[t.base]) E(w, `대상 '${t.base}' 없음`);
-    else if (t.sub === 'site' && !db.senses[t.base].site[t.key]) E(w, `대상 부위 '${l.target}' 없음`);
-    else if (t.sub === 'rule' && !db.senses[t.base].rule.some((r) => r.id === t.key)) E(w, `대상 규칙 '${l.target}' 없음`);
-    if (!V.gapTypes[l.type]) E(w, `한계 종류 '${l.type}' — ${Object.keys(V.gapTypes).join(' | ')}`);
-    if (!l.requirement.text) E(w, '요구 사항(requirement.text) 없음 — 무엇이 있어야 해결되는지');
-    if (!l.requirement.needs.length) E(w, '해결 경로(requirement.needs) 없음 — 필요한 데이터를 하나 이상');
+    if (!t) E('RULE-0369', w, `대상 '${l.target}' 형식 — D…, D…/site/키, D…/rule/키, S…`);
+    else if (t.base[0] === 'S' ? !db.steps[t.base] : !db.senses[t.base]) E('RULE-0369', w, `대상 '${t.base}' 없음`);
+    else if (t.sub === 'site' && !db.senses[t.base].site[t.key]) E('RULE-0369', w, `대상 부위 '${l.target}' 없음`);
+    else if (t.sub === 'rule' && !db.senses[t.base].rule.some((r) => r.id === t.key)) E('RULE-0369', w, `대상 규칙 '${l.target}' 없음`);
+    if (!V.gapTypes[l.type]) E('RULE-0369', w, `한계 종류 '${l.type}' — ${Object.keys(V.gapTypes).join(' | ')}`);
+    if (!l.requirement.text) E('RULE-0369', w, '요구 사항(requirement.text) 없음 — 무엇이 있어야 해결되는지');
+    if (!l.requirement.needs.length) E('RULE-0369', w, '해결 경로(requirement.needs) 없음 — 필요한 데이터를 하나 이상');
     // 구조 필드 (가 스키마)
     if (l.symptom) for (const [k, v] of Object.entries(l.symptom)) {
-      if (!/^[a-z][a-z0-9_]*$/.test(k)) E(w, `증상 키 '${k}' — 소문자·숫자·밑줄(단위는 키 끝에, 예: wall_time_s)`);
-      if (!Number.isFinite(v)) E(w, `증상 '${k}' 의 값은 유한한 수 — 설명은 requirement.text 에`);
+      if (!/^[a-z][a-z0-9_]*$/.test(k)) E('RULE-0372', w, `증상 키 '${k}' — 소문자·숫자·밑줄(단위는 키 끝에, 예: wall_time_s)`);
+      if (!Number.isFinite(v)) E('RULE-0372', w, `증상 '${k}' 의 값은 유한한 수 — 설명은 requirement.text 에`);
     }
     for (const ref of l.downstream_blocked || []) {
       const t2 = parseTarget(ref);
-      if (!t2) E(w, `막힌 하류 '${ref}' 형식 — D…, D…/site/키, D…/rule/키, S…`);
-      else if (t2.base[0] === 'S' ? !db.steps[t2.base] : !db.senses[t2.base]) E(w, `막힌 하류 '${ref}' 없음`);
-      else if (ref === l.target) E(w, `막힌 하류 '${ref}' 가 대상 자신`);
+      if (!t2) E('RULE-0372', w, `막힌 하류 '${ref}' 형식 — D…, D…/site/키, D…/rule/키, S…`);
+      else if (t2.base[0] === 'S' ? !db.steps[t2.base] : !db.senses[t2.base]) E('RULE-0372', w, `막힌 하류 '${ref}' 없음`);
+      else if (ref === l.target) E('RULE-0372', w, `막힌 하류 '${ref}' 가 대상 자신`);
     }
     if (l.resolution_trigger != null) {
-      if (!V.resolutionTriggers[l.resolution_trigger]) E(w, `재검토 조건 '${l.resolution_trigger}' — ${Object.keys(V.resolutionTriggers).join(' | ')}`);
-      else if (l.resolution_trigger !== 'manual' && !(l.at && Number.isFinite(Date.parse(l.at)))) E(w, `재검토 조건 '${l.resolution_trigger}' 은 한계의 등록 시각 at(ISO) 이 있어야 비교할 수 있음`);
+      if (!V.resolutionTriggers[l.resolution_trigger]) E('RULE-0372', w, `재검토 조건 '${l.resolution_trigger}' — ${Object.keys(V.resolutionTriggers).join(' | ')}`);
+      else if (l.resolution_trigger !== 'manual' && !(l.at && Number.isFinite(Date.parse(l.at)))) E('RULE-0372', w, `재검토 조건 '${l.resolution_trigger}' 은 한계의 등록 시각 at(ISO) 이 있어야 비교할 수 있음`);
     }
-    if (l.prohibited_bypasses && !l.prohibited_bypasses.every((x) => x && x.trim())) E(w, '금지된 우회(prohibited_bypasses)는 비지 않은 문장 목록');
+    if (l.prohibited_bypasses && !l.prohibited_bypasses.every((x) => x && x.trim())) E('RULE-0372', w, '금지된 우회(prohibited_bypasses)는 비지 않은 문장 목록');
     l.requirement.needs.forEach((n, i) => {
       const nw = `${id} 필요 ${i + 1}`;
       if (n.kind === 'obs') {
-        if (!V.obsProperties[n.property]) E(nw, `관찰 속성 '${n.property}' 은(는) 어휘에 없음`);
-        if (!db.senses[n.on]) E(nw, `관찰을 받을 정의항 '${n.on || ''}' 없음`);
-        if (n.cell && !V.cells[n.cell]) E(nw, `세포 '${n.cell}' 은(는) 어휘에 없음`);
-        if (n.location && !V.locations[n.location]) E(nw, `위치 '${n.location}' 은(는) 어휘에 없음`);
+        if (!V.obsProperties[n.property]) E('RULE-0371', nw, `관찰 속성 '${n.property}' 은(는) 어휘에 없음`);
+        if (!db.senses[n.on]) E('RULE-0371', nw, `관찰을 받을 정의항 '${n.on || ''}' 없음`);
+        if (n.cell && !V.cells[n.cell]) E('RULE-0371', nw, `세포 '${n.cell}' 은(는) 어휘에 없음`);
+        if (n.location && !V.locations[n.location]) E('RULE-0371', nw, `위치 '${n.location}' 은(는) 어휘에 없음`);
       } else if (n.kind === 'residue') {
         const s = parseTarget(n.site);
-        if (!s || s.sub !== 'site' || !db.senses[s.base] || !db.senses[s.base].site[s.key]) E(nw, `잔기를 채울 부위 '${n.site || ''}' 없음 — D…/site/키`);
+        if (!s || s.sub !== 'site' || !db.senses[s.base] || !db.senses[s.base].site[s.key]) E('RULE-0371', nw, `잔기를 채울 부위 '${n.site || ''}' 없음 — D…/site/키`);
       } else if (n.kind === 'xref') {
-        if (!V.xrefs[n.db]) E(nw, `외부 ID 종류 '${n.db}' 없음`);
+        if (!V.xrefs[n.db]) E('RULE-0371', nw, `외부 ID 종류 '${n.db}' 없음`);
         const d = db.senses[n.on];
-        if (!d) E(nw, `외부 ID 를 받을 정의항 '${n.on || ''}' 없음`);
-        else if (V.kinds[d.kind] && !V.kinds[d.kind].xref.allowed.includes(n.db)) E(nw, `kind '${d.kind}' 에는 ${n.db} ID 를 붙일 수 없어 이 경로로는 해결되지 않음`);
+        if (!d) E('RULE-0371', nw, `외부 ID 를 받을 정의항 '${n.on || ''}' 없음`);
+        else if (V.kinds[d.kind] && !V.kinds[d.kind].xref.allowed.includes(n.db)) E('RULE-0371', nw, `kind '${d.kind}' 에는 ${n.db} ID 를 붙일 수 없어 이 경로로는 해결되지 않음`);
       } else if (n.kind === 'kinetics') {
         const t = parseTarget(n.rule);
-        if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E(nw, `속도 상수를 받을 규칙 '${n.rule || ''}' 없음 — D…/rule/키`);
-        if (!(n.params || []).length) E(nw, '필요한 속도 상수(params) 없음');
-        for (const f of n.params || []) if (!KIN_FIELDS.includes(f)) E(nw, `속도 상수 '${f}' — ${KIN_FIELDS.join(', ')}`);
-      } else if (n.kind === 'manual') { if (!n.text) E(nw, 'manual 해결 경로에 설명(text) 없음'); }
-      else E(nw, `해결 경로 종류 '${n.kind}' — obs | residue | xref | kinetics | manual`);
+        if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E('RULE-0371', nw, `속도 상수를 받을 규칙 '${n.rule || ''}' 없음 — D…/rule/키`);
+        if (!(n.params || []).length) E('RULE-0371', nw, '필요한 속도 상수(params) 없음');
+        for (const f of n.params || []) if (!KIN_FIELDS.includes(f)) E('RULE-0371', nw, `속도 상수 '${f}' — ${KIN_FIELDS.join(', ')}`);
+      } else if (n.kind === 'manual') { if (!n.text) E('RULE-0371', nw, 'manual 해결 경로에 설명(text) 없음'); }
+      else E('RULE-0371', nw, `해결 경로 종류 '${n.kind}' — obs | residue | xref | kinetics | manual`);
     });
-    if (l.resolution) { if (!l.resolution.note) E(w, 'resolution 에 해결 설명(note) 없음'); checkEvidence(l.resolution.evidence, w, E); }
+    if (l.resolution) { if (!l.resolution.note) E('RULE-0369', w, 'resolution 에 해결 설명(note) 없음'); checkEvidence(l.resolution.evidence, w, E); }
   }
 
   function validateSense(db, ix, id, d, E, W) {
     const L = ix.label, where = `${id}(${L(id)})`, K = V.kinds[d.kind];
-    if (!isId('D', id)) E(id, "정의항 번호는 'D' + 숫자 6자리");
-    if (!db.terms[d.term]) E(where, `소속 개념 '${d.term}' 없음`);
-    if (!(d.n >= 1)) E(where, '뜻 번호(n) 없음');
-    else if ((ix.termSenses.get(d.term) || []).filter((x) => db.senses[x].n === d.n).length > 1) E(where, `같은 개념 안에 뜻 번호 ${d.n} 이 겹침`);
-    if (!K) E(where, `kind '${d.kind}' 은(는) 어휘 목록에 없음`);
+    if (!isId('D', id)) E('RULE-0498', id, "정의항 번호는 'D' + 숫자 6자리");
+    if (!db.terms[d.term]) E('RULE-0500', where, `소속 개념 '${d.term}' 없음`);
+    if (!(d.n >= 1)) E('RULE-0500', where, '뜻 번호(n) 없음');
+    else if ((ix.termSenses.get(d.term) || []).filter((x) => db.senses[x].n === d.n).length > 1) E('RULE-0500', where, `같은 개념 안에 뜻 번호 ${d.n} 이 겹침`);
+    if (!K) E('RULE-0309', where, `kind '${d.kind}' 은(는) 어휘 목록에 없음`);
     // 종
-    if (K && K.species === 'required' && !d.reference_species) E(where, `kind '${d.kind}' 는 기준 종(reference_species)이 필요함 (기본 ${V.defaultReferenceSpecies})`);
-    if (K && K.species === 'forbidden' && d.reference_species) E(where, `kind '${d.kind}' 는 종과 무관 — reference_species 를 두지 않음`);
-    if (d.reference_species && !V.taxa[d.reference_species]) E(where, `기준 종 '${d.reference_species}' 은(는) 종 어휘에 없음`);
+    if (K && K.species === 'required' && !d.reference_species) E('RULE-0073', where, `kind '${d.kind}' 는 기준 종(reference_species)이 필요함 (기본 ${V.defaultReferenceSpecies})`);
+    if (K && K.species === 'forbidden' && d.reference_species) E('RULE-0073', where, `kind '${d.kind}' 는 종과 무관 — reference_species 를 두지 않음`);
+    if (d.reference_species && !V.taxa[d.reference_species]) E('RULE-0073', where, `기준 종 '${d.reference_species}' 은(는) 종 어휘에 없음`);
     // 외부 ID·지문
     const dbs = new Set(), byDb = new Map(), seenId = new Set();
     for (const x of d.xrefs) {
       const src = V.xrefs[x.db];
-      if (!src) { E(where, `외부 ID 종류 '${x.db}' 없음`); continue; }
-      if (!new RegExp(src.pattern).test(x.id)) E(where, `${x.db} ID '${x.id}' 형식이 틀림`);
-      if (K && !K.xref.allowed.includes(x.db)) E(where, `kind '${d.kind}' 에는 ${x.db} ID 를 붙일 수 없음 (허용: ${K.xref.allowed.join(', ') || '없음'})`);
-      if (!V.xrefStatus.includes(x.status)) E(where, `외부 ID 상태 '${x.status}' — ${V.xrefStatus.join(' | ')}`);
-      if (x.role && !V.xrefRoles[x.role]) E(where, `외부 ID 역할 '${x.role}' — ${Object.keys(V.xrefRoles).join(' | ')}`);
-      if (seenId.has(`${x.db}:${x.id}`)) E(where, `외부 ID ${x.db}:${x.id} 가 두 번`);
+      if (!src) { E('RULE-0414', where, `외부 ID 종류 '${x.db}' 없음`); continue; }
+      if (!new RegExp(src.pattern).test(x.id)) E('RULE-0414', where, `${x.db} ID '${x.id}' 형식이 틀림`);
+      if (K && !K.xref.allowed.includes(x.db)) E('RULE-0311', where, `kind '${d.kind}' 에는 ${x.db} ID 를 붙일 수 없음 (허용: ${K.xref.allowed.join(', ') || '없음'})`);
+      if (!V.xrefStatus.includes(x.status)) E('RULE-0414', where, `외부 ID 상태 '${x.status}' — ${V.xrefStatus.join(' | ')}`);
+      if (x.role && !V.xrefRoles[x.role]) E('RULE-0063', where, `외부 ID 역할 '${x.role}' — ${Object.keys(V.xrefRoles).join(' | ')}`);
+      if (seenId.has(`${x.db}:${x.id}`)) E('RULE-0414', where, `외부 ID ${x.db}:${x.id} 가 두 번`);
       seenId.add(`${x.db}:${x.id}`);
       dbs.add(x.db);
       if (!byDb.has(x.db)) byDb.set(x.db, []);
@@ -510,258 +510,258 @@
     for (const [dbName, list] of byDb) {
       if (list.length > 1) {
         const roles = list.map((x) => x.role);
-        if (roles.some((r) => !r)) E(where, `${dbName} ID 가 ${list.length}개인데 역할(role)이 없는 것이 있음 — ${Object.keys(V.xrefRoles).join(' | ')} 로 규약을 선언할 것`);
-        else if (new Set(roles).size !== roles.length) E(where, `${dbName} ID 의 역할이 겹침 (${roles.join(', ')})`);
-        else if (!roles.includes('physiological')) E(where, `${dbName} ID 가 여러 개면 엔진이 읽을 physiological(pH 7.3 우세 종)을 하나 정해야 함`);
+        if (roles.some((r) => !r)) E('RULE-0435', where, `${dbName} ID 가 ${list.length}개인데 역할(role)이 없는 것이 있음 — ${Object.keys(V.xrefRoles).join(' | ')} 로 규약을 선언할 것`);
+        else if (new Set(roles).size !== roles.length) E('RULE-0435', where, `${dbName} ID 의 역할이 겹침 (${roles.join(', ')})`);
+        else if (!roles.includes('physiological')) E('RULE-0435', where, `${dbName} ID 가 여러 개면 엔진이 읽을 physiological(pH 7.3 우세 종)을 하나 정해야 함`);
       }
-      for (const x of list) if (x.role === 'class' && SPECIES_KINDS.includes(d.kind)) E(where, `kind '${d.kind}' 는 셀 수 있는 분자 — 분류(class) 항목 ${dbName}:${x.id} 을 번호로 쓸 수 없음 (화학식이 없어 수지 대조가 건너뛰어진다). pH 7.3 우세 종을 physiological 로 적을 것`);
-      if (list.length === 1 && list[0].role === 'parent' && SPECIES_KINDS.includes(d.kind)) W(where, `${dbName}:${list[0].id} 이 중성 모체만 적혀 있음 — 반응 참여자(physiological)를 함께 적는 것이 규약`);
+      for (const x of list) if (x.role === 'class' && SPECIES_KINDS.includes(d.kind)) E('RULE-0063', where, `kind '${d.kind}' 는 셀 수 있는 분자 — 분류(class) 항목 ${dbName}:${x.id} 을 번호로 쓸 수 없음 (화학식이 없어 수지 대조가 건너뛰어진다). pH 7.3 우세 종을 physiological 로 적을 것`);
+      if (list.length === 1 && list[0].role === 'parent' && SPECIES_KINDS.includes(d.kind)) W('RULE-0436', where, `${dbName}:${list[0].id} 이 중성 모체만 적혀 있음 — 반응 참여자(physiological)를 함께 적는 것이 규약`);
     }
-    if (K) for (const req of K.xref.required || []) if (!dbs.has(req) && !d.unmapped) E(where, `kind '${d.kind}' 는 ${req} ID 가 필요함 — 확실한 ID 를 모르면 unmapped 에 사유를 적을 것 (추측 금지)`);
+    if (K) for (const req of K.xref.required || []) if (!dbs.has(req) && !d.unmapped) E('RULE-0063', where, `kind '${d.kind}' 는 ${req} ID 가 필요함 — 확실한 ID 를 모르면 unmapped 에 사유를 적을 것 (추측 금지)`);
     if (d.fingerprint) {
       const f = d.fingerprint, sc = V.fingerprints[f.scheme];
-      if (!sc) E(where, `지문 방식 '${f.scheme}' 없음`);
+      if (!sc) E('RULE-0418', where, `지문 방식 '${f.scheme}' 없음`);
       else {
-        if (!new RegExp(sc.pattern).test(f.value)) E(where, `${f.scheme} 지문 '${f.value}' 형식이 틀림`);
-        if (!sc.kinds.includes(d.kind)) E(where, `kind '${d.kind}' 에는 ${f.scheme} 지문을 붙일 수 없음`);
+        if (!new RegExp(sc.pattern).test(f.value)) E('RULE-0418', where, `${f.scheme} 지문 '${f.value}' 형식이 틀림`);
+        if (!sc.kinds.includes(d.kind)) E('RULE-0418', where, `kind '${d.kind}' 에는 ${f.scheme} 지문을 붙일 수 없음`);
       }
-      if (!V.fingerprintStatus.includes(f.status)) E(where, `지문 상태 '${f.status}'`);
+      if (!V.fingerprintStatus.includes(f.status)) E('RULE-0418', where, `지문 상태 '${f.status}'`);
     }
     const participant = isParticipantKind(d.kind);
     // 층 (형식 v8): 분자 종류는 기본 층 T1(연속 장) | T2(규칙 행위자) 필수, 그 밖의 종류는 두지 않음. T3 은 영역 상태라 쓸 수 없음
     if (d.tier) {
-      if (!V.tiers[d.tier]) E(where, `층 '${d.tier}' 은(는) 어휘에 없음 (T1 | T2)`);
-      else if (d.tier === 'T3') E(where, 'T3(공간 영역)은 영역의 동적 상태 — 정의항의 기본 층은 T1 | T2');
-      if (!participant) E(where, '층(tier)은 분자 종류 정의항만');
-      if (d.tier === 'T1' && ['protein', 'complex', 'nucleic_acid'].includes(d.kind)) E(where, `kind '${d.kind}' 는 부위 상태를 가진 행위자 — T2`);
-      if (d.tier === 'T1' && Object.keys(d.site).length) E(where, 'T1(연속 장) 분자는 부위 상태를 갖지 않음 — 부위가 있으면 T2');
-    } else if (participant) E(where, '분자 종류는 기본 층(tier: T1 | T2)이 필요함 (형식 v8)');
+      if (!V.tiers[d.tier]) E('RULE-0138', where, `층 '${d.tier}' 은(는) 어휘에 없음 (T1 | T2)`);
+      else if (d.tier === 'T3') E('RULE-0138', where, 'T3(공간 영역)은 영역의 동적 상태 — 정의항의 기본 층은 T1 | T2');
+      if (!participant) E('RULE-0138', where, '층(tier)은 분자 종류 정의항만');
+      if (d.tier === 'T1' && ['protein', 'complex', 'nucleic_acid'].includes(d.kind)) E('RULE-0138', where, `kind '${d.kind}' 는 부위 상태를 가진 행위자 — T2`);
+      if (d.tier === 'T1' && Object.keys(d.site).length) E('RULE-0138', where, 'T1(연속 장) 분자는 부위 상태를 갖지 않음 — 부위가 있으면 T2');
+    } else if (participant) E('RULE-0138', where, '분자 종류는 기본 층(tier: T1 | T2)이 필요함 (형식 v8)');
     // 막 위상
     if (d.membrane) {
       const m = d.membrane;
-      if (!participant) E(where, '막 위상은 분자 종류만 가질 수 있음');
-      if (!V.associations[m.association]) E(where, `막 결합 방식 '${m.association}' 은(는) 어휘에 없음`);
+      if (!participant) E('RULE-0312', where, '막 위상은 분자 종류만 가질 수 있음');
+      if (!V.associations[m.association]) E('RULE-0339', where, `막 결합 방식 '${m.association}' 은(는) 어휘에 없음`);
       else if (m.association !== 'soluble') {
-        if (!V.locations[m.location] || V.locations[m.location].dim !== '2D') E(where, `막 결합 분자는 막(2D 위치)을 membrane.location 으로 가져야 함`);
-        if (['peripheral', 'lipid_anchored'].includes(m.association) && !(m.side && locSides(m.location)[m.side])) E(where, `${vlabel('associations', m.association)} 분자는 붙어 있는 막 면(membrane.side)이 필요함`);
+        if (!V.locations[m.location] || V.locations[m.location].dim !== '2D') E('RULE-0340', where, `막 결합 분자는 막(2D 위치)을 membrane.location 으로 가져야 함`);
+        if (['peripheral', 'lipid_anchored'].includes(m.association) && !(m.side && locSides(m.location)[m.side])) E('RULE-0339', where, `${vlabel('associations', m.association)} 분자는 붙어 있는 막 면(membrane.side)이 필요함`);
         // 막 이동 경로 (MHC 실험): 분비·세포 내 섭취 경로로 옮겨 가는 막 단백질이 거치는 막들. 내강 쪽 면 ↔ 세포 밖 쪽 면은 위상이 같다 (소포 수송)
-        for (const l of m.route || []) if (!V.locations[l] || V.locations[l].dim !== '2D') E(where, `막 이동 경로의 '${l}' 은(는) 막(2D) 위치가 아님`); else if (l === m.location) E(where, `막 이동 경로에 기본 막 '${l}' 을 다시 적음`);
-      } else if (m.location || m.side) E(where, '수용성 분자에는 membrane.location/side 를 두지 않음');
+        for (const l of m.route || []) if (!V.locations[l] || V.locations[l].dim !== '2D') E('RULE-0440', where, `막 이동 경로의 '${l}' 은(는) 막(2D) 위치가 아님`); else if (l === m.location) E('RULE-0440', where, `막 이동 경로에 기본 막 '${l}' 을 다시 적음`);
+      } else if (m.location || m.side) E('RULE-0340', where, '수용성 분자에는 membrane.location/side 를 두지 않음');
     }
     // 구성 요소 (구조 계층)
     if (d.components.length) {
-      if (d.kind !== 'complex') E(where, `구성 요소(components)는 kind complex 만 가질 수 있음 (현재 ${d.kind})`);
+      if (d.kind !== 'complex') E('RULE-0331', where, `구성 요소(components)는 kind complex 만 가질 수 있음 (현재 ${d.kind})`);
       for (const c of d.components) {
         const x = db.senses[c.ref];
-        if (!x) E(where, `구성 요소 '${c.ref}' 없음`);
-        else if (!isParticipantKind(x.kind)) E(where, `구성 요소 '${L(c.ref)}' 는 분자 종류가 아님`);
-        if (c.ref === id) E(where, '자기 자신을 구성 요소로 가질 수 없음');
-        if (!(c.n >= 1)) E(where, `구성 요소 개수 틀림`);
+        if (!x) E('RULE-0332', where, `구성 요소 '${c.ref}' 없음`);
+        else if (!isParticipantKind(x.kind)) E('RULE-0332', where, `구성 요소 '${L(c.ref)}' 는 분자 종류가 아님`);
+        if (c.ref === id) E('RULE-0332', where, '자기 자신을 구성 요소로 가질 수 없음');
+        if (!(c.n >= 1)) E('RULE-0417', where, `구성 요소 개수 틀림`);
       }
-    } else if (d.kind === 'complex') W(where, '복합체인데 구성 요소(components)가 없음 — 구조 계층을 채울 것');
+    } else if (d.kind === 'complex') W('RULE-0332', where, '복합체인데 구성 요소(components)가 없음 — 구조 계층을 채울 것');
     // 설명
-    if (!d.desc.length) E(where, '설명(desc)이 하나도 없음');
+    if (!d.desc.length) E('RULE-0501', where, '설명(desc)이 하나도 없음');
     d.desc.forEach((ds, di) => {
       const dw = `${id}/desc/${di + 1}`;
-      if (!ds.text) E(dw, '정의 문장(text) 없음');
-      if (!V.fields[ds.field]) E(dw, `field '${ds.field}' 은(는) 어휘 목록에 없음`);
-      if (!ds.context.scope) E(dw, '맥락 범위(context.scope) 없음');
+      if (!ds.text) E('RULE-0501', dw, '정의 문장(text) 없음');
+      if (!V.fields[ds.field]) E('RULE-0501', dw, `field '${ds.field}' 은(는) 어휘 목록에 없음`);
+      if (!ds.context.scope) E('RULE-0501', dw, '맥락 범위(context.scope) 없음');
       checkContext(ds.context, dw, E);
       checkEvidence(ds.evidence, dw, E);
-      if (ds.genus && !ds.links.some((l) => l.rel === 'is_a' && l.to === ds.genus)) E(dw, `genus '${ds.genus}' 는 이 설명의 is_a 연결 대상이어야 함`);
+      if (ds.genus && !ds.links.some((l) => l.rel === 'is_a' && l.to === ds.genus)) E('RULE-0334', dw, `genus '${ds.genus}' 는 이 설명의 is_a 연결 대상이어야 함`);
       ds.links.forEach((l, i) => {
         const lw = `${dw} 연결 ${i + 1}`;
-        if (!REL[l.rel]) { E(lw, `알 수 없는 관계 '${l.rel}'`); return; }
-        if (l.to === id) E(lw, '자기 자신을 가리킴');
+        if (!REL[l.rel]) { E('RULE-0334', lw, `알 수 없는 관계 '${l.rel}'`); return; }
+        if (l.to === id) E('RULE-0334', lw, '자기 자신을 가리킴');
         const tg = db.senses[l.to];
-        if (!tg) { E(lw, `대상 '${l.to}' 가 정의항 번호가 아니거나 없음`); return; }
+        if (!tg) { E('RULE-0334', lw, `대상 '${l.to}' 가 정의항 번호가 아니거나 없음`); return; }
         const down = !!UP_OF[l.rel];
         if (V.kinds[d.kind] && V.kinds[tg.kind] && !(down ? kindAllowed(l.rel, tg.kind, d.kind) : kindAllowed(l.rel, d.kind, tg.kind)))
-          E(lw, `${l.rel}: kind '${d.kind}' → '${tg.kind}'(${L(l.to)}) 는 허용되지 않음`);
-        if (l.span && !ds.text.includes(l.span)) E(lw, `근거 구절 '${l.span}' 이 정의 문장에 없음`);
-        if (!l.span && !['contrasts', 'requires'].includes(l.rel)) W(lw, `(→${L(l.to)}) 근거 구절(span) 없음`);
+          E('RULE-0334', lw, `${l.rel}: kind '${d.kind}' → '${tg.kind}'(${L(l.to)}) 는 허용되지 않음`);
+        if (l.span && !ds.text.includes(l.span)) E('RULE-0074', lw, `근거 구절 '${l.span}' 이 정의 문장에 없음`);
+        if (!l.span && !['contrasts', 'requires'].includes(l.rel)) W('RULE-0074', lw, `(→${L(l.to)}) 근거 구절(span) 없음`);
       });
     });
     // 부위
     const sites = Object.entries(d.site);
-    if (sites.length && !participant) E(where, '부위(site)는 분자 종류만 가질 수 있음');
+    if (sites.length && !participant) E('RULE-0312', where, '부위(site)는 분자 종류만 가질 수 있음');
     const memAssoc = d.membrane ? d.membrane.association : 'soluble';
     for (const [k, s] of sites) {
       const sw = `${id}/site/${k}`;
-      if (!SITE_RE.test(k)) E(sw, '부위 키는 영문 소문자·숫자·_ (예: reg_phos)');
-      if (!V.siteTypes[s.type]) E(sw, `부위 종류 '${s.type}' 은(는) 어휘에 없음`);
-      if (!s.features.length) E(sw, '허용 특징(features)이 없음');
-      for (const f of s.features) if (!V.features[f]) E(sw, `특징 '${f}' 은(는) 특징 어휘에 없음`);
+      if (!SITE_RE.test(k)) E('RULE-0319', sw, '부위 키는 영문 소문자·숫자·_ (예: reg_phos)');
+      if (!V.siteTypes[s.type]) E('RULE-0309', sw, `부위 종류 '${s.type}' 은(는) 어휘에 없음`);
+      if (!s.features.length) E('RULE-0342', sw, '허용 특징(features)이 없음');
+      for (const f of s.features) if (!V.features[f]) E('RULE-0342', sw, `특징 '${f}' 은(는) 특징 어휘에 없음`);
       for (const [t, r] of Object.entries(s.numbering || {})) {
-        if (!V.taxa[t]) E(sw, `잔기 번호의 종 '${t}' 은(는) 종 어휘에 없음`);
-        if (!RES_RE.test(r)) E(sw, `잔기 '${r}' 형식 틀림 (예: Ser14)`);
+        if (!V.taxa[t]) E('RULE-0337', sw, `잔기 번호의 종 '${t}' 은(는) 종 어휘에 없음`);
+        if (!RES_RE.test(r)) E('RULE-0337', sw, `잔기 '${r}' 형식 틀림 (예: Ser14)`);
       }
       if (s.type === 'modification_site' && ['protein', 'nucleic_acid'].includes(d.kind)) {
         const ref = d.reference_species;
-        if (!(s.numbering && s.numbering[ref]) && !s.residue_unknown) E(sw, `기준 종(${ref}) 잔기 번호가 없음 — 모르면 residue_unknown: true 로 명시(지어내지 않음)`);
+        if (!(s.numbering && s.numbering[ref]) && !s.residue_unknown) E('RULE-0068', sw, `기준 종(${ref}) 잔기 번호가 없음 — 모르면 residue_unknown: true 로 명시(지어내지 않음)`);
       }
       if (s.face) {
-        if (!V.faces[s.face]) E(sw, `막 면 '${s.face}' 은(는) 어휘에 없음`);
-        else if (memAssoc === 'soluble') E(sw, '막 면(face)은 막 결합 분자의 부위에만');
-        else if (s.face !== 'transmembrane' && !locSides(d.membrane.location)[s.face]) E(sw, `${vlabel('locations', d.membrane.location)}에는 '${s.face}' 면이 없음`);
+        if (!V.faces[s.face]) E('RULE-0343', sw, `막 면 '${s.face}' 은(는) 어휘에 없음`);
+        else if (memAssoc === 'soluble') E('RULE-0343', sw, '막 면(face)은 막 결합 분자의 부위에만');
+        else if (s.face !== 'transmembrane' && !locSides(d.membrane.location)[s.face]) E('RULE-0343', sw, `${vlabel('locations', d.membrane.location)}에는 '${s.face}' 면이 없음`);
       }
-      if (s.on && !d.components.some((c) => c.ref === s.on)) E(sw, `부위가 있는 구성 요소 '${s.on}' 는 이 복합체의 구성 요소가 아님`);
-      if (s.ligand) { const x = db.senses[s.ligand]; if (!x) E(sw, `리간드 '${s.ligand}' 없음`); else if (!MOLECULAR.has(x.kind)) E(sw, `리간드 '${L(s.ligand)}' 는 분자 종류가 아님`); }
+      if (s.on && !d.components.some((c) => c.ref === s.on)) E('RULE-0343', sw, `부위가 있는 구성 요소 '${s.on}' 는 이 복합체의 구성 요소가 아님`);
+      if (s.ligand) { const x = db.senses[s.ligand]; if (!x) E('RULE-0343', sw, `리간드 '${s.ligand}' 없음`); else if (!MOLECULAR.has(x.kind)) E('RULE-0343', sw, `리간드 '${L(s.ligand)}' 는 분자 종류가 아님`); }
       for (const [f, g] of Object.entries(s.ligands || {})) {
-        if (!s.features.includes(f)) E(sw, `ligands: 특징 '${f}' 는 이 부위의 특징이 아님`);
-        const x = db.senses[g]; if (!x) E(sw, `ligands: 리간드 '${g}' 없음`); else if (!MOLECULAR.has(x.kind)) E(sw, `ligands: 리간드 '${L(g)}' 는 분자 종류가 아님`);
+        if (!s.features.includes(f)) E('RULE-0343', sw, `ligands: 특징 '${f}' 는 이 부위의 특징이 아님`);
+        const x = db.senses[g]; if (!x) E('RULE-0343', sw, `ligands: 리간드 '${g}' 없음`); else if (!MOLECULAR.has(x.kind)) E('RULE-0343', sw, `ligands: 리간드 '${L(g)}' 는 분자 종류가 아님`);
       }
-      for (const t of s.taxa || []) if (!V.taxa[t]) E(sw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
+      for (const t of s.taxa || []) if (!V.taxa[t]) E('RULE-0338', sw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
       if (s.structure) {
-        if (s.structure.db !== 'PDB' || !new RegExp(V.xrefs.PDB.pattern).test(s.structure.id)) E(sw, `구조 참조는 PDB ID 여야 함 ('${s.structure.db}:${s.structure.id}')`);
-        else if (!d.xrefs.some((x) => x.db === 'PDB' && x.id === s.structure.id)) E(sw, `해상도 일관성: 부위의 구조 ${s.structure.id} 가 정의항의 PDB 외부 ID 에 없음 — 정의항 xrefs 에도 같은 구조를 둘 것`);
+        if (s.structure.db !== 'PDB' || !new RegExp(V.xrefs.PDB.pattern).test(s.structure.id)) E('RULE-0377', sw, `구조 참조는 PDB ID 여야 함 ('${s.structure.db}:${s.structure.id}')`);
+        else if (!d.xrefs.some((x) => x.db === 'PDB' && x.id === s.structure.id)) E('RULE-0377', sw, `해상도 일관성: 부위의 구조 ${s.structure.id} 가 정의항의 PDB 외부 ID 에 없음 — 정의항 xrefs 에도 같은 구조를 둘 것`);
       }
     }
     // 규칙
     const ruleIds = new Set();
     for (const r of d.rule) {
       const rw = `${id}/rule/${r.id || '?'}`;
-      if (!r.id || !SITE_RE.test(r.id)) E(rw, '규칙 id 는 영문 소문자·숫자·_');
-      if (ruleIds.has(r.id)) E(rw, '규칙 id 중복');
+      if (!r.id || !SITE_RE.test(r.id)) E('RULE-0319', rw, '규칙 id 는 영문 소문자·숫자·_');
+      if (ruleIds.has(r.id)) E('RULE-0502', rw, '규칙 id 중복');
       ruleIds.add(r.id);
-      if (!r.label) E(rw, '규칙 이름(label) 없음');
-      if (!participant && r.type !== 'supply') E(rw, '규칙은 분자 종류 정의항만 가질 수 있음 (경로·과정·원리는 공급 규칙 supply 만)');
-      if (r.kinetics && (r.kinetics.law === 'hill') !== (r.type === 'modulation')) E(rw, r.type === 'modulation' ? `조절 규칙의 속도 법칙은 hill (지금 ${r.kinetics.law})` : 'hill 법칙은 조절 규칙(modulation)에만');
+      if (!r.label) E('RULE-0502', rw, '규칙 이름(label) 없음');
+      if (!participant && r.type !== 'supply') E('RULE-0382', rw, '규칙은 분자 종류 정의항만 가질 수 있음 (경로·과정·원리는 공급 규칙 supply 만)');
+      if (r.kinetics && (r.kinetics.law === 'hill') !== (r.type === 'modulation')) E('RULE-0399', rw, r.type === 'modulation' ? `조절 규칙의 속도 법칙은 hill (지금 ${r.kinetics.law})` : 'hill 법칙은 조절 규칙(modulation)에만');
       checkEvidence(r.evidence, rw, E);
-      for (const t of r.taxa || []) if (!V.taxa[t]) E(rw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
-      if (r.kinetics) { for (const m of kineticIssues(r, null)) E(rw, m); checkEvidence(r.kinetics.evidence, rw + ' 속도', E); if (r.kinetics.context) checkContext(r.kinetics.context, rw, E); checkKineticsFrom(db, `${id}/rule/${r.id}`, r.kinetics, rw, E); }
+      for (const t of r.taxa || []) if (!V.taxa[t]) E('RULE-0338', rw, `종 조건 '${t}' 은(는) 종 어휘에 없음`);
+      if (r.kinetics) { for (const m of kineticIssues(r, null)) E('RULE-0379', rw, m); checkEvidence(r.kinetics.evidence, rw + ' 속도', E); if (r.kinetics.context) checkContext(r.kinetics.context, rw, E); checkKineticsFrom(db, `${id}/rule/${r.id}`, r.kinetics, rw, E); }
       if (r.type === 'supply') { validateSupply(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'degradation') { validateDegradation(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'modulation') { validateModulation(db, ix, id, d, r, rw, E, W); continue; }
       if (r.type === 'meaning') {
-        if (!V.activity[r.activity]) E(rw, `활성 '${r.activity}' 은(는) 어휘에 없음`);
+        if (!V.activity[r.activity]) E('RULE-0347', rw, `활성 '${r.activity}' 은(는) 어휘에 없음`);
         for (const [s, f] of Object.entries(r.when)) {
-          if (!d.site[s]) E(rw, `조건의 부위 '${s}' 가 이 정의항에 없음`);
-          else if (!d.site[s].features.includes(f)) E(rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`);
+          if (!d.site[s]) E('RULE-0348', rw, `조건의 부위 '${s}' 가 이 정의항에 없음`);
+          else if (!d.site[s].features.includes(f)) E('RULE-0342', rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`);
         }
         continue;
       }
-      if (r.type !== 'transition') { E(rw, `규칙 종류 '${r.type}' — ${Object.keys(V.ruleTypes).join(' | ')}`); continue; }
+      if (r.type !== 'transition') { E('RULE-0502', rw, `규칙 종류 '${r.type}' — ${Object.keys(V.ruleTypes).join(' | ')}`); continue; }
       const A = V.actions[r.action], e = r.effect;
-      if (!A) E(rw, `변화 종류 '${r.action}' 은(는) 어휘에 없음`);
-      if (!EFFECT_TYPES.includes(e.type)) { E(rw, `효과 종류 '${e.type}' — ${EFFECT_TYPES.join(' | ')}`); continue; }
-      if (A && !A.effects.includes(e.type)) E(rw, `변화 종류 '${r.action}' 에는 효과 '${e.type}' 를 쓸 수 없음 (허용: ${A.effects.join(', ')})`);
-      if (r.via_site && !d.site[r.via_site]) E(rw, `행위 부위 '${r.via_site}' 가 이 정의항에 없음`);
-      if (r.via_component && !d.components.some((c) => c.ref === r.via_component)) E(rw, `행위 구성 요소 '${r.via_component}' 는 구성 요소가 아님`);
-      if (!r.agent && r.via_site) W(rw, 'agent 가 아닌 규칙에 via_site 가 있음');
-      for (const l of r.where || []) if (!V.locations[l]) E(rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
+      if (!A) E('RULE-0356', rw, `변화 종류 '${r.action}' 은(는) 어휘에 없음`);
+      if (!EFFECT_TYPES.includes(e.type)) { E('RULE-0356', rw, `효과 종류 '${e.type}' — ${EFFECT_TYPES.join(' | ')}`); continue; }
+      if (A && !A.effects.includes(e.type)) E('RULE-0356', rw, `변화 종류 '${r.action}' 에는 효과 '${e.type}' 를 쓸 수 없음 (허용: ${A.effects.join(', ')})`);
+      if (r.via_site && !d.site[r.via_site]) E('RULE-0349', rw, `행위 부위 '${r.via_site}' 가 이 정의항에 없음`);
+      if (r.via_component && !d.components.some((c) => c.ref === r.via_component)) E('RULE-0349', rw, `행위 구성 요소 '${r.via_component}' 는 구성 요소가 아님`);
+      if (!r.agent && r.via_site) W('RULE-0349', rw, 'agent 가 아닌 규칙에 via_site 가 있음');
+      for (const l of r.where || []) if (!V.locations[l]) E('RULE-0364', rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
       for (const g of r.regulators) {
-        if (!db.senses[g.ref]) E(rw, `조절자 '${g.ref}' 없음`);
-        if (!V.effects[g.effect]) E(rw, `조절 효과 '${g.effect}' 은(는) 어휘에 없음`);
+        if (!db.senses[g.ref]) E('RULE-0357', rw, `조절자 '${g.ref}' 없음`);
+        if (!V.effects[g.effect]) E('RULE-0357', rw, `조절 효과 '${g.effect}' 은(는) 어휘에 없음`);
       }
-      for (const x of [...(r.with ? [...r.with.consumes, ...r.with.produces] : [])]) if (!db.senses[x]) E(rw, `보조 기질 '${x}' 없음`);
-      const need = (ref, what) => { const x = db.senses[ref]; if (!x) { E(rw, `${what} '${ref}' 없음`); return null; } if (!isParticipantKind(x.kind)) E(rw, `${what} '${L(ref)}' 는 분자 종류가 아님`); return x; };
+      for (const x of [...(r.with ? [...r.with.consumes, ...r.with.produces] : [])]) if (!db.senses[x]) E('RULE-0357', rw, `보조 기질 '${x}' 없음`);
+      const need = (ref, what) => { const x = db.senses[ref]; if (!x) { E('RULE-0357', rw, `${what} '${ref}' 없음`); return null; } if (!isParticipantKind(x.kind)) E('RULE-0357', rw, `${what} '${L(ref)}' 는 분자 종류가 아님`); return x; };
       if (e.type === 'modify') {
         const T = need(e.target || id, '대상');
         if (T) {
           const s = T.site[e.site];
-          if (!s) E(rw, `대상 '${L(e.target || id)}' 에 부위 '${e.site}' 가 없음`);
-          else for (const f of [...(e.add || []), ...(e.remove || [])]) if (!s.features.includes(f)) E(rw, `부위 '${e.site}' 는 특징 '${f}' 를 가질 수 없음`);
-          if ((e.add || []).length > 1 || (e.remove || []).length > 1) E(rw, '한 부위에는 특징이 하나 — add/remove 는 각각 하나까지');
-          if (!(e.add || []).length && !(e.remove || []).length) E(rw, 'modify 효과에 add/remove 가 없음');
-          if (A && A.adds && !(e.add || []).includes(A.adds)) E(rw, `'${r.action}' 은(는) 특징 '${A.adds}' 를 추가해야 함`);
-          if (A && A.removes && !(e.remove || []).includes(A.removes)) E(rw, `'${r.action}' 은(는) 특징 '${A.removes}' 를 제거해야 함`);
-          if (e.partner) { need(e.partner, '결합 상대'); if (s && s.ligand && s.ligand !== e.partner) E(rw, `부위 '${e.site}' 의 리간드(${L(s.ligand)})와 결합 상대가 다름`); }
+          if (!s) E('RULE-0350', rw, `대상 '${L(e.target || id)}' 에 부위 '${e.site}' 가 없음`);
+          else for (const f of [...(e.add || []), ...(e.remove || [])]) if (!s.features.includes(f)) E('RULE-0350', rw, `부위 '${e.site}' 는 특징 '${f}' 를 가질 수 없음`);
+          if ((e.add || []).length > 1 || (e.remove || []).length > 1) E('RULE-0350', rw, '한 부위에는 특징이 하나 — add/remove 는 각각 하나까지');
+          if (!(e.add || []).length && !(e.remove || []).length) E('RULE-0350', rw, 'modify 효과에 add/remove 가 없음');
+          if (A && A.adds && !(e.add || []).includes(A.adds)) E('RULE-0356', rw, `'${r.action}' 은(는) 특징 '${A.adds}' 를 추가해야 함`);
+          if (A && A.removes && !(e.remove || []).includes(A.removes)) E('RULE-0356', rw, `'${r.action}' 은(는) 특징 '${A.removes}' 를 제거해야 함`);
+          if (e.partner) { need(e.partner, '결합 상대'); if (s && s.ligand && s.ligand !== e.partner) E('RULE-0350', rw, `부위 '${e.site}' 의 리간드(${L(s.ligand)})와 결합 상대가 다름`); }
         }
       } else if (e.type === 'convert') {
-        if (!(e.consumes || []).length || !(e.produces || []).length) E(rw, 'convert 효과는 consumes 와 produces 가 필요함');
+        if (!(e.consumes || []).length || !(e.produces || []).length) E('RULE-0351', rw, 'convert 효과는 consumes 와 produces 가 필요함');
         for (const x of [...(e.consumes || []), ...(e.produces || [])]) need(x, '기질/생성물');
       } else if (e.type === 'dissociate' || e.type === 'associate') {
         const C = need(e.complex || id, '복합체');
-        if (C && !C.components.length) E(rw, `'${L(e.complex || id)}' 는 구성 요소가 정의되지 않은 복합체`);
+        if (C && !C.components.length) E('RULE-0352', rw, `'${L(e.complex || id)}' 는 구성 요소가 정의되지 않은 복합체`);
         if (e.partner) need(e.partner, '결합 상대');
         if (e.partner_site) {
           const comp = db.senses[e.partner_site.component];
-          if (C && !C.components.some((c) => c.ref === e.partner_site.component)) E(rw, `partner_site 의 구성 요소는 복합체의 구성 요소여야 함`);
-          if (!e.partner_site.sites.length) E(rw, 'partner_site 에 부위(sites)가 없음');
-          for (const ps of e.partner_site.sites) if (comp && !(comp.site[ps] && comp.site[ps].features.includes('bound'))) E(rw, `구성 요소 '${L(e.partner_site.component)}' 에 'bound' 를 받는 부위 '${ps}' 가 없음`);
+          if (C && !C.components.some((c) => c.ref === e.partner_site.component)) E('RULE-0352', rw, `partner_site 의 구성 요소는 복합체의 구성 요소여야 함`);
+          if (!e.partner_site.sites.length) E('RULE-0352', rw, 'partner_site 에 부위(sites)가 없음');
+          for (const ps of e.partner_site.sites) if (comp && !(comp.site[ps] && comp.site[ps].features.includes('bound'))) E('RULE-0352', rw, `구성 요소 '${L(e.partner_site.component)}' 에 'bound' 를 받는 부위 '${ps}' 가 없음`);
         }
       } else if (e.type === 'transport') {
         need(e.target || id, '대상');
-        if (!V.locations[e.from] || !V.locations[e.to]) E(rw, '수송 효과는 위치 어휘의 from/to 가 필요함');
+        if (!V.locations[e.from] || !V.locations[e.to]) E('RULE-0353', rw, '수송 효과는 위치 어휘의 from/to 가 필요함');
       } else if (e.type === 'transfer') {
         // 리간드(partner)를 소유자의 from_site 에서 대상의 site 로 넘긴다
         const fs = d.site[e.from_site];
-        if (!fs || !fs.features.includes('bound')) E(rw, `넘겨줄 부위 from_site '${e.from_site || ''}' 가 이 정의항에 없거나 'bound' 를 받지 않음`);
-        else if (fs.ligand && e.partner && fs.ligand !== e.partner) E(rw, `from_site '${e.from_site}' 의 리간드와 넘기는 상대(partner)가 다름`);
-        if (!e.partner) E(rw, 'transfer 효과는 넘기는 리간드(partner)가 필요함'); else need(e.partner, '리간드');
+        if (!fs || !fs.features.includes('bound')) E('RULE-0354', rw, `넘겨줄 부위 from_site '${e.from_site || ''}' 가 이 정의항에 없거나 'bound' 를 받지 않음`);
+        else if (fs.ligand && e.partner && fs.ligand !== e.partner) E('RULE-0354', rw, `from_site '${e.from_site}' 의 리간드와 넘기는 상대(partner)가 다름`);
+        if (!e.partner) E('RULE-0354', rw, 'transfer 효과는 넘기는 리간드(partner)가 필요함'); else need(e.partner, '리간드');
         const T = e.target && need(e.target, '대상');
-        if (!e.target) E(rw, 'transfer 효과는 받는 대상(target)이 필요함');
-        if (T) { const ts = T.site[e.site]; if (!ts || !ts.features.includes('bound')) E(rw, `대상 '${L(e.target)}' 에 'bound' 를 받는 부위 '${e.site || ''}' 가 없음`); else if (ts.ligand && ts.ligand !== e.partner) E(rw, `대상 부위 '${e.site}' 의 리간드와 넘기는 상대가 다름`); }
+        if (!e.target) E('RULE-0354', rw, 'transfer 효과는 받는 대상(target)이 필요함');
+        if (T) { const ts = T.site[e.site]; if (!ts || !ts.features.includes('bound')) E('RULE-0354', rw, `대상 '${L(e.target)}' 에 'bound' 를 받는 부위 '${e.site || ''}' 가 없음`); else if (ts.ligand && ts.ligand !== e.partner) E('RULE-0354', rw, `대상 부위 '${e.site}' 의 리간드와 넘기는 상대가 다름`); }
       } else if (e.type === 'degrade') {
         const C = need(e.complex || id, '복합체');
-        if (C && !C.components.some((c) => c.ref === e.component)) E(rw, `분해할 구성 요소 '${e.component || ''}' 는 '${L(e.complex || id)}' 의 구성 요소가 아님`);
+        if (C && !C.components.some((c) => c.ref === e.component)) E('RULE-0355', rw, `분해할 구성 요소 '${e.component || ''}' 는 '${L(e.complex || id)}' 의 구성 요소가 아님`);
         for (const x of e.produces || []) need(x, '분해 산물');
-        if (!(e.produces || []).length) E(rw, 'degrade 효과는 분해 산물(produces)이 필요함 — 질량이 사라지지 않게');
+        if (!(e.produces || []).length) E('RULE-0355', rw, 'degrade 효과는 분해 산물(produces)이 필요함 — 질량이 사라지지 않게');
       }
       // 부분 구조 수지: 화학 변환(convert)·분해(degrade)는 보조 기질까지 합쳐 부분 구조(moiety)가 보존되어야 함
       if (e.type === 'convert' || e.type === 'degrade') {
         const lhs = [...(e.consumes || []), ...(e.type === 'degrade' ? [e.component] : []), ...(r.with ? r.with.consumes : [])].map((x) => ({ ref: x, n: 1 }));
         const rhs = [...(e.produces || []), ...(r.with ? r.with.produces : [])].map((x) => ({ ref: x, n: 1 }));
         const bad = moietyImbalance(db, lhs, rhs);
-        if (bad) E(rw, `부분 구조 수지가 맞지 않음 — ${bad} (빠진 산물·보조 기질을 정의하고 규칙에 적을 것)`);
+        if (bad) E('RULE-0010', rw, `부분 구조 수지가 맞지 않음 — ${bad} (빠진 산물·보조 기질을 정의하고 규칙에 적을 것)`);
       }
       for (const q of e.requires || []) {
         const ref = q.ref || e.target || e.complex || id, x = db.senses[ref];
-        if (!x) { E(rw, `전제 조건의 대상 '${ref}' 없음`); continue; }
-        if (!x.site[q.site]) E(rw, `전제 조건의 부위 '${q.site}' 가 '${L(ref)}' 에 없음`);
-        else if (!x.site[q.site].features.includes(q.feature)) E(rw, `전제 조건: 부위 '${q.site}' 는 특징 '${q.feature}' 를 가질 수 없음`);
+        if (!x) { E('RULE-0503', rw, `전제 조건의 대상 '${ref}' 없음`); continue; }
+        if (!x.site[q.site]) E('RULE-0503', rw, `전제 조건의 부위 '${q.site}' 가 '${L(ref)}' 에 없음`);
+        else if (!x.site[q.site].features.includes(q.feature)) E('RULE-0503', rw, `전제 조건: 부위 '${q.site}' 는 특징 '${q.feature}' 를 가질 수 없음`);
       }
     }
     // 상위 개념
     if (d.motif) {
-      if (!MOTIFS[d.motif]) E(where, `motif '${d.motif}' — 가능한 값: ${Object.keys(MOTIFS).join(', ')}`);
-      if (d.kind !== 'process') E(where, 'motif(경로에서 찾는 패턴)는 kind process 정의항만 가질 수 있음');
+      if (!MOTIFS[d.motif]) E('RULE-0080', where, `motif '${d.motif}' — 가능한 값: ${Object.keys(MOTIFS).join(', ')}`);
+      if (d.kind !== 'process') E('RULE-0080', where, 'motif(경로에서 찾는 패턴)는 kind process 정의항만 가질 수 있음');
       // Gap-filling Loop: 상위 개념은 한계 등록부를 검토한 결과를 반드시 가진다
-      if (!(d.addresses || []).length && !d.gap_review) E(where, '상위 개념(motif)은 한계 등록부를 검토해 addresses(해결하는 한계와 방법) 또는 gap_review(해결하지 않는 이유)를 적어야 함');
+      if (!(d.addresses || []).length && !d.gap_review) E('RULE-0079', where, '상위 개념(motif)은 한계 등록부를 검토해 addresses(해결하는 한계와 방법) 또는 gap_review(해결하지 않는 이유)를 적어야 함');
     }
     for (const a of d.addresses || []) {
-      if (!db.limitations[a.limitation]) E(where, `addresses: 한계 '${a.limitation}' 없음`);
-      if (!a.how) E(where, `addresses: 한계 ${a.limitation} 를 어떻게 해결하는지(how) 없음`);
+      if (!db.limitations[a.limitation]) E('RULE-0079', where, `addresses: 한계 '${a.limitation}' 없음`);
+      if (!a.how) E('RULE-0079', where, `addresses: 한계 ${a.limitation} 를 어떻게 해결하는지(how) 없음`);
     }
     validateCellState(db, ix, id, d, where, E, W);
     if (d.elements) {
-      if (d.kind !== 'structure_feature') E(where, '원자 수(elements)는 부분 구조(kind structure_feature)만');
-      for (const [e, n] of Object.entries(d.elements)) { if (!/^[A-Z][a-z]?$/.test(e)) E(where, `원소 기호 '${e}' 형식 틀림 (예: C, N, P, S)`); if (!(Number.isInteger(n) && n >= 0)) E(where, `원소 ${e} 의 개수는 0 이상의 정수`); }
+      if (d.kind !== 'structure_feature') E('RULE-0389', where, '원자 수(elements)는 부분 구조(kind structure_feature)만');
+      for (const [e, n] of Object.entries(d.elements)) { if (!/^[A-Z][a-z]?$/.test(e)) E('RULE-0389', where, `원소 기호 '${e}' 형식 틀림 (예: C, N, P, S)`); if (!(Number.isInteger(n) && n >= 0)) E('RULE-0389', where, `원소 ${e} 의 개수는 0 이상의 정수`); }
     }
     // 부분 구조
     for (const m of d.moieties || []) {
       const x = db.senses[m.ref];
-      if (!MOLECULAR.has(d.kind)) E(where, '부분 구조(moieties)는 분자 종류만 가질 수 있음');
-      if (!x) E(where, `부분 구조 '${m.ref}' 없음`);
-      else if (x.kind !== 'structure_feature') E(where, `부분 구조 '${L(m.ref)}' 는 kind structure_feature 여야 함`);
-      if (!(Number.isInteger(m.n) && m.n >= 1)) E(where, `부분 구조 '${m.ref}' 의 개수는 1 이상의 정수`);
+      if (!MOLECULAR.has(d.kind)) E('RULE-0389', where, '부분 구조(moieties)는 분자 종류만 가질 수 있음');
+      if (!x) E('RULE-0389', where, `부분 구조 '${m.ref}' 없음`);
+      else if (x.kind !== 'structure_feature') E('RULE-0389', where, `부분 구조 '${L(m.ref)}' 는 kind structure_feature 여야 함`);
+      if (!(Number.isInteger(m.n) && m.n >= 1)) E('RULE-0389', where, `부분 구조 '${m.ref}' 의 개수는 1 이상의 정수`);
     }
     // 관찰
     d.obs.forEach((b, i) => {
       const ow = `${id}/obs/${i + 1}`, P = V.obsProperties[b.property];
-      if (!P) { E(ow, `관찰 속성 '${b.property}' 은(는) 어휘에 없음`); return; }
+      if (!P) { E('RULE-0309', ow, `관찰 속성 '${b.property}' 은(는) 어휘에 없음`); return; }
       checkContext(b.context, ow, E);
       checkEvidence(b.evidence, ow, E);
-      if (P.speciesRequired && !b.context.species) E(ow, `'${b.property}' 는 종에 따라 달라짐 — context.species 필수`);
-      if (P.value === 'number' && typeof b.value !== 'number') E(ow, '값은 숫자여야 함');
-      if (P.unit && !b.unit) E(ow, '단위(unit) 필요');
-      if (P.units && b.unit && !P.units.includes(b.unit)) E(ow, `'${b.property}' 의 단위는 SI 정준 ${P.units.join(' | ')} 만 (지금 '${b.unit}')`);
-      if (P.requiresLocation && !b.context.location) E(ow, `'${b.property}' 는 위치마다 다름 — context.location 필수`);
-      if (b.property === 'pH' && typeof b.value === 'number' && !(b.value >= 0 && b.value <= 14)) E(ow, 'pH 는 0–14');
-      if (['diffusion_coefficient', 'ionic_strength', 'relative_permittivity'].includes(b.property) && typeof b.value === 'number' && !(b.value > 0)) E(ow, `'${b.property}' 는 양수`);
-      if (P.value === 'location' && !V.locations[b.value]) E(ow, `값 '${b.value}' 은(는) 위치 어휘에 없음`);
-      if (Array.isArray(P.value) && !P.value.includes(b.value)) E(ow, `값은 ${P.value.join(' | ')} 중 하나`);
-      if (P.value === 'xref') { const x = parseXref(b.value); if (!V.xrefs[x.db] || !new RegExp(V.xrefs[x.db].pattern).test(x.id)) E(ow, `외부 ID '${b.value}' 형식 틀림`); }
+      if (P.speciesRequired && !b.context.species) E('RULE-0072', ow, `'${b.property}' 는 종에 따라 달라짐 — context.species 필수`);
+      if (P.value === 'number' && typeof b.value !== 'number') E('RULE-0504', ow, '값은 숫자여야 함');
+      if (P.unit && !b.unit) E('RULE-0504', ow, '단위(unit) 필요');
+      if (P.units && b.unit && !P.units.includes(b.unit)) E('RULE-0504', ow, `'${b.property}' 의 단위는 SI 정준 ${P.units.join(' | ')} 만 (지금 '${b.unit}')`);
+      if (P.requiresLocation && !b.context.location) E('RULE-0139', ow, `'${b.property}' 는 위치마다 다름 — context.location 필수`);
+      if (b.property === 'pH' && typeof b.value === 'number' && !(b.value >= 0 && b.value <= 14)) E('RULE-0504', ow, 'pH 는 0–14');
+      if (['diffusion_coefficient', 'ionic_strength', 'relative_permittivity'].includes(b.property) && typeof b.value === 'number' && !(b.value > 0)) E('RULE-0504', ow, `'${b.property}' 는 양수`);
+      if (P.value === 'location' && !V.locations[b.value]) E('RULE-0504', ow, `값 '${b.value}' 은(는) 위치 어휘에 없음`);
+      if (Array.isArray(P.value) && !P.value.includes(b.value)) E('RULE-0504', ow, `값은 ${P.value.join(' | ')} 중 하나`);
+      if (P.value === 'xref') { const x = parseXref(b.value); if (!V.xrefs[x.db] || !new RegExp(V.xrefs[x.db].pattern).test(x.id)) E('RULE-0414', ow, `외부 ID '${b.value}' 형식 틀림`); }
       // v11 — 허용 단위(어휘의 환산표)·물리 상한·관찰 기록 대조. 정의항 obs 는 **측정의 파생값**이므로
       //   측정량이 있는 속성의 문헌(curated) 값은 관찰 기록을 가리켜야 하고, 값·종·세포가 그 관찰과 같아야 한다.
       //   kinetics.from 과 같은 계약이다 — 한쪽만 막혀 있으면 그 틈으로 측정값이 조용히 바뀐다.
       if (P.dim && !P.units && b.unit && !(b.unit in (V.unitFactors[P.dim] || {})))
-        E(ow, `'${b.property}' 의 단위 '${b.unit}' 은(는) 어휘의 환산표에 없음 — ${Object.keys(V.unitFactors[P.dim] || {}).join(' | ')}`);
+        E('RULE-0128', ow, `'${b.property}' 의 단위 '${b.unit}' 은(는) 어휘의 환산표에 없음 — ${Object.keys(V.unitFactors[P.dim] || {}).join(' | ')}`);
       const si = obsSI(P, b);
       if (si != null) checkBound(P.dim, si, ow, `'${b.property}'`, E);
       if (P.observable && b.evidence.level === 'curated' && !b.from)
-        E(ow, `문헌(curated) '${b.property}' 에 관찰 기록 참조(from)가 없음 — 측정값은 관찰 기록(O…)으로 넣고 정의항 obs 는 그것을 가리킨다 (observation-port.md §1, kinetics.from 과 같은 계약)`);
+        E('RULE-0127', ow, `문헌(curated) '${b.property}' 에 관찰 기록 참조(from)가 없음 — 측정값은 관찰 기록(O…)으로 넣고 정의항 obs 는 그것을 가리킨다 (observation-port.md §1, kinetics.from 과 같은 계약)`);
       if (b.from) checkSenseObsFrom(db, id, b, P, ow, E);
     });
   }
@@ -780,99 +780,99 @@
   // 대사물 공급 규칙 (Metabolic_Supply_Rule)
   function validateSupply(db, ix, id, d, r, rw, E, W) {
     const L = ix.label;
-    if (!r.produces.length) E(rw, '공급 규칙은 생성물(produces)이 필요함');
-    if (!r.consumes.length && !r.source) E(rw, '소비하는 것이 없는 공급은 계 밖에서 들어오는 것 — source: true 로 명시할 것');
-    if (r.where.length !== 1) E(rw, '공급 규칙은 위치(where)가 정확히 하나 (저장소 묶음 = 정의항|위치)');
+    if (!r.produces.length) E('RULE-0441', rw, '공급 규칙은 생성물(produces)이 필요함');
+    if (!r.consumes.length && !r.source) E('RULE-0441', rw, '소비하는 것이 없는 공급은 계 밖에서 들어오는 것 — source: true 로 명시할 것');
+    if (r.where.length !== 1) E('RULE-0383', rw, '공급 규칙은 위치(where)가 정확히 하나 (저장소 묶음 = 정의항|위치)');
     // 공급 위치: 부피(3D) 구획, 또는 막(2D) — 막이면 막 단백질의 동시 번역 삽입처럼 모든 생성·소비 분자가 그 막에 있을 수 있어야 함 (속도의 부피는 시나리오 volumes[막] = 유효 부피)
     const memOK = (l) => [...r.consumes, ...r.produces].every((q) => { const x = db.senses[q.ref], m = x && x.membrane; return m && m.association !== 'soluble' && [m.location, ...(m.route || [])].some((y) => sameFamily(l, y)); });
-    for (const l of r.where) if (!V.locations[l]) E(rw, `위치 '${l}' 은(는) 위치 어휘에 없음`); else if (V.locations[l].dim !== '3D' && !memOK(l)) E(rw, `공급 위치 '${vlabel('locations', l)}' 는 부피(3D) 구획이어야 함 (막이면 모든 생성·소비 분자가 그 막에 박힌 분자여야 함)`);
+    for (const l of r.where) if (!V.locations[l]) E('RULE-0383', rw, `위치 '${l}' 은(는) 위치 어휘에 없음`); else if (V.locations[l].dim !== '3D' && !memOK(l)) E('RULE-0383', rw, `공급 위치 '${vlabel('locations', l)}' 는 부피(3D) 구획이어야 함 (막이면 모든 생성·소비 분자가 그 막에 박힌 분자여야 함)`);
     for (const q of [...r.consumes, ...r.produces]) {
       const x = db.senses[q.ref];
-      if (!x) E(rw, `저장소 분자 '${q.ref}' 없음`);
-      else if (!isParticipantKind(x.kind)) E(rw, `저장소 분자 '${L(q.ref)}' 는 분자 종류가 아님`);
-      if (!(typeof q.n === 'number' && q.n > 0)) E(rw, `'${L(q.ref)}' 의 화학량 n 은 양수`);
+      if (!x) E('RULE-0133', rw, `저장소 분자 '${q.ref}' 없음`);
+      else if (!isParticipantKind(x.kind)) E('RULE-0133', rw, `저장소 분자 '${L(q.ref)}' 는 분자 종류가 아님`);
+      if (!(typeof q.n === 'number' && q.n > 0)) E('RULE-0133', rw, `'${L(q.ref)}' 의 화학량 n 은 양수`);
     }
-    if (r.kinetics && !['zero_order', 'mass_action'].includes(r.kinetics.law)) E(rw, `공급 규칙의 속도 법칙은 zero_order | mass_action (지금 ${r.kinetics.law})`);
+    if (r.kinetics && !['zero_order', 'mass_action'].includes(r.kinetics.law)) E('RULE-0384', rw, `공급 규칙의 속도 법칙은 zero_order | mass_action (지금 ${r.kinetics.law})`);
     // 포화 보조 기질 (v9, saturating): 화학량대로 소비하지만 속도 법칙의 차수에서는 빠진다 (포화 가정, 바닥나면 c/(c + K_sat) 로 꺼짐)
-    for (const q of r.produces) if (q.saturating) E(rw, `saturating 은 소비(consumes)에만 — 생성물 '${L(q.ref)}'`);
+    for (const q of r.produces) if (q.saturating) E('RULE-0400', rw, `saturating 은 소비(consumes)에만 — 생성물 '${L(q.ref)}'`);
     const lawN = r.consumes.filter((q) => !q.saturating).reduce((t, q) => t + (typeof q.n === 'number' ? q.n : 0), 0);
-    if (r.consumes.length && r.consumes.every((q) => q.saturating)) E(rw, '모든 소비가 saturating 이면 속도 법칙의 기질이 없음 — 하나 이상은 속도를 정하는 기질로');
-    if (r.kinetics && r.kinetics.law === 'mass_action' && r.kinetics.order != null && lawN !== r.kinetics.order) E(rw, `질량 작용 차수 ${r.kinetics.order} 가 소비 분자 수(${lawN}${r.consumes.some((q) => q.saturating) ? ', saturating 제외' : ''})와 다름`);
-    if (r.kinetics && r.kinetics.law === 'mass_action' && !r.consumes.length) E(rw, '소비하는 것이 없는 공급은 zero_order 로');
+    if (r.consumes.length && r.consumes.every((q) => q.saturating)) E('RULE-0400', rw, '모든 소비가 saturating 이면 속도 법칙의 기질이 없음 — 하나 이상은 속도를 정하는 기질로');
+    if (r.kinetics && r.kinetics.law === 'mass_action' && r.kinetics.order != null && lawN !== r.kinetics.order) E('RULE-0384', rw, `질량 작용 차수 ${r.kinetics.order} 가 소비 분자 수(${lawN}${r.consumes.some((q) => q.saturating) ? ', saturating 제외' : ''})와 다름`);
+    if (r.kinetics && r.kinetics.law === 'mass_action' && !r.consumes.length) E('RULE-0384', rw, '소비하는 것이 없는 공급은 zero_order 로');
     const bad = moietyImbalance(db, r.consumes, r.produces);
-    if (bad && !r.source) E(rw, `부분 구조 수지가 맞지 않음 — ${bad} (계 밖에서 들어오는 공급이면 source: true)`);
+    if (bad && !r.source) E('RULE-0010', rw, `부분 구조 수지가 맞지 않음 — ${bad} (계 밖에서 들어오는 공급이면 source: true)`);
   }
   // 분해 규칙 (Degradation_Rule)
   function validateDegradation(db, ix, id, d, r, rw, E, W) {
     const L = ix.label;
-    if (!V.lifecycleFates[r.fate]) E(rw, `분해 산물의 운명(fate) '${r.fate}' — ${Object.keys(V.lifecycleFates).join(' | ')}`);
-    if (r.fate === 'recycled' && !r.recycle_to.length) E(rw, '재활용(recycled)이면 recycle_to 에 돌아갈 구성 단위가 필요함');
-    if (r.fate === 'lost' && r.recycle_to.length) E(rw, '소실(lost)인데 recycle_to 가 있음');
+    if (!V.lifecycleFates[r.fate]) E('RULE-0385', rw, `분해 산물의 운명(fate) '${r.fate}' — ${Object.keys(V.lifecycleFates).join(' | ')}`);
+    if (r.fate === 'recycled' && !r.recycle_to.length) E('RULE-0133', rw, '재활용(recycled)이면 recycle_to 에 돌아갈 구성 단위가 필요함');
+    if (r.fate === 'lost' && r.recycle_to.length) E('RULE-0385', rw, '소실(lost)인데 recycle_to 가 있음');
     for (const q of r.recycle_to) {
       const x = db.senses[q.ref];
-      if (!x) E(rw, `재활용 단위 '${q.ref}' 없음`); else if (!isParticipantKind(x.kind)) E(rw, `재활용 단위 '${L(q.ref)}' 는 분자 종류가 아님`);
+      if (!x) E('RULE-0386', rw, `재활용 단위 '${q.ref}' 없음`); else if (!isParticipantKind(x.kind)) E('RULE-0386', rw, `재활용 단위 '${L(q.ref)}' 는 분자 종류가 아님`);
       if (q.n === 'sequence_length') { /* 관찰이 없으면 detectGaps 가 Structural_Gap 후보로 잡는다 */ }
-      else if (!(q.n > 0)) E(rw, `재활용 단위 '${L(q.ref)}' 의 화학량 n 은 양수 또는 'sequence_length'`);
-      if (q.location && !V.locations[q.location]) E(rw, `위치 '${q.location}' 은(는) 위치 어휘에 없음`);
+      else if (!(q.n > 0)) E('RULE-0386', rw, `재활용 단위 '${L(q.ref)}' 의 화학량 n 은 양수 또는 'sequence_length'`);
+      if (q.location && !V.locations[q.location]) E('RULE-0388', rw, `위치 '${q.location}' 은(는) 위치 어휘에 없음`);
     }
-    for (const [s, f] of Object.entries(r.when)) { if (!d.site[s]) E(rw, `조건의 부위 '${s}' 가 이 정의항에 없음`); else if (!d.site[s].features.includes(f)) E(rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`); }
-    for (const l of r.where || []) if (!V.locations[l]) E(rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
+    for (const [s, f] of Object.entries(r.when)) { if (!d.site[s]) E('RULE-0388', rw, `조건의 부위 '${s}' 가 이 정의항에 없음`); else if (!d.site[s].features.includes(f)) E('RULE-0388', rw, `부위 '${s}' 는 특징 '${f}' 를 가질 수 없음`); }
+    for (const l of r.where || []) if (!V.locations[l]) E('RULE-0388', rw, `위치 조건 '${l}' 은(는) 위치 어휘에 없음`);
   }
 
   // 조절 규칙 (v9): 조절자(소유자) → 대상 규칙의 속도 배율
   function validateModulation(db, ix, id, d, r, rw, E, W) {
     const L = ix.label, t = parseTarget(r.target), owner = t && db.senses[t.base], tr = owner && owner.rule.find((x) => x.id === t.key);
-    if (!t || t.sub !== 'rule') E(rw, `조절 대상 '${r.target}' — 'D…/rule/키' 형식의 규칙이어야 함`);
-    else if (!tr) E(rw, `조절 대상 규칙 '${r.target}' 없음`);
-    else if (!['supply', 'transition', 'degradation'].includes(tr.type)) E(rw, `조절 대상은 속도가 있는 규칙(supply · transition · degradation) — '${L(t.base)}' 의 '${tr.id}' 는 ${tr.type}`);
-    if (tr && t.base === id && tr.id === r.id) E(rw, '자기 자신을 조절할 수 없음');
-    if (!V.effects[r.effect]) E(rw, `조절 효과 '${r.effect}' — ${Object.keys(V.effects).join(' | ')}`);
-    if (!V.locations[r.at]) E(rw, `조절자 위치(at) '${r.at}' 은(는) 위치 어휘에 없음 — 조절자 묶음 = 소유자|at`);
-    else if (V.locations[r.at].dim !== '3D') E(rw, `조절자 위치 '${vlabel('locations', r.at)}' 는 부피(3D) 구획이어야 함 (농도로 배율을 계산)`);
-    for (const v of r.via) { const x = db.senses[v]; if (!x) E(rw, `매개 분자(via) '${v}' 없음`); else if (!isParticipantKind(x.kind)) E(rw, `매개 분자 '${L(v)}' 는 분자 종류가 아님`); }
+    if (!t || t.sub !== 'rule') E('RULE-0399', rw, `조절 대상 '${r.target}' — 'D…/rule/키' 형식의 규칙이어야 함`);
+    else if (!tr) E('RULE-0399', rw, `조절 대상 규칙 '${r.target}' 없음`);
+    else if (!['supply', 'transition', 'degradation'].includes(tr.type)) E('RULE-0399', rw, `조절 대상은 속도가 있는 규칙(supply · transition · degradation) — '${L(t.base)}' 의 '${tr.id}' 는 ${tr.type}`);
+    if (tr && t.base === id && tr.id === r.id) E('RULE-0399', rw, '자기 자신을 조절할 수 없음');
+    if (!V.effects[r.effect]) E('RULE-0399', rw, `조절 효과 '${r.effect}' — ${Object.keys(V.effects).join(' | ')}`);
+    if (!V.locations[r.at]) E('RULE-0399', rw, `조절자 위치(at) '${r.at}' 은(는) 위치 어휘에 없음 — 조절자 묶음 = 소유자|at`);
+    else if (V.locations[r.at].dim !== '3D') E('RULE-0399', rw, `조절자 위치 '${vlabel('locations', r.at)}' 는 부피(3D) 구획이어야 함 (농도로 배율을 계산)`);
+    for (const v of r.via) { const x = db.senses[v]; if (!x) E('RULE-0399', rw, `매개 분자(via) '${v}' 없음`); else if (!isParticipantKind(x.kind)) E('RULE-0399', rw, `매개 분자 '${L(v)}' 는 분자 종류가 아님`); }
     const k = r.kinetics;
     if (k && k.law === 'hill') {
-      if (r.effect === 'activates' && !(k.fmax > 1)) E(rw, '활성화 조절은 fmax > 1 (최대 배율)이 필요함');
-      if (r.effect === 'inhibits' && !(k.fmin >= 0 && k.fmin < 1)) E(rw, '억제 조절은 0 ≤ fmin < 1 (최소 배율)이 필요함');
-      if (r.effect === 'activates' && k.fmin != null) E(rw, '활성화 조절에는 fmin 을 두지 않음');
-      if (r.effect === 'inhibits' && k.fmax != null) E(rw, '억제 조절에는 fmax 를 두지 않음');
+      if (r.effect === 'activates' && !(k.fmax > 1)) E('RULE-0399', rw, '활성화 조절은 fmax > 1 (최대 배율)이 필요함');
+      if (r.effect === 'inhibits' && !(k.fmin >= 0 && k.fmin < 1)) E('RULE-0399', rw, '억제 조절은 0 ≤ fmin < 1 (최소 배율)이 필요함');
+      if (r.effect === 'activates' && k.fmin != null) E('RULE-0399', rw, '활성화 조절에는 fmin 을 두지 않음');
+      if (r.effect === 'inhibits' && k.fmax != null) E('RULE-0399', rw, '억제 조절에는 fmax 를 두지 않음');
     }
   }
   // 세포 상태 (v9): signature · metabolome · transitions 는 kind cell_state 만, cell_state 는 분자 필드를 갖지 않음
   function validateCellState(db, ix, id, d, where, E, W) {
     const L = ix.label, has = (d.signature || []).length || (d.metabolome || []).length || (d.transitions || []).length || (d.mechanisms || []).length;
-    if (d.kind !== 'cell_state') { if (has) E(where, '표지 서명·대사 프로그램·기전 프로그램·전이(signature · metabolome · mechanisms · transitions)는 kind cell_state 만'); return; }
-    if (!(d.signature || []).length) E(where, '세포 상태는 표지 서명(signature)이 필요함 — 어떤 분자가 높고 낮은지로 상태를 정의');
-    if (d.rule.length || Object.keys(d.site).length || d.moieties || d.components.length) E(where, '세포 상태는 분자가 아님 — 규칙·부위·부분 구조·구성 요소를 두지 않음');
+    if (d.kind !== 'cell_state') { if (has) E('RULE-0396', where, '표지 서명·대사 프로그램·기전 프로그램·전이(signature · metabolome · mechanisms · transitions)는 kind cell_state 만'); return; }
+    if (!(d.signature || []).length) E('RULE-0396', where, '세포 상태는 표지 서명(signature)이 필요함 — 어떤 분자가 높고 낮은지로 상태를 정의');
+    if (d.rule.length || Object.keys(d.site).length || d.moieties || d.components.length) E('RULE-0396', where, '세포 상태는 분자가 아님 — 규칙·부위·부분 구조·구성 요소를 두지 않음');
     const seen = new Set();
     for (const m of d.signature || []) {
       const x = db.senses[m.ref];
-      if (!x) E(where, `표지 '${m.ref}' 없음`); else if (!isParticipantKind(x.kind)) E(where, `표지 '${L(m.ref)}' 는 분자 종류가 아님`);
-      if (!V.signatureLevels[m.level]) E(where, `표지 '${L(m.ref)}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
+      if (!x) E('RULE-0396', where, `표지 '${m.ref}' 없음`); else if (!isParticipantKind(x.kind)) E('RULE-0396', where, `표지 '${L(m.ref)}' 는 분자 종류가 아님`);
+      if (!V.signatureLevels[m.level]) E('RULE-0396', where, `표지 '${L(m.ref)}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
       // 표지 위치: 부피(3D) 또는 막(2D, 예: 세포 표면 펩타이드–MHC) — 문턱은 분자 수라 부피가 없어도 판정된다. 막이면 그 분자가 그 막에 박혀 있어야 함
-      if (!V.locations[m.location]) E(where, `표지 '${L(m.ref)}' 의 위치 '${m.location}' 은(는) 위치 어휘에 없음`);
-      else if (V.locations[m.location].dim === '2D' && x && !(x.membrane && x.membrane.association !== 'soluble' && [x.membrane.location, ...(x.membrane.route || [])].some((l) => sameFamily(m.location, l)))) E(where, `표지 '${L(m.ref)}' 는 막 '${m.location}' 에 있을 수 없음 — 막 위상(membrane)이 그 막이어야 함`);
-      else if (V.locations[m.location].dim === '3D' && x && x.membrane && x.membrane.association !== 'soluble') E(where, `표지 '${L(m.ref)}' 는 막 분자 — 부피(3D) 위치 '${m.location}' 에 있을 수 없음`);
-      const key = `${m.ref}|${m.location}`; if (seen.has(key)) E(where, `표지 '${L(m.ref)}' 가 같은 위치에 두 번`); seen.add(key);
+      if (!V.locations[m.location]) E('RULE-0396', where, `표지 '${L(m.ref)}' 의 위치 '${m.location}' 은(는) 위치 어휘에 없음`);
+      else if (V.locations[m.location].dim === '2D' && x && !(x.membrane && x.membrane.association !== 'soluble' && [x.membrane.location, ...(x.membrane.route || [])].some((l) => sameFamily(m.location, l)))) E('RULE-0396', where, `표지 '${L(m.ref)}' 는 막 '${m.location}' 에 있을 수 없음 — 막 위상(membrane)이 그 막이어야 함`);
+      else if (V.locations[m.location].dim === '3D' && x && x.membrane && x.membrane.association !== 'soluble') E('RULE-0396', where, `표지 '${L(m.ref)}' 는 막 분자 — 부피(3D) 위치 '${m.location}' 에 있을 수 없음`);
+      const key = `${m.ref}|${m.location}`; if (seen.has(key)) E('RULE-0396', where, `표지 '${L(m.ref)}' 가 같은 위치에 두 번`); seen.add(key);
     }
     for (const m of d.metabolome || []) {
       const t = parseTarget(m.ref), o = t && db.senses[t.base], r = o && o.rule.find((x) => x.id === t.key);
-      if (!r) E(where, `대사 프로그램의 규칙 '${m.ref}' 없음 — 'D…/rule/키'`);
-      else if (r.type !== 'supply') E(where, `대사 프로그램은 공급 규칙(supply)만 — '${m.ref}' 는 ${r.type}`);
-      if (!V.signatureLevels[m.level]) E(where, `대사 프로그램 '${m.ref}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
+      if (!r) E('RULE-0397', where, `대사 프로그램의 규칙 '${m.ref}' 없음 — 'D…/rule/키'`);
+      else if (r.type !== 'supply') E('RULE-0397', where, `대사 프로그램은 공급 규칙(supply)만 — '${m.ref}' 는 ${r.type}`);
+      if (!V.signatureLevels[m.level]) E('RULE-0397', where, `대사 프로그램 '${m.ref}' 의 수준 '${m.level}' — ${Object.keys(V.signatureLevels).join(' | ')}`);
     }
     for (const m of d.mechanisms || []) {
       const x = db.senses[m.ref];
-      if (!x) E(where, `기전 프로그램 '${m.ref}' 없음`); else if (x.kind !== 'pathway') E(where, `기전 프로그램 '${L(m.ref)}' 는 경로(pathway)가 아님`);
-      else if (!Object.values(db.steps).some((st) => (st.part_of || []).includes(m.ref))) E(where, `기전 프로그램 '${L(m.ref)}' 에 속한 단계(part_of)가 없음`);
+      if (!x) E('RULE-0396', where, `기전 프로그램 '${m.ref}' 없음`); else if (x.kind !== 'pathway') E('RULE-0396', where, `기전 프로그램 '${L(m.ref)}' 는 경로(pathway)가 아님`);
+      else if (!Object.values(db.steps).some((st) => (st.part_of || []).includes(m.ref))) E('RULE-0396', where, `기전 프로그램 '${L(m.ref)}' 에 속한 단계(part_of)가 없음`);
     }
     for (const tr of d.transitions || []) {
       const x = db.senses[tr.to];
-      if (!x) E(where, `전이 대상 상태 '${tr.to}' 없음`); else if (x.kind !== 'cell_state') E(where, `전이 대상 '${L(tr.to)}' 는 cell_state 가 아님`);
-      if (tr.to === id) E(where, '자기 자신으로의 전이');
-      if (!tr.signals.length) E(where, `'${L(tr.to)}' 로의 전이에 신호(signals)가 없음 — 무엇이 분화를 일으키는지`);
-      for (const g of tr.signals) { const y = db.senses[g]; if (!y) E(where, `신호 '${g}' 없음`); else if (!isParticipantKind(y.kind)) E(where, `신호 '${L(g)}' 는 분자 종류가 아님`); }
-      if (!V.commitmentCriteria[tr.commitment.criterion]) E(where, `결정 기준 '${tr.commitment.criterion}' — ${Object.keys(V.commitmentCriteria).join(' | ')}`);
+      if (!x) E('RULE-0398', where, `전이 대상 상태 '${tr.to}' 없음`); else if (x.kind !== 'cell_state') E('RULE-0398', where, `전이 대상 '${L(tr.to)}' 는 cell_state 가 아님`);
+      if (tr.to === id) E('RULE-0398', where, '자기 자신으로의 전이');
+      if (!tr.signals.length) E('RULE-0398', where, `'${L(tr.to)}' 로의 전이에 신호(signals)가 없음 — 무엇이 분화를 일으키는지`);
+      for (const g of tr.signals) { const y = db.senses[g]; if (!y) E('RULE-0398', where, `신호 '${g}' 없음`); else if (!isParticipantKind(y.kind)) E('RULE-0398', where, `신호 '${L(g)}' 는 분자 종류가 아님`); }
+      if (!V.commitmentCriteria[tr.commitment.criterion]) E('RULE-0398', where, `결정 기준 '${tr.commitment.criterion}' — ${Object.keys(V.commitmentCriteria).join(' | ')}`);
       checkEvidence(tr.evidence, `${where} 전이 → ${tr.to}`, E);
     }
   }
@@ -880,24 +880,24 @@
   // 묶음 하나 검사: 바탕 정의항·부위·특징·위치·막 위상
   function checkBundle(db, ix, key, where, E) {
     const b = parseBundle(key);
-    if (b.error) { E(where, b.error); return null; }
-    if (bundleKey(b) !== key) E(where, `묶음 키 '${key}' 는 정렬된 표준 형식이 아님 (${bundleKey(b)})`);
+    if (b.error) { E('RULE-0358', where, b.error); return null; }
+    if (bundleKey(b) !== key) E('RULE-0358', where, `묶음 키 '${key}' 는 정렬된 표준 형식이 아님 (${bundleKey(b)})`);
     const d = db.senses[b.base];
-    if (!d) { E(where, `묶음 바탕 '${b.base}' 없음`); return null; }
-    if (!isParticipantKind(d.kind)) E(where, `'${ix.label(b.base)}'(${d.kind}) 는 기전에 참여할 수 없음`);
+    if (!d) { E('RULE-0358', where, `묶음 바탕 '${b.base}' 없음`); return null; }
+    if (!isParticipantKind(d.kind)) E('RULE-0358', where, `'${ix.label(b.base)}'(${d.kind}) 는 기전에 참여할 수 없음`);
     const L = V.locations[b.location];
-    if (!L) E(where, `위치 '${b.location}' 은(는) 위치 어휘에 없음`);
+    if (!L) E('RULE-0358', where, `위치 '${b.location}' 은(는) 위치 어휘에 없음`);
     else {
       const assoc = d.membrane ? d.membrane.association : 'soluble';
-      if (assoc === 'soluble' && L.dim !== '3D') E(where, `${ix.label(b.base)} 은(는) 수용성 — 막(2D) 위치 '${L.label}' 에 있을 수 없음`);
-      if (assoc !== 'soluble' && !(L.dim === '2D' && [d.membrane.location, ...(d.membrane.route || [])].some((l) => sameFamily(b.location, l)))) E(where, `${ix.label(b.base)} 은(는) ${vlabel('locations', d.membrane.location)}에 박힌 분자 — '${L.label}' 에 있을 수 없음`);
+      if (assoc === 'soluble' && L.dim !== '3D') E('RULE-0341', where, `${ix.label(b.base)} 은(는) 수용성 — 막(2D) 위치 '${L.label}' 에 있을 수 없음`);
+      if (assoc !== 'soluble' && !(L.dim === '2D' && [d.membrane.location, ...(d.membrane.route || [])].some((l) => sameFamily(b.location, l)))) E('RULE-0341', where, `${ix.label(b.base)} 은(는) ${vlabel('locations', d.membrane.location)}에 박힌 분자 — '${L.label}' 에 있을 수 없음`);
     }
     const seen = new Set();
     for (const f of b.features) {
       const s = d.site[f.site];
-      if (!s) E(where, `'${ix.label(b.base)}' 에 부위 '${f.site}' 가 없음`);
-      else if (!s.features.includes(f.feature)) E(where, `부위 '${f.site}' 는 특징 '${f.feature}' 를 가질 수 없음 (허용: ${s.features.join(', ')})`);
-      if (seen.has(f.site)) E(where, `부위 '${f.site}' 에 특징이 둘`);
+      if (!s) E('RULE-0358', where, `'${ix.label(b.base)}' 에 부위 '${f.site}' 가 없음`);
+      else if (!s.features.includes(f.feature)) E('RULE-0358', where, `부위 '${f.site}' 는 특징 '${f.feature}' 를 가질 수 없음 (허용: ${s.features.join(', ')})`);
+      if (seen.has(f.site)) E('RULE-0358', where, `부위 '${f.site}' 에 특징이 둘`);
       seen.add(f.site);
     }
     return { ...b, d };
@@ -906,36 +906,36 @@
   // 단계 검사: 단계는 규칙의 한 번 적용이다. 변화량·위치·접촉·행위자 활성이 규칙과 맞아야 한다.
   function validateStep(db, ix, id, st, E, W) {
     const L = ix.label, where = `${id}`;
-    if (!isStepId(id)) E(id, "단계 번호는 'S' + 숫자 6자리");
+    if (!isStepId(id)) E('RULE-0498', id, "단계 번호는 'S' + 숫자 6자리");
     const rule = ix.ruleOf(st.rule), owner = ix.ruleOwner(st.rule);
-    if (!rule) { E(where, `규칙 '${st.rule}' 없음 — 'D…/rule/키' 로 원천의 전이 규칙을 가리킬 것`); return; }
+    if (!rule) { E('RULE-0069', where, `규칙 '${st.rule}' 없음 — 'D…/rule/키' 로 원천의 전이 규칙을 가리킬 것`); return; }
     const w = `${id}(${rule.label})`;
-    if (rule.type !== 'transition') { E(w, '단계는 전이(transition) 규칙만 적용할 수 있음'); return; }
-    if (!st.part_of.length) E(w, 'part_of 없음 — 어느 경로에 속하는지 적어야 함');
-    for (const p of st.part_of) { const x = db.senses[p]; if (!x) E(w, `소속 경로 '${p}' 없음`); else if (x.kind !== 'pathway') E(w, `소속 '${L(p)}' 의 kind 가 pathway 가 아님`); }
+    if (rule.type !== 'transition') { E('RULE-0382', w, '단계는 전이(transition) 규칙만 적용할 수 있음'); return; }
+    if (!st.part_of.length) E('RULE-0333', w, 'part_of 없음 — 어느 경로에 속하는지 적어야 함');
+    for (const p of st.part_of) { const x = db.senses[p]; if (!x) E('RULE-0333', w, `소속 경로 '${p}' 없음`); else if (x.kind !== 'pathway') E('RULE-0333', w, `소속 '${L(p)}' 의 kind 가 pathway 가 아님`); }
     const B = {};
     for (const role of ['agents', 'inputs', 'outputs', 'regulators']) B[role] = st[role].map((p) => {
-      if (!p.b) { E(w, `${role} 참여자가 묶음 키가 아님`); return null; }
+      if (!p.b) { E('RULE-0069', w, `${role} 참여자가 묶음 키가 아님`); return null; }
       const b = checkBundle(db, ix, p.b, w, E);
       return b ? { ...b, key: p.b, n: p.n || 1, minor: !!p.minor } : null;
     }).filter(Boolean);
     const e = rule.effect, major = (x) => !x.minor;
     const findOne = (list, base, what) => {
       const xs = list.filter((x) => x.base === base && major(x));
-      if (xs.length !== 1) { E(w, `${what}에 '${L(base)}' 묶음이 ${xs.length}개 (정확히 1개여야 함)`); return null; }
+      if (xs.length !== 1) { E('RULE-0069', w, `${what}에 '${L(base)}' 묶음이 ${xs.length}개 (정확히 1개여야 함)`); return null; }
       return xs[0];
     };
     // 행위자
     let center = null;
     if (rule.agent) {
       const ag = B.agents.find((x) => x.base === owner);
-      if (!ag) E(w, `규칙 '${rule.label}' 의 행위자 '${L(owner)}' 묶음이 agents 에 없음`);
+      if (!ag) E('RULE-0361', w, `규칙 '${rule.label}' 의 행위자 '${L(owner)}' 묶음이 agents 에 없음`);
       else {
         const act = ix.activityOf(ag.key);
-        if (act === 'inactive') E(w, `행위자 ${ix.bundleLabel(ag.key)} 은(는) 원천 규칙상 비활성 — 이 전이를 일으킬 수 없음`);
+        if (act === 'inactive') E('RULE-0361', w, `행위자 ${ix.bundleLabel(ag.key)} 은(는) 원천 규칙상 비활성 — 이 전이를 일으킬 수 없음`);
         center = { b: ag, face: rule.via_site ? (db.senses[owner].site[rule.via_site] || {}).face : null };
       }
-    } else if (B.agents.length) E(w, '행위자가 없는 규칙인데 agents 가 있음');
+    } else if (B.agents.length) E('RULE-0361', w, '행위자가 없는 규칙인데 agents 가 있음');
     const inF = (x) => new Map(x.features.map((f) => [f.site, f.feature]));
     let targetIn = null, moved = null;
     if (e.type === 'modify') {
@@ -943,19 +943,19 @@
       if (tin && tout) {
         targetIn = tin;
         const a = inF(tin), b = inF(tout);
-        for (const s of uniq([...a.keys(), ...b.keys()])) if (s !== e.site && a.get(s) !== b.get(s)) E(w, `규칙이 바꾸지 않는 부위 '${s}' 가 바뀜`);
+        for (const s of uniq([...a.keys(), ...b.keys()])) if (s !== e.site && a.get(s) !== b.get(s)) E('RULE-0362', w, `규칙이 바꾸지 않는 부위 '${s}' 가 바뀜`);
         const expIn = (e.remove || [])[0], expOut = (e.add || [])[0];
-        if (a.get(e.site) !== expIn) E(w, `입력의 부위 '${e.site}' 는 ${expIn ? `'${expIn}'` : '빈 상태'} 여야 함 (실제 ${a.get(e.site) || '빈 상태'})`);
-        if (b.get(e.site) !== expOut) E(w, `출력의 부위 '${e.site}' 는 ${expOut ? `'${expOut}'` : '빈 상태'} 여야 함 (실제 ${b.get(e.site) || '빈 상태'})`);
-        if (tin.location !== tout.location) E(w, '수송이 아닌 단계에서 위치가 바뀜');
+        if (a.get(e.site) !== expIn) E('RULE-0362', w, `입력의 부위 '${e.site}' 는 ${expIn ? `'${expIn}'` : '빈 상태'} 여야 함 (실제 ${a.get(e.site) || '빈 상태'})`);
+        if (b.get(e.site) !== expOut) E('RULE-0353', w, `출력의 부위 '${e.site}' 는 ${expOut ? `'${expOut}'` : '빈 상태'} 여야 함 (실제 ${b.get(e.site) || '빈 상태'})`);
+        if (tin.location !== tout.location) E('RULE-0353', w, '수송이 아닌 단계에서 위치가 바뀜');
       }
       if (e.partner) {
-        if (!B.inputs.some((x) => x.base === e.partner)) E(w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
-        if (B.outputs.some((x) => x.base === e.partner && major(x))) E(w, `결합 상대 '${L(e.partner)}' 는 대상 부위에 흡수되므로 출력에 따로 남지 않음`);
+        if (!B.inputs.some((x) => x.base === e.partner)) E('RULE-0362', w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
+        if (B.outputs.some((x) => x.base === e.partner && major(x))) E('RULE-0362', w, `결합 상대 '${L(e.partner)}' 는 대상 부위에 흡수되므로 출력에 따로 남지 않음`);
       }
     } else if (e.type === 'convert') {
-      for (const x of e.consumes || []) if (!B.inputs.some((y) => y.base === x)) E(w, `기질 '${L(x)}' 묶음이 입력에 없음`);
-      for (const x of e.produces || []) if (!B.outputs.some((y) => y.base === x)) E(w, `생성물 '${L(x)}' 묶음이 출력에 없음`);
+      for (const x of e.consumes || []) if (!B.inputs.some((y) => y.base === x)) E('RULE-0362', w, `기질 '${L(x)}' 묶음이 입력에 없음`);
+      for (const x of e.produces || []) if (!B.outputs.some((y) => y.base === x)) E('RULE-0362', w, `생성물 '${L(x)}' 묶음이 출력에 없음`);
       targetIn = B.inputs.find((y) => (e.consumes || []).includes(y.base)) || null;
     } else if (e.type === 'dissociate' || e.type === 'associate') {
       const C = e.complex || owner, cd = db.senses[C];
@@ -965,47 +965,47 @@
         targetIn = cx;
         for (const c of cd.components) {
           const got = parts.filter((x) => x.base === c.ref && major(x)).reduce((s, x) => s + x.n, 0);
-          if (got !== c.n * cx.n) E(w, `${pName}의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${c.n * cx.n}개`);
+          if (got !== c.n * cx.n) E('RULE-0362', w, `${pName}의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${c.n * cx.n}개`);
         }
-        for (const x of parts.filter(major)) if (!cd.components.some((c) => c.ref === x.base) && x.base !== e.partner) E(w, `'${L(x.base)}' 는 '${L(C)}' 의 구성 요소가 아님`);
+        for (const x of parts.filter(major)) if (!cd.components.some((c) => c.ref === x.base) && x.base !== e.partner) E('RULE-0362', w, `'${L(x.base)}' 는 '${L(C)}' 의 구성 요소가 아님`);
         // 막 복합체에 수용성 구성 요소가 붙거나 떨어질 때(β2m·펩타이드 → 막의 MHC): 그 3D 위치가 복합체 막의 한 면과 맞닿아 있어야 함
         const touches = (x) => (V.locations[x.location] || {}).dim === '3D' && (V.locations[cx.location] || {}).dim === '2D' && Object.values(locSides(cx.location)).includes(x.location);
-        for (const x of parts) if (x.location !== cx.location && major(x) && !touches(x)) E(w, '해리·결합 단계에서 위치가 바뀜');
+        for (const x of parts) if (x.location !== cx.location && major(x) && !touches(x)) E('RULE-0363', w, '해리·결합 단계에서 위치가 바뀜');
       }
       if (e.partner) {
-        if (!B.inputs.some((x) => x.base === e.partner)) E(w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
-        if (e.partner_site && B.outputs.some((x) => x.base === e.partner && major(x))) E(w, `결합 상대 '${L(e.partner)}' 는 구성 요소 '${L(e.partner_site.component)}' 의 부위에 흡수되므로 출력에 따로 남지 않음`);
+        if (!B.inputs.some((x) => x.base === e.partner)) E('RULE-0362', w, `결합 상대 '${L(e.partner)}' 묶음이 입력에 없음`);
+        if (e.partner_site && B.outputs.some((x) => x.base === e.partner && major(x))) E('RULE-0362', w, `결합 상대 '${L(e.partner)}' 는 구성 요소 '${L(e.partner_site.component)}' 의 부위에 흡수되므로 출력에 따로 남지 않음`);
         if (e.partner_site && e.type === 'dissociate') {
           const outs = B.outputs.filter((x) => x.base === e.partner_site.component);
-          for (const ps of e.partner_site.sites) if (!outs.length || outs.some((x) => inF(x).get(ps) !== 'bound')) E(w, `구성 요소 '${L(e.partner_site.component)}' 의 부위 '${ps}' 가 'bound' 여야 함 (결합 상대가 흡수된 곳)`);
+          for (const ps of e.partner_site.sites) if (!outs.length || outs.some((x) => inF(x).get(ps) !== 'bound')) E('RULE-0362', w, `구성 요소 '${L(e.partner_site.component)}' 의 부위 '${ps}' 가 'bound' 여야 함 (결합 상대가 흡수된 곳)`);
         }
       }
     } else if (e.type === 'transport') {
       const T = e.target || owner, tin = findOne(B.inputs, T, '입력'), tout = findOne(B.outputs, T, '출력');
       if (tin && tout) {
         targetIn = tin; moved = tout;
-        if (tin.location !== e.from || tout.location !== e.to) E(w, `수송 규칙은 ${vlabel('locations', e.from)} → ${vlabel('locations', e.to)} (실제 ${vlabel('locations', tin.location)} → ${vlabel('locations', tout.location)})`);
-        if (JSON.stringify([...inF(tin)].sort()) !== JSON.stringify([...inF(tout)].sort())) E(w, '수송 단계에서 특징이 바뀜');
+        if (tin.location !== e.from || tout.location !== e.to) E('RULE-0353', w, `수송 규칙은 ${vlabel('locations', e.from)} → ${vlabel('locations', e.to)} (실제 ${vlabel('locations', tin.location)} → ${vlabel('locations', tout.location)})`);
+        if (JSON.stringify([...inF(tin)].sort()) !== JSON.stringify([...inF(tout)].sort())) E('RULE-0353', w, '수송 단계에서 특징이 바뀜');
       }
     } else if (e.type === 'transfer') {
       const din = findOne(B.inputs, owner, '입력'), dout = findOne(B.outputs, owner, '출력');
       const tin = findOne(B.inputs, e.target, '입력'), tout = findOne(B.outputs, e.target, '출력');
-      const same = (a, b, skip, what) => { for (const k of uniq([...a.keys(), ...b.keys()])) if (k !== skip && a.get(k) !== b.get(k)) E(w, `${what}의 규칙이 바꾸지 않는 부위 '${k}' 가 바뀜`); };
+      const same = (a, b, skip, what) => { for (const k of uniq([...a.keys(), ...b.keys()])) if (k !== skip && a.get(k) !== b.get(k)) E('RULE-0362', w, `${what}의 규칙이 바꾸지 않는 부위 '${k}' 가 바뀜`); };
       if (din && dout) {
-        if (inF(din).get(e.from_site) !== 'bound') E(w, `넘겨주는 '${L(owner)}' 입력의 부위 '${e.from_site}' 는 'bound' 여야 함`);
-        if (inF(dout).get(e.from_site)) E(w, `넘겨준 뒤 '${L(owner)}' 의 부위 '${e.from_site}' 는 빈 상태여야 함`);
+        if (inF(din).get(e.from_site) !== 'bound') E('RULE-0362', w, `넘겨주는 '${L(owner)}' 입력의 부위 '${e.from_site}' 는 'bound' 여야 함`);
+        if (inF(dout).get(e.from_site)) E('RULE-0362', w, `넘겨준 뒤 '${L(owner)}' 의 부위 '${e.from_site}' 는 빈 상태여야 함`);
         same(inF(din), inF(dout), e.from_site, '넘겨주는 쪽');
-        if (din.location !== dout.location) E(w, '수송이 아닌 단계에서 위치가 바뀜');
+        if (din.location !== dout.location) E('RULE-0363', w, '수송이 아닌 단계에서 위치가 바뀜');
         center = { b: din, face: (db.senses[owner].site[e.from_site] || {}).face };
       }
       if (tin && tout) {
         targetIn = tin;
-        if (inF(tin).get(e.site)) E(w, `받는 '${L(e.target)}' 입력의 부위 '${e.site}' 는 빈 상태여야 함`);
-        if (inF(tout).get(e.site) !== 'bound') E(w, `받은 뒤 '${L(e.target)}' 의 부위 '${e.site}' 는 'bound' 여야 함`);
+        if (inF(tin).get(e.site)) E('RULE-0362', w, `받는 '${L(e.target)}' 입력의 부위 '${e.site}' 는 빈 상태여야 함`);
+        if (inF(tout).get(e.site) !== 'bound') E('RULE-0362', w, `받은 뒤 '${L(e.target)}' 의 부위 '${e.site}' 는 'bound' 여야 함`);
         same(inF(tin), inF(tout), e.site, '받는 쪽');
-        if (tin.location !== tout.location) E(w, '수송이 아닌 단계에서 위치가 바뀜');
+        if (tin.location !== tout.location) E('RULE-0363', w, '수송이 아닌 단계에서 위치가 바뀜');
       }
-      if ([...B.inputs, ...B.outputs].some((x) => x.base === e.partner && major(x))) E(w, `리간드 '${L(e.partner)}' 는 부위 안에서 넘겨지므로 따로 입력·출력에 두지 않음`);
+      if ([...B.inputs, ...B.outputs].some((x) => x.base === e.partner && major(x))) E('RULE-0362', w, `리간드 '${L(e.partner)}' 는 부위 안에서 넘겨지므로 따로 입력·출력에 두지 않음`);
     } else if (e.type === 'degrade') {
       const C = e.complex || owner, cd = db.senses[C], cx = findOne(B.inputs, C, '입력');
       if (cx && cd) {
@@ -1013,23 +1013,23 @@
         for (const c of cd.components) {
           const got = B.outputs.filter((x) => x.base === c.ref && major(x)).reduce((t, x) => t + x.n, 0);
           const want = c.ref === e.component ? 0 : c.n * cx.n;
-          if (got !== want) E(w, c.ref === e.component ? `분해된 구성 요소 '${L(c.ref)}' 가 출력에 남아 있음` : `출력의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${want}개`);
+          if (got !== want) E('RULE-0362', w, c.ref === e.component ? `분해된 구성 요소 '${L(c.ref)}' 가 출력에 남아 있음` : `출력의 구성 요소 '${L(c.ref)}' 개수 ${got} — 복합체 정의상 ${want}개`);
         }
-        for (const x of B.outputs) if (x.location !== cx.location && major(x)) E(w, '분해 단계에서 위치가 바뀜');
+        for (const x of B.outputs) if (x.location !== cx.location && major(x)) E('RULE-0363', w, '분해 단계에서 위치가 바뀜');
       }
-      for (const x of e.produces || []) if (!B.outputs.some((y) => y.base === x)) E(w, `분해 산물 '${L(x)}' 묶음이 출력에 없음`);
+      for (const x of e.produces || []) if (!B.outputs.some((y) => y.base === x)) E('RULE-0362', w, `분해 산물 '${L(x)}' 묶음이 출력에 없음`);
     }
     // 전제 조건: 대상(또는 지정한 정의항)의 입력 묶음이 이미 그 특징을 가져야 함
     for (const q of e.requires || []) {
       const ref = q.ref || e.target || e.complex || owner, xs = B.inputs.filter((x) => x.base === ref && major(x));
-      if (!xs.length) E(w, `전제 조건의 대상 '${L(ref)}' 묶음이 입력에 없음`);
-      for (const x of xs) if (inF(x).get(q.site) !== q.feature) E(w, `전제 조건 불충족: ${ix.bundleLabel(x.key)} 의 부위 '${q.site}' 는 '${vlabel('features', q.feature)}' 여야 함`);
+      if (!xs.length) E('RULE-0503', w, `전제 조건의 대상 '${L(ref)}' 묶음이 입력에 없음`);
+      for (const x of xs) if (inF(x).get(q.site) !== q.feature) E('RULE-0503', w, `전제 조건 불충족: ${ix.bundleLabel(x.key)} 의 부위 '${q.site}' 는 '${vlabel('features', q.feature)}' 여야 함`);
     }
     if (rule.with) {
-      for (const x of rule.with.consumes) if (!B.inputs.some((y) => y.base === x)) E(w, `보조 기질 '${L(x)}' 가 입력에 없음`);
-      for (const x of rule.with.produces) if (!B.outputs.some((y) => y.base === x)) E(w, `보조 생성물 '${L(x)}' 가 출력에 없음`);
+      for (const x of rule.with.consumes) if (!B.inputs.some((y) => y.base === x)) E('RULE-0365', w, `보조 기질 '${L(x)}' 가 입력에 없음`);
+      for (const x of rule.with.produces) if (!B.outputs.some((y) => y.base === x)) E('RULE-0365', w, `보조 생성물 '${L(x)}' 가 출력에 없음`);
     }
-    for (const g of B.regulators) if (!rule.regulators.some((r) => r.ref === g.base)) E(w, `'${L(g.base)}' 는 규칙 '${rule.label}' 에 정의된 조절자가 아님`);
+    for (const g of B.regulators) if (!rule.regulators.some((r) => r.ref === g.base)) E('RULE-0365', w, `'${L(g.base)}' 는 규칙 '${rule.label}' 에 정의된 조절자가 아님`);
     // 동일성 보존: 물리적 변화(결합·해리·전달·분해·수송)에서는 입력과 출력의 구성 실체가 같아야 한다
     if (CONSERVING.has(e.type) || (e.type === 'modify' && e.partner)) {
       const cos = new Set(rule.with ? [...rule.with.consumes, ...rule.with.produces] : []);
@@ -1037,11 +1037,11 @@
       for (const x of B.inputs) if (!cos.has(x.base)) entityTally(db, x.base, inF(x), x.n, tIn, e.type === 'degrade' ? e.component : null);
       for (const x of B.outputs) if (!cos.has(x.base) && !(e.type === 'degrade' && (e.produces || []).includes(x.base))) entityTally(db, x.base, inF(x), x.n, tOut, null);
       const diff = uniq([...Object.keys(tIn), ...Object.keys(tOut)]).filter((k) => (tIn[k] || 0) !== (tOut[k] || 0));
-      if (diff.length) E(w, `동일성 보존 위반: ${diff.map((k) => `${L(k)} 입력 ${tIn[k] || 0} ≠ 출력 ${tOut[k] || 0}`).join(', ')}`);
+      if (diff.length) E('RULE-0366', w, `동일성 보존 위반: ${diff.map((k) => `${L(k)} 입력 ${tIn[k] || 0} ≠ 출력 ${tOut[k] || 0}`).join(', ')}`);
     }
     // 위치 조건
     if (!center && targetIn) center = { b: targetIn, face: e.site ? (targetIn.d.site[e.site] || {}).face : null };
-    if (center && rule.where && !rule.where.includes(center.b.location)) E(w, `규칙 '${rule.label}' 은(는) ${rule.where.map((l) => vlabel('locations', l)).join(', ')}에서만 작동 — 실제 ${vlabel('locations', center.b.location)}`);
+    if (center && rule.where && !rule.where.includes(center.b.location)) E('RULE-0364', w, `규칙 '${rule.label}' 은(는) ${rule.where.map((l) => vlabel('locations', l)).join(', ')}에서만 작동 — 실제 ${vlabel('locations', center.b.location)}`);
     // 공간 접촉: 반응 중심(행위자 또는 대상)과 모든 참여자
     if (center) {
       const cb = center.b, cDim = (V.locations[cb.location] || {}).dim;
@@ -1057,13 +1057,13 @@
           face = ts && ts.face;
         } else if (cDim === '2D' && xDim === '2D') {
           const cf = center.face, side = x.d.membrane && x.d.membrane.side;
-          if (cf && side && cf !== 'transmembrane' && cf !== side) E(w, `${ix.bundleLabel(cb.key)} 의 작용 면(${vlabel('faces', cf)})과 ${ix.bundleLabel(x.key)} 가 붙은 면(${vlabel('faces', side)})이 다름`);
+          if (cf && side && cf !== 'transmembrane' && cf !== side) E('RULE-0364', w, `${ix.bundleLabel(cb.key)} 의 작용 면(${vlabel('faces', cf)})과 ${ix.bundleLabel(x.key)} 가 붙은 면(${vlabel('faces', side)})이 다름`);
         }
         const c = locCompatible(cb.location, x.location, face && face !== 'transmembrane' ? face : null);
-        if (!c.ok) E(w, `공간 접촉 불가: ${ix.bundleLabel(cb.key)} ↔ ${ix.bundleLabel(x.key)} — ${c.why}`);
+        if (!c.ok) E('RULE-0071', w, `공간 접촉 불가: ${ix.bundleLabel(cb.key)} ↔ ${ix.bundleLabel(x.key)} — ${c.why}`);
       }
     }
-    if (rule.kinetics) for (const m of kineticIssues(rule, st).filter((x) => /차수|두 분자/.test(x))) E(w, m);
+    if (rule.kinetics) for (const m of kineticIssues(rule, st).filter((x) => /차수|두 분자/.test(x))) E('RULE-0379', w, m);
   }
 
   function gate(dbBefore, result, opt) {
@@ -1083,11 +1083,11 @@
   //   ① why 필수 ② 미등록 한계 후보 0 (병합 뒤 db 전체 — CI 의 limitations --detect 와 같은 기준) ③ 이 패치가 새로 만든 중복 규칙·등록 안 된 화학량 모순
   function patchPolicy(before, result) {
     const out = [], after = result.db;
-    if (!result.report.why) out.push({ where: '패치', msg: '변경 이유(why)가 없음 — 패치 최상위에 "why": "…" 를 적을 것 (Traceable Evolution Protocol)' });
-    for (const g of detectGaps(after)) out.push({ where: g.target, msg: `미등록 한계 후보 [${g.type}] ${g.why} — 같은 패치의 limitations 에 등록할 것` });
+    if (!result.report.why) out.push({ rule: 'RULE-0059', where: '패치', msg: '변경 이유(why)가 없음 — 패치 최상위에 "why": "…" 를 적을 것 (Traceable Evolution Protocol)' });
+    for (const g of detectGaps(after)) out.push({ rule: 'RULE-0078', where: g.target, msg: `미등록 한계 후보 [${g.type}] ${g.why} — 같은 패치의 limitations 에 등록할 것` });
     const was = new Set(refineCheck(before).issues.map((x) => x.type + x.where));
     for (const x of refineCheck(after).issues) if (!was.has(x.type + x.where) && (x.type === 'duplicate_rule' || (x.type === 'lumped_contradiction' && !x.known.length)))
-      out.push({ where: x.where, msg: `정제 점검 [${x.type}] ${x.msg} — 의도한 단순화면 Structural_Gap 으로 등록, 중복이면 리팩터링 초안(legislative draftRefactor)대로` });
+      out.push({ rule: 'RULE-0165', where: x.where, msg: `정제 점검 [${x.type}] ${x.msg} — 의도한 단순화면 Structural_Gap 으로 등록, 중복이면 리팩터링 초안(legislative draftRefactor)대로` });
     return out;
   }
   // 관찰 기록은 한 번 들어오면 바뀌지 않는다 — 지울 수 없고, 바꿀 수 있는 것은 철회 표시(retracted) 하나 (실측값을 다시 잴 일이 없게)
@@ -1095,13 +1095,13 @@
     const out = [];
     for (const [id, o] of Object.entries(before.observations || {})) {
       const a = (after.observations || {})[id];
-      if (!a) { out.push({ where: id, msg: '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시' }); continue; }
+      if (!a) { out.push({ rule: 'RULE-0110', where: id, msg: '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시' }); continue; }
       const strip = (x) => { const { retracted, ...rest } = x; return JSON.stringify(rest); };
-      if (strip(a) !== strip(o)) out.push({ where: id, msg: '관찰 기록은 바꿀 수 없음 — 새 측정은 새 관찰(O+1), 잘못된 관찰은 retracted 로 표시' });
-      if (o.retracted && JSON.stringify(a.retracted) !== JSON.stringify(o.retracted)) out.push({ where: id, msg: '철회 표시는 바꾸거나 지울 수 없음' });
+      if (strip(a) !== strip(o)) out.push({ rule: 'RULE-0110', where: id, msg: '관찰 기록은 바꿀 수 없음 — 새 측정은 새 관찰(O+1), 잘못된 관찰은 retracted 로 표시' });
+      if (o.retracted && JSON.stringify(a.retracted) !== JSON.stringify(o.retracted)) out.push({ rule: 'RULE-0110', where: id, msg: '철회 표시는 바꾸거나 지울 수 없음' });
     }
     // 새 관찰은 기록 시각을 가진다 (형식 v12 — 병합이 패치의 recorded_at 을 찍는다)
-    for (const [id, a] of Object.entries(after.observations || {})) if (!(before.observations || {})[id] && !a.recorded_at) out.push({ where: id, msg: '새 관찰에 기록 시각(recorded_at)이 없음 — 병합 전에 dbtool 이 패치에 찍는다' });
+    for (const [id, a] of Object.entries(after.observations || {})) if (!(before.observations || {})[id] && !a.recorded_at) out.push({ rule: 'RULE-0126', where: id, msg: '새 관찰에 기록 시각(recorded_at)이 없음 — 병합 전에 dbtool 이 패치에 찍는다' });
     return out;
   }
 
@@ -1621,39 +1621,39 @@
   // 시작 + 원장(생성·소멸·교환·경로)과 맞춘다. 사후 분석(정지 원인·제한 요인·폐기물·소비/생산 비)도 여기서 판정한다.
   function auditRate(db, target, raw) {
     db = normalize(db);
-    const ix = index(db), audit = [], AE = (fault, code, where, msg, sug) => audit.push({ code, fault, where, msg, suggestion: sug }); // fault: judicial/fault.js
+    const ix = index(db), audit = [], AE = (rule, fault, code, where, msg, sug) => audit.push({ code, fault, where, msg, suggestion: sug, rule }); // fault: judicial/fault.js
     const r = raw, ids = r.ids, react = r.react, finite = r.finite, res = new Set(r.reservoirSet), tgIds = r.targets;
     // ① 원자료 사실
-    for (const f of r.facts) if (f.kind === 'recycle_stoich_unknown') AE('DATA_GAP', 'AUDIT_RESOURCE', f.ref, `${ix.label(f.owner)} 재활용 화학량(서열 길이)을 모름 — 이 단위는 소실로 처리함`, gapSuggest(db, ix, f.owner, 'Structural_Gap', /서열 길이|sequence_length|재활용/));
+    for (const f of r.facts) if (f.kind === 'recycle_stoich_unknown') AE('RULE-0136', 'DATA_GAP', 'AUDIT_RESOURCE', f.ref, `${ix.label(f.owner)} 재활용 화학량(서열 길이)을 모름 — 이 단위는 소실로 처리함`, gapSuggest(db, ix, f.owner, 'Structural_Gap', /서열 길이|sequence_length|재활용/));
     // ② 쓰인 속도 상수의 무결성 · 부피 공백
     for (const u of r.kinUsed) {
       const rule = ix.ruleOf(u.ref), st = u.step ? db.steps[u.step] : null;
-      for (const m of kineticIssues(rule, st, u.kin)) AE('DOMAIN_CONFLICT', 'AUDIT_KINETIC', u.step ? `${u.step} ${rule.label}` : u.ref, m, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
-      if (!u.step) { const s = r.supplies.find((x) => x.ref === u.ref); if (s && !s.V) AE('DATA_GAP', 'AUDIT_CONCENTRATION', s.ref, `공급 위치(${vlabel('locations', s.loc)}) 부피를 모름 — 공급을 적용하지 못함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
-      else { const x = react.get(u.step); if (!x.V) AE('DATA_GAP', 'AUDIT_CONCENTRATION', `${u.step} ${rule.label}`, `반응 부피(${x.loc ? vlabel('locations', x.loc) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
+      for (const m of kineticIssues(rule, st, u.kin)) AE('RULE-0103', 'DOMAIN_CONFLICT', 'AUDIT_KINETIC', u.step ? `${u.step} ${rule.label}` : u.ref, m, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
+      if (!u.step) { const s = r.supplies.find((x) => x.ref === u.ref); if (s && !s.V) AE('RULE-0081', 'DATA_GAP', 'AUDIT_CONCENTRATION', s.ref, `공급 위치(${vlabel('locations', s.loc)}) 부피를 모름 — 공급을 적용하지 못함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
+      else { const x = react.get(u.step); if (!x.V) AE('RULE-0081', 'DATA_GAP', 'AUDIT_CONCENTRATION', `${u.step} ${rule.label}`, `반응 부피(${x.loc ? vlabel('locations', x.loc) : '3D 위치 없음'})를 모름 — 속도 법칙을 농도로 계산할 수 없어 즉시 처리함`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap')); }
     }
     // ②′ 상수 등급 (신뢰 지표 ②, judicial/reliability.js): 쓰인 상수마다 등급을 계산하고 문턱 미달을 판정한다.
     //   가상 값(시나리오가 준 상수)은 등급 밖이므로 시나리오가 hypothetical 을 선언했을 때만 허용한다 — 원자료가 그 선언을 싣고 온다.
     {
       const min = r.min_grade || RELI.DEFAULT_MIN, ctx = { evidenceShas: [] }, minBad = RELI.gateMinError(min);
-      if (minBad) AE('DATA_GAP', 'AUDIT_KINETIC', '상수 등급', minBad, '시나리오의 min_grade 를 기본 이상의 등급 이름 하나로 적거나 지울 것');
+      if (minBad) AE('RULE-0136', 'DATA_GAP', 'AUDIT_KINETIC', '상수 등급', minBad, '시나리오의 min_grade 를 기본 이상의 등급 이름 하나로 적거나 지울 것');
       else for (const u of r.kinUsed) {
         const k = u.kin || {}, where = u.step ? `${u.step} ${ix.ruleOf(u.ref).label}` : u.ref;
         if (k.src === 'scenario') {
-          if (!r.hypothetical) AE('DATA_GAP', 'AUDIT_KINETIC', where, '상수 등급: 시나리오가 준 가상 값인데 시나리오가 hypothetical 을 선언하지 않음 — 가상 값은 등급 밖이다', '시나리오에 hypothetical: true 를 적거나, 확인한 상수를 규칙의 kinetics 로 데이터에 넣을 것');
+          if (!r.hypothetical) AE('RULE-0136', 'DATA_GAP', 'AUDIT_KINETIC', where, '상수 등급: 시나리오가 준 가상 값인데 시나리오가 hypothetical 을 선언하지 않음 — 가상 값은 등급 밖이다', '시나리오에 hypothetical: true 를 적거나, 확인한 상수를 규칙의 kinetics 로 데이터에 넣을 것');
           continue;
         }
         const sd = RELI.scoreEvidence(k.evidence, ctx), msg = RELI.gateMessage({ ...sd, species: (k.context || {}).species || null }, min);
-        if (msg) AE('DATA_GAP', 'AUDIT_KINETIC', where, `상수 ${msg}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
+        if (msg) AE('RULE-0136', 'DATA_GAP', 'AUDIT_KINETIC', where, `상수 ${msg}`, gapSuggest(db, ix, u.owner, 'Kinetic_Gap'));
       }
     }
     // ③ 국소 수지: 발화한 단계의 한 번당 실체·부분 구조 변화 (첫 발화 시각)
     for (const sid of ids.filter((s) => r.firstFire[s] != null).sort((a, b) => r.firstFire[a] - r.firstFire[b])) {
       const x = react.get(sid), t = r.firstFire[sid];
-      if (Object.keys(x.unitEnt).length) AE('DOMAIN_CONFLICT', 'AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 국소 수지 위반 — 한 번 일어날 때마다 ${Object.entries(x.unitEnt).map(([en, v]) => `${ix.label(en)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (보존되어야 할 실체가 생기거나 사라짐)`, massSuggest(db, ix, Object.keys(x.unitEnt)[0]));
-      if (finite && Object.keys(x.unitMoi).length && !x.covalent) AE('DOMAIN_CONFLICT', 'AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 부분 구조 수지 위반 — 한 번에 ${Object.entries(x.unitMoi).map(([m, v]) => `${ix.label(m)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (단계의 부산물·보조 기질 묶음이 빠졌거나 규칙이 불완전)`, `단계 ${sid} 의 입력·출력에 빠진 부산물(minor)을 넣거나 규칙 ${x.st.rule} 의 효과·with 를 고칠 것`);
+      if (Object.keys(x.unitEnt).length) AE('RULE-0010', 'DOMAIN_CONFLICT', 'AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 국소 수지 위반 — 한 번 일어날 때마다 ${Object.entries(x.unitEnt).map(([en, v]) => `${ix.label(en)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (보존되어야 할 실체가 생기거나 사라짐)`, massSuggest(db, ix, Object.keys(x.unitEnt)[0]));
+      if (finite && Object.keys(x.unitMoi).length && !x.covalent) AE('RULE-0010', 'DOMAIN_CONFLICT', 'AUDIT_MASS', `${sid} ${x.rule.label}`, `t=${t} s 첫 발화에서 부분 구조 수지 위반 — 한 번에 ${Object.entries(x.unitMoi).map(([m, v]) => `${ix.label(m)} ${v > 0 ? '+' : ''}${+v.toFixed(6)}`).join(', ')} (단계의 부산물·보조 기질 묶음이 빠졌거나 규칙이 불완전)`, `단계 ${sid} 의 입력·출력에 빠진 부산물(minor)을 넣거나 규칙 ${x.st.rule} 의 효과·with 를 고칠 것`);
     }
-    for (const [b, x] of Object.entries(r.negatives)) AE('ENGINE_DEFECT', 'AUDIT_MASS', b, `t=${x.t} s 에 저장소 ${ix.bundleLabel(b)} 가 음수(${x.n}) — 엔진 오류`, '엔진 버그: 보고할 것');
+    for (const [b, x] of Object.entries(r.negatives)) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', b, `t=${x.t} s 에 저장소 ${ix.bundleLabel(b)} 가 음수(${x.n}) — 엔진 오류`, '엔진 버그: 보고할 것');
     // ④ 전역 수지 — 독립 재계산 (기록점마다)
     const TOL = 1e-6, chemical = new Set(r.chemical), vecCache = new Map(), moiCache = new Map();
     const vec = (b) => { if (!vecCache.has(b)) { const t = {}; entityTally(db, b.split('|')[0], new Map(parseBundle(b).features.map((f) => [f.site, f.feature])), 1, t, null); vecCache.set(b, t); } return vecCache.get(b); };
@@ -1679,11 +1679,11 @@
     }
     // 전역 수지 위반의 출처: 국소(한 번당) 수지 위반 단계가 있으면 그 결과(데이터 모순), 없으면 엔진 원장 결함
     const localViol = audit.some((a) => a.code === 'AUDIT_MASS' && a.fault === 'DOMAIN_CONFLICT');
-    if (massFirst) { const L = massFirst.L, en = massFirst.en; AE(localViol ? 'DOMAIN_CONFLICT' : 'ENGINE_DEFECT', 'AUDIT_MASS', en, `${ix.label(en)}: t=${massFirst.t} s 기록점까지 처음 어긋남 — 시작 ${(ent0[en] || 0).toFixed(3)} + 생성 ${(L.created[en] || 0).toFixed(3)} − 소멸 ${(L.destroyed[en] || 0).toFixed(3)}${finite ? '' : ` + 풀에서 들어옴 ${(L.exIn[en] || 0).toFixed(3)} − 풀로 나감 ${(L.exOut[en] || 0).toFixed(3)}`} = ${massFirst.want.toFixed(3)} ≠ 실제 ${massFirst.got.toFixed(3)} — 보존되어야 하는 실체가 원장 밖에서 사라지거나 생김`, massSuggest(db, ix, en)); }
-    if (moiFirst) AE(localViol ? 'DOMAIN_CONFLICT' : 'ENGINE_DEFECT', 'AUDIT_MASS', moiFirst.k, `부분 구조 ${ix.label(moiFirst.k)}: t=${moiFirst.t} s 기록점까지 처음 어긋남 — 기대 ${moiFirst.want.toFixed(3)} ≠ 실제 ${moiFirst.got.toFixed(3)} (원장 밖 변화 ${moiFirst.viol.toFixed(3)} 는 위 국소 수지 위반 단계에서 옴)`, '국소 수지 위반 단계를 먼저 고칠 것');
+    if (massFirst) { const L = massFirst.L, en = massFirst.en; AE('RULE-0010', localViol ? 'DOMAIN_CONFLICT' : 'ENGINE_DEFECT', 'AUDIT_MASS', en, `${ix.label(en)}: t=${massFirst.t} s 기록점까지 처음 어긋남 — 시작 ${(ent0[en] || 0).toFixed(3)} + 생성 ${(L.created[en] || 0).toFixed(3)} − 소멸 ${(L.destroyed[en] || 0).toFixed(3)}${finite ? '' : ` + 풀에서 들어옴 ${(L.exIn[en] || 0).toFixed(3)} − 풀로 나감 ${(L.exOut[en] || 0).toFixed(3)}`} = ${massFirst.want.toFixed(3)} ≠ 실제 ${massFirst.got.toFixed(3)} — 보존되어야 하는 실체가 원장 밖에서 사라지거나 생김`, massSuggest(db, ix, en)); }
+    if (moiFirst) AE('RULE-0010', localViol ? 'DOMAIN_CONFLICT' : 'ENGINE_DEFECT', 'AUDIT_MASS', moiFirst.k, `부분 구조 ${ix.label(moiFirst.k)}: t=${moiFirst.t} s 기록점까지 처음 어긋남 — 기대 ${moiFirst.want.toFixed(3)} ≠ 실제 ${moiFirst.got.toFixed(3)} (원장 밖 변화 ${moiFirst.viol.toFixed(3)} 는 위 국소 수지 위반 단계에서 옴)`, '국소 수지 위반 단계를 먼저 고칠 것');
     // ⑤ 적분 안정성: 한 Δt 에 입력의 20% 넘게 쓰려 한 속도 법칙 단계
     const stiffSteps = Object.entries(r.stiff).filter(([, f]) => f > 0.2).sort((a, b) => b[1] - a[1]);
-    if (stiffSteps.length) AE('NUMERICAL', 'AUDIT_KINETIC', target, `Δt ${r.dt} s 가 너무 큼 — 속도 법칙 단계가 한 Δt 에 입력을 최대 ${stiffSteps.slice(0, 4).map(([sid, f]) => `${sid} ${Math.min(f, 99.99) * 100 > 9999 ? '>9999' : (f * 100).toFixed(0)}%`).join(', ')} 소비하려 함 (오일러 적분 불안정·과도 진동 위험)`, `dt 를 ${(r.dt * 0.2 / stiffSteps[0][1]).toPrecision(2)} s 이하로 줄여 다시 실행하고 결과가 같은지 확인`);
+    if (stiffSteps.length) AE('RULE-0137', 'NUMERICAL', 'AUDIT_KINETIC', target, `Δt ${r.dt} s 가 너무 큼 — 속도 법칙 단계가 한 Δt 에 입력을 최대 ${stiffSteps.slice(0, 4).map(([sid, f]) => `${sid} ${Math.min(f, 99.99) * 100 > 9999 ? '>9999' : (f * 100).toFixed(0)}%`).join(', ')} 소비하려 함 (오일러 적분 불안정·과도 진동 위험)`, `dt 를 ${(r.dt * 0.2 / stiffSteps[0][1]).toPrecision(2)} s 이하로 줄여 다시 실행하고 결과가 같은지 확인`);
     // ⑥ 평형 일치: 결합 단계의 끝 시점 Q 와 Kd
     const conc = (b, Vr) => Math.max(0, r.final[b] || 0) / (NA * Vr);
     for (const sid of ids) {
@@ -1695,7 +1695,7 @@
       if (ids.some((o) => o !== sid && [...db.steps[o].inputs, ...db.steps[o].agents].some((p) => p.b === outs[0].b && !p.minor))) continue;
       if (r.degradations.some((g) => g.k_deg > 0 && [ins[0].b, ins[1].b, outs[0].b].includes(g.bundle))) continue;
       const Q = conc(ins[0].b, Vr) * conc(ins[1].b, Vr) / Math.max(conc(outs[0].b, Vr), 1e-30);
-      if (conc(ins[0].b, Vr) > 0 && conc(ins[1].b, Vr) > 0 && Math.abs(Math.log10(Q / Kd)) > 1) AE('NUMERICAL', 'AUDIT_KINETIC', `${sid} ${react.get(sid).rule.label}`, `끝 시점의 [A][B]/[AB] = ${Q.toExponential(2)} M 가 Kd ${Kd.toExponential(2)} M 와 10배 이상 다름 — 아직 평형 전이거나 dt 가 너무 큼`, `t_end 를 늘리거나 dt 를 줄여 다시 실행 (지금 dt ${r.dt} s)`);
+      if (conc(ins[0].b, Vr) > 0 && conc(ins[1].b, Vr) > 0 && Math.abs(Math.log10(Q / Kd)) > 1) AE('RULE-0137', 'NUMERICAL', 'AUDIT_KINETIC', `${sid} ${react.get(sid).rule.label}`, `끝 시점의 [A][B]/[AB] = ${Q.toExponential(2)} M 가 Kd ${Kd.toExponential(2)} M 와 10배 이상 다름 — 아직 평형 전이거나 dt 가 너무 큼`, `t_end 를 늘리거나 dt 를 줄여 다시 실행 (지금 dt ${r.dt} s)`);
     }
     // ⑦ 자원 순환 분류: closed(순환) · consumed_only(고갈 위험) · produced_only(축적) · idle
     const resv = {};
@@ -1714,8 +1714,8 @@
     for (const s of r.supplies) if (s.active) for (const a of s.consumes) for (const b of s.produces) edge(a, b);
     const cycles = sccs(G).filter((c) => c.length > 1);
     if (finite) for (const [b, x] of Object.entries(resv)) {
-      if (x.class === 'consumed_only') AE('DATA_GAP', 'AUDIT_RESOURCE', b, `저장소 ${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (소비: ${x.consumers.join(', ')})${x.firstExhausted != null ? ` — t=${x.firstExhausted} s 에 고갈` : ''}`, gapSuggest(db, ix, b.split('|')[0], 'Kinetic_Gap', /공급|재생|supply/));
-      if (x.source === 'bulk' && x.consumers.some(active)) AE('DATA_GAP', 'AUDIT_CONCENTRATION', b, `저장소 ${ix.bundleLabel(b)} 의 시작량이 기본값(${r.bulk}) — 고갈 시각은 질적 의미만`, gapSuggest(db, ix, b.split('|')[0], 'Concentration_Gap', /저장소|대사물|뉴클레오타이드|reservoir/));
+      if (x.class === 'consumed_only') AE('RULE-0136', 'DATA_GAP', 'AUDIT_RESOURCE', b, `저장소 ${ix.bundleLabel(b)} 는 소비만 되고 재생 경로가 없음 (소비: ${x.consumers.join(', ')})${x.firstExhausted != null ? ` — t=${x.firstExhausted} s 에 고갈` : ''}`, gapSuggest(db, ix, b.split('|')[0], 'Kinetic_Gap', /공급|재생|supply/));
+      if (x.source === 'bulk' && x.consumers.some(active)) AE('RULE-0081', 'DATA_GAP', 'AUDIT_CONCENTRATION', b, `저장소 ${ix.bundleLabel(b)} 의 시작량이 기본값(${r.bulk}) — 고갈 시각은 질적 의미만`, gapSuggest(db, ix, b.split('|')[0], 'Concentration_Gap', /저장소|대사물|뉴클레오타이드|reservoir/));
     }
     // ⑧ 사후 분석 (Post-Mortem): 정지 시각·원인·제한 요인·완료한 회로 수·폐기물 축적·소비/생산 비
     const tEnd = r.series[r.series.length - 1].t, watch = r.watch, death = r.death;
@@ -1744,14 +1744,14 @@
       }
       const lb = pm.limiting && pm.limiting.bundle, base0 = lb ? lb.split('|')[0] : (pm.bottleneck ? ix.ruleOwner(db.steps[pm.bottleneck.sid].rule) : tgIds[0]);
       const gtype = pm.cause === 'exhaustion' ? 'Resource_Gap' : 'Kinetic_Gap';
-      AE('FINDING', 'AUDIT_RESOURCE', target, `사후 분석: t=${pm.t_death} s 에 정지 (${{ exhaustion: '자원 고갈', equilibrium: '산물 축적으로 평형', intermediate_drained: '중간물 고갈', kinetic_stall: '속도 정지' }[pm.cause]})${lb ? ` — 제한 요인 ${ix.bundleLabel(lb)}${pm.limiting.starved.length ? ` (굶은 단계 ${pm.limiting.starved.join(', ')})` : ''}` : ''}${pm.bottleneck ? ` — 병목 ${pm.bottleneck.sid} (역/정 = ${pm.bottleneck.ratio.toFixed(3)})` : ''} · 완료한 회로 ${turnsDone.map((c) => c.completed).join('/') || '—'}바퀴`,
+      AE('RULE-0134', 'FINDING', 'AUDIT_RESOURCE', target, `사후 분석: t=${pm.t_death} s 에 정지 (${{ exhaustion: '자원 고갈', equilibrium: '산물 축적으로 평형', intermediate_drained: '중간물 고갈', kinetic_stall: '속도 정지' }[pm.cause]})${lb ? ` — 제한 요인 ${ix.bundleLabel(lb)}${pm.limiting.starved.length ? ` (굶은 단계 ${pm.limiting.starved.join(', ')})` : ''}` : ''}${pm.bottleneck ? ` — 병목 ${pm.bottleneck.sid} (역/정 = ${pm.bottleneck.ratio.toFixed(3)})` : ''} · 완료한 회로 ${turnsDone.map((c) => c.completed).join('/') || '—'}바퀴`,
         gapSuggest(db, ix, base0, gtype, gtype === 'Resource_Gap' ? new RegExp(lb ? ix.label(base0).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '고갈') : null));
     }
     // ⑨ 속도 상수 공백 · 해상도 근사
     const gaps = r.kineticGaps.filter((x) => !/\/rule\//.test(x) || react.has(x)), sgaps = r.kineticGaps.filter((x) => /\/rule\//.test(x));
-    if (gaps.length) AE('DATA_GAP', 'AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${gaps.length}개를 즉시(사건 기반)로 처리함: ${gaps.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Kinetic_Gap'));
-    if (sgaps.length) AE('DATA_GAP', 'AUDIT_KINETIC_GAP', target, `속도 상수가 없는 공급·분해 규칙 ${sgaps.length}개는 적용하지 않음: ${sgaps.join(', ')}`, sgaps.map((x) => gapSuggest(db, ix, x.split('/')[0], 'Kinetic_Gap')).filter((x, i, a) => a.indexOf(x) === i).join(' / '));
-    if (r.approx.length) AE('DATA_GAP', 'AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${r.approx.length}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${r.approx.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap', /2D|면적/));
+    if (gaps.length) AE('RULE-0136', 'DATA_GAP', 'AUDIT_KINETIC_GAP', target, `속도 상수가 없는 단계 ${gaps.length}개를 즉시(사건 기반)로 처리함: ${gaps.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Kinetic_Gap'));
+    if (sgaps.length) AE('RULE-0136', 'DATA_GAP', 'AUDIT_KINETIC_GAP', target, `속도 상수가 없는 공급·분해 규칙 ${sgaps.length}개는 적용하지 않음: ${sgaps.join(', ')}`, sgaps.map((x) => gapSuggest(db, ix, x.split('/')[0], 'Kinetic_Gap')).filter((x, i, a) => a.indexOf(x) === i).join(' / '));
+    if (r.approx.length) AE('RULE-0082', 'DATA_GAP', 'AUDIT_RESOLUTION', target, `막(2D) 분자가 낀 단계 ${r.approx.length}개는 인접 3D 부피의 농도로 환산함 (면적 농도 아님): ${r.approx.join(', ')}`, gapSuggest(db, ix, tgIds[0], 'Concentration_Gap', /2D|면적/));
     return { audit, postMortem: pm, reservoirs: resv, cycles };
   }
   function simulateRateText(db, target, raw) {
@@ -1799,11 +1799,11 @@
     raws = raws || {};
     db = normalize(db);
     const out = [], v = validate(db);
-    for (const e of v.errors) out.push({ code: 'AUDIT_SCHEMA', fault: 'DOMAIN_CONFLICT', where: e.where, msg: e.msg, suggestion: '패치를 고쳐 다시 병합' });
+    for (const e of v.errors) out.push({ rule: e.rule, code: 'AUDIT_SCHEMA', fault: 'DOMAIN_CONFLICT', where: e.where, msg: e.msg, suggestion: '패치를 고쳐 다시 병합' });
     const p = resolutionPlan(db, target, { pools: raws.pools });
     if (!p.error) for (const r of p.rows) if (!r.ok) out.push({ code: 'AUDIT_RESOLUTION', fault: 'DATA_GAP', where: `${r.sid} ${p.ix.label(r.sid)}`, msg: `필요 ${['R0', 'R1', 'R2'][r.need]} 인데 갖춤 ${['R0', 'R1', 'R2'][r.have]} — ${r.hits.join(', ')}: ${r.comp.map((c) => p.ix.bundleLabel(c.bundle)).join(', ')} 를 두고 ${r.comp.flatMap((c) => c.steps).filter((x, i, a) => a.indexOf(x) === i).join('·')} 가 경쟁하는데 속도 상수도 반응 중심 구조도 없음`, suggestion: gapSuggest(db, p.ix, p.ix.ruleOwner(db.steps[r.sid].rule), 'Kinetic_Gap') });
     const th = thermoLoops(db, target);
-    if (!th.error) for (const l of th.loops) if (!l.ok) out.push({ code: 'AUDIT_THERMO', fault: 'DOMAIN_CONFLICT', where: l.steps.join('→'), msg: `닫힌 고리의 ΣΔG° = ${l.sum.toFixed(1)} J/mol ≠ 0 (허용 ${V.thermo.loop_tolerance}) — 미시적 가역성 위반: 고리를 한 바퀴 돌면 에너지가 생기거나 사라짐`, suggestion: '고리 단계들의 dG0 를 확인하고 하나를 나머지로부터 정할 것 (Wegscheider 조건)' });
+    if (!th.error) for (const l of th.loops) if (!l.ok) out.push({ rule: 'RULE-0141', code: 'AUDIT_THERMO', fault: 'DOMAIN_CONFLICT', where: l.steps.join('→'), msg: `닫힌 고리의 ΣΔG° = ${l.sum.toFixed(1)} J/mol ≠ 0 (허용 ${V.thermo.loop_tolerance}) — 미시적 가역성 위반: 고리를 한 바퀴 돌면 에너지가 생기거나 사라짐`, suggestion: '고리 단계들의 dG0 를 확인하고 하나를 나머지로부터 정할 것 (Wegscheider 조건)' });
     if (raws.rate && !raws.rate.error) out.push(...auditRate(db, target, raws.rate).audit);
     return out;
   }
