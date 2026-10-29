@@ -65,7 +65,7 @@
 - `RULE-0077` 실패·우회·추정·단순화는 한계 데이터로 — 패치 limitations [Target — Type — Requirement]+needs
 - `RULE-0080` 상위 개념 없는 패턴이 두 경로 이상이면 kind process + motif _(코드가 알림)_
 - `RULE-0082` 해상도 structure(구조)는 속도 상수로 못 가르는 반응 중심만, 경쟁(competition)은 Kd·kcat·Km 먼저 _(코드가 알림)_
-- `RULE-0090` 불확도 미보고면 sd = 유효 숫자 해상도 + note
+- `RULE-0090` 불확도 미보고면 sd = 유효 숫자 해상도 + uncertainty.basis 'resolution' + note — 판정은 기본 그대로(A), 선택으로 GUM ÷√12
 - `RULE-0091` 상수를 넣은 뒤 궤적 전후 비교 보고
 - `RULE-0108` 반복 수가 원문에 없으면 null — 1 로 적지 않음 _(코드가 알림)_
 - `RULE-0117` 교과서·추론은 정성 관찰이 아님 (한계·메모로)

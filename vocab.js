@@ -514,6 +514,13 @@
     biological:  { label: '생물학적 변이 (개체·세포 간)' },
     combined:    { label: '둘을 가르지 않은 합산' },
   },
+  // 불확도 크기(sd)가 어디서 왔나 (RULE-0090 · DEC-0035). 없으면 reported 로 읽는다 — 옛 기록과 호환
+  //   resolution: 원문이 불확도를 보고하지 않아 sd = 보고된 유효 숫자 마지막 자리 해상도(보수적 기본, A). 잰 퍼짐이 아니다
+  //   — 반복 수로 나누지 않고(보고된 평균값 자체의 반올림) 퍼짐 검정에 쓰지 않는다. 측정 표준(GUM) 사각 분포로 읽으려면 sd/√12 (선택)
+  uncertaintyBases: {
+    reported:   { label: '원문이 보고한 불확도' },
+    resolution: { label: '미보고 — 유효 숫자 해상도로 채움 (잰 퍼짐 아님)', models: ['normal'] },
+  },
   noiseModels: {
     normal:    { label: '정규 (sd = 표준 편차, 같은 단위)' },
     lognormal: { label: '로그정규 (sd = ln 값의 표준 편차, 무차원) — 값 > 0', positive: true },

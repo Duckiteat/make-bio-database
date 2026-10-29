@@ -4,17 +4,17 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `.claude/skills/author/SKILL.md` | 11.0 | 138 |  | 미분류 |
+| `.claude/skills/author/SKILL.md` | 11.1 | 138 |  | 미분류 |
 | `.claude/skills/baseline/SKILL.md` | 4.2 | 70 |  | 미분류 |
 | `.claude/skills/develop/SKILL.md` | 6.2 | 89 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.5 | 33 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.5 | 86 |  | 미분류 |
-| `CHANGES.md` | 269.6 | 247 |  | 분류됨 1 |
+| `CHANGES.md` | 270.8 | 248 |  | 분류됨 1 |
 | `CLAUDE.md` | 5.8 | 83 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
-| `SCHEMA.md` | 100.4 | 659 |  | 분류됨 427 |
+| `SCHEMA.md` | 100.8 | 659 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.8 | 315 |  | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
@@ -37,7 +37,7 @@
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.1 | 133 |  | 분류됨 95 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
-| `docs/modes/author.md` | 10.8 | 133 |  | 생성물 |
+| `docs/modes/author.md` | 10.9 | 133 |  | 생성물 |
 | `docs/modes/baseline.md` | 4.0 | 65 |  | 생성물 |
 | `docs/modes/develop.md` | 6.0 | 84 |  | 생성물 |
 | `docs/modes/field.md` | 1.3 | 28 |  | 생성물 |

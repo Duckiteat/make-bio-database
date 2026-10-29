@@ -103,3 +103,13 @@ test('⑥ 관측 커버리지 지도 (48): 예측 가능한 측정량마다 검�
   assert.equal(cov.find((r) => r.kind === 'ratio').blind, cov.find((r) => r.kind === 'ratio').quant === 0);
   assert.match(J.coverageMapText(BASE), /관측 커버리지/);
 });
+
+// RULE-0090 · DEC-0035: 미보고 불확도의 출처 칸 — 해상도로 채운 sd 는 표시하고, 표시는 검사된다 (없으면 reported — 옛 기록 호환)
+test('⑦ 불확도 출처: resolution 은 정규·sd > 0 에만 · 모르는 출처는 거부 · 출처 없는 옛 기록은 그대로 통과', () => {
+  passes({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'resolution' } })] });
+  passes({ observations: [amount({ uncertainty: { kind: 'measurement', model: 'normal', sd: 60, basis: 'reported' } })] });
+  rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'guess' } })] }, /불확도 출처 'guess'/);
+  rejectedFor({ observations: [halfLife({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.2, basis: 'resolution' } })] }, /잡음 모형 normal 에만/);
+  rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 0, basis: 'resolution' } })] }, /0 보다 커야/);
+  assert.equal(C.checkObservation({ ...amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 1, basis: 'nope' } }) }).ok, false, '계약 모양도 출처 값을 본다');
+});

@@ -715,7 +715,7 @@ switch (cmd) {
   }
   case 'observe': { // 관찰 포트 (4단계 ②): 판정만 — 관찰을 데이터베이스에 넣는 것은 패치(observations)·관문·서기
     const db = loadDB(), K = req('./judicial/contract.js'), OC = req('./judicial/obs_compare.js');
-    if (!args[0] || !flags.state || !flags.scenario) die('사용법: observe <O…|관찰.json> --state <세포 상태> --scenario A.json [--scenario-b B.json] [--n 50]');
+    if (!args[0] || !flags.state || !flags.scenario) die('사용법: observe <O…|관찰.json> --state <세포 상태> --scenario A.json [--scenario-b B.json] [--n 50] [--resolution A|gum]');
     let o;
     if (/^O\d{6}$/.test(args[0])) { o = db.observations[args[0]]; if (!o) die(`관찰 기록 ${args[0]} 없음`); }
     else {
@@ -737,7 +737,7 @@ switch (cmd) {
       console.log(QC.qualCompareText([Object.assign(q, { id: oid || '(파일)' })], QC.chanceBaseline([q])));
       process.exit(q.outcome === 'invalid' ? 1 : 0);
     }
-    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null, acceptance: /^O\d{6}$/.test(args[0]) ? acceptanceOf(db, args[0]) : null });
+    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, resolution: flags.resolution && flags.resolution !== true ? flags.resolution : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null, acceptance: /^O\d{6}$/.test(args[0]) ? acceptanceOf(db, args[0]) : null });
     console.log(req('./judicial/protocol.js').protocolText(req('./judicial/protocol.js').protocolVerdict(db, scA, { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() })) + '\n');
     console.log(OC.verdictText(v));
     process.exit(v.error ? 1 : 0);

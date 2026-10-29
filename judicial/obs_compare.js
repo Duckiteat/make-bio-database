@@ -23,14 +23,23 @@ const PROTO = require('./protocol.js');
 // 반복 수 미보고(null)는 한 번 잰 것으로 본다 — 표준 오차가 가장 넓은 쪽(보수적), 반복을 지어내지 않음
 const reps = (o) => (o.replicates == null ? 1 : o.replicates);
 
+// 불확도 크기 (RULE-0090): 해상도로 채운 sd 는 기본 그대로(A, 보수적) · opt.resolution 'gum' 이면 측정 표준 사각 분포 sd/√12
+const GUM_RECT = 1 / Math.sqrt(12);
+const isResolution = (o) => o.uncertainty.basis === 'resolution';
+function sdOf(o, opt) {
+  const conv = (opt && opt.resolution) || 'A';
+  if (conv !== 'A' && conv !== 'gum') throw new Error(`해상도 sd 읽기 '${conv}' — A | gum`);
+  return isResolution(o) && conv === 'gum' ? o.uncertainty.sd * GUM_RECT : o.uncertainty.sd;
+}
+
 // 비교 척도로 옮긴 예측·관찰과 분산 성분
-function scale(o, samples) {
-  const u = o.uncertainty, r = reps(o), log = u.model === 'lognormal';
+function scale(o, samples, opt) {
+  const u = o.uncertainty, r = reps(o), log = u.model === 'lognormal', sd = sdOf(o, opt);
   const finite = samples.filter(Number.isFinite), censored = samples.length - finite.length;
   const xs = log ? finite.map((v) => Math.log(v)) : finite;
   const n = xs.length, mu = n ? S.mean(xs) : NaN, s2 = S.variance(xs);
   const y = log ? Math.log(o.value) : o.value;
-  let noise = (u.sd * u.sd) / r; // 관찰 평균의 측정(또는 합산) 분산
+  let noise = (sd * sd) / (isResolution(o) ? 1 : r); // 관찰 평균의 측정(또는 합산) 분산 — 해상도는 보고된 평균값 자체의 반올림이라 반복 수로 줄지 않는다
   if (u.model === 'poisson') noise += Math.max(mu, 0) / r; // 계수 잡음
   if (o.observable.kind === 'fraction' || o.observable.kind === 'fraction_above') noise += (mu * (1 - mu)) / r; // r 개 세포를 센 비율의 표집 분산
   const mc = n > 1 ? s2 / n : 0; // 앙상블 평균의 몬테카를로 분산
@@ -38,9 +47,9 @@ function scale(o, samples) {
 }
 
 // 예측 하나와 관찰 하나 — 평균 검정 (+ 퍼짐 검정)
-function test(o, samples, alpha) {
+function test(o, samples, alpha, opt) {
   alpha = alpha == null ? S.ALPHA : alpha;
-  const k = scale(o, samples), out = { mu: k.mu, y: k.y, se: k.se, n: k.n, censored: k.censored, scale: k.log ? 'ln' : 'linear', notes: [] };
+  const k = scale(o, samples, opt), out = { mu: k.mu, y: k.y, se: k.se, n: k.n, censored: k.censored, scale: k.log ? 'ln' : 'linear', notes: [] };
   if (!k.n) { Object.assign(out, { p: 0, z: Infinity }); out.notes.push('모든 실행이 측정량을 내지 못함(도달 안 함·중도 절단) — 관찰은 도달을 보고함'); return out; }
   if (k.censored) out.notes.push(`실행 ${k.censored}/${samples.length} 개가 도달하지 않아 중도 절단 — 도달한 실행만 평균`);
   if (o.detection_limit != null && o.value <= o.detection_limit) {
@@ -55,7 +64,8 @@ function test(o, samples, alpha) {
   else { out.z = (k.y - k.mu) / k.se; out.p = 2 * S.normSf(Math.abs(out.z)); }
   // 퍼짐: 생물 변이는 확률 앙상블만 예측한다
   const kind = o.uncertainty.kind;
-  if (kind !== 'measurement' && o.replicates > 1) {
+  if (isResolution(o)) { if (o.replicates > 1) out.notes.push('sd 가 해상도로 채운 값(잰 퍼짐 아님) — 퍼짐 검정을 하지 않음'); }
+  else if (kind !== 'measurement' && o.replicates > 1) {
     if (k.n < 2) out.notes.push('결정론 예측(실행 1개) — 생물 변이(퍼짐)는 판정할 수 없음: 확률 앙상블 필요');
     else if (k.s2 > 0) {
       const obsVar = o.uncertainty.sd ** 2;
@@ -118,7 +128,8 @@ function verdict(o, predA, predB, opt) {
   opt = Object.assign({ alpha: S.ALPHA, power: S.POWER }, opt || {});
   if (o.use !== 'validation') return { error: `관찰의 용도가 ${o.use} — 추정용 관찰은 판정하지 않음 (상수를 맞춘 관찰로 그 상수를 검증하면 순환)` };
   if (o.retracted) return { error: '철회된 관찰 — 판정하지 않음' };
-  const A = test(o, predA, opt.alpha), out = { observable: o.observable, alpha: opt.alpha, power_target: opt.power, A };
+  const A = test(o, predA, opt.alpha, opt), out = { observable: o.observable, alpha: opt.alpha, power_target: opt.power, A };
+  if (isResolution(o)) out.sd_basis = { basis: 'resolution', read: opt.resolution || 'A', sd: sdOf(o, opt) }; // 판정에 쓴 sd 읽기가 결과에 남는다
   if (!predB) {
     // 가설 하나: 기각하지 못한 것은 일치가 아니다 — 일치는 동등성(TOST)으로 적극적으로 보여야 한다 (M1)
     if (!A.ok) out.verdict = 'CONFLICT';
@@ -129,7 +140,7 @@ function verdict(o, predA, predB, opt) {
       if (!eq.shown) out.limitation = { type: 'Observation_Gap', requirement: eq.requirement };
     }
   } else {
-    const B = test(o, predB, opt.alpha); out.B = B;
+    const B = test(o, predB, opt.alpha, opt); out.B = B;
     // 가를 수 있는가: 두 예측 평균의 차를 관찰 하나의 표준 오차로 — 검정력
     const se = Math.max(A.se, B.se), delta = A.mu - B.mu;
     if (A.ok && B.ok) out.verdict = 'INDISTINGUISHABLE';
@@ -141,9 +152,9 @@ function verdict(o, predA, predB, opt) {
     } else {
       out.discrimination = { delta, se, power: se > 0 ? S.powerZ(delta, se, opt.alpha) : delta ? 1 : 0, scale: A.scale };
       // 필요한 정밀도: 지금 반복 수에서 sd, 지금 sd 에서 반복 수 (몬테카를로 분산은 빼고 — 앙상블을 늘려 줄일 수 있음)
-      const seReq = S.requiredSE(delta, opt.alpha, opt.power), r = reps(o), mc = Math.max(scale(o, predA).mc, scale(o, predB).mc);
+      const seReq = S.requiredSE(delta, opt.alpha, opt.power), r = reps(o), mc = Math.max(scale(o, predA, opt).mc, scale(o, predB, opt).mc);
       const noiseReq = seReq * seReq - mc;
-      out.required = { se: seReq, sd_at_replicates: noiseReq > 0 ? Math.sqrt(noiseReq * r) : 0, replicates_at_sd: noiseReq > 0 ? Math.ceil((o.uncertainty.sd ** 2) / noiseReq) : Infinity, scale: A.scale,
+      out.required = { se: seReq, sd_at_replicates: noiseReq > 0 ? Math.sqrt(noiseReq * r) : 0, replicates_at_sd: noiseReq > 0 ? Math.ceil((sdOf(o, opt) ** 2) / noiseReq) : Infinity, scale: A.scale,
         note: delta === 0 ? '두 가설의 예측이 같음 — 이 측정량으로는 어떤 정밀도로도 가를 수 없음' : noiseReq > 0 ? '' : '모델 쪽 몬테카를로 오차가 이미 필요한 표준 오차보다 큼 — 앙상블을 늘려야 함' };
     }
   }
@@ -156,8 +167,8 @@ const fmt = (x) => (Number.isFinite(x) ? Number(x.toPrecision(4)).toString() : S
 // 관찰 없이: 두 가설을 가를 실험 설계 — 측정 잡음 sd 에서 필요한 반복 수 (Observation_Gap 의 요구 사항)
 function design(o, predA, predB, opt) {
   opt = Object.assign({ alpha: S.ALPHA, power: S.POWER }, opt || {});
-  const a = scale(o, predA), b = scale(o, predB), delta = a.mu - b.mu, seReq = S.requiredSE(delta, opt.alpha, opt.power), noiseReq = seReq * seReq - Math.max(a.mc, b.mc);
-  return { delta, se: seReq, replicates: noiseReq > 0 ? Math.ceil((o.uncertainty.sd ** 2) / noiseReq) : Infinity, scale: a.log ? 'ln' : 'linear' };
+  const a = scale(o, predA, opt), b = scale(o, predB, opt), delta = a.mu - b.mu, seReq = S.requiredSE(delta, opt.alpha, opt.power), noiseReq = seReq * seReq - Math.max(a.mc, b.mc);
+  return { delta, se: seReq, replicates: noiseReq > 0 ? Math.ceil((sdOf(o, opt) ** 2) / noiseReq) : Infinity, scale: a.log ? 'ln' : 'linear' };
 }
 
 function verdictText(v) {
@@ -165,6 +176,7 @@ function verdictText(v) {
   const row = (h, t) => `| ${h} | ${fmt(t.mu)} | ${fmt(t.se)} | ${fmt(t.z)} | ${fmt(t.p)} | ${t.spread ? `F ${fmt(t.spread.F)}, p ${fmt(t.spread.p)}` : '—'} | ${t.notes.join('; ') || '—'} |`;
   const lines = [`관찰 판정: **${v.verdict}** [${v.fault}] — ${v.observable.kind} @ ${v.observable.target} (α ${v.alpha}, 목표 검정력 ${v.power_target})`, '',
     '| 가설 | 예측 평균 | 표준 오차 | z | p | 퍼짐 | 메모 |', '|---|---|---|---|---|---|---|', row('A', v.A)];
+  if (v.sd_basis) lines.push('', `불확도: 원문 미보고 — sd ${fmt(v.sd_basis.sd)} 는 유효 숫자 해상도로 채운 값 (읽기 ${v.sd_basis.read === 'gum' ? 'GUM 사각 분포 ÷√12' : 'A — 해상도 그대로, 보수적'})`);
   if (v.B) lines.push(row('B', v.B), '', v.required ? `가름: 차 ${fmt(v.discrimination.delta)} (${v.discrimination.scale}), 검정력 ${fmt(v.discrimination.power)} · 필요한 표준 오차 ≤ ${fmt(v.required.se)}${v.required.note ? ' — ' + v.required.note : ''}` : `가름: ${v.discrimination.note}`);
   if (v.equivalence) {
     const e = v.equivalence;
@@ -179,4 +191,4 @@ function verdictText(v) {
   return lines.join('\n');
 }
 
-module.exports = { scale, test, verdict, design, verdictText };
+module.exports = { scale, test, verdict, design, verdictText, sdOf, GUM_RECT };

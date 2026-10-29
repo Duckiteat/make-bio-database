@@ -344,6 +344,14 @@
       if (nm.positive && !(o.value > 0)) E('RULE-0107', w, `잡음 모형 ${u.model} 은(는) 값 > 0 에만`);
     }
     if (!(u.sd >= 0 && Number.isFinite(u.sd))) E('RULE-0107', w, '불확도 크기(uncertainty.sd)가 0 이상의 수가 아님');
+    if (u.basis !== undefined) {
+      const ub = V.uncertaintyBases[u.basis];
+      if (!ub) E('RULE-0090', w, `불확도 출처 '${u.basis}' — ${Object.keys(V.uncertaintyBases).join(' | ')}`);
+      else if (u.basis === 'resolution') {
+        if (ub.models && !ub.models.includes(u.model)) E('RULE-0090', w, `해상도로 채운 sd 는 잡음 모형 ${ub.models.join('·')} 에만 (같은 단위의 마지막 자리)`);
+        if (!(u.sd > 0)) E('RULE-0090', w, '해상도로 채운 sd 는 0 보다 커야 함 (마지막 자리 크기)');
+      }
+    }
     if (!(o.replicates === null || (Number.isInteger(o.replicates) && o.replicates >= 1))) E('RULE-0108', w, '반복 수(replicates)는 1 이상의 정수 — 원문에 없으면 null(미보고), 1 로 적지 않는다');
     for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E('RULE-0107', w, `${k} 는 0 이상`);
     const c = o.condition;

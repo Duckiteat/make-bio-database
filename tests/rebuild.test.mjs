@@ -183,7 +183,8 @@ test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글
   const r = READ.read('RULE-0010', 2, S);
   assert.ok(r.startsWith('RULE-0010 — ' + S.rules['RULE-0010'].text), 'L0 = 장부 문장 그대로');
   assert.match(r, /EQ-0009/); assert.match(READ.read('EQ-0009', 2, S), /근거: 배정도 .*\(design\)/, '근거가 있으면 원본 그대로 + 종류');
-  assert.match(READ.read('EQ-0013', 2, S), /근거 기록 없음/, '근거가 없으면 없다고');
+  const bare = { ...S, formulas: { ...S.formulas, 'EQ-9999': { ...S.formulas['EQ-0013'], id: 'EQ-9999', basis: null, basis_kind: 'none' } } }; // 지금은 모든 수식에 근거가 있다 — 없는 기록을 만들어 본다
+  assert.match(READ.read('EQ-9999', 2, bare), /근거 기록 없음/, '근거가 없으면 없다고');
   assert.match(READ.read('RULE-0002', 2, S), /수식 기록 없음/, '수식이 없으면 없다고');
   assert.equal(READ.read('RULE-0002', 0, S).split('\n').filter(Boolean).length, 2, 'L0 은 두 줄 (문장 + 모드)');
   const M = createRequire(import.meta.url)('../model.js'), eq = S.formulas['EQ-0005'];
