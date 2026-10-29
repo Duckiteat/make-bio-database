@@ -1,3 +1,8 @@
+---
+name: develop
+description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 코드를 고칠 때 (사용자 요청이 있을 때만). 세션을 이 모드로 시작할 때 연다 (한 세션 = 한 모드)."
+---
+
 # 모드: 디벨롭 (`develop` — 기계 고치기)
 
 > 생성물 — `node rebuild/status.mjs --write` 가 `rebuild/rules/rules.jsonl · modes.json` 에서 만든다. 손으로 고치지 않는다 (규칙을 바꾸려면 원본을).
@@ -11,7 +16,7 @@
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (40)
+## 지켜야 할 규칙 — 사람·AI (38)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -59,9 +64,7 @@
 
 ### 검증·판정
 
-- `RULE-0001` 규칙을 바꾸면 CLAUDE.md 와 agent-rules.md 를 같은 커밋에서
 - `RULE-0191` 코드·형식·어휘·문서 구조 변경은 CHANGES.md 맨 위 한 행 (Scope·Why·Impact·Verification), 같은 커밋 _(코드가 알림)_
-- `RULE-0193` 구조 변경 → SCHEMA.md, 작업 규칙 → CLAUDE.md + agent-rules.md, 실패·공백 → limitations.md
 - `RULE-0194` 문서는 해당 절만 고침
 - `RULE-0196` 주석은 계약·이유만, 이력은 CHANGES.md
 - `RULE-0197` vocab·model·core·judicial·legislative 규칙은 사용자 요청 시만

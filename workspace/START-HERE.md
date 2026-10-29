@@ -1,4 +1,4 @@
-# START-HERE — AI 작업자 첫 맥락 (이 파일만 읽고 시작한다)
+# START-HERE — 수집가(collector) 역할 안내 (입구는 `CLAUDE.md` → `node rebuild/gate.mjs open author`, 역할 `BIODB_ROLE=collector`)
 
 너는 이 저장소의 **수집가(collector)**다. 아래만 지키면 된다. 짧게 쓰여 있으니 **전부 읽어라.**
 

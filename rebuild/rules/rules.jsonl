@@ -1,4 +1,4 @@
-{"id": "RULE-0001", "text": "규칙을 바꾸면 CLAUDE.md 와 agent-rules.md 를 같은 커밋에서", "modes": ["develop"], "enforce": "text", "unit": "U0002", "copies": ["U0243"], "note": "사본 동기화 규칙 — 재건으로 없어질 규칙"}
+{"id": "RULE-0001", "text": "규칙을 바꾸면 CLAUDE.md 와 agent-rules.md 를 같은 커밋에서", "modes": ["develop"], "enforce": "text", "unit": "U0002", "copies": ["U0243"], "retired": {"at": "2026-10-29", "by": "user", "archive": "rebuild/archive/old-hub.json"}}
 {"id": "RULE-0002", "text": "명령은 저장소 최상위에서", "modes": ["common"], "enforce": "text", "unit": "U0004", "copies": ["U0434"]}
 {"id": "RULE-0003", "text": "큰 파일(db.json·CHANGES.md·limitations.md·계획 문서 둘)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 하나 읽기 node rebuild/read.mjs PLAN-…, 고치기 node rebuild/plan.mjs apply", "modes": ["common"], "enforce": "text", "unit": "U0005", "copies": ["U0248", "U0451", "U0453", "U0616", "U0770"]}
 {"id": "RULE-0004", "text": "연결은 번호로만", "modes": ["common", "author"], "enforce": "machine", "unit": "U0007", "copies": ["U0245", "U1186", "U1282"], "where": "judicial/judicial.js validate (참조 해석·없는 번호 거부)"}
@@ -20,7 +20,7 @@
 {"id": "RULE-0020", "text": "mcp 서버는 파일을 직접 쓰지 않는다", "modes": ["develop"], "enforce": "machine", "unit": "U0026", "copies": ["U0423"], "where": "tests/governance.test.mjs ①"}
 {"id": "RULE-0021", "text": "유료 원천은 받지 않는다", "modes": ["author"], "enforce": "text", "unit": "U0027", "copies": ["U5843"], "note": "fetch 의 resolve_access 가 거르는지 확인 필요"}
 {"id": "RULE-0022", "text": "계정 원천은 BRENDA 하나, fetch 의 brenda_kinetics 로만", "modes": ["author"], "enforce": "text", "unit": "U0028", "copies": ["U0419", "U0825", "U0826"]}
-{"id": "RULE-0023", "text": "BRENDA 계정은 환경 변수 BRENDA_EMAIL·BRENDA_PASSWORD_SHA256 — 출력·받기 기록·수신함·저장소·채팅에 남기지 않음", "modes": ["author"], "enforce": "machine", "unit": "U0029", "copies": ["U0419", "U0827"], "where": "tests/mcp.test.mjs ⑩ ⑪ · legislative/clerk.mjs postToInbox"}
+{"id": "RULE-0023", "text": "BRENDA 계정은 환경 변수 BRENDA_EMAIL·BRENDA_PASSWORD_SHA256 — 출력·받기 기록·수신함·저장소·채팅에 남기지 않음", "modes": ["author"], "enforce": "machine", "unit": "U0029", "copies": ["U0419"], "where": "tests/mcp.test.mjs ⑩ ⑪ · legislative/clerk.mjs postToInbox"}
 {"id": "RULE-0024", "text": "그 밖의 로그인(학교 계정 등)은 쓰지 않는다", "modes": ["common", "author"], "enforce": "text", "unit": "U0030", "copies": ["U0419"]}
 {"id": "RULE-0025", "text": "사법(judicial/)은 검증·증명·감사·보고만, 엔진 실행·데이터/엔진 수정 금지", "modes": ["develop"], "enforce": "machine", "unit": "U0031", "copies": ["U0258", "U0442"], "where": "tests/governance.test.mjs ③"}
 {"id": "RULE-0026", "text": "행정부는 관찰을 읽지 않는다; 예측 표본은 조정자가 compiler/obs_operator.js 로", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0032", "copies": ["U0260", "U5702"], "where": "tests/governance.test.mjs ②′"}
@@ -190,7 +190,7 @@
 {"id": "RULE-0190", "text": "why 없음·미등록 한계 후보·새 정제 문제는 관문(patchPolicy) 거부", "modes": ["author"], "enforce": "machine", "unit": "U0218", "copies": ["U0402"], "where": "judicial/judicial.js patchPolicy · rejections 5a·5b·5c"}
 {"id": "RULE-0191", "text": "코드·형식·어휘·문서 구조 변경은 CHANGES.md 맨 위 한 행 (Scope·Why·Impact·Verification), 같은 커밋", "modes": ["develop"], "enforce": "text", "unit": "U0219", "copies": ["U0403", "U0583"], "flags": "legislative/clerk.mjs insertChangesRow"}
 {"id": "RULE-0192", "text": "사용자 보고는 네 칸 표, 산문 요약 금지", "modes": ["common"], "enforce": "text", "unit": "U0220", "copies": ["U0404", "U0587", "U0588"]}
-{"id": "RULE-0193", "text": "구조 변경 → SCHEMA.md, 작업 규칙 → CLAUDE.md + agent-rules.md, 실패·공백 → limitations.md", "modes": ["develop"], "enforce": "text", "unit": "U0221", "copies": ["U0405"], "note": "사본 동기화 — 재건으로 바뀔 규칙"}
+{"id": "RULE-0193", "text": "구조 변경 → SCHEMA.md, 작업 규칙 → CLAUDE.md + agent-rules.md, 실패·공백 → limitations.md", "modes": ["develop"], "enforce": "text", "unit": "U0221", "copies": ["U0405"], "retired": {"at": "2026-10-29", "by": "user", "archive": "rebuild/archive/old-hub.json"}}
 {"id": "RULE-0194", "text": "문서는 해당 절만 고침", "modes": ["develop"], "enforce": "text", "unit": "U0222", "copies": ["U0405"]}
 {"id": "RULE-0195", "text": "논리를 깨면 감지·수정·기록까지 한 작업", "modes": ["common"], "enforce": "text", "unit": "U0224", "copies": ["U0409"]}
 {"id": "RULE-0196", "text": "주석은 계약·이유만, 이력은 CHANGES.md", "modes": ["develop"], "enforce": "text", "unit": "U0225", "copies": []}
@@ -515,3 +515,4 @@
 {"id": "RULE-0515", "text": "모드마다 쓸 수 있는 곳만 바뀐다 (rebuild/rules/modes.json gate) — Edit·Write 는 미리 막고, 셸로 쓴 것은 도구 앞뒤 파일 대조로 바로 뒤에 잡는다", "modes": ["common"], "enforce": "machine", "where": "rebuild/gate.mjs decidePre · violations · tests/gate.test.mjs ②③", "from_code": "2026-10-29 재건 7 단계 — 세션 규칙(DEC-0018)과 사용자 결정(끝내기 전 시험이 통과해야 commit·push)을 문지기로"}
 {"id": "RULE-0516", "text": "끝내기 전 시험 묶음(node rebuild/gate.mjs finish <모드>)이 지금 파일 상태(작업 지문)로 통과해야 git commit·push 가 열린다", "modes": ["common"], "enforce": "machine", "where": "rebuild/gate.mjs decidePre · tests/gate.test.mjs ②③", "from_code": "2026-10-29 재건 7 단계 — 세션 규칙(DEC-0018)과 사용자 결정(끝내기 전 시험이 통과해야 commit·push)을 문지기로"}
 {"id": "RULE-0517", "text": "영수증(workspace/receipts/)은 문지기만 쓴다 — 사슬로 덧붙이기만, 고치거나 지우면 쓰는 도구를 막는다", "modes": ["common"], "enforce": "machine", "where": "rebuild/gate.mjs receiptIntact · legislative/clerk.mjs appendReceipt · tests/gate.test.mjs ④", "from_code": "2026-10-29 재건 7 단계 — 세션 규칙(DEC-0018)과 사용자 결정(끝내기 전 시험이 통과해야 commit·push)을 문지기로"}
+{"id": "RULE-0518", "text": "계정·비밀번호·토큰은 채팅·출력·저장소·핸드오프·기록 어디에도 남기지 않는다 — 사용자가 붙여 넣으려 하면 붙여 넣지 말라고 알린다 (기계가 지우는 것은 서기가 쓰는 파일뿐)", "modes": ["common"], "enforce": "text", "unit": "U0827", "copies": [], "note": "workspace/SOURCES.md:12 의 '핸드오프·채팅에 절대 남기지 않는다' 를 모드 공통 글 규칙으로 (재건 8 단계, 전에는 RULE-0023 의 사본) — 채팅은 코드가 막을 수 없다"}

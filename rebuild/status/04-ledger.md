@@ -134,7 +134,7 @@
 | 문서 | 단위가 있는 줄 | 빠진 줄 |
 |---|---|---|
 | `CHANGES.md` | 파일 전체 | 없음 |
-| `CLAUDE.md` | 75 | 없음 |
+| `CLAUDE.md` (`056e372` 판) | 75 | 없음 |
 | `DESIGN-v4.md` | 152 | 없음 |
 | `FEATURES.md` | 122 | 없음 |
 | `README.md` | 153 | 없음 |
@@ -142,7 +142,7 @@
 | `docs/PROMPTS.md` | 151 | 없음 |
 | `docs/RUNBOOK.md` | 178 | 없음 |
 | `docs/design/abstraction-boundary.md` | 31 | 없음 |
-| `docs/design/agent-rules.md` | 93 | 없음 |
+| `docs/design/agent-rules.md` (`056e372` 판) | 93 | 없음 |
 | `docs/design/authority-and-comprehension.md` | 22 | 없음 |
 | `docs/design/build-plan.md` (`e4423d8` 판) | 120 | 없음 |
 | `docs/design/cell-fate-engine.md` | 76 | 없음 |

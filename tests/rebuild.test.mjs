@@ -1,7 +1,7 @@
 // 재건 관리 파일 (rebuild/PLAN.md §6) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
 //   ① 관리 파일이 지금 저장소와 같다 (개수·크기·건수가 바뀌면 갱신돼야 함)
 //   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
-//   ③ 서기 구역 rebuild 는 rebuild/status/ 의 관리 파일 · rebuild/draft/ 의 초안 · rebuild/state/ 의 상태 기록만
+//   ③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/state/ 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만
 //   ④ 분류 장부에 형식 오류가 없다
 //   ⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다
 //   ⑩ 맥락: 규칙마다 이유 판정(because·inline·decided_by·none) · 대상 종류 · 표 머리
@@ -27,12 +27,13 @@ test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () =
   assert.deepEqual(stale, [], '관리 파일이 낡음 — node rebuild/status.mjs --write');
   const extra = readdirSync(join(ROOT, STATUS)).filter((f) => !out[f]);
   assert.deepEqual(extra, [], '생성기가 만들지 않는 파일이 관리 폴더에 있음');
-  // 6 단계 새 구조 초안 (rebuild/draft) — 원본에서 바이트 동일하게 다시 만들어진다
-  const drafts = RENDER.build(ROOT), D = join(ROOT, 'rebuild/draft');
-  const dStale = Object.entries(drafts).filter(([n, t]) => { const p = join(D, n); return !existsSync(p) || readFileSync(p, 'utf8') !== t; }).map(([n]) => n);
-  assert.deepEqual(dStale, [], '새 구조 초안이 낡음 — node rebuild/status.mjs --write');
-  const walk = (d, pre = '') => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n), pre + n + '/') : [pre + n]));
-  assert.deepEqual(walk(D).filter((f) => !drafts[f]), [], '생성기가 만들지 않는 파일이 초안 폴더에 있음');
+  // 드리프트 (8 단계): 중심 문서 · 모드 문서 · 스킬은 규칙 장부·모드 원본에서 바이트 동일 — 손으로 고친 흔적이 없다
+  const hub = RENDER.build(ROOT);
+  const dStale = Object.entries(hub).filter(([n, t]) => { const p = join(ROOT, n); return !existsSync(p) || readFileSync(p, 'utf8') !== t; }).map(([n]) => n);
+  assert.deepEqual(dStale, [], '중심·모드 문서가 원본과 다름 — 손으로 고치지 말고 규칙 장부·modes.json 을 고친 뒤 node rebuild/status.mjs --write');
+  const walk = (d, pre = '') => (existsSync(d) ? readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n), pre + n + '/') : [pre + n])) : []);
+  assert.deepEqual([...walk(join(ROOT, 'docs/modes'), 'docs/modes/'), ...walk(join(ROOT, '.claude/skills'), '.claude/skills/')].filter((f) => !hub[f]), [], '생성기가 만들지 않는 파일이 모드 문서·스킬 폴더에 있음');
+  assert.ok(!existsSync(join(ROOT, 'rebuild/draft')) && !existsSync(join(ROOT, 'docs/design/agent-rules.md')), '옛 초안 폴더·해설 사본이 남아 있음');
 });
 
 test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는다', () => {
@@ -45,13 +46,13 @@ test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는
   assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
-test('③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/draft/ 초안 · rebuild/state/ 계획 기록 · 계획 문서 둘만', () => {
-  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md']);
+test('③ 서기 구역 rebuild 는 관리 파일 · 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md', 'CLAUDE.md', 'docs/modes/', '.claude/skills/']);
   for (const bad of ['../x.jsonl', 'other.jsonl', 'build-plan.jsonl', 'build-plan.md']) assert.throws(() => CLERK.writeState(bad, 'x', ROOT), /계획 기록 이름/, bad);
   assert.throws(() => CLERK.writeState('plan-log.jsonl', 'x\n', ROOT), /덧붙이기만/, '걸어온 길을 줄이거나 고치는 쓰기');
   assert.throws(() => CLERK.writePlanDoc('other', 'x', ROOT), /build · rebuild 만/);
   for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
-  for (const bad of ['../CLAUDE.md', 'build-plan.md', 'modes/Author.md', 'modes/a/b.md', 'skills/x/other.md', 'x.md']) assert.throws(() => CLERK.writeDraftDoc(bad, 'x', ROOT), /새 구조 초안 이름/, bad);
+  for (const bad of ['../CLAUDE.md', 'build-plan.md', 'modes/author.md', 'docs/modes/Author.md', 'docs/modes/a/b.md', '.claude/skills/x/other.md', '.claude/settings.json', 'x.md']) assert.throws(() => CLERK.writeHubDoc(bad, 'x', ROOT), /중심·모드 문서 이름/, bad);
 });
 
 test('④ 분류 장부에 형식 오류가 없고, 분류한 문서는 빠진 줄이 없다', () => {
@@ -138,13 +139,13 @@ test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인�
 
 test('⑬ 옛 규칙 대조 (6 단계): 살아 있는 규칙은 모두 새 구조에 있다 — 글 규칙은 중심·모드 문서에 번호로, 기계 규칙은 그 모드의 개수에', () => {
   const rules = readFileSync(join(ROOT, 'rebuild/rules/rules.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((r) => !r.retired);
-  const d = RENDER.build(ROOT), docs = Object.entries(d).filter(([n]) => !n.startsWith('skills/'));
+  const d = RENDER.build(ROOT), docs = Object.entries(d).filter(([n]) => !n.startsWith('.claude/skills/'));
   const where = (id) => docs.filter(([, t]) => t.includes('`' + id + '`')).map(([n]) => n);
   const lost = [], twice = [];
   for (const r of rules) {
     if (r.enforce === 'machine') continue;
     if (r.spec) { for (const m of r.modes) if (!READ.listSpec(m).includes(r.id + ' ')) lost.push(`${r.id} (형식 설명 — 읽기 모드 ${m} 목록에 없음)`); continue; }
-    const w = where(r.id), want = r.modes.includes('common') ? ['CLAUDE.md'] : r.modes.map((m) => `modes/${m}.md`);
+    const w = where(r.id), want = r.modes.includes('common') ? ['CLAUDE.md'] : r.modes.map((m) => `docs/modes/${m}.md`);
     if (!w.length) lost.push(r.id);
     else if (w.sort().join() !== want.sort().join()) twice.push(`${r.id}: ${w.join(', ')} (기대 ${want.join(', ')})`);
   }
@@ -154,11 +155,11 @@ test('⑬ 옛 규칙 대조 (6 단계): 살아 있는 규칙은 모두 새 구�
   const count = (t, h) => Number((t.split(h)[1] || '').match(/(\d+) 개/)[1]);
   const mm = (m) => rules.filter((r) => r.enforce === 'machine' && (m === 'common' ? r.modes.includes('common') : r.modes.includes(m) && !r.modes.includes('common'))).length;
   assert.equal(count(d['CLAUDE.md'], '## 공통 규칙 — 컴퓨터가 막는다'), mm('common'));
-  for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`modes/${m}.md`], '## 컴퓨터가 막는 규칙'), mm(m), m);
+  for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`docs/modes/${m}.md`], '## 컴퓨터가 막는 규칙'), mm(m), m);
   // 형식 설명: 모드 문서가 밝힌 개수 = 읽기 모드 목록의 줄 수
-  for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`modes/${m}.md`], '## 형식 설명'), READ.listSpec(m).split('\n').filter(Boolean).length, m);
+  for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`docs/modes/${m}.md`], '## 형식 설명'), READ.listSpec(m).split('\n').filter(Boolean).length, m);
   // 스킬은 모드 문서와 같은 본문
-  for (const m of RENDER.MODE_KEYS) assert.ok(d[`skills/${m}/SKILL.md`].endsWith(d[`modes/${m}.md`]), m);
+  for (const m of RENDER.MODE_KEYS) assert.ok(d[`.claude/skills/${m}/SKILL.md`].endsWith(d[`docs/modes/${m}.md`]), m);
 });
 
 test('⑭ 명령 장부 (6c): dbtool 의 명령·MCP 의 도구가 장부와 하나씩 맞고, 모드·쓰기 구역은 정해진 것만', () => {

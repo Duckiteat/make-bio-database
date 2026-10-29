@@ -4,22 +4,26 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 261.9 | 242 |  | 분류됨 1 |
-| `CLAUDE.md` | 18.5 | 85 | 입구 | 분류됨 242 |
+| `.claude/skills/author/SKILL.md` | 11.3 | 138 |  | 미분류 |
+| `.claude/skills/baseline/SKILL.md` | 4.6 | 71 |  | 미분류 |
+| `.claude/skills/develop/SKILL.md` | 6.4 | 91 |  | 미분류 |
+| `.claude/skills/field/SKILL.md` | 1.5 | 33 |  | 미분류 |
+| `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
+| `CHANGES.md` | 263.9 | 243 |  | 분류됨 1 |
+| `CLAUDE.md` | 5.8 | 83 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
 | `SCHEMA.md` | 100.2 | 659 |  | 분류됨 427 |
-| `docs/PROMPTS.md` | 17.8 | 315 | 입구 | 분류됨 151 |
-| `docs/RUNBOOK.md` | 22.3 | 328 | 입구 | 분류됨 180 |
+| `docs/PROMPTS.md` | 17.8 | 315 |  | 분류됨 151 |
+| `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
-| `docs/design/agent-rules.md` | 46.8 | 117 |  | 분류됨 192 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
-| `docs/design/build-plan.md` | 201.2 | 2310 |  | 생성물 |
+| `docs/design/build-plan.md` | 204.2 | 2329 |  | 생성물 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
 | `docs/design/dictionary-and-translation.md` | 16.0 | 203 |  | 분류됨 121 |
-| `docs/design/direction.md` | 6.2 | 46 | 입구 | 분류됨 26 |
+| `docs/design/direction.md` | 6.3 | 46 |  | 분류됨 26 |
 | `docs/design/engine-port-roadmap.md` | 53.4 | 564 |  | 분류됨 369 |
 | `docs/design/format-v12.md` | 10.1 | 101 |  | 분류됨 61 |
 | `docs/design/hybrid-multiscale-engine.md` | 35.8 | 340 |  | 분류됨 231 |
@@ -27,12 +31,17 @@
 | `docs/design/observation-port.md` | 6.0 | 68 |  | 분류됨 35 |
 | `docs/design/outsourcing-and-mcp.md` | 18.1 | 158 |  | 분류됨 80 |
 | `docs/design/post-build-directions.md` | 5.4 | 35 |  | 분류됨 18 |
-| `docs/design/rules-regulation-tests.md` | 9.7 | 112 |  | 분류됨 61 |
+| `docs/design/rules-regulation-tests.md` | 9.8 | 112 |  | 분류됨 61 |
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.6 | 208 |  | 분류됨 102 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.1 | 133 |  | 분류됨 95 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
+| `docs/modes/author.md` | 11.0 | 133 |  | 생성물 |
+| `docs/modes/baseline.md` | 4.4 | 66 |  | 생성물 |
+| `docs/modes/develop.md` | 6.2 | 86 |  | 생성물 |
+| `docs/modes/field.md` | 1.3 | 28 |  | 생성물 |
+| `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
 | `docs/reports/2026-10-15-mhc1-qualitative-batch.md` | 2.9 | 26 |  | 분류됨 13 |
@@ -57,7 +66,7 @@
 | `docs/reports/2026-10-25-structure-evaluation.md` | 8.5 | 69 |  | 분류됨 34 |
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
-| `docs/textbook/00-목차.md` | 4.8 | 45 | 입구 | 분류됨 28 |
+| `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 분류됨 116 |
@@ -66,11 +75,11 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 120.9 | 826 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 120.8 | 825 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
-| `workspace/START-HERE.md` | 4.7 | 57 | 입구 | 분류됨 32 |
+| `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
 | `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
 | `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
 | `workspace/handoff/HANDOFF-template.md` | 2.3 | 30 |  | 분류됨 16 |

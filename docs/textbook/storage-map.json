@@ -936,10 +936,26 @@
     {
       "path": "CLAUDE.md",
       "class": "spec",
-      "format": "Markdown",
-      "writer": "사람·AI",
+      "format": "Markdown 생성물 — 중심 문서 (목적 · 세션 · 모드 표 · 공통 규칙 · 모든 모드의 명령)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeHubDoc) — 원본 rebuild/rules/rules.jsonl · modes.json · commands.jsonl",
       "readers": "Claude Code 등 AI 에이전트 (세션 시작 시 자동)",
-      "interpret": "에이전트가 반드시 지킬 작업 규칙의 한 줄 점검표(세션마다 자동으로 실리므로 짧게). 이유·경위·예시는 docs/design/agent-rules.md — 규칙은 두 곳에 같이 있고 함께 고친다."
+      "interpret": "세션마다 자동으로 실리는 중심 문서 (재건 8 단계부터 생성물). 손으로 고치지 않는다 — 규칙은 장부에서 고치고 다시 만든다. 모드의 규칙은 docs/modes/<모드>.md, 규칙 하나의 이유는 node rebuild/read.mjs RULE-…"
+    },
+    {
+      "path": "docs/modes/*",
+      "class": "spec",
+      "format": "Markdown 생성물 — 모드 문서 <모드>.md (언제 · 목표 · 쓸 곳 · 위험 · 끝내기 전 · 멈춤 · 규칙 · 명령)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeHubDoc)",
+      "readers": "AI 에이전트 (모드를 연 세션) · 사람",
+      "interpret": "한 모드의 계약. 손으로 고치지 않는다 — 원본은 규칙 장부와 modes.json. 시험 rebuild ① 이 바이트 동일을 본다(드리프트)."
+    },
+    {
+      "path": ".claude/skills/*/SKILL.md",
+      "class": "spec",
+      "format": "Markdown 생성물 — 모드 스킬 (모드 문서 본문 + 머리 name·description)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeHubDoc)",
+      "readers": "Claude Code (작업 설명이 맞을 때 스킬로 열림)",
+      "interpret": "모드 문서와 같은 본문 — 스킬로도 열리게. 손으로 고치지 않는다."
     },
     {
       "path": "CHANGES.md",
@@ -1597,8 +1613,8 @@
       "class": "management",
       "format": "Node 모듈 (순수 — build(root) 가 파일 이름 → 글)",
       "writer": "사람·AI",
-      "readers": "rebuild/status.mjs (--write 가 서기 writeDraftDoc 로 씀) · tests/rebuild.test.mjs ①·⑬",
-      "interpret": "6 단계 새 구조 생성기 — 규칙 장부·모드 원본(rebuild/rules/modes.json)에서 중심 문서·모드 문서 5·스킬 5 를 만든다."
+      "readers": "rebuild/status.mjs (--write 가 서기 writeHubDoc 로 씀) · tests/rebuild.test.mjs ①·⑬",
+      "interpret": "중심 문서·모드 문서 5·스킬 5 생성기 — 규칙 장부·모드 원본(rebuild/rules/modes.json)·명령 장부에서 CLAUDE.md · docs/modes/ · .claude/skills/ 를 제자리에 만든다 (재건 8 단계부터)."
     },
     {
       "path": "rebuild/state.mjs",
@@ -1647,30 +1663,6 @@
       "writer": "사람·AI",
       "readers": "tests/rebuild.test.mjs ⑲ · node rebuild/plan-import.mjs --check",
       "interpret": "손으로 쓰던 계획 문서의 git 역사(import.until 까지)를 작업 사건으로 — 옛 문서의 깨진 곳 둘을 고쳐 읽고 그 사실을 repairs 로 남김."
-    },
-    {
-      "path": "rebuild/draft/*",
-      "class": "management",
-      "format": "Markdown 생성물 — 새 중심 문서 CLAUDE.md",
-      "writer": "rebuild/status.mjs --write (입법 서기 writeDraftDoc)",
-      "readers": "사람 (8 단계 교체 전 검토) · tests/rebuild.test.mjs ①·⑬",
-      "interpret": "새 구조 초안 — 8 단계에 CLAUDE.md · docs/modes/ · .claude/skills/ 로 옮긴다. 손으로 고치지 않는다(원본은 규칙 장부와 modes.json)."
-    },
-    {
-      "path": "rebuild/draft/modes/*",
-      "class": "management",
-      "format": "Markdown 생성물 — 모드 문서 <모드>.md",
-      "writer": "rebuild/status.mjs --write (입법 서기 writeDraftDoc)",
-      "readers": "사람 (8 단계 교체 전 검토) · tests/rebuild.test.mjs ①·⑬",
-      "interpret": "새 구조 초안 — 8 단계에 CLAUDE.md · docs/modes/ · .claude/skills/ 로 옮긴다. 손으로 고치지 않는다(원본은 규칙 장부와 modes.json)."
-    },
-    {
-      "path": "rebuild/draft/skills/*/SKILL.md",
-      "class": "management",
-      "format": "Markdown 생성물 — 모드 스킬 (같은 본문 + 머리 name·description)",
-      "writer": "rebuild/status.mjs --write (입법 서기 writeDraftDoc)",
-      "readers": "사람 (8 단계 교체 전 검토) · tests/rebuild.test.mjs ①·⑬",
-      "interpret": "새 구조 초안 — 8 단계에 CLAUDE.md · docs/modes/ · .claude/skills/ 로 옮긴다. 손으로 고치지 않는다(원본은 규칙 장부와 modes.json)."
     },
     {
       "path": "rebuild/archive/*",

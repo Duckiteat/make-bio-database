@@ -1,6 +1,6 @@
 # 방향 — 어디로, 왜 그 순서로 (세션을 가로지르는 북극성)
 
-> 새 세션은 이 대화를 기억하지 못한다. **이 문서 + 철학 문서들 + CLAUDE.md 를 읽으면 지금의 방향 감각으로 들어온다.** 규율은 `CLAUDE.md`, 원리는 아래 철학 문서들, 플랜·단계 상태는 `build-plan.md`. 이 문서는 "지금 무엇을 왜 그 순서로" 를 잡는다. 2026-10-22 확정.
+> 이 문서는 "지금 무엇을 왜 그 순서로" 의 북극성이다(2026-10-22 확정). **입구는 중심 문서 `CLAUDE.md` 하나**(재건 8 단계, 2026-10-29) — 세션은 거기서 모드를 연다. 여기의 순서 결정은 계획에도 결정으로 있다(DEC-0010 · DEC-0028 · DEC-0029 · DEC-0030 — `node rebuild/read.mjs DEC-…`).
 
 ## 0. 북극성
 **현실 검증 — "시뮬레이션이 현실 위에서 기능한다."** 맞는지 틀린지 현실 관찰에 맞춰 검증 가능해야 한다. 그 기계는 6부(42–48): 관찰 연산자(장치 눈먼 곳)·측정 유형 카탈로그·해석해 벤치마크·수렴 스윕·강성 진단·사각 지도. **완성됨.**
@@ -38,9 +38,9 @@ collect→verify→patch 고리를 MCP 도구로 자율화한다. 쓰기는 관�
 ## 6. 오차 수렴의 경계 — 과대약속 금지
 오차는 **측정이 닿는 데까지, 데이터가 있는 양에 대해서만** 수렴한다. 48 사각(정량 검증 0)인 양은 수렴이 아니라 정직한 공백이다. 커버리지 지도가 그 프런티어를 보여준다.
 
-## 읽는 순서 (새 세션 부팅)
-1. `CLAUDE.md` — 규율·점검표(자동 로드).
+## 더 깊이 읽을 때 (입구는 `CLAUDE.md` — 2026-10-29 부터)
+1. `CLAUDE.md` — 중심 문서(자동 로드) → 연 모드의 `docs/modes/<모드>.md`.
 2. **이 문서** — 방향·우선순위·왜 그 순서.
 3. 철학: `authority-and-comprehension.md`(권한/이해) · `tripartite-governance.md`(삼권분립) · `dictionary-and-translation.md`(번역/레지스터) · `conservation-classes.md`(보존 분류) · `work-verification.md`(꼼수방지).
 4. `build-plan.md`(플랜·단계 상태·◐ 메모 — "왜 멈췄나" 가 거기 있다 · 생성물이라 길다: 하나씩 `node rebuild/read.mjs PLAN-…`) · `CHANGES.md` 위 몇 행 · `limitations.md`.
-5. `workspace/handoff/NEXT-<가장 최근 날짜>.md` — 지난 세션의 상태·사용자 결정·다음 순서 (지금: `NEXT-2026-10-25.md`).
+5. 지난 세션의 인계는 전환 기록 `workspace/transitions.jsonl`(`node dbtool.mjs transition`) — 옛 `workspace/handoff/NEXT-*.md` 산문을 대신한다(DEC-0018).

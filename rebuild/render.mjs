@@ -1,6 +1,6 @@
 // 새 구조 문서 생성기 (rebuild/PLAN.md 6 단계) — 규칙 장부와 모드 원본에서 중심 문서·모드 문서·스킬을 만든다.
 //   원본: rebuild/rules/rules.jsonl (규칙 하나 = 기록 하나) · rebuild/rules/modes.json (모드 머리말) · rebuild/rules/commands.jsonl (명령 장부) · rebuild/ledger/units.jsonl (규칙이 온 절)
-//   결과: rebuild/draft/ 아래 — 8 단계에 제자리(CLAUDE.md · docs/modes/ · .claude/skills/)로 옮긴다. 그때까지 지금 문서는 그대로.
+//   결과: 제자리에 바로 — CLAUDE.md · docs/modes/<모드>.md · .claude/skills/<모드>/SKILL.md (재건 8 단계, 2026-10-29 — 옛 손글 CLAUDE.md·agent-rules.md 를 대신)
 // 계약: 순수 — 같은 원본이면 같은 바이트. 쓰기는 rebuild/status.mjs 가 서기(writeDraftDoc)로. 손으로 고치지 않는다.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -56,8 +56,8 @@ export function build(root) {
       `## 컴퓨터가 막는 규칙`, '', machineNote(machine(xs).length), '',
       `## 형식 설명`, '', `${spec(xs).length} 개 — 칸의 모양·값의 뜻(SCHEMA). 쓸 때 찾는다: \`node rebuild/read.mjs --list spec --mode ${m.key}\` · 하나는 \`node rebuild/read.mjs RULE-…\``, '',
       `## 쓸 명령 (모든 모드의 명령은 중심 문서)`, '', cmdTable(cmds.filter((c) => c.modes.includes(m.key) && !every(c))), ''].join('\n');
-    out[`modes/${m.key}.md`] = body;
-    out[`skills/${m.key}/SKILL.md`] = `---\nname: ${m.key}\ndescription: "${m.name} 모드 — ${m.when}. 세션을 이 모드로 시작할 때 연다 (한 세션 = 한 모드)."\n---\n\n${body}`;
+    out[`docs/modes/${m.key}.md`] = body;
+    out[`.claude/skills/${m.key}/SKILL.md`] = `---\nname: ${m.key}\ndescription: "${m.name} 모드 — ${m.when}. 세션을 이 모드로 시작할 때 연다 (한 세션 = 한 모드)."\n---\n\n${body}`;
   }
   return out;
 }

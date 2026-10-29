@@ -537,3 +537,4 @@
 {"from": "RULE-0515", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "모드가 믿는 것·쓸 수 있는 곳을 정한다(DEC-0016) — 셸로 쓴 것까지 도구 앞뒤 대조로"}
 {"from": "RULE-0516", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "'끝내기 전에 돌려라' 를 잊어도 막히게 — 사용자 결정 2026-10-29 커밋·push 를 막음 (DEC-0031)"}
 {"from": "RULE-0517", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "AI 작업이 블랙박스가 되지 않게(진단 DEC-0015) — 영수증을 작업자가 고치면 영수증이 아니다"}
+{"from": "RULE-0518", "rel": "inline", "by": "judged", "note": "이유가 문장 안 — 채팅·출력은 코드가 지울 수 없어 사람·AI 가 지킨다"}

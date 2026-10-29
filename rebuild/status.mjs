@@ -11,7 +11,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from './index.mjs'; // 번호 사전 — 파일 목록·이름공간을 한 곳에서
-import * as RENDER from './render.mjs'; // 6 단계 새 구조 초안 (rebuild/draft)
+import * as RENDER from './render.mjs'; // 중심 문서·모드 문서·스킬 (제자리에 생성 — 8 단계)
 import * as STATE from './state.mjs'; // 6c 상태 기록 (rebuild/state)
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,17 +25,20 @@ const KINDS = ['rule', 'procedure', 'reason', 'value', 'history'];
 const KIND_KO = { rule: '규칙', procedure: '절차', reason: '이유', value: '현재 숫자', history: '역사' };
 const ENFORCE = ['machine', 'text', 'none', 'unchecked']; // unchecked = 집행 자리를 아직 확인하지 못함 (5 단계에서 확정)
 // 지금의 입구 문서 (각자 "먼저 읽어라" 라고 하는 곳) · direction 이 정한 부팅 읽기
-const ENTRY = ['CLAUDE.md', 'docs/design/direction.md', 'docs/RUNBOOK.md', 'docs/textbook/00-목차.md', 'docs/PROMPTS.md', 'workspace/START-HERE.md'];
-const BOOT = ['CLAUDE.md', 'docs/design/direction.md', 'docs/design/authority-and-comprehension.md', 'docs/design/tripartite-governance.md',
-  'docs/design/dictionary-and-translation.md', 'docs/design/conservation-classes.md', 'docs/design/work-verification.md', 'docs/design/build-plan.md'];
+const ENTRY = ['CLAUDE.md']; // 입구는 중심 문서 하나 (재건 8 단계 — 옛 입구 6 곳: direction · RUNBOOK · 교과서 목차 · PROMPTS · START-HERE 는 참고 문서로)
+const BOOT = ['CLAUDE.md', 'docs/modes/author.md']; // 새 세션이 처음 읽는 것 = 중심 + 모드 하나 (가장 큰 정보 작성 모드로 셈)
 // 생성물 (분류 대상이 아님 — 원천에서 다시 만든다)
-const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html', 'docs/design/build-plan.md', 'rebuild/PLAN.md']; // 계획 둘은 2026-10-29 부터 계획 기록에서 생성 (DEC-0027)
+const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html', 'docs/design/build-plan.md', 'rebuild/PLAN.md', // 계획 둘은 2026-10-29 부터 계획 기록에서 생성 (DEC-0027)
+  'CLAUDE.md', ...['author', 'baseline', 'develop', 'field', 'inspect'].map((m) => `docs/modes/${m}.md`)]; // 중심·모드 문서는 8 단계부터 규칙 장부에서 생성
 
 // ── 저장소 파일 목록 (추적 + 무시되지 않은 새 파일, 관리 파일 자신은 뺌 — 자기 크기를 세면 고정점이 없다)
 function files() {
   return IDX.repoFiles().map((p) => ({ path: p, bytes: statSync(join(ROOT, p)).size }));
 }
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
+// 단위의 원문 — src_at 이 있으면 그 판(그 뒤 생성물이 되거나 지운 문서)을 git 에서, 없으면 지금 파일 (얕은 복제면 빈 글)
+const AT = new Map();
+const readAt = (p, at) => { if (!at) return read(p); const k = at + ':' + p; if (!AT.has(k)) { let t = ''; try { t = execFileSync('git', ['show', k], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26, stdio: ['ignore', 'pipe', 'ignore'] }); } catch { /* 얕은 복제 */ } AT.set(k, t); } return AT.get(k); };
 const lines = (p) => read(p).split('\n').length - (read(p).endsWith('\n') ? 1 : 0);
 const kb = (n) => (n / 1024).toFixed(1);
 const top = (p) => (p.includes('/') ? p.split('/')[0] : '(최상위)');
@@ -122,8 +125,8 @@ function build() {
   // 00 요약
   const rows = [
     ['저장소 파일 (관리 파일 제외)', `${all.length} 개 · ${kb(sum(all.map((f) => f.bytes)))} KB`],
-    ['입구 문서 6 곳 합', `${kb(sum(ENTRY.map((p) => by[p] || 0)))} KB`],
-    ['direction 부팅 읽기 합', `${kb(sum(BOOT.map((p) => by[p] || 0)))} KB`],
+    [`입구 문서 ${ENTRY.length} 곳 합`, `${kb(sum(ENTRY.map((p) => by[p] || 0)))} KB`],
+    ['새 세션이 처음 읽는 양 (중심 + 가장 큰 모드 문서)', `${kb(sum(BOOT.map((p) => by[p] || 0)))} KB`],
     ['문서(.md, data·tests·rebuild 밖)', `${docs.length} 개 · ${kb(sum(docs.map((d) => d.bytes)))} KB`],
     ['아직 분류하지 않은 문서', `${todo.length} 개 · ${kb(sum(todo.map((d) => d.bytes)))} KB`],
     ['장부 단위', `${L.units.length} (형식 오류 ${L.bad.length})`],
@@ -260,7 +263,7 @@ function build() {
   // 자리 맥락: 규칙의 원래 단위 기준
   const ru = rules7.map((r) => uid[r.unit]).filter(Boolean), cbad = [];
   for (const u of L.units) for (const k of ['lead', 'sentence_of']) { const v = u.ctx?.[k]; if (v && !uid[v] && !/:\d+$/.test(v)) cbad.push(`${u.id}: ctx.${k} '${v}'`); }
-  const tableNoHead = ru.filter((u) => /^\s*\|/.test(read(u.src.replace(/:\d+$/, '')).split('\n')[+u.src.split(':')[1] - 1] || '') && !u.ctx?.table).map((u) => u.id);
+  const tableNoHead = ru.filter((u) => /^\s*\|/.test(readAt(u.src.replace(/:\d+$/, ''), u.src_at).split('\n')[+u.src.split(':')[1] - 1] || '') && !u.ctx?.table).map((u) => u.id);
   const frag = rules7.filter((r) => uid[r.unit]?.ctx?.sentence_of);
   const posRows = [
     ['절 경로(path)', String(ru.filter((u) => u.ctx?.path?.length).length)],
@@ -336,10 +339,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   if (errs.length && flag) { console.error(`계획 기록 오류 ${errs.length}:\n- ${errs.slice(0, 30).join('\n- ')}`); process.exit(1); }
   const plansOut = Object.fromEntries(S.plans.map((p) => [p.plan, STATE.render(S, p.plan)]));
   const planStale = Object.entries(plansOut).filter(([plan, text]) => { const f = join(ROOT, STATE.PLANS[plan].out); return !existsSync(f) || readFileSync(f, 'utf8') !== text; });
-  const stale = () => [...staleIn(STATUS, out), ...staleIn('rebuild/draft/', drafts).map(([n, t]) => ['../draft/' + n, t]), ...planStale.map(([plan]) => ['../../' + STATE.PLANS[plan].out])];
-  if (flag === '--write') { // 계획 문서·초안 먼저 — 관리 파일이 그 크기를 세므로 그 뒤에 다시 계산해 쓴다 (한 번에 최신)
+  const stale = () => [...staleIn(STATUS, out), ...staleIn('', drafts).map(([n, t]) => ['../../' + n, t]), ...planStale.map(([plan]) => ['../../' + STATE.PLANS[plan].out])];
+  if (flag === '--write') { // 계획 문서·중심 문서 먼저 — 관리 파일이 그 크기를 세므로 그 뒤에 다시 계산해 쓴다 (한 번에 최신)
     for (const [plan, text] of planStale) CLERK.writePlanDoc(plan, text, ROOT);
-    for (const [name, text] of staleIn('rebuild/draft/', drafts)) CLERK.writeDraftDoc(name, text, ROOT);
+    for (const [name, text] of staleIn('', drafts)) CLERK.writeHubDoc(name, text, ROOT);
     for (const [name, text] of staleIn(STATUS, build())) CLERK.writeStatus(name, text, ROOT);
   }
   else if (flag === '--check') {

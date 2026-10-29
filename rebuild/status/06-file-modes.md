@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 77 | 6762.7 |
-| 정보 작성 `author` | 449 | 16510.3 |
+| 공통 `common` | 76 | 6724.3 |
+| 정보 작성 `author` | 449 | 16510.4 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 162 | 2124.7 |
+| 디벨롭 `develop` | 162 | 2127.3 |
 | 적분장 `field` | 17 | 137.3 |
 | 점검·검증 `inspect` | 33 | 748.4 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 35 | 5685.6 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 25 | 5643.2 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 12 | 52.2 | 수집가 작업 공간 |
+| `workspace/**` | author | 12 | 52.3 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/fv_solver.js` | field | 1 | 13.7 | P3 장 |
@@ -45,7 +45,7 @@
 | `engine/**` | develop | 17 | 200.3 | 운명 엔진·Rust·결합점 |
 | `compiler/**` | develop | 7 | 49.0 | 컴파일러 |
 | `judicial/**` | develop | 29 | 542.0 | 사법부 코드 |
-| `legislative/**` | develop | 3 | 71.8 | 입법부 코드 |
+| `legislative/**` | develop | 3 | 71.9 | 입법부 코드 |
 | `mcp/**` | develop | 4 | 34.7 | MCP 서버 |
 | `migrations/**` | develop | 13 | 59.8 | 형식 변환 |
 | `schemas/obs/**` | author | 1 | 13.2 | 관찰 포트 계약 |
@@ -62,18 +62,18 @@
 | `tests/p4_*` | field | 2 | 11.2 | P4 |
 | `tests/p5_*` | field | 1 | 12.7 | P5 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
-| `tests/**` | develop | 50 | 499.3 | 시험 |
+| `tests/**` | develop | 50 | 499.8 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 23 | 367.0 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 11 | 402.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
-| `docs/design/**` | common | 21 | 546.1 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 3 | 43.0 | 안내 문서 |
+| `docs/design/**` | common | 20 | 502.5 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
+| `docs/**` | common | 8 | 72.6 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 261.9 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 263.9 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 100.2 | 형식 |
-| `*.md` | common | 4 | 75.5 | 최상위 문서 |
-| `.claude/**` | common | 1 | 4.0 | 도구 설정 |
+| `*.md` | common | 4 | 62.8 | 최상위 문서 |
+| `.claude/**` | common | 6 | 34.6 | 도구 설정 |
 | `.github/**` | develop | 1 | 2.6 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
 
