@@ -40,6 +40,7 @@
 | `fate` | 적힘 |
 | `observe` | 적힘 |
 | `prompt` | 적힘 |
+| `transition` | 적힘 |
 
 ## MCP 도구
 
@@ -79,7 +80,7 @@
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |
 | `tests/qualitative.test.mjs` | 9 |
-| `tests/rebuild.test.mjs` | 13 |
+| `tests/rebuild.test.mjs` | 14 |
 | `tests/rejections.test.mjs` | 3 |
 | `tests/reliability_criteria.test.mjs` | 12 |
 | `tests/retraction_propagation.test.mjs` | 4 |
@@ -89,6 +90,7 @@
 | `tests/stats.test.mjs` | 6 |
 | `tests/stochastic.test.mjs` | 6 |
 | `tests/telomere.test.mjs` | 7 |
+| `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |
 
 거부 말뭉치: 25

@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (276 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (277 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 235 |
+| 잡음 `caught` | 236 |
 | 설정에 있음 `present` | 8 |
 | 본보기에만 있음 (켜지지 않음) `present_template` | 7 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
@@ -16,7 +16,7 @@
 
 없음
 
-## 잡음 `caught` — 235
+## 잡음 `caught` — 236
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -255,6 +255,7 @@
 | RULE-0510 | 사전 새 항목은 vocab 에 있는 register·키만, 영어 라벨·뜻은 비지 않은 문자열, since 는 | replace | judicial/dictionary_audit.js | RULE-0510 사전 새 항목은 객체여야 하고 vocab 의 register·키만 받는다 |
 | RULE-0511 | 외부 ID 확인은 원본 응답과 대조한다 — 번호·기준 종·이름이 맞아야 하고, 이미 다른 정의항에 있는 번호 | replace | judicial/identity.js | 자동 보강 build: 검증만 verified·출처·서열 길이·지문, 종·번호·이름·화학식·중복 위반은 거부, 모호하면 unmapped 유지 + 후보 메모, as |
 | RULE-0512 | 검사 자리는 첫 인자로 규칙 번호를 낸다 — 새 검사는 규칙 장부에 규칙 먼저(없으면 from_code),  | replace | judicial/judicial.js | ⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인자가 살아 있는 RULE 번호 (5d) |
+| RULE-0513 | 다른 모드가 필요하면 세션은 전환 기록 { from, to, at, why, target, files, op | replace | judicial/transition_audit.js | RULE-0513 전환 기록 검사: 통과 1 + 거부 사유별 |
 
 ## 설정에 있음 `present` — 8
 

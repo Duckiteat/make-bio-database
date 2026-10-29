@@ -1049,6 +1049,14 @@
       "interpret": "집행 구멍 메우기 — 변이 시험에서 집행 자리를 망가뜨려도 빨개지지 않던 규칙마다 그 자리를 직접 찌르는 시험. 시험 이름에 RULE 번호."
     },
     {
+      "path": "tests/transitions.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "전환 기록 시험 — 검사 통과 1 + 거부 사유별 · 서기는 검사 뒤 끝에만 붙이고 순번을 매김 (RULE-0513)."
+    },
+    {
       "path": "tests/mutation/run.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",
@@ -1551,6 +1559,22 @@
       "writer": "재건 5 단계 (분류 장부에서)",
       "readers": "rebuild/status.mjs · tests/mutation/run.mjs (enforcement.jsonl)",
       "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림) · 모드 원본(modes.json — 중심·모드 문서의 머리말). 6 단계에서 규칙의 원본이 된다."
+    },
+    {
+      "path": "workspace/transitions.jsonl",
+      "class": "management",
+      "format": "JSON Lines — 한 줄 한 전환 { seq, from, to, at, why, target[], files[], open[] }",
+      "writer": "node dbtool.mjs transition <기록.json> (입법 서기 appendTransition — 사법부 checkTransition 통과 뒤 끝에만)",
+      "readers": "다음 세션 (to 모드로 시작할 때) · node dbtool.mjs transition (목록)",
+      "interpret": "한 세션 = 한 모드 — 다른 모드가 필요하면 세션은 이 기록을 남기고 끝난다. workspace/handoff/NEXT-*.md 산문을 대신한다."
+    },
+    {
+      "path": "judicial/transition_audit.js",
+      "class": "law",
+      "format": "CommonJS 모듈 (사법부 — 읽기·판정만)",
+      "writer": "사람·AI (사용자 요청 시)",
+      "readers": "legislative/clerk.mjs appendTransition · tests/transitions.test.mjs",
+      "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513."
     },
     {
       "path": "rebuild/render.mjs",

@@ -103,3 +103,37 @@
 ## 컴퓨터가 막는 규칙
 
 25 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+
+## 쓸 명령 (모든 모드의 명령은 중심 문서)
+
+| 명령 | 쓰는 구역 | 무엇 |
+|---|---|---|
+| `dbtool validate` | 읽기만 | 전체 검사 (오류면 종료 코드 1) |
+| `dbtool report` | 읽기만 | 기록된 병합의 Patch Report |
+| `dbtool map` | 읽기만 | 참조가 어느 정의항(D…)으로 매핑되는지 |
+| `dbtool audit` | 읽기만 | 매핑·채움 현황 |
+| `dbtool context` | 읽기만 | 이름의 뜻이 여럿일 때 맥락별 정의항 |
+| `dbtool mechanism` | 읽기만 | 기전(위·아래 단계) |
+| `dbtool limitations` | derived | 한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect) |
+| `dbtool grade` | 읽기만 | 신뢰 지표 (S, D) → 등급 |
+| `dbtool dictionary` | registry | 사전(en) 보기·추가 |
+| `dbtool qualgraph` | 읽기만 | 정성 그래프 — 경로 없음·모순 후보 |
+| `dbtool retraction` | 읽기만 | 철회 전파 |
+| `dbtool evidence` | report | 증거·방법 보고서 |
+| `dbtool verify-collection` | 읽기만 | 수집 후보 판정 |
+| `dbtool verify-run` | 읽기만 | 수집 실행 기록 대조 |
+| `dbtool log` | 읽기만 | 병합 기록 사슬·재생 검사 |
+| `dbtool attest` | attestation | 증명 등록부 재검증 |
+| `dbtool accept` | attestation | 높은 용도 승인·철회 도장 |
+| `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |
+| `dbtool observe` | 읽기만 | 관찰 대조 — 등록 규약 아래에서만 일치 결론 |
+| `mcp accept` | attestation | 승인 도장 |
+| `mcp attest` | attestation | 증명 등록부 재검증 |
+| `mcp map` | 읽기만 | 참조 매핑 |
+| `mcp context` | 읽기만 | 맥락별 정의항 |
+| `mcp mechanism` | 읽기만 | 기전 |
+| `mcp limitations` | 읽기만 | 한계 |
+| `mcp qualgraph` | 읽기만 | 정성 그래프 |
+| `mcp retraction` | 읽기만 | 철회 전파 |
+| `mcp inbox` | 읽기만 | 수신함 목록 |
+| `mcp verify_collection` | 읽기만 | 후보 판정 |

@@ -83,3 +83,26 @@ description: "기초시험 모드 — 지금 검증된 코어로 시뮬레이션
 ## 컴퓨터가 막는 규칙
 
 40 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+
+## 쓸 명령 (모든 모드의 명령은 중심 문서)
+
+| 명령 | 쓰는 구역 | 무엇 |
+|---|---|---|
+| `dbtool map` | 읽기만 | 참조가 어느 정의항(D…)으로 매핑되는지 |
+| `dbtool mechanism` | 읽기만 | 기전(위·아래 단계) |
+| `dbtool resolution` | 읽기만 | 혼합 해상도 계획 (pool·site·structure) |
+| `dbtool audit-run` | 읽기만 | 감사: 스키마·해상도·속도 무결성·질량 보존 |
+| `dbtool simulate` | 읽기만 | 속도 기반 시뮬레이션 (질량 감사) |
+| `dbtool grade` | 읽기만 | 신뢰 지표 (S, D) → 등급 |
+| `dbtool origin` | 읽기만 | 첫 장면 기원 — 시나리오 시작 숫자의 출처 |
+| `dbtool assume` | registry | 가정 원장 보기·추가(add — 감사·봉인 뒤 서기) |
+| `dbtool register` | registry | 모의 실험 규약 사전 등록 (실행 전) |
+| `dbtool compare` | 읽기만 | 비교 검토 — 복잡도·수치 L2·결과 |
+| `dbtool fate` | report | 운명 시뮬레이션 + 과정 보고서 |
+| `dbtool observe` | 읽기만 | 관찰 대조 — 등록 규약 아래에서만 일치 결론 |
+| `mcp register` | registry | 사전 등록 |
+| `mcp assume_add` | registry | 가정 원장 추가 |
+| `mcp map` | 읽기만 | 참조 매핑 |
+| `mcp mechanism` | 읽기만 | 기전 |
+| `mcp origin` | 읽기만 | 첫 장면 기원 |
+| `mcp assume_uses` | 읽기만 | 가정 번호를 쓰는 시나리오 |

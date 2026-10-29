@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 512 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 513 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 500 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 501 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 283 |
+| machine | 284 |
 | text | 227 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,7 +26,7 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 291 |
+| 1 곳 | 292 |
 | 2 곳 | 104 |
 | 3 곳 | 61 |
 | 4 곳 | 33 |

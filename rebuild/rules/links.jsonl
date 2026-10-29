@@ -532,3 +532,4 @@
 {"from": "RULE-0510", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
 {"from": "RULE-0511", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
 {"from": "RULE-0512", "rel": "because", "to": "U7496", "by": "judged"}
+{"from": "RULE-0513", "rel": "none", "by": "judged", "note": "이유는 PLAN §3(한 세션 = 한 모드 — 기초시험 중 엔진을 고치는 길을 구조로 없앤다) — 재건 문서라 단위 장부 밖"}

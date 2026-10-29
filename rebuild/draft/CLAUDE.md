@@ -100,4 +100,14 @@
 
 ## 공통 규칙 — 컴퓨터가 막는다
 
-11 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+12 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+
+## 모든 모드의 명령
+
+| 명령 | 쓰는 구역 | 무엇 |
+|---|---|---|
+| `dbtool status` | 읽기만 | 저장소 요약 |
+| `dbtool transition` | transition | 전환 기록 추가 — 이 세션을 끝내고 다른 모드로 넘길 때 |
+| `mcp summary` | 읽기만 | 저장소 요약 |
+
+모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).

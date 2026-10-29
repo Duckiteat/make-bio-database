@@ -3,6 +3,7 @@
 // 기본 저장소는 data/db.json 이다. 다른 파일을 쓰려면 --db <경로>.
 //
 //   node dbtool.mjs status                                  저장소 요약
+//   node dbtool.mjs transition [기록.json]                   전환 기록 — 검사 뒤 workspace/transitions.jsonl 끝에 (없으면 목록)
 //   node dbtool.mjs validate                                전체 검사 (오류 있으면 종료 코드 1)
 //   node dbtool.mjs merge     <patch.json...> [--dry] [--allow-warnings]
 //                                                           병합 + Patch Report(Scope·Why·Impact·Verification). patch.why 필수, 미등록 한계 후보가 있으면 거부
@@ -16,7 +17,7 @@
 //   node dbtool.mjs limitations [--open] [--write | --check] [--detect]
 //                                                           한계 등록부: 출력 / limitations.md 생성 / 최신인지 검사 / 미등록 후보 찾기
 //   node dbtool.mjs pattern   <경로|상위 개념>              경로에서 상위 패턴(모티프) 찾기, 또는 상위 개념이 나타나는 경로
-//   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(R0 위상·R1 부위·R2 구조)와 전환 문턱
+//   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(pool 위상·site 부위·structure 구조)와 전환 문턱
 //   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N]
 //                                                           감사: 스키마·해상도 일관성·속도 무결성·질량 보존 (Audit Error 가 있으면 종료 코드 1)
 //   node dbtool.mjs report    <data/patches/….json>          기록된 병합의 Patch Report (Scope·Why·Impact·Verification)
@@ -743,6 +744,13 @@ switch (cmd) {
   }
   case 'prompt': {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));
+    break;
+  }
+  case 'transition': { // 전환 기록 (한 세션 = 한 모드) — <기록.json> 을 검사해 workspace/transitions.jsonl 끝에 붙인다 · 인자 없으면 목록
+    if (!args[0]) { for (const t of CLERK.readTransitions(HERE)) console.log(`#${t.seq} ${t.at} ${t.from} → ${t.to}: ${t.why}`); break; }
+    const rec = JSON.parse(readFileSync(args[0], 'utf8'));
+    CLERK.appendTransition(rec, HERE);
+    console.log(`전환 기록 추가 (입법 서기): ${rec.from} → ${rec.to} — ${CLERK.TRANSITIONS}`);
     break;
   }
   default:

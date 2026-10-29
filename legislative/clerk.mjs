@@ -44,6 +44,7 @@ export const ZONES = {
   report:      { label: '사용자 보고서', deny: ['data', 'attestations', 'judicial', 'legislative', 'engine', 'compiler', 'migrations', 'schemas', 'tests'], rule: '위치는 사용자가 정한다 — 저장소의 코드·데이터·증명 위치에는 쓰지 않는다' },
   draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
+  transition:  { label: '전환 기록 (세션 사이 인계)', allow: ['workspace/transitions.jsonl'], rule: '사법부 전환 기록 검사(judicial/transition_audit.js)가 통과할 때만 — 추가만 한다' },
   rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/draft/'], rule: '생성기(rebuild/status.mjs · render.mjs)가 계산한 관리 파일과 새 구조 초안만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
@@ -309,6 +310,17 @@ export function appendFetchLog(dir, results) {
 }
 
 // ⑨ 핸드오프 추가 (outsourcing-and-mcp.md §4.3): 수집가가 쓸 수 있는 유일한 자리. 후보 줄을 붙이기만 한다 — 고치거나 지우지 않는다.
+// 전환 기록 (한 세션 = 한 모드): 검사 통과 뒤 순번(seq)을 붙여 끝에 한 줄 — 앞선 줄은 그대로 둔다
+const TA = require('../judicial/transition_audit.js');
+export const TRANSITIONS = 'workspace/transitions.jsonl';
+export function readTransitions(root) { const f = join(root || ROOT, TRANSITIONS); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; }
+export function appendTransition(rec, root) {
+  const v = TA.checkTransition(rec, root || ROOT);
+  if (!v.ok) refuse(v.rules[0], `전환 기록 검사 실패 — ${v.errors.join(' · ')}`);
+  const f = join(root || ROOT, TRANSITIONS), prev = readTransitions(root);
+  const line = JSON.stringify({ seq: prev.length + 1, ...Object.fromEntries(TA.FIELDS.map((k) => [k, rec[k]])) });
+  return put('transition', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + line + '\n');
+}
 export function appendHandoff(name, lines) {
   if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(String(name))) refuse('RULE-0019', `핸드오프 이름 '${name}' — 소문자·숫자·하이픈만`);
   if (!Array.isArray(lines) || !lines.length) refuse('RULE-0019', '붙일 후보 줄이 없음');

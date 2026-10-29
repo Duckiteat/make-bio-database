@@ -120,3 +120,15 @@
 ## 컴퓨터가 막는 규칙
 
 59 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+
+## 쓸 명령 (모든 모드의 명령은 중심 문서)
+
+| 명령 | 쓰는 구역 | 무엇 |
+|---|---|---|
+| `dbtool validate` | 읽기만 | 전체 검사 (오류면 종료 코드 1) |
+| `dbtool vocab` | 읽기만 | 통제 어휘 보기 |
+| `dbtool textbook` | derived | 교과서 부록 생성(--write)·최신·파일 분류 검사 |
+| `dbtool dictionary` | registry | 사전(en) 보기·추가 |
+| `dbtool compare` | 읽기만 | 비교 검토 — 복잡도·수치 L2·결과 |
+| `mcp dictionary_add` | registry | 사전 항목 추가 |
+| `mcp write_derived` | derived | 파생 문서 다시 쓰기 |

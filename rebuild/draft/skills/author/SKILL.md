@@ -276,3 +276,47 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 ## 컴퓨터가 막는 규칙
 
 179 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+
+## 쓸 명령 (모든 모드의 명령은 중심 문서)
+
+| 명령 | 쓰는 구역 | 무엇 |
+|---|---|---|
+| `dbtool validate` | 읽기만 | 전체 검사 (오류면 종료 코드 1) |
+| `dbtool merge` | registry | 패치 병합 — 관문 통과 + 봉인 뒤 서기가 db.json·patches |
+| `dbtool report` | 읽기만 | 기록된 병합의 Patch Report |
+| `dbtool map` | 읽기만 | 참조가 어느 정의항(D…)으로 매핑되는지 |
+| `dbtool audit` | 읽기만 | 매핑·채움 현황 |
+| `dbtool vocab` | 읽기만 | 통제 어휘 보기 |
+| `dbtool context` | 읽기만 | 이름의 뜻이 여럿일 때 맥락별 정의항 |
+| `dbtool mechanism` | 읽기만 | 기전(위·아래 단계) |
+| `dbtool limitations` | derived | 한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect) |
+| `dbtool pattern` | 읽기만 | 경로의 상위 패턴(모티프) |
+| `dbtool resolution` | 읽기만 | 혼합 해상도 계획 (pool·site·structure) |
+| `dbtool audit-run` | 읽기만 | 감사: 스키마·해상도·속도 무결성·질량 보존 |
+| `dbtool augment` | evidence · registry | 자동 보강 고리 plan → fetch → build → apply (원본 대조) |
+| `dbtool grade` | 읽기만 | 신뢰 지표 (S, D) → 등급 |
+| `dbtool assume` | registry | 가정 원장 보기·추가(add — 감사·봉인 뒤 서기) |
+| `dbtool qualgraph` | 읽기만 | 정성 그래프 — 경로 없음·모순 후보 |
+| `dbtool retraction` | 읽기만 | 철회 전파 |
+| `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |
+| `dbtool prompt` | 읽기만 | AI 작성 지침 + 현재 색인 |
+| `mcp put_handoff` | handoff | 핸드오프에 후보 추가 (수집가) |
+| `mcp validate_patch` | 읽기만 | 패치 관문 미리 보기 |
+| `mcp merge` | registry | 패치 병합 |
+| `mcp augment_apply` | registry | 원본 대조 적용 |
+| `mcp assume_add` | registry | 가정 원장 추가 |
+| `mcp write_derived` | derived | 파생 문서 다시 쓰기 |
+| `mcp resolve_access` | 읽기만 | PMID 접근 상태 |
+| `mcp fetch_abstract` | evidence | 초록 받기 |
+| `mcp fetch_fulltext` | evidence | 공개 전문 받기 |
+| `mcp resolve_doi` | evidence | DOI → Europe PMC |
+| `mcp brenda_kinetics` | evidence | BRENDA Km·kcat 받기 (계정 = 환경 변수) |
+| `mcp map` | 읽기만 | 참조 매핑 |
+| `mcp context` | 읽기만 | 맥락별 정의항 |
+| `mcp mechanism` | 읽기만 | 기전 |
+| `mcp pattern` | 읽기만 | 사고 패턴 |
+| `mcp limitations` | 읽기만 | 한계 |
+| `mcp assume_uses` | 읽기만 | 가정 번호를 쓰는 시나리오 |
+| `mcp qualgraph` | 읽기만 | 정성 그래프 |
+| `mcp retraction` | 읽기만 | 철회 전파 |
+| `mcp inbox` | 읽기만 | 수신함 목록 |

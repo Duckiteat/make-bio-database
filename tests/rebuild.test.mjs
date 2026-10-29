@@ -102,7 +102,7 @@ test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인�
   //   객체로 쌓는 모듈은 오류 객체의 rule 칸, 문자열로 쌓는 모듈은 같은 순서의 rules 목록 (rules[i] ↔ errors[i])
   const SITES = { 'judicial/judicial.js': ['E', 'W', 'AE'], 'legislative/legislative.js': ['ERR'], 'legislative/clerk.mjs': ['refuse'], 'judicial/fate_audit.js': ['AE', 'prob'], 'judicial/contract.js': ['E'],
     'judicial/assumption_audit.js': ['E', 'err'], 'judicial/dictionary_audit.js': ['err'], 'judicial/log_audit.js': ['err'], 'judicial/protocol.js': ['prob'], 'judicial/collection_audit.js': ['push', 'err'],
-    'judicial/derivative.js': ['err'], 'judicial/identity.js': ['fail'], 'judicial/perturb_audit.js': ['P'] };
+    'judicial/derivative.js': ['err'], 'judicial/identity.js': ['fail'], 'judicial/perturb_audit.js': ['P'], 'judicial/transition_audit.js': ['err'] };
   const bad = [], used = new Set(); let n = 0;
   for (const [f, names] of Object.entries(SITES)) {
     const lines = readFileSync(join(ROOT, f), 'utf8').split('\n');
@@ -147,4 +147,18 @@ test('⑬ 옛 규칙 대조 (6 단계): 살아 있는 규칙은 모두 새 구�
   for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`modes/${m}.md`], '## 컴퓨터가 막는 규칙'), mm(m), m);
   // 스킬은 모드 문서와 같은 본문
   for (const m of RENDER.MODE_KEYS) assert.ok(d[`skills/${m}/SKILL.md`].endsWith(d[`modes/${m}.md`]), m);
+});
+
+test('⑭ 명령 장부 (6c): dbtool 의 명령·MCP 의 도구가 장부와 하나씩 맞고, 모드·쓰기 구역은 정해진 것만', () => {
+  const C = readFileSync(join(ROOT, 'rebuild/rules/commands.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const cli = [...readFileSync(join(ROOT, 'dbtool.mjs'), 'utf8').matchAll(/^  case '([a-z-]+)'/gm)].map((m) => 'dbtool ' + m[1]).sort();
+  const mcp = readdirSync(join(ROOT, 'mcp')).flatMap((f) => [...readFileSync(join(ROOT, 'mcp', f), 'utf8').matchAll(/\{ name: '([a-z_]+)', roles:/g)].map((m) => 'mcp ' + m[1])).sort();
+  assert.deepEqual(C.filter((c) => c.kind === 'cli').map((c) => c.cmd).sort(), cli, 'dbtool 명령 ↔ 장부');
+  assert.deepEqual(C.filter((c) => c.kind === 'mcp').map((c) => c.cmd).sort(), [...new Set(mcp)].sort(), 'MCP 도구 ↔ 장부');
+  const modes = Object.keys(JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).modes.reduce((o, m) => ({ ...o, [m.key]: 1 }), {}));
+  for (const c of C) {
+    assert.ok(c.modes.length && c.modes.every((m) => modes.includes(m)), `${c.cmd}: 모드 ${c.modes}`);
+    assert.ok(c.what && c.what.trim(), `${c.cmd}: 설명`);
+    for (const z of c.writes ? c.writes.split(' · ') : []) assert.ok(CLERK.ZONES[z], `${c.cmd}: 모르는 구역 ${z}`);
+  }
 });
