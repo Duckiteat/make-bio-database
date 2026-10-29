@@ -193,7 +193,7 @@
 {"id": "RULE-0193", "text": "구조 변경 → SCHEMA.md, 작업 규칙 → CLAUDE.md + agent-rules.md, 실패·공백 → limitations.md", "modes": ["develop"], "enforce": "text", "unit": "U0221", "copies": ["U0405"], "retired": {"at": "2026-10-29", "by": "user", "archive": "rebuild/archive/old-hub.json"}}
 {"id": "RULE-0194", "text": "문서는 해당 절만 고침", "modes": ["develop"], "enforce": "text", "unit": "U0222", "copies": ["U0405"]}
 {"id": "RULE-0195", "text": "논리를 깨면 감지·수정·기록까지 한 작업", "modes": ["common"], "enforce": "text", "unit": "U0224", "copies": ["U0409"]}
-{"id": "RULE-0196", "text": "주석은 계약·이유만, 이력은 CHANGES.md", "modes": ["develop"], "enforce": "text", "unit": "U0225", "copies": [], "where": "tests/rebuild.test.mjs ⑳ (코드 주석의 날짜·예전 거부)"}
+{"id": "RULE-0196", "text": "주석은 계약·이유만, 이력은 CHANGES.md", "modes": ["develop"], "enforce": "machine", "unit": "U0225", "copies": [], "where": "tests/rebuild.test.mjs ⑳ (코드 주석의 날짜·예전 거부)"}
 {"id": "RULE-0197", "text": "vocab·model·core·judicial·legislative 규칙은 사용자 요청 시만", "modes": ["author", "develop"], "enforce": "text", "unit": "U0226", "copies": ["U0410", "U0593", "U0665", "U1268", "U1269"]}
 {"id": "RULE-0198", "text": "데이터를 통과시키려고 규칙을 느슨하게 하지 않음", "modes": ["develop"], "enforce": "machine", "unit": "U0227", "copies": ["U0410", "U0445", "U0550", "U0595"], "where": "tests/rejections.test.mjs (거부 말뭉치) · FLOOR"}
 {"id": "RULE-0199", "text": "엔진·공유 기계를 바꿨으면 전체 시험", "modes": ["common", "develop"], "enforce": "text", "unit": "U0229", "copies": ["U0411"]}

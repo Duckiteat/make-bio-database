@@ -98,7 +98,7 @@
 
 | 규칙 | 집행 | 내용 | 근거 | 제안 | 결정 |
 |---|---|---|---|---|---|
-| RULE-0196 | text | 주석은 계약·이유만, 이력은 CHANGES.md | "주석은 계약·이유만, 이력은 CHANGES" — 코드 주석에 날짜·"예전" 같은 이력이 약 30 줄 | 5c 에서 판정 시험으로 올릴지 정한다 | 2026-10-29 user: 권장대로 — 코드 주석의 이력 37 곳을 이유만 남게 고치고 거부 시험 tests/rebuild.test.mjs ⑳ 추가 → 컴퓨터가 막는 규칙 (migrations/ 는 일회성 기록 스크립트라 예외) |
+| RULE-0196 | machine | 주석은 계약·이유만, 이력은 CHANGES.md | "주석은 계약·이유만, 이력은 CHANGES" — 코드 주석에 날짜·"예전" 같은 이력이 약 30 줄 | 5c 에서 판정 시험으로 올릴지 정한다 | 2026-10-29 user: 권장대로 — 코드 주석의 이력 37 곳을 이유만 남게 고치고 거부 시험 tests/rebuild.test.mjs ⑳ 추가 → 컴퓨터가 막는 규칙 (migrations/ 는 일회성 기록 스크립트라 예외) |
 | RULE-0052 | machine | 수치 L2 수렴 기준은 같은 적분기 허용 오차 1/1000 (orchestrator.refScenario) | orchestrator.js refScenario 는 rtol 1e-9·atol 1e-5 를 박아 둔다 — 기본값(1e-6·1e-2)의 1/1000 일 뿐, 시나리오가 rtol 1e-8 이면 기준해는 1/10. 같은 파일 101 행 주석은 '1/100'. 수치 선택이 coupling 등록부 밖에 있음(RULE-0011 과도 겹침) | 기준해 허용 오차 = 시나리오 integrator 값 × 1/1000 으로 계산하고 배율은 coupling 등록부에 — 조정자 변경이라 사용자 확인 뒤 | 2026-10-26 user: 권장대로 — 기준해 허용 오차를 시나리오 값 × 등록부 ref_tol_factor 로 계산 + 시험 |
 
 ## 보고서가 지적한 약점 `weakness_reported` — 9

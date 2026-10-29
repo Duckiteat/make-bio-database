@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "765 개 · 26408.7 KB"
+        "765 개 · 26408.9 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "90 개 · 1843.1 KB"
+        "90 개 · 1843.0 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -73,7 +73,7 @@
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "252 / 0 / 0"
+        "253 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -118,7 +118,7 @@
        [
         "rebuild",
         "25",
-        "5676.8"
+        "5677.2"
        ],
        [
         "docs",
@@ -348,7 +348,7 @@
        [
         "`.claude/skills/develop/SKILL.md`",
         "6.2",
-        "90",
+        "89",
         "",
         "미분류"
        ],
@@ -579,7 +579,7 @@
        [
         "`docs/modes/develop.md`",
         "6.0",
-        "85",
+        "84",
         "",
         "생성물"
        ],
@@ -2492,7 +2492,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "599 · 36 · 19",
+        "600 · 36 · 19",
         "158 · 없음 2"
        ],
        [
@@ -2880,7 +2880,7 @@
        [
         "공통 `common`",
         "76",
-        "6748.8"
+        "6749.1"
        ],
        [
         "정보 작성 `author`",
@@ -2928,7 +2928,7 @@
         "`rebuild/**`",
         "common",
         "25",
-        "5676.8",
+        "5677.2",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -3187,7 +3187,7 @@
         "`docs/**`",
         "common",
         "8",
-        "71.6",
+        "71.5",
         "안내 문서"
        ],
        [
@@ -3308,11 +3308,11 @@
       "rows": [
        [
         "machine",
-        "293"
+        "294"
        ],
        [
         "text",
-        "223"
+        "222"
        ],
        [
         "none",
@@ -4554,7 +4554,7 @@
       "rows": [
        [
         "RULE-0196",
-        "text",
+        "machine",
         "주석은 계약·이유만, 이력은 CHANGES.md",
         "\"주석은 계약·이유만, 이력은 CHANGES\" — 코드 주석에 날짜·\"예전\" 같은 이력이 약 30 줄",
         "5c 에서 판정 시험으로 올릴지 정한다",
@@ -5058,7 +5058,7 @@
       "rows": [
        [
         "잡음 `caught`",
-        "252"
+        "253"
        ],
        [
         "설정에 있음 `present`",
@@ -5076,7 +5076,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (286 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (287 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -5087,7 +5087,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 252",
+    "heading": "잡음 `caught` — 253",
     "tables": [
      {
       "head": [
@@ -6861,6 +6861,13 @@
         "replace",
         "judicial/obs_compare.js",
         "④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백"
+       ],
+       [
+        "RULE-0196",
+        "주석은 계약·이유만, 이력은 CHANGES.md",
+        "replace",
+        "core.js",
+        "⑳ 코드 주석에 이력(날짜·예전)이 없다 — 이력은 CHANGES.md (RULE-0196)"
        ]
       ]
      }

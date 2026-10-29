@@ -16,7 +16,7 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (37)
+## 지켜야 할 규칙 — 사람·AI (36)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -65,14 +65,13 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 
 - `RULE-0191` 코드·형식·어휘·문서 구조 변경은 CHANGES.md 맨 위 한 행 (Scope·Why·Impact·Verification), 같은 커밋 _(코드가 알림)_
 - `RULE-0194` 문서는 해당 절만 고침
-- `RULE-0196` 주석은 계약·이유만, 이력은 CHANGES.md
 - `RULE-0197` vocab·model·core·judicial·legislative 규칙은 사용자 요청 시만
 - `RULE-0205` 새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋
 - `RULE-0208` 알고리즘·형식·상호작용 변경 → docs/textbook/ 해당 장 같은 커밋
 
 ## 컴퓨터가 막는 규칙
 
-60 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+61 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
 ## 형식 설명
 

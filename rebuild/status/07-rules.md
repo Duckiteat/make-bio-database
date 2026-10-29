@@ -17,8 +17,8 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 293 |
-| text | 223 |
+| machine | 294 |
+| text | 222 |
 | none | 0 |
 | unchecked | 2 |
 

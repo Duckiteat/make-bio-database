@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | `.claude/skills/author/SKILL.md` | 11.0 | 138 |  | 미분류 |
 | `.claude/skills/baseline/SKILL.md` | 4.2 | 70 |  | 미분류 |
-| `.claude/skills/develop/SKILL.md` | 6.2 | 90 |  | 미분류 |
+| `.claude/skills/develop/SKILL.md` | 6.2 | 89 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.5 | 33 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.5 | 86 |  | 미분류 |
 | `CHANGES.md` | 269.6 | 247 |  | 분류됨 1 |
@@ -39,7 +39,7 @@
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
 | `docs/modes/author.md` | 10.8 | 133 |  | 생성물 |
 | `docs/modes/baseline.md` | 4.0 | 65 |  | 생성물 |
-| `docs/modes/develop.md` | 6.0 | 85 |  | 생성물 |
+| `docs/modes/develop.md` | 6.0 | 84 |  | 생성물 |
 | `docs/modes/field.md` | 1.3 | 28 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.3 | 81 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
