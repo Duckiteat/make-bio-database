@@ -263,3 +263,13 @@ test('⑳ 코드 주석에 이력(날짜·예전)이 없다 — 이력은 CHANGE
   const bad = files.flatMap((f) => historyComments(readFileSync(join(ROOT, f), 'utf8')).map(([n, l]) => `${f}:${n} ${l.trim().slice(0, 80)}`));
   assert.deepEqual(bad, [], '주석의 이력은 CHANGES.md 로 옮기고 이유만 남긴다');
 });
+
+// STG-10a (DEC-0037): 로컬 = CI — 단위 장부가 고정 커밋(src_at)을 읽으므로 CI 는 전체 역사를 받아야 한다 (얕은 복제면 ① · ④ 가 CI 에서만 빨개짐)
+const fullHistory = (yml) => /- uses: actions\/checkout@v\d+\n\s+with:\n(?:\s+[\w-]+:.*\n)*?\s+fetch-depth: 0\b/.test(yml);
+test('㉑ CI 는 전체 역사를 받는다 (checkout fetch-depth: 0) — 고정 커밋을 읽는 단위가 있는 동안', () => {
+  assert.equal(fullHistory('      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n'), false, '거부: 설정 없음');
+  assert.equal(fullHistory('      - uses: actions/checkout@v4\n        with:\n          fetch-depth: 1\n'), false, '거부: 얕은 복제');
+  const pinned = readFileSync(join(ROOT, 'rebuild/ledger/units.jsonl'), 'utf8').includes('"src_at"');
+  assert.ok(pinned, '고정 커밋을 읽는 단위가 없으면 이 시험의 이유도 없다 — 시험을 다시 볼 것');
+  assert.ok(fullHistory(readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8')), '.github/workflows/check.yml 의 checkout 에 fetch-depth: 0');
+});

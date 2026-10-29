@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 전체 역사 — 지운 문서의 단위 장부는 고정 커밋(src_at)에서 읽고, 계획 기록은 git 역사와 대조한다 (STG-10a)
       - uses: actions/setup-node@v4
         with:
           node-version: 22
