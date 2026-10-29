@@ -7,7 +7,7 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 25 | 5665.3 |
+| rebuild | 25 | 5667.1 |
 | docs | 62 | 1337.2 |
 | (최상위) | 18 | 892.4 |
 | judicial | 29 | 542.0 |
@@ -50,6 +50,6 @@
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
 | `judicial/judicial.js` | 172.4 |
-| `rebuild/state/plans.jsonl` | 170.0 |
+| `rebuild/state/plans.jsonl` | 170.9 |
 | `data/fetched/consensus/uniprot/Q04206.json` | 167.2 |
 | `data/fetched/uniprot/Q04206.json` | 167.2 |
