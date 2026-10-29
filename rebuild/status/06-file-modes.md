@@ -11,7 +11,7 @@
 | 공통 `common` | 54 | 5998.6 |
 | 정보 작성 `author` | 449 | 16506.4 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 159 | 2067.0 |
+| 디벨롭 `develop` | 159 | 2067.6 |
 | 적분장 `field` | 17 | 137.3 |
 | 점검·검증 `inspect` | 33 | 748.4 |
 
@@ -62,7 +62,7 @@
 | `tests/p4_*` | field | 2 | 11.2 | P4 |
 | `tests/p5_*` | field | 1 | 12.7 | P5 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
-| `tests/**` | develop | 48 | 466.4 | 시험 |
+| `tests/**` | develop | 48 | 467.0 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 23 | 367.0 | 보고서 — 읽기·점검 |

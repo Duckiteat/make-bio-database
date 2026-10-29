@@ -11,7 +11,7 @@
 | docs | 58 | 1203.6 |
 | (최상위) | 18 | 881.9 |
 | judicial | 28 | 538.8 |
-| tests | 78 | 531.1 |
+| tests | 78 | 531.7 |
 | engine | 26 | 299.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
