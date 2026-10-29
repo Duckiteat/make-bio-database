@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "782 개 · 26535.4 KB"
+        "765 개 · 26376.0 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "90 개 · 1840.7 KB"
+        "90 개 · 1841.0 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "390 / 25"
+        "365 / 25"
        ],
        [
         "번호 이름공간",
@@ -118,22 +118,17 @@
        [
         "rebuild",
         "25",
-        "5643.2"
+        "5652.0"
        ],
        [
         "docs",
         "62",
-        "1344.2"
+        "1336.8"
        ],
        [
         "(최상위)",
         "18",
-        "887.8"
-       ],
-       [
-        "tests",
-        "80",
-        "564.5"
+        "889.7"
        ],
        [
         "judicial",
@@ -141,9 +136,9 @@
         "542.0"
        ],
        [
-        "engine",
-        "26",
-        "299.1"
+        "tests",
+        "76",
+        "508.8"
        ],
        [
         "attestations",
@@ -154,6 +149,11 @@
         "examples",
         "47",
         "289.6"
+       ],
+       [
+        "engine",
+        "17",
+        "200.3"
        ],
        [
         "workspace",
@@ -177,8 +177,8 @@
        ],
        [
         "schemas",
-        "6",
-        "43.6"
+        "2",
+        "36.1"
        ],
        [
         "mcp",
@@ -193,7 +193,7 @@
        [
         ".github",
         "1",
-        "2.6"
+        "1.9"
        ]
       ]
      }
@@ -259,7 +259,7 @@
        ],
        [
         "`CHANGES.md`",
-        "263.9"
+        "265.6"
        ],
        [
         "`data/fetched/consensus/uniprot/P01911.json`",
@@ -271,11 +271,11 @@
        ],
        [
         "`docs/design/build-plan.md`",
-        "204.2"
+        "206.2"
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "189.1"
+        "192.6"
        ],
        [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "263.9",
-        "243",
+        "265.6",
+        "244",
         "",
         "분류됨 1"
        ],
@@ -403,7 +403,7 @@
        ],
        [
         "`SCHEMA.md`",
-        "100.2",
+        "100.4",
         "659",
         "",
         "분류됨 427"
@@ -438,8 +438,8 @@
        ],
        [
         "`docs/design/build-plan.md`",
-        "204.2",
-        "2329",
+        "206.2",
+        "2335",
         "",
         "생성물"
        ],
@@ -795,7 +795,7 @@
        ],
        [
         "`docs/textbook/04-알고리즘.md`",
-        "65.0",
+        "65.5",
         "376",
         "",
         "분류됨 233"
@@ -830,8 +830,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "120.8",
-        "825",
+        "116.6",
+        "811",
         "",
         "생성물"
        ],
@@ -1289,7 +1289,7 @@
        ],
        [
         "`tests/rules.test.mjs`",
-        "149"
+        "124"
        ],
        [
         "`tests/runbook.test.mjs`",
@@ -1442,7 +1442,16 @@
      }
     ],
     "text": [
-     "집행 자리 확인 (machine 400): 파일·이름 확인 382 · 글로만 적힘 10 · 못 찾음 8",
+     "집행 자리 확인 (machine 400): 파일·이름 확인 373 · 글로만 적힘 10 · 못 찾음 17",
+     "- U0170 (CLAUDE.md:55): 파일 없음 tests/p3_end_to_end.js",
+     "- U0171 (CLAUDE.md:55): 파일 없음 tests/p3_end_to_end.js",
+     "- U0172 (CLAUDE.md:56): 파일 없음 tests/p4_end_to_end.js",
+     "- U0174 (CLAUDE.md:56): 파일 없음 tests/p4_end_to_end.js",
+     "- U0176 (CLAUDE.md:57): 파일 없음 tests/p5_dynamic_promotion.js",
+     "- U0178 (CLAUDE.md:57): 파일 없음 tests/p5_dynamic_promotion.js",
+     "- U0364 (docs/design/agent-rules.md:75): 파일 없음 tests/p3_end_to_end.js",
+     "- U0365 (docs/design/agent-rules.md:76): 파일 없음 tests/p4_end_to_end.js",
+     "- U0367 (docs/design/agent-rules.md:77): 파일 없음 tests/p5_dynamic_promotion.js",
      "- U0722 (docs/PROMPTS.md:235): 파일 없음 workspace/collector.settings.json",
      "- U0723 (docs/PROMPTS.md:236): 파일 없음 workspace/collector.settings.json",
      "- U0766 (workspace/START-HERE.md:11): 파일 없음 workspace/collector.settings.json",
@@ -2253,7 +2262,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "10328 · 214 · 226",
+        "10326 · 214 · 224",
         "212 · 없음 2"
        ],
        [
@@ -2313,7 +2322,7 @@
         "`^[TDSLOA]\\+[A-Za-z0-9_]+$`",
         "patch author (patch-local)",
         "`patch files (merge assigns real id)`",
-        "1846 · 505 · 94",
+        "1845 · 505 · 94",
         "—"
        ],
        [
@@ -2483,8 +2492,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "521 · 34 · 15",
-        "155 · 없음 2"
+        "560 · 34 · 17",
+        "156 · 없음 2"
        ],
        [
         "`change`",
@@ -2494,7 +2503,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "236 · 없음 0"
+        "237 · 없음 0"
        ],
        [
         "`code_head`",
@@ -2513,8 +2522,8 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "938 · 90 · 7",
-        "155 · 없음 3"
+        "941 · 90 · 7",
+        "156 · 없음 3"
        ],
        [
         "`plan_stage`",
@@ -2523,8 +2532,8 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "311 · 23 · 8",
-        "155 · 없음 0"
+        "320 · 23 · 8",
+        "156 · 없음 0"
        ],
        [
         "`plan_direction`",
@@ -2533,8 +2542,8 @@
         "`^DIR-\\d{4}$`",
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "21 · 8 · 6",
-        "155 · 없음 1"
+        "27 · 9 · 6",
+        "156 · 없음 1"
        ],
        [
         "`test`",
@@ -2855,7 +2864,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/index/file-modes.jsonl` (규칙 57, 위에서부터 첫 규칙이 이긴다). 파일마다 어느 모드가 주로 건드리는지."
+     "원본: `rebuild/index/file-modes.jsonl` (규칙 45, 위에서부터 첫 규칙이 이긴다). 파일마다 어느 모드가 주로 건드리는지."
     ]
    },
    {
@@ -2871,12 +2880,12 @@
        [
         "공통 `common`",
         "76",
-        "6724.3"
+        "6725.6"
        ],
        [
         "정보 작성 `author`",
         "449",
-        "16510.4"
+        "16510.6"
        ],
        [
         "기초시험 `baseline`",
@@ -2886,12 +2895,12 @@
        [
         "디벨롭 `develop`",
         "162",
-        "2127.3"
+        "2103.5"
        ],
        [
         "적분장 `field`",
-        "17",
-        "137.3"
+        "0",
+        "0.0"
        ],
        [
         "점검·검증 `inspect`",
@@ -2919,7 +2928,7 @@
         "`rebuild/**`",
         "common",
         "25",
-        "5643.2",
+        "5652.0",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -3012,69 +3021,6 @@
         "3",
         "4.6",
         "예시 패치·합성 관찰"
-       ],
-       [
-        "`engine/fv_solver.js`",
-        "field",
-        "1",
-        "13.7",
-        "P3 장"
-       ],
-       [
-        "`engine/hmse.js`",
-        "field",
-        "1",
-        "14.1",
-        "3 층 실행 층"
-       ],
-       [
-        "`engine/devs_scheduler.js`",
-        "field",
-        "1",
-        "19.2",
-        "P3 스케줄러"
-       ],
-       [
-        "`engine/fno_surrogate.js`",
-        "field",
-        "1",
-        "14.3",
-        "P4 대리 모델"
-       ],
-       [
-        "`engine/ood_detector.js`",
-        "field",
-        "1",
-        "5.8",
-        "P4 OOD"
-       ],
-       [
-        "`engine/p5_dynamic_gate.js`",
-        "field",
-        "1",
-        "6.7",
-        "P5 관문"
-       ],
-       [
-        "`engine/async_fallback_worker.js`",
-        "field",
-        "1",
-        "3.5",
-        "P4 비동기 대체"
-       ],
-       [
-        "`engine/interfaces/**`",
-        "field",
-        "2",
-        "21.3",
-        "v8 인터페이스"
-       ],
-       [
-        "`schemas/v8/**`",
-        "field",
-        "4",
-        "7.5",
-        "v8 영역 패킷"
        ],
        [
         "`engine/**`",
@@ -3189,27 +3135,6 @@
         "수신함 해석"
        ],
        [
-        "`tests/p3_end_to_end.js`",
-        "field",
-        "1",
-        "7.0",
-        "P3 종단"
-       ],
-       [
-        "`tests/p4_*`",
-        "field",
-        "2",
-        "11.2",
-        "P4"
-       ],
-       [
-        "`tests/p5_*`",
-        "field",
-        "1",
-        "12.7",
-        "P5"
-       ],
-       [
         "`tests/fixtures/rejections/**`",
         "develop",
         "26",
@@ -3220,7 +3145,7 @@
         "`tests/**`",
         "develop",
         "50",
-        "499.8",
+        "475.1",
         "시험"
        ],
        [
@@ -3248,14 +3173,14 @@
         "`docs/textbook/**`",
         "common",
         "11",
-        "402.1",
+        "392.7",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
         "`docs/design/**`",
         "common",
         "20",
-        "502.5",
+        "504.5",
         "설계 문서 — 장부 단위가 모드를 따로 가짐"
        ],
        [
@@ -3276,14 +3201,14 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "263.9",
+        "265.6",
         "변경 기록"
        ],
        [
         "`SCHEMA.md`",
         "author",
         "1",
-        "100.2",
+        "100.4",
         "형식"
        ],
        [
@@ -3304,7 +3229,7 @@
         "`.github/**`",
         "develop",
         "1",
-        "2.6",
+        "1.9",
         "CI"
        ],
        [

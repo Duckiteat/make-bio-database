@@ -1,138 +1,165 @@
 {
- "format": "rebuild-archive",
- "version": 1,
- "id": "p3-p5-layer",
- "what": "공간 층 P3(유한 체적 FV·정수 원장)·P4(FNO 대리 모델·OOD)·P5(동적 승격 관문)와 DEVS 스케줄러",
- "retired": {
-  "at": "2026-10-25",
-  "by": "user",
-  "why": "실제 경로(운명 엔진·simulateRate·dbtool·조정자)가 부르지 않고 자기 시험만 부른다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않는다(U0368). 보고서 2026-10-25-architecture-analysis 가 \"1,110 줄 + 시험 4 개가 생물 결론에 한 번도 쓰이지 않음\"(U5011)"
- },
- "rules": [
-  {
-   "id": "RULE-0142",
-   "text": "실행 상태는 db 가 아니라 시나리오 domains·engine/",
-   "enforce": "text",
-   "unit": "U0169"
+  "format": "rebuild-archive",
+  "version": 1,
+  "id": "p3-p5-layer",
+  "what": "공간 층 P3(유한 체적 FV·정수 원장)·P4(FNO 대리 모델·OOD)·P5(동적 승격 관문)와 DEVS 스케줄러",
+  "retired": {
+    "at": "2026-10-25",
+    "by": "user",
+    "why": "실제 경로(운명 엔진·simulateRate·dbtool·조정자)가 부르지 않고 자기 시험만 부른다. 운명 엔진은 1.5 단계부터 P5 를 쓰지 않는다(U0368). 보고서 2026-10-25-architecture-analysis 가 \"1,110 줄 + 시험 4 개가 생물 결론에 한 번도 쓰이지 않음\"(U5011)"
   },
-  {
-   "id": "RULE-0143",
-   "text": "P3 변경 → node tests/p3_end_to_end.js (|ΔN|<1)",
-   "enforce": "machine",
-   "unit": "U0170"
-  },
-  {
-   "id": "RULE-0144",
-   "text": "원장은 거래로만, 장은 원장에 맞춰 재척도",
-   "enforce": "machine",
-   "unit": "U0171"
-  },
-  {
-   "id": "RULE-0145",
-   "text": "P4 대리 출력은 같은 단계 OOD 통과 시만",
-   "enforce": "machine",
-   "unit": "U0172"
-  },
-  {
-   "id": "RULE-0146",
-   "text": "P4 속도는 tests/p4_benchmark.js FV 부분 단계 수와 함께 보고",
-   "enforce": "text",
-   "unit": "U0173"
-  },
-  {
-   "id": "RULE-0147",
-   "text": "P4 L2<2% + tests/p4_end_to_end.js",
-   "enforce": "machine",
-   "unit": "U0174"
-  },
-  {
-   "id": "RULE-0148",
-   "text": "P5 경로는 engine/p5_dynamic_gate.js 의 N_sub·히스테리시스·γ 로만",
-   "enforce": "unchecked",
-   "unit": "U0175"
-  },
-  {
-   "id": "RULE-0149",
-   "text": "P5 전이마다 exactAnchor ≤1e-15",
-   "enforce": "machine",
-   "unit": "U0176"
-  },
-  {
-   "id": "RULE-0150",
-   "text": "mode:'fv' 결과 비트 불변",
-   "enforce": "unchecked",
-   "unit": "U0177"
-  },
-  {
-   "id": "RULE-0151",
-   "text": "P5 변경 → tests/p5_dynamic_promotion.js, 속도는 구간별 N_sub 와 (N_sub<15 ≈1×)",
-   "enforce": "machine",
-   "unit": "U0178"
-  },
-  {
-   "id": "RULE-0237",
-   "text": "충격·OOD 는 같은 단계 강등 + W 냉각",
-   "enforce": "machine",
-   "unit": "U0367"
+  "rules": [
+    {
+      "id": "RULE-0142",
+      "text": "실행 상태는 db 가 아니라 시나리오 domains·engine/",
+      "enforce": "text",
+      "unit": "U0169"
+    },
+    {
+      "id": "RULE-0143",
+      "text": "P3 변경 → node tests/p3_end_to_end.js (|ΔN|<1)",
+      "enforce": "machine",
+      "unit": "U0170"
+    },
+    {
+      "id": "RULE-0144",
+      "text": "원장은 거래로만, 장은 원장에 맞춰 재척도",
+      "enforce": "machine",
+      "unit": "U0171"
+    },
+    {
+      "id": "RULE-0145",
+      "text": "P4 대리 출력은 같은 단계 OOD 통과 시만",
+      "enforce": "machine",
+      "unit": "U0172"
+    },
+    {
+      "id": "RULE-0146",
+      "text": "P4 속도는 tests/p4_benchmark.js FV 부분 단계 수와 함께 보고",
+      "enforce": "text",
+      "unit": "U0173"
+    },
+    {
+      "id": "RULE-0147",
+      "text": "P4 L2<2% + tests/p4_end_to_end.js",
+      "enforce": "machine",
+      "unit": "U0174"
+    },
+    {
+      "id": "RULE-0148",
+      "text": "P5 경로는 engine/p5_dynamic_gate.js 의 N_sub·히스테리시스·γ 로만",
+      "enforce": "unchecked",
+      "unit": "U0175"
+    },
+    {
+      "id": "RULE-0149",
+      "text": "P5 전이마다 exactAnchor ≤1e-15",
+      "enforce": "machine",
+      "unit": "U0176"
+    },
+    {
+      "id": "RULE-0150",
+      "text": "mode:'fv' 결과 비트 불변",
+      "enforce": "unchecked",
+      "unit": "U0177"
+    },
+    {
+      "id": "RULE-0151",
+      "text": "P5 변경 → tests/p5_dynamic_promotion.js, 속도는 구간별 N_sub 와 (N_sub<15 ≈1×)",
+      "enforce": "machine",
+      "unit": "U0178"
+    },
+    {
+      "id": "RULE-0237",
+      "text": "충격·OOD 는 같은 단계 강등 + W 냉각",
+      "enforce": "machine",
+      "unit": "U0367"
+    }
+  ],
+  "code": [
+    "engine/hmse.js",
+    "engine/fv_solver.js",
+    "engine/fno_surrogate.js",
+    "engine/p5_dynamic_gate.js",
+    "engine/devs_scheduler.js",
+    "engine/ood_detector.js",
+    "engine/async_fallback_worker.js"
+  ],
+  "tests": [
+    "tests/p3_end_to_end.js",
+    "tests/p4_benchmark.js",
+    "tests/p4_end_to_end.js",
+    "tests/p5_dynamic_promotion.js"
+  ],
+  "references": [
+    "\"docs/textbook/04-\\354\\225\\214\\352\\263\\240\\353\\246\\254\\354\\246\\230.md\"",
+    "\"docs/textbook/90-\\353\\266\\200\\353\\241\\235-\\354\\236\\220\\353\\217\\231\\354\\203\\235\\354\\204\\261.md\"",
+    ".github/workflows/check.yml",
+    "CHANGES.md",
+    "CLAUDE.md",
+    "README.md",
+    "SCHEMA.md",
+    "docs/design/agent-rules.md",
+    "docs/design/build-plan.md",
+    "docs/design/hybrid-multiscale-engine.md",
+    "docs/design/integral-field-engine.md",
+    "docs/design/structure-realignment.md",
+    "docs/design/tripartite-governance.md",
+    "docs/reports/2026-10-22-phase0-reality-validation-audit.md",
+    "docs/reports/2026-10-23-constraints-tests-inventory.md",
+    "docs/reports/2026-10-25-architecture-analysis.md",
+    "docs/textbook/storage-map.json",
+    "engine/interfaces/hmse.hpp",
+    "engine/interfaces/hmse.py",
+    "rebuild/index/file-modes.jsonl",
+    "rebuild/ledger/units.jsonl",
+    "rebuild/rules/review.jsonl",
+    "rebuild/rules/rules.jsonl",
+    "rebuild/status/06-file-modes.md",
+    "rebuild/status/09-review.md",
+    "schemas/v8/boundary-flux-packet.schema.json",
+    "schemas/v8/domain-config.schema.json",
+    "schemas/v8/domain-metrics.schema.json",
+    "schemas/v8/ledger-transaction.schema.json",
+    "tests/governance.test.mjs",
+    "tests/rules.test.mjs"
+  ],
+  "design": [
+    "docs/design/hybrid-multiscale-engine.md",
+    "docs/design/integral-field-engine.md",
+    "docs/textbook/04-알고리즘.md (4.9B·D)"
+  ],
+  "state_now": "2026-10-29 재건 8 단계(사용자 결정 DEC-0032)에 코드·시험·인터페이스·통신 스키마를 저장소에서 지움. 규칙은 2026-10-25 에 은퇴. 교과서 4.9B–D 와 SCHEMA §8F 의 해당 줄은 옛 기록으로 표시해 남김",
+  "revive": [
+    "코드 되찾기: git checkout 2263f0c -- <removed.files> (지운 커밋의 바로 앞 판)",
+    "적분장(field) 모드에서 다시 쓰려면: 컴파일러가 db 위치·확산으로 FV 영역을 만드는 길을 먼저 연다(보고서 R7, U5059)",
+    "이 파일의 rules 를 규칙 장부로 되살리고(retired 지움), 시험 4 개를 다시 묶는다",
+    "확산 계수(RULE-0139)·tier(RULE-0138)가 이 층의 입력이다 — 그 둘의 예약 표시도 함께 푼다"
+  ],
+  "removed": {
+    "at": "2026-10-29",
+    "by": "user",
+    "commit": "2263f0c",
+    "files": [
+      "engine/hmse.js",
+      "engine/fv_solver.js",
+      "engine/fno_surrogate.js",
+      "engine/p5_dynamic_gate.js",
+      "engine/devs_scheduler.js",
+      "engine/ood_detector.js",
+      "engine/async_fallback_worker.js",
+      "engine/interfaces/hmse.py",
+      "engine/interfaces/hmse.hpp",
+      "schemas/v8/boundary-flux-packet.schema.json",
+      "schemas/v8/domain-config.schema.json",
+      "schemas/v8/domain-metrics.schema.json",
+      "schemas/v8/ledger-transaction.schema.json",
+      "tests/p3_end_to_end.js",
+      "tests/p4_benchmark.js",
+      "tests/p4_end_to_end.js",
+      "tests/p5_dynamic_promotion.js"
+    ],
+    "tests_removed": "tests/rules.test.mjs 의 v8 영역·원장 5 · P3 6 · P4 7 · P5 7 (25) — tier·관찰·열역학·Wegscheider 시험 5 는 남김(지금 경로가 씀)",
+    "restore": "git checkout 2263f0c -- engine/hmse.js engine/fv_solver.js engine/fno_surrogate.js engine/p5_dynamic_gate.js engine/devs_scheduler.js engine/ood_detector.js engine/async_fallback_worker.js engine/interfaces/hmse.py engine/interfaces/hmse.hpp schemas/v8/boundary-flux-packet.schema.json schemas/v8/domain-config.schema.json schemas/v8/domain-metrics.schema.json schemas/v8/ledger-transaction.schema.json tests/p3_end_to_end.js tests/p4_benchmark.js tests/p4_end_to_end.js tests/p5_dynamic_promotion.js · tests/rules.test.mjs 의 그 25 시험은 git show 2263f0c:tests/rules.test.mjs (788–1036 줄)"
   }
- ],
- "code": [
-  "engine/hmse.js",
-  "engine/fv_solver.js",
-  "engine/fno_surrogate.js",
-  "engine/p5_dynamic_gate.js",
-  "engine/devs_scheduler.js",
-  "engine/ood_detector.js",
-  "engine/async_fallback_worker.js"
- ],
- "tests": [
-  "tests/p3_end_to_end.js",
-  "tests/p4_benchmark.js",
-  "tests/p4_end_to_end.js",
-  "tests/p5_dynamic_promotion.js"
- ],
- "references": [
-  "\"docs/textbook/04-\\354\\225\\214\\352\\263\\240\\353\\246\\254\\354\\246\\230.md\"",
-  "\"docs/textbook/90-\\353\\266\\200\\353\\241\\235-\\354\\236\\220\\353\\217\\231\\354\\203\\235\\354\\204\\261.md\"",
-  ".github/workflows/check.yml",
-  "CHANGES.md",
-  "CLAUDE.md",
-  "README.md",
-  "SCHEMA.md",
-  "docs/design/agent-rules.md",
-  "docs/design/build-plan.md",
-  "docs/design/hybrid-multiscale-engine.md",
-  "docs/design/integral-field-engine.md",
-  "docs/design/structure-realignment.md",
-  "docs/design/tripartite-governance.md",
-  "docs/reports/2026-10-22-phase0-reality-validation-audit.md",
-  "docs/reports/2026-10-23-constraints-tests-inventory.md",
-  "docs/reports/2026-10-25-architecture-analysis.md",
-  "docs/textbook/storage-map.json",
-  "engine/interfaces/hmse.hpp",
-  "engine/interfaces/hmse.py",
-  "rebuild/index/file-modes.jsonl",
-  "rebuild/ledger/units.jsonl",
-  "rebuild/rules/review.jsonl",
-  "rebuild/rules/rules.jsonl",
-  "rebuild/status/06-file-modes.md",
-  "rebuild/status/09-review.md",
-  "schemas/v8/boundary-flux-packet.schema.json",
-  "schemas/v8/domain-config.schema.json",
-  "schemas/v8/domain-metrics.schema.json",
-  "schemas/v8/ledger-transaction.schema.json",
-  "tests/governance.test.mjs",
-  "tests/rules.test.mjs"
- ],
- "design": [
-  "docs/design/hybrid-multiscale-engine.md",
-  "docs/design/integral-field-engine.md",
-  "docs/textbook/04-알고리즘.md (4.9B·D)"
- ],
- "state_now": "규칙만 은퇴 — 코드·시험·문서는 아직 저장소에 있다. 8 단계(비우기)에서 옮기거나 지운다.",
- "revive": [
-  "적분장(field) 모드에서 다시 쓰려면: 컴파일러가 db 위치·확산으로 FV 영역을 만드는 길을 먼저 연다(보고서 R7, U5059)",
-  "이 파일의 rules 를 규칙 장부로 되살리고(retired 지움), 시험 4 개를 다시 묶는다",
-  "확산 계수(RULE-0139)·tier(RULE-0138)가 이 층의 입력이다 — 그 둘의 예약 표시도 함께 푼다"
- ]
 }

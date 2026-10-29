@@ -322,7 +322,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 ## 8F. 3 층 다중 규모 엔진 — 형식 v8
 
-설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고(`irHash` = 먹은 IR 의 sha256, `engine` = js | rust 포함), `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 운명 IR 은 `compiler/ir_builder.js`(형식 `definition-db-fate-ir` v3 — 활성 규칙 전체의 `jac.active`·`jac.S`, 희소 LU 기호 분석 `jac.lu`(순서·채움·연산 수, `compiler/sparse_lu.js`)·J 항 값 위치 `jac.scatter`, 테이프 명령표 `compiler/tape.js`), 결합점(`hill_s_floor`, 결합 Rodas3 단계 제어 `integrator.*`, 희소 LU 피벗 문턱 `integrator.pivot_rel`)은 `engine/coupling.js`. 경로 속도 시뮬레이션(`simulateRate`)의 IR 은 `compiler/rate_ir.js`(형식 `definition-db-rate-ir` v1, 원자료 `irHash`). 원자료의 적분 기록은 `integrator`(받아들인·거부한 단계, h 범위, Δ 당 단계 수)와 `trajectory[].steps·rejects`. 이식 계획 `docs/design/engine-port-roadmap.md`.
+설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현(`engine/hmse.js` · 인터페이스 `engine/interfaces/hmse.{hpp,py}` · 통신 스키마 `schemas/v8/*.schema.json`)은 2026-10-29 지움 — 되살리는 길 `rebuild/archive/p3-p5-layer.json`. 아래 필드(tier · 환경 · 열역학)는 그대로 쓰인다. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고(`irHash` = 먹은 IR 의 sha256, `engine` = js | rust 포함), `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 운명 IR 은 `compiler/ir_builder.js`(형식 `definition-db-fate-ir` v3 — 활성 규칙 전체의 `jac.active`·`jac.S`, 희소 LU 기호 분석 `jac.lu`(순서·채움·연산 수, `compiler/sparse_lu.js`)·J 항 값 위치 `jac.scatter`, 테이프 명령표 `compiler/tape.js`), 결합점(`hill_s_floor`, 결합 Rodas3 단계 제어 `integrator.*`, 희소 LU 피벗 문턱 `integrator.pivot_rel`)은 `engine/coupling.js`. 경로 속도 시뮬레이션(`simulateRate`)의 IR 은 `compiler/rate_ir.js`(형식 `definition-db-rate-ir` v1, 원자료 `irHash`). 원자료의 적분 기록은 `integrator`(받아들인·거부한 단계, h 범위, Δ 당 단계 수)와 `trajectory[].steps·rejects`. 이식 계획 `docs/design/engine-port-roadmap.md`.
 
 | 필드 | 위치 | 규칙 |
 |---|---|---|
@@ -335,7 +335,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 - 시뮬레이터: mass_action 규칙에 k0·dG_act·dG0·env 가 있으면 구획 환경(시나리오 `environment[위치] = { pH, relative_permittivity }` → 관찰)으로 k 를 계산하고, dG0 가 있으면 k_r = k·e^{dG0/RT} 로 정해 가역으로 돌린다 (환경은 장벽만 옮기고 평형은 옮기지 않음).
 - `audit-run`: **AUDIT_THERMO** — 경로의 단계 순환 중 순 화학량이 0 인 닫힌 고리에서 ΣdG0 ≠ 0 (허용 `vocab.thermo.loop_tolerance` J/mol) — Wegscheider 조건 위반.
-- 실행 상태(영역·원장·경계 거래·영역 점수)는 데이터베이스가 아니라 시나리오 `domains`(domain-config 스키마)와 실행 층(`engine/hmse.js`)에 둔다 — 지식과 실행 상태를 섞지 않는다.
+- 실행 상태(영역·원장·경계 거래·영역 점수)는 데이터베이스가 아니라 시나리오와 실행 층에 둔다 — 지식과 실행 상태를 섞지 않는다. (그 실행 층 `engine/hmse.js` 와 domain-config 스키마는 2026-10-29 지움 — `rebuild/archive/p3-p5-layer.json`)
 
 ## 8G. 세포 운명 층 — 형식 v9
 

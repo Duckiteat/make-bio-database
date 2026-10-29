@@ -12,15 +12,6 @@
 {"pattern": "workspace/**", "mode": "author", "why": "수집가 작업 공간"}
 {"pattern": "examples/scenarios/**", "mode": "baseline", "why": "시나리오 — 기초시험이 돌린다"}
 {"pattern": "examples/**", "mode": "author", "why": "예시 패치·합성 관찰"}
-{"pattern": "engine/fv_solver.js", "mode": "field", "why": "P3 장"}
-{"pattern": "engine/hmse.js", "mode": "field", "why": "3 층 실행 층"}
-{"pattern": "engine/devs_scheduler.js", "mode": "field", "why": "P3 스케줄러"}
-{"pattern": "engine/fno_surrogate.js", "mode": "field", "why": "P4 대리 모델"}
-{"pattern": "engine/ood_detector.js", "mode": "field", "why": "P4 OOD"}
-{"pattern": "engine/p5_dynamic_gate.js", "mode": "field", "why": "P5 관문"}
-{"pattern": "engine/async_fallback_worker.js", "mode": "field", "why": "P4 비동기 대체"}
-{"pattern": "engine/interfaces/**", "mode": "field", "why": "v8 인터페이스"}
-{"pattern": "schemas/v8/**", "mode": "field", "why": "v8 영역 패킷"}
 {"pattern": "engine/**", "mode": "develop", "why": "운명 엔진·Rust·결합점"}
 {"pattern": "compiler/**", "mode": "develop", "why": "컴파일러"}
 {"pattern": "judicial/**", "mode": "develop", "why": "사법부 코드"}
@@ -37,9 +28,6 @@
 {"pattern": "dbtool.mjs", "mode": "develop", "why": "명령줄"}
 {"pattern": "scenarios.js", "mode": "develop", "why": "시나리오 읽기"}
 {"pattern": "inbox.js", "mode": "develop", "why": "수신함 해석"}
-{"pattern": "tests/p3_end_to_end.js", "mode": "field", "why": "P3 종단"}
-{"pattern": "tests/p4_*", "mode": "field", "why": "P4"}
-{"pattern": "tests/p5_*", "mode": "field", "why": "P5"}
 {"pattern": "tests/fixtures/rejections/**", "mode": "develop", "why": "거부 말뭉치"}
 {"pattern": "tests/**", "mode": "develop", "why": "시험"}
 {"pattern": "viewer.html", "mode": "inspect", "why": "화면 — 사람이 읽는 자리"}

@@ -26,8 +26,17 @@
 | none | 0 |
 | unchecked | 203 |
 
-집행 자리 확인 (machine 400): 파일·이름 확인 382 · 글로만 적힘 10 · 못 찾음 8
+집행 자리 확인 (machine 400): 파일·이름 확인 373 · 글로만 적힘 10 · 못 찾음 17
 
+- U0170 (CLAUDE.md:55): 파일 없음 tests/p3_end_to_end.js
+- U0171 (CLAUDE.md:55): 파일 없음 tests/p3_end_to_end.js
+- U0172 (CLAUDE.md:56): 파일 없음 tests/p4_end_to_end.js
+- U0174 (CLAUDE.md:56): 파일 없음 tests/p4_end_to_end.js
+- U0176 (CLAUDE.md:57): 파일 없음 tests/p5_dynamic_promotion.js
+- U0178 (CLAUDE.md:57): 파일 없음 tests/p5_dynamic_promotion.js
+- U0364 (docs/design/agent-rules.md:75): 파일 없음 tests/p3_end_to_end.js
+- U0365 (docs/design/agent-rules.md:76): 파일 없음 tests/p4_end_to_end.js
+- U0367 (docs/design/agent-rules.md:77): 파일 없음 tests/p5_dynamic_promotion.js
 - U0722 (docs/PROMPTS.md:235): 파일 없음 workspace/collector.settings.json
 - U0723 (docs/PROMPTS.md:236): 파일 없음 workspace/collector.settings.json
 - U0766 (workspace/START-HERE.md:11): 파일 없음 workspace/collector.settings.json

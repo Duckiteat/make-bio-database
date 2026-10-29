@@ -28,21 +28,10 @@ jobs:
         run: node dbtool.mjs trend
       - name: 신뢰 지표 분포 (등급이 계산되는지 — 저장되지 않는지)
         run: node dbtool.mjs grade
-      - name: P3 종단 시험 (영역 10,000 단계 질량 보존)
-        run: node tests/p3_end_to_end.js --every 2500
-      - name: P4 종단 시험 (대리 모델 + OOD 대체, 10,000 단계 질량 보존)
-        run: node tests/p4_end_to_end.js --every 5000
-      - name: P5 동적 승격·강등 (10,000 단계, 질량·장 정합·충격 강등)
-        run: node tests/p5_dynamic_promotion.js --every 5000
       - name: Fate-Test (세포 운명 — 충실도·비가역성·분화 정지·다른 운명·질량)
         run: node tests/fate_suite.js --quick
       - name: Fate-Test (Rust 엔진)
         run: node tests/fate_suite.js --quick --engine rust
-      - name: v8 인터페이스 — Python 자체 시험·C++ 구문
-        run: |
-          python3 engine/interfaces/hmse.py --selftest
-          printf '#include "engine/interfaces/hmse.hpp"\nint main(){return 0;}\n' > /tmp/hmse_check.cpp
-          g++ -std=c++20 -fsyntax-only -Wall -Wextra -I. /tmp/hmse_check.cpp
       - name: 재건 관리 파일 최신 (rebuild/status)
         run: node rebuild/status.mjs --check
       - name: 교과서 부록 최신·모든 파일 분류

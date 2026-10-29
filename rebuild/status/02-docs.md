@@ -9,17 +9,17 @@
 | `.claude/skills/develop/SKILL.md` | 6.4 | 91 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.5 | 33 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 263.9 | 243 |  | 분류됨 1 |
+| `CHANGES.md` | 265.6 | 244 |  | 분류됨 1 |
 | `CLAUDE.md` | 5.8 | 83 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
-| `SCHEMA.md` | 100.2 | 659 |  | 분류됨 427 |
+| `SCHEMA.md` | 100.4 | 659 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.8 | 315 |  | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
-| `docs/design/build-plan.md` | 204.2 | 2329 |  | 생성물 |
+| `docs/design/build-plan.md` | 206.2 | 2335 |  | 생성물 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
 | `docs/design/dictionary-and-translation.md` | 16.0 | 203 |  | 분류됨 121 |
@@ -70,12 +70,12 @@
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 65.0 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 65.5 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 120.8 | 825 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 116.6 | 811 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
