@@ -1532,9 +1532,9 @@
       "path": "workspace/receipts/*",
       "class": "management",
       "format": "JSONL (사건 하나 = 한 줄, prev = 앞 줄 sha256 사슬) + 같은 이름 .md (사람용 보기)",
-      "writer": "rebuild/gate.mjs 훅만 (입법 서기 appendReceipt · writeReceiptDoc, 구역 receipt)",
+      "writer": "rebuild/gate.mjs 훅만 — 세션 동안은 저장소 밖(liveRoot)에 쌓고, git commit 직전에 이 자리로 실어 git add (입법 서기 appendReceipt · publishReceipt, 구역 receipt)",
       "readers": "사람 (GitHub 에서 .md) · node rebuild/gate.mjs receipt",
-      "interpret": "세션 하나 = 영수증 하나: 모드 · 막힌 것 · 바뀐 파일과 그 호출 · 끝내기 전 시험 · git 변경과의 대조. 손으로 고치면 문지기가 쓰는 도구를 막는다. 관리 파일 개수에서는 빠진다(자라는 기록)."
+      "interpret": "세션 하나 = 영수증 하나: 모드 · 막힌 것 · 바뀐 파일과 그 호출 · 끝내기 전 시험 · git 변경과의 대조. 커밋마다 그때까지의 사슬이 실리므로 커밋 뒤 작업 트리가 깨끗하다(커밋 명령 자체의 기록은 다음 커밋에). 손으로 고치면 문지기가 쓰는 도구를 막는다. 관리 파일 개수에서는 빠진다."
     },
     {
       "path": "rebuild/plan.mjs",

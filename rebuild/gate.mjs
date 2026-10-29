@@ -6,7 +6,7 @@
 //   훅:   node rebuild/gate.mjs hook <session-start|pre|post|stop>  (.claude/settings.json — 입력은 표준 입력의 JSON)
 // 정책은 rebuild/rules/modes.json 의 gate (모드별 쓰기 경로 · 막는 명령 · 끝내기 전 시험 · 수집가 역할). 이 파일은 판단과 입출력만.
 // 영수증 = git 변경: 도구 호출마다 그 앞뒤로 저장소 파일의 크기·시각을 대조해, 바뀐 파일을 그 호출에 붙인다(Edit·Write 뿐 아니라 셸로 쓴 것도).
-// 계약: 파일 쓰기는 입법 서기만(appendReceipt · writeReceiptDoc · writeDraft — 세션 상태는 저장소 밖). 훅은 막을 때만 종료 코드 2.
+// 계약: 파일 쓰기는 입법 서기만(appendReceipt · writeReceiptDoc · publishReceipt · writeDraft — 세션 상태와 쌓이는 영수증은 저장소 밖, 저장소에는 커밋할 때 실음). 훅은 막을 때만 종료 코드 2.
 import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs';
 import { join, dirname, relative, resolve, isAbsolute } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -110,17 +110,26 @@ const headOf = (root) => { try { return git(root, 'rev-parse', 'HEAD').trim(); }
 
 // ── 세션 상태 (영수증에서 계산 · 앞뒤 대조용 지문만 저장소 밖에) ─────────────────
 const sid8 = (sid) => String(sid || 'nosession').replace(/[^0-9a-zA-Z-]/g, '').slice(0, 12) || 'nosession';
+// 영수증은 세션 동안 저장소 밖(live)에 쌓고, 커밋할 때만 저장소의 같은 이름으로 싣는다 — 커밋 뒤에 작업 트리가 다시 더러워지지 않게
+//   (커밋 명령 자체도 도구 호출이라, 저장소에 바로 쓰면 커밋할 때마다 영수증만 바뀐 채로 남았다 — 2026-10-29)
+export const liveRoot = (root) => join(tmpdir(), `biodb-receipts-${sha(resolve(root)).slice(0, 12)}`);
 function receiptName(root, sid) {
-  const d = join(root, RECEIPTS), tail = '-' + sid8(sid) + '.jsonl';
-  const have = existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(tail)).sort() : [];
-  return have.length ? have[0].slice(0, -'.jsonl'.length) : today() + '-' + sid8(sid);
+  const tail = '-' + sid8(sid) + '.jsonl';
+  for (const base of [liveRoot(root), root]) { const d = join(base, RECEIPTS); const have = existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(tail)).sort() : []; if (have.length) return have[0].slice(0, -'.jsonl'.length); }
+  return today() + '-' + sid8(sid);
+}
+// 저장소에 실린 영수증만 있고 live 가 없으면(새 컨테이너 · 이 방식 이전 세션) 그것으로 live 를 시작한다
+function seedLive(root, name) {
+  const lf = join(liveRoot(root), RECEIPTS, name + '.jsonl'), rf = join(root, RECEIPTS, name + '.jsonl');
+  if (!existsSync(lf) && existsSync(rf)) CLERK.publishReceipt(liveRoot(root), name, readFileSync(rf, 'utf8'), existsSync(join(root, RECEIPTS, name + '.md')) ? readFileSync(join(root, RECEIPTS, name + '.md'), 'utf8') : '');
 }
 export const readReceipt = (root, name) => { const f = join(root, RECEIPTS, name + '.jsonl'); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; };
 const scratch = (root, sid) => join(tmpdir(), `biodb-gate-${sha(resolve(root)).slice(0, 12)}-${sid8(sid)}.json`);
 const finishFile = (root) => join(tmpdir(), `biodb-finish-${sha(resolve(root)).slice(0, 12)}.json`);
 const readJson = (f) => { try { return JSON.parse(readFileSync(f, 'utf8')); } catch { return null; } };
 function state(root, sid, P) {
-  const name = receiptName(root, sid), evs = readReceipt(root, name), open = evs.find((e) => e.t === 'open');
+  const name = receiptName(root, sid); seedLive(root, name);
+  const evs = readReceipt(liveRoot(root), name), open = evs.find((e) => e.t === 'open');
   const role = process.env.BIODB_ROLE && P.roles[process.env.BIODB_ROLE] ? process.env.BIODB_ROLE : null;
   const fin = [...evs].reverse().find((e) => e.t === 'finish');
   return { name, evs, mode: open ? open.mode : null, role: open ? open.role : role, open, finish: fin || null,
@@ -158,9 +167,12 @@ function hook(event, input, root) {
   const P = loadPolicy(), sc = scratch(root, input.session_id), S = readJson(sc) || {};
   let st = state(root, input.session_id, P);
   const save = () => CLERK.writeDraft(sc, S);
-  const add = (ev) => { CLERK.appendReceipt(root, st.name, { at: now(), ...ev }); const ls = readFileSync(join(root, RECEIPTS, st.name + '.jsonl'), 'utf8').split('\n').filter(Boolean); S.rc = { name: st.name, n: ls.length, last: sha(ls[ls.length - 1]) }; };
+  const LR = liveRoot(root);
+  const add = (ev) => { CLERK.appendReceipt(LR, st.name, { at: now(), ...ev }); const ls = readFileSync(join(LR, RECEIPTS, st.name + '.jsonl'), 'utf8').split('\n').filter(Boolean); S.rc = { name: st.name, n: ls.length, last: sha(ls[ls.length - 1]) }; };
+  // 커밋에 싣기: live 사슬과 보기를 저장소의 같은 이름으로 쓰고 git add — 그 커밋에 함께 들어간다
+  const publish = () => { const cur = state(root, input.session_id, P); CLERK.publishReceipt(root, cur.name, readFileSync(join(LR, RECEIPTS, cur.name + '.jsonl'), 'utf8'), renderReceipt(cur.evs, gitChangedSince(root, cur.open && cur.open.head))); git(root, 'add', '--', RECEIPTS + cur.name + '.jsonl', RECEIPTS + cur.name + '.md'); };
   const say = (rule, msg) => { process.stderr.write(`문지기 [${rule}]: ${msg}\n`); return 2; };
-  const broken = receiptIntact(root, (S.rc && S.rc.name) || st.name, S.rc);
+  const broken = receiptIntact(LR, (S.rc && S.rc.name) || st.name, S.rc);
   if (broken) {
     if (event === 'session-start') { process.stdout.write(`문지기: 이 세션의 영수증이 고쳐졌다 (${broken}) — 사람에게 알린다. 쓰는 도구는 막힌다.\n`); return 0; }
     return event === 'pre' ? say('RULE-0517', `영수증이 고쳐졌다 (${broken}) — 쓰는 도구를 막는다. 사람에게 알린다 (영수증은 문지기만 쓴다)`) : 0;
@@ -178,6 +190,7 @@ function hook(event, input, root) {
     const why = decidePre(P, st, input, root);
     S.snap = snap; S.pre_at = Date.now();
     if (why) add({ t: 'block', tool: input.tool_name, target: target(input), rule: why.rule, why: why.msg });
+    else if (input.tool_name === 'Bash' && st.evs.length && RE.commit.test(codeOf((input.tool_input || {}).command))) { add({ t: 'publish', what: '이 커밋에 영수증을 실음' }); publish(); }
     save();
     return why ? say(why.rule, why.msg) : 0;
   }
@@ -203,7 +216,7 @@ function hook(event, input, root) {
     const after = snapshot(root), gen = diffSnap(before, after);
     if (gen.length && st.evs.length) add({ t: 'hook', what: 'status --write (응답 끝 훅)', changed: gen });
     st = state(root, input.session_id, P);
-    if (st.evs.length) CLERK.writeReceiptDoc(root, st.name, renderReceipt(st.evs, gitChangedSince(root, st.open && st.open.head)));
+    if (st.evs.length) CLERK.writeReceiptDoc(LR, st.name, renderReceipt(st.evs, gitChangedSince(root, st.open && st.open.head))); // 보기도 live 에 — 저장소에는 커밋할 때만
     S.snap = after;
     const dirty = gitChangedSince(root, null) || [];
     let code = 0;
@@ -249,13 +262,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   } else if (cmd === 'open') {
     if (!MODES.includes(arg)) { console.error(`모드 '${arg || ''}' — ${MODES.join(' | ')}`); process.exit(2); }
     const P = loadPolicy(), M = P.modes[arg];
-    console.log(`${arg} 모드 — 모드 문서: docs/modes/${arg}.md (8 단계 전에는 rebuild/draft/modes/${arg}.md)\n쓸 수 있는 곳: ${[...P.common.write, ...M.write].join(' · ')}${M.except ? ' (빼고: ' + M.except.join(' · ') + ')' : ''}\n끝내기 전: node rebuild/gate.mjs finish ${arg} → ${[...M.finish, ...P.common.finish].join(' · ')}\n(문지기 훅이 이 명령을 영수증에 '열림' 으로 남긴다 — 훅이 꺼져 있으면 아무것도 막히지 않는다)`);
+    console.log(`${arg} 모드 — 모드 문서: docs/modes/${arg}.md (스킬 /${arg})\n쓸 수 있는 곳: ${[...P.common.write, ...M.write].join(' · ')}${M.except ? ' (빼고: ' + M.except.join(' · ') + ')' : ''}\n끝내기 전: node rebuild/gate.mjs finish ${arg} → ${[...M.finish, ...P.common.finish].join(' · ')}\n(문지기 훅이 이 명령을 영수증에 '열림' 으로 남긴다 — 훅이 꺼져 있으면 아무것도 막히지 않는다)`);
   } else if (cmd === 'finish') process.exit(finish(arg, root));
   else if (cmd === 'receipt') {
-    const d = join(root, RECEIPTS), names = existsSync(d) ? readdirSync(d).filter((f) => f.endsWith('.jsonl')).map((f) => f.slice(0, -6)).sort() : [];
-    const name = arg || names[names.length - 1];
+    const ls = (b) => { const d = join(b, RECEIPTS); return existsSync(d) ? readdirSync(d).filter((f) => f.endsWith('.jsonl')).map((f) => f.slice(0, -6)) : []; };
+    const names = [...new Set([...ls(root), ...ls(liveRoot(root))])].sort(), name = arg || names[names.length - 1];
     if (!name) { console.log('영수증 없음'); process.exit(0); }
-    const evs = readReceipt(root, name), open = evs.find((e) => e.t === 'open');
+    const live = existsSync(join(liveRoot(root), RECEIPTS, name + '.jsonl')), evs = readReceipt(live ? liveRoot(root) : root, name), open = evs.find((e) => e.t === 'open');
     process.stdout.write(renderReceipt(evs, gitChangedSince(root, open && open.head)));
   } else { console.error('사용: node rebuild/gate.mjs open <모드> · finish <모드> · receipt [이름] · hook <session-start|pre|post|stop>'); process.exit(2); }
 }

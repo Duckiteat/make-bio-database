@@ -269,6 +269,15 @@ export function appendReceipt(root, name, ev) {
   const line = JSON.stringify({ ...ev, prev: lines.length ? sha(lines[lines.length - 1]) : null });
   return put('receipt', f, old + line + '\n');
 }
+// 커밋에 영수증을 싣는다 — 세션 동안 저장소 밖에 쌓인 사슬(text)과 그 보기(md)를 저장소의 같은 이름으로. 사슬이 맞을 때만
+export function publishReceipt(root, name, text, md) {
+  if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}'`);
+  const lines = String(text).split('\n').filter(Boolean);
+  for (let i = 1; i < lines.length; i++) if (JSON.parse(lines[i]).prev !== sha(lines[i - 1])) refuse('RULE-0014', `영수증 ${name} 의 사슬이 ${i + 1} 째 줄에서 끊김 — 싣지 않는다`);
+  const d = join(root || ROOT, 'workspace', 'receipts');
+  put('receipt', join(d, name + '.md'), md);
+  return put('receipt', join(d, name + '.jsonl'), lines.join('\n') + '\n');
+}
 export function writeReceiptDoc(root, name, md) {
   if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}'`);
   return put('receipt', join(root || ROOT, 'workspace', 'receipts', name + '.md'), md);

@@ -75,7 +75,8 @@ function repo() {
 }
 const SID = 'test-sess-0001';
 const hook = (d, ev, input, env = {}) => spawnSync(process.execPath, [join(ROOT, 'rebuild/gate.mjs'), 'hook', ev], { cwd: d, input: JSON.stringify({ session_id: SID, ...input }), encoding: 'utf8', env: { ...process.env, CLAUDE_PROJECT_DIR: d, BIODB_ROLE: '', ...env } });
-const receipt = (d) => { const r = join(d, 'workspace/receipts'), f = readdirSync(r).find((x) => x.endsWith('.jsonl')); return readFileSync(join(r, f), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)); };
+const RD = (d) => join(G.liveRoot(d), 'workspace/receipts'); // 쌓이는 영수증은 저장소 밖 — 저장소에는 커밋할 때 실림
+const receipt = (d) => { const r = RD(d), f = readdirSync(r).find((x) => x.endsWith('.jsonl')); return readFileSync(join(r, f), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)); };
 // 도구 하나 = pre → (도구가 하는 일) → post
 const tool = (d, name, x, act) => { const a = hook(d, 'pre', { tool_name: name, tool_input: x }); if (a.status !== 0) return a; if (act) act(); return hook(d, 'post', { tool_name: name, tool_input: x, tool_response: {} }); };
 const finishFile = (d) => join(tmpdir(), `biodb-finish-${createHash('sha256').update(d).digest('hex').slice(0, 12)}.json`);
@@ -100,20 +101,27 @@ test('③ 끝에서 끝: 훅이 실제로 막고, 셸로 쓴 것도 잡고, 영�
     const pass = () => tool(d, 'Bash', { command: 'node rebuild/gate.mjs finish develop' }, () => writeFileSync(finishFile(d), JSON.stringify({ mode: 'develop', role: null, at_ms: Date.now() + 1, work: G.workHash(d), pass: true, results: [{ cmd: 'x', code: 0, ms: 1 }] })));
     assert.equal(pass().status, 0);
     assert.equal(tool(d, 'Bash', { command: 'git commit -qam work' }, () => execFileSync('git', ['commit', '-qam', 'work'], { cwd: d })).status, 0, '통과한 상태면 커밋 열림');
+    // 영수증은 그 커밋에 실리고, 커밋 뒤에도 작업 트리는 깨끗하다 (커밋 명령의 기록은 live 에만 — 다음 커밋에 실린다)
+    assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: d, encoding: 'utf8' }), '', '커밋 뒤 작업 트리가 깨끗');
+    const inCommit = execFileSync('git', ['show', '--name-only', '--format=', 'HEAD'], { cwd: d, encoding: 'utf8' });
+    assert.match(inCommit, /workspace\/receipts\/.*\.jsonl/); assert.match(inCommit, /workspace\/receipts\/.*\.md/);
+    const pub = readFileSync(join(d, 'workspace/receipts', readdirSync(join(d, 'workspace/receipts')).find((f) => f.endsWith('.jsonl'))), 'utf8');
+    assert.ok(readFileSync(join(RD(d), readdirSync(RD(d)).find((f) => f.endsWith('.jsonl'))), 'utf8').startsWith(pub), '실린 영수증은 live 사슬의 앞부분 그대로');
+    assert.ok(JSON.parse(pub.trim().split('\n').pop()).t === 'publish');
     tool(d, 'Edit', { file_path: join(d, 'engine/e.js') }, () => writeFileSync(join(d, 'engine/e.js'), '3\n'));
     const late = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'git commit -qam more' } });
     assert.equal(late.status, 2); assert.match(late.stderr, /시험 뒤에 파일이 바뀌었다/);
     // 응답 끝: 커밋 안 한 변경 + 시험 없음 → 한 번 알림, 두 번째는 조용히
     assert.equal(hook(d, 'stop', { stop_hook_active: false }).status, 2);
     assert.equal(hook(d, 'stop', { stop_hook_active: false }).status, 0, '같은 상태로는 한 번만');
-    const md = readFileSync(join(d, 'workspace/receipts', readdirSync(join(d, 'workspace/receipts')).find((f) => f.endsWith('.md'))), 'utf8');
+    const md = readFileSync(join(RD(d), readdirSync(RD(d)).find((f) => f.endsWith('.md'))), 'utf8');
     assert.match(md, /\*\*영수증에 없는 변경 0\*\*/, '영수증 = git 변경');
     assert.match(md, /`engine\/e\.js` ← /); assert.match(md, /모드 밖 변경/); assert.match(md, /data\/db\.json/);
     const ev = receipt(d);
     assert.ok(ev.some((e) => e.t === 'outside'), '도구 밖 변경도 남음');
     assert.ok(ev.some((e) => e.t === 'finish' && e.pass), '끝내기 전 시험이 영수증에');
     assert.ok(ev.filter((e) => e.t === 'block').length >= 4, '막힌 것이 영수증에');
-  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d)]) rmSync(f, { force: true }); }
+  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
 });
 
 test('④ 영수증은 문지기만: 고치거나 지우면 쓰는 도구가 막힌다', () => {
@@ -121,7 +129,7 @@ test('④ 영수증은 문지기만: 고치거나 지우면 쓰는 도구가 막
   try {
     tool(d, 'Bash', { command: 'node rebuild/gate.mjs open develop' });
     tool(d, 'Bash', { command: 'ls' });
-    const r = join(d, 'workspace/receipts'), f = join(r, readdirSync(r).find((x) => x.endsWith('.jsonl')));
+    const r = RD(d), f = join(r, readdirSync(r).find((x) => x.endsWith('.jsonl')));
     const lines = readFileSync(f, 'utf8').split('\n').filter(Boolean);
     writeFileSync(f, lines.map((l, i) => (i === 0 ? l.replace('"develop"', '"author"') : l)).join('\n') + '\n'); // 모드를 몰래 바꿈
     const a = hook(d, 'pre', { tool_name: 'Edit', tool_input: { file_path: join(d, 'engine/e.js') } });
@@ -129,5 +137,5 @@ test('④ 영수증은 문지기만: 고치거나 지우면 쓰는 도구가 막
     rmSync(f); // 통째로 지워도
     const b = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node rebuild/gate.mjs open author' } });
     assert.equal(b.status, 2); assert.match(b.stderr, /지워지거나 고쳐짐/);
-  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d)]) rmSync(f, { force: true }); }
+  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
 });
