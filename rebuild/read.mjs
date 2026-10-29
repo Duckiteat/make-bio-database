@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // 읽기 모드 (rebuild/PLAN.md §2′ · 6d) — 사람은 원본을 읽지 않고 이것으로 읽는다. 조회만 하고 지어내지 않는다.
 //   node rebuild/read.mjs <RULE-…|EQ-…> [--depth 0|1|2]    L0 한 줄 · L1 연결 · L2 수식 (기본 2)
+//   node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…>         계획 번호 — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
 //   node rebuild/read.mjs --list spec [--mode author]       형식 설명 규칙(spec) 목록 — 모드 문서에서 빠진 것
 // 계약: 출력은 원본(규칙 장부·단위 장부·맥락·집행 변이·검토·수식 기록)에서만 — 같은 원본이면 같은 바이트.
 //   원본에 없는 것은 '… 기록 없음' 으로 드러낸다(수식·근거·예시를 그 자리에서 만들지 않는다). 파일을 쓰지 않는다.
@@ -8,6 +9,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import * as STATE from './state.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -50,6 +52,7 @@ function readFormula(S, f, depth, out) {
 
 export function read(id, depth = 2, S = load()) {
   const out = [];
+  if (/^(?:PLAN|STG|DEC|DIR)-/.test(id)) return STATE.readOne(STATE.load(ROOT), id, depth) || `${id} — 계획 기록에 없음\n`;
   if (S.formulas[id]) { readFormula(S, S.formulas[id], depth, out); return out.join('\n') + '\n'; }
   const r = S.rules[id];
   if (!r) return `${id} — 규칙 장부·수식 기록에 없음\n`;
@@ -81,5 +84,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
   if (a[0] === '--list') { if (a[1] !== 'spec') { console.error('--list spec 만'); process.exit(2); } process.stdout.write(listSpec(opt('--mode'))); }
   else if (a[0]) process.stdout.write(read(a[0], opt('--depth') != null ? Number(opt('--depth')) : 2));
-  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
+  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|DEC-…|DIR-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
 }

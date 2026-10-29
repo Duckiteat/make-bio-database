@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 74 | 6285.9 |
+| 공통 `common` | 76 | 6708.4 |
 | 정보 작성 `author` | 450 | 16509.6 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 161 | 2096.5 |
+| 디벨롭 `develop` | 161 | 2104.1 |
 | 적분장 `field` | 17 | 137.3 |
 | 점검·검증 `inspect` | 33 | 748.4 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 32 | 5354.7 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 34 | 5636.4 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -45,7 +45,7 @@
 | `engine/**` | develop | 17 | 200.3 | 운명 엔진·Rust·결합점 |
 | `compiler/**` | develop | 7 | 49.0 | 컴파일러 |
 | `judicial/**` | develop | 29 | 542.0 | 사법부 코드 |
-| `legislative/**` | develop | 3 | 68.3 | 입법부 코드 |
+| `legislative/**` | develop | 3 | 69.0 | 입법부 코드 |
 | `mcp/**` | develop | 4 | 34.7 | MCP 서버 |
 | `migrations/**` | develop | 13 | 59.8 | 형식 변환 |
 | `schemas/obs/**` | author | 1 | 13.2 | 관찰 포트 계약 |
@@ -62,17 +62,17 @@
 | `tests/p4_*` | field | 2 | 11.2 | P4 |
 | `tests/p5_*` | field | 1 | 12.7 | P5 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
-| `tests/**` | develop | 49 | 481.4 | 시험 |
+| `tests/**` | develop | 49 | 485.4 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 23 | 367.0 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 11 | 396.3 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
-| `docs/design/**` | common | 21 | 407.3 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
+| `docs/textbook/**` | common | 11 | 399.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/design/**` | common | 21 | 545.2 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 3 | 42.8 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 255.1 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 258.0 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 100.2 | 형식 |
-| `*.md` | common | 4 | 75.0 | 최상위 문서 |
+| `*.md` | common | 4 | 75.2 | 최상위 문서 |
 | `.claude/**` | common | 1 | 3.2 | 도구 설정 |
 | `.github/**` | develop | 1 | 2.6 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |

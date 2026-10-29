@@ -42,5 +42,5 @@ collect→verify→patch 고리를 MCP 도구로 자율화한다. 쓰기는 관�
 1. `CLAUDE.md` — 규율·점검표(자동 로드).
 2. **이 문서** — 방향·우선순위·왜 그 순서.
 3. 철학: `authority-and-comprehension.md`(권한/이해) · `tripartite-governance.md`(삼권분립) · `dictionary-and-translation.md`(번역/레지스터) · `conservation-classes.md`(보존 분류) · `work-verification.md`(꼼수방지).
-4. `build-plan.md`(플랜·단계 상태·◐ 메모 — "왜 멈췄나" 가 거기 있다) · `CHANGES.md` 위 몇 행 · `limitations.md`.
+4. `build-plan.md`(플랜·단계 상태·◐ 메모 — "왜 멈췄나" 가 거기 있다 · 생성물이라 길다: 하나씩 `node rebuild/read.mjs PLAN-…`) · `CHANGES.md` 위 몇 행 · `limitations.md`.
 5. `workspace/handoff/NEXT-<가장 최근 날짜>.md` — 지난 세션의 상태·사용자 결정·다음 순서 (지금: `NEXT-2026-10-25.md`).

@@ -13,19 +13,19 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "780 개 · 26065.4 KB"
+        "782 개 · 26495.5 KB"
        ],
        [
         "입구 문서 6 곳 합",
-        "73.4 KB"
+        "73.7 KB"
        ],
        [
         "direction 부팅 읽기 합",
-        "137.5 KB"
+        "274.9 KB"
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "81 개 · 1685.1 KB"
+        "81 개 · 1827.4 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,11 +53,11 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "384 / 25"
+        "386 / 25"
        ],
        [
         "번호 이름공간",
-        "52 (active 30 · planned 4 · legacy 2 · external 16)"
+        "54 (active 33 · planned 3 · legacy 2 · external 16)"
        ],
        [
         "미등록 번호 모양 / 겹침 / 예외",
@@ -117,23 +117,23 @@
        ],
        [
         "rebuild",
-        "32",
-        "5354.7"
+        "34",
+        "5636.4"
        ],
        [
         "docs",
         "58",
-        "1213.5"
+        "1354.2"
        ],
        [
         "(최상위)",
         "18",
-        "891.2"
+        "894.3"
        ],
        [
         "tests",
         "79",
-        "546.1"
+        "550.0"
        ],
        [
         "judicial",
@@ -163,7 +163,7 @@
        [
         "legislative",
         "3",
-        "68.3"
+        "69.0"
        ],
        [
         "migrations",
@@ -211,7 +211,7 @@
       "rows": [
        [
         "`rebuild/ledger/units.jsonl`",
-        "4657.9"
+        "4660.9"
        ],
        [
         "`data/fetched/consensus/uniprot/P04637.json`",
@@ -259,7 +259,7 @@
        ],
        [
         "`CHANGES.md`",
-        "255.1"
+        "258.0"
        ],
        [
         "`data/fetched/consensus/uniprot/P01911.json`",
@@ -270,12 +270,20 @@
         "253.4"
        ],
        [
+        "`docs/design/build-plan.md`",
+        "201.2"
+       ],
+       [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
         "188.8"
        ],
        [
         "`data/assumptions.jsonl`",
         "182.3"
+       ],
+       [
+        "`rebuild/state/plan-log.jsonl`",
+        "181.1"
        ],
        [
         "`data/fetched/consensus/uniprot/P62877.json`",
@@ -300,14 +308,6 @@
        [
         "`data/fetched/consensus/uniprot/Q9Y6K9.json`",
         "166.6"
-       ],
-       [
-        "`data/fetched/uniprot/Q9Y6K9.json`",
-        "166.6"
-       ],
-       [
-        "`data/fetched/consensus/uniprot/O14746.json`",
-        "145.9"
        ]
       ]
      }
@@ -333,14 +333,14 @@
       "rows": [
        [
         "`CHANGES.md`",
-        "255.1",
-        "239",
+        "258.0",
+        "240",
         "",
         "분류됨 1"
        ],
        [
         "`CLAUDE.md`",
-        "18.0",
+        "18.2",
         "85",
         "입구",
         "분류됨 242"
@@ -396,7 +396,7 @@
        ],
        [
         "`docs/design/agent-rules.md`",
-        "45.2",
+        "45.9",
         "117",
         "",
         "분류됨 192"
@@ -410,10 +410,10 @@
        ],
        [
         "`docs/design/build-plan.md`",
-        "64.1",
-        "164",
+        "201.2",
+        "2310",
         "",
-        "분류됨 120"
+        "생성물"
        ],
        [
         "`docs/design/cell-fate-engine.md`",
@@ -767,8 +767,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "118.3",
-        "821",
+        "119.6",
+        "823",
         "",
         "생성물"
        ],
@@ -1206,7 +1206,7 @@
        ],
        [
         "`tests/rebuild.test.mjs`",
-        "17"
+        "19"
        ],
        [
         "`tests/rejections.test.mjs`",
@@ -1783,7 +1783,7 @@
         "없음"
        ],
        [
-        "`docs/design/build-plan.md`",
+        "`docs/design/build-plan.md` (`e4423d8` 판)",
         "120",
         "없음"
        ],
@@ -2143,7 +2143,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/index/namespaces.jsonl` (이름공간 52) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다."
+     "원본: `rebuild/index/namespaces.jsonl` (이름공간 54) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다."
     ]
    },
    {
@@ -2178,7 +2178,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "10325 · 214 · 226",
+        "10328 · 214 · 226",
         "212 · 없음 2"
        ],
        [
@@ -2198,7 +2198,7 @@
         "`model.ID_RE.L`",
         "legislative merge (meta.next.L)",
         "`data/db.json#limitations`",
-        "2614 · 126 · 161",
+        "2641 · 126 · 161",
         "124 · 없음 2"
        ],
        [
@@ -2208,7 +2208,7 @@
         "`model.ID_RE.O`",
         "legislative merge (meta.next.O)",
         "`data/db.json#observations`",
-        "754 · 34 · 82",
+        "764 · 34 · 82",
         "28 · 없음 6"
        ],
        [
@@ -2238,7 +2238,7 @@
         "`^[TDSLOA]\\+[A-Za-z0-9_]+$`",
         "patch author (patch-local)",
         "`patch files (merge assigns real id)`",
-        "1853 · 505 · 96",
+        "1855 · 505 · 96",
         "—"
        ],
        [
@@ -2348,7 +2348,7 @@
         "`^(S[0-4]|D[0-4]|T|I)\\.[a-z_]+$`",
         "judicial/reliability.js CRITERIA",
         "`judicial/reliability.js#CRITERIA`",
-        "110 · 22 · 13",
+        "198 · 22 · 12",
         "20 · 없음 2"
        ],
        [
@@ -2358,7 +2358,7 @@
         "`^TASK-\\d{3}$`",
         "integrator",
         "`workspace/tasks/`",
-        "357 · 5 · 36",
+        "359 · 5 · 36",
         "5 · 없음 0"
        ],
        [
@@ -2368,7 +2368,7 @@
         "`^U\\d{4,}$`",
         "classification (rebuild PLAN §5)",
         "`rebuild/ledger/*.jsonl`",
-        "10017 · 7281 · 8",
+        "10021 · 7281 · 9",
         "—"
        ],
        [
@@ -2398,18 +2398,18 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "2961 · 513 · 42",
+        "2980 · 513 · 44",
         "513 · 없음 0"
        ],
        [
         "`decision`",
-        "planned",
+        "active",
         "token",
         "`^DEC-\\d{4}$`",
-        "(planned)",
-        "`(planned)`",
-        "0 · 0 · 0",
-        "—"
+        "rebuild 6c (계획 기록 — 결정, 순번)",
+        "`rebuild/state/plans.jsonl`",
+        "452 · 32 · 11",
+        "153 · 없음 2"
        ],
        [
         "`change`",
@@ -2419,7 +2419,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "232 · 없음 0"
+        "233 · 없음 0"
        ],
        [
         "`code_head`",
@@ -2436,10 +2436,30 @@
         "active",
         "token",
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
-        "rebuild 6c (상태 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
-        "`rebuild/state/build-plan.jsonl`",
-        "88 · 87 · 2",
-        "93 · 없음 0"
+        "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
+        "`rebuild/state/plans.jsonl`",
+        "917 · 90 · 6",
+        "153 · 없음 3"
+       ],
+       [
+        "`plan_stage`",
+        "active",
+        "token",
+        "`^STG-\\d{2}[a-z]?p{0,3}$`",
+        "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
+        "`rebuild/state/plans.jsonl`",
+        "267 · 23 · 7",
+        "153 · 없음 0"
+       ],
+       [
+        "`plan_direction`",
+        "active",
+        "token",
+        "`^DIR-\\d{4}$`",
+        "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
+        "`rebuild/state/plans.jsonl`",
+        "15 · 8 · 4",
+        "153 · 없음 1"
        ],
        [
         "`test`",
@@ -2468,7 +2488,7 @@
         "`^EQ-\\d{4}$`",
         "rebuild 6d (수식 기록)",
         "`rebuild/rules/formulas.jsonl`",
-        "19 · 13 · 4",
+        "25 · 13 · 6",
         "13 · 없음 0"
        ],
        [
@@ -2713,7 +2733,10 @@
      "- `observation`: O000029 · O000999 · O900001 · O900002 · O900003 · O999999",
      "- `value`: V000069 · V900000 · V999998 · V999999",
      "- `assumption`: A000500 · A000999 · A999999",
-     "- `criterion`: D3.asserted · S3.doi"
+     "- `criterion`: D3.asserted · S3.doi",
+     "- `decision`: DEC-0098 · DEC-0099",
+     "- `plan_item`: PLAN-997 · PLAN-998 · PLAN-999",
+     "- `plan_direction`: DIR-0099"
     ]
    },
    {
@@ -2771,8 +2794,8 @@
       "rows": [
        [
         "공통 `common`",
-        "74",
-        "6285.9"
+        "76",
+        "6708.4"
        ],
        [
         "정보 작성 `author`",
@@ -2787,7 +2810,7 @@
        [
         "디벨롭 `develop`",
         "161",
-        "2096.5"
+        "2104.1"
        ],
        [
         "적분장 `field`",
@@ -2819,8 +2842,8 @@
        [
         "`rebuild/**`",
         "common",
-        "32",
-        "5354.7",
+        "34",
+        "5636.4",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -3002,7 +3025,7 @@
         "`legislative/**`",
         "develop",
         "3",
-        "68.3",
+        "69.0",
         "입법부 코드"
        ],
        [
@@ -3121,7 +3144,7 @@
         "`tests/**`",
         "develop",
         "49",
-        "481.4",
+        "485.4",
         "시험"
        ],
        [
@@ -3149,14 +3172,14 @@
         "`docs/textbook/**`",
         "common",
         "11",
-        "396.3",
+        "399.1",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
         "`docs/design/**`",
         "common",
         "21",
-        "407.3",
+        "545.2",
         "설계 문서 — 장부 단위가 모드를 따로 가짐"
        ],
        [
@@ -3177,7 +3200,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "255.1",
+        "258.0",
         "변경 기록"
        ],
        [
@@ -3191,7 +3214,7 @@
         "`*.md`",
         "common",
         "4",
-        "75.0",
+        "75.2",
         "최상위 문서"
        ],
        [

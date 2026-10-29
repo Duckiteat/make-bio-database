@@ -45,7 +45,7 @@ export const ZONES = {
   draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
   transition:  { label: '전환 기록 (세션 사이 인계)', allow: ['workspace/transitions.jsonl'], rule: '사법부 전환 기록 검사(judicial/transition_audit.js)가 통과할 때만 — 추가만 한다' },
-  rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·상태 기록만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
+  rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·계획 기록과 그 생성 문서만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
 // 구역 검사 — 통과한 절대 경로를 돌려준다. 저장소 밖은 구역 표가 다루지 않는다(위 머리말).
@@ -237,14 +237,22 @@ export function writeStatus(name, content, root) {
 }
 // 6 단계 새 구조 초안 (재건 초안 폴더 — 8 단계에 제자리로): 중심 문서 · 모드 문서 · 스킬만
 export function writeDraftDoc(name, content, root) {
-  if (!/^(CLAUDE\.md|build-plan\.md|modes\/[a-z]+\.md|skills\/[a-z]+\/SKILL\.md)$/.test(name)) refuse('RULE-0014', `새 구조 초안 이름 '${name}' — CLAUDE.md · build-plan.md · modes/<모드>.md · skills/<모드>/SKILL.md 만`);
+  if (!/^(CLAUDE\.md|modes\/[a-z]+\.md|skills\/[a-z]+\/SKILL\.md)$/.test(name)) refuse('RULE-0014', `새 구조 초안 이름 '${name}' — CLAUDE.md · modes/<모드>.md · skills/<모드>/SKILL.md 만`);
   return put('rebuild', join(root || ROOT, 'rebuild', 'draft', name), content);
 }
 
-// 6c 상태 기록 (재건 상태 폴더) — 계획 문서를 parse 한 기록. 8 단계까지는 문서에서 다시 들이고, 그 뒤엔 기록이 원본
+// 6c 계획 기록 (재건 상태 폴더) — 지금(plans.jsonl)과 걸어온 길(plan-log.jsonl). 걸어온 길은 덧붙이기만: 새 글이 옛 글로 시작해야 한다
 export function writeState(name, content, root) {
-  if (name !== 'build-plan.jsonl') refuse('RULE-0014', `상태 기록 이름 '${name}' — build-plan.jsonl 만`);
-  return put('rebuild', join(root || ROOT, 'rebuild', 'state', name), content);
+  if (!['plans.jsonl', 'plan-log.jsonl'].includes(name)) refuse('RULE-0014', `계획 기록 이름 '${name}' — plans.jsonl · plan-log.jsonl 만`);
+  const f = join(root || ROOT, 'rebuild', 'state', name);
+  if (name === 'plan-log.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0014', '계획의 걸어온 길(plan-log.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
+  return put('rebuild', f, content);
+}
+// 계획 문서 둘 — 계획 기록에서 생성한 글만 (손으로 고치지 않는다)
+export function writePlanDoc(plan, content, root) {
+  const rel = { build: ['docs', 'design', 'build-plan.md'], rebuild: ['rebuild', 'PLAN.md'] }[plan];
+  if (!rel) refuse('RULE-0014', `계획 '${plan}' — build · rebuild 만`);
+  return put('rebuild', join(root || ROOT, ...rel), content);
 }
 
 // ⑥ 임시 산출물 (패치 초안·리팩터링 제안) — 저장소 밖 임시 폴더에만

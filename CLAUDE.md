@@ -1,7 +1,7 @@
 # 에이전트 점검표
 
 해설·이유·경위: `docs/design/agent-rules.md`(규칙을 바꾸면 두 파일을 같은 커밋에서). 실행 방법: `docs/RUNBOOK.md`. 형식: `SCHEMA.md`. 설명: `docs/textbook/00-목차.md`. 명령은 저장소 최상위에서.
-큰 파일(`data/db.json`·`CHANGES.md`·`limitations.md`)은 통째로 읽지 말고 조회 명령·`grep`.
+큰 파일(`data/db.json`·`CHANGES.md`·`limitations.md`·계획 문서 둘)은 통째로 읽지 말고 조회 명령·`grep`. 계획(`docs/design/build-plan.md`·`rebuild/PLAN.md`)은 생성물 — 하나 읽기 `node rebuild/read.mjs PLAN-…|STG-…|DEC-…|DIR-…`, 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜).
 번호: 개념 T… · 뜻 D… · 단계 S… · 관찰 O… · 하위 `D…/site/키`·`D…/rule/키` · 묶음 `D…|부위:특징|위치`. 연결은 번호로만.
 
 ## 삼권 분립 (`docs/design/tripartite-governance.md`) — 바꾸면 `node --test tests/*.test.mjs`(특히 governance)

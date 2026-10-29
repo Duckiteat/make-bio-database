@@ -51,7 +51,7 @@
 ### 검증·판정
 
 - `RULE-0002` 명령은 저장소 최상위에서
-- `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md)은 통째로 읽지 말고 조회 명령·grep
+- `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md·계획 문서 둘)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 하나 읽기 node rebuild/read.mjs PLAN-…, 고치기 node rebuild/plan.mjs apply
 - `RULE-0192` 사용자 보고는 네 칸 표, 산문 요약 금지
 - `RULE-0195` 논리를 깨면 감지·수정·기록까지 한 작업
 - `RULE-0199` 엔진·공유 기계를 바꿨으면 전체 시험

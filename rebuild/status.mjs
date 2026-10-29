@@ -29,7 +29,7 @@ const ENTRY = ['CLAUDE.md', 'docs/design/direction.md', 'docs/RUNBOOK.md', 'docs
 const BOOT = ['CLAUDE.md', 'docs/design/direction.md', 'docs/design/authority-and-comprehension.md', 'docs/design/tripartite-governance.md',
   'docs/design/dictionary-and-translation.md', 'docs/design/conservation-classes.md', 'docs/design/work-verification.md', 'docs/design/build-plan.md'];
 // 생성물 (분류 대상이 아님 — 원천에서 다시 만든다)
-const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html'];
+const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html', 'docs/design/build-plan.md', 'rebuild/PLAN.md']; // 계획 둘은 2026-10-29 부터 계획 기록에서 생성 (DEC-0027)
 
 // ── 저장소 파일 목록 (추적 + 무시되지 않은 새 파일, 관리 파일 자신은 뺌 — 자기 크기를 세면 고정점이 없다)
 function files() {
@@ -172,10 +172,13 @@ function build() {
   const places = Object.values(refd), multi = places.length;
   const covRows = Object.keys(unitsBy).sort().map((s) => {
     if (L.units.some((u) => u.src === s + ':*')) return [`\`${s}\``, '파일 전체', '없음'];
-    const have = new Set(L.units.filter((u) => u.src.replace(/:\d+.*$/, '') === s).map((u) => +u.src.split(':')[1]));
-    const ls = read(s).split('\n');
+    const us = L.units.filter((u) => u.src.replace(/:\d+.*$/, '') === s), have = new Set(us.map((u) => +u.src.split(':')[1]));
+    // src_at: 줄 번호가 맞는 판(그 뒤 생성물이 된 문서). 그 판을 git 에서 읽는다 — 얕은 복제면 대조하지 않음
+    const at = [...new Set(us.map((u) => u.src_at).filter(Boolean))];
+    if (at.length > 1) return [`\`${s}\``, String(have.size), `판이 여럿 (${at.join(' · ')}) — 하나여야 함`];
+    let ls; if (at.length) { try { ls = execFileSync('git', ['show', `${at[0]}:${s}`], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 }).split('\n'); } catch { return [`\`${s}\` (\`${at[0]}\` 판)`, String(have.size), 'git 에 그 판이 없음(얕은 복제) — 대조 못 함']; } } else ls = read(s).split('\n');
     const miss = ls.map((l, i) => [l, i + 1]).filter(([l, n]) => l.trim() && !/^\|?\s*:?-{3}/.test(ls[n] || '') && !/^#{1,6} /.test(l) && !/^\|?\s*-{3}/.test(l) && !/^\|[^|]*\|\s*$/.test(l) && !/^```/.test(l) && !/^>\s*$/.test(l) && !have.has(n)).map(([, n]) => n);
-    return [`\`${s}\``, String(have.size), miss.length ? miss.join(' · ') : '없음'];
+    return [`\`${s}\`${at.length ? ` (\`${at[0].slice(0, 7)}\` 판)` : ''}`, String(have.size), miss.length ? miss.join(' · ') : '없음'];
   });
   const heur = L.units.filter((u) => u.by === 'heur').length, eqs = L.units.filter((u) => /수식 후보/.test(u.note || '')).length;
   const byText = `매긴 방식: 판단 ${L.units.length - heur} · 휴리스틱 ${heur} (\`by: heur\` — 검토 전, 5 단계에서 규칙부터 다시 봄) · 수식 후보(EQ) ${eqs}`;
@@ -310,16 +313,34 @@ function build() {
   return out;
 }
 
+// 계획 기록의 참조를 풀 재료 — 파일·규칙·수식·데이터 번호·변경 기록 행·커밋 (얕은 복제면 커밋은 모름 = null)
+export function planCtx(S, root = ROOT) {
+  const jl = (p) => (existsSync(join(root, p)) ? readFileSync(join(root, p), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []);
+  const db = JSON.parse(readFileSync(join(root, 'data', 'db.json'), 'utf8'));
+  const keys = { T: 'terms', D: 'senses', S: 'steps', O: 'observations', L: 'limitations', V: 'values' };
+  let shallow = true; try { shallow = execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: root, encoding: 'utf8' }).trim() === 'true'; } catch {}
+  return {
+    exists: (p) => existsSync(join(root, p)), rules: new Set(jl('rebuild/rules/rules.jsonl').map((r) => r.id)), formulas: new Set(jl('rebuild/rules/formulas.jsonl').map((r) => r.id)),
+    db: Object.fromEntries(Object.entries(keys).map(([k, v]) => [k, new Set(Object.keys(db[v] || {}))])),
+    changes: readFileSync(join(root, 'CHANGES.md'), 'utf8').split('\n').filter((l) => l.startsWith('| 20')).length,
+    commit: shallow ? null : (h) => { try { execFileSync('git', ['cat-file', '-e', h + '^{commit}'], { cwd: root, stdio: 'ignore' }); return true; } catch { return false; } },
+  };
+}
+
 // 직접 실행할 때만 (시험이 build 를 불러도 쓰거나 출력하지 않게)
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const flag = process.argv[2], out = build(), drafts = RENDER.build(ROOT);
   const staleIn = (dir, o) => Object.entries(o).filter(([name, text]) => { const p = join(ROOT, dir, name); return !existsSync(p) || readFileSync(p, 'utf8') !== text; });
-  // 상태 기록 (6c): 8 단계까지 계획 문서는 손으로 고쳐지므로, 기록을 다시 그린 글이 문서와 다르면 문서를 parse 해 다시 들인다
-  const planDoc = readFileSync(join(ROOT, STATE.SOURCE), 'utf8'), planStale = !existsSync(join(ROOT, STATE.RECORDS)) || STATE.render(STATE.load(ROOT)) !== planDoc;
-  const stale = () => [...staleIn(STATUS, out), ...staleIn('rebuild/draft/', drafts).map(([n, t]) => ['../draft/' + n, t]), ...(planStale ? [['../' + STATE.RECORDS.split('/').slice(1).join('/')]] : [])];
-  if (flag === '--write') {
-    if (planStale) { CLERK.writeState('build-plan.jsonl', STATE.parse(planDoc).map((r) => JSON.stringify(r)).join('\n') + '\n', ROOT); drafts['build-plan.md'] = STATE.render(STATE.load(ROOT)); }
-    for (const [name, text] of staleIn(STATUS, out)) CLERK.writeStatus(name, text, ROOT); for (const [name, text] of staleIn('rebuild/draft/', drafts)) CLERK.writeDraftDoc(name, text, ROOT);
+  // 계획 문서 둘 (6c): 계획 기록에서 생성 — 기록이 정확성 검사를 통과해야 쓴다
+  const S = STATE.load(ROOT), errs = STATE.check(S, planCtx(S));
+  if (errs.length && flag) { console.error(`계획 기록 오류 ${errs.length}:\n- ${errs.slice(0, 30).join('\n- ')}`); process.exit(1); }
+  const plansOut = Object.fromEntries(S.plans.map((p) => [p.plan, STATE.render(S, p.plan)]));
+  const planStale = Object.entries(plansOut).filter(([plan, text]) => { const f = join(ROOT, STATE.PLANS[plan].out); return !existsSync(f) || readFileSync(f, 'utf8') !== text; });
+  const stale = () => [...staleIn(STATUS, out), ...staleIn('rebuild/draft/', drafts).map(([n, t]) => ['../draft/' + n, t]), ...planStale.map(([plan]) => ['../../' + STATE.PLANS[plan].out])];
+  if (flag === '--write') { // 계획 문서·초안 먼저 — 관리 파일이 그 크기를 세므로 그 뒤에 다시 계산해 쓴다 (한 번에 최신)
+    for (const [plan, text] of planStale) CLERK.writePlanDoc(plan, text, ROOT);
+    for (const [name, text] of staleIn('rebuild/draft/', drafts)) CLERK.writeDraftDoc(name, text, ROOT);
+    for (const [name, text] of staleIn(STATUS, build())) CLERK.writeStatus(name, text, ROOT);
   }
   else if (flag === '--check') {
     const s = stale().map(([n]) => n);

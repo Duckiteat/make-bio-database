@@ -135,7 +135,7 @@
 | `docs/design/abstraction-boundary.md` | 31 | 없음 |
 | `docs/design/agent-rules.md` | 93 | 없음 |
 | `docs/design/authority-and-comprehension.md` | 22 | 없음 |
-| `docs/design/build-plan.md` | 120 | 없음 |
+| `docs/design/build-plan.md` (`e4423d8` 판) | 120 | 없음 |
 | `docs/design/cell-fate-engine.md` | 76 | 없음 |
 | `docs/design/conservation-classes.md` | 47 | 없음 |
 | `docs/design/dictionary-and-translation.md` | 121 | 없음 |

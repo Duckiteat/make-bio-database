@@ -62,7 +62,8 @@ const NETS = [
   /\b[A-Z]{1,4}\d{4,8}\b/g,                                             // 글자 + 숫자 (T000001 · P04637 · PMC123)
   /(?<![A-Za-z0-9_])[A-Z]\+[A-Za-z0-9_]+/g,                             // 패치 임시 번호
   /\bAUDIT_[A-Z_]+\b/g,                                                 // 감사 코드
-  /\b(?:TASK|RULE|DEC|CHG|PLAN|TEST|SW|EQ|MED|PMC)-\d+\b/g,             // 하이픈 번호
+  /\b(?:TASK|RULE|DEC|CHG|PLAN|TEST|SW|EQ|MED|PMC|DIR)-\d+\b/g,         // 하이픈 번호
+  /\bSTG-\d{2}[a-z]?p{0,3}\b/g,                                         // 재건 단계 (STG-05bpp)
   /\btrig_[A-Za-z0-9]+/g,                                               // 예약 작업
 ];
 const NET_MD = /(?<![\w.])(?:S[0-4]|D[0-4]|T|I)\.[a-z_]+\b/g;            // 신뢰 기준 번호 (문서에서만 — 코드에선 속성 접근과 겹침)

@@ -6,7 +6,7 @@
 데이터는 사람이 아니라 AI가 넣는다. 저장소는 `data/db.json`, 병합 기록은 `data/patches/`.
 모든 항목은 고정 번호(개념 T…, 뜻 D…, 단계 S…)로 식별되고 연결도 번호로만 건다. 정의항의 하위 항목은 `D…/site/키`·`D…/rule/키`, 묶음은 `D…|부위:특징|위치`.
 규칙 전체는 `SCHEMA.md`, 구조·저장·알고리즘·상호작용의 설명은 교과서 `docs/textbook/00-목차.md`. 명령은 저장소 최상위에서 실행한다.
-**무엇을 어떻게 돌리는지는 `docs/RUNBOOK.md` 하나로 충분하다** — 돌릴 수 있는 경로·상태, 확인된 상태×시나리오 짝, 결과를 읽는 법, 관문 거부 메시지 → 고칠 곳, 넘길 신호. 큰 파일(`data/db.json` 604 KB·`CHANGES.md`·`limitations.md`)을 통째로 읽지 말고 조회 명령과 `grep` 으로 필요한 줄만 본다.
+**무엇을 어떻게 돌리는지는 `docs/RUNBOOK.md` 하나로 충분하다** — 돌릴 수 있는 경로·상태, 확인된 상태×시나리오 짝, 결과를 읽는 법, 관문 거부 메시지 → 고칠 곳, 넘길 신호. 큰 파일(`data/db.json` 604 KB·`CHANGES.md`·`limitations.md`)을 통째로 읽지 말고 조회 명령과 `grep` 으로 필요한 줄만 본다. 계획 문서 둘(`docs/design/build-plan.md`·`rebuild/PLAN.md`)도 길다 — 생성물이다(원본 `rebuild/state/plans.jsonl`·`plan-log.jsonl`). 사용자 2026-10-29(DEC-0027): 맥락을 잃은 채 계획을 따라가면 이상한 결론에 닿으므로, 계획은 처음 목적·중간에 바뀐 이유·도달 과정·중간 결과·종합 결과와 의의·나아갈 방향을 모두 담고 길어도 정확해야 한다. 그래서 하나씩 `node rebuild/read.mjs PLAN-…` 로 읽고, 고칠 때는 `node rebuild/plan.mjs apply <ops.json>` 로만 — 바꿀 때마다 왜를 적고 사건으로 남으며, 근거 없는 종합·지어낸 번호·사건 없는 변경은 검사가 거부한다.
 
 ## 삼권 분립 (반드시 — 어기면 무결성 규약 위반, `docs/design/tripartite-governance.md`)
 

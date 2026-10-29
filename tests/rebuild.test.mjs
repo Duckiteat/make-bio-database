@@ -11,12 +11,13 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { createRequire } from 'node:module';
-import { build, ROOT, STATUS } from '../rebuild/status.mjs';
+import { build, ROOT, STATUS, planCtx } from '../rebuild/status.mjs';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from '../rebuild/index.mjs';
 import * as RENDER from '../rebuild/render.mjs';
 import * as READ from '../rebuild/read.mjs';
 import * as STATE from '../rebuild/state.mjs';
+import * as IMPORT from '../rebuild/plan-import.mjs';
 
 const X = IDX.build();
 
@@ -43,11 +44,13 @@ test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는
   assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
-test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md · rebuild/draft/ 의 새 구조 초안 · rebuild/state/ 의 상태 기록만', () => {
-  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/']);
-  for (const bad of ['../x.jsonl', 'other.jsonl', 'build-plan.md']) assert.throws(() => CLERK.writeState(bad, 'x', ROOT), /상태 기록 이름/, bad);
+test('③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/draft/ 초안 · rebuild/state/ 계획 기록 · 계획 문서 둘만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md']);
+  for (const bad of ['../x.jsonl', 'other.jsonl', 'build-plan.jsonl', 'build-plan.md']) assert.throws(() => CLERK.writeState(bad, 'x', ROOT), /계획 기록 이름/, bad);
+  assert.throws(() => CLERK.writeState('plan-log.jsonl', 'x\n', ROOT), /덧붙이기만/, '걸어온 길을 줄이거나 고치는 쓰기');
+  assert.throws(() => CLERK.writePlanDoc('other', 'x', ROOT), /build · rebuild 만/);
   for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
-  for (const bad of ['../CLAUDE.md', 'modes/Author.md', 'modes/a/b.md', 'skills/x/other.md', 'x.md']) assert.throws(() => CLERK.writeDraftDoc(bad, 'x', ROOT), /새 구조 초안 이름/, bad);
+  for (const bad of ['../CLAUDE.md', 'build-plan.md', 'modes/Author.md', 'modes/a/b.md', 'skills/x/other.md', 'x.md']) assert.throws(() => CLERK.writeDraftDoc(bad, 'x', ROOT), /새 구조 초안 이름/, bad);
 });
 
 test('④ 분류 장부에 형식 오류가 없고, 분류한 문서는 빠진 줄이 없다', () => {
@@ -188,15 +191,44 @@ test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글
   }
 });
 
-test('⑯ 상태 기록 (6c): build-plan 의 기록에서 다시 만든 글 = 지금 문서 (바이트 동일) · 작업마다 번호 하나 · 상태 기호가 읽힘', () => {
-  const recs = STATE.load(ROOT), now = readFileSync(join(ROOT, STATE.SOURCE), 'utf8');
-  assert.equal(STATE.render(recs), now, '기록이 문서와 다름 — 문서를 고쳤으면 node --input-type=module 로 parse 해 rebuild/state/build-plan.jsonl 을 다시 들인다');
-  assert.deepEqual(STATE.parse(now), recs, 'parse(문서) = 기록');
-  const items = recs.filter((r) => r.kind === 'item'), ids = items.map((r) => r.id);
-  assert.equal(new Set(ids).size, ids.length, '계획 번호가 겹침');
-  assert.ok(ids.every((x) => /^PLAN-(?:\d{3}[ap]?|H\d{2})$/.test(x)));
-  assert.deepEqual(recs.filter((r) => r.kind === 'raw').map((r) => r.text.slice(0, 30)), [], '깨진 표 줄');
-  assert.deepEqual(items.filter((r) => !r.state && r.n !== '(보류)').map((r) => r.id), [], '상태 기호(☑ ☐ ◐ ✗)가 없는 작업');
+test('⑯ 계획 기록 (6c · DEC-0027): 정확성 검사 0 · 지금 = 걸어온 길을 접은 것 · 계획 문서 둘은 기록에서 바이트 동일', () => {
+  const S = STATE.load(ROOT);
+  assert.deepEqual(STATE.check(S, planCtx(S)), [], '계획 기록 검사 — node rebuild/plan.mjs check');
+  for (const p of S.plans) assert.equal(readFileSync(join(ROOT, STATE.PLANS[p.plan].out), 'utf8'), STATE.render(S, p.plan), `${p.plan} 계획 문서가 기록과 다름 — 손으로 고치지 말고 node rebuild/plan.mjs apply → status --write`);
+  assert.deepEqual(S.plans.map((p) => p.plan).sort(), ['build', 'rebuild']);
+  // 차례가 정한 절이 다 있다 (목적 → 왜 → 결정 → 작업 → 종합 → 방향 → 열린 질문 → 근거 점검)
+  for (const p of S.plans) { const t = STATE.render(S, p.plan); let at = -1; for (const h of ['## 1. 목적', '## 2. 왜', '## 3. 결정과 바뀐 이유', '## 4. 작업', '## 5. 종합 결과와 의의', '## 6. 나아갈 방향', '## 7. 열린 질문', '## 근거 점검']) { const k = t.indexOf(h); assert.ok(k > at, `${p.plan}: '${h}' 가 차례대로 없음`); at = k; } }
+});
+
+test('⑱ 계획 고치기는 왜 · 근거가 있어야 하고, 지어낸 번호와 걸어온 길 밖의 변경을 거부한다', () => {
+  const S = STATE.load(ROOT), ctx = planCtx(S), first = S.items[0].id;
+  const run = (change) => { const r = STATE.apply(S, change); return [...r.errs, ...STATE.check(r.S, ctx)]; };
+  const ok = STATE.apply(S, { at: '2026-10-29', why: '시험', ops: [{ op: 'result', id: first, append: ' · 시험' }] });
+  assert.deepEqual([...ok.errs, ...STATE.check(ok.S, ctx)], [], '바른 변경은 통과');
+  assert.equal(ok.S.log.length, S.log.length + 1, '변경마다 사건 하나');
+  assert.ok(run({ at: '2026-10-29', ops: [] }).some((e) => /why/.test(e)), '왜 없음');
+  assert.ok(run({ at: '2026-10-29', why: 'x', ops: [{ op: 'state', id: 'PLAN-999', state: 'done' }] }).some((e) => /PLAN-999/.test(e)), '없는 작업');
+  assert.ok(run({ at: '2026-10-29', why: 'x', ops: [{ op: 'synthesis', synthesis: { plan: 'build', scope: 'all', by: 'ai', result: 'PLAN-998 이 끝남', meaning: 'm', evidence: ['PLAN-001'] } }] }).some((e) => /PLAN-998/.test(e)), '글 속 지어낸 번호');
+  assert.ok(run({ at: '2026-10-29', why: 'x', ops: [{ op: 'synthesis', synthesis: { plan: 'build', scope: 'all', by: 'ai', result: 'r', meaning: 'm', evidence: [] } }] }).some((e) => /근거 없음/.test(e)), '근거 없는 종합');
+  assert.ok(run({ at: '2026-10-29', why: 'x', ops: [{ op: 'direction', direction: { id: 'DIR-0099', plan: 'build', by: 'ai', state: 'open', text: 't', why: '', evidence: ['PLAN-001'] } }] }).some((e) => /무엇·왜/.test(e)), '왜 없는 방향');
+  assert.ok(run({ at: '2026-10-29', why: 'x', ops: [{ op: 'decide', decision: { id: 'DEC-0099', plans: ['rebuild'], type: 'method', at: '2026-10-29', by: 'user', title: 't', text: '원문에 없는 말', src: { item: 'STG-06a' }, affects: [] } }] }).some((e) => /그대로 없음/.test(e)), '인용이 원문에 없는 결정');
+  assert.ok(run({ at: '2026-10-29', why: 'x', ops: [{ op: 'decide', decision: { id: 'DEC-0098', plans: ['build'], type: 'order', at: '2026-10-29', by: 'someone', title: 't', text: 't', affects: ['PLAN-997'] } }] }).filter((e) => /DEC-0098/.test(e)).length >= 2, '누가 · 닿는 작업이 틀린 결정');
+  const hand = JSON.parse(JSON.stringify(S)); hand.items = hand.recs.filter((r) => r.kind === 'item'); hand.items[0].state = 'dropped'; hand.items[0].mark = '✗';
+  assert.ok(STATE.check(hand, ctx).some((e) => /걸어온 길/.test(e)), '사건 없이 고친 작업');
+});
+
+test('⑲ 걸어온 길의 git 부분은 git 역사에서 다시 계산한 것과 같다 (손으로 쓰던 계획 문서의 마지막 판까지)', () => {
+  const S = STATE.load(ROOT);
+  for (const p of S.plans) {
+    const have = S.log.filter((e) => e.plan === p.plan && e.source === 'git');
+    assert.ok(have.length && have.every((e) => /^[0-9a-f]{10}$/.test(e.commit)), `${p.plan}: git 사건마다 커밋`);
+    if (IMPORT.shallow(ROOT)) continue; // 얕은 복제에는 역사가 없다 — 위의 모양과 ⑯ 의 장부·잔액 검사만
+    const want = IMPORT.importHistory(ROOT, p.plan, p.import.until);
+    assert.deepEqual(have.map(({ seq, ...e }) => e), want.events, `${p.plan}: 저장된 git 사건 = 다시 가져온 것`);
+    assert.equal(want.commits, p.import.commits);
+    assert.deepEqual(want.repairs, p.import.repairs, `${p.plan}: 옛 문서에서 고친 곳`);
+  }
+  if (!IMPORT.shallow(ROOT)) assert.deepEqual(IMPORT.checkDecisionSources(ROOT, S), [], '결정의 원문이 그 판에 글자 그대로');
 });
 
 test('⑰ 관리 파일의 기계용 보기 (6e): status.json 의 표를 다시 그리면 .md 의 표와 칸까지 같다', () => {

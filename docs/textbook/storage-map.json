@@ -1499,10 +1499,10 @@
     {
       "path": "rebuild/PLAN.md",
       "class": "management",
-      "format": "Markdown",
-      "writer": "사람·AI",
-      "readers": "사람·AI (읽기만)",
-      "interpret": "재건 계획 — 미션·진단·모드 다섯·세션 규칙·새 구조·분류 방법·관리 파일·단계. 지금 숫자는 status/ 에."
+      "format": "Markdown 생성물 — 목적 → 왜 → 결정(시간순) → 작업(결과·걸어온 길) → 종합·의의 → 방향 → 열린 질문 → 근거 점검",
+      "writer": "rebuild/status.mjs --write (입법 서기 writePlanDoc) — 원본 rebuild/state/plans.jsonl · plan-log.jsonl",
+      "readers": "사람·AI (읽기만 — 하나씩은 node rebuild/read.mjs STG-…|DEC-…|DIR-…)",
+      "interpret": "재건 계획 (DEC-0027 부터 생성물). 손으로 고치지 않는다 — node rebuild/plan.mjs apply. 옛 절 번호(§0–§9)는 결정마다 '옛 문서의 §…' 로 남음."
     },
     {
       "path": "rebuild/status.mjs",
@@ -1595,18 +1595,34 @@
     {
       "path": "rebuild/state.mjs",
       "class": "management",
-      "format": "Node 모듈 (순수 — parse(글) → 기록 · render(기록) → 글 · load(root))",
+      "format": "Node 모듈 (순수 — load · fold · check · render · apply · readOne)",
       "writer": "사람·AI",
-      "readers": "rebuild/render.mjs · rebuild/status.mjs (--write 가 서기 writeState 로 씀) · tests/rebuild.test.mjs ⑯",
-      "interpret": "상태 기록 (6c) — 계획 문서의 작업 한 줄을 기록 하나(PLAN-…)로, 산문은 원문 그대로 한 덩어리. render(기록) 은 지금 문서와 바이트까지 같다."
+      "readers": "rebuild/status.mjs (계획 문서 생성) · rebuild/plan.mjs · rebuild/read.mjs · rebuild/plan-import.mjs · tests/rebuild.test.mjs ⑯–⑲",
+      "interpret": "계획 기록 (6c · DEC-0027) — 계획은 기록, 글은 생성물. check 가 정확성(참조가 풀림 · 지금 = 사건을 접은 것 · 근거 있는 종합·방향 · 인용이 원문에 그대로)을 보고, 통과해야 쓴다."
     },
     {
       "path": "rebuild/state/*",
       "class": "management",
-      "format": "JSONL — 기록 하나 = 한 줄 (kind item·text·head·raw)",
-      "writer": "rebuild/status.mjs --write (입법 서기 writeState)",
-      "readers": "rebuild/render.mjs (rebuild/draft/build-plan.md 생성) · tests/rebuild.test.mjs ⑯",
-      "interpret": "계획 상태 원본 — 8 단계까지는 docs/design/build-plan.md 에서 다시 들이고, 그 뒤엔 이것이 원본이고 글은 생성물."
+      "format": "JSONL — plans.jsonl (계획 머리·결정 DEC·부·글·작업 PLAN/STG·종합·방향 DIR·열린 질문) · plan-log.jsonl (작업 사건, 덧붙이기만)",
+      "writer": "입법 서기 writeState 만 (rebuild/plan.mjs apply — 검사 통과 뒤). plan-log 는 옛 글로 시작해야 씀",
+      "readers": "rebuild/state.mjs · rebuild/status.mjs (docs/design/build-plan.md · rebuild/PLAN.md 생성) · tests/rebuild.test.mjs ⑯–⑲",
+      "interpret": "두 계획의 원본. 2026-10-29 까지의 걸어온 길은 git 역사에서 가져옴(source git, node rebuild/plan-import.mjs --check 로 다시 대조), 그 뒤는 apply 사건(source apply)."
+    },
+    {
+      "path": "rebuild/plan.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (apply <ops.json> [--dry] · check)",
+      "writer": "사람·AI",
+      "readers": "사람·AI",
+      "interpret": "계획 고치기의 유일한 길 — 변경 묶음 {at, why, ops[]} 를 검사한 뒤 서기로 씀. 문서는 status --write 가 다시 만듦."
+    },
+    {
+      "path": "rebuild/plan-import.mjs",
+      "class": "management",
+      "format": "Node 모듈·스크립트 (읽기만 — git 역사를 읽음)",
+      "writer": "사람·AI",
+      "readers": "tests/rebuild.test.mjs ⑲ · node rebuild/plan-import.mjs --check",
+      "interpret": "손으로 쓰던 계획 문서의 git 역사(import.until 까지)를 작업 사건으로 — 옛 문서의 깨진 곳 둘을 고쳐 읽고 그 사실을 repairs 로 남김."
     },
     {
       "path": "rebuild/draft/*",

@@ -4,8 +4,8 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 255.1 | 239 |  | 분류됨 1 |
-| `CLAUDE.md` | 18.0 | 85 | 입구 | 분류됨 242 |
+| `CHANGES.md` | 258.0 | 240 |  | 분류됨 1 |
+| `CLAUDE.md` | 18.2 | 85 | 입구 | 분류됨 242 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
@@ -13,9 +13,9 @@
 | `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
-| `docs/design/agent-rules.md` | 45.2 | 117 |  | 분류됨 192 |
+| `docs/design/agent-rules.md` | 45.9 | 117 |  | 분류됨 192 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
-| `docs/design/build-plan.md` | 64.1 | 164 |  | 분류됨 120 |
+| `docs/design/build-plan.md` | 201.2 | 2310 |  | 생성물 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
 | `docs/design/dictionary-and-translation.md` | 16.0 | 203 |  | 분류됨 121 |
@@ -66,7 +66,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 118.3 | 821 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 119.6 | 823 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
