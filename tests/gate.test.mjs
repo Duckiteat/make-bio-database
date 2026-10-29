@@ -53,7 +53,7 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   assert.equal(pre({ ...col, branch: () => 'collector/task-9', pushFiles: () => ['workspace/handoff/TASK-009.jsonl'] }, 'Bash', { command: 'git push -u origin collector/task-9' }), null, '결정 ②: 자기 브랜치 + 핸드오프만');
   assert.match(pre(col, 'Bash', { command: 'node dbtool.mjs augment apply p.json' }), /^RULE-0287 .*수집가는 후보만/);
   assert.match(pre({ role: 'collector' }, 'Bash', { command: 'node rebuild/gate.mjs open develop' }), /author 모드만/);
-  // 글로 적은 명령은 실행이 아니다 (2026-10-29 첫 실사용에서 잘못 막힘 — 기록 본문의 "gate.mjs finish develop`")
+  // 글로 적은 명령은 실행이 아니다 (본문 글자를 명령으로 보면 잘못 막는다 — 예: "gate.mjs finish develop`")
   const dev = { mode: 'develop' };
   assert.equal(pre(dev, 'Bash', { command: "cat >> x.md <<'EOF'\n`node rebuild/gate.mjs finish develop` · node dbtool.mjs merge p.json\nEOF\necho ok" }), null, 'heredoc 본문');
   assert.equal(pre(dev, 'Bash', { command: 'git add -A && echo "dbtool.mjs merge 을 고침"' }), null, '따옴표 속 글');

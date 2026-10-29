@@ -132,7 +132,7 @@ test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 
   assert.deepEqual(lit['DOI:10.1038/nature07830'], { kind: 'journal', retracted: false }, 'DOI 검색으로 확인된 학술지 기록 (소문자 열쇠)');
 });
 
-// 2026-10-25 사용자 결정: 수집가도 BRENDA 를 — 단 계정 정보는 도구 안(환경 변수)에만, 출력·기록·수신함에 남지 않는다
+// 사용자 결정: 수집가도 BRENDA 를 — 단 계정 정보는 도구 안(환경 변수)에만, 출력·기록·수신함에 남지 않는다
 test('⑩ BRENDA 도구: 수집가에게 보임 · 계정 없으면 사람이 할 일을 알림 · 해시가 아니면 거부 · EC 형식 검사', () => {
   const env = { BRENDA_EMAIL: '', BRENDA_PASSWORD_SHA256: '' };
   const { out } = call('fetch.mjs', [{ method: 'tools/list' }, tool('brenda_kinetics', { ec: '1.1.1.37' }), tool('brenda_kinetics', { ec: 'x' })], env);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 문지기 · 영수증 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — '한 세션 = 한 모드' 를 사람의 기억이 아니라 구조가 막게 한다.
+// 문지기 · 영수증 (재건 7 단계 · DEC-0018) — '한 세션 = 한 모드' 를 사람의 기억이 아니라 구조가 막게 한다.
 //   세션: node rebuild/gate.mjs open <모드>      (모드를 연다 — 세션 안에서 바꾸지 않는다. 다른 모드가 필요하면 node dbtool.mjs transition 뒤 끝낸다)
 //         node rebuild/gate.mjs finish <모드>    (끝내기 전 시험 묶음 — 통과해야 git commit · push)
 //         node rebuild/gate.mjs receipt [이름]   (영수증 읽기)
@@ -33,7 +33,7 @@ export function mayWrite(P, mode, role, rel) {
   const R = role && P.roles[role];
   if (R) return hit(R.write, rel);
   const M = P.modes[mode];
-  return !!M && (hit(M.also, rel) || (hit(M.write, rel) && !hit(M.except, rel))); // also = except 안에서도 여는 자리 (디벨롭의 사전 — 사용자 결정 2026-10-29)
+  return !!M && (hit(M.also, rel) || (hit(M.write, rel) && !hit(M.except, rel))); // also = except 안에서도 여는 자리 (디벨롭의 사전 — 사용자 결정)
 }
 export const protectedPath = (P, rel) => hit(P.common.protect, rel);
 export function finishCmds(P, mode, role) {
@@ -130,7 +130,7 @@ const headOf = (root) => { try { return git(root, 'rev-parse', 'HEAD').trim(); }
 // ── 세션 상태 (영수증에서 계산 · 앞뒤 대조용 지문만 저장소 밖에) ─────────────────
 const sid8 = (sid) => String(sid || 'nosession').replace(/[^0-9a-zA-Z-]/g, '').slice(0, 12) || 'nosession';
 // 영수증은 세션 동안 저장소 밖(live)에 쌓고, 커밋할 때만 저장소의 같은 이름으로 싣는다 — 커밋 뒤에 작업 트리가 다시 더러워지지 않게
-//   (커밋 명령 자체도 도구 호출이라, 저장소에 바로 쓰면 커밋할 때마다 영수증만 바뀐 채로 남았다 — 2026-10-29)
+//   (커밋 명령 자체도 도구 호출이라, 저장소에 바로 쓰면 커밋할 때마다 영수증만 바뀐 채로 남는다)
 export const liveRoot = (root) => join(tmpdir(), `biodb-receipts-${sha(resolve(root)).slice(0, 12)}`);
 function receiptName(root, sid) {
   const tail = '-' + sid8(sid) + '.jsonl';
@@ -229,7 +229,7 @@ function hook(event, input, root) {
     return code;
   }
   if (event === 'stop') {
-    // 관리 파일 생성(예전 Stop 훅)을 여기서 — 그 변경도 영수증에 붙는다
+    // 관리 파일 생성을 여기서 — 그 변경도 영수증에 붙는다
     const before = snapshot(root);
     if (existsSync(join(root, 'rebuild/status.mjs'))) spawnSync(process.execPath, [join(root, 'rebuild/status.mjs'), '--write'], { cwd: root, stdio: 'ignore' });
     const after = snapshot(root), gen = diffSnap(before, after);

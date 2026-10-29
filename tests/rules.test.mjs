@@ -674,7 +674,7 @@ const mx = (d) => `${d}|mito_matrix`;
 // examples/scenarios/tca-measured-kinetics-hypothetical.json(교과서 7.5′)에서 따로 확인한다.
 const INSTANT = (() => {
   const d = JSON.parse(JSON.stringify(BASE));
-  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate'], ['D000149', 'condense'], ['D000150', 'isomerize']]) for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다 (CS·아코니테이스 는 2026-10-16 실측 kcat·Km 추가 — 즉시 순환 픽스처에서는 벗긴다)
+  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate'], ['D000149', 'condense'], ['D000150', 'isomerize']]) for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다 (CS·아코니테이스 는 실측 kcat·Km 이 있다 — 즉시 순환 픽스처에서는 벗긴다)
   return DefDB.normalize(d);
 })();
 test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복실화에서 CO₂ 를 빼면 거부', () => {
@@ -914,7 +914,7 @@ test('자동 보강 build: 검증만 verified·출처·서열 길이·지문, �
   assert.notEqual(s.rows.find((r) => r.sense === id('IL-12 p35')).outcome, 'verified', 'sync 여도 이름·종 확인은 그대로 (번호만 바뀐 응답은 이름 확인이 없으면 거부)');
 });
 
-// ===== 외부 ID 역할 (ChEBI 규약, 2026-10-10) — 모체·pH 7.3 우세 종·분류를 섞지 않는다 =====
+// ===== 외부 ID 역할 (ChEBI 규약) — 모체·pH 7.3 우세 종·분류를 섞지 않는다 =====
 const INBOX = new URL('../data/fetched', import.meta.url).pathname;
 test('외부 ID 역할: 분류 항목은 셀 수 있는 분자의 번호가 될 수 없고, 역할이 겹치거나 physiological 이 없으면 거부', () => {
   const ATP = id('ATP'), xs = (list) => ({ senses: [{ id: ATP, xrefs: list }] });

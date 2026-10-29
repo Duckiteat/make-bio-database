@@ -1,9 +1,9 @@
 // 계획 상태 기록 (rebuild/PLAN.md 6c) — 계획은 기록이고 글은 생성물이다. 손으로 고치지 않는다.
 //   원본 둘: rebuild/state/plans.jsonl (지금 — 계획 머리·결정·부·작업·글·종합·방향·열린 질문, 한 줄 = 기록 하나)
-//            rebuild/state/plan-log.jsonl (걸어온 길 — 작업 사건, 덧붙이기만. 2026-10-29 까지는 git 역사에서 가져옴)
+//            rebuild/state/plan-log.jsonl (걸어온 길 — 작업 사건, 덧붙이기만. 손글 시절 사건은 git 역사에서 가져옴 — source 'git')
 //   생성: docs/design/build-plan.md · rebuild/PLAN.md (rebuild/status.mjs --write 가 서기 writePlanDoc 로)
 //   고치기: node rebuild/plan.mjs apply <ops.json> — 바꿀 때마다 왜(why)를 받아 사건으로 남긴다
-// 왜 이렇게 (사용자 2026-10-29): 맥락을 잃은 채 계획을 따라가면 이상한 결론에 닿는다 — 처음 목적, 중간에 바뀐 이유,
+// 왜 이렇게 (사용자 결정 DEC-0027): 맥락을 잃은 채 계획을 따라가면 이상한 결론에 닿는다 — 처음 목적, 중간에 바뀐 이유,
 //   도달 과정, 중간 결과, 종합 결과와 의의, 나아갈 방향이 모두 계획 안에 정확히 있어야 한다. 길어도 된다, 정확해야 한다.
 // 계약: 순수 — load 는 읽기만, check·fold·render·apply 는 값만 돌려준다. 파일 쓰기는 서기만.
 import { readFileSync, existsSync } from 'node:fs';

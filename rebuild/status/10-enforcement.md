@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (282 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (286 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 248 |
+| 잡음 `caught` | 252 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 248
+## 잡음 `caught` — 252
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -267,6 +267,10 @@
 | RULE-0517 | 영수증(workspace/receipts/)은 문지기만 쓴다 — 사슬로 덧붙이기만, 고치거나 지우면 쓰는 도 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
 | RULE-0516 | 끝내기 전 시험 묶음(node rebuild/gate.mjs finish <모드>)이 지금 파일 상태(작업  | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
 | RULE-0299 | **본체(main) 금지.** 커밋·push 는 자기 수집 브랜치(`collector/*`)에만, 바뀐 파일 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0433 | `evidence` 검증 근거 \| S ≥ 3 ∧ D ≥ 2 ∧ 불일치 아님 \| 기준 종 · 확인된 문헌( | replace | judicial/reliability.js | ② 승인 없음 → needs_approval · 승인 → accepted · 축이 내려가면 review · 철회 → needs_approval |
+| RULE-0228 | 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증 | replace | judicial/reliability.js | ⑦ 관문은 인정의 추정 조건을 본다: 다른 종 상수 거부 · 조건부(오차 막대)도 관문은 통과시키지 않음 · 사람 상수는 그대로 |
+| RULE-0456 | 판정 셋: **CONSISTENT**(FINDING — 가설 하나면 선언된 허용 차이 δ 안임을 동등성 검정 | replace | judicial/obs_compare.js | ④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백 |
+| RULE-0486 | CONSISTENT \| (사전 등록된 규약의 검증 세트 관찰만 — build-plan 3) 가설 하나: 선 | replace | judicial/obs_compare.js | ④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백 |
 
 ## 설정에 있음 `present` — 8
 

@@ -28,7 +28,7 @@ const ENFORCE = ['machine', 'text', 'none', 'unchecked']; // unchecked = 집행 
 const ENTRY = ['CLAUDE.md']; // 입구는 중심 문서 하나 (재건 8 단계 — 옛 입구 6 곳: direction · RUNBOOK · 교과서 목차 · PROMPTS · START-HERE 는 참고 문서로)
 const BOOT = ['CLAUDE.md', 'docs/modes/author.md']; // 새 세션이 처음 읽는 것 = 중심 + 모드 하나 (가장 큰 정보 작성 모드로 셈)
 // 생성물 (분류 대상이 아님 — 원천에서 다시 만든다)
-const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html', 'docs/design/build-plan.md', 'rebuild/PLAN.md', // 계획 둘은 2026-10-29 부터 계획 기록에서 생성 (DEC-0027)
+const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html', 'docs/design/build-plan.md', 'rebuild/PLAN.md', // 계획 둘은 계획 기록에서 생성 (DEC-0027)
   'CLAUDE.md', ...['author', 'baseline', 'develop', 'field', 'inspect'].map((m) => `docs/modes/${m}.md`)]; // 중심·모드 문서는 8 단계부터 규칙 장부에서 생성
 
 // ── 저장소 파일 목록 (추적 + 무시되지 않은 새 파일, 관리 파일 자신은 뺌 — 자기 크기를 세면 고정점이 없다)

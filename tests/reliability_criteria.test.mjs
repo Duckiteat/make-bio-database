@@ -42,7 +42,7 @@ test('④ 출력에 기준·이유·이유 미정 수가 드러난다', () => {
   assert.match(REL.gradeText(rows), /## 기준과 이유/);
 });
 
-// 2026-10-24 결정: S3 을 확인된 것·확인 안 된 것으로 가르고, 원고·철회는 확인되면 바로 내림 · 근거 없이 적은 값은 D2 — 등급은 그대로
+// 사용자 결정: S3 을 확인된 것·확인 안 된 것으로 가르고, 원고·철회는 확인되면 바로 내림 · 근거 없이 적은 값은 D2 — 등급은 그대로
 test('⑤ 출처 논문 상태: 학술지 확인 → S3.confirmed · 기록 없음 → S3.unconfirmed · 원고뿐 → S2 · 철회 → S0', () => {
   const ev = { level: 'curated', sources: [{ db: 'PMID', id: '9' }] };
   const at = (lit) => REL.scoreEvidence(ev, { evidenceShas: [], literature: lit });
@@ -72,7 +72,7 @@ test('⑦ 출처는 sources 칸의 식별자로만 — 문장 속 "DOI" 글자�
   assert.deepEqual(left, [], '식별자가 문장에만 있는 추론 규칙');
 });
 
-// 2026-10-24 결정: 이유를 종류로 가른다 (원칙·실증·외부 표준·운영·결정)
+// 사용자 결정: 이유를 종류로 가른다 (원칙·실증·외부 표준·운영·결정)
 test('⑧ 기준·등급·정책의 이유마다 종류가 있다 — 종류는 어휘 안 · 결정이면 날짜 · 이유가 있으면 종류도 있다', () => {
   const RB = req('../model.js').VOCAB.reasonBasis;
   const all = [...Object.entries(REL.CRITERIA), ...Object.entries(REL.GRADE_WHY).map(([k, x]) => [`등급 ${k}`, x]), ...Object.entries(REL.POLICY).map(([k, x]) => [`정책 ${k}`, x])];
@@ -101,7 +101,7 @@ test('⑨ 합의 창은 원천별 판 주기 — 같은 나이라도 원천마�
   assert.equal(Object.keys(at(plus(C.uniprot.days + 1)).map).length, 0);
 });
 
-// 2026-10-25 결정: 반복 수 1 이 '한 번·미보고·계산값' 을 섞던 것을 가른다 — 문턱(≥1)은 그대로
+// 사용자 결정: 반복 수 1 의 '한 번·미보고·계산값' 을 가른다 — 문턱(≥1)은 그대로
 test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부', () => {
   const est = Object.values(db.observations).filter((o) => o.kind !== 'qualitative' && (o.evidence || {}).level === 'computed');
   assert.ok(est.length > 0 && est.every((o) => REL.scoreObservation(o, {}).cd === 'D2.estimate'), 'eQuilibrator 추정은 실측이 아니다');
@@ -120,7 +120,7 @@ test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받�
   assert.ok(a && Number.isFinite(a.se) && a.se === b.se, `미보고는 1 회와 같은 표준 오차 (${a && a.se} · ${b && b.se})`);
 });
 
-// build-plan 73 (2026-10-25): 문턱 = 축 조건 — 순번 비교와 다른 곳은 비교할 수 없는 쌍뿐 · 관문 문턱은 올리기만
+// PLAN-073: 문턱 = 축 조건 — 순번 비교와 다른 곳은 비교할 수 없는 쌍뿐 · 관문 문턱은 올리기만
 test('⑪ 문턱은 축 조건: 모든 (S,D,T) 에서 순번 비교와 같고, 다른 곳은 bounded↔parameter 쌍뿐 · 등급은 제 문턱을 넘는다', () => {
   const diff = [];
   for (const s of [0, 2, 3, 4]) for (const d of [2, 3, 4]) for (const trend of ['match', 'mismatch', 'unchecked']) {

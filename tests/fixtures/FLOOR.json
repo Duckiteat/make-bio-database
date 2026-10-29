@@ -2,5 +2,5 @@
   "_설명": "래칫 바닥값 (형식 v11, SCHEMA §8M) — 내리는 변경은 그 자체로 눈에 보이는 커밋이 된다. 올리는 것은 자유. 새 방어 규칙을 더하면 거부 말뭉치와 이 값을 같이 올린다.",
   "rejection_fixtures": 25,
   "judicial_check_sites": 426,
-  "tests": 365
+  "tests": 366
 }

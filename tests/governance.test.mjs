@@ -195,7 +195,7 @@ test('④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안�
 });
 
 test('④″ CI 설정이 실제로 파싱되는가 — 검사가 조용히 죽지 않게', () => {
-  // ccabd83 이후 워크플로의 name 값에 ': ' 가 들어가 YAML 이 깨져 CI 가 아예 돌지 않았다 (2026-10-10 발견).
+  // 워크플로의 name 값에 ': ' 가 들어가면 YAML 이 깨져 CI 가 아예 돌지 않는다.
   // YAML 모듈 없이, 그 실패 방식만 겨눈 검사: 평문 스칼라에는 ': ' 를 둘 수 없다.
   const yml = readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8'), lines = yml.split('\n');
   const bad = [];
@@ -451,7 +451,7 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   assert.ok(ER.evidenceReport(BASE, sc, {}).error, '대상 없으면 오류');
 });
 
-// 보고서가 경로만이 아니라 세포 상태·교란·검증 시나리오에서도 비지 않고 맞는 판정 수준을 낸다 (2026-10-22 회귀: 0 고리·가정 없음·검증이 '탐색' 으로)
+// 보고서가 경로만이 아니라 세포 상태·교란·검증 시나리오에서도 비지 않고 맞는 판정 수준을 낸다 (막는 회귀: 0 고리·가정 없음·검증이 '탐색' 으로)
 test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준', () => {
   const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), IRB = req('../compiler/ir_builder.js');
   const json = (f) => SCN.read(join(ROOT, 'examples/scenarios', f));

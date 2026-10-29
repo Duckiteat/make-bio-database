@@ -94,7 +94,7 @@ test('⑥ 결론은 가장 약한 근거를 따른다 — 검증 세트 관찰�
   assert.equal(ER.evidenceReport(BASE, b2m, { target: 'D000202', prereg }).judgment.acceptance, null, '인정 표를 받지 않으면 확인 안 함으로');
 });
 
-// build-plan 74 (2026-10-25): 관문 = 인정 '추정' — 두 판정이 같은 함수
+// PLAN-074: 관문 = 인정 '추정' — 두 판정이 같은 함수
 test('⑦ 관문은 인정의 추정 조건을 본다: 다른 종 상수 거부 · 조건부(오차 막대)도 관문은 통과시키지 않음 · 사람 상수는 그대로', () => {
   const DOI = { level: 'curated', sources: [{ db: 'PMID', id: '31141475' }] };
   const ir = (k) => ({ rules: [{ ref: 'D000149/rule/condense', kind: 'mm', k: { src: 'data', kcat: 1, evidence: DOI, ...k } }] });
@@ -111,7 +111,7 @@ test('⑦ 관문은 인정의 추정 조건을 본다: 다른 종 상수 거부 
   assert.equal(REL.speciesOf(base, { what: 'kinetics', sense: 'D000149', target: 'D000149/rule/condense' }), '10090', '속도 상수의 종은 kinetics.context.species');
 });
 
-// build-plan 75 (2026-10-25): observe·fate 판정도 가장 약한 근거 — 인정되지 않은 관찰은 결론이 아니다
+// PLAN-075: observe·fate 판정도 가장 약한 근거 — 인정되지 않은 관찰은 결론이 아니다
 test('⑧ 정성·정량 판정의 결론은 인정을 따른다 — 인정되지 않으면 결론 아님 · 넘기지 않으면 확인 안 함(그대로)', () => {
   const QC = req('../judicial/qual_compare.js');
   const pv = { declared: true, ok: true, problems: [], validation: ['O000009'] };
@@ -126,7 +126,7 @@ test('⑧ 정성·정량 판정의 결론은 인정을 따른다 — 인정되�
   assert.ok(PR.processReport);
 });
 
-// build-plan 76 (2026-10-25): 승인 도장은 추가만 — 경과가 등록부에 남고 마지막 도장이 유효
+// PLAN-076: 승인 도장은 추가만 — 경과가 등록부에 남고 마지막 도장이 유효
 test('⑨ 승인 이력: 승인 → 철회 → 재승인이 등록부에 모두 남고 마지막이 유효 · 같은 도장은 거부', () => {
   const dir = mkdtempSync(join(tmpdir(), 'acc-h-')); mkdirSync(join(dir, 'attestations'));
   try {

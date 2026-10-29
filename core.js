@@ -745,7 +745,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       if (i % every === 0 || i === steps) record(t);
       if (untilDeath && death) { if (i % every !== 0) record(t); break; }
     }
-    // 표 → 원자료의 이름 키 객체 (키 순서는 예전 Map·객체와 같게)
+    // 표 → 원자료의 이름 키 객체 (키 순서는 원자료에 넣은 순서 그대로)
     N.clear(); for (const i of order) N.set(KEYS[i], NN[i]);
     resList.forEach(([, , r], q) => { r.min = rMin[q]; r.max = rMax[q]; });
     for (const i of ledOrder) ledger[KEYS[i]] = { reaction: LED[4 * i], supply: LED[4 * i + 1], degradation: LED[4 * i + 2], recycle: LED[4 * i + 3] };

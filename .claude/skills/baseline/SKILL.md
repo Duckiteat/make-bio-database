@@ -16,12 +16,11 @@ description: "기초시험 모드 — 지금 검증된 코어로 시뮬레이션
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (20)
+## 지켜야 할 규칙 — 사람·AI (19)
 
 ### 관찰·측정값
 
 - `RULE-0255` 규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP 사례 L000107).
-- `RULE-0456` 판정 셋: CONSISTENT(FINDING — 가설 하나면 선언된 허용 차이 δ 안임을 동등성 검정(TOST)으로 보였을 때만, 가설 둘이면 이 가설만 기각되지 않음), CONFLICT(DOMAIN_CONFLICT — 모델과 관찰의 모순, 근거와 함께 데이터를 고칠 일), INDISTINGUISHABLE(DATA_GAP — 두 가설이 모두 맞아 가를 수 없음 → Observation_Gap …
 
 ### 한계
 
@@ -52,7 +51,7 @@ description: "기초시험 모드 — 지금 검증된 코어로 시뮬레이션
 
 ## 컴퓨터가 막는 규칙
 
-40 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+41 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
 ## 형식 설명
 

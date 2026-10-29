@@ -1,6 +1,6 @@
 // 새 구조 문서 생성기 (rebuild/PLAN.md 6 단계) — 규칙 장부와 모드 원본에서 중심 문서·모드 문서·스킬을 만든다.
 //   원본: rebuild/rules/rules.jsonl (규칙 하나 = 기록 하나) · rebuild/rules/modes.json (모드 머리말) · rebuild/rules/commands.jsonl (명령 장부) · rebuild/ledger/units.jsonl (규칙이 온 절)
-//   결과: 제자리에 바로 — CLAUDE.md · docs/modes/<모드>.md · .claude/skills/<모드>/SKILL.md (재건 8 단계, 2026-10-29 — 옛 손글 CLAUDE.md·agent-rules.md 를 대신)
+//   결과: 제자리에 바로 — CLAUDE.md · docs/modes/<모드>.md · .claude/skills/<모드>/SKILL.md (재건 8 단계)
 // 계약: 순수 — 같은 원본이면 같은 바이트. 쓰기는 rebuild/status.mjs 가 서기(writeDraftDoc)로. 손으로 고치지 않는다.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

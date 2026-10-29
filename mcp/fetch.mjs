@@ -30,7 +30,7 @@ async function get(file, url, refetch) {
   const [ev] = CLERK.appendFetchLog(EPMC, [{ ...r, url: r.url || url }]);
   return { ...r, log: ev };
 }
-// ===== BRENDA (계정 원천, 2026-10-25 사용자 결정: 수집가도 이 도구로) =====
+// ===== BRENDA (계정 원천 — 사용자 결정: 수집가도 이 도구로) =====
 //   계정 정보는 환경 변수에서만 읽는다: BRENDA_EMAIL · BRENDA_PASSWORD_SHA256(비밀번호의 SHA256 16진수 — 원래 비밀번호는 받지 않음).
 //   도구 출력·받기 기록·수신함 파일 어디에도 계정 정보를 남기지 않는다(본문은 curl 표준 입력으로, 응답은 저장 전에 지움 — 서기 postToInbox).
 const BRENDA = 'https://www.brenda-enzymes.org/soap/brenda_server_zeep.php', BRENDA_DIR = join(DATA, 'fetched', 'brenda');

@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 import { build, ROOT, STATUS, planCtx } from '../rebuild/status.mjs';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from '../rebuild/index.mjs';
@@ -181,7 +182,8 @@ test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글
   assert.equal(READ.read('RULE-0010', 2, S), READ.read('RULE-0010', 2, READ.load()), '결정론');
   const r = READ.read('RULE-0010', 2, S);
   assert.ok(r.startsWith('RULE-0010 — ' + S.rules['RULE-0010'].text), 'L0 = 장부 문장 그대로');
-  assert.match(r, /EQ-0009/); assert.match(r, /근거 기록 없음/, '근거가 없으면 없다고');
+  assert.match(r, /EQ-0009/); assert.match(READ.read('EQ-0009', 2, S), /근거: 배정도 .*\(design\)/, '근거가 있으면 원본 그대로 + 종류');
+  assert.match(READ.read('EQ-0013', 2, S), /근거 기록 없음/, '근거가 없으면 없다고');
   assert.match(READ.read('RULE-0002', 2, S), /수식 기록 없음/, '수식이 없으면 없다고');
   assert.equal(READ.read('RULE-0002', 0, S).split('\n').filter(Boolean).length, 2, 'L0 은 두 줄 (문장 + 모드)');
   const M = createRequire(import.meta.url)('../model.js'), eq = S.formulas['EQ-0005'];
@@ -245,4 +247,18 @@ test('⑰ 관리 파일의 기계용 보기 (6e): status.json 의 표를 다시 
       assert.ok(out[name].includes(md), `${name} · ${sec.heading}: 표를 다시 그린 글이 .md 에 없음`);
     }
   }
+});
+
+// RULE-0196: 주석은 계약·이유만 — 날짜·옛 이야기 같은 이력은 CHANGES.md 로. migrations/ 는 일회성 기록 스크립트라 날짜가 곧 정체 (이름 붙인 예외)
+const HISTORY_RE = /(^|\s)\/\/\s.*(\d{4}-\d{2}-\d{2}|예전)/;
+const historyComments = (text) => text.split('\n').map((l, i) => [i + 1, l]).filter(([, l]) => HISTORY_RE.test(l));
+test('⑳ 코드 주석에 이력(날짜·예전)이 없다 — 이력은 CHANGES.md (RULE-0196)', () => {
+  // 거부 시험: 막아야 할 모양은 잡고, 이유 주석·주석 밖 날짜·주소는 지나간다
+  assert.equal(historyComments('  /' + '/ 기준 표 (' + '2026-10-24 결정)').length, 1);
+  assert.equal(historyComments('x(); // 예' + '전 Stop 훅').length, 1);
+  assert.equal(historyComments("const AT = '2026-10-23'; // 사건 시각\n// 이유: 보존 법칙\nfetch('https://x.org/a')").length, 0);
+  const files = execFileSync('git', ['ls-files', '*.js', '*.mjs'], { cwd: ROOT, encoding: 'utf8' }).trim().split('\n')
+    .filter((f) => !f.startsWith('migrations/') && !f.startsWith('node_modules/') && existsSync(join(ROOT, f)));
+  const bad = files.flatMap((f) => historyComments(readFileSync(join(ROOT, f), 'utf8')).map(([n, l]) => `${f}:${n} ${l.trim().slice(0, 80)}`));
+  assert.deepEqual(bad, [], '주석의 이력은 CHANGES.md 로 옮기고 이유만 남긴다');
 });

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 계획 고치기 — 계획 문서는 생성물이라 손으로 고치지 않고 이것으로만 바꾼다 (사용자 2026-10-29 · DEC-0027)
+// 계획 고치기 — 계획 문서는 생성물이라 손으로 고치지 않고 이것으로만 바꾼다 (DEC-0027)
 //   node rebuild/plan.mjs apply <ops.json> [--dry]   변경 묶음 { at, why, ops[] } — 형식은 rebuild/state.mjs apply 머리말
 //   node rebuild/plan.mjs check                      계획 기록의 정확성 검사만
 // 계약: 검사(state.check)를 통과해야 서기 writeState 로 쓴다. 그 뒤 문서는 node rebuild/status.mjs --write 가 다시 만든다.

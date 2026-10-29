@@ -24,7 +24,7 @@ const RULE = {
 const GRADES = Object.freeze(Object.fromEntries(Object.entries(M.VOCAB.reliabilityGrades).map(([k, g]) => [k, Object.freeze({ label: g.label, use: g.note, rule: RULE[k] })])));
 const ORDER = ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked'];
 
-// ----- 기준 표 (2026-10-24, build-plan 71·73): 점수를 매기는 갈래마다 번호 · 조건(when) · 이유(why) -----
+// ----- 기준 표 (PLAN-071·073): 점수를 매기는 갈래마다 번호 · 조건(when) · 이유(why) -----
 //   이유가 확립되지 않은 기준은 why: null + open(무엇이 미정인지) — 이유를 지어내지 않는다. 기준 자체를 바꾸는 것은 사용자 결정.
 //   basis = 이유의 종류(vocab.reasonBasis: 원칙·실증·외부 표준·운영·결정) — 원칙에서 나온 이유와 편의·결정에서 나온 이유를 섞지 않는다.
 //   점수 함수는 갈래마다 이 번호(cs·cd)를 단다 — 기록마다 "어떤 기준으로, 왜" 를 따라갈 수 있게.
@@ -98,7 +98,7 @@ function scoreEvidence(ev, ctx) {
     const sha = toolSha(ev), ok = sha && ctx.evidenceShas.some((x) => x.startsWith(sha));
     return { s: ok ? 4 : 2, d: 4, cs: ok ? 'S4.tool' : 'S2.unsourced', cd: 'D4.computed', why: ok ? `도구가 도장받은 원본에서 계산 (${ev.tool || ''}`.slice(0, 120) + ')' : '도구 계산인데 원본 증거를 찾을 수 없음' };
   }
-  // 출처는 sources 칸의 식별자로만 — 설명 문장에 'DOI' 글자가 있는 것으로는 S3 이 아니다 (2026-10-24: "DOI/PMID 는 확인하지 못함" 이라 적힌 규칙이 S3 을 받던 버그)
+  // 출처는 sources 칸의 식별자로만 — 설명 문장에 'DOI' 글자가 있는 것으로는 S3 이 아니다 ("DOI/PMID 는 확인하지 못함" 이라 적힌 규칙도 S3 을 받게 되므로)
   if (ev.level === 'abstracted') return { ...(hasDOI(ev) ? litS(ev.sources, ctx) : { s: 2, cs: 'S2.unsourced' }), d: 2, cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
   if (ev.level === 'predicted') return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: `예측 모델 출력 (신뢰도 ${ev.confidence != null ? ev.confidence : '없음'})` };
   return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.asserted', why: '출처 없이 적음 (asserted)' };
@@ -237,7 +237,7 @@ function criteriaText(rows) {
 // ===== 인정의 용도 (build-plan 72·74) — (기록, 용도) 판정은 여기 하나: judicial/acceptance.js(표·승인 도장)와 관문(constantVerdict)이 같이 부른다 =====
 // 용도별 조건 (동작 표 — 라벨·뜻은 vocab.acceptanceUses). floors: 하나라도 맞으면 축 조건 통과. conditional: 맞으면 조건부.
 //   sameSpecies: 기록의 종이 기준 종과 같아야(다른 종 값은 서술·비교에만 — 64 전까지 기준 종 하나)
-//   confirmed: 출처가 확인된 문헌·도장이어야(S3.unconfirmed 는 높은 용도에 못 씀, 2026-10-24 결정)
+//   confirmed: 출처가 확인된 문헌·도장이어야(S3.unconfirmed 는 높은 용도에 못 씀 — 사용자 결정)
 //   notEstimated: 추정에 쓴 관찰은 검증 근거가 될 수 없다(순환) · approval: 승인 도장 필요 · independence: 독립 단위 수(I 축) 요구
 const USES = Object.freeze({
   describe: { floors: [{ s: 2, d: 2, t: T_ALL }] },

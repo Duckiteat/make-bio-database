@@ -16,7 +16,7 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (38)
+## 지켜야 할 규칙 — 사람·AI (37)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -46,7 +46,6 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 - `RULE-0131` 환산표는 하나 (엔진과 사법부가 같은 것)
 - `RULE-0163` 결과가 바뀌면 관찰로 고르고, 없으면 Gap note
 - `RULE-0164` 기존 supply·modulation 으로 되면 새 규칙 종류 금지
-- `RULE-0228` 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두 부름 (74·75·76)
 - `RULE-0239` 화학·생물 사실(부분 구조 원자 수 elements, 기본 위치 defaultVolumeLocation)은 데이터나 어휘에
 
 ### 기전·시뮬레이션
@@ -73,7 +72,7 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 
 ## 컴퓨터가 막는 규칙
 
-59 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+60 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
 ## 형식 설명
 
