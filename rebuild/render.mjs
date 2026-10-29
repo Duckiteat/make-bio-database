@@ -17,17 +17,21 @@ export function build(root) {
   const M = JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8'));
   const cmds = jsonl(root, 'rebuild/rules/commands.jsonl'); // 명령 장부 (6c)
   const ALL = M.modes.map((m) => m.key), every = (c) => ALL.every((k) => c.modes.includes(k));
-  const cmdTable = (xs) => xs.length ? ['| 명령 | 쓰는 구역 | 무엇 |', '|---|---|---|', ...xs.map((c) => `| \`${c.cmd}\` | ${c.writes || '읽기만'} | ${c.what} |`)].join('\n') : '없음';
+  // 쓰는 명령은 표(구역이 중요), 읽기만 하는 명령은 한 줄
+  const cmdTable = (xs) => { const w = xs.filter((c) => c.writes), r = xs.filter((c) => !c.writes);
+    return [w.length ? ['| 쓰는 명령 | 구역 | 무엇 |', '|---|---|---|', ...w.map((c) => `| \`${c.cmd}\` | ${c.writes} | ${c.what} |`)].join('\n') : '', r.length ? `읽기만: ${r.map((c) => '`' + c.cmd + '`').join(' · ')}` : ''].filter(Boolean).join('\n\n') || '없음'; };
   // 규칙이 온 절 — 단위의 자리 맥락(ctx.path)의 마지막 제목. 코드에서 찾은 규칙은 한 묶음
-  const section = (r) => (r.from_code ? '코드에서 찾은 검사' : ((units[r.unit] || {}).ctx || {}).path?.slice(-1)[0] || '(절 없음)');
+  // 주제 (modes.json topics — 원문 절 제목 경로에 열쇠말이 있으면 그 주제, 위에서부터 첫 일치)
+  const section = (r) => { if (r.from_code) return '코드에서 찾은 검사'; const p = (((units[r.unit] || {}).ctx || {}).path || []).join(' > '); const t = (M.topics || []).find((x) => x.match.some((k) => p.includes(k))); return t ? t.topic : '기타'; };
   const line = (r) => `- \`${r.id}\` ${clean(r.text)}${r.flags ? ' _(코드가 알림)_' : ''}`;
   const grouped = (xs) => {
     const by = new Map();
     for (const r of [...xs].sort((a, b) => a.id.localeCompare(b.id))) { const s = section(r); if (!by.has(s)) by.set(s, []); by.get(s).push(r); }
-    return [...by].map(([s, rs]) => `### ${s.replace(/`/g, '')}\n\n${rs.map(line).join('\n')}`).join('\n\n');
+    const order = [...(M.topics || []).map((t) => t.topic), '코드에서 찾은 검사', '기타'];
+    return [...by].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0])).map(([s, rs]) => `### ${s}\n\n${rs.map(line).join('\n')}`).join('\n\n');
   };
   const isCommon = (r) => r.modes.includes('common');
-  const text = (xs) => xs.filter((r) => r.enforce !== 'machine'), machine = (xs) => xs.filter((r) => r.enforce === 'machine');
+  const text = (xs) => xs.filter((r) => r.enforce !== 'machine' && !r.spec), machine = (xs) => xs.filter((r) => r.enforce === 'machine'), spec = (xs) => xs.filter((r) => r.spec);
   const machineNote = (n) => `${n} 개 — 어기면 검사 오류에 그 번호(\`RULE-…\`)가 붙어 나온다. 이유·맥락은 규칙 장부(\`rebuild/rules/rules.jsonl\` · 맥락 \`links.jsonl\`)에서 번호로 찾는다.`;
   const out = {};
 
@@ -50,6 +54,7 @@ export function build(root) {
       `- **끝내기 전**: ${m.finish.join(' · ')}`, `- **멈춤**: ${m.stop}`, '', '공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.', '',
       `## 지켜야 할 규칙 — 사람·AI (${text(xs).length})`, '', text(xs).length ? grouped(text(xs)) : '없음 — 이 모드의 규칙은 모두 컴퓨터가 막는다.', '',
       `## 컴퓨터가 막는 규칙`, '', machineNote(machine(xs).length), '',
+      `## 형식 설명`, '', `${spec(xs).length} 개 — 칸의 모양·값의 뜻(SCHEMA). 쓸 때 찾는다: \`node rebuild/read.mjs --list spec --mode ${m.key}\` · 하나는 \`node rebuild/read.mjs RULE-…\``, '',
       `## 쓸 명령 (모든 모드의 명령은 중심 문서)`, '', cmdTable(cmds.filter((c) => c.modes.includes(m.key) && !every(c))), ''].join('\n');
     out[`modes/${m.key}.md`] = body;
     out[`skills/${m.key}/SKILL.md`] = `---\nname: ${m.key}\ndescription: "${m.name} 모드 — ${m.when}. 세션을 이 모드로 시작할 때 연다 (한 세션 = 한 모드)."\n---\n\n${body}`;

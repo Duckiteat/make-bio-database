@@ -16,9 +16,14 @@ description: "기초시험 모드 — 지금 검증된 코어로 시뮬레이션
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (23)
+## 지켜야 할 규칙 — 사람·AI (20)
 
-### 한계·진화
+### 관찰·측정값
+
+- `RULE-0255` 규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP 사례 L000107).
+- `RULE-0456` 판정 셋: CONSISTENT(FINDING — 가설 하나면 선언된 허용 차이 δ 안임을 동등성 검정(TOST)으로 보였을 때만, 가설 둘이면 이 가설만 기각되지 않음), CONFLICT(DOMAIN_CONFLICT — 모델과 관찰의 모순, 근거와 함께 데이터를 고칠 일), INDISTINGUISHABLE(DATA_GAP — 두 가설이 모두 맞아 가를 수 없음 → Observation_Gap …
+
+### 한계
 
 - `RULE-0081` 시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함 _(코드가 알림)_
 - `RULE-0132` Audit Error 는 한계를 채우거나 등록
@@ -31,78 +36,36 @@ description: "기초시험 모드 — 지금 검증된 코어로 시뮬레이션
 - `RULE-0176` 확률은 앙상블로만 판정, 궤적 하나로 결론 금지
 - `RULE-0183` 운명 결과는 fate --report 과정 보고서로만, 끝 상태만 말하지 않음
 - `RULE-0184` 무결성 증명서 FAIL 이면 실패로 보고
-
-### 한계와 개념 진화 (반드시)
-
 - `RULE-0242` 억제는 경쟁·비경쟁을 가리지 않는 단순 배율
 
-### 운명 (세포 상태 전이)
+### 기전·시뮬레이션
 
 - `RULE-0254` fate 인자는 시작 상태 — 끝 상태로 부르면 무결성 FAIL · rc=1
-
-### 검증 (관찰과의 일치) — 사전 등록된 규약 아래에서만
-
-- `RULE-0255` 규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP 사례 L000107).
-
-### 반드시 먼저 보는 세 줄
-
 - `RULE-0256` `속도 상수 없음 → 즉시` — 그 단계는 순간에 끝난다(상수 미확인) — 시간 척도를 결론으로 쓰지 말라
-
-### 8C. 상위 개념 (Evolution Engine)
-
-- `RULE-0375` 구획 농도 모델(principle): 시뮬레이터가 시작량을 데이터에서 정한다 — 정의항의 `copy_number` 관찰(세포·위치 맥락), 없으면 `concentration` × 구획 부피(`compartment_volume`, 구획 농도 모델 정의항이 세포·위치별로 소유) × 아보가드로 수. 둘 다 없으면 기본값이고 출력에 "농도 공백"으로 표시된다. 관찰 맥락에는 `context.location` 을 쓸 수 있다.
-
-### 8F. 3 층 다중 규모 엔진 — 형식 v8
-
-- `RULE-0395` 시뮬레이터: mass_action 규칙에 k0·dG_act·dG0·env 가 있으면 구획 환경(시나리오 `environment[위치] = { pH, relative_permittivity }` → 관찰)으로 k 를 계산하고, dG0 가 있으면 k_r = k·e^{dG0/RT} 로 정해 가역으로 돌린다 (환경은 장벽만 옮기고 평형은 옮기지 않음).
-
-### 8G. 세포 운명 층 — 형식 v9
-
-- `RULE-0401` `simulateRate`(경로 시뮬레이션)도 조절 규칙을 적용한다 — 단계·공급·분해의 속도에 배율을 곱하고, 힐 상수가 없으면 배율 1 로 두고 `modulationGaps` 로 보고.
-
-### 6.3 사건 기반 시뮬레이션 (simulate) 읽기
-
 - `RULE-0454` 쓸 수 없는 것: 라운드 수, 끝 풀의 양, 경쟁 결과(어느 표적이 먼저 차지했나 — 단계 순서에 좌우됨).
-
-### 6.4 속도 기반 시뮬레이션 (simulate --rate) 읽기
-
 - `RULE-0455` 끝의 감사 목록이 비어 있지 않으면 결과보다 감사를 먼저 읽는다.
 
-### 6.10 관찰 판정 (dbtool observe, 4단계)
-
-- `RULE-0456` 판정 셋: CONSISTENT(FINDING — 가설 하나면 선언된 허용 차이 δ 안임을 동등성 검정(TOST)으로 보였을 때만, 가설 둘이면 이 가설만 기각되지 않음), CONFLICT(DOMAIN_CONFLICT — 모델과 관찰의 모순, 근거와 함께 데이터를 고칠 일), INDISTINGUISHABLE(DATA_GAP — 두 가설이 모두 맞아 가를 수 없음 → Observation_Gap …
-
-### 3. 추정 세트와 검증 세트 (겹치지 않음)
+### 검증·판정
 
 - `RULE-0496` 맞추기 금지 — 검증 세트를 보고 입력을 고치지 않음 — 틀리면 틀린 대로 보고 + 한계 — 사전 등록
-
-### 6. 결정 (사용자 2026-10-25)
-
 - `RULE-0497` ④ 자유 매개변수: 3 개 이하 — 예측 9 개보다 충분히 적게 — 넘으면 "부분 실험" 으로 강등 · 가정 원장 번호로만 — 확정
 
 ## 컴퓨터가 막는 규칙
 
 40 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
+## 형식 설명
+
+3 개 — 칸의 모양·값의 뜻(SCHEMA). 쓸 때 찾는다: `node rebuild/read.mjs --list spec --mode baseline` · 하나는 `node rebuild/read.mjs RULE-…`
+
 ## 쓸 명령 (모든 모드의 명령은 중심 문서)
 
-| 명령 | 쓰는 구역 | 무엇 |
+| 쓰는 명령 | 구역 | 무엇 |
 |---|---|---|
-| `dbtool map` | 읽기만 | 참조가 어느 정의항(D…)으로 매핑되는지 |
-| `dbtool mechanism` | 읽기만 | 기전(위·아래 단계) |
-| `dbtool resolution` | 읽기만 | 혼합 해상도 계획 (pool·site·structure) |
-| `dbtool audit-run` | 읽기만 | 감사: 스키마·해상도·속도 무결성·질량 보존 |
-| `dbtool simulate` | 읽기만 | 속도 기반 시뮬레이션 (질량 감사) |
-| `dbtool grade` | 읽기만 | 신뢰 지표 (S, D) → 등급 |
-| `dbtool origin` | 읽기만 | 첫 장면 기원 — 시나리오 시작 숫자의 출처 |
 | `dbtool assume` | registry | 가정 원장 보기·추가(add — 감사·봉인 뒤 서기) |
 | `dbtool register` | registry | 모의 실험 규약 사전 등록 (실행 전) |
-| `dbtool compare` | 읽기만 | 비교 검토 — 복잡도·수치 L2·결과 |
 | `dbtool fate` | report | 운명 시뮬레이션 + 과정 보고서 |
-| `dbtool observe` | 읽기만 | 관찰 대조 — 등록 규약 아래에서만 일치 결론 |
 | `mcp register` | registry | 사전 등록 |
 | `mcp assume_add` | registry | 가정 원장 추가 |
-| `mcp map` | 읽기만 | 참조 매핑 |
-| `mcp mechanism` | 읽기만 | 기전 |
-| `mcp origin` | 읽기만 | 첫 장면 기원 |
-| `mcp assume_uses` | 읽기만 | 가정 번호를 쓰는 시나리오 |
+
+읽기만: `dbtool map` · `dbtool mechanism` · `dbtool resolution` · `dbtool audit-run` · `dbtool simulate` · `dbtool grade` · `dbtool origin` · `dbtool compare` · `dbtool observe` · `mcp map` · `mcp mechanism` · `mcp origin` · `mcp assume_uses`

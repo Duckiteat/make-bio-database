@@ -19,6 +19,10 @@
 
 8 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
+## 형식 설명
+
+0 개 — 칸의 모양·값의 뜻(SCHEMA). 쓸 때 찾는다: `node rebuild/read.mjs --list spec --mode field` · 하나는 `node rebuild/read.mjs RULE-…`
+
 ## 쓸 명령 (모든 모드의 명령은 중심 문서)
 
 없음

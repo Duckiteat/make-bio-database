@@ -16,129 +16,75 @@ description: "점검·검증 모드 — 상태를 읽거나(L0·L1·L2), 모은 
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (30)
+## 지켜야 할 규칙 — 사람·AI (33)
 
-### 한계·진화
+### 수집·위임 (다른 AI·수집가)
 
-- `RULE-0081` 시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함 _(코드가 알림)_
-- `RULE-0095` 웹 검색 결과 저장 금지
-
-### 규칙·코드 바꾸기
-
-- `RULE-0205` 새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋
-
-### 한계와 개념 진화 (반드시)
-
-- `RULE-0228` 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두 부름 (74·75·76)
-
-### 수집가 프롬프트 (복붙 — 읽기 전용·수집만)
-
+- `RULE-0265` 저장소에 접근하지 못하는 AI(웹 챗 등)는 두 가지에만 쓴다. 나머지는 손해가 더 크다.
+- `RULE-0266` 상수·외부 ID 를 "대충 아는 값" 으로 받기 — 지어낸 값이 들어오면 전체 설계의 전제가 무너진다. 반드시 원 논문 식별자로 대조한다
+- `RULE-0267` 결함 태그를 고르게 하기 — 저장소의 규약을 모른다 — 수치 문제를 데이터로 맞추라고 답하기 쉽다
+- `RULE-0268` 패치 JSON 을 직접 쓰게 하기 — 관문의 형식을 모른다. 거부 메시지를 돌려줘도 규칙을 느슨하게 하자고 답한다
+- `RULE-0269` 내 결론을 주고 검토 요청 — 그 결론을 확인해 주는 답이 돌아온다. 코드만 주고 판단은 받지 않는다
 - `RULE-0276` 후보는 전부 후보 — 1차 출처로 재확인한 것만 패치가 된다
 - `RULE-0277` 핸드오프 파일 상태를 `verified`/`rejected`/`applied` 로 바꾼다. 수집가 파일은 untrusted 입력으로 다룬다.
-
-### 5. 작업이 끝난 뒤 (사용자가 확인할 것)
-
-- `RULE-0283` 규칙 파일이 바뀌었는데 사용자 요청이 없었다면 그 작업은 거부
-
-### workspace/ — AI 작업자 전용 공간 (격리)
-
 - `RULE-0294` 검증·적용·본체 병합은 통합가
-
-### 절대 선 (작업자가 깨면 안 되는 것)
-
 - `RULE-0298` 1차 출처로 검증해 패치로 넣는다.
-
-### tasks/ — 통합가 → 작업자 묶음 과제
-
 - `RULE-0304` 한 번에 하나 — 작업자가 그 묶음을 혼자 끝내고 `workspace/handoff/` 로 넘긴다(항목마다 핑퐁하지 않는다).
+- `RULE-0457` 초록이나 전문에 있음 — 대조 문제 없음 (값 후보는 여전히 통합가 재확인 — REVIEW)
+- `RULE-0458` 초록만 있고 거기 없음 · 원문이 없음 — REVIEW — 전문을 받거나(공개면) 사람이 확인
+- `RULE-0459` 그림·표 전사(`transcribed: true`) · 12자 미만 인용 — REVIEW — 글로 대조할 수 없음
+- `RULE-0480` > 원칙: 작업자의 과정 정직성을 검증하려 들지 말고, 통합가가 결과를 독립적으로 재-도출하라.
+- `RULE-0481` 재생 검증은 결정론 행동만. 외부 행동은 기록만 되고 진실은 통합가/사람.
+- `RULE-0483` 일치·버전 동일)"면 재수집 금지, 부족분만. 재사용 ≠ 독립 검토 생략 — 재수집 안 해도 통합가 1차 출처 재확인은 _(코드가 알림)_
+- `RULE-0484` 필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴).
+- `RULE-0485` 실제 HTTP 해석은 dbtool 이 직접 못 한다(governance ①: dbtool 에 `execFileSync — child_process` 금지, 받기는
 
-### 과제 종류 (통합가가 정한 카탈로그)
+### 데이터 넣기
 
 - `RULE-0305` 작업자 출력은 전부 후보다. 통합가가 1차 출처(PMC 전문·UniProt)로 직접 재확인한 뒤에만 패치가 된다.
 - `RULE-0306` (원본 대조 fetch 파이프라인·패치 적용은 통합가가 — 작업자는 수집·반환까지.)
 
-### 8K. 신뢰 지표 — 무엇을 무엇에 쓸 수 있는가 (judicial/reliability.js, dbtool grade)
+### 한계
 
-- `RULE-0426` 등급은 권한의 이름이다: `anchor` 기준값(S4 ∧ D4 ∧ 추세 일치 — 시뮬레이션의 고정점) · `parameter` 매개변수(S ≥ 3 ∧ D ≥ 3) · `bounded` 구간값(S4 ∧ D2 — 오차 막대와 함께) · `legacy` 지난값(추세 불일치 — 지우지 않고 비교에만) · `reference` 참고(계산 금지) · `blocked` 차단(한계로만).
+- `RULE-0081` 시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함 _(코드가 알림)_
+- `RULE-0095` 웹 검색 결과 저장 금지
+- `RULE-0228` 판정은 하나 — 용도별 판정 함수는 reliability.accept 하나, 관문·observe·fate·증거 보고서가 모두 부름 (74·75·76)
 
-### 관문 (②) — 시뮬레이션이 읽는 상수의 등급
+### 기전·시뮬레이션
 
-- `RULE-0427` 쓸 수 있는가를 쓰는 자리에서 판정한다. 사법부는 엔진을 부르지 않고 쓰인 상수의 `src`·`evidence` 만 읽는다 (운명 경로는 IR 의 `rules[].k`·`mods[].k`, 속도 경로는 원자료의 `kinUsed[].kin`).
+- `RULE-0263` "통과하게 만들어라" 는 절대 쓰지 않는다 — 규칙을 느슨하게 만든다
+- `RULE-0264` 쓸 말: 거부되면 메시지를 그대로 가져오고 데이터를 고쳐라
+- `RULE-0278` "통과하게 만들어라" · "오류를 없애라" — 규칙을 느슨하게 하는 길이 가장 빠르다 — "거부 메시지대로 데이터를 고쳐라"
+- `RULE-0279` "시험을 초록으로 만들어라" — `skip` 이 가장 빠르다 (래칫이 잡지만, 시간을 버린다) — "시험이 무엇을 요구하는지 보고해라"
+- `RULE-0280` "적당한 값을 넣어" · "대략" — 지어낸 값이 데이터가 된다 — "확인된 값만, 없으면 한계로"
+- `RULE-0281` "알아서 해" — 범위가 번지고 규칙을 건드린다 — 산출물 하나를 적는다
+- `RULE-0282` "빠르게" — 검증을 건너뛴다 — 검증 명령을 ④에 적는다
+- `RULE-0283` 규칙 파일이 바뀌었는데 사용자 요청이 없었다면 그 작업은 거부
 
-### 추세 축 (③) — 지금도 합의와 같은가 (judicial/trend.js, dbtool trend)
+### 검증·판정
 
-- `RULE-0428` 점검 대상 — 유효한 신원 도장(claim `verified`)이 있는 주체(외부 ID·지문)만. 도장이 없으면 S 가 이미 낮아 추세를 물을 자리가 아니다
-- `RULE-0429` 판정 — 새 원본으로 신원 확인을 다시 돌려 같은 결론·같은 값이면 `match`, 결론이나 값이 달라지면 `mismatch`, 새 원본이 없으면 `unchecked`
-
-### 인정 (④) — (기록, 용도) (judicial/acceptance.js, dbtool accept, build-plan 72)
-
-- `RULE-0430` `describe` 서술 — S ≥ 2 — — — 없음
-- `RULE-0431` `compare` 비교 — S ≥ 3 ∧ D ≥ 2 (추세 불일치 허용) — — — 없음
-- `RULE-0432` `estimate` 추정 — S ≥ 3 ∧ D ≥ 3 ∧ 불일치 아님 · S4 ∧ D2 는 조건부(오차 막대) — 기준 종 — 없음
-- `RULE-0433` `evidence` 검증 근거 — S ≥ 3 ∧ D ≥ 2 ∧ 불일치 아님 — 기준 종 · 확인된 문헌(S3.unconfirmed 불가) · 추정에 쓰지 않은 관찰 기록만 — 필요
-- `RULE-0434` 등급 6칸은 자동 인정의 상한: anchor·parameter → 추정 · bounded → 추정(조건부) · legacy → 비교 · reference → 서술(S3D2 는 비교까지) · blocked → 없음.
-
-### 6.1 신뢰의 등급
-
+- `RULE-0205` 새 규칙 → 말뭉치·바닥값 올림, 의도적 완화는 바닥값 내리는 별도 커밋
 - `RULE-0453` 6 — 시나리오의 가상 값 (`hypothetical: true`) — 엔진이 작동한다는 것만. 생물학적 결론 금지
-
-### 7.5E 수집 후보 판정 — 인용을 원문과 대조 (verify-collection, build-plan 58)
-
-- `RULE-0457` 초록이나 전문에 있음 — 대조 문제 없음 (값 후보는 여전히 통합가 재확인 — REVIEW)
-- `RULE-0458` 초록만 있고 거기 없음 · 원문이 없음 — REVIEW — 전문을 받거나(공개면) 사람이 확인
-- `RULE-0459` 그림·표 전사(`transcribed: true`) · 12자 미만 인용 — REVIEW — 글로 대조할 수 없음
-
-### 2. 핵심 결론 — 과정이 아니라 결과를 재-도출한다
-
-- `RULE-0480` > 원칙: 작업자의 과정 정직성을 검증하려 들지 말고, 통합가가 결과를 독립적으로 재-도출하라.
-
-### 4. 엔진 기록 형식 재사용 (새 로그 형식 안 지음)
-
-- `RULE-0481` 재생 검증은 결정론 행동만. 외부 행동은 기록만 되고 진실은 통합가/사람.
-
-### 7. 재사용 · 재실행 기준 (중복 방지)
-
-- `RULE-0483` 일치·버전 동일)"면 재수집 금지, 부족분만. 재사용 ≠ 독립 검토 생략 — 재수집 안 해도 통합가 1차 출처 재확인은 _(코드가 알림)_
-- `RULE-0484` 필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴).
-
-### 8. 최소 구현 (1차 구현됨 — judicial/collection_audit.js · dbtool verify-collection)
-
-- `RULE-0485` 실제 HTTP 해석은 dbtool 이 직접 못 한다(governance ①: dbtool 에 `execFileSync — child_process` 금지, 받기는
 
 ## 컴퓨터가 막는 규칙
 
 25 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
+## 형식 설명
+
+9 개 — 칸의 모양·값의 뜻(SCHEMA). 쓸 때 찾는다: `node rebuild/read.mjs --list spec --mode inspect` · 하나는 `node rebuild/read.mjs RULE-…`
+
 ## 쓸 명령 (모든 모드의 명령은 중심 문서)
 
-| 명령 | 쓰는 구역 | 무엇 |
+| 쓰는 명령 | 구역 | 무엇 |
 |---|---|---|
-| `dbtool validate` | 읽기만 | 전체 검사 (오류면 종료 코드 1) |
-| `dbtool report` | 읽기만 | 기록된 병합의 Patch Report |
-| `dbtool map` | 읽기만 | 참조가 어느 정의항(D…)으로 매핑되는지 |
-| `dbtool audit` | 읽기만 | 매핑·채움 현황 |
-| `dbtool context` | 읽기만 | 이름의 뜻이 여럿일 때 맥락별 정의항 |
-| `dbtool mechanism` | 읽기만 | 기전(위·아래 단계) |
 | `dbtool limitations` | derived | 한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect) |
-| `dbtool grade` | 읽기만 | 신뢰 지표 (S, D) → 등급 |
 | `dbtool dictionary` | registry | 사전(en) 보기·추가 |
-| `dbtool qualgraph` | 읽기만 | 정성 그래프 — 경로 없음·모순 후보 |
-| `dbtool retraction` | 읽기만 | 철회 전파 |
 | `dbtool evidence` | report | 증거·방법 보고서 |
-| `dbtool verify-collection` | 읽기만 | 수집 후보 판정 |
-| `dbtool verify-run` | 읽기만 | 수집 실행 기록 대조 |
-| `dbtool log` | 읽기만 | 병합 기록 사슬·재생 검사 |
 | `dbtool attest` | attestation | 증명 등록부 재검증 |
 | `dbtool accept` | attestation | 높은 용도 승인·철회 도장 |
 | `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |
-| `dbtool observe` | 읽기만 | 관찰 대조 — 등록 규약 아래에서만 일치 결론 |
 | `mcp accept` | attestation | 승인 도장 |
 | `mcp attest` | attestation | 증명 등록부 재검증 |
-| `mcp map` | 읽기만 | 참조 매핑 |
-| `mcp context` | 읽기만 | 맥락별 정의항 |
-| `mcp mechanism` | 읽기만 | 기전 |
-| `mcp limitations` | 읽기만 | 한계 |
-| `mcp qualgraph` | 읽기만 | 정성 그래프 |
-| `mcp retraction` | 읽기만 | 철회 전파 |
-| `mcp inbox` | 읽기만 | 수신함 목록 |
-| `mcp verify_collection` | 읽기만 | 후보 판정 |
+
+읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool observe` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection`

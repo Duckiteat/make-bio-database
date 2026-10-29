@@ -10,10 +10,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { createRequire } from 'node:module';
 import { build, ROOT, STATUS } from '../rebuild/status.mjs';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from '../rebuild/index.mjs';
 import * as RENDER from '../rebuild/render.mjs';
+import * as READ from '../rebuild/read.mjs';
 
 const X = IDX.build();
 
@@ -134,6 +136,7 @@ test('⑬ 옛 규칙 대조 (6 단계): 살아 있는 규칙은 모두 새 구�
   const lost = [], twice = [];
   for (const r of rules) {
     if (r.enforce === 'machine') continue;
+    if (r.spec) { for (const m of r.modes) if (!READ.listSpec(m).includes(r.id + ' ')) lost.push(`${r.id} (형식 설명 — 읽기 모드 ${m} 목록에 없음)`); continue; }
     const w = where(r.id), want = r.modes.includes('common') ? ['CLAUDE.md'] : r.modes.map((m) => `modes/${m}.md`);
     if (!w.length) lost.push(r.id);
     else if (w.sort().join() !== want.sort().join()) twice.push(`${r.id}: ${w.join(', ')} (기대 ${want.join(', ')})`);
@@ -145,6 +148,8 @@ test('⑬ 옛 규칙 대조 (6 단계): 살아 있는 규칙은 모두 새 구�
   const mm = (m) => rules.filter((r) => r.enforce === 'machine' && (m === 'common' ? r.modes.includes('common') : r.modes.includes(m) && !r.modes.includes('common'))).length;
   assert.equal(count(d['CLAUDE.md'], '## 공통 규칙 — 컴퓨터가 막는다'), mm('common'));
   for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`modes/${m}.md`], '## 컴퓨터가 막는 규칙'), mm(m), m);
+  // 형식 설명: 모드 문서가 밝힌 개수 = 읽기 모드 목록의 줄 수
+  for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`modes/${m}.md`], '## 형식 설명'), READ.listSpec(m).split('\n').filter(Boolean).length, m);
   // 스킬은 모드 문서와 같은 본문
   for (const m of RENDER.MODE_KEYS) assert.ok(d[`skills/${m}/SKILL.md`].endsWith(d[`modes/${m}.md`]), m);
 });
@@ -160,5 +165,23 @@ test('⑭ 명령 장부 (6c): dbtool 의 명령·MCP 의 도구가 장부와 하
     assert.ok(c.modes.length && c.modes.every((m) => modes.includes(m)), `${c.cmd}: 모드 ${c.modes}`);
     assert.ok(c.what && c.what.trim(), `${c.cmd}: 설명`);
     for (const z of c.writes ? c.writes.split(' · ') : []) assert.ok(CLERK.ZONES[z], `${c.cmd}: 모르는 구역 ${z}`);
+  }
+});
+
+test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글, 없는 것은 \'기록 없음\' 으로 드러남, 수식 예시는 코드를 그대로 부름', () => {
+  const S = READ.load();
+  assert.equal(READ.read('RULE-0010', 2, S), READ.read('RULE-0010', 2, READ.load()), '결정론');
+  const r = READ.read('RULE-0010', 2, S);
+  assert.ok(r.startsWith('RULE-0010 — ' + S.rules['RULE-0010'].text), 'L0 = 장부 문장 그대로');
+  assert.match(r, /EQ-0009/); assert.match(r, /근거 기록 없음/, '근거가 없으면 없다고');
+  assert.match(READ.read('RULE-0002', 2, S), /수식 기록 없음/, '수식이 없으면 없다고');
+  assert.equal(READ.read('RULE-0002', 0, S).split('\n').filter(Boolean).length, 2, 'L0 은 두 줄 (문장 + 모드)');
+  const M = createRequire(import.meta.url)('../model.js'), eq = S.formulas['EQ-0005'];
+  assert.ok(READ.read('EQ-0005', 2, S).includes('= ' + JSON.stringify(M.hillFactor(...eq.example.args))), '예시 = 코드 함수의 값');
+  // 수식 기록 형식: 번호 · 식 · 규칙은 장부에 · 근거 없음은 basis null + basis_kind none
+  for (const f of Object.values(S.formulas)) {
+    assert.match(f.id, /^EQ-\d{4}$/); assert.ok(f.name && f.expr, f.id);
+    for (const id of f.rules || []) assert.ok(S.rules[id], `${f.id}: 없는 규칙 ${id}`);
+    assert.ok(f.basis ? f.basis_kind !== 'none' : f.basis_kind === 'none', `${f.id}: 근거와 근거 종류가 어긋남`);
   }
 });
