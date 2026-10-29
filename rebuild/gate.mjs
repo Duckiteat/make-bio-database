@@ -20,7 +20,9 @@ const sha = (x) => createHash('sha256').update(x).digest('hex');
 const today = () => new Date().toISOString().slice(0, 10);
 const now = () => new Date().toISOString();
 export const MODES = ['author', 'baseline', 'develop', 'field', 'inspect'];
-export const loadPolicy = (root = CODE) => JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8')).gate;
+export const loadPolicy = (root = CODE) => ({ ...JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8')).gate, commands: loadCommands(root) });
+// 명령 장부 (재건 9 단계 — 명령의 허용·금지는 이것 하나에서): cmd → { modes, writes, writes_on, collector }
+export const loadCommands = (root = CODE) => Object.fromEntries(readFileSync(join(root, 'rebuild/rules/commands.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).map((c) => [c.cmd, c]));
 
 // ── 판단 (순수) ───────────────────────────────────────────────────────────
 const esc = (s) => s.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
@@ -31,14 +33,25 @@ export function mayWrite(P, mode, role, rel) {
   const R = role && P.roles[role];
   if (R) return hit(R.write, rel);
   const M = P.modes[mode];
-  return !!M && hit(M.write, rel) && !hit(M.except, rel);
+  return !!M && (hit(M.also, rel) || (hit(M.write, rel) && !hit(M.except, rel))); // also = except 안에서도 여는 자리 (디벨롭의 사전 — 사용자 결정 2026-10-29)
 }
 export const protectedPath = (P, rel) => hit(P.common.protect, rel);
 export function finishCmds(P, mode, role) {
   const R = role && P.roles[role];
   return { first: P.common.finish_first || [], cmds: [...(R ? R.finish : P.modes[mode].finish), ...P.common.finish] };
 }
-const denies = (P, mode, role) => [...(P.common.deny || []), ...((P.modes[mode] || {}).deny || []), ...(((role && P.roles[role]) || {}).deny || [])];
+// 명령 하나가 이 모드·역할에서 막히나 — 장부의 writes(쓰는가) · writes_on(어느 인자에서 쓰나, 없으면 늘) · modes · collector
+export function commandBlock(P, mode, role, cmd, args) {
+  const c = P.commands[cmd];
+  if (!c || !c.writes) return null; // 장부 밖 명령·읽기 명령은 막지 않는다 (쓴 파일은 경로 규칙이 본다)
+  if (c.writes_on && !new RegExp(c.writes_on).test(args || '')) return null;
+  if (role && P.roles[role] && !c.collector) return { rule: 'RULE-0287', why: `${cmd} 는 쓰는 명령(${c.writes}) — 수집가는 후보만 모은다(핸드오프·전환 기록만), 적용·병합·등록·도장은 통합가가` };
+  if (!c.modes.includes(mode)) return { rule: 'RULE-0515', why: `${cmd}${c.writes_on ? ' (' + String(args || '').trim().slice(0, 30) + ')' : ''} 는 ${c.modes.join(' · ')} 모드의 일 — 이 세션은 ${mode} (명령 장부)` };
+  return null;
+}
+// 셸 명령 안의 dbtool 호출들 — 이름과 그 뒤 인자 (다음 && ; | 줄바꿈 전까지)
+export const dbtoolCalls = (code) => [...String(code).matchAll(/\bdbtool\.mjs\s+([a-z-]+)([^\n;&|]*)/g)].map((m) => ({ cmd: 'dbtool ' + m[1], args: m[2] }));
+export const MCP_RE = /^mcp__.+__([a-z_]+)$/;
 const RE = { open: /\bgate\.mjs\s+open\b(?:\s+([a-z]+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+([a-z]+))?/, commit: /\bgit\s+(?:-C\s+\S+\s+)?commit\b/, push: /\bgit\s+(?:-C\s+\S+\s+)?push\b/ };
 // 명령에서 '실행되는 부분' 만 — heredoc 본문과 따옴표 속 글을 지운다. 글로 적은 명령 이름(커밋 메시지·기록 본문)을 실행으로 읽지 않으려고.
 //   따옴표 속에 숨긴 실행(bash -c "…")은 여기서 못 보지만, 그 실행이 바꾼 파일은 도구 뒤 대조(violations)가 잡는다.
@@ -69,6 +82,12 @@ export function decidePre(P, st, input, root) {
     if (!mayWrite(P, st.mode, st.role, rel)) { const tail = `에서는 ${rel} 을 쓰지 않는다 — 다른 모드의 일이면 node dbtool.mjs transition 으로 전환 기록을 남기고 끝낸다`; return st.role ? B('RULE-0275', `${st.role} 역할 ${tail}`) : B('RULE-0515', `${st.mode} 모드 ${tail}`); }
     return null;
   }
+  const mm = String(t).match(MCP_RE);
+  if (mm && P.commands['mcp ' + mm[1]] && P.commands['mcp ' + mm[1]].writes) {
+    if (!st.mode) return B('RULE-0514', `모드를 먼저 연다: node rebuild/gate.mjs open <${MODES.join('|')}> — 쓰는 MCP 도구(${mm[1]})도`);
+    const { rule, why } = commandBlock(P, st.mode, st.role, 'mcp ' + mm[1], '') || {};
+    return rule ? B(rule, `${st.role || st.mode}: ${why}`) : null;
+  }
   if (t !== 'Bash') return null;
   const cmd = codeOf(x.command);
   const o = cmd.match(RE.open);
@@ -81,7 +100,7 @@ export function decidePre(P, st, input, root) {
   }
   const f = cmd.match(RE.finish);
   if (f && (!st.mode || f[1] !== st.mode)) return B('RULE-0516', `끝내기 전 시험은 이 세션의 모드로만: node rebuild/gate.mjs finish ${st.mode || '<모드 먼저 열기>'}`);
-  if (st.mode) for (const { re, rule, why } of denies(P, st.mode, st.role)) if (new RegExp(re).test(cmd)) return B(rule, `${st.role || st.mode}: ${why}`); // 번호는 modes.json gate 의 deny 행이 정한다
+  if (st.mode) for (const { cmd: c, args } of dbtoolCalls(cmd)) { const { rule, why } = commandBlock(P, st.mode, st.role, c, args) || {}; if (rule) return B(rule, `${st.role || st.mode}: ${why}`); } // 번호는 장부의 판단이 정한다 (5d)
   const isCommit = RE.commit.test(cmd), isPush = RE.push.test(cmd);
   if (isCommit || isPush) {
     if (!st.mode) return B('RULE-0514', `모드를 열지 않은 세션은 커밋·push 하지 않는다: node rebuild/gate.mjs open <모드>`);

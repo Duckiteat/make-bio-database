@@ -79,12 +79,9 @@ description: "점검·검증 모드 — 상태를 읽거나(L0·L1·L2), 모은 
 | 쓰는 명령 | 구역 | 무엇 |
 |---|---|---|
 | `dbtool limitations` | derived | 한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect) |
-| `dbtool dictionary` | registry | 사전(en) 보기·추가 |
 | `dbtool evidence` | report | 증거·방법 보고서 |
-| `dbtool attest` | attestation | 증명 등록부 재검증 |
 | `dbtool accept` | attestation | 높은 용도 승인·철회 도장 |
 | `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |
 | `mcp accept` | attestation | 승인 도장 |
-| `mcp attest` | attestation | 증명 등록부 재검증 |
 
-읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool observe` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection`
+읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool attest` · `dbtool observe` · `mcp attest` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection`

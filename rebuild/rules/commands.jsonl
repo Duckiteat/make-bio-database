@@ -1,39 +1,39 @@
 {"cmd": "dbtool status", "kind": "cli", "modes": ["author", "baseline", "develop", "field", "inspect"], "writes": null, "what": "저장소 요약"}
 {"cmd": "dbtool validate", "kind": "cli", "modes": ["author", "develop", "inspect"], "writes": null, "what": "전체 검사 (오류면 종료 코드 1)"}
-{"cmd": "dbtool merge", "kind": "cli", "modes": ["author"], "writes": "registry", "what": "패치 병합 — 관문 통과 + 봉인 뒤 서기가 db.json·patches"}
+{"cmd": "dbtool merge", "kind": "cli", "modes": ["author"], "writes": "registry", "writes_on": "^(?!.*--dry\\b)", "what": "패치 병합 — 관문 통과 + 봉인 뒤 서기가 db.json·patches"}
 {"cmd": "dbtool report", "kind": "cli", "modes": ["author", "inspect"], "writes": null, "what": "기록된 병합의 Patch Report"}
 {"cmd": "dbtool map", "kind": "cli", "modes": ["author", "baseline", "inspect"], "writes": null, "what": "참조가 어느 정의항(D…)으로 매핑되는지"}
 {"cmd": "dbtool audit", "kind": "cli", "modes": ["author", "inspect"], "writes": null, "what": "매핑·채움 현황"}
 {"cmd": "dbtool vocab", "kind": "cli", "modes": ["author", "develop"], "writes": null, "what": "통제 어휘 보기"}
 {"cmd": "dbtool context", "kind": "cli", "modes": ["author", "inspect"], "writes": null, "what": "이름의 뜻이 여럿일 때 맥락별 정의항"}
 {"cmd": "dbtool mechanism", "kind": "cli", "modes": ["author", "baseline", "inspect"], "writes": null, "what": "기전(위·아래 단계)"}
-{"cmd": "dbtool limitations", "kind": "cli", "modes": ["author", "inspect"], "writes": "derived", "what": "한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect)"}
+{"cmd": "dbtool limitations", "kind": "cli", "modes": ["author", "inspect"], "writes": "derived", "writes_on": "--write\\b", "what": "한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect)"}
 {"cmd": "dbtool pattern", "kind": "cli", "modes": ["author"], "writes": null, "what": "경로의 상위 패턴(모티프)"}
-{"cmd": "dbtool textbook", "kind": "cli", "modes": ["develop"], "writes": "derived", "what": "교과서 부록 생성(--write)·최신·파일 분류 검사"}
+{"cmd": "dbtool textbook", "kind": "cli", "modes": ["author", "develop"], "writes": "derived", "writes_on": "--write\\b", "what": "교과서 부록 생성(--write)·최신·파일 분류 검사"}
 {"cmd": "dbtool resolution", "kind": "cli", "modes": ["author", "baseline"], "writes": null, "what": "혼합 해상도 계획 (pool·site·structure)"}
 {"cmd": "dbtool audit-run", "kind": "cli", "modes": ["author", "baseline"], "writes": null, "what": "감사: 스키마·해상도·속도 무결성·질량 보존"}
 {"cmd": "dbtool simulate", "kind": "cli", "modes": ["baseline"], "writes": null, "what": "속도 기반 시뮬레이션 (질량 감사)"}
-{"cmd": "dbtool augment", "kind": "cli", "modes": ["author"], "writes": "evidence · registry", "what": "자동 보강 고리 plan → fetch → build → apply (원본 대조)"}
+{"cmd": "dbtool augment", "kind": "cli", "modes": ["author"], "writes": "evidence · registry", "writes_on": "^\\s*(fetch|apply)\\b", "what": "자동 보강 고리 plan → fetch → build → apply (원본 대조)"}
 {"cmd": "dbtool grade", "kind": "cli", "modes": ["author", "baseline", "inspect"], "writes": null, "what": "신뢰 지표 (S, D) → 등급"}
 {"cmd": "dbtool origin", "kind": "cli", "modes": ["baseline"], "writes": null, "what": "첫 장면 기원 — 시나리오 시작 숫자의 출처"}
-{"cmd": "dbtool assume", "kind": "cli", "modes": ["author", "baseline"], "writes": "registry", "what": "가정 원장 보기·추가(add — 감사·봉인 뒤 서기)"}
-{"cmd": "dbtool dictionary", "kind": "cli", "modes": ["develop", "inspect"], "writes": "registry", "what": "사전(en) 보기·추가"}
-{"cmd": "dbtool register", "kind": "cli", "modes": ["baseline"], "writes": "registry", "what": "모의 실험 규약 사전 등록 (실행 전)"}
+{"cmd": "dbtool assume", "kind": "cli", "modes": ["author", "baseline"], "writes": "registry", "writes_on": "^\\s*add\\b", "what": "가정 원장 보기·추가(add — 감사·봉인 뒤 서기)"}
+{"cmd": "dbtool dictionary", "kind": "cli", "modes": ["develop"], "writes": "registry", "writes_on": "^\\s*add\\b", "what": "사전(en) 보기·추가"}
+{"cmd": "dbtool register", "kind": "cli", "modes": ["baseline"], "writes": "registry", "writes_on": "^\\s*[^-\\s]", "what": "모의 실험 규약 사전 등록 (실행 전)"}
 {"cmd": "dbtool qualgraph", "kind": "cli", "modes": ["author", "inspect"], "writes": null, "what": "정성 그래프 — 경로 없음·모순 후보"}
 {"cmd": "dbtool retraction", "kind": "cli", "modes": ["author", "inspect"], "writes": null, "what": "철회 전파"}
-{"cmd": "dbtool evidence", "kind": "cli", "modes": ["inspect"], "writes": "report", "what": "증거·방법 보고서"}
+{"cmd": "dbtool evidence", "kind": "cli", "modes": ["inspect"], "writes": "report", "writes_on": "--report\\s+[^-\\s]", "what": "증거·방법 보고서"}
 {"cmd": "dbtool verify-collection", "kind": "cli", "modes": ["inspect"], "writes": null, "what": "수집 후보 판정"}
 {"cmd": "dbtool verify-run", "kind": "cli", "modes": ["inspect"], "writes": null, "what": "수집 실행 기록 대조"}
 {"cmd": "dbtool log", "kind": "cli", "modes": ["inspect"], "writes": null, "what": "병합 기록 사슬·재생 검사"}
-{"cmd": "dbtool attest", "kind": "cli", "modes": ["inspect"], "writes": "attestation", "what": "증명 등록부 재검증"}
-{"cmd": "dbtool accept", "kind": "cli", "modes": ["inspect"], "writes": "attestation", "what": "높은 용도 승인·철회 도장"}
-{"cmd": "dbtool trend", "kind": "cli", "modes": ["author", "inspect"], "writes": "evidence · attestation", "what": "추세 점검 — 합의 수신함 받기(--fetch)·도장(--write)"}
+{"cmd": "dbtool attest", "kind": "cli", "modes": ["inspect"], "writes": null, "what": "증명 등록부 재검증 — 읽기만 (재검증 결과를 보여 줄 뿐 쓰지 않는다)"}
+{"cmd": "dbtool accept", "kind": "cli", "modes": ["inspect"], "writes": "attestation", "writes_on": "^\\s*[^-\\s]", "what": "높은 용도 승인·철회 도장"}
+{"cmd": "dbtool trend", "kind": "cli", "modes": ["author", "inspect"], "writes": "evidence · attestation", "writes_on": "--(fetch|write)\\b", "what": "추세 점검 — 합의 수신함 받기(--fetch)·도장(--write)"}
 {"cmd": "dbtool compare", "kind": "cli", "modes": ["develop", "baseline"], "writes": null, "what": "비교 검토 — 복잡도·수치 L2·결과"}
-{"cmd": "dbtool fate", "kind": "cli", "modes": ["baseline"], "writes": "report", "what": "운명 시뮬레이션 + 과정 보고서"}
+{"cmd": "dbtool fate", "kind": "cli", "modes": ["baseline"], "writes": "report", "writes_on": "--report\\s+[^-\\s]", "what": "운명 시뮬레이션 + 과정 보고서"}
 {"cmd": "dbtool observe", "kind": "cli", "modes": ["baseline", "inspect"], "writes": null, "what": "관찰 대조 — 등록 규약 아래에서만 일치 결론"}
 {"cmd": "dbtool prompt", "kind": "cli", "modes": ["author"], "writes": null, "what": "AI 작성 지침 + 현재 색인"}
-{"cmd": "dbtool transition", "kind": "cli", "modes": ["author", "baseline", "develop", "field", "inspect"], "writes": "transition", "what": "전환 기록 추가 — 이 세션을 끝내고 다른 모드로 넘길 때"}
-{"cmd": "mcp put_handoff", "kind": "mcp", "modes": ["author"], "writes": "handoff", "what": "핸드오프에 후보 추가 (수집가)"}
+{"cmd": "dbtool transition", "kind": "cli", "modes": ["author", "baseline", "develop", "field", "inspect"], "writes": "transition", "writes_on": "^\\s*[^-\\s]", "collector": true, "what": "전환 기록 추가 — 이 세션을 끝내고 다른 모드로 넘길 때"}
+{"cmd": "mcp put_handoff", "kind": "mcp", "modes": ["author"], "writes": "handoff", "collector": true, "what": "핸드오프에 후보 추가 (수집가)"}
 {"cmd": "mcp validate_patch", "kind": "mcp", "modes": ["author"], "writes": null, "what": "패치 관문 미리 보기"}
 {"cmd": "mcp merge", "kind": "mcp", "modes": ["author"], "writes": "registry", "what": "패치 병합"}
 {"cmd": "mcp augment_apply", "kind": "mcp", "modes": ["author"], "writes": "registry", "what": "원본 대조 적용"}
@@ -41,7 +41,7 @@
 {"cmd": "mcp assume_add", "kind": "mcp", "modes": ["author", "baseline"], "writes": "registry", "what": "가정 원장 추가"}
 {"cmd": "mcp dictionary_add", "kind": "mcp", "modes": ["develop"], "writes": "registry", "what": "사전 항목 추가"}
 {"cmd": "mcp accept", "kind": "mcp", "modes": ["inspect"], "writes": "attestation", "what": "승인 도장"}
-{"cmd": "mcp attest", "kind": "mcp", "modes": ["inspect"], "writes": "attestation", "what": "증명 등록부 재검증"}
+{"cmd": "mcp attest", "kind": "mcp", "modes": ["inspect"], "writes": null, "what": "증명 등록부 재검증 — 읽기만 (재검증 결과를 보여 줄 뿐 쓰지 않는다)"}
 {"cmd": "mcp write_derived", "kind": "mcp", "modes": ["author", "develop"], "writes": "derived", "what": "파생 문서 다시 쓰기"}
 {"cmd": "mcp resolve_access", "kind": "mcp", "modes": ["author"], "writes": null, "what": "PMID 접근 상태"}
 {"cmd": "mcp fetch_abstract", "kind": "mcp", "modes": ["author"], "writes": "evidence", "what": "초록 받기"}

@@ -122,6 +122,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 |---|---|---|
 | `dbtool merge` | registry | 패치 병합 — 관문 통과 + 봉인 뒤 서기가 db.json·patches |
 | `dbtool limitations` | derived | 한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect) |
+| `dbtool textbook` | derived | 교과서 부록 생성(--write)·최신·파일 분류 검사 |
 | `dbtool augment` | evidence · registry | 자동 보강 고리 plan → fetch → build → apply (원본 대조) |
 | `dbtool assume` | registry | 가정 원장 보기·추가(add — 감사·봉인 뒤 서기) |
 | `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |

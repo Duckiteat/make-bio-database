@@ -38,8 +38,8 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   assert.match(pre({}, 'Bash', { command: 'node rebuild/gate.mjs open hacker' }), /author \| baseline/);
   assert.match(pre({ mode: 'develop' }, 'Edit', { file_path: '/r/data/db.json' }), /develop 모드 에서는/);
   assert.match(pre({ mode: 'develop' }, 'Edit', { file_path: '/r/workspace/receipts/x.jsonl' }), /문지기만/);
-  assert.match(pre({ mode: 'develop' }, 'Bash', { command: 'cd x && node dbtool.mjs merge p.json' }), /디벨롭은 기계/);
-  assert.match(pre({ mode: 'baseline' }, 'Bash', { command: 'node dbtool.mjs augment apply p.json' }), /결과에 맞추려고/);
+  assert.match(pre({ mode: 'develop' }, 'Bash', { command: 'cd x && node dbtool.mjs merge p.json' }), /^RULE-0515 .*author 모드의 일.*명령 장부/);
+  assert.match(pre({ mode: 'baseline' }, 'Bash', { command: 'node dbtool.mjs augment apply p.json' }), /^RULE-0515 .*author 모드의 일/);
   assert.equal(pre({ mode: 'author' }, 'Bash', { command: 'node dbtool.mjs merge p.json' }), null, '정보 작성은 병합');
   assert.match(pre({ mode: 'develop' }, 'Bash', { command: 'node rebuild/gate.mjs finish author' }), /이 세션의 모드로만/);
   assert.match(pre({}, 'Bash', { command: 'git commit -m x' }), /모드를 열지 않은/);
@@ -58,9 +58,29 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   assert.equal(pre(dev, 'Bash', { command: "cat >> x.md <<'EOF'\n`node rebuild/gate.mjs finish develop` · node dbtool.mjs merge p.json\nEOF\necho ok" }), null, 'heredoc 본문');
   assert.equal(pre(dev, 'Bash', { command: 'git add -A && echo "dbtool.mjs merge 을 고침"' }), null, '따옴표 속 글');
   assert.equal(pre(dev, 'Bash', { command: 'python3 - <<EOF\nprint("git push")\nEOF' }), null, 'heredoc 속 push 글자');
-  assert.match(pre(dev, 'Bash', { command: "cat <<'EOF' > a\nx\nEOF\nnode dbtool.mjs merge p.json" }), /디벨롭은 기계/, 'heredoc 뒤의 진짜 실행은 그대로 막힘');
+  assert.match(pre(dev, 'Bash', { command: "cat <<'EOF' > a\nx\nEOF\nnode dbtool.mjs merge p.json" }), /author 모드의 일/, 'heredoc 뒤의 진짜 실행은 그대로 막힘');
   assert.match(pre(dev, 'Bash', { command: 'git commit -m "dbtool.mjs merge 설명"' }), /^RULE-0516 /, '커밋은 커밋 — 메시지 속 글만 지움');
   assert.equal(G.codeOf(`a 'b c' "d \\" e" f`), `a '' "" f`);
+  // 명령 장부 하나로 (재건 9 단계): 쓰는 명령은 장부의 모드에서만 · 어느 인자에서 쓰는지(writes_on)까지
+  assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs merge --dry p.json' }), null, 'merge --dry 는 읽기');
+  assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --detect' }), null, '--detect 는 읽기');
+  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --write' }), /^RULE-0515 /);
+  assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs attest' }), null, 'attest 는 재검증만 — 쓰지 않는다');
+  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs accept O000019 --use validation --reason x' }), /inspect 모드의 일/, '승인 도장은 점검에서만');
+  assert.equal(pre({ mode: 'inspect' }, 'Bash', { command: 'node dbtool.mjs accept O000019 --use validation --reason x' }), null);
+  assert.equal(pre({ mode: 'author' }, 'Bash', { command: 'node dbtool.mjs textbook --write' }), null, '사용자 결정: 부록은 정보 작성도');
+  assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs dictionary add e.jsonl' }), null, '사용자 결정: 사전은 디벨롭');
+  assert.match(pre({ mode: 'inspect' }, 'Bash', { command: 'node dbtool.mjs dictionary add e.jsonl' }), /develop 모드의 일/);
+  assert.ok(G.mayWrite(P, 'develop', null, 'data/dictionary.jsonl') && !G.mayWrite(P, 'develop', null, 'data/db.json'), '디벨롭: 사전만 data/ 안에서 열림');
+  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs status && node dbtool.mjs register s.json' }), /baseline 모드의 일/, '이어 붙인 둘째 명령도');
+  // MCP 도구도 문지기가 본다 — 서버 이름은 무엇이든, 도구 이름이 장부에 있으면
+  assert.match(pre(dev, 'mcp__biodb-clerk__merge', {}), /^RULE-0515 .*author/);
+  assert.match(pre({}, 'mcp__clerk__assume_add', {}), /^RULE-0514 /, '모드 없이 쓰는 MCP 도구');
+  assert.equal(pre(dev, 'mcp__github__merge_pull_request', {}), null, '장부 밖 MCP 도구는 다루지 않음');
+  assert.equal(pre(dev, 'mcp__query__map', {}), null, '읽기 도구');
+  assert.equal(pre(col, 'mcp__clerk__put_handoff', {}), null, '수집가: 핸드오프');
+  assert.match(pre(col, 'mcp__clerk__merge', {}), /^RULE-0287 /);
+  assert.equal(pre({ ...col, finish: null }, 'Bash', { command: 'node dbtool.mjs transition t.json' }), null, '수집가도 전환 기록');
 });
 
 // ── 끝에서 끝: 임시 git 저장소
