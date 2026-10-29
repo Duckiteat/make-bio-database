@@ -9,7 +9,7 @@
 ## 역할 분리 (깨면 안 되는 선)
 
 - **수집가 (Sonnet 등 — 싼 모델):** 읽기·조회·분석·문헌 수집만. 후보를 아래 표에 `collected` 로 넘긴다
-  (서브에이전트면 **파일에 쓰지 말고 반환**, 상주 세션이면 이 표에 append). **금지**: `augment apply`·`merge`·
+  (서브에이전트면 **파일에 쓰지 말고 반환**, 상주 수집가 세션이면 `workspace/handoff/<과제>.jsonl` 에 붙이기만 — MCP clerk `put_handoff`, 수집가가 쓰는 자리는 이것 하나). **금지**: `augment apply`·`merge`·
   `register` · `git commit`·`git push` · 규칙·코드 파일(vocab·model·core·judicial·legislative) 수정 · db.json
   직접 편집 · 남의 행 수정.
 - **통합가 (Opus/사람):** 각 후보를 **1차 출처(PMC 전문·UniProt 큐레이션)로 직접 재확인**(수집가 값은 전부

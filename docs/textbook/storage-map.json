@@ -1049,6 +1049,14 @@
       "interpret": "집행 구멍 메우기 — 변이 시험에서 집행 자리를 망가뜨려도 빨개지지 않던 규칙마다 그 자리를 직접 찌르는 시험. 시험 이름에 RULE 번호."
     },
     {
+      "path": "tests/gate.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "문지기 시험 — 정책 · 판단(규칙 번호) · 저장소 밖 임시 git 저장소에서 진짜 훅을 돌려 막힘·셸 쓰기 잡기·영수증 = git 변경 · 영수증 고침/지움이 막힘."
+    },
+    {
       "path": "tests/transitions.test.mjs",
       "class": "verification",
       "format": "node:test",
@@ -1403,7 +1411,7 @@
     {
       "path": "workspace/*",
       "class": "log",
-      "format": "AI 작업자 전용 공간 (최상위) — README(격리 규약)·collector.settings.json(권한 프로파일)",
+      "format": "AI 작업자 전용 공간 (최상위) — README(격리 규약)·START-HERE·전환 기록. 권한은 문지기 훅이 역할로(rebuild/gate.mjs)",
       "writer": "작업자(Sonnet 등, workspace/ 안에서만) · 통합가(Opus/사람)",
       "readers": "작업자·통합가 · 사람",
       "interpret": "[작업 공간] 싼 모델(작업자·수집가)이 일하는 유일한 쓰기 공간 — 신뢰 저장소(db·규칙·엔진)와 분리. 적용·본체 병합은 통합가가. 설계 docs/PROMPTS.md §3′ · workspace/README.md."
@@ -1607,6 +1615,22 @@
       "writer": "입법 서기 writeState 만 (rebuild/plan.mjs apply — 검사 통과 뒤). plan-log 는 옛 글로 시작해야 씀",
       "readers": "rebuild/state.mjs · rebuild/status.mjs (docs/design/build-plan.md · rebuild/PLAN.md 생성) · tests/rebuild.test.mjs ⑯–⑲",
       "interpret": "두 계획의 원본. 2026-10-29 까지의 걸어온 길은 git 역사에서 가져옴(source git, node rebuild/plan-import.mjs --check 로 다시 대조), 그 뒤는 apply 사건(source apply)."
+    },
+    {
+      "path": "rebuild/gate.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (훅 hook <session-start|pre|post|stop> · open · finish · receipt)",
+      "writer": "사람·AI",
+      "readers": ".claude/settings.json 훅 · tests/gate.test.mjs",
+      "interpret": "문지기·영수증 (재건 7 단계) — 정책은 rebuild/rules/modes.json 의 gate. 모드 밖 쓰기·막는 명령·끝내기 전 시험 없는 commit·push 를 막고(RULE-0514–0517 · 수집가 0274·0275·0287·0299), 도구 호출마다 바뀐 파일을 영수증에 붙인다."
+    },
+    {
+      "path": "workspace/receipts/*",
+      "class": "management",
+      "format": "JSONL (사건 하나 = 한 줄, prev = 앞 줄 sha256 사슬) + 같은 이름 .md (사람용 보기)",
+      "writer": "rebuild/gate.mjs 훅만 (입법 서기 appendReceipt · writeReceiptDoc, 구역 receipt)",
+      "readers": "사람 (GitHub 에서 .md) · node rebuild/gate.mjs receipt",
+      "interpret": "세션 하나 = 영수증 하나: 모드 · 막힌 것 · 바뀐 파일과 그 호출 · 끝내기 전 시험 · git 변경과의 대조. 손으로 고치면 문지기가 쓰는 도구를 막는다. 관리 파일 개수에서는 빠진다(자라는 기록)."
     },
     {
       "path": "rebuild/plan.mjs",

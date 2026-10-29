@@ -265,7 +265,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 386/386 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 390/390 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)
@@ -325,4 +325,4 @@ cmp index.html viewer.html             # 화면 두 파일이 같은지
 | 보존/비보존 분류(오차 3채널 기저) | `docs/design/conservation-classes.md` (`vocab.conservationClasses`·`conservationReasons`) |
 | 색인·파싱 비용 문턱 | `tests/bench_index.js` (`node tests/bench_index.js`) |
 | 수집가·통합가 핸드오프(싼 모델에 수집 위임) | `docs/PROMPTS.md` §3′ |
-| AI 작업자 전용 공간(격리) | `workspace/README.md` · 핸드오프 `workspace/handoff/` · 권한 프로파일 `workspace/collector.settings.json` |
+| AI 작업자 전용 공간(격리) | `workspace/README.md` · 핸드오프 `workspace/handoff/` · 권한은 문지기 훅이 역할로(`rebuild/gate.mjs`, `BIODB_ROLE=collector`) |

@@ -37,7 +37,8 @@ test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () =
 
 test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는다', () => {
   const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'target', 'rebuild'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
-  const code = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p) && p !== 'tests/rebuild.test.mjs');
+  // 예외: 재건 도구의 시험 — 문지기 시험은 따로 있어야 변이 시험이 판정할 수 있다(rebuild.test 는 파일이 바뀌면 늘 빨개짐)
+  const code = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p) && !['tests/rebuild.test.mjs', 'tests/gate.test.mjs'].includes(p));
   const users = code.filter((p) => /rebuild\//.test(readFileSync(join(ROOT, p), 'utf8')));
   assert.deepEqual(users, ['legislative/clerk.mjs'], 'rebuild/ 를 가리키는 코드');
   const clerk = readFileSync(join(ROOT, 'legislative/clerk.mjs'), 'utf8').split('\n').filter((l) => /rebuild\//.test(l));
@@ -109,7 +110,8 @@ test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인�
   //   객체로 쌓는 모듈은 오류 객체의 rule 칸, 문자열로 쌓는 모듈은 같은 순서의 rules 목록 (rules[i] ↔ errors[i])
   const SITES = { 'judicial/judicial.js': ['E', 'W', 'AE'], 'legislative/legislative.js': ['ERR'], 'legislative/clerk.mjs': ['refuse'], 'judicial/fate_audit.js': ['AE', 'prob'], 'judicial/contract.js': ['E'],
     'judicial/assumption_audit.js': ['E', 'err'], 'judicial/dictionary_audit.js': ['err'], 'judicial/log_audit.js': ['err'], 'judicial/protocol.js': ['prob'], 'judicial/collection_audit.js': ['push', 'err'],
-    'judicial/derivative.js': ['err'], 'judicial/identity.js': ['fail'], 'judicial/perturb_audit.js': ['P'], 'judicial/transition_audit.js': ['err'] };
+    'judicial/derivative.js': ['err'], 'judicial/identity.js': ['fail'], 'judicial/perturb_audit.js': ['P'], 'judicial/transition_audit.js': ['err'],
+    'rebuild/gate.mjs': ['B'] };
   const bad = [], used = new Set(); let n = 0;
   for (const [f, names] of Object.entries(SITES)) {
     const lines = readFileSync(join(ROOT, f), 'utf8').split('\n');

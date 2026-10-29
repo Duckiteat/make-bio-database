@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 513 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 517 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 501 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 505 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,8 +17,8 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 284 |
-| text | 227 |
+| machine | 289 |
+| text | 226 |
 | none | 0 |
 | unchecked | 2 |
 
@@ -26,7 +26,7 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 292 |
+| 1 곳 | 296 |
 | 2 곳 | 104 |
 | 3 곳 | 61 |
 | 4 곳 | 33 |
@@ -38,7 +38,7 @@
 |---|---|---|
 | RULE-0004 | common · author | 연결은 번호로만 |
 | RULE-0010 | common · develop | 부분 구조 수지 ΣIn=ΣOut 상대 1e-14 (규칙 검사·운명 원장) |
-| RULE-0018 | author · develop | 권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤 |
+| RULE-0018 | author · develop | 권한은 입출력기 clerk 하나 — 단일 작성자 잠금(clerk 서버와 dbtool 의 권위 쓰기가 같은 잠금, 원자적), 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤 |
 | RULE-0019 | author · develop | 역할 BIODB_ROLE 기본 collector (핸드오프만) |
 | RULE-0024 | common · author | 그 밖의 로그인(학교 계정 등)은 쓰지 않는다 |
 | RULE-0026 | author · develop | 행정부는 관찰을 읽지 않는다; 예측 표본은 조정자가 compiler/obs_operator.js 로 |

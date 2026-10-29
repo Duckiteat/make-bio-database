@@ -228,7 +228,7 @@ function build() {
   const chgRows = read('CHANGES.md').split('\n').filter((l) => l.startsWith('| 20'));
   const chgHead = (t) => { const k = +t.slice(4); return k >= 1 && k <= chgRows.length ? chgRows[chgRows.length - k].split('|')[1].trim() : null; };
   const lims = new Set(Object.keys(JSON.parse(read('data/db.json')).limitations || {}));
-  const codeHead = (t) => { const f = t.slice(5); return existsSync(join(ROOT, f)) && /^\s*(\/\/|\/\*)/.test(read(f)); };
+  const codeHead = (t) => { const f = t.slice(5); return existsSync(join(ROOT, f)) && /^(#![^\n]*\n)?\s*(\/\/|\/\*)/.test(read(f)); }; // 실행 줄(#!) 다음의 머리 주석도
   const isReport = (t) => /^docs\/reports\//.test(uid[t]?.src || ''); // 보고서 문장은 휴리스틱으로 대부분 history — 이유로도 경위로도 이을 수 있다
   const isPatch = (t) => /^patch:[^/]+\.json$/.test(t) && existsSync(join(ROOT, 'data', 'patches', t.slice(6)));
   const far = (t) => (/^CHG-\d{4}$/.test(t) && chgHead(t) !== null) || (/^code:/.test(t) && codeHead(t)) || lims.has(t) || isReport(t) || isPatch(t);

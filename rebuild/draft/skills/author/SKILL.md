@@ -16,13 +16,13 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (70)
+## 지켜야 할 규칙 — 사람·AI (69)
 
 ### 권한·쓰기 (삼권 분립)
 
 - `RULE-0021` 유료 원천은 받지 않는다
 - `RULE-0022` 계정 원천은 BRENDA 하나, fetch 의 brenda_kinetics 로만
-- `RULE-0307` (서브에이전트면 파일에 쓰지 말고 반환, 상주 세션이면 이 표에 append). 금지: `augment apply`·`merge`·
+- `RULE-0307` (서브에이전트면 파일에 쓰지 말고 반환, 상주 수집가 세션이면 `workspace/handoff/<과제>.jsonl` 에 붙이기만 — MCP clerk `put_handoff`, 수집가가 쓰는 자리는 이것 하나). 금지: `augment apply`·`merge`·
 - `RULE-0308` "후보"다 — 베끼지 않는다). 통과분만 패치 → `validate` → `augment apply` → 커밋. 상태를 바꾼다.
 - `RULE-0490` 패치 초안 — 저장소를 읽는 에이전트만 — 관문 — `validate` · `patchPolicy` · 정제 점검. 저장소 밖 AI 에게는 맡기지 않는다(PROMPTS §3)
 - `RULE-0491` 적대적 검토 — 다른 AI — 대화 → 거부 시험 — 결론은 주지 않고 코드만 준다(PROMPTS §3)
@@ -42,7 +42,6 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 - `RULE-0273` A (서브에이전트, 지금 기본): 보고만 — 구조적으로 apply·commit 불가. 설정 0. 묶음마다 통합가가 띄운다.
 - `RULE-0285` 수집가는 후보를 workspace/handoff/ 에 적기만, 적용·커밋·판단은 통합가
 - `RULE-0288` 인용·값은 지정 1차 출처 API 응답에서만, 웹 검색 스니펫·2차 리뷰 금지 (TASK-002 교훈)
-- `RULE-0299` 본체(main) 금지. 커밋·push 는 자기 작업 브랜치(`sonnet/*` 등)에만. `main` 에 쓰지 않는다
 - `RULE-0301` 인용·값은 지정 1차 출처 API가 반환한 내용에서만 뽑는다. 웹 검색 스니펫·2차 리뷰·블로그를 값·인용
 - `RULE-0302` 근거로 쓰지 마라. 못 찾으면 `not_found`, 접근 안 되면 `unreadable` — 지어내거나 스니펫으로 메우지 않는다.
 - `RULE-0303` 나머지는 엔드포인트를 통합가가 확인해 이 표를 갱신하기 전까지 "통합가 필요"로 표시한다.
@@ -111,7 +110,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 
 ## 컴퓨터가 막는 규칙
 
-179 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+180 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
 ## 형식 설명
 

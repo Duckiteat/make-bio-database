@@ -26,7 +26,16 @@
 | none | 0 |
 | unchecked | 203 |
 
-집행 자리 확인 (machine 400): 파일·이름 확인 390 · 글로만 적힘 10 · 못 찾음 0
+집행 자리 확인 (machine 400): 파일·이름 확인 382 · 글로만 적힘 10 · 못 찾음 8
+
+- U0722 (docs/PROMPTS.md:235): 파일 없음 workspace/collector.settings.json
+- U0723 (docs/PROMPTS.md:236): 파일 없음 workspace/collector.settings.json
+- U0766 (workspace/START-HERE.md:11): 파일 없음 workspace/collector.settings.json
+- U0767 (workspace/START-HERE.md:12): 파일 없음 workspace/collector.settings.json
+- U0799 (workspace/README.md:7): 파일 없음 workspace/collector.settings.json
+- U0801 (workspace/README.md:12): 파일 없음 workspace/collector.settings.json
+- U0802 (workspace/README.md:13): 파일 없음 workspace/collector.settings.json
+- U0803 (workspace/README.md:14): 파일 없음 workspace/collector.settings.json
 
 이 확인은 '자리가 있다' 까지다 — 그 자리가 정말 그 규칙을 집행하는지는 5 단계에서 거부 시험으로 확인한다.
 

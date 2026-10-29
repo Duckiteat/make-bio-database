@@ -14,7 +14,7 @@
 //   저장소 **밖**(tmp·스크래치 사본, `--db` 로 가리킨 다른 저장소)은 구역 표가 다루지 않는다 — 저장소의 코드·데이터·증명을
 //   건드리지 못하게 막는 것이 목적이고, 밖은 애초에 그것이 아니다. 막는 것은 '저장소 안인데 그 구역이 아닌 자리' 다
 //   (예: 병합이 judicial/ 에, 받기가 engine/ 에 쓰려는 경우).
-import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync, statSync, linkSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -45,6 +45,7 @@ export const ZONES = {
   draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
   transition:  { label: '전환 기록 (세션 사이 인계)', allow: ['workspace/transitions.jsonl'], rule: '사법부 전환 기록 검사(judicial/transition_audit.js)가 통과할 때만 — 추가만 한다' },
+  receipt:     { label: '영수증 (세션 작업 기록)', allow: ['workspace/receipts/'], rule: '문지기(gate.mjs — 재건 7 단계)가 도구 호출마다 덧붙인다 — 사슬(prev)로 이어 붙이기만, 고치지 않는다 (재건 7 단계)' },
   rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·계획 기록과 그 생성 문서만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
@@ -60,7 +61,10 @@ function zoned(zone, file) {
   return abs;
 }
 // 이 저장소에서 파일에 쓰는 단 하나의 함수 — 구역을 반드시 지난다
-const put = (zone, file, text) => { const abs = zoned(zone, file); mkdirSync(dirname(abs), { recursive: true }); const tmp = abs + '.part'; writeFileSync(tmp, text); renameSync(tmp, abs); log.push(relative(process.cwd(), abs) || abs); return abs; };
+// 권위 있는 구역(데이터·도장·증거·파생·핸드오프·전환)에 이 저장소 안으로 쓰는 프로세스는 단일 작성자 잠금을 잡는다 — MCP clerk 든 dbtool 이든 (RULE-0018, 재건 7 단계)
+const LOCKED = new Set(['registry', 'attestation', 'evidence', 'derived', 'handoff', 'transition']);
+let held = null;
+const put = (zone, file, text) => { const abs = zoned(zone, file); if (LOCKED.has(zone) && !held) { const r = relative(ROOT, abs); if (r && !r.startsWith('..')) { writerLock(ROOT); } } mkdirSync(dirname(abs), { recursive: true }); const tmp = abs + '.part'; writeFileSync(tmp, text); renameSync(tmp, abs); log.push(relative(process.cwd(), abs) || abs); return abs; };
 
 // ① 병합 기록: 관문 봉인이 통과이고 봉인의 db 가 쓸 db 와 같을 때만 data/patches/ 기록 + data/db.json
 export function commitMerge({ dbPath, db, records, seal }) {
@@ -255,6 +259,21 @@ export function writePlanDoc(plan, content, root) {
   return put('rebuild', join(root || ROOT, ...rel), content);
 }
 
+// 7 단계 영수증 — 세션 하나 = 파일 하나(workspace/receipts/<날짜>-<세션>.jsonl). 덧붙이기만: 사건마다 앞 줄의 sha256 을 prev 로 잇는다.
+//   사슬이 끊겨 있으면(누가 고쳤으면) 덧붙이지 않고 거부 — 문지기가 그 사실을 따로 알린다. .md 는 같은 이름의 사람용 보기(생성물)
+export function appendReceipt(root, name, ev) {
+  if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}' — <YYYY-MM-DD>-<세션>`);
+  const f = join(root || ROOT, 'workspace', 'receipts', name + '.jsonl'), old = existsSync(f) ? readFileSync(f, 'utf8') : '';
+  const lines = old.split('\n').filter(Boolean);
+  for (let i = 1; i < lines.length; i++) if (JSON.parse(lines[i]).prev !== sha(lines[i - 1])) refuse('RULE-0014', `영수증 ${name} 의 사슬이 ${i + 1} 째 줄에서 끊김 — 고친 흔적`);
+  const line = JSON.stringify({ ...ev, prev: lines.length ? sha(lines[lines.length - 1]) : null });
+  return put('receipt', f, old + line + '\n');
+}
+export function writeReceiptDoc(root, name, md) {
+  if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}'`);
+  return put('receipt', join(root || ROOT, 'workspace', 'receipts', name + '.md'), md);
+}
+
 // ⑥ 임시 산출물 (패치 초안·리팩터링 제안) — 저장소 밖 임시 폴더에만
 export function writeDraft(file, obj) {
   return put('draft', resolve(file), JSON.stringify(obj, null, 2) + '\n');
@@ -343,15 +362,30 @@ export function appendHandoff(name, lines) {
   return put('handoff', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + rows.join('\n') + '\n');
 }
 
-// ⑩ 단일 작성자 잠금 (outsourcing-and-mcp.md §4.3): 저장소마다 입출력기(MCP clerk 서버) 하나. 잠금은 저장소 밖(운영체제 임시 폴더) —
-//   쓰기는 put('draft') — 저장소 밖만 허용하는 구역. 살아 있는 작성자가 있으면 거부, 죽은 잠금은 치운다. 돌려준 함수로 푼다.
+// ⑩ 단일 작성자 잠금 (outsourcing-and-mcp.md §4.3 · RULE-0018): 저장소마다 작성자 하나 — MCP clerk 는 뜰 때, 다른 프로세스(dbtool …)는 권위 구역에 처음 쓸 때 잡는다.
+//   잠금은 저장소 밖(운영체제 임시 폴더). 잡기는 원자적: 내 pid 를 담은 임시 파일을 잠금 이름으로 hard link — 이미 있으면 실패한다(확인과 쓰기 사이 틈 없음).
+//   살아 있는 다른 작성자면 거부, 죽은 잠금은 치우고 한 번 더. 프로세스가 끝나면 푼다. 돌려준 함수로도 푼다.
 export function writerLock(root = ROOT) {
   const f = join(tmpdir(), `biodb-clerk-${sha(resolve(root)).slice(0, 16)}.lock`);
+  if (held && held.f === f) return held.release;
   const alive = (pid) => { try { process.kill(pid, 0); return true; } catch (e) { return false; } };
-  if (existsSync(f)) { const pid = +readFileSync(f, 'utf8'); if (pid && alive(pid)) refuse('RULE-0018', `입출력기가 이미 떠 있음 (pid ${pid}) — 작성자는 하나`); unlinkSync(f); }
-  put('draft', f, String(process.pid)); // 저장소 밖 — draft 구역(저장소 밖만)
-  if (+readFileSync(f, 'utf8') !== process.pid) refuse('RULE-0018', '입출력기 잠금을 다른 작성자가 먼저 잡음');
-  return () => { try { if (+readFileSync(f, 'utf8') === process.pid) unlinkSync(f); } catch (e) { /* 이미 없음 */ } };
+  const mine = join(tmpdir(), `biodb-clerk-${process.pid}-${Date.now()}.pid`);
+  put('draft', mine, String(process.pid)); // 저장소 밖 — draft 구역(저장소 밖만)
+  try {
+    for (let tries = 0; ; tries++) {
+      try { linkSync(mine, f); break; } catch (e) {
+        if (e.code !== 'EEXIST') throw e;
+        const pid = +readFileSync(f, 'utf8');
+        if (pid && pid !== process.pid && alive(pid)) refuse('RULE-0018', `작성자가 이미 떠 있음 (pid ${pid}) — 저장소마다 작성자는 하나 (MCP clerk 또는 다른 dbtool 쓰기)`);
+        if (tries) refuse('RULE-0018', '입출력기 잠금을 다른 작성자가 먼저 잡음');
+        try { unlinkSync(f); } catch (e2) { /* 다른 쪽이 먼저 치움 */ }
+      }
+    }
+  } finally { try { unlinkSync(mine); } catch (e) { /* 없음 */ } }
+  const release = () => { try { if (+readFileSync(f, 'utf8') === process.pid) unlinkSync(f); } catch (e) { /* 이미 없음 */ } if (held && held.f === f) held = null; };
+  held = { f, release };
+  process.once('exit', release);
+  return release;
 }
 
 export const writtenFiles = () => log.slice();

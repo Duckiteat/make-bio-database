@@ -232,8 +232,8 @@ data/db.json·CHANGES.md·limitations.md·교과서 부록을 통째로 읽지 �
 
 **수집가 권한 (A: 서브에이전트 / B: 상주 세션):**
 - **A (서브에이전트, 지금 기본):** 보고만 — 구조적으로 apply·commit 불가. 설정 0. 묶음마다 통합가가 띄운다.
-- **B (상주 Sonnet 세션, 독립 실행 시):** `.claude/settings.json` 권한으로 **거부**한다 — `augment apply`·`merge`·
-  `register` · `git commit`·`git push` · 규칙 파일(vocab·model·core·judicial·legislative) 쓰기 · `data/db.json` 쓰기.
+- **B (상주 수집가 세션, 독립 실행 시):** 문지기 훅(`rebuild/gate.mjs` — 저장소 `.claude/settings.json`, 복사할 틀 없음)이 `BIODB_ROLE=collector` 를 보고 **거부**한다 — `augment apply`·`merge`·
+  `register`·`attest`·`accept` · `collector/*` 밖 브랜치로의 `git commit`·`git push` · `workspace/handoff/` 밖 쓰기(Edit·Write·셸 모두 — 규칙 파일·`data/db.json` 포함).
   그러면 신뢰가 아니라 **구조로** 막힌다. (db 는 관문이, 규칙·커밋은 권한이 — 이중.)
 
 ### 수집가 프롬프트 (복붙 — 읽기 전용·수집만)

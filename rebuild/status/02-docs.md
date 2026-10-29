@@ -4,16 +4,16 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 258.0 | 240 |  | 분류됨 1 |
-| `CLAUDE.md` | 18.2 | 85 | 입구 | 분류됨 242 |
+| `CHANGES.md` | 260.4 | 241 |  | 분류됨 1 |
+| `CLAUDE.md` | 18.5 | 85 | 입구 | 분류됨 242 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
 | `SCHEMA.md` | 100.2 | 659 |  | 분류됨 427 |
-| `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 분류됨 151 |
-| `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 분류됨 180 |
+| `docs/PROMPTS.md` | 17.8 | 315 | 입구 | 분류됨 151 |
+| `docs/RUNBOOK.md` | 22.3 | 328 | 입구 | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
-| `docs/design/agent-rules.md` | 45.9 | 117 |  | 분류됨 192 |
+| `docs/design/agent-rules.md` | 46.8 | 117 |  | 분류됨 192 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
 | `docs/design/build-plan.md` | 201.2 | 2310 |  | 생성물 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
@@ -66,14 +66,14 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 119.6 | 823 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 120.9 | 826 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
-| `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
+| `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
-| `workspace/START-HERE.md` | 4.6 | 57 | 입구 | 분류됨 32 |
+| `workspace/START-HERE.md` | 4.7 | 57 | 입구 | 분류됨 32 |
 | `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
 | `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
-| `workspace/handoff/HANDOFF-template.md` | 2.2 | 30 |  | 분류됨 16 |
+| `workspace/handoff/HANDOFF-template.md` | 2.3 | 30 |  | 분류됨 16 |
 | `workspace/handoff/HANDOFF-tnf-mrna-halflife.md` | 2.7 | 33 |  | 분류됨 17 |
 | `workspace/handoff/HANDOFF-validation-precondition.md` | 2.2 | 37 |  | 분류됨 19 |
 | `workspace/handoff/NEXT-2026-10-23.md` | 1.7 | 19 |  | 분류됨 11 |

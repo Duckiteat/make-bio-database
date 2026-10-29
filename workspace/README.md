@@ -13,7 +13,7 @@
    `compiler/`·`engine/`·테스트·형식 파일을 수정하지 않는다(읽기만).
 2. **적용·등록 금지.** `node dbtool.mjs augment apply`·`merge`·`register` 를 돌리지 않는다. 데이터는 통합가가
    1차 출처로 검증해 패치로 넣는다.
-3. **본체(main) 금지.** 커밋·push 는 자기 작업 브랜치(`sonnet/*` 등)에만. `main` 에 쓰지 않는다
+3. **본체(main) 금지.** 커밋·push 는 자기 수집 브랜치(`collector/*`)에만, 바뀐 파일은 `workspace/handoff/` 만 — 문지기 훅(`rebuild/gate.mjs`)이 `BIODB_ROLE=collector` 를 보고 push 직전에 브랜치와 바뀐 파일을 확인한다(결정 ②). `main` 에 쓰지 않는다
    (저장소 브랜치 보호가 구조적으로 막는다).
 4. **수집은 후보다.** 값·외부 ID 를 지어내지 않는다 — 조회·1차 출처로 확인한 것만, 못 찾으면 "없음".
 
@@ -22,7 +22,7 @@
 - `handoff/` — 수집가가 모은 후보와 통합가의 검증·적용 상태(`collected → verified/rejected → applied`).
   복사용 틀은 `handoff/HANDOFF-template.md`.
 - `tasks/` — 통합가가 작업자에게 맡기는 묶음(batch) 과제 명세. 한 번에 하나(핑퐁 아님).
-- `collector.settings.json` — 작업자 세션용 권한 프로파일(아래). 작업자 세션의 `.claude/settings.json` 으로 복사.
+- 권한: 복사할 설정 틀은 없다 — 저장소 `.claude/settings.json` 의 문지기 훅이 `BIODB_ROLE=collector` 를 보고 막는다(`rebuild/rules/modes.json` 의 `gate.roles.collector`).
 
 ## 두 역할 루프 (단위 = 묶음)
 

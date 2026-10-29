@@ -71,6 +71,7 @@
 | `tests/dose_slope.test.mjs` | 6 |
 | `tests/enforcement_gaps.test.mjs` | 26 |
 | `tests/gap_schema.test.mjs` | 3 |
+| `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 21 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mhc.test.mjs` | 11 |

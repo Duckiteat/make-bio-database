@@ -2,13 +2,12 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (277 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (282 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 236 |
+| 잡음 `caught` | 248 |
 | 설정에 있음 `present` | 8 |
-| 본보기에만 있음 (켜지지 않음) `present_template` | 7 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
 
@@ -16,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 236
+## 잡음 `caught` — 248
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -32,7 +31,7 @@
 | RULE-0015 | db.json·patches 는 관문 봉인(통과 + 같은 db sha256)일 때만 | disable | legislative/clerk.mjs | ④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다 |
 | RULE-0016 | 증명 등록부는 도장 재검증 뒤에만 쓴다 | disable | legislative/clerk.mjs | ④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다 |
 | RULE-0017 | dbtool.mjs 포함 다른 파일에 쓰기 금지 | inject | dbtool.mjs | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
-| RULE-0018 | 권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤 | disable | legislative/clerk.mjs | ④ clerk 단일 작성자: 하나가 떠 있으면 둘째는 시작하지 않는다 |
+| RULE-0018 | 권한은 입출력기 clerk 하나 — 단일 작성자 잠금(clerk 서버와 dbtool 의 권위 쓰기가 같은 잠 | disable | legislative/clerk.mjs | ④ 단일 작성자: clerk 가 떠 있으면 둘째 clerk 도, dbtool 쓰기도 막힌다 |
 | RULE-0019 | 역할 BIODB_ROLE 기본 collector (핸드오프만) | replace | mcp/protocol.mjs | ③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부 |
 | RULE-0020 | mcp 서버는 파일을 직접 쓰지 않는다 | inject | mcp/query.mjs | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
 | RULE-0023 | BRENDA 계정은 환경 변수 BRENDA_EMAIL·BRENDA_PASSWORD_SHA256 — 출력·받기 | replace | legislative/clerk.mjs | ⑪ 서기 POST 받기: 본문은 표준 입력으로만 · 응답에 되돌아온 계정 정보는 지움 · 오류 본문도 지움 |
@@ -151,11 +150,18 @@
 | RULE-0247 | 요청 본문은 서기 postToInbox 가 curl 표준 입력으로, 응답에 계정이 되돌아오면 저장 전에 지운 | replace | legislative/clerk.mjs | ⑪ 서기 POST 받기: 본문은 표준 입력으로만 · 응답에 되돌아온 계정 정보는 지움 · 오류 본문도 지움 |
 | RULE-0250 | 목록에 없는 도구는 부르는 자리에서도 거부 | replace | mcp/protocol.mjs | ③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부 |
 | RULE-0251 | --allow-warnings 는 사람 역할만 (MCP) | replace | mcp/clerk.mjs | ③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부 |
-| RULE-0286 | 수집가 쓰기는 workspace/ 안에서만, 규칙·코드·db 는 읽기만 | replace | legislative/clerk.mjs | ⑤ 핸드오프: 이름 검사 · 붙이기만 (앞 줄 그대로) |
+| RULE-0274 | **B (상주 수집가 세션, 독립 실행 시):** 문지기 훅(`rebuild/gate.mjs` — 저장소 ` | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0275 | `register`·`attest`·`accept` · `collector/*` 밖 브랜치로의 `git co | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0286 | 수집가 쓰기는 workspace/ 안에서만, 규칙·코드·db 는 읽기만 | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0287 | **이 명령들 금지**(문지기 훅이 `BIODB_ROLE=collector` 를 보고 막는다): `node  | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
 | RULE-0289 | 후보마다 값·단위·종·세포·시각·불확도·출처+인용·use·규약 가능 | replace | judicial/collection_audit.js | RULE-0289 수집 후보: read_value 인데 값이 없으면 INCOMPLETE (출처·인용이 있어도 검토로 넘기지 않음) |
 | RULE-0290 | `outcome` ∈ `not_searched\|not_found\|unreadable\|read_no_va | replace | judicial/collection_audit.js | ⑦ outcome 누락·빈 입력 → INCOMPLETE |
 | RULE-0291 | 값을 적으면 source + quote 필수 | replace | judicial/collection_audit.js | ③ 근거 없는 값 → REJECTED (꼼수: 미확인을 사실처럼) |
 | RULE-0292 | 완료는 수집가가 아니라 판정기가 정한다 — 값 후보는 1차 출처 재확인 전 PASS 아님 | replace | judicial/collection_audit.js | ② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지) |
+| RULE-0293 | > **아예 분리**돼 있다. 작업자는 저장소 전체를 **읽을** 수 있으나 **쓰기는 여기(`workspa | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0295 | **쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model. | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0296 | `compiler/`·`engine/`·테스트·형식 파일을 수정하지 않는다(읽기만). | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0297 | **적용·등록 금지.** `node dbtool.mjs augment apply`·`merge`·`regis | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
 | RULE-0309 | **통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0311 | **외부 ID·구조 지문·잔기 번호**: 형식·kind 검사, 같은 ID·지문 중복 금지. 모르면 지어내지  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0312 | **구조**: 구성 요소는 복합체만, 부위의 `on` 은 구성 요소, 막 면은 그 막에 있는 면, 막 결합  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
@@ -256,6 +262,11 @@
 | RULE-0511 | 외부 ID 확인은 원본 응답과 대조한다 — 번호·기준 종·이름이 맞아야 하고, 이미 다른 정의항에 있는 번호 | replace | judicial/identity.js | 자동 보강 build: 검증만 verified·출처·서열 길이·지문, 종·번호·이름·화학식·중복 위반은 거부, 모호하면 unmapped 유지 + 후보 메모, as |
 | RULE-0512 | 검사 자리는 첫 인자로 규칙 번호를 낸다 — 새 검사는 규칙 장부에 규칙 먼저(없으면 from_code),  | replace | judicial/judicial.js | ⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인자가 살아 있는 RULE 번호 (5d) |
 | RULE-0513 | 다른 모드가 필요하면 세션은 전환 기록 { from, to, at, why, target, files, op | replace | judicial/transition_audit.js | RULE-0513 전환 기록 검사: 통과 1 + 거부 사유별 |
+| RULE-0514 | 세션은 모드 하나로 시작해서 끝난다 — 모드를 열기 전에는 저장소에 쓰지 않고, 세션 안에서 모드를 바꾸지  | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0515 | 모드마다 쓸 수 있는 곳만 바뀐다 (rebuild/rules/modes.json gate) — Edit·Wr | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0517 | 영수증(workspace/receipts/)은 문지기만 쓴다 — 사슬로 덧붙이기만, 고치거나 지우면 쓰는 도 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0516 | 끝내기 전 시험 묶음(node rebuild/gate.mjs finish <모드>)이 지금 파일 상태(작업  | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0299 | **본체(main) 금지.** 커밋·push 는 자기 수집 브랜치(`collector/*`)에만, 바뀐 파일 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
 
 ## 설정에 있음 `present` — 8
 
@@ -269,18 +280,6 @@
 | RULE-0210 | 파일 추가·이동 → storage-map.json 에 분류 | static | .github/workflows/check.yml |  |
 | RULE-0253 | 읽기·검증·시뮬레이션·시험은 허가를 묻지 않는다. 데이터를 바꾸는 명령과 `git push` 는 묻는다(`. | static | .claude/settings.json |  |
 | RULE-0300 | 보이게 못박는다. `data/fetched/`(원본 수신함)는 별개로 쓰기 보호이며 `augment plan | static | .claude/settings.json |  |
-
-## 본보기에만 있음 (켜지지 않음) `present_template` — 7
-
-| 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
-|---|---|---|---|---|
-| RULE-0274 | **B (상주 Sonnet 세션, 독립 실행 시):** `.claude/settings.json` 권한으로  | static | workspace/collector.settings.json |  |
-| RULE-0275 | `register` · `git commit`·`git push` · 규칙 파일(vocab·model·cor | static | workspace/collector.settings.json |  |
-| RULE-0287 | 수집가 금지 명령: augment apply·merge·register·git commit·push | static | workspace/collector.settings.json |  |
-| RULE-0293 | > **아예 분리**돼 있다. 작업자는 저장소 전체를 **읽을** 수 있으나 **쓰기는 여기(`workspa | static | workspace/collector.settings.json |  |
-| RULE-0295 | **쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model. | static | workspace/collector.settings.json |  |
-| RULE-0296 | `compiler/`·`engine/`·테스트·형식 파일을 수정하지 않는다(읽기만). | static | workspace/collector.settings.json |  |
-| RULE-0297 | **적용·등록 금지.** `node dbtool.mjs augment apply`·`merge`·`regis | static | workspace/collector.settings.json |  |
 
 ## 시험 통과 (자리 변이 없음) `test_passes` — 26
 

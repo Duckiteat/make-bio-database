@@ -13,19 +13,19 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "782 개 · 26495.5 KB"
+        "783 개 · 26563.1 KB"
        ],
        [
         "입구 문서 6 곳 합",
-        "73.7 KB"
+        "74.3 KB"
        ],
        [
         "direction 부팅 읽기 합",
-        "274.9 KB"
+        "275.2 KB"
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "81 개 · 1827.4 KB"
+        "81 개 · 1832.9 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "386 / 25"
+        "390 / 25"
        ],
        [
         "번호 이름공간",
@@ -69,11 +69,11 @@
        ],
        [
         "규칙 장부 RULE",
-        "513"
+        "517"
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "236 / 0 / 0"
+        "248 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -81,7 +81,7 @@
        ],
        [
         "규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함",
-        "196 / 21 / 284"
+        "200 / 21 / 284"
        ]
       ]
      }
@@ -117,23 +117,23 @@
        ],
        [
         "rebuild",
-        "34",
-        "5636.4"
+        "35",
+        "5680.8"
        ],
        [
         "docs",
         "58",
-        "1354.2"
+        "1358.2"
        ],
        [
         "(최상위)",
         "18",
-        "894.3"
+        "897.0"
        ],
        [
         "tests",
-        "79",
-        "550.0"
+        "80",
+        "563.0"
        ],
        [
         "judicial",
@@ -157,13 +157,13 @@
        ],
        [
         "workspace",
-        "22",
-        "72.9"
+        "21",
+        "73.7"
        ],
        [
         "legislative",
         "3",
-        "69.0"
+        "71.8"
        ],
        [
         "migrations",
@@ -211,7 +211,7 @@
       "rows": [
        [
         "`rebuild/ledger/units.jsonl`",
-        "4660.9"
+        "4661.6"
        ],
        [
         "`data/fetched/consensus/uniprot/P04637.json`",
@@ -259,7 +259,7 @@
        ],
        [
         "`CHANGES.md`",
-        "258.0"
+        "260.4"
        ],
        [
         "`data/fetched/consensus/uniprot/P01911.json`",
@@ -278,12 +278,12 @@
         "188.8"
        ],
        [
-        "`data/assumptions.jsonl`",
-        "182.3"
+        "`rebuild/state/plan-log.jsonl`",
+        "183.6"
        ],
        [
-        "`rebuild/state/plan-log.jsonl`",
-        "181.1"
+        "`data/assumptions.jsonl`",
+        "182.3"
        ],
        [
         "`data/fetched/consensus/uniprot/P62877.json`",
@@ -333,14 +333,14 @@
       "rows": [
        [
         "`CHANGES.md`",
-        "258.0",
-        "240",
+        "260.4",
+        "241",
         "",
         "분류됨 1"
        ],
        [
         "`CLAUDE.md`",
-        "18.2",
+        "18.5",
         "85",
         "입구",
         "분류됨 242"
@@ -375,14 +375,14 @@
        ],
        [
         "`docs/PROMPTS.md`",
-        "17.7",
+        "17.8",
         "315",
         "입구",
         "분류됨 151"
        ],
        [
         "`docs/RUNBOOK.md`",
-        "22.2",
+        "22.3",
         "328",
         "입구",
         "분류됨 180"
@@ -396,7 +396,7 @@
        ],
        [
         "`docs/design/agent-rules.md`",
-        "45.9",
+        "46.8",
         "117",
         "",
         "분류됨 192"
@@ -767,8 +767,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "119.6",
-        "823",
+        "120.9",
+        "826",
         "",
         "생성물"
        ],
@@ -781,7 +781,7 @@
        ],
        [
         "`workspace/README.md`",
-        "2.8",
+        "3.1",
         "39",
         "",
         "분류됨 25"
@@ -795,7 +795,7 @@
        ],
        [
         "`workspace/START-HERE.md`",
-        "4.6",
+        "4.7",
         "57",
         "입구",
         "분류됨 32"
@@ -816,7 +816,7 @@
        ],
        [
         "`workspace/handoff/HANDOFF-template.md`",
-        "2.2",
+        "2.3",
         "30",
         "",
         "분류됨 16"
@@ -1169,6 +1169,10 @@
         "3"
        ],
        [
+        "`tests/gate.test.mjs`",
+        "4"
+       ],
+       [
         "`tests/governance.test.mjs`",
         "21"
        ],
@@ -1375,7 +1379,15 @@
      }
     ],
     "text": [
-     "집행 자리 확인 (machine 400): 파일·이름 확인 390 · 글로만 적힘 10 · 못 찾음 0",
+     "집행 자리 확인 (machine 400): 파일·이름 확인 382 · 글로만 적힘 10 · 못 찾음 8",
+     "- U0722 (docs/PROMPTS.md:235): 파일 없음 workspace/collector.settings.json",
+     "- U0723 (docs/PROMPTS.md:236): 파일 없음 workspace/collector.settings.json",
+     "- U0766 (workspace/START-HERE.md:11): 파일 없음 workspace/collector.settings.json",
+     "- U0767 (workspace/START-HERE.md:12): 파일 없음 workspace/collector.settings.json",
+     "- U0799 (workspace/README.md:7): 파일 없음 workspace/collector.settings.json",
+     "- U0801 (workspace/README.md:12): 파일 없음 workspace/collector.settings.json",
+     "- U0802 (workspace/README.md:13): 파일 없음 workspace/collector.settings.json",
+     "- U0803 (workspace/README.md:14): 파일 없음 workspace/collector.settings.json",
      "이 확인은 '자리가 있다' 까지다 — 그 자리가 정말 그 규칙을 집행하는지는 5 단계에서 거부 시험으로 확인한다."
     ]
    },
@@ -2358,8 +2370,8 @@
         "`^TASK-\\d{3}$`",
         "integrator",
         "`workspace/tasks/`",
-        "359 · 5 · 36",
-        "5 · 없음 0"
+        "361 · 6 · 37",
+        "5 · 없음 1"
        ],
        [
         "`ledger_unit`",
@@ -2398,8 +2410,8 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "2980 · 513 · 44",
-        "513 · 없음 0"
+        "3076 · 517 · 48",
+        "517 · 없음 0"
        ],
        [
         "`decision`",
@@ -2408,8 +2420,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "452 · 32 · 11",
-        "153 · 없음 2"
+        "473 · 33 · 15",
+        "154 · 없음 2"
        ],
        [
         "`change`",
@@ -2419,7 +2431,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "233 · 없음 0"
+        "234 · 없음 0"
        ],
        [
         "`code_head`",
@@ -2439,7 +2451,7 @@
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
         "917 · 90 · 6",
-        "153 · 없음 3"
+        "154 · 없음 3"
        ],
        [
         "`plan_stage`",
@@ -2448,8 +2460,8 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "267 · 23 · 7",
-        "153 · 없음 0"
+        "278 · 23 · 8",
+        "154 · 없음 0"
        ],
        [
         "`plan_direction`",
@@ -2458,8 +2470,8 @@
         "`^DIR-\\d{4}$`",
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "15 · 8 · 4",
-        "153 · 없음 1"
+        "16 · 8 · 5",
+        "154 · 없음 1"
        ],
        [
         "`test`",
@@ -2734,6 +2746,7 @@
      "- `value`: V000069 · V900000 · V999998 · V999999",
      "- `assumption`: A000500 · A000999 · A999999",
      "- `criterion`: D3.asserted · S3.doi",
+     "- `task`: TASK-009",
      "- `decision`: DEC-0098 · DEC-0099",
      "- `plan_item`: PLAN-997 · PLAN-998 · PLAN-999",
      "- `plan_direction`: DIR-0099"
@@ -2794,13 +2807,13 @@
       "rows": [
        [
         "공통 `common`",
-        "76",
-        "6708.4"
+        "77",
+        "6757.1"
        ],
        [
         "정보 작성 `author`",
-        "450",
-        "16509.6"
+        "449",
+        "16510.3"
        ],
        [
         "기초시험 `baseline`",
@@ -2809,8 +2822,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "161",
-        "2104.1"
+        "162",
+        "2122.2"
        ],
        [
         "적분장 `field`",
@@ -2842,8 +2855,8 @@
        [
         "`rebuild/**`",
         "common",
-        "34",
-        "5636.4",
+        "35",
+        "5680.8",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -2919,8 +2932,8 @@
        [
         "`workspace/**`",
         "author",
-        "13",
-        "51.5",
+        "12",
+        "52.2",
         "수집가 작업 공간"
        ],
        [
@@ -3025,7 +3038,7 @@
         "`legislative/**`",
         "develop",
         "3",
-        "69.0",
+        "71.8",
         "입법부 코드"
        ],
        [
@@ -3143,8 +3156,8 @@
        [
         "`tests/**`",
         "develop",
-        "49",
-        "485.4",
+        "50",
+        "498.3",
         "시험"
        ],
        [
@@ -3172,21 +3185,21 @@
         "`docs/textbook/**`",
         "common",
         "11",
-        "399.1",
+        "402.1",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
         "`docs/design/**`",
         "common",
         "21",
-        "545.2",
+        "546.1",
         "설계 문서 — 장부 단위가 모드를 따로 가짐"
        ],
        [
         "`docs/**`",
         "common",
         "3",
-        "42.8",
+        "43.0",
         "안내 문서"
        ],
        [
@@ -3200,7 +3213,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "258.0",
+        "260.4",
         "변경 기록"
        ],
        [
@@ -3214,7 +3227,7 @@
         "`*.md`",
         "common",
         "4",
-        "75.2",
+        "75.5",
         "최상위 문서"
        ],
        [
@@ -3266,7 +3279,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/rules/rules.jsonl` · 규칙 513 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
+     "원본: `rebuild/rules/rules.jsonl` · 규칙 517 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
     ]
    },
    {
@@ -3293,7 +3306,7 @@
      }
     ],
     "text": [
-     "살아 있는 규칙 501 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
+     "살아 있는 규칙 505 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
     ]
    },
    {
@@ -3307,11 +3320,11 @@
       "rows": [
        [
         "machine",
-        "284"
+        "289"
        ],
        [
         "text",
-        "227"
+        "226"
        ],
        [
         "none",
@@ -3337,7 +3350,7 @@
       "rows": [
        [
         "1 곳",
-        "292"
+        "296"
        ],
        [
         "2 곳",
@@ -3383,7 +3396,7 @@
        [
         "RULE-0018",
         "author · develop",
-        "권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤"
+        "권한은 입출력기 clerk 하나 — 단일 작성자 잠금(clerk 서버와 dbtool 의 권위 쓰기가 같은 잠금, 원자적), 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤"
        ],
        [
         "RULE-0019",
@@ -3810,7 +3823,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "규칙 513 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (535 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
+     "규칙 517 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (539 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
     ]
    },
    {
@@ -3863,8 +3876,8 @@
       "rows": [
        [
         "because",
-        "170",
-        "159"
+        "174",
+        "163"
        ],
        [
         "inline",
@@ -3900,7 +3913,7 @@
      }
     ],
     "text": [
-     "이유가 있는 규칙 196 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
+     "이유가 있는 규칙 200 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
     ]
    },
    {
@@ -3930,8 +3943,8 @@
        ],
        [
         "코드 머리 주석",
-        "12",
-        "12"
+        "16",
+        "16"
        ],
        [
         "한계",
@@ -3971,8 +3984,8 @@
       "rows": [
        [
         "공통 `common`",
-        "33",
-        "19",
+        "37",
+        "23",
         "14"
        ],
        [
@@ -4145,8 +4158,8 @@
        ],
        [
         "RULE-0299",
-        "text",
-        "**본체(main) 금지.** 커밋·push 는 자기 작업 브랜치(`sonnet/*` 등)에만. `main` 에 쓰지 않는다",
+        "machine",
+        "**본체(main) 금지.** 커밋·push 는 자기 수집 브랜치(`collector/*`)에만, 바뀐 파일은 `workspa",
         "작업 브랜치 `sonnet/*` — 그런 브랜치는 없고, 결정 ② 는 `collector/*` + 문지기 훅 (RULE-0287 과 모순으로 이미 기록)",
         "7 단계에서 collector/* 로 고치고 훅으로 집행",
         "2026-10-29 user: 권장대로 — 7 단계: 브랜치 이름을 collector/* 로 고치고 문지기 훅으로 집행"
@@ -4154,7 +4167,7 @@
        [
         "RULE-0274",
         "machine",
-        "**B (상주 Sonnet 세션, 독립 실행 시):** `.claude/settings.json` 권한으로 **거부**한다 —",
+        "**B (상주 수집가 세션, 독립 실행 시):** 문지기 훅(`rebuild/gate.mjs` — 저장소 `.claude/se",
         "막는 설정 틀(workspace/collector.settings.json)은 있다 — apply·merge·register·commit·push 를 deny. 그러나 \"비활성 틀\" 이라 수집가 세션의 .claude/settings.json 에 손으로 복사해야 켜지고, 규칙 파일은 Edit 만 막고 Write 는 막지 않는다. 저장소 기본 설정(.claude/settings.json)은 같은 명령을 묻기(ask)만 한다. (2026-10-25 정정: 처음엔 틀 파일을 보지 못해 \"막지 않는다\" 로 적었음)",
         "7 단계 문지기 훅이 역할(BIODB_ROLE)을 보고 자동으로 막게 — 복사에 기대지 않게. Write 도 막는다",
         "2026-10-29 user: 권장대로 — 7 단계: 문지기 훅이 역할을 보고 막게 + 문장 고침"
@@ -4162,7 +4175,7 @@
        [
         "RULE-0275",
         "machine",
-        "`register` · `git commit`·`git push` · 규칙 파일(vocab·model·core·judicial",
+        "`register`·`attest`·`accept` · `collector/*` 밖 브랜치로의 `git commit`·`git",
         "막는 설정 틀(workspace/collector.settings.json)은 있다 — apply·merge·register·commit·push 를 deny. 그러나 \"비활성 틀\" 이라 수집가 세션의 .claude/settings.json 에 손으로 복사해야 켜지고, 규칙 파일은 Edit 만 막고 Write 는 막지 않는다. 저장소 기본 설정(.claude/settings.json)은 같은 명령을 묻기(ask)만 한다. (2026-10-25 정정: 처음엔 틀 파일을 보지 못해 \"막지 않는다\" 로 적었음)",
         "7 단계 문지기 훅이 역할(BIODB_ROLE)을 보고 자동으로 막게 — 복사에 기대지 않게. Write 도 막는다",
         "2026-10-29 user: 권장대로 — 7 단계: 문지기 훅이 역할을 보고 막게 + 문장 고침"
@@ -4170,7 +4183,7 @@
        [
         "RULE-0018",
         "machine",
-        "권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤",
+        "권한은 입출력기 clerk 하나 — 단일 작성자 잠금(clerk 서버와 dbtool 의 권위 쓰기가 같은 잠금, 원자적), 권",
         "\"단일 작성자 잠금\" — writerLock 은 MCP clerk(mcp/clerk.mjs)만 잡고 dbtool CLI 는 잡지 않으며, 잠금 확인 → 쓰기가 원자적이지 않다(보고서 U4993·U5235). 외부 에이전트가 clerk 를 쓴 기록도 없다(U5185)",
         "7 단계에서 dbtool 도 잠금을 잡게 하거나 문장을 \"MCP 경로만\" 으로 고친다",
         "2026-10-29 user: 권장대로 — 7 단계: dbtool 도 단일 작성자 잠금을 잡게 + 문장 고침"
@@ -4470,7 +4483,7 @@
        [
         "RULE-0307",
         "text",
-        "(서브에이전트면 **파일에 쓰지 말고 반환**, 상주 세션이면 이 표에 append). **금지**: `augment appl",
+        "(서브에이전트면 **파일에 쓰지 말고 반환**, 상주 수집가 세션이면 `workspace/handoff/<과제>.jsonl` ",
         "\"상주 세션이면 이 표에 append\" — 어느 표인지 문장 밖에서만 알 수 있음, 상주 세션 방식(B)은 결정 ② 와 겹침",
         "7 단계에서 수집가 쓰기 자리를 하나로 정리",
         "2026-10-29 user: 권장대로 — 7 단계: 수집가 쓰기 자리를 하나로 정리"
@@ -5057,15 +5070,11 @@
       "rows": [
        [
         "잡음 `caught`",
-        "236"
+        "248"
        ],
        [
         "설정에 있음 `present`",
         "8"
-       ],
-       [
-        "본보기에만 있음 (켜지지 않음) `present_template`",
-        "7"
        ],
        [
         "시험 통과 (자리 변이 없음) `test_passes`",
@@ -5079,7 +5088,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (277 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (282 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -5090,7 +5099,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 236",
+    "heading": "잡음 `caught` — 248",
     "tables": [
      {
       "head": [
@@ -5187,10 +5196,10 @@
        ],
        [
         "RULE-0018",
-        "권한은 입출력기 clerk 하나 — 단일 작성자 잠금, 권위 쓰기는 dbtool 명령으로 사법부 재판정 뒤",
+        "권한은 입출력기 clerk 하나 — 단일 작성자 잠금(clerk 서버와 dbtool 의 권위 쓰기가 같은 잠",
         "disable",
         "legislative/clerk.mjs",
-        "④ clerk 단일 작성자: 하나가 떠 있으면 둘째는 시작하지 않는다"
+        "④ 단일 작성자: clerk 가 떠 있으면 둘째 clerk 도, dbtool 쓰기도 막힌다"
        ],
        [
         "RULE-0019",
@@ -6019,11 +6028,32 @@
         "③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, 불러도 거부 · 모르는 역할은 시작 거부"
        ],
        [
+        "RULE-0274",
+        "**B (상주 수집가 세션, 독립 실행 시):** 문지기 훅(`rebuild/gate.mjs` — 저장소 `",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0275",
+        "`register`·`attest`·`accept` · `collector/*` 밖 브랜치로의 `git co",
+        "replace",
+        "rebuild/gate.mjs",
+        "① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만"
+       ],
+       [
         "RULE-0286",
         "수집가 쓰기는 workspace/ 안에서만, 규칙·코드·db 는 읽기만",
         "replace",
-        "legislative/clerk.mjs",
-        "⑤ 핸드오프: 이름 검사 · 붙이기만 (앞 줄 그대로)"
+        "rebuild/gate.mjs",
+        "① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만"
+       ],
+       [
+        "RULE-0287",
+        "**이 명령들 금지**(문지기 훅이 `BIODB_ROLE=collector` 를 보고 막는다): `node ",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
        ],
        [
         "RULE-0289",
@@ -6052,6 +6082,34 @@
         "replace",
         "judicial/collection_audit.js",
         "② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지)"
+       ],
+       [
+        "RULE-0293",
+        "> **아예 분리**돼 있다. 작업자는 저장소 전체를 **읽을** 수 있으나 **쓰기는 여기(`workspa",
+        "replace",
+        "rebuild/gate.mjs",
+        "① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만"
+       ],
+       [
+        "RULE-0295",
+        "**쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model.",
+        "replace",
+        "rebuild/gate.mjs",
+        "① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만"
+       ],
+       [
+        "RULE-0296",
+        "`compiler/`·`engine/`·테스트·형식 파일을 수정하지 않는다(읽기만).",
+        "replace",
+        "rebuild/gate.mjs",
+        "① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만"
+       ],
+       [
+        "RULE-0297",
+        "**적용·등록 금지.** `node dbtool.mjs augment apply`·`merge`·`regis",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
        ],
        [
         "RULE-0309",
@@ -6752,6 +6810,41 @@
         "replace",
         "judicial/transition_audit.js",
         "RULE-0513 전환 기록 검사: 통과 1 + 거부 사유별"
+       ],
+       [
+        "RULE-0514",
+        "세션은 모드 하나로 시작해서 끝난다 — 모드를 열기 전에는 저장소에 쓰지 않고, 세션 안에서 모드를 바꾸지 ",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0515",
+        "모드마다 쓸 수 있는 곳만 바뀐다 (rebuild/rules/modes.json gate) — Edit·Wr",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0517",
+        "영수증(workspace/receipts/)은 문지기만 쓴다 — 사슬로 덧붙이기만, 고치거나 지우면 쓰는 도",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0516",
+        "끝내기 전 시험 묶음(node rebuild/gate.mjs finish <모드>)이 지금 파일 상태(작업 ",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0299",
+        "**본체(main) 금지.** 커밋·push 는 자기 수집 브랜치(`collector/*`)에만, 바뀐 파일",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
        ]
       ]
      }
@@ -6824,72 +6917,6 @@
         "보이게 못박는다. `data/fetched/`(원본 수신함)는 별개로 쓰기 보호이며 `augment plan",
         "static",
         ".claude/settings.json",
-        ""
-       ]
-      ]
-     }
-    ],
-    "text": []
-   },
-   {
-    "heading": "본보기에만 있음 (켜지지 않음) `present_template` — 7",
-    "tables": [
-     {
-      "head": [
-       "규칙",
-       "내용",
-       "변이",
-       "파일",
-       "빨개진 시험 · 메모"
-      ],
-      "rows": [
-       [
-        "RULE-0274",
-        "**B (상주 Sonnet 세션, 독립 실행 시):** `.claude/settings.json` 권한으로 ",
-        "static",
-        "workspace/collector.settings.json",
-        ""
-       ],
-       [
-        "RULE-0275",
-        "`register` · `git commit`·`git push` · 규칙 파일(vocab·model·cor",
-        "static",
-        "workspace/collector.settings.json",
-        ""
-       ],
-       [
-        "RULE-0287",
-        "수집가 금지 명령: augment apply·merge·register·git commit·push",
-        "static",
-        "workspace/collector.settings.json",
-        ""
-       ],
-       [
-        "RULE-0293",
-        "> **아예 분리**돼 있다. 작업자는 저장소 전체를 **읽을** 수 있으나 **쓰기는 여기(`workspa",
-        "static",
-        "workspace/collector.settings.json",
-        ""
-       ],
-       [
-        "RULE-0295",
-        "**쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model.",
-        "static",
-        "workspace/collector.settings.json",
-        ""
-       ],
-       [
-        "RULE-0296",
-        "`compiler/`·`engine/`·테스트·형식 파일을 수정하지 않는다(읽기만).",
-        "static",
-        "workspace/collector.settings.json",
-        ""
-       ],
-       [
-        "RULE-0297",
-        "**적용·등록 금지.** `node dbtool.mjs augment apply`·`merge`·`regis",
-        "static",
-        "workspace/collector.settings.json",
         ""
        ]
       ]

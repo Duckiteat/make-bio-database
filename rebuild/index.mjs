@@ -16,12 +16,12 @@ export const STATUS = ['active', 'planned', 'legacy', 'external'];
 export const SHAPES = ['token', 'composite', 'chain', 'file', 'vocab'];
 const FIELDS = ['ns', 'status', 'shape', 'examples', 'issuer', 'store', 'immutable', 'scan'];
 
-// 저장소 파일 (추적 + 무시되지 않은 새 파일) — 관리 파일·번호 사전 자신은 뺀다
+// 저장소 파일 (추적 + 무시되지 않은 새 파일) — 관리 파일·번호 사전 자신은 뺀다. 영수증(workspace/receipts/)도 뺀다 — 도구 호출마다 자라서, 세면 관리 파일이 늘 낡는다
 export function repoFiles() {
   let list;
   try { list = execFileSync('git', ['ls-files', '-co', '--exclude-standard', '-z'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 << 20 }).split('\0').filter(Boolean); }
   catch { const walk = (d) => readdirSync(join(ROOT, d), { withFileTypes: true }).flatMap((e) => (['.git', 'node_modules', 'target'].includes(e.name) ? [] : e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)])); list = walk(''); }
-  return [...new Set(list)].filter((p) => !p.startsWith('rebuild/status/') && !p.endsWith('.part') && existsSync(join(ROOT, p))).sort();
+  return [...new Set(list)].filter((p) => !p.startsWith('rebuild/status/') && !p.startsWith('workspace/receipts/') && !p.endsWith('.part') && existsSync(join(ROOT, p))).sort();
 }
 
 const jsonl = (p) => (existsSync(p) ? readFileSync(p, 'utf8').split('\n').map((l, i) => [l, i + 1]).filter(([l]) => l.trim()) : []);

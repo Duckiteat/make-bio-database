@@ -533,3 +533,7 @@
 {"from": "RULE-0511", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
 {"from": "RULE-0512", "rel": "because", "to": "U7496", "by": "judged"}
 {"from": "RULE-0513", "rel": "none", "by": "judged", "note": "이유는 PLAN §3(한 세션 = 한 모드 — 기초시험 중 엔진을 고치는 길을 구조로 없앤다) — 재건 문서라 단위 장부 밖"}
+{"from": "RULE-0514", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "글로 된 '한 세션 = 한 모드' 는 잊으면 그만 — 구조가 막게 (DEC-0018 · DEC-0031)"}
+{"from": "RULE-0515", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "모드가 믿는 것·쓸 수 있는 곳을 정한다(DEC-0016) — 셸로 쓴 것까지 도구 앞뒤 대조로"}
+{"from": "RULE-0516", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "'끝내기 전에 돌려라' 를 잊어도 막히게 — 사용자 결정 2026-10-29 커밋·push 를 막음 (DEC-0031)"}
+{"from": "RULE-0517", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "AI 작업이 블랙박스가 되지 않게(진단 DEC-0015) — 영수증을 작업자가 고치면 영수증이 아니다"}

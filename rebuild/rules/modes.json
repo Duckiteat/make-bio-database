@@ -199,5 +199,149 @@
         "보고"
       ]
     }
-  ]
+  ],
+  "gate": {
+    "_what": "문지기 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — rebuild/gate.mjs 가 읽는다. write = 이 모드에서 바뀌어도 되는 저장소 경로(glob, ** = 아래 전부) · deny = 이 모드에서 막는 명령(정규식, 이유) · finish = 끝내기 전 시험 묶음(종료 코드 0 이어야 통과 — 통과해야 git commit·push). 저장소 밖(스크래치·임시)은 다루지 않는다.",
+    "common": {
+      "write": [
+        "rebuild/status/**",
+        "rebuild/draft/**",
+        "rebuild/state/**",
+        "rebuild/PLAN.md",
+        "docs/design/build-plan.md",
+        "docs/textbook/90-부록-자동생성.md",
+        "workspace/transitions.jsonl",
+        "workspace/receipts/**"
+      ],
+      "protect": [
+        "workspace/receipts/**"
+      ],
+      "deny": [],
+      "finish_first": [
+        "node rebuild/status.mjs --write"
+      ],
+      "finish": [
+        "node rebuild/plan.mjs check",
+        "node rebuild/status.mjs --check"
+      ]
+    },
+    "modes": {
+      "author": {
+        "write": [
+          "data/**",
+          "attestations/**",
+          "limitations.md",
+          "workspace/handoff/**",
+          "docs/reports/**"
+        ],
+        "deny": [],
+        "finish": [
+          "node dbtool.mjs validate",
+          "node dbtool.mjs limitations --detect",
+          "node --test tests/rejections.test.mjs"
+        ]
+      },
+      "baseline": {
+        "write": [
+          "examples/scenarios/**",
+          "docs/reports/**",
+          "data/assumptions.jsonl",
+          "data/preregistrations.jsonl"
+        ],
+        "deny": [
+          {
+            "re": "\\bdbtool\\.mjs\\s+(merge|augment\\s+apply)\\b",
+            "why": "기초시험은 데이터를 고치지 않는다 — 결과에 맞추려고 고치기가 이 모드의 가장 큰 위험",
+            "rule": "RULE-0515"
+          }
+        ],
+        "finish": [
+          "node dbtool.mjs validate"
+        ]
+      },
+      "develop": {
+        "write": [
+          "**"
+        ],
+        "except": [
+          "data/**",
+          "attestations/**",
+          "workspace/handoff/**"
+        ],
+        "deny": [
+          {
+            "re": "\\bdbtool\\.mjs\\s+(merge|augment\\s+(apply|fetch)|register)\\b",
+            "why": "디벨롭은 기계를 고친다 — 데이터 넣기·사전 등록은 정보 작성·기초시험 세션에서",
+            "rule": "RULE-0515"
+          }
+        ],
+        "finish": [
+          "node --test tests/*.test.mjs",
+          "node dbtool.mjs validate",
+          "node dbtool.mjs textbook --check"
+        ]
+      },
+      "field": {
+        "write": [
+          "engine/**",
+          "tests/**",
+          "examples/scenarios/**",
+          "docs/**",
+          "schemas/ffi/**",
+          "CHANGES.md"
+        ],
+        "deny": [
+          {
+            "re": "\\bdbtool\\.mjs\\s+(merge|augment\\s+(apply|fetch)|register)\\b",
+            "why": "적분장은 엔진 시제품만 — db 에 장 상태를 넣지 않는다",
+            "rule": "RULE-0515"
+          }
+        ],
+        "finish": [
+          "node --test tests/*.test.mjs",
+          "node dbtool.mjs validate",
+          "node dbtool.mjs textbook --check"
+        ]
+      },
+      "inspect": {
+        "write": [
+          "attestations/**",
+          "docs/reports/**"
+        ],
+        "deny": [
+          {
+            "re": "\\bdbtool\\.mjs\\s+(merge|augment\\s+(apply|fetch)|register)\\b",
+            "why": "점검·검증은 판정 결과와 승인 도장만 남긴다 (결정 ①) — 적용은 정보 작성의 새 세션이",
+            "rule": "RULE-0515"
+          }
+        ],
+        "finish": [
+          "node dbtool.mjs validate"
+        ]
+      }
+    },
+    "roles": {
+      "collector": {
+        "_what": "BIODB_ROLE=collector — 정보 작성 모드의 수집가 (결정 ② · RULE-0274·0275·0287·0299)",
+        "mode": "author",
+        "write": [
+          "workspace/handoff/**"
+        ],
+        "deny": [
+          {
+            "re": "\\bdbtool\\.mjs\\s+(merge|augment\\s+apply|register|attest|accept|limitations\\s+--write)\\b",
+            "why": "수집가는 후보만 모은다 — 적용·병합·등록·도장은 통합가가",
+            "rule": "RULE-0287"
+          }
+        ],
+        "branch": "^collector/",
+        "push_only": [
+          "workspace/handoff/**",
+          "workspace/transitions.jsonl",
+          "workspace/receipts/**"
+        ],
+        "finish": []
+      }
+    }
+  }
 }
