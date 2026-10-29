@@ -102,13 +102,17 @@ test('⑨ 합의 창은 원천별 판 주기 — 같은 나이라도 원천마�
 });
 
 // 사용자 결정: 반복 수 1 의 '한 번·미보고·계산값' 을 가른다 — 문턱(≥1)은 그대로
-test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부', () => {
+test('⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)·해상도 sd 는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부', () => {
   const est = Object.values(db.observations).filter((o) => o.kind !== 'qualitative' && (o.evidence || {}).level === 'computed');
   assert.ok(est.length > 0 && est.every((o) => REL.scoreObservation(o, {}).cd === 'D2.estimate'), 'eQuilibrator 추정은 실측이 아니다');
   const base = JSON.parse(JSON.stringify(db.observations.O000004));
   assert.equal(REL.scoreObservation(base, {}).cd, 'D4.measured');
   const unrep = { ...base, replicates: null };
   assert.deepEqual([REL.scoreObservation(unrep, {}).cd, REL.scoreObservation(unrep, {}).d], ['D3.obs_bare', 3]);
+  // RULE-0090 · DEC-0036: 해상도로 채운 sd 는 반복 수가 있어도 D3 (퍼짐을 모른다) · 보고됨 표시는 D4 그대로
+  const resol = { ...base, uncertainty: { ...base.uncertainty, basis: 'resolution' } };
+  assert.deepEqual([REL.scoreObservation(resol, {}).cd, REL.scoreObservation(resol, {}).d], ['D3.obs_bare', 3]);
+  assert.equal(REL.scoreObservation({ ...base, uncertainty: { ...base.uncertainty, basis: 'reported' } }, {}).cd, 'D4.measured');
   const J = req('../judicial/judicial.js'), M = req('../model.js');
   const ndb = M.normalize(db), ix = M.index(ndb);
   const errs = (o) => { const out = []; J.validateObservation(ndb, ix, 'O000999', M.normObservation(o), (rule, w, m) => out.push(m), () => {}); return out.join(' '); };
