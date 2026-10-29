@@ -13,6 +13,7 @@ import { join, relative } from 'node:path';
 import { build, ROOT, STATUS } from '../rebuild/status.mjs';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from '../rebuild/index.mjs';
+import * as RENDER from '../rebuild/render.mjs';
 
 const X = IDX.build();
 
@@ -22,6 +23,12 @@ test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () =
   assert.deepEqual(stale, [], '관리 파일이 낡음 — node rebuild/status.mjs --write');
   const extra = readdirSync(join(ROOT, STATUS)).filter((f) => !out[f]);
   assert.deepEqual(extra, [], '생성기가 만들지 않는 파일이 관리 폴더에 있음');
+  // 6 단계 새 구조 초안 (rebuild/draft) — 원본에서 바이트 동일하게 다시 만들어진다
+  const drafts = RENDER.build(ROOT), D = join(ROOT, 'rebuild/draft');
+  const dStale = Object.entries(drafts).filter(([n, t]) => { const p = join(D, n); return !existsSync(p) || readFileSync(p, 'utf8') !== t; }).map(([n]) => n);
+  assert.deepEqual(dStale, [], '새 구조 초안이 낡음 — node rebuild/status.mjs --write');
+  const walk = (d, pre = '') => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n), pre + n + '/') : [pre + n]));
+  assert.deepEqual(walk(D).filter((f) => !drafts[f]), [], '생성기가 만들지 않는 파일이 초안 폴더에 있음');
 });
 
 test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는다', () => {
@@ -33,9 +40,10 @@ test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는
   assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
-test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만', () => {
-  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/']);
+test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 와 rebuild/draft/ 의 새 구조 초안만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/draft/']);
   for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
+  for (const bad of ['../CLAUDE.md', 'modes/Author.md', 'modes/a/b.md', 'skills/x/other.md', 'x.md']) assert.throws(() => CLERK.writeDraftDoc(bad, 'x', ROOT), /새 구조 초안 이름/, bad);
 });
 
 test('④ 분류 장부에 형식 오류가 없고, 분류한 문서는 빠진 줄이 없다', () => {
@@ -117,4 +125,26 @@ test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인�
   // 거꾸로: 코드에서 찾은 규칙(from_code)은 코드 어딘가에서 쓰인다
   const orphan = [...rules.values()].filter((r) => r.from_code && !used.has(r.id) && !readdirSync(join(ROOT, 'judicial')).some((x) => readFileSync(join(ROOT, 'judicial', x), 'utf8').includes(`'${r.id}'`)));
   assert.deepEqual(orphan.map((r) => r.id), [], '코드에서 찾은 규칙인데 코드가 쓰지 않음');
+});
+
+test('⑬ 옛 규칙 대조 (6 단계): 살아 있는 규칙은 모두 새 구조에 있다 — 글 규칙은 중심·모드 문서에 번호로, 기계 규칙은 그 모드의 개수에', () => {
+  const rules = readFileSync(join(ROOT, 'rebuild/rules/rules.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((r) => !r.retired);
+  const d = RENDER.build(ROOT), docs = Object.entries(d).filter(([n]) => !n.startsWith('skills/'));
+  const where = (id) => docs.filter(([, t]) => t.includes('`' + id + '`')).map(([n]) => n);
+  const lost = [], twice = [];
+  for (const r of rules) {
+    if (r.enforce === 'machine') continue;
+    const w = where(r.id), want = r.modes.includes('common') ? ['CLAUDE.md'] : r.modes.map((m) => `modes/${m}.md`);
+    if (!w.length) lost.push(r.id);
+    else if (w.sort().join() !== want.sort().join()) twice.push(`${r.id}: ${w.join(', ')} (기대 ${want.join(', ')})`);
+  }
+  assert.deepEqual(lost, [], '새 구조에서 빠진 글 규칙');
+  assert.deepEqual(twice, [], '모드와 다른 문서에 적힌 규칙');
+  // 기계 규칙: 각 모드 문서가 밝힌 개수 = 장부에서 센 개수 (공통은 중심 문서)
+  const count = (t, h) => Number((t.split(h)[1] || '').match(/(\d+) 개/)[1]);
+  const mm = (m) => rules.filter((r) => r.enforce === 'machine' && (m === 'common' ? r.modes.includes('common') : r.modes.includes(m) && !r.modes.includes('common'))).length;
+  assert.equal(count(d['CLAUDE.md'], '## 공통 규칙 — 컴퓨터가 막는다'), mm('common'));
+  for (const m of RENDER.MODE_KEYS) assert.equal(count(d[`modes/${m}.md`], '## 컴퓨터가 막는 규칙'), mm(m), m);
+  // 스킬은 모드 문서와 같은 본문
+  for (const m of RENDER.MODE_KEYS) assert.ok(d[`skills/${m}/SKILL.md`].endsWith(d[`modes/${m}.md`]), m);
 });

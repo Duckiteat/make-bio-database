@@ -11,6 +11,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from './index.mjs'; // 번호 사전 — 파일 목록·이름공간을 한 곳에서
+import * as RENDER from './render.mjs'; // 6 단계 새 구조 초안 (rebuild/draft)
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const STATUS = 'rebuild/status/';
@@ -290,9 +291,10 @@ function build() {
 
 // 직접 실행할 때만 (시험이 build 를 불러도 쓰거나 출력하지 않게)
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const flag = process.argv[2], out = build();
-  const stale = () => Object.entries(out).filter(([name, text]) => { const p = join(ROOT, STATUS, name); return !existsSync(p) || readFileSync(p, 'utf8') !== text; });
-  if (flag === '--write') for (const [name, text] of stale()) CLERK.writeStatus(name, text, ROOT);
+  const flag = process.argv[2], out = build(), drafts = RENDER.build(ROOT);
+  const staleIn = (dir, o) => Object.entries(o).filter(([name, text]) => { const p = join(ROOT, dir, name); return !existsSync(p) || readFileSync(p, 'utf8') !== text; });
+  const stale = () => [...staleIn(STATUS, out), ...staleIn('rebuild/draft/', drafts).map(([n, t]) => ['../draft/' + n, t])];
+  if (flag === '--write') { for (const [name, text] of staleIn(STATUS, out)) CLERK.writeStatus(name, text, ROOT); for (const [name, text] of staleIn('rebuild/draft/', drafts)) CLERK.writeDraftDoc(name, text, ROOT); }
   else if (flag === '--check') {
     const s = stale().map(([n]) => n);
     if (s.length) { console.error(`관리 파일이 낡음: ${s.join(', ')} — node rebuild/status.mjs --write`); process.exit(1); }

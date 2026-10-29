@@ -7,16 +7,16 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 12 | 5089.3 |
-| docs | 58 | 1203.9 |
-| (최상위) | 18 | 883.7 |
+| rebuild | 25 | 5181.5 |
+| docs | 58 | 1207.5 |
+| (최상위) | 18 | 884.7 |
 | judicial | 28 | 538.8 |
-| tests | 78 | 535.4 |
+| tests | 78 | 538.1 |
 | engine | 26 | 299.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | workspace | 21 | 69.8 |
-| legislative | 3 | 66.2 |
+| legislative | 3 | 66.7 |
 | migrations | 13 | 59.8 |
 | compiler | 7 | 49.0 |
 | schemas | 6 | 43.6 |
@@ -42,7 +42,7 @@
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `CHANGES.md` | 249.1 |
+| `CHANGES.md` | 250.2 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
