@@ -38,8 +38,8 @@
 | `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 243 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
 | `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 967 · 90 · 10 | 170 · 없음 3 |
-| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 434 · 31 · 9 | 170 · 없음 0 |
-| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 69 · 10 · 6 | 170 · 없음 1 |
+| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 436 · 31 · 9 | 170 · 없음 0 |
+| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 72 · 10 · 6 | 170 · 없음 1 |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `switch` | planned | token | `^SW-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `formula` | active | token | `^EQ-\d{4}$` | rebuild 6d (수식 기록) | `rebuild/rules/formulas.jsonl` | 50 · 14 · 8 | 13 · 없음 1 |
