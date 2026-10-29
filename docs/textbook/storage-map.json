@@ -1593,6 +1593,22 @@
       "interpret": "6 단계 새 구조 생성기 — 규칙 장부·모드 원본(rebuild/rules/modes.json)에서 중심 문서·모드 문서 5·스킬 5 를 만든다."
     },
     {
+      "path": "rebuild/state.mjs",
+      "class": "management",
+      "format": "Node 모듈 (순수 — parse(글) → 기록 · render(기록) → 글 · load(root))",
+      "writer": "사람·AI",
+      "readers": "rebuild/render.mjs · rebuild/status.mjs (--write 가 서기 writeState 로 씀) · tests/rebuild.test.mjs ⑯",
+      "interpret": "상태 기록 (6c) — 계획 문서의 작업 한 줄을 기록 하나(PLAN-…)로, 산문은 원문 그대로 한 덩어리. render(기록) 은 지금 문서와 바이트까지 같다."
+    },
+    {
+      "path": "rebuild/state/*",
+      "class": "management",
+      "format": "JSONL — 기록 하나 = 한 줄 (kind item·text·head·raw)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeState)",
+      "readers": "rebuild/render.mjs (rebuild/draft/build-plan.md 생성) · tests/rebuild.test.mjs ⑯",
+      "interpret": "계획 상태 원본 — 8 단계까지는 docs/design/build-plan.md 에서 다시 들이고, 그 뒤엔 이것이 원본이고 글은 생성물."
+    },
+    {
       "path": "rebuild/draft/*",
       "class": "management",
       "format": "Markdown 생성물 — 새 중심 문서 CLAUDE.md",

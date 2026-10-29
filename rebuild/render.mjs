@@ -4,6 +4,7 @@
 // 계약: 순수 — 같은 원본이면 같은 바이트. 쓰기는 rebuild/status.mjs 가 서기(writeDraftDoc)로. 손으로 고치지 않는다.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import * as STATE from './state.mjs';
 
 const MODE_KEYS = ['author', 'baseline', 'develop', 'field', 'inspect'];
 const jsonl = (root, p) => readFileSync(join(root, p), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
@@ -59,6 +60,8 @@ export function build(root) {
     out[`modes/${m.key}.md`] = body;
     out[`skills/${m.key}/SKILL.md`] = `---\nname: ${m.key}\ndescription: "${m.name} 모드 — ${m.when}. 세션을 이 모드로 시작할 때 연다 (한 세션 = 한 모드)."\n---\n\n${body}`;
   }
+  // 상태 기록 (6c) — build-plan 을 기록에서
+  out['build-plan.md'] = STATE.render(STATE.load(root));
   return out;
 }
 

@@ -12,6 +12,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from './index.mjs'; // 번호 사전 — 파일 목록·이름공간을 한 곳에서
 import * as RENDER from './render.mjs'; // 6 단계 새 구조 초안 (rebuild/draft)
+import * as STATE from './state.mjs'; // 6c 상태 기록 (rebuild/state)
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const STATUS = 'rebuild/status/';
@@ -38,7 +39,26 @@ const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 const lines = (p) => read(p).split('\n').length - (read(p).endsWith('\n') ? 1 : 0);
 const kb = (n) => (n / 1024).toFixed(1);
 const top = (p) => (p.includes('/') ? p.split('/')[0] : '(최상위)');
-const table = (head, rows) => [`| ${head.join(' | ')} |`, `|${head.map(() => '---').join('|')}|`, ...rows.map((r) => `| ${r.join(' | ')} |`)].join('\n');
+const cell = (c) => String(c).replace(/(?<!\\)\|/g, '\\|'); // 칸 안의 맨 | 는 \| 로 — 이미 \| 인 것은 그대로 (status.json 이 칸을 다시 나눌 수 있게)
+const table = (head, rows) => [`| ${head.map(cell).join(' | ')} |`, `|${head.map(() => '---').join('|')}|`, ...rows.map((r) => `| ${r.map(cell).join(' | ')} |`)].join('\n');
+// 6e 기계용 보기: 생성한 관리 파일의 제목·절·표를 구조로 (사람은 .md, 기계는 status.json — 같은 생성에서 나온다)
+//   표 칸의 '\|' 는 글 안의 막대(이스케이프)라 칸을 가르지 않는다
+const splitRow = (l) => l.slice(2, -2).split(/(?<!\\) \| /).map((c) => c.replace(/\\\|/g, '|'));
+export function toJson(md) {
+  const lines = md.split('\n'), doc = { title: (lines[0] || '').replace(/^# /, ''), sections: [] };
+  let sec = { heading: null, tables: [], text: [] }; doc.sections.push(sec);
+  for (let i = 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^#{2,3} /.test(l)) { sec = { heading: l.replace(/^#+ /, ''), tables: [], text: [] }; doc.sections.push(sec); continue; }
+    if (/^\| /.test(l) && /^\|---/.test(lines[i + 1] || '')) {
+      const t = { head: splitRow(l), rows: [] }; i += 2;
+      while (i < lines.length && /^\| /.test(lines[i])) t.rows.push(splitRow(lines[i++]));
+      i--; sec.tables.push(t); continue;
+    }
+    if (l.trim() && !/^> /.test(l)) sec.text.push(l);
+  }
+  return doc;
+}
 const sum = (xs) => xs.reduce((a, b) => a + b, 0);
 
 // ── 장부 (rebuild/ledger/*.jsonl)
@@ -286,6 +306,7 @@ function build() {
   for (const f of all) { const r = rules.find((x) => x.re.test(f.path)); if (!r) { unmatched.push(f.path); continue; } r.n++; r.b += f.bytes; if (perMode[r.mode]) { perMode[r.mode].n++; perMode[r.mode].b += f.bytes; } }
   const unused = rules.filter((r) => !r.n).map((r) => r.pattern);
   out['06-file-modes.md'] = `# 파일 → 모드\n\n${note}\n원본: \`rebuild/index/file-modes.jsonl\` (규칙 ${fm.length}, 위에서부터 첫 규칙이 이긴다). 파일마다 어느 모드가 주로 건드리는지.\n\n## 모드별\n\n${table(['모드', '파일', 'KB'], MODES.map((m) => [MODE_KO[m] + ` \`${m}\``, String(perMode[m].n), kb(perMode[m].b)]))}\n\n## 규칙별\n\n${table(['형식', '모드', '파일', 'KB', '왜'], rules.map((r) => [`\`${r.pattern}\``, r.mode, String(r.n), kb(r.b), r.why]))}\n\n## 규칙에 맞지 않는 파일 (0 이어야 함)\n\n${unmatched.length ? unmatched.map((x) => '- ' + x).join('\n') : '없음'}\n\n## 아무 파일에도 맞지 않는 규칙 · 모르는 모드\n\n${[...unused, ...badMode.map((x) => x + ' (모드)')].map((x) => '- ' + x).join('\n') || '없음'}\n`;
+  out['status.json'] = JSON.stringify(Object.fromEntries(Object.keys(out).sort().map((n) => [n, toJson(out[n])])), null, 1) + '\n';
   return out;
 }
 
@@ -293,8 +314,13 @@ function build() {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const flag = process.argv[2], out = build(), drafts = RENDER.build(ROOT);
   const staleIn = (dir, o) => Object.entries(o).filter(([name, text]) => { const p = join(ROOT, dir, name); return !existsSync(p) || readFileSync(p, 'utf8') !== text; });
-  const stale = () => [...staleIn(STATUS, out), ...staleIn('rebuild/draft/', drafts).map(([n, t]) => ['../draft/' + n, t])];
-  if (flag === '--write') { for (const [name, text] of staleIn(STATUS, out)) CLERK.writeStatus(name, text, ROOT); for (const [name, text] of staleIn('rebuild/draft/', drafts)) CLERK.writeDraftDoc(name, text, ROOT); }
+  // 상태 기록 (6c): 8 단계까지 계획 문서는 손으로 고쳐지므로, 기록을 다시 그린 글이 문서와 다르면 문서를 parse 해 다시 들인다
+  const planDoc = readFileSync(join(ROOT, STATE.SOURCE), 'utf8'), planStale = !existsSync(join(ROOT, STATE.RECORDS)) || STATE.render(STATE.load(ROOT)) !== planDoc;
+  const stale = () => [...staleIn(STATUS, out), ...staleIn('rebuild/draft/', drafts).map(([n, t]) => ['../draft/' + n, t]), ...(planStale ? [['../' + STATE.RECORDS.split('/').slice(1).join('/')]] : [])];
+  if (flag === '--write') {
+    if (planStale) { CLERK.writeState('build-plan.jsonl', STATE.parse(planDoc).map((r) => JSON.stringify(r)).join('\n') + '\n', ROOT); drafts['build-plan.md'] = STATE.render(STATE.load(ROOT)); }
+    for (const [name, text] of staleIn(STATUS, out)) CLERK.writeStatus(name, text, ROOT); for (const [name, text] of staleIn('rebuild/draft/', drafts)) CLERK.writeDraftDoc(name, text, ROOT);
+  }
   else if (flag === '--check') {
     const s = stale().map(([n]) => n);
     if (s.length) { console.error(`관리 파일이 낡음: ${s.join(', ')} — node rebuild/status.mjs --write`); process.exit(1); }

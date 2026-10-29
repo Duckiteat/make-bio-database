@@ -1,7 +1,7 @@
 // 재건 관리 파일 (rebuild/PLAN.md §6) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
 //   ① 관리 파일이 지금 저장소와 같다 (개수·크기·건수가 바뀌면 갱신돼야 함)
 //   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
-//   ③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 만
+//   ③ 서기 구역 rebuild 는 rebuild/status/ 의 관리 파일 · rebuild/draft/ 의 초안 · rebuild/state/ 의 상태 기록만
 //   ④ 분류 장부에 형식 오류가 없다
 //   ⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다
 //   ⑩ 맥락: 규칙마다 이유 판정(because·inline·decided_by·none) · 대상 종류 · 표 머리
@@ -16,6 +16,7 @@ import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from '../rebuild/index.mjs';
 import * as RENDER from '../rebuild/render.mjs';
 import * as READ from '../rebuild/read.mjs';
+import * as STATE from '../rebuild/state.mjs';
 
 const X = IDX.build();
 
@@ -42,8 +43,9 @@ test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는
   assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
-test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md 와 rebuild/draft/ 의 새 구조 초안만', () => {
-  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/draft/']);
+test('③ 서기 구역 rebuild 는 rebuild/status/ 의 .md · rebuild/draft/ 의 새 구조 초안 · rebuild/state/ 의 상태 기록만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/draft/', 'rebuild/state/']);
+  for (const bad of ['../x.jsonl', 'other.jsonl', 'build-plan.md']) assert.throws(() => CLERK.writeState(bad, 'x', ROOT), /상태 기록 이름/, bad);
   for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
   for (const bad of ['../CLAUDE.md', 'modes/Author.md', 'modes/a/b.md', 'skills/x/other.md', 'x.md']) assert.throws(() => CLERK.writeDraftDoc(bad, 'x', ROOT), /새 구조 초안 이름/, bad);
 });
@@ -183,5 +185,29 @@ test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글
     assert.match(f.id, /^EQ-\d{4}$/); assert.ok(f.name && f.expr, f.id);
     for (const id of f.rules || []) assert.ok(S.rules[id], `${f.id}: 없는 규칙 ${id}`);
     assert.ok(f.basis ? f.basis_kind !== 'none' : f.basis_kind === 'none', `${f.id}: 근거와 근거 종류가 어긋남`);
+  }
+});
+
+test('⑯ 상태 기록 (6c): build-plan 의 기록에서 다시 만든 글 = 지금 문서 (바이트 동일) · 작업마다 번호 하나 · 상태 기호가 읽힘', () => {
+  const recs = STATE.load(ROOT), now = readFileSync(join(ROOT, STATE.SOURCE), 'utf8');
+  assert.equal(STATE.render(recs), now, '기록이 문서와 다름 — 문서를 고쳤으면 node --input-type=module 로 parse 해 rebuild/state/build-plan.jsonl 을 다시 들인다');
+  assert.deepEqual(STATE.parse(now), recs, 'parse(문서) = 기록');
+  const items = recs.filter((r) => r.kind === 'item'), ids = items.map((r) => r.id);
+  assert.equal(new Set(ids).size, ids.length, '계획 번호가 겹침');
+  assert.ok(ids.every((x) => /^PLAN-(?:\d{3}[ap]?|H\d{2})$/.test(x)));
+  assert.deepEqual(recs.filter((r) => r.kind === 'raw').map((r) => r.text.slice(0, 30)), [], '깨진 표 줄');
+  assert.deepEqual(items.filter((r) => !r.state && r.n !== '(보류)').map((r) => r.id), [], '상태 기호(☑ ☐ ◐ ✗)가 없는 작업');
+});
+
+test('⑰ 관리 파일의 기계용 보기 (6e): status.json 의 표를 다시 그리면 .md 의 표와 칸까지 같다', () => {
+  const out = build(), J = JSON.parse(out['status.json']);
+  assert.deepEqual(Object.keys(J), Object.keys(out).filter((n) => n.endsWith('.md')).sort(), 'status.json 이 관리 파일을 모두 담음');
+  const esc = (c) => String(c).replace(/\|/g, '\\|');
+  for (const [name, doc] of Object.entries(J)) {
+    assert.ok(out[name].startsWith('# ' + doc.title), name);
+    for (const sec of doc.sections) for (const t of sec.tables) {
+      const md = [`| ${t.head.map(esc).join(' | ')} |`, `|${t.head.map(() => '---').join('|')}|`, ...t.rows.map((r) => `| ${r.map(esc).join(' | ')} |`)].join('\n');
+      assert.ok(out[name].includes(md), `${name} · ${sec.heading}: 표를 다시 그린 글이 .md 에 없음`);
+    }
   }
 });
