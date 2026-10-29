@@ -2,21 +2,21 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (254 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (276 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 213 |
+| 잡음 `caught` | 235 |
 | 설정에 있음 `present` | 8 |
 | 본보기에만 있음 (켜지지 않음) `present_template` | 7 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
-| 아직 시험 안 함 (machine) | 21 |
+| 아직 시험 안 함 (machine) | 0 |
 
 ## 형식 오류
 
 없음
 
-## 잡음 `caught` — 213
+## 잡음 `caught` — 235
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -156,6 +156,9 @@
 | RULE-0290 | `outcome` ∈ `not_searched\|not_found\|unreadable\|read_no_va | replace | judicial/collection_audit.js | ⑦ outcome 누락·빈 입력 → INCOMPLETE |
 | RULE-0291 | 값을 적으면 source + quote 필수 | replace | judicial/collection_audit.js | ③ 근거 없는 값 → REJECTED (꼼수: 미확인을 사실처럼) |
 | RULE-0292 | 완료는 수집가가 아니라 판정기가 정한다 — 값 후보는 1차 출처 재확인 전 PASS 아님 | replace | judicial/collection_audit.js | ② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지) |
+| RULE-0309 | **통제 어휘** (`vocab.js`): kind·분야·위치(3D/2D, 막 면, 특수 위치의 부모)·막  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0311 | **외부 ID·구조 지문·잔기 번호**: 형식·kind 검사, 같은 ID·지문 중복 금지. 모르면 지어내지  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0312 | **구조**: 구성 요소는 복합체만, 부위의 `on` 은 구성 요소, 막 면은 그 막에 있는 면, 막 결합  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0319 | 부위·규칙 키는 영문 소문자·숫자·`_` (`reg_phos`, `gs_gef`). 잔기 번호 같은 종 의존 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0323 | 패치의 새 별칭이 다른 개념의 이름이면 거부. 이름에 `#` `@` `\|` `/` 금지. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0324 | 이미 뜻이 있는 개념에 새 뜻을 더하려면 `distinction`(기존 뜻과의 차이)이 필수. 없으면 거부. | replace | legislative/legislative.js | 띄어쓰기만 다른 이름은 기존 개념으로 매핑되고, 설명 없는 새 뜻 추가는 거부 |
@@ -165,6 +168,7 @@
 | RULE-0331 | **참여자 종류**(protein, complex, nucleic_acid, small_molecule, m | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0332 | 구성 요소(`components`)는 `complex` 만 가지며, 구성 요소는 참여자 종류여야 한다. 구성 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0333 | 단계의 `part_of` 대상은 `pathway` 정의항이어야 한다. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0334 | `is_a`: 분자 → 같은 kind 또는 molecule_class / molecule_class → mo | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0337 | 잔기 번호는 부위의 `numbering: { "종 번호": "Ser14" }` 로 종마다 적는다. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0339 | `association`: soluble \| integral \| peripheral \| lipid_an | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0340 | 막 결합(soluble 이 아님)이면 `location` 은 2D 위치(막). peripheral·lipid | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
@@ -185,6 +189,7 @@
 | RULE-0356 | `action` 은 어휘의 허용 효과만 쓸 수 있고, `adds`·`removes` 가 정해진 action( | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0357 | `with`: 보조 기질·생성물(ATP→ADP 등). `regulators`: `[{ ref, effect, | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0358 | 묶음 키: `바탕 D\|부위:특징\|…\|위치`. 특징은 부위 이름순으로 정렬한 표준 형식이어야 한다. 빈  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0359 | 패치에서는 참여자를 `{ ref, features: { 부위: 특징 } \| ["부위:특징"], locati | replace | legislative/legislative.js | RULE-0359 패치 참여자의 특징 "부위:특징" 은 콜론으로 나뉜다 — 형식이 틀리면 거부 |
 | RULE-0360 | 규칙은 원천의 전이 규칙이어야 한다. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0361 | 행위자: `agent` 규칙이면 소유자의 묶음이 agents 에 있고, 소유자의 상태 의미 규칙상 **비활성 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0362 | 변화량 = 규칙 효과: modify 는 대상의 입력·출력 묶음이 정확히 하나씩, 규칙의 부위만 `remove | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
@@ -222,10 +227,12 @@
 | RULE-0418 | 같은 지문은 정의항 하나에만 붙는다. `status`: `computed`(도구로 계산) / `asserte | replace | judicial/judicial.js | ④ 증명 등록부: 도장 없는 verified 는 오류, 변조·위조 도장은 무효 |
 | RULE-0421 | 이전 형식(v2·v3) 패치(`terms` 가 객체, `definientia`, `states`)는 거부된다 | replace | legislative/legislative.js | 이전 형식 패치(v2·v3)는 거부 |
 | RULE-0422 | 매핑 오류 또는 검사 오류가 새로 생김 \| 거부 | replace | legislative/clerk.mjs | ④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다 |
+| RULE-0435 | 한 db 에 항목이 둘 이상 \| 역할이 서로 달라야 하고, 그중 하나는 `physiological` 이어야 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0436 | 모체만 적힌 저분자 \| 경고 — 반응 참여자(physiological)를 함께 적는 것이 규약 | replace | judicial/judicial.js | RULE-0436 저분자에 ChEBI 모체(parent)만 있으면 경고 — 반응 참여자(physiological)를 함께 적는 규약 |
 | RULE-0440 | 막 이동 경로 `membrane.route` \| 막 단백질이 분비·섭취 경로에서 거쳐 가는 다른 막들. 묶 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0441 | 소모된 것의 행방 \| 공급 규칙은 생성물이 필요하다(`produces` 필수). 떨어져 나간 반복 단위는  | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0442 | 분열 허가·정지 \| 조절 규칙(힐)의 배율. 허가는 신호의 **활성**(`activates`), 정지는 억 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0444 | (`checkSenseObsFrom` — `checkKineticsFrom` 의 거울). 철회된 관찰이나 ` | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0446 | **값 기록**: `{ subject: D… \| D…/rule/키, property, value { dis | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0447 | **두 시간**: `recorded_at`(기록 시각)·`evidence_at`(근거 시각). `model. | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
 | RULE-0448 | **사법부**: `validateValues`(대상·속성 어휘·분포·유도 방식·기록 시각·근거 관찰·대체 사 | replace | legislative/legislative.js | ④ 변경 불가: 관찰은 바꾸거나 지울 수 없고, 철회 표시만 더할 수 있음 |
@@ -233,6 +240,21 @@
 | RULE-0452 | **사법부**: `judicial/assumption_audit.js` — 사슬(seq·prev·root·번 | replace | judicial/assumption_audit.js | ④ 새 기록 검사: 통과 1 + 거부 사유별 |
 | RULE-0482 | → 이들은 **REVIEW_REQUIRED**로 두고 "완료"로 적지 않는다. | replace | judicial/collection_audit.js | ② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지) |
 | RULE-0489 | `subject`: 정의항 `D…` · 규칙 `D…/rule/키` · 묶음 키 · 위치(`vocab.loca | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0498 | 번호는 정해진 모양이다 — 개념 T·정의항 D·단계 S·관찰 O·한계 L 은 글자 하나 + 숫자 여섯 자리 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0499 | 개념(T)은 한국어 이름(names.ko)을 가지고, 뜻(정의항)이 하나 이상 있다 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0500 | 정의항(D)은 소속 개념이 있고, 개념 안에서 겹치지 않는 뜻 번호(n)를 가진다 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0501 | 정의항 설명(desc)은 하나 이상이고, 각 설명은 정의 문장(text)·분야(field, 어휘)·맥락 범위 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0502 | 규칙은 정의항 안에서 겹치지 않는 id 와 이름(label)을 가지고, 종류(type)는 어휘의 것이다 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0503 | 규칙의 전제 조건(requires)은 있는 정의항의 있는 부위·특징을 가리키고, 그 규칙을 쓰는 단계는 전제 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0504 | 정의항 obs 값은 속성의 값 종류·SI 정준 단위·위치 필수 여부·범위(pH 0–14, 양수 속성)·값 목 | replace | judicial/judicial.js | ② 래칫: 말뭉치 수·검사 자리 수·시험 수가 바닥값 아래로 내려가지 않는다 |
+| RULE-0505 | 패치는 JSON 객체이고 terms·senses·steps·limitations·observations 는  | replace | legislative/legislative.js | RULE-0505 패치는 JSON 객체여야 한다 — 객체가 아니면 병합 거부 |
+| RULE-0506 | 추가만 하는 기록(병합 기록·받기 기록·사전·사전 등록부)은 사슬이다 — 순번이 이어지고 prev 는 직전  | replace | judicial/dictionary_audit.js | ② 변조·삭제는 거부 |
+| RULE-0507 | 입법 서기는 사법부 봉인이 있고, 판결이 통과이고, 쓰려는 내용이 봉인된 것과 같을 때만 쓴다 (형식 변환· | replace | legislative/clerk.mjs | RULE-0507 서기는 봉인된 db 와 쓰려는 db 가 같을 때만 형식 변환을 쓴다 |
+| RULE-0508 | 수신함 파일은 받기 기록(FETCH_LOG)과 같아야 한다 — 기록에 있는데 없거나, 받은 뒤 내용이 바뀌면 | replace | judicial/collection_audit.js | ⑥ 받기 기록 검사: 통과 · 사슬 변조 · 받은 뒤 파일이 바뀜 · 파일이 사라짐 |
+| RULE-0509 | 병합 기록을 기원 스냅숏부터 다시 돌리면 지금 db 와 같아야 한다 — 기록을 거치지 않은 쓰기(직접 편집) | replace | judicial/log_audit.js | RULE-0509 병합 기록 재생: 형식 변환 스크립트가 기록과 다르거나 지금 db 가 기록의 끝과 다르면 거부 |
+| RULE-0510 | 사전 새 항목은 vocab 에 있는 register·키만, 영어 라벨·뜻은 비지 않은 문자열, since 는 | replace | judicial/dictionary_audit.js | RULE-0510 사전 새 항목은 객체여야 하고 vocab 의 register·키만 받는다 |
+| RULE-0511 | 외부 ID 확인은 원본 응답과 대조한다 — 번호·기준 종·이름이 맞아야 하고, 이미 다른 정의항에 있는 번호 | replace | judicial/identity.js | 자동 보강 build: 검증만 verified·출처·서열 길이·지문, 종·번호·이름·화학식·중복 위반은 거부, 모호하면 unmapped 유지 + 후보 메모, as |
+| RULE-0512 | 검사 자리는 첫 인자로 규칙 번호를 낸다 — 새 검사는 규칙 장부에 규칙 먼저(없으면 from_code),  | replace | judicial/judicial.js | ⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인자가 살아 있는 RULE 번호 (5d) |
 
 ## 설정에 있음 `present` — 8
 
@@ -290,28 +312,6 @@
 | RULE-0241 | 운명 비율(구간)·도달 시각 분포·표지 퍼짐(Fano)은 judicial/stoch_audit.js | test_only | tests/stochastic.test.mjs |  |
 | RULE-0284 | `tests/rejections.test.mjs` 가 자동으로 잡지만, 사람 눈으로도 한 번 본다. | test_only | tests/rejections.test.mjs |  |
 
-## 아직 시험 안 함 — 21
+## 아직 시험 안 함 — 0
 
-| 규칙 | 집행 자리 |
-|---|---|
-| RULE-0309 | judicial/judicial.js checkEvidence · judicial/judicial.js checkContext · judicial/judicial.js valida |
-| RULE-0311 | judicial/judicial.js validateSense |
-| RULE-0312 | judicial/judicial.js validateSense |
-| RULE-0334 | judicial/judicial.js validate · judicial/judicial.js validateSense |
-| RULE-0359 | legislative/legislative.js merge |
-| RULE-0435 | judicial/judicial.js validateSense |
-| RULE-0444 | judicial/judicial.js checkSenseObsFrom |
-| RULE-0498 | judicial/judicial.js validate · validateSense · validateStep · validateObservation · validateLimitat |
-| RULE-0499 | judicial/judicial.js validate (개념 기본 칸) |
-| RULE-0500 | judicial/judicial.js validateSense (정의항 기본 칸) |
-| RULE-0501 | judicial/judicial.js validateSense (설명 칸) |
-| RULE-0502 | judicial/judicial.js validateSense (규칙 기본 칸) |
-| RULE-0503 | judicial/judicial.js validateSense · validateStep (전제 조건) |
-| RULE-0504 | judicial/judicial.js validateSense (obs 값) |
-| RULE-0505 | legislative/legislative.js merge (패치 모양) |
-| RULE-0506 | judicial/log_audit.js · collection_audit.js verifyFetchLog · dictionary_audit.js · protocol.js verif |
-| RULE-0507 | legislative/clerk.mjs commitMigration · sealGenesis · registerPrereg · appendDictionary |
-| RULE-0508 | judicial/collection_audit.js verifyFetchLog |
-| RULE-0509 | judicial/log_audit.js replayVerdict |
-| RULE-0510 | judicial/dictionary_audit.js checkProposals |
-| RULE-0511 | judicial/identity.js verifyIdentity |
+없음

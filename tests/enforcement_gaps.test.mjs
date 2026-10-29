@@ -203,3 +203,46 @@ test('RULE-0245 무결성 증명서: 엔진 감사에 AUDIT_MASS 가 있으면 F
   assert.equal(rep.pass, false);
   assert.ok(rep.checks.some((c) => /AUDIT_MASS 없음/.test(c.name) && c.ok === false));
 });
+
+// 5d — 코드에서 찾은 규칙(from_code)의 검사 자리
+test('RULE-0505 패치는 JSON 객체여야 한다 — 객체가 아니면 병합 거부', () => {
+  const LEG = req('../legislative/legislative.js');
+  for (const p of [null, [], 'patch']) assert.ok(LEG.merge(BASE, p).report.errors.some((e) => e.rule === 'RULE-0505' && /JSON 객체가 아님/.test(e.msg)), JSON.stringify(p));
+});
+
+test('RULE-0359 패치 참여자의 특징 "부위:특징" 은 콜론으로 나뉜다 — 형식이 틀리면 거부', () => {
+  const LEG = req('../legislative/legislative.js'), sid = Object.keys(RAW.steps)[0], st = JSON.parse(JSON.stringify(RAW.steps[sid]));
+  const p = st.inputs.find((x) => x.ref) || st.inputs[0];
+  const patch = { format: 'definition-db-patch', version: 9, why: '시험', recorded_at: '2026-10-26T00:00:00.000Z', steps: [{ ...st, id: sid, inputs: [{ ref: p.ref || p.b.split('|')[0], features: ['콜론없음'], location: p.location || p.b.split('|').pop() }] }] };
+  const errs = LEG.merge(BASE, patch).report.errors;
+  assert.ok(errs.some((e) => e.rule === 'RULE-0359' && /형식/.test(e.msg)), JSON.stringify(errs.slice(0, 3)));
+});
+
+test('RULE-0510 사전 새 항목은 객체여야 하고 vocab 의 register·키만 받는다', () => {
+  const DA = req('../judicial/dictionary_audit.js');
+  const v = DA.checkProposals([], [null]);
+  assert.equal(v.ok, false); assert.equal(v.rules[0], 'RULE-0510'); assert.match(v.errors[0], /객체가 아님/);
+  const w = DA.checkProposals([], [{ register: '없는표', key: 'x', label_en: 'x', meaning_en: 'x', since: '2026-10-26', xref: null }]);
+  assert.ok(w.errors.some((e, i) => /register 어휘 밖/.test(e) && w.rules[i] === 'RULE-0510'));
+});
+
+test('RULE-0509 병합 기록 재생: 형식 변환 스크립트가 기록과 다르거나 지금 db 가 기록의 끝과 다르면 거부', () => {
+  const LA = req('../judicial/log_audit.js'), ATT = req('../judicial/attestation.js'), sha = (x) => req('crypto').createHash('sha256').update(x).digest('hex');
+  const X = 'a'.repeat(64), Y = 'b'.repeat(64), genesis = { format: 'definition-db-log', db_sha256: X, root: sha('genesis\n' + X) };
+  const body = { seq: 1, prev: genesis.root, kind: 'migration', script: 'migrations/012.js', script_sha256: 'c'.repeat(64), db_sha256: Y };
+  const events = [{ ...body, root: sha(body.prev + '\n' + ATT.canon(body)) }];
+  const ok = LA.replayVerdict(genesis, events, { snapshot_sha256: X, shas: [Y], scriptShas: { 0: 'c'.repeat(64) } }, Y);
+  assert.ok(ok.ok, ok.errors.join(' · '));
+  const bad = LA.replayVerdict(genesis, events, { snapshot_sha256: X, shas: [Y], scriptShas: { 0: 'd'.repeat(64) } }, Y);
+  assert.ok(bad.errors.some((e, i) => /형식 변환 스크립트가 기록된 것과 다름/.test(e) && bad.rules[i] === 'RULE-0509'));
+  const edited = LA.replayVerdict(genesis, events, { snapshot_sha256: X, shas: [Y], scriptShas: { 0: 'c'.repeat(64) } }, 'e'.repeat(64));
+  assert.ok(edited.errors.some((e, i) => /기록을 거치지 않은 쓰기/.test(e) && edited.rules[i] === 'RULE-0509'));
+});
+
+test('RULE-0507 서기는 봉인된 db 와 쓰려는 db 가 같을 때만 형식 변환을 쓴다', async () => {
+  const CLERK = await import('../legislative/clerk.mjs'), ATT = req('../judicial/attestation.js');
+  const v = J.validate(BASE), seal = ATT.sealVerdict({ ok: !v.errors.length, errors: v.errors, warnings: v.warnings }, BASE);
+  const other = JSON.parse(JSON.stringify(RAW)); other.meta = { ...(other.meta || {}), _시험: 1 };
+  assert.throws(() => CLERK.commitMigration({ dbPath: join(tmpdir(), 'never', 'db.json'), db: other, seal, script: 'migrations/012.js', scriptText: '', fromSha: 'x' }),
+    (e) => e.rule === 'RULE-0507' && /봉인된 db 와 쓰려는 db 가 다름/.test(e.message));
+});

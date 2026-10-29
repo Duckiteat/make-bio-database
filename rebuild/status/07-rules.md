@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 511 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 512 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 500 · 은퇴 11 (`rebuild/archive/p3-p5-layer.json`) · 예약 2
+살아 있는 규칙 501 · 은퇴 11 (`rebuild/archive/p3-p5-layer.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 282 |
+| machine | 283 |
 | text | 227 |
 | none | 0 |
 | unchecked | 2 |
@@ -28,7 +28,7 @@
 |---|---|
 | 1 곳 | 291 |
 | 2 곳 | 104 |
-| 3 곳 | 60 |
+| 3 곳 | 61 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
@@ -115,7 +115,7 @@
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 
-U0315 (docs/design/agent-rules.md:62) → 규칙 9 · U0355 (docs/design/agent-rules.md:70) → 규칙 9 · U0279 (docs/design/agent-rules.md:24) → 규칙 7 · U0347 (docs/design/agent-rules.md:68) → 규칙 7 · U0272 (docs/design/agent-rules.md:21) → 규칙 6 · U0350 (docs/design/agent-rules.md:68) → 규칙 6 · U0369 (docs/design/agent-rules.md:78) → 규칙 6 · U0270 (docs/design/agent-rules.md:20) → 규칙 5 · U0335 (docs/design/agent-rules.md:65) → 규칙 5 · U0363 (docs/design/agent-rules.md:74) → 규칙 5 · U0381 (docs/design/agent-rules.md:83) → 규칙 5 · U0251 (docs/design/agent-rules.md:13) → 규칙 4 · U0340 (docs/design/agent-rules.md:66) → 규칙 4 · U0366 (docs/design/agent-rules.md:77) → 규칙 4 · U0372 (docs/design/agent-rules.md:79) → 규칙 4 · U0385 (docs/design/agent-rules.md:85) → 규칙 4 · U0393 (docs/design/agent-rules.md:87) → 규칙 4 · U0414 (docs/design/agent-rules.md:110) → 규칙 4 · U0254 (docs/design/agent-rules.md:14) → 규칙 3 · U0423 (docs/design/agent-rules.md:116) → 규칙 3 · U0419 (docs/design/agent-rules.md:115) → 규칙 3 · U0560 (docs/RUNBOOK.md:239) → 규칙 3 · U0274 (docs/design/agent-rules.md:22) → 규칙 3 · U0324 (docs/design/agent-rules.md:63) → 규칙 3 · U0329 (docs/design/agent-rules.md:64) → 규칙 3 · U0344 (docs/design/agent-rules.md:67) → 규칙 3 · U0361 (docs/design/agent-rules.md:72) → 규칙 3 · U0365 (docs/design/agent-rules.md:76) → 규칙 3 · U0377 (docs/design/agent-rules.md:81) → 규칙 3 · U0396 (docs/design/agent-rules.md:88) → 규칙 3 · …
+U0315 (docs/design/agent-rules.md:62) → 규칙 9 · U0355 (docs/design/agent-rules.md:70) → 규칙 9 · U0279 (docs/design/agent-rules.md:24) → 규칙 7 · U0347 (docs/design/agent-rules.md:68) → 규칙 7 · U0272 (docs/design/agent-rules.md:21) → 규칙 6 · U0350 (docs/design/agent-rules.md:68) → 규칙 6 · U0369 (docs/design/agent-rules.md:78) → 규칙 6 · U0270 (docs/design/agent-rules.md:20) → 규칙 5 · U0335 (docs/design/agent-rules.md:65) → 규칙 5 · U0363 (docs/design/agent-rules.md:74) → 규칙 5 · U0381 (docs/design/agent-rules.md:83) → 규칙 5 · U0251 (docs/design/agent-rules.md:13) → 규칙 4 · U0340 (docs/design/agent-rules.md:66) → 규칙 4 · U0366 (docs/design/agent-rules.md:77) → 규칙 4 · U0372 (docs/design/agent-rules.md:79) → 규칙 4 · U0385 (docs/design/agent-rules.md:85) → 규칙 4 · U0393 (docs/design/agent-rules.md:87) → 규칙 4 · U0414 (docs/design/agent-rules.md:110) → 규칙 4 · U0254 (docs/design/agent-rules.md:14) → 규칙 3 · U0423 (docs/design/agent-rules.md:117) → 규칙 3 · U0419 (docs/design/agent-rules.md:116) → 규칙 3 · U0560 (docs/RUNBOOK.md:239) → 규칙 3 · U0274 (docs/design/agent-rules.md:22) → 규칙 3 · U0324 (docs/design/agent-rules.md:63) → 규칙 3 · U0329 (docs/design/agent-rules.md:64) → 규칙 3 · U0344 (docs/design/agent-rules.md:67) → 규칙 3 · U0361 (docs/design/agent-rules.md:72) → 규칙 3 · U0365 (docs/design/agent-rules.md:76) → 규칙 3 · U0377 (docs/design/agent-rules.md:81) → 규칙 3 · U0396 (docs/design/agent-rules.md:88) → 규칙 3 · …
 
 ## 장부에 없는 판단 규칙 단위 (0 이어야 함)
 

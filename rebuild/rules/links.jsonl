@@ -531,3 +531,4 @@
 {"from": "RULE-0509", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
 {"from": "RULE-0510", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
 {"from": "RULE-0511", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0512", "rel": "because", "to": "U7496", "by": "judged"}

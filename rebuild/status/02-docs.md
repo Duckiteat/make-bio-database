@@ -4,8 +4,8 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 247.4 | 233 |  | 분류됨 1 |
-| `CLAUDE.md` | 18.0 | 85 | 입구 | 분류됨 241 |
+| `CHANGES.md` | 249.1 | 234 |  | 분류됨 1 |
+| `CLAUDE.md` | 18.0 | 85 | 입구 | 분류됨 242 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
@@ -13,7 +13,7 @@
 | `docs/PROMPTS.md` | 17.7 | 315 | 입구 | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.2 | 328 | 입구 | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
-| `docs/design/agent-rules.md` | 45.2 | 117 |  | 분류됨 190 |
+| `docs/design/agent-rules.md` | 45.2 | 117 |  | 분류됨 192 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
 | `docs/design/build-plan.md` | 64.1 | 164 |  | 분류됨 120 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
@@ -61,12 +61,12 @@
 | `docs/textbook/01-원칙과-구조.md` | 9.3 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 64.9 | 376 |  | 분류됨 232 |
+| `docs/textbook/04-알고리즘.md` | 64.9 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 114.0 | 810 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 114.2 | 810 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |

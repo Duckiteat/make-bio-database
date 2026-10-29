@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-장부 파일: units.jsonl · 단위 7277
+장부 파일: units.jsonl · 단위 7281
 
 ## 모드 × 종류
 
@@ -11,7 +11,7 @@
 | 공통 `common` | 53 | 104 | 276 | 134 | 117 | 684 |
 | 정보 작성 `author` | 412 | 255 | 576 | 28 | 419 | 1690 |
 | 기초시험 `baseline` | 97 | 67 | 185 | 46 | 421 | 816 |
-| 디벨롭 `develop` | 146 | 43 | 698 | 1560 | 481 | 2928 |
+| 디벨롭 `develop` | 149 | 43 | 699 | 1560 | 481 | 2932 |
 | 적분장 `field` | 16 | 4 | 246 | 16 | 220 | 502 |
 | 점검·검증 `inspect` | 63 | 79 | 131 | 26 | 358 | 657 |
 
@@ -21,12 +21,12 @@
 
 | 집행 | 규칙 수 |
 |---|---|
-| machine | 378 |
+| machine | 381 |
 | text | 206 |
 | none | 0 |
 | unchecked | 203 |
 
-집행 자리 확인 (machine 397): 파일·이름 확인 387 · 글로만 적힘 10 · 못 찾음 0
+집행 자리 확인 (machine 400): 파일·이름 확인 390 · 글로만 적힘 10 · 못 찾음 0
 
 이 확인은 '자리가 있다' 까지다 — 그 자리가 정말 그 규칙을 집행하는지는 5 단계에서 거부 시험으로 확인한다.
 
@@ -35,7 +35,7 @@
 | 문서 | 단위 |
 |---|---|
 | `CHANGES.md` | 1 |
-| `CLAUDE.md` | 241 |
+| `CLAUDE.md` | 242 |
 | `DESIGN-v4.md` | 152 |
 | `FEATURES.md` | 122 |
 | `README.md` | 153 |
@@ -43,7 +43,7 @@
 | `docs/PROMPTS.md` | 151 |
 | `docs/RUNBOOK.md` | 180 |
 | `docs/design/abstraction-boundary.md` | 31 |
-| `docs/design/agent-rules.md` | 190 |
+| `docs/design/agent-rules.md` | 192 |
 | `docs/design/authority-and-comprehension.md` | 22 |
 | `docs/design/build-plan.md` | 120 |
 | `docs/design/cell-fate-engine.md` | 76 |
@@ -91,7 +91,7 @@
 | `docs/textbook/01-원칙과-구조.md` | 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 81 |
 | `docs/textbook/03-데이터-모델.md` | 116 |
-| `docs/textbook/04-알고리즘.md` | 232 |
+| `docs/textbook/04-알고리즘.md` | 233 |
 | `docs/textbook/05-상호작용.md` | 94 |
 | `docs/textbook/06-출력-해석.md` | 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 117 |
@@ -116,16 +116,16 @@
 
 ## 사본
 
-사본 단위(same_as) 322 · 사본이 있는 원래 단위 250 · 한 규칙이 적힌 곳 최대 11
+사본 단위(same_as) 324 · 사본이 있는 원래 단위 251 · 한 규칙이 적힌 곳 최대 11
 
-매긴 방식: 판단 3046 · 휴리스틱 4231 (`by: heur` — 검토 전, 5 단계에서 규칙부터 다시 봄) · 수식 후보(EQ) 197
+매긴 방식: 판단 3050 · 휴리스틱 4231 (`by: heur` — 검토 전, 5 단계에서 규칙부터 다시 봄) · 수식 후보(EQ) 197
 
 ## 단위가 없는 줄 (제목·표 머리·빈 줄 제외 — 0 이어야 1 단계 끝)
 
 | 문서 | 단위가 있는 줄 | 빠진 줄 |
 |---|---|---|
 | `CHANGES.md` | 파일 전체 | 없음 |
-| `CLAUDE.md` | 74 | 85 |
+| `CLAUDE.md` | 75 | 없음 |
 | `DESIGN-v4.md` | 152 | 없음 |
 | `FEATURES.md` | 122 | 없음 |
 | `README.md` | 153 | 없음 |
@@ -133,7 +133,7 @@
 | `docs/PROMPTS.md` | 151 | 없음 |
 | `docs/RUNBOOK.md` | 178 | 없음 |
 | `docs/design/abstraction-boundary.md` | 31 | 없음 |
-| `docs/design/agent-rules.md` | 92 | 114 · 117 |
+| `docs/design/agent-rules.md` | 93 | 없음 |
 | `docs/design/authority-and-comprehension.md` | 22 | 없음 |
 | `docs/design/build-plan.md` | 120 | 없음 |
 | `docs/design/cell-fate-engine.md` | 76 | 없음 |
@@ -181,7 +181,7 @@
 | `docs/textbook/01-원칙과-구조.md` | 55 | 없음 |
 | `docs/textbook/02-저장-위치와-방식.md` | 81 | 없음 |
 | `docs/textbook/03-데이터-모델.md` | 116 | 없음 |
-| `docs/textbook/04-알고리즘.md` | 232 | 89 · 92 · 97 · 98 · 106 · 118 · 128 · 136 · 137 · 143 · 148 · 155 · 158 · 169 · 180 · 187 · 191 · 192 · 198 · 199 · 204 · 211 · 228 · 229 · 236 · 237 · 241 · 242 · 252 · 253 · 260 · 261 · 267 · 268 · 272 · 273 · 278 · 286 · 289 · 294 · 306 · 309 · 313 · 316 · 320 · 328 · 331 · 337 · 338 · 342 · 347 · 354 · 355 · 360 · 363 · 370 · 371 · 375 |
+| `docs/textbook/04-알고리즘.md` | 233 | 없음 |
 | `docs/textbook/05-상호작용.md` | 94 | 없음 |
 | `docs/textbook/06-출력-해석.md` | 115 | 없음 |
 | `docs/textbook/07-AI-작업-절차.md` | 117 | 없음 |
