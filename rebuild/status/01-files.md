@@ -7,10 +7,10 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 35 | 5680.8 |
+| rebuild | 35 | 5685.6 |
 | docs | 58 | 1358.2 |
-| (최상위) | 18 | 897.0 |
-| tests | 80 | 563.0 |
+| (최상위) | 18 | 898.5 |
+| tests | 80 | 564.0 |
 | judicial | 29 | 542.0 |
 | engine | 26 | 299.1 |
 | attestations | 1 | 299.0 |
@@ -21,7 +21,7 @@
 | compiler | 7 | 49.0 |
 | schemas | 6 | 43.6 |
 | mcp | 4 | 34.7 |
-| .claude | 1 | 3.2 |
+| .claude | 1 | 4.0 |
 | .github | 1 | 2.6 |
 
 ## 큰 파일 25
@@ -40,12 +40,12 @@
 | `attestations/registry.json` | 299.0 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
-| `CHANGES.md` | 260.4 |
+| `CHANGES.md` | 261.9 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
 | `docs/design/build-plan.md` | 201.2 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
-| `rebuild/state/plan-log.jsonl` | 183.6 |
+| `rebuild/state/plan-log.jsonl` | 185.0 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |

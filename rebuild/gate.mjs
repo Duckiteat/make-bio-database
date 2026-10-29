@@ -39,7 +39,21 @@ export function finishCmds(P, mode, role) {
   return { first: P.common.finish_first || [], cmds: [...(R ? R.finish : P.modes[mode].finish), ...P.common.finish] };
 }
 const denies = (P, mode, role) => [...(P.common.deny || []), ...((P.modes[mode] || {}).deny || []), ...(((role && P.roles[role]) || {}).deny || [])];
-const RE = { open: /\bgate\.mjs\s+open\b(?:\s+(\S+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+(\S+))?/, commit: /\bgit\s+(?:-C\s+\S+\s+)?commit\b/, push: /\bgit\s+(?:-C\s+\S+\s+)?push\b/ };
+const RE = { open: /\bgate\.mjs\s+open\b(?:\s+([a-z]+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+([a-z]+))?/, commit: /\bgit\s+(?:-C\s+\S+\s+)?commit\b/, push: /\bgit\s+(?:-C\s+\S+\s+)?push\b/ };
+// 명령에서 '실행되는 부분' 만 — heredoc 본문과 따옴표 속 글을 지운다. 글로 적은 명령 이름(커밋 메시지·기록 본문)을 실행으로 읽지 않으려고.
+//   따옴표 속에 숨긴 실행(bash -c "…")은 여기서 못 보지만, 그 실행이 바꾼 파일은 도구 뒤 대조(violations)가 잡는다.
+export function codeOf(cmd) {
+  let s = String(cmd || ''), out = '', i = 0;
+  const hd = [...s.matchAll(/<<-?\s*(['"]?)([A-Za-z_][\w]*)\1/g)];
+  for (const m of hd) { const tag = m[2], from = s.indexOf('\n', m.index); if (from < 0) continue; const end = s.indexOf('\n' + tag, from); s = s.slice(0, from) + (end < 0 ? '' : s.slice(end + 1 + tag.length)); }
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'") { const j = s.indexOf("'", i + 1); out += "''"; i = j < 0 ? s.length : j + 1; continue; }
+    if (c === '"') { let j = i + 1; while (j < s.length && s[j] !== '"') j += s[j] === '\\' ? 2 : 1; out += '""'; i = j + 1; continue; }
+    out += c; i++;
+  }
+  return out;
+}
 const rel0 = (root, f) => { if (!f) return null; const a = isAbsolute(f) ? f : resolve(root, f), r = relative(root, a); return r.startsWith('..') || isAbsolute(r) ? null : r.split('\\').join('/'); };
 
 // st = { mode, role, finish(마지막 통과한 끝내기 전 시험), work()(지금 작업 지문), branch(), pushFiles() }
@@ -56,7 +70,7 @@ export function decidePre(P, st, input, root) {
     return null;
   }
   if (t !== 'Bash') return null;
-  const cmd = String(x.command || '');
+  const cmd = codeOf(x.command);
   const o = cmd.match(RE.open);
   if (o) {
     const m = o[1];
@@ -170,11 +184,11 @@ function hook(event, input, root) {
   if (event === 'post') {
     const snap = snapshot(root), changed = diffSnap(S.snap || snap, snap), cmd = String((input.tool_input || {}).command || '');
     const ok = !(input.tool_response && (input.tool_response.is_error || input.tool_response.interrupted));
-    const o = input.tool_name === 'Bash' && cmd.match(RE.open);
+    const o = input.tool_name === 'Bash' && codeOf(cmd).match(RE.open);
     if (o && ok && !st.mode && MODES.includes(o[1])) add({ t: 'open', mode: o[1], role: st.role, branch: branchOf(root), head: headOf(root) });
     add({ t: 'tool', tool: input.tool_name, target: target(input), changed });
     st = state(root, input.session_id, P);
-    if (input.tool_name === 'Bash' && RE.finish.test(cmd)) { const F = readJson(finishFile(root)); if (F && F.at_ms >= (S.pre_at || 0) && F.mode === st.mode) add({ t: 'finish', mode: F.mode, role: F.role, work: F.work, pass: F.pass, results: F.results }); }
+    if (input.tool_name === 'Bash' && RE.finish.test(codeOf(cmd))) { const F = readJson(finishFile(root)); if (F && F.at_ms >= (S.pre_at || 0) && F.mode === st.mode) add({ t: 'finish', mode: F.mode, role: F.role, work: F.work, pass: F.pass, results: F.results }); }
     S.snap = snap;
     const bad = violations(P, st.mode, st.role, changed);
     let code = 0;

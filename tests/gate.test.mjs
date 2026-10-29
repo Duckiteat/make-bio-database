@@ -53,6 +53,14 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   assert.equal(pre({ ...col, branch: () => 'collector/task-9', pushFiles: () => ['workspace/handoff/TASK-009.jsonl'] }, 'Bash', { command: 'git push -u origin collector/task-9' }), null, '결정 ②: 자기 브랜치 + 핸드오프만');
   assert.match(pre(col, 'Bash', { command: 'node dbtool.mjs augment apply p.json' }), /^RULE-0287 .*수집가는 후보만/);
   assert.match(pre({ role: 'collector' }, 'Bash', { command: 'node rebuild/gate.mjs open develop' }), /author 모드만/);
+  // 글로 적은 명령은 실행이 아니다 (2026-10-29 첫 실사용에서 잘못 막힘 — 기록 본문의 "gate.mjs finish develop`")
+  const dev = { mode: 'develop' };
+  assert.equal(pre(dev, 'Bash', { command: "cat >> x.md <<'EOF'\n`node rebuild/gate.mjs finish develop` · node dbtool.mjs merge p.json\nEOF\necho ok" }), null, 'heredoc 본문');
+  assert.equal(pre(dev, 'Bash', { command: 'git add -A && echo "dbtool.mjs merge 을 고침"' }), null, '따옴표 속 글');
+  assert.equal(pre(dev, 'Bash', { command: 'python3 - <<EOF\nprint("git push")\nEOF' }), null, 'heredoc 속 push 글자');
+  assert.match(pre(dev, 'Bash', { command: "cat <<'EOF' > a\nx\nEOF\nnode dbtool.mjs merge p.json" }), /디벨롭은 기계/, 'heredoc 뒤의 진짜 실행은 그대로 막힘');
+  assert.match(pre(dev, 'Bash', { command: 'git commit -m "dbtool.mjs merge 설명"' }), /^RULE-0516 /, '커밋은 커밋 — 메시지 속 글만 지움');
+  assert.equal(G.codeOf(`a 'b c' "d \\" e" f`), `a '' "" f`);
 });
 
 // ── 끝에서 끝: 임시 git 저장소
