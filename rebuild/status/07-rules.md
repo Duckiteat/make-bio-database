@@ -6,7 +6,7 @@
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 501 · 은퇴 11 (`rebuild/archive/p3-p5-layer.json`) · 예약 2
+살아 있는 규칙 500 · 은퇴 12 (`rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|

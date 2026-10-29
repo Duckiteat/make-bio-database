@@ -763,7 +763,7 @@ function textbookAppendix(db, map) {
     ['형식 버전', db.version], ['개념 T', Object.keys(db.terms).length], ['정의항 D', senses.length], ['기전 단계 S', Object.keys(db.steps).length], ['한계 L', lim.length],
     ['다음 번호 (meta.next)', Object.entries(db.meta.next).map(([k, v]) => `${k}${String(v).padStart(6, '0')}`).join(' ')],
     ['정의항 종류별', Object.entries(byKind).sort().map(([k, n]) => `${k} ${n}`).join(', ')],
-    ['부위 / 구조 참조(R2) 있는 부위', `${sites.length} / ${sites.filter((x) => x.structure).length}`],
+    ['부위 / 구조 참조(structure 해상도) 있는 부위', `${sites.length} / ${sites.filter((x) => x.structure).length}`],
     ['규칙 (상태 의미 / 전이 / 속도 상수 있음)', `${rules.filter((r) => r.type === 'meaning').length} / ${rules.filter((r) => r.type === 'transition').length} / ${rules.filter((r) => r.kinetics).length}`],
     ['관찰(obs)', senses.reduce((n, d) => n + d.obs.length, 0)],
     ['근거 수준 (설명·규칙·관찰)', Object.entries(ev).sort().map(([k, n]) => `${k} ${n}`).join(', ')],
@@ -777,7 +777,7 @@ function textbookAppendix(db, map) {
     const st = ix.stepsIn(pid); if (!st.length) continue;
     const m = DefDB.findMotifs(db, pid, ix), rp = ORCH.resolutionPlan(db, pid);
     const need = [0, 1, 2].map((n) => rp.rows.filter((r) => r.need === n).length);
-    prow.push([`${pid} ${ix.label(pid)}`, st.length, m.trajectory.join(' → '), Object.keys(m.found).join(', '), `R0 ${need[0]} · R1 ${need[1]} · R2 ${need[2]}`]);
+    prow.push([`${pid} ${ix.label(pid)}`, st.length, m.trajectory.join(' → '), Object.keys(m.found).join(', '), `pool ${need[0]} · site ${need[1]} · structure ${need[2]}`]);
   }
   out.push(...T(['경로', '단계', '위치 궤적', '찾은 패턴', '필요 해상도'], prow), '');
   // 3. 저장 지도

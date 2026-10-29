@@ -79,7 +79,7 @@
 {"id": "RULE-0079", "text": "상위 개념은 addresses:[{limitation,how}] 또는 gap_review 필수", "modes": ["author"], "enforce": "machine", "unit": "U0095", "copies": ["U0311", "U0678"], "where": "judicial/judicial.js validateSense (motif)"}
 {"id": "RULE-0080", "text": "상위 개념 없는 패턴이 두 경로 이상이면 kind process + motif", "modes": ["author"], "enforce": "text", "unit": "U0097", "copies": ["U0312"], "flags": "judicial/judicial.js validateSense"}
 {"id": "RULE-0081", "text": "시뮬레이션 보고에 농도 공백(기본값·무한 풀) 명시 — 도달 여부만 말함", "modes": ["baseline", "inspect"], "enforce": "text", "unit": "U0098", "copies": ["U0313", "U0446", "U0520", "U0589", "U2273"], "note": "보고서 생성기로 옮길 후보", "flags": "judicial/judicial.js auditRate · judicial/fate_audit.js judgeFate"}
-{"id": "RULE-0082", "text": "R2 는 속도 상수로 못 가르는 반응 중심만, 경쟁은 Kd·kcat·Km 먼저", "modes": ["author"], "enforce": "text", "unit": "U0100", "copies": ["U0314"], "flags": "judicial/judicial.js auditRate"}
+{"id": "RULE-0082", "text": "해상도 structure(구조)는 속도 상수로 못 가르는 반응 중심만, 경쟁(competition)은 Kd·kcat·Km 먼저", "modes": ["author"], "enforce": "text", "unit": "U0100", "copies": ["U0314"], "flags": "judicial/judicial.js auditRate"}
 {"id": "RULE-0083", "text": "속도 상수는 규칙 kinetics 에 SI 정준 단위", "modes": ["author"], "enforce": "machine", "unit": "U0101", "copies": ["U0315", "U1411", "U1493", "U2427"], "where": "judicial/judicial.js kineticIssues"}
 {"id": "RULE-0084", "text": "문헌 값은 관찰(O…) 먼저 + kinetics.from (lumped 도 원 관찰 참조)", "modes": ["author"], "enforce": "machine", "unit": "U0102", "copies": ["U0315", "U0350", "U0547", "U0548", "U0663", "U1503", "U1506", "U5687"], "where": "judicial/judicial.js checkKineticsFrom · rejections 2a·2a2·2a3"}
 {"id": "RULE-0085", "text": "미확인 값 금지 — 시험값은 가정 원장 번호 A… 를 hypothetical 시나리오가 {assume} 로", "modes": ["author", "develop"], "enforce": "machine", "unit": "U0103", "copies": ["U0315", "U1649", "U5935"], "where": "judicial/assumption_audit.js · judicial/reliability.js constantVerdict"}
@@ -249,7 +249,7 @@
 {"id": "RULE-0249", "text": "받기는 도구의 기록이 증거 — 유료·PMC 무료 열람본은 저작권 때문에 받지 않음", "modes": ["author"], "enforce": "text", "unit": "U0425", "copies": ["U5842"]}
 {"id": "RULE-0250", "text": "목록에 없는 도구는 부르는 자리에서도 거부", "modes": ["author"], "enforce": "machine", "unit": "U0426", "copies": ["U5814"], "where": "mcp/protocol.mjs · tests/mcp.test.mjs"}
 {"id": "RULE-0251", "text": "--allow-warnings 는 사람 역할만 (MCP)", "modes": ["author"], "enforce": "machine", "unit": "U0427", "copies": [], "where": "mcp/clerk.mjs"}
-{"id": "RULE-0252", "text": "두 해상도를 지킨다", "modes": ["author"], "enforce": "text", "unit": "U0431", "copies": []}
+{"id": "RULE-0252", "text": "두 해상도를 지킨다", "modes": ["author"], "enforce": "text", "unit": "U0431", "copies": [], "retired": {"at": "2026-10-29", "by": "user", "archive": "rebuild/archive/merged.json"}}
 {"id": "RULE-0253", "text": "읽기·검증·시뮬레이션·시험은 허가를 묻지 않는다. 데이터를 바꾸는 명령과 `git push` 는 묻는다(`.claude/settings.json`).", "modes": ["common"], "enforce": "machine", "unit": "U0436", "copies": [], "where": ".claude/settings.json"}
 {"id": "RULE-0254", "text": "fate 인자는 시작 상태 — 끝 상태로 부르면 무결성 FAIL · rc=1", "modes": ["baseline"], "enforce": "text", "unit": "U0464", "copies": []}
 {"id": "RULE-0255", "text": "규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP 사례 L000107).", "modes": ["baseline"], "enforce": "text", "unit": "U0500", "copies": []}
@@ -311,7 +311,7 @@
 {"id": "RULE-0311", "text": "**외부 ID·구조 지문·잔기 번호**: 형식·kind 검사, 같은 ID·지문 중복 금지. 모르면 지어내지 말고 `unmapped`·`residue_unknown`.", "modes": ["author"], "enforce": "machine", "unit": "U1188", "copies": [], "note": "SCHEMA 요약 사본", "where": "judicial/judicial.js validateSense"}
 {"id": "RULE-0312", "text": "**구조**: 구성 요소는 복합체만, 부위의 `on` 은 구성 요소, 막 면은 그 막에 있는 면, 막 결합 분자는 2D 위치에만.", "modes": ["author"], "enforce": "machine", "unit": "U1190", "copies": [], "note": "SCHEMA 요약 사본", "where": "judicial/judicial.js validateSense"}
 {"id": "RULE-0313", "text": "**단계는 규칙의 적용**: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.", "modes": ["author"], "enforce": "text", "unit": "U1191", "copies": [], "note": "SCHEMA 요약 사본"}
-{"id": "RULE-0314", "text": "규칙은 `tests/` 의 시험 195개가 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.", "modes": ["author"], "enforce": "text", "unit": "U1193", "copies": [], "note": "SCHEMA 요약 사본"}
+{"id": "RULE-0314", "text": "규칙은 `tests/` 의 시험(개수는 `tests/fixtures/FLOOR.json` 이 센다)이 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.", "modes": ["author"], "enforce": "text", "unit": "U1193", "copies": [], "note": "SCHEMA 요약 사본"}
 {"id": "RULE-0315", "text": "AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있고 어휘·규칙은 바꿀 수 없다.", "modes": ["author"], "enforce": "text", "unit": "U1271", "copies": []}
 {"id": "RULE-0316", "text": "**번호에는 의미를 넣지 않는다.** 이름·분류·기능처럼 바뀔 수 있는 정보가 번호에 들어가면 지식이 바뀔 때 번호도 바뀌어야 한다.", "modes": ["author"], "enforce": "text", "unit": "U1283", "copies": []}
 {"id": "RULE-0317", "text": "**이름을 바꿔도 번호와 연결은 그대로다.** 옛 한국어 이름은 자동으로 별칭에 남는다.", "modes": ["author"], "enforce": "text", "unit": "U1285", "copies": []}
@@ -465,8 +465,8 @@
 {"id": "RULE-0465", "text": "한 줄: **정준 텍스트 = 권위(봉인·감사) · SQLite 색인(16) = 파생 질의 · 뷰어(19) = 렌더.** 셋을 섞지 않는다.", "modes": ["develop"], "enforce": "text", "unit": "U5402", "copies": []}
 {"id": "RULE-0466", "text": "읽기·표현만 (행정/사법 권한 밖). 쓰기·판정 없음.", "modes": ["develop"], "enforce": "text", "unit": "U5426", "copies": []}
 {"id": "RULE-0467", "text": "**미등록 토큰 거부**: 사전에 없는 키 → 관문 거부 픽스처 (`tests/fixtures/rejections/` + `EXPECT.json`).", "modes": ["develop"], "enforce": "text", "unit": "U5429", "copies": []}
-{"id": "RULE-0468", "text": "**하지 말 것**: 한계 115개·db 서술문을 **영어로 일괄 이관 금지**(반경 크고 신뢰 이득 작음) · 병기를 레코드마다", "modes": ["develop"], "enforce": "text", "unit": "U5433", "copies": []}
-{"id": "RULE-0469", "text": "손으로 뿌리지 않음(drift).", "modes": ["develop"], "enforce": "text", "unit": "U5434", "copies": []}
+{"id": "RULE-0468", "text": "**하지 말 것**: 한계·db 서술문을 **영어로 일괄 이관 금지**(반경 크고 신뢰 이득 작음) · 병기를 레코드마다", "modes": ["develop"], "enforce": "text", "unit": "U5433", "copies": []}
+{"id": "RULE-0469", "text": "병기(ko·en 을 나란히 적기)를 레코드마다 손으로 뿌리지 않는다 — 손으로 뿌린 병기는 사전과 어긋난다(drift). 병기는 렌더러가 사전에서 만든다.", "modes": ["develop"], "enforce": "text", "unit": "U5434", "copies": []}
 {"id": "RULE-0470", "text": "**이관은 점진** — 새 레코드부터 적용, 기존은 닿을 때. 일괄 이관 금지.", "modes": ["develop"], "enforce": "text", "unit": "U5462", "copies": []}
 {"id": "RULE-0471", "text": "**한 순수 엔진 코어 + 하나의 불변 db.** 통합해야 \"검증되는 것 = 키우는 것\" 이라 오차 수렴이 의미를 가진다. 엔진을 포크하면 두 코드 경로가 생겨 비교·수렴이 깨진다.", "modes": ["common"], "enforce": "text", "unit": "U5483", "copies": []}
 {"id": "RULE-0472", "text": "사용자가 지정한 보고서(`fate --report`) | 데이터·코드·증명 위치는 거부", "modes": ["develop"], "enforce": "text", "unit": "U5508", "copies": []}

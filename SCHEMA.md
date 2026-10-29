@@ -229,9 +229,9 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 해상도 | 담는 것 | 언제 |
 |---|---|---|
-| R0 위상 | 위치·상태(묶음 키) | 풀 안의 분자, 수송, 부위 없는 변환 |
-| R1 부위 | 이름 붙은 부위·특징·잔기 번호·막 면 | **T1** 부위 사건(site·from_site·partner_site·via_site·requires), **T2** 구성 요소 화학량(결합체 형성·해리·분해) |
-| R2 구조 | 반응 중심 부위의 3차원 구조 참조 `site.structure: { db: "PDB", id, chain, residues }` | **T3** 같은 묶음을 두 단계 이상이 소비하는 경쟁 — 속도 상수가 있으면 R1 에서 해결, 없을 때만 구조가 필요 |
+| pool 위상 | 위치·상태(묶음 키) | 풀 안의 분자, 수송, 부위 없는 변환 |
+| site 부위 | 이름 붙은 부위·특징·잔기 번호·막 면 | **site_event** 부위 사건(site·from_site·partner_site·via_site·requires), **stoichiometry** 구성 요소 화학량(결합체 형성·해리·분해) |
+| structure 구조 | 반응 중심 부위의 3차원 구조 참조 `site.structure: { db: "PDB", id, chain, residues }` | **competition** 같은 묶음을 두 단계 이상이 소비하는 경쟁 — 속도 상수가 있으면 site 에서 해결, 없을 때만 구조가 필요 |
 
 - 하향 전환(반응 중심 → 풀): 바뀐 부위는 묶음 키의 `부위:특징`으로 남아 무손실이고, 수송·해리는 특징 보존 검사를 받는다.
 - 해상도 일관성: 부위의 구조 참조는 정의항 `xrefs` 의 같은 PDB 여야 한다. 좌표 자체는 저장하지 않고 구조 데이터베이스를 가리킨다.

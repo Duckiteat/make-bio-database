@@ -482,7 +482,7 @@ test('반응 중심 구조(R2): PDB 만, 정의항 xrefs 에도 같은 구조가
 test('혼합 해상도 계획: LPS 경로는 3차원 0단계, 글리코겐 경로는 cAMP 경쟁(T3) 두 단계만 R2 — 속도 상수가 들어오면 R1 로 해결', () => {
   const lps = ORCH.resolutionPlan(BASE, TLRP), gly = ORCH.resolutionPlan(BASE, '에피네프린에 의한 글리코겐 분해');
   assert.equal(lps.rows.filter((r) => r.need === 2).length, 0);
-  assert.ok(lps.rows.find((r) => r.sid === sid(NFKB, 'nuclear_import')).need === 0, '수송은 R0(위상)');
+  assert.ok(lps.rows.find((r) => r.sid === sid(NFKB, 'nuclear_import')).need === 0, '수송은 pool(위상)');
   assert.deepEqual(gly.rows.filter((r) => r.need === 2).map((r) => r.sid).sort(), [sid(PKAR, 'camp_release'), sid(PDE, 'camp_hydrolysis')].sort());
   assert.ok(gly.rows.some((r) => !r.ok));
   const res = passes({ senses: [withKin(PKAR, 'camp_release', { law: 'mass_action', k: 1e20, order: 5, evidence: pred }), withKin(PDE, 'camp_hydrolysis', { law: 'michaelis_menten', kcat: 5, Km: 1e-6, evidence: pred })] });
@@ -502,7 +502,7 @@ test('감사: 잘못된 속도 법칙·Kd 불일치를 잡고, 이중 계산(Gs)
   const a = ORCH.auditRun(BASE, '에피네프린에 의한 글리코겐 분해', { scenario: scenario('camp-competition-hypothetical.json'), t_end: 10, dt: 0.01 });
   assert.ok(a.some((x) => x.code === 'AUDIT_KINETIC' && /두 분자 결합/.test(x.msg)));
   assert.ok(a.some((x) => x.code === 'AUDIT_KINETIC' && /Kd 와 k_off\/k_on/.test(x.msg)));
-  assert.ok(a.some((x) => x.code === 'AUDIT_RESOLUTION' && /T3 경쟁/.test(x.msg)));
+  assert.ok(a.some((x) => x.code === 'AUDIT_RESOLUTION' && /경쟁\(competition\)/.test(x.msg)));
   const mass = a.find((x) => x.code === 'AUDIT_MASS');
   const gsGap = Object.keys(BASE.limitations).find((k) => BASE.limitations[k].target === `${AC}/site/gs_site`);
   assert.ok(mass && mass.suggestion.includes(gsGap), '질량 위반 제안이 등록된 한계를 가리킴');

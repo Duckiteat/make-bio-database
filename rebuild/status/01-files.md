@@ -7,11 +7,11 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 25 | 5181.5 |
-| docs | 58 | 1207.5 |
-| (최상위) | 18 | 884.7 |
-| judicial | 28 | 538.8 |
-| tests | 78 | 538.1 |
+| rebuild | 26 | 5192.1 |
+| docs | 58 | 1208.1 |
+| (최상위) | 18 | 886.2 |
+| judicial | 28 | 538.9 |
+| tests | 78 | 538.2 |
 | engine | 26 | 299.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
@@ -28,7 +28,7 @@
 
 | 파일 | KB |
 |---|---|
-| `rebuild/ledger/units.jsonl` | 4657.7 |
+| `rebuild/ledger/units.jsonl` | 4657.9 |
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 676.4 |
@@ -42,12 +42,12 @@
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `CHANGES.md` | 250.2 |
+| `CHANGES.md` | 251.5 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
-| `judicial/judicial.js` | 172.3 |
+| `judicial/judicial.js` | 172.4 |
 | `data/fetched/consensus/uniprot/Q04206.json` | 167.2 |
 | `data/fetched/uniprot/Q04206.json` | 167.2 |
 | `data/fetched/consensus/uniprot/Q9Y6K9.json` | 166.6 |

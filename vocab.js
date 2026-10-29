@@ -298,14 +298,14 @@
 
   // ===== 혼합 해상도 (Hybrid-Resolution) — 전환 문턱 =====
   resolutionLevels: {
-    R0: { label: '위상 해상도', note: '위치·상태(묶음 키)만. 풀 안에서 확산·대기·수송하는 분자, 변환 단계.' },
-    R1: { label: '부위 해상도', note: '이름 붙은 부위·특징·잔기 번호·막 면. 결합·수식·전달 같은 부위 사건.' },
-    R2: { label: '구조 해상도', note: '반응 중심 부위의 3차원 구조 참조(PDB). 경쟁·특이성을 속도 상수로 가를 수 없을 때만.' },
+    pool: { label: '위상 해상도', note: '위치·상태(묶음 키)만. 풀 안에서 확산·대기·수송하는 분자, 변환 단계.' },
+    site: { label: '부위 해상도', note: '이름 붙은 부위·특징·잔기 번호·막 면. 결합·수식·전달 같은 부위 사건.' },
+    structure: { label: '구조 해상도', note: '반응 중심 부위의 3차원 구조 참조(PDB). 경쟁·특이성을 속도 상수로 가를 수 없을 때만.' },
   },
   resolutionThresholds: {
-    T1: { label: '부위 사건', up: 'R1', when: '규칙이 이름 붙은 부위를 바꾸거나(site·from_site·partner_site), 부위로 작용하거나(via_site), 부위 상태를 전제로 할 때(requires)' },
-    T2: { label: '구성 요소 화학량', up: 'R1', when: '결합체 형성·해리·분해 — 구성 요소 개수가 결과를 정할 때' },
-    T3: { label: '경쟁', up: 'R2', when: '같은 묶음을 두 단계 이상이 소비할 때. 속도 상수(Kd·kcat·Km)가 있으면 R1 에서 해결되고, 없으면 반응 중심 구조가 필요하다' },
+    site_event: { label: '부위 사건', up: 'site', when: '규칙이 이름 붙은 부위를 바꾸거나(site·from_site·partner_site), 부위로 작용하거나(via_site), 부위 상태를 전제로 할 때(requires)' },
+    stoichiometry: { label: '구성 요소 화학량', up: 'site', when: '결합체 형성·해리·분해 — 구성 요소 개수가 결과를 정할 때' },
+    competition: { label: '경쟁', up: 'structure', when: '같은 묶음을 두 단계 이상이 소비할 때. 속도 상수(Kd·kcat·Km)가 있으면 site 해상도에서 해결되고, 없으면 반응 중심 구조가 필요하다' },
     down: { label: '하향 전환 (반응 중심 → 풀)', when: '사건이 끝나 산물이 풀로 돌아갈 때 — 바뀐 부위는 묶음 키의 부위:특징으로 남고(무손실), 수송·해리는 특징 보존을 검사받는다' },
   },
 

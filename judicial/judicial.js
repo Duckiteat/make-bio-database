@@ -1570,18 +1570,18 @@
     const ids = uniq(tg.ids.flatMap((d) => ix.stepsIn(d)));
     const sim = (opt && opt.pools) || { source: {} };
     const bulk = new Set(Object.keys(sim.source || {}).filter((k) => sim.source[k] === 'bulk'));
-    // T3 경쟁: 같은 묶음을 두 단계 이상이 소비 (넉넉한 대사물 풀은 제외)
+    // 경쟁(competition): 같은 묶음을 두 단계 이상이 소비 (넉넉한 대사물 풀은 제외)
     const consumers = new Map();
     for (const sid of ids) for (const p of db.steps[sid].inputs) if (!p.minor && !bulk.has(p.b)) { if (!consumers.has(p.b)) consumers.set(p.b, []); consumers.get(p.b).push(sid); }
     const competitions = [...consumers].filter(([, xs]) => uniq(xs).length > 1).map(([b, xs]) => ({ bundle: b, steps: uniq(xs) }));
     const rows = ids.map((sid) => {
       const st = db.steps[sid], rule = ix.ruleOf(st.rule), e = rule.effect || {}, sites = siteRefsOf(db, ix, sid), hits = [];
       let need = 0;
-      if (sites.length) { need = 1; hits.push('T1 부위 사건'); }
-      if (['associate', 'dissociate', 'degrade'].includes(e.type)) { need = Math.max(need, 1); hits.push('T2 구성 요소 화학량'); }
+      if (sites.length) { need = 1; hits.push('부위 사건(site_event)'); }
+      if (['associate', 'dissociate', 'degrade'].includes(e.type)) { need = Math.max(need, 1); hits.push('구성 요소 화학량(stoichiometry)'); }
       const comp = competitions.filter((c) => c.steps.includes(sid));
       const kinOK = !!rule.kinetics;
-      if (comp.length) hits.push('T3 경쟁' + (kinOK ? ' (속도 상수로 해결)' : ''));
+      if (comp.length) hits.push('경쟁(competition)' + (kinOK ? ' (속도 상수로 해결)' : ''));
       if (comp.length && !kinOK) need = 2;
       const siteObjs = sites.map((ref) => { const t = parseTarget(ref); return db.senses[t.base].site[t.key]; });
       const have = sites.length && siteObjs.every((x) => x.structure) ? 2 : (sites.length || ['associate', 'dissociate', 'degrade'].includes(e.type)) ? 1 : 0;
@@ -1592,11 +1592,11 @@
   function resolutionText(db, target, opt) {
     const p = resolutionPlan(db, target, opt);
     if (p.error) return p.error;
-    const ix = p.ix, lv = (n) => ['R0', 'R1', 'R2'][n], out = [`해상도 계획: ${target} — 단계 ${p.ids.length}개`];
+    const ix = p.ix, lv = (n) => ['pool', 'site', 'structure'][n], out = [`해상도 계획: ${target} — 단계 ${p.ids.length}개`];
     const cnt = [0, 1, 2].map((n) => p.rows.filter((r) => r.need === n).length);
-    out.push(`  필요 해상도: R0(위상) ${cnt[0]} · R1(부위) ${cnt[1]} · R2(구조) ${cnt[2]} — 3차원이 필요한 단계 ${cnt[2]}/${p.ids.length}`);
+    out.push(`  필요 해상도: pool(위상) ${cnt[0]} · site(부위) ${cnt[1]} · structure(구조) ${cnt[2]} — 3차원이 필요한 단계 ${cnt[2]}/${p.ids.length}`);
     for (const r of p.rows) out.push(`  ${r.ok ? '✓' : '✗'} ${r.sid} ${ix.label(r.sid)}: 필요 ${lv(r.need)} / 갖춤 ${lv(r.have)}${r.hits.length ? ' — ' + r.hits.join(', ') : ''}${r.sites.length ? ' · 반응 중심 ' + r.sites.join(', ') : ''}`);
-    if (p.competitions.length) out.push('  경쟁(T3):', ...p.competitions.map((c) => `    ${ix.bundleLabel(c.bundle)} ← ${c.steps.map((s) => `${s} ${ix.label(s)}`).join(' / ')}`));
+    if (p.competitions.length) out.push('  경쟁(competition):', ...p.competitions.map((c) => `    ${ix.bundleLabel(c.bundle)} ← ${c.steps.map((s) => `${s} ${ix.label(s)}`).join(' / ')}`));
     return out.join('\n');
   }
   // 감사 오류에 붙일 교정 제안: 한계 등록부에서 대상·종류가 맞는 열린 한계를 찾는다

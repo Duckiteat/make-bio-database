@@ -4,7 +4,7 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `CHANGES.md` | 250.2 | 235 |  | 분류됨 1 |
+| `CHANGES.md` | 251.5 | 236 |  | 분류됨 1 |
 | `CLAUDE.md` | 18.0 | 85 | 입구 | 분류됨 242 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -18,7 +18,7 @@
 | `docs/design/build-plan.md` | 64.1 | 164 |  | 분류됨 120 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
-| `docs/design/dictionary-and-translation.md` | 15.8 | 203 |  | 분류됨 121 |
+| `docs/design/dictionary-and-translation.md` | 16.0 | 203 |  | 분류됨 121 |
 | `docs/design/direction.md` | 6.2 | 46 | 입구 | 분류됨 26 |
 | `docs/design/engine-port-roadmap.md` | 53.4 | 564 |  | 분류됨 369 |
 | `docs/design/format-v12.md` | 10.1 | 101 |  | 분류됨 61 |
@@ -58,15 +58,15 @@
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
 | `docs/textbook/00-목차.md` | 4.8 | 45 | 입구 | 분류됨 28 |
-| `docs/textbook/01-원칙과-구조.md` | 9.3 | 101 |  | 분류됨 55 |
+| `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 17.3 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 64.9 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 65.0 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
-| `docs/textbook/06-출력-해석.md` | 22.7 | 197 |  | 분류됨 115 |
+| `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 115.7 | 814 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 115.9 | 814 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/README.md` | 2.8 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |

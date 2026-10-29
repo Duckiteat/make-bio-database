@@ -94,7 +94,7 @@ node dbtool.mjs simulate <경로>                                 # 도달 여�
 
 ```bash
 node dbtool.mjs audit-run <경로>              # 감사 — Audit Error 가 있으면 종료 코드 1 (정상이다)
-node dbtool.mjs resolution <경로>             # 단계마다 필요한 해상도 R0/R1/R2
+node dbtool.mjs resolution <경로>             # 단계마다 필요한 해상도 pool/site/structure
 node dbtool.mjs pattern <경로>                # 상위 패턴 (motif 후보)
 node dbtool.mjs grade [--min parameter]       # 쓰인 값의 신뢰 등급
 node dbtool.mjs compare --state D000174 --scenario A.json [--scenario-b B.json | --patch p.json]
