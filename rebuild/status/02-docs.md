@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.4 | 91 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.5 | 33 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.7 | 87 |  | 미분류 |
-| `CHANGES.md` | 268.3 | 246 |  | 분류됨 1 |
+| `CHANGES.md` | 268.4 | 246 |  | 분류됨 1 |
 | `CLAUDE.md` | 5.8 | 83 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
