@@ -11,7 +11,7 @@
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (68)
+## 지켜야 할 규칙 — 사람·AI (67)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -65,7 +65,6 @@
 - `RULE-0077` 실패·우회·추정·단순화는 한계 데이터로 — 패치 limitations [Target — Type — Requirement]+needs
 - `RULE-0080` 상위 개념 없는 패턴이 두 경로 이상이면 kind process + motif _(코드가 알림)_
 - `RULE-0082` 해상도 structure(구조)는 속도 상수로 못 가르는 반응 중심만, 경쟁(competition)은 Kd·kcat·Km 먼저 _(코드가 알림)_
-- `RULE-0090` 불확도 미보고면 sd = 유효 숫자 해상도 + uncertainty.basis 'resolution' + note — 판정은 기본 그대로(A), 선택으로 GUM ÷√12
 - `RULE-0091` 상수를 넣은 뒤 궤적 전후 비교 보고
 - `RULE-0108` 반복 수가 원문에 없으면 null — 1 로 적지 않음 _(코드가 알림)_
 - `RULE-0117` 교과서·추론은 정성 관찰이 아님 (한계·메모로)
@@ -104,7 +103,7 @@
 
 ## 컴퓨터가 막는 규칙
 
-181 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+182 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
 ## 형식 설명
 
