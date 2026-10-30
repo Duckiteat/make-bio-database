@@ -45,15 +45,15 @@ function expectedChange(baseSc, baseIR, p) {
 }
 
 function verifyPerturbation({ baseScenario, baseIR, scenario, ir, record }) {
-  const problems = [], P = (m) => problems.push(m);
-  if (!record || !record.perturbation) return { ok: false, problems: ['교란 기록이 없음'] };
+  const problems = [], rules = [], P = (rule, m) => { problems.push(m); rules.push(rule); }; // rules[i] = problems[i] 의 규칙 번호
+  if (!record || !record.perturbation) return { ok: false, problems: ['교란 기록이 없음'], rules: ['RULE-0035'] };
   // 기록 자체
   const { hash: rh, ...rbody } = record;
-  if (rh !== sha(ATT.canon(rbody))) P('교란 기록의 해시가 내용과 다름');
-  if (record.base_scenario_sha256 !== sha(ATT.canon(baseScenario))) P('기록의 기준 시나리오 해시가 기준 시나리오와 다름 — 다른 대조군');
+  if (rh !== sha(ATT.canon(rbody))) P('RULE-0035', '교란 기록의 해시가 내용과 다름');
+  if (record.base_scenario_sha256 !== sha(ATT.canon(baseScenario))) P('RULE-0035', '기록의 기준 시나리오 해시가 기준 시나리오와 다름 — 다른 대조군');
   // ① 재구성
   const ex = expectedChange(baseScenario, baseIR, record.perturbation);
-  if (ex.error) return { ok: false, problems: [...problems, ex.error] };
+  if (ex.error) return { ok: false, problems: [...problems, ex.error], rules: [...rules, 'RULE-0035'] };
   const want = ex.change;
   for (const f of SCENARIO_FIELDS) {
     const got = (record.change || {})[f], w = want[f];
@@ -61,46 +61,46 @@ function verifyPerturbation({ baseScenario, baseIR, scenario, ir, record }) {
       ? eq(Object.keys(got || {}).sort(), Object.keys(w).sort()) && Object.entries(w).every(([b, v]) => got[b] && got[b].conc_M === v.conc_M && got[b].total > 0)
       : f === 'rule_scale' ? eq(Object.keys(got || {}).sort(), Object.keys(w).sort()) && Object.entries(w).every(([r, v]) => Math.abs(got[r] - v) <= 1e-15 * Math.abs(v))
       : eq(got || {}, w);
-    if (!same) P(`선언한 교란이 만들어야 할 ${f} 와 기록의 변경이 다름`);
+    if (!same) P('RULE-0035', `선언한 교란이 만들어야 할 ${f} 와 기록의 변경이 다름`);
   }
   // ② 시나리오 차이: 기준 + 변경 = 교란 시나리오, 나머지 필드는 같음
   const keys = new Set([...Object.keys(baseScenario), ...Object.keys(scenario)]);
   for (const k of keys) {
-    if (!SCENARIO_FIELDS.includes(k)) { if (!eq(baseScenario[k], scenario[k])) P(`시나리오 '${k}' 가 기준과 다름 — 선언 밖의 차이`); continue; }
+    if (!SCENARIO_FIELDS.includes(k)) { if (!eq(baseScenario[k], scenario[k])) P('RULE-0035', `시나리오 '${k}' 가 기준과 다름 — 선언 밖의 차이`); continue; }
     const ch = (record.change || {})[k], b = baseScenario[k], s = scenario[k];
-    if (k === 'exclude_rules') { if (!eq([...new Set([...(b || []), ...((ch || []))])].sort(), [...(s || [])].sort())) P('exclude_rules = 기준 + 선언한 제외가 아님'); continue; }
+    if (k === 'exclude_rules') { if (!eq([...new Set([...(b || []), ...((ch || []))])].sort(), [...(s || [])].sort())) P('RULE-0035', 'exclude_rules = 기준 + 선언한 제외가 아님'); continue; }
     const expect = Object.keys(ch || {}).length ? Object.assign({}, b || {}, ch) : b;
-    if (!eq(expect, s)) P(`시나리오 '${k}' 가 기준 + 선언한 변경과 다름`);
+    if (!eq(expect, s)) P('RULE-0035', `시나리오 '${k}' 가 기준 + 선언한 변경과 다름`);
   }
   // ③ IR 차이
   if (ir) {
-    for (const f of ['source', 'states', 'keys', 'markers', 'signals', 'coupling', 'format', 'version']) if (!eq(baseIR[f], ir[f])) P(`IR '${f}' 가 기준과 다름`);
+    for (const f of ['source', 'states', 'keys', 'markers', 'signals', 'coupling', 'format', 'version']) if (!eq(baseIR[f], ir[f])) P('RULE-0035', `IR '${f}' 가 기준과 다름`);
     const excl = new Set([...(scenario.exclude_rules || [])]), scale = scenario.rule_scale || {};
     const wantRules = baseIR.rules.filter((R) => !excl.has(R.ref)); // 기준 IR 에는 기준의 제외가 이미 빠져 있다
-    if (wantRules.length !== ir.rules.length) P(`IR 규칙 수 ${ir.rules.length} ≠ 기준 ${baseIR.rules.length} − 제외 = ${wantRules.length}`);
+    if (wantRules.length !== ir.rules.length) P('RULE-0035', `IR 규칙 수 ${ir.rules.length} ≠ 기준 ${baseIR.rules.length} − 제외 = ${wantRules.length}`);
     else wantRules.forEach((R, j) => {
       const { scale: s0, ...r0 } = R, { scale: s1, ...r1 } = ir.rules[j];
-      if (!eq(r0, r1)) P(`IR 규칙 ${R.ref} 가 배율 말고도 기준과 다름`);
+      if (!eq(r0, r1)) P('RULE-0035', `IR 규칙 ${R.ref} 가 배율 말고도 기준과 다름`);
       const ws = scale[R.ref] != null ? scale[R.ref] : undefined;
-      if ((s1 == null ? undefined : s1) !== ws) P(`IR 규칙 ${R.ref} 의 배율 ${s1} ≠ 시나리오 ${ws}`);
+      if ((s1 == null ? undefined : s1) !== ws) P('RULE-0035', `IR 규칙 ${R.ref} 의 배율 ${s1} ≠ 시나리오 ${ws}`);
     });
     baseIR.species.forEach((s, i) => {
       const t = ir.species[i] || {}, b = baseIR.keys[i], cl = (scenario.buffered || {})[b], bb = (baseScenario.buffered || {})[b];
-      if (s.b !== t.b || s.V !== t.V) P(`IR 묶음 ${b} 의 부피가 기준과 다름`);
+      if (s.b !== t.b || s.V !== t.V) P('RULE-0035', `IR 묶음 ${b} 의 부피가 기준과 다름`);
       const wantBuf = cl ? cl.conc_M : bb ? bb.conc_M : null;
-      if ((t.buf == null ? null : t.buf) !== wantBuf) P(`IR 묶음 ${b} 의 완충 ${t.buf} ≠ 기대 ${wantBuf}`);
+      if ((t.buf == null ? null : t.buf) !== wantBuf) P('RULE-0035', `IR 묶음 ${b} 의 완충 ${t.buf} ≠ 기대 ${wantBuf}`);
     });
     const pr = ir.perturbation;
-    if (!pr) P('교란 IR 에 교란 기록이 없음');
+    if (!pr) P('RULE-0035', '교란 IR 에 교란 기록이 없음');
     else {
-      if (pr.base_ir_hash !== baseIR.hash) P('교란 IR 의 기준 IR 해시가 기준 IR 과 다름');
+      if (pr.base_ir_hash !== baseIR.hash) P('RULE-0035', '교란 IR 의 기준 IR 해시가 기준 IR 과 다름');
       const { base_ir_hash, ...rest } = pr;
-      if (!eq(rest, record)) P('교란 IR 에 실린 기록이 교란 기록과 다름');
+      if (!eq(rest, record)) P('RULE-0035', '교란 IR 에 실린 기록이 교란 기록과 다름');
     }
     const { hash, ...irRest } = ir;
-    if (hash !== sha(ATT.canon(irRest))) P('교란 IR 해시가 내용과 다름');
+    if (hash !== sha(ATT.canon(irRest))) P('RULE-0035', '교란 IR 해시가 내용과 다름');
   }
-  return { ok: !problems.length, problems, perturbation: record.perturbation, change: want };
+  return { ok: !problems.length, problems, rules, perturbation: record.perturbation, change: want };
 }
 
 function perturbationText(v) {

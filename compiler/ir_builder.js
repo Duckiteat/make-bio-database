@@ -230,7 +230,7 @@ function buildFateIR(db, sourceId, sc, params) {
   // 희소 LU (3단계): M = I/(γh) − J 의 패턴 → 최소 차수 순서·채움 (compiler/sparse_lu.js). 엔진은 값 배열만 다룬다.
   const rowsM = active.map((j, k) => { const cols = new Set([k]); for (const d of [...jac.dRate[j], ...jac.dFactor[j]]) for (const [c] of S[d.i]) cols.add(c); return [...cols].sort((a, b) => a - b); });
   const L = SLU.symbolic(active.length, rowsM);
-  // J 항의 값 위치: 활성 규칙 k 의 도함수 항 d(묶음 i)마다 [위치, 화학량, …] — 엔진은 vals[위치] −= ∂·화학량 (예전 밀집 조립과 같은 순서)
+  // J 항의 값 위치: 활성 규칙 k 의 도함수 항 d(묶음 i)마다 [위치, 화학량, …] — 엔진은 vals[위치] −= ∂·화학량 (밀집 조립과 같은 순서)
   const scat = (k, list) => list.map((d) => S[d.i].flatMap(([c, co]) => [L.posOf(k, c), co]));
   const scatter = { rate: active.map((j, k) => scat(k, jac.dRate[j])), factor: active.map((j, k) => scat(k, jac.dFactor[j])), diag: active.map((j, k) => L.diagPos[L.iperm[k]]) };
   const lu = { perm: L.perm, iperm: L.iperm, rowPtr: L.rowPtr, col: L.col, diagPos: L.diagPos, nnz: L.nnz, nnzA: L.nnzA, flops: L.flops, solveFlops: L.solveFlops, denseFlops: L.denseFlops };

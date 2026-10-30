@@ -229,9 +229,9 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 | 해상도 | 담는 것 | 언제 |
 |---|---|---|
-| R0 위상 | 위치·상태(묶음 키) | 풀 안의 분자, 수송, 부위 없는 변환 |
-| R1 부위 | 이름 붙은 부위·특징·잔기 번호·막 면 | **T1** 부위 사건(site·from_site·partner_site·via_site·requires), **T2** 구성 요소 화학량(결합체 형성·해리·분해) |
-| R2 구조 | 반응 중심 부위의 3차원 구조 참조 `site.structure: { db: "PDB", id, chain, residues }` | **T3** 같은 묶음을 두 단계 이상이 소비하는 경쟁 — 속도 상수가 있으면 R1 에서 해결, 없을 때만 구조가 필요 |
+| pool 위상 | 위치·상태(묶음 키) | 풀 안의 분자, 수송, 부위 없는 변환 |
+| site 부위 | 이름 붙은 부위·특징·잔기 번호·막 면 | **site_event** 부위 사건(site·from_site·partner_site·via_site·requires), **stoichiometry** 구성 요소 화학량(결합체 형성·해리·분해) |
+| structure 구조 | 반응 중심 부위의 3차원 구조 참조 `site.structure: { db: "PDB", id, chain, residues }` | **competition** 같은 묶음을 두 단계 이상이 소비하는 경쟁 — 속도 상수가 있으면 site 에서 해결, 없을 때만 구조가 필요 |
 
 - 하향 전환(반응 중심 → 풀): 바뀐 부위는 묶음 키의 `부위:특징`으로 남아 무손실이고, 수송·해리는 특징 보존 검사를 받는다.
 - 해상도 일관성: 부위의 구조 참조는 정의항 `xrefs` 의 같은 PDB 여야 한다. 좌표 자체는 저장하지 않고 구조 데이터베이스를 가리킨다.
@@ -322,7 +322,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 ## 8F. 3 층 다중 규모 엔진 — 형식 v8
 
-설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현: `engine/hmse.js`, 인터페이스: `engine/interfaces/hmse.{hpp,py}`, 통신 스키마: `schemas/v8/*.schema.json`. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고(`irHash` = 먹은 IR 의 sha256, `engine` = js | rust 포함), `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 운명 IR 은 `compiler/ir_builder.js`(형식 `definition-db-fate-ir` v3 — 활성 규칙 전체의 `jac.active`·`jac.S`, 희소 LU 기호 분석 `jac.lu`(순서·채움·연산 수, `compiler/sparse_lu.js`)·J 항 값 위치 `jac.scatter`, 테이프 명령표 `compiler/tape.js`), 결합점(`hill_s_floor`, 결합 Rodas3 단계 제어 `integrator.*`, 희소 LU 피벗 문턱 `integrator.pivot_rel`)은 `engine/coupling.js`. 경로 속도 시뮬레이션(`simulateRate`)의 IR 은 `compiler/rate_ir.js`(형식 `definition-db-rate-ir` v1, 원자료 `irHash`). 원자료의 적분 기록은 `integrator`(받아들인·거부한 단계, h 범위, Δ 당 단계 수)와 `trajectory[].steps·rejects`. 이식 계획 `docs/design/engine-port-roadmap.md`.
+설계: `docs/design/hybrid-multiscale-engine.md` (§A 층, §B 불변식). 실행 층 참조 구현(`engine/hmse.js` · 인터페이스 `engine/interfaces/hmse.{hpp,py}` · 통신 스키마 `schemas/v8/*.schema.json`)은 2026-10-29 지움 — 되살리는 길 `rebuild/archive/p3-p5-layer.json`. 아래 필드(tier · 환경 · 열역학)는 그대로 쓰인다. 행정부 → 사법부 원자료 계약(FFI): `schemas/ffi/fate-raw.schema.json` — JS·Rust 어느 운명 엔진이든 이 모양을 내고(`irHash` = 먹은 IR 의 sha256, `engine` = js | rust 포함), `judicial/contract.js` 가 검사한다(위반이면 판정 거부). 운명 IR 은 `compiler/ir_builder.js`(형식 `definition-db-fate-ir` v3 — 활성 규칙 전체의 `jac.active`·`jac.S`, 희소 LU 기호 분석 `jac.lu`(순서·채움·연산 수, `compiler/sparse_lu.js`)·J 항 값 위치 `jac.scatter`, 테이프 명령표 `compiler/tape.js`), 결합점(`hill_s_floor`, 결합 Rodas3 단계 제어 `integrator.*`, 희소 LU 피벗 문턱 `integrator.pivot_rel`)은 `engine/coupling.js`. 경로 속도 시뮬레이션(`simulateRate`)의 IR 은 `compiler/rate_ir.js`(형식 `definition-db-rate-ir` v1, 원자료 `irHash`). 원자료의 적분 기록은 `integrator`(받아들인·거부한 단계, h 범위, Δ 당 단계 수)와 `trajectory[].steps·rejects`. 이식 계획 `docs/design/engine-port-roadmap.md`.
 
 | 필드 | 위치 | 규칙 |
 |---|---|---|
@@ -335,7 +335,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 
 - 시뮬레이터: mass_action 규칙에 k0·dG_act·dG0·env 가 있으면 구획 환경(시나리오 `environment[위치] = { pH, relative_permittivity }` → 관찰)으로 k 를 계산하고, dG0 가 있으면 k_r = k·e^{dG0/RT} 로 정해 가역으로 돌린다 (환경은 장벽만 옮기고 평형은 옮기지 않음).
 - `audit-run`: **AUDIT_THERMO** — 경로의 단계 순환 중 순 화학량이 0 인 닫힌 고리에서 ΣdG0 ≠ 0 (허용 `vocab.thermo.loop_tolerance` J/mol) — Wegscheider 조건 위반.
-- 실행 상태(영역·원장·경계 거래·영역 점수)는 데이터베이스가 아니라 시나리오 `domains`(domain-config 스키마)와 실행 층(`engine/hmse.js`)에 둔다 — 지식과 실행 상태를 섞지 않는다.
+- 실행 상태(영역·원장·경계 거래·영역 점수)는 데이터베이스가 아니라 시나리오와 실행 층에 둔다 — 지식과 실행 상태를 섞지 않는다. (그 실행 층 `engine/hmse.js` 와 domain-config 스키마는 2026-10-29 지움 — `rebuild/archive/p3-p5-layer.json`)
 
 ## 8G. 세포 운명 층 — 형식 v9
 
@@ -370,7 +370,7 @@ AI 패치는 데이터(`terms`, `senses`, `steps`, `remove`)만 바꿀 수 있�
 - **필드**
   - `observable { kind, target, param?, denominator?, also? }`: 측정량(`vocab.observables`). 대상은 종류에 따라 다름 — amount·concentration 은 묶음 키, fraction·event_time 은 cell_state 정의항, kinetic_constant 는 `D…/rule/키` 와 `param`, `ratio` 는 두 묶음의 몫(target/denominator, 무차원 unit 1 — 정규화 밴드·활성 분율·fold-change), `fraction_above` 는 게이팅 문턱(threshold, 분자 수) 이상인 실행의 비(%양성, 앙상블 평균이 0–1), `dose_slope` 는 규칙(target `D…/rule/키`)의 누적 진행량을 용량 축 `dose { target: 묶음, values: [서로 다른 분자 수 ≥ 2] }` 의 시작량에 대해 최소제곱한 기울기(무차원 unit 1). `also`(묶음 키 목록)는 측정이 못 가르는 형태를 합산한다(amount·concentration·ratio 분자·fraction_above).
   - `value`·`unit`: SI 정준 단위만. 단위는 molecule · M · 1 · s, 속도 상수는 `vocab.kineticUnits` 를 따르고 k·k0·k_r 은 `M^(1−order) s^-1`.
-  - `uncertainty { kind: measurement | biological | combined, model: normal | lognormal | poisson, sd ≥ 0 }`: 필수. 값만 있는 관찰은 받지 않는다. poisson 은 amount 에만, lognormal 은 값 > 0 에만.
+  - `uncertainty { kind: measurement | biological | combined, model: normal | lognormal | poisson, sd ≥ 0 }`: 필수. 값만 있는 관찰은 받지 않는다. poisson 은 amount 에만, lognormal 은 값 > 0 에만. `basis`(선택): `reported`(없으면 이것 — 원문이 보고한 불확도) | `resolution`(원문 미보고 — sd = 보고된 유효 숫자 마지막 자리, normal · sd > 0 에만, RULE-0090). resolution 은 판정에서 반복 수로 나누지 않고 퍼짐 검정에 쓰지 않으며, 기본은 sd 그대로(A) · `observe --resolution gum` 이면 sd/√12. 신뢰 지표는 반복 수가 있어도 D3.obs_bare(퍼짐을 모름, DEC-0036).
   - `replicates`(1 이상의 정수, 원문에 없으면 `null` = 미보고 — 1 로 채우지 않음. 신뢰 지표는 D3, 비교는 1 회로 봄), `precision`·`detection_limit`·`saturation`(선택, 0 이상). 검출 한계 아래 값은 상한 검정, 포화 상한 위 값은 하한 검정 — 장치의 눈먼 곳을 판정에 담는다(`judicial/obs_compare.js`). 정성 관찰 `readout.instrument_resolution`(선택, 0 이상)은 측정이 가르는 최소 차이로, 모의 분해능 바닥(수치 오차 + 양자)을 그 값까지 올린다.
   - `condition { species(필수), location, cell, temperature_K, pH, time_s, states:[묶음 키] }`.
   - `calibration { kind: identity | linear(a, b) | table(points) }` + `raw`: 값은 `compiler/obs_operator.js` 로 다시 계산되어 `value` 와 같아야 한다(상대 1e-12). 표의 범위 밖이면 거부.

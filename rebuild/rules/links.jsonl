@@ -1,0 +1,540 @@
+{"from": "RULE-0001", "rel": "because", "to": "U0242", "by": "judged"}
+{"from": "RULE-0002", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0003", "rel": "because", "to": "CHG-0063", "by": "judged", "anchor": "2026-10-10 · 실행 설명서 — 이 시뮬레이션을 쓰는 법 (한 파일로 시작)"}
+{"from": "RULE-0004", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0005", "rel": "because", "to": "U0252", "by": "judged"}
+{"from": "RULE-0005", "rel": "decided_by", "to": "CHG-0014", "by": "judged", "anchor": "2026-10-09 · 삼권 분립과 격리 (Tripartite Governance & Isolation)"}
+{"from": "RULE-0006", "rel": "because", "to": "U0252", "by": "judged"}
+{"from": "RULE-0006", "rel": "decided_by", "to": "CHG-0014", "by": "judged", "anchor": "2026-10-09 · 삼권 분립과 격리 (Tripartite Governance & Isolation)"}
+{"from": "RULE-0007", "rel": "because", "to": "U0252", "by": "judged"}
+{"from": "RULE-0007", "rel": "decided_by", "to": "CHG-0014", "by": "judged", "anchor": "2026-10-09 · 삼권 분립과 격리 (Tripartite Governance & Isolation)"}
+{"from": "RULE-0008", "rel": "because", "to": "U0252", "by": "judged"}
+{"from": "RULE-0008", "rel": "decided_by", "to": "CHG-0014", "by": "judged", "anchor": "2026-10-09 · 삼권 분립과 격리 (Tripartite Governance & Isolation)"}
+{"from": "RULE-0009", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0010", "rel": "because", "to": "U5145", "by": "judged"}
+{"from": "RULE-0011", "rel": "because", "to": "U5578", "by": "judged"}
+{"from": "RULE-0012", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0013", "rel": "because", "to": "CHG-0050", "by": "judged", "anchor": "2026-10-10 · 서기의 쓰기 자리를 구역으로 (경로를 실제 경계로)"}
+{"from": "RULE-0014", "rel": "because", "to": "CHG-0050", "by": "judged", "anchor": "2026-10-10 · 서기의 쓰기 자리를 구역으로 (경로를 실제 경계로)"}
+{"from": "RULE-0015", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0016", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0017", "rel": "decided_by", "to": "CHG-0014", "by": "judged", "anchor": "2026-10-09 · 삼권 분립과 격리 (Tripartite Governance & Isolation)"}
+{"from": "RULE-0018", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0019", "rel": "because", "to": "U0428", "by": "judged"}
+{"from": "RULE-0020", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0021", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0022", "rel": "decided_by", "to": "U0420", "by": "judged"}
+{"from": "RULE-0023", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0024", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0025", "rel": "decided_by", "to": "CHG-0014", "by": "judged", "anchor": "2026-10-09 · 삼권 분립과 격리 (Tripartite Governance & Isolation)"}
+{"from": "RULE-0026", "rel": "because", "to": "U5019", "by": "judged"}
+{"from": "RULE-0027", "rel": "because", "to": "U5129", "by": "judged"}
+{"from": "RULE-0028", "rel": "because", "to": "code:orchestrator.js", "by": "judged"}
+{"from": "RULE-0029", "rel": "because", "to": "CHG-0015", "by": "judged", "anchor": "2026-10-09 · 엔진 이식 0단계: 기준선·원자료 계약 (FFI)"}
+{"from": "RULE-0030", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0031", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0032", "rel": "because", "to": "U4995", "by": "judged"}
+{"from": "RULE-0033", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0034", "rel": "because", "to": "U0389", "by": "judged"}
+{"from": "RULE-0035", "rel": "because", "to": "CHG-0084", "by": "judged", "anchor": "2026-10-15 · 검증 5: 교란 차이 검사"}
+{"from": "RULE-0036", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0037", "rel": "because", "to": "U5147", "by": "judged"}
+{"from": "RULE-0038", "rel": "because", "to": "code:judicial/fault.js", "by": "judged"}
+{"from": "RULE-0039", "rel": "because", "to": "code:judicial/fault.js", "by": "judged"}
+{"from": "RULE-0040", "rel": "because", "to": "code:judicial/fault.js", "by": "judged"}
+{"from": "RULE-0041", "rel": "because", "to": "code:judicial/fault.js", "by": "judged"}
+{"from": "RULE-0042", "rel": "because", "to": "code:judicial/fault.js", "by": "judged"}
+{"from": "RULE-0042", "rel": "because", "to": "CHG-0018", "by": "judged", "anchor": "2026-10-09 · 1단계 전 정비: 결함 출처 태그·아키텍처 노드·유한차분 경로 제거·한계 정리"}
+{"from": "RULE-0043", "rel": "because", "to": "code:judicial/fault.js", "by": "judged"}
+{"from": "RULE-0044", "rel": "because", "to": "U0275", "by": "judged"}
+{"from": "RULE-0045", "rel": "because", "to": "U0275", "by": "judged"}
+{"from": "RULE-0046", "rel": "because", "to": "U0275", "by": "judged"}
+{"from": "RULE-0047", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0048", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0049", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0050", "rel": "because", "to": "U5150", "by": "judged"}
+{"from": "RULE-0051", "rel": "because", "to": "U5150", "by": "judged"}
+{"from": "RULE-0052", "rel": "decided_by", "to": "L000081", "by": "judged"}
+{"from": "RULE-0053", "rel": "because", "to": "CHG-0028", "by": "judged", "anchor": "2026-10-09 · 4단계 ③: 사건 시각 정밀화"}
+{"from": "RULE-0053", "rel": "decided_by", "to": "L000070", "by": "judged"}
+{"from": "RULE-0054", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0055", "rel": "because", "to": "U0281", "by": "judged"}
+{"from": "RULE-0056", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0057", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0058", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0059", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0060", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0061", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0062", "rel": "because", "to": "U0791", "by": "judged"}
+{"from": "RULE-0063", "rel": "because", "to": "U0294", "by": "judged"}
+{"from": "RULE-0064", "rel": "because", "to": "CHG-0043", "by": "judged", "anchor": "2026-10-10 · 외부 ID 역할 (ChEBI 규약): 모체·pH 7.3 우세 종·분류를 섞지 않음"}
+{"from": "RULE-0065", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0066", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0067", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0068", "rel": "because", "to": "U0298", "by": "judged"}
+{"from": "RULE-0069", "rel": "because", "to": "U0298", "by": "judged"}
+{"from": "RULE-0070", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0071", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0072", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0073", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0074", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0075", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0076", "rel": "because", "to": "U5101", "by": "judged"}
+{"from": "RULE-0077", "rel": "because", "to": "CHG-0065", "by": "judged", "anchor": "2026-10-10 · 데이터 패치 (augment apply)"}
+{"from": "RULE-0078", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0079", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0080", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0081", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0082", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0083", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0084", "rel": "because", "to": "CHG-0061", "by": "judged", "anchor": "2026-10-10 · 데이터 패치 (augment apply)"}
+{"from": "RULE-0085", "rel": "because", "to": "U0316", "by": "judged"}
+{"from": "RULE-0086", "rel": "because", "to": "U0316", "by": "judged"}
+{"from": "RULE-0087", "rel": "because", "to": "code:compiler/assumptions.js", "by": "judged"}
+{"from": "RULE-0088", "rel": "because", "to": "U0316", "by": "judged"}
+{"from": "RULE-0089", "rel": "decided_by", "to": "L000096", "by": "judged"}
+{"from": "RULE-0090", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0091", "rel": "because", "to": "U0323", "by": "judged"}
+{"from": "RULE-0092", "rel": "because", "to": "code:judicial/reliability.js", "by": "judged"}
+{"from": "RULE-0093", "rel": "because", "to": "U0326", "by": "judged"}
+{"from": "RULE-0093", "rel": "because", "to": "CHG-0045", "by": "judged", "anchor": "2026-10-10 · 신뢰 지표 ①: (S, D) 쌍을 계산해 등급을 냄"}
+{"from": "RULE-0094", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0095", "rel": "because", "to": "CHG-0048", "by": "judged", "anchor": "2026-10-10 · 신뢰 지표 ③: 추세 축 — 지금도 합의와 같은가"}
+{"from": "RULE-0096", "rel": "because", "to": "U0330", "by": "judged"}
+{"from": "RULE-0096", "rel": "because", "to": "CHG-0190", "by": "judged", "anchor": "2026-10-24 · 이유의 종류 · 원천별 합의 창"}
+{"from": "RULE-0097", "rel": "because", "to": "U0334", "by": "judged"}
+{"from": "RULE-0098", "rel": "because", "to": "CHG-0195", "by": "judged", "anchor": "2026-10-25 · 인정 = (기록, 용도) (build-plan 72)"}
+{"from": "RULE-0099", "rel": "because", "to": "CHG-0195", "by": "judged", "anchor": "2026-10-25 · 인정 = (기록, 용도) (build-plan 72)"}
+{"from": "RULE-0100", "rel": "because", "to": "CHG-0195", "by": "judged", "anchor": "2026-10-25 · 인정 = (기록, 용도) (build-plan 72)"}
+{"from": "RULE-0100", "rel": "because", "to": "CHG-0198", "by": "judged", "anchor": "2026-10-25 · 판정 하나 — 관문 = 인정 · observe·fate 에 인정 · 승인 이력 (build-plan 74·75·76)"}
+{"from": "RULE-0101", "rel": "because", "to": "CHG-0198", "by": "judged", "anchor": "2026-10-25 · 판정 하나 — 관문 = 인정 · observe·fate 에 인정 · 승인 이력 (build-plan 74·75·76)"}
+{"from": "RULE-0101", "rel": "because", "to": "CHG-0046", "by": "judged", "anchor": "2026-10-10 · 신뢰 지표 ②: 등급을 쓰는 자리에서 강제"}
+{"from": "RULE-0102", "rel": "because", "to": "CHG-0198", "by": "judged", "anchor": "2026-10-25 · 판정 하나 — 관문 = 인정 · observe·fate 에 인정 · 승인 이력 (build-plan 74·75·76)"}
+{"from": "RULE-0103", "rel": "because", "to": "U5095", "by": "judged"}
+{"from": "RULE-0104", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0105", "rel": "decided_by", "to": "U0341", "by": "judged"}
+{"from": "RULE-0106", "rel": "because", "to": "CHG-0194", "by": "judged", "anchor": "2026-10-25 · 문턱 = 축 조건 · 관문 문턱은 올리기만 (build-plan 73)"}
+{"from": "RULE-0107", "rel": "because", "to": "CHG-0025", "by": "judged", "anchor": "2026-10-09 · 4단계 ①: 관찰 기록 형식 토대 (v10)"}
+{"from": "RULE-0108", "rel": "because", "to": "U0348", "by": "judged"}
+{"from": "RULE-0109", "rel": "because", "to": "CHG-0192", "by": "judged", "anchor": "2026-10-25 · 반복 수 미보고 · 도구 추정값은 실측이 아님"}
+{"from": "RULE-0110", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0111", "rel": "because", "to": "code:judicial/obs_compare.js", "by": "judged"}
+{"from": "RULE-0112", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0113", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0114", "rel": "because", "to": "CHG-0087", "by": "judged", "anchor": "2026-10-15 · 형식 v12 ②: 정성 관찰·맥락 열쇠·번호 이동"}
+{"from": "RULE-0115", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0116", "rel": "because", "to": "U4651", "by": "judged"}
+{"from": "RULE-0117", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0118", "rel": "because", "to": "CHG-0096", "by": "judged", "anchor": "2026-10-15 · 증거 독립 우연 기준선 (build-plan 22, M3·L4)"}
+{"from": "RULE-0119", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0120", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0121", "rel": "because", "to": "CHG-0087", "by": "judged", "anchor": "2026-10-15 · 형식 v12 ②: 정성 관찰·맥락 열쇠·번호 이동"}
+{"from": "RULE-0122", "rel": "because", "to": "CHG-0087", "by": "judged", "anchor": "2026-10-15 · 형식 v12 ②: 정성 관찰·맥락 열쇠·번호 이동"}
+{"from": "RULE-0123", "rel": "because", "to": "CHG-0087", "by": "judged", "anchor": "2026-10-15 · 형식 v12 ②: 정성 관찰·맥락 열쇠·번호 이동"}
+{"from": "RULE-0124", "rel": "because", "to": "U0345", "by": "judged"}
+{"from": "RULE-0125", "rel": "because", "to": "U0345", "by": "judged"}
+{"from": "RULE-0126", "rel": "because", "to": "U0346", "by": "judged"}
+{"from": "RULE-0127", "rel": "because", "to": "CHG-0061", "by": "judged", "anchor": "2026-10-10 · 데이터 패치 (augment apply)"}
+{"from": "RULE-0127", "rel": "decided_by", "to": "L000102", "by": "judged"}
+{"from": "RULE-0128", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0129", "rel": "because", "to": "U0345", "by": "judged"}
+{"from": "RULE-0130", "rel": "because", "to": "U1620", "by": "judged"}
+{"from": "RULE-0131", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0132", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0133", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0134", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0135", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0136", "rel": "because", "to": "CHG-0003", "by": "judged", "anchor": "2026-10-08 · Survival-to-Exhaustion Stress Test"}
+{"from": "RULE-0137", "rel": "decided_by", "to": "U5001", "by": "judged"}
+{"from": "RULE-0138", "rel": "because", "to": "U1730", "by": "judged"}
+{"from": "RULE-0138", "rel": "decided_by", "to": "U1679", "by": "judged"}
+{"from": "RULE-0138", "rel": "because", "to": "CHG-0005", "by": "judged", "anchor": "2026-10-08 · 형식 v8: 3 층 다중 규모 엔진"}
+{"from": "RULE-0139", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0140", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0141", "rel": "because", "to": "U5146", "by": "judged"}
+{"from": "RULE-0142", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0143", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0144", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0145", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0146", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0147", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0148", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0149", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0150", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0151", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0152", "rel": "because", "to": "U0382", "by": "judged"}
+{"from": "RULE-0153", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0154", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0155", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0156", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0157", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0158", "rel": "decided_by", "to": "CHG-0056", "by": "judged", "anchor": "2026-10-10 · 텔로미어 소모와 복제 노화 (헤이플릭 한계) — 형식·엔진 바꾸지 않음"}
+{"from": "RULE-0159", "rel": "because", "to": "U0374", "by": "judged"}
+{"from": "RULE-0160", "rel": "because", "to": "U1610", "by": "judged"}
+{"from": "RULE-0161", "rel": "decided_by", "to": "L000070", "by": "judged"}
+{"from": "RULE-0162", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0163", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0164", "rel": "decided_by", "to": "CHG-0056", "by": "judged", "anchor": "2026-10-10 · 텔로미어 소모와 복제 노화 (헤이플릭 한계) — 형식·엔진 바꾸지 않음"}
+{"from": "RULE-0165", "rel": "because", "to": "CHG-0067", "by": "judged", "anchor": "2026-10-15 · 병합 규약을 사법부 관문 안으로 (봉인 = 검사 + 규약)"}
+{"from": "RULE-0166", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0167", "rel": "because", "to": "U0382", "by": "judged"}
+{"from": "RULE-0167", "rel": "because", "to": "CHG-0035", "by": "judged", "anchor": "2026-10-09 · MHC I·II 기전: 세포 상태의 기전 프로그램·시나리오 맥락"}
+{"from": "RULE-0168", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0169", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0170", "rel": "decided_by", "to": "L000081", "by": "auto", "basis": "in_text"}
+{"from": "RULE-0171", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0172", "rel": "because", "to": "CHG-0035", "by": "judged", "anchor": "2026-10-09 · MHC I·II 기전: 세포 상태의 기전 프로그램·시나리오 맥락"}
+{"from": "RULE-0173", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0174", "rel": "because", "to": "U0354", "by": "judged"}
+{"from": "RULE-0175", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0176", "rel": "because", "to": "U0281", "by": "judged"}
+{"from": "RULE-0177", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0178", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0179", "rel": "because", "to": "CHG-0081", "by": "judged", "anchor": "2026-10-15 · 검증 3: 모의 실험 규약 + 사전 등록"}
+{"from": "RULE-0180", "rel": "because", "to": "CHG-0081", "by": "judged", "anchor": "2026-10-15 · 검증 3: 모의 실험 규약 + 사전 등록"}
+{"from": "RULE-0181", "rel": "because", "to": "CHG-0081", "by": "judged", "anchor": "2026-10-15 · 검증 3: 모의 실험 규약 + 사전 등록"}
+{"from": "RULE-0182", "rel": "because", "to": "CHG-0081", "by": "judged", "anchor": "2026-10-15 · 검증 3: 모의 실험 규약 + 사전 등록"}
+{"from": "RULE-0183", "rel": "because", "to": "U5151", "by": "judged"}
+{"from": "RULE-0184", "rel": "because", "to": "U5151", "by": "judged"}
+{"from": "RULE-0185", "rel": "because", "to": "U5096", "by": "judged"}
+{"from": "RULE-0186", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0187", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0188", "rel": "because", "to": "patch:20261010-222447-seq.json", "by": "judged"}
+{"from": "RULE-0189", "rel": "because", "to": "U0401", "by": "judged"}
+{"from": "RULE-0190", "rel": "because", "to": "CHG-0067", "by": "judged", "anchor": "2026-10-15 · 병합 규약을 사법부 관문 안으로 (봉인 = 검사 + 규약)"}
+{"from": "RULE-0191", "rel": "because", "to": "U0401", "by": "judged"}
+{"from": "RULE-0192", "rel": "because", "to": "U0401", "by": "judged"}
+{"from": "RULE-0193", "rel": "because", "to": "U0408", "by": "judged"}
+{"from": "RULE-0194", "rel": "because", "to": "CHG-0054", "by": "judged", "anchor": "2026-10-10 · 설명서 동기화 (전면 재작성 아님) + **CI 가 죽어 있던 것을 발견·복구**"}
+{"from": "RULE-0195", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0196", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0197", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0198", "rel": "because", "to": "U0415", "by": "judged"}
+{"from": "RULE-0199", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0200", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0201", "rel": "because", "to": "U0415", "by": "judged"}
+{"from": "RULE-0202", "rel": "because", "to": "U0415", "by": "judged"}
+{"from": "RULE-0202", "rel": "decided_by", "to": "U1631", "by": "judged"}
+{"from": "RULE-0203", "rel": "because", "to": "U0415", "by": "judged"}
+{"from": "RULE-0204", "rel": "because", "to": "U0415", "by": "judged"}
+{"from": "RULE-0205", "rel": "because", "to": "U0415", "by": "judged"}
+{"from": "RULE-0206", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0207", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0208", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0209", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0210", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0211", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0212", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0213", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0214", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0215", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0216", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0217", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0218", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0219", "rel": "because", "to": "U0316", "by": "judged"}
+{"from": "RULE-0220", "rel": "because", "to": "U0316", "by": "judged"}
+{"from": "RULE-0221", "rel": "because", "to": "U5133", "by": "judged"}
+{"from": "RULE-0222", "rel": "decided_by", "to": "L000096", "by": "judged"}
+{"from": "RULE-0223", "rel": "because", "to": "code:judicial/trend.js", "by": "judged"}
+{"from": "RULE-0224", "rel": "because", "to": "CHG-0190", "by": "judged", "anchor": "2026-10-24 · 이유의 종류 · 원천별 합의 창"}
+{"from": "RULE-0225", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0226", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0227", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0228", "rel": "because", "to": "CHG-0198", "by": "judged", "anchor": "2026-10-25 · 판정 하나 — 관문 = 인정 · observe·fate 에 인정 · 승인 이력 (build-plan 74·75·76)"}
+{"from": "RULE-0229", "rel": "because", "to": "U0326", "by": "judged"}
+{"from": "RULE-0229", "rel": "because", "to": "CHG-0194", "by": "judged", "anchor": "2026-10-25 · 문턱 = 축 조건 · 관문 문턱은 올리기만 (build-plan 73)"}
+{"from": "RULE-0230", "rel": "because", "to": "CHG-0046", "by": "judged", "anchor": "2026-10-10 · 신뢰 지표 ②: 등급을 쓰는 자리에서 강제"}
+{"from": "RULE-0231", "rel": "decided_by", "to": "CHG-0192", "by": "judged", "anchor": "2026-10-25 · 반복 수 미보고 · 도구 추정값은 실측이 아님"}
+{"from": "RULE-0232", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0233", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0234", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0235", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0236", "rel": "because", "to": "U5140", "by": "judged"}
+{"from": "RULE-0237", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0238", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0239", "rel": "decided_by", "to": "patch:20261009-075150-moiety-elements-refactor.json", "by": "judged"}
+{"from": "RULE-0240", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0241", "rel": "because", "to": "U5144", "by": "judged"}
+{"from": "RULE-0242", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0243", "rel": "because", "to": "CHG-0084", "by": "judged", "anchor": "2026-10-15 · 검증 5: 교란 차이 검사"}
+{"from": "RULE-0244", "rel": "because", "to": "U4647", "by": "judged"}
+{"from": "RULE-0245", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0246", "rel": "decided_by", "to": "patch:20261008-173234-identity-gaps.json", "by": "judged"}
+{"from": "RULE-0247", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0248", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0249", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0250", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0251", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0252", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0253", "rel": "because", "to": "CHG-0060", "by": "judged", "anchor": "2026-10-10 · 로컬 실행 권한 목록 — 에이전트가 사용자 컴퓨터에서 바로 고쳐 쓰도록"}
+{"from": "RULE-0254", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0255", "rel": "decided_by", "to": "L000107", "by": "auto", "basis": "in_text"}
+{"from": "RULE-0256", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0257", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0258", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0259", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0260", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0261", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0262", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0263", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0264", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0265", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0266", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0267", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0268", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0269", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0270", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0271", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0272", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0273", "rel": "because", "to": "U0724", "by": "judged"}
+{"from": "RULE-0274", "rel": "because", "to": "U0724", "by": "judged"}
+{"from": "RULE-0275", "rel": "because", "to": "U0724", "by": "judged"}
+{"from": "RULE-0276", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0277", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0278", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0279", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0280", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0281", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0282", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0283", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0284", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0285", "rel": "because", "to": "U0715", "by": "judged"}
+{"from": "RULE-0286", "rel": "because", "to": "U0724", "by": "judged"}
+{"from": "RULE-0286", "rel": "because", "to": "CHG-0136", "by": "judged", "anchor": "2026-10-16 · AI 작업자 전용 공간 `workspace/` 신설 (격리)"}
+{"from": "RULE-0287", "rel": "because", "to": "U0724", "by": "judged"}
+{"from": "RULE-0288", "rel": "decided_by", "to": "TASK-002", "by": "auto", "basis": "in_text"}
+{"from": "RULE-0289", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0290", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0291", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0292", "rel": "because", "to": "U4804", "by": "judged"}
+{"from": "RULE-0293", "rel": "because", "to": "CHG-0136", "by": "judged", "anchor": "2026-10-16 · AI 작업자 전용 공간 `workspace/` 신설 (격리)"}
+{"from": "RULE-0294", "rel": "because", "to": "U0715", "by": "judged"}
+{"from": "RULE-0295", "rel": "because", "to": "CHG-0136", "by": "judged", "anchor": "2026-10-16 · AI 작업자 전용 공간 `workspace/` 신설 (격리)"}
+{"from": "RULE-0296", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0297", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0298", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0299", "rel": "decided_by", "to": "CHG-0217", "by": "judged", "anchor": "2026-10-25 · 재건 5a — 규칙 장부 · 결정 ②"}
+{"from": "RULE-0300", "rel": "because", "to": "U0816", "by": "judged"}
+{"from": "RULE-0301", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0302", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0303", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0304", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0305", "rel": "because", "to": "U0817", "by": "judged"}
+{"from": "RULE-0306", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0307", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0308", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0309", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0310", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0311", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0312", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0313", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0314", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0315", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0316", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0317", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0318", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0319", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0320", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0321", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0322", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0323", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0324", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0325", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0326", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0327", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0328", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0329", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0330", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0331", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0332", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0333", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0334", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0335", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0336", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0337", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0338", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0339", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0340", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0341", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0342", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0343", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0344", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0345", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0346", "rel": "because", "to": "U5115", "by": "judged"}
+{"from": "RULE-0346", "rel": "because", "to": "U4428", "by": "judged"}
+{"from": "RULE-0347", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0348", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0349", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0350", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0351", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0352", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0353", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0354", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0355", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0356", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0357", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0358", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0359", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0360", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0361", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0362", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0363", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0364", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0365", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0366", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0367", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0368", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0369", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0370", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0371", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0372", "rel": "because", "to": "CHG-0165", "by": "judged", "anchor": "2026-10-23 · 16A 가 스키마 — 한계 구조 필드 + 재검토 후보"}
+{"from": "RULE-0373", "rel": "because", "to": "U5093", "by": "judged"}
+{"from": "RULE-0374", "rel": "decided_by", "to": "L000002", "by": "judged"}
+{"from": "RULE-0375", "rel": "because", "to": "CHG-0059", "by": "judged", "anchor": "2026-10-10 · 농도·부피를 데이터로 — 엔진이 처음으로 데이터에서 부피·시작량을 읽음"}
+{"from": "RULE-0375", "rel": "decided_by", "to": "L000103", "by": "judged"}
+{"from": "RULE-0376", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0377", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0378", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0379", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0380", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0381", "rel": "because", "to": "U4408", "by": "judged"}
+{"from": "RULE-0382", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0383", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0384", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0385", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0386", "rel": "because", "to": "CHG-0066", "by": "judged", "anchor": "2026-10-10 · 한계 닫기 ① — 사람 TNF mRNA 서열 길이로 L000026 해결, 찾지 못한 넷은 요구 조건을 날카롭게"}
+{"from": "RULE-0386", "rel": "decided_by", "to": "L000026", "by": "judged"}
+{"from": "RULE-0387", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0388", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0389", "rel": "because", "to": "U5145", "by": "judged"}
+{"from": "RULE-0390", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0391", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0392", "rel": "because", "to": "U5145", "by": "judged"}
+{"from": "RULE-0393", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0394", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0395", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0396", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0397", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0398", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0399", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0400", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0401", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0402", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0403", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0404", "rel": "because", "to": "U4428", "by": "judged"}
+{"from": "RULE-0405", "rel": "because", "to": "code:judicial/obs_compare.js", "by": "judged"}
+{"from": "RULE-0406", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0407", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0408", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0409", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0410", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0411", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0412", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0413", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0414", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0415", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0416", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0417", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0418", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0419", "rel": "decided_by", "to": "patch:20261010-062904-role.json", "by": "judged"}
+{"from": "RULE-0420", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0421", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0422", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0423", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0424", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0425", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0426", "rel": "because", "to": "U5121", "by": "judged"}
+{"from": "RULE-0427", "rel": "because", "to": "CHG-0046", "by": "judged", "anchor": "2026-10-10 · 신뢰 지표 ②: 등급을 쓰는 자리에서 강제"}
+{"from": "RULE-0428", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0429", "rel": "because", "to": "CHG-0048", "by": "judged", "anchor": "2026-10-10 · 신뢰 지표 ③: 추세 축 — 지금도 합의와 같은가"}
+{"from": "RULE-0430", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0431", "rel": "because", "to": "U5124", "by": "judged"}
+{"from": "RULE-0432", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0433", "rel": "because", "to": "CHG-0186", "by": "judged", "anchor": "2026-10-24 · 신뢰 기준 고침 둘 — S3 확인 여부 · 근거 없는 값 D2"}
+{"from": "RULE-0434", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0435", "rel": "because", "to": "CHG-0043", "by": "judged", "anchor": "2026-10-10 · 외부 ID 역할 (ChEBI 규약): 모체·pH 7.3 우세 종·분류를 섞지 않음"}
+{"from": "RULE-0436", "rel": "because", "to": "CHG-0043", "by": "judged", "anchor": "2026-10-10 · 외부 ID 역할 (ChEBI 규약): 모체·pH 7.3 우세 종·분류를 섞지 않음"}
+{"from": "RULE-0437", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0438", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0439", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0440", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0441", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0442", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0443", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0444", "rel": "because", "to": "CHG-0062", "by": "judged", "anchor": "2026-10-10 · 안전장치 v11 — 측정값 사슬을 닫고 규칙 침식을 래칫으로 막음 (레드팀 7/7 차단)"}
+{"from": "RULE-0445", "rel": "because", "to": "U1629", "by": "judged"}
+{"from": "RULE-0446", "rel": "because", "to": "CHG-0086", "by": "judged", "anchor": "2026-10-15 · 형식 v12 ①: 값 층 분리"}
+{"from": "RULE-0447", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0448", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0449", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0450", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0451", "rel": "because", "to": "CHG-0170", "by": "judged", "anchor": "2026-10-23 · 가정 원장 (build-plan 49)"}
+{"from": "RULE-0452", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0453", "rel": "because", "to": "U4892", "by": "judged"}
+{"from": "RULE-0454", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0455", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0456", "rel": "because", "to": "U2375", "by": "judged"}
+{"from": "RULE-0456", "rel": "because", "to": "CHG-0077", "by": "judged", "anchor": "2026-10-15 · 검증 M1 동등성 검정 + 구현 계획"}
+{"from": "RULE-0457", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0458", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0459", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0460", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0461", "rel": "because", "to": "U5293", "by": "judged"}
+{"from": "RULE-0462", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0463", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0464", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0465", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0466", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0467", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0468", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0469", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0470", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0471", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0472", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0473", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0474", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0475", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0476", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0477", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0478", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0479", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0480", "rel": "because", "to": "U5609", "by": "judged"}
+{"from": "RULE-0481", "rel": "because", "to": "U5616", "by": "judged"}
+{"from": "RULE-0482", "rel": "because", "to": "U5626", "by": "judged"}
+{"from": "RULE-0483", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0484", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0485", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0486", "rel": "because", "to": "CHG-0077", "by": "judged", "anchor": "2026-10-15 · 검증 M1 동등성 검정 + 구현 계획"}
+{"from": "RULE-0487", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0488", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0489", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0490", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0491", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0492", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0493", "rel": "none", "by": "judged", "note": "문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 에서 이유를 찾지 못했다"}
+{"from": "RULE-0494", "rel": "decided_by", "to": "CHG-0180", "by": "judged", "anchor": "2026-10-23 · 규약·규제·시험 지도 + 생화학 기준 제안"}
+{"from": "RULE-0495", "rel": "because", "to": "U5096", "by": "judged"}
+{"from": "RULE-0496", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0497", "rel": "inline", "by": "judged", "note": "이유가 규칙 문장 안에 있다"}
+{"from": "RULE-0299", "rel": "contradicts", "to": "RULE-0287", "by": "judged", "basis": "결정 ② 로 정리 (7 단계)"}
+{"from": "RULE-0498", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0499", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0500", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0501", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0502", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0503", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0504", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0505", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0506", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0507", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0508", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0509", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0510", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0511", "rel": "none", "by": "judged", "note": "코드에서 찾은 규칙 (5d) — 이유 기록은 아직 찾지 못함"}
+{"from": "RULE-0512", "rel": "because", "to": "U7496", "by": "judged"}
+{"from": "RULE-0513", "rel": "none", "by": "judged", "note": "이유는 PLAN §3(한 세션 = 한 모드 — 기초시험 중 엔진을 고치는 길을 구조로 없앤다) — 재건 문서라 단위 장부 밖"}
+{"from": "RULE-0514", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "글로 된 '한 세션 = 한 모드' 는 잊으면 그만 — 구조가 막게 (DEC-0018 · DEC-0031)"}
+{"from": "RULE-0515", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "모드가 믿는 것·쓸 수 있는 곳을 정한다(DEC-0016) — 셸로 쓴 것까지 도구 앞뒤 대조로"}
+{"from": "RULE-0516", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "'끝내기 전에 돌려라' 를 잊어도 막히게 — 사용자 결정 2026-10-29 커밋·push 를 막음 (DEC-0031)"}
+{"from": "RULE-0517", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "AI 작업이 블랙박스가 되지 않게(진단 DEC-0015) — 영수증을 작업자가 고치면 영수증이 아니다"}
+{"from": "RULE-0518", "rel": "inline", "by": "judged", "note": "이유가 문장 안 — 채팅·출력은 코드가 지울 수 없어 사람·AI 가 지킨다"}

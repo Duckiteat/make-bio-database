@@ -13,7 +13,7 @@ const ATT = require('./attestation.js');
 const ISSUER = 'judicial/acceptance.js';
 const { USES, accept } = REL; // 용도별 판정은 reliability 하나 — 관문(constantVerdict)과 같은 함수 (build-plan 74)
 const HIGH = Object.keys(USES).filter((u) => USES[u].approval);
-const APPROVERS = ['human', 'integrator']; // 승인할 수 있는 역할 (2026-10-25 결정: 통합 에이전트도 — 사람은 나중에 철회할 수 있다)
+const APPROVERS = ['human', 'integrator']; // 승인할 수 있는 역할 (사용자 결정: 통합 에이전트도 — 사람은 나중에 철회할 수 있다)
 
 // 추정에 쓰인 관찰: use 가 estimation 이거나, 어떤 값(속도 상수·정의항 obs)의 from 이 가리킴
 function estimatedObservations(db) {

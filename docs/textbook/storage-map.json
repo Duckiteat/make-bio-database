@@ -65,6 +65,11 @@
       "label": "증명 등록부 (사법부 도장)",
       "rule": "'verified' 의 유일한 근거. 사법부(judicial/attestation.js)가 발급한 도장을 입법 서기만 기록한다. 도장마다 digest·증거 파일 sha256·같은 확인 재실행으로 검증되며, 데이터는 스스로 verified 를 선언할 수 없다. 손으로 고치면 digest 가 깨져 무효가 된다.",
       "zone": "product"
+    },
+    "management": {
+      "label": "재건 관리 (읽기 점검용)",
+      "rule": "재건(rebuilding-project)을 관리하는 파일. 사람과 AI 가 읽어 점검하는 데만 쓰고, 다른 코드가 읽거나 입력으로 쓰지 않는다(tests/rebuild.test.mjs). status/ 는 생성물(손으로 고치지 않음), ledger/ 는 분류 장부(중간 파일).",
+      "zone": "design"
     }
   },
   "files": [
@@ -616,62 +621,6 @@
       "refactor_strategy": "조정만. 쓰기는 서기, 판정은 사법부."
     },
     {
-      "path": "engine/hmse.js",
-      "class": "law",
-      "format": "UMD JavaScript (브라우저 HMSE / Node require)",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "tests, (예정) DEVS 스케줄러",
-      "interpret": "3 층 엔진의 실행 층 참조 구현 — 정수 원장·인접 경계 거래·이동량 표본·영역 점수·히스테리시스·보존적 투영. 지식(core.js)과 분리. 다른 언어 구현은 이 함수들과 같은 결과를 내야 한다."
-    },
-    {
-      "path": "engine/devs_scheduler.js",
-      "class": "law",
-      "format": "UMD JavaScript",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "tests/p3_end_to_end.js, tests",
-      "interpret": "Phase P3 Parallel-DEVS 스케줄러·경계 엔진·원자 모델(T3 영역, T2 SSA/τ-도약 노드). 결정론적 동시 사건 정렬, 보수적 동기화, 정수 원장 거래."
-    },
-    {
-      "path": "engine/fv_solver.js",
-      "class": "law",
-      "format": "UMD JavaScript",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "engine/devs_scheduler.js, tests",
-      "interpret": "Phase P3 3차원 유한 체적 반응·확산·이류 풀이기 — 기준 경계 마스크, 보존형 면 유속, 원장 닻 재척도."
-    },
-    {
-      "path": "engine/fno_surrogate.js",
-      "class": "law",
-      "format": "UMD JavaScript",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "engine/devs_scheduler.js, engine/ood_detector.js, tests",
-      "interpret": "Phase P4 스펙트럼 신경 연산자 대리 모델 — FFT·Makhoul DCT, FV 궤적에서 학습한 모드별 이득, Strang 분할 반응, 질량 조정 연산자. 분포: 상자·이류 없음·1차 반응 쌍."
-    },
-    {
-      "path": "engine/ood_detector.js",
-      "class": "law",
-      "format": "UMD JavaScript",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "engine/devs_scheduler.js, tests",
-      "interpret": "Phase P4 분포 이탈·안정성 탐지 S_ood = w1·E_spec + w2·V_grad + w3·ΔG_drift (학습 기준으로 정규화, τ = 1) + 즉시 OOD 사유."
-    },
-    {
-      "path": "engine/async_fallback_worker.js",
-      "class": "law",
-      "format": "Node CommonJS (worker_threads 일꾼 겸용)",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "engine/devs_scheduler.js, tests",
-      "interpret": "Phase P4 보수적 비동기 FV 대체 실행기 — inline 또는 공유 메모리 일꾼, join 때만 원장 정수화."
-    },
-    {
-      "path": "engine/p5_dynamic_gate.js",
-      "class": "law",
-      "format": "UMD JavaScript",
-      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
-      "readers": "engine/devs_scheduler.js, tests",
-      "interpret": "Phase P5 동적 승격·강등 관문 — 강성 N_sub(C_CFL 15), 히스테리시스 K_up/K_down/M, 사전 필터 γ, 강제 강등 + W 냉각, 정밀 닻(|Σu − N| ≤ 1e-15)."
-    },
-    {
       "path": "engine/fate_engine.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -832,30 +781,6 @@
       "interpret": "src_sha256·wasm_sha256·rustc·target·profile."
     },
     {
-      "path": "engine/interfaces/hmse.hpp",
-      "class": "spec",
-      "format": "C++20 헤더 (인터페이스만)",
-      "writer": "사람·AI",
-      "readers": "C++ 구현자, CI(g++ -fsyntax-only)",
-      "interpret": "IntegerLedger·ThermodynamicField·SpatialSolver·DomainManager·BoundaryEngine·AtomicModel·DEVSScheduler 계약. 의미는 engine/hmse.js 와 설계 문서."
-    },
-    {
-      "path": "engine/interfaces/hmse.py",
-      "class": "spec",
-      "format": "Python 3 (ABC + 참조 원장)",
-      "writer": "사람·AI",
-      "readers": "Python 구현자, CI(--selftest)",
-      "interpret": "같은 인터페이스의 Python 판 + DictIntegerLedger 참조 구현과 자체 시험 (engine/hmse.js 와 같은 의미)."
-    },
-    {
-      "path": "schemas/v8/*.schema.json",
-      "class": "spec",
-      "format": "JSON Schema 2020-12",
-      "writer": "사람·AI (형식을 바꿀 때)",
-      "readers": "구현자, tests(필수 필드 대조)",
-      "interpret": "실행 층 통신 형식 — 원장 거래, 경계 유속 패킷, 영역 구성(시나리오 domains), 영역 점수·전이 기록."
-    },
-    {
       "path": "schemas/ffi/*.schema.json",
       "class": "spec",
       "format": "JSON Schema 2020-12 (+ x-dimensions)",
@@ -931,10 +856,26 @@
     {
       "path": "CLAUDE.md",
       "class": "spec",
-      "format": "Markdown",
-      "writer": "사람·AI",
+      "format": "Markdown 생성물 — 중심 문서 (목적 · 세션 · 모드 표 · 공통 규칙 · 모든 모드의 명령)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeHubDoc) — 원본 rebuild/rules/rules.jsonl · modes.json · commands.jsonl",
       "readers": "Claude Code 등 AI 에이전트 (세션 시작 시 자동)",
-      "interpret": "에이전트가 반드시 지킬 작업 규칙의 한 줄 점검표(세션마다 자동으로 실리므로 짧게). 이유·경위·예시는 docs/design/agent-rules.md — 규칙은 두 곳에 같이 있고 함께 고친다."
+      "interpret": "세션마다 자동으로 실리는 중심 문서 (재건 8 단계부터 생성물). 손으로 고치지 않는다 — 규칙은 장부에서 고치고 다시 만든다. 모드의 규칙은 docs/modes/<모드>.md, 규칙 하나의 이유는 node rebuild/read.mjs RULE-…"
+    },
+    {
+      "path": "docs/modes/*",
+      "class": "spec",
+      "format": "Markdown 생성물 — 모드 문서 <모드>.md (언제 · 목표 · 쓸 곳 · 위험 · 끝내기 전 · 멈춤 · 규칙 · 명령)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeHubDoc)",
+      "readers": "AI 에이전트 (모드를 연 세션) · 사람",
+      "interpret": "한 모드의 계약. 손으로 고치지 않는다 — 원본은 규칙 장부와 modes.json. 시험 rebuild ① 이 바이트 동일을 본다(드리프트)."
+    },
+    {
+      "path": ".claude/skills/*/SKILL.md",
+      "class": "spec",
+      "format": "Markdown 생성물 — 모드 스킬 (모드 문서 본문 + 머리 name·description)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeHubDoc)",
+      "readers": "Claude Code (작업 설명이 맞을 때 스킬로 열림)",
+      "interpret": "모드 문서와 같은 본문 — 스킬로도 열리게. 손으로 고치지 않는다."
     },
     {
       "path": "CHANGES.md",
@@ -1034,6 +975,38 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "가정 원장 시험 — 사슬 변조·삭제·번호 바꾸기 · 다른 자리 옮겨 붙이기·없는 번호 거부 · 최신 따라가기 없음 · 새 기록 거부 사유별 · 서기 봉인·순번 · 인라인 숫자 등록 거부 · 거꾸로 색인 · 변환 결과."
+    },
+    {
+      "path": "tests/enforcement_gaps.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI (변이 시험이 놓친 규칙마다)",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "집행 구멍 메우기 — 변이 시험에서 집행 자리를 망가뜨려도 빨개지지 않던 규칙마다 그 자리를 직접 찌르는 시험. 시험 이름에 RULE 번호."
+    },
+    {
+      "path": "tests/gate.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "문지기 시험 — 정책 · 판단(규칙 번호) · 저장소 밖 임시 git 저장소에서 진짜 훅을 돌려 막힘·셸 쓰기 잡기·영수증 = git 변경 · 영수증 고침/지움이 막힘."
+    },
+    {
+      "path": "tests/transitions.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "전환 기록 시험 — 검사 통과 1 + 거부 사유별 · 서기는 검사 뒤 끝에만 붙이고 순번을 매김 (RULE-0513)."
+    },
+    {
+      "path": "tests/mutation/run.mjs",
+      "class": "verification",
+      "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",
+      "writer": "사람·AI",
+      "readers": "사람 (rebuild/status/10-enforcement.md 의 다시 돌리기)",
+      "interpret": "집행 변이 시험 — rebuild/rules/enforcement.jsonl 의 행마다 저장소 밖 git 사본에서 집행 자리를 망가뜨리고 시험이 빨개지는지(caught) 통과하는지(missed) 본다. 저장소 안은 읽기만."
     },
     {
       "path": "tests/mcp.test.mjs",
@@ -1186,38 +1159,6 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "1·1.5단계 — WASM 최신성(해시)·JS 기준 구현과 동등(궤적 ≤ rtol, 운명·도달·결정·사건 같음, 단계 수 ±1%)·byteLength 불변·결정론·네이티브 = WASM 비트·네이티브 루프 할당 0·사법부 판정 PASS."
-    },
-    {
-      "path": "tests/p3_end_to_end.js",
-      "class": "verification",
-      "format": "Node CommonJS 스크립트 (+ module.exports.run)",
-      "writer": "사람·AI",
-      "readers": "사람(콘솔 출력), tests/rules.test.mjs, CI",
-      "interpret": "T3 영역 + T2 노드 10,000 단계 종단 시험 — 단계별 상태와 질량 보존 지표를 콘솔에, 실패하면 종료 코드 1. 가상 값."
-    },
-    {
-      "path": "tests/p4_end_to_end.js",
-      "class": "verification",
-      "format": "Node CommonJS 스크립트 (+ module.exports.run)",
-      "writer": "사람·AI",
-      "readers": "사람(콘솔), tests/rules.test.mjs, CI",
-      "interpret": "대리 모델 영역 + T2 노드 10,000 단계, 디랙 충격 주입 → OOD 지연·대체·질량 보존. 가상 값."
-    },
-    {
-      "path": "tests/p4_benchmark.js",
-      "class": "verification",
-      "format": "Node CommonJS 스크립트 (+ module.exports.run)",
-      "writer": "사람·AI",
-      "readers": "사람(콘솔), tests/rules.test.mjs",
-      "interpret": "FV 대 대리 모델 단계당 시간·상대 L2 오차를 격자·Δt(강성)별로 표로 — 속도 향상은 FV 부분 단계 수에 달려 있다."
-    },
-    {
-      "path": "tests/p5_dynamic_promotion.js",
-      "class": "verification",
-      "format": "Node CommonJS 스크립트 (+ module.exports.run·build)",
-      "writer": "사람·AI",
-      "readers": "사람(콘솔), tests/rules.test.mjs, CI",
-      "interpret": "D(t) 일정으로 강성이 오르내리는 영역 + T2 노드 10,000 단계 — 관문 전이·히스테리시스·충격 강등·냉각, 질량·장 정합·L2, 구간별 동적 대 FV 시간. 가상 값."
     },
     {
       "path": "tests/fate_suite.js",
@@ -1374,7 +1315,7 @@
     {
       "path": "workspace/*",
       "class": "log",
-      "format": "AI 작업자 전용 공간 (최상위) — README(격리 규약)·collector.settings.json(권한 프로파일)",
+      "format": "AI 작업자 전용 공간 (최상위) — README(격리 규약)·START-HERE·전환 기록. 권한은 문지기 훅이 역할로(rebuild/gate.mjs)",
       "writer": "작업자(Sonnet 등, workspace/ 안에서만) · 통합가(Opus/사람)",
       "readers": "작업자·통합가 · 사람",
       "interpret": "[작업 공간] 싼 모델(작업자·수집가)이 일하는 유일한 쓰기 공간 — 신뢰 저장소(db·규칙·엔진)와 분리. 적용·본체 병합은 통합가가. 설계 docs/PROMPTS.md §3′ · workspace/README.md."
@@ -1466,6 +1407,158 @@
       "writer": "입법 서기만 (appendAttestations — 사법부 도장, 재검증 뒤)",
       "readers": "judicial/attestation.js validStamps → validate(db, { attestations })",
       "interpret": "도장: subject(정의항·필드·종류:값) · claim verified · evidence(수신함 파일·sha256) · issuer(모듈·코드 sha256) · issued_at · digest. validate 는 status verified 마다 유효한 도장을 요구한다."
+    },
+    {
+      "path": "rebuild/PLAN.md",
+      "class": "management",
+      "format": "Markdown 생성물 — 목적 → 왜 → 결정(시간순) → 작업(결과·걸어온 길) → 종합·의의 → 방향 → 열린 질문 → 근거 점검",
+      "writer": "rebuild/status.mjs --write (입법 서기 writePlanDoc) — 원본 rebuild/state/plans.jsonl · plan-log.jsonl",
+      "readers": "사람·AI (읽기만 — 하나씩은 node rebuild/read.mjs STG-…|DEC-…|DIR-…)",
+      "interpret": "재건 계획 (DEC-0027 부터 생성물). 손으로 고치지 않는다 — node rebuild/plan.mjs apply. 옛 절 번호(§0–§9)는 결정마다 '옛 문서의 §…' 로 남음."
+    },
+    {
+      "path": "rebuild/status.mjs",
+      "class": "management",
+      "format": "Node ES 모듈",
+      "writer": "사람·AI",
+      "readers": "훅(Stop)·CI·tests/rebuild.test.mjs",
+      "interpret": "관리 파일 생성기 — 저장소를 세어 status/*.md 를 서기 구역 rebuild 로 쓴다(--write), 낡았는지 본다(--check)."
+    },
+    {
+      "path": "rebuild/status/*",
+      "class": "management",
+      "format": "Markdown (생성물)",
+      "writer": "rebuild/status.mjs --write (입법 서기 writeStatus)",
+      "readers": "사람·AI (읽기 점검만)",
+      "interpret": "파일·문서·명령·판정·분류 진행의 개수와 크기. 시각 없음 — 같은 저장소면 같은 내용."
+    },
+    {
+      "path": "rebuild/ledger/*",
+      "class": "management",
+      "format": "JSON Lines — 한 줄 한 단위 {id, src, text, mode, kind, enforce, where?, note?}",
+      "writer": "분류 작업 (PLAN §5)",
+      "readers": "rebuild/status.mjs",
+      "interpret": "분류 장부(중간 파일) — 문서의 문장 하나를 모드·종류·집행으로 분류한 기록."
+    },
+    {
+      "path": "tests/rebuild.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "관리 파일이 최신 · rebuild/ 밖 코드가 rebuild/ 를 읽지 않음 · 구역 · 장부 형식."
+    },
+    {
+      "path": "rebuild/index.mjs",
+      "class": "management",
+      "format": "Node ES 모듈",
+      "writer": "사람·AI",
+      "readers": "rebuild/status.mjs · tests/rebuild.test.mjs",
+      "interpret": "번호 사전 계산기 — 이름공간 표를 읽고 저장소의 번호 모양 토큰을 세어 참조 색인을 계산(저장 안 함). 미등록 모양·겹침·정의 안 된 참조·코드에 따로 적은 형식을 드러낸다."
+    },
+    {
+      "path": "rebuild/index/*",
+      "class": "management",
+      "format": "JSON Lines — namespaces.jsonl 한 줄 한 이름공간 {ns, status, shape, pattern|pattern_from, examples, issuer, store, immutable, scan, scan_in?, defined_by?, members_from?, note?} · exceptions.jsonl {file, token, reason} · file-modes.jsonl {pattern, mode, why} (위에서부터 첫 규칙)",
+      "writer": "사람·AI (손으로, 형식 검사)",
+      "readers": "rebuild/index.mjs",
+      "interpret": "번호 사전 원본(PLAN §4′) — 번호 종류마다 형식·발급자·자리·불변 규칙. 형식은 가능하면 코드 정의를 가리킨다(pattern_from). file-modes.jsonl 은 파일마다 주로 건드리는 모드."
+    },
+    {
+      "path": "rebuild/rules/*",
+      "class": "management",
+      "format": "JSON Lines — 한 줄 한 규칙 {id: RULE-…, text, modes[], enforce, unit | from_code, copies[], where?, flags?, note?} (from_code = 문서 단위 없이 코드의 검사 자리에서 온 규칙, flags = 글 규칙인데 코드가 알림만 하는 자리)",
+      "writer": "재건 5 단계 (분류 장부에서)",
+      "readers": "rebuild/status.mjs · tests/mutation/run.mjs (enforcement.jsonl)",
+      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림) · 모드 원본(modes.json — 중심·모드 문서의 머리말·주제 표) · 명령 장부(commands.jsonl) · 수식 기록(formulas.jsonl — EQ-…, 읽기 모드 L2). 6 단계에서 규칙의 원본이 된다."
+    },
+    {
+      "path": "workspace/transitions.jsonl",
+      "class": "management",
+      "format": "JSON Lines — 한 줄 한 전환 { seq, from, to, at, why, target[], files[], open[] }",
+      "writer": "node dbtool.mjs transition <기록.json> (입법 서기 appendTransition — 사법부 checkTransition 통과 뒤 끝에만)",
+      "readers": "다음 세션 (to 모드로 시작할 때) · node dbtool.mjs transition (목록)",
+      "interpret": "한 세션 = 한 모드 — 다른 모드가 필요하면 세션은 이 기록을 남기고 끝난다. workspace/handoff/NEXT-*.md 산문을 대신한다."
+    },
+    {
+      "path": "judicial/transition_audit.js",
+      "class": "law",
+      "format": "CommonJS 모듈 (사법부 — 읽기·판정만)",
+      "writer": "사람·AI (사용자 요청 시)",
+      "readers": "legislative/clerk.mjs appendTransition · tests/transitions.test.mjs",
+      "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513."
+    },
+    {
+      "path": "rebuild/read.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (표준 출력만 — 파일을 쓰지 않음)",
+      "writer": "사람·AI",
+      "readers": "사람 (읽기 모드) · tests/rebuild.test.mjs ⑬·⑮",
+      "interpret": "읽기 모드 (6d) — RULE·EQ 번호를 L0 한 줄 · L1 연결(적힌 곳·집행 자리·변이 시험·맥락·검토) · L2 수식으로. 원본에서만 조회하고, 없으면 '기록 없음'."
+    },
+    {
+      "path": "rebuild/render.mjs",
+      "class": "management",
+      "format": "Node 모듈 (순수 — build(root) 가 파일 이름 → 글)",
+      "writer": "사람·AI",
+      "readers": "rebuild/status.mjs (--write 가 서기 writeHubDoc 로 씀) · tests/rebuild.test.mjs ①·⑬",
+      "interpret": "중심 문서·모드 문서 5·스킬 5 생성기 — 규칙 장부·모드 원본(rebuild/rules/modes.json)·명령 장부에서 CLAUDE.md · docs/modes/ · .claude/skills/ 를 제자리에 만든다 (재건 8 단계부터)."
+    },
+    {
+      "path": "rebuild/state.mjs",
+      "class": "management",
+      "format": "Node 모듈 (순수 — load · fold · check · render · apply · readOne)",
+      "writer": "사람·AI",
+      "readers": "rebuild/status.mjs (계획 문서 생성) · rebuild/plan.mjs · rebuild/read.mjs · rebuild/plan-import.mjs · tests/rebuild.test.mjs ⑯–⑲",
+      "interpret": "계획 기록 (6c · DEC-0027) — 계획은 기록, 글은 생성물. check 가 정확성(참조가 풀림 · 지금 = 사건을 접은 것 · 근거 있는 종합·방향 · 인용이 원문에 그대로)을 보고, 통과해야 쓴다."
+    },
+    {
+      "path": "rebuild/state/*",
+      "class": "management",
+      "format": "JSONL — plans.jsonl (계획 머리·결정 DEC·부·글·작업 PLAN/STG·종합·방향 DIR·열린 질문) · plan-log.jsonl (작업 사건, 덧붙이기만)",
+      "writer": "입법 서기 writeState 만 (rebuild/plan.mjs apply — 검사 통과 뒤). plan-log 는 옛 글로 시작해야 씀",
+      "readers": "rebuild/state.mjs · rebuild/status.mjs (docs/design/build-plan.md · rebuild/PLAN.md 생성) · tests/rebuild.test.mjs ⑯–⑲",
+      "interpret": "두 계획의 원본. 2026-10-29 까지의 걸어온 길은 git 역사에서 가져옴(source git, node rebuild/plan-import.mjs --check 로 다시 대조), 그 뒤는 apply 사건(source apply)."
+    },
+    {
+      "path": "rebuild/gate.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (훅 hook <session-start|pre|post|stop> · open · finish · receipt)",
+      "writer": "사람·AI",
+      "readers": ".claude/settings.json 훅 · tests/gate.test.mjs",
+      "interpret": "문지기·영수증 (재건 7 단계) — 정책은 rebuild/rules/modes.json 의 gate. 모드 밖 쓰기·막는 명령·끝내기 전 시험 없는 commit·push 를 막고(RULE-0514–0517 · 수집가 0274·0275·0287·0299), 도구 호출마다 바뀐 파일을 영수증에 붙인다."
+    },
+    {
+      "path": "workspace/receipts/*",
+      "class": "management",
+      "format": "JSONL (사건 하나 = 한 줄, prev = 앞 줄 sha256 사슬) + 같은 이름 .md (사람용 보기)",
+      "writer": "rebuild/gate.mjs 훅만 — 세션 동안은 저장소 밖(liveRoot)에 쌓고, git commit 직전에 이 자리로 실어 git add (입법 서기 appendReceipt · publishReceipt, 구역 receipt)",
+      "readers": "사람 (GitHub 에서 .md) · node rebuild/gate.mjs receipt",
+      "interpret": "세션 하나 = 영수증 하나: 모드 · 막힌 것 · 바뀐 파일과 그 호출 · 끝내기 전 시험 · git 변경과의 대조. 커밋마다 그때까지의 사슬이 실리므로 커밋 뒤 작업 트리가 깨끗하다(커밋 명령 자체의 기록은 다음 커밋에). 손으로 고치면 문지기가 쓰는 도구를 막는다. 관리 파일 개수에서는 빠진다."
+    },
+    {
+      "path": "rebuild/plan.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (apply <ops.json> [--dry] · check)",
+      "writer": "사람·AI",
+      "readers": "사람·AI",
+      "interpret": "계획 고치기의 유일한 길 — 변경 묶음 {at, why, ops[]} 를 검사한 뒤 서기로 씀. 문서는 status --write 가 다시 만듦."
+    },
+    {
+      "path": "rebuild/plan-import.mjs",
+      "class": "management",
+      "format": "Node 모듈·스크립트 (읽기만 — git 역사를 읽음)",
+      "writer": "사람·AI",
+      "readers": "tests/rebuild.test.mjs ⑲ · node rebuild/plan-import.mjs --check",
+      "interpret": "손으로 쓰던 계획 문서의 git 역사(import.until 까지)를 작업 사건으로 — 옛 문서의 깨진 곳 둘을 고쳐 읽고 그 사실을 repairs 로 남김."
+    },
+    {
+      "path": "rebuild/archive/*",
+      "class": "management",
+      "format": "JSON — 은퇴한 층 하나 {id, what, retired{at,by,why}, rules[], code[], tests[], references[], design[], state_now, revive[]}",
+      "writer": "재건 (사용자가 은퇴를 정할 때)",
+      "readers": "rebuild/status.mjs (은퇴 규칙이 보관 파일에 있는지)",
+      "interpret": "은퇴한 규칙과 그 층을 나중에 되살릴 수 있게 한곳에 모은 기록"
     }
   ],
   "governance": {

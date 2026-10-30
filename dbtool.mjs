@@ -3,6 +3,7 @@
 // 기본 저장소는 data/db.json 이다. 다른 파일을 쓰려면 --db <경로>.
 //
 //   node dbtool.mjs status                                  저장소 요약
+//   node dbtool.mjs transition [기록.json]                   전환 기록 — 검사 뒤 workspace/transitions.jsonl 끝에 (없으면 목록)
 //   node dbtool.mjs validate                                전체 검사 (오류 있으면 종료 코드 1)
 //   node dbtool.mjs merge     <patch.json...> [--dry] [--allow-warnings]
 //                                                           병합 + Patch Report(Scope·Why·Impact·Verification). patch.why 필수, 미등록 한계 후보가 있으면 거부
@@ -16,7 +17,7 @@
 //   node dbtool.mjs limitations [--open] [--write | --check] [--detect]
 //                                                           한계 등록부: 출력 / limitations.md 생성 / 최신인지 검사 / 미등록 후보 찾기
 //   node dbtool.mjs pattern   <경로|상위 개념>              경로에서 상위 패턴(모티프) 찾기, 또는 상위 개념이 나타나는 경로
-//   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(R0 위상·R1 부위·R2 구조)와 전환 문턱
+//   node dbtool.mjs resolution <경로>                        혼합 해상도 계획: 단계마다 필요한/갖춘 해상도(pool 위상·site 부위·structure 구조)와 전환 문턱
 //   node dbtool.mjs audit-run <경로> [--scenario s.json] [--t 60] [--dt 0.001] [--reservoirs finite|infinite] [--stochastic] [--seed N]
 //                                                           감사: 스키마·해상도 일관성·속도 무결성·질량 보존 (Audit Error 가 있으면 종료 코드 1)
 //   node dbtool.mjs report    <data/patches/….json>          기록된 병합의 Patch Report (Scope·Why·Impact·Verification)
@@ -714,14 +715,14 @@ switch (cmd) {
   }
   case 'observe': { // 관찰 포트 (4단계 ②): 판정만 — 관찰을 데이터베이스에 넣는 것은 패치(observations)·관문·서기
     const db = loadDB(), K = req('./judicial/contract.js'), OC = req('./judicial/obs_compare.js');
-    if (!args[0] || !flags.state || !flags.scenario) die('사용법: observe <O…|관찰.json> --state <세포 상태> --scenario A.json [--scenario-b B.json] [--n 50]');
+    if (!args[0] || !flags.state || !flags.scenario) die('사용법: observe <O…|관찰.json> --state <세포 상태> --scenario A.json [--scenario-b B.json] [--n 50] [--resolution A|gum]');
     let o;
     if (/^O\d{6}$/.test(args[0])) { o = db.observations[args[0]]; if (!o) die(`관찰 기록 ${args[0]} 없음`); }
     else {
       const rawO = readJSON(args[0]), shape = K.checkObservation(rawO);
       if (!shape.ok) die('관찰 계약 위반 (schemas/obs/observation.schema.json):\n' + shape.violations.map((v) => `  ${v.path}: ${v.msg}`).join('\n'));
       o = DefDB.normalize({ ...db, observations: { O999999: rawO } }).observations.O999999;
-      const E = [], ix = DefDB.index(db); J.validateObservation(db, ix, 'O999999', o, (w, msg) => E.push(msg), () => {});
+      const E = [], ix = DefDB.index(db); J.validateObservation(db, ix, 'O999999', o, (rule, w, msg) => E.push(msg), () => {});
       const real = E.filter((m) => !/합성\(hypothetical\)/.test(m));
       if (real.length) die('관찰 의미 검사 실패:\n' + real.map((m) => '  ' + m).join('\n'));
       if (o.hypothetical) console.log('※ 합성(hypothetical) 관찰 — 판정 시험용. 데이터베이스에는 넣을 수 없다.\n');
@@ -736,13 +737,20 @@ switch (cmd) {
       console.log(QC.qualCompareText([Object.assign(q, { id: oid || '(파일)' })], QC.chanceBaseline([q])));
       process.exit(q.outcome === 'invalid' ? 1 : 0);
     }
-    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null, acceptance: /^O\d{6}$/.test(args[0]) ? acceptanceOf(db, args[0]) : null });
+    const v = ORCH.observeFate(db, o, x.id, scA, scB, { n: flags.n && flags.n !== true ? +flags.n : undefined, resolution: flags.resolution && flags.resolution !== true ? flags.resolution : undefined, prereg: CLERK.readPrereg(dirname(DB_PATH)), observationId: /^O\d{6}$/.test(args[0]) ? args[0] : null, acceptance: /^O\d{6}$/.test(args[0]) ? acceptanceOf(db, args[0]) : null });
     console.log(req('./judicial/protocol.js').protocolText(req('./judicial/protocol.js').protocolVerdict(db, scA, { prereg: CLERK.readPrereg(dirname(DB_PATH)), runAt: new Date().toISOString() })) + '\n');
     console.log(OC.verdictText(v));
     process.exit(v.error ? 1 : 0);
   }
   case 'prompt': {
     console.log(DefDB.promptText(loadDB(), { material: args[0] ? readFileSync(args[0], 'utf8') : '' }));
+    break;
+  }
+  case 'transition': { // 전환 기록 (한 세션 = 한 모드) — <기록.json> 을 검사해 workspace/transitions.jsonl 끝에 붙인다 · 인자 없으면 목록
+    if (!args[0]) { for (const t of CLERK.readTransitions(HERE)) console.log(`#${t.seq} ${t.at} ${t.from} → ${t.to}: ${t.why}`); break; }
+    const rec = JSON.parse(readFileSync(args[0], 'utf8'));
+    CLERK.appendTransition(rec, HERE);
+    console.log(`전환 기록 추가 (입법 서기): ${rec.from} → ${rec.to} — ${CLERK.TRANSITIONS}`);
     break;
   }
   default:
@@ -763,7 +771,7 @@ function textbookAppendix(db, map) {
     ['형식 버전', db.version], ['개념 T', Object.keys(db.terms).length], ['정의항 D', senses.length], ['기전 단계 S', Object.keys(db.steps).length], ['한계 L', lim.length],
     ['다음 번호 (meta.next)', Object.entries(db.meta.next).map(([k, v]) => `${k}${String(v).padStart(6, '0')}`).join(' ')],
     ['정의항 종류별', Object.entries(byKind).sort().map(([k, n]) => `${k} ${n}`).join(', ')],
-    ['부위 / 구조 참조(R2) 있는 부위', `${sites.length} / ${sites.filter((x) => x.structure).length}`],
+    ['부위 / 구조 참조(structure 해상도) 있는 부위', `${sites.length} / ${sites.filter((x) => x.structure).length}`],
     ['규칙 (상태 의미 / 전이 / 속도 상수 있음)', `${rules.filter((r) => r.type === 'meaning').length} / ${rules.filter((r) => r.type === 'transition').length} / ${rules.filter((r) => r.kinetics).length}`],
     ['관찰(obs)', senses.reduce((n, d) => n + d.obs.length, 0)],
     ['근거 수준 (설명·규칙·관찰)', Object.entries(ev).sort().map(([k, n]) => `${k} ${n}`).join(', ')],
@@ -777,7 +785,7 @@ function textbookAppendix(db, map) {
     const st = ix.stepsIn(pid); if (!st.length) continue;
     const m = DefDB.findMotifs(db, pid, ix), rp = ORCH.resolutionPlan(db, pid);
     const need = [0, 1, 2].map((n) => rp.rows.filter((r) => r.need === n).length);
-    prow.push([`${pid} ${ix.label(pid)}`, st.length, m.trajectory.join(' → '), Object.keys(m.found).join(', '), `R0 ${need[0]} · R1 ${need[1]} · R2 ${need[2]}`]);
+    prow.push([`${pid} ${ix.label(pid)}`, st.length, m.trajectory.join(' → '), Object.keys(m.found).join(', '), `pool ${need[0]} · site ${need[1]} · structure ${need[2]}`]);
   }
   out.push(...T(['경로', '단계', '위치 궤적', '찾은 패턴', '필요 해상도'], prow), '');
   // 3. 저장 지도

@@ -1,0 +1,3 @@
+{"file":"tests/rules.test.mjs","token":"L0000","reason":"정규식 조각 /L0000\\d\\d/ — 번호가 아님"}
+{"file":"FEATURES.md","token":"F+1","reason":"구현하지 않은 지난 설계(feature_legacy)의 임시 번호 예시"}
+{"file":"rebuild/ledger/units.jsonl","token":"F+1","reason":"FEATURES.md 원문 줄을 장부로 옮긴 것 — 지난 설계의 임시 번호 예시"}

@@ -1,4 +1,4 @@
-# START-HERE — AI 작업자 첫 맥락 (이 파일만 읽고 시작한다)
+# START-HERE — 수집가(collector) 역할 안내 (입구는 `CLAUDE.md` → `node rebuild/gate.mjs open author`, 역할 `BIODB_ROLE=collector`)
 
 너는 이 저장소의 **수집가(collector)**다. 아래만 지키면 된다. 짧게 쓰여 있으니 **전부 읽어라.**
 
@@ -9,7 +9,7 @@
 ## 1. 절대 규칙 (어기면 안 된다)
 
 1. **쓰기는 `workspace/` 안에서만.** `data/db.json`·`vocab.js`·`model.js`·`core.js`·`judicial/`·`legislative/`·`compiler/`·`engine/`·테스트 — **읽기만**, 절대 수정 금지.
-2. **이 명령들 금지**: `node dbtool.mjs augment apply`·`merge`·`register` · `git commit`·`git push`.
+2. **이 명령들 금지**(문지기 훅이 `BIODB_ROLE=collector` 를 보고 막는다): `node dbtool.mjs augment apply`·`merge`·`register`·`attest`·`accept`. `git commit`·`git push` 는 자기 브랜치 `collector/*` 에, 바뀐 파일이 `workspace/handoff/` 뿐일 때만(결정 ②).
 3. **지어내지 마라.** 값·DOI·종·세포를 상상하지 않는다. 조회·원문으로 확인 못 하면 **"없음"** 이라고 쓴다. 이게 가장 중요하다.
    - **인용·값은 지정 1차 출처 API(`workspace/SOURCES.md`)가 반환한 내용에서만.** 웹 검색 스니펫·2차 리뷰를 값·인용 근거로 쓰지 마라(TASK-002 교훈: 스니펫 인용이 원문에 없어 검증 불패). 초록에 값이 없으면 "전문 필요"로 표시. 계정 필요 출처는 직접 손대지 마라 — BRENDA 만 `fetch` 서버의 `brenda_kinetics` 도구로 부른다(계정은 도구 안, 너는 보지 않는다). 그 밖은 "통합가 필요"로.
 4. **큰 파일 통째로 읽지 마라.** `data/db.json`(675KB)·`CHANGES.md`·`limitations.md` — 아래 조회 명령으로 필요한 줄만.

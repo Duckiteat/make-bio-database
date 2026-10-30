@@ -22,6 +22,7 @@ const STF = require('./judicial/stiffness.js');
 const OC = require('./judicial/obs_compare.js');
 const SA = require('./judicial/stoch_audit.js');
 const M = require('./model.js');
+const COUPLING = require('./engine/coupling.js');
 
 // ----- 사건 기반·속도 시뮬레이션 -----
 const pools = (db, target) => { const s = C.simulate(db, target, { rounds: 0 }); return s.error ? undefined : { source: s.source }; };
@@ -51,8 +52,9 @@ const fateBrief = (db, sid, opt) => { const v = runFate(db, sid, opt); return v.
 
 // ----- 비교 검토: 변형마다 행정부 실행 (본 실행·수렴 기준·시간) → 사법부 판정 -----
 const timed = (f) => { const t0 = process.hrtime.bigint(), r = f(); return { r, ms: Number(process.hrtime.bigint() - t0) / 1e6 }; };
-// 수렴 기준 (수치 L2 의 기준): 같은 결합 적분기를 허용 오차를 기본의 1/1000 로 좁혀 — 시나리오의 다른 값은 그대로 (1.5단계, 예전 '명시 1%' 기준은 자기 오차 ~1e-3)
-const refScenario = (sc) => ({ ...sc, integrator: { ...(sc.integrator || {}), rtol: 1e-9, atol: 1e-5 } });
+// 수렴 기준 (수치 L2 의 기준): 같은 결합 적분기를 그 시나리오의 허용 오차 × ref_tol_factor(등록부, 기본 1/1000)로 좁혀 — 시나리오의 다른 값은 그대로
+//   (1.5단계 — 고정 '명시 1%' 기준은 자기 오차가 ~1e-3 이라 기준이 못 됨). 배율은 곱으로: 1e-6 × 1e-3 = 1e-9 가 비트까지 같다 (나눗셈은 한 ulp 어긋남)
+const refScenario = (sc) => { const cp = COUPLING.resolve(sc); return { ...sc, integrator: { ...(sc.integrator || {}), rtol: cp.rtol * cp.ref_tol_factor, atol: cp.atol * cp.ref_tol_factor } }; };
 function runVariant(db, state, sc, opt) {
   const A = F.assemble(C.normalize(db), state, sc);
   if (A.error) return { error: A.error };

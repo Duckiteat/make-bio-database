@@ -14,7 +14,7 @@
 //   저장소 **밖**(tmp·스크래치 사본, `--db` 로 가리킨 다른 저장소)은 구역 표가 다루지 않는다 — 저장소의 코드·데이터·증명을
 //   건드리지 못하게 막는 것이 목적이고, 밖은 애초에 그것이 아니다. 막는 것은 '저장소 안인데 그 구역이 아닌 자리' 다
 //   (예: 병합이 judicial/ 에, 받기가 engine/ 에 쓰려는 경우).
-import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync, statSync, linkSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, basename, relative, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -29,7 +29,7 @@ const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '..');
 const sha = (x) => createHash('sha256').update(x).digest('hex');
 const serialize = (db) => JSON.stringify(db, null, 2) + '\n';
 const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15);
-const refuse = (m) => { throw new Error('입법 서기 거부: ' + m); };
+const refuse = (rule, m) => { const e = new Error('입법 서기 거부: ' + m); e.rule = rule; throw e; }; // rule: 집행하는 규칙 번호
 const log = [];
 
 // 파생 문서가 놓일 수 있는 곳 (서기가 쓰는 위치 목록 — 이 밖으로는 쓰지 않는다; 보고서는 사용자가 지정)
@@ -44,28 +44,34 @@ export const ZONES = {
   report:      { label: '사용자 보고서', deny: ['data', 'attestations', 'judicial', 'legislative', 'engine', 'compiler', 'migrations', 'schemas', 'tests'], rule: '위치는 사용자가 정한다 — 저장소의 코드·데이터·증명 위치에는 쓰지 않는다' },
   draft:       { label: '초안 (패치·리팩터링 제안)', outsideOnly: true, rule: '저장소 밖(스크래치·임시 폴더)에만' },
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
+  transition:  { label: '전환 기록 (세션 사이 인계)', allow: ['workspace/transitions.jsonl'], rule: '사법부 전환 기록 검사(judicial/transition_audit.js)가 통과할 때만 — 추가만 한다' },
+  receipt:     { label: '영수증 (세션 작업 기록)', allow: ['workspace/receipts/'], rule: '문지기(gate.mjs — 재건 7 단계)가 도구 호출마다 덧붙인다 — 사슬(prev)로 이어 붙이기만, 고치지 않는다 (재건 7 단계)' },
+  rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md', 'CLAUDE.md', 'docs/modes/', '.claude/skills/'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·계획 기록과 그 생성 문서만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
 // 구역 검사 — 통과한 절대 경로를 돌려준다. 저장소 밖은 구역 표가 다루지 않는다(위 머리말).
 function zoned(zone, file) {
   const z = ZONES[zone];
-  if (!z) refuse(`알 수 없는 구역 '${zone}'`);
+  if (!z) refuse('RULE-0014', `알 수 없는 구역 '${zone}'`);
   const abs = resolve(file), rel = relative(ROOT, abs), outside = rel === '' || rel.startsWith('..');
-  if (z.outsideOnly) { if (!outside) refuse(`${z.label} 는 ${z.rule} (${rel})`); return abs; }
+  if (z.outsideOnly) { if (!outside) refuse('RULE-0014', `${z.label} 는 ${z.rule} (${rel})`); return abs; }
   if (outside) return abs;
-  if (z.allow && !z.allow.some((a) => rel === a || rel.startsWith(a.endsWith('/') ? a : a + sep))) refuse(`${z.label} 가 아닌 자리에 쓰려 함: ${rel} — 허용 ${z.allow.join(', ')}`);
-  if (z.deny && (z.deny.some((d) => rel === d || rel.startsWith(d + sep)) || /\.(js|mjs|json)$/.test(abs) || GUARDED_FILES.includes(rel))) refuse(`보고서를 저장소의 보호된 위치(${rel})에 쓸 수 없음`);
+  if (z.allow && !z.allow.some((a) => rel === a || rel.startsWith(a.endsWith('/') ? a : a + sep))) refuse('RULE-0211', `${z.label} 가 아닌 자리에 쓰려 함: ${rel} — 허용 ${z.allow.join(', ')}`);
+  if (z.deny && (z.deny.some((d) => rel === d || rel.startsWith(d + sep)) || /\.(js|mjs|json)$/.test(abs) || GUARDED_FILES.includes(rel))) refuse('RULE-0014', `보고서를 저장소의 보호된 위치(${rel})에 쓸 수 없음`);
   return abs;
 }
 // 이 저장소에서 파일에 쓰는 단 하나의 함수 — 구역을 반드시 지난다
-const put = (zone, file, text) => { const abs = zoned(zone, file); mkdirSync(dirname(abs), { recursive: true }); const tmp = abs + '.part'; writeFileSync(tmp, text); renameSync(tmp, abs); log.push(relative(process.cwd(), abs) || abs); return abs; };
+// 권위 있는 구역(데이터·도장·증거·파생·핸드오프·전환)에 이 저장소 안으로 쓰는 프로세스는 단일 작성자 잠금을 잡는다 — MCP clerk 든 dbtool 이든 (RULE-0018, 재건 7 단계)
+const LOCKED = new Set(['registry', 'attestation', 'evidence', 'derived', 'handoff', 'transition']);
+let held = null;
+const put = (zone, file, text) => { const abs = zoned(zone, file); if (LOCKED.has(zone) && !held) { const r = relative(ROOT, abs); if (r && !r.startsWith('..')) { writerLock(ROOT); } } mkdirSync(dirname(abs), { recursive: true }); const tmp = abs + '.part'; writeFileSync(tmp, text); renameSync(tmp, abs); log.push(relative(process.cwd(), abs) || abs); return abs; };
 
 // ① 병합 기록: 관문 봉인이 통과이고 봉인의 db 가 쓸 db 와 같을 때만 data/patches/ 기록 + data/db.json
 export function commitMerge({ dbPath, db, records, seal }) {
-  if (!ATT.checkSeal(seal)) refuse('관문 봉인이 없거나 변조됨');
-  if (!seal.ok) refuse(`관문 판결이 거부 (오류 ${seal.errors}, 경고 ${seal.warnings})`);
+  if (!ATT.checkSeal(seal)) refuse('RULE-0015', '관문 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0422', `관문 판결이 거부 (오류 ${seal.errors}, 경고 ${seal.warnings})`);
   const text = serialize(db);
-  if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 쓰려는 db 가 다름 — 판결을 다른 데이터에 재사용할 수 없음');
+  if (sha(text) !== seal.db_sha256) refuse('RULE-0015', '봉인된 db 와 쓰려는 db 가 다름 — 판결을 다른 데이터에 재사용할 수 없음');
   const patchDir = join(dirname(dbPath), 'patches'), written = [];
   for (const r of records) written.push(put('registry', join(patchDir, `${stamp()}-${r.name.replace(/\.json$/, '')}.json`), JSON.stringify({ applied_at: new Date().toISOString(), ...r.record }, null, 2) + '\n'));
   const event = appendEvent(dirname(dbPath), records, seal);
@@ -93,11 +99,11 @@ function appendEvent(dataDir, records, seal) {
 // ①″ 형식 변환 (migrations/): 사법부 검사 봉인이 있을 때만 db 를 쓰고, 기원이 있으면 사건 종류 'migration' 으로 사슬에 남긴다.
 //   사건 = { seq, at, kind: 'migration', script, script_sha256, from_sha256, recorded_at, db_sha256, prev } — 재생은 그 스크립트의 transform 을 다시 돌린다.
 export function commitMigration({ dbPath, db, seal, script, scriptText, fromSha, recorded_at }) {
-  if (!ATT.checkSeal(seal)) refuse('검사 봉인이 없거나 변조됨');
-  if (!seal.ok) refuse('검사 판결이 거부');
+  if (!ATT.checkSeal(seal)) refuse('RULE-0507', '검사 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0507', '검사 판결이 거부');
   const text = serialize(db);
-  if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 쓰려는 db 가 다름');
-  if (!/^migrations\/[^/]+\.js$/.test(script)) refuse(`형식 변환 스크립트는 migrations/ 의 CommonJS 파일이어야 함 (${script})`);
+  if (sha(text) !== seal.db_sha256) refuse('RULE-0507', '봉인된 db 와 쓰려는 db 가 다름');
+  if (!/^migrations\/[^/]+\.js$/.test(script)) refuse('RULE-0206', `형식 변환 스크립트는 migrations/ 의 CommonJS 파일이어야 함 (${script})`);
   const dir = join(dirname(dbPath), LOG.dir), gf = join(dir, LOG.genesis);
   let event = null;
   if (existsSync(gf)) {
@@ -112,12 +118,12 @@ export function commitMigration({ dbPath, db, seal, script, scriptText, fromSha,
 }
 // 기원 체크포인트: 지금 db 를 사법부가 검사해 봉인한 것만 기원으로 쓴다. 한 번만 — 이미 있으면 거부.
 export function sealGenesis({ dbPath, db, seal, note }) {
-  if (!ATT.checkSeal(seal)) refuse('관문 봉인이 없거나 변조됨');
-  if (!seal.ok) refuse(`검사 판결이 거부 (오류 ${seal.errors}, 경고 ${seal.warnings})`);
+  if (!ATT.checkSeal(seal)) refuse('RULE-0507', '관문 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0507', `검사 판결이 거부 (오류 ${seal.errors}, 경고 ${seal.warnings})`);
   const text = serialize(db);
-  if (sha(text) !== seal.db_sha256) refuse('봉인된 db 와 기원으로 쓰려는 db 가 다름');
+  if (sha(text) !== seal.db_sha256) refuse('RULE-0507', '봉인된 db 와 기원으로 쓰려는 db 가 다름');
   const dir = join(dirname(dbPath), LOG.dir);
-  if (existsSync(join(dir, LOG.genesis))) refuse('기원 체크포인트가 이미 있음 — 기원은 한 번만 만든다');
+  if (existsSync(join(dir, LOG.genesis))) refuse('RULE-0507', '기원 체크포인트가 이미 있음 — 기원은 한 번만 만든다');
   const g = { format: 'definition-db-log', version: 1, at: new Date().toISOString(), db_sha256: seal.db_sha256, root: sha('genesis\n' + seal.db_sha256), snapshot: LOG.snapshot, note: note || '' };
   put('registry', join(dir, LOG.snapshot), text);
   put('registry', join(dir, LOG.genesis), JSON.stringify(g, null, 2) + '\n');
@@ -128,12 +134,12 @@ export function sealGenesis({ dbPath, db, seal, note }) {
 const PREREG = 'preregistrations.jsonl', PREREG_GENESIS = sha('preregistration\n');
 export function readPrereg(dataDir) { const f = join(dataDir, PREREG); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; }
 export function registerPrereg({ dataDir, scenario, seal, assumptions }) {
-  if (!ATT.checkSeal(seal)) refuse('규약 판정 봉인이 없거나 변조됨');
-  if (!seal.ok) refuse(`규약 판정이 거부 (위반 ${seal.errors})`);
-  if (sha(JSON.stringify(scenario, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 시나리오와 등록하려는 시나리오가 다름');
+  if (!ATT.checkSeal(seal)) refuse('RULE-0507', '규약 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0507', `규약 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(scenario, null, 2) + '\n') !== seal.db_sha256) refuse('RULE-0507', '봉인된 시나리오와 등록하려는 시나리오가 다름');
   const entries = readPrereg(dataDir), h = sha(ATT.canon(scenario)); // 시나리오는 가정 번호를 푼 내용 — 해시가 번호의 숫자까지 고정한다 (가정 번호 목록은 assumptions 로 함께)
   const dup = entries.find((e) => e.scenario_sha256 === h);
-  if (dup) refuse(`이미 등록된 시나리오 (#${dup.seq}, ${dup.at})`);
+  if (dup) refuse('RULE-0181', `이미 등록된 시나리오 (#${dup.seq}, ${dup.at})`);
   const last = entries[entries.length - 1];
   const body = { seq: entries.length + 1, at: new Date().toISOString(), scenario_sha256: h, name: scenario.name || '', question: (scenario.protocol || {}).question || '', ...(assumptions && assumptions.length ? { assumptions } : {}), prev: last ? last.root : PREREG_GENESIS };
   const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) }, f = join(dataDir, PREREG);
@@ -146,9 +152,9 @@ export function registerPrereg({ dataDir, scenario, seal, assumptions }) {
 const DICT = 'dictionary.jsonl', DICT_GENESIS = sha('dictionary\n');
 export function readDictionary(dataDir) { const f = join(dataDir, DICT); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim() && !l.trim().startsWith('//')).map((l) => JSON.parse(l)) : []; }
 export function appendDictionary({ dataDir, proposals, seal }) {
-  if (!ATT.checkSeal(seal)) refuse('사전 판정 봉인이 없거나 변조됨');
-  if (!seal.ok) refuse(`사전 판정이 거부 (위반 ${seal.errors})`);
-  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 항목과 쓰려는 항목이 다름');
+  if (!ATT.checkSeal(seal)) refuse('RULE-0507', '사전 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0507', `사전 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('RULE-0507', '봉인된 항목과 쓰려는 항목이 다름');
   const events = readDictionary(dataDir), f = join(dataDir, DICT), at = new Date().toISOString(), out = [];
   let prev = events.length ? events[events.length - 1].root : DICT_GENESIS;
   for (const p of proposals) {
@@ -165,9 +171,9 @@ export function appendDictionary({ dataDir, proposals, seal }) {
 const ASSUME = 'assumptions.jsonl', ASSUME_GENESIS = sha('assumptions\n');
 export function readAssumptions(dataDir) { const f = join(dataDir, ASSUME); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []; }
 export function appendAssumptions({ dataDir, proposals, seal }) {
-  if (!ATT.checkSeal(seal)) refuse('가정 판정 봉인이 없거나 변조됨');
-  if (!seal.ok) refuse(`가정 판정이 거부 (위반 ${seal.errors})`);
-  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('봉인된 기록과 쓰려는 기록이 다름');
+  if (!ATT.checkSeal(seal)) refuse('RULE-0086', '가정 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0086', `가정 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('RULE-0086', '봉인된 기록과 쓰려는 기록이 다름');
   const events = readAssumptions(dataDir), f = join(dataDir, ASSUME), at = new Date().toISOString(), out = [];
   let prev = events.length ? events[events.length - 1].root : ASSUME_GENESIS;
   for (const p of proposals) {
@@ -195,9 +201,9 @@ export function appendAttestations({ root, stamps, db, context }) {
     const v = st.claim === 'trend' ? TR.verifyTrendStamp(st, db, { root, reverify: true, registry: reg })
       : st.claim === 'accept' ? ACC.checkIssue(st, db, context) // context = 신뢰 지표 입력(도장·문헌 상태·추세) — 부르는 쪽이 모은다
       : ATT.verifyStamp(st, db, { root, reverify: true });
-    if (!v.ok) refuse(`도장 ${v.key}: ${v.reasons.join(' · ')}`);
+    if (!v.ok) refuse('RULE-0016', `도장 ${v.key}: ${v.reasons.join(' · ')}`);
     // 승인 도장(claim 'accept')은 추가만 — 승인·철회의 경과가 등록부에 남고, 같은 주체의 마지막 도장이 유효 (build-plan 76). 다른 주장은 같은 주체를 갈아 끼운다
-    if (st.claim === 'accept') { if (reg.stamps.some((x) => x.digest === st.digest)) refuse(`도장 ${v.key}: 같은 승인 도장이 이미 있음`); }
+    if (st.claim === 'accept') { if (reg.stamps.some((x) => x.digest === st.digest)) refuse('RULE-0102', `도장 ${v.key}: 같은 승인 도장이 이미 있음`); }
     else reg.stamps = reg.stamps.filter((x) => ATT.subjectKey(x.subject) !== v.key);
     reg.stamps.push(st);
   }
@@ -207,7 +213,7 @@ export function appendAttestations({ root, stamps, db, context }) {
 
 // ③ 파생 문서 (limitations.md · 교과서 부록 · 수동 수집 과제)
 export function writeDerived(kind, content, root) {
-  if (!DERIVED[kind]) refuse(`알 수 없는 파생 문서 '${kind}'`);
+  if (!DERIVED[kind]) refuse('RULE-0014', `알 수 없는 파생 문서 '${kind}'`);
   return put('derived', join(root || ROOT, DERIVED[kind]), content);
 }
 // 수동 수집 과제 (증거 구역 = 수신함 안에만 — 자리 검사는 구역이 한다)
@@ -219,13 +225,62 @@ export const derivedPath = (kind, root) => join(root || ROOT, DERIVED[kind]);
 // ④ CHANGES.md 맨 위 표에 한 행
 export function insertChangesRow(row, root) {
   const ch = join(root || ROOT, 'CHANGES.md'), txt = readFileSync(ch, 'utf8'), anchor = '|---|---|---|---|---|\n', i = txt.indexOf(anchor);
-  if (i < 0) refuse('CHANGES.md 표 머리를 찾지 못함');
+  if (i < 0) refuse('RULE-0191', 'CHANGES.md 표 머리를 찾지 못함');
   return put('derived', ch, txt.slice(0, i + anchor.length) + row + txt.slice(i + anchor.length));
 }
 
 // ⑤ 사용자가 요청한 보고서 파일 (예: fate --report 파일.md) — 저장소의 데이터·코드·증명 위치에는 쓰지 않는다
 export function writeReport(file, content) {
   return put('report', resolve(file), content);
+}
+
+// ⑤′ 재건 관리 파일 (rebuild/status 안의 .md) — 읽기 점검용, 다른 코드가 입력으로 쓰지 않는다
+export function writeStatus(name, content, root) {
+  if (!/^[0-9a-z-]+\.md$/.test(name) && name !== 'status.json') refuse('RULE-0014', `관리 파일 이름 '${name}' — 소문자·숫자·하이픈 .md 와 status.json 만`);
+  return put('rebuild', join(root || ROOT, 'rebuild', 'status', name), content);
+}
+// 중심 문서 · 모드 문서 · 스킬 (재건 8 단계 — 규칙 장부·모드 원본에서 생성, 손으로 고치지 않는다)
+export function writeHubDoc(name, content, root) {
+  if (!/^(CLAUDE\.md|docs\/modes\/[a-z]+\.md|\.claude\/skills\/[a-z]+\/SKILL\.md)$/.test(name)) refuse('RULE-0014', `중심·모드 문서 이름 '${name}' — CLAUDE.md · docs/modes/<모드>.md · .claude/skills/<모드>/SKILL.md 만`);
+  return put('rebuild', join(root || ROOT, ...name.split('/')), content);
+}
+
+// 6c 계획 기록 (재건 상태 폴더) — 지금(plans.jsonl)과 걸어온 길(plan-log.jsonl). 걸어온 길은 덧붙이기만: 새 글이 옛 글로 시작해야 한다
+export function writeState(name, content, root) {
+  if (!['plans.jsonl', 'plan-log.jsonl'].includes(name)) refuse('RULE-0014', `계획 기록 이름 '${name}' — plans.jsonl · plan-log.jsonl 만`);
+  const f = join(root || ROOT, 'rebuild', 'state', name);
+  if (name === 'plan-log.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0014', '계획의 걸어온 길(plan-log.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
+  return put('rebuild', f, content);
+}
+// 계획 문서 둘 — 계획 기록에서 생성한 글만 (손으로 고치지 않는다)
+export function writePlanDoc(plan, content, root) {
+  const rel = { build: ['docs', 'design', 'build-plan.md'], rebuild: ['rebuild', 'PLAN.md'] }[plan];
+  if (!rel) refuse('RULE-0014', `계획 '${plan}' — build · rebuild 만`);
+  return put('rebuild', join(root || ROOT, ...rel), content);
+}
+
+// 7 단계 영수증 — 세션 하나 = 파일 하나(workspace/receipts/<날짜>-<세션>.jsonl). 덧붙이기만: 사건마다 앞 줄의 sha256 을 prev 로 잇는다.
+//   사슬이 끊겨 있으면(누가 고쳤으면) 덧붙이지 않고 거부 — 문지기가 그 사실을 따로 알린다. .md 는 같은 이름의 사람용 보기(생성물)
+export function appendReceipt(root, name, ev) {
+  if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}' — <YYYY-MM-DD>-<세션>`);
+  const f = join(root || ROOT, 'workspace', 'receipts', name + '.jsonl'), old = existsSync(f) ? readFileSync(f, 'utf8') : '';
+  const lines = old.split('\n').filter(Boolean);
+  for (let i = 1; i < lines.length; i++) if (JSON.parse(lines[i]).prev !== sha(lines[i - 1])) refuse('RULE-0014', `영수증 ${name} 의 사슬이 ${i + 1} 째 줄에서 끊김 — 고친 흔적`);
+  const line = JSON.stringify({ ...ev, prev: lines.length ? sha(lines[lines.length - 1]) : null });
+  return put('receipt', f, old + line + '\n');
+}
+// 커밋에 영수증을 싣는다 — 세션 동안 저장소 밖에 쌓인 사슬(text)과 그 보기(md)를 저장소의 같은 이름으로. 사슬이 맞을 때만
+export function publishReceipt(root, name, text, md) {
+  if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}'`);
+  const lines = String(text).split('\n').filter(Boolean);
+  for (let i = 1; i < lines.length; i++) if (JSON.parse(lines[i]).prev !== sha(lines[i - 1])) refuse('RULE-0014', `영수증 ${name} 의 사슬이 ${i + 1} 째 줄에서 끊김 — 싣지 않는다`);
+  const d = join(root || ROOT, 'workspace', 'receipts');
+  put('receipt', join(d, name + '.md'), md);
+  return put('receipt', join(d, name + '.jsonl'), lines.join('\n') + '\n');
+}
+export function writeReceiptDoc(root, name, md) {
+  if (!/^\d{4}-\d{2}-\d{2}-[0-9a-zA-Z-]{4,40}$/.test(name)) refuse('RULE-0014', `영수증 이름 '${name}'`);
+  return put('receipt', join(root || ROOT, 'workspace', 'receipts', name + '.md'), md);
 }
 
 // ⑥ 임시 산출물 (패치 초안·리팩터링 제안) — 저장소 밖 임시 폴더에만
@@ -297,23 +352,49 @@ export function appendFetchLog(dir, results) {
 }
 
 // ⑨ 핸드오프 추가 (outsourcing-and-mcp.md §4.3): 수집가가 쓸 수 있는 유일한 자리. 후보 줄을 붙이기만 한다 — 고치거나 지우지 않는다.
+// 전환 기록 (한 세션 = 한 모드): 검사 통과 뒤 순번(seq)을 붙여 끝에 한 줄 — 앞선 줄은 그대로 둔다
+const TA = require('../judicial/transition_audit.js');
+export const TRANSITIONS = 'workspace/transitions.jsonl';
+export function readTransitions(root) { const f = join(root || ROOT, TRANSITIONS); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; }
+export function appendTransition(rec, root) {
+  const v = TA.checkTransition(rec, root || ROOT);
+  if (!v.ok) refuse(v.rules[0], `전환 기록 검사 실패 — ${v.errors.join(' · ')}`);
+  const f = join(root || ROOT, TRANSITIONS), prev = readTransitions(root);
+  const line = JSON.stringify({ seq: prev.length + 1, ...Object.fromEntries(TA.FIELDS.map((k) => [k, rec[k]])) });
+  return put('transition', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + line + '\n');
+}
 export function appendHandoff(name, lines) {
-  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(String(name))) refuse(`핸드오프 이름 '${name}' — 소문자·숫자·하이픈만`);
-  if (!Array.isArray(lines) || !lines.length) refuse('붙일 후보 줄이 없음');
-  const rows = lines.map((l, i) => { const o = typeof l === 'string' ? JSON.parse(l) : l; if (!o || typeof o !== 'object' || Array.isArray(o)) refuse(`${i + 1}번째 후보가 JSON 객체가 아님`); return JSON.stringify(o); });
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(String(name))) refuse('RULE-0019', `핸드오프 이름 '${name}' — 소문자·숫자·하이픈만`);
+  if (!Array.isArray(lines) || !lines.length) refuse('RULE-0019', '붙일 후보 줄이 없음');
+  const rows = lines.map((l, i) => { const o = typeof l === 'string' ? JSON.parse(l) : l; if (!o || typeof o !== 'object' || Array.isArray(o)) refuse('RULE-0019', `${i + 1}번째 후보가 JSON 객체가 아님`); return JSON.stringify(o); });
   const f = join(ROOT, 'workspace', 'handoff', `${name}.jsonl`);
   return put('handoff', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + rows.join('\n') + '\n');
 }
 
-// ⑩ 단일 작성자 잠금 (outsourcing-and-mcp.md §4.3): 저장소마다 입출력기(MCP clerk 서버) 하나. 잠금은 저장소 밖(운영체제 임시 폴더) —
-//   쓰기는 put('draft') — 저장소 밖만 허용하는 구역. 살아 있는 작성자가 있으면 거부, 죽은 잠금은 치운다. 돌려준 함수로 푼다.
+// ⑩ 단일 작성자 잠금 (outsourcing-and-mcp.md §4.3 · RULE-0018): 저장소마다 작성자 하나 — MCP clerk 는 뜰 때, 다른 프로세스(dbtool …)는 권위 구역에 처음 쓸 때 잡는다.
+//   잠금은 저장소 밖(운영체제 임시 폴더). 잡기는 원자적: 내 pid 를 담은 임시 파일을 잠금 이름으로 hard link — 이미 있으면 실패한다(확인과 쓰기 사이 틈 없음).
+//   살아 있는 다른 작성자면 거부, 죽은 잠금은 치우고 한 번 더. 프로세스가 끝나면 푼다. 돌려준 함수로도 푼다.
 export function writerLock(root = ROOT) {
   const f = join(tmpdir(), `biodb-clerk-${sha(resolve(root)).slice(0, 16)}.lock`);
+  if (held && held.f === f) return held.release;
   const alive = (pid) => { try { process.kill(pid, 0); return true; } catch (e) { return false; } };
-  if (existsSync(f)) { const pid = +readFileSync(f, 'utf8'); if (pid && alive(pid)) refuse(`입출력기가 이미 떠 있음 (pid ${pid}) — 작성자는 하나`); unlinkSync(f); }
-  put('draft', f, String(process.pid)); // 저장소 밖 — draft 구역(저장소 밖만)
-  if (+readFileSync(f, 'utf8') !== process.pid) refuse('입출력기 잠금을 다른 작성자가 먼저 잡음');
-  return () => { try { if (+readFileSync(f, 'utf8') === process.pid) unlinkSync(f); } catch (e) { /* 이미 없음 */ } };
+  const mine = join(tmpdir(), `biodb-clerk-${process.pid}-${Date.now()}.pid`);
+  put('draft', mine, String(process.pid)); // 저장소 밖 — draft 구역(저장소 밖만)
+  try {
+    for (let tries = 0; ; tries++) {
+      try { linkSync(mine, f); break; } catch (e) {
+        if (e.code !== 'EEXIST') throw e;
+        const pid = +readFileSync(f, 'utf8');
+        if (pid && pid !== process.pid && alive(pid)) refuse('RULE-0018', `작성자가 이미 떠 있음 (pid ${pid}) — 저장소마다 작성자는 하나 (MCP clerk 또는 다른 dbtool 쓰기)`);
+        if (tries) refuse('RULE-0018', '입출력기 잠금을 다른 작성자가 먼저 잡음');
+        try { unlinkSync(f); } catch (e2) { /* 다른 쪽이 먼저 치움 */ }
+      }
+    }
+  } finally { try { unlinkSync(mine); } catch (e) { /* 없음 */ } }
+  const release = () => { try { if (+readFileSync(f, 'utf8') === process.pid) unlinkSync(f); } catch (e) { /* 이미 없음 */ } if (held && held.f === f) held = null; };
+  held = { f, release };
+  process.once('exit', release);
+  return release;
 }
 
 export const writtenFiles = () => log.slice();

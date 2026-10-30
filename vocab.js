@@ -235,7 +235,7 @@
   // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
   thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
-  // ===== 합의 창 (추세 점검, judicial/trend.js) — 원천별 (2026-10-24 결정) =====
+  // ===== 합의 창 (추세 점검, judicial/trend.js) — 원천별 (사용자 결정, CHANGES 참고) =====
   // 추세 도장은 "그 원본의 그 판과 같다" 까지만 주장한다. 원천이 다음 판을 낼 수 있는 시점을 지나면 '지금도 합의와 같다' 는 확인되지 않은 것 →
   // 다시 '점검하지 않음' 이 되어 anchor 가 내려간다. 그래서 창 = 원천이 공표한 판 주기(일). 도장의 증거 종류(evidence.kind)로 원천을 고른다.
   // 표에 없는 원천의 도장은 창이 없으므로 만료로 본다(창을 지어내지 않음). basis 는 reasonBasis 의 열쇠.
@@ -256,7 +256,7 @@
     standard: { label: '기준', note: '다른 값을 재는 고정점 — 승인 + 독립 단위 ≥ 2 (I 축 전에는 닿지 못함)' },
   },
 
-  // ===== 이유의 종류 (신뢰 지표 기준·등급·정책의 basis, judicial/reliability.js) — 2026-10-24 결정 =====
+  // ===== 이유의 종류 (신뢰 지표 기준·등급·정책의 basis, judicial/reliability.js) — 사용자 결정 =====
   // 기준마다 "왜" 를 적을 뿐 아니라 그 이유가 어떤 종류인지 가른다 — 원칙에서 나온 것과 편의·결정에서 나온 것을 섞지 않게.
   //   결정(decision)이 붙은 이유는 사용자 결정의 날짜를 why 에 적는다. 이유가 없으면 basis 를 비우지 않고 open 으로 드러낸다.
   reasonBasis: {
@@ -296,16 +296,25 @@
     threshold:  { label: '표지 문턱 — 목표 상태의 모든 표지가 문턱을 넘으면 도달 (가역일 수 있음)' },
   },
 
+  // ===== 세션 모드 (재건 PLAN §2·§3) — 한 세션 = 한 모드, 바꿀 때는 전환 기록 =====
+  sessionModes: {
+    author: { label: '정보 작성', note: '실측에 매인 사실을 늘린다 (수집가 포함)' },
+    baseline: { label: '기초시험', note: '지금 검증된 코어로 현실과 맞는지 본다' },
+    develop: { label: '디벨롭', note: '기계(엔진·컴파일러·판정 규칙·도구)를 고친다 — 사용자 요청 필수' },
+    field: { label: '적분장', note: '다음 엔진의 설계·시제품' },
+    inspect: { label: '점검·검증', note: '상태를 읽고 모은 후보를 판정한다 — 사람의 유일한 입구' },
+  },
+
   // ===== 혼합 해상도 (Hybrid-Resolution) — 전환 문턱 =====
   resolutionLevels: {
-    R0: { label: '위상 해상도', note: '위치·상태(묶음 키)만. 풀 안에서 확산·대기·수송하는 분자, 변환 단계.' },
-    R1: { label: '부위 해상도', note: '이름 붙은 부위·특징·잔기 번호·막 면. 결합·수식·전달 같은 부위 사건.' },
-    R2: { label: '구조 해상도', note: '반응 중심 부위의 3차원 구조 참조(PDB). 경쟁·특이성을 속도 상수로 가를 수 없을 때만.' },
+    pool: { label: '위상 해상도', note: '위치·상태(묶음 키)만. 풀 안에서 확산·대기·수송하는 분자, 변환 단계.' },
+    site: { label: '부위 해상도', note: '이름 붙은 부위·특징·잔기 번호·막 면. 결합·수식·전달 같은 부위 사건.' },
+    structure: { label: '구조 해상도', note: '반응 중심 부위의 3차원 구조 참조(PDB). 경쟁·특이성을 속도 상수로 가를 수 없을 때만.' },
   },
   resolutionThresholds: {
-    T1: { label: '부위 사건', up: 'R1', when: '규칙이 이름 붙은 부위를 바꾸거나(site·from_site·partner_site), 부위로 작용하거나(via_site), 부위 상태를 전제로 할 때(requires)' },
-    T2: { label: '구성 요소 화학량', up: 'R1', when: '결합체 형성·해리·분해 — 구성 요소 개수가 결과를 정할 때' },
-    T3: { label: '경쟁', up: 'R2', when: '같은 묶음을 두 단계 이상이 소비할 때. 속도 상수(Kd·kcat·Km)가 있으면 R1 에서 해결되고, 없으면 반응 중심 구조가 필요하다' },
+    site_event: { label: '부위 사건', up: 'site', when: '규칙이 이름 붙은 부위를 바꾸거나(site·from_site·partner_site), 부위로 작용하거나(via_site), 부위 상태를 전제로 할 때(requires)' },
+    stoichiometry: { label: '구성 요소 화학량', up: 'site', when: '결합체 형성·해리·분해 — 구성 요소 개수가 결과를 정할 때' },
+    competition: { label: '경쟁', up: 'structure', when: '같은 묶음을 두 단계 이상이 소비할 때. 속도 상수(Kd·kcat·Km)가 있으면 site 해상도에서 해결되고, 없으면 반응 중심 구조가 필요하다' },
     down: { label: '하향 전환 (반응 중심 → 풀)', when: '사건이 끝나 산물이 풀로 돌아갈 때 — 바뀐 부위는 묶음 키의 부위:특징으로 남고(무손실), 수송·해리는 특징 보존을 검사받는다' },
   },
 
@@ -505,6 +514,13 @@
     biological:  { label: '생물학적 변이 (개체·세포 간)' },
     combined:    { label: '둘을 가르지 않은 합산' },
   },
+  // 불확도 크기(sd)가 어디서 왔나 (RULE-0090 · DEC-0035). 없으면 reported 로 읽는다 — 옛 기록과 호환
+  //   resolution: 원문이 불확도를 보고하지 않아 sd = 보고된 유효 숫자 마지막 자리 해상도(보수적 기본, A). 잰 퍼짐이 아니다
+  //   — 반복 수로 나누지 않고(보고된 평균값 자체의 반올림) 퍼짐 검정에 쓰지 않는다. 측정 표준(GUM) 사각 분포로 읽으려면 sd/√12 (선택)
+  uncertaintyBases: {
+    reported:   { label: '원문이 보고한 불확도' },
+    resolution: { label: '미보고 — 유효 숫자 해상도로 채움 (잰 퍼짐 아님)', models: ['normal'] },
+  },
   noiseModels: {
     normal:    { label: '정규 (sd = 표준 편차, 같은 단위)' },
     lognormal: { label: '로그정규 (sd = ln 값의 표준 편차, 무차원) — 값 > 0', positive: true },
@@ -574,7 +590,7 @@
     PMID:     { pattern: '^[0-9]+$', url: 'https://pubmed.ncbi.nlm.nih.gov/{id}' },
     DOI:      { pattern: '^10\\.[0-9]{4,}/\\S+$', url: 'https://doi.org/{id}' },
   },
-  // 외부 ID 의 역할 (ChEBI 실험, 2026-10-10): 같은 분자에 ChEBI 항목이 세 종류 있다 — 중성 모체·pH 7.3 우세 이온 종·이온화 상태를 묶은 분류.
+  // 외부 ID 의 역할 (ChEBI 실험으로 확인): 같은 분자에 ChEBI 항목이 세 종류 있다 — 중성 모체·pH 7.3 우세 이온 종·이온화 상태를 묶은 분류.
   // 규약을 선언하지 않으면 셋이 섞여 화학식 대조가 조용히 건너뛰어진다(분류 항목은 화학식이 없다). 엔진·상호 운용이 읽는 것은 physiological 하나.
   xrefRoles: {
     physiological: { label: 'pH 7.3 우세 종 (반응 참여자 — 엔진·상호 운용이 읽는 번호)', note: '큐레이션된 반응 DB(Rhea)가 반응식에 쓰는 종. 중성 분자(포도당·CO₂)는 모체와 같은 번호다. 화학식이 있어야 한다 — 분류 항목은 쓸 수 없다.' },

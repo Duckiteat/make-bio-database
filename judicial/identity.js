@@ -222,39 +222,39 @@ function verifyIdentity(db, opt) {
     const evidence = { file: path.relative(process.cwd(), got.file) || got.file, sha256: got.sha };
     const src = `${evidence.file} · sha256:${got.sha.slice(0, 12)}`;
     if (t.kind === 'uniprot_entry') {
-      const u = got.data, d = db.senses[t.sense], fails = [];
-      if (u.accession !== t.key && !(u.secondary || []).includes(t.key)) fails.push(`번호 ${u.accession} ≠ ${t.key}`);
-      if (u.taxon !== (d.reference_species || V.defaultReferenceSpecies)) fails.push(`종 ${u.taxon} ≠ 기준 종 ${d.reference_species}`);
+      const u = got.data, d = db.senses[t.sense], fails = [], rules = [], fail = (rule, m) => { fails.push(m); rules.push(rule); }; // rules[i] = fails[i] 의 규칙 번호
+      if (u.accession !== t.key && !(u.secondary || []).includes(t.key)) fail('RULE-0511', `번호 ${u.accession} ≠ ${t.key}`);
+      if (u.taxon !== (d.reference_species || V.defaultReferenceSpecies)) fail('RULE-0511', `종 ${u.taxon} ≠ 기준 종 ${d.reference_species}`);
       const hit = nameHit(db, t.sense, [...u.genes, ...u.names, u.entryName && u.entryName.split('_')[0]]);
-      if (!hit) fails.push(`이름 불일치 — 원본 ${[...u.genes, ...u.names].slice(0, 4).join(' / ')} · 개념 ${namesOf(db, t.sense).join(' / ')}`);
+      if (!hit) fail('RULE-0511', `이름 불일치 — 원본 ${[...u.genes, ...u.names].slice(0, 4).join(' / ')} · 개념 ${namesOf(db, t.sense).join(' / ')}`);
       const others = holder('UniProt', u.accession).filter((x) => x !== t.sense);
-      if (others.length) fails.push(`${u.accession} 는 이미 ${others.join(', ')} 에 있음`);
-      if (u.accession !== t.key && !opt.sync) fails.push(`asserted 번호 ${t.key} 를 ${u.accession} 로 바꾸려면 sync`);
-      if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file }); continue; }
+      if (others.length) fail('RULE-0511', `${u.accession} 는 이미 ${others.join(', ')} 에 있음`);
+      if (u.accession !== t.key && !opt.sync) fail('RULE-0066', `asserted 번호 ${t.key} 를 ${u.accession} 로 바꾸려면 sync`);
+      if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file, rules }); continue; }
       const seqHash = u.sequence && u.length && u.sequence.length === u.length ? crypto.createHash('sha256').update(u.sequence.toUpperCase()).digest('hex') : null;
       row(t, 'verified', `검증 (이름 '${hit}', 종 ${u.taxon})`, { file: got.file, id: u.accession, evidence, src,
         facts: { db: 'UniProt', id: u.accession, from: t.key, format: u.format, reviewed: u.reviewed, entryVersion: u.entryVersion, sequenceVersion: u.sequenceVersion, taxon: u.taxon, name: hit, length: u.sequence ? u.length : null, seqHash } });
     } else if (t.kind === 'chebi_entity') {
-      const c = got.data, fails = [];
-      if (c.id !== t.key) fails.push(`번호 ${c.id} ≠ ${t.key}`);
+      const c = got.data, fails = [], rules = [], fail = (rule, m) => { fails.push(m); rules.push(rule); };
+      if (c.id !== t.key) fail('RULE-0511', `번호 ${c.id} ≠ ${t.key}`);
       const hit = nameHit(db, t.sense, [c.name, ...c.synonyms]);
-      if (!hit) fails.push(`이름 불일치 — 원본 '${c.name}' · 개념 ${namesOf(db, t.sense).join(' / ')}`);
+      if (!hit) fail('RULE-0511', `이름 불일치 — 원본 '${c.name}' · 개념 ${namesOf(db, t.sense).join(' / ')}`);
       const fc = formulaCheck(db, t.sense, c.formula);
-      if (fc.status === 'mismatch') fails.push(`화학식 ↔ 부분 구조: ${fc.note}`);
+      if (fc.status === 'mismatch') fail('RULE-0389', `화학식 ↔ 부분 구조: ${fc.note}`);
       const others = holder('ChEBI', c.id).filter((x) => x !== t.sense);
-      if (others.length) fails.push(`${c.id} 는 이미 ${others.join(', ')} 에 있음`);
+      if (others.length) fail('RULE-0511', `${c.id} 는 이미 ${others.join(', ')} 에 있음`);
       const s0 = db.senses[t.sense], existing = s0.xrefs.find((y) => y.db === 'ChEBI' && (t.role ? y.role === t.role : true) && y.id === c.id) ? null : s0.xrefs.find((y) => y.db === 'ChEBI' && (t.role ? y.role === t.role : !y.role));
-      if (existing && existing.id !== c.id && !opt.sync) fails.push(`asserted ${existing.id} 를 ${c.id} 로 바꾸려면 sync`);
+      if (existing && existing.id !== c.id && !opt.sync) fail('RULE-0066', `asserted ${existing.id} 를 ${c.id} 로 바꾸려면 sync`);
       // 역할 규약 (ChEBI 실험): physiological 은 분류 항목일 수 없고, 모체와 함께 있으면 conjugate 관계로 이어져 있어야 한다
-      if (t.role === 'physiological' && c.isClass) fails.push(`${c.id} 는 분류 항목(화학식 없음) — pH 7.3 우세 종이 될 수 없음`);
+      if (t.role === 'physiological' && c.isClass) fail('RULE-0063', `${c.id} 는 분류 항목(화학식 없음) — pH 7.3 우세 종이 될 수 없음`);
       let rhea = null;
       if (t.role === 'physiological') {
         const ru = readTask({ kind: 'rhea_usage', key: c.id, file: path.join(opt.dir || INBOX, fileOf('rhea_usage', c.id)) });
-        if (!ru || !ru.ok) fails.push(`반응 참여 자료(${fileOf('rhea_usage', c.id)}.tsv)가 수신함에 없음 — pH 7.3 우세 종 주장을 확인할 수 없음`);
-        else if (ru.data.reactions < RHEA_MIN) fails.push(`반응 참여 ${ru.data.reactions}회 < ${RHEA_MIN} — 반응 참여자로 쓰이는 종이 아님`);
+        if (!ru || !ru.ok) fail('RULE-0064', `반응 참여 자료(${fileOf('rhea_usage', c.id)}.tsv)가 수신함에 없음 — pH 7.3 우세 종 주장을 확인할 수 없음`);
+        else if (ru.data.reactions < RHEA_MIN) fail('RULE-0064', `반응 참여 ${ru.data.reactions}회 < ${RHEA_MIN} — 반응 참여자로 쓰이는 종이 아님`);
         else rhea = { reactions: ru.data.reactions, examples: ru.data.examples, file: path.relative(process.cwd(), ru.file) || ru.file, sha256: ru.sha };
       }
-      if (t.role === 'parent' && Number(c.charge) !== 0) fails.push(`${c.id} 는 전하 ${c.charge} — 중성 모체가 아님`);
+      if (t.role === 'parent' && Number(c.charge) !== 0) fail('RULE-0063', `${c.id} 는 전하 ${c.charge} — 중성 모체가 아님`);
       // 짝 역할과의 관계: 켤레 산·염기는 **수소와 전하만** 달라야 한다 (ATP C10H16… 0 ↔ ATP(4−) C10H12… −4).
       //   ChEBI 의 conjugate 관계는 한 단계씩만 이어져 있어(ATP ↔ ATP(3−) ↔ ATP(4−)) 직접 연결을 요구할 수 없다 — 화학식으로 검사한다.
       //   짝 항목 파일이 수신함에 있어야 한다 (받기는 입법 서기, 여기서는 읽기만).
@@ -275,7 +275,7 @@ function verifyIdentity(db, opt) {
           conj = { with: other.id, role: other.role, dH, dCharge: dQ, direct: c.conjugates.includes(other.id) };
         }
       }
-      if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file, formula: fc }); continue; }
+      if (fails.length) { row(t, 'rejected', fails.join(' · '), { file: got.file, formula: fc, rules }); continue; }
       const ikOK = c.inchikey && V.fingerprints.InChIKey.kinds.includes(s0.kind);
       const dupIK = ikOK ? Object.entries(db.senses).find(([oid, o]) => oid !== t.sense && o.fingerprint && o.fingerprint.value === c.inchikey) : null;
       row(t, 'verified', `검증 (이름 '${hit}', ${fc.status === 'ok' ? '부분 구조 원자 수 일치' : fc.note}${t.role ? ` · 역할 ${t.role}` : ''}${rhea ? ` · Rhea 반응 참여 ${rhea.reactions}회` : ''}${conj ? ` · 켤레 ${conj.with} 와 수소 ${conj.dH >= 0 ? '+' : ''}${conj.dH}·전하 ${conj.dCharge >= 0 ? '+' : ''}${conj.dCharge}` : ''})`, { file: got.file, id: c.id, formula: fc, evidence, src,

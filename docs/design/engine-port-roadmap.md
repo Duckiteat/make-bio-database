@@ -260,7 +260,7 @@
   - `trajectory[].path·nsub·gate` → `steps·rejects`
   - `process.gateEvents` 제거
   - `stats` 는 rhs·jac·steps·rejected·rejectedNeg·hMinHits·singular
-- 수렴 기준(비교 판정·Fate-Test F·보고서 수치 확인): 같은 적분기를 허용 오차 1/1000(rtol 1e-9, atol 1e-5)로 돌린다. 출처는 `orchestrator.refScenario` 이다.
+- 수렴 기준(비교 판정·Fate-Test F·보고서 수치 확인): 같은 적분기를 그 시나리오 허용 오차 × `ref_tol_factor`(engine/coupling.js 등록부, 기본 1/1000 — 기본 허용 오차면 rtol 1e-9, atol 1e-5)로 돌린다. 2026-10-26 전에는 1e-9·1e-5 를 고정해 시나리오가 허용 오차를 좁히면 1/1000 이 아니게 됐다(RULE-0052). 출처는 `orchestrator.refScenario` 이다.
 
 ### 정확도·비용 (8 시나리오, 48 h, Rust)
 

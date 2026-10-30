@@ -166,3 +166,20 @@ test('⑤ 관찰 연산자: 운명 원자료(결정론) → 분자 수(격자 �
   assert.equal(OP.predict(obs({ observable: { kind: 'fraction_above', target: 'D000165|nucleoplasm', threshold: e[k] - 1 } }), [raw])[0], 1, 'fraction_above: 문턱 이상 = 양성');
   assert.equal(OP.predict(obs({ observable: { kind: 'fraction_above', target: 'D000165|nucleoplasm', threshold: e[k] + 1 } }), [raw])[0], 0, 'fraction_above: 문턱 미만 = 음성');
 });
+
+// RULE-0090 · DEC-0035: 해상도로 채운 sd — 기본 A(그대로, 보수적) · 선택 gum(÷√12) · 반복 수로 줄지 않음 · 퍼짐 검정 안 함
+test('④″ 해상도 sd: 기본은 그대로 · gum 은 ÷√12 · 반복 수로 나누지 않음 · 퍼짐 검정 건너뜀 · 판정에 읽기가 남음', () => {
+  const res = (o) => obs(Object.assign({ uncertainty: { kind: 'combined', model: 'normal', sd: 50, basis: 'resolution' } }, o));
+  const rep = obs({ uncertainty: { kind: 'combined', model: 'normal', sd: 50 } });
+  close(OC.test(rep, [1000]).se, 25, 1e-12, '보고된 sd 는 반복 수 4 로 나눔');
+  close(OC.test(res(), [1000]).se, 50, 1e-12, '해상도 sd 는 보고된 평균 자체의 반올림 — 나누지 않음');
+  close(OC.test(res(), [1000], null, { resolution: 'gum' }).se, 50 / Math.sqrt(12), 1e-12, 'gum 사각 분포');
+  close(OC.test(rep, [1000], null, { resolution: 'gum' }).se, 25, 1e-12, '보고된 sd 는 gum 선택과 무관');
+  assert.equal(OC.sdOf(res(), {}), 50); assert.throws(() => OC.sdOf(res(), { resolution: 'B' }), /A \| gum/);
+  const ens = Array.from({ length: 20 }, (_, i) => 900 + i * 10);
+  assert.ok(OC.test(rep, ens).spread, '보고된 합산 sd 는 퍼짐 검정');
+  const t = OC.test(res(), ens); assert.equal(t.spread, undefined); assert.match(t.notes.join(), /퍼짐 검정을 하지 않음/);
+  const v = OC.verdict(res(), [1000], null, { resolution: 'gum' }); assert.deepEqual(v.sd_basis, { basis: 'resolution', read: 'gum', sd: 50 / Math.sqrt(12) });
+  assert.match(OC.verdictText(v), /해상도로 채운 값 \(읽기 GUM/);
+  assert.equal(OC.verdict(rep, [1000]).sd_basis, undefined);
+});

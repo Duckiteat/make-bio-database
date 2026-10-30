@@ -72,13 +72,19 @@ test('③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, �
   assert.notEqual(bad.status, 0);
 });
 
-test('④ clerk 단일 작성자: 하나가 떠 있으면 둘째는 시작하지 않는다', async () => {
+test('④ 단일 작성자: clerk 가 떠 있으면 둘째 clerk 도, dbtool 쓰기도 막힌다', async () => {
   const first = spawn(process.execPath, [join(ROOT, 'mcp', 'clerk.mjs')], { env: { ...process.env, BIODB_ROLE: 'integrator' }, cwd: ROOT });
   await new Promise((r) => setTimeout(r, 400));
   try {
     const second = spawnSync(process.execPath, [join(ROOT, 'mcp', 'clerk.mjs')], { input: '', encoding: 'utf8', env: { ...process.env, BIODB_ROLE: 'integrator' }, cwd: ROOT, timeout: 10000 });
     assert.equal(second.status, 1);
     assert.match(second.stderr, /이미 떠 있음/);
+    // dbtool 도 같은 잠금을 잡는다 (RULE-0018, 재건 7 단계) — 권위 구역 쓰기는 거부되고, 읽기는 그대로
+    const w = spawnSync(process.execPath, [join(ROOT, 'dbtool.mjs'), 'limitations', '--write'], { encoding: 'utf8', cwd: ROOT, timeout: 60000 });
+    assert.notEqual(w.status, 0, 'clerk 가 떠 있는 동안 dbtool 쓰기');
+    assert.match(w.stderr, /작성자가 이미 떠 있음/);
+    const r = spawnSync(process.execPath, [join(ROOT, 'dbtool.mjs'), 'limitations', '--check'], { encoding: 'utf8', cwd: ROOT, timeout: 60000 });
+    assert.doesNotMatch(r.stderr, /작성자가 이미/, '읽기는 잠금을 잡지 않음');
   } finally { first.kill(); await new Promise((r) => first.on('exit', r)); }
 });
 
@@ -126,7 +132,7 @@ test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 
   assert.deepEqual(lit['DOI:10.1038/nature07830'], { kind: 'journal', retracted: false }, 'DOI 검색으로 확인된 학술지 기록 (소문자 열쇠)');
 });
 
-// 2026-10-25 사용자 결정: 수집가도 BRENDA 를 — 단 계정 정보는 도구 안(환경 변수)에만, 출력·기록·수신함에 남지 않는다
+// 사용자 결정: 수집가도 BRENDA 를 — 단 계정 정보는 도구 안(환경 변수)에만, 출력·기록·수신함에 남지 않는다
 test('⑩ BRENDA 도구: 수집가에게 보임 · 계정 없으면 사람이 할 일을 알림 · 해시가 아니면 거부 · EC 형식 검사', () => {
   const env = { BRENDA_EMAIL: '', BRENDA_PASSWORD_SHA256: '' };
   const { out } = call('fetch.mjs', [{ method: 'tools/list' }, tool('brenda_kinetics', { ec: '1.1.1.37' }), tool('brenda_kinetics', { ec: 'x' })], env);

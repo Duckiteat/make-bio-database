@@ -105,6 +105,12 @@
             "sd": {
               "type": "number",
               "minimum": 0
+            },
+            "basis": {
+              "enum": [
+                "reported",
+                "resolution"
+              ]
             }
           }
         },

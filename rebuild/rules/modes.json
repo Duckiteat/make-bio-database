@@ -1,0 +1,315 @@
+{
+  "_what": "모드 원본 (rebuild/PLAN.md §2·§3, 사용자 결정 2026-10-25) — 중심 문서·모드 문서·스킬은 이것과 규칙 장부(rules.jsonl)에서 생성한다(rebuild/render.mjs). 손으로 고치는 곳은 여기뿐.",
+  "purpose": [
+    "생물 정의·기전·실측값을 맥락과 함께 쌓고, 그 위에서 시뮬레이션해 현실과 맞는지 본다.",
+    "원본은 기계용(번호·JSONL)이고, 사람은 점검 모드의 읽기(L0·L1·L2)로만 읽는다.",
+    "한 세션 = 한 모드. 다른 모드가 필요하면 전환 기록을 남기고 끝낸다."
+  ],
+  "session": [
+    "세션은 모드 하나를 골라 연다: `node rebuild/gate.mjs open <모드>` — 그 모드 문서(또는 스킬)를 먼저 읽는다. 문지기 훅이 그 모드 밖 쓰기를 막고, 도구 호출마다 영수증(`workspace/receipts/`)을 남긴다.",
+    "세션 안에서 모드를 바꾸지 않는다. 다른 모드가 필요하면 전환 기록 { from, to, at, why, target, files, open } 을 남기고 끝낸다.",
+    "끝내기 전: `node rebuild/gate.mjs finish <모드>` — 그 모드의 시험 묶음이 지금 파일 상태로 통과해야 git commit·push 가 열린다.",
+    "검사 오류에는 규칙 번호(RULE-…)가 붙는다 — 그 규칙의 이유·맥락·수식은 읽기 모드로 찾는다: `node rebuild/read.mjs RULE-…` (L0 한 줄 · L1 연결 · L2 수식, 조회만).",
+    "계획은 생성물이다 — 하나 읽기 `node rebuild/read.mjs PLAN-…|STG-…|DEC-…|DIR-…`, 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님)."
+  ],
+  "modes": [
+    {
+      "key": "author",
+      "name": "정보 작성",
+      "role": "수집가 포함",
+      "when": "정의·기전·관찰·외부 ID·한계를 데이터에 더하거나 고칠 때, 또는 문헌에서 값 후보를 모을 때",
+      "goal": "실측에 매인 사실을 늘린다",
+      "writes": "패치 → 관문(validate · augment apply / merge)만. 수집가는 핸드오프(workspace/handoff/)만. 코드 편집 금지",
+      "risk": "지어내기 · 다른 종 값을 사람 값으로",
+      "finish": [
+        "node dbtool.mjs validate",
+        "node dbtool.mjs limitations --detect (후보 0)",
+        "닿은 경로 audit-run",
+        "node --test tests/rejections.test.mjs"
+      ],
+      "stop": "어휘에 없는 값이 필요할 때 · 종이 다를 때 → 사람에게"
+    },
+    {
+      "key": "baseline",
+      "name": "기초시험",
+      "role": "결정론장",
+      "when": "지금 검증된 코어로 시뮬레이션을 돌려 관찰과 맞는지 볼 때",
+      "goal": "지금 검증된 코어로 현실과 맞는지 본다",
+      "writes": "데이터·코드는 읽기만. 시나리오 숫자는 가정 원장(A…). 사전 등록 뒤 실행",
+      "risk": "결과에 맞추려고 코드·데이터 고치기",
+      "finish": [
+        "무결성 증명서 PASS",
+        "사전 등록 해시 일치",
+        "우연 기준선과 함께 보고",
+        "쓴 값의 등급 표기"
+      ],
+      "stop": "무결성 FAIL · AUDIT_* → 고치지 말고 전환 기록"
+    },
+    {
+      "key": "develop",
+      "name": "디벨롭",
+      "role": "기계 고치기",
+      "when": "엔진·컴파일러·판정 규칙·도구 코드를 고칠 때 (사용자 요청이 있을 때만)",
+      "goal": "기계(엔진·컴파일러·판정 규칙·도구)를 고친다",
+      "writes": "코드 — 사용자 요청 필수. 삼권 경계(쓰기는 서기 put 만, 행정부 순수, 사법부 비실행)",
+      "risk": "데이터를 통과시키려고 규칙 완화",
+      "finish": [
+        "node --test tests/*.test.mjs",
+        "해당 엔진 시험",
+        "래칫(FLOOR) 내리지 않음",
+        "CHANGES.md 맨 위 한 행"
+      ],
+      "stop": "완화가 유일한 길일 때 → 사람에게"
+    },
+    {
+      "key": "field",
+      "name": "적분장",
+      "role": "T3 확률장 · T4 스파크 · T5 핵 기억",
+      "when": "다음 엔진(공간·확률 장)의 설계와 시제품을 만들 때",
+      "goal": "다음 엔진의 설계·시제품",
+      "writes": "엔진 시제품 + 그 시험. db 에 장 상태 금지",
+      "risk": "검증보다 능력이 앞섬 (direction §2)",
+      "finish": [
+        "종단 시험 · 전이 수지 정확 0",
+        "벤치 기준선과 비교"
+      ],
+      "stop": "\"반박할 공간 관찰이 있나?\" 가 아니오면 결론 금지"
+    },
+    {
+      "key": "inspect",
+      "name": "점검·검증",
+      "role": "사람의 유일한 입구",
+      "when": "상태를 읽거나(L0·L1·L2), 모은 후보를 판정하거나, 승인 도장을 남길 때",
+      "goal": "상태를 읽고, 모은 후보를 판정한다",
+      "writes": "db 쓰기 금지. 판정 결과(통과·거부·재검토)와 승인 도장(증명 구역)만 (결정 ①)",
+      "risk": "자기가 모은 것을 자기가 통과",
+      "finish": [
+        "verify-collection",
+        "인용–원문 대조",
+        "node dbtool.mjs attest"
+      ],
+      "stop": "1차 출처를 열 수 없음 → 사람"
+    }
+  ],
+  "topics": [
+    {
+      "topic": "권한·쓰기 (삼권 분립)",
+      "match": [
+        "삼권",
+        "서기",
+        "쓰기",
+        "구역",
+        "권한",
+        "MCP",
+        "역할"
+      ]
+    },
+    {
+      "topic": "수집·위임 (다른 AI·수집가)",
+      "match": [
+        "AI",
+        "수집",
+        "핸드오프",
+        "작업자",
+        "출처 표",
+        "절대 선",
+        "절대 규칙",
+        "한 문장",
+        "위임",
+        "역할 분리"
+      ]
+    },
+    {
+      "topic": "데이터 넣기",
+      "match": [
+        "데이터 넣기",
+        "패치",
+        "관문",
+        "매핑",
+        "이름",
+        "식별자",
+        "외부 ID",
+        "지문",
+        "어휘",
+        "종류",
+        "kind",
+        "종 "
+      ]
+    },
+    {
+      "topic": "관찰·측정값",
+      "match": [
+        "관찰",
+        "측정",
+        "값 층",
+        "정성"
+      ]
+    },
+    {
+      "topic": "한계",
+      "match": [
+        "한계"
+      ]
+    },
+    {
+      "topic": "기전·시뮬레이션",
+      "match": [
+        "속도",
+        "시뮬레이션",
+        "해상도",
+        "저장소",
+        "분해",
+        "운명",
+        "기전",
+        "묶음",
+        "단계",
+        "층",
+        "분열",
+        "엔진",
+        "적분",
+        "확률"
+      ]
+    },
+    {
+      "topic": "검증·판정",
+      "match": [
+        "검증",
+        "판정",
+        "인정",
+        "등급",
+        "추세",
+        "신뢰",
+        "규약",
+        "증명",
+        "점검"
+      ]
+    },
+    {
+      "topic": "규칙·코드·시험",
+      "match": [
+        "규칙·코드",
+        "시험",
+        "래칫",
+        "코드"
+      ]
+    },
+    {
+      "topic": "기록",
+      "match": [
+        "기록",
+        "CHANGES",
+        "보고"
+      ]
+    }
+  ],
+  "gate": {
+    "_what": "문지기 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — rebuild/gate.mjs 가 읽는다. write = 이 모드에서 바뀌어도 되는 저장소 경로(glob, ** = 아래 전부) · finish = 끝내기 전 시험 묶음(종료 코드 0 이어야 통과 — 통과해야 git commit·push). 저장소 밖(스크래치·임시)은 다루지 않는다. 명령의 허용·금지는 여기 적지 않는다 — 명령 장부(rebuild/rules/commands.jsonl)의 modes · writes · writes_on · collector 에서 계산(재건 9 단계, 사용자 결정 2026-10-29: 장부 하나로).",
+    "common": {
+      "write": [
+        "rebuild/status/**",
+        "rebuild/draft/**",
+        "rebuild/state/**",
+        "rebuild/PLAN.md",
+        "docs/design/build-plan.md",
+        "docs/textbook/90-부록-자동생성.md",
+        "workspace/transitions.jsonl",
+        "workspace/receipts/**"
+      ],
+      "protect": [
+        "workspace/receipts/**"
+      ],
+      "finish_first": [
+        "node rebuild/status.mjs --write"
+      ],
+      "finish": [
+        "node rebuild/plan.mjs check",
+        "node rebuild/status.mjs --check"
+      ]
+    },
+    "modes": {
+      "author": {
+        "write": [
+          "data/**",
+          "attestations/**",
+          "limitations.md",
+          "workspace/handoff/**",
+          "docs/reports/**"
+        ],
+        "finish": [
+          "node dbtool.mjs validate",
+          "node dbtool.mjs limitations --detect",
+          "node --test tests/rejections.test.mjs"
+        ]
+      },
+      "baseline": {
+        "write": [
+          "examples/scenarios/**",
+          "docs/reports/**",
+          "data/assumptions.jsonl",
+          "data/preregistrations.jsonl"
+        ],
+        "finish": [
+          "node dbtool.mjs validate"
+        ]
+      },
+      "develop": {
+        "write": [
+          "**"
+        ],
+        "except": [
+          "data/**",
+          "attestations/**",
+          "workspace/handoff/**"
+        ],
+        "finish": [
+          "node --test tests/*.test.mjs",
+          "node dbtool.mjs validate",
+          "node dbtool.mjs textbook --check"
+        ],
+        "also": [
+          "data/dictionary.jsonl"
+        ]
+      },
+      "field": {
+        "write": [
+          "engine/**",
+          "tests/**",
+          "examples/scenarios/**",
+          "docs/**",
+          "schemas/ffi/**",
+          "CHANGES.md"
+        ],
+        "finish": [
+          "node --test tests/*.test.mjs",
+          "node dbtool.mjs validate",
+          "node dbtool.mjs textbook --check"
+        ]
+      },
+      "inspect": {
+        "write": [
+          "attestations/**",
+          "docs/reports/**"
+        ],
+        "finish": [
+          "node dbtool.mjs validate"
+        ]
+      }
+    },
+    "roles": {
+      "collector": {
+        "_what": "BIODB_ROLE=collector — 정보 작성 모드의 수집가 (결정 ② · RULE-0274·0275·0287·0299)",
+        "mode": "author",
+        "write": [
+          "workspace/handoff/**"
+        ],
+        "branch": "^collector/",
+        "push_only": [
+          "workspace/handoff/**",
+          "workspace/transitions.jsonl",
+          "workspace/receipts/**"
+        ],
+        "finish": []
+      }
+    }
+  }
+}

@@ -195,7 +195,7 @@ test('④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안�
 });
 
 test('④″ CI 설정이 실제로 파싱되는가 — 검사가 조용히 죽지 않게', () => {
-  // ccabd83 이후 워크플로의 name 값에 ': ' 가 들어가 YAML 이 깨져 CI 가 아예 돌지 않았다 (2026-10-10 발견).
+  // 워크플로의 name 값에 ': ' 가 들어가면 YAML 이 깨져 CI 가 아예 돌지 않는다.
   // YAML 모듈 없이, 그 실패 방식만 겨눈 검사: 평문 스칼라에는 ': ' 를 둘 수 없다.
   const yml = readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8'), lines = yml.split('\n');
   const bad = [];
@@ -238,7 +238,13 @@ test('⑥ 결합점 등록부: 시나리오 → 데이터(params) → 기본값,
   const a = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false }), b = F.simulateFate(BASE, 'D000174', { scenario: sc, commitment: false, coupling: { rtol: 1e-9 } });
   assert.ok(b.integrator.steps > a.integrator.steps && b.integrator.rtol === 1e-9, '데이터 쪽 값이 엔진 단계 제어를 바꿈');
   assert.equal(b.coupling._source.rtol, 'data');
-  for (const e of COUPLING.REGISTRY) if (typeof e.default === 'number' && e.key !== 'saturation_K') assert.ok(!new RegExp(`\\b${e.scenario.split('.').pop()}\\b\\s*\\|\\|\\s*${e.default}\\b`).test(src('engine/fate_engine.js')), `엔진에 ${e.key} 기본값이 박혀 있음`);
+  // 엔진 파일 모두(engine/*.js·mjs, 등록부 제외)에서 `이름 || 숫자`·`이름 ?? 숫자` 의 숫자를 값으로 비교한다 — 1e-6 과 0.000001 은 같은 기본값
+  const DEF = new Map(COUPLING.REGISTRY.filter((e) => typeof e.default === 'number' && e.key !== 'saturation_K').map((e) => [e.scenario.split('.').pop(), e]));
+  for (const f of readdirSync(join(ROOT, 'engine')).filter((x) => /\.m?js$/.test(x) && x !== 'coupling.js'))
+    for (const m of src('engine/' + f).matchAll(/\b(\w+)\s*(?:\|\||\?\?)\s*(-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)(?![\w.])/gi)) {
+      const e = DEF.get(m[1]);
+      assert.ok(!(e && Number(m[2]) === e.default), `engine/${f}: 엔진에 ${e && e.key} 기본값이 박혀 있음 (${m[0]}) — 값은 engine/coupling.js 등록부에서만`);
+    }
 });
 
 test('⑦ 원자료 계약 (FFI): 엔진 출력은 schemas/ffi/fate-raw.schema.json 을 지키고, 어기면 사법부가 판정하지 않는다', () => {
@@ -445,7 +451,7 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   assert.ok(ER.evidenceReport(BASE, sc, {}).error, '대상 없으면 오류');
 });
 
-// 보고서가 경로만이 아니라 세포 상태·교란·검증 시나리오에서도 비지 않고 맞는 판정 수준을 낸다 (2026-10-22 회귀: 0 고리·가정 없음·검증이 '탐색' 으로)
+// 보고서가 경로만이 아니라 세포 상태·교란·검증 시나리오에서도 비지 않고 맞는 판정 수준을 낸다 (막는 회귀: 0 고리·가정 없음·검증이 '탐색' 으로)
 test('⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준', () => {
   const ER = req('../judicial/evidence_report.js'), PT = req('../compiler/perturb.js'), IRB = req('../compiler/ir_builder.js');
   const json = (f) => SCN.read(join(ROOT, 'examples/scenarios', f));

@@ -17,7 +17,7 @@
 | 자리 | 크기 | 담는 것 |
 |---|---|---|
 | `CLAUDE.md` | 83 줄 | 에이전트 점검표 — 짧은 명령형 |
-| `docs/design/agent-rules.md` | 114 줄 | 같은 규칙의 이유·경위 (두 파일은 같은 커밋에서 바뀜) |
+| `docs/design/agent-rules.md` | (2026-10-29 재건 8 단계에 지움) | 같은 규칙의 이유·경위였다 — 규칙은 규칙 장부 하나, 이유는 맥락 연결(`rebuild/rules/links.jsonl`), 원문은 단위 장부(`src_at`) |
 | `SCHEMA.md` | 633 줄 | 저장 형식과 변경 기록 |
 | `docs/design/*.md` | 20 개 | 철학·설계(삼권 분립, 사전, 보존 분류, 작업 검증, 구조 재편, 외주화 …) |
 | `docs/RUNBOOK.md` · `docs/PROMPTS.md` | | 실행법 · 일 맡기는 법 |

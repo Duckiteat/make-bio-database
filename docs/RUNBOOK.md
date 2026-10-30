@@ -1,6 +1,6 @@
 # 실행 설명서 — 이 시뮬레이션을 쓰는 법
 
-이 파일 하나로 작업을 시작할 수 있게 쓴 것이다. **여기 적힌 명령은 전부 실제로 돌려 확인했다**(2026-10-10 · 수치 갱신 2026-10-16).
+명령을 어떻게 돌리고 결과를 어떻게 읽는지 모은 **참고 문서**다 — 입구는 `CLAUDE.md`(모드를 연 뒤 필요할 때 여기서 찾는다). **여기 적힌 명령은 전부 실제로 돌려 확인했다**(2026-10-10 · 수치 갱신 2026-10-16).
 막히면 끝의 "더 읽을 곳" 으로 간다 — 교과서를 처음부터 읽지 않는다.
 
 - 모든 명령은 **저장소 최상위**에서 돈다.
@@ -94,7 +94,7 @@ node dbtool.mjs simulate <경로>                                 # 도달 여�
 
 ```bash
 node dbtool.mjs audit-run <경로>              # 감사 — Audit Error 가 있으면 종료 코드 1 (정상이다)
-node dbtool.mjs resolution <경로>             # 단계마다 필요한 해상도 R0/R1/R2
+node dbtool.mjs resolution <경로>             # 단계마다 필요한 해상도 pool/site/structure
 node dbtool.mjs pattern <경로>                # 상위 패턴 (motif 후보)
 node dbtool.mjs grade [--min parameter]       # 쓰인 값의 신뢰 등급
 node dbtool.mjs compare --state D000174 --scenario A.json [--scenario-b B.json | --patch p.json]
@@ -265,7 +265,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 339/339 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 369/369 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)
@@ -325,4 +325,4 @@ cmp index.html viewer.html             # 화면 두 파일이 같은지
 | 보존/비보존 분류(오차 3채널 기저) | `docs/design/conservation-classes.md` (`vocab.conservationClasses`·`conservationReasons`) |
 | 색인·파싱 비용 문턱 | `tests/bench_index.js` (`node tests/bench_index.js`) |
 | 수집가·통합가 핸드오프(싼 모델에 수집 위임) | `docs/PROMPTS.md` §3′ |
-| AI 작업자 전용 공간(격리) | `workspace/README.md` · 핸드오프 `workspace/handoff/` · 권한 프로파일 `workspace/collector.settings.json` |
+| AI 작업자 전용 공간(격리) | `workspace/README.md` · 핸드오프 `workspace/handoff/` · 권한은 문지기 훅이 역할로(`rebuild/gate.mjs`, `BIODB_ROLE=collector`) |

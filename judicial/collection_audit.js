@@ -30,11 +30,11 @@ function findRec(db, ref) {
 function auditEntry(db, e, i, opt = {}) {
   const issues = [];
   const id = e && e.id ? String(e.id) : `#${i + 1}`;
-  const push = (sev, msg) => issues.push({ sev, msg });
-  if (!e || typeof e !== 'object') { return { id, outcome: null, issues: [{ sev: 'incomplete', msg: '항목이 객체가 아님' }] }; }
+  const push = (rule, sev, msg) => issues.push({ sev, msg, rule }); // rule: 집행하는 규칙 번호
+  if (!e || typeof e !== 'object') { return { id, outcome: null, issues: [{ sev: 'incomplete', msg: '항목이 객체가 아님', rule: 'RULE-0290' }] }; }
 
-  if (!OUTCOMES.includes(e.outcome)) push('incomplete', `outcome 미선언/어휘 밖 (${OUTCOMES.join('|')})`);
-  if (e.use != null && !USES.includes(e.use)) push('incomplete', `use 어휘 밖 (${USES.join('|')})`);
+  if (!OUTCOMES.includes(e.outcome)) push('RULE-0290', 'incomplete', `outcome 미선언/어휘 밖 (${OUTCOMES.join('|')})`);
+  if (e.use != null && !USES.includes(e.use)) push('RULE-0290', 'incomplete', `use 어휘 밖 (${USES.join('|')})`);
 
   const hasValue = e.value != null && e.value !== '';
   const src = e.source || {};
@@ -42,39 +42,39 @@ function auditEntry(db, e, i, opt = {}) {
 
   // 값 주장엔 출처 + 원문 인용 필수 (꼼수 #3 검토 안 함·#5 없는 인용·#8 미확인을 사실처럼)
   if (e.outcome === 'read_value' || hasValue) {
-    if (!hasValue) push('incomplete', 'read_value 인데 값(value) 없음');
-    if (!hasSrc) push('reject', '값을 주장하는데 출처(source.db+id) 없음 — 근거 없는 값');
-    if (!e.quote) push('reject', '값을 주장하는데 원문 인용(quote) 없음');
+    if (!hasValue) push('RULE-0289', 'incomplete', 'read_value 인데 값(value) 없음');
+    if (!hasSrc) push('RULE-0291', 'reject', '값을 주장하는데 출처(source.db+id) 없음 — 근거 없는 값');
+    if (!e.quote) push('RULE-0291', 'reject', '값을 주장하는데 원문 인용(quote) 없음');
   }
   // 출처 형식만 (해석·원문 대조는 통합가, 자동 불가)
   if (hasSrc) {
-    if (src.db === 'DOI' && !/\S\/\S/.test(String(src.id))) push('reject', `DOI 형식 아님: ${src.id}`);
-    if (src.db === 'PMID' && !/^\d+$/.test(String(src.id))) push('reject', `PMID 형식 아님: ${src.id}`);
+    if (src.db === 'DOI' && !/\S\/\S/.test(String(src.id))) push('RULE-0291', 'reject', `DOI 형식 아님: ${src.id}`);
+    if (src.db === 'PMID' && !/^\d+$/.test(String(src.id))) push('RULE-0291', 'reject', `PMID 형식 아님: ${src.id}`);
     // 출처 해석(존재) 확인 — dbtool 이 HTTP 로 확인해 넘긴 결과. 존재 안 하면 가짜/오기(꼼수 #4), 확인 실패는 통합가로.
     const st = (opt.sourceChecks || {})[`${src.db}:${src.id}`];
-    if (st === 'notfound') push('reject', `출처가 해석되지 않음 — 존재하지 않는 ${src.db}: ${src.id} (가짜/오기)`);
-    else if (st === 'error') push('review', `출처 해석 확인 실패(네트워크·접근) — 통합가 재확인: ${src.db} ${src.id}`);
+    if (st === 'notfound') push('RULE-0291', 'reject', `출처가 해석되지 않음 — 존재하지 않는 ${src.db}: ${src.id} (가짜/오기)`);
+    else if (st === 'error') push('RULE-0291', 'review', `출처 해석 확인 실패(네트워크·접근) — 통합가 재확인: ${src.db} ${src.id}`);
   }
   // 상태-내용 구별: 값 없다고 선언한 outcome 에 값이 있으면 모순 (조사 안함 vs 못찾음 vs 접근불가 혼동 방지)
-  if (NO_VALUE_OUTCOMES.includes(e.outcome) && hasValue) push('reject', `${e.outcome} 인데 값이 있음 — 상태와 내용 불일치`);
+  if (NO_VALUE_OUTCOMES.includes(e.outcome) && hasValue) push('RULE-0290', 'reject', `${e.outcome} 인데 값이 있음 — 상태와 내용 불일치`);
 
   // 인용–원문 대조 (build-plan 58, work-verification #5): 부르는 쪽이 수신함 원문을 넘기면(opt.texts) 인용이 글자 그대로 있는지 본다.
   //   전문이 있는데 없으면 거부(없는 인용), 초록만 있고 거기 없으면 사람 확인(전문에 있을 수 있음), 원문이 없으면 사람 확인.
   if (e.quote && hasSrc && opt.texts) {
     const q = quoteCheck(e.quote, opt.texts[`${src.db}:${src.id}`], { transcribed: e.transcribed === true });
-    if (q.sev) push(q.sev, q.msg);
+    if (q.sev) push('RULE-0291', q.sev, q.msg); // 인용이 원문에 있나 (값 주장 = 출처 + 원문 인용)
   }
   // 값 후보는 통합가 1차 출처 재확인 전까지 자동 PASS 금지 (꼼수 #13)
-  if (hasValue && e.verified !== true) push('review', '값 후보 — 1차 출처 재확인 필요(통합가)');
+  if (hasValue && e.verified !== true) push('RULE-0292', 'review', '값 후보 — 1차 출처 재확인 필요(통합가)');
 
   // 재사용 (꼼수 #12): 기존 db 대상의 존재·철회를 결정론으로 재-도출
   if (e.outcome === 'reused' || e.reuse) {
     const ref = (e.reuse && e.reuse.ref) || e.ref;
-    if (!ref) push('incomplete', 'reused 인데 재사용 대상(reuse.ref) 없음');
+    if (!ref) push('RULE-0483', 'incomplete', 'reused 인데 재사용 대상(reuse.ref) 없음');
     else {
       const rec = findRec(db, ref);
-      if (!rec) push('reject', `재사용 대상 ${ref} 가 db 에 없음 — 무효 재사용`);
-      else if (rec.retracted) push('reject', `재사용 대상 ${ref} 는 철회됨 — 무효 재사용`);
+      if (!rec) push('RULE-0483', 'reject', `재사용 대상 ${ref} 가 db 에 없음 — 무효 재사용`);
+      else if (rec.retracted) push('RULE-0483', 'reject', `재사용 대상 ${ref} 는 철회됨 — 무효 재사용`);
     }
   }
   return { id, outcome: e.outcome || null, issues };
@@ -174,21 +174,21 @@ const crypto = require('crypto');
 const ATT = require('./attestation.js');
 const FETCH_GENESIS = crypto.createHash('sha256').update('fetchlog\n').digest('hex');
 function verifyFetchLog(events, currentSha) {
-  const errors = []; let prev = FETCH_GENESIS; const last = new Map();
+  const errors = [], rules = [], err = (rule, m) => { errors.push(m); rules.push(rule); }; let prev = FETCH_GENESIS; const last = new Map();
   (events || []).forEach((e, i) => {
     const { root, ...body } = e;
-    if (e.seq !== i + 1) errors.push(`사건 ${i + 1}: seq ${e.seq} — 빠지거나 끼운 사건`);
-    if (e.prev !== prev) errors.push(`사건 ${i + 1}: prev 가 직전 root 와 다름 — 사슬이 끊김`);
-    if (root !== crypto.createHash('sha256').update(body.prev + '\n' + ATT.canon(body)).digest('hex')) errors.push(`사건 ${i + 1}: root 재계산 불일치 — 기록이 바뀜`);
+    if (e.seq !== i + 1) err('RULE-0506', `사건 ${i + 1}: seq ${e.seq} — 빠지거나 끼운 사건`);
+    if (e.prev !== prev) err('RULE-0506', `사건 ${i + 1}: prev 가 직전 root 와 다름 — 사슬이 끊김`);
+    if (root !== crypto.createHash('sha256').update(body.prev + '\n' + ATT.canon(body)).digest('hex')) err('RULE-0506', `사건 ${i + 1}: root 재계산 불일치 — 기록이 바뀜`);
     if (e.ok && e.file && e.sha256) last.set(e.file, e);
     prev = root;
   });
   for (const [file, e] of last) {
     const now = (currentSha || {})[file];
-    if (now === null || now === undefined) errors.push(`${file}: 받기 기록에 있는데 파일이 없음 (사건 ${e.seq})`);
-    else if (now !== e.sha256) errors.push(`${file}: 받은 뒤 내용이 바뀜 — 기록 ${e.sha256.slice(0, 12)}… · 지금 ${now.slice(0, 12)}… (사건 ${e.seq})`);
+    if (now === null || now === undefined) err('RULE-0508', `${file}: 받기 기록에 있는데 파일이 없음 (사건 ${e.seq})`);
+    else if (now !== e.sha256) err('RULE-0508', `${file}: 받은 뒤 내용이 바뀜 — 기록 ${e.sha256.slice(0, 12)}… · 지금 ${now.slice(0, 12)}… (사건 ${e.seq})`);
   }
-  return { ok: !errors.length, errors, events: (events || []).length, files: last.size, head: prev };
+  return { ok: !errors.length, errors, rules, events: (events || []).length, files: last.size, head: prev };
 }
 
 module.exports = { STATUSES, OUTCOMES, USES, auditEntry, auditCollection, auditText, sourcesOf, parseRunlog, crossCheckRun, verifyFetchLog, FETCH_GENESIS, normText, quoteCheck };

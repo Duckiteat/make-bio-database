@@ -24,7 +24,7 @@ const RULE = {
 const GRADES = Object.freeze(Object.fromEntries(Object.entries(M.VOCAB.reliabilityGrades).map(([k, g]) => [k, Object.freeze({ label: g.label, use: g.note, rule: RULE[k] })])));
 const ORDER = ['anchor', 'parameter', 'bounded', 'legacy', 'reference', 'blocked'];
 
-// ----- 기준 표 (2026-10-24, build-plan 71·73): 점수를 매기는 갈래마다 번호 · 조건(when) · 이유(why) -----
+// ----- 기준 표 (PLAN-071·073): 점수를 매기는 갈래마다 번호 · 조건(when) · 이유(why) -----
 //   이유가 확립되지 않은 기준은 why: null + open(무엇이 미정인지) — 이유를 지어내지 않는다. 기준 자체를 바꾸는 것은 사용자 결정.
 //   basis = 이유의 종류(vocab.reasonBasis: 원칙·실증·외부 표준·운영·결정) — 원칙에서 나온 이유와 편의·결정에서 나온 이유를 섞지 않는다.
 //   점수 함수는 갈래마다 이 번호(cs·cd)를 단다 — 기록마다 "어떤 기준으로, 왜" 를 따라갈 수 있게.
@@ -41,7 +41,7 @@ const CRITERIA = Object.freeze({
   'D4.computed':  { basis: ['principle'], axis: 'D', level: 4, when: '도구가 원본에서 계산한 값 · 구조 지문', why: '같은 원본과 도구로 다시 계산하면 같은 값 — 추적 가능' },
   'D3.curated':   { basis: ['principle'], axis: 'D', level: 3, when: '문헌에서 옮긴 값(curated)', why: '정리된 값 — 원래 측정의 퍼짐·조건은 이 기록에 없다' },
   'D3.identity':  { basis: ['principle'], axis: 'D', level: 3, when: '외부 ID (정체성 사실)', why: '같은 것을 가리킨다는 사실 — 측정값이 아니므로 D4 가 아니다 (그래서 외부 ID 의 상한은 parameter)' },
-  'D3.obs_bare':  { basis: ['principle'], axis: 'D', level: 3, when: '불확도가 없거나 반복 수가 미보고(null)인 관찰', why: '측정이지만 퍼짐을 모른다' },
+  'D3.obs_bare':  { basis: ['principle'], axis: 'D', level: 3, when: '불확도가 없거나 해상도로 채운 관찰(uncertainty.basis resolution — 원문 미보고, RULE-0090) · 반복 수가 미보고(null)인 관찰', why: '측정이지만 퍼짐을 모른다' },
   'D2.asserted':  { basis: ['principle', 'decision'], axis: 'D', level: 2, when: '출처 없이 적은 값(asserted)', why: '근거가 없으면 무엇을 어떻게 얻은 값인지도 모른다 — 정리된 문헌 값(D3)으로 볼 근거가 없다 (2026-10-24 결정: D3 → D2, 이미 S2 라 등급은 reference 그대로)' },
   'D2.estimate':  { basis: ['principle', 'decision'], axis: 'D', level: 2, when: '관찰 기록이지만 근거 수준이 도구 추정(computed·predicted) — 예: eQuilibrator 성분 기여법 ΔG°′', why: '모형의 추정이지 잰 값이 아니다 — 불확도가 있어도 측정의 퍼짐이 아니라 모형 오차다. 구조 지문(D4.computed)은 원본의 정확한 함수라 다르다 (2026-10-25 결정: 계산값이 D4.measured 를 받던 결함)' },
   'D2.inferred':  { basis: ['principle'], axis: 'D', level: 2, when: '추론·단순화(abstracted) · 예측 모델 · 근거 없음 · 외부 ID 없음', why: '직접 잰 값이 아니다' },
@@ -98,7 +98,7 @@ function scoreEvidence(ev, ctx) {
     const sha = toolSha(ev), ok = sha && ctx.evidenceShas.some((x) => x.startsWith(sha));
     return { s: ok ? 4 : 2, d: 4, cs: ok ? 'S4.tool' : 'S2.unsourced', cd: 'D4.computed', why: ok ? `도구가 도장받은 원본에서 계산 (${ev.tool || ''}`.slice(0, 120) + ')' : '도구 계산인데 원본 증거를 찾을 수 없음' };
   }
-  // 출처는 sources 칸의 식별자로만 — 설명 문장에 'DOI' 글자가 있는 것으로는 S3 이 아니다 (2026-10-24: "DOI/PMID 는 확인하지 못함" 이라 적힌 규칙이 S3 을 받던 버그)
+  // 출처는 sources 칸의 식별자로만 — 설명 문장에 'DOI' 글자가 있는 것으로는 S3 이 아니다 ("DOI/PMID 는 확인하지 못함" 이라 적힌 규칙도 S3 을 받게 되므로)
   if (ev.level === 'abstracted') return { ...(hasDOI(ev) ? litS(ev.sources, ctx) : { s: 2, cs: 'S2.unsourced' }), d: 2, cd: 'D2.inferred', why: '추론·단순화 (기전 흐름에서)' };
   if (ev.level === 'predicted') return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.inferred', why: `예측 모델 출력 (신뢰도 ${ev.confidence != null ? ev.confidence : '없음'})` };
   return { s: 2, d: 2, cs: 'S2.unsourced', cd: 'D2.asserted', why: '출처 없이 적음 (asserted)' };
@@ -111,7 +111,7 @@ const ESTIMATE = new Set(['computed', 'predicted']); // 관찰의 근거 수준 
 function scoreObservation(o, ctx) {
   const src = (o.provenance || {}).source || {}, doi = ['DOI', 'PMID'].includes(src.db), lit = doi ? litS([src], ctx) : null;
   // 관찰 칸에 있어도 도구의 추정(evidence.level computed·predicted)은 측정이 아니다 → D2.estimate
-  const est = ESTIMATE.has((o.evidence || {}).level), cd = est ? 'D2.estimate' : o.uncertainty && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare';
+  const est = ESTIMATE.has((o.evidence || {}).level), cd = est ? 'D2.estimate' : o.uncertainty && o.uncertainty.basis !== 'resolution' && o.replicates >= 1 ? 'D4.measured' : 'D3.obs_bare'; // 해상도로 채운 sd 는 잰 퍼짐이 아니다 (DEC-0036)
   return { s: o.retracted ? 0 : doi ? lit.s : 2, d: CRITERIA[cd].level,
     cs: o.retracted ? 'S0.void' : doi ? lit.cs : 'S2.unsourced', cd,
     why: o.retracted ? `철회됨: ${o.retracted.note || ''}`.slice(0, 60) : `${doi ? `문헌 ${src.db}:${src.id}` : '출처 식별자 없음'} · ${est ? '도구 추정값' : `반복 ${o.replicates == null ? '미보고' : o.replicates}`}` };
@@ -237,7 +237,7 @@ function criteriaText(rows) {
 // ===== 인정의 용도 (build-plan 72·74) — (기록, 용도) 판정은 여기 하나: judicial/acceptance.js(표·승인 도장)와 관문(constantVerdict)이 같이 부른다 =====
 // 용도별 조건 (동작 표 — 라벨·뜻은 vocab.acceptanceUses). floors: 하나라도 맞으면 축 조건 통과. conditional: 맞으면 조건부.
 //   sameSpecies: 기록의 종이 기준 종과 같아야(다른 종 값은 서술·비교에만 — 64 전까지 기준 종 하나)
-//   confirmed: 출처가 확인된 문헌·도장이어야(S3.unconfirmed 는 높은 용도에 못 씀, 2026-10-24 결정)
+//   confirmed: 출처가 확인된 문헌·도장이어야(S3.unconfirmed 는 높은 용도에 못 씀 — 사용자 결정)
 //   notEstimated: 추정에 쓴 관찰은 검증 근거가 될 수 없다(순환) · approval: 승인 도장 필요 · independence: 독립 단위 수(I 축) 요구
 const USES = Object.freeze({
   describe: { floors: [{ s: 2, d: 2, t: T_ALL }] },
