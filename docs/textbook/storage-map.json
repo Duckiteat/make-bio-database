@@ -1006,7 +1006,7 @@
       "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",
       "writer": "사람·AI",
       "readers": "사람 (rebuild/status/10-enforcement.md 의 다시 돌리기)",
-      "interpret": "집행 변이 시험 — rebuild/rules/enforcement.jsonl 의 행마다 저장소 밖 git 사본에서 집행 자리를 망가뜨리고 시험이 빨개지는지(caught) 통과하는지(missed) 본다. 저장소 안은 읽기만."
+      "interpret": "집행 변이 시험 — rebuild/rules/enforcement.jsonl 의 행마다 저장소 밖 git 사본(지금 작업 파일의 스냅숏 커밋 — 커밋 안 한 변경·새 파일 포함, 임시 색인으로 만들어 브랜치·작업 트리·색인은 그대로)에서 집행 자리를 망가뜨리고 시험이 빨개지는지(caught) 통과하는지(missed) 본다. 저장소 안은 읽기만."
     },
     {
       "path": "tests/mcp.test.mjs",

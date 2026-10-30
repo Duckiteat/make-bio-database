@@ -8,7 +8,8 @@
 //   ⑤–⑦ 번호 사전 (rebuild/index): 표 형식 · 예시가 자기 이름공간에만 · 저장소의 번호 모양이 모두 이름공간 하나에
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync, mkdtempSync, writeFileSync, appendFileSync, copyFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -272,4 +273,27 @@ test('㉑ CI 는 전체 역사를 받는다 (checkout fetch-depth: 0) — 고정
   const pinned = readFileSync(join(ROOT, 'rebuild/ledger/units.jsonl'), 'utf8').includes('"src_at"');
   assert.ok(pinned, '고정 커밋을 읽는 단위가 없으면 이 시험의 이유도 없다 — 시험을 다시 볼 것');
   assert.ok(fullHistory(readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8')), '.github/workflows/check.yml 의 checkout 에 fetch-depth: 0');
+});
+
+test('㉒ 변이 시험은 커밋하지 않은 작업 파일로 돈다 — 브랜치 · 작업 트리 · 색인 · stash 는 그대로 (10b)', () => {
+  const tmp = mkdtempSync(join(tmpdir(), 'mut-test-')), C = join(tmp, 'c'), spec = join(tmp, 'spec.jsonl');
+  try {
+    execFileSync('git', ['clone', '-q', '--local', '--no-hardlinks', ROOT, C]);
+    copyFileSync(join(ROOT, 'tests/mutation/run.mjs'), join(C, 'tests/mutation/run.mjs')); // 시험하는 실행기는 지금 작업 파일의 것
+    const M1 = 'MUT-SNAPSHOT-EDITED-' + process.pid, M2 = 'MUT-SNAPSHOT-NEW-' + process.pid;
+    appendFileSync(join(C, 'README.md'), `\n${M1}\n`); // 추적 파일의 커밋 안 한 변경
+    writeFileSync(join(C, 'probe-untracked.txt'), M2 + '\n'); // 추적하지 않는 새 파일
+    writeFileSync(spec, [
+      { rule: 'RULE-T001', op: 'static', file: 'README.md', contains: M1 },
+      { rule: 'RULE-T002', op: 'static', file: 'probe-untracked.txt', contains: M2 },
+      { rule: 'RULE-T003', op: 'static', file: 'README.md', contains: 'MUT-SNAPSHOT-NOWHERE' },
+    ].map((r) => JSON.stringify(r)).join('\n') + '\n');
+    const g = (...a) => execFileSync('git', a, { cwd: C, encoding: 'utf8' });
+    const state = () => ({ head: g('rev-parse', 'HEAD'), branch: g('symbolic-ref', '-q', 'HEAD'), status: g('status', '--porcelain'), diff: g('diff'), index: g('ls-files', '-s'), stash: g('stash', 'list'), trees: g('worktree', 'list', '--porcelain').split('\n').filter((l) => l.startsWith('worktree ')).length });
+    const before = state();
+    const out = execFileSync(process.execPath, [join(C, 'tests/mutation/run.mjs'), '--spec', spec], { cwd: C, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const got = Object.fromEntries(out.split('\n').filter(Boolean).map((l) => JSON.parse(l)).map((r) => [r.rule, r.result]));
+    assert.deepEqual(got, { 'RULE-T001': 'present', 'RULE-T002': 'present', 'RULE-T003': 'absent' }, '사본이 커밋 안 한 변경·새 파일을 보지 못함 (또는 없는 것을 봄)');
+    assert.deepEqual(state(), before, '변이 시험이 브랜치·작업 트리·색인·stash·사본 목록을 바꿈');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
 });

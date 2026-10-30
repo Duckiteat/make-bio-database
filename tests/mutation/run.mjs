@@ -5,6 +5,8 @@
 //     --skip out.jsonl  앞선 출력에 결과가 있는 행은 건너뜀 (끊긴 실행 잇기)
 //   명세 파일은 인자로만 받는다 — 관리 구역을 가리키는 경로를 코드에 두지 않는다(tests/rebuild.test.mjs ②).
 // 계약: 변이는 저장소 밖 임시 사본(git worktree)에서만 한다 — 저장소 안 파일은 읽기만. 결과 기록은 사람이 명세 파일로 옮긴다.
+//   사본은 지금 작업 파일(커밋 안 한 변경 · 새 파일, .gitignore 밖)의 스냅숏 커밋 개체에서 — 커밋하지 않은 새 기계 규칙도 시험한다.
+//   스냅숏은 임시 색인으로 만든다: 브랜치·작업 트리·실제 색인·stash 는 그대로.
 // op: disable(find 앞에 'false && ') · replace(find → repl) · inject(파일 끝에 code) · delete(폴더의 첫 .json 고정 파일 지움)
 //     static(설정 파일에 contains 가 있는지만 — 실행 시험 아님) · test_only(그 시험이 통과하는지만 — 자리를 망가뜨리지 않음)
 // 판정: 망가뜨린 뒤 시험이 하나라도 빨개지면 caught, 모두 통과하면 missed(집행 구멍).
@@ -21,6 +23,19 @@ const SLOW = ['rebuild', 'mhc', 'stochastic', 'rust_engine']; // 느린 시험 �
 const SKIP = '^P[345] |v9 Fate-Test'; // 은퇴한 P3–P5 층 — 변이와 무관하게 느림
 const FIRST = 'tests/governance.test.mjs'; // 먼저 돌리는 빠른 묶음 — 여기서 잡히면 나머지는 안 돌린다
 
+// 지금 작업 파일의 스냅숏 커밋 (부모 HEAD) — 임시 색인(GIT_INDEX_FILE)에 HEAD 를 읽고 작업 트리 전부를 더해 쓴다. 이름은 고정(어느 환경에서나 같은 방식).
+function snapshot() {
+  const dir = mkdtempSync(join(tmpdir(), 'mut-index-'));
+  const who = { NAME: 'mutation-snapshot', EMAIL: 'mutation-snapshot@localhost' };
+  const env = { ...process.env, GIT_INDEX_FILE: join(dir, 'index'), GIT_AUTHOR_NAME: who.NAME, GIT_AUTHOR_EMAIL: who.EMAIL, GIT_COMMITTER_NAME: who.NAME, GIT_COMMITTER_EMAIL: who.EMAIL };
+  const git = (...a) => execFileSync('git', a, { cwd: ROOT, env, encoding: 'utf8' }).trim();
+  try {
+    git('read-tree', 'HEAD');
+    git('add', '-A');
+    const tree = git('write-tree');
+    return { commit: git('commit-tree', tree, '-p', 'HEAD', '-m', 'mutation snapshot (작업 파일)'), same: tree === git('rev-parse', 'HEAD^{tree}') };
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+}
 const inside = (w) => { const r = relative(ROOT, w); return !r.startsWith('..') && !isAbsolute(r); };
 function runTests(W, files) {
   const r = spawnSync('node', ['--test', '--test-reporter=tap', `--test-skip-pattern=${SKIP}`, ...files], { cwd: W, encoding: 'utf8', maxBuffer: 64 << 20, timeout: 900000 });
@@ -65,7 +80,9 @@ if (shard) { // 일꾼: 주어진 사본에서 자기 몫만
   todo.forEach((m, i) => { if (i % n === k) process.stdout.write(JSON.stringify(one(wt, m)) + '\n'); });
 } else {
   const check = process.argv.includes('--check'), jobs = Number(arg('--jobs') || 1), base = mkdtempSync(join(tmpdir(), 'mut-')), trees = [];
-  for (let i = 0; i < jobs; i++) { const w = join(base, 'w' + i); execFileSync('git', ['worktree', 'add', '-q', '--detach', w, 'HEAD'], { cwd: ROOT }); trees.push(w); }
+  const snap = snapshot();
+  process.stderr.write(`사본: 작업 파일 스냅숏 ${snap.commit.slice(0, 12)} (${snap.same ? 'HEAD 와 같음' : '커밋 안 한 변경 포함'})\n`);
+  for (let i = 0; i < jobs; i++) { const w = join(base, 'w' + i); execFileSync('git', ['worktree', 'add', '-q', '--detach', w, snap.commit], { cwd: ROOT }); trees.push(w); }
   const kids = trees.map((w, i) => new Promise((res) => { let buf = ''; const p = spawn(process.execPath, [fileURLToPath(import.meta.url), '--shard', `${i}/${jobs}`, '--worktree', w, '--spec', SPEC, ...(only ? ['--rules', arg('--rules')] : [])], { stdio: ['ignore', 'pipe', 'inherit'] }); let part = ''; p.stdout.on('data', (d) => { part += d; const ls = part.split('\n'); part = ls.pop(); for (const l of ls) if (l) { buf += l + '\n'; if (!check) process.stdout.write(l + '\n'); } }); p.on('close', () => res(buf)); })); // 결과는 나오는 대로 한 줄씩 (실행이 끊겨도 남는다)
   const got = (await Promise.all(kids)).join('').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   for (const w of trees) execFileSync('git', ['worktree', 'remove', '--force', w], { cwd: ROOT });
