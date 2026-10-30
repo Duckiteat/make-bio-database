@@ -279,7 +279,7 @@ test('㉒ 변이 시험은 커밋하지 않은 작업 파일로 돈다 — 브�
   const tmp = mkdtempSync(join(tmpdir(), 'mut-test-')), C = join(tmp, 'c'), spec = join(tmp, 'spec.jsonl');
   try {
     execFileSync('git', ['clone', '-q', '--local', '--no-hardlinks', ROOT, C]);
-    copyFileSync(join(ROOT, 'tests/mutation/run.mjs'), join(C, 'tests/mutation/run.mjs')); // 시험하는 실행기는 지금 작업 파일의 것
+    for (const f of ['tests/mutation/run.mjs', 'tests/snapshot.mjs']) copyFileSync(join(ROOT, f), join(C, f)); // 시험하는 실행기는 지금 작업 파일의 것
     const M1 = 'MUT-SNAPSHOT-EDITED-' + process.pid, M2 = 'MUT-SNAPSHOT-NEW-' + process.pid;
     appendFileSync(join(C, 'README.md'), `\n${M1}\n`); // 추적 파일의 커밋 안 한 변경
     writeFileSync(join(C, 'probe-untracked.txt'), M2 + '\n'); // 추적하지 않는 새 파일

@@ -1001,6 +1001,38 @@
       "interpret": "전환 기록 시험 — 검사 통과 1 + 거부 사유별 · 서기는 검사 뒤 끝에만 붙이고 순번을 매김 (RULE-0513)."
     },
     {
+      "path": "tests/affected.mjs",
+      "class": "verification",
+      "format": "Node 스크립트 (node:test 묶음이 아님) — 기본 · --full · --list",
+      "writer": "사람·AI",
+      "readers": "문지기 finish (modes.json gate 의 디벨롭·적분장 묶음) · 사람",
+      "interpret": "바뀐 것만 시험 (DEC-0037) — 커밋은 시험마다 마지막으로 통과했을 때 읽은 파일 중 바뀐 것이 있을 때만 돌리고, --full(push)은 전체 + 추적 구멍 검사(건너뛸 수 있었던 시험이 지도에 없는 것을 읽으면 실패). 지도는 저장소 밖 임시 폴더(서기 초안)에 저장소마다 하나 — 추적에서 계산, 손으로 쓰지 않음, 없으면 모두."
+    },
+    {
+      "path": "tests/trace.mjs",
+      "class": "verification",
+      "format": "Node 모듈 (node --import 로 미리 실림 — NODE_OPTIONS)",
+      "writer": "사람·AI",
+      "readers": "tests/affected.mjs",
+      "interpret": "시험 추적 — 시험 파일 하나가 실제로 읽은 저장소 파일(모듈 적재 · fs 읽기 · 폴더 목록 · 하위 프로세스 인자 · 저장소 안 git 은 역사 표시, 작업 트리를 읽는 git 은 저장소 전체)을 하위 프로세스·워커까지 모아 저장소 밖 기록 폴더에. 저장소에 쓰지 않음."
+    },
+    {
+      "path": "tests/snapshot.mjs",
+      "class": "verification",
+      "format": "Node 모듈",
+      "writer": "사람·AI",
+      "readers": "tests/affected.mjs · tests/mutation/run.mjs",
+      "interpret": "작업 파일 스냅숏 — 커밋 안 한 변경·새 파일까지 git 트리·커밋 개체로(저장소 밖 임시 색인). 브랜치·작업 트리·실제 색인·stash 는 그대로."
+    },
+    {
+      "path": "tests/affected.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "바뀐 것만 시험의 시험 — 고르기 · 추적 구멍 · 새 지도(합성 기록) + 임시 git 저장소에서 끝까지(처음 모두 → 0 → 읽은 파일 · 목록 폴더의 새 파일 · HEAD 바뀜 → 그 시험만 · 지도에서 뺀 연결을 전체 검사가 잡음)."
+    },
+    {
       "path": "tests/mutation/run.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",
@@ -1523,10 +1555,10 @@
     {
       "path": "rebuild/gate.mjs",
       "class": "management",
-      "format": "Node 스크립트 (훅 hook <session-start|pre|post|stop> · open · finish · receipt)",
+      "format": "Node 스크립트 (훅 hook <session-start|pre|post|stop> · open · finish [--full] · receipt)",
       "writer": "사람·AI",
       "readers": ".claude/settings.json 훅 · tests/gate.test.mjs",
-      "interpret": "문지기·영수증 (재건 7 단계) — 정책은 rebuild/rules/modes.json 의 gate. 모드 밖 쓰기·막는 명령·끝내기 전 시험 없는 commit·push 를 막고(RULE-0514–0517 · 수집가 0274·0275·0287·0299), 도구 호출마다 바뀐 파일을 영수증에 붙인다."
+      "interpret": "문지기·영수증 (재건 7 단계) — 정책은 rebuild/rules/modes.json 의 gate. 모드 밖 쓰기·막는 명령·끝내기 전 시험 없는 commit·push 를 막고(RULE-0514–0517 · 수집가 0274·0275·0287·0299 — 커밋은 바뀐 것에 닿는 시험으로, push 는 finish --full 전체 뒤에만), 도구 호출마다 바뀐 파일을 영수증에 붙인다."
     },
     {
       "path": "workspace/receipts/*",

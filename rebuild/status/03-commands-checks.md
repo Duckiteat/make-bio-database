@@ -63,6 +63,7 @@
 | 파일 | 시험 |
 |---|---|
 | `tests/acceptance.test.mjs` | 9 |
+| `tests/affected.test.mjs` | 3 |
 | `tests/assumptions.test.mjs` | 8 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |

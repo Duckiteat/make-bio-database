@@ -47,6 +47,14 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   assert.match(pre({ mode: 'develop', finish: { pass: false, work: 'W1' } }, 'Bash', { command: 'git push -u origin b' }), /통과하지 않았다/);
   assert.match(pre({ mode: 'develop', finish: { pass: true, work: 'W0' } }, 'Bash', { command: 'git commit -m x' }), /^RULE-0516 .*시험 뒤에 파일이 바뀌었다/);
   assert.equal(pre({ mode: 'develop', finish: { pass: true, work: 'W1' } }, 'Bash', { command: 'git commit -m x' }), null, '통과한 그 상태면 열림');
+  // 바뀐 것만 시험 (DEC-0037): 커밋 = 닿는 시험만으로 열림, push = 전체 뒤에만. 범위 기록이 없는 옛 통과는 전체였다
+  assert.equal(pre({ mode: 'develop', finish: { pass: true, work: 'W1', scope: 'affected' } }, 'Bash', { command: 'git commit -m x' }), null, '닿는 시험만 통과해도 커밋');
+  assert.match(pre({ mode: 'develop', finish: { pass: true, work: 'W1', scope: 'affected' } }, 'Bash', { command: 'git push -u origin b' }), /^RULE-0516 .*push 는 전체 시험 뒤에만.*--full/);
+  assert.equal(pre({ mode: 'develop', finish: { pass: true, work: 'W1', scope: 'full' } }, 'Bash', { command: 'git push -u origin b' }), null, '전체 통과 뒤 push');
+  assert.equal(pre({ mode: 'develop', finish: { pass: true, work: 'W1' } }, 'Bash', { command: 'git push -u origin b' }), null, '범위 없는 옛 기록 = 전체');
+  assert.equal(G.finishScope(G.finishCmds(P, 'develop', null).cmds, false), 'affected', '디벨롭 묶음은 바뀐 것만 시험을 씀');
+  assert.equal(G.finishScope(G.finishCmds(P, 'develop', null).cmds, true), 'full', '--full');
+  assert.equal(G.finishScope(G.finishCmds(P, 'author', null).cmds, false), 'full', '바뀐 것만 시험이 없는 묶음은 늘 전체');
   const col = { mode: 'author', role: 'collector', finish: { pass: true, work: 'W1' } };
   assert.match(pre(col, 'Bash', { command: 'git push -u origin main' }), /^RULE-0299 .*collector/, '수집가는 main 에 못 씀');
   assert.match(pre({ ...col, branch: () => 'collector/task-9', pushFiles: () => ['core.js'] }, 'Bash', { command: 'git push -u origin collector/task-9' }), /push 는/);

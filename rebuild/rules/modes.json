@@ -54,7 +54,7 @@
       "writes": "코드 — 사용자 요청 필수. 삼권 경계(쓰기는 서기 put 만, 행정부 순수, 사법부 비실행)",
       "risk": "데이터를 통과시키려고 규칙 완화",
       "finish": [
-        "node --test tests/*.test.mjs",
+        "node rebuild/gate.mjs finish develop — 커밋은 바뀐 것에 닿는 시험만, push 는 --full (전체)",
         "해당 엔진 시험",
         "래칫(FLOOR) 내리지 않음",
         "CHANGES.md 맨 위 한 행"
@@ -262,7 +262,7 @@
           "workspace/handoff/**"
         ],
         "finish": [
-          "node --test tests/*.test.mjs",
+          "node tests/affected.mjs",
           "node dbtool.mjs validate",
           "node dbtool.mjs textbook --check"
         ],
@@ -280,7 +280,7 @@
           "CHANGES.md"
         ],
         "finish": [
-          "node --test tests/*.test.mjs",
+          "node tests/affected.mjs",
           "node dbtool.mjs validate",
           "node dbtool.mjs textbook --check"
         ]
