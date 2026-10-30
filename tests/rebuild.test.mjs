@@ -20,6 +20,7 @@ import * as RENDER from '../rebuild/render.mjs';
 import * as READ from '../rebuild/read.mjs';
 import * as STATE from '../rebuild/state.mjs';
 import * as IMPORT from '../rebuild/plan-import.mjs';
+import * as LEDGER from '../rebuild/rules.mjs';
 
 const X = IDX.build();
 
@@ -45,7 +46,7 @@ test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는
   const users = code.filter((p) => /rebuild\//.test(readFileSync(join(ROOT, p), 'utf8')));
   assert.deepEqual(users, ['legislative/clerk.mjs'], 'rebuild/ 를 가리키는 코드');
   const clerk = readFileSync(join(ROOT, 'legislative/clerk.mjs'), 'utf8').split('\n').filter((l) => /rebuild\//.test(l));
-  assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
+  assert.ok(clerk.every((l) => /ZONES|rebuild:|ledger:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
 test('③ 서기 구역 rebuild 는 관리 파일 · 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만', () => {
@@ -289,11 +290,53 @@ test('㉒ 변이 시험은 커밋하지 않은 작업 파일로 돈다 — 브�
       { rule: 'RULE-T003', op: 'static', file: 'README.md', contains: 'MUT-SNAPSHOT-NOWHERE' },
     ].map((r) => JSON.stringify(r)).join('\n') + '\n');
     const g = (...a) => execFileSync('git', a, { cwd: C, encoding: 'utf8' });
-    const state = () => ({ head: g('rev-parse', 'HEAD'), branch: g('symbolic-ref', '-q', 'HEAD'), status: g('status', '--porcelain'), diff: g('diff'), index: g('ls-files', '-s'), stash: g('stash', 'list'), trees: g('worktree', 'list', '--porcelain').split('\n').filter((l) => l.startsWith('worktree ')).length });
+    const state = () => ({ head: g('rev-parse', 'HEAD'), branch: g('rev-parse', '--abbrev-ref', 'HEAD'), status: g('status', '--porcelain'), diff: g('diff'), index: g('ls-files', '-s'), stash: g('stash', 'list'), trees: g('worktree', 'list', '--porcelain').split('\n').filter((l) => l.startsWith('worktree ')).length });
     const before = state();
     const out = execFileSync(process.execPath, [join(C, 'tests/mutation/run.mjs'), '--spec', spec], { cwd: C, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
     const got = Object.fromEntries(out.split('\n').filter(Boolean).map((l) => JSON.parse(l)).map((r) => [r.rule, r.result]));
     assert.deepEqual(got, { 'RULE-T001': 'present', 'RULE-T002': 'present', 'RULE-T003': 'absent' }, '사본이 커밋 안 한 변경·새 파일을 보지 못함 (또는 없는 것을 봄)');
     assert.deepEqual(state(), before, '변이 시험이 브랜치·작업 트리·색인·stash·사본 목록을 바꿈');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
+});
+
+test('㉓ 규칙 장부는 도구로만 (10c · RULE-0519): 줄 모양 하나 · 칸 · 열쇠 · 참조 · 봉인 — 도구 밖에서 고치면 거부', () => {
+  assert.deepEqual(LEDGER.check(LEDGER.load(ROOT)), [], '규칙 장부 — node rebuild/rules.mjs check');
+  const R1 = { id: 'RULE-0001', text: 't', modes: ['common'], enforce: 'text' };
+  const files = Object.fromEntries(Object.keys(LEDGER.LEDGERS).map((n) => [n, n === 'rules' ? JSON.stringify(R1) + '\n' : '']));
+  const seal = { at: '2026-10-30', why: '시험', ops: Object.keys(LEDGER.LEDGERS).map((file) => ({ op: 'seal', file })) };
+  const first = LEDGER.apply({ files, log: [] }, seal);
+  assert.deepEqual(first.errs, [], '첫 봉인');
+  const S = first.S;
+  assert.equal(S.files.rules, LEDGER.canon(R1) + '\n', '봉인이 줄 모양을 하나로 맞춤 (값은 그대로)');
+  assert.ok(LEDGER.check({ files, log: [] }).some((e) => /봉인이 없음/.test(e)), '봉인 없는 장부는 거부');
+  const all = (r) => r.errs.join('\n');
+  const ok = LEDGER.apply(S, { at: '2026-10-30', why: '고침', ops: [{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { text: 'u', note: 'n' } }, { op: 'add', file: 'review', row: { rule: 'RULE-0001', issue: 'stale', evidence: 'e', proposal: 'p', decision: { by: 'user' } } }] });
+  assert.deepEqual(ok.errs, [], '고치기 통과');
+  const ev = ok.S.log[ok.S.log.length - 2];
+  assert.deepEqual([ev.op, ev.key, ev.before.text, ev.after.text, ev.after.note], ['set', 'RULE-0001', 't', 'u', 'n'], '사건에 앞뒤가 남음');
+  assert.deepEqual(LEDGER.check(ok.S), [], '고친 뒤 봉인과 같음');
+  // 도구 밖에서 고침 · 다른 줄 모양 → 거부 (규칙 번호와 함께)
+  const hand = { ...ok.S, files: { ...ok.S.files, rules: ok.S.files.rules.replace('"u"', '"손"') } };
+  assert.match(LEDGER.check(hand).join('\n'), /^RULE-0519 rules: 장부가 마지막 봉인\(사건 \d+\)과 다름 — 도구 밖에서 고쳤다/m);
+  const compact = { ...ok.S, files: { ...ok.S.files, rules: JSON.stringify(JSON.parse(ok.S.files.rules)) + '\n' } };
+  assert.match(LEDGER.check(compact).join('\n'), /rules 1 째 줄: 줄 모양이 다름/);
+  // 고치기 거부 사유마다
+  const bad = (ops, why = '왜') => all(LEDGER.apply(ok.S, { at: '2026-10-30', why, ops }));
+  assert.match(bad([{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { text: 'x' } }], ''), /why 가 없음/);
+  assert.match(bad([{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { bogus: 1 } }]), /모르는 칸 'bogus'/);
+  assert.match(bad([{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { text: null } }]), /필수 칸 'text' 이 없음/);
+  assert.match(bad([{ op: 'add', file: 'rules', row: R1 }]), /열쇠 'RULE-0001' 가 이미 있음/);
+  assert.match(bad([{ op: 'add', file: 'enforcement', row: { rule: 'RULE-0999', op: 'static', result: 'present', at: '2026-10-30' } }]), /없는 규칙 'RULE-0999'/);
+  assert.match(bad([{ op: 'remove', file: 'rules', key: 'RULE-0404' }]), /열쇠 'RULE-0404' 인 줄이 없음/);
+  assert.match(bad([{ op: 'seal', file: 'rules' }]), /이미 봉인된 장부/);
+  assert.match(bad([{ op: 'rename', file: 'rules' }]), /모르는 op/);
+  assert.match(bad([{ op: 'add', file: 'modes', row: {} }]), /모르는 장부/);
+  // 서기: 장부 이름은 정해진 것만 · 사건 기록은 덧붙이기만
+  const tmp = mkdtempSync(join(tmpdir(), 'ledger-'));
+  try {
+    assert.throws(() => CLERK.writeLedger('modes.json', '{}', tmp), /규칙 장부 이름/);
+    CLERK.writeLedger('changes.jsonl', 'a\n', tmp);
+    assert.throws(() => CLERK.writeLedger('changes.jsonl', 'b\n', tmp), /^Error: 입법 서기 거부: 규칙 장부의 사건 기록/);
+    assert.equal(CLERK.writeLedger('changes.jsonl', 'a\nb\n', tmp), join(tmp, 'rebuild', 'rules', 'changes.jsonl'), '덧붙이기는 됨');
   } finally { rmSync(tmp, { recursive: true, force: true }); }
 });

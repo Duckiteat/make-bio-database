@@ -46,6 +46,7 @@ export const ZONES = {
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
   transition:  { label: '전환 기록 (세션 사이 인계)', allow: ['workspace/transitions.jsonl'], rule: '사법부 전환 기록 검사(judicial/transition_audit.js)가 통과할 때만 — 추가만 한다' },
   receipt:     { label: '영수증 (세션 작업 기록)', allow: ['workspace/receipts/'], rule: '문지기(gate.mjs — 재건 7 단계)가 도구 호출마다 덧붙인다 — 사슬(prev)로 이어 붙이기만, 고치지 않는다 (재건 7 단계)' },
+  ledger:      { label: '규칙 장부 (규칙 · 검토 · 수식 · 집행 · 맥락 · 명령)', allow: ['rebuild/rules/'], rule: '장부 고치기 도구(rebuild/rules.mjs)가 변경 묶음을 검사한 뒤에만 — 바꿀 때마다 왜, 사건 기록(changes.jsonl)은 덧붙이기만, 사건마다 장부의 봉인 sha256' },
   rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md', 'CLAUDE.md', 'docs/modes/', '.claude/skills/'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·계획 기록과 그 생성 문서만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
@@ -251,6 +252,13 @@ export function writeState(name, content, root) {
   const f = join(root || ROOT, 'rebuild', 'state', name);
   if (name === 'plan-log.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0014', '계획의 걸어온 길(plan-log.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
   return put('rebuild', f, content);
+}
+// 규칙 장부 (규칙 폴더의 .jsonl 여섯) — 장부 고치기 도구가 검사한 글만. 사건 기록(changes.jsonl)은 덧붙이기만: 새 글이 옛 글로 시작해야 한다
+export function writeLedger(name, content, root) {
+  if (!/^(rules|review|formulas|enforcement|links|commands|changes)\.jsonl$/.test(name)) refuse('RULE-0014', `규칙 장부 이름 '${name}' — rules · review · formulas · enforcement · links · commands · changes (.jsonl) 만`);
+  const f = join(root || ROOT, 'rebuild', 'rules', name);
+  if (name === 'changes.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0519', '규칙 장부의 사건 기록(changes.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
+  return put('ledger', f, content);
 }
 // 계획 문서 둘 — 계획 기록에서 생성한 글만 (손으로 고치지 않는다)
 export function writePlanDoc(plan, content, root) {

@@ -1500,9 +1500,9 @@
       "path": "rebuild/rules/*",
       "class": "management",
       "format": "JSON Lines — 한 줄 한 규칙 {id: RULE-…, text, modes[], enforce, unit | from_code, copies[], where?, flags?, note?} (from_code = 문서 단위 없이 코드의 검사 자리에서 온 규칙, flags = 글 규칙인데 코드가 알림만 하는 자리)",
-      "writer": "재건 5 단계 (분류 장부에서)",
-      "readers": "rebuild/status.mjs · tests/mutation/run.mjs (enforcement.jsonl)",
-      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림) · 모드 원본(modes.json — 중심·모드 문서의 머리말·주제 표) · 명령 장부(commands.jsonl) · 수식 기록(formulas.jsonl — EQ-…, 읽기 모드 L2). 6 단계에서 규칙의 원본이 된다."
+      "writer": "장부 고치기 도구 rebuild/rules.mjs apply 만 (.jsonl 여섯 — 서기 ledger 구역 · RULE-0519) · modes.json 은 사람·AI",
+      "readers": "rebuild/status.mjs · rebuild/rules.mjs · tests/mutation/run.mjs (enforcement.jsonl)",
+      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림) · 모드 원본(modes.json — 중심·모드 문서의 머리말·주제 표) · 명령 장부(commands.jsonl) · 수식 기록(formulas.jsonl — EQ-…, 읽기 모드 L2) · 사건 기록(changes.jsonl — 장부를 고칠 때마다 왜 · 앞뒤 줄 · 바꾼 뒤 장부의 봉인 sha256, 덧붙이기만). 6 단계에서 규칙의 원본이 된다."
     },
     {
       "path": "workspace/transitions.jsonl",
@@ -1551,6 +1551,14 @@
       "writer": "입법 서기 writeState 만 (rebuild/plan.mjs apply — 검사 통과 뒤). plan-log 는 옛 글로 시작해야 씀",
       "readers": "rebuild/state.mjs · rebuild/status.mjs (docs/design/build-plan.md · rebuild/PLAN.md 생성) · tests/rebuild.test.mjs ⑯–⑲",
       "interpret": "두 계획의 원본. 2026-10-29 까지의 걸어온 길은 git 역사에서 가져옴(source git, node rebuild/plan-import.mjs --check 로 다시 대조), 그 뒤는 apply 사건(source apply)."
+    },
+    {
+      "path": "rebuild/rules.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (apply <ops.json> [--dry] · check)",
+      "writer": "사람·AI",
+      "readers": "사람·AI (장부를 고칠 때) · tests/rebuild.test.mjs ㉓",
+      "interpret": "규칙 장부 고치기 (재건 10c) — rebuild/rules/ 의 .jsonl 여섯을 변경 묶음 { at, why, ops: add · set · remove · seal } 으로만 바꾼다. 줄 모양 하나 · 칸 목록 · 열쇠 · 참조를 검사한 뒤 서기(writeLedger)가 쓰고, 사건마다 봉인 sha256 — 장부가 마지막 봉인과 다르면 도구 밖에서 고친 것으로 거부(RULE-0519)."
     },
     {
       "path": "rebuild/gate.mjs",

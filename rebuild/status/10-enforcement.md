@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (288 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (289 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 254 |
+| 잡음 `caught` | 255 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 254
+## 잡음 `caught` — 255
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -273,6 +273,7 @@
 | RULE-0486 | CONSISTENT \| (사전 등록된 규약의 검증 세트 관찰만 — build-plan 3) 가설 하나: 선 | replace | judicial/obs_compare.js | ④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백 |
 | RULE-0196 | 주석은 계약·이유만, 이력은 CHANGES.md | replace | core.js | ⑳ 코드 주석에 이력(날짜·예전)이 없다 — 이력은 CHANGES.md (RULE-0196) |
 | RULE-0090 | 불확도 미보고면 sd = 유효 숫자 해상도 + uncertainty.basis 'resolution' + n | replace | judicial/obs_compare.js | ④″ 해상도 sd: 기본은 그대로 · gum 은 ÷√12 · 반복 수로 나누지 않음 · 퍼짐 검정 건너뜀 · 판정에 읽기가 남음 |
+| RULE-0519 | 규칙 장부(rebuild/rules/*.jsonl)는 장부 고치기 도구(node rebuild/rules.m | replace | rebuild/rules.mjs | ㉓ 규칙 장부는 도구로만 (10c · RULE-0519): 줄 모양 하나 · 칸 · 열쇠 · 참조 · 봉인 — 도구 밖에서 고치면 거부 |
 
 ## 설정에 있음 `present` — 8
 
