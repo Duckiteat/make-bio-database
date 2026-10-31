@@ -4,12 +4,12 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `.claude/skills/author/SKILL.md` | 13.4 | 146 |  | 미분류 |
-| `.claude/skills/baseline/SKILL.md` | 4.8 | 75 |  | 미분류 |
+| `.claude/skills/author/SKILL.md` | 13.0 | 142 |  | 미분류 |
+| `.claude/skills/baseline/SKILL.md` | 4.6 | 71 |  | 미분류 |
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
-| `.claude/skills/inspect/SKILL.md` | 7.0 | 93 |  | 미분류 |
-| `CHANGES.md` | 280.8 | 258 |  | 분류됨 1 |
+| `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
+| `CHANGES.md` | 281.6 | 259 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.3 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -37,11 +37,11 @@
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.1 | 133 |  | 분류됨 95 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
-| `docs/modes/author.md` | 13.2 | 141 |  | 생성물 |
-| `docs/modes/baseline.md` | 4.6 | 70 |  | 생성물 |
+| `docs/modes/author.md` | 12.8 | 137 |  | 생성물 |
+| `docs/modes/baseline.md` | 4.4 | 66 |  | 생성물 |
 | `docs/modes/develop.md` | 5.9 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
-| `docs/modes/inspect.md` | 6.8 | 88 |  | 생성물 |
+| `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
 | `docs/reports/2026-10-15-mhc1-qualitative-batch.md` | 2.9 | 26 |  | 분류됨 13 |

@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (301 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (309 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 267 |
+| 잡음 `caught` | 275 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 267
+## 잡음 `caught` — 275
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -286,6 +286,14 @@
 | RULE-0478 | `core.mapText` 는 외부 ID 의 status 를 **표시**한다(읽기). 선언하지는 않는다. | inject | core.js | ② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코드·verified 선언이 없다 |
 | RULE-0479 | `viewer.html` 은 브라우저 안에서만 병합(입법 함수)하고 관문(사법 함수)을 보여 준다. 저장은  | inject | viewer.html | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
 | RULE-0495 | 범위와 판정 규칙은 **사전 등록 때 함께 고정**한다(사후에 좁히기 금지). | replace | judicial/protocol.js | ⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준 |
+| RULE-0058 | db.json·patches 함께 커밋 | replace | judicial/log_audit.js | RULE-0509 병합 기록 재생: 형식 변환 스크립트가 기록과 다르거나 지금 db 가 기록의 끝과 다르면 거부 |
+| RULE-0285 | 수집가는 후보를 workspace/handoff/ 에 적기만, 적용·커밋·판단은 통합가 | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0310 | **이름 하나 = 개념 하나**: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키 | replace | judicial/judicial.js | 이름 하나 = 개념 하나 (RULE-0310 · 0323): 띄어쓰기만 다른 이름이 두 개념을 가리키면 검사가 거부 |
+| RULE-0460 | 생성물(`limitations.md`, 부록, `index.html`) 손으로 고치기 | inject | limitations.md | limitations.md 는 data/db.json 에서 생성된 최신 상태여야 함 |
+| RULE-0255 | 규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP  | replace | judicial/protocol.js | ① 규약 구조: 완결하면 통과, 빠지면 사유 |
+| RULE-0294 | 검증·적용·본체 병합은 통합가 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0484 | 필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴). | replace | judicial/judicial.js | ④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다 |
+| RULE-0485 | **실제 HTTP 해석은 dbtool 이 직접 못 한다**(governance ①: dbtool 에 `exe | inject | dbtool.mjs | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
 
 ## 설정에 있음 `present` — 8
 

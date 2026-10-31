@@ -1211,3 +1211,10 @@ test('과정 보고서: 규칙 밖 개입은 FAIL — 저장소를 몰래 바꾸
   const kin = JSON.parse(JSON.stringify(sc)); kin.kinetics['D000170/rule/aerobic_glycolysis'].k *= 2; // 실행 뒤 입력을 바꾸면 출처 확인이 잡는다
   assert.equal(PRP.processReport(r, { scenario: kin, rerunHash: r.process.hash }).checks.find((c) => /출처/.test(c.name)).ok, false);
 });
+
+test('이름 하나 = 개념 하나 (RULE-0310 · 0323): 띄어쓰기만 다른 이름이 두 개념을 가리키면 검사가 거부', () => {
+  const d = JSON.parse(JSON.stringify(BASE)), [a, b] = Object.keys(d.terms).filter((t) => d.terms[t].names && d.terms[t].names.ko);
+  d.terms[b].names.ko = d.terms[a].names.ko.split('').join(' '); // 정규화하면 같은 이름
+  const e = J.validate(DefDB.normalize(d)).errors.filter((x) => x.rule === 'RULE-0323');
+  assert.ok(e.length && /이름 충돌/.test(e[0].msg), JSON.stringify(e));
+});

@@ -361,7 +361,7 @@ test('㉕ 글 규칙 → 기계 규칙 (10h · DEC-0038): 글 규칙마다 글�
   const S = LEDGER.load(ROOT), rules = S.files.rules.split('\n').filter(Boolean).map((l) => JSON.parse(l));
   const text = rules.filter((r) => r.enforce === 'text' && !r.spec && !r.retired && !r.reserved);
   assert.deepEqual(text.filter((r) => !LEDGER.TEXT_WHY[r.text_why]).map((r) => r.id), [], '까닭이 없는 글 규칙');
-  const DONE = ['develop']; // 10h 묶음이 끝난 모드 — 묶음마다 늘린다
+  const DONE = ['develop', 'author', 'inspect']; // 10h 묶음이 끝난 모드 — 묶음마다 늘린다
   const left = text.filter((r) => r.text_why === 'candidate' && r.modes.some((m) => DONE.includes(m)));
   assert.deepEqual(left.map((r) => r.id), [], `끝난 모드(${DONE.join(' · ')})에 판정 가능한 글 규칙이 남음`);
   const one = text.find((r) => r.text_why === 'work');

@@ -88,7 +88,7 @@
 | `tests/rejections.test.mjs` | 3 |
 | `tests/reliability_criteria.test.mjs` | 12 |
 | `tests/retraction_propagation.test.mjs` | 4 |
-| `tests/rules.test.mjs` | 124 |
+| `tests/rules.test.mjs` | 125 |
 | `tests/runbook.test.mjs` | 5 |
 | `tests/rust_engine.test.mjs` | 8 |
 | `tests/stats.test.mjs` | 7 |

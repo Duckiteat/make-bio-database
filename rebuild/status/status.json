@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "776 개 · 26838.9 KB"
+        "776 개 · 26873.1 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -21,15 +21,15 @@
        ],
        [
         "새 세션이 처음 읽는 양 (중심 + 가장 큰 모드 문서)",
-        "20.4 KB"
+        "20.0 KB"
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "90 개 · 1873.1 KB"
+        "90 개 · 1872.2 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "5 개 · 33.0 KB"
+        "5 개 · 32.2 KB"
        ],
        [
         "장부 단위",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "381 / 25"
+        "382 / 25"
        ],
        [
         "번호 이름공간",
@@ -73,7 +73,7 @@
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "267 / 0 / 0"
+        "275 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -118,22 +118,22 @@
        [
         "rebuild",
         "29",
-        "6008.8"
+        "6043.0"
        ],
        [
         "docs",
         "62",
-        "1355.3"
+        "1354.4"
        ],
        [
         "(최상위)",
         "18",
-        "907.6"
+        "908.5"
        ],
        [
         "tests",
         "83",
-        "571.1"
+        "571.9"
        ],
        [
         "judicial",
@@ -176,14 +176,14 @@
         "49.0"
        ],
        [
-        ".claude",
-        "6",
-        "37.0"
-       ],
-       [
         "schemas",
         "2",
         "36.2"
+       ],
+       [
+        ".claude",
+        "6",
+        "36.1"
        ],
        [
         "mcp",
@@ -250,16 +250,16 @@
         "299.0"
        ],
        [
+        "`CHANGES.md`",
+        "281.6"
+       ],
+       [
         "`data/fetched/consensus/uniprot/P63092.json`",
         "281.5"
        ],
        [
         "`data/fetched/uniprot/P63092.json`",
         "281.5"
-       ],
-       [
-        "`CHANGES.md`",
-        "280.8"
        ],
        [
         "`data/fetched/consensus/uniprot/P01911.json`",
@@ -270,20 +270,20 @@
         "253.4"
        ],
        [
+        "`rebuild/rules/changes.jsonl`",
+        "231.8"
+       ],
+       [
         "`rebuild/state/plan-log.jsonl`",
-        "223.5"
+        "224.7"
        ],
        [
         "`docs/design/build-plan.md`",
         "211.7"
        ],
        [
-        "`rebuild/rules/changes.jsonl`",
-        "205.4"
-       ],
-       [
         "`rebuild/state/plans.jsonl`",
-        "195.0"
+        "196.0"
        ],
        [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
@@ -333,15 +333,15 @@
       "rows": [
        [
         "`.claude/skills/author/SKILL.md`",
-        "13.4",
-        "146",
+        "13.0",
+        "142",
         "",
         "미분류"
        ],
        [
         "`.claude/skills/baseline/SKILL.md`",
-        "4.8",
-        "75",
+        "4.6",
+        "71",
         "",
         "미분류"
        ],
@@ -361,15 +361,15 @@
        ],
        [
         "`.claude/skills/inspect/SKILL.md`",
-        "7.0",
-        "93",
+        "6.8",
+        "90",
         "",
         "미분류"
        ],
        [
         "`CHANGES.md`",
-        "280.8",
-        "258",
+        "281.6",
+        "259",
         "",
         "분류됨 1"
        ],
@@ -564,15 +564,15 @@
        ],
        [
         "`docs/modes/author.md`",
-        "13.2",
-        "141",
+        "12.8",
+        "137",
         "",
         "생성물"
        ],
        [
         "`docs/modes/baseline.md`",
-        "4.6",
-        "70",
+        "4.4",
+        "66",
         "",
         "생성물"
        ],
@@ -592,8 +592,8 @@
        ],
        [
         "`docs/modes/inspect.md`",
-        "6.8",
-        "88",
+        "6.5",
+        "85",
         "",
         "생성물"
        ],
@@ -1301,7 +1301,7 @@
        ],
        [
         "`tests/rules.test.mjs`",
-        "124"
+        "125"
        ],
        [
         "`tests/runbook.test.mjs`",
@@ -2464,7 +2464,7 @@
         "`^U\\d{4,}$`",
         "classification (rebuild PLAN §5)",
         "`rebuild/ledger/*.jsonl`",
-        "10604 · 7281 · 10",
+        "10640 · 7281 · 10",
         "—"
        ],
        [
@@ -2494,7 +2494,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "4551 · 523 · 66",
+        "4691 · 523 · 68",
         "521 · 없음 2"
        ],
        [
@@ -2504,7 +2504,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "774 · 40 · 34",
+        "775 · 40 · 34",
         "174 · 없음 2"
        ],
        [
@@ -2525,7 +2525,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "251 · 없음 0"
+        "252 · 없음 0"
        ],
        [
         "`code_head`",
@@ -2554,7 +2554,7 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "472 · 34 · 11",
+        "474 · 34 · 11",
         "174 · 없음 0"
        ],
        [
@@ -2905,7 +2905,7 @@
        [
         "공통 `common`",
         "80",
-        "7104.8"
+        "7137.3"
        ],
        [
         "정보 작성 `author`",
@@ -2920,7 +2920,7 @@
        [
         "디벨롭 `develop`",
         "169",
-        "2185.9"
+        "2187.6"
        ],
        [
         "적분장 `field`",
@@ -2953,7 +2953,7 @@
         "`rebuild/**`",
         "common",
         "29",
-        "6008.8",
+        "6043.0",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -3170,7 +3170,7 @@
         "`tests/**`",
         "develop",
         "57",
-        "537.4",
+        "538.2",
         "시험"
        ],
        [
@@ -3212,7 +3212,7 @@
         "`docs/**`",
         "common",
         "8",
-        "75.0",
+        "74.2",
         "안내 문서"
        ],
        [
@@ -3226,7 +3226,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "280.8",
+        "281.6",
         "변경 기록"
        ],
        [
@@ -3247,7 +3247,7 @@
         "`.claude/**`",
         "common",
         "6",
-        "37.0",
+        "36.1",
         "도구 설정"
        ],
        [
@@ -3333,11 +3333,11 @@
       "rows": [
        [
         "machine",
-        "308"
+        "316"
        ],
        [
         "text",
-        "211"
+        "203"
        ],
        [
         "none",
@@ -5083,7 +5083,7 @@
       "rows": [
        [
         "잡음 `caught`",
-        "267"
+        "275"
        ],
        [
         "설정에 있음 `present`",
@@ -5101,7 +5101,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (301 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (309 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -5112,7 +5112,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 267",
+    "heading": "잡음 `caught` — 275",
     "tables": [
      {
       "head": [
@@ -6991,6 +6991,62 @@
         "replace",
         "judicial/protocol.js",
         "⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준"
+       ],
+       [
+        "RULE-0058",
+        "db.json·patches 함께 커밋",
+        "replace",
+        "judicial/log_audit.js",
+        "RULE-0509 병합 기록 재생: 형식 변환 스크립트가 기록과 다르거나 지금 db 가 기록의 끝과 다르면 거부"
+       ],
+       [
+        "RULE-0285",
+        "수집가는 후보를 workspace/handoff/ 에 적기만, 적용·커밋·판단은 통합가",
+        "replace",
+        "rebuild/gate.mjs",
+        "① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만"
+       ],
+       [
+        "RULE-0310",
+        "**이름 하나 = 개념 하나**: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키",
+        "replace",
+        "judicial/judicial.js",
+        "이름 하나 = 개념 하나 (RULE-0310 · 0323): 띄어쓰기만 다른 이름이 두 개념을 가리키면 검사가 거부"
+       ],
+       [
+        "RULE-0460",
+        "생성물(`limitations.md`, 부록, `index.html`) 손으로 고치기",
+        "inject",
+        "limitations.md",
+        "limitations.md 는 data/db.json 에서 생성된 최신 상태여야 함"
+       ],
+       [
+        "RULE-0255",
+        "규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP ",
+        "replace",
+        "judicial/protocol.js",
+        "① 규약 구조: 완결하면 통과, 빠지면 사유"
+       ],
+       [
+        "RULE-0294",
+        "검증·적용·본체 병합은 통합가",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0484",
+        "필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴).",
+        "replace",
+        "judicial/judicial.js",
+        "④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다"
+       ],
+       [
+        "RULE-0485",
+        "**실제 HTTP 해석은 dbtool 이 직접 못 한다**(governance ①: dbtool 에 `exe",
+        "inject",
+        "dbtool.mjs",
+        "① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만"
        ]
       ]
      }

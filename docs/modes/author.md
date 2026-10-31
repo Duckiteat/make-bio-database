@@ -11,7 +11,7 @@
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (66)
+## 지켜야 할 규칙 — 사람·AI (62)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -35,23 +35,19 @@
 - `RULE-0271` 확인하지 못하면 한계로 등록한다 — 그게 이 저장소가 다른 데이터베이스와 다른 점이다.
 - `RULE-0272` 단위는 묶음(batch) — 항목마다 핑퐁하지 않는다.
 - `RULE-0273` A (서브에이전트, 지금 기본): 보고만 — 구조적으로 apply·commit 불가. 설정 0. 묶음마다 통합가가 띄운다.
-- `RULE-0285` 수집가는 후보를 workspace/handoff/ 에 적기만, 적용·커밋·판단은 통합가
 - `RULE-0288` 인용·값은 지정 1차 출처 API 응답에서만, 웹 검색 스니펫·2차 리뷰 금지 (TASK-002 교훈)
 - `RULE-0301` 인용·값은 지정 1차 출처 API가 반환한 내용에서만 뽑는다. 웹 검색 스니펫·2차 리뷰·블로그를 값·인용
 - `RULE-0302` 근거로 쓰지 마라. 못 찾으면 `not_found`, 접근 안 되면 `unreadable` — 지어내거나 스니펫으로 메우지 않는다.
 - `RULE-0303` 나머지는 엔드포인트를 통합가가 확인해 이 표를 갱신하기 전까지 "통합가 필요"로 표시한다.
-- `RULE-0460` 생성물(`limitations.md`, 부록, `index.html`) 손으로 고치기
 
 ### 데이터 넣기
 
 - `RULE-0057` --allow-warnings 는 사용자 허락 시만
-- `RULE-0058` db.json·patches 함께 커밋
 - `RULE-0062` 외부 ID 는 확실한 것만, 모르면 unmapped (+Identity_Gap), 지어내지 않음
 - `RULE-0065` 모호하면 unmapped + Identity_Gap 유지
 - `RULE-0070` 인산화·활성형은 묶음 부위:특징 + 상태 의미 규칙 (새 개념 금지)
 - `RULE-0075` 기존 정의항 패치는 적은 최상위 필드 통째 교체 — 유지할 항목도 적음
 - `RULE-0076` 구조 지문(InChIKey·서열 해시)은 도구 계산값만 computed 로
-- `RULE-0310` 이름 하나 = 개념 하나: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키면 오류. 새 이름이 기존 별칭과 같으면 기존 개념으로 합쳐진다.
 - `RULE-0313` 단계는 규칙의 적용: 행위자 활성, 변화량 = 규칙 효과, 해리 구성 요소 개수, 수송 외 위치 변화 금지, 위치 조건, 공간 접촉.
 - `RULE-0314` 규칙은 `tests/` 의 시험(개수는 `tests/fixtures/FLOOR.json` 이 센다)이 지키고, GitHub Actions 가 푸시마다 테스트와 전체 검사를 돌린다.
 
@@ -102,11 +98,11 @@
 
 ## 컴퓨터가 막는 규칙
 
-183 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+187 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
 
 - 권한·쓰기 (삼권 분립): RULE-0018 · RULE-0019 · RULE-0023 · RULE-0026 · RULE-0027 · RULE-0435 · RULE-0436
-- 수집·위임 (다른 AI·수집가): RULE-0274 · RULE-0275 · RULE-0286 · RULE-0287 · RULE-0289 · RULE-0290 · RULE-0291 · RULE-0293 · RULE-0295 · RULE-0296 · RULE-0297 · RULE-0299 · RULE-0300
-- 데이터 넣기: RULE-0059 · RULE-0060 · RULE-0061 · RULE-0063 · RULE-0064 · RULE-0066 · RULE-0068 · RULE-0069 · RULE-0071 · RULE-0072 · RULE-0073 · RULE-0074 · RULE-0309 · RULE-0311 · RULE-0312 · RULE-0319 · RULE-0323 · RULE-0324 · RULE-0325 · RULE-0327 · RULE-0330 · RULE-0331 · RULE-0332 · RULE-0333 · RULE-0334 · RULE-0337 · RULE-0339 · RULE-0340 · RULE-0341 · RULE-0342 · RULE-0343 · RULE-0344 · RULE-0345 · RULE-0346 · RULE-0348 · RULE-0349 · RULE-0350 · RULE-0351 · RULE-0352 · RULE-0353 · RULE-0354 · RULE-0355 · RULE-0356 · RULE-0357 · RULE-0358 · RULE-0359 · RULE-0360 · RULE-0361 · RULE-0362 · RULE-0363 · RULE-0364 · RULE-0365 · RULE-0366 · RULE-0369 · RULE-0370 · RULE-0371 · RULE-0372 · RULE-0377 · RULE-0378 · RULE-0379 · RULE-0382 · RULE-0383 · RULE-0384 · RULE-0385 · RULE-0387 · RULE-0389 · RULE-0396 · RULE-0397 · RULE-0398 · RULE-0399 · RULE-0400 · RULE-0402 · RULE-0404 · RULE-0405 · RULE-0406 · RULE-0414 · RULE-0417 · RULE-0418 · RULE-0421 · RULE-0422 · RULE-0440 · RULE-0441 · RULE-0442 · RULE-0444 · RULE-0446 · RULE-0447 · RULE-0448 · RULE-0451 · RULE-0452
+- 수집·위임 (다른 AI·수집가): RULE-0274 · RULE-0275 · RULE-0285 · RULE-0286 · RULE-0287 · RULE-0289 · RULE-0290 · RULE-0291 · RULE-0293 · RULE-0295 · RULE-0296 · RULE-0297 · RULE-0299 · RULE-0300 · RULE-0460
+- 데이터 넣기: RULE-0058 · RULE-0059 · RULE-0060 · RULE-0061 · RULE-0063 · RULE-0064 · RULE-0066 · RULE-0068 · RULE-0069 · RULE-0071 · RULE-0072 · RULE-0073 · RULE-0074 · RULE-0309 · RULE-0310 · RULE-0311 · RULE-0312 · RULE-0319 · RULE-0323 · RULE-0324 · RULE-0325 · RULE-0327 · RULE-0330 · RULE-0331 · RULE-0332 · RULE-0333 · RULE-0334 · RULE-0337 · RULE-0339 · RULE-0340 · RULE-0341 · RULE-0342 · RULE-0343 · RULE-0344 · RULE-0345 · RULE-0346 · RULE-0348 · RULE-0349 · RULE-0350 · RULE-0351 · RULE-0352 · RULE-0353 · RULE-0354 · RULE-0355 · RULE-0356 · RULE-0357 · RULE-0358 · RULE-0359 · RULE-0360 · RULE-0361 · RULE-0362 · RULE-0363 · RULE-0364 · RULE-0365 · RULE-0366 · RULE-0369 · RULE-0370 · RULE-0371 · RULE-0372 · RULE-0377 · RULE-0378 · RULE-0379 · RULE-0382 · RULE-0383 · RULE-0384 · RULE-0385 · RULE-0387 · RULE-0389 · RULE-0396 · RULE-0397 · RULE-0398 · RULE-0399 · RULE-0400 · RULE-0402 · RULE-0404 · RULE-0405 · RULE-0406 · RULE-0414 · RULE-0417 · RULE-0418 · RULE-0421 · RULE-0422 · RULE-0440 · RULE-0441 · RULE-0442 · RULE-0444 · RULE-0446 · RULE-0447 · RULE-0448 · RULE-0451 · RULE-0452
 - 관찰·측정값: RULE-0486 · RULE-0489
 - 한계: RULE-0078 · RULE-0079 · RULE-0083 · RULE-0084 · RULE-0085 · RULE-0086 · RULE-0087 · RULE-0088 · RULE-0089 · RULE-0090 · RULE-0104 · RULE-0107 · RULE-0110 · RULE-0111 · RULE-0112 · RULE-0113 · RULE-0114 · RULE-0115 · RULE-0116 · RULE-0119 · RULE-0121 · RULE-0123 · RULE-0124 · RULE-0125 · RULE-0126 · RULE-0127 · RULE-0128 · RULE-0129 · RULE-0130 · RULE-0131 · RULE-0133 · RULE-0138 · RULE-0139 · RULE-0140 · RULE-0141 · RULE-0153 · RULE-0154 · RULE-0155 · RULE-0156 · RULE-0162 · RULE-0165 · RULE-0168 · RULE-0169 · RULE-0171 · RULE-0172 · RULE-0174 · RULE-0182 · RULE-0186 · RULE-0219 · RULE-0220 · RULE-0233
 - 검증·판정: RULE-0189 · RULE-0190 · RULE-0202 · RULE-0203
