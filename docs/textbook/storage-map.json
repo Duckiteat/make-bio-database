@@ -1049,6 +1049,14 @@
       "interpret": "실제 db 기록 번호를 쓰는 시험 파일과 그 이유 — 예시 시나리오가 가리키는 계 · 불변인 사전 등록 기록 · 합성 시험 자료의 원본 등. 줄어드는 쪽으로만 (실제 상태를 단언하는 곳은 합성으로)."
     },
     {
+      "path": "tests/permissions.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "상시 권한 장부 시험 (10g · RULE-0521) — 지금 settings · 문지기 모드가 장부와 같음 + 거부 사례(장부 밖 권한 · 낡은 장부 줄 · 보호 자리 · 전부 허용 · 빈 칸 · 모르는 층·목록·모드 · 겹침)."
+    },
+    {
       "path": "tests/mutation/run.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",
@@ -1518,7 +1526,7 @@
       "format": "JSON Lines — 한 줄 한 규칙 {id: RULE-…, text, modes[], enforce, unit | from_code, copies[], where?, flags?, note?} (from_code = 문서 단위 없이 코드의 검사 자리에서 온 규칙, flags = 글 규칙인데 코드가 알림만 하는 자리)",
       "writer": "장부 고치기 도구 rebuild/rules.mjs apply 만 (.jsonl 여섯 — 서기 ledger 구역 · RULE-0519) · modes.json 은 사람·AI",
       "readers": "rebuild/status.mjs · rebuild/rules.mjs · tests/mutation/run.mjs (enforcement.jsonl)",
-      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림) · 모드 원본(modes.json — 중심·모드 문서의 머리말·주제 표) · 명령 장부(commands.jsonl) · 수식 기록(formulas.jsonl — EQ-…, 읽기 모드 L2) · 사건 기록(changes.jsonl — 장부를 고칠 때마다 왜 · 앞뒤 줄 · 바꾼 뒤 장부의 봉인 sha256, 덧붙이기만). 6 단계에서 규칙의 원본이 된다."
+      "interpret": "규칙 장부(rules.jsonl — 은퇴 retired·예약 reserved 표시 포함) · 맥락 연결(links.jsonl) · 규칙 검토(review.jsonl) · 집행 변이 시험(enforcement.jsonl — machine 규칙마다 망가뜨리는 법과 결과, tests/mutation/run.mjs 가 다시 돌림) · 모드 원본(modes.json — 중심·모드 문서의 머리말·주제 표) · 명령 장부(commands.jsonl) · 수식 기록(formulas.jsonl — EQ-…, 읽기 모드 L2) · 상시 권한(permissions.jsonl — PERM-…, settings · 문지기 권한 줄마다 무엇·누가·언제·왜·철회, 10g) · 사건 기록(changes.jsonl — 장부를 고칠 때마다 왜 · 앞뒤 줄 · 바꾼 뒤 장부의 봉인 sha256, 덧붙이기만). 6 단계에서 규칙의 원본이 된다."
     },
     {
       "path": "workspace/transitions.jsonl",
@@ -1575,6 +1583,14 @@
       "writer": "사람·AI",
       "readers": "사람·AI (장부를 고칠 때) · tests/rebuild.test.mjs ㉓",
       "interpret": "규칙 장부 고치기 (재건 10c) — rebuild/rules/ 의 .jsonl 여섯을 변경 묶음 { at, why, ops: add · set · remove · seal } 으로만 바꾼다. 줄 모양 하나 · 칸 목록 · 열쇠 · 참조를 검사한 뒤 서기(writeLedger)가 쓰고, 사건마다 봉인 sha256 — 장부가 마지막 봉인과 다르면 도구 밖에서 고친 것으로 거부(RULE-0519)."
+    },
+    {
+      "path": "rebuild/permissions.mjs",
+      "class": "management",
+      "format": "Node 모듈 (load · check — 순수)",
+      "writer": "사람·AI",
+      "readers": "tests/permissions.test.mjs",
+      "interpret": "상시 권한 대조 (재건 10g · RULE-0521) — .claude/settings.json 의 allow·ask 와 문지기 모드(modes.json gate)의 write·also 가 상시 권한 장부(rebuild/rules/permissions.jsonl)와 같은지. 장부로도 보호 자리(문지기 · 자기 검사 장치 · 권한 원본)와 전부 허용은 열 수 없다. 파일을 쓰지 않음 — settings.json 은 사람이 고친다."
     },
     {
       "path": "rebuild/gate.mjs",

@@ -4,7 +4,7 @@
 //   node rebuild/rules.mjs check                      장부 검사만 (모양 · 칸 · 열쇠 · 참조 · 봉인)
 //   op: add {file, row} · set {file, key, fields}(칸을 덮어씀 — null 이면 그 칸을 지움) · remove {file, key}
 //       seal {file} — 봉인이 아직 없는 장부에 첫 봉인 (줄 모양을 하나로 맞춘다 — 값은 그대로)
-//   file: LEDGERS 의 이름 · key: 그 장부의 열쇠 칸 값 (여럿이면 '|' 로 이음)
+//   file: LEDGERS 의 이름(새 장부는 파일 없이 시작 — seal 이 첫 글) · key: 그 장부의 열쇠 칸 값 (여럿이면 '|' 로 이음)
 // 줄 모양 하나 (canon): 칸 순서는 적힌 그대로, 구분자 ', ' · ': ', 숫자는 JSON 표기. 칸은 장부마다 허용 목록 안, 필수 칸이 있고, 열쇠는 겹치지 않는다.
 // 봉인: 바꿀 때마다 rebuild/rules/changes.jsonl 에 사건 { seq, at, why, file, op, key, before, after, sha } — sha 는 바꾼 뒤 장부 파일의 sha256.
 //   장부의 지금 sha256 이 그 장부의 마지막 사건 sha 와 다르면 도구 밖에서 고친 것이다 → 검사 거부 (RULE-0519).
@@ -27,6 +27,8 @@ export const LEDGERS = {
   enforcement: { key: ['rule'], need: ['rule', 'op', 'result', 'at'], may: ['tests', 'note', 'file', 'code', 'red', 'find', 'repl', 'contains'], refs: ['rule'] },
   links: { key: ['from', 'rel', 'to'], need: ['from', 'rel', 'by'], may: ['to', 'note', 'anchor', 'basis'], refs: ['from'] },
   commands: { key: ['cmd'], need: ['cmd', 'kind', 'modes', 'writes', 'what'], may: ['writes_on', 'collector'] },
+  // 상시 권한 (10g · RULE-0521): layer settings(.claude/settings.json 의 list allow·ask) · gate(modes.json 의 모드 mode 의 list write·also)
+  permissions: { key: ['id'], need: ['id', 'layer', 'list', 'what', 'why', 'by', 'at', 'revoke'], may: ['mode', 'wide', 'src'] },
 };
 export const LOG = 'changes.jsonl';
 
@@ -38,7 +40,7 @@ const rowsOf = (t) => t.split('\n').filter(Boolean).map((l) => JSON.parse(l));
 // S = { files: { 이름: 글 }, log: [사건] }
 export function load(root = ROOT) {
   const d = join(root, 'rebuild', 'rules'), files = {};
-  for (const n of Object.keys(LEDGERS)) files[n] = readFileSync(join(d, n + '.jsonl'), 'utf8');
+  for (const n of Object.keys(LEDGERS)) files[n] = existsSync(join(d, n + '.jsonl')) ? readFileSync(join(d, n + '.jsonl'), 'utf8') : ''; // 새 장부는 빈 채로 시작해 첫 봉인
   const lf = join(d, LOG);
   return { files, log: existsSync(lf) ? rowsOf(readFileSync(lf, 'utf8')) : [] };
 }

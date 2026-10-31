@@ -77,6 +77,7 @@
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 7 |
+| `tests/permissions.test.mjs` | 2 |
 | `tests/perturb.test.mjs` | 4 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |

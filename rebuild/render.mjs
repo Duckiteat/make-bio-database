@@ -11,11 +11,22 @@ const jsonl = (root, p) => readFileSync(join(root, p), 'utf8').split('\n').filte
 const clean = (t) => t.replace(/\*\*/g, '').split('|').map((x) => x.trim()).filter(Boolean).join(' — ').replace(/\s+/g, ' ').trim(); // 표 줄에서 온 규칙은 칸을 ' — ' 로 잇는다
 const NOTE = (src) => `> 생성물 — \`node rebuild/status.mjs --write\` 가 \`${src}\` 에서 만든다. 손으로 고치지 않는다 (규칙을 바꾸려면 원본을).\n`;
 
+// 상시 권한 (10g · RULE-0521) — 중심 문서는 매 세션 읽으므로 짧게: 자리별 줄 수 · 넓은 권한(⚠)만 번호와 함께. 줄 하나는 읽기 모드(PERM-…)로
+function permSection(perms) {
+  if (!perms.length) return [];
+  const where = (p) => (p.layer === 'gate' ? `문지기 ${p.list}` : `settings ${p.list}`), count = {};
+  for (const p of perms) count[where(p)] = (count[where(p)] || 0) + 1;
+  return [`## 상시 권한 (${perms.length})`, '', '권한은 장부(`rebuild/rules/permissions.jsonl`)에 있는 것만 — `.claude/settings.json` · 문지기 모드(`rebuild/rules/modes.json`)가 장부와 다르면 시험이 거부한다(RULE-0521). 문지기·자기 검사 장치는 장부로도 열 수 없다. 줄 하나(무엇·누가·언제·왜·철회)는 `node rebuild/read.mjs PERM-…`.', '',
+    `- ${Object.entries(count).map(([k, n]) => `${k} ${n}`).join(' · ')}`,
+    ...perms.filter((p) => p.wide).map((p) => `- ⚠ \`${p.id}\` ${where(p)}${p.mode ? ' ' + p.mode : ''} — ${p.wide}`), ''];
+}
+
 export function build(root) {
   const rules = jsonl(root, 'rebuild/rules/rules.jsonl').filter((r) => !r.retired);
   const units = Object.fromEntries(jsonl(root, 'rebuild/ledger/units.jsonl').map((u) => [u.id, u]));
   const M = JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8'));
   const cmds = jsonl(root, 'rebuild/rules/commands.jsonl'); // 명령 장부 (6c)
+  const perms = jsonl(root, 'rebuild/rules/permissions.jsonl'); // 상시 권한 장부 (10g)
   const ALL = M.modes.map((m) => m.key), every = (c) => ALL.every((k) => c.modes.includes(k));
   // 쓰는 명령은 표(구역이 중요), 읽기만 하는 명령은 한 줄
   const cmdTable = (xs) => { const w = xs.filter((c) => c.writes), r = xs.filter((c) => !c.writes);
@@ -44,7 +55,8 @@ export function build(root) {
     '## 모드 — 하나를 골라 연다', '', '| 모드 | 언제 | 여는 법 |', '|---|---|---|', ...modeRows, '',
     `## 공통 규칙 — 사람·AI 가 지킨다 (${text(common).length})`, '', grouped(text(common)), '',
     `## 공통 규칙 — 컴퓨터가 막는다`, '', machineNote(machine(common).length), '',
-    '## 모든 모드의 명령', '', cmdTable(cmds.filter(every)), '', '모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).', ''].join('\n');
+    '## 모든 모드의 명령', '', cmdTable(cmds.filter(every)), '', '모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).', '',
+    ...permSection(perms)].join('\n');
 
   // 모드 문서 + 스킬 (같은 본문)
   for (const m of M.modes) {

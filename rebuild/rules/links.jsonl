@@ -540,3 +540,4 @@
 {"from": "RULE-0518", "rel": "inline", "by": "judged", "note": "이유가 문장 안 — 채팅·출력은 코드가 지울 수 없어 사람·AI 가 지킨다"}
 {"from": "RULE-0519", "rel": "because", "to": "code:rebuild/rules.mjs", "by": "judged", "note": "장부를 그때그때 스크립트로 고쳐 줄 모양 차이 1,000 줄이 생기고 고친 까닭이 남지 않았다(재건 6b 사용 평가 — STG-10 의 계기)"}
 {"from": "RULE-0520", "rel": "because", "to": "code:tests/real_records.test.mjs", "by": "judged", "note": "실제 데이터를 예로 든 시험이 데이터가 좋아지자 두 번 깨졌다(재건 6b 사용 평가 — STG-10 의 계기)"}
+{"from": "RULE-0521", "rel": "because", "to": "code:rebuild/permissions.mjs", "by": "judged", "note": "RULE-0461 — 권한을 넓히는 유일한 올바른 길은 명시적·검증 가능·철회 가능한 standing 권한. 10a 의 CI 설정 수정이 권한 확인에서 막혔을 때 사용자가 '마스터 권한' 을 물었고 좁은 상시 권한으로 정리"}

@@ -13,19 +13,19 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "773 개 · 26575.2 KB"
+        "776 개 · 26630.8 KB"
        ],
        [
         "입구 문서 1 곳 합",
-        "6.1 KB"
+        "7.2 KB"
        ],
        [
         "새 세션이 처음 읽는 양 (중심 + 가장 큰 모드 문서)",
-        "16.8 KB"
+        "18.0 KB"
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "90 개 · 1860.8 KB"
+        "90 개 · 1864.2 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,11 +53,11 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "377 / 25"
+        "379 / 25"
        ],
        [
         "번호 이름공간",
-        "54 (active 33 · planned 3 · legacy 2 · external 16)"
+        "55 (active 34 · planned 3 · legacy 2 · external 16)"
        ],
        [
         "미등록 번호 모양 / 겹침 / 예외",
@@ -69,11 +69,11 @@
        ],
        [
         "규칙 장부 RULE",
-        "520"
+        "521"
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "256 / 0 / 0"
+        "257 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -81,7 +81,7 @@
        ],
        [
         "규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함",
-        "203 / 21 / 284"
+        "204 / 21 / 284"
        ]
       ]
      }
@@ -117,23 +117,23 @@
        ],
        [
         "rebuild",
-        "27",
-        "5763.0"
+        "29",
+        "5810.9"
        ],
        [
         "docs",
         "62",
-        "1349.6"
+        "1351.8"
        ],
        [
         "(최상위)",
         "18",
-        "903.4"
+        "905.8"
        ],
        [
         "tests",
-        "82",
-        "566.7"
+        "83",
+        "569.8"
        ],
        [
         "judicial",
@@ -259,7 +259,7 @@
        ],
        [
         "`CHANGES.md`",
-        "277.7"
+        "278.9"
        ],
        [
         "`data/fetched/consensus/uniprot/P01911.json`",
@@ -271,7 +271,7 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "216.5"
+        "218.2"
        ],
        [
         "`docs/design/build-plan.md`",
@@ -279,7 +279,7 @@
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "189.8"
+        "190.9"
        ],
        [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
@@ -368,15 +368,15 @@
        ],
        [
         "`CHANGES.md`",
-        "277.7",
-        "255",
+        "278.9",
+        "256",
         "",
         "분류됨 1"
        ],
        [
         "`CLAUDE.md`",
-        "6.1",
-        "83",
+        "7.2",
+        "95",
         "입구",
         "생성물"
        ],
@@ -830,8 +830,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "120.4",
-        "818",
+        "121.4",
+        "820",
         "",
         "생성물"
        ],
@@ -1254,6 +1254,10 @@
        [
         "`tests/observations.test.mjs`",
         "7"
+       ],
+       [
+        "`tests/permissions.test.mjs`",
+        "2"
        ],
        [
         "`tests/perturb.test.mjs`",
@@ -2235,7 +2239,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/index/namespaces.jsonl` (이름공간 54) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다."
+     "원본: `rebuild/index/namespaces.jsonl` (이름공간 55) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다."
     ]
    },
    {
@@ -2490,8 +2494,8 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "3265 · 521 · 60",
-        "520 · 없음 1"
+        "3323 · 522 · 63",
+        "521 · 없음 1"
        ],
        [
         "`decision`",
@@ -2500,8 +2504,18 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "743 · 39 · 31",
+        "746 · 39 · 32",
         "170 · 없음 2"
+       ],
+       [
+        "`permission`",
+        "active",
+        "token",
+        "`^PERM-\\d{4}$`",
+        "rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번)",
+        "`rebuild/rules/permissions.jsonl`",
+        "0 · 0 · 0",
+        "21 · 없음 0"
        ],
        [
         "`change`",
@@ -2511,7 +2525,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "248 · 없음 0"
+        "249 · 없음 0"
        ],
        [
         "`code_head`",
@@ -2540,7 +2554,7 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "445 · 31 · 11",
+        "448 · 31 · 11",
         "170 · 없음 0"
        ],
        [
@@ -2889,8 +2903,8 @@
       "rows": [
        [
         "공통 `common`",
-        "78",
-        "6848.7"
+        "80",
+        "6899.8"
        ],
        [
         "정보 작성 `author`",
@@ -2904,8 +2918,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "168",
-        "2178.3"
+        "169",
+        "2182.8"
        ],
        [
         "적분장 `field`",
@@ -2937,8 +2951,8 @@
        [
         "`rebuild/**`",
         "common",
-        "27",
-        "5763.0",
+        "29",
+        "5810.9",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -3154,8 +3168,8 @@
        [
         "`tests/**`",
         "develop",
-        "56",
-        "533.0",
+        "57",
+        "536.1",
         "시험"
        ],
        [
@@ -3183,7 +3197,7 @@
         "`docs/textbook/**`",
         "common",
         "11",
-        "401.0",
+        "403.2",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
@@ -3211,7 +3225,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "277.7",
+        "278.9",
         "변경 기록"
        ],
        [
@@ -3225,7 +3239,7 @@
         "`*.md`",
         "common",
         "4",
-        "63.1",
+        "64.2",
         "최상위 문서"
        ],
        [
@@ -3277,7 +3291,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/rules/rules.jsonl` · 규칙 520 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
+     "원본: `rebuild/rules/rules.jsonl` · 규칙 521 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
     ]
    },
    {
@@ -3304,7 +3318,7 @@
      }
     ],
     "text": [
-     "살아 있는 규칙 506 · 은퇴 14 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
+     "살아 있는 규칙 507 · 은퇴 14 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
     ]
    },
    {
@@ -3318,7 +3332,7 @@
       "rows": [
        [
         "machine",
-        "297"
+        "298"
        ],
        [
         "text",
@@ -3348,7 +3362,7 @@
       "rows": [
        [
         "1 곳",
-        "299"
+        "300"
        ],
        [
         "2 곳",
@@ -3821,7 +3835,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "규칙 520 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (542 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
+     "규칙 521 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (543 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
     ]
    },
    {
@@ -3874,8 +3888,8 @@
       "rows": [
        [
         "because",
-        "176",
-        "165"
+        "177",
+        "166"
        ],
        [
         "inline",
@@ -3911,7 +3925,7 @@
      }
     ],
     "text": [
-     "이유가 있는 규칙 203 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
+     "이유가 있는 규칙 204 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
     ]
    },
    {
@@ -3941,8 +3955,8 @@
        ],
        [
         "코드 머리 주석",
-        "18",
-        "18"
+        "19",
+        "19"
        ],
        [
         "한계",
@@ -3982,8 +3996,8 @@
       "rows": [
        [
         "공통 `common`",
-        "38",
-        "24",
+        "39",
+        "25",
         "14"
        ],
        [
@@ -5068,7 +5082,7 @@
       "rows": [
        [
         "잡음 `caught`",
-        "256"
+        "257"
        ],
        [
         "설정에 있음 `present`",
@@ -5086,7 +5100,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (290 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (291 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -5097,7 +5111,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 256",
+    "heading": "잡음 `caught` — 257",
     "tables": [
      {
       "head": [
@@ -6899,6 +6913,13 @@
         "inject",
         "tests/values.test.mjs",
         "① 실제 기록 번호는 목록에 이유와 함께 있는 것만 (RULE-0520)"
+       ],
+       [
+        "RULE-0521",
+        "상시 권한은 장부(rebuild/rules/permissions.jsonl)에 있는 것만 — .claude/",
+        "replace",
+        ".claude/settings.json",
+        "① 권한은 장부에 있는 것만 — settings · 문지기 모드 모두 (RULE-0521)"
        ]
       ]
      }

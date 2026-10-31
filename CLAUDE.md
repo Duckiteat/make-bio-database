@@ -70,7 +70,7 @@
 
 ## 공통 규칙 — 컴퓨터가 막는다
 
-16 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+17 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
 
 ## 모든 모드의 명령
 
@@ -81,3 +81,15 @@
 읽기만: `dbtool status` · `mcp summary`
 
 모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).
+
+## 상시 권한 (21)
+
+권한은 장부(`rebuild/rules/permissions.jsonl`)에 있는 것만 — `.claude/settings.json` · 문지기 모드(`rebuild/rules/modes.json`)가 장부와 다르면 시험이 거부한다(RULE-0521). 문지기·자기 검사 장치는 장부로도 열 수 없다. 줄 하나(무엇·누가·언제·왜·철회)는 `node rebuild/read.mjs PERM-…`.
+
+- settings allow 10 · settings ask 3 · 문지기 write 7 · 문지기 also 1
+- ⚠ `PERM-0002` settings allow — 경로 제한 없음 — 문지기 훅과 deny 에 기댐
+- ⚠ `PERM-0004` settings allow — node tests/ 는 tests/ 의 아무 스크립트 — AI 가 쓸 수 있는 자리라 사실상 임의 실행
+- ⚠ `PERM-0005` settings allow — 임의 JavaScript 실행 — 사실상 전부 허용 (파일 쓰기도 됨)
+- ⚠ `PERM-0008` settings allow — find 는 -delete · -exec 로 지우거나 실행할 수 있음
+- ⚠ `PERM-0009` settings allow — cp 는 보호 자리를 덮어쓸 수 있음 (문지기는 도구 뒤 대조로 잡음)
+- ⚠ `PERM-0017` 문지기 write develop — 모든 자리 — except(data · attestations · handoff)와 문지기 protect 가 빼냄

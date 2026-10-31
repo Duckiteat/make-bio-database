@@ -3,6 +3,7 @@
 //   node rebuild/read.mjs <RULE-…|EQ-…> [--depth 0|1|2]    L0 한 줄 · L1 연결 · L2 수식 (기본 2)
 //   node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…> [--depth 0|1|2]  계획 번호 — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
 //     0 한 줄(≤ 300 B — 상태 확인) · 1 칸·닿는 결정·방향·결과 · 2 결과 날짜별·걸어온 길 전부 (기본 2)
+//   node rebuild/read.mjs <PERM-…> [--depth 0|1|2]          상시 권한 — 0 한 줄 · 1 무엇·누가·언제·철회 · 2 걸어온 길 (rebuild/rules/permissions.jsonl)
 //   node rebuild/read.mjs --list spec [--mode author]       형식 설명 규칙(spec) 목록 — 모드 문서에서 빠진 것
 // 계약: 출력은 원본(규칙 장부·단위 장부·맥락·집행 변이·검토·수식 기록)에서만 — 같은 원본이면 같은 바이트.
 //   원본에 없는 것은 '… 기록 없음' 으로 드러낸다(수식·근거·예시를 그 자리에서 만들지 않는다). 파일을 쓰지 않는다.
@@ -23,6 +24,7 @@ export function load() {
     enf: byId(jsonl('rebuild/rules/enforcement.jsonl'), 'rule'), review: jsonl('rebuild/rules/review.jsonl'), formulas: byId(jsonl('rebuild/rules/formulas.jsonl')),
     changes: readFileSync(join(ROOT, 'CHANGES.md'), 'utf8').split('\n').filter((l) => l.startsWith('| 20')),
     limitations: JSON.parse(readFileSync(join(ROOT, 'data/db.json'), 'utf8')).limitations || {},
+    perms: byId(jsonl('rebuild/rules/permissions.jsonl')), ledgerLog: jsonl('rebuild/rules/changes.jsonl'),
   };
 }
 
@@ -55,6 +57,14 @@ export function read(id, depth = 2, S = load()) {
   const out = [];
   if (/^(?:PLAN|STG|DEC|DIR)-/.test(id)) return STATE.readOne(STATE.load(ROOT), id, depth) || `${id} — 계획 기록에 없음\n`;
   if (S.formulas[id]) { readFormula(S, S.formulas[id], depth, out); return out.join('\n') + '\n'; }
+  if (/^PERM-/.test(id)) { // 상시 권한 (10g) — 0 한 줄 · 1 무엇 전부·누가·언제·넓음·철회 · 2 걸어온 길(장부 사건)
+    const p = S.perms[id];
+    if (!p) return `${id} — 상시 권한 장부에 없음\n`;
+    out.push(`${p.id} ${p.layer === 'gate' ? `문지기 ${p.mode} ${p.list}` : `settings ${p.list}`} — ${p.why}`);
+    if (depth >= 1) out.push(`  무엇: ${p.what.join(' · ')}`, `  누가: ${p.by} · 언제: ${p.at}${p.src ? ` (${p.src})` : ''}`, ...(p.wide ? [`  넓음: ${p.wide}`] : []), `  철회: ${p.revoke}`);
+    if (depth >= 2) out.push('  걸어온 길:', ...S.ledgerLog.filter((e) => e.file === 'permissions' && e.key === id).map((e) => `    ${e.at} ${e.op} — ${e.why}`));
+    return out.join('\n') + '\n';
+  }
   const r = S.rules[id];
   if (!r) return `${id} — 규칙 장부·수식 기록에 없음\n`;
   out.push(`${r.id} — ${r.text}`, `  모드 ${r.modes.join(' · ')} · ${r.enforce === 'machine' ? '컴퓨터가 막음' : r.flags ? '글 규칙 — 코드가 알림' : '글 규칙'}${r.spec ? ' · 형식 설명' : ''}${r.retired ? ` · 은퇴 (${r.retired.at}, ${r.retired.archive})` : ''}${r.reserved ? ` · 예약 (${r.reserved.for})` : ''}`);
@@ -85,5 +95,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
   if (a[0] === '--list') { if (a[1] !== 'spec') { console.error('--list spec 만'); process.exit(2); } process.stdout.write(listSpec(opt('--mode'))); }
   else if (a[0]) process.stdout.write(read(a[0], opt('--depth') != null ? Number(opt('--depth')) : 2));
-  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|DEC-…|DIR-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
+  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|DEC-…|DIR-…|PERM-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
 }
