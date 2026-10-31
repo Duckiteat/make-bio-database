@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // 읽기 모드 (rebuild/PLAN.md §2′ · 6d) — 사람은 원본을 읽지 않고 이것으로 읽는다. 조회만 하고 지어내지 않는다.
 //   node rebuild/read.mjs <RULE-…|EQ-…> [--depth 0|1|2]    L0 한 줄 · L1 연결 · L2 수식 (기본 2)
-//   node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…>         계획 번호 — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
+//   node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…> [--depth 0|1|2]  계획 번호 — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
+//     0 한 줄(≤ 300 B — 상태 확인) · 1 칸·닿는 결정·방향·결과 · 2 결과 날짜별·걸어온 길 전부 (기본 2)
 //   node rebuild/read.mjs --list spec [--mode author]       형식 설명 규칙(spec) 목록 — 모드 문서에서 빠진 것
 // 계약: 출력은 원본(규칙 장부·단위 장부·맥락·집행 변이·검토·수식 기록)에서만 — 같은 원본이면 같은 바이트.
 //   원본에 없는 것은 '… 기록 없음' 으로 드러낸다(수식·근거·예시를 그 자리에서 만들지 않는다). 파일을 쓰지 않는다.

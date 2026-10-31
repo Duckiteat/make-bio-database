@@ -9,8 +9,8 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 89 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.5 | 33 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.5 | 86 |  | 미분류 |
-| `CHANGES.md` | 277.0 | 254 |  | 분류됨 1 |
-| `CLAUDE.md` | 6.0 | 83 | 입구 | 생성물 |
+| `CHANGES.md` | 277.7 | 255 |  | 분류됨 1 |
+| `CLAUDE.md` | 6.1 | 83 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
@@ -19,7 +19,7 @@
 | `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
-| `docs/design/build-plan.md` | 211.8 | 2363 |  | 생성물 |
+| `docs/design/build-plan.md` | 211.7 | 2363 |  | 생성물 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
 | `docs/design/dictionary-and-translation.md` | 16.0 | 203 |  | 분류됨 121 |

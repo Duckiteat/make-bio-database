@@ -341,3 +341,18 @@ test('㉓ 규칙 장부는 도구로만 (10c · RULE-0519): 줄 모양 하나 ·
     assert.equal(CLERK.writeLedger('changes.jsonl', 'a\nb\n', tmp), join(tmp, 'rebuild', 'rules', 'changes.jsonl'), '덧붙이기는 됨');
   } finally { rmSync(tmp, { recursive: true, force: true }); }
 });
+
+test('㉔ 계획 읽기 깊이 (10f): 0 한 줄 ≤ 300 B · 깊이가 깊을수록 앞 깊이를 포함 · 기본·명령 출력 = 깊이 2', () => {
+  const S = STATE.load(ROOT), ids = [...S.items, ...S.decisions, ...S.directions].map((x) => x.id);
+  assert.ok(ids.length > 0);
+  for (const id of ids) {
+    const [d0, d1, d2] = [0, 1, 2].map((d) => STATE.readOne(S, id, d));
+    assert.ok(Buffer.byteLength(d0) <= 300 && d0.split('\n').length === 2, `${id}: 0 단계는 한 줄 ≤ 300 B (${Buffer.byteLength(d0)} B)`);
+    assert.ok(d1.startsWith(d0.trimEnd()), `${id}: 1 단계가 0 단계로 시작`);
+    assert.ok(d2.length >= d1.length && d2.startsWith(d0.trimEnd()), `${id}: 2 단계가 가장 깊음`);
+    assert.equal(STATE.readOne(S, id), d2, `${id}: 기본은 2 단계`);
+  }
+  const one = ids[0], cli = (...a) => execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), one, ...a], { cwd: ROOT, encoding: 'utf8' });
+  assert.equal(cli('--depth', '0'), STATE.readOne(S, one, 0), '명령의 --depth 가 계획 번호에도');
+  assert.equal(cli(), STATE.readOne(S, one, 2), '명령 기본 = 2 단계 (지금 출력과 같은 바이트)');
+});
