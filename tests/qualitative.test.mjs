@@ -50,7 +50,7 @@ test('① 정성 관찰: 구절·1차 문헌·교란·읽을 거리·용도 위�
     [{ expect: { order: [READ, READ] }, readout: { kind: 'amount' } }, '서로 다른 대상 둘 이상'],
     [{ use: 'estimation' }, '정성 관찰의 용도는 validation'],
     [{ perturbation: { type: 'inhibit', target: RULE } }, 'inhibit 에는 Ki_M > 0'],
-    [{ perturbation: { type: 'block', target: 'D000001/rule/없는규칙' } }, '없음 — D…/rule/키'],
+    [{ perturbation: { type: 'block', target: 'D900001/rule/없는규칙' } }, '없음 — D…/rule/키'],
     [{ evidence: { level: 'abstracted', basis: '추론' } }, '정성 관찰 근거는 curated'],
     [{ evidence_at: '2019년' }, "근거 시각(evidence_at) '2019년'"],
   ];
@@ -80,11 +80,11 @@ test('② 관찰 입력 계약: kind 로 모양을 고른다', () => {
 });
 
 test('③ 맥락 열쇠: 여섯 칸 · 빈 칸 null · 조건 정렬 · 자유 문장은 열쇠 밖', () => {
-  const a = M.contextKey({ species: '9606', location: 'cytosol', condition: ['D000002', 'D000001'], scope: '설명 A' });
-  const b = M.contextKey({ location: 'cytosol', species: '9606', condition: ['D000001', 'D000002'], scope: '설명 B', cell: null });
+  const a = M.contextKey({ species: '9606', location: 'cytosol', condition: ['D900002', 'D900001'], scope: '설명 A' });
+  const b = M.contextKey({ location: 'cytosol', species: '9606', condition: ['D900001', 'D900002'], scope: '설명 B', cell: null });
   assert.equal(a, b, '같은 맥락은 같은 열쇠 (순서·설명 무관)');
   assert.deepEqual(Object.keys(JSON.parse(a)), ['cell', 'condition', 'location', 'pH', 'species', 'temperature_K']);
-  assert.notEqual(a, M.contextKey({ species: '9606', location: 'cytosol', condition: ['D000001', 'D000002'], pH: 7.4 }));
+  assert.notEqual(a, M.contextKey({ species: '9606', location: 'cytosol', condition: ['D900001', 'D900002'], pH: 7.4 }));
   // 조건은 정의항 번호 목록: 문장은 거부, 번호는 통과(있는 번호만)
   const sid = Object.keys(BASE.senses).find((s) => BASE.senses[s].obs.some((o) => o.property === 'sequence_length' && !o.from));
   const withCond = (c) => P({ senses: [{ id: sid, obs: BASE.senses[sid].obs.map((o) => (o.property === 'sequence_length' ? { ...o, context: { ...o.context, condition: c } } : o)) }] });

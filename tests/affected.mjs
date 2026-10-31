@@ -53,17 +53,18 @@ export function holes(chosen, map, fresh) {
   }
   return out;
 }
-// 추적 기록 → { 시험: { files, dirs, git } } — 줄: 't 시험' · 'f 파일' · 'd 폴더' · 'g HEAD'
+// 추적 기록 → { 시험: { files, dirs, git } } — 줄: 't 시험' · 'f 파일' · 'd 폴더' · 'w 쓴 파일' · 'g HEAD'
 export function readTraces(dir) {
   const by = {};
   for (const n of readdirSync(dir).filter((x) => x.endsWith('.trace'))) {
     const lines = readFileSync(join(dir, n), 'utf8').split('\n').filter(Boolean).map((l) => l.split('\t'));
     const t = lines.length && lines[0][0] === 't' ? lines[0][1] : null;
     if (!t) continue;
-    const e = (by[t] = by[t] || { files: new Set(), dirs: new Set(), git: false });
-    for (const [k, v] of lines.slice(1)) { if (k === 'f') e.files.add(v); else if (k === 'd') e.dirs.add(v); else if (k === 'g') e.git = true; }
+    const e = (by[t] = by[t] || { files: new Set(), dirs: new Set(), wrote: new Set(), git: false });
+    for (const [k, v] of lines.slice(1)) { if (k === 'f') e.files.add(v); else if (k === 'd') e.dirs.add(v); else if (k === 'w') e.wrote.add(v); else if (k === 'g') e.git = true; }
   }
-  return Object.fromEntries(Object.entries(by).map(([t, e]) => [t, { files: [...e.files].sort(), dirs: [...e.dirs].sort(), git: e.git }]));
+  // 시험이 스스로 쓴 파일(임시 파일 등)은 그 시험의 입력이 아니다
+  return Object.fromEntries(Object.entries(by).map(([t, e]) => [t, { files: [...e.files].filter((f) => !e.wrote.has(f)).sort(), dirs: [...e.dirs].sort(), git: e.git }]));
 }
 // 새 지도 (순수) — 돌린 시험 중 자기 파일을 읽은 기록이 있는 것만 새 항목(추적이 비면 다음에 다시 돌게 항목을 지운다), 사라진 시험은 뺀다
 export function nextMap(old, { tests, ran, fresh, tree, head }) {

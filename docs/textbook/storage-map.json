@@ -1033,6 +1033,22 @@
       "interpret": "바뀐 것만 시험의 시험 — 고르기 · 추적 구멍 · 새 지도(합성 기록) + 임시 git 저장소에서 끝까지(처음 모두 → 0 → 읽은 파일 · 목록 폴더의 새 파일 · HEAD 바뀜 → 그 시험만 · 지도에서 뺀 연결을 전체 검사가 잡음)."
     },
     {
+      "path": "tests/real_records.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "실제 기록 번호를 쓰는 시험 (10e · RULE-0520) — 시험 글의 실제 db 번호는 tests/real-records.json 에 이유와 함께 있는 것만. 목록 밖 번호 · 낡은 목록 번호 · 이유 없는 줄은 거부. 새 시험은 합성 기록(9xxxxx)."
+    },
+    {
+      "path": "tests/real-records.json",
+      "class": "verification",
+      "format": "JSON — { about, entries: [{ file, ids[], why }] }",
+      "writer": "사람·AI (실제 번호가 꼭 필요할 때만, 이유와 함께)",
+      "readers": "tests/real_records.test.mjs",
+      "interpret": "실제 db 기록 번호를 쓰는 시험 파일과 그 이유 — 예시 시나리오가 가리키는 계 · 불변인 사전 등록 기록 · 합성 시험 자료의 원본 등. 줄어드는 쪽으로만 (실제 상태를 단언하는 곳은 합성으로)."
+    },
+    {
       "path": "tests/mutation/run.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님 — 손으로 돌림)",

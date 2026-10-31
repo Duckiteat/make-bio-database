@@ -135,8 +135,9 @@ test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인�
   }
   assert.deepEqual(bad, [], `검사 자리 ${n}`);
   assert.ok(n >= 550, `검사 자리가 ${n} — 자리를 지웠는지 본다`);
-  // 거꾸로: 코드에서 찾은 규칙(from_code)은 코드 어딘가에서 쓰인다
-  const orphan = [...rules.values()].filter((r) => r.from_code && !used.has(r.id) && !readdirSync(join(ROOT, 'judicial')).some((x) => readFileSync(join(ROOT, 'judicial', x), 'utf8').includes(`'${r.id}'`)));
+  // 거꾸로: 코드에서 찾은 규칙(from_code)은 코드 어딘가에서 쓰인다 — 판정 코드, 또는 그 규칙의 집행 자리(where 에 적힌 파일 — 시험이 집행하는 규칙)
+  const inWhere = (r) => [...String(r.where || '').matchAll(/[\w./-]+\.(?:m?js|json)\b/g)].map((m) => m[0]).some((f) => existsSync(join(ROOT, f)) && readFileSync(join(ROOT, f), 'utf8').includes(`'${r.id}'`));
+  const orphan = [...rules.values()].filter((r) => r.from_code && !used.has(r.id) && !inWhere(r) && !readdirSync(join(ROOT, 'judicial')).some((x) => readFileSync(join(ROOT, 'judicial', x), 'utf8').includes(`'${r.id}'`)));
   assert.deepEqual(orphan.map((r) => r.id), [], '코드에서 찾은 규칙인데 코드가 쓰지 않음');
 });
 

@@ -14,11 +14,11 @@ const clone = (x) => JSON.parse(JSON.stringify(x));
 test('① 정규화가 구조 필드를 보존 — 없으면 그대로', () => {
   const db = M.normalize(clone(RAW));
   assert.equal(JSON.stringify(M.normalize(clone(RAW)).limitations), JSON.stringify(db.limitations), '구조 필드 없는 한계는 바뀌지 않음');
-  const r = clone(RAW), id = Object.keys(r.limitations)[0];
-  Object.assign(r.limitations[id], { symptom: { wall_time_s: 60, species_n: 42 }, downstream_blocked: ['D000212'], resolution_trigger: 'observation_added', at: '2026-10-16T00:00:00Z', prohibited_bypasses: ['다른 종 값을 사람 값으로'] });
+  const r = clone(RAW), id = Object.keys(r.limitations)[0], down = Object.keys(r.senses)[0]; // 있는 정의항 아무것이나 (하류 대상은 실제로 있어야 함)
+  Object.assign(r.limitations[id], { symptom: { wall_time_s: 60, species_n: 42 }, downstream_blocked: [down], resolution_trigger: 'observation_added', at: '2026-10-16T00:00:00Z', prohibited_bypasses: ['다른 종 값을 사람 값으로'] });
   const l = M.normalize(r).limitations[id];
   assert.deepEqual(l.symptom, { wall_time_s: 60, species_n: 42 });
-  assert.deepEqual(l.downstream_blocked, ['D000212']);
+  assert.deepEqual(l.downstream_blocked, [down]);
   assert.equal(l.resolution_trigger, 'observation_added');
   assert.deepEqual(l.prohibited_bypasses, ['다른 종 값을 사람 값으로']);
   assert.equal(l.requirement.text, RAW.limitations[id].requirement.text || RAW.limitations[id].requirement, 'R2 서술은 그대로');
@@ -27,11 +27,12 @@ test('① 정규화가 구조 필드를 보존 — 없으면 그대로', () => {
 
 test('② 재검토 후보 — at 이후 대상·하류에 새 관찰·값', () => {
   const base = clone(RAW);
-  const lid = Object.entries(base.limitations).find(([, l]) => l.target === 'D000148')[0];
-  Object.assign(base.limitations[lid], { resolution_trigger: 'value_recorded', at: '2026-10-01T00:00:00Z', downstream_blocked: ['D000149/rule/condense'] });
+  // 기록 시각이 있는 규칙 값 하나와 한계 하나 — 번호를 박지 않고 찾는다 (10e)
+  const val = Object.values(base.values).find((v) => v.recorded_at && v.subject.includes('/rule/') && !v.retracted && !v.superseded_by), lid = Object.keys(base.limitations)[0];
+  Object.assign(base.limitations[lid], { resolution_trigger: 'value_recorded', at: '2000-01-01T00:00:00Z', downstream_blocked: [val.subject] });
   const db = M.normalize(base);
   const hit = J.reviewCandidates(db).find((x) => x.limitation === lid);
-  assert.ok(hit && hit.hits.length > 0, '시트르산 생성효소 값(2026-10-16 기록)이 at 이후 → 다시 볼 한계');
+  assert.ok(hit && hit.hits.length > 0, '하류 규칙의 값이 at 이후에 기록됨 → 다시 볼 한계');
   // at 을 미래로 → 후보 아님
   const later = clone(base); later.limitations[lid].at = '2099-01-01T00:00:00Z';
   assert.ok(!J.reviewCandidates(M.normalize(later)).some((x) => x.limitation === lid), 'at 이후 기록이 없으면 후보 아님');

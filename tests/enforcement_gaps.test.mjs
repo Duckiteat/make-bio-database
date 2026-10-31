@@ -20,6 +20,8 @@ const id = (ref) => { const r = C.resolveRef(IX, ref); if (r.error) throw new Er
 const probe = (f) => { const d = JSON.parse(JSON.stringify(RAW)); f(d); return J.validate(C.normalize(d)); };
 const has = (list, re) => list.some((e) => re.test(e.msg));
 const valueOf = (d, subject, property) => Object.values(d.values).find((v) => v.subject === subject && v.property === property && !v.retracted && !v.superseded_by);
+// 정의항(규칙이 아닌) obs 의 문헌 측정값 하나 — 번호를 박지 않고 찾는다 (실제 값이 바뀌어도 시험은 그대로)
+const CUR = Object.values(RAW.values).find((v) => !v.subject.includes('/') && v.evidence && v.evidence.level === 'curated' && (v.from || []).length && !v.retracted && !v.superseded_by);
 
 test('RULE-0114 정성 관찰: 읽을 거리 대상(readout.target)이 없으면 거부', () => {
   const q = Object.keys(RAW.observations).find((k) => RAW.observations[k].kind === 'qualitative' && typeof RAW.observations[k].expect === 'string');
@@ -35,14 +37,14 @@ test('RULE-0123 이동된 번호는 다시 쓰지 않는다: 이동 표에 있�
 });
 
 test('RULE-0127 정의항 obs 의 문헌(curated) 측정값은 관찰 기록(from)을 가리켜야 한다', () => {
-  const v = valueOf(RAW, 'D000116', 'compartment_volume');
+  const v = valueOf(RAW, CUR.subject, CUR.property);
   assert.ok(v && v.from && v.evidence.level === 'curated');
-  const e = probe((d) => { delete valueOf(d, 'D000116', 'compartment_volume').from; }).errors;
+  const e = probe((d) => { delete valueOf(d, CUR.subject, CUR.property).from; }).errors;
   assert.ok(has(e, /관찰 기록 참조\(from\)가 없음/), JSON.stringify(e.slice(0, 3)));
 });
 
 test('RULE-0111 추정용만 모델 값의 출처: 검증용(validation) 관찰을 정의항 obs 의 from 으로 쓰면 거부', () => {
-  const o = valueOf(RAW, 'D000116', 'compartment_volume').from[0];
+  const o = valueOf(RAW, CUR.subject, CUR.property).from[0];
   const e = probe((d) => { d.observations[o].use = 'validation'; }).errors;
   assert.ok(has(e, /용도가 validation 인 관찰은 모델 값의 출처로 쓸 수 없음/), JSON.stringify(e.slice(0, 3)));
 });

@@ -373,37 +373,44 @@ test('⑩ 델타 기록 (S1): 기원 봉인 → 병합마다 사건 추가 → �
 
 // ⑬ 파생 그래프 · 철회 전파 (build-plan 13): 관찰 철회 → 기댄 값·상수·단계·경로에 '근거 철회됨' (읽기 전용 판결, db 불변)
 test('⑬ 사법부: 철회 전파 — 관찰에 기댄 값·단계·경로를 드러낸다 (읽기만)', () => {
-  // 유효한 db 에는 철회된 관찰이 없다 → 전파할 것 없음
-  const base = J.retractionImpact(BASE);
+  // 합성 기록 (10e): 관찰 O900001 → 값 V900001(규칙 D900001/rule/r 의 kcat) → 단계 S900001 → 경로 D900002 · 값이 기대지 않는 관찰 O900002.
+  //   실제 관찰·값의 철회·대체가 생겨도 시험은 그대로
+  const syn = JSON.parse(JSON.stringify(BASE));
+  for (const o of Object.values(syn.observations)) delete o.retracted; // 철회 없는 기준 db
+  const tpl = Object.values(syn.observations).find((o) => o.use === 'estimation');
+  syn.observations.O900001 = { ...tpl }; syn.observations.O900002 = { ...tpl };
+  syn.values.V900001 = { subject: 'D900001/rule/r', property: 'kcat', value: { dist: 'point', mean: 1 }, context: { species: '9606' }, evidence: { level: 'curated', sources: [] }, from: ['O900001'], derivation: 'direct', recorded_at: '2026-10-31' };
+  syn.steps.S900001 = { rule: 'D900001/rule/r', agents: [], inputs: [], outputs: [], regulators: [], part_of: ['D900002'] };
+  // 철회된 관찰이 없으면 전파할 것 없음
+  const base = J.retractionImpact(syn);
   assert.equal(base.retractedCount, 0);
   assert.equal(base.rows.length, 0, '철회된 관찰이 없으면 행 없음');
 
-  // 만약 아코니테이스 kcat 관찰(O000025)을 철회하면 — 값 V000067 → 규칙 isomerize → 단계 S000032 → 경로 D000148
-  const whatif = J.retractionImpact(BASE, { assume: ['O000025'] });
+  // 관찰 O900001 을 철회하면 — 값 V900001 → 규칙 → 단계 S900001 → 경로 D900002
+  const whatif = J.retractionImpact(syn, { assume: ['O900001'] });
   assert.equal(whatif.rows.length, 1);
   const r = whatif.rows[0];
-  assert.equal(r.obs, 'O000025'); assert.equal(r.assumed, true); assert.equal(r.retracted, false);
-  assert.ok(r.values.some((v) => v.value === 'V000067' && v.subject === 'D000150/rule/isomerize' && v.property === 'kcat'), '기댄 값을 가리킴');
-  assert.ok(r.rules.includes('D000150/rule/isomerize'));
-  assert.ok(r.steps.includes('S000032'), '그 규칙을 쓰는 단계');
-  assert.ok(r.pathways.includes('D000148'), '단계가 속한 경로');
+  assert.equal(r.obs, 'O900001'); assert.equal(r.assumed, true); assert.equal(r.retracted, false);
+  assert.ok(r.values.some((v) => v.value === 'V900001' && v.subject === 'D900001/rule/r' && v.property === 'kcat'), '기댄 값을 가리킴');
+  assert.deepEqual(r.rules, ['D900001/rule/r']);
+  assert.deepEqual(r.steps, ['S900001'], '그 규칙을 쓰는 단계');
+  assert.deepEqual(r.pathways, ['D900002'], '단계가 속한 경로');
 
   // 실제로 철회 표시가 붙은 관찰(메모리에서 — 관문은 이런 db 를 거부하지만 판결 함수는 blast-radius 를 보여준다)
-  const dbR = C.normalize(JSON.parse(JSON.stringify(BASE)));
-  dbR.observations.O000025 = { ...dbR.observations.O000025, retracted: { note: '시험 철회' } };
+  const dbR = JSON.parse(JSON.stringify(syn));
+  dbR.observations.O900001 = { ...dbR.observations.O900001, retracted: { note: '시험 철회' } };
   const got = J.retractionImpact(dbR);
   assert.equal(got.retractedCount, 1);
   assert.equal(got.rows.length, 1);
   assert.equal(got.rows[0].retracted, true); assert.equal(got.rows[0].assumed, false);
-  assert.ok(got.rows[0].values.some((v) => v.value === 'V000067'));
+  assert.ok(got.rows[0].values.some((v) => v.value === 'V900001'));
 
-  // 어떤 현재 값도 기대지 않는 관찰(정성 관찰 O000019)을 철회 가정 → 전파할 것 없음
-  const none = J.retractionImpact(BASE, { assume: ['O000019'] });
-  assert.equal(none.rows.length, 0, '값이 기대지 않는 관찰은 전파 없음');
+  // 어떤 현재 값도 기대지 않는 관찰을 철회 가정 → 전파할 것 없음
+  assert.equal(J.retractionImpact(syn, { assume: ['O900002'] }).rows.length, 0, '값이 기대지 않는 관찰은 전파 없음');
 
-  // 텍스트 보고 — 철회 가정이 반영되고, 철회된 관찰이 없는 기본 db 는 안내 문구
-  assert.match(J.retractionText(BASE, { assume: ['O000025'] }), /근거 철회됨 → 값 V000067/);
-  assert.match(J.retractionText(BASE), /철회된 관찰 없음/);
+  // 텍스트 보고 — 철회 가정이 반영되고, 철회된 관찰이 없는 db 는 안내 문구
+  assert.match(J.retractionText(syn, { assume: ['O900001'] }), /근거 철회됨 → 값 V900001/);
+  assert.match(J.retractionText(syn), /철회된 관찰 없음/);
 });
 
 // 증거·방법 보고서 (build-plan 12 / 설계 §13.4): 읽기 전용 판결 — 인과·값표·닫는 방법·판정 수준·실패·사고패턴·삼각 결론
@@ -413,20 +420,23 @@ test('⑭ 사법부: 증거·방법 보고서 — 측정/가정을 가르고, �
   const before = JSON.stringify(BASE);
   const rep = ER.evidenceReport(BASE, sc, { target: 'D000148' });
   assert.equal(before, JSON.stringify(BASE), '보고서는 db 를 바꾸지 않는다');
-  // 인과 사슬: TCA 8단계, 실측 4 · 사건기반 4 (CS·아코니테이스·IDH·푸마레이스만 measure)
-  assert.equal(rep.chain.length, 8);
-  assert.equal(rep.chain.filter((c) => c.measured).length, 4, '실측 단계 4');
-  assert.equal(rep.chain.filter((c) => c.closure === 'none').length, 4, '사건 기반 단계 4');
+  // 인과 사슬: 경로의 단계마다 한 고리 · 실측 여부는 닫는 방법에서 (개수는 데이터가 늘면 바뀌므로 구조만 — 10e)
+  assert.equal(rep.chain.length, Object.values(BASE.steps).filter((st) => (st.part_of || []).includes('D000148')).length, '경로의 단계마다 한 고리');
+  assert.ok(rep.chain.some((c) => c.measured) && rep.chain.some((c) => c.closure === 'none'), '실측 고리와 사건 기반 고리가 함께');
+  for (const c of rep.chain) assert.equal(c.measured, ['measure', 'computed'].includes(c.closure), `${c.closure}: 실측 표시는 닫는 방법에서`);
   // 값 표: 측정 상수에 등급·출처
-  const aco = rep.values.find((v) => v.rule === 'D000150/rule/isomerize' && v.param === 'kcat');
-  assert.ok(aco && aco.closure === 'measure' && aco.grade.grade === 'parameter', '아코니테이스 kcat 은 measure·parameter');
-  assert.ok(aco.sources.some((s) => /PMID:36738801/.test(s)), '출처 PMID 를 보인다');
+  const mv = rep.values.filter((v) => v.closure === 'measure');
+  assert.ok(mv.length, '측정 상수가 값 표에');
+  for (const v of mv) { assert.ok(v.grade && v.grade.grade, `${v.rule} ${v.param}: 등급`); assert.ok(v.sources.some((x) => /^(PMID|DOI):/.test(x)), `${v.rule} ${v.param}: 출처`); }
   // 가정 입력(가상 농도)을 측정과 가른다
   assert.ok(rep.assumptions.length > 0, '시나리오의 가정 입력을 드러낸다');
   // 판정 수준: 가상 시나리오 → 가설 생성
   assert.match(rep.judgment.level, /가설 생성|탐색/);
-  // 실패를 숨기지 않는다: 열린 한계가 보고된다
-  assert.ok(rep.failures.some((f) => f.id === 'L000096' || f.id === 'L000110'), '사람 kcat 공백 한계를 드러낸다');
+  // 실패를 숨기지 않는다: 경로에 걸린 열린 한계가 보고된다 — 합성 한계 L900001 (실제 한계가 닫혀도 시험은 그대로)
+  const synL = JSON.parse(JSON.stringify(BASE)), openL = Object.values(synL.limitations).find((l) => l.target === 'D000148' && !J.limitationStatus(synL, l).status.startsWith('resolved'))
+    || Object.values(synL.limitations).find((l) => !J.limitationStatus(synL, l).status.startsWith('resolved'));
+  synL.limitations.L900001 = { ...JSON.parse(JSON.stringify(openL)), target: 'D000148' };
+  assert.ok(ER.evidenceReport(synL, sc, { target: 'D000148' }).failures.some((f) => f.id === 'L900001'), '경로에 걸린 열린 한계를 드러낸다');
   // 판정 기준과 근거: 등급 척도·문턱이 코드(reliability)에서 나오고, 쓰인 등급(parameter)이 표시된다
   assert.equal(rep.criteria.threshold, 'parameter');
   assert.ok(rep.criteria.grades.some((g) => g.key === 'parameter' && g.used && /S ≥ 3/.test(g.rule)), '등급 규칙과 근거를 밝힌다');

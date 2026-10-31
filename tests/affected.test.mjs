@@ -42,6 +42,13 @@ test('① 추적 구멍 · 새 지도: 건너뛸 수 있었던 시험이 새로 
   assert.deepEqual(Object.keys(next.tests), ['tests/a.test.mjs', 'tests/b.test.mjs'], 'c 는 추적이 비어 항목 없음 (다음에 다시 돔)');
   assert.equal(next.tests['tests/a.test.mjs'].tree, 'T0', '돌리지 않은 시험은 옛 항목 그대로');
   assert.deepEqual(next.tests['tests/b.test.mjs'], { tree: 'T1', head: 'H1', ...fresh['tests/b.test.mjs'] });
+  // 추적 기록 읽기: 시험이 스스로 쓴 파일(임시 파일 등)은 그 시험의 입력이 아니다
+  const td = mkdtempSync(join(tmpdir(), 'trace-read-'));
+  try {
+    writeFileSync(join(td, '1-0.trace'), 't\ttests/a.test.mjs\nf\ttests/a.test.mjs\nf\tlib/x.js\nw\ttmp/own-1.json\nf\ttmp/own-1.json\nd\tfx\n');
+    writeFileSync(join(td, '2-0.trace'), 't\ttests/a.test.mjs\ng\tHEAD\n');
+    assert.deepEqual(A.readTraces(td), { 'tests/a.test.mjs': { files: ['lib/x.js', 'tests/a.test.mjs'], dirs: ['fx'], git: true } }, '하위 프로세스 기록도 합치고, 스스로 쓴 파일은 뺌');
+  } finally { rmSync(td, { recursive: true, force: true }); }
   assert.ok(!('tests/gone.test.mjs' in A.nextMap({ version: 1, tests: { 'tests/gone.test.mjs': E([]) } }, { tests: [], ran: [], fresh: {}, tree: 'T', head: 'H' }).tests), '사라진 시험은 뺌');
 });
 

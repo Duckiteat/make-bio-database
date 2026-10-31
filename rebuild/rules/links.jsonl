@@ -539,3 +539,4 @@
 {"from": "RULE-0517", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "AI 작업이 블랙박스가 되지 않게(진단 DEC-0015) — 영수증을 작업자가 고치면 영수증이 아니다"}
 {"from": "RULE-0518", "rel": "inline", "by": "judged", "note": "이유가 문장 안 — 채팅·출력은 코드가 지울 수 없어 사람·AI 가 지킨다"}
 {"from": "RULE-0519", "rel": "because", "to": "code:rebuild/rules.mjs", "by": "judged", "note": "장부를 그때그때 스크립트로 고쳐 줄 모양 차이 1,000 줄이 생기고 고친 까닭이 남지 않았다(재건 6b 사용 평가 — STG-10 의 계기)"}
+{"from": "RULE-0520", "rel": "because", "to": "code:tests/real_records.test.mjs", "by": "judged", "note": "실제 데이터를 예로 든 시험이 데이터가 좋아지자 두 번 깨졌다(재건 6b 사용 평가 — STG-10 의 계기)"}

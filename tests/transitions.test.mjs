@@ -10,7 +10,7 @@ import * as CLERK from '../legislative/clerk.mjs';
 const req = createRequire(import.meta.url);
 const TA = req('../judicial/transition_audit.js');
 const ROOT = new URL('..', import.meta.url).pathname;
-const OK = { from: 'baseline', to: 'develop', at: '2026-10-29', why: '무결성 FAIL — 엔진 결함으로 보임', target: ['D000148', 'RULE-0010'], files: ['CLAUDE.md'], open: ['원장 불일치가 어느 단계에서 시작되나?'] };
+const OK = { from: 'baseline', to: 'develop', at: '2026-10-29', why: '무결성 FAIL — 엔진 결함으로 보임', target: ['D900001', 'RULE-0010'], files: ['CLAUDE.md'], open: ['원장 불일치가 어느 단계에서 시작되나?'] };
 
 test('RULE-0513 전환 기록 검사: 통과 1 + 거부 사유별', () => {
   assert.deepEqual(TA.checkTransition(OK, ROOT), { ok: true, errors: [], rules: [] });

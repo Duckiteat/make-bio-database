@@ -82,6 +82,7 @@
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |
 | `tests/qualitative.test.mjs` | 9 |
+| `tests/real_records.test.mjs` | 2 |
 | `tests/rebuild.test.mjs` | 23 |
 | `tests/rejections.test.mjs` | 3 |
 | `tests/reliability_criteria.test.mjs` | 12 |

@@ -3,6 +3,7 @@
 //   켜는 법: 환경 BIODB_TRACE_DIR(저장소 밖 기록 폴더) · BIODB_TRACE_ROOT(저장소 최상위). 둘 중 하나라도 없으면 아무것도 하지 않는다.
 //   시험 이름: 시험 프로세스는 argv[1](…​.test.mjs)에서 정하고 BIODB_TRACE_TEST 로 내려 준다 — 그 시험이 띄운 하위 프로세스도 같은 시험에 붙는다.
 // 기록하는 읽기: 모듈 적재(import · require) · fs 읽기·존재·상태·열기 · 폴더 목록(재귀면 '/**', glob 은 '**') · 하위 프로세스 인자 중 저장소 안 파일.
+//   쓴 파일: 'w' (그 시험이 스스로 만든 파일 — 입력에서 뺀다).
 //   저장소 안에서 부른 git: 'g' (git 역사를 읽음 — HEAD 가 바뀌면 다시) · 작업 트리를 읽는 git 명령(ls-files · status · diff …)은 저장소 전체 '**'.
 // 계약: 읽기만 기록 — 저장소에 쓰지 않는다. 기록은 BIODB_TRACE_DIR 에 프로세스·스레드마다 한 파일, 새 항목마다 한 줄 덧붙임
 //   (프로세스가 강제로 끝나도 그때까지 읽은 것은 남는다 — 지도에 구멍이 생기지 않게).
@@ -43,6 +44,12 @@ if (TEST) {
   const ONE = ['readFileSync', 'readFile', 'existsSync', 'statSync', 'stat', 'lstatSync', 'lstat', 'openSync', 'open', 'accessSync', 'access', 'createReadStream', 'realpathSync', 'readlinkSync', 'copyFileSync', 'copyFile', 'cpSync', 'cp'];
   wrap(fs, ONE, (a) => file(a[0]));
   wrap(fs, ['readdirSync', 'readdir', 'opendirSync', 'opendir'], (a) => dir(a[0], a[1]));
+  // 시험이 스스로 쓴 파일은 입력이 아니다 (임시 파일 등) — 'w' 로 적어 두고 고르는 쪽이 입력에서 뺀다
+  const wrote = (p, base) => { const r = rel(p, base); if (r && r !== '.') note('w', r); };
+  wrap(fs, ['writeFileSync', 'writeFile', 'appendFileSync', 'appendFile', 'mkdirSync', 'mkdir', 'createWriteStream'], (a) => wrote(a[0]));
+  wrap(fs, ['renameSync', 'rename', 'copyFileSync', 'copyFile', 'linkSync', 'symlinkSync'], (a) => wrote(a[1]));
+  wrap(fs.promises, ['writeFile', 'appendFile', 'mkdir'], (a) => wrote(a[0]));
+  wrap(fs.promises, ['rename', 'copyFile'], (a) => wrote(a[1]));
   wrap(fs.promises, ['readFile', 'stat', 'lstat', 'open', 'access', 'realpath', 'readlink', 'copyFile', 'cp'], (a) => file(a[0]));
   wrap(fs.promises, ['readdir', 'opendir'], (a) => dir(a[0], a[1]));
   // 하위 프로세스: 실행 파일과 인자 중 저장소 안에 있는 파일 (node 하위 프로세스는 스스로도 추적된다 — NODE_OPTIONS)
