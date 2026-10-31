@@ -531,3 +531,7 @@ test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못
   // 경로 사슬은 하위 경로 단계까지 (LPS 경로 D000102 는 단계를 하위 경로 D000103–105 에 둔다)
   assert.ok(ER.evidenceReport(BASE, JSON.parse(readFileSync(join(dir, 'lps-hypothetical.json'), 'utf8')), { target: 'D000102', prereg }).chain.length >= 19);
 });
+
+test('환산표는 하나 (RULE-0131) — 단위 환산표(unitFactors)는 vocab.js 에만, 엔진·사법부는 그것을 쓴다', () => {
+  assert.deepEqual(CODE.filter((p) => /unitFactors\s*[:=]\s*\{/.test(src(p))), ['vocab.js'], '환산표를 따로 정의한 코드');
+});

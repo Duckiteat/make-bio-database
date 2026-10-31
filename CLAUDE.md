@@ -26,7 +26,7 @@
 | `field` 적분장 | 다음 엔진(공간·확률 장)의 설계와 시제품을 만들 때 | 스킬 `/field` · `docs/modes/field.md` |
 | `inspect` 점검·검증 | 상태를 읽거나(L0·L1·L2), 모은 후보를 판정하거나, 승인 도장을 남길 때 | 스킬 `/inspect` · `docs/modes/inspect.md` |
 
-## 공통 규칙 — 사람·AI 가 지킨다 (22)
+## 공통 규칙 — 사람·AI 가 지킨다 (20)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -60,8 +60,6 @@
 - `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md·계획 문서 둘)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 하나 읽기 node rebuild/read.mjs PLAN-…, 고치기 node rebuild/plan.mjs apply
 - `RULE-0192` 사용자 보고는 네 칸 표, 산문 요약 금지
 - `RULE-0195` 논리를 깨면 감지·수정·기록까지 한 작업
-- `RULE-0199` 엔진·공유 기계를 바꿨으면 전체 시험
-- `RULE-0201` 새 규칙엔 거부 시험
 
 ### 기타
 
@@ -70,7 +68,14 @@
 
 ## 공통 규칙 — 컴퓨터가 막는다
 
-17 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+19 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+
+- 권한·쓰기 (삼권 분립): RULE-0010 · RULE-0038 · RULE-0212
+- 한계: RULE-0092 · RULE-0093 · RULE-0094 · RULE-0109
+- 기전·시뮬레이션: RULE-0253
+- 검증·판정: RULE-0004 · RULE-0199 · RULE-0200 · RULE-0201
+- 코드에서 찾은 검사: RULE-0513 · RULE-0514 · RULE-0515 · RULE-0516 · RULE-0517 · RULE-0521
+- 기타: RULE-0056
 
 ## 모든 모드의 명령
 

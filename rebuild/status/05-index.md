@@ -13,7 +13,7 @@
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1221 · 212 · 24 | 210 · 없음 2 |
 | `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10403 · 218 · 226 | 212 · 없음 6 |
 | `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 668 · 59 · 53 | 57 · 없음 2 |
-| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2658 · 127 · 161 | 124 · 없음 3 |
+| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2662 · 127 · 162 | 124 · 없음 3 |
 | `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 778 · 36 · 85 | 28 · 없음 8 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 90 · 73 · 9 | 68 · 없음 5 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2072 · 363 · 39 | 360 · 없음 3 |
@@ -27,19 +27,19 @@
 | `attestation` | active | chain | `^[0-9a-f]{64}$` | judicial attestation (digest) | `attestations/registry.json` | — | — |
 | `patch_record` | active | file | `^\d{8}-\d{6}-.+\.json$` | clerk commitMerge | `data/patches/` | — | — |
 | `vocab_token` | active | vocab | `—` | human (vocab.js, user request) | `vocab.js` | — | — |
-| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 314 · 10 · 35 | 10 · 없음 0 |
+| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 318 · 12 · 36 | 10 · 없음 2 |
 | `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 205 · 22 · 11 | 20 · 없음 2 |
-| `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 361 · 6 · 37 | 5 · 없음 1 |
-| `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10021 · 7281 · 9 | — |
+| `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 363 · 6 · 38 | 5 · 없음 1 |
+| `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10604 · 7281 · 10 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 8 · 1 · 5 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 3323 · 522 · 63 | 521 · 없음 1 |
-| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 767 · 40 · 32 | 174 · 없음 2 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 4551 · 523 · 66 | 521 · 없음 2 |
+| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 774 · 40 · 34 | 174 · 없음 2 |
 | `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 22 · 없음 0 |
-| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 250 · 없음 0 |
+| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 251 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
 | `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 969 · 90 · 10 | 174 · 없음 3 |
-| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 470 · 34 · 11 | 174 · 없음 0 |
+| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 472 · 34 · 11 | 174 · 없음 0 |
 | `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 72 · 10 · 6 | 174 · 없음 1 |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `switch` | planned | token | `^SW-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
@@ -83,9 +83,10 @@
 - `observation`: O000029 · O000999 · O800002 · O900001 · O900002 · O900003 · O900009 · O999999
 - `value`: V000069 · V900000 · V900001 · V999998 · V999999
 - `assumption`: A000500 · A000999 · A999999
+- `audit_code`: AUDIT_PROBE · AUDIT_TEST
 - `criterion`: D3.asserted · S3.doi
 - `task`: TASK-009
-- `rule`: RULE-0999
+- `rule`: RULE-0999 · RULE-9519
 - `decision`: DEC-0098 · DEC-0099
 - `plan_item`: PLAN-997 · PLAN-998 · PLAN-999
 - `plan_direction`: DIR-0099

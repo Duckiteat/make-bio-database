@@ -73,7 +73,7 @@
 | `tests/enforcement_gaps.test.mjs` | 26 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
-| `tests/governance.test.mjs` | 21 |
+| `tests/governance.test.mjs` | 22 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 7 |
@@ -84,7 +84,7 @@
 | `tests/qual_graph.test.mjs` | 8 |
 | `tests/qualitative.test.mjs` | 9 |
 | `tests/real_records.test.mjs` | 2 |
-| `tests/rebuild.test.mjs` | 24 |
+| `tests/rebuild.test.mjs` | 25 |
 | `tests/rejections.test.mjs` | 3 |
 | `tests/reliability_criteria.test.mjs` | 12 |
 | `tests/retraction_propagation.test.mjs` | 4 |

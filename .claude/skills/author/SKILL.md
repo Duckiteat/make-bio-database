@@ -16,7 +16,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 
 공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.
 
-## 지켜야 할 규칙 — 사람·AI (67)
+## 지켜야 할 규칙 — 사람·AI (66)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -75,7 +75,6 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 - `RULE-0117` 교과서·추론은 정성 관찰이 아님 (한계·메모로)
 - `RULE-0118` 같은 실험은 experiment 로 묶음
 - `RULE-0122` 번호를 합치거나 나눌 땐 패치 moved (지우고 새로 만들지 않음) _(코드가 알림)_
-- `RULE-0131` 환산표는 하나 (엔진과 사법부가 같은 것)
 - `RULE-0132` Audit Error 는 한계를 채우거나 등록
 - `RULE-0134` 고갈은 결과로 보고 (결함 아님) _(코드가 알림)_
 - `RULE-0135` 재생 경로 없으면 supply 정의 또는 Kinetic_Gap _(코드가 알림)_
@@ -108,7 +107,17 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 
 ## 컴퓨터가 막는 규칙
 
-182 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+183 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+
+- 권한·쓰기 (삼권 분립): RULE-0018 · RULE-0019 · RULE-0023 · RULE-0026 · RULE-0027 · RULE-0435 · RULE-0436
+- 수집·위임 (다른 AI·수집가): RULE-0274 · RULE-0275 · RULE-0286 · RULE-0287 · RULE-0289 · RULE-0290 · RULE-0291 · RULE-0293 · RULE-0295 · RULE-0296 · RULE-0297 · RULE-0299 · RULE-0300
+- 데이터 넣기: RULE-0059 · RULE-0060 · RULE-0061 · RULE-0063 · RULE-0064 · RULE-0066 · RULE-0068 · RULE-0069 · RULE-0071 · RULE-0072 · RULE-0073 · RULE-0074 · RULE-0309 · RULE-0311 · RULE-0312 · RULE-0319 · RULE-0323 · RULE-0324 · RULE-0325 · RULE-0327 · RULE-0330 · RULE-0331 · RULE-0332 · RULE-0333 · RULE-0334 · RULE-0337 · RULE-0339 · RULE-0340 · RULE-0341 · RULE-0342 · RULE-0343 · RULE-0344 · RULE-0345 · RULE-0346 · RULE-0348 · RULE-0349 · RULE-0350 · RULE-0351 · RULE-0352 · RULE-0353 · RULE-0354 · RULE-0355 · RULE-0356 · RULE-0357 · RULE-0358 · RULE-0359 · RULE-0360 · RULE-0361 · RULE-0362 · RULE-0363 · RULE-0364 · RULE-0365 · RULE-0366 · RULE-0369 · RULE-0370 · RULE-0371 · RULE-0372 · RULE-0377 · RULE-0378 · RULE-0379 · RULE-0382 · RULE-0383 · RULE-0384 · RULE-0385 · RULE-0387 · RULE-0389 · RULE-0396 · RULE-0397 · RULE-0398 · RULE-0399 · RULE-0400 · RULE-0402 · RULE-0404 · RULE-0405 · RULE-0406 · RULE-0414 · RULE-0417 · RULE-0418 · RULE-0421 · RULE-0422 · RULE-0440 · RULE-0441 · RULE-0442 · RULE-0444 · RULE-0446 · RULE-0447 · RULE-0448 · RULE-0451 · RULE-0452
+- 관찰·측정값: RULE-0486 · RULE-0489
+- 한계: RULE-0078 · RULE-0079 · RULE-0083 · RULE-0084 · RULE-0085 · RULE-0086 · RULE-0087 · RULE-0088 · RULE-0089 · RULE-0090 · RULE-0104 · RULE-0107 · RULE-0110 · RULE-0111 · RULE-0112 · RULE-0113 · RULE-0114 · RULE-0115 · RULE-0116 · RULE-0119 · RULE-0121 · RULE-0123 · RULE-0124 · RULE-0125 · RULE-0126 · RULE-0127 · RULE-0128 · RULE-0129 · RULE-0130 · RULE-0131 · RULE-0133 · RULE-0138 · RULE-0139 · RULE-0140 · RULE-0141 · RULE-0153 · RULE-0154 · RULE-0155 · RULE-0156 · RULE-0162 · RULE-0165 · RULE-0168 · RULE-0169 · RULE-0171 · RULE-0172 · RULE-0174 · RULE-0182 · RULE-0186 · RULE-0219 · RULE-0220 · RULE-0233
+- 검증·판정: RULE-0189 · RULE-0190 · RULE-0202 · RULE-0203
+- 규칙·코드·시험: RULE-0247 · RULE-0250 · RULE-0251
+- 코드에서 찾은 검사: RULE-0498 · RULE-0499 · RULE-0500 · RULE-0501 · RULE-0502 · RULE-0503 · RULE-0504 · RULE-0505 · RULE-0510 · RULE-0511
+- 기타: RULE-0216 · RULE-0217 · RULE-0218 · RULE-0246
 
 ## 형식 설명
 

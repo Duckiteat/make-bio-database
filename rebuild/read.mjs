@@ -12,6 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import * as STATE from './state.mjs';
+import { TEXT_WHY } from './rules.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -67,7 +68,7 @@ export function read(id, depth = 2, S = load()) {
   }
   const r = S.rules[id];
   if (!r) return `${id} — 규칙 장부·수식 기록에 없음\n`;
-  out.push(`${r.id} — ${r.text}`, `  모드 ${r.modes.join(' · ')} · ${r.enforce === 'machine' ? '컴퓨터가 막음' : r.flags ? '글 규칙 — 코드가 알림' : '글 규칙'}${r.spec ? ' · 형식 설명' : ''}${r.retired ? ` · 은퇴 (${r.retired.at}, ${r.retired.archive})` : ''}${r.reserved ? ` · 예약 (${r.reserved.for})` : ''}`);
+  out.push(`${r.id} — ${r.text}`, `  모드 ${r.modes.join(' · ')} · ${r.enforce === 'machine' ? '컴퓨터가 막음' : r.flags ? '글 규칙 — 코드가 알림' : '글 규칙'}${r.spec ? ' · 형식 설명' : ''}${r.retired ? ` · 은퇴 (${r.retired.at}, ${r.retired.archive})` : ''}${r.reserved ? ` · 예약 (${r.reserved.for})` : ''}${r.text_why ? ` · 글로 남는 까닭: ${TEXT_WHY[r.text_why] || r.text_why}` : ''}`);
   if (depth < 1) return out.join('\n') + '\n';
   const src = r.from_code ? `코드에서 찾음 — ${r.from_code}` : [r.unit, ...(r.copies || [])].map((u) => (S.units[u] ? S.units[u].src : u)).join(' · ');
   out.push(`  적힌 곳: ${src}`);

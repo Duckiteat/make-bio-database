@@ -13,23 +13,23 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "776 개 · 26646.8 KB"
+        "776 개 · 26838.9 KB"
        ],
        [
         "입구 문서 1 곳 합",
-        "7.0 KB"
+        "7.3 KB"
        ],
        [
         "새 세션이 처음 읽는 양 (중심 + 가장 큰 모드 문서)",
-        "17.7 KB"
+        "20.4 KB"
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "90 개 · 1864.8 KB"
+        "90 개 · 1873.1 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "5 개 · 29.5 KB"
+        "5 개 · 33.0 KB"
        ],
        [
         "장부 단위",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "379 / 25"
+        "381 / 25"
        ],
        [
         "번호 이름공간",
@@ -73,7 +73,7 @@
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "257 / 0 / 0"
+        "267 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -118,22 +118,22 @@
        [
         "rebuild",
         "29",
-        "5826.3"
+        "6008.8"
        ],
        [
         "docs",
         "62",
-        "1351.8"
+        "1355.3"
        ],
        [
         "(최상위)",
         "18",
-        "906.4"
+        "907.6"
        ],
        [
         "tests",
         "83",
-        "569.8"
+        "571.1"
        ],
        [
         "judicial",
@@ -176,6 +176,11 @@
         "49.0"
        ],
        [
+        ".claude",
+        "6",
+        "37.0"
+       ],
+       [
         "schemas",
         "2",
         "36.2"
@@ -184,11 +189,6 @@
         "mcp",
         "4",
         "34.7"
-       ],
-       [
-        ".claude",
-        "6",
-        "33.5"
        ],
        [
         ".github",
@@ -259,7 +259,7 @@
        ],
        [
         "`CHANGES.md`",
-        "279.8"
+        "280.8"
        ],
        [
         "`data/fetched/consensus/uniprot/P01911.json`",
@@ -271,15 +271,19 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "221.7"
+        "223.5"
        ],
        [
         "`docs/design/build-plan.md`",
         "211.7"
        ],
        [
+        "`rebuild/rules/changes.jsonl`",
+        "205.4"
+       ],
+       [
         "`rebuild/state/plans.jsonl`",
-        "193.9"
+        "195.0"
        ],
        [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
@@ -303,10 +307,6 @@
        ],
        [
         "`data/fetched/consensus/uniprot/Q04206.json`",
-        "167.2"
-       ],
-       [
-        "`data/fetched/uniprot/Q04206.json`",
         "167.2"
        ]
       ]
@@ -333,50 +333,50 @@
       "rows": [
        [
         "`.claude/skills/author/SKILL.md`",
-        "11.0",
-        "137",
+        "13.4",
+        "146",
         "",
         "미분류"
        ],
        [
         "`.claude/skills/baseline/SKILL.md`",
-        "4.2",
-        "70",
+        "4.8",
+        "75",
         "",
         "미분류"
        ],
        [
         "`.claude/skills/develop/SKILL.md`",
-        "6.3",
-        "89",
+        "6.1",
+        "85",
         "",
         "미분류"
        ],
        [
         "`.claude/skills/field/SKILL.md`",
-        "1.5",
-        "33",
+        "1.7",
+        "36",
         "",
         "미분류"
        ],
        [
         "`.claude/skills/inspect/SKILL.md`",
-        "6.5",
-        "86",
+        "7.0",
+        "93",
         "",
         "미분류"
        ],
        [
         "`CHANGES.md`",
-        "279.8",
-        "257",
+        "280.8",
+        "258",
         "",
         "분류됨 1"
        ],
        [
         "`CLAUDE.md`",
-        "7.0",
-        "93",
+        "7.3",
+        "98",
         "입구",
         "생성물"
        ],
@@ -564,36 +564,36 @@
        ],
        [
         "`docs/modes/author.md`",
-        "10.7",
-        "132",
+        "13.2",
+        "141",
         "",
         "생성물"
        ],
        [
         "`docs/modes/baseline.md`",
-        "4.0",
-        "65",
+        "4.6",
+        "70",
         "",
         "생성물"
        ],
        [
         "`docs/modes/develop.md`",
-        "6.0",
-        "84",
+        "5.9",
+        "80",
         "",
         "생성물"
        ],
        [
         "`docs/modes/field.md`",
-        "1.3",
-        "28",
+        "1.5",
+        "31",
         "",
         "생성물"
        ],
        [
         "`docs/modes/inspect.md`",
-        "6.3",
-        "81",
+        "6.8",
+        "88",
         "",
         "생성물"
        ],
@@ -1241,7 +1241,7 @@
        ],
        [
         "`tests/governance.test.mjs`",
-        "21"
+        "22"
        ],
        [
         "`tests/mcp.test.mjs`",
@@ -1285,7 +1285,7 @@
        ],
        [
         "`tests/rebuild.test.mjs`",
-        "24"
+        "25"
        ],
        [
         "`tests/rejections.test.mjs`",
@@ -2294,7 +2294,7 @@
         "`model.ID_RE.L`",
         "legislative merge (meta.next.L)",
         "`data/db.json#limitations`",
-        "2658 · 127 · 161",
+        "2662 · 127 · 162",
         "124 · 없음 3"
        ],
        [
@@ -2434,8 +2434,8 @@
         "`^AUDIT_[A-Z_]+$`",
         "judicial (code literal)",
         "`judicial/*.js`",
-        "314 · 10 · 35",
-        "10 · 없음 0"
+        "318 · 12 · 36",
+        "10 · 없음 2"
        ],
        [
         "`criterion`",
@@ -2454,7 +2454,7 @@
         "`^TASK-\\d{3}$`",
         "integrator",
         "`workspace/tasks/`",
-        "361 · 6 · 37",
+        "363 · 6 · 38",
         "5 · 없음 1"
        ],
        [
@@ -2464,7 +2464,7 @@
         "`^U\\d{4,}$`",
         "classification (rebuild PLAN §5)",
         "`rebuild/ledger/*.jsonl`",
-        "10021 · 7281 · 9",
+        "10604 · 7281 · 10",
         "—"
        ],
        [
@@ -2494,8 +2494,8 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "3323 · 522 · 63",
-        "521 · 없음 1"
+        "4551 · 523 · 66",
+        "521 · 없음 2"
        ],
        [
         "`decision`",
@@ -2504,7 +2504,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "767 · 40 · 32",
+        "774 · 40 · 34",
         "174 · 없음 2"
        ],
        [
@@ -2525,7 +2525,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "250 · 없음 0"
+        "251 · 없음 0"
        ],
        [
         "`code_head`",
@@ -2554,7 +2554,7 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "470 · 34 · 11",
+        "472 · 34 · 11",
         "174 · 없음 0"
        ],
        [
@@ -2839,9 +2839,10 @@
      "- `observation`: O000029 · O000999 · O800002 · O900001 · O900002 · O900003 · O900009 · O999999",
      "- `value`: V000069 · V900000 · V900001 · V999998 · V999999",
      "- `assumption`: A000500 · A000999 · A999999",
+     "- `audit_code`: AUDIT_PROBE · AUDIT_TEST",
      "- `criterion`: D3.asserted · S3.doi",
      "- `task`: TASK-009",
-     "- `rule`: RULE-0999",
+     "- `rule`: RULE-0999 · RULE-9519",
      "- `decision`: DEC-0098 · DEC-0099",
      "- `plan_item`: PLAN-997 · PLAN-998 · PLAN-999",
      "- `plan_direction`: DIR-0099",
@@ -2904,7 +2905,7 @@
        [
         "공통 `common`",
         "80",
-        "6914.9"
+        "7104.8"
        ],
        [
         "정보 작성 `author`",
@@ -2919,7 +2920,7 @@
        [
         "디벨롭 `develop`",
         "169",
-        "2183.6"
+        "2185.9"
        ],
        [
         "적분장 `field`",
@@ -2952,7 +2953,7 @@
         "`rebuild/**`",
         "common",
         "29",
-        "5826.3",
+        "6008.8",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -3169,7 +3170,7 @@
         "`tests/**`",
         "develop",
         "57",
-        "536.1",
+        "537.4",
         "시험"
        ],
        [
@@ -3211,7 +3212,7 @@
         "`docs/**`",
         "common",
         "8",
-        "71.5",
+        "75.0",
         "안내 문서"
        ],
        [
@@ -3225,7 +3226,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "279.8",
+        "280.8",
         "변경 기록"
        ],
        [
@@ -3239,14 +3240,14 @@
         "`*.md`",
         "common",
         "4",
-        "64.0",
+        "64.2",
         "최상위 문서"
        ],
        [
         "`.claude/**`",
         "common",
         "6",
-        "33.5",
+        "37.0",
         "도구 설정"
        ],
        [
@@ -3318,7 +3319,7 @@
      }
     ],
     "text": [
-     "살아 있는 규칙 507 · 은퇴 14 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
+     "살아 있는 규칙 506 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
     ]
    },
    {
@@ -3332,11 +3333,11 @@
       "rows": [
        [
         "machine",
-        "298"
+        "308"
        ],
        [
         "text",
-        "221"
+        "211"
        ],
        [
         "none",
@@ -5082,7 +5083,7 @@
       "rows": [
        [
         "잡음 `caught`",
-        "257"
+        "267"
        ],
        [
         "설정에 있음 `present`",
@@ -5100,7 +5101,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (291 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (301 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -5111,7 +5112,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 257",
+    "heading": "잡음 `caught` — 267",
     "tables": [
      {
       "head": [
@@ -6920,6 +6921,76 @@
         "replace",
         ".claude/settings.json",
         "① 권한은 장부에 있는 것만 — settings · 문지기 모드 모두 (RULE-0521)"
+       ],
+       [
+        "RULE-0131",
+        "환산표는 하나 (엔진과 사법부가 같은 것)",
+        "inject",
+        "judicial/obs_compare.js",
+        "환산표는 하나 (RULE-0131) — 단위 환산표(unitFactors)는 vocab.js 에만, 엔진·사법부는 그것을 쓴다"
+       ],
+       [
+        "RULE-0199",
+        "엔진·공유 기계를 바꿨으면 전체 시험",
+        "replace",
+        "rebuild/gate.mjs",
+        "② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치"
+       ],
+       [
+        "RULE-0201",
+        "새 규칙엔 거부 시험",
+        "replace",
+        "rebuild/rules/enforcement.jsonl",
+        "① 관리 파일이 최신이다 (node rebuild/status.mjs --write)"
+       ],
+       [
+        "RULE-0467",
+        "**미등록 토큰 거부**: 사전에 없는 키 → 관문 거부 픽스처 (`tests/fixtures/rejecti",
+        "replace",
+        "dictionary.js",
+        "③ 미등록 토큰 거부 — 조회·렌더·번역 모두 오류(추론으로 메우지 않음)"
+       ],
+       [
+        "RULE-0472",
+        "사용자가 지정한 보고서(`fate --report`) | 데이터·코드·증명 위치는 거부",
+        "replace",
+        "legislative/clerk.mjs",
+        "④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다"
+       ],
+       [
+        "RULE-0473",
+        "패치 초안·리팩터링 제안 | 저장소 밖(임시 폴더)에만",
+        "replace",
+        "legislative/clerk.mjs",
+        "④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다"
+       ],
+       [
+        "RULE-0474",
+        "구역 검사는 조건 검사와 **직교**한다. 봉인·도장 재확인이 \"쓸 자격\" 이라면 구역은 \"쓸 자리\" 다. ",
+        "replace",
+        "legislative/clerk.mjs",
+        "④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안의 다른 구역에 쓰려 하면 거부된다"
+       ],
+       [
+        "RULE-0478",
+        "`core.mapText` 는 외부 ID 의 status 를 **표시**한다(읽기). 선언하지는 않는다.",
+        "inject",
+        "core.js",
+        "② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코드·verified 선언이 없다"
+       ],
+       [
+        "RULE-0479",
+        "`viewer.html` 은 브라우저 안에서만 병합(입법 함수)하고 관문(사법 함수)을 보여 준다. 저장은 ",
+        "inject",
+        "viewer.html",
+        "① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만"
+       ],
+       [
+        "RULE-0495",
+        "범위와 판정 규칙은 **사전 등록 때 함께 고정**한다(사후에 좁히기 금지).",
+        "replace",
+        "judicial/protocol.js",
+        "⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준"
        ]
       ]
      }

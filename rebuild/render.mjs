@@ -43,7 +43,14 @@ export function build(root) {
   };
   const isCommon = (r) => r.modes.includes('common');
   const text = (xs) => xs.filter((r) => r.enforce !== 'machine' && !r.spec), machine = (xs) => xs.filter((r) => r.enforce === 'machine'), spec = (xs) => xs.filter((r) => r.spec);
-  const machineNote = (n) => `${n} 개 — 어기면 검사 오류에 그 번호(\`RULE-…\`)가 붙어 나온다. 이유·맥락은 규칙 장부(\`rebuild/rules/rules.jsonl\` · 맥락 \`links.jsonl\`)에서 번호로 찾는다.`;
+  const machineNote = (n) => `${n} 개 — 어기면 검사 오류에 그 번호(\`RULE-…\`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 \`node rebuild/read.mjs RULE-… --depth 0\`, 이유·맥락은 깊이 1·2.`;
+  // 기계 규칙은 주제별 번호만 (10h · DEC-0038 ② — 미리 어느 주제에 있는지 보이고, 제목·이유는 읽기 모드로). 번호는 그대로 찾을 수 있게 RULE- 를 붙인다
+  const machineIds = (xs) => {
+    const by = new Map();
+    for (const r of [...xs].sort((a, b) => a.id.localeCompare(b.id))) { const s = section(r); if (!by.has(s)) by.set(s, []); by.get(s).push(r.id); }
+    const order = [...(M.topics || []).map((t) => t.topic), '코드에서 찾은 검사', '기타'];
+    return [...by].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0])).map(([s, ids]) => `- ${s}: ${ids.join(' · ')}`).join('\n');
+  };
   const out = {};
 
   // 중심 문서
@@ -54,7 +61,7 @@ export function build(root) {
     '## 세션', '', ...M.session.map((x) => `- ${x}`), '',
     '## 모드 — 하나를 골라 연다', '', '| 모드 | 언제 | 여는 법 |', '|---|---|---|', ...modeRows, '',
     `## 공통 규칙 — 사람·AI 가 지킨다 (${text(common).length})`, '', grouped(text(common)), '',
-    `## 공통 규칙 — 컴퓨터가 막는다`, '', machineNote(machine(common).length), '',
+    `## 공통 규칙 — 컴퓨터가 막는다`, '', machineNote(machine(common).length), '', machineIds(machine(common)), '',
     '## 모든 모드의 명령', '', cmdTable(cmds.filter(every)), '', '모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).', '',
     ...permSection(perms)].join('\n');
 
@@ -65,7 +72,7 @@ export function build(root) {
       `- **언제**: ${m.when}`, `- **목표**: ${m.goal}`, `- **쓸 수 있는 곳**: ${m.writes}`, `- **가장 큰 위험**: ${m.risk}`,
       `- **끝내기 전**: ${m.finish.join(' · ')}`, `- **멈춤**: ${m.stop}`, '', '공통 규칙은 중심 문서(`CLAUDE.md`)에 있다.', '',
       `## 지켜야 할 규칙 — 사람·AI (${text(xs).length})`, '', text(xs).length ? grouped(text(xs)) : '없음 — 이 모드의 규칙은 모두 컴퓨터가 막는다.', '',
-      `## 컴퓨터가 막는 규칙`, '', machineNote(machine(xs).length), '',
+      `## 컴퓨터가 막는 규칙`, '', machineNote(machine(xs).length), '', machineIds(machine(xs)), '',
       `## 형식 설명`, '', `${spec(xs).length} 개 — 칸의 모양·값의 뜻(SCHEMA). 쓸 때 찾는다: \`node rebuild/read.mjs --list spec --mode ${m.key}\` · 하나는 \`node rebuild/read.mjs RULE-…\``, '',
       `## 쓸 명령 (모든 모드의 명령은 중심 문서)`, '', cmdTable(cmds.filter((c) => c.modes.includes(m.key) && !every(c))), ''].join('\n');
     out[`docs/modes/${m.key}.md`] = body;

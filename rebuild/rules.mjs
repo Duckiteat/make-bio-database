@@ -21,7 +21,7 @@ const RULE = 'RULE-0519';
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 // 장부마다: 열쇠 칸 · 필수 칸 · 허용 칸 (필수 포함) · 규칙 번호를 가리키는 칸 (참조 검사)
 export const LEDGERS = {
-  rules: { key: ['id'], need: ['id', 'text', 'modes', 'enforce'], may: ['unit', 'copies', 'retired', 'where', 'note', 'flags', 'reserved', 'moved_from_common', 'spec', 'from_code'] },
+  rules: { key: ['id'], need: ['id', 'text', 'modes', 'enforce'], may: ['unit', 'copies', 'retired', 'where', 'note', 'flags', 'reserved', 'moved_from_common', 'spec', 'from_code', 'text_why'] },
   review: { key: ['rule', 'issue'], need: ['rule', 'issue', 'evidence', 'proposal', 'decision'], may: [], refs: ['rule'] },
   formulas: { key: ['id'], need: ['id', 'name', 'expr', 'vars', 'code', 'check', 'test', 'rules', 'basis', 'basis_kind'], may: ['example'], refs: ['rules'] },
   enforcement: { key: ['rule'], need: ['rule', 'op', 'result', 'at'], may: ['tests', 'note', 'file', 'code', 'red', 'find', 'repl', 'contains'], refs: ['rule'] },
@@ -31,6 +31,15 @@ export const LEDGERS = {
   permissions: { key: ['id'], need: ['id', 'layer', 'list', 'what', 'why', 'by', 'at', 'revoke'], may: ['mode', 'wide', 'src'] },
 };
 export const LOG = 'changes.jsonl';
+// 글 규칙이 글로 남는 까닭 (10h · DEC-0038 ①) — 글 규칙(enforce text · spec 아님)마다 하나. candidate 는 기계 규칙으로 올릴 차례(0 이 목표)
+export const TEXT_WHY = {
+  work: '일하는 방식 — 언제 묻나 · 권한 · 보고 형식 · 작업 순서 (판정할 산출물이 없음)',
+  judgment: '사람·통합가의 판단 — 원문 대조 · 출처 확인 · 결함 태그 고르기',
+  delegation: '다른 AI · 수집가에게 맡기는 법 — 대화 속 지시',
+  notify: '코드가 알림만 — 거부로 바꾸면 기존 데이터가 막힌다 (사람이 판단)',
+  principle: '설계 원칙 — 여러 검사의 근거라 하나의 검사로 판정하지 않음',
+  candidate: '판정 가능 — 기계 규칙으로 올릴 차례',
+};
 
 export const canon = (v) => (Array.isArray(v) ? '[' + v.map(canon).join(', ') + ']' : v && typeof v === 'object' ? '{' + Object.entries(v).map(([k, x]) => JSON.stringify(k) + ': ' + canon(x)).join(', ') + '}' : JSON.stringify(v));
 export const keyOf = (name, row) => LEDGERS[name].key.map((k) => (row[k] == null ? '' : String(row[k]))).join('|');
@@ -66,6 +75,12 @@ export function check(S) {
       if (seen.has(k)) E(`${n}: 열쇠 '${k}' 가 겹침`);
       seen.add(k);
     }
+  }
+  for (const o of rows.rules) { // 글 규칙의 까닭 (10h)
+    const text = o.enforce === 'text' && !o.spec && !o.retired && !o.reserved;
+    if (text && !o.text_why) E(`rules ${o.id}: 글 규칙인데 text_why(글로 남는 까닭)가 없음 — ${Object.keys(TEXT_WHY).join(' · ')}`);
+    if (o.text_why && !TEXT_WHY[o.text_why]) E(`rules ${o.id}: 모르는 text_why '${o.text_why}' — ${Object.keys(TEXT_WHY).join(' · ')}`);
+    if (o.text_why && !text) E(`rules ${o.id}: text_why 는 글 규칙에만 (기계 규칙 · 형식 설명은 없음)`);
   }
   const ids = new Set(rows.rules.map((o) => o.id));
   for (const [n, L] of Object.entries(LEDGERS)) for (const o of rows[n]) for (const f of L.refs || []) for (const r of [].concat(o[f] ?? [])) if (/^RULE-/.test(r) && !ids.has(r)) E(`${n} ${keyOf(n, o)}: 없는 규칙 '${r}' 을 가리킴`);

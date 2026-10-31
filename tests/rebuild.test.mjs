@@ -302,7 +302,7 @@ test('㉒ 변이 시험은 커밋하지 않은 작업 파일로 돈다 — 브�
 
 test('㉓ 규칙 장부는 도구로만 (10c · RULE-0519): 줄 모양 하나 · 칸 · 열쇠 · 참조 · 봉인 — 도구 밖에서 고치면 거부', () => {
   assert.deepEqual(LEDGER.check(LEDGER.load(ROOT)), [], '규칙 장부 — node rebuild/rules.mjs check');
-  const R1 = { id: 'RULE-0001', text: 't', modes: ['common'], enforce: 'text' };
+  const R1 = { id: 'RULE-0001', text: 't', modes: ['common'], enforce: 'text', text_why: 'work' };
   const files = Object.fromEntries(Object.keys(LEDGER.LEDGERS).map((n) => [n, n === 'rules' ? JSON.stringify(R1) + '\n' : '']));
   const seal = { at: '2026-10-30', why: '시험', ops: Object.keys(LEDGER.LEDGERS).map((file) => ({ op: 'seal', file })) };
   const first = LEDGER.apply({ files, log: [] }, seal);
@@ -355,4 +355,15 @@ test('㉔ 계획 읽기 깊이 (10f): 0 한 줄 ≤ 300 B · 깊이가 깊을수
   const one = ids[0], cli = (...a) => execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), one, ...a], { cwd: ROOT, encoding: 'utf8' });
   assert.equal(cli('--depth', '0'), STATE.readOne(S, one, 0), '명령의 --depth 가 계획 번호에도');
   assert.equal(cli(), STATE.readOne(S, one, 2), '명령 기본 = 2 단계 (지금 출력과 같은 바이트)');
+});
+
+test('㉕ 글 규칙 → 기계 규칙 (10h · DEC-0038): 글 규칙마다 글로 남는 까닭 · 판정 가능(candidate)은 끝난 모드에 없음 · 읽기 모드가 까닭을 보임', () => {
+  const S = LEDGER.load(ROOT), rules = S.files.rules.split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const text = rules.filter((r) => r.enforce === 'text' && !r.spec && !r.retired && !r.reserved);
+  assert.deepEqual(text.filter((r) => !LEDGER.TEXT_WHY[r.text_why]).map((r) => r.id), [], '까닭이 없는 글 규칙');
+  const DONE = ['develop']; // 10h 묶음이 끝난 모드 — 묶음마다 늘린다
+  const left = text.filter((r) => r.text_why === 'candidate' && r.modes.some((m) => DONE.includes(m)));
+  assert.deepEqual(left.map((r) => r.id), [], `끝난 모드(${DONE.join(' · ')})에 판정 가능한 글 규칙이 남음`);
+  const one = text.find((r) => r.text_why === 'work');
+  assert.match(READ.read(one.id, 0), new RegExp(`글로 남는 까닭: ${LEDGER.TEXT_WHY.work.slice(0, 10)}`), '읽기 모드가 까닭을 보임');
 });
