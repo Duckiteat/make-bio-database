@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 80 | 6899.8 |
+| 공통 `common` | 80 | 6914.9 |
 | 정보 작성 `author` | 449 | 16512.0 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 169 | 2182.8 |
+| 디벨롭 `develop` | 169 | 2183.6 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 33 | 748.4 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 29 | 5810.9 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 29 | 5826.3 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -58,9 +58,9 @@
 | `docs/design/**` | common | 20 | 510.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 8 | 71.5 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 278.9 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 279.8 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 100.8 | 형식 |
-| `*.md` | common | 4 | 64.2 | 최상위 문서 |
+| `*.md` | common | 4 | 64.0 | 최상위 문서 |
 | `.claude/**` | common | 6 | 33.5 | 도구 설정 |
 | `.github/**` | develop | 1 | 2.1 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
