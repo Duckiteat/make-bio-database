@@ -594,6 +594,8 @@
     o.use = str(b.use);
     o.evidence = normEvidence(b.evidence);
     if (str(b.experiment)) o.experiment = str(b.experiment);
+    if (str(b.assay)) o.assay = str(b.assay); // 측정법 장부의 key (측정법 계획 ASY-00 — 대조는 사법부, RULE-0524)
+    if (b.replicate_type != null) o.replicate_type = str(b.replicate_type); // technical · biological — 없으면 원문에 없음 (DEC-0045)
     for (const k of ['evidence_at', 'recorded_at']) if (str(b[k])) o[k] = str(b[k]);
     if (b.hypothetical) o.hypothetical = true; // 관문이 거부 — 합성 관찰은 examples/ 에만
     if (str(b.note)) o.note = str(b.note);

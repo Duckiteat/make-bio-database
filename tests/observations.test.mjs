@@ -113,3 +113,14 @@ test('⑦ 불확도 출처: resolution 은 정규·sd > 0 에만 · 모르는 �
   rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 0, basis: 'resolution' } })] }, /0 보다 커야/);
   assert.equal(C.checkObservation({ ...amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 1, basis: 'nope' } }) }).ok, false, '계약 모양도 출처 값을 본다');
 });
+
+test('측정법이 붙은 관찰 (RULE-0524 · DEC-0045): 관문은 등록된 측정법만 · 장부를 못 받으면 경고로 막음', () => {
+  const reg = new Map([['syn_counting', { key: 'syn_counting', rung: 'cellular', produces: ['amount'] }]]);
+  const g = (o, opt) => J.gate(BASE, LEG.merge(BASE, P({ observations: [amount(o)] })), opt);
+  const ok = g({ assay: 'syn_counting', replicate_type: 'biological' }, { assays: reg });
+  assert.ok(ok.ok, msgs(ok));
+  const bad = g({ assay: 'nowhere_assay' }, { assays: reg });
+  assert.equal(bad.ok, false); assert.match(msgs(bad), /미등록 측정법 'nowhere_assay'/);
+  const blind = g({ assay: 'syn_counting' }, {});
+  assert.equal(blind.ok, false, '장부를 받지 않은 관문은 통과시키지 않음'); assert.match(msgs(blind), /측정법 장부를 받지 않아 확인하지 못함/);
+});

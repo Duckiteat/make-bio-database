@@ -127,4 +127,19 @@ function auditText(a) {
     a.ok ? '판정: 통과' : `판정: 오류 ${a.errors.length}\n${a.errors.map((e) => '  ✗ ' + e).join('\n')}`, ''].join('\n');
 }
 
-module.exports = { GENESIS, PROPOSAL_FIELDS, RUNGS, verifyChain, current, checkProposals, audit, auditText };
+// 같은 측정 깃발 (DEC-0045 · PLAN-071 I 축의 바탕) — 같은 측정법 · 같은 출처의 관찰은 서로 독립 근거가 아니다(측정 잡음·계통 오차를 함께 진다).
+//   계산만 하고 저장하지 않는다. 철회된 관찰 · 측정법이나 출처가 없는 관찰은 묶지 않는다
+function sameMeasurement(db) {
+  const by = new Map();
+  for (const [id, o] of Object.entries((db && db.observations) || {})) {
+    if (!o.assay || o.retracted) continue;
+    const src = (o.provenance && o.provenance.source) || ((o.evidence || {}).sources || [])[0];
+    if (!src || !src.db || !src.id) continue;
+    const k = `${o.assay}\u0000${src.db}:${src.id}`;
+    if (!by.has(k)) by.set(k, []);
+    by.get(k).push(id);
+  }
+  return [...by].filter(([, ids]) => ids.length > 1).map(([k, ids]) => { const [assay, source] = k.split('\u0000'); return { assay, source, obs: ids.sort() }; });
+}
+
+module.exports = { GENESIS, PROPOSAL_FIELDS, RUNGS, verifyChain, current, checkProposals, audit, auditText, sameMeasurement };

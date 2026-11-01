@@ -68,3 +68,22 @@ test('③ 서기 — 봉인 없이 · 다른 항목으로는 쓰지 않음 · �
     assert.match(AS.audit(CLERK.readAssays(dir)).errors.join('\n'), /root 재계산 불일치/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('④ 관찰의 측정법 (RULE-0524 · DEC-0045): 등록된 측정법만 · 그 측정법이 관찰 종류를 냄 · 장부를 못 받으면 경고 · 반복 종류 어휘 · 같은 측정 깃발', () => {
+  const C = req('../core.js'), J = req('../judicial/judicial.js');
+  const base = C.normalize(JSON.parse(readFileSync(new URL('../data/db.json', import.meta.url), 'utf8')));
+  const tpl = Object.values(base.observations).find((o) => o.observable && o.observable.kind === 'concentration' && !o.retracted);
+  const withObs = (extra) => { const d = JSON.parse(JSON.stringify(base)); Object.assign(d.observations, extra); return C.normalize(d); };
+  const reg = new Map([['syn_absorbance', { key: 'syn_absorbance', rung: 'readout', produces: ['concentration'] }], ['syn_kinetics', { key: 'syn_kinetics', rung: 'combined', produces: ['kinetic_constant'] }]]);
+  const errs = (db, opt) => J.validate(db, opt).errors.filter((e) => e.rule === 'RULE-0524').map((e) => e.msg).join('\n');
+  const warns = (db, opt) => J.validate(db, opt).warnings.filter((e) => e.rule === 'RULE-0524').map((e) => e.msg).join('\n');
+  assert.equal(errs(withObs({ O900001: { ...tpl, assay: 'syn_absorbance', replicate_type: 'technical' } }), { assays: reg }), '', '등록 · 내는 값 맞음');
+  assert.match(errs(withObs({ O900001: { ...tpl, assay: 'nowhere_assay' } }), { assays: reg }), /미등록 측정법 'nowhere_assay'/);
+  assert.match(errs(withObs({ O900001: { ...tpl, assay: 'syn_kinetics' } }), { assays: reg }), /'concentration' 를 내지 않음/);
+  assert.match(warns(withObs({ O900001: { ...tpl, assay: 'syn_absorbance' } }), {}), /측정법 장부를 받지 않아 확인하지 못함/, '장부를 못 받으면 조용히 넘어가지 않음');
+  assert.match(errs(withObs({ O900001: { ...tpl, replicate_type: 'cells' } }), { assays: reg }), /반복 종류\(replicate_type\) 'cells'/);
+  // 같은 측정 — 같은 측정법 · 같은 출처는 독립 근거가 아님 (철회·측정법 없음은 묶지 않음)
+  const g = AS.sameMeasurement({ observations: { O900001: { ...tpl, assay: 'syn_absorbance' }, O900002: { ...tpl, assay: 'syn_absorbance' }, O900003: { ...tpl, assay: 'syn_absorbance', retracted: { note: 'x' } }, O900004: { ...tpl } } });
+  assert.deepEqual(g.map((x) => x.obs), [['O900001', 'O900002']]);
+  assert.equal(g[0].assay, 'syn_absorbance');
+});

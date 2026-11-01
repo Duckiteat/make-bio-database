@@ -133,6 +133,15 @@
           "type": ["integer", "null"],
           "minimum": 1
         },
+        "assay": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,40}$",
+          "description": "측정법 장부(data/assays.jsonl)의 key — 등록된 측정법만 (RULE-0524)"
+        },
+        "replicate_type": {
+          "enum": ["technical", "biological", null],
+          "description": "반복 종류 — technical: 같은 시료를 여러 번(퍼짐 = 측정 잡음) · biological: 다른 세포·개체(퍼짐 = 화학·생물 잡음 + 측정 잡음) · null: 원문에 없음 (DEC-0045)"
+        },
         "condition": {
           "type": "object",
           "required": [
@@ -430,6 +439,15 @@
         "replicates": {
           "type": "integer",
           "minimum": 1
+        },
+        "assay": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,40}$",
+          "description": "측정법 장부(data/assays.jsonl)의 key — 등록된 측정법만, 그 측정법이 readout 종류를 내야 함 (RULE-0524)"
+        },
+        "replicate_type": {
+          "enum": ["technical", "biological", null],
+          "description": "반복 종류 — technical · biological · null(원문에 없음) (DEC-0045)"
         },
         "kind": {
           "const": "qualitative"

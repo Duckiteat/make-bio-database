@@ -114,7 +114,7 @@
     for (const n of parentsOf.keys()) dfs(n, []);
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
-    for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W);
+    for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W, opt);
     validateMoved(db, E);
     validateValues(db, E);
     checkAttestations(db, opt, E, W);
@@ -290,8 +290,21 @@
     if (o.evidence.level !== 'curated') E('RULE-0115', w, `정성 관찰 근거는 curated(문헌) — 지금 ${o.evidence.level}`);
     if (o.use !== 'validation') E('RULE-0116', w, '정성 관찰의 용도는 validation — 상수 추정에 쓰지 않음');
   }
-  function validateObservation(db, ix, id, o, E, W) {
+  // 관찰의 측정법 (측정법 계획 ASY-00 · DEC-0045): 등록된 측정법만 · 그 측정법이 이 관찰 종류를 낸다 · 반복 종류(기술 · 생물)는 어휘 안.
+  //   opt.assays = 측정법 장부의 현재 측정법(Map key → 사건, judicial/assay_audit.js audit().current). 받지 못하면 확인하지 못했다고 경고 — 관문에서는 경고가 병합을 막는다
+  function checkAssayLink(o, w, opt, E, W) {
+    if (o.replicate_type != null && !['technical', 'biological'].includes(o.replicate_type)) E('RULE-0524', w, `반복 종류(replicate_type) '${o.replicate_type}' — technical(같은 시료 · 측정 잡음) | biological(다른 세포·개체 · 화학 잡음 + 측정 잡음) | 없음`);
+    if (o.assay == null) return;
+    const A = opt && opt.assays;
+    if (!A) { W('RULE-0524', w, `측정법 '${o.assay}' — 측정법 장부를 받지 않아 확인하지 못함 (dbtool · 조정자는 장부를 넘긴다)`); return; }
+    const a = typeof A.get === 'function' ? A.get(o.assay) : A[o.assay];
+    if (!a) { E('RULE-0524', w, `미등록 측정법 '${o.assay}' — 먼저 측정법 장부에 (dbtool assay add, 만든 방법과 함께)`); return; }
+    const kind = o.kind === 'qualitative' ? o.readout && o.readout.kind : o.observable && o.observable.kind;
+    if (kind && !(a.produces || []).includes(kind)) E('RULE-0524', w, `측정법 '${o.assay}' 는 '${kind}' 를 내지 않음 — 내는 값: ${(a.produces || []).join(' · ') || '없음 (값을 내지 않는 단)'}`);
+  }
+  function validateObservation(db, ix, id, o, E, W, opt) {
     const w = id;
+    checkAssayLink(o, w, opt, E, W);
     if (!isId('O', id)) E('RULE-0498', id, "관찰 번호는 'O' + 숫자 6자리");
     if (o.hypothetical) E('RULE-0112', w, '합성(hypothetical) 관찰은 데이터베이스에 넣지 않음 — examples/observations/ 에만 (실측값을 지어내지 않음)');
     if (o.evidence_at && !/^\d{4}(-\d{2}(-\d{2})?)?$/.test(o.evidence_at)) E('RULE-0447', w, `근거 시각(evidence_at) '${o.evidence_at}' — YYYY · YYYY-MM · YYYY-MM-DD`);
@@ -1075,7 +1088,7 @@
   }
 
   function gate(dbBefore, result, opt) {
-    const vo = opt && opt.attestations ? { attestations: opt.attestations } : undefined;
+    const vo = opt && (opt.attestations || opt.assays) ? { attestations: opt.attestations, assays: opt.assays } : undefined;
     const b0 = normalize(dbBefore), before = validate(b0, vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
     const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result)];

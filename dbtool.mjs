@@ -111,6 +111,7 @@ const rateOpt = () => ({ scenario: flags.scenario ? loadScenario(flags.scenario)
   until_death: flags['until-death'] ? true : undefined, window: flags.window != null ? +flags.window : undefined, death_frac: flags['death-frac'] != null ? +flags['death-frac'] : undefined });
 // 사법부가 검증한 증명 도장 열쇠 (validate·관문에 넘김)
 const attestations = (db) => ATT.validStamps(db, ATT.readRegistry(HERE), { root: HERE });
+const assays = () => req('./judicial/assay_audit.js').audit(CLERK.readAssays(dirname(DB_PATH))).current; // 측정법 장부의 현재 측정법 — 관문·검사가 관찰의 assay 를 대조 (RULE-0524)
 const REL = req('./judicial/reliability.js'); // 사법부 — 신뢰 지표 (S·D 쌍 → 등급)
 const TR = req('./judicial/trend.js');        // 사법부 — 추세 점검 (시간 축: 합의와 같은가)
 // 추세 축: 창 안의 유효한 추세 도장만 (없으면 'unchecked' — anchor 가 나오지 않는다)
@@ -133,7 +134,7 @@ switch (cmd) {
   }
   case 'validate': {
     if (args[0]) { // 패치 검사: 관문 미리 보기 + 부분 구조 수지(ΣIn = ΣOut, 상대 1e-14 — validate 규칙) + 정제 점검의 새 문제
-      const db = loadDB(), patch = stamped(readJSON(args[0])), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys });
+      const db = loadDB(), patch = stamped(readJSON(args[0])), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys, assays: assays() });
       printIssues(g.errors, g.warnings);
       const before = J.refineCheck(db).issues.map((x) => x.type + x.where), ref = J.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
       for (const x of fresh) console.log(`  △ [${x.type}] ${x.msg}`);
@@ -171,7 +172,7 @@ switch (cmd) {
     const applied = [], att = attestations(db).keys;
     for (const p of args) {
       const patch = stamped(readJSON(p));
-      const res = LEG.ingest(db, patch), g = J.gate(db, res, { allowWarnings: !!flags['allow-warnings'], attestations: att }), r = res.report;
+      const res = LEG.ingest(db, patch), g = J.gate(db, res, { allowWarnings: !!flags['allow-warnings'], attestations: att, assays: assays() }), r = res.report;
       console.log(`${p}: 추가 ${r.added.length}, 수정 ${r.updated.length}, 삭제 ${r.removed.length}`);
       for (const [a, b] of Object.entries(r.idmap)) console.log(`  id   ${a} → ${b}`);
       for (const m of r.mapped) console.log(`  매핑 ${m.from} → ${m.to}  (${m.via})`);
@@ -355,7 +356,7 @@ switch (cmd) {
       const fresh = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: HERE })), badSt = fresh.filter((v) => !v.ok);
       for (const v of badSt) console.log(`  ✗ 도장 ${v.key}: ${v.reasons.join(' · ')}`);
       const att = [...attestations(db).keys, ...fresh.filter((v) => v.ok).map((v) => v.key)];
-      const g = J.gate(db, res, { attestations: att }), rep = J.patchReport(db, res, b.patch, g);
+      const g = J.gate(db, res, { attestations: att, assays: assays() }), rep = J.patchReport(db, res, b.patch, g);
       printIssues(g.errors, g.warnings);
       console.log(J.patchReportText(rep, DefDB.index(res.db)));
       console.log(`패치 초안 (입법 서기): ${out} · 증명 도장 ${b.stamps.length} (유효 ${fresh.length - badSt.length})`);
@@ -456,7 +457,7 @@ switch (cmd) {
   }
   case 'assay': { // 측정법 장부 (측정법 계획 ASY-00): 인자 없으면 사슬·현재 측정법 판정, add <항목.json|jsonl> 은 사법부 검사 → 봉인 → 서기가 사슬에 추가
     const AS = req('./judicial/assay_audit.js'), dataDir = dirname(DB_PATH), events = CLERK.readAssays(dataDir);
-    if (args[0] !== 'add') { const a = AS.audit(events); console.log(AS.auditText(a)); process.exit(a.ok ? 0 : 1); }
+    if (args[0] !== 'add') { const a = AS.audit(events), g = AS.sameMeasurement(loadDB()); console.log(AS.auditText(a) + `\n같은 측정 (같은 측정법 · 같은 출처 — 독립 근거가 아님): ${g.length ? g.map((x) => `${x.assay} · ${x.source}: ${x.obs.join(' · ')}`).join(' / ') : '없음'}`); process.exit(a.ok ? 0 : 1); }
     if (!args[1]) die('사용법: assay [add <항목.json|.jsonl>] — 항목 칸: ' + AS.PROPOSAL_FIELDS.join(' · '));
     const txt = readFileSync(args[1], 'utf8').trim();
     const proposals = txt.startsWith('[') ? JSON.parse(txt) : txt.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
@@ -672,7 +673,7 @@ switch (cmd) {
     const CMP = req('./judicial/compare.js');
     const dbA = loadDB(), x = DefDB.resolveRef(DefDB.index(dbA), flags.state); if (x.error) die(x.error);
     let dbB = dbA;
-    if (flags.patch) { const res = LEG.ingest(dbA, readJSON(flags.patch)), g = J.gate(dbA, res, { attestations: attestations(dbA).keys }); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
+    if (flags.patch) { const res = LEG.ingest(dbA, readJSON(flags.patch)), g = J.gate(dbA, res, { attestations: attestations(dbA).keys, assays: assays() }); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
     const scA = loadScenario(flags.scenario, x.id, dbA).scenario, scB = flags['scenario-b'] ? loadScenario(flags['scenario-b'], x.id, dbA).scenario : JSON.parse(JSON.stringify(scA));
     if (flags.hours) { scA.t_end = +flags.hours * 3600; scB.t_end = +flags.hours * 3600; }
     const r = ORCH.compare(dbA, dbB, x.id, scA, scB, { refHours: +(flags['ref-hours'] || 3) });

@@ -274,7 +274,11 @@ function augmentBuild(db, opt) {
 // ----- 전체 검사 (증명 등록부 포함) -----
 function validateWithRegistry(db, root, opt) {
   const reg = ATT.readRegistry(root), v = ATT.validStamps(C.normalize(db), reg, Object.assign({ root }, opt || {}));
-  return Object.assign(J.validate(C.normalize(db), { attestations: v.keys }), { attestations: v });
+  // 측정법 장부(data/assays.jsonl)의 현재 측정법 — 관찰의 assay 대조 (RULE-0524). 읽기만
+  const fs = require('fs'), path = require('path'), af = path.join(root, 'data', 'assays.jsonl');
+  const events = fs.existsSync(af) ? fs.readFileSync(af, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
+  const assays = require('./judicial/assay_audit.js').audit(events).current;
+  return Object.assign(J.validate(C.normalize(db), { attestations: v.keys, assays }), { attestations: v });
 }
 
 // ----- 델타 기록 재생 (S1): 기원 스냅숏에서 사건의 패치를 입법부 순수 병합으로 차례로 적용 → 사건마다 sha256 → 사법부 판정 -----
