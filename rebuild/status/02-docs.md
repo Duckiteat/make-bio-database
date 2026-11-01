@@ -96,7 +96,7 @@
 | `docs/plan/items/ASY-05.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-06.md` | 1.3 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-08.md` | 2.7 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-08.md` | 8.1 | 39 |  | 생성물 |
 | `docs/plan/items/ASY-09.md` | 1.5 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-10.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-001.md` | 2.4 | 30 |  | 생성물 |
