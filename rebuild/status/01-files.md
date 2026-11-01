@@ -7,9 +7,9 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 28 | 6063.4 |
-| docs | 263 | 1674.6 |
-| (최상위) | 18 | 934.0 |
+| rebuild | 28 | 6066.1 |
+| docs | 264 | 1678.4 |
+| (최상위) | 18 | 934.4 |
 | tests | 84 | 592.3 |
 | judicial | 30 | 567.0 |
 | attestations | 1 | 299.0 |
@@ -38,14 +38,14 @@
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
-| `CHANGES.md` | 292.6 |
+| `CHANGES.md` | 293.0 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
-| `rebuild/state/plan-log.jsonl` | 274.8 |
+| `rebuild/state/plan-log.jsonl` | 276.3 |
 | `rebuild/rules/changes.jsonl` | 257.8 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `rebuild/state/plans.jsonl` | 231.5 |
+| `rebuild/state/plans.jsonl` | 232.8 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `judicial/judicial.js` | 184.9 |
 | `data/assumptions.jsonl` | 182.3 |
