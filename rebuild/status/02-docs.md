@@ -267,6 +267,7 @@
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
 | `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
+| `docs/reports/2026-11-01-engine-teardown-2.md` | 9.7 | 57 |  | 미분류 |
 | `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
