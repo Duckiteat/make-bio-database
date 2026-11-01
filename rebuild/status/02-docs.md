@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 284.3 | 263 |  | 분류됨 1 |
+| `CHANGES.md` | 284.8 | 264 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.4 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -86,14 +86,14 @@
 | `docs/plan/decisions/DEC-0040.md` | 0.6 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0041.md` | 1.2 | 19 |  | 생성물 |
 | `docs/plan/decisions/DEC-0042.md` | 1.2 | 15 |  | 생성물 |
-| `docs/plan/items/ASY-00.md` | 1.9 | 22 |  | 생성물 |
-| `docs/plan/items/ASY-01.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/ASY-02.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/ASY-03.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/ASY-04.md` | 1.1 | 21 |  | 생성물 |
-| `docs/plan/items/ASY-05.md` | 1.1 | 21 |  | 생성물 |
-| `docs/plan/items/ASY-06.md` | 1.1 | 21 |  | 생성물 |
-| `docs/plan/items/ASY-07.md` | 1.2 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-00.md` | 2.2 | 23 |  | 생성물 |
+| `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-03.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-04.md` | 1.4 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-05.md` | 1.4 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-06.md` | 1.3 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-07.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-001.md` | 2.4 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-002.md` | 1.9 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-003.md` | 1.8 | 23 |  | 생성물 |

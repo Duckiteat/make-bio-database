@@ -379,3 +379,13 @@ test('㉕ 글 규칙 → 기계 규칙 (10h · DEC-0038): 글 규칙마다 글�
   const one = text.find((r) => r.text_why === 'work');
   assert.match(READ.read(one.id, 0), new RegExp(`글로 남는 까닭: ${LEDGER.TEXT_WHY.work.slice(0, 10)}`), '읽기 모드가 까닭을 보임');
 });
+
+test('㉖ 계획 고치기 — 부 옮기기(move)는 걸어온 길에 남고, 없는 부로 옮기기 · 작업이 남은 부 지우기는 거부', () => {
+  const S = STATE.load(ROOT), x = S.items.find((y) => y.plan === 'assay'), go = (ops) => STATE.apply(S, { at: '2026-11-01', why: '시험', ops });
+  assert.match(go([{ op: 'move', id: x.id, to: '없는 부' }]).errs.join(), /부 '없는 부' 없음/);
+  assert.match(go([{ op: 'part-drop', plan: x.plan, title: x.part }]).errs.join(), /작업이 남아 있음/);
+  const ok = go([{ op: 'part', part: { plan: x.plan, title: '시험 부', cols: [] } }, { op: 'move', id: x.id, to: '시험 부' }]);
+  assert.deepEqual(ok.errs, []);
+  const e = ok.S.log[ok.S.log.length - 1];
+  assert.deepEqual([e.change, e.from, e.to], ['moved', x.part, '시험 부'], '옮긴 사건이 걸어온 길에');
+});

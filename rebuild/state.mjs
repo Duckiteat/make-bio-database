@@ -292,6 +292,7 @@ export function renderFiles(S) {
 //       decide {decision} · decision-update {id, update:{at?, text, refs}} · synthesis {synthesis} (덧붙임 — 이전 판은 남음)
 //       direction {direction} (같은 번호면 바꿈) · open {open} · resolve {text, resolved}
 //       order {seq: [{id, why}]} (순서 통째로 — 사건에 앞뒤) · plan {plan} · part {part} (새 계획을 세울 때)
+//       move {id, to} (작업의 부를 옮김 — 사건 moved) · part-drop {plan, title} (빈 부만 지움)
 export function apply(S, change) {
   const errs = [], at = change.at, why = String(change.why || '').trim();
   if (!DATE.test(at || '')) errs.push('변경 묶음 at 은 YYYY-MM-DD');
@@ -322,6 +323,8 @@ export function apply(S, change) {
     }
     else if (op.op === 'plan') { if (recs.some((r) => r.kind === 'plan' && r.plan === op.plan.plan)) { errs.push(`계획 '${op.plan.plan}' 이 이미 있음`); continue; } recs.splice(recs.map((r) => r.kind).lastIndexOf('plan') + 1, 0, { kind: 'plan', ...op.plan }); }
     else if (op.op === 'part') recs.splice(recs.map((r) => r.kind).lastIndexOf('part') + 1, 0, { kind: 'part', ...op.part });
+    else if (op.op === 'move') { const x = item(op.id); if (!x) continue; if (!recs.some((r) => r.kind === 'part' && r.plan === x.plan && r.title === op.to)) { errs.push(`부 '${op.to}' 없음`); continue; } const from = x.part; x.part = op.to; ev(x, 'moved', { from, to: op.to }); }
+    else if (op.op === 'part-drop') { const i = recs.findIndex((r) => r.kind === 'part' && r.plan === op.plan && r.title === op.title); if (i < 0) { errs.push(`부 '${op.title}' 없음`); continue; } if (recs.some((r) => r.kind === 'item' && r.plan === op.plan && r.part === op.title)) { errs.push(`부 '${op.title}' 에 작업이 남아 있음 — 먼저 move`); continue; } recs.splice(i, 1); }
     else errs.push(`모르는 op '${op.op}'`);
   }
   const of = (k) => recs.filter((r) => r.kind === k);
