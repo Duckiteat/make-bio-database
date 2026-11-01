@@ -302,6 +302,26 @@
     const kind = o.kind === 'qualitative' ? o.readout && o.readout.kind : o.observable && o.observable.kind;
     if (kind && !(a.produces || []).includes(kind)) E('RULE-0524', w, `측정법 '${o.assay}' 는 '${kind}' 를 내지 않음 — 내는 값: ${(a.produces || []).join(' · ') || '없음 (값을 내지 않는 단)'}`);
   }
+  // 원문 자리수 (측정법 계획 ASY-08 · 사용자 '자리수가 안 맞으면 가차없이'): 원문 숫자(reported — 십진 문자열 그대로)에서 정확한 유리수로
+  //   환산한 값 = 저장된 SI 값(f64 한 번 반올림)이어야 하고, 원문의 마지막 자리 = 해상도가 precision · 해상도 sd 와 같아야 한다. 어긋나면 오류
+  function checkReported(o, w, E, W) {
+    const r = o.reported;
+    if (!r) { W('RULE-0525', w, '원문 숫자(reported)가 없음 — 자리수를 대조할 수 없다 (새 관찰은 관문이 거부)'); return; }
+    const sameUnit = r.unit === o.unit, ru = sameUnit ? { q: [1n, 1n] } : M.unitQ(r.unit), ou = sameUnit ? { q: [1n, 1n] } : M.unitQ(o.unit);
+    const v = M.exactQ(r.value);
+    if (!v || typeof r.value !== 'string') { E('RULE-0525', w, `원문 숫자(reported.value) '${r.value}' — 원문 그대로의 십진 문자열이어야 함 (자리수를 지우지 않게)`); return; }
+    if (!ru || !ou || (!sameUnit && ru.kind !== ou.kind)) { E('RULE-0525', w, `원문 단위 '${r.unit}' → '${o.unit}' — 같은 종류의 환산표(vocab.unitExact)에 없음`); return; }
+    const f = M.qDiv(ru.q, ou.q), want = M.qToF64(M.qMul(v, f));
+    if (want !== o.value) E('RULE-0525', w, `값 ${o.value} 이 원문 '${r.value} ${r.unit}' 의 정확한 환산 ${want} 과 다름 — 원문 숫자를 그대로, 자리수를 늘리거나 줄이지 않는다`);
+    const res = M.qToF64(M.qMul(M.lastPlaceQ(r.value), f));
+    if (o.precision != null && o.precision !== res) E('RULE-0525', w, `precision ${o.precision} 이 원문 '${r.value}' 의 마지막 자리(해상도 ${res} ${o.unit})와 다름`);
+    if (o.uncertainty && o.uncertainty.basis === 'resolution' && o.uncertainty.sd !== res) E('RULE-0525', w, `해상도로 채운 sd ${o.uncertainty.sd} 가 원문 '${r.value}' 의 마지막 자리(${res} ${o.unit})와 다름`);
+    if (r.sd != null) {
+      const s = M.exactQ(r.sd);
+      if (!s || typeof r.sd !== 'string') E('RULE-0525', w, `원문 불확도(reported.sd) '${r.sd}' — 원문 그대로의 십진 문자열이어야 함`);
+      else if (o.uncertainty && o.uncertainty.model === 'normal' && o.uncertainty.basis !== 'resolution') { const ws = M.qToF64(M.qMul(s, f)); if (ws !== o.uncertainty.sd) E('RULE-0525', w, `sd ${o.uncertainty.sd} 이 원문 '± ${r.sd} ${r.unit}' 의 정확한 환산 ${ws} 과 다름`); }
+    }
+  }
   function validateObservation(db, ix, id, o, E, W, opt) {
     const w = id;
     checkAssayLink(o, w, opt, E, W);
@@ -319,6 +339,7 @@
       if (o.retracted) { if (!o.retracted.note) E('RULE-0107', w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
       return;
     }
+    checkReported(o, w, E, W);
     const ob = o.observable, ov = V.observables[ob.kind];
     if (!ov) E('RULE-0402', w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
     else if (ov.target === 'bundle') checkBundle(db, ix, ob.target, `${w} 측정 대상`, E);
@@ -1091,7 +1112,9 @@
     const vo = opt && (opt.attestations || opt.assays) ? { attestations: opt.attestations, assays: opt.assays } : undefined;
     const b0 = normalize(dbBefore), before = validate(b0, vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
-    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result)];
+    // 새 정량 관찰은 원문 숫자가 있어야 한다 (RULE-0525 — 옛 관찰의 '없음' 은 경고로 남기지만 새로 들어오는 것은 거부)
+    const noReported = Object.entries(result.db.observations || {}).filter(([id, o]) => !(b0.observations || {})[id] && o.kind !== 'qualitative' && !o.reported).map(([id]) => ({ rule: 'RULE-0525', where: id, msg: '새 정량 관찰에 원문 숫자(reported { value: 원문 십진 문자열, unit: 원문 단위, sd? })가 없음 — 자리수를 대조할 수 없으면 들이지 않는다' }));
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result), ...noReported];
     const warnings = after.warnings.filter((i) => !old.has(key(i)));
     const r = result.report;
     const changed = r.added.length + r.updated.length + r.removed.length > 0;

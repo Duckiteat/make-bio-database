@@ -624,11 +624,13 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 - **사법부**: `judicial/assay_audit.js` — 사슬 · revises · 칸 모양 · 단이 값을 내는가(계량·분리는 produces [], 계산은 측정이 아님 — 양자 계산 포함, DEC-0044) · 조합 측정법은 판독을 하나 이상 조합 · 분리 속성은 분리 단만 (RULE-0522).
 - **쓰기**: `dbtool assay add <항목.json|jsonl>` — 사법부 검사 → 봉인 → 서기(`appendAssays`, 입법 구역). 정보 작성 모드의 일. 보기는 `dbtool assay`.
 - **관찰과 잇기**: 관찰(정량·정성)의 선택 칸 `assay`(측정법 key — 등록된 것만, 그 측정법의 produces 에 관찰 종류(정량 observable.kind · 정성 readout.kind)가 있어야 함)와 `replicate_type`(technical | biological — 퍼짐이 측정 잡음인지 화학 잡음 + 측정 잡음인지, 없으면 원문에 없음). 사법부 `checkAssayLink`(RULE-0524)는 측정법 장부를 `opt.assays` 로 받고(dbtool · 조정자가 넘김), 받지 못하면 확인하지 못했다고 경고한다. 같은 측정 깃발 `sameMeasurement`(같은 측정법·같은 출처는 독립 근거가 아님)은 계산만 — 저장하지 않음. 측정 잡음은 엔진이 뽑지 않는다(RULE-0523).
+- **원문 숫자** (ASY-08 · RULE-0525): 정량 관찰의 칸 `reported { value: 원문 십진 문자열, unit: 원문 단위, sd?: 원문 십진 문자열 }`. `value` 는 원문의 정확한 유리수 × 정확한 단위 배율(`vocab.unitExact` — 환산표는 하나, `unitFactors` 는 그 f64 보기)을 f64 로 **한 번** 반올림한 값과 같아야 하고, `precision` · 해상도로 채운 sd(basis resolution)는 원문 마지막 자리(정수의 뒤 0 은 자리가 아님 — 유효 자리를 밝히려면 `1.20e3`)와, 원문 sd 가 있으면(정규 · basis 가 resolution 이 아닐 때) sd 와 정확히 같아야 한다. 하나라도 다르면 오류. 문자열이 아니면 거부(정규화는 바꾸지 않음 — 잃은 자리수를 가리지 않게). 새 정량 관찰에 없으면 관문이 거부, 옛 관찰은 경고(정보 작성 모드에서 원문으로 채움).
 
 ## 변경 기록
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-11-01 | (원문 숫자) | 정량 관찰에 `reported { value, unit, sd? }`(원문 그대로의 십진 문자열) — 계약 `schemas/obs/observation.schema.json` · 정규화(있을 때만, 값 그대로) · 사법부 `checkReported` · 관문(새 정량 관찰은 필수)(RULE-0525). `vocab.unitExact` 신설, `unitFactors` 는 거기서 유도(비트 단위로 같음). 옮길 기록 없음(옛 관찰은 경고 — 원문에서 채움) — 이관 스크립트 필요 없음 |
 | 2026-11-01 | (관찰의 측정법) | 관찰(정량·정성)에 선택 칸 `assay`(측정법 key) · `replicate_type`(technical · biological) — 계약 `schemas/obs/observation.schema.json` · 정규화(있을 때만 — 기존 기록의 직렬화 그대로) · 사법부 `checkAssayLink`(RULE-0524). 옮길 기록 없음(새 칸은 선택, 기존 관찰은 정보 작성 모드에서 하나씩) — 이관 스크립트 필요 없음 |
 | 2026-11-01 | (측정법 장부) | `data/assays.jsonl` 신설(§8P) — 추가만 하는 사슬 `seq·at·key·label·rung·principle·produces·measurement_noise·composed_of·separation?·traceability?·made{how,sources,alternatives,by}·revises?·why?·prev·root`, 첫 prev = sha256('assays\n'). 사법부 `judicial/assay_audit.js`(RULE-0522) · 서기 `appendAssays` · `dbtool assay`. db 형식 불변(관찰의 assay 칸은 다음 묶음) |
 | 2026-10-25 | (판정 하나) | 용도별 판정을 `reliability` 로 옮김(`USES`·`accept`·`speciesOf`·`gateMessage`) · 관문 두 곳이 인정 '추정' 을 봄(다른 종 상수 거부) · `obs_compare`·`qual_compare` 결론이 인정을 따름 · 운명 과정 보고서 점검 줄 · 승인 도장 추가 전용 · `validate` 승인 도장 검사. db 형식 불변 (build-plan 74·75·76) |

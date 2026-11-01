@@ -9,12 +9,12 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 288.8 | 268 |  | 분류됨 1 |
+| `CHANGES.md` | 290.0 | 269 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
-| `SCHEMA.md` | 104.0 | 670 |  | 분류됨 427 |
+| `SCHEMA.md` | 105.4 | 672 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.8 | 315 |  | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
@@ -36,7 +36,7 @@
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
-| `docs/modes/author.md` | 12.9 | 138 |  | 생성물 |
+| `docs/modes/author.md` | 13.0 | 138 |  | 생성물 |
 | `docs/modes/baseline.md` | 4.4 | 66 |  | 생성물 |
 | `docs/modes/develop.md` | 5.9 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
@@ -97,7 +97,7 @@
 | `docs/plan/items/ASY-05.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-06.md` | 1.3 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-08.md` | 10.4 | 50 |  | 생성물 |
+| `docs/plan/items/ASY-08.md` | 11.6 | 53 |  | 생성물 |
 | `docs/plan/items/ASY-09.md` | 2.9 | 31 |  | 생성물 |
 | `docs/plan/items/ASY-10.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-001.md` | 2.4 | 30 |  | 생성물 |
@@ -254,7 +254,7 @@
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
-| `docs/textbook/03-데이터-모델.md` | 17.8 | 184 |  | 분류됨 116 |
+| `docs/textbook/03-데이터-모델.md` | 18.1 | 184 |  | 분류됨 116 |
 | `docs/textbook/04-알고리즘.md` | 65.5 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |

@@ -568,6 +568,11 @@
       o.calibration = cal;
     }
     if (str(b.method)) o.method = str(b.method);
+    if (isObj(b.reported)) { // 원문 숫자 그대로 (ASY-08 — 자리수 대조 RULE-0525): 십진 문자열을 바꾸지 않는다
+      const r = { value: b.reported.value, unit: str(b.reported.unit) }; // 숫자로 오면 그대로 둔다 — 문자열로 바꾸면 잃은 자리수(0.10 → 0.1)가 가려진다. 판정이 거부
+      if (b.reported.sd != null) r.sd = b.reported.sd;
+      o.reported = r;
+    }
     return Object.assign(o, normObsCommon(b));
   }
   // 관찰 조건 = 맥락 열쇠(v12 §5) + 측정 시각·상태 (조건 목록은 끝에 — 기존 기록의 필드 순서 유지)
@@ -934,7 +939,48 @@
     return m;
   }
 
-  return Object.freeze({ VOCAB: V, NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
+  // ── 정확한 수 (측정법 계획 ASY-08 · integral-field-engine.md §1 원칙 4 · §4.3) — 십진 문자열·유리수를 BigInt 분수로, f64 로는 한 번만 반올림.
+  //   원문 숫자의 자리수 대조(RULE-0525)와 상수 접기가 같은 함수를 쓴다. 순수 함수
+  const DEC_RE = /^-?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i;
+  const qGcd = (a, b) => { a = a < 0n ? -a : a; while (b) [a, b] = [b, a % b]; return a; };
+  const qNorm = (n, d) => { if (d < 0n) { n = -n; d = -d; } const g = qGcd(n, d) || 1n; return [n / g, d / g]; };
+  // '26.70' · '1.2e-3' · '1/60' → [분자, 분모] (BigInt). 모양이 틀리면 null
+  function exactQ(t) {
+    t = String(t).trim();
+    const sl = t.split('/');
+    if (sl.length === 2) { const a = exactQ(sl[0]), b = exactQ(sl[1]); return a && b && b[0] !== 0n ? qNorm(a[0] * b[1], a[1] * b[0]) : null; }
+    if (!DEC_RE.test(t)) return null;
+    let [m, e] = t.toLowerCase().split('e'); e = Number(e || 0);
+    const neg = m.startsWith('-'); if (neg) m = m.slice(1);
+    const [a, b = ''] = m.split('.');
+    let n = BigInt((a || '0') + b), d = 10n ** BigInt(b.length);
+    if (e > 0) n *= 10n ** BigInt(e); else if (e < 0) d *= 10n ** BigInt(-e);
+    return qNorm(neg ? -n : n, d);
+  }
+  const qMul = (x, y) => qNorm(x[0] * y[0], x[1] * y[1]), qDiv = (x, y) => qNorm(x[0] * y[1], x[1] * y[0]);
+  // 원문 숫자의 마지막 자리 값 (해상도): '26.70' → 1/100 · '3.6e-6' → 1e-7 · '1200' → 1 (정수의 뒤 0 은 자리로 보지 않는다)
+  function lastPlaceQ(t) {
+    t = String(t).trim().toLowerCase(); if (!DEC_RE.test(t)) return null;
+    let [m, e] = t.split('e'); e = Number(e || 0);
+    const frac = (m.split('.')[1] || '').length, p = e - frac;
+    return p >= 0 ? [10n ** BigInt(p), 1n] : [1n, 10n ** BigInt(-p)];
+  }
+  // 분수 → 가장 가까운 f64 (짝수로 반올림 — 한 번만)
+  function qToF64(q) {
+    let [n, d] = q; if (n === 0n) return 0;
+    const neg = n < 0n; if (neg) n = -n;
+    const k = n.toString(2).length - d.toString(2).length - 60;
+    const D = k >= 0 ? d << BigInt(k) : d, N = k >= 0 ? n : n << BigInt(-k);
+    const qq = N / D, r = N % D, bits = qq.toString(2).length, drop = bits - 53;
+    let mant = qq >> BigInt(drop); const rem = qq & ((1n << BigInt(drop)) - 1n), half = 1n << BigInt(drop - 1);
+    if (rem > half || (rem === half && (r > 0n || (mant & 1n)))) mant += 1n;
+    const x = Number(mant) * Math.pow(2, drop + k);
+    return neg ? -x : x;
+  }
+  // 단위의 정확한 배율 (vocab.unitExact — 환산표는 하나) · 같은 종류인지
+  function unitQ(u) { for (const [kind, t] of Object.entries(V.unitExact || {})) if (Object.prototype.hasOwnProperty.call(t, u)) return { kind, q: exactQ(t[u]) }; return null; }
+
+  return Object.freeze({ exactQ, qMul, qDiv, lastPlaceQ, qToF64, unitQ, VOCAB: V, NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
     FORMAT, REL, UP_OF, AXIS_UP, AXIS_DOWN, ROLE, labelsOf, EFFECT_TYPES, CONSERVING, ID_RE, fmtId, isId, isTemp,
     isStepId, isObj, clone, str, arr, uniq, RESERVED, RES_RE, MOLECULAR, isParticipantKind, GREEK, normName,
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,

@@ -4,6 +4,10 @@
 // AI 패치는 여기 없는 값을 쓸 수 없다. 별칭(aliases)으로 들어온 값은 병합 때 표준 키로 바뀐다.
 // 값을 추가·변경하면 SCHEMA.md 의 변경 기록에도 적는다.
 (function (root, v) {
+  // 환산 계수 = 정확한 배율(unitExact — 정수 분수 또는 십진 문자열)을 f64 로 한 번 반올림한 보기. 표는 하나(unitExact — RULE-0131),
+  //   unitFactors 는 그 보기라 손으로 적지 않는다. 정수·십진 문자열의 해석과 정수끼리의 나눗셈은 IEEE 에서 정확히 한 번 반올림된다(ASY-08)
+  const once = (t) => { const p = String(t).split('/'); return p.length === 2 ? Number(p[0]) / Number(p[1]) : Number(t); };
+  v.unitFactors = Object.fromEntries(Object.entries(v.unitExact).map(([kind, tb]) => [kind, Object.fromEntries(Object.entries(tb).map(([u, q]) => [u, once(q)]))]));
   if (typeof module === 'object' && module.exports) module.exports = v;
   else root.DefDBVocab = v;
 })(typeof self !== 'undefined' ? self : this, {
@@ -338,15 +342,17 @@
   //   엔진(core.js 의 시작량·부피 환산)과 사법부(정의항 obs ↔ 관찰 기록 값 대조)가 **같은 표**를 읽는다.
   //   표가 둘이면 대조 검사가 자기 환산으로 틀린 판정을 낸다. 부피의 정준은 L 로 둔다 — 농도의 정준이 M(mol/L)이라
   //   m³ 로 두면 엔진이 환산을 한 번 더 해 기존 궤적의 마지막 비트가 달라진다.
-  unitFactors: {
-    concentration: { M: 1, mM: 1e-3, 'µM': 1e-6, uM: 1e-6, nM: 1e-9, pM: 1e-12 },
-    volume:        { L: 1, mL: 1e-3, 'µL': 1e-6, uL: 1e-6, nL: 1e-9, pL: 1e-12, fL: 1e-15 },
-    time:          { s: 1, min: 60, h: 3600, d: 86400 },
-    per_time:      { 's^-1': 1, 'min^-1': 1 / 60 },
-    count:         { molecule: 1, molecules: 1, copies: 1, 'copies/cell': 1 },
-    residue:       { aa: 1, nt: 1, bp: 1 },
-    energy_molar:  { 'J/mol': 1, 'kJ/mol': 1e3 },
-    diffusion:     { 'm^2/s': 1 },
+  // 단위의 정확한 배율 (측정법 계획 ASY-08 — 정수 분수 '1/60' 또는 십진 문자열 '1e-3'). 정준 단위(배율 '1')로 바꾼다.
+  //   숫자 보기 unitFactors 는 이것을 한 번 반올림해 만든다(위 감싸개) — 손으로 적는 환산표는 이것 하나
+  unitExact: {
+    concentration: { M: '1', mM: '1e-3', 'µM': '1e-6', uM: '1e-6', nM: '1e-9', pM: '1e-12' },
+    volume:        { L: '1', mL: '1e-3', 'µL': '1e-6', uL: '1e-6', nL: '1e-9', pL: '1e-12', fL: '1e-15' },
+    time:          { s: '1', min: '60', h: '3600', d: '86400' },
+    per_time:      { 's^-1': '1', 'min^-1': '1/60' },
+    count:         { molecule: '1', molecules: '1', copies: '1', 'copies/cell': '1' },
+    residue:       { aa: '1', nt: '1', bp: '1' },
+    energy_molar:  { 'J/mol': '1', 'kJ/mol': '1e3' },
+    diffusion:     { 'm^2/s': '1' },
   },
   // 물리적 상한 (형식 v11) — 생물학적 범위가 아니라 **불가능**을 걸러내는 천장이다.
   //   818 µM 을 818 M 로 적는 실수를 잡는 것이 목적이고, 어떤 값이 생물학적으로 그럴듯한지는 판정하지 않는다.

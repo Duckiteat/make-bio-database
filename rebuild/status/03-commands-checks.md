@@ -57,7 +57,7 @@
 |---|---|
 | `judicial/assumption_audit.js` | 22 |
 | `judicial/contract.js` | 9 |
-| `judicial/judicial.js` | 432 |
+| `judicial/judicial.js` | 439 |
 
 ## 시험
 
@@ -78,7 +78,7 @@
 | `tests/governance.test.mjs` | 23 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mhc.test.mjs` | 11 |
-| `tests/observations.test.mjs` | 8 |
+| `tests/observations.test.mjs` | 9 |
 | `tests/permissions.test.mjs` | 2 |
 | `tests/perturb.test.mjs` | 4 |
 | `tests/protocol.test.mjs` | 3 |

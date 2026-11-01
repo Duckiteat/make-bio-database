@@ -532,8 +532,9 @@ test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못
   assert.ok(ER.evidenceReport(BASE, JSON.parse(readFileSync(join(dir, 'lps-hypothetical.json'), 'utf8')), { target: 'D000102', prereg }).chain.length >= 19);
 });
 
-test('환산표는 하나 (RULE-0131) — 단위 환산표(unitFactors)는 vocab.js 에만, 엔진·사법부는 그것을 쓴다', () => {
-  assert.deepEqual(CODE.filter((p) => /unitFactors\s*[:=]\s*\{/.test(src(p))), ['vocab.js'], '환산표를 따로 정의한 코드');
+test('환산표는 하나 (RULE-0131) — 정확한 배율 표(unitExact)는 vocab.js 에만, 숫자 보기(unitFactors)는 그것에서 만들고 손으로 적지 않는다', () => {
+  assert.deepEqual(CODE.filter((p) => /unitExact\s*[:=]\s*\{/.test(src(p))), ['vocab.js'], '정확한 환산표를 따로 정의한 코드');
+  assert.deepEqual(CODE.filter((p) => /unitFactors\s*[:=]\s*\{/.test(src(p))), [], '숫자 환산표를 손으로 적은 코드 — vocab.unitExact 에서 만든다 (ASY-08)');
 });
 
 test('측정 잡음은 엔진이 뽑지 않는다 (RULE-0523 · DEC-0045) — 엔진·컴파일러는 측정법 장부를 읽지 않고, 난수는 engine/rng.js 하나', () => {

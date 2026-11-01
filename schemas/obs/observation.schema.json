@@ -142,6 +142,17 @@
           "enum": ["technical", "biological", null],
           "description": "반복 종류 — technical: 같은 시료를 여러 번(퍼짐 = 측정 잡음) · biological: 다른 세포·개체(퍼짐 = 화학·생물 잡음 + 측정 잡음) · null: 원문에 없음 (DEC-0045)"
         },
+        "reported": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "additionalProperties": false,
+          "description": "원문 그대로의 값 — 자리수까지 문자열로. value·sd·precision 은 여기서 정확한 유리수 환산(한 번 반올림)으로 나와야 하고, 자리수가 하나라도 다르면 거부 (RULE-0525)",
+          "properties": {
+            "value": { "type": "string", "pattern": "^-?(\\d+\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?$" },
+            "unit": { "type": "string" },
+            "sd": { "type": "string", "pattern": "^(\\d+\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?$" }
+          }
+        },
         "condition": {
           "type": "object",
           "required": [
