@@ -139,7 +139,7 @@
 | RULE-0227 | 기준(standard)은 독립 단위 ≥ 2 — I 축(52) 전에는 아무것도 닿지 못함 | replace | judicial/reliability.js | ③ 승인은 축·관계 조건을 넘지 못한다 — 서기가 쓰지 않는다 |
 | RULE-0229 | bounded(S4,D2)와 parameter(S3,D3)는 서로의 문턱을 넘지 못한다 | replace | judicial/reliability.js | ⑫ 관문 문턱은 올리기만: 기본보다 느슨하거나 비교할 수 없는 문턱은 거부 · 지금 데이터의 판정은 그대로 |
 | RULE-0230 | 무결성 증명서가 상수 등급 판정을 한 줄로 싣고, 미달이면 FAIL | replace | judicial/process_report.js | MHC ⑨: 상수 등급 관문 — 가상 상수는 hypothetical 선언 아래에서만, 선언을 빼면 운명 판정이 거부한다 |
-| RULE-0231 | 미보고 반복 수는 D3, 비교는 1 회로 본다 | replace | judicial/reliability.js | ⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부 |
+| RULE-0231 | 미보고 반복 수는 D3, 비교는 1 회로 본다 | replace | judicial/reliability.js | ⑩ 도구 추정값은 D2.estimate · 반복 수 미보고(null)·해상도 sd 는 받되 D3 · 비교는 1 회로 봄(보수적) · 반복 수를 빼면 거부 |
 | RULE-0233 | 같은 열쇠의 현재 값은 하나뿐 | disable | judicial/judicial.js | ③ 같은 열쇠의 현재 값이 둘이면 거부 (새 값은 supersedes 로) |
 | RULE-0234 | 결정론은 차이가 분해능(수치 오차 + 분자 1 개)을 넘어야 방향이 있고, 앙상블은 검정으로 | replace | judicial/qual_compare.js | ① 방향: 결정론은 분해능, 앙상블은 z 검정 — 못 보이면 불일치가 아니라 보이지 못함 |
 | RULE-0240 | 사법부가 선언과 실행의 일관성을 판정, 어긋나면 무결성 증명서 FAIL | replace | judicial/fate_audit.js | MHC ④: 맥락 선언(원인·필수성·일반 상황)이 실행과 맞아야 한다 — 틀린 선언은 판정 실패 |

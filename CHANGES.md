@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-01 · 작업 도구 넷 — 사전 검사 · 재생성 · 규칙 한 번에 · 파일 탐침 (STG-11a–d · DEC-0047) | 새 `rebuild/precheck.mjs` · `rebuild/regen.mjs` · `rebuild/probe.mjs` · `rebuild/rules.mjs` rule(rulePreflight · ruleOps) · `legislative/clerk.mjs` writeDraftText · 새 `tests/probe.test.mjs` ①–⑥ · `tests/rebuild.test.mjs` ② 예외에 작업 도구 시험 · 집행 장부 RULE-0231 find 갱신 · 저장 지도 넷 · 보고서 §11 · 계획 | 반복 기록 일과 다시 돌리기를 줄임(영수증: 읽기·찾기 37 %, 실패한 전체 시험 27 %). 탐침이 RULE-0231 변이 자리가 10-29 부터 어긋난 것을 찾음 | 사전 검사 약 18 초(전체 약 126 초) · 규칙 등록 명령 1 회 · 탐침 0.3 초. 문지기 · 시험 문 · 권한은 그대로(재생성은 확인 명령을 감싸므로 allow 밖) | probe ①–⑥ · 사전 검사 통과 · RULE-0231 변이 다시 caught · rules 끝까지 시험(--dry) · 전체 시험 |
 | 2026-11-01 · 대화 밖으로 옮기기 — 기록만 (DEC-0047 갱신) | `docs/reports/2026-11-01-work-automation.md` §10 · 열린 질문 1 | 구조·절차·함정을 대화 메시지에서 Claude Code 의 다른 자리(skill · hook · subagent)로 옮기자는 사용자 제안 — 시기가 아니라는 사용자 판단 | 코드·데이터 · 순서 불변. 다시 꺼낼 조건: 도구(STG-11a–d) 뒤 절차가 안정될 때 | plan check 오류 0 · 전체 시험 |
 | 2026-11-01 · 규약과 습관 — 세션 끊기 · 기록 묶기 (DEC-0047 갱신) | `docs/reports/2026-11-01-work-automation.md` §9 · 계획 STG-11f · 열린 질문 1 · 순서 | 자동화 목록에서 빠졌던 둘(도구가 아닌 일하는 방식) — 사용자 결정 | 코드·데이터 불변. 세션 끊기는 순서에(11a 뒤), 기록 묶기는 결정하지 않고 열린 질문으로 | plan check 오류 0 · 전체 시험 |
 | 2026-11-01 · 바뀐 자리 따라 고치기 — 세 등급 (DEC-0047 갱신) | `docs/reports/2026-11-01-work-automation.md` §8 · 계획 STG-11d · STG-11a 범위 넓힘 · DEC-0047 갱신 | 탐침으로 바뀐 경로·지점을 고쳐 주는 시스템을 들이자는 사용자 제안 | 코드·데이터 불변. 자동 수정은 현재 상태를 가리키는 기계적 참조만, 변이 자리는 제안 뒤 확인 + 재실행, 과거 기록은 거부 | plan check 오류 0 · 전체 시험 |

@@ -6,13 +6,13 @@
 
 1. [PLAN-077](items/PLAN-077.md) 추세 재확인 자동화가 실제로 돌게 — ◐ 진행 · build — 구조 평가 뒤 순서의 첫째(DEC-0030) — 추세 재확인이 실제로 돌게 (저장소 연결은 사용자 일 — 보류 중)
 2. [ASY-00](items/ASY-00.md) 틀 — ◐ 진행 · assay — 데이터를 모으기 전에 측정법 틀 — 나중이면 모은 기록을 모두 옮겨야 함 (DEC-0041)
-3. [STG-11c](items/STG-11c.md) 빠른 사전 검사 — ☐ 대기 · rebuild — 가장 싸고 바로 실패를 줄임 — 다음 작업들이 규칙을 더하는 일이라 먼저 (DEC-0047)
-4. [STG-11b](items/STG-11b.md) 재생성 한 번에 — ☐ 대기 · rebuild — 11a 가 부름 (DEC-0047)
-5. [STG-11a](items/STG-11a.md) 규칙 한 번에 — ☐ 대기 · rebuild — ASY-08 · 11 · 12 가 규칙을 더함 — 그대로 효과 (DEC-0047)
+3. [STG-11c](items/STG-11c.md) 빠른 사전 검사 — ☑ 완료 · rebuild — 가장 싸고 바로 실패를 줄임 — 다음 작업들이 규칙을 더하는 일이라 먼저 (DEC-0047)
+4. [STG-11b](items/STG-11b.md) 재생성 한 번에 — ☑ 완료 · rebuild — 11a 가 부름 (DEC-0047)
+5. [STG-11a](items/STG-11a.md) 규칙 한 번에 — ☑ 완료 · rebuild — ASY-08 · 11 · 12 가 규칙을 더함 — 그대로 효과 (DEC-0047)
 6. [STG-11f](items/STG-11f.md) 세션 끊기 — ☐ 대기 · rebuild — 도구가 필요 없는 습관 — 규칙 한 번에(11a) 뒤 ASY-08 부터 항목마다 적용 (DEC-0047)
 7. [ASY-08](items/ASY-08.md) 계량 기초 — ◐ 진행 · assay — 가장 기초 — 단위 · 상수 · 자리수 · 추적성 · 불확도 예산. 모든 판독이 이 단을 가리킴 (DEC-0043)
 8. [ASY-11](items/ASY-11.md) 사슬 꼬리 — ☐ 대기 · assay — 가장 싸고 모든 장부에 닿음 — 자료가 쌓이기 전에 (DEC-0046)
-9. [STG-11d](items/STG-11d.md) 파일 탐침 — ☐ 대기 · rebuild — 효과는 가장 크지만 설계가 큼 — 앞의 셋이 만든 자리 정보를 씀 (DEC-0047)
+9. [STG-11d](items/STG-11d.md) 파일 탐침 — ☑ 완료 · rebuild — 효과는 가장 크지만 설계가 큼 — 앞의 셋이 만든 자리 정보를 씀 (DEC-0047)
 10. [STG-11e](items/STG-11e.md) CHANGES 초안 — ☐ 대기 · rebuild — 탐침의 바뀐 자리 정보를 씀 (DEC-0047)
 11. [ASY-12](items/ASY-12.md) 출처 고정 — ☐ 대기 · assay — 옛 관찰 22 의 원문 숫자 채우기가 이 위에서 해야 한 번에 끝남 (DEC-0046)
 12. [ASY-14](items/ASY-14.md) 내부 일관성 — ☐ 대기 · assay — 들이는 값마다 걸러야 하니 모으기 전에 — 계산만이라 쌈 (DEC-0046)
@@ -40,7 +40,7 @@
 ## 끝난 것
 
 - build: 34 / 93
-- rebuild: 33 / 40
+- rebuild: 37 / 40
 - assay: 0 / 17
 
 ## 순서가 바뀐 길

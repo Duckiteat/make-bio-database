@@ -2,6 +2,8 @@
 // 규칙 장부 고치기 — rebuild/rules/ 의 .jsonl 여섯은 이것으로만 바꾼다 (plan.mjs 와 같은 방식: 변경 묶음 · 고칠 때마다 왜 · 검사 통과 뒤 서기만 씀)
 //   node rebuild/rules.mjs apply <ops.json> [--dry]   변경 묶음 { at, why, ops[] }
 //   node rebuild/rules.mjs check                      장부 검사만 (모양 · 칸 · 열쇠 · 참조 · 봉인)
+//   node rebuild/rules.mjs rule <명세.json> [--dry]   새 기계 규칙 한 번에 (STG-11a): 먼저 확인 → 변이 → caught 일 때만 규칙·연결·집행(+red) 한 묶음 → 생성 문서
+//     명세 { at, why, rule{id,text,modes,where,from_code…}, link{rel,to,by,note}, enforcement{op,file,find,repl,tests,note} } — enforce 는 machine 으로 채움
 //   op: add {file, row} · set {file, key, fields}(칸을 덮어씀 — null 이면 그 칸을 지움) · remove {file, key}
 //       seal {file} — 봉인이 아직 없는 장부에 첫 봉인 (줄 모양을 하나로 맞춘다 — 값은 그대로)
 //   file: LEDGERS 의 이름(새 장부는 파일 없이 시작 — seal 이 첫 글) · key: 그 장부의 열쇠 칸 값 (여럿이면 '|' 로 이음)
@@ -10,6 +12,8 @@
 //   장부의 지금 sha256 이 그 장부의 마지막 사건 sha 와 다르면 도구 밖에서 고친 것이다 → 검사 거부 (RULE-0519).
 // 계약: load 는 읽기만, canon · check · apply 는 값만 돌려준다. 파일 쓰기는 서기(writeLedger)만.
 import { readFileSync, existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -131,17 +135,60 @@ export function apply(S, change) {
   return { errs: [...errs, ...(errs.length ? [] : check(N))], S: N };
 }
 
+
+// 새 기계 규칙 한 번에 (STG-11a · DEC-0047) — 순수 부분: 먼저 확인 · 묶음 만들기. 변이 실행과 쓰기는 명령 쪽
+//   먼저 확인: 변이 자리(find)가 그 파일에 정확히 한 번 · 판정 코드(집행 파일이나 where 의 파일)에 'RULE-…' 가 글자 그대로(rebuild ⑫) ·
+//   연결은 code: 를 가리킴(rebuild ⑩ — RULE- 는 안 됨) · from_code 있음(rebuild ⑨). 어긋나면 후보만 보이고 쓰지 않는다(둘째 등급 — 자동으로 다시 가리키지 않음)
+const PATHS = /(?:[\w가-힣.-]+\/)+[\w가-힣.-]+\.(?:mjs|cjs|js)\b|\b[\w-]+\.(?:mjs|js)\b/g;
+export function rulePreflight(spec, read) {
+  const errs = [], r = spec && spec.rule, l = spec && spec.link, e = spec && spec.enforcement;
+  if (!r || !/^RULE-\d{4}$/.test(r.id || '')) errs.push('rule.id 는 RULE-네 자리');
+  if (!r || !r.text || !r.where || !r.from_code || !Array.isArray(r.modes)) errs.push('rule 에 text · modes[] · where · from_code 가 필요 (rebuild ⑨)');
+  if (!l || !/^code:/.test(l.to || '') || !l.rel || !l.by) errs.push('link 는 { rel, to: code:<파일>, by } — RULE- 를 가리키지 않음 (rebuild ⑩)');
+  if (!e || !['replace', 'disable'].includes(e.op) || !e.file || !e.find || !Array.isArray(e.tests) || !e.tests.length) errs.push('enforcement 는 { op: replace|disable, file, find, repl?, tests[] }');
+  if (errs.length) return errs;
+  const src = read(e.file);
+  if (src == null) return [`집행 파일 '${e.file}' 이 없음`];
+  const n = src.split(e.find).length - 1;
+  if (n !== 1) errs.push(`find 가 ${e.file} 에 ${n} 곳 — 정확히 1 이어야 (node rebuild/probe.mjs ${r.id} 로 후보)`);
+  if (e.op === 'replace' && typeof e.repl !== 'string') errs.push('replace 는 repl 이 필요');
+  const files = [e.file, ...new Set(String(r.where).match(PATHS) || [])];
+  if (!files.some((f) => (read(f) || '').includes(`'${r.id}'`))) errs.push(`'${r.id}' 를 글자 그대로 내는 판정 코드가 없음 — ${files.join(' · ')} (rebuild ⑫)`);
+  return errs;
+}
+export function ruleOps(spec, verdict) {
+  const at = spec.at, r = { ...spec.rule, enforce: 'machine' }, e = spec.enforcement;
+  const row = { rule: r.id, op: e.op, file: e.file, find: e.find, ...(e.repl != null ? { repl: e.repl } : {}), tests: e.tests, ...(e.note ? { note: e.note } : {}), result: verdict.result, at, ...(verdict.red ? { red: verdict.red } : {}) };
+  return { at, why: spec.why, ops: [{ op: 'add', file: 'rules', row: r }, { op: 'add', file: 'links', row: { from: r.id, ...spec.link } }, { op: 'add', file: 'enforcement', row }] };
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [cmd, file, ...rest] = process.argv.slice(2), S = load(ROOT);
   if (cmd === 'check') { const e = check(S); console.log(e.length ? e.join('\n') : '규칙 장부 정확 — 오류 0'); process.exit(e.length ? 1 : 0); }
-  if (cmd !== 'apply' || !file) { console.error('사용: node rebuild/rules.mjs apply <ops.json> [--dry] · check'); process.exit(2); }
-  const { errs, S: N } = apply(S, JSON.parse(readFileSync(file, 'utf8')));
+  if (!['apply', 'rule'].includes(cmd) || !file) { console.error('사용: node rebuild/rules.mjs apply <ops.json> [--dry] · rule <명세.json> [--dry] · check'); process.exit(2); }
+  let change = JSON.parse(readFileSync(file, 'utf8'));
+  if (cmd === 'rule') {
+    const read = (p) => { try { return readFileSync(join(ROOT, p), 'utf8'); } catch { return null; } };
+    const pre = rulePreflight(change, read);
+    if (pre.length) { console.error(`거부 (쓰지 않음) — ${pre.length}:\n- ${pre.join('\n- ')}`); process.exit(1); }
+    const id = change.rule.id, spec = join(tmpdir(), `biodb-rule-${process.pid}-${Date.now()}.jsonl`);
+    CLERK.writeDraftText(spec, canon({ rule: id, ...change.enforcement, result: 'pending', at: change.at }) + '\n');
+    console.log(`변이 — ${id} (${change.enforcement.op} ${change.enforcement.file}) …`);
+    const m = spawnSync('node', ['tests/mutation/run.mjs', '--spec', spec, '--rules', id.slice(5)], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 << 20 });
+    const line = String(m.stdout || '').split('\n').filter((x) => x.startsWith('{')).pop();
+    const v = line ? JSON.parse(line) : { result: 'error', error: (m.stderr || '').slice(-400) };
+    if (v.result !== 'caught') { console.error(`거부 (쓰지 않음) — 변이 결과 ${v.result}${v.error ? ': ' + v.error : ''} — 검사를 꺼도 시험이 빨개지지 않으면 집행 구멍`); process.exit(1); }
+    console.log(`변이 caught — red: ${v.red || '-'}`);
+    change = ruleOps(change, v);
+  }
+  const { errs, S: N } = apply(S, change);
   if (errs.length) { console.error(`거부 — ${errs.length}:\n- ${errs.join('\n- ')}`); process.exit(1); }
   const changed = Object.keys(LEDGERS).filter((n) => N.files[n] !== S.files[n] || N.log.slice(S.log.length).some((e) => e.file === n));
   console.log(`통과 — 사건 ${S.log.length} → ${N.log.length} · 장부 ${changed.join(' · ')}`);
   if (!rest.includes('--dry')) {
     for (const n of changed) CLERK.writeLedger(n + '.jsonl', N.files[n], ROOT);
     CLERK.writeLedger(LOG, N.log.map(canon).join('\n') + '\n', ROOT);
-    console.log('씀 — 생성 문서는 node rebuild/status.mjs --write');
+    if (cmd === 'rule') { const g = spawnSync('node', ['rebuild/status.mjs', '--write'], { cwd: ROOT, encoding: 'utf8' }); console.log(g.status === 0 ? '씀 — 생성 문서도 (status --write). 교과서 부록은 node rebuild/regen.mjs' : `생성 문서 실패: ${g.stderr}`); }
+    else console.log('씀 — 생성 문서는 node rebuild/status.mjs --write');
   }
 }

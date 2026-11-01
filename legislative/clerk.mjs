@@ -313,6 +313,10 @@ export function writeReceiptDoc(root, name, md) {
 export function writeDraft(file, obj) {
   return put('draft', resolve(file), JSON.stringify(obj, null, 2) + '\n');
 }
+// 초안 글 그대로 (JSONL 명세 등 — 저장소 밖에만. 규칙 한 번에 등록의 변이 명세)
+export function writeDraftText(file, text) {
+  return put('draft', resolve(file), String(text));
+}
 
 // ⑦ 수신함 받기 (curl, 프록시 설정을 따름) — 원본을 그대로 data/fetched/ 에. 해석·실행하지 않음
 export function fetchToInbox(tasks, opt) {

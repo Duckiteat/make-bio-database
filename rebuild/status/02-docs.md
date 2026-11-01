@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 293.5 | 275 |  | 분류됨 1 |
+| `CHANGES.md` | 294.5 | 276 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -235,10 +235,10 @@
 | `docs/plan/items/STG-10h.md` | 5.9 | 28 |  | 생성물 |
 | `docs/plan/items/STG-10i.md` | 3.2 | 24 |  | 생성물 |
 | `docs/plan/items/STG-10j.md` | 2.6 | 24 |  | 생성물 |
-| `docs/plan/items/STG-11a.md` | 3.1 | 30 |  | 생성물 |
-| `docs/plan/items/STG-11b.md` | 1.3 | 21 |  | 생성물 |
-| `docs/plan/items/STG-11c.md` | 1.4 | 21 |  | 생성물 |
-| `docs/plan/items/STG-11d.md` | 4.3 | 39 |  | 생성물 |
+| `docs/plan/items/STG-11a.md` | 4.0 | 32 |  | 생성물 |
+| `docs/plan/items/STG-11b.md` | 2.1 | 23 |  | 생성물 |
+| `docs/plan/items/STG-11c.md` | 2.4 | 23 |  | 생성물 |
+| `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
 | `docs/plan/rebuild.md` | 24.7 | 248 |  | 생성물 |
@@ -267,7 +267,7 @@
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
 | `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
-| `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
+| `docs/reports/2026-11-01-work-automation.md` | 18.7 | 194 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
@@ -277,9 +277,9 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 123.7 | 825 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 125.5 | 829 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
-| `workspace/NEXT-2026-11-01.md` | 5.9 | 52 |  | 미분류 |
+| `workspace/NEXT-2026-11-01.md` | 6.7 | 61 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |

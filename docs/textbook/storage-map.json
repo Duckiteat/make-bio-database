@@ -1625,6 +1625,38 @@
       "interpret": "규칙 장부 고치기 (재건 10c) — rebuild/rules/ 의 .jsonl 여섯을 변경 묶음 { at, why, ops: add · set · remove · seal } 으로만 바꾼다. 줄 모양 하나 · 칸 목록 · 열쇠 · 참조를 검사한 뒤 서기(writeLedger)가 쓰고, 사건마다 봉인 sha256 — 장부가 마지막 봉인과 다르면 도구 밖에서 고친 것으로 거부(RULE-0519)."
     },
     {
+      "path": "rebuild/precheck.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (인자 없음 — 읽기·시험만)",
+      "writer": "사람·AI",
+      "readers": "사람·AI (finish 전) · tests/probe.test.mjs",
+      "interpret": "빠른 사전 검사 (STG-11c · DEC-0047) — 깨진 참조(probe --check) · 규칙 장부 · 계획 · 생성 문서 --check · 구조 시험(rebuild · governance)을 약 20 초에. 전체 시험을 대신하지 않고 앞에 선다 — 문지기 finish · 커밋 문은 그대로."
+    },
+    {
+      "path": "rebuild/regen.mjs",
+      "class": "management",
+      "format": "Node 스크립트 (인자 없음)",
+      "writer": "사람·AI",
+      "readers": "사람·AI · tests/probe.test.mjs ⑥",
+      "interpret": "생성 문서 한 번에 (STG-11b) — 교과서 부록(dbtool textbook --write) → 관리·계획·중심 문서(status --write) → 둘 다 --check. 교과서 부록 쓰기는 확인(ask) 명령이라 이 스크립트도 설정 allow 에 두지 않는다(감싸서 확인을 건너뛰지 않음 — RULE-0461)."
+    },
+    {
+      "path": "rebuild/probe.mjs",
+      "class": "management",
+      "format": "Node 모듈·스크립트 (<질의> · --check · --fix [--dry])",
+      "writer": "사람·AI",
+      "readers": "rebuild/precheck.mjs · tests/probe.test.mjs",
+      "interpret": "파일 탐침 (STG-11d) — 파일 · RULE · 계획 번호 · 이름에 닿는 곳(분류 · 규칙 · 집행 · 읽는 시험 · 같이 고친 파일 · 분류된 줄 · 처방)을 이미 있는 기계 자료를 엮어 보인다. --check 는 현재를 가리키는 참조의 깨짐(첫 등급 경로 · 둘째 등급 변이 자리), --fix 는 git 이 이동으로 본 것만 장부·계획 도구로 고침. 과거 기록은 보지도 고치지도 않는다(docs/reports/2026-11-01-work-automation.md §8)."
+    },
+    {
+      "path": "tests/probe.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "작업 도구 시험 — 글 속 경로 · 깨진 참조 세 등급 · 고치기 계획(이동만 자동) · 지금 저장소 깨진 참조 0 · 규칙 한 번에 먼저 확인과 묶음 · 확인 명령을 감싼 스크립트는 allow 밖."
+    },
+    {
       "path": "rebuild/permissions.mjs",
       "class": "management",
       "format": "Node 모듈 (load · check — 순수)",
