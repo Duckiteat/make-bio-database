@@ -37,7 +37,7 @@ const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부
 
 // 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
 export const ZONES = {
-  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl', 'data/assumptions.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl', 'data/assumptions.jsonl', 'data/assays.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
   attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
   evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
@@ -158,6 +158,25 @@ export function appendDictionary({ dataDir, proposals, seal }) {
   if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('RULE-0507', '봉인된 항목과 쓰려는 항목이 다름');
   const events = readDictionary(dataDir), f = join(dataDir, DICT), at = new Date().toISOString(), out = [];
   let prev = events.length ? events[events.length - 1].root : DICT_GENESIS;
+  for (const p of proposals) {
+    const body = { seq: events.length + out.length + 1, at, ...p, prev };
+    const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+    out.push(ev); prev = ev.root;
+  }
+  put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + out.map((e) => JSON.stringify(e)).join('\n') + '\n');
+  return out;
+}
+
+// 측정법 장부 (측정법 계획 ASY-00): data/assays.jsonl 은 추가만 하는 사슬. 사법부(judicial/assay_audit.js checkProposals)가 새 항목을
+//   통과시킨 봉인이 있을 때만 붙인다 — 고치기는 revises(현재 root) + why 를 단 새 사건이라 만든 방법과 바뀐 내력이 사슬에 남는다.
+const ASSAYS = 'assays.jsonl', ASSAYS_GENESIS = sha('assays\n');
+export function readAssays(dataDir) { const f = join(dataDir, ASSAYS); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []; }
+export function appendAssays({ dataDir, proposals, seal }) {
+  if (!ATT.checkSeal(seal)) refuse('RULE-0507', '측정법 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0507', `측정법 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('RULE-0507', '봉인된 항목과 쓰려는 항목이 다름');
+  const events = readAssays(dataDir), f = join(dataDir, ASSAYS), at = new Date().toISOString(), out = [];
+  let prev = events.length ? events[events.length - 1].root : ASSAYS_GENESIS;
   for (const p of proposals) {
     const body = { seq: events.length + out.length + 1, at, ...p, prev };
     const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };

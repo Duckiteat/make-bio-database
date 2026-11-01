@@ -98,6 +98,14 @@
       "interpret": "사전 overlay — 통제 토큰의 en 라벨·의미·외부 온톨로지 앵커(xref). ko 는 vocab.js(권위)에서 병합한다(복제 없음). 고유 개념(gap 타입 등)은 우리가 en 을 저술하므로 xref null, 외부 개념은 xref 로 검증. 설계 dictionary-and-translation.md."
     },
     {
+      "path": "data/assays.jsonl",
+      "class": "law",
+      "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·key·label·rung·principle·produces·noise·composed_of·separation?·traceability?·made{how,sources,alternatives,by}·revises?·why?·prev·root (첫 prev = sha256('assays\\n'))",
+      "writer": "입법 서기 appendAssays (구역 registry) — judicial/assay_audit.js checkProposals 봉인이 있을 때만 (`dbtool assay add`, 정보 작성 모드)",
+      "readers": "judicial/assay_audit.js (validate·assay)",
+      "interpret": "측정법 장부 (측정법 계획 ASY-00 · SCHEMA §8P) — 측정 방식을 기초 판독부터 조합으로 쌓고, 측정법마다 만든 방법·근거·버린 대안을 남긴다. 고치기는 revises + why 의 새 사건이라 내력이 사슬에 남는다."
+    },
+    {
       "path": "data/assumptions.jsonl",
       "class": "law",
       "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·id(A+순번)·slot{kind,key,param,cell?}·value·unit·origin·limitations·basis·range?·revises?·migrated?·prev·root (root = sha256(prev + 정준 JSON))",
@@ -325,6 +333,14 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "dbtool validate·assume, tests/assumptions",
       "interpret": "[사법] 가정 원장 감사 — 사슬(seq·prev·root·번호=순번) · 기록(자리·칸·대상·부호·단위·기원·assumed 의 열린 한계·근거·범위·revises·중복) · 모든 시나리오 번호 풀기 · 거꾸로 색인(uses). 새 기록은 checkProposals 가 통과시켜야 서기가 붙인다. 판정만 — 읽기·쓰기 없음."
+    },
+    {
+      "path": "judicial/assay_audit.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool validate·assay, tests/assays",
+      "interpret": "[사법] 측정법 장부 감사 (ASY-00 · RULE-0522) — 사슬 · revises · 칸 모양 · 사다리의 단(값을 내는가 — 계량·분리는 produces []) · 조합 측정법은 판독을 조합 · 분리 속성 · 만든 방법(how · 근거 출처 · 버린 대안 · 누가). 판정만, 쓰지 않음."
     },
     {
       "path": "judicial/dependency.js",
@@ -1055,6 +1071,14 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "상시 권한 장부 시험 (10g · RULE-0521) — 지금 settings · 문지기 모드가 장부와 같음 + 거부 사례(장부 밖 권한 · 낡은 장부 줄 · 보호 자리 · 전부 허용 · 빈 칸 · 모르는 층·목록·모드 · 겹침)."
+    },
+    {
+      "path": "tests/assays.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "측정법 장부 시험 (ASY-00 · RULE-0522) — 합성 측정법으로 사다리대로 쌓기 · 고치기의 내력 · 거부 사례(만든 방법 · 단 · 조합 · 분리 · why) · 서기의 봉인 검사 · 사슬 변조."
     },
     {
       "path": "tests/mutation/run.mjs",

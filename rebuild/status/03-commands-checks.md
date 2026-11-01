@@ -26,6 +26,7 @@
 | `origin` | **빠짐** |
 | `assume` | **빠짐** |
 | `dictionary` | **빠짐** |
+| `assay` | **빠짐** |
 | `register` | **빠짐** |
 | `qualgraph` | **빠짐** |
 | `retraction` | **빠짐** |
@@ -64,6 +65,7 @@
 |---|---|
 | `tests/acceptance.test.mjs` | 9 |
 | `tests/affected.test.mjs` | 3 |
+| `tests/assays.test.mjs` | 3 |
 | `tests/assumptions.test.mjs` | 8 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |

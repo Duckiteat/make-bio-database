@@ -150,6 +150,8 @@ switch (cmd) {
     if (!dict.ok) for (const e of dict.errors) console.log(`오류  사전 ${e}`);
     const AA = req('./judicial/assumption_audit.js'), asm = AA.audit(CLERK.readAssumptions(dirname(DB_PATH)), loadDB(), scenarioFiles()); // 가정 원장 (49) — 사슬·기록·시나리오 번호 풀기
     if (!asm.ok) for (const e of asm.errors) console.log(`오류  가정 ${e}`);
+    const assays = req('./judicial/assay_audit.js').audit(CLERK.readAssays(dirname(DB_PATH))); // 측정법 장부 (ASY-00) — 사슬·revises·만든 방법·참조
+    if (!assays.ok) for (const e of assays.errors) console.log(`오류  측정법 ${e}`);
     const CA = req('./judicial/collection_audit.js'), fdir = join(dirname(DB_PATH), 'fetched'), flog = { ok: true, errors: [] }; // 받기 기록 (60) — 사슬 + 받은 파일이 그대로인가
     for (const src of existsSync(fdir) ? readdirSync(fdir).filter((d) => existsSync(join(fdir, d, CLERK.FETCH_LOG))) : []) {
       const ev = CLERK.readFetchLog(join(fdir, src)), cur = {};
@@ -450,6 +452,18 @@ switch (cmd) {
     if (!v.ok) { console.log(`사전 항목 거부: ${v.errors.length}\n` + v.errors.map((e) => '  ✗ ' + e).join('\n')); process.exit(1); }
     const out = CLERK.appendDictionary({ dataDir, proposals, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, proposals, { issuer: 'judicial/dictionary_audit.js#checkProposals' }) });
     console.log(`사전 사건 ${out.length}개 추가 (입법 서기): #${out[0].seq}–#${out[out.length - 1].seq} · head ${out[out.length - 1].root.slice(0, 12)}…`);
+    break;
+  }
+  case 'assay': { // 측정법 장부 (측정법 계획 ASY-00): 인자 없으면 사슬·현재 측정법 판정, add <항목.json|jsonl> 은 사법부 검사 → 봉인 → 서기가 사슬에 추가
+    const AS = req('./judicial/assay_audit.js'), dataDir = dirname(DB_PATH), events = CLERK.readAssays(dataDir);
+    if (args[0] !== 'add') { const a = AS.audit(events); console.log(AS.auditText(a)); process.exit(a.ok ? 0 : 1); }
+    if (!args[1]) die('사용법: assay [add <항목.json|.jsonl>] — 항목 칸: ' + AS.PROPOSAL_FIELDS.join(' · '));
+    const txt = readFileSync(args[1], 'utf8').trim();
+    const proposals = txt.startsWith('[') ? JSON.parse(txt) : txt.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
+    const v = AS.checkProposals(events, proposals);
+    if (!v.ok) { console.log(`측정법 항목 거부: ${v.errors.length}\n` + v.errors.map((e) => '  ✗ ' + e).join('\n')); process.exit(1); }
+    const out = CLERK.appendAssays({ dataDir, proposals, seal: ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, proposals, { issuer: 'judicial/assay_audit.js#checkProposals' }) });
+    console.log(`측정법 사건 ${out.length}개 추가 (입법 서기): #${out[0].seq}–#${out[out.length - 1].seq} · head ${out[out.length - 1].root.slice(0, 12)}…`);
     break;
   }
   case 'register': { // 사전 등록 (build-plan 3): 검증에 쓸 시나리오를 실행 전에 — 사법부 규약 구조 판정이 통과한 것만 서기가 사슬에 남긴다
