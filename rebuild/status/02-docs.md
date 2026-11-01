@@ -174,7 +174,7 @@
 | `docs/plan/items/PLAN-074.md` | 1.9 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-075.md` | 1.7 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-076.md` | 1.8 | 23 |  | 생성물 |
-| `docs/plan/items/PLAN-077.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-077.md` | 2.6 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-078.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-079.md` | 2.3 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-080.md` | 1.4 | 21 |  | 생성물 |
