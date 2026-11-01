@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 재건 관리 파일 생성기 (rebuild/PLAN.md §6) — 저장소를 세어 rebuild/status/*.md 를 만든다.
+// 재건 관리 파일 생성기 (재건 계획 — 관리 파일) — 저장소를 세어 rebuild/status/*.md 를 만든다.
 //   node rebuild/status.mjs            요약을 화면에
 //   node rebuild/status.mjs --write    관리 파일을 갱신 (서기 구역 rebuild 만, 바뀐 파일만)
 //   node rebuild/status.mjs --check    관리 파일이 지금 저장소와 같은지 (다르면 종료 코드 1)
@@ -28,8 +28,9 @@ const ENFORCE = ['machine', 'text', 'none', 'unchecked']; // unchecked = 집행 
 const ENTRY = ['CLAUDE.md']; // 입구는 중심 문서 하나 (재건 8 단계 — 옛 입구 6 곳: direction · RUNBOOK · 교과서 목차 · PROMPTS · START-HERE 는 참고 문서로)
 const BOOT = ['CLAUDE.md', 'docs/modes/author.md']; // 새 세션이 처음 읽는 것 = 중심 + 모드 하나 (가장 큰 정보 작성 모드로 셈)
 // 생성물 (분류 대상이 아님 — 원천에서 다시 만든다)
-const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html', 'docs/design/build-plan.md', 'rebuild/PLAN.md', // 계획 둘은 계획 기록에서 생성 (DEC-0027)
+const GENERATED = ['limitations.md', 'docs/textbook/90-부록-자동생성.md', 'index.html',
   'CLAUDE.md', ...['author', 'baseline', 'develop', 'field', 'inspect'].map((m) => `docs/modes/${m}.md`)]; // 중심·모드 문서는 8 단계부터 규칙 장부에서 생성
+const isGenerated = (p) => GENERATED.includes(p) || p.startsWith(STATE.PLAN_DIR + '/'); // 계획 생성 파일(순서 · 개요 · 작업 · 결정)은 계획 기록에서 (DEC-0027 · DEC-0042)
 
 // ── 저장소 파일 목록 (추적 + 무시되지 않은 새 파일, 관리 파일 자신은 뺌 — 자기 크기를 세면 고정점이 없다)
 function files() {
@@ -118,7 +119,7 @@ function build() {
   const X = IDX.build(), all = files(), by = Object.fromEntries(all.map((f) => [f.path, f.bytes])), L = ledger(X.rows), C = codeCounts(all);
   const docs = all.filter((f) => f.path.endsWith('.md') && !/^(data|rebuild|tests)\//.test(f.path));
   const classified = new Set(L.units.map((u) => u.src.replace(/:(\d+.*|\*)$/, '')));
-  const todo = docs.filter((d) => !GENERATED.includes(d.path) && !classified.has(d.path));
+  const todo = docs.filter((d) => !isGenerated(d.path) && !classified.has(d.path));
   const out = {};
   const note = '> 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.\n';
 
@@ -151,7 +152,7 @@ function build() {
 
   // 02 문서
   const unitsBy = {}; for (const u of L.units) { const s = u.src.replace(/:(\d+.*|\*)$/, ''); unitsBy[s] = (unitsBy[s] || 0) + 1; }
-  const docRows = docs.map((d) => [`\`${d.path}\``, kb(d.bytes), String(lines(d.path)), ENTRY.includes(d.path) ? '입구' : '', GENERATED.includes(d.path) ? '생성물' : unitsBy[d.path] ? `분류됨 ${unitsBy[d.path]}` : '미분류']);
+  const docRows = docs.map((d) => [`\`${d.path}\``, kb(d.bytes), String(lines(d.path)), ENTRY.includes(d.path) ? '입구' : '', isGenerated(d.path) ? '생성물' : unitsBy[d.path] ? `분류됨 ${unitsBy[d.path]}` : '미분류']);
   out['02-docs.md'] = `# 문서 (.md)\n\n${note}\n${table(['문서', 'KB', '줄', '입구', '분류'], docRows)}\n`;
 
   // 03 명령·판정·시험
@@ -334,14 +335,16 @@ export function planCtx(S, root = ROOT) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const flag = process.argv[2], out = build(), drafts = RENDER.build(ROOT);
   const staleIn = (dir, o) => Object.entries(o).filter(([name, text]) => { const p = join(ROOT, dir, name); return !existsSync(p) || readFileSync(p, 'utf8') !== text; });
-  // 계획 문서 둘 (6c): 계획 기록에서 생성 — 기록이 정확성 검사를 통과해야 쓴다
+  // 계획 생성 파일 (docs/plan/ — 순서 · 개요 · 작업 · 결정): 계획 기록에서 생성 — 기록이 정확성 검사를 통과해야 쓴다
   const S = STATE.load(ROOT), errs = STATE.check(S, planCtx(S));
   if (errs.length && flag) { console.error(`계획 기록 오류 ${errs.length}:\n- ${errs.slice(0, 30).join('\n- ')}`); process.exit(1); }
-  const plansOut = Object.fromEntries(S.plans.map((p) => [p.plan, STATE.render(S, p.plan)]));
-  const planStale = Object.entries(plansOut).filter(([plan, text]) => { const f = join(ROOT, STATE.PLANS[plan].out); return !existsSync(f) || readFileSync(f, 'utf8') !== text; });
-  const stale = () => [...staleIn(STATUS, out), ...staleIn('', drafts).map(([n, t]) => ['../../' + n, t]), ...planStale.map(([plan]) => ['../../' + STATE.PLANS[plan].out])];
+  const planOut = STATE.renderFiles(S), planStale = staleIn('', planOut);
+  // 생성기가 만들지 않는 파일이 계획 폴더에 남아 있으면(지운 작업·결정) 낡은 것으로 — 지운다(git rm)
+  const planExtra = ['', 'items', 'decisions'].flatMap((d) => { const dir = join(ROOT, STATE.PLAN_DIR, d); return existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.md')).map((f) => [STATE.PLAN_DIR, d, f].filter(Boolean).join('/')) : []; }).filter((f) => !planOut[f]);
+  const stale = () => [...staleIn(STATUS, out), ...staleIn('', drafts).map(([n, t]) => ['../../' + n, t]), ...planStale.map(([n]) => '../../' + n).map((n) => [n]), ...planExtra.map((n) => ['../../' + n + ' (생성기가 만들지 않음 — 지울 것)'])];
   if (flag === '--write') { // 계획 문서·중심 문서 먼저 — 관리 파일이 그 크기를 세므로 그 뒤에 다시 계산해 쓴다 (한 번에 최신)
-    for (const [plan, text] of planStale) CLERK.writePlanDoc(plan, text, ROOT);
+    for (const [rel, text] of planStale) CLERK.writePlanFile(rel, text, ROOT);
+    if (planExtra.length) console.error(`계획 폴더에 생성기가 만들지 않는 파일 ${planExtra.length}: ${planExtra.join(', ')} — git rm 으로 지운다`);
     for (const [name, text] of staleIn('', drafts)) CLERK.writeHubDoc(name, text, ROOT);
     for (const [name, text] of staleIn(STATUS, build())) CLERK.writeStatus(name, text, ROOT);
   }

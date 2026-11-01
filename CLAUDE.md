@@ -14,7 +14,7 @@
 - 세션 안에서 모드를 바꾸지 않는다. 다른 모드가 필요하면 전환 기록 { from, to, at, why, target, files, open } 을 남기고 끝낸다.
 - 끝내기 전: `node rebuild/gate.mjs finish <모드>` — 그 모드의 시험 묶음이 지금 파일 상태로 통과해야 git commit 이 열린다(시험은 바뀐 것에 닿는 것만). push 는 `finish <모드> --full`(전체) 뒤에.
 - 검사 오류에는 규칙 번호(RULE-…)가 붙는다 — 그 규칙의 이유·맥락·수식은 읽기 모드로 찾는다: `node rebuild/read.mjs RULE-…` (L0 한 줄 · L1 연결 · L2 수식, 조회만).
-- 계획은 생성물이다 — 하나 읽기 `node rebuild/read.mjs PLAN-…|STG-…|DEC-…|DIR-… [--depth 0|1|2]`(0 한 줄 · 1 결정·방향 · 2 걸어온 길 전부 — 필요한 만큼만), 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 규칙 장부(`rebuild/rules/` 의 .jsonl)도 같은 방식으로만: `node rebuild/rules.mjs apply <ops.json>`. 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님).
+- 계획은 생성물이다 — 무엇을 언제 하나는 `docs/plan/ORDER.md`(순서 — 세 계획을 한 줄로), 하나 읽기 `node rebuild/read.mjs ORDER|PLAN-…|STG-…|ASY-…|DEC-…|DIR-… [--depth 0|1|2]`(0 한 줄 · 1 결정·방향 · 2 걸어온 길 전부 — 필요한 만큼만), 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 규칙 장부(`rebuild/rules/` 의 .jsonl)도 같은 방식으로만: `node rebuild/rules.mjs apply <ops.json>`. 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님).
 
 ## 모드 — 하나를 골라 연다
 
@@ -57,7 +57,7 @@
 ### 검증·판정
 
 - `RULE-0002` 명령은 저장소 최상위에서
-- `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md·계획 문서 둘)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 하나 읽기 node rebuild/read.mjs PLAN-…, 고치기 node rebuild/plan.mjs apply
+- `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 순서는 docs/plan/ORDER.md, 하나 읽기 node rebuild/read.mjs PLAN-… (--depth 0 — 1 — 2), 고치기 node rebuild/plan.mjs apply
 - `RULE-0192` 사용자 보고는 네 칸 표, 산문 요약 금지
 - `RULE-0195` 논리를 깨면 감지·수정·기록까지 한 작업
 

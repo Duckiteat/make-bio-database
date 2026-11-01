@@ -1,4 +1,4 @@
-// 번호 사전 (rebuild/PLAN.md §4′) — 이름공간 표(원본 rebuild/index/namespaces.jsonl)를 읽고,
+// 번호 사전 (재건 0′) — 이름공간 표(원본 rebuild/index/namespaces.jsonl)를 읽고,
 // 저장소의 번호 모양 토큰을 세어 참조 색인을 **계산**한다(저장하지 않음).
 // 계약: 읽기만 한다. 형식은 가능하면 코드의 정의를 가리킨다(pattern_from) — 사본을 만들지 않는다.
 import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs';

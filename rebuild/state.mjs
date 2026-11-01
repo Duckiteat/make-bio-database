@@ -1,7 +1,8 @@
-// 계획 상태 기록 (rebuild/PLAN.md 6c) — 계획은 기록이고 글은 생성물이다. 손으로 고치지 않는다.
+// 계획 상태 기록 (재건 6c) — 계획은 기록이고 글은 생성물이다. 손으로 고치지 않는다.
 //   원본 둘: rebuild/state/plans.jsonl (지금 — 계획 머리·결정·부·작업·글·종합·방향·열린 질문, 한 줄 = 기록 하나)
 //            rebuild/state/plan-log.jsonl (걸어온 길 — 작업 사건, 덧붙이기만. 손글 시절 사건은 git 역사에서 가져옴 — source 'git')
-//   생성: docs/design/build-plan.md · rebuild/PLAN.md (rebuild/status.mjs --write 가 서기 writePlanDoc 로)
+//   생성: docs/plan/ — 순서 파일 ORDER.md(세 계획을 한 줄로) · 계획마다 개요 <계획>.md · 작업마다 items/<번호>.md · 결정마다 decisions/<번호>.md
+//         (rebuild/status.mjs --write 가 서기 writePlanFile 로). 순서와 내용을 떼어 둔다 — 순서를 바꿔도 내용 파일은 그대로
 //   고치기: node rebuild/plan.mjs apply <ops.json> — 바꿀 때마다 왜(why)를 받아 사건으로 남긴다
 // 왜 이렇게 (사용자 결정 DEC-0027): 맥락을 잃은 채 계획을 따라가면 이상한 결론에 닿는다 — 처음 목적, 중간에 바뀐 이유,
 //   도달 과정, 중간 결과, 종합 결과와 의의, 나아갈 방향이 모두 계획 안에 정확히 있어야 한다. 길어도 된다, 정확해야 한다.
@@ -23,9 +24,11 @@ export const stageId = (n) => {
   return 'STG-' + m[1].padStart(2, '0') + (m[2] || '') + 'p'.repeat(['', '′', '″', '‴'].indexOf(m[3] || ''));
 };
 export const PLANS = {
-  build: { legacy: 'docs/design/build-plan.md', out: 'docs/design/build-plan.md', idOf: planId, re: /^PLAN-(?:\d{3}[ap]?|H\d{2})$/ },
-  rebuild: { legacy: 'rebuild/PLAN.md', out: 'rebuild/PLAN.md', idOf: stageId, re: /^STG-\d{2}[a-z]?p{0,3}$/ },
+  build: { legacy: 'docs/design/build-plan.md', out: 'docs/plan/build.md', idOf: planId, re: /^PLAN-(?:\d{3}[ap]?|H\d{2})$/ },
+  rebuild: { legacy: 'rebuild/PLAN.md', out: 'docs/plan/rebuild.md', idOf: stageId, re: /^STG-\d{2}[a-z]?p{0,3}$/ },
+  assay: { legacy: null, out: 'docs/plan/assay.md', idOf: (n) => 'ASY-' + String(n).padStart(2, '0'), re: /^ASY-\d{2}$/ }, // 측정법 사다리 (기초 판독 → 분리 → 조합 → 상호작용 → 세포)
 };
+export const PLAN_DIR = 'docs/plan';
 // 상태 기호 ↔ 상태 (표의 기호는 그대로 보인다)
 export const STATE_OF = { '☑': 'done', '◐': 'partial', '☐': 'open', '✗': 'dropped', '보류': 'hold', '논의': 'discussion' };
 export const MARK = Object.fromEntries(Object.entries(STATE_OF).map(([k, v]) => [v, k]));
@@ -33,12 +36,12 @@ export const STATE_KO = { done: '완료', partial: '진행', open: '대기', dro
 // 결정의 종류 · 누가 (원문에 적힌 대로 — 적힌 것이 없으면 unstated, 지어 넣지 않는다)
 export const DECISION_TYPES = { purpose: '목적', diagnosis: '진단 (왜)', order: '순서', scope: '범위', design: '설계', method: '방법' };
 export const BY = { user: '사용자', agreed: '사용자와 합의', delegated: '사용자가 AI 에게 맡김', ai: 'AI 초안 — 사용자 확인 전', unstated: '원문에 누가인지 없음' };
-export const KINDS = ['plan', 'decision', 'part', 'note', 'item', 'synthesis', 'direction', 'open'];
+export const KINDS = ['plan', 'decision', 'part', 'note', 'item', 'synthesis', 'direction', 'open', 'order'];
 
 const jsonl = (root, p) => (existsSync(join(root, p)) ? readFileSync(join(root, p), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []);
 export function load(root) {
   const recs = jsonl(root, PLANS_FILE), log = jsonl(root, LOG_FILE), of = (k) => recs.filter((r) => r.kind === k);
-  return { recs, log, plans: of('plan'), decisions: of('decision'), parts: of('part'), notes: of('note'), items: of('item'), syntheses: of('synthesis'), directions: of('direction'), opens: of('open') };
+  return { recs, log, plans: of('plan'), decisions: of('decision'), parts: of('part'), notes: of('note'), items: of('item'), syntheses: of('synthesis'), directions: of('direction'), opens: of('open'), order: of('order')[0] || null };
 }
 
 // 사건을 차례로 접어 작업의 지금 칸을 만든다 — 저장된 작업 기록과 같아야 한다(장부와 잔액)
@@ -60,13 +63,13 @@ export function fold(log, plan) {
 }
 
 // ── 참조 — 결정·종합·방향이 가리키는 것. 글 안에 적힌 번호도 모두 풀려야 한다(지어낸 번호를 막는다)
-export const REF_RE = /\b(?:PLAN-(?:\d{3}[ap]?|H\d{2})|STG-\d{2}[a-z]?p{0,3}|DEC-\d{4}|DIR-\d{4}|RULE-\d{4}|CHG-\d{4}|EQ-\d{4}|[TDSOLV]\d{6})\b/g;
+export const REF_RE = /\b(?:PLAN-(?:\d{3}[ap]?|H\d{2})|STG-\d{2}[a-z]?p{0,3}|ASY-\d{2}|DEC-\d{4}|DIR-\d{4}|RULE-\d{4}|CHG-\d{4}|EQ-\d{4}|[TDSOLV]\d{6})\b/g;
 const isPath = (r) => /^[\w.\-]+(\/[\w.\-*]+)+$|^[\w\-]+\.(md|mjs|js|json|jsonl)$/.test(r);
 // ctx: { exists(path), rules:Set, db:{T,D,S,O,L,V:Set}, changes:n, formulas:Set, commit(h)→bool|null }
 export function resolveRef(S, ctx, r) {
   const s = String(r);
   if (/^commit:/.test(s)) { const ok = ctx.commit ? ctx.commit(s.slice(7)) : null; return ok !== false; }
-  if (/^PLAN-|^STG-/.test(s)) return S.items.some((x) => x.id === s);
+  if (/^PLAN-|^STG-|^ASY-/.test(s)) return S.items.some((x) => x.id === s);
   if (/^DEC-/.test(s)) return S.decisions.some((x) => x.id === s);
   if (/^DIR-/.test(s)) return S.directions.some((x) => x.id === s);
   if (/^RULE-/.test(s)) return ctx.rules.has(s);
@@ -104,6 +107,9 @@ export function check(S, ctx) {
     for (const x of want) if (have.get(x.id) !== sig(x)) E.push(`${x.id}: 지금 기록이 걸어온 길(사건)을 접은 것과 다름`);
     if (have.size !== want.length) E.push(`${plan}: 사건에서 나온 작업 ${have.size} ≠ 기록 ${want.length}`);
   }
+  // 순서 (세 계획을 한 줄로) — 있는 작업만 · 겹치지 않게 · 자리마다 왜
+  if (S.recs.filter((r) => r.kind === 'order').length > 1) E.push('순서 기록은 하나');
+  if (S.order) { const ids = new Set(); for (const o of S.order.seq || []) { if (!S.items.some((x) => x.id === o.id)) E.push(`순서: 작업 '${o.id}' 없음`); if (ids.has(o.id)) E.push(`순서: '${o.id}' 가 두 번`); ids.add(o.id); if (!String(o.why || '').trim()) E.push(`순서: '${o.id}' 자리의 왜가 없음`); } }
   // 결정
   for (const d of S.decisions) {
     uniq(d.id, /^DEC-\d{4}$/, '결정');
@@ -182,8 +188,8 @@ export function render(S, plan) {
   const decs = S.decisions.filter((d) => d.plans.includes(plan)).sort((a, b) => a.at.localeCompare(b.at) || a.id.localeCompare(b.id));
   const out = [`# ${P.title}`, '',
     `> 생성물 — \`node rebuild/status.mjs --write\` 가 원본 \`${PLANS_FILE}\` · \`${LOG_FILE}\` 에서 만든다. 손으로 고치지 않는다.`,
-    `> 바꾸려면 \`node rebuild/plan.mjs apply <ops.json>\` (바꿀 때마다 왜를 적는다). 하나만 읽기: \`node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…>\`.`,
-    `> 이 문서의 차례: 목적 → 왜 → 결정과 바뀐 이유(시간순) → 작업(결과·걸어온 길) → 종합 결과와 의의 → 나아갈 방향 → 열린 질문 → 근거 점검.`, '', ...(P.intro || []), ''];
+    `> 바꾸려면 \`node rebuild/plan.mjs apply <ops.json>\` (바꿀 때마다 왜를 적는다). 하나만 읽기: \`node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…|ASY-…> [--depth 0|1|2]\`.`,
+    `> 이 문서의 차례: 목적 → 왜 → 결정(표) → 작업(표) → 종합 결과와 의의 → 나아갈 방향 → 열린 질문 → 근거 점검. 무엇을 언제 하나는 [순서](ORDER.md), 작업 하나는 items/, 결정 하나는 decisions/.`, '', ...(P.intro || []), ''];
   const decBlock = (d) => {
     const o = [`### ${d.id} — ${d.title}`, '', `\`${d.at}\` · ${by(d.by)}${d.by_src ? ` (${d.by_src})` : ''} · ${DECISION_TYPES[d.type]}${d.src && d.src.commit ? ` · 처음 적힌 커밋 \`${d.src.commit.slice(0, 7)}\`` : ''}${d.src && d.src.item ? ` · 원문 자리 ${d.src.item}` : ''}${d.was ? ` · 옛 문서의 ${d.was}` : ''}${d.src && d.src.file && d.src.file !== P.out ? ` · 원문 \`${d.src.file}\`` : ''}`, '', d.text, ''];
     if (d.first && d.first.text) o.push(details(`처음 적힌 글 (${d.first.at}, \`${d.first.commit.slice(0, 7)}\`) — 지금 글과 다름`, d.first.text), '');
@@ -195,23 +201,15 @@ export function render(S, plan) {
   const purp = decs.filter((d) => d.type === 'purpose'), diag = decs.filter((d) => d.type === 'diagnosis');
   out.push('## 1. 목적 — 처음 목적과 그 뒤에 바뀐 목적', '', purp.length ? purp.map(decBlock).join('\n') : '목적 기록 없음\n');
   out.push('## 2. 왜 — 진단', '', diag.length ? diag.map(decBlock).join('\n') : '진단 기록 없음\n');
-  // 3 결정 (목적·진단 밖) — 한눈 표 + 하나씩
-  const rest = decs.filter((d) => !['purpose', 'diagnosis'].includes(d.type));
-  out.push('## 3. 결정과 바뀐 이유 (시간순)', '', '목적·진단을 포함한 모든 결정:', '', '| 결정 | 날짜 | 누가 | 종류 | 무엇 | 닿는 작업 |', '|---|---|---|---|---|---|',
-    ...decs.map((d) => `| ${d.id} | ${d.at} | ${by(d.by)} | ${DECISION_TYPES[d.type]} | ${cell(d.title)} | ${(d.affects || []).length} |`), '', rest.map(decBlock).join('\n'));
+  // 3 결정 — 한눈 표 (하나씩은 decisions/)
+  out.push('## 3. 결정과 바뀐 이유 (시간순)', '', '목적·진단을 포함한 모든 결정 — 하나씩은 decisions/ 의 파일:', '', '| 결정 | 날짜 | 누가 | 종류 | 무엇 | 닿는 작업 |', '|---|---|---|---|---|---|',
+    ...decs.map((d) => `| [${d.id}](decisions/${d.id}.md) | ${d.at} | ${by(d.by)} | ${DECISION_TYPES[d.type]} | ${cell(d.title)} | ${(d.affects || []).length} |`), '');
   // 4 작업
   out.push('## 4. 작업 — 결과와 걸어온 길', '', ...S.notes.filter((n) => n.plan === plan && n.place === 'work').map((n) => n.text), '');
   for (const part of S.parts.filter((p) => p.plan === plan)) {
     const xs = items.filter((x) => x.part === part.title);
     out.push(`### ${part.title}`, '', ...(part.note || []), ...(part.note ? [''] : []), '| # | 번호 | 작업 | 상태 |', '|---|---|---|---|',
-      ...xs.map((x) => `| ${x.n} | ${x.id} | ${cell(titleOf(x))} | ${x.mark}${x.at ? ' ' + x.at : ''} |`), '');
-    for (const x of xs) {
-      const pieces = resultPieces(S, x), decx = S.decisions.filter((d) => (d.affects || []).includes(x.id));
-      out.push(`#### ${x.n} · ${x.id} — ${titleOf(x)}`, '', ...Object.entries(x.fields).map(([k, v]) => `- **${k}**: ${one(v)}`), `- **상태**: ${x.mark} ${STATE_KO[x.state]}${x.at ? ' ' + x.at : ''}`, '');
-      out.push('**결과 (날짜별)**', '', ...(pieces.length ? pieces.map((p) => `- \`${p.at}\` ${p.src}: ${one(p.text) || '(비움)'}${p.replaced ? '\n\n  ' + details('고쳐 쓰기 전 글', one(p.replaced)) : ''}`) : ['- 결과 기록 없음']), '');
-      out.push('**걸어온 길**', '', ...pathOf(S, x), '');
-      if (decx.length) out.push(`**닿는 결정**: ${decx.map((d) => `${d.id} (${d.at} ${d.title})`).join(' · ')}`, '');
-    }
+      ...xs.map((x) => `| ${x.n} | [${x.id}](items/${x.id}.md) | ${cell(titleOf(x))} | ${x.mark}${x.at ? ' ' + x.at : ''} |`), '');
   }
   // 5 종합
   out.push('## 5. 종합 결과와 의의', '');
@@ -248,10 +246,52 @@ export function render(S, plan) {
   return out.join('\n');
 }
 
+const NOTE = (what) => `> 생성물 — 원본 \`${PLANS_FILE}\` · \`${LOG_FILE}\` 에서 (\`node rebuild/status.mjs --write\`). 손으로 고치지 않는다 — 바꾸려면 \`node rebuild/plan.mjs apply\`. ${what}`;
+// 작업 하나 — 칸 · 상태 · 결과(날짜별) · 걸어온 길 · 닿는 결정 (순서는 ORDER.md 에만 — 순서를 바꿔도 이 파일은 그대로)
+export function itemDoc(S, x) {
+  const P = S.plans.find((p) => p.plan === x.plan), pieces = resultPieces(S, x), decx = S.decisions.filter((d) => (d.affects || []).includes(x.id));
+  return [`# ${x.id} — ${titleOf(x)}`, '', NOTE(`계획: [${P.title}](../${x.plan}.md) · [순서](../ORDER.md)`), '',
+    `- **계획 · 부**: ${x.plan} ${x.n} · ${x.part}`, ...Object.entries(x.fields).map(([k, v]) => `- **${k}**: ${one(v)}`),
+    `- **상태**: ${x.mark} ${STATE_KO[x.state]}${x.at ? ' ' + x.at : ''}`, '',
+    '## 결과 (날짜별)', '', ...(pieces.length ? pieces.map((p) => `- \`${p.at}\` ${p.src}: ${one(p.text) || '(비움)'}${p.replaced ? '\n\n  ' + details('고쳐 쓰기 전 글', one(p.replaced)) : ''}`) : ['- 결과 기록 없음']), '',
+    '## 걸어온 길', '', ...pathOf(S, x), '',
+    ...(decx.length ? ['## 닿는 결정', '', ...decx.map((d) => `- [${d.id}](../decisions/${d.id}.md) ${d.at} ${d.title}`), ''] : [])].join('\n');
+}
+// 결정 하나 — 원문 · 누가 · 처음 글 · 뒤에 일어난 일 · 닿는 작업
+export function decisionDoc(S, d) {
+  const o = [`# ${d.id} — ${d.title}`, '', NOTE(`계획: ${d.plans.map((p) => `[${p}](../${p}.md)`).join(' · ')}`), '',
+    `\`${d.at}\` · ${by(d.by)}${d.by_src ? ` (${d.by_src})` : ''} · ${DECISION_TYPES[d.type]}${d.src && d.src.commit ? ` · 처음 적힌 커밋 \`${d.src.commit.slice(0, 7)}\`` : ''}${d.src && d.src.item ? ` · 원문 자리 ${d.src.item}` : ''}${d.was ? ` · 옛 문서의 ${d.was}` : ''}`, '', d.text, ''];
+  if (d.first && d.first.text) o.push(details(`처음 적힌 글 (${d.first.at}, \`${d.first.commit.slice(0, 7)}\`) — 지금 글과 다름`, d.first.text), '');
+  if ((d.updates || []).length) o.push('## 뒤에 일어난 일', '', ...d.updates.map((u) => `- \`${u.at}\` ${u.text}${(u.refs || []).length ? ` (${u.refs.join(' · ')})` : ''}`), '');
+  if ((d.affects || []).length) o.push('## 닿는 작업', '', ...d.affects.map((a) => (S.items.some((x) => x.id === a) ? `- [${itemLine(S, a)}](../items/${a}.md)` : `- ${a}`)), '');
+  return o.join('\n');
+}
+// 순서 파일 — 세 계획을 한 줄로. 지금 순서 · 순서 밖 대기·진행 · 끝난 수 · 순서가 바뀐 길
+export function orderDoc(S) {
+  const seq = S.order ? S.order.seq : [], inSeq = new Set(seq.map((o) => o.id)), x = (id) => S.items.find((y) => y.id === id);
+  const line = (it, extra) => `[${it.id}](items/${it.id}.md) ${titleOf(it)} — ${it.mark} ${STATE_KO[it.state]} · ${it.plan}${extra ? ' — ' + extra : ''}`;
+  const left = S.items.filter((it) => !inSeq.has(it.id) && ['open', 'partial', 'discussion', 'hold'].includes(it.state));
+  const evs = S.log.filter((e) => e.plan === 'order');
+  return ['# 순서 — 무엇을 언제 하나 (세 계획을 한 줄로)', '', NOTE('내용은 items/ · 계획 개요는 build.md · rebuild.md · assay.md. 순서를 바꾸면 내용 파일은 그대로다.'), '',
+    '## 지금 순서', '', ...(seq.length ? seq.map((o, i) => `${i + 1}. ${x(o.id) ? line(x(o.id), o.why) : o.id}`) : ['순서 기록 없음']), '',
+    `## 순서 밖 — 대기·진행·논의·보류 (${left.length})`, '', ...S.plans.flatMap((p) => { const xs = left.filter((it) => it.plan === p.plan); return xs.length ? [`- **${p.plan}**: ${xs.map((it) => `[${it.id}](items/${it.id}.md) ${it.mark}`).join(' · ')}`] : []; }), '',
+    '## 끝난 것', '', ...S.plans.map((p) => `- ${p.plan}: ${S.items.filter((it) => it.plan === p.plan && it.state === 'done').length} / ${S.items.filter((it) => it.plan === p.plan).length}`), '',
+    '## 순서가 바뀐 길', '', ...(evs.length ? evs.map((e) => `- \`${e.at}\` ${e.from.length ? e.from.join(' → ') : '(처음)'} ⇒ ${e.to.join(' → ')} — ${one(e.why)}`) : ['- 기록 없음']), ''].join('\n');
+}
+// 생성 파일 모두 — { 저장소 안 경로: 글 }
+export function renderFiles(S) {
+  const out = { [`${PLAN_DIR}/ORDER.md`]: orderDoc(S) };
+  for (const p of S.plans) out[PLANS[p.plan].out] = render(S, p.plan);
+  for (const x of S.items) out[`${PLAN_DIR}/items/${x.id}.md`] = itemDoc(S, x);
+  for (const d of S.decisions) out[`${PLAN_DIR}/decisions/${d.id}.md`] = decisionDoc(S, d);
+  return out;
+}
+
 // ── 고치기 — 변경 묶음 { at, why, ops[] } → 새 기록·새 사건. 작업이 바뀌면 사건이 붙고, 다른 기록은 at·updates 로 남는다
 //   op: state {id, state, at?} · result {id, append | set} · scope {id, field, to} · add {item, after?} · remove {id}
 //       decide {decision} · decision-update {id, update:{at?, text, refs}} · synthesis {synthesis} (덧붙임 — 이전 판은 남음)
 //       direction {direction} (같은 번호면 바꿈) · open {open} · resolve {text, resolved}
+//       order {seq: [{id, why}]} (순서 통째로 — 사건에 앞뒤) · plan {plan} · part {part} (새 계획을 세울 때)
 export function apply(S, change) {
   const errs = [], at = change.at, why = String(change.why || '').trim();
   if (!DATE.test(at || '')) errs.push('변경 묶음 at 은 YYYY-MM-DD');
@@ -274,15 +314,29 @@ export function apply(S, change) {
     else if (op.op === 'direction') { const i = recs.findIndex((r) => r.kind === 'direction' && r.id === op.direction.id); const d = { kind: 'direction', at, ...op.direction }; if (i >= 0) recs[i] = d; else recs.push(d); }
     else if (op.op === 'open') recs.push({ kind: 'open', ...op.open });
     else if (op.op === 'resolve') { const o = recs.find((r) => r.kind === 'open' && r.text === op.text); if (!o) { errs.push(`열린 질문 '${op.text}' 없음`); continue; } o.resolved = op.resolved; }
+    else if (op.op === 'order') { // 순서 통째로 — 사건에 앞뒤 번호 줄이 남는다
+      if (!Array.isArray(op.seq)) { errs.push('order 는 seq [{ id, why }]'); continue; }
+      const i = recs.findIndex((r) => r.kind === 'order'), from = i >= 0 ? recs[i].seq.map((o) => o.id) : [];
+      const o = { kind: 'order', seq: op.seq }; if (i >= 0) recs[i] = o; else recs.push(o);
+      log.push({ seq: log.length + 1, plan: 'order', at, item: 'ORDER', label: '순서', change: 'order', from, to: op.seq.map((x) => x.id), why: change.why_detail ? `${why} — ${change.why_detail}` : why, source: 'apply' });
+    }
+    else if (op.op === 'plan') { if (recs.some((r) => r.kind === 'plan' && r.plan === op.plan.plan)) { errs.push(`계획 '${op.plan.plan}' 이 이미 있음`); continue; } recs.splice(recs.map((r) => r.kind).lastIndexOf('plan') + 1, 0, { kind: 'plan', ...op.plan }); }
+    else if (op.op === 'part') recs.splice(recs.map((r) => r.kind).lastIndexOf('part') + 1, 0, { kind: 'part', ...op.part });
     else errs.push(`모르는 op '${op.op}'`);
   }
   const of = (k) => recs.filter((r) => r.kind === k);
-  return { errs, S: { recs, log, plans: of('plan'), decisions: of('decision'), parts: of('part'), notes: of('note'), items: of('item'), syntheses: of('synthesis'), directions: of('direction'), opens: of('open') } };
+  return { errs, S: { recs, log, plans: of('plan'), decisions: of('decision'), parts: of('part'), notes: of('note'), items: of('item'), syntheses: of('synthesis'), directions: of('direction'), opens: of('open'), order: of('order')[0] || null } };
 }
 export const serialize = (S) => ({ plans: S.recs.map((r) => JSON.stringify(r)).join('\n') + '\n', log: S.log.map((r) => JSON.stringify(r)).join('\n') + '\n' });
 
 // ── 읽기 모드 (rebuild/read.mjs 가 부름) — 계획 번호 하나를 L0 한 줄 · L1 연결 · L2 전부로. 기록에서만
 export function readOne(S, id, depth = 2) {
+  if (id === 'ORDER') { // 순서 — 0 몇 줄 · 1 줄마다 번호·상태·왜 · 2 순서가 바뀐 길
+    const seq = S.order ? S.order.seq : [], o = [`ORDER — 순서 ${seq.length} 줄 (세 계획을 한 줄로)${seq.length ? ` · 다음: ${seq.find((q) => { const x = S.items.find((y) => y.id === q.id); return x && x.state !== 'done'; })?.id || '없음'}` : ''}`];
+    if (depth >= 1) o.push(...seq.map((q, i) => `  ${i + 1}. ${itemLine(S, q.id)} — ${q.why}`));
+    if (depth >= 2) o.push('  바뀐 길:', ...S.log.filter((e) => e.plan === 'order').map((e) => `    ${e.at} ${e.from.join(' → ') || '(처음)'} ⇒ ${e.to.join(' → ')} — ${one(e.why)}`));
+    return o.join('\n') + '\n';
+  }
   const x = S.items.find((y) => y.id === id), d = S.decisions.find((y) => y.id === id), r = S.directions.find((y) => y.id === id), o = [];
   if (x) {
     o.push(`${x.id} (${x.plan} ${x.n}) ${titleOf(x)} — ${x.mark} ${STATE_KO[x.state]}${x.at ? ' ' + x.at : ''}`);

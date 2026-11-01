@@ -178,7 +178,7 @@ data/db.json·CHANGES.md·limitations.md·교과서 부록을 통째로 읽지 �
 ### H. 실측 정량 검증 (사전 등록된 규약 — 지금의 1순위)
 
 ```
-먼저 docs/RUNBOOK.md §2(검증)·§3 과 docs/design/build-plan.md 항목 3·8 을 읽어라.
+먼저 docs/RUNBOOK.md §2(검증)·§3 과 docs/plan/items/PLAN-003.md · PLAN-008.md 를 읽어라.
 
 임무: <관찰 O… / 가설>을 사전 등록된 규약 아래에서 검증하고 과정 보고서로 결론을 내라.
 

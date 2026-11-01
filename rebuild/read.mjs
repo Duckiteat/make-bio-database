@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// 읽기 모드 (rebuild/PLAN.md §2′ · 6d) — 사람은 원본을 읽지 않고 이것으로 읽는다. 조회만 하고 지어내지 않는다.
+// 읽기 모드 (재건 6d) — 사람은 원본을 읽지 않고 이것으로 읽는다. 조회만 하고 지어내지 않는다.
 //   node rebuild/read.mjs <RULE-…|EQ-…> [--depth 0|1|2]    L0 한 줄 · L1 연결 · L2 수식 (기본 2)
-//   node rebuild/read.mjs <PLAN-…|STG-…|DEC-…|DIR-…> [--depth 0|1|2]  계획 번호 — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
+//   node rebuild/read.mjs <PLAN-…|STG-…|ASY-…|DEC-…|DIR-…|ORDER> [--depth 0|1|2]  계획 번호 (ORDER = 순서: 0 수 · 1 줄마다 · 2 바뀐 길) — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
 //     0 한 줄(≤ 300 B — 상태 확인) · 1 칸·닿는 결정·방향·결과 · 2 결과 날짜별·걸어온 길 전부 (기본 2)
 //   node rebuild/read.mjs <PERM-…> [--depth 0|1|2]          상시 권한 — 0 한 줄 · 1 무엇·누가·언제·철회 · 2 걸어온 길 (rebuild/rules/permissions.jsonl)
 //   node rebuild/read.mjs --list spec [--mode author]       형식 설명 규칙(spec) 목록 — 모드 문서에서 빠진 것
@@ -56,7 +56,7 @@ function readFormula(S, f, depth, out) {
 
 export function read(id, depth = 2, S = load()) {
   const out = [];
-  if (/^(?:PLAN|STG|DEC|DIR)-/.test(id)) return STATE.readOne(STATE.load(ROOT), id, depth) || `${id} — 계획 기록에 없음\n`;
+  if (/^(?:PLAN|STG|ASY|DEC|DIR)-/.test(id) || id === 'ORDER') return STATE.readOne(STATE.load(ROOT), id, depth) || `${id} — 계획 기록에 없음\n`;
   if (S.formulas[id]) { readFormula(S, S.formulas[id], depth, out); return out.join('\n') + '\n'; }
   if (/^PERM-/.test(id)) { // 상시 권한 (10g) — 0 한 줄 · 1 무엇 전부·누가·언제·넓음·철회 · 2 걸어온 길(장부 사건)
     const p = S.perms[id];
@@ -96,5 +96,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
   if (a[0] === '--list') { if (a[1] !== 'spec') { console.error('--list spec 만'); process.exit(2); } process.stdout.write(listSpec(opt('--mode'))); }
   else if (a[0]) process.stdout.write(read(a[0], opt('--depth') != null ? Number(opt('--depth')) : 2));
-  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|DEC-…|DIR-…|PERM-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
+  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|ASY-…|DEC-…|DIR-…|ORDER|PERM-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
 }

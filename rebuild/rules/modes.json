@@ -1,5 +1,5 @@
 {
-  "_what": "모드 원본 (rebuild/PLAN.md §2·§3, 사용자 결정 2026-10-25) — 중심 문서·모드 문서·스킬은 이것과 규칙 장부(rules.jsonl)에서 생성한다(rebuild/render.mjs). 손으로 고치는 곳은 여기뿐.",
+  "_what": "모드 원본 (재건 계획 DEC-0016 · DEC-0018, 사용자 결정 2026-10-25) — 중심 문서·모드 문서·스킬은 이것과 규칙 장부(rules.jsonl)에서 생성한다(rebuild/render.mjs). 손으로 고치는 곳은 여기뿐.",
   "purpose": [
     "생물 정의·기전·실측값을 맥락과 함께 쌓고, 그 위에서 시뮬레이션해 현실과 맞는지 본다.",
     "원본은 기계용(번호·JSONL)이고, 사람은 점검 모드의 읽기(L0·L1·L2)로만 읽는다.",
@@ -10,7 +10,7 @@
     "세션 안에서 모드를 바꾸지 않는다. 다른 모드가 필요하면 전환 기록 { from, to, at, why, target, files, open } 을 남기고 끝낸다.",
     "끝내기 전: `node rebuild/gate.mjs finish <모드>` — 그 모드의 시험 묶음이 지금 파일 상태로 통과해야 git commit 이 열린다(시험은 바뀐 것에 닿는 것만). push 는 `finish <모드> --full`(전체) 뒤에.",
     "검사 오류에는 규칙 번호(RULE-…)가 붙는다 — 그 규칙의 이유·맥락·수식은 읽기 모드로 찾는다: `node rebuild/read.mjs RULE-…` (L0 한 줄 · L1 연결 · L2 수식, 조회만).",
-    "계획은 생성물이다 — 하나 읽기 `node rebuild/read.mjs PLAN-…|STG-…|DEC-…|DIR-… [--depth 0|1|2]`(0 한 줄 · 1 결정·방향 · 2 걸어온 길 전부 — 필요한 만큼만), 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 규칙 장부(`rebuild/rules/` 의 .jsonl)도 같은 방식으로만: `node rebuild/rules.mjs apply <ops.json>`. 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님)."
+    "계획은 생성물이다 — 무엇을 언제 하나는 `docs/plan/ORDER.md`(순서 — 세 계획을 한 줄로), 하나 읽기 `node rebuild/read.mjs ORDER|PLAN-…|STG-…|ASY-…|DEC-…|DIR-… [--depth 0|1|2]`(0 한 줄 · 1 결정·방향 · 2 걸어온 길 전부 — 필요한 만큼만), 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 규칙 장부(`rebuild/rules/` 의 .jsonl)도 같은 방식으로만: `node rebuild/rules.mjs apply <ops.json>`. 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님)."
   ],
   "modes": [
     {
@@ -209,8 +209,7 @@
         "rebuild/status/**",
         "rebuild/draft/**",
         "rebuild/state/**",
-        "rebuild/PLAN.md",
-        "docs/design/build-plan.md",
+        "docs/plan/**",
         "docs/textbook/90-부록-자동생성.md",
         "workspace/transitions.jsonl",
         "workspace/receipts/**"

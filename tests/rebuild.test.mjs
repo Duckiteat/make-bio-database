@@ -1,7 +1,7 @@
-// 재건 관리 파일 (rebuild/PLAN.md §6) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
+// 재건 관리 파일 (재건 계획 — 관리 파일) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
 //   ① 관리 파일이 지금 저장소와 같다 (개수·크기·건수가 바뀌면 갱신돼야 함)
 //   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
-//   ③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/state/ 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만
+//   ③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/state/ 계획 기록 · docs/plan/ 계획 생성 파일 · 중심·모드 문서·스킬만
 //   ④ 분류 장부에 형식 오류가 없다
 //   ⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다
 //   ⑩ 맥락: 규칙마다 이유 판정(because·inline·decided_by·none) · 대상 종류 · 표 머리
@@ -49,11 +49,11 @@ test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는
   assert.ok(clerk.every((l) => /ZONES|rebuild:|ledger:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
-test('③ 서기 구역 rebuild 는 관리 파일 · 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만', () => {
-  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md', 'CLAUDE.md', 'docs/modes/', '.claude/skills/']);
+test('③ 서기 구역 rebuild 는 관리 파일 · 계획 기록 · 계획 생성 파일 · 중심·모드 문서·스킬만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/state/', 'docs/plan/', 'CLAUDE.md', 'docs/modes/', '.claude/skills/']);
   for (const bad of ['../x.jsonl', 'other.jsonl', 'build-plan.jsonl', 'build-plan.md']) assert.throws(() => CLERK.writeState(bad, 'x', ROOT), /계획 기록 이름/, bad);
   assert.throws(() => CLERK.writeState('plan-log.jsonl', 'x\n', ROOT), /덧붙이기만/, '걸어온 길을 줄이거나 고치는 쓰기');
-  assert.throws(() => CLERK.writePlanDoc('other', 'x', ROOT), /build · rebuild 만/);
+  for (const bad of ['docs/plan/other.md', 'docs/plan/items/X-1.md', 'docs/plan/../CLAUDE.md', 'docs/design/build-plan.md', 'docs/plan/decisions/x.md']) assert.throws(() => CLERK.writePlanFile(bad, 'x', ROOT), /계획 생성 파일/, bad);
   for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
   for (const bad of ['../CLAUDE.md', 'build-plan.md', 'modes/author.md', 'docs/modes/Author.md', 'docs/modes/a/b.md', '.claude/skills/x/other.md', '.claude/settings.json', 'x.md']) assert.throws(() => CLERK.writeHubDoc(bad, 'x', ROOT), /중심·모드 문서 이름/, bad);
 });
@@ -200,13 +200,25 @@ test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글
   }
 });
 
-test('⑯ 계획 기록 (6c · DEC-0027): 정확성 검사 0 · 지금 = 걸어온 길을 접은 것 · 계획 문서 둘은 기록에서 바이트 동일', () => {
+test('⑯ 계획 기록 (6c · DEC-0027 · DEC-0042): 정확성 검사 0 · 생성 파일(순서 · 개요 · 작업 · 결정)은 기록에서 바이트 동일 · 내용이 빠지지 않음 · 순서를 바꿔도 내용 파일은 그대로', () => {
   const S = STATE.load(ROOT);
   assert.deepEqual(STATE.check(S, planCtx(S)), [], '계획 기록 검사 — node rebuild/plan.mjs check');
-  for (const p of S.plans) assert.equal(readFileSync(join(ROOT, STATE.PLANS[p.plan].out), 'utf8'), STATE.render(S, p.plan), `${p.plan} 계획 문서가 기록과 다름 — 손으로 고치지 말고 node rebuild/plan.mjs apply → status --write`);
-  assert.deepEqual(S.plans.map((p) => p.plan).sort(), ['build', 'rebuild']);
+  const F = STATE.renderFiles(S);
+  for (const [rel, text] of Object.entries(F)) assert.equal(readFileSync(join(ROOT, rel), 'utf8'), text, `${rel} 가 기록과 다름 — 손으로 고치지 말고 node rebuild/plan.mjs apply → status --write`);
+  assert.deepEqual(S.plans.map((p) => p.plan).sort(), ['assay', 'build', 'rebuild']);
   // 차례가 정한 절이 다 있다 (목적 → 왜 → 결정 → 작업 → 종합 → 방향 → 열린 질문 → 근거 점검)
   for (const p of S.plans) { const t = STATE.render(S, p.plan); let at = -1; for (const h of ['## 1. 목적', '## 2. 왜', '## 3. 결정과 바뀐 이유', '## 4. 작업', '## 5. 종합 결과와 의의', '## 6. 나아갈 방향', '## 7. 열린 질문', '## 근거 점검']) { const k = t.indexOf(h); assert.ok(k > at, `${p.plan}: '${h}' 가 차례대로 없음`); at = k; } }
+  // 내용이 빠지지 않음: 작업마다 칸과 결과 글이 그 작업 파일에, 결정마다 원문이 그 결정 파일에
+  const flat = (t) => String(t || '').replace(/\s*\n\s*/g, ' ').trim();
+  for (const x of S.items) { const f = F[`docs/plan/items/${x.id}.md`]; assert.ok(f, `${x.id} 파일`); for (const v of Object.values(x.fields)) assert.ok(f.includes(flat(v)), `${x.id}: 칸이 빠짐`); }
+  for (const d of S.decisions) assert.ok(F[`docs/plan/decisions/${d.id}.md`].includes(d.text), `${d.id}: 원문이 빠짐`);
+  // 순서만 바꾸면 순서 파일만 바뀐다 (DEC-0042 — 순서와 내용을 뗀다)
+  const seq = S.order.seq, { errs, S: N } = STATE.apply(S, { at: '2026-11-01', why: '시험', ops: [{ op: 'order', seq: [seq[1], seq[0], ...seq.slice(2)] }] });
+  assert.deepEqual(errs, []);
+  const G = STATE.renderFiles(N), changed = Object.keys(G).filter((k) => G[k] !== F[k]);
+  assert.deepEqual(changed, ['docs/plan/ORDER.md'], '순서를 바꿨는데 내용 파일이 바뀜');
+  assert.equal(N.log[N.log.length - 1].change, 'order', '순서를 바꾼 사건이 걸어온 길에');
+  assert.match(STATE.apply(S, { at: '2026-11-01', why: '시험', ops: [{ op: 'order', seq: [{ id: 'PLAN-999', why: 'x' }] }] }).S && STATE.check(STATE.apply(S, { at: '2026-11-01', why: '시험', ops: [{ op: 'order', seq: [{ id: 'PLAN-077', why: '' }, { id: 'PLAN-077', why: 'x' }] }] }).S, planCtx(S)).join('\n'), /왜가 없음[\s\S]*두 번/, '순서: 왜 없음 · 겹침 거부');
 });
 
 test('⑱ 계획 고치기는 왜 · 근거가 있어야 하고, 지어낸 번호와 걸어온 길 밖의 변경을 거부한다', () => {
@@ -228,7 +240,7 @@ test('⑱ 계획 고치기는 왜 · 근거가 있어야 하고, 지어낸 번�
 
 test('⑲ 걸어온 길의 git 부분은 git 역사에서 다시 계산한 것과 같다 (손으로 쓰던 계획 문서의 마지막 판까지)', () => {
   const S = STATE.load(ROOT);
-  for (const p of S.plans) {
+  for (const p of S.plans.filter((q) => STATE.PLANS[q.plan].legacy)) { // 손으로 쓰던 옛 문서가 있던 계획만 (측정법 계획은 기록에서 시작)
     const have = S.log.filter((e) => e.plan === p.plan && e.source === 'git');
     assert.ok(have.length && have.every((e) => /^[0-9a-f]{10}$/.test(e.commit)), `${p.plan}: git 사건마다 커밋`);
     if (IMPORT.shallow(ROOT)) continue; // 얕은 복제에는 역사가 없다 — 위의 모양과 ⑯ 의 장부·잔액 검사만
