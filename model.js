@@ -894,7 +894,7 @@
 
   // 물리 상수·부피 단위 (SI) — 행정부의 농도 환산과 사법부의 독립 재계산이 같은 정의를 읽는다
   // 부피 환산표는 어휘 하나에서 (vocab.unitFactors.volume) — 엔진·사법부가 같은 계수를 쓴다
-  const NA = 6.02214076e23, VOL = V.unitFactors.volume;
+  const NA = Number(V.siConstants.N_A.value), VOL = V.unitFactors.volume; // N_A 는 SI 정의 상수 표에서 (ASY-08)
 
   // 속도 법칙의 정의 (행정부 적분과 사법부 재계산이 같은 법칙을 읽는다)
   const SAT_K = 1e-6; // 포화 보조 기질의 수치 포화 상수 (M) — 생물 상수가 아니라 바닥날 때 속도를 매끄럽게 끄는 정칙화 (시나리오 saturation_K 로 바꿈)

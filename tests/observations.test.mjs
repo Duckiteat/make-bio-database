@@ -152,3 +152,25 @@ test('⑧ 원문 자리수: 환산값 · 자리수 · precision · 해상도 sd 
   rejectedFor({ observations: [amount({ reported: undefined })] }, /새 정량 관찰에 원문 숫자\(reported/);
   assert.equal(J.validate(BASE).errors.filter((e) => e.rule === 'RULE-0525').length, 0, '옛 관찰은 경고(원문 숫자 없음)로만 — 자료 작업에서 채운다');
 });
+
+// RULE-0526 (ASY-08): 단위 체계가 스스로 맞는가 — 차원(유리수 지수) · 속도 법칙 차원 식 · SI 정의 상수의 정확한 곱 · 엔진의 R
+test('⑨ 차원: 단위 문자열 → 기본 차원 · 속도 법칙 · SI 상수 · R 이 정확값의 한 번 반올림', () => {
+  const V = req('../vocab.js'), M = req('../model.js');
+  const k = (u) => J.dimKey(J.parseDim(u));
+  assert.equal(k('M^-1 s^-1'), k('L/mol/s'), '2차 속도 상수 = L mol⁻¹ s⁻¹');
+  assert.equal(k('J/mol'), k('kg m^2 s^-2 mol^-1'));
+  assert.equal(k('M^0.5 s^-1'), 'L^-3/2 N^1/2 T^-1/1', '분수 지수 — 0.5 차 반응');
+  assert.equal(k('1'), ''); assert.equal(J.parseDim('furlong'), null); assert.equal(J.parseDim('M^x'), null);
+  assert.deepEqual(J.checkUnitSystem(), [], '지금 어휘는 차원이 맞음');
+  assert.equal(V.thermo.R, 8.31446261815324, 'R = N_A · k_B 정확값의 한 번 반올림 (전에는 8.314462618 — 끝 다섯 자리 잘림)');
+  assert.equal(M.NA, 6.02214076e23);
+  // 거부: 어휘를 하나씩 틀리게 하면 잡는다 (시험 안에서만 바꾸고 되돌림)
+  const tamper = (obj, key, val, re) => { const old = obj[key]; obj[key] = val; try { assert.match(J.checkUnitSystem().map((e) => `${e.where}: ${e.msg}`).join('\n'), re); } finally { obj[key] = old; } };
+  tamper(V.kineticUnits, 'Km', 's', /michaelis_menten_km Km.*차원 식이 맞지 않음/);
+  tamper(V.kineticUnits, 'k_on', 's^-1', /binding k_on.*차원 식이 맞지 않음/);
+  tamper(V.kineticUnits, 'dG0', 'J', /무차원이 아님/);
+  tamper(V.siDerived, 'R', { ...V.siDerived.R, value: '8.314462618' }, /정확한 곱.*자리수를 자르지 않는다/);
+  tamper(V.siConstants, 'k_B', { ...V.siConstants.k_B, unit: 'J' }, /siDerived\.R: 단위/);
+  tamper(V.thermo, 'R', 8.314462618, /thermo\.R/);
+  tamper(V.unitSymbols, 'M', { N: '1', L: '-2' }, /unitSymbols\.M: 'M' 의 차원이 정의/);
+});

@@ -9,12 +9,12 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 290.6 | 270 |  | 분류됨 1 |
+| `CHANGES.md` | 291.5 | 271 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
-| `SCHEMA.md` | 105.4 | 672 |  | 분류됨 427 |
+| `SCHEMA.md` | 106.3 | 674 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.8 | 315 |  | 분류됨 151 |
 | `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
@@ -98,7 +98,7 @@
 | `docs/plan/items/ASY-05.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-06.md` | 1.3 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-08.md` | 12.3 | 56 |  | 생성물 |
+| `docs/plan/items/ASY-08.md` | 13.1 | 58 |  | 생성물 |
 | `docs/plan/items/ASY-09.md` | 3.1 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-10.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-11.md` | 1.5 | 21 |  | 생성물 |
@@ -263,7 +263,7 @@
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
-| `docs/textbook/03-데이터-모델.md` | 18.1 | 184 |  | 분류됨 116 |
+| `docs/textbook/03-데이터-모델.md` | 18.3 | 184 |  | 분류됨 116 |
 | `docs/textbook/04-알고리즘.md` | 65.5 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |

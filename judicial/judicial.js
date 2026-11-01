@@ -80,6 +80,7 @@
   function validate(db, opt) {
     const errors = [], warnings = [];
     const E = (rule, where, msg) => errors.push({ where, msg, rule }), W = (rule, where, msg) => warnings.push({ where, msg, rule }); // rule: 집행하는 규칙 번호 (rebuild 규칙 장부)
+    for (const x of checkUnitSystem()) E('RULE-0526', x.where, x.msg); // 단위 체계 자체 (ASY-08)
     if (db._version) E('RULE-0206', '데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
     for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations], ['V', db.values || {}]]) {
@@ -147,6 +148,77 @@
     const lowBad = B.exclusiveMin ? !(si > B.min) : !(si >= B.min);
     if (lowBad) E('RULE-0129', w, `${what}: 값 ${si} 이(가) 물리적 하한 ${B.min} ${B.exclusiveMin ? '초과' : '이상'} 이 아님 — ${B.why}`);
     if (si > B.max) E('RULE-0129', w, `${what}: 값 ${si} 이(가) 물리적 상한 ${B.max} 를 넘음 — ${B.why} (단위를 잘못 적었는지 확인)`);
+  }
+  // ===== 차원 (ASY-08 · RULE-0526) — 단위 문자열 → 기본 차원 지수(정확한 유리수). 단위 체계가 스스로 맞는지 검사한다 =====
+  //   'M^-1 s^-1' · 'J/mol' · 'm^2/s' · 'M^0.5 s^-1' · '1'. 기호는 vocab.unitSymbols 에 있는 것만 — 모르는 기호는 null
+  function parseDim(u) {
+    if (typeof u !== 'string' || !u.trim()) return null;
+    const out = {}, add = (dim, q) => { for (const [ax, e] of Object.entries(dim)) { const k = M.exactQ(e); if (!k) return false; const v = M.qMul(k, q), o = out[ax] || [0n, 1n]; const n = o[0] * v[1] + v[0] * o[1], d = o[1] * v[1]; out[ax] = n === 0n ? [0n, 1n] : M.qDiv([n, d], [1n, 1n]); } return true; };
+    const [num, ...den] = u.trim().split('/');
+    for (const [part, sign] of [[num, 1n], ...den.map((x) => [x, -1n])]) for (const tok of part.trim().split(/[\s·*]+/).filter(Boolean)) {
+      if (tok === '1') continue;
+      const m = /^([A-Za-zΘ#]+)(?:\^(-?[0-9.]+))?$/.exec(tok); if (!m) return null;
+      const sym = V.unitSymbols[m[1]]; if (!sym) return null;
+      const e = M.exactQ(m[2] || '1'); if (!e) return null;
+      if (!add(sym, [sign * e[0], e[1]])) return null;
+    }
+    for (const k of Object.keys(out)) if (out[k][0] === 0n) delete out[k];
+    return out;
+  }
+  const dimKey = (d) => d && Object.keys(d).sort().map((k) => `${k}^${d[k][0]}/${d[k][1]}`).join(' ');
+  const dimMul = (...ps) => { const out = {}; for (const [d, e] of ps) for (const [ax, q] of Object.entries(d)) { const v = M.qMul(q, M.exactQ(String(e))), o = out[ax] || [0n, 1n]; const n = o[0] * v[1] + v[0] * o[1]; out[ax] = n === 0n ? [0n, 1n] : M.qDiv([n, o[1] * v[1]], [1n, 1n]); } for (const k of Object.keys(out)) if (out[k][0] === 0n) delete out[k]; return out; };
+  // 속도 법칙의 차원 식: Π 칸^지수 × 농도^c = 속도(M s^-1) — 엔진의 식(model.js)과 같은 꼴. order 는 질량 작용 차수(분수도 됨)
+  const LAW_DIMS = {
+    mass_action: (o) => [[['k', 1]], o], zero_order: () => [[['k', 1]], 0],
+    binding: () => [[['k_on', 1]], 2], binding_off: () => [[['k_off', 1]], 1], binding_kd: () => [[['Kd', 1]], -1, 'one'],
+    michaelis_menten: () => [[['kcat', 1]], 1], michaelis_menten_km: () => [[['Km', 1]], -1, 'one'],
+    hill: () => [[['K', 1]], -1, 'one'], hill_n: () => [[['n', 1], ['fmax', 1], ['fmin', 1]], 0, 'one'],
+    first_order_half_life: () => [[['half_life', -1]], 1],
+  };
+  // 단위 체계 자체 검사 — 어휘의 기호 · 환산표의 정준 · 측정량 · 속도 칸 · 속도 법칙 · SI 상수 · 열역학이 서로 맞는지. 오류 목록
+  function checkUnitSystem() {
+    const errs = [], E = (rule, where, msg) => errs.push({ rule, where, msg });
+    for (const [s, d] of Object.entries(V.unitSymbols)) for (const [ax, e] of Object.entries(d)) if (!M.exactQ(e)) E('RULE-0526', `unitSymbols.${s}`, `${ax} 지수 '${e}' 가 유리수가 아님`);
+    // 유도 기호의 정의 — 기본 기호로 다시 쓴 것과 같아야 한다 (기호 하나만 틀리게 고치면 서로 맞아 보여도 여기서 걸림)
+    for (const [sym, base] of [['M', 'mol m^-3'], ['L', 'm^3'], ['J', 'kg m^2 s^-2'], ['C', 'A s']]) if (V.unitSymbols[sym] && dimKey(parseDim(sym)) !== dimKey(parseDim(base))) E('RULE-0526', `unitSymbols.${sym}`, `'${sym}' 의 차원이 정의 '${base}' 와 다름`);
+    const kindDim = {};
+    for (const [kind, t] of Object.entries(V.unitExact)) {
+      const canon = Object.keys(t).filter((u) => t[u] === '1'), dims = canon.map((u) => [u, parseDim(u)]).filter(([, d]) => d);
+      if (!dims.length) { E('RULE-0526', `unitExact.${kind}`, `정준 단위(배율 '1') 중 기호로 읽히는 것이 없음 — ${canon.join(' · ')}`); continue; }
+      kindDim[kind] = dims[0][1];
+      for (const [u, d] of dims) if (dimKey(d) !== dimKey(kindDim[kind])) E('RULE-0526', `unitExact.${kind}`, `정준 단위 '${u}' 의 차원이 '${dims[0][0]}' 과 다름`);
+    }
+    for (const [k, ov] of Object.entries(V.observables)) {
+      if (ov.unit === 'param') continue;
+      const d = parseDim(ov.unit); if (!d) { E('RULE-0526', `observables.${k}`, `정준 단위 '${ov.unit}' 를 차원으로 읽지 못함`); continue; }
+      if (ov.dim && kindDim[ov.dim] && dimKey(d) !== dimKey(kindDim[ov.dim])) E('RULE-0526', `observables.${k}`, `단위 '${ov.unit}' 의 차원이 환산표 종류 '${ov.dim}' 와 다름`);
+    }
+    const P = {}; for (const [p, u] of Object.entries(V.kineticUnits)) { P[p] = parseDim(u); if (!P[p]) E('RULE-0526', `kineticUnits.${p}`, `단위 '${u}' 를 차원으로 읽지 못함`); }
+    const C = parseDim('M'), RATE = parseDim('M s^-1'), ONE = {};
+    for (const order of ['0', '1', '2', '0.5', '1.5']) P[`k@${order}`] = parseDim(`M^${1 - Number(order)} s^-1`); // obsUnit 의 k 단위와 같은 꼴 — 차수 o 면 M^(1−o) s^-1
+    const law = (name, terms, cexp, target, order) => {
+      const parts = terms.map(([p, e]) => [P[order != null && p === 'k' ? `k@${order}` : p], e]);
+      if (parts.some(([d]) => !d)) return;
+      const got = dimMul(...parts, [C, cexp]), want = target === 'one' ? ONE : RATE;
+      if (dimKey(got) !== dimKey(want)) E('RULE-0526', `kineticLaws.${name}`, `차원 식이 맞지 않음 — ${terms.map(([p, e]) => `${p}^${e}`).join(' · ')} · [c]^${cexp} = ${dimKey(got) || '1'} ≠ ${dimKey(want) || '1'}`);
+    };
+    for (const order of ['0', '1', '2', '0.5', '1.5']) { const [t, c] = LAW_DIMS.mass_action(order); law(`mass_action(차수 ${order})`, t, c, 'rate', order); }
+    for (const [name, f] of Object.entries(LAW_DIMS)) if (name !== 'mass_action') { const [t, c, tg] = f(); for (const [p, e] of t) law(`${name} ${p}`, [[p, e]], c, tg || 'rate'); }
+    // 열역학: ΔG / (R · T) 는 무차원 — R 의 단위 · 에너지 단위 · 온도
+    const R = V.siDerived.R, dR = parseDim(R.unit), dG = P.dG0;
+    if (dR && dG && dimKey(dimMul([dG, 1], [dR, -1], [parseDim('K'), -1])) !== '') E('RULE-0526', 'thermo', `ΔG°′ / (R · T) 가 무차원이 아님 — ${V.kineticUnits.dG0} · ${R.unit} · K`);
+    // SI 상수: 정의값은 십진 문자열, 파생값은 정의값들의 정확한 곱 · 단위 차원도 곱
+    for (const [k, c] of Object.entries(V.siConstants)) { if (!M.exactQ(c.value)) E('RULE-0526', `siConstants.${k}`, `값 '${c.value}' 가 정확한 십진 문자열이 아님`); if (!parseDim(c.unit)) E('RULE-0526', `siConstants.${k}`, `단위 '${c.unit}' 를 차원으로 읽지 못함`); }
+    for (const [k, c] of Object.entries(V.siDerived)) {
+      const parts = c.of.map((x) => V.siConstants[x]);
+      if (parts.some((x) => !x)) { E('RULE-0526', `siDerived.${k}`, `정의 상수 ${c.of.join(' · ')} 중 없는 것`); continue; }
+      const q = parts.map((x) => M.exactQ(x.value)).reduce((a, b) => M.qMul(a, b)), v = M.exactQ(c.value);
+      if (!v || v[0] !== q[0] || v[1] !== q[1]) E('RULE-0526', `siDerived.${k}`, `값 '${c.value}' 가 ${c.of.join(' · ')} 의 정확한 곱(${q[0]}/${q[1]})과 다름 — 자리수를 자르지 않는다`);
+      const want = dimMul(...parts.map((x) => [parseDim(x.unit) || {}, 1])), got = parseDim(c.unit);
+      if (!got || dimKey(got) !== dimKey(want)) E('RULE-0526', `siDerived.${k}`, `단위 '${c.unit}' 의 차원이 ${c.of.join(' · ')} 단위의 곱과 다름`);
+    }
+    if (V.thermo.R !== M.qToF64(M.exactQ(V.siDerived.R.value))) E('RULE-0526', 'thermo.R', `엔진이 쓰는 R ${V.thermo.R} 이 정확값 ${V.siDerived.R.value} 의 한 번 반올림이 아님`);
+    return errs;
   }
   // 정의항 obs 의 값을 정준 단위로. 차원·단위를 모르면 null (그 자리에서 이미 단위 오류가 난다)
   function obsSI(P, b) {
@@ -1852,7 +1924,7 @@
     return out;
   }
 
-  return Object.freeze({ auditRate, checkAttestations,
+  return Object.freeze({ parseDim, dimKey, checkUnitSystem, auditRate, checkAttestations,
     needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, retractionImpact, retractionText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, reviewCandidates, coverageMap, coverageMapText, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,

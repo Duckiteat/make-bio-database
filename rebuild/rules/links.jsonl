@@ -545,3 +545,4 @@
 {"from": "RULE-0523", "rel": "because", "to": "code:engine/rng.js", "by": "judged", "note": "사용자 결정 DEC-0045 — 확률 적분층에서 난수 시드에 의한 표류를 막고, 화학적 노이즈와 측정 노이즈가 헷갈리지 않게"}
 {"from": "RULE-0524", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "사용자 결정 DEC-0045 — 화학적 노이즈와 측정 노이즈가 헷갈리지 않게: 측정법이 측정 잡음을, 반복 종류가 퍼짐의 출처를 말한다"}
 {"from": "RULE-0525", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "사용자 요청 2026-11-01 — 데이터 자리수를 원문과 대조하고 안 맞으면 가차없이. 실수 배율의 두 번 반올림(12 % 가 1 ulp 다름)이 시드 표류와 자리수 위조를 가리지 않게 정확한 유리수로 한 번만 반올림 (DEC-0045)"}
+{"from": "RULE-0526", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "ASY-08 끝나는 조건 — 차원 벡터 · SI 정의 상수 표 · 속도 법칙 차원 검사. 만들며 찾은 것: 어휘의 R 8.314462618 이 정확값 8.31446261815324 의 끝 다섯 자리를 자른 값이었음 (DEC-0045 · DEC-0046)"}

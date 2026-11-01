@@ -7,6 +7,7 @@
   // 환산 계수 = 정확한 배율(unitExact — 정수 분수 또는 십진 문자열)을 f64 로 한 번 반올림한 보기. 표는 하나(unitExact — RULE-0131),
   //   unitFactors 는 그 보기라 손으로 적지 않는다. 정수·십진 문자열의 해석과 정수끼리의 나눗셈은 IEEE 에서 정확히 한 번 반올림된다(ASY-08)
   const once = (t) => { const p = String(t).split('/'); return p.length === 2 ? Number(p[0]) / Number(p[1]) : Number(t); };
+  v.thermo.R = Number(v.siDerived.R.value); // 십진 문자열 해석은 한 번 반올림
   v.unitFactors = Object.fromEntries(Object.entries(v.unitExact).map(([kind, tb]) => [kind, Object.fromEntries(Object.entries(tb).map(([u, q]) => [u, once(q)]))]));
   if (typeof module === 'object' && module.exports) module.exports = v;
   else root.DefDBVocab = v;
@@ -237,7 +238,9 @@
     T3: { label: 'Tier 3 3차원 공간 동역학 영역 (대리 모델 + 유한 체적 대체) — 영역 상태 전용', aliases: ['tier3', 'spatial'] },
   },
   // 열역학 기준 (형식 v8): 전이 상태 이론 k = k0·exp(−(ΔG‡ + ΔG_env)/RT), 미시적 가역성 k_f/k_r = exp(−ΔG°/RT)
-  thermo: { R: 8.314462618, T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
+  //   R 은 손으로 적지 않는다 — SI 정의 상수 N_A · k_B 의 정확한 곱(siDerived.R)을 한 번 반올림해 위 감싸개가 채운다 (ASY-08 · RULE-0526).
+  //   전에 적혀 있던 8.314462618 은 정확값 8.31446261815324 의 끝 다섯 자리를 자른 값이었다
+  thermo: { T_ref: 310.15, unit_energy: 'J/mol', loop_tolerance: 100 },
 
   // ===== 합의 창 (추세 점검, judicial/trend.js) — 원천별 (사용자 결정, CHANGES 참고) =====
   // 추세 도장은 "그 원본의 그 판과 같다" 까지만 주장한다. 원천이 다음 판을 낼 수 있는 시점을 지나면 '지금도 합의와 같다' 는 확인되지 않은 것 →
@@ -344,6 +347,25 @@
   //   m³ 로 두면 엔진이 환산을 한 번 더 해 기존 궤적의 마지막 비트가 달라진다.
   // 단위의 정확한 배율 (측정법 계획 ASY-08 — 정수 분수 '1/60' 또는 십진 문자열 '1e-3'). 정준 단위(배율 '1')로 바꾼다.
   //   숫자 보기 unitFactors 는 이것을 한 번 반올림해 만든다(위 감싸개) — 손으로 적는 환산표는 이것 하나
+  // ===== 차원 (ASY-08 · RULE-0526) — 단위 기호 → 기본 차원의 지수(유리수 문자열: 분수 지수도 됨 — 0.5차 반응의 M^0.5 s^-1).
+  //   축: L 길이 · M 질량 · T 시간 · I 전류 · Θ 온도 · N 물질량 · J 광도 + # 개수(분자 하나 — 물질량과 N_A 로 이어지지만 엔진은 개수로 셈).
+  //   정준 단위 문자열(관찰 단위 · kineticUnits · 속도 법칙의 칸)은 이 기호들의 곱 'M^-1 s^-1' · 'J/mol' · 'm^2/s' · '1' 로만 쓴다
+  unitSymbols: {
+    m: { L: '1' }, kg: { M: '1' }, s: { T: '1' }, A: { I: '1' }, K: { 'Θ': '1' }, mol: { N: '1' }, cd: { J: '1' },
+    molecule: { '#': '1' }, L: { L: '3' }, M: { N: '1', L: '-3' }, J: { M: '1', L: '2', T: '-2' }, C: { I: '1', T: '1' },
+    aa: { '#': '1' }, nt: { '#': '1' }, bp: { '#': '1' },
+  },
+  // 2019 SI 정의 상수 — 정확값(문자열 그대로, 자리수를 자르지 않음). 파생 상수는 정의 상수의 정확한 곱이어야 한다(시험이 다시 곱함)
+  siConstants: {
+    N_A: { value: '6.02214076e23', unit: 'mol^-1', label: '아보가드로 상수' },
+    k_B: { value: '1.380649e-23', unit: 'J K^-1', label: '볼츠만 상수' },
+    e:   { value: '1.602176634e-19', unit: 'C', label: '기본 전하' },
+    h:   { value: '6.62607015e-34', unit: 'J s', label: '플랑크 상수' },
+  },
+  siDerived: {
+    R: { value: '8.31446261815324', of: ['N_A', 'k_B'], unit: 'J mol^-1 K^-1', label: '기체 상수 = N_A · k_B' },
+    F: { value: '96485.3321233100184', of: ['N_A', 'e'], unit: 'C mol^-1', label: '패러데이 상수 = N_A · e' },
+  },
   unitExact: {
     concentration: { M: '1', mM: '1e-3', 'µM': '1e-6', uM: '1e-6', nM: '1e-9', pM: '1e-12' },
     volume:        { L: '1', mL: '1e-3', 'µL': '1e-6', uL: '1e-6', nL: '1e-9', pL: '1e-12', fL: '1e-15' },
