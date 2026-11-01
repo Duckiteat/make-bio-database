@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 290.0 | 269 |  | 분류됨 1 |
+| `CHANGES.md` | 290.6 | 270 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -41,9 +41,9 @@
 | `docs/modes/develop.md` | 5.9 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
-| `docs/plan/ORDER.md` | 5.4 | 36 |  | 생성물 |
-| `docs/plan/assay.md` | 3.9 | 74 |  | 생성물 |
-| `docs/plan/build.md` | 35.3 | 374 |  | 생성물 |
+| `docs/plan/ORDER.md` | 7.1 | 44 |  | 생성물 |
+| `docs/plan/assay.md` | 4.9 | 82 |  | 생성물 |
+| `docs/plan/build.md` | 35.7 | 376 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -89,6 +89,7 @@
 | `docs/plan/decisions/DEC-0043.md` | 1.0 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0044.md` | 0.8 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0045.md` | 1.2 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0046.md` | 1.9 | 19 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.2 | 30 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -97,9 +98,15 @@
 | `docs/plan/items/ASY-05.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-06.md` | 1.3 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-08.md` | 11.6 | 53 |  | 생성물 |
-| `docs/plan/items/ASY-09.md` | 2.9 | 31 |  | 생성물 |
+| `docs/plan/items/ASY-08.md` | 12.3 | 56 |  | 생성물 |
+| `docs/plan/items/ASY-09.md` | 3.1 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-10.md` | 1.6 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-11.md` | 1.5 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-12.md` | 1.6 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-13.md` | 1.5 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-14.md` | 1.4 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-15.md` | 1.3 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-16.md` | 1.5 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-001.md` | 2.4 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-002.md` | 1.9 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-003.md` | 1.8 | 23 |  | 생성물 |
@@ -191,6 +198,7 @@
 | `docs/plan/items/PLAN-085.md` | 2.1 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-086.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-087.md` | 1.2 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-088.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -251,6 +259,7 @@
 | `docs/reports/2026-10-25-structure-evaluation.md` | 8.5 | 69 |  | 분류됨 34 |
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
+| `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
