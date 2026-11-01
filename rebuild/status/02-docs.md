@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 293.0 | 274 |  | 분류됨 1 |
+| `CHANGES.md` | 293.5 | 275 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -90,7 +90,7 @@
 | `docs/plan/decisions/DEC-0044.md` | 0.8 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0045.md` | 1.2 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0046.md` | 1.9 | 19 |  | 생성물 |
-| `docs/plan/decisions/DEC-0047.md` | 1.7 | 20 |  | 생성물 |
+| `docs/plan/decisions/DEC-0047.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.2 | 30 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -241,7 +241,7 @@
 | `docs/plan/items/STG-11d.md` | 4.3 | 39 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
-| `docs/plan/rebuild.md` | 24.3 | 247 |  | 생성물 |
+| `docs/plan/rebuild.md` | 24.7 | 248 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
 | `docs/reports/2026-10-15-mhc1-qualitative-batch.md` | 2.9 | 26 |  | 분류됨 13 |
@@ -267,7 +267,7 @@
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
 | `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
-| `docs/reports/2026-11-01-work-automation.md` | 13.4 | 151 |  | 미분류 |
+| `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
