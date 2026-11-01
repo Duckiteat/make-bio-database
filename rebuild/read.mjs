@@ -4,9 +4,10 @@
 //   node rebuild/read.mjs <PLAN-…|STG-…|ASY-…|DEC-…|DIR-…|ORDER> [--depth 0|1|2]  계획 번호 (ORDER = 순서: 0 수 · 1 줄마다 · 2 바뀐 길) — 작업·단계 · 결정 · 방향 (rebuild/state/plans.jsonl)
 //     0 한 줄(≤ 300 B — 상태 확인) · 1 칸·닿는 결정·방향·결과 · 2 결과 날짜별·걸어온 길 전부 (기본 2)
 //   node rebuild/read.mjs <PERM-…> [--depth 0|1|2]          상시 권한 — 0 한 줄 · 1 무엇·누가·언제·철회 · 2 걸어온 길 (rebuild/rules/permissions.jsonl)
+//   node rebuild/read.mjs --bundle <ORDER|build|rebuild|assay|부 이름|번호,번호> [--depth 0|1|2] [--out 보고서.md]  묶어 보기 — 나눠 둔 작업을 모음
 //   node rebuild/read.mjs --list spec [--mode author]       형식 설명 규칙(spec) 목록 — 모드 문서에서 빠진 것
 // 계약: 출력은 원본(규칙 장부·단위 장부·맥락·집행 변이·검토·수식 기록)에서만 — 같은 원본이면 같은 바이트.
-//   원본에 없는 것은 '… 기록 없음' 으로 드러낸다(수식·근거·예시를 그 자리에서 만들지 않는다). 파일을 쓰지 않는다.
+//   원본에 없는 것은 '… 기록 없음' 으로 드러낸다(수식·근거·예시를 그 자리에서 만들지 않는다). 파일은 --bundle --out 일 때만 서기의 보고서 구역으로.
 import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -95,6 +96,11 @@ export function listSpec(mode, S = load()) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
   if (a[0] === '--list') { if (a[1] !== 'spec') { console.error('--list spec 만'); process.exit(2); } process.stdout.write(listSpec(opt('--mode'))); }
+  else if (a[0] === '--bundle') { // 묶어 보기 — 점검 모드에서 나눠 둔 작업을 모아 본다. --out 이면 서기의 보고서 구역으로(위치는 사용자가 — 코드·데이터 자리는 거부)
+    const r = STATE.bundle(STATE.load(ROOT), a[1], opt('--depth') != null ? Number(opt('--depth')) : 1);
+    if (r.error) { console.error(r.error); process.exit(2); }
+    if (opt('--out')) { const CLERK = await import('../legislative/clerk.mjs'); console.log('씀 (입법 서기 보고서):', CLERK.writeReport(opt('--out'), r.text)); } else process.stdout.write(r.text);
+  }
   else if (a[0]) process.stdout.write(read(a[0], opt('--depth') != null ? Number(opt('--depth')) : 2));
-  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|ASY-…|DEC-…|DIR-…|ORDER|PERM-…> [--depth 0|1|2] · --list spec [--mode 모드]'); process.exit(2); }
+  else { console.error('사용: node rebuild/read.mjs <RULE-…|EQ-…|PLAN-…|STG-…|ASY-…|DEC-…|DIR-…|ORDER|PERM-…> [--depth 0|1|2] · --bundle <ORDER|계획|부|번호,번호> [--depth 0|1|2] [--out 보고서.md] · --list spec [--mode 모드]'); process.exit(2); }
 }

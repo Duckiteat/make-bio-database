@@ -389,3 +389,22 @@ test('㉖ 계획 고치기 — 부 옮기기(move)는 걸어온 길에 남고, �
   const e = ok.S.log[ok.S.log.length - 1];
   assert.deepEqual([e.change, e.from, e.to], ['moved', x.part, '시험 부'], '옮긴 사건이 걸어온 길에');
 });
+
+test('㉗ 묶어 보기 (점검 모드): 순서·계획·부·번호 목록으로 모으고, 깊이가 깊을수록 앞 깊이를 포함 · 모르는 묶음은 거부 · 저장은 보고서 구역만', () => {
+  const S = STATE.load(ROOT), seq = S.order.seq.map((o) => o.id);
+  const o0 = STATE.bundle(S, 'ORDER', 0).text;
+  assert.deepEqual([...o0.matchAll(/^- ((?:PLAN|STG|ASY)-[0-9a-z]+) /gm)].map((m) => m[1]), seq, '순서대로');
+  for (const p of S.plans) { const t = STATE.bundle(S, p.plan, 1).text; for (const x of S.items.filter((y) => y.plan === p.plan)) assert.ok(t.includes(`### ${x.id} — `), `${p.plan}: ${x.id} 빠짐`); }
+  const part = S.parts.find((p) => p.plan === 'assay').title;
+  assert.ok(STATE.bundle(S, part, 0).text.includes(`부 ${part}`));
+  const pick = `${seq[0]},${seq[1]}`, [d0, d1, d2] = [0, 1, 2].map((d) => STATE.bundle(S, pick, d).text);
+  assert.ok(d0.length < d1.length && d1.length < d2.length, '깊이마다 더 많이');
+  assert.ok(d2.includes('#### 걸어온 길'), '깊이 2 = 작업 파일 전부');
+  assert.match(STATE.bundle(S, 'PLAN-999', 1).error, /계획 기록에 없는 이름·번호: PLAN-999/);
+  const tmp = mkdtempSync(join(tmpdir(), 'bundle-')), out = join(tmp, 'order.md');
+  try {
+    execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), '--bundle', 'ORDER', '--depth', '0', '--out', out], { cwd: ROOT, encoding: 'utf8' });
+    assert.equal(readFileSync(out, 'utf8'), o0, '--out 은 같은 글을 보고서로');
+    assert.throws(() => execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), '--bundle', 'ORDER', '--out', join(ROOT, 'judicial', 'x.md')], { cwd: ROOT, stdio: 'pipe' }), /보호된 위치/, '코드 자리에는 쓰지 않음');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
+});

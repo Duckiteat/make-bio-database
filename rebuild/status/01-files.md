@@ -7,10 +7,10 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 28 | 5960.5 |
+| rebuild | 28 | 5964.0 |
 | docs | 241 | 1587.5 |
-| (최상위) | 18 | 911.8 |
-| tests | 83 | 574.6 |
+| (최상위) | 18 | 912.7 |
+| tests | 83 | 576.3 |
 | judicial | 29 | 543.9 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
@@ -38,7 +38,7 @@
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
-| `CHANGES.md` | 284.8 |
+| `CHANGES.md` | 285.6 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |

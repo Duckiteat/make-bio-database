@@ -278,6 +278,25 @@ export function orderDoc(S) {
     '## 끝난 것', '', ...S.plans.map((p) => `- ${p.plan}: ${S.items.filter((it) => it.plan === p.plan && it.state === 'done').length} / ${S.items.filter((it) => it.plan === p.plan).length}`), '',
     '## 순서가 바뀐 길', '', ...(evs.length ? evs.map((e) => `- \`${e.at}\` ${e.from.length ? e.from.join(' → ') : '(처음)'} ⇒ ${e.to.join(' → ')} — ${one(e.why)}`) : ['- 기록 없음']), ''].join('\n');
 }
+// 묶어 보기 (점검 모드 — 나눠 둔 작업을 원하는 묶음으로 다시 모은다, 기록에서만 · 쓰지 않음)
+//   sel: 'ORDER'(순서대로) · 계획 이름(build|rebuild|assay — 부마다) · 부 이름 · 번호 목록('PLAN-077,ASY-00')
+//   depth: 0 줄마다 한 줄 · 1 칸·상태·지금 결과 · 2 작업 파일 전부(결과 날짜별 · 걸어온 길 · 닿는 결정)
+export function bundle(S, sel, depth = 1) {
+  const byId = (id) => S.items.find((x) => x.id === id);
+  let title, groups;
+  if (sel === 'ORDER') { title = '순서대로'; groups = [['지금 순서', (S.order ? S.order.seq : []).map((o) => byId(o.id)).filter(Boolean)]]; }
+  else if (S.plans.some((p) => p.plan === sel)) { title = `계획 ${sel}`; groups = S.parts.filter((p) => p.plan === sel).map((p) => [p.title, S.items.filter((x) => x.plan === sel && x.part === p.title)]); }
+  else if (S.parts.some((p) => p.title === sel)) { title = `부 ${sel}`; groups = [[sel, S.items.filter((x) => x.part === sel)]]; }
+  else { const ids = String(sel).split(',').map((t) => t.trim()).filter(Boolean), miss = ids.filter((id) => !byId(id)); if (!ids.length || miss.length) return { error: `묶음 '${sel}' 를 모름 — 계획 기록에 없는 이름·번호: ${miss.join(' · ') || '(비었음)'} (쓸 수 있는 것: ORDER · 계획 이름 · 부 이름 · 번호 목록)` }; title = `번호 ${ids.length}`; groups = [['고른 작업', ids.map(byId)]]; }
+  const body = (x) => {
+    if (depth <= 0) return `- ${itemLine(S, x.id)}`;
+    if (depth === 1) { const pieces = resultPieces(S, x), last = pieces[pieces.length - 1]; return [`### ${x.id} — ${titleOf(x)}`, '', ...Object.entries(x.fields).map(([k, v]) => `- **${k}**: ${one(v)}`), `- **상태**: ${x.mark} ${STATE_KO[x.state]}${x.at ? ' ' + x.at : ''}`, `- **지금 결과**: ${last ? `\`${last.at}\` ${one(last.text)}` : '결과 기록 없음'}`, ''].join('\n'); }
+    return itemDoc(S, x).replace(/^# /, '### ').replace(/\n## /g, '\n#### ').replace(/\n> 생성물[^\n]*\n/, '\n');
+  };
+  const n = groups.reduce((a, [, xs]) => a + xs.length, 0);
+  return { text: [`# 묶어 보기 — ${title} (작업 ${n} · 깊이 ${depth})`, '', `> 기록(\`${PLANS_FILE}\` · \`${LOG_FILE}\`)에서 그때그때 모은 보기 — 고칠 때는 \`node rebuild/plan.mjs apply\`. 작업 하나는 \`docs/plan/items/\`.`, '',
+    ...groups.flatMap(([g, xs]) => (xs.length ? [`## ${g} (${xs.length})`, '', ...xs.map(body), ''] : []))].join('\n') };
+}
 // 생성 파일 모두 — { 저장소 안 경로: 글 }
 export function renderFiles(S) {
   const out = { [`${PLAN_DIR}/ORDER.md`]: orderDoc(S) };
