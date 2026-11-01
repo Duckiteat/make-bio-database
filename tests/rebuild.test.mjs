@@ -1,14 +1,15 @@
-// 재건 관리 파일 (rebuild/PLAN.md §6) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
+// 재건 관리 파일 (재건 계획 — 관리 파일) — 자동 갱신되고, 읽기 점검용으로만 쓰인다.
 //   ① 관리 파일이 지금 저장소와 같다 (개수·크기·건수가 바뀌면 갱신돼야 함)
 //   ② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 가리키지 않는다 (서기의 구역 표만 예외)
-//   ③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/state/ 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만
+//   ③ 서기 구역 rebuild 는 rebuild/status/ 관리 파일 · rebuild/state/ 계획 기록 · docs/plan/ 계획 생성 파일 · 중심·모드 문서·스킬만
 //   ④ 분류 장부에 형식 오류가 없다
 //   ⑧ 파일 → 모드: 모든 파일이 규칙 하나에 맞고, 쓰이지 않는 규칙·모르는 모드가 없다
 //   ⑩ 맥락: 규칙마다 이유 판정(because·inline·decided_by·none) · 대상 종류 · 표 머리
 //   ⑤–⑦ 번호 사전 (rebuild/index): 표 형식 · 예시가 자기 이름공간에만 · 저장소의 번호 모양이 모두 이름공간 하나에
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync, mkdtempSync, writeFileSync, appendFileSync, copyFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -19,6 +20,7 @@ import * as RENDER from '../rebuild/render.mjs';
 import * as READ from '../rebuild/read.mjs';
 import * as STATE from '../rebuild/state.mjs';
 import * as IMPORT from '../rebuild/plan-import.mjs';
+import * as LEDGER from '../rebuild/rules.mjs';
 
 const X = IDX.build();
 
@@ -40,18 +42,18 @@ test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () =
 test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는다', () => {
   const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'target', 'rebuild'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
   // 예외: 재건 도구의 시험 — 문지기 시험은 따로 있어야 변이 시험이 판정할 수 있다(rebuild.test 는 파일이 바뀌면 늘 빨개짐)
-  const code = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p) && !['tests/rebuild.test.mjs', 'tests/gate.test.mjs'].includes(p));
+  const code = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p) && !['tests/rebuild.test.mjs', 'tests/gate.test.mjs', 'tests/permissions.test.mjs'].includes(p));
   const users = code.filter((p) => /rebuild\//.test(readFileSync(join(ROOT, p), 'utf8')));
   assert.deepEqual(users, ['legislative/clerk.mjs'], 'rebuild/ 를 가리키는 코드');
   const clerk = readFileSync(join(ROOT, 'legislative/clerk.mjs'), 'utf8').split('\n').filter((l) => /rebuild\//.test(l));
-  assert.ok(clerk.every((l) => /ZONES|rebuild:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
+  assert.ok(clerk.every((l) => /ZONES|rebuild:|ledger:|writeStatus|rebuild\/status|PLAN\.md/.test(l)), '서기는 구역 표와 쓰기 함수에서만 가리킨다');
 });
 
-test('③ 서기 구역 rebuild 는 관리 파일 · 계획 기록 · 계획 문서 둘 · 중심·모드 문서·스킬만', () => {
-  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md', 'CLAUDE.md', 'docs/modes/', '.claude/skills/']);
+test('③ 서기 구역 rebuild 는 관리 파일 · 계획 기록 · 계획 생성 파일 · 중심·모드 문서·스킬만', () => {
+  assert.deepEqual(CLERK.ZONES.rebuild.allow, ['rebuild/status/', 'rebuild/state/', 'docs/plan/', 'CLAUDE.md', 'docs/modes/', '.claude/skills/']);
   for (const bad of ['../x.jsonl', 'other.jsonl', 'build-plan.jsonl', 'build-plan.md']) assert.throws(() => CLERK.writeState(bad, 'x', ROOT), /계획 기록 이름/, bad);
   assert.throws(() => CLERK.writeState('plan-log.jsonl', 'x\n', ROOT), /덧붙이기만/, '걸어온 길을 줄이거나 고치는 쓰기');
-  assert.throws(() => CLERK.writePlanDoc('other', 'x', ROOT), /build · rebuild 만/);
+  for (const bad of ['docs/plan/other.md', 'docs/plan/items/X-1.md', 'docs/plan/../CLAUDE.md', 'docs/design/build-plan.md', 'docs/plan/decisions/x.md']) assert.throws(() => CLERK.writePlanFile(bad, 'x', ROOT), /계획 생성 파일/, bad);
   for (const bad of ['../x.md', 'x.json', 'X.md', 'a/b.md']) assert.throws(() => CLERK.writeStatus(bad, 'x', ROOT), /관리 파일 이름/, bad);
   for (const bad of ['../CLAUDE.md', 'build-plan.md', 'modes/author.md', 'docs/modes/Author.md', 'docs/modes/a/b.md', '.claude/skills/x/other.md', '.claude/settings.json', 'x.md']) assert.throws(() => CLERK.writeHubDoc(bad, 'x', ROOT), /중심·모드 문서 이름/, bad);
 });
@@ -133,8 +135,9 @@ test('⑫ 판정 코드가 규칙 번호를 낸다: 검사 자리마다 첫 인�
   }
   assert.deepEqual(bad, [], `검사 자리 ${n}`);
   assert.ok(n >= 550, `검사 자리가 ${n} — 자리를 지웠는지 본다`);
-  // 거꾸로: 코드에서 찾은 규칙(from_code)은 코드 어딘가에서 쓰인다
-  const orphan = [...rules.values()].filter((r) => r.from_code && !used.has(r.id) && !readdirSync(join(ROOT, 'judicial')).some((x) => readFileSync(join(ROOT, 'judicial', x), 'utf8').includes(`'${r.id}'`)));
+  // 거꾸로: 코드에서 찾은 규칙(from_code)은 코드 어딘가에서 쓰인다 — 판정 코드, 또는 그 규칙의 집행 자리(where 에 적힌 파일 — 시험이 집행하는 규칙)
+  const inWhere = (r) => [...String(r.where || '').matchAll(/[\w./-]+\.(?:m?js|json)\b/g)].map((m) => m[0]).some((f) => existsSync(join(ROOT, f)) && readFileSync(join(ROOT, f), 'utf8').includes(`'${r.id}'`));
+  const orphan = [...rules.values()].filter((r) => r.from_code && !used.has(r.id) && !inWhere(r) && !readdirSync(join(ROOT, 'judicial')).some((x) => readFileSync(join(ROOT, 'judicial', x), 'utf8').includes(`'${r.id}'`)));
   assert.deepEqual(orphan.map((r) => r.id), [], '코드에서 찾은 규칙인데 코드가 쓰지 않음');
 });
 
@@ -197,13 +200,25 @@ test('⑮ 읽기 모드 (6d): 원본에서만 — 같은 입력이면 같은 글
   }
 });
 
-test('⑯ 계획 기록 (6c · DEC-0027): 정확성 검사 0 · 지금 = 걸어온 길을 접은 것 · 계획 문서 둘은 기록에서 바이트 동일', () => {
+test('⑯ 계획 기록 (6c · DEC-0027 · DEC-0042): 정확성 검사 0 · 생성 파일(순서 · 개요 · 작업 · 결정)은 기록에서 바이트 동일 · 내용이 빠지지 않음 · 순서를 바꿔도 내용 파일은 그대로', () => {
   const S = STATE.load(ROOT);
   assert.deepEqual(STATE.check(S, planCtx(S)), [], '계획 기록 검사 — node rebuild/plan.mjs check');
-  for (const p of S.plans) assert.equal(readFileSync(join(ROOT, STATE.PLANS[p.plan].out), 'utf8'), STATE.render(S, p.plan), `${p.plan} 계획 문서가 기록과 다름 — 손으로 고치지 말고 node rebuild/plan.mjs apply → status --write`);
-  assert.deepEqual(S.plans.map((p) => p.plan).sort(), ['build', 'rebuild']);
+  const F = STATE.renderFiles(S);
+  for (const [rel, text] of Object.entries(F)) assert.equal(readFileSync(join(ROOT, rel), 'utf8'), text, `${rel} 가 기록과 다름 — 손으로 고치지 말고 node rebuild/plan.mjs apply → status --write`);
+  assert.deepEqual(S.plans.map((p) => p.plan).sort(), ['assay', 'build', 'rebuild']);
   // 차례가 정한 절이 다 있다 (목적 → 왜 → 결정 → 작업 → 종합 → 방향 → 열린 질문 → 근거 점검)
   for (const p of S.plans) { const t = STATE.render(S, p.plan); let at = -1; for (const h of ['## 1. 목적', '## 2. 왜', '## 3. 결정과 바뀐 이유', '## 4. 작업', '## 5. 종합 결과와 의의', '## 6. 나아갈 방향', '## 7. 열린 질문', '## 근거 점검']) { const k = t.indexOf(h); assert.ok(k > at, `${p.plan}: '${h}' 가 차례대로 없음`); at = k; } }
+  // 내용이 빠지지 않음: 작업마다 칸과 결과 글이 그 작업 파일에, 결정마다 원문이 그 결정 파일에
+  const flat = (t) => String(t || '').replace(/\s*\n\s*/g, ' ').trim();
+  for (const x of S.items) { const f = F[`docs/plan/items/${x.id}.md`]; assert.ok(f, `${x.id} 파일`); for (const v of Object.values(x.fields)) assert.ok(f.includes(flat(v)), `${x.id}: 칸이 빠짐`); }
+  for (const d of S.decisions) assert.ok(F[`docs/plan/decisions/${d.id}.md`].includes(d.text), `${d.id}: 원문이 빠짐`);
+  // 순서만 바꾸면 순서 파일만 바뀐다 (DEC-0042 — 순서와 내용을 뗀다)
+  const seq = S.order.seq, { errs, S: N } = STATE.apply(S, { at: '2026-11-01', why: '시험', ops: [{ op: 'order', seq: [seq[1], seq[0], ...seq.slice(2)] }] });
+  assert.deepEqual(errs, []);
+  const G = STATE.renderFiles(N), changed = Object.keys(G).filter((k) => G[k] !== F[k]);
+  assert.deepEqual(changed, ['docs/plan/ORDER.md'], '순서를 바꿨는데 내용 파일이 바뀜');
+  assert.equal(N.log[N.log.length - 1].change, 'order', '순서를 바꾼 사건이 걸어온 길에');
+  assert.match(STATE.apply(S, { at: '2026-11-01', why: '시험', ops: [{ op: 'order', seq: [{ id: 'PLAN-999', why: 'x' }] }] }).S && STATE.check(STATE.apply(S, { at: '2026-11-01', why: '시험', ops: [{ op: 'order', seq: [{ id: 'PLAN-077', why: '' }, { id: 'PLAN-077', why: 'x' }] }] }).S, planCtx(S)).join('\n'), /왜가 없음[\s\S]*두 번/, '순서: 왜 없음 · 겹침 거부');
 });
 
 test('⑱ 계획 고치기는 왜 · 근거가 있어야 하고, 지어낸 번호와 걸어온 길 밖의 변경을 거부한다', () => {
@@ -225,7 +240,7 @@ test('⑱ 계획 고치기는 왜 · 근거가 있어야 하고, 지어낸 번�
 
 test('⑲ 걸어온 길의 git 부분은 git 역사에서 다시 계산한 것과 같다 (손으로 쓰던 계획 문서의 마지막 판까지)', () => {
   const S = STATE.load(ROOT);
-  for (const p of S.plans) {
+  for (const p of S.plans.filter((q) => STATE.PLANS[q.plan].legacy)) { // 손으로 쓰던 옛 문서가 있던 계획만 (측정법 계획은 기록에서 시작)
     const have = S.log.filter((e) => e.plan === p.plan && e.source === 'git');
     assert.ok(have.length && have.every((e) => /^[0-9a-f]{10}$/.test(e.commit)), `${p.plan}: git 사건마다 커밋`);
     if (IMPORT.shallow(ROOT)) continue; // 얕은 복제에는 역사가 없다 — 위의 모양과 ⑯ 의 장부·잔액 검사만
@@ -272,4 +287,124 @@ test('㉑ CI 는 전체 역사를 받는다 (checkout fetch-depth: 0) — 고정
   const pinned = readFileSync(join(ROOT, 'rebuild/ledger/units.jsonl'), 'utf8').includes('"src_at"');
   assert.ok(pinned, '고정 커밋을 읽는 단위가 없으면 이 시험의 이유도 없다 — 시험을 다시 볼 것');
   assert.ok(fullHistory(readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8')), '.github/workflows/check.yml 의 checkout 에 fetch-depth: 0');
+});
+
+test('㉒ 변이 시험은 커밋하지 않은 작업 파일로 돈다 — 브랜치 · 작업 트리 · 색인 · stash 는 그대로 (10b)', () => {
+  const tmp = mkdtempSync(join(tmpdir(), 'mut-test-')), C = join(tmp, 'c'), spec = join(tmp, 'spec.jsonl');
+  try {
+    execFileSync('git', ['clone', '-q', '--local', '--no-hardlinks', ROOT, C]);
+    for (const f of ['tests/mutation/run.mjs', 'tests/snapshot.mjs']) copyFileSync(join(ROOT, f), join(C, f)); // 시험하는 실행기는 지금 작업 파일의 것
+    const M1 = 'MUT-SNAPSHOT-EDITED-' + process.pid, M2 = 'MUT-SNAPSHOT-NEW-' + process.pid;
+    appendFileSync(join(C, 'README.md'), `\n${M1}\n`); // 추적 파일의 커밋 안 한 변경
+    writeFileSync(join(C, 'probe-untracked.txt'), M2 + '\n'); // 추적하지 않는 새 파일
+    writeFileSync(spec, [
+      { rule: 'RULE-T001', op: 'static', file: 'README.md', contains: M1 },
+      { rule: 'RULE-T002', op: 'static', file: 'probe-untracked.txt', contains: M2 },
+      { rule: 'RULE-T003', op: 'static', file: 'README.md', contains: 'MUT-SNAPSHOT-NOWHERE' },
+    ].map((r) => JSON.stringify(r)).join('\n') + '\n');
+    const g = (...a) => execFileSync('git', a, { cwd: C, encoding: 'utf8' });
+    const state = () => ({ head: g('rev-parse', 'HEAD'), branch: g('rev-parse', '--abbrev-ref', 'HEAD'), status: g('status', '--porcelain'), diff: g('diff'), index: g('ls-files', '-s'), stash: g('stash', 'list'), trees: g('worktree', 'list', '--porcelain').split('\n').filter((l) => l.startsWith('worktree ')).length });
+    const before = state();
+    const out = execFileSync(process.execPath, [join(C, 'tests/mutation/run.mjs'), '--spec', spec], { cwd: C, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const got = Object.fromEntries(out.split('\n').filter(Boolean).map((l) => JSON.parse(l)).map((r) => [r.rule, r.result]));
+    assert.deepEqual(got, { 'RULE-T001': 'present', 'RULE-T002': 'present', 'RULE-T003': 'absent' }, '사본이 커밋 안 한 변경·새 파일을 보지 못함 (또는 없는 것을 봄)');
+    assert.deepEqual(state(), before, '변이 시험이 브랜치·작업 트리·색인·stash·사본 목록을 바꿈');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
+});
+
+test('㉓ 규칙 장부는 도구로만 (10c · RULE-0519): 줄 모양 하나 · 칸 · 열쇠 · 참조 · 봉인 — 도구 밖에서 고치면 거부', () => {
+  assert.deepEqual(LEDGER.check(LEDGER.load(ROOT)), [], '규칙 장부 — node rebuild/rules.mjs check');
+  const R1 = { id: 'RULE-0001', text: 't', modes: ['common'], enforce: 'text', text_why: 'work' };
+  const files = Object.fromEntries(Object.keys(LEDGER.LEDGERS).map((n) => [n, n === 'rules' ? JSON.stringify(R1) + '\n' : '']));
+  const seal = { at: '2026-10-30', why: '시험', ops: Object.keys(LEDGER.LEDGERS).map((file) => ({ op: 'seal', file })) };
+  const first = LEDGER.apply({ files, log: [] }, seal);
+  assert.deepEqual(first.errs, [], '첫 봉인');
+  const S = first.S;
+  assert.equal(S.files.rules, LEDGER.canon(R1) + '\n', '봉인이 줄 모양을 하나로 맞춤 (값은 그대로)');
+  assert.ok(LEDGER.check({ files, log: [] }).some((e) => /봉인이 없음/.test(e)), '봉인 없는 장부는 거부');
+  const all = (r) => r.errs.join('\n');
+  const ok = LEDGER.apply(S, { at: '2026-10-30', why: '고침', ops: [{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { text: 'u', note: 'n' } }, { op: 'add', file: 'review', row: { rule: 'RULE-0001', issue: 'stale', evidence: 'e', proposal: 'p', decision: { by: 'user' } } }] });
+  assert.deepEqual(ok.errs, [], '고치기 통과');
+  const ev = ok.S.log[ok.S.log.length - 2];
+  assert.deepEqual([ev.op, ev.key, ev.before.text, ev.after.text, ev.after.note], ['set', 'RULE-0001', 't', 'u', 'n'], '사건에 앞뒤가 남음');
+  assert.deepEqual(LEDGER.check(ok.S), [], '고친 뒤 봉인과 같음');
+  // 도구 밖에서 고침 · 다른 줄 모양 → 거부 (규칙 번호와 함께)
+  const hand = { ...ok.S, files: { ...ok.S.files, rules: ok.S.files.rules.replace('"u"', '"손"') } };
+  assert.match(LEDGER.check(hand).join('\n'), /^RULE-0519 rules: 장부가 마지막 봉인\(사건 \d+\)과 다름 — 도구 밖에서 고쳤다/m);
+  const compact = { ...ok.S, files: { ...ok.S.files, rules: JSON.stringify(JSON.parse(ok.S.files.rules)) + '\n' } };
+  assert.match(LEDGER.check(compact).join('\n'), /rules 1 째 줄: 줄 모양이 다름/);
+  // 고치기 거부 사유마다
+  const bad = (ops, why = '왜') => all(LEDGER.apply(ok.S, { at: '2026-10-30', why, ops }));
+  assert.match(bad([{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { text: 'x' } }], ''), /why 가 없음/);
+  assert.match(bad([{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { bogus: 1 } }]), /모르는 칸 'bogus'/);
+  assert.match(bad([{ op: 'set', file: 'rules', key: 'RULE-0001', fields: { text: null } }]), /필수 칸 'text' 이 없음/);
+  assert.match(bad([{ op: 'add', file: 'rules', row: R1 }]), /열쇠 'RULE-0001' 가 이미 있음/);
+  assert.match(bad([{ op: 'add', file: 'enforcement', row: { rule: 'RULE-0999', op: 'static', result: 'present', at: '2026-10-30' } }]), /없는 규칙 'RULE-0999'/);
+  assert.match(bad([{ op: 'remove', file: 'rules', key: 'RULE-0404' }]), /열쇠 'RULE-0404' 인 줄이 없음/);
+  assert.match(bad([{ op: 'seal', file: 'rules' }]), /이미 봉인된 장부/);
+  assert.match(bad([{ op: 'rename', file: 'rules' }]), /모르는 op/);
+  assert.match(bad([{ op: 'add', file: 'modes', row: {} }]), /모르는 장부/);
+  // 서기: 장부 이름은 정해진 것만 · 사건 기록은 덧붙이기만
+  const tmp = mkdtempSync(join(tmpdir(), 'ledger-'));
+  try {
+    assert.throws(() => CLERK.writeLedger('modes.json', '{}', tmp), /규칙 장부 이름/);
+    CLERK.writeLedger('changes.jsonl', 'a\n', tmp);
+    assert.throws(() => CLERK.writeLedger('changes.jsonl', 'b\n', tmp), /^Error: 입법 서기 거부: 규칙 장부의 사건 기록/);
+    assert.equal(CLERK.writeLedger('changes.jsonl', 'a\nb\n', tmp), join(tmp, 'rebuild', 'rules', 'changes.jsonl'), '덧붙이기는 됨');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
+});
+
+test('㉔ 계획 읽기 깊이 (10f): 0 한 줄 ≤ 300 B · 깊이가 깊을수록 앞 깊이를 포함 · 기본·명령 출력 = 깊이 2', () => {
+  const S = STATE.load(ROOT), ids = [...S.items, ...S.decisions, ...S.directions].map((x) => x.id);
+  assert.ok(ids.length > 0);
+  for (const id of ids) {
+    const [d0, d1, d2] = [0, 1, 2].map((d) => STATE.readOne(S, id, d));
+    assert.ok(Buffer.byteLength(d0) <= 300 && d0.split('\n').length === 2, `${id}: 0 단계는 한 줄 ≤ 300 B (${Buffer.byteLength(d0)} B)`);
+    assert.ok(d1.startsWith(d0.trimEnd()), `${id}: 1 단계가 0 단계로 시작`);
+    assert.ok(d2.length >= d1.length && d2.startsWith(d0.trimEnd()), `${id}: 2 단계가 가장 깊음`);
+    assert.equal(STATE.readOne(S, id), d2, `${id}: 기본은 2 단계`);
+  }
+  const one = ids[0], cli = (...a) => execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), one, ...a], { cwd: ROOT, encoding: 'utf8' });
+  assert.equal(cli('--depth', '0'), STATE.readOne(S, one, 0), '명령의 --depth 가 계획 번호에도');
+  assert.equal(cli(), STATE.readOne(S, one, 2), '명령 기본 = 2 단계 (지금 출력과 같은 바이트)');
+});
+
+test('㉕ 글 규칙 → 기계 규칙 (10h · DEC-0038): 글 규칙마다 글로 남는 까닭 · 판정 가능(candidate)은 끝난 모드에 없음 · 읽기 모드가 까닭을 보임', () => {
+  const S = LEDGER.load(ROOT), rules = S.files.rules.split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const text = rules.filter((r) => r.enforce === 'text' && !r.spec && !r.retired && !r.reserved);
+  assert.deepEqual(text.filter((r) => !LEDGER.TEXT_WHY[r.text_why]).map((r) => r.id), [], '까닭이 없는 글 규칙');
+  const DONE = ['develop', 'author', 'inspect', 'baseline', 'common', 'field']; // 10h 묶음이 끝난 모드 — 묶음마다 늘린다
+  const left = text.filter((r) => r.text_why === 'candidate' && r.modes.some((m) => DONE.includes(m)));
+  assert.deepEqual(left.map((r) => r.id), [], `끝난 모드(${DONE.join(' · ')})에 판정 가능한 글 규칙이 남음`);
+  const one = text.find((r) => r.text_why === 'work');
+  assert.match(READ.read(one.id, 0), new RegExp(`글로 남는 까닭: ${LEDGER.TEXT_WHY.work.slice(0, 10)}`), '읽기 모드가 까닭을 보임');
+});
+
+test('㉖ 계획 고치기 — 부 옮기기(move)는 걸어온 길에 남고, 없는 부로 옮기기 · 작업이 남은 부 지우기는 거부', () => {
+  const S = STATE.load(ROOT), x = S.items.find((y) => y.plan === 'assay'), go = (ops) => STATE.apply(S, { at: '2026-11-01', why: '시험', ops });
+  assert.match(go([{ op: 'move', id: x.id, to: '없는 부' }]).errs.join(), /부 '없는 부' 없음/);
+  assert.match(go([{ op: 'part-drop', plan: x.plan, title: x.part }]).errs.join(), /작업이 남아 있음/);
+  const ok = go([{ op: 'part', part: { plan: x.plan, title: '시험 부', cols: [] } }, { op: 'move', id: x.id, to: '시험 부' }]);
+  assert.deepEqual(ok.errs, []);
+  const e = ok.S.log[ok.S.log.length - 1];
+  assert.deepEqual([e.change, e.from, e.to], ['moved', x.part, '시험 부'], '옮긴 사건이 걸어온 길에');
+});
+
+test('㉗ 묶어 보기 (점검 모드): 순서·계획·부·번호 목록으로 모으고, 깊이가 깊을수록 앞 깊이를 포함 · 모르는 묶음은 거부 · 저장은 보고서 구역만', () => {
+  const S = STATE.load(ROOT), seq = S.order.seq.map((o) => o.id);
+  const o0 = STATE.bundle(S, 'ORDER', 0).text;
+  assert.deepEqual([...o0.matchAll(/^- ((?:PLAN|STG|ASY)-[0-9a-z]+) /gm)].map((m) => m[1]), seq, '순서대로');
+  for (const p of S.plans) { const t = STATE.bundle(S, p.plan, 1).text; for (const x of S.items.filter((y) => y.plan === p.plan)) assert.ok(t.includes(`### ${x.id} — `), `${p.plan}: ${x.id} 빠짐`); }
+  const part = S.parts.find((p) => p.plan === 'assay').title;
+  assert.ok(STATE.bundle(S, part, 0).text.includes(`부 ${part}`));
+  const pick = `${seq[0]},${seq[1]}`, [d0, d1, d2] = [0, 1, 2].map((d) => STATE.bundle(S, pick, d).text);
+  assert.ok(d0.length < d1.length && d1.length < d2.length, '깊이마다 더 많이');
+  assert.ok(d2.includes('#### 걸어온 길'), '깊이 2 = 작업 파일 전부');
+  assert.match(STATE.bundle(S, 'PLAN-999', 1).error, /계획 기록에 없는 이름·번호: PLAN-999/);
+  const tmp = mkdtempSync(join(tmpdir(), 'bundle-')), out = join(tmp, 'order.md');
+  try {
+    execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), '--bundle', 'ORDER', '--depth', '0', '--out', out], { cwd: ROOT, encoding: 'utf8' });
+    assert.equal(readFileSync(out, 'utf8'), o0, '--out 은 같은 글을 보고서로');
+    assert.throws(() => execFileSync(process.execPath, [join(ROOT, 'rebuild/read.mjs'), '--bundle', 'ORDER', '--out', join(ROOT, 'judicial', 'x.md')], { cwd: ROOT, stdio: 'pipe' }), /보호된 위치/, '코드 자리에는 쓰지 않음');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
 });

@@ -9,7 +9,7 @@ const db = req('../data/db.json'); // observations·senses 가 id 키 객체
 const v = (entries) => CA.auditCollection(db, entries).verdict;
 
 test('① 제대로 조사·값 없음 → PASS (못 찾음을 정직히 표시)', () => {
-  assert.equal(v([{ target: 'D000101/rule/turnover', outcome: 'not_found', use: 'validation', note: '사람 값 공개 전문에 없음' }]), 'PASS');
+  assert.equal(v([{ target: 'D900101/rule/turnover', outcome: 'not_found', use: 'validation', note: '사람 값 공개 전문에 없음' }]), 'PASS');
 });
 
 test('② 값 후보(출처+인용) 미검증 → REVIEW_REQUIRED (자동 PASS 금지)', () => {
@@ -32,14 +32,14 @@ test('⑤ 상태-내용 불일치 → REJECTED (못 찾음인데 값 있음)', (
 
 test('⑥ 재사용: db 에 없는 대상 → REJECTED · 있는 대상 → 통과', () => {
   assert.equal(v([{ outcome: 'reused', reuse: { ref: 'O999999' } }]), 'REJECTED'); // 없는 관찰
-  // 실재 관찰(O000001) 재사용, 값 주장 아님 → 거부/미완 없음 → PASS
-  assert.equal(v([{ outcome: 'reused', reuse: { ref: 'O000001' } }]), 'PASS');
+  // 실재 관찰 하나(번호를 박지 않고 찾음) 재사용, 값 주장 아님 → 거부/미완 없음 → PASS
+  assert.equal(v([{ outcome: 'reused', reuse: { ref: Object.keys(db.observations)[0] } }]), 'PASS');
 });
 
 test('⑦ outcome 누락·빈 입력 → INCOMPLETE', () => {
-  assert.equal(v([{ target: 'D000101' }]), 'INCOMPLETE'); // outcome 누락, 값 없음 → incomplete만
+  assert.equal(v([{ target: 'D900101' }]), 'INCOMPLETE'); // outcome 누락, 값 없음 → incomplete만
   assert.equal(v([]), 'INCOMPLETE');
-  assert.equal(v([{ outcome: 'read_no_value', target: 'D000101' }]), 'PASS'); // 읽었으나 값 없음, 정직
+  assert.equal(v([{ outcome: 'read_no_value', target: 'D900101' }]), 'PASS'); // 읽었으나 값 없음, 정직
 });
 
 test('⑧ 출처 해석 확인(#4): 해석 안 됨 → REJECTED · 됨 → 통과', () => {

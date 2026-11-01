@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (288 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (314 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 254 |
+| 잡음 `caught` | 280 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 254
+## 잡음 `caught` — 280
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -273,6 +273,32 @@
 | RULE-0486 | CONSISTENT \| (사전 등록된 규약의 검증 세트 관찰만 — build-plan 3) 가설 하나: 선 | replace | judicial/obs_compare.js | ④ 관찰 판정: 세 판정·필요 정밀도·추정용 거부·결정론의 퍼짐 공백 |
 | RULE-0196 | 주석은 계약·이유만, 이력은 CHANGES.md | replace | core.js | ⑳ 코드 주석에 이력(날짜·예전)이 없다 — 이력은 CHANGES.md (RULE-0196) |
 | RULE-0090 | 불확도 미보고면 sd = 유효 숫자 해상도 + uncertainty.basis 'resolution' + n | replace | judicial/obs_compare.js | ④″ 해상도 sd: 기본은 그대로 · gum 은 ÷√12 · 반복 수로 나누지 않음 · 퍼짐 검정 건너뜀 · 판정에 읽기가 남음 |
+| RULE-0519 | 규칙 장부(rebuild/rules/*.jsonl)는 장부 고치기 도구(node rebuild/rules.m | replace | rebuild/rules.mjs | ㉓ 규칙 장부는 도구로만 (10c · RULE-0519): 줄 모양 하나 · 칸 · 열쇠 · 참조 · 봉인 — 도구 밖에서 고치면 거부 |
+| RULE-0520 | 시험은 실제 데이터 기록을 예로 들지 않고 합성 기록(9xxxxx 번호)을 쓴다 — 실제 번호가 꼭 필요하면 | inject | tests/values.test.mjs | ① 실제 기록 번호는 목록에 이유와 함께 있는 것만 (RULE-0520) |
+| RULE-0521 | 상시 권한은 장부(rebuild/rules/permissions.jsonl)에 있는 것만 — .claude/ | replace | .claude/settings.json | ① 권한은 장부에 있는 것만 — settings · 문지기 모드 모두 (RULE-0521) |
+| RULE-0131 | 환산표는 하나 (엔진과 사법부가 같은 것) | inject | judicial/obs_compare.js | 환산표는 하나 (RULE-0131) — 단위 환산표(unitFactors)는 vocab.js 에만, 엔진·사법부는 그것을 쓴다 |
+| RULE-0199 | 엔진·공유 기계를 바꿨으면 전체 시험 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0201 | 새 규칙엔 거부 시험 | replace | rebuild/rules/enforcement.jsonl | ① 관리 파일이 최신이다 (node rebuild/status.mjs --write) |
+| RULE-0467 | **미등록 토큰 거부**: 사전에 없는 키 → 관문 거부 픽스처 (`tests/fixtures/rejecti | replace | dictionary.js | ③ 미등록 토큰 거부 — 조회·렌더·번역 모두 오류(추론으로 메우지 않음) |
+| RULE-0472 | 사용자가 지정한 보고서(`fate --report`) \| 데이터·코드·증명 위치는 거부 | replace | legislative/clerk.mjs | ④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다 |
+| RULE-0473 | 패치 초안·리팩터링 제안 \| 저장소 밖(임시 폴더)에만 | replace | legislative/clerk.mjs | ④ 입법 서기: 봉인 없는·변조된·다른 db 의 판결로는 쓰지 않는다 · 보호 위치에 보고서를 쓰지 않는다 |
+| RULE-0474 | 구역 검사는 조건 검사와 **직교**한다. 봉인·도장 재확인이 "쓸 자격" 이라면 구역은 "쓸 자리" 다.  | replace | legislative/clerk.mjs | ④′ 구역(Zone): 쓰기는 모두 구역을 지나고, 저장소 안의 다른 구역에 쓰려 하면 거부된다 |
+| RULE-0478 | `core.mapText` 는 외부 ID 의 status 를 **표시**한다(읽기). 선언하지는 않는다. | inject | core.js | ② 행정부: 사법·입법·조정자를 부르지 않고, 감사 코드·verified 선언이 없다 |
+| RULE-0479 | `viewer.html` 은 브라우저 안에서만 병합(입법 함수)하고 관문(사법 함수)을 보여 준다. 저장은  | inject | viewer.html | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
+| RULE-0495 | 범위와 판정 규칙은 **사전 등록 때 함께 고정**한다(사후에 좁히기 금지). | replace | judicial/protocol.js | ⑭′ 사법부: 증거 보고서 — 세포 상태 계 · 파생(교란) 시나리오 · 사전 등록 판정 수준 |
+| RULE-0058 | db.json·patches 함께 커밋 | replace | judicial/log_audit.js | RULE-0509 병합 기록 재생: 형식 변환 스크립트가 기록과 다르거나 지금 db 가 기록의 끝과 다르면 거부 |
+| RULE-0285 | 수집가는 후보를 workspace/handoff/ 에 적기만, 적용·커밋·판단은 통합가 | replace | rebuild/gate.mjs | ① 정책: 모드별 쓰기 경로 · 수집가는 핸드오프만 · 영수증은 문지기만 |
+| RULE-0310 | **이름 하나 = 개념 하나**: 띄어쓰기·하이픈·대소문자·그리스 문자 차이를 없앤 이름이 두 개념을 가리키 | replace | judicial/judicial.js | 이름 하나 = 개념 하나 (RULE-0310 · 0323): 띄어쓰기만 다른 이름이 두 개념을 가리키면 검사가 거부 |
+| RULE-0460 | 생성물(`limitations.md`, 부록, `index.html`) 손으로 고치기 | inject | limitations.md | limitations.md 는 data/db.json 에서 생성된 최신 상태여야 함 |
+| RULE-0255 | 규약엔 대응 실험의 종·세포·측정 시각·불확도·음성 대조가 있어야 한다 (없으면 그 공백을 한계로: TAP  | replace | judicial/protocol.js | ① 규약 구조: 완결하면 통과, 빠지면 사유 |
+| RULE-0294 | 검증·적용·본체 병합은 통합가 | replace | rebuild/gate.mjs | ② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커밋·push 없음 · 수집가 브랜치 |
+| RULE-0484 | 필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴). | replace | judicial/judicial.js | ④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다 |
+| RULE-0485 | **실제 HTTP 해석은 dbtool 이 직접 못 한다**(governance ①: dbtool 에 `exe | inject | dbtool.mjs | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
+| RULE-0522 | 측정법 장부(data/assays.jsonl)의 측정법마다 만든 방법(무엇을 보고 어떻게 정했나) · 근거  | replace | judicial/assay_audit.js | ② 거부 사례 — 만든 방법 · 단 · 조합 · 분리 · 고칠 때 why |
+| RULE-0523 | 측정 잡음은 엔진이 뽑지 않는다 — 엔진·컴파일러는 측정법 장부(측정 잡음)를 읽지 않고, 난수는 engin | inject | compiler/obs_operator.js | 측정 잡음은 엔진이 뽑지 않는다 (RULE-0523 · DEC-0045) — 엔진·컴파일러는 측정법 장부를 읽지 않고, 난수는 engine/rng.js 하나 |
+| RULE-0524 | 관찰의 측정법(assay)은 측정법 장부에 등록된 것만, 그 측정법이 그 관찰 종류를 내야 한다. 반복 종류 | replace | judicial/judicial.js | ④ 관찰의 측정법 (RULE-0524 · DEC-0045): 등록된 측정법만 · 그 측정법이 관찰 종류를 냄 · 장부를 못 받으면 경고 · 반복 종류 어휘 · 같 |
+| RULE-0525 | 정량 관찰은 원문 숫자(reported { value: 원문 십진 문자열, unit: 원문 단위, sd? } | replace | judicial/judicial.js | ⑧ 원문 자리수: 환산값 · 자리수 · precision · 해상도 sd · 원문 sd 가 정확히 맞아야 하고, 없으면 관문이 거부 |
+| RULE-0526 | 단위 체계는 스스로 맞아야 한다 — 단위 기호는 기본 차원의 유리수 지수(vocab.unitSymbols,  | replace | judicial/judicial.js | ⑨ 차원: 단위 문자열 → 기본 차원 · 속도 법칙 · SI 상수 · R 이 정확값의 한 번 반올림 |
 
 ## 설정에 있음 `present` — 8
 

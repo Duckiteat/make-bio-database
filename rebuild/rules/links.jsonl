@@ -538,3 +538,11 @@
 {"from": "RULE-0516", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "'끝내기 전에 돌려라' 를 잊어도 막히게 — 사용자 결정 2026-10-29 커밋·push 를 막음 (DEC-0031)"}
 {"from": "RULE-0517", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "AI 작업이 블랙박스가 되지 않게(진단 DEC-0015) — 영수증을 작업자가 고치면 영수증이 아니다"}
 {"from": "RULE-0518", "rel": "inline", "by": "judged", "note": "이유가 문장 안 — 채팅·출력은 코드가 지울 수 없어 사람·AI 가 지킨다"}
+{"from": "RULE-0519", "rel": "because", "to": "code:rebuild/rules.mjs", "by": "judged", "note": "장부를 그때그때 스크립트로 고쳐 줄 모양 차이 1,000 줄이 생기고 고친 까닭이 남지 않았다(재건 6b 사용 평가 — STG-10 의 계기)"}
+{"from": "RULE-0520", "rel": "because", "to": "code:tests/real_records.test.mjs", "by": "judged", "note": "실제 데이터를 예로 든 시험이 데이터가 좋아지자 두 번 깨졌다(재건 6b 사용 평가 — STG-10 의 계기)"}
+{"from": "RULE-0521", "rel": "because", "to": "code:rebuild/permissions.mjs", "by": "judged", "note": "RULE-0461 — 권한을 넓히는 유일한 올바른 길은 명시적·검증 가능·철회 가능한 standing 권한. 10a 의 CI 설정 수정이 권한 확인에서 막혔을 때 사용자가 '마스터 권한' 을 물었고 좁은 상시 권한으로 정리"}
+{"from": "RULE-0522", "rel": "because", "to": "code:judicial/assay_audit.js", "by": "judged", "note": "사용자 결정 DEC-0041 — 측정법을 기초부터 쌓되 하나하나 어떻게 만들었는지 남긴다. 산문은 시간이 지나면 어긋나므로 사슬의 칸으로"}
+{"from": "RULE-0523", "rel": "because", "to": "code:engine/rng.js", "by": "judged", "note": "사용자 결정 DEC-0045 — 확률 적분층에서 난수 시드에 의한 표류를 막고, 화학적 노이즈와 측정 노이즈가 헷갈리지 않게"}
+{"from": "RULE-0524", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "사용자 결정 DEC-0045 — 화학적 노이즈와 측정 노이즈가 헷갈리지 않게: 측정법이 측정 잡음을, 반복 종류가 퍼짐의 출처를 말한다"}
+{"from": "RULE-0525", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "사용자 요청 2026-11-01 — 데이터 자리수를 원문과 대조하고 안 맞으면 가차없이. 실수 배율의 두 번 반올림(12 % 가 1 ulp 다름)이 시드 표류와 자리수 위조를 가리지 않게 정확한 유리수로 한 번만 반올림 (DEC-0045)"}
+{"from": "RULE-0526", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "ASY-08 끝나는 조건 — 차원 벡터 · SI 정의 상수 표 · 속도 법칙 차원 검사. 만들며 찾은 것: 어휘의 R 8.314462618 이 정확값 8.31446261815324 의 끝 다섯 자리를 자른 값이었음 (DEC-0045 · DEC-0046)"}

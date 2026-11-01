@@ -17,8 +17,8 @@ const rejectedFor = (patch, re, db = BASE) => { const { g } = run(db, patch); as
 
 const BUNDLE = 'D000030|plasma_membrane', RULE = 'D000086/rule/basal_turnover';
 const FIX = { level: 'computed', tool: 'test fixture' }; // 시험 기록 — 출처를 지어내지 않으려고 computed
-const amount = (o) => Object.assign({ id: 'O+1', observable: { kind: 'amount', target: BUNDLE }, value: 1200, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 60 }, replicates: 3, condition: { species: '9606' }, use: 'validation', evidence: FIX }, o);
-const halfLife = (o) => Object.assign({ id: 'O+1', observable: { kind: 'kinetic_constant', target: RULE, param: 'half_life' }, value: 1800, unit: 's', uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.2 }, replicates: 4, condition: { species: '9606', temperature_K: 310.15 }, use: 'estimation', evidence: FIX }, o);
+const amount = (o) => Object.assign({ id: 'O+1', observable: { kind: 'amount', target: BUNDLE }, value: 1200, unit: 'molecule', uncertainty: { kind: 'measurement', model: 'normal', sd: 60 }, replicates: 3, condition: { species: '9606' }, use: 'validation', evidence: FIX, reported: { value: '1200', unit: 'molecule', sd: '60' } }, o);
+const halfLife = (o) => Object.assign({ id: 'O+1', observable: { kind: 'kinetic_constant', target: RULE, param: 'half_life' }, value: 1800, unit: 's', uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.2 }, replicates: 4, condition: { species: '9606', temperature_K: 310.15 }, use: 'estimation', evidence: FIX, reported: { value: '30', unit: 'min' } }, o);
 const withKin = (kin) => ({ id: 'D000086', rule: BASE.senses.D000086.rule.map((r) => (r.id === 'basal_turnover' ? { ...r, kinetics: kin } : r)) });
 
 test('① 계약: 합성 예시는 모양을 지키고, 값만 있는 관찰은 모양에서 거부', () => {
@@ -106,10 +106,71 @@ test('⑥ 관측 커버리지 지도 (48): 예측 가능한 측정량마다 검�
 
 // RULE-0090 · DEC-0035: 미보고 불확도의 출처 칸 — 해상도로 채운 sd 는 표시하고, 표시는 검사된다 (없으면 reported — 옛 기록 호환)
 test('⑦ 불확도 출처: resolution 은 정규·sd > 0 에만 · 모르는 출처는 거부 · 출처 없는 옛 기록은 그대로 통과', () => {
-  passes({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'resolution' } })] });
+  passes({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'resolution' }, reported: { value: '1.20e3', unit: 'molecule' } })] });
   passes({ observations: [amount({ uncertainty: { kind: 'measurement', model: 'normal', sd: 60, basis: 'reported' } })] });
   rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'guess' } })] }, /불확도 출처 'guess'/);
   rejectedFor({ observations: [halfLife({ uncertainty: { kind: 'measurement', model: 'lognormal', sd: 0.2, basis: 'resolution' } })] }, /잡음 모형 normal 에만/);
   rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 0, basis: 'resolution' } })] }, /0 보다 커야/);
   assert.equal(C.checkObservation({ ...amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 1, basis: 'nope' } }) }).ok, false, '계약 모양도 출처 값을 본다');
+});
+
+test('측정법이 붙은 관찰 (RULE-0524 · DEC-0045): 관문은 등록된 측정법만 · 장부를 못 받으면 경고로 막음', () => {
+  const reg = new Map([['syn_counting', { key: 'syn_counting', rung: 'cellular', produces: ['amount'] }]]);
+  const g = (o, opt) => J.gate(BASE, LEG.merge(BASE, P({ observations: [amount(o)] })), opt);
+  const ok = g({ assay: 'syn_counting', replicate_type: 'biological' }, { assays: reg });
+  assert.ok(ok.ok, msgs(ok));
+  const bad = g({ assay: 'nowhere_assay' }, { assays: reg });
+  assert.equal(bad.ok, false); assert.match(msgs(bad), /미등록 측정법 'nowhere_assay'/);
+  const blind = g({ assay: 'syn_counting' }, {});
+  assert.equal(blind.ok, false, '장부를 받지 않은 관문은 통과시키지 않음'); assert.match(msgs(blind), /측정법 장부를 받지 않아 확인하지 못함/);
+});
+
+// RULE-0525 (ASY-08): 원문 숫자 대조 — 정확한 유리수 환산(한 번 반올림)과 자리수가 하나라도 다르면 거부. 새 정량 관찰은 원문 숫자 없이 들이지 않는다
+test('⑧ 원문 자리수: 환산값 · 자리수 · precision · 해상도 sd · 원문 sd 가 정확히 맞아야 하고, 없으면 관문이 거부', () => {
+  const M = req('../model.js'), V = req('../vocab.js');
+  // 정확한 도구: 십진·분수 해석, 마지막 자리, 한 번 반올림
+  assert.deepEqual(M.exactQ('0.10'), [1n, 10n]); assert.deepEqual(M.exactQ('1/60'), [1n, 60n]); assert.deepEqual(M.exactQ('-2.5e-3'), [-1n, 400n]);
+  assert.equal(M.exactQ('1,2'), null); assert.equal(M.exactQ('0x10'), null);
+  assert.deepEqual(M.lastPlaceQ('26.70'), [1n, 100n]); assert.deepEqual(M.lastPlaceQ('3.6e-6'), [1n, 10000000n]); assert.deepEqual(M.lastPlaceQ('1200'), [1n, 1n]); assert.deepEqual(M.lastPlaceQ('1.20e3'), [10n, 1n]);
+  assert.equal(M.qToF64([1n, 10n]), 0.1); assert.equal(M.qToF64([1n, 3n]), 1 / 3); assert.equal(M.qToF64([-7n, 2n]), -3.5);
+  assert.equal(M.qToF64(M.qMul(M.exactQ('3.6'), M.exactQ('1e-6'))), 3.6e-6, '한 번 반올림 — 3.6 * 1e-6 의 두 번 반올림(3.5999999999999994e-6)이 아님');
+  // 환산표는 하나: 실수 배율은 정확한 배율의 한 번 반올림
+  for (const [kind, t] of Object.entries(V.unitExact)) for (const [u, q] of Object.entries(t)) assert.equal(V.unitFactors[kind][u], M.qToF64(M.exactQ(q)), `${kind} ${u}`);
+  // 통과: 같은 단위 · 다른 단위(분 → 초) · 해상도 sd
+  passes({ observations: [amount()] });
+  passes({ observations: [halfLife()] });
+  passes({ observations: [amount({ precision: 10, uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'resolution' }, reported: { value: '1.20e3', unit: 'molecule' } })] });
+  // 거부: 가차없이 — 값 · 자리수 · 단위 · 문자열 · 원문 sd · 없음
+  rejectedFor({ observations: [amount({ reported: { value: '1201', unit: 'molecule', sd: '60' } })] }, /정확한 환산 1201 과 다름/);
+  rejectedFor({ observations: [halfLife({ reported: { value: '30.1', unit: 'min' } })] }, /정확한 환산 1806 과 다름/);
+  rejectedFor({ observations: [amount({ precision: 1, reported: { value: '1.20e3', unit: 'molecule' } })] }, /precision 1 이 원문 '1\.20e3' 의 마지막 자리\(해상도 10/, BASE);
+  rejectedFor({ observations: [amount({ precision: 100, reported: { value: '1200', unit: 'molecule' } })] }, /precision 100 이 원문 '1200' 의 마지막 자리\(해상도 1 /);
+  rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 10, basis: 'resolution' } })] }, /해상도로 채운 sd 10 가 원문 '1200' 의 마지막 자리\(1 /);
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '61' } })] }, /sd 60 이 원문 '± 61 molecule' 의 정확한 환산 61/);
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'min' } })] }, /같은 종류의 환산표/);
+  rejectedFor({ observations: [amount({ reported: { value: 1200, unit: 'molecule' } })] }, /원문 그대로의 십진 문자열/);
+  rejectedFor({ observations: [amount({ reported: undefined })] }, /새 정량 관찰에 원문 숫자\(reported/);
+  assert.equal(J.validate(BASE).errors.filter((e) => e.rule === 'RULE-0525').length, 0, '옛 관찰은 경고(원문 숫자 없음)로만 — 자료 작업에서 채운다');
+});
+
+// RULE-0526 (ASY-08): 단위 체계가 스스로 맞는가 — 차원(유리수 지수) · 속도 법칙 차원 식 · SI 정의 상수의 정확한 곱 · 엔진의 R
+test('⑨ 차원: 단위 문자열 → 기본 차원 · 속도 법칙 · SI 상수 · R 이 정확값의 한 번 반올림', () => {
+  const V = req('../vocab.js'), M = req('../model.js');
+  const k = (u) => J.dimKey(J.parseDim(u));
+  assert.equal(k('M^-1 s^-1'), k('L/mol/s'), '2차 속도 상수 = L mol⁻¹ s⁻¹');
+  assert.equal(k('J/mol'), k('kg m^2 s^-2 mol^-1'));
+  assert.equal(k('M^0.5 s^-1'), 'L^-3/2 N^1/2 T^-1/1', '분수 지수 — 0.5 차 반응');
+  assert.equal(k('1'), ''); assert.equal(J.parseDim('furlong'), null); assert.equal(J.parseDim('M^x'), null);
+  assert.deepEqual(J.checkUnitSystem(), [], '지금 어휘는 차원이 맞음');
+  assert.equal(V.thermo.R, 8.31446261815324, 'R = N_A · k_B 정확값의 한 번 반올림 (전에는 8.314462618 — 끝 다섯 자리 잘림)');
+  assert.equal(M.NA, 6.02214076e23);
+  // 거부: 어휘를 하나씩 틀리게 하면 잡는다 (시험 안에서만 바꾸고 되돌림)
+  const tamper = (obj, key, val, re) => { const old = obj[key]; obj[key] = val; try { assert.match(J.checkUnitSystem().map((e) => `${e.where}: ${e.msg}`).join('\n'), re); } finally { obj[key] = old; } };
+  tamper(V.kineticUnits, 'Km', 's', /michaelis_menten_km Km.*차원 식이 맞지 않음/);
+  tamper(V.kineticUnits, 'k_on', 's^-1', /binding k_on.*차원 식이 맞지 않음/);
+  tamper(V.kineticUnits, 'dG0', 'J', /무차원이 아님/);
+  tamper(V.siDerived, 'R', { ...V.siDerived.R, value: '8.314462618' }, /정확한 곱.*자리수를 자르지 않는다/);
+  tamper(V.siConstants, 'k_B', { ...V.siConstants.k_B, unit: 'J' }, /siDerived\.R: 단위/);
+  tamper(V.thermo, 'R', 8.314462618, /thermo\.R/);
+  tamper(V.unitSymbols, 'M', { N: '1', L: '-2' }, /unitSymbols\.M: 'M' 의 차원이 정의/);
 });

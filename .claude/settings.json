@@ -34,8 +34,6 @@
       "Bash(node dbtool.mjs textbook --check:*)",
       "Bash(node dbtool.mjs log:*)",
       "Bash(node --test:*)",
-      "Bash(node tests/:*)",
-      "Bash(node -e:*)",
       "Bash(node migrations/:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
@@ -63,6 +61,8 @@
       "Bash(node rebuild/status.mjs:*)"
     ],
     "ask": [
+      "Bash(node tests/:*)",
+      "Bash(node -e:*)",
       "Bash(node dbtool.mjs merge:*)",
       "Bash(node dbtool.mjs augment apply:*)",
       "Bash(node dbtool.mjs augment fetch:*)",

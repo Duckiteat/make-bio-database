@@ -24,7 +24,7 @@ test('① set_amount 교란 — 시작량만 바꾸고 사법부 재구성이 �
     assert.ok(a.ok, (a.problems || []).join('; '));
   }
   assert.match(PT.perturb(DB, 'D000210', SC, { type: 'set_amount', target: TEL, n: -1 }).error, /n ≥ 0/);
-  assert.match(PT.perturb(DB, 'D000210', SC, { type: 'set_amount', target: 'D000001|nucleoplasm', n: 5 }).error, /이 계에 없음/);
+  assert.match(PT.perturb(DB, 'D000210', SC, { type: 'set_amount', target: 'D900001|nucleoplasm', n: 5 }).error, /이 계에 없음/);
 });
 
 test('② 관찰 검사 — 용량 축 없음·값 하나·없는 규칙 거부', () => {

@@ -27,6 +27,7 @@ test('① 규약 구조: 완결하면 통과, 빠지면 사유', () => {
   miss({ question: '' }, /question/);
   miss({ controls: {} }, /음성 대조/);
   miss({ matched_experiment: { source: { db: 'ISBN', id: '1' }, system: { species: '9606', cell: 'T', condition: 'c' }, readout_times_s: [1] } }, /DOI·PMID/);
+  miss({ matched_experiment: { source: { db: 'DOI', id: '10.0000/x' }, system: { species: '9606', condition: 'c' }, readout_times_s: [1] } }, /species·cell·condition/); // 대응 실험의 세포가 없음 (RULE-0255)
   miss({ readouts: [{ observable: { kind: 'mood', target: 'x' } }] }, /observable/);
   miss({ stopping: {} }, /fixed_n/);
   miss({ validation: ['O900002'] }, /추정용 관찰로 검증하면 순환/);

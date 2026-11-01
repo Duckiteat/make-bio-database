@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // 문지기 · 영수증 (재건 7 단계 · DEC-0018) — '한 세션 = 한 모드' 를 사람의 기억이 아니라 구조가 막게 한다.
 //   세션: node rebuild/gate.mjs open <모드>      (모드를 연다 — 세션 안에서 바꾸지 않는다. 다른 모드가 필요하면 node dbtool.mjs transition 뒤 끝낸다)
-//         node rebuild/gate.mjs finish <모드>    (끝내기 전 시험 묶음 — 통과해야 git commit · push)
+//         node rebuild/gate.mjs finish <모드>    (끝내기 전 시험 묶음 — 통과해야 git commit. 시험은 바뀐 것에 닿는 것만: tests/affected.mjs)
+//         node rebuild/gate.mjs finish <모드> --full  (전체 — push 는 이것이 통과한 뒤에만 · DEC-0037)
 //         node rebuild/gate.mjs receipt [이름]   (영수증 읽기)
 //   훅:   node rebuild/gate.mjs hook <session-start|pre|post|stop>  (.claude/settings.json — 입력은 표준 입력의 JSON)
 // 정책은 rebuild/rules/modes.json 의 gate (모드별 쓰기 경로 · 막는 명령 · 끝내기 전 시험 · 수집가 역할). 이 파일은 판단과 입출력만.
@@ -40,6 +41,9 @@ export function finishCmds(P, mode, role) {
   const R = role && P.roles[role];
   return { first: P.common.finish_first || [], cmds: [...(R ? R.finish : P.modes[mode].finish), ...P.common.finish] };
 }
+// 범위: 묶음에 바뀐 것만 시험(tests/affected.mjs)이 있고 --full 이 아니면 'affected' — 커밋만 연다. 그 밖은 'full' — push 도 연다
+export const AFFECTED_RE = /\btests\/affected\.mjs\b/;
+export const finishScope = (cmds, full) => (!full && cmds.some((c) => AFFECTED_RE.test(c)) ? 'affected' : 'full');
 // 명령 하나가 이 모드·역할에서 막히나 — 장부의 writes(쓰는가) · writes_on(어느 인자에서 쓰나, 없으면 늘) · modes · collector
 export function commandBlock(P, mode, role, cmd, args) {
   const c = P.commands[cmd];
@@ -110,6 +114,7 @@ export function decidePre(P, st, input, root) {
     const w = st.work();
     if (!st.finish || !st.finish.pass) return B('RULE-0516', `끝내기 전 시험이 통과하지 않았다: node rebuild/gate.mjs finish ${st.mode} — 통과해야 커밋·push`);
     if (st.finish.work !== w) return B('RULE-0516', `끝내기 전 시험 뒤에 파일이 바뀌었다 (시험 ${st.finish.work.slice(0, 8)} ≠ 지금 ${w.slice(0, 8)}): node rebuild/gate.mjs finish ${st.mode} 를 다시`);
+    if (isPush && st.finish.scope === 'affected') return B('RULE-0516', `push 는 전체 시험 뒤에만 — 지난 끝내기 전 시험은 바뀐 것에 닿는 시험만 돌렸다: node rebuild/gate.mjs finish ${st.mode} --full`);
   }
   return null;
 }
@@ -199,7 +204,7 @@ function hook(event, input, root) {
   if (event === 'session-start') {
     const tr = existsSync(join(root, 'workspace/transitions.jsonl')) ? readFileSync(join(root, 'workspace/transitions.jsonl'), 'utf8').split('\n').filter(Boolean).slice(-3).map((l) => JSON.parse(l)) : [];
     process.stdout.write([`문지기 (재건 7 단계): 이 세션은 모드 하나로 시작한다 — node rebuild/gate.mjs open <${MODES.join('|')}>.`, st.mode ? `이미 열린 모드: ${st.mode}` : '아직 연 모드 없음 — 열기 전에는 저장소 파일을 쓰지 않는다.',
-      st.role ? `역할: ${st.role} (${P.roles[st.role].mode} 모드만)` : '', '끝내기 전: node rebuild/gate.mjs finish <모드> — 통과해야 git commit · push.',
+      st.role ? `역할: ${st.role} (${P.roles[st.role].mode} 모드만)` : '', '끝내기 전: node rebuild/gate.mjs finish <모드> — 통과해야 git commit (바뀐 것에 닿는 시험만). push 는 finish <모드> --full (전체) 뒤에.',
       tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : ''].filter(Boolean).join('\n') + '\n');
     return 0;
   }
@@ -220,7 +225,7 @@ function hook(event, input, root) {
     if (o && ok && !st.mode && MODES.includes(o[1])) add({ t: 'open', mode: o[1], role: st.role, branch: branchOf(root), head: headOf(root) });
     add({ t: 'tool', tool: input.tool_name, target: target(input), changed });
     st = state(root, input.session_id, P);
-    if (input.tool_name === 'Bash' && RE.finish.test(codeOf(cmd))) { const F = readJson(finishFile(root)); if (F && F.at_ms >= (S.pre_at || 0) && F.mode === st.mode) add({ t: 'finish', mode: F.mode, role: F.role, work: F.work, pass: F.pass, results: F.results }); }
+    if (input.tool_name === 'Bash' && RE.finish.test(codeOf(cmd))) { const F = readJson(finishFile(root)); if (F && F.at_ms >= (S.pre_at || 0) && F.mode === st.mode) add({ t: 'finish', mode: F.mode, role: F.role, scope: F.scope, work: F.work, pass: F.pass, results: F.results }); }
     S.snap = snap;
     const bad = violations(P, st.mode, st.role, changed);
     let code = 0;
@@ -254,25 +259,25 @@ function hook(event, input, root) {
 const target = (input) => { const x = input.tool_input || {}; return x.file_path || x.notebook_path || (x.command ? String(x.command).slice(0, 400) : null); };
 
 // ── 명령 ─────────────────────────────────────────────────────────────────
-function finish(mode, root) {
+function finish(mode, root, full) {
   const P = loadPolicy(), role = process.env.BIODB_ROLE && P.roles[process.env.BIODB_ROLE] ? process.env.BIODB_ROLE : null;
   if (!MODES.includes(mode)) { console.error(`모드 '${mode || ''}' — ${MODES.join(' | ')}`); return 2; }
-  const { first, cmds } = finishCmds(P, mode, role), results = [];
+  const { first, cmds } = finishCmds(P, mode, role), results = [], scope = finishScope(cmds, full), env = { ...process.env, BIODB_TEST_SCOPE: scope };
   for (const c of first) spawnSync(c, { cwd: root, shell: true, stdio: 'ignore' });
   for (const c of cmds) {
-    const t0 = Date.now(), r = spawnSync(c, { cwd: root, shell: true, encoding: 'utf8', maxBuffer: 1 << 28 });
+    const t0 = Date.now(), r = spawnSync(c, { cwd: root, env, shell: true, encoding: 'utf8', maxBuffer: 1 << 28 });
     results.push({ cmd: c, code: r.status ?? 1, ms: Date.now() - t0 });
     console.log(`${r.status === 0 ? 'ok  ' : 'FAIL'} ${c} (${Math.round((Date.now() - t0) / 1000)}s)`);
     if (r.status !== 0) process.stdout.write(String(r.stdout || '').split('\n').slice(-25).join('\n') + String(r.stderr || '').split('\n').slice(-10).join('\n') + '\n');
   }
   const pass = results.every((r) => r.code === 0), work = workHash(root);
-  CLERK.writeDraft(finishFile(root), { mode, role, at_ms: Date.now(), work, pass, results });
-  console.log(`${pass ? '통과' : '실패'} — 작업 지문 ${work.slice(0, 8)} (${mode}${role ? ' · ' + role : ''}). ${pass ? '이 상태 그대로면 커밋·push 가 열린다' : '고친 뒤 다시'}`);
+  CLERK.writeDraft(finishFile(root), { mode, role, scope, at_ms: Date.now(), work, pass, results });
+  console.log(`${pass ? '통과' : '실패'} — 작업 지문 ${work.slice(0, 8)} (${mode}${role ? ' · ' + role : ''} · ${scope === 'full' ? '전체' : '바뀐 것에 닿는 시험만'}). ${pass ? (scope === 'full' ? '이 상태 그대로면 커밋·push 가 열린다' : '이 상태 그대로면 커밋이 열린다 — push 는 finish ' + mode + ' --full 뒤에') : '고친 뒤 다시'}`);
   return pass ? 0 : 1;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const [cmd, arg] = process.argv.slice(2);
+  const [cmd, arg, ...rest] = process.argv.slice(2);
   const root = (() => { try { return git(process.env.CLAUDE_PROJECT_DIR || process.cwd(), 'rev-parse', '--show-toplevel').trim(); } catch { return process.env.CLAUDE_PROJECT_DIR || process.cwd(); } })();
   if (cmd === 'hook') {
     let input = {}; try { input = JSON.parse(readFileSync(0, 'utf8') || '{}'); } catch { /* 빈 입력 */ }
@@ -281,13 +286,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   } else if (cmd === 'open') {
     if (!MODES.includes(arg)) { console.error(`모드 '${arg || ''}' — ${MODES.join(' | ')}`); process.exit(2); }
     const P = loadPolicy(), M = P.modes[arg];
-    console.log(`${arg} 모드 — 모드 문서: docs/modes/${arg}.md (스킬 /${arg})\n쓸 수 있는 곳: ${[...P.common.write, ...M.write].join(' · ')}${M.except ? ' (빼고: ' + M.except.join(' · ') + ')' : ''}\n끝내기 전: node rebuild/gate.mjs finish ${arg} → ${[...M.finish, ...P.common.finish].join(' · ')}\n(문지기 훅이 이 명령을 영수증에 '열림' 으로 남긴다 — 훅이 꺼져 있으면 아무것도 막히지 않는다)`);
-  } else if (cmd === 'finish') process.exit(finish(arg, root));
+    console.log(`${arg} 모드 — 모드 문서: docs/modes/${arg}.md (스킬 /${arg})\n쓸 수 있는 곳: ${[...P.common.write, ...M.write].join(' · ')}${M.except ? ' (빼고: ' + M.except.join(' · ') + ')' : ''}\n끝내기 전: node rebuild/gate.mjs finish ${arg} → ${[...M.finish, ...P.common.finish].join(' · ')}${M.finish.some((c) => AFFECTED_RE.test(c)) ? ` (커밋은 바뀐 것에 닿는 시험만 · push 는 finish ${arg} --full 뒤에)` : ''}\n(문지기 훅이 이 명령을 영수증에 '열림' 으로 남긴다 — 훅이 꺼져 있으면 아무것도 막히지 않는다)`);
+  } else if (cmd === 'finish') process.exit(finish(arg, root, rest.includes('--full')));
   else if (cmd === 'receipt') {
     const ls = (b) => { const d = join(b, RECEIPTS); return existsSync(d) ? readdirSync(d).filter((f) => f.endsWith('.jsonl')).map((f) => f.slice(0, -6)) : []; };
     const names = [...new Set([...ls(root), ...ls(liveRoot(root))])].sort(), name = arg || names[names.length - 1];
     if (!name) { console.log('영수증 없음'); process.exit(0); }
     const live = existsSync(join(liveRoot(root), RECEIPTS, name + '.jsonl')), evs = readReceipt(live ? liveRoot(root) : root, name), open = evs.find((e) => e.t === 'open');
     process.stdout.write(renderReceipt(evs, gitChangedSince(root, open && open.head)));
-  } else { console.error('사용: node rebuild/gate.mjs open <모드> · finish <모드> · receipt [이름] · hook <session-start|pre|post|stop>'); process.exit(2); }
+  } else { console.error('사용: node rebuild/gate.mjs open <모드> · finish <모드> [--full] · receipt [이름] · hook <session-start|pre|post|stop>'); process.exit(2); }
 }

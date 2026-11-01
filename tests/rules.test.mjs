@@ -54,7 +54,10 @@ const stepOf = (db, ruleRef) => Object.values(db.steps).find((s) => s.rule === r
 test('현재 저장소는 오류·경고 없음', () => {
   // verified 외부 ID 는 증명 등록부와 대조해야 한다 (등록부를 주지 않으면 사법부가 경고로 남긴다 — governance ④)
   const r = ORCH.validateWithRegistry(BASE, ROOT);
-  assert.deepEqual([r.errors, r.warnings], [[], []]);
+  // 예외 하나: 원문 숫자(reported) 없는 옛 정량 관찰 (RULE-0525 — 새 관찰은 관문이 거부하므로 늘 수 없다). 원문에서 채울수록 줄이기만 — 톱니
+  const noReported = r.warnings.filter((w) => w.rule === 'RULE-0525' && /원문 숫자\(reported\)가 없음/.test(w.msg));
+  assert.ok(noReported.length <= 22, `원문 숫자 없는 옛 관찰이 늘었음 (${noReported.length} > 22)`);
+  assert.deepEqual([r.errors, r.warnings.filter((w) => !noReported.includes(w))], [[], []]);
   assert.ok(r.attestations.keys.length > 0 && !r.attestations.failed.length, '증명 도장이 모두 유효');
 });
 test('예시 패치는 관문을 통과', () => {
@@ -280,7 +283,7 @@ test('묶음 객체 { ref, features, location } 은 정렬된 키로 매핑, 단
   assert.ok(ix.prev(sid).some((p) => p.id === 'S000009'), '인산화 단계 뒤에 이어져야 함');
 });
 test('묶음 키는 정렬된 표준 형식이어야 함, 부위에 특징은 하나', () => {
-  assert.equal(DefDB.bundleKey(DefDB.parseBundle('D000001|b:x|a:y|cytosol')), 'D000001|a:y|b:x|cytosol');
+  assert.equal(DefDB.bundleKey(DefDB.parseBundle('D900001|b:x|a:y|cytosol')), 'D900001|a:y|b:x|cytosol');
   failsWith((d) => { d.steps.S000006.outputs[0].b = `${id('PKA 조절 소단위')}|cnb_b:bound|cnb_a:bound|cytosol`; }, /정렬된 표준 형식이 아님/);
   failsWith((d) => { d.steps.S000006.outputs[0].b = `${id('PKA 조절 소단위')}|cnb_a:bound|cnb_a:bound|cytosol`; }, /특징이 둘/);
 });
@@ -668,13 +671,14 @@ test('Identity_Gap: unmapped 외부 ID 는 한계로 등록되어야 하고, 확
 // ===== 소진 시험 (Survival-to-Exhaustion): 시트르산 회로 =====
 const TCA = '시트르산 회로', ACCOA = id('아세틸-CoA'), NADP = id('NAD⁺'), NADH = id('NADH'), CO2 = id('이산화탄소'), IDH = id('아이소시트르산 탈수소효소');
 const mx = (d) => `${d}|mito_matrix`;
-// 측정 상수가 들어온 뒤(관찰 기록 O000001–O000006) 아이소시트르산 탈수소효소·푸마레이스 단계는 속도를 가진다.
+// 측정 상수가 들어온 뒤 회로의 몇 단계는 속도를 가진다.
 // 소진 시험은 '유한 저장소의 장부'(바퀴 수·CO₂·고갈 시각)를 보는 것이고 그 수는 화학량이 정하므로, 여기서는
-// 그 두 상수를 뺀 '모든 단계 즉시' 기준에서 센다 — 측정 상수로 도는 흐름은 소진 시험 3(가역 IDH)과
+// 회로 단계의 상수를 모두 뺀 '모든 단계 즉시' 기준에서 센다 — 측정 상수로 도는 흐름은 소진 시험 3(가역 IDH)과
 // examples/scenarios/tca-measured-kinetics-hypothetical.json(교과서 7.5′)에서 따로 확인한다.
 const INSTANT = (() => {
   const d = JSON.parse(JSON.stringify(BASE));
-  for (const [sid, key] of [[IDH, 'oxdecarb'], [id('푸마레이스'), 'hydrate'], ['D000149', 'condense'], ['D000150', 'isomerize']]) for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다 (CS·아코니테이스 는 실측 kcat·Km 이 있다 — 즉시 순환 픽스처에서는 벗긴다)
+  const tcaRules = new Set(Object.values(d.steps).filter((st) => (st.part_of || []).includes(id(TCA))).map((st) => st.rule)); // 회로 단계의 규칙 모두 — 측정 상수가 늘어도 기준은 그대로 (10e)
+  for (const ref of tcaRules) { const [sid, , key] = ref.split('/'); for (const r of d.senses[sid].rule) if (r.id === key) { delete r.kinetics; delete r.kinetic_law; } } // v12: 법칙 모양을 빼면 속도 상수 보기도 없다 (CS·아코니테이스 는 실측 kcat·Km 이 있다 — 즉시 순환 픽스처에서는 벗긴다)
   return DefDB.normalize(d);
 })();
 test('시트르산 회로: 탄소·CoA·NAD 부분 구조 수지 — 탈카복실화에서 CO₂ 를 빼면 거부', () => {
@@ -1003,7 +1007,7 @@ test('신뢰 지표: 데이터가 스스로 등급을 올릴 수 없다 (도장 
 });
 test('신뢰 지표 ②: 관문은 쓰인 상수의 등급을 보고 미달을 거부한다 (가상 값은 hypothetical 선언 아래에서만)', () => {
   // IR 하나를 손으로 지어 판정만 본다 — 사법부는 엔진을 부르지 않고 IR 의 k.evidence·k.src 만 읽는다
-  const ir = (k) => ({ rules: [{ ref: 'D000001/rule/x', kind: 'transition', k }] });
+  const ir = (k) => ({ rules: [{ ref: 'D900001/rule/x', kind: 'transition', k }] });
   const DOI = { level: 'curated', sources: [{ db: 'DOI', id: '10.1/x' }] };
   const ok = REL.constantVerdict(ir({ src: 'data', k: 1, evidence: DOI }), {});
   assert.ok(ok.ok && ok.rows[0].grade === 'parameter', REL.constantText(ok));
@@ -1209,4 +1213,11 @@ test('과정 보고서: 규칙 밖 개입은 FAIL — 저장소를 몰래 바꾸
   assert.equal(PRP.processReport(r, { scenario: sc, rerunHash: 'x'.repeat(64) }).pass, false);
   const kin = JSON.parse(JSON.stringify(sc)); kin.kinetics['D000170/rule/aerobic_glycolysis'].k *= 2; // 실행 뒤 입력을 바꾸면 출처 확인이 잡는다
   assert.equal(PRP.processReport(r, { scenario: kin, rerunHash: r.process.hash }).checks.find((c) => /출처/.test(c.name)).ok, false);
+});
+
+test('이름 하나 = 개념 하나 (RULE-0310 · 0323): 띄어쓰기만 다른 이름이 두 개념을 가리키면 검사가 거부', () => {
+  const d = JSON.parse(JSON.stringify(BASE)), [a, b] = Object.keys(d.terms).filter((t) => d.terms[t].names && d.terms[t].names.ko);
+  d.terms[b].names.ko = d.terms[a].names.ko.split('').join(' '); // 정규화하면 같은 이름
+  const e = J.validate(DefDB.normalize(d)).errors.filter((x) => x.rule === 'RULE-0323');
+  assert.ok(e.length && /이름 충돌/.test(e[0].msg), JSON.stringify(e));
 });

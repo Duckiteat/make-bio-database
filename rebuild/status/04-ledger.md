@@ -147,7 +147,7 @@
 | `DESIGN-v4.md` | 152 | 없음 |
 | `FEATURES.md` | 122 | 없음 |
 | `README.md` | 153 | 없음 |
-| `SCHEMA.md` | 427 | 없음 |
+| `SCHEMA.md` (`b3b7c37` 판) | 427 | 없음 |
 | `docs/PROMPTS.md` | 151 | 없음 |
 | `docs/RUNBOOK.md` | 178 | 없음 |
 | `docs/design/abstraction-boundary.md` | 31 | 없음 |

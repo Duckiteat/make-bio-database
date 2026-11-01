@@ -71,15 +71,15 @@ test('효과 없음 주장 · 0 층 판정 대상이 아닌 것', () => {
 
 test('양방향 색인: 교란 대상 · 읽을 거리(묶음과 정의항) · 맥락 열쇠 — 철회된 것은 빠짐', () => {
   const db = { ...DB, observations: {
-    O000001: claim('knockout', 'E', 'B|c', 'decrease', { condition: { species: '9606', cell: 'dendritic_cell' } }),
-    O000002: claim('block', 'A/rule/r1', 'B|c', 'decrease'),
-    O000003: Object.assign(claim('knockout', 'X', 'B|c', 'decrease'), { retracted: { note: '시험' } }),
+    O900001: claim('knockout', 'E', 'B|c', 'decrease', { condition: { species: '9606', cell: 'dendritic_cell' } }),
+    O900002: claim('block', 'A/rule/r1', 'B|c', 'decrease'),
+    O900003: Object.assign(claim('knockout', 'X', 'B|c', 'decrease'), { retracted: { note: '시험' } }),
   } };
   const v = Q.qualGraphVerdict(db), ix = v.index;
-  assert.deepEqual(ix.byPerturbation.E, ['O000001']);
-  assert.deepEqual(ix.byPerturbation.A, ['O000002'], '규칙 교란은 소유 정의항으로도 찾음');
-  assert.deepEqual(ix.byReadout['B|c'], ['O000001', 'O000002']);
-  assert.deepEqual(ix.byReadout.B, ['O000001', 'O000002']);
+  assert.deepEqual(ix.byPerturbation.E, ['O900001']);
+  assert.deepEqual(ix.byPerturbation.A, ['O900002'], '규칙 교란은 소유 정의항으로도 찾음');
+  assert.deepEqual(ix.byReadout['B|c'], ['O900001', 'O900002']);
+  assert.deepEqual(ix.byReadout.B, ['O900001', 'O900002']);
   assert.equal(Object.keys(ix.byContext).length, 2, '맥락이 다르면 다른 열쇠');
   assert.deepEqual(v.counts, { supported: 2 });
   assert.match(Q.qualGraphText(v), /구조 지지/);

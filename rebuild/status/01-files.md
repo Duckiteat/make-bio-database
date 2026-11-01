@@ -7,28 +7,28 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 25 | 5718.7 |
-| docs | 62 | 1341.2 |
-| (최상위) | 18 | 897.9 |
-| judicial | 29 | 543.9 |
-| tests | 76 | 518.2 |
+| rebuild | 28 | 6066.8 |
+| docs | 264 | 1681.7 |
+| (최상위) | 18 | 934.9 |
+| tests | 84 | 592.3 |
+| judicial | 30 | 567.0 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 17 | 200.3 |
-| workspace | 21 | 74.6 |
-| legislative | 3 | 72.7 |
+| workspace | 22 | 80.5 |
+| legislative | 3 | 75.4 |
 | migrations | 13 | 59.8 |
 | compiler | 7 | 49.0 |
-| schemas | 2 | 36.2 |
+| schemas | 2 | 37.8 |
+| .claude | 6 | 36.4 |
 | mcp | 4 | 34.7 |
-| .claude | 6 | 33.4 |
 | .github | 1 | 2.1 |
 
 ## 큰 파일 25
 
 | 파일 | KB |
 |---|---|
-| `rebuild/ledger/units.jsonl` | 4671.8 |
+| `rebuild/ledger/units.jsonl` | 4681.8 |
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 676.4 |
@@ -38,18 +38,18 @@
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
+| `CHANGES.md` | 293.5 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
-| `CHANGES.md` | 272.4 |
+| `rebuild/state/plan-log.jsonl` | 276.3 |
+| `rebuild/rules/changes.jsonl` | 257.8 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `docs/design/build-plan.md` | 211.4 |
-| `rebuild/state/plan-log.jsonl` | 208.6 |
+| `rebuild/state/plans.jsonl` | 233.4 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
-| `rebuild/state/plans.jsonl` | 185.0 |
+| `judicial/judicial.js` | 184.9 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
-| `judicial/judicial.js` | 172.9 |
 | `data/fetched/consensus/uniprot/Q04206.json` | 167.2 |
 | `data/fetched/uniprot/Q04206.json` | 167.2 |

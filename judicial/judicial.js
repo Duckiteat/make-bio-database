@@ -80,6 +80,7 @@
   function validate(db, opt) {
     const errors = [], warnings = [];
     const E = (rule, where, msg) => errors.push({ where, msg, rule }), W = (rule, where, msg) => warnings.push({ where, msg, rule }); // rule: 집행하는 규칙 번호 (rebuild 규칙 장부)
+    for (const x of checkUnitSystem()) E('RULE-0526', x.where, x.msg); // 단위 체계 자체 (ASY-08)
     if (db._version) E('RULE-0206', '데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
     for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations], ['V', db.values || {}]]) {
@@ -114,7 +115,7 @@
     for (const n of parentsOf.keys()) dfs(n, []);
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
-    for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W);
+    for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W, opt);
     validateMoved(db, E);
     validateValues(db, E);
     checkAttestations(db, opt, E, W);
@@ -147,6 +148,77 @@
     const lowBad = B.exclusiveMin ? !(si > B.min) : !(si >= B.min);
     if (lowBad) E('RULE-0129', w, `${what}: 값 ${si} 이(가) 물리적 하한 ${B.min} ${B.exclusiveMin ? '초과' : '이상'} 이 아님 — ${B.why}`);
     if (si > B.max) E('RULE-0129', w, `${what}: 값 ${si} 이(가) 물리적 상한 ${B.max} 를 넘음 — ${B.why} (단위를 잘못 적었는지 확인)`);
+  }
+  // ===== 차원 (ASY-08 · RULE-0526) — 단위 문자열 → 기본 차원 지수(정확한 유리수). 단위 체계가 스스로 맞는지 검사한다 =====
+  //   'M^-1 s^-1' · 'J/mol' · 'm^2/s' · 'M^0.5 s^-1' · '1'. 기호는 vocab.unitSymbols 에 있는 것만 — 모르는 기호는 null
+  function parseDim(u) {
+    if (typeof u !== 'string' || !u.trim()) return null;
+    const out = {}, add = (dim, q) => { for (const [ax, e] of Object.entries(dim)) { const k = M.exactQ(e); if (!k) return false; const v = M.qMul(k, q), o = out[ax] || [0n, 1n]; const n = o[0] * v[1] + v[0] * o[1], d = o[1] * v[1]; out[ax] = n === 0n ? [0n, 1n] : M.qDiv([n, d], [1n, 1n]); } return true; };
+    const [num, ...den] = u.trim().split('/');
+    for (const [part, sign] of [[num, 1n], ...den.map((x) => [x, -1n])]) for (const tok of part.trim().split(/[\s·*]+/).filter(Boolean)) {
+      if (tok === '1') continue;
+      const m = /^([A-Za-zΘ#]+)(?:\^(-?[0-9.]+))?$/.exec(tok); if (!m) return null;
+      const sym = V.unitSymbols[m[1]]; if (!sym) return null;
+      const e = M.exactQ(m[2] || '1'); if (!e) return null;
+      if (!add(sym, [sign * e[0], e[1]])) return null;
+    }
+    for (const k of Object.keys(out)) if (out[k][0] === 0n) delete out[k];
+    return out;
+  }
+  const dimKey = (d) => d && Object.keys(d).sort().map((k) => `${k}^${d[k][0]}/${d[k][1]}`).join(' ');
+  const dimMul = (...ps) => { const out = {}; for (const [d, e] of ps) for (const [ax, q] of Object.entries(d)) { const v = M.qMul(q, M.exactQ(String(e))), o = out[ax] || [0n, 1n]; const n = o[0] * v[1] + v[0] * o[1]; out[ax] = n === 0n ? [0n, 1n] : M.qDiv([n, o[1] * v[1]], [1n, 1n]); } for (const k of Object.keys(out)) if (out[k][0] === 0n) delete out[k]; return out; };
+  // 속도 법칙의 차원 식: Π 칸^지수 × 농도^c = 속도(M s^-1) — 엔진의 식(model.js)과 같은 꼴. order 는 질량 작용 차수(분수도 됨)
+  const LAW_DIMS = {
+    mass_action: (o) => [[['k', 1]], o], zero_order: () => [[['k', 1]], 0],
+    binding: () => [[['k_on', 1]], 2], binding_off: () => [[['k_off', 1]], 1], binding_kd: () => [[['Kd', 1]], -1, 'one'],
+    michaelis_menten: () => [[['kcat', 1]], 1], michaelis_menten_km: () => [[['Km', 1]], -1, 'one'],
+    hill: () => [[['K', 1]], -1, 'one'], hill_n: () => [[['n', 1], ['fmax', 1], ['fmin', 1]], 0, 'one'],
+    first_order_half_life: () => [[['half_life', -1]], 1],
+  };
+  // 단위 체계 자체 검사 — 어휘의 기호 · 환산표의 정준 · 측정량 · 속도 칸 · 속도 법칙 · SI 상수 · 열역학이 서로 맞는지. 오류 목록
+  function checkUnitSystem() {
+    const errs = [], E = (rule, where, msg) => errs.push({ rule, where, msg });
+    for (const [s, d] of Object.entries(V.unitSymbols)) for (const [ax, e] of Object.entries(d)) if (!M.exactQ(e)) E('RULE-0526', `unitSymbols.${s}`, `${ax} 지수 '${e}' 가 유리수가 아님`);
+    // 유도 기호의 정의 — 기본 기호로 다시 쓴 것과 같아야 한다 (기호 하나만 틀리게 고치면 서로 맞아 보여도 여기서 걸림)
+    for (const [sym, base] of [['M', 'mol m^-3'], ['L', 'm^3'], ['J', 'kg m^2 s^-2'], ['C', 'A s']]) if (V.unitSymbols[sym] && dimKey(parseDim(sym)) !== dimKey(parseDim(base))) E('RULE-0526', `unitSymbols.${sym}`, `'${sym}' 의 차원이 정의 '${base}' 와 다름`);
+    const kindDim = {};
+    for (const [kind, t] of Object.entries(V.unitExact)) {
+      const canon = Object.keys(t).filter((u) => t[u] === '1'), dims = canon.map((u) => [u, parseDim(u)]).filter(([, d]) => d);
+      if (!dims.length) { E('RULE-0526', `unitExact.${kind}`, `정준 단위(배율 '1') 중 기호로 읽히는 것이 없음 — ${canon.join(' · ')}`); continue; }
+      kindDim[kind] = dims[0][1];
+      for (const [u, d] of dims) if (dimKey(d) !== dimKey(kindDim[kind])) E('RULE-0526', `unitExact.${kind}`, `정준 단위 '${u}' 의 차원이 '${dims[0][0]}' 과 다름`);
+    }
+    for (const [k, ov] of Object.entries(V.observables)) {
+      if (ov.unit === 'param') continue;
+      const d = parseDim(ov.unit); if (!d) { E('RULE-0526', `observables.${k}`, `정준 단위 '${ov.unit}' 를 차원으로 읽지 못함`); continue; }
+      if (ov.dim && kindDim[ov.dim] && dimKey(d) !== dimKey(kindDim[ov.dim])) E('RULE-0526', `observables.${k}`, `단위 '${ov.unit}' 의 차원이 환산표 종류 '${ov.dim}' 와 다름`);
+    }
+    const P = {}; for (const [p, u] of Object.entries(V.kineticUnits)) { P[p] = parseDim(u); if (!P[p]) E('RULE-0526', `kineticUnits.${p}`, `단위 '${u}' 를 차원으로 읽지 못함`); }
+    const C = parseDim('M'), RATE = parseDim('M s^-1'), ONE = {};
+    for (const order of ['0', '1', '2', '0.5', '1.5']) P[`k@${order}`] = parseDim(`M^${1 - Number(order)} s^-1`); // obsUnit 의 k 단위와 같은 꼴 — 차수 o 면 M^(1−o) s^-1
+    const law = (name, terms, cexp, target, order) => {
+      const parts = terms.map(([p, e]) => [P[order != null && p === 'k' ? `k@${order}` : p], e]);
+      if (parts.some(([d]) => !d)) return;
+      const got = dimMul(...parts, [C, cexp]), want = target === 'one' ? ONE : RATE;
+      if (dimKey(got) !== dimKey(want)) E('RULE-0526', `kineticLaws.${name}`, `차원 식이 맞지 않음 — ${terms.map(([p, e]) => `${p}^${e}`).join(' · ')} · [c]^${cexp} = ${dimKey(got) || '1'} ≠ ${dimKey(want) || '1'}`);
+    };
+    for (const order of ['0', '1', '2', '0.5', '1.5']) { const [t, c] = LAW_DIMS.mass_action(order); law(`mass_action(차수 ${order})`, t, c, 'rate', order); }
+    for (const [name, f] of Object.entries(LAW_DIMS)) if (name !== 'mass_action') { const [t, c, tg] = f(); for (const [p, e] of t) law(`${name} ${p}`, [[p, e]], c, tg || 'rate'); }
+    // 열역학: ΔG / (R · T) 는 무차원 — R 의 단위 · 에너지 단위 · 온도
+    const R = V.siDerived.R, dR = parseDim(R.unit), dG = P.dG0;
+    if (dR && dG && dimKey(dimMul([dG, 1], [dR, -1], [parseDim('K'), -1])) !== '') E('RULE-0526', 'thermo', `ΔG°′ / (R · T) 가 무차원이 아님 — ${V.kineticUnits.dG0} · ${R.unit} · K`);
+    // SI 상수: 정의값은 십진 문자열, 파생값은 정의값들의 정확한 곱 · 단위 차원도 곱
+    for (const [k, c] of Object.entries(V.siConstants)) { if (!M.exactQ(c.value)) E('RULE-0526', `siConstants.${k}`, `값 '${c.value}' 가 정확한 십진 문자열이 아님`); if (!parseDim(c.unit)) E('RULE-0526', `siConstants.${k}`, `단위 '${c.unit}' 를 차원으로 읽지 못함`); }
+    for (const [k, c] of Object.entries(V.siDerived)) {
+      const parts = c.of.map((x) => V.siConstants[x]);
+      if (parts.some((x) => !x)) { E('RULE-0526', `siDerived.${k}`, `정의 상수 ${c.of.join(' · ')} 중 없는 것`); continue; }
+      const q = parts.map((x) => M.exactQ(x.value)).reduce((a, b) => M.qMul(a, b)), v = M.exactQ(c.value);
+      if (!v || v[0] !== q[0] || v[1] !== q[1]) E('RULE-0526', `siDerived.${k}`, `값 '${c.value}' 가 ${c.of.join(' · ')} 의 정확한 곱(${q[0]}/${q[1]})과 다름 — 자리수를 자르지 않는다`);
+      const want = dimMul(...parts.map((x) => [parseDim(x.unit) || {}, 1])), got = parseDim(c.unit);
+      if (!got || dimKey(got) !== dimKey(want)) E('RULE-0526', `siDerived.${k}`, `단위 '${c.unit}' 의 차원이 ${c.of.join(' · ')} 단위의 곱과 다름`);
+    }
+    if (V.thermo.R !== M.qToF64(M.exactQ(V.siDerived.R.value))) E('RULE-0526', 'thermo.R', `엔진이 쓰는 R ${V.thermo.R} 이 정확값 ${V.siDerived.R.value} 의 한 번 반올림이 아님`);
+    return errs;
   }
   // 정의항 obs 의 값을 정준 단위로. 차원·단위를 모르면 null (그 자리에서 이미 단위 오류가 난다)
   function obsSI(P, b) {
@@ -290,8 +362,41 @@
     if (o.evidence.level !== 'curated') E('RULE-0115', w, `정성 관찰 근거는 curated(문헌) — 지금 ${o.evidence.level}`);
     if (o.use !== 'validation') E('RULE-0116', w, '정성 관찰의 용도는 validation — 상수 추정에 쓰지 않음');
   }
-  function validateObservation(db, ix, id, o, E, W) {
+  // 관찰의 측정법 (측정법 계획 ASY-00 · DEC-0045): 등록된 측정법만 · 그 측정법이 이 관찰 종류를 낸다 · 반복 종류(기술 · 생물)는 어휘 안.
+  //   opt.assays = 측정법 장부의 현재 측정법(Map key → 사건, judicial/assay_audit.js audit().current). 받지 못하면 확인하지 못했다고 경고 — 관문에서는 경고가 병합을 막는다
+  function checkAssayLink(o, w, opt, E, W) {
+    if (o.replicate_type != null && !['technical', 'biological'].includes(o.replicate_type)) E('RULE-0524', w, `반복 종류(replicate_type) '${o.replicate_type}' — technical(같은 시료 · 측정 잡음) | biological(다른 세포·개체 · 화학 잡음 + 측정 잡음) | 없음`);
+    if (o.assay == null) return;
+    const A = opt && opt.assays;
+    if (!A) { W('RULE-0524', w, `측정법 '${o.assay}' — 측정법 장부를 받지 않아 확인하지 못함 (dbtool · 조정자는 장부를 넘긴다)`); return; }
+    const a = typeof A.get === 'function' ? A.get(o.assay) : A[o.assay];
+    if (!a) { E('RULE-0524', w, `미등록 측정법 '${o.assay}' — 먼저 측정법 장부에 (dbtool assay add, 만든 방법과 함께)`); return; }
+    const kind = o.kind === 'qualitative' ? o.readout && o.readout.kind : o.observable && o.observable.kind;
+    if (kind && !(a.produces || []).includes(kind)) E('RULE-0524', w, `측정법 '${o.assay}' 는 '${kind}' 를 내지 않음 — 내는 값: ${(a.produces || []).join(' · ') || '없음 (값을 내지 않는 단)'}`);
+  }
+  // 원문 자리수 (측정법 계획 ASY-08 · 사용자 '자리수가 안 맞으면 가차없이'): 원문 숫자(reported — 십진 문자열 그대로)에서 정확한 유리수로
+  //   환산한 값 = 저장된 SI 값(f64 한 번 반올림)이어야 하고, 원문의 마지막 자리 = 해상도가 precision · 해상도 sd 와 같아야 한다. 어긋나면 오류
+  function checkReported(o, w, E, W) {
+    const r = o.reported;
+    if (!r) { W('RULE-0525', w, '원문 숫자(reported)가 없음 — 자리수를 대조할 수 없다 (새 관찰은 관문이 거부)'); return; }
+    const sameUnit = r.unit === o.unit, ru = sameUnit ? { q: [1n, 1n] } : M.unitQ(r.unit), ou = sameUnit ? { q: [1n, 1n] } : M.unitQ(o.unit);
+    const v = M.exactQ(r.value);
+    if (!v || typeof r.value !== 'string') { E('RULE-0525', w, `원문 숫자(reported.value) '${r.value}' — 원문 그대로의 십진 문자열이어야 함 (자리수를 지우지 않게)`); return; }
+    if (!ru || !ou || (!sameUnit && ru.kind !== ou.kind)) { E('RULE-0525', w, `원문 단위 '${r.unit}' → '${o.unit}' — 같은 종류의 환산표(vocab.unitExact)에 없음`); return; }
+    const f = M.qDiv(ru.q, ou.q), want = M.qToF64(M.qMul(v, f));
+    if (want !== o.value) E('RULE-0525', w, `값 ${o.value} 이 원문 '${r.value} ${r.unit}' 의 정확한 환산 ${want} 과 다름 — 원문 숫자를 그대로, 자리수를 늘리거나 줄이지 않는다`);
+    const res = M.qToF64(M.qMul(M.lastPlaceQ(r.value), f));
+    if (o.precision != null && o.precision !== res) E('RULE-0525', w, `precision ${o.precision} 이 원문 '${r.value}' 의 마지막 자리(해상도 ${res} ${o.unit})와 다름`);
+    if (o.uncertainty && o.uncertainty.basis === 'resolution' && o.uncertainty.sd !== res) E('RULE-0525', w, `해상도로 채운 sd ${o.uncertainty.sd} 가 원문 '${r.value}' 의 마지막 자리(${res} ${o.unit})와 다름`);
+    if (r.sd != null) {
+      const s = M.exactQ(r.sd);
+      if (!s || typeof r.sd !== 'string') E('RULE-0525', w, `원문 불확도(reported.sd) '${r.sd}' — 원문 그대로의 십진 문자열이어야 함`);
+      else if (o.uncertainty && o.uncertainty.model === 'normal' && o.uncertainty.basis !== 'resolution') { const ws = M.qToF64(M.qMul(s, f)); if (ws !== o.uncertainty.sd) E('RULE-0525', w, `sd ${o.uncertainty.sd} 이 원문 '± ${r.sd} ${r.unit}' 의 정확한 환산 ${ws} 과 다름`); }
+    }
+  }
+  function validateObservation(db, ix, id, o, E, W, opt) {
     const w = id;
+    checkAssayLink(o, w, opt, E, W);
     if (!isId('O', id)) E('RULE-0498', id, "관찰 번호는 'O' + 숫자 6자리");
     if (o.hypothetical) E('RULE-0112', w, '합성(hypothetical) 관찰은 데이터베이스에 넣지 않음 — examples/observations/ 에만 (실측값을 지어내지 않음)');
     if (o.evidence_at && !/^\d{4}(-\d{2}(-\d{2})?)?$/.test(o.evidence_at)) E('RULE-0447', w, `근거 시각(evidence_at) '${o.evidence_at}' — YYYY · YYYY-MM · YYYY-MM-DD`);
@@ -306,6 +411,7 @@
       if (o.retracted) { if (!o.retracted.note) E('RULE-0107', w, '철회(retracted)에 사유(note) 없음'); checkEvidence(o.retracted.evidence, w + ' 철회', E); }
       return;
     }
+    checkReported(o, w, E, W);
     const ob = o.observable, ov = V.observables[ob.kind];
     if (!ov) E('RULE-0402', w, `측정량 '${ob.kind}' — ${Object.keys(V.observables).join(' | ')}`);
     else if (ov.target === 'bundle') checkBundle(db, ix, ob.target, `${w} 측정 대상`, E);
@@ -1075,10 +1181,12 @@
   }
 
   function gate(dbBefore, result, opt) {
-    const vo = opt && opt.attestations ? { attestations: opt.attestations } : undefined;
+    const vo = opt && (opt.attestations || opt.assays) ? { attestations: opt.attestations, assays: opt.assays } : undefined;
     const b0 = normalize(dbBefore), before = validate(b0, vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
-    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result)];
+    // 새 정량 관찰은 원문 숫자가 있어야 한다 (RULE-0525 — 옛 관찰의 '없음' 은 경고로 남기지만 새로 들어오는 것은 거부)
+    const noReported = Object.entries(result.db.observations || {}).filter(([id, o]) => !(b0.observations || {})[id] && o.kind !== 'qualitative' && !o.reported).map(([id]) => ({ rule: 'RULE-0525', where: id, msg: '새 정량 관찰에 원문 숫자(reported { value: 원문 십진 문자열, unit: 원문 단위, sd? })가 없음 — 자리수를 대조할 수 없으면 들이지 않는다' }));
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result), ...noReported];
     const warnings = after.warnings.filter((i) => !old.has(key(i)));
     const r = result.report;
     const changed = r.added.length + r.updated.length + r.removed.length > 0;
@@ -1816,7 +1924,7 @@
     return out;
   }
 
-  return Object.freeze({ auditRate, checkAttestations,
+  return Object.freeze({ parseDim, dimKey, checkUnitSystem, auditRate, checkAttestations,
     needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, retractionImpact, retractionText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, reviewCandidates, coverageMap, coverageMapText, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,

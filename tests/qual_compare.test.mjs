@@ -51,9 +51,9 @@ test('① 유무 · 단조 · 순서 · 무효 · 결론 조건', () => {
   assert.equal(judge(Q('decrease'), { values: [100] }, { values: [90] }, { perturbationAudit: { ok: false, problems: ['꾸민 배율'] } }).outcome, 'invalid');
   assert.equal(judge(Q('decrease'), { values: [100] }, null).outcome, 'invalid', '대조 비교에 교란군이 없음');
   // 결론: 등록 규약 + 검증 세트의 관찰만
-  const pv = { declared: true, ok: true, problems: [], validation: ['O000009'] };
-  assert.equal(judge(Q('decrease'), { values: [100] }, { values: [90] }, { protocol: pv, observationId: 'O000009' }).conclusive, true);
-  assert.equal(judge(Q('decrease'), { values: [100] }, { values: [90] }, { protocol: pv, observationId: 'O000001' }).conclusive, false);
+  const pv = { declared: true, ok: true, problems: [], validation: ['O900009'] };
+  assert.equal(judge(Q('decrease'), { values: [100] }, { values: [90] }, { protocol: pv, observationId: 'O900009' }).conclusive, true);
+  assert.equal(judge(Q('decrease'), { values: [100] }, { values: [90] }, { protocol: pv, observationId: 'O900001' }).conclusive, false);
   assert.match(judge(Q('decrease'), { values: [100] }, { values: [90] }).requirement, /탐색 실행/);
 });
 

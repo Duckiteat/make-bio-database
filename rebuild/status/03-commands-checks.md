@@ -26,6 +26,7 @@
 | `origin` | **빠짐** |
 | `assume` | **빠짐** |
 | `dictionary` | **빠짐** |
+| `assay` | **빠짐** |
 | `register` | **빠짐** |
 | `qualgraph` | **빠짐** |
 | `retraction` | **빠짐** |
@@ -56,13 +57,15 @@
 |---|---|
 | `judicial/assumption_audit.js` | 22 |
 | `judicial/contract.js` | 9 |
-| `judicial/judicial.js` | 429 |
+| `judicial/judicial.js` | 455 |
 
 ## 시험
 
 | 파일 | 시험 |
 |---|---|
 | `tests/acceptance.test.mjs` | 9 |
+| `tests/affected.test.mjs` | 3 |
+| `tests/assays.test.mjs` | 4 |
 | `tests/assumptions.test.mjs` | 8 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
@@ -72,20 +75,22 @@
 | `tests/enforcement_gaps.test.mjs` | 26 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
-| `tests/governance.test.mjs` | 21 |
+| `tests/governance.test.mjs` | 23 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mhc.test.mjs` | 11 |
-| `tests/observations.test.mjs` | 7 |
+| `tests/observations.test.mjs` | 10 |
+| `tests/permissions.test.mjs` | 2 |
 | `tests/perturb.test.mjs` | 4 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |
 | `tests/qualitative.test.mjs` | 9 |
-| `tests/rebuild.test.mjs` | 21 |
+| `tests/real_records.test.mjs` | 2 |
+| `tests/rebuild.test.mjs` | 27 |
 | `tests/rejections.test.mjs` | 3 |
 | `tests/reliability_criteria.test.mjs` | 12 |
 | `tests/retraction_propagation.test.mjs` | 4 |
-| `tests/rules.test.mjs` | 124 |
+| `tests/rules.test.mjs` | 125 |
 | `tests/runbook.test.mjs` | 5 |
 | `tests/rust_engine.test.mjs` | 8 |
 | `tests/stats.test.mjs` | 7 |

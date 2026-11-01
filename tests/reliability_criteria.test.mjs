@@ -145,7 +145,7 @@ test('⑫ 관문 문턱은 올리기만: 기본보다 느슨하거나 비교할 
   assert.deepEqual(REL.ORDER.filter((g) => !REL.gateMinError(g)), ['anchor', 'parameter']);
   for (const g of ['bounded', 'legacy', 'reference', 'blocked']) assert.match(REL.gateMinError(g), /올리기만/);
   assert.match(REL.gateMinError('최고'), /모름/);
-  const ir = { rules: [{ ref: 'D000001/rule/x', kind: 'mass_action', k: { src: 'data', k: 1, evidence: { level: 'asserted' } } }] };
+  const ir = { rules: [{ ref: 'D900001/rule/x', kind: 'mass_action', k: { src: 'data', k: 1, evidence: { level: 'asserted' } } }] };
   assert.match(REL.constantVerdict(ir, { min_grade: 'reference' }).error, /올리기만/, '내린 문턱으로 근거 없는 상수를 통과시키지 못한다');
   assert.equal(REL.constantVerdict(ir, {}).ok, false);
 });

@@ -74,6 +74,14 @@
       "text": "충격·OOD 는 같은 단계 강등 + W 냉각",
       "enforce": "machine",
       "unit": "U0367"
+    },
+    {
+      "id": "RULE-0477",
+      "text": "`engine/hmse.js`·`engine/devs_scheduler.js` 의 실행 전 조건 검사(잘못된 입력에 대한 예외)는 판정이 아니라 함수의 정의역 검사다. 이 검사들은 감사 코드를 내지 않는다.",
+      "enforce": "text",
+      "unit": "U5586",
+      "retired_at": "2026-10-31",
+      "note": "8 단계에 코드를 지울 때 은퇴를 빠뜨림 — 재건 10h 에서 기계 규칙으로 올리려던 변이 시험이 파일 없음으로 드러냄"
     }
   ],
   "code": [

@@ -37,7 +37,7 @@ const DERIVED = { limitations: 'limitations.md', textbook: 'docs/textbook/90-부
 
 // 구역 표: allow = 저장소 안에서 허용되는 자리(접두사) · deny = 보호 목록(사용자가 위치를 정하는 보고서) · outsideOnly = 저장소 밖에만
 export const ZONES = {
-  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl', 'data/assumptions.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
+  registry:    { label: '입법 구역 (정의·병합 기록·델타 기록)', allow: ['data/db.json', 'data/patches/', 'data/log/', 'data/preregistrations.jsonl', 'data/dictionary.jsonl', 'data/assumptions.jsonl', 'data/assays.jsonl'], rule: '관문 봉인 통과 + 봉인의 db sha256 이 쓸 db 와 같을 때만' },
   attestation: { label: '증명 구역 (도장 등록부)', allow: [ATT.REGISTRY], rule: '도장마다 digest·증거 재확인(주장별 사법부 모듈)이 통과할 때만' },
   evidence:    { label: '증거 구역 (원본 수신함)', allow: ['data/fetched/', 'tests/fixtures/'], rule: '원본을 그대로 — 해석·실행하지 않는다' },
   derived:     { label: '파생 문서 구역', allow: [...Object.values(DERIVED), 'CHANGES.md'], rule: '내용은 다른 모듈이 계산하고 서기는 정해진 파일에만' },
@@ -46,7 +46,8 @@ export const ZONES = {
   handoff:     { label: '핸드오프 (수집 후보)', allow: ['workspace/handoff/'], rule: '후보만 — 추가만 한다, 사실이 아니다 (통합가가 1차 출처로 재확인한 것만 패치)' },
   transition:  { label: '전환 기록 (세션 사이 인계)', allow: ['workspace/transitions.jsonl'], rule: '사법부 전환 기록 검사(judicial/transition_audit.js)가 통과할 때만 — 추가만 한다' },
   receipt:     { label: '영수증 (세션 작업 기록)', allow: ['workspace/receipts/'], rule: '문지기(gate.mjs — 재건 7 단계)가 도구 호출마다 덧붙인다 — 사슬(prev)로 이어 붙이기만, 고치지 않는다 (재건 7 단계)' },
-  rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/state/', 'rebuild/PLAN.md', 'docs/design/build-plan.md', 'CLAUDE.md', 'docs/modes/', '.claude/skills/'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·계획 기록과 그 생성 문서만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
+  ledger:      { label: '규칙 장부 (규칙 · 검토 · 수식 · 집행 · 맥락 · 명령 · 상시 권한)', allow: ['rebuild/rules/'], rule: '장부 고치기 도구(rebuild/rules.mjs)가 변경 묶음을 검사한 뒤에만 — 바꿀 때마다 왜, 사건 기록(changes.jsonl)은 덧붙이기만, 사건마다 장부의 봉인 sha256' },
+  rebuild:     { label: '재건 관리 구역 (읽기 점검용)', allow: ['rebuild/status/', 'rebuild/state/', 'docs/plan/', 'CLAUDE.md', 'docs/modes/', '.claude/skills/'], rule: '생성기(rebuild/status.mjs · render.mjs · state.mjs)가 계산한 관리 파일·새 구조 초안·계획 기록과 그 생성 문서만 — 다른 코드는 읽지 않는다 (rebuild/PLAN.md §6·6 단계)' },
 };
 const GUARDED_FILES = ['core.js', 'model.js', 'vocab.js', 'dbtool.mjs', 'orchestrator.js', 'CHANGES.md', 'limitations.md', 'SCHEMA.md', 'CLAUDE.md'];
 // 구역 검사 — 통과한 절대 경로를 돌려준다. 저장소 밖은 구역 표가 다루지 않는다(위 머리말).
@@ -166,6 +167,25 @@ export function appendDictionary({ dataDir, proposals, seal }) {
   return out;
 }
 
+// 측정법 장부 (측정법 계획 ASY-00): data/assays.jsonl 은 추가만 하는 사슬. 사법부(judicial/assay_audit.js checkProposals)가 새 항목을
+//   통과시킨 봉인이 있을 때만 붙인다 — 고치기는 revises(현재 root) + why 를 단 새 사건이라 만든 방법과 바뀐 내력이 사슬에 남는다.
+const ASSAYS = 'assays.jsonl', ASSAYS_GENESIS = sha('assays\n');
+export function readAssays(dataDir) { const f = join(dataDir, ASSAYS); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : []; }
+export function appendAssays({ dataDir, proposals, seal }) {
+  if (!ATT.checkSeal(seal)) refuse('RULE-0507', '측정법 판정 봉인이 없거나 변조됨');
+  if (!seal.ok) refuse('RULE-0507', `측정법 판정이 거부 (위반 ${seal.errors})`);
+  if (sha(JSON.stringify(proposals, null, 2) + '\n') !== seal.db_sha256) refuse('RULE-0507', '봉인된 항목과 쓰려는 항목이 다름');
+  const events = readAssays(dataDir), f = join(dataDir, ASSAYS), at = new Date().toISOString(), out = [];
+  let prev = events.length ? events[events.length - 1].root : ASSAYS_GENESIS;
+  for (const p of proposals) {
+    const body = { seq: events.length + out.length + 1, at, ...p, prev };
+    const ev = { ...body, root: sha(body.prev + '\n' + ATT.canon(body)) };
+    out.push(ev); prev = ev.root;
+  }
+  put('registry', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + out.map((e) => JSON.stringify(e)).join('\n') + '\n');
+  return out;
+}
+
 // 가정 원장 (build-plan 49): data/assumptions.jsonl 은 추가만 하는 사슬. 사법부(judicial/assumption_audit.js checkProposals)가 새 기록을
 //   통과시킨 봉인이 있을 때만 붙인다. 번호 A… 는 서기가 차례로 붙인다 — 지우거나 고쳐 쓰지 않는다(고치기는 revises 단 새 번호).
 const ASSUME = 'assumptions.jsonl', ASSUME_GENESIS = sha('assumptions\n');
@@ -252,11 +272,17 @@ export function writeState(name, content, root) {
   if (name === 'plan-log.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0014', '계획의 걸어온 길(plan-log.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
   return put('rebuild', f, content);
 }
-// 계획 문서 둘 — 계획 기록에서 생성한 글만 (손으로 고치지 않는다)
-export function writePlanDoc(plan, content, root) {
-  const rel = { build: ['docs', 'design', 'build-plan.md'], rebuild: ['rebuild', 'PLAN.md'] }[plan];
-  if (!rel) refuse('RULE-0014', `계획 '${plan}' — build · rebuild 만`);
-  return put('rebuild', join(root || ROOT, ...rel), content);
+// 규칙 장부 (규칙 폴더의 .jsonl 여섯) — 장부 고치기 도구가 검사한 글만. 사건 기록(changes.jsonl)은 덧붙이기만: 새 글이 옛 글로 시작해야 한다
+export function writeLedger(name, content, root) {
+  if (!/^(rules|review|formulas|enforcement|links|commands|permissions|changes)\.jsonl$/.test(name)) refuse('RULE-0014', `규칙 장부 이름 '${name}' — rules · review · formulas · enforcement · links · commands · permissions · changes (.jsonl) 만`);
+  const f = join(root || ROOT, 'rebuild', 'rules', name);
+  if (name === 'changes.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0519', '규칙 장부의 사건 기록(changes.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
+  return put('ledger', f, content);
+}
+// 계획 생성 파일 (docs/plan/) — 계획 기록에서 생성한 글만 (손으로 고치지 않는다)
+export function writePlanFile(rel, content, root) {
+  if (!/^docs\/plan\/(?:(?:ORDER|build|rebuild|assay)\.md|items\/(?:PLAN|STG|ASY)-[0-9A-Za-z]+\.md|decisions\/DEC-\d{4}\.md)$/.test(rel)) refuse('RULE-0014', `계획 생성 파일 '${rel}' — docs/plan/ 의 ORDER · 계획 개요 · items/<작업> · decisions/<결정> 만`);
+  return put('rebuild', join(root || ROOT, ...rel.split('/')), content);
 }
 
 // 7 단계 영수증 — 세션 하나 = 파일 하나(workspace/receipts/<날짜>-<세션>.jsonl). 덧붙이기만: 사건마다 앞 줄의 sha256 을 prev 로 잇는다.

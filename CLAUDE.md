@@ -12,9 +12,9 @@
 
 - 세션은 모드 하나를 골라 연다: `node rebuild/gate.mjs open <모드>` — 그 모드 문서(또는 스킬)를 먼저 읽는다. 문지기 훅이 그 모드 밖 쓰기를 막고, 도구 호출마다 영수증(`workspace/receipts/`)을 남긴다.
 - 세션 안에서 모드를 바꾸지 않는다. 다른 모드가 필요하면 전환 기록 { from, to, at, why, target, files, open } 을 남기고 끝낸다.
-- 끝내기 전: `node rebuild/gate.mjs finish <모드>` — 그 모드의 시험 묶음이 지금 파일 상태로 통과해야 git commit·push 가 열린다.
+- 끝내기 전: `node rebuild/gate.mjs finish <모드>` — 그 모드의 시험 묶음이 지금 파일 상태로 통과해야 git commit 이 열린다(시험은 바뀐 것에 닿는 것만). push 는 `finish <모드> --full`(전체) 뒤에.
 - 검사 오류에는 규칙 번호(RULE-…)가 붙는다 — 그 규칙의 이유·맥락·수식은 읽기 모드로 찾는다: `node rebuild/read.mjs RULE-…` (L0 한 줄 · L1 연결 · L2 수식, 조회만).
-- 계획은 생성물이다 — 하나 읽기 `node rebuild/read.mjs PLAN-…|STG-…|DEC-…|DIR-…`, 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님).
+- 계획은 생성물이다 — 무엇을 언제 하나는 `docs/plan/ORDER.md`(순서 — 세 계획을 한 줄로), 하나 읽기 `node rebuild/read.mjs ORDER|PLAN-…|STG-…|ASY-…|DEC-…|DIR-… [--depth 0|1|2]`, 여러 작업을 모아 보기 `node rebuild/read.mjs --bundle <ORDER|계획|부|번호,번호> [--depth 0|1|2] [--out 보고서.md]`(0 한 줄 · 1 결정·방향 · 2 걸어온 길 전부 — 필요한 만큼만), 고치기 `node rebuild/plan.mjs apply <ops.json>`(바꿀 때마다 왜). 규칙 장부(`rebuild/rules/` 의 .jsonl)도 같은 방식으로만: `node rebuild/rules.mjs apply <ops.json>`. 실행 방법·절차는 `docs/RUNBOOK.md`(참고 문서, 입구 아님).
 
 ## 모드 — 하나를 골라 연다
 
@@ -26,7 +26,7 @@
 | `field` 적분장 | 다음 엔진(공간·확률 장)의 설계와 시제품을 만들 때 | 스킬 `/field` · `docs/modes/field.md` |
 | `inspect` 점검·검증 | 상태를 읽거나(L0·L1·L2), 모은 후보를 판정하거나, 승인 도장을 남길 때 | 스킬 `/inspect` · `docs/modes/inspect.md` |
 
-## 공통 규칙 — 사람·AI 가 지킨다 (22)
+## 공통 규칙 — 사람·AI 가 지킨다 (20)
 
 ### 권한·쓰기 (삼권 분립)
 
@@ -57,11 +57,9 @@
 ### 검증·판정
 
 - `RULE-0002` 명령은 저장소 최상위에서
-- `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md·계획 문서 둘)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 하나 읽기 node rebuild/read.mjs PLAN-…, 고치기 node rebuild/plan.mjs apply
+- `RULE-0003` 큰 파일(db.json·CHANGES.md·limitations.md)은 통째로 읽지 말고 조회 명령·grep. 계획은 생성물 — 순서는 docs/plan/ORDER.md, 하나 읽기 node rebuild/read.mjs PLAN-… (--depth 0 — 1 — 2), 고치기 node rebuild/plan.mjs apply
 - `RULE-0192` 사용자 보고는 네 칸 표, 산문 요약 금지
 - `RULE-0195` 논리를 깨면 감지·수정·기록까지 한 작업
-- `RULE-0199` 엔진·공유 기계를 바꿨으면 전체 시험
-- `RULE-0201` 새 규칙엔 거부 시험
 
 ### 기타
 
@@ -70,7 +68,14 @@
 
 ## 공통 규칙 — 컴퓨터가 막는다
 
-16 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 이유·맥락은 규칙 장부(`rebuild/rules/rules.jsonl` · 맥락 `links.jsonl`)에서 번호로 찾는다.
+19 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+
+- 권한·쓰기 (삼권 분립): RULE-0010 · RULE-0038 · RULE-0212
+- 한계: RULE-0092 · RULE-0093 · RULE-0094 · RULE-0109
+- 기전·시뮬레이션: RULE-0253
+- 검증·판정: RULE-0004 · RULE-0199 · RULE-0200 · RULE-0201
+- 코드에서 찾은 검사: RULE-0513 · RULE-0514 · RULE-0515 · RULE-0516 · RULE-0517 · RULE-0521
+- 기타: RULE-0056
 
 ## 모든 모드의 명령
 
@@ -81,3 +86,13 @@
 읽기만: `dbtool status` · `mcp summary`
 
 모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).
+
+## 상시 권한 (22)
+
+권한은 장부(`rebuild/rules/permissions.jsonl`)에 있는 것만 — `.claude/settings.json` · 문지기 모드(`rebuild/rules/modes.json`)가 장부와 다르면 시험이 거부한다(RULE-0521). 문지기·자기 검사 장치는 장부로도 열 수 없다. 줄 하나(무엇·누가·언제·왜·철회)는 `node rebuild/read.mjs PERM-…`.
+
+- settings allow 9 · settings ask 5 · 문지기 write 7 · 문지기 also 1
+- ⚠ `PERM-0002` settings allow — 경로 제한 없음 — 문지기 훅과 deny 에 기댐
+- ⚠ `PERM-0008` settings allow — find 는 -delete · -exec 로 지우거나 실행할 수 있음
+- ⚠ `PERM-0009` settings allow — cp 는 보호 자리를 덮어쓸 수 있음 (문지기는 도구 뒤 대조로 잡음)
+- ⚠ `PERM-0017` 문지기 write develop — 모든 자리 — except(data · attestations · handoff)와 문지기 protect 가 빼냄

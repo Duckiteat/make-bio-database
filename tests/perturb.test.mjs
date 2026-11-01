@@ -64,7 +64,7 @@ test('③ 교란 IR 해시 · 없는 대상 · 잘못된 선언', () => {
   const bad = (q, re) => assert.match(PT.perturb(DB, SRC, SC, q).error || '', re);
   bad({ type: 'knockout', target: 'D999999' }, /이 계에 없음/);
   bad({ type: 'knockout', target: 'TAP' }, /정의항 번호/);
-  bad({ type: 'block', target: 'D000001/rule/none' }, /이 계에 없음/);
+  bad({ type: 'block', target: 'D900001/rule/none' }, /이 계에 없음/);
   bad({ type: 'inhibit', target: RULE.ref, Ki_M: 0, dose_M: 1 }, /Ki_M > 0/);
   bad({ type: 'clamp', target: 'D999999|cytosol', conc_M: 1 }, /이 계에 없음/);
   bad({ type: 'dose_series', of: { type: 'block', target: RULE.ref }, doses: [1] }, /dose_series/);
@@ -78,7 +78,7 @@ test('④ 교란 차이 검사: 교란 외에는 대조군과 같다 — 사법�
   const ko = run(cases[0]), bad = (mut, re) => { const x = JSON.parse(JSON.stringify(ko)); mut(x); const v = PA.verifyPerturbation(x); assert.ok(!v.ok && v.problems.some((m) => re.test(m)), `${re}: ${v.problems.join(' · ')}`); };
   // 선언 밖 차이: 교란 시나리오에서 다른 값도 몰래 바꿈
   bad((x) => { x.scenario.t_end = (x.scenario.t_end || 0) + 1; }, /선언 밖의 차이/);
-  bad((x) => { const b = Object.keys(x.scenario.amounts).find((k) => !(k in x.record.change.amounts)); if (b) x.scenario.amounts[b] += 1; else x.scenario.amounts['D000001|cytosol'] = 5; }, /기준 \+ 선언한 변경과 다름/);
+  bad((x) => { const b = Object.keys(x.scenario.amounts).find((k) => !(k in x.record.change.amounts)); if (b) x.scenario.amounts[b] += 1; else x.scenario.amounts['D900001|cytosol'] = 5; }, /기준 \+ 선언한 변경과 다름/);
   // 생성 규칙 하나를 빼먹은 넉아웃 (기록·시나리오를 서로 맞게 꾸며도 사법부 재구성이 잡는다)
   if (ko.record.change.exclude_rules.length) bad((x) => { const r = x.record.change.exclude_rules.pop(); x.scenario.exclude_rules = x.scenario.exclude_rules.filter((y) => y !== r); }, /만들어야 할 exclude_rules/);
   // IR 이 시나리오와 다름: 제외한 규칙이 남음 · 다른 규칙의 상수가 바뀜
@@ -86,5 +86,5 @@ test('④ 교란 차이 검사: 교란 외에는 대조군과 같다 — 사법�
   bad((x) => { const R = x.ir.rules.find((r) => r.k && r.k.k != null); if (R) R.k.k *= 2; else x.ir.rules[0].loc = 'x'; }, /배율 말고도 기준과 다름|IR 해시가 내용과 다름/);
   // 다른 대조군 · 기록 변조
   bad((x) => { x.baseScenario = { ...x.baseScenario, name: '다른 대조군' }; }, /기준 시나리오 해시/);
-  bad((x) => { x.record.perturbation.target = 'D000001'; }, /기록의 해시/);
+  bad((x) => { x.record.perturbation.target = 'D900001'; }, /기록의 해시/);
 });

@@ -1,0 +1,185 @@
+{
+  "about": "실제 db 기록 번호를 쓰는 시험 — 시험 파일마다 번호와 이유 (10e · RULE-0520). 새 시험은 합성 기록(9xxxxx 번호)을 쓴다; 여기 없는 실제 번호는 tests/real_records.test.mjs 가 거부",
+  "entries": [
+    {
+      "file": "tests/acceptance.test.mjs",
+      "ids": [
+        "D000202"
+      ],
+      "why": "사전 등록 #1 의 검증 시나리오(mhc-i-b2m-validation) 대상 — 결론이 가장 약한 근거를 따르는지는 실제 등록 기록으로만 시험된다 (등록 기록은 불변)"
+    },
+    {
+      "file": "tests/assumptions.test.mjs",
+      "ids": [
+        "D000205",
+        "D000207",
+        "L000116"
+      ],
+      "why": "가정 장부(data/assumptions.jsonl)와 예시 시나리오가 가리키는 실제 자리 — 가정 연결 검사가 실제 기록에서 무는지"
+    },
+    {
+      "file": "tests/dictionary.test.mjs",
+      "ids": [
+        "D000148",
+        "D000189",
+        "D000210"
+      ],
+      "why": "렌더러가 실제 정의항에서 ko 기본 출력과 같은지 · en 등록 토큰은 영어로, 미등록은 표시만 — 사전(data/dictionary.jsonl)이 채워지면 미등록 단언을 다시 볼 것"
+    },
+    {
+      "file": "tests/dose_slope.test.mjs",
+      "ids": [
+        "D000148",
+        "D000204",
+        "D000205",
+        "D000209",
+        "D000210",
+        "L000092"
+      ],
+      "why": "텔로미어·TCA 예시 시나리오(examples/scenarios)의 계 — 운명 엔진 위 용량 기울기 관찰·장면 기원 (시나리오 파일이 이 번호를 가리킴)"
+    },
+    {
+      "file": "tests/enforcement_gaps.test.mjs",
+      "ids": [
+        "D000053",
+        "D000191",
+        "D000202",
+        "D000205",
+        "L000116"
+      ],
+      "why": "예시 시나리오(mhc-dc-maturation)·가정 장부·보강 초안의 실제 자리 — 거부 규칙이 실제 기록에서 무는지"
+    },
+    {
+      "file": "tests/governance.test.mjs",
+      "ids": [
+        "D000102",
+        "D000148",
+        "D000165",
+        "D000174",
+        "D000189",
+        "D000202",
+        "D000210",
+        "S000033"
+      ],
+      "why": "예시 시나리오 위 운명·속도 엔진·IR·증거 보고서(시나리오 파일이 이 번호를 가리키고, S000033 의 기대 흐름은 시나리오의 선언) · D000165 는 실제 외부 ID 의 자기 승인 거부"
+    },
+    {
+      "file": "tests/mcp.test.mjs",
+      "ids": [
+        "D000210"
+      ],
+      "why": "MCP 조회와 dbtool 조회의 출력이 같은지 대조 — 기록 내용과 무관"
+    },
+    {
+      "file": "tests/mhc.test.mjs",
+      "ids": [
+        "D000165",
+        "D000198",
+        "D000200",
+        "D000201",
+        "D000202",
+        "D000203"
+      ],
+      "why": "MHC 예시 시나리오의 계 — 운명·기전 엔진 위 교란 결과"
+    },
+    {
+      "file": "tests/observations.test.mjs",
+      "ids": [
+        "D000030",
+        "D000086"
+      ],
+      "why": "막에 박힌 분자 · 기저 회전 규칙 — 관찰 형식 검사가 실제 구조 사실에서 무는지"
+    },
+    {
+      "file": "tests/perturb.test.mjs",
+      "ids": [
+        "D000202"
+      ],
+      "why": "MHC 예시 시나리오의 시작 상태 — 교란 연산자 위 파생 시나리오"
+    },
+    {
+      "file": "tests/protocol.test.mjs",
+      "ids": [
+        "D000165",
+        "D000175"
+      ],
+      "why": "예시 시나리오의 표지·상태 — 사전 등록 규약 검사"
+    },
+    {
+      "file": "tests/qual_compare.test.mjs",
+      "ids": [
+        "D000165",
+        "D000174",
+        "D000202"
+      ],
+      "why": "예시 시나리오 위 정성 관찰 모의 판정 (시나리오 파일이 이 번호를 가리킴)"
+    },
+    {
+      "file": "tests/retraction_propagation.test.mjs",
+      "ids": [
+        "D000148",
+        "D000202",
+        "O000021"
+      ],
+      "why": "사전 등록 #1 검증 세트의 실제 철회 경로 — 등록 기록은 불변, 그 결론이 철회로 흔들리는지"
+    },
+    {
+      "file": "tests/rules.test.mjs",
+      "ids": [
+        "D000159",
+        "D000170",
+        "L000058",
+        "L000061",
+        "S000009"
+      ],
+      "why": "예시 시나리오의 속도 규칙 덮어쓰기 · 합성 시험 자료(tests/fixtures/augment)의 원본 정의항과 그 한계 · 실제 경로의 알려진 단순화(L000061 — 합성으로 만들려면 경로 화학량을 지어야 함) · 인산화 단계 S000009 를 본뜬 거부 사례"
+    },
+    {
+      "file": "tests/runbook.test.mjs",
+      "ids": [
+        "D000174",
+        "D000203"
+      ],
+      "why": "주석 — RUNBOOK 운명 표의 행 모양 예"
+    },
+    {
+      "file": "tests/rust_engine.test.mjs",
+      "ids": [
+        "D000165",
+        "D000174"
+      ],
+      "why": "예시 시나리오 위 JS = Rust 엔진 대조 (기록 내용과 무관하게 두 엔진이 같은지)"
+    },
+    {
+      "file": "tests/stats.test.mjs",
+      "ids": [
+        "D000165",
+        "D000174",
+        "D000175",
+        "D000176"
+      ],
+      "why": "예시 시나리오 위 관찰 연산자 — 엔진 원자료의 표지·상태"
+    },
+    {
+      "file": "tests/stochastic.test.mjs",
+      "ids": [
+        "D000165",
+        "D000166",
+        "D000168",
+        "D000174"
+      ],
+      "why": "확률 예시 시나리오(stochastic-birth-death 등)의 계 — 앙상블·수렴·축약 판정"
+    },
+    {
+      "file": "tests/telomere.test.mjs",
+      "ids": [
+        "D000204",
+        "D000205",
+        "D000208",
+        "D000210",
+        "D000211"
+      ],
+      "why": "텔로미어 예시 시나리오의 계 — 분열·소모 운명"
+    }
+  ]
+}
