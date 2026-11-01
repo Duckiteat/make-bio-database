@@ -279,6 +279,7 @@
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
 | `docs/textbook/90-부록-자동생성.md` | 123.7 | 825 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
+| `workspace/NEXT-2026-11-01.md` | 5.9 | 52 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
