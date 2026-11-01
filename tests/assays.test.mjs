@@ -13,9 +13,9 @@ const AS = req('../judicial/assay_audit.js'), ATT = req('../judicial/attestation
 const CLERK = await import('../legislative/clerk.mjs');
 
 const made = (o) => ({ how: '교과서의 원리 장과 대표 프로토콜을 보고 판독 단위로 정함', sources: [{ db: 'ISBN', id: '9780000000000' }], alternatives: [{ what: '장비 이름으로 묶기', why_not: '같은 원리를 여러 장비가 씀' }], by: 'test', ...o });
-const A = (o) => ({ key: 'syn_absorbance', label: '흡광 측정 (합성)', rung: 'readout', principle: 'Beer–Lambert — 흡광도 = ε · c · l', produces: ['concentration'], noise: ['normal'], composed_of: [], made: made(), ...o });
-const SEP = { key: 'syn_gel', label: '전기영동 (합성)', rung: 'separation', principle: '전하·크기로 분리', produces: [], noise: [], composed_of: [], made: made() };
-const COMB = { key: 'syn_enzyme_assay', label: '효소 활성 분광 측정 (합성)', rung: 'combined', principle: '기질 소모를 흡광으로 — 초기 속도', produces: ['kinetic_constant'], noise: ['normal'], composed_of: ['syn_absorbance'], separation: ['syn_gel'], made: made() };
+const A = (o) => ({ key: 'syn_absorbance', label: '흡광 측정 (합성)', rung: 'readout', principle: 'Beer–Lambert — 흡광도 = ε · c · l', produces: ['concentration'], measurement_noise: ['normal'], composed_of: [], made: made(), ...o });
+const SEP = { key: 'syn_gel', label: '전기영동 (합성)', rung: 'separation', principle: '전하·크기로 분리', produces: [], measurement_noise: [], composed_of: [], made: made() };
+const COMB = { key: 'syn_enzyme_assay', label: '효소 활성 분광 측정 (합성)', rung: 'combined', principle: '기질 소모를 흡광으로 — 초기 속도', produces: ['kinetic_constant'], measurement_noise: ['normal'], composed_of: ['syn_absorbance'], separation: ['syn_gel'], made: made() };
 const sealed = (proposals) => ATT.sealVerdict({ ok: true, errors: [], warnings: [] }, proposals, { issuer: 'judicial/assay_audit.js#checkProposals' });
 
 test('① 사다리대로 쌓기 · 고치기는 revises + why 로 내력이 남음', () => {
@@ -43,9 +43,10 @@ test('② 거부 사례 — 만든 방법 · 단 · 조합 · 분리 · 고칠 �
   bad(A({ made: undefined }), /made\(어떻게 만들었나\)가 없음/);
   bad(A({ rung: 'quantum' }), /rung 은 사다리의 단/);
   bad(A({ produces: [] }), /값을 낸다 — produces 가 비었음/);
-  bad({ ...SEP, produces: ['concentration'], noise: ['normal'] }, /혼자서 값을 내지 않는다/);
+  bad({ ...SEP, produces: ['concentration'], measurement_noise: ['normal'] }, /혼자서 값을 내지 않는다/);
   bad(A({ produces: ['mood'] }), /관찰 종류가 아님/);
-  bad(A({ noise: [] }), /잡음 모형이 하나 이상/);
+  bad(A({ measurement_noise: [] }), /측정 잡음 모형이 하나 이상/);
+  bad(A({ noise: ['normal'] }), /noise 칸은 받지 않음 — 측정법에는 측정 잡음만/); // 화학 잡음과 섞이지 않게 칸 이름이 측정 잡음을 말한다 (DEC-0045)
   bad({ ...COMB, composed_of: [] }, /판독\(readout · combined\)을 하나 이상 조합/);
   bad({ ...COMB, composed_of: ['nowhere'] }, /장부에 없는 측정법/);
   bad(A({ key: 'X' }), /key 는 소문자/);

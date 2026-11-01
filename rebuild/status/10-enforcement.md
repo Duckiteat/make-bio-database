@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (310 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (311 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 276 |
+| 잡음 `caught` | 277 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 276
+## 잡음 `caught` — 277
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -295,6 +295,7 @@
 | RULE-0484 | 필요. 기존 기록 덮어쓰기 금지(새 실행 + 연결, 값 층 `recorded_at`·`moved` 패턴). | replace | judicial/judicial.js | ④ 사법부: 값 기록 모양 · 값은 바꾸거나 지울 수 없다 |
 | RULE-0485 | **실제 HTTP 해석은 dbtool 이 직접 못 한다**(governance ①: dbtool 에 `exe | inject | dbtool.mjs | ① 쓰기 권한: 파일 쓰기 코드는 legislative/clerk.mjs 와 migrations/ 에만 |
 | RULE-0522 | 측정법 장부(data/assays.jsonl)의 측정법마다 만든 방법(무엇을 보고 어떻게 정했나) · 근거  | replace | judicial/assay_audit.js | ② 거부 사례 — 만든 방법 · 단 · 조합 · 분리 · 고칠 때 why |
+| RULE-0523 | 측정 잡음은 엔진이 뽑지 않는다 — 엔진·컴파일러는 측정법 장부(측정 잡음)를 읽지 않고, 난수는 engin | inject | compiler/obs_operator.js | 측정 잡음은 엔진이 뽑지 않는다 (RULE-0523 · DEC-0045) — 엔진·컴파일러는 측정법 장부를 읽지 않고, 난수는 engine/rng.js 하나 |
 
 ## 설정에 있음 `present` — 8
 

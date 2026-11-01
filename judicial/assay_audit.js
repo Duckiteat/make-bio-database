@@ -1,16 +1,17 @@
 // 사법부 — 측정법 장부 (측정법 계획 ASY-00 · 설계 DEC-0041 "하나하나 어떻게 만들었는지 남긴다")
 //
-// data/assays.jsonl 은 추가만 하는 사슬이다: 사건 = { seq, at, key, label, rung, principle, produces, noise, composed_of, separation,
+// data/assays.jsonl 은 추가만 하는 사슬이다: 사건 = { seq, at, key, label, rung, principle, produces, measurement_noise, composed_of, separation,
 //   traceability, made: { how, sources, alternatives, by }, revises?, why?, prev } · root = sha256(prev + '\n' + 정준 JSON).
 //   고치기는 지우지 않고 revises(그 측정법의 현재 root) + why 를 단 새 사건으로 — 마지막 사건이 현재 값, 앞 사건들이 바뀐 내력.
 // 이 파일은 판정만 한다(읽기·쓰기 없음): 사슬 무결성 · 새 항목 검사(서기가 쓰기 전) · 현재 측정법의 참조.
+// 측정법의 잡음은 측정 잡음(measurement_noise)뿐 — 화학(생물) 잡음은 계의 몫(엔진 SSA · τ-도약)이고, 측정 잡음은 엔진이 뽑지 않는다(RULE-0523 · DEC-0045).
 'use strict';
 const crypto = require('crypto');
 const ATT = require('./attestation.js');
 const V = require('../vocab.js');
 const sha = (x) => crypto.createHash('sha256').update(x).digest('hex');
 const GENESIS = sha('assays\n');
-const PROPOSAL_FIELDS = ['key', 'label', 'rung', 'principle', 'produces', 'noise', 'composed_of', 'separation', 'traceability', 'made', 'revises', 'why'];
+const PROPOSAL_FIELDS = ['key', 'label', 'rung', 'principle', 'produces', 'measurement_noise', 'composed_of', 'separation', 'traceability', 'made', 'revises', 'why'];
 // 사다리의 단 (측정법 계획 assay) — 단마다 값을 내는가. 계량·분리는 값을 내지 않는다(판독의 바탕·앞 단계 속성), 계산은 측정이 아니다
 const RUNGS = {
   metrology:   { stage: 'ASY-08', label: '계량 기초 — 단위 · 교정 · 기준물질 · 불확도', values: false },
@@ -57,17 +58,17 @@ function shape(p, at, look, err) {
   const rung = RUNGS[p.rung];
   if (!rung) { err(R, `${at}: rung 은 사다리의 단 — ${Object.keys(RUNGS).join(' · ')}`); return; }
   if (!nonEmpty(p.principle)) err(R, `${at}: principle(무엇을 어떤 원리로 재나)이 없음`);
-  const produces = Array.isArray(p.produces) ? p.produces : null, noise = Array.isArray(p.noise) ? p.noise : null;
+  const produces = Array.isArray(p.produces) ? p.produces : null, noise = Array.isArray(p.measurement_noise) ? p.measurement_noise : null;
   if (!produces) err(R, `${at}: produces 는 관찰 종류 목록 (값을 내지 않으면 [])`);
   else {
     for (const k of produces) if (!V.observables[k]) err(R, `${at}: produces 의 '${k}' 는 관찰 종류가 아님 — ${Object.keys(V.observables).join(' · ')}`);
     if (rung.values && !produces.length) err(R, `${at}: ${p.rung} 단은 값을 낸다 — produces 가 비었음`);
     if (!rung.values && produces.length) err(R, `${at}: ${p.rung} 단은 혼자서 값을 내지 않는다 (${rung.label}) — produces 는 []`);
   }
-  if (!noise) err(R, `${at}: noise 는 잡음 모형 목록 (값을 내지 않으면 [])`);
+  if (!noise) err(R, `${at}: measurement_noise 는 측정 잡음 모형 목록 (값을 내지 않으면 []) — 화학(생물) 잡음은 계의 몫이라 측정법에 두지 않는다`);
   else {
-    for (const m of noise) if (!V.noiseModels[m]) err(R, `${at}: noise 의 '${m}' 는 잡음 모형이 아님 — ${Object.keys(V.noiseModels).join(' · ')}`);
-    if (produces && produces.length && !noise.length) err(R, `${at}: 값을 내는 측정법은 잡음 모형이 하나 이상`);
+    for (const m of noise) if (!V.noiseModels[m]) err(R, `${at}: measurement_noise 의 '${m}' 는 잡음 모형이 아님 — ${Object.keys(V.noiseModels).join(' · ')}`);
+    if (produces && produces.length && !noise.length) err(R, `${at}: 값을 내는 측정법은 측정 잡음 모형이 하나 이상`);
   }
   const parts = Array.isArray(p.composed_of) ? p.composed_of : null;
   if (!parts) err(R, `${at}: composed_of 는 앞 단계 측정법 목록 (없으면 [])`);
@@ -98,6 +99,7 @@ function checkProposals(events, proposals) {
   for (const [i, p] of proposals.entries()) {
     const at = `항목 ${i + 1}${p && p.key ? ` (${p.key})` : ''}`;
     if (!p || typeof p !== 'object') { err('RULE-0522', `${at}: 객체가 아님`); continue; }
+    if ('noise' in p) err('RULE-0523', `${at}: noise 칸은 받지 않음 — 측정법에는 측정 잡음만(measurement_noise), 화학·생물 잡음은 계(엔진)의 몫`);
     const extra = Object.keys(p).filter((k) => !PROPOSAL_FIELDS.includes(k));
     if (extra.length) err('RULE-0522', `${at}: 받지 않는 칸 ${extra.join(', ')} (사슬 칸 seq·at·prev·root 는 서기가 붙인다)`);
     shape(p, at, (k) => next.get(k), err);

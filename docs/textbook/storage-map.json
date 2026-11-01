@@ -100,7 +100,7 @@
     {
       "path": "data/assays.jsonl",
       "class": "law",
-      "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·key·label·rung·principle·produces·noise·composed_of·separation?·traceability?·made{how,sources,alternatives,by}·revises?·why?·prev·root (첫 prev = sha256('assays\\n'))",
+      "format": "JSON Lines — 추가만 하는 사슬, 한 줄 한 사건: seq·at·key·label·rung·principle·produces·measurement_noise·composed_of·separation?·traceability?·made{how,sources,alternatives,by}·revises?·why?·prev·root (첫 prev = sha256('assays\\n'))",
       "writer": "입법 서기 appendAssays (구역 registry) — judicial/assay_audit.js checkProposals 봉인이 있을 때만 (`dbtool assay add`, 정보 작성 모드)",
       "readers": "judicial/assay_audit.js (validate·assay)",
       "interpret": "측정법 장부 (측정법 계획 ASY-00 · SCHEMA §8P) — 측정 방식을 기초 판독부터 조합으로 쌓고, 측정법마다 만든 방법·근거·버린 대안을 남긴다. 고치기는 revises + why 의 새 사건이라 내력이 사슬에 남는다."

@@ -75,7 +75,7 @@
 | `tests/enforcement_gaps.test.mjs` | 26 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
-| `tests/governance.test.mjs` | 22 |
+| `tests/governance.test.mjs` | 23 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 7 |

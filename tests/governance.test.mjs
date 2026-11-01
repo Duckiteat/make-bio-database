@@ -535,3 +535,12 @@ test('⑭″ 시나리오 대상 색인 subjects.json — 빠짐·남음·잘못
 test('환산표는 하나 (RULE-0131) — 단위 환산표(unitFactors)는 vocab.js 에만, 엔진·사법부는 그것을 쓴다', () => {
   assert.deepEqual(CODE.filter((p) => /unitFactors\s*[:=]\s*\{/.test(src(p))), ['vocab.js'], '환산표를 따로 정의한 코드');
 });
+
+test('측정 잡음은 엔진이 뽑지 않는다 (RULE-0523 · DEC-0045) — 엔진·컴파일러는 측정법 장부를 읽지 않고, 난수는 engine/rng.js 하나', () => {
+  // 화학(생물) 잡음 = 계의 확률(엔진 난수) · 측정 잡음 = 측정법(사법부 비교에서 해석적으로). 섞이면 측정법만 바꿔도 화학 궤적의 난수 소비가 밀린다(시드 표류)
+  const runtime = [...CODE.filter((p) => p.startsWith('engine/') || p.startsWith('compiler/')), 'core.js'];
+  const reads = runtime.filter((p) => /assays\.jsonl|readAssays|measurement_noise|assay_audit/.test(src(p)));
+  assert.deepEqual(reads, [], '엔진·컴파일러가 측정법(측정 잡음)을 읽음');
+  const rand = runtime.filter((p) => p !== 'engine/rng.js' && /Math\.random|crypto\.random|getRandomValues/.test(src(p)));
+  assert.deepEqual(rand, [], '난수를 engine/rng.js 밖에서 만듦 — 같은 (seed, 궤적) 이 같은 궤적이 아니게 된다');
+});
