@@ -271,14 +271,30 @@ switch (cmd) {
     const zones = (map.zones || {}).enum || {};
     for (const [k, c] of Object.entries(map.classes)) if (!zones[c.zone]) die(`storage-map: 분류 '${k}' 의 구역 '${c.zone}' 가 zones 에 없음`);
     for (const f of map.files) if (f.zone && !zones[f.zone]) die(`storage-map: '${f.path}' 의 구역 '${f.zone}' 가 zones 에 없음`);
-    // 권한 칸 (STG-12 · DEC-0048): 자리마다 등급 · 구역 · 쓰는 열쇠 · 판정 열쇠 — 빠지면 거부
+    // 권한 구조 (STG-12 · DEC-0048): 열쇠 표 · 구역 표 · 자리 대조 — 어기면 거부
+    const AU = map.authority || {}, KEYS = AU.keys || {}, AREAS = AU.areas || {}, LV = (l) => Number(String(l).slice(1));
+    const need = (a, k) => { if (!KEYS[k]) die(`storage-map: 구역 '${a}' 의 열쇠 '${k}' 가 authority.keys 에 없음`); return KEYS[k]; };
+    let debt = 0;
+    for (const [a, z] of Object.entries(AREAS)) {
+      if (!/^L[0-6]$/.test(z.level || '')) die(`storage-map: 구역 '${a}' 의 level 이 L0–L6 이 아님`);
+      const wk = (z.write_keys || []).map((k) => need(a, k)), jk = (z.judge_keys || []).map((k) => need(a, k));
+      if (!wk.length || !jk.length) die(`storage-map: 구역 '${a}' 에 쓰는/판정 열쇠가 비어 있음 (판정 없음은 'none')`);
+      if ((z.write_keys || []).includes('unassigned')) debt++;
+      // 열쇠의 max_level 까지만 — 넘으면 판정이 사람·사법부이거나 구역에 예외가 적혀야 한다 (상속은 명시된 것만)
+      const strongJudge = jk.some((k) => k.kind === 'human' || k.kind === 'judge');
+      for (const k of wk) if (LV(k.max_level) < LV(z.level) && !strongJudge && !z.예외) die(`storage-map: 구역 '${a}'(${z.level}) 의 열쇠가 max_level ${k.max_level} 를 넘음 — 예외나 사람·사법부 판정이 필요`);
+      if (z.level === 'L5') { // L5 두 열쇠: 쓰는 쪽은 서기, 판정 쪽은 사법부 (판정 없음은 예외를 적은 구역만)
+        if (wk.some((k) => k.kind !== 'clerk')) die(`storage-map: L5 구역 '${a}' 의 쓰는 열쇠는 서기(clerk)만`);
+        if (!jk.every((k) => k.kind === 'judge') && !z.예외) die(`storage-map: L5 구역 '${a}' 는 판정 열쇠(judicial)가 있어야 함 — 없으면 예외를 적는다`);
+      }
+      if (z.level === 'L6' && (z.write_keys || []).some((k) => KEYS[k].kind === 'session') && !jk.some((k) => k.kind === 'human')) die(`storage-map: L6 구역 '${a}' 를 세션이 쓰려면 사람 확인(human 판정)이 있어야 함`);
+    }
+    if (debt > 2) die(`storage-map: 담당 열쇠 없는 구역(unassigned)이 ${debt} — 상한 2 (늘리지 않는다)`);
     for (const f of map.files) {
-      if (!/^L[0-6]$/.test(f.level || '')) die(`storage-map: '${f.path}' 의 level 이 L0–L6 이 아님`);
-      for (const k of ['area', 'write_key', 'judge_key']) if (!f[k]) die(`storage-map: '${f.path}' 에 ${k} 칸 없음`);
-      const ar = (map.authority || {}).areas?.[f.area];
-      if (!ar) die(`storage-map: '${f.path}' 의 구역 '${f.area}' 가 authority.areas 에 없음`);
-      if (ar.level !== f.level || !ar.write_keys.includes(f.write_key) || !ar.judge_keys.includes(f.judge_key)) die(`storage-map: '${f.path}' 의 등급·열쇠가 구역 '${f.area}' 표와 다름`);
-      if (f.level === 'L5' && f.write_key === f.judge_key) die(`storage-map: '${f.path}' L5 는 쓰는 열쇠 ≠ 판정 열쇠(두 열쇠)`);
+      const z = AREAS[f.area];
+      if (!z) die(`storage-map: '${f.path}' 의 구역 '${f.area}' 가 authority.areas 에 없음`);
+      if (f.level !== z.level) die(`storage-map: '${f.path}' 의 등급 ${f.level} 이 구역 '${f.area}'(${z.level}) 와 다름`);
+      if (!Array.isArray(f.write_keys) || !f.write_keys.length || f.write_keys.some((k) => !z.write_keys.includes(k))) die(`storage-map: '${f.path}' 의 write_keys 가 구역 '${f.area}' 표의 부분집합이 아님`);
     }
     // 아키텍처 노드: 이름 하나에 파일 하나, 권한은 열거값, 경로는 실제 파일
     const nodeNames = new Set();
@@ -297,7 +313,7 @@ switch (cmd) {
         const parts = p.split('/'); for (let n = parts.length - 1; n >= 0; n--) {
           const pre = parts.slice(0, n).join('/') + (n ? '/' : ''); const near = map.files.filter((x) => x.path.startsWith(pre) && x.area);
           if (near.length) { const as = [...new Set(near.map((x) => x.area))]; const lv = near[0].level;
-            return as.length === 1 && !['L5', 'L6'].includes(lv) ? `  → 제안: area=${as[0]} level=${lv} write_key=${near[0].write_key} judge_key=${near[0].judge_key}` : '  → 제안 없음 (L5·L6 이거나 구역이 갈림 — 사람이 정함)'; } }
+            return as.length === 1 && !['L5', 'L6'].includes(lv) ? `  → 제안: area=${as[0]} level=${lv} write_keys=${JSON.stringify(near[0].write_keys)}` : '  → 제안 없음 (L5·L6 이거나 구역이 갈림 — 사람이 정함)'; } }
         return '  → 제안 없음'; };
       die('storage-map.json 에 분류되지 않은 파일:\n' + unclassified.map((p) => '  ' + p + '\n' + hint(p)).join('\n'));
     }
