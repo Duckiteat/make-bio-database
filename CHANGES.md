@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 승인 묶음 설계 보고서 (L6 변경을 사람 승인 한 번으로) | `docs/reports/2026-11-02-approval-bundle.md` · 계획 STG-12 | 사용자 결정: 버튼 = 사람 승인 · 도구가 보여 줌 · 위반은 거부. 정책 파일을 바꾸면 바꾼 순간 새 정책이 적용되어 세션 안에서 못 끝낸 경험 | 설계만 — 코드 · 장부 · 설정 변경 없음. 구현은 한 묶음으로 사람이 한 번 적용 | `plan.mjs check` · `finish develop` |
 | 2026-11-02 · 생성 문서 `rebuild/status/11-links.md` — 구역별 자리 ↔ 규칙·계획 연결 | `rebuild/status.mjs` build(11-links · 요약 링크) · `rebuild/status/11-links.md` | 사용자 요청: 연결 항목 란을 자동으로. 문서마다 머리말에 박으면 복사본이 어긋나므로 원본(저장 지도 · 규칙 where · 계획)에서 생성 | 구역별 자리 수 · 규칙에 닿는 자리 · 열린 계획에 닿는 자리 · 연결 없는 자리 목록(후보 — 결함 아님) | status --check · precheck |
 | 2026-11-02 · 새 파일의 연결 후보 제안 (`probe.mjs --new`) · precheck 한 단계 | `rebuild/probe.mjs` newFiles · linkHints · `rebuild/precheck.mjs` STEPS · `tests/probe.test.mjs` ⑦ | 사용자 요청: 새 파일의 연결 지점을 자동으로 (STG-12) | 새 파일의 분류·규칙·읽는 시험·열린 계획을 보이고 연결이 없으면 알림 — 제안만, 실패하지 않음 | tests/probe.test.mjs 7 · precheck |
 | 2026-11-02 · 권한 구조 검사를 순수 모듈로(RULE-0527) · 서기 호출 표 · 시험 | `judicial/authority.js`(checkAuthority · checkCallers) · `dbtool.mjs` textbook 검사가 부름 · `docs/textbook/storage-map.json` authority.callers(서기 쓰기 함수 27 → 열쇠 · 부를 수 있는 모듈) · `tests/authority.test.mjs` · 규칙 장부 RULE-0527 | 사용자 결정(DEC-0048): 권한 표와 코드가 어긋나지 않게 | 표 밖 모듈이 서기 쓰기 함수를 부르면 거부 · 낡은 표도 거부 · 위반 여섯 가지 거부 | tests/authority.test.mjs 5 · 변이 caught · precheck |
