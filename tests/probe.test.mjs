@@ -5,7 +5,10 @@
 //   ⑥ 확인(ask) 명령을 감싼 스크립트는 설정 allow 에 없다 — 감싸서 확인을 건너뛰지 않음 (RULE-0461)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, appendFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import * as PR from '../rebuild/probe.mjs';
 import * as RU from '../rebuild/rules.mjs';
 
@@ -98,4 +101,21 @@ test('⑦ 새 파일의 연결 후보: 규칙에 닿는 파일은 규칙을 보�
   assert.match(miss, /새 파일 tests\/authority\.test\.mjs/);
   assert.deepEqual(await PR.linkHints(ctx, ['없는/파일.js']), []); // 없는 파일은 건너뜀
   assert.ok(Array.isArray(PR.newFiles()));
+});
+
+test('⑧ 자기 검사 시험(L6)에 새 시험 블록을 더하면 새 L2 파일로 안내한다 (제안 — 막지 않음)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'l6add-')), g = (...a) => execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', ...a], { cwd: dir, encoding: 'utf8' });
+  try {
+    g('init', '-q'); mkdirSync(join(dir, 'tests'));
+    for (const f of ['a.test.mjs', 'b.test.mjs']) writeFileSync(join(dir, 'tests', f), "test('x', () => {});\n");
+    g('add', '-A'); g('commit', '-qm', 'base');
+    const ctx = { root: dir, map: { files: [{ path: 'tests/a.test.mjs', area: 'guard:self-tests' }, { path: 'tests/b.test.mjs', area: 'code:tests' }] } };
+    assert.deepEqual(PR.l6TestAdds(ctx), [], '바뀐 것이 없으면 안내 없음');
+    appendFileSync(join(dir, 'tests/a.test.mjs'), "test('y', () => {});\ntest('z', () => {});\n");
+    appendFileSync(join(dir, 'tests/b.test.mjs'), "test('w', () => {});\n");
+    const out = PR.l6TestAdds(ctx);
+    assert.equal(out.length, 1, 'L6 파일만 — 일반 시험 파일에 더하는 것은 안내하지 않음');
+    assert.match(out[0], /tests\/a\.test\.mjs: 새 시험 블록 2 개 — 일상 시험이면 새 L2 파일/);
+    assert.deepEqual(PR.l6TestAdds({ root: dir, map: null }), []);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
 });

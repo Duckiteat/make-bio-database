@@ -129,6 +129,18 @@ export function newFiles(root = ROOT) {
   const out = git(['status', '--porcelain', '--untracked-files=all'], root).split('\n').filter(Boolean).filter((l) => /^(\?\?| A|A )/.test(l)).map((l) => l.slice(3).replace(/^"|"$/g, ''));
   return out.filter((f) => !f.startsWith('workspace/') && !f.startsWith('.git/'));
 }
+// 자기 검사 시험(L6) 파일에 새 시험 블록을 더하려는가 — 일상 시험은 새 L2 파일에 쓴다 (STG-12 · 분리 보고서 B안). 제안만 — 막지 않는다
+//   불변식(권한 · 서기 구역 · 규칙 번호 · 봉인)을 지키는 시험이면 L6 에 더해도 된다 — 그때는 승인 묶음으로
+export function l6TestAdds(ctx) {
+  const out = [];
+  for (const f of (ctx.map && ctx.map.files) || []) {
+    if (f.area !== 'guard:self-tests' || f.path.includes('*')) continue;
+    const d = git(['diff', '-U0', 'HEAD', '--', f.path], ctx.root);
+    const n = d.split('\n').filter((l) => /^\+test\(/.test(l)).length;
+    if (n) out.push(`${f.path}: 새 시험 블록 ${n} 개 — 일상 시험이면 새 L2 파일(tests/<주제>.test.mjs)에 쓴다. 스스로를 지키는 불변식이면 여기에 더해도 되지만 사람 승인이 필요하다`);
+  }
+  return out;
+}
 // 새 파일마다 연결 후보: 분류 · 규칙 · 읽는 시험 · 열린 계획 (probe 가 이미 아는 것을 엮음) — 연결이 하나도 없으면 알린다. 막지는 않는다 (제안)
 export async function linkHints(ctx, files) {
   const lines = [];
@@ -206,7 +218,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   }
   if (args[0] === '--new') { // 새 파일의 연결 후보 (제안 — 종료 코드 0)
     const fs = newFiles(ROOT), ls = await linkHints(ctx, fs);
-    console.log(fs.length ? ls.join('\n') : '새 파일 0 — 연결 후보 없음'); process.exit(0);
+    const ta = l6TestAdds(ctx);
+    console.log([fs.length ? ls.join('\n') : '새 파일 0 — 연결 후보 없음', ...ta].join('\n')); process.exit(0);
   }
   if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new'); process.exit(2); }
   for (const l of await probe(ctx, args[0])) console.log(l);
