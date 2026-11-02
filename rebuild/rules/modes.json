@@ -257,7 +257,10 @@
         "except": [
           "data/**",
           "attestations/**",
-          "workspace/handoff/**"
+          "workspace/handoff/**",
+          "rebuild/gate.mjs",
+          ".claude/settings.json",
+          "rebuild/rules/modes.json"
         ],
         "finish": [
           "node tests/affected.mjs",
