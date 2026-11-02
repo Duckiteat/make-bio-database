@@ -22,14 +22,17 @@
 16. [ASY-03](items/ASY-03.md) 분리 + 판독 — ☐ 대기 · assay — 78 이 모을 속도 상수의 측정법(효소 활성 분광 등)
 17. [ASY-09](items/ASY-09.md) 검증 축 — ☐ 대기 · assay — 정량 측정이 들어오는 3 과 함께 — 값마다 검증 근거 수준 (DEC-0043)
 18. [PLAN-088](items/PLAN-088.md) 엔진 정답 시험 + 변형 관계 시험 — ☐ 대기 · build — 실측 상수로 비교를 시작하기 전에 엔진 쪽 근거 — 관문 D 의 바탕 (DEC-0046)
-19. [PLAN-078](items/PLAN-078.md) 실측 상수 늘리기 — ☐ 대기 · build — 북극성 ①의 병목 — 측정법·검증 칸이 선 뒤 실측 상수를 모음
-20. [ASY-15](items/ASY-15.md) 화학량 보존 — ☐ 대기 · assay — 78 이 저분자 반응 상수를 들이며 화학식이 생김 (DEC-0046)
-21. [ASY-04](items/ASY-04.md) 상호작용 — ☐ 대기 · assay — 경쟁 판정의 바탕인 Kd — 78 다음으로 필요해질 상수
-22. [PLAN-071](items/PLAN-071.md) 검증 상태 = 기록의 축 묶음 (S, D, T, I) — ☐ 대기 · build — 검증 상태 축 — I 축(독립성)은 같은 측정 깃발(ASY-00) 위에
-23. [ASY-16](items/ASY-16.md) 여러 출처 합의 — ☐ 대기 · assay — 독립성 축(71) 위에, 독립 출처가 쌓인 뒤 (DEC-0046)
-24. [ASY-05](items/ASY-05.md) 세포 수준 — ☐ 대기 · assay — 정성 검증 판독의 측정법
-25. [PLAN-079](items/PLAN-079.md) 규칙 문서 한 곳 — ◐ 진행 · build — 규칙 문서 한 곳 — 구조 평가 뒤 순서의 끝(DEC-0030)
-26. [ASY-10](items/ASY-10.md) GMP 자료 받기 — ☐ 대기 · assay — 실제 GMP 자료 출처가 생길 때 — 그때까지는 순서 끝 (DEC-0043)
+19. [PLAN-089](items/PLAN-089.md) 계산 기록부 — ☐ 대기 · build — GMP·논문 목표의 빈 곳(계산 과정 기록). R0(코드 정체)은 엔진과 무관해 먼저 가능하나 R3(재현 검사)는 안전망 시험·시계 정리·난수 정리 뒤에 의미가 있음 (DEC-0048)
+20. [PLAN-090](items/PLAN-090.md) 사람/AI 행위자 구분 — ☐ 대기 · build — 행위자 구분은 새 기록 줄마다 필요해서 계산 기록부·주장 장부와 함께 설계 — 학술 규범(저자는 사람, AI 사용 공개) (DEC-0048)
+21. [PLAN-091](items/PLAN-091.md) 주장 장부 — ☐ 대기 · build — 계산 기록부(89)와 행위자 구분(90) 위에서 — 주장 → 실행 → 입력·코드 사슬 (DEC-0048)
+22. [PLAN-078](items/PLAN-078.md) 실측 상수 늘리기 — ☐ 대기 · build — 북극성 ①의 병목 — 측정법·검증 칸이 선 뒤 실측 상수를 모음
+23. [ASY-15](items/ASY-15.md) 화학량 보존 — ☐ 대기 · assay — 78 이 저분자 반응 상수를 들이며 화학식이 생김 (DEC-0046)
+24. [ASY-04](items/ASY-04.md) 상호작용 — ☐ 대기 · assay — 경쟁 판정의 바탕인 Kd — 78 다음으로 필요해질 상수
+25. [PLAN-071](items/PLAN-071.md) 검증 상태 = 기록의 축 묶음 (S, D, T, I) — ☐ 대기 · build — 검증 상태 축 — I 축(독립성)은 같은 측정 깃발(ASY-00) 위에
+26. [ASY-16](items/ASY-16.md) 여러 출처 합의 — ☐ 대기 · assay — 독립성 축(71) 위에, 독립 출처가 쌓인 뒤 (DEC-0046)
+27. [ASY-05](items/ASY-05.md) 세포 수준 — ☐ 대기 · assay — 정성 검증 판독의 측정법
+28. [PLAN-079](items/PLAN-079.md) 규칙 문서 한 곳 — ◐ 진행 · build — 규칙 문서 한 곳 — 구조 평가 뒤 순서의 끝(DEC-0030)
+29. [ASY-10](items/ASY-10.md) GMP 자료 받기 — ☐ 대기 · assay — 실제 GMP 자료 출처가 생길 때 — 그때까지는 순서 끝 (DEC-0043)
 
 ## 순서 밖 — 대기·진행·논의·보류 (57)
 
@@ -39,7 +42,7 @@
 
 ## 끝난 것
 
-- build: 34 / 93
+- build: 34 / 96
 - rebuild: 33 / 40
 - assay: 0 / 17
 
@@ -50,3 +53,4 @@
 - `2026-11-01` PLAN-077 → ASY-00 → ASY-08 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-078 → ASY-04 → PLAN-071 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-077 → ASY-00 → ASY-08 → ASY-11 → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 — 자료 무결성 종합 — 제안 사양서와 다른 방법을 뺄 것은 빼고 묶어 계획에 넣고 순서를 정함 (사용자 요청 2026-11-01, docs/reports/2026-11-01-data-integrity.md)
 - `2026-11-01` PLAN-077 → ASY-00 → ASY-08 → ASY-11 → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 — 반복 기록 일 자동화와 파일 탐침을 계획에 — 영수증으로 잰 효율 차이와 순서 (사용자 요청 2026-11-01, docs/reports/2026-11-01-work-automation.md)
 - `2026-11-01` PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 — 세션 끊기를 순서에, 기록 묶기는 열린 질문으로 (사용자 결정 2026-11-01)
+- `2026-11-02` PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 — GMP 활용과 학술지 논문을 목표로 계산 과정의 기록·주장 추적·사람/AI 행위 분리가 계획에 없음 — 사용자가 계획 항목으로 올리라고 함 (DEC-0048)

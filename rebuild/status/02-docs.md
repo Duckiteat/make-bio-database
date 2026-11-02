@@ -41,9 +41,9 @@
 | `docs/modes/develop.md` | 5.9 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
-| `docs/plan/ORDER.md` | 9.4 | 52 |  | 생성물 |
+| `docs/plan/ORDER.md` | 11.0 | 56 |  | 생성물 |
 | `docs/plan/assay.md` | 4.9 | 82 |  | 생성물 |
-| `docs/plan/build.md` | 35.7 | 376 |  | 생성물 |
+| `docs/plan/build.md` | 36.1 | 380 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -91,6 +91,7 @@
 | `docs/plan/decisions/DEC-0045.md` | 1.2 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0046.md` | 1.9 | 19 |  | 생성물 |
 | `docs/plan/decisions/DEC-0047.md` | 1.9 | 21 |  | 생성물 |
+| `docs/plan/decisions/DEC-0048.md` | 1.7 | 15 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.2 | 30 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -101,7 +102,7 @@
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-08.md` | 13.1 | 58 |  | 생성물 |
 | `docs/plan/items/ASY-09.md` | 3.1 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-10.md` | 1.6 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-10.md` | 1.7 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-11.md` | 1.5 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-12.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-13.md` | 1.5 | 21 |  | 생성물 |
@@ -199,7 +200,10 @@
 | `docs/plan/items/PLAN-085.md` | 2.1 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-086.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-087.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-088.md` | 1.6 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-088.md` | 1.7 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-089.md` | 2.1 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-090.md` | 2.0 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-091.md` | 2.1 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -271,7 +275,7 @@
 | `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
 | `docs/reports/2026-11-02-engine-primer-qa.md` | 18.8 | 110 |  | 미분류 |
-| `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 20.6 | 135 |  | 미분류 |
+| `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 22.3 | 146 |  | 미분류 |
 | `docs/reports/2026-11-02-run-record-design.md` | 19.0 | 149 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
