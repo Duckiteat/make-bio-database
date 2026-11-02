@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 301.2 | 288 |  | 분류됨 1 |
+| `CHANGES.md` | 301.5 | 289 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -242,7 +242,7 @@
 | `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
-| `docs/plan/items/STG-12.md` | 8.6 | 38 |  | 생성물 |
+| `docs/plan/items/STG-12.md` | 9.5 | 40 |  | 생성물 |
 | `docs/plan/rebuild.md` | 25.2 | 251 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
@@ -272,6 +272,7 @@
 | `docs/reports/2026-11-01-work-automation.md` | 18.7 | 194 |  | 미분류 |
 | `docs/reports/2026-11-02-approval-bundle.md` | 6.7 | 57 |  | 미분류 |
 | `docs/reports/2026-11-02-identity-keys.md` | 43.1 | 377 |  | 미분류 |
+| `docs/reports/2026-11-02-l6-test-split.md` | 10.4 | 72 |  | 미분류 |
 | `docs/reports/2026-11-02-write-ownership.md` | 7.2 | 70 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
