@@ -13,6 +13,7 @@ import * as CLERK from '../legislative/clerk.mjs';
 import * as IDX from './index.mjs'; // 번호 사전 — 파일 목록·이름공간을 한 곳에서
 import * as RENDER from './render.mjs'; // 중심 문서·모드 문서·스킬 (제자리에 생성 — 8 단계)
 import * as STATE from './state.mjs'; // 6c 상태 기록 (rebuild/state)
+import { pathsIn } from './probe.mjs'; // 글 속 경로 찾기 (연결 장부 11)
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const STATUS = 'rebuild/status/';
@@ -303,7 +304,17 @@ function build() {
   rows.push(['집행 변이 시험 — 잡음 / 놓침 / 아직 안 함', `${mut.filter((x) => x.result === 'caught').length} / ${mut.filter((x) => x.result === 'missed').length} / ${untested.length}`]);
   rows.push(['규칙 검토 — 결정 남은 규칙 / 전체', `${new Set(review.filter((x) => !x.decision).map((x) => x.rule)).size} / ${new Set(review.map((x) => x.rule)).size}`]);
   rows.push(['규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함', `${why.length} / ${onlyHist.length} / ${none.length}`]);
-  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md) · [09 규칙 검토](09-review.md) · [10 집행 시험](10-enforcement.md)\n`;
+  // 11 자리 ↔ 연결 (STG-12 · DEC-0048): 구역마다 자리 수 · 규칙(where)에 닿는 자리 · 계획에 닿는 자리 · 연결 없는 자리. 자리마다의 연결은 탐침이 그때그때 계산한다 (node rebuild/probe.mjs <파일>)
+  const SM = JSON.parse(read('docs/textbook/storage-map.json') || '{"files":[]}'), SMF = SM.files.filter((f) => f.area && !f.path.includes('*'));
+  const smRoot = new Set(SM.files.map((f) => f.path).filter((x) => !x.includes('/')));
+  const lrules = rules7.filter((r) => !r.retired).map((r) => new Set(pathsIn(r.where, smRoot)));
+  const lplan = read('rebuild/state/plans.jsonl').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((x) => x.kind === 'item' && !['☑', '✗'].includes(x.mark)).map((x) => new Set(pathsIn(Object.values(x.fields || {}).join(' '), smRoot)));
+  const LA = {};
+  for (const f of SMF) { const a = (LA[f.area] ||= { level: f.level, n: 0, r: 0, p: 0, none: [] }), hr = lrules.some((s) => s.has(f.path)), hp = lplan.some((s) => s.has(f.path)); a.n++; if (hr) a.r++; if (hp) a.p++; if (!hr && !hp) a.none.push(f.path); }
+  const LK = Object.entries(LA).sort((x, y) => x[1].level.localeCompare(y[1].level) || x[0].localeCompare(y[0]));
+  const lnone = LK.reduce((n, [, a]) => n + a.none.length, 0);
+  out['11-links.md'] = `# 자리 ↔ 연결\n\n${note}\n원본: \`docs/textbook/storage-map.json\`(구역·자리) · \`rebuild/rules/rules.jsonl\`(규칙의 where) · \`rebuild/state/plans.jsonl\`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 ${SMF.length})만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: \`node rebuild/probe.mjs <파일>\` · 새 파일: \`node rebuild/probe.mjs --new\`\n\n${table(['등급', '구역', '자리', '규칙에 닿음', '열린 계획에 닿음', '연결 없음'], LK.map(([k, a]) => [a.level, `\`${k}\``, String(a.n), String(a.r), String(a.p), String(a.none.length)]))}\n\n## 연결 없는 자리 (${lnone})\n\n${LK.filter(([, a]) => a.none.length).map(([k, a]) => `- \`${k}\`: ${a.none.map((x) => '`' + x + '`').join(' · ')}`).join('\n') || '없음'}\n`;
+  out['00-summary.md'] = `# 재건 관리 — 요약\n\n${note}\n${table(['무엇', '지금'], rows)}\n\n자세히: [01 파일](01-files.md) · [02 문서](02-docs.md) · [03 명령·판정·시험](03-commands-checks.md) · [04 분류 장부](04-ledger.md) · [05 번호 사전](05-index.md) · [06 파일 → 모드](06-file-modes.md) · [07 규칙 장부](07-rules.md) · [08 맥락](08-context.md) · [09 규칙 검토](09-review.md) · [10 집행 시험](10-enforcement.md) · [11 자리 ↔ 연결](11-links.md)\n`;
 
   // 06 파일 → 모드 (rebuild/index/file-modes.jsonl, 첫 규칙이 이긴다)
   const fm = read('rebuild/index/file-modes.jsonl').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
