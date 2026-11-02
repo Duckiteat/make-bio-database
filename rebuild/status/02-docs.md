@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 311.2 | 306 |  | 분류됨 1 |
+| `CHANGES.md` | 312.6 | 308 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -238,8 +238,8 @@
 | `docs/plan/items/STG-10j.md` | 2.6 | 24 |  | 생성물 |
 | `docs/plan/items/STG-11a.md` | 4.0 | 32 |  | 생성물 |
 | `docs/plan/items/STG-11b.md` | 2.1 | 23 |  | 생성물 |
-| `docs/plan/items/STG-11c.md` | 2.4 | 23 |  | 생성물 |
-| `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
+| `docs/plan/items/STG-11c.md` | 3.3 | 25 |  | 생성물 |
+| `docs/plan/items/STG-11d.md` | 6.1 | 43 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 2.0 | 23 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 2.0 | 19 |  | 생성물 |
 | `docs/plan/items/STG-12.md` | 24.0 | 74 |  | 생성물 |
@@ -285,10 +285,10 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 131.4 | 843 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 132.8 | 846 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
-| `workspace/NEXT-2026-11-02.md` | 6.4 | 46 |  | 미분류 |
+| `workspace/NEXT-2026-11-02.md` | 7.3 | 48 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |

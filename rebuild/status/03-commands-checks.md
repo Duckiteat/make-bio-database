@@ -82,10 +82,12 @@
 | `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 23 |
 | `tests/mcp.test.mjs` | 12 |
+| `tests/merge-check.test.mjs` | 4 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 10 |
 | `tests/permissions.test.mjs` | 2 |
 | `tests/perturb.test.mjs` | 4 |
+| `tests/plan-import-sources.test.mjs` | 2 |
 | `tests/probe.test.mjs` | 10 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |

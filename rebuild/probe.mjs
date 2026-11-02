@@ -257,12 +257,16 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     process.exit(ok ? 0 : 1);
   }
   if (args[0] === '--next') { console.log(nextFrom(ROOT).join('\n')); process.exit(0); }
+  if (args[0] === '--merge-check') { // 병합 사전 점검 (rebuild/merge-check.mjs) — 다른 브랜치와 합치기 전에 충돌 · 번호 충돌을 미리 본다
+    if (!args[1]) { console.error('사용: node rebuild/probe.mjs --merge-check <브랜치 또는 커밋>'); process.exit(2); }
+    const { mergeCheck } = await import('./merge-check.mjs'), r = mergeCheck(args[1]); console.log(r.lines.join('\n')); process.exit(r.exit);
+  }
   if (args[0] === '--audit') { const p = auditReceipts(ROOT); console.log(p.length ? p.join('\n') : '영수증 감사 — GitHub 파일 쓰기 도구 사용 0'); process.exit(p.length ? 1 : 0); }
   if (args[0] === '--new') { // 새 파일의 연결 후보 (제안 — 종료 코드 0)
     const fs = newFiles(ROOT), ls = await linkHints(ctx, fs);
     const ta = l6TestAdds(ctx);
     console.log([fs.length ? ls.join('\n') : '새 파일 0 — 연결 후보 없음', ...ta].join('\n')); process.exit(0);
   }
-  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new · --audit · --next'); process.exit(2); }
+  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new · --audit · --next · --merge-check <브랜치>'); process.exit(2); }
   for (const l of await probe(ctx, args[0])) console.log(l);
 }

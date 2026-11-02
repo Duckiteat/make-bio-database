@@ -2902,6 +2902,47 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "화학량 보존 시험 — 포도당 연소 · ATP 가수분해(전하까지) 균형 · 불균형 사유 · 검사 불가 네 가지 · 보고의 수."
+    },
+    {
+      "class": "management",
+      "area": "code:tools",
+      "level": "L2",
+      "write_keys": [
+        "session:develop"
+      ],
+      "path": "rebuild/merge-check.mjs",
+      "format": "Node 스크립트·모듈 (<브랜치> — 읽기 전용)",
+      "writer": "사람·AI",
+      "readers": "사람 (다른 세션의 브랜치를 합치기 전) · rebuild/probe.mjs --merge-check · tests/merge-check.test.mjs",
+      "interpret": "병합 사전 점검 — git merge-tree 로 작업 트리를 건드리지 않고 시험 합치기를 해서 충돌 파일을 종류별로(다시 만들면 되는 것 · 합집합 · 도구나 손으로 · 손으로) 나누고, 계획 · 규칙 · 상시 권한 장부에서 양쪽이 새로 만든 같은 번호가 다른 내용인 번호 충돌을 센다. 계획 기록(seq) 양쪽 덧붙임 · 그쪽 새 저장 지도 자리의 권한 칸 누락 · 그쪽의 L6 변경도 알린다. 번호 충돌이나 손으로 풀 충돌이 있으면 종료 코드 1."
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/merge-check.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "병합 사전 점검 시험 — 번호 비교 · 충돌 종류 · 권한 칸 누락 · 임시 git 저장소의 통합(번호 충돌 · 충돌 종류 · 권한 칸 · L6 · 작업 트리 불변, 겹침 없음은 0, 없는 브랜치는 2)."
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/plan-import-sources.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "결정 원문 대조 시험 — 대화로 만든 결정(src 에 파일은 있고 커밋은 없음)이 전체 이력 검사(checkDecisionSources)를 깨뜨리지 않고, 커밋이 있는 결정은 여전히 그 판과 대조한다."
     }
   ],
   "governance": {
