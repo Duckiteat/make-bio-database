@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 284 | 7539.4 |
+| 공통 `common` | 284 | 7547.0 |
 | 정보 작성 `author` | 450 | 16526.0 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 172 | 2265.3 |
+| 디벨롭 `develop` | 172 | 2267.0 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 37 | 830.2 |
 
@@ -46,7 +46,7 @@
 | `vocab.js` | develop | 1 | 58.5 | 통제 어휘 — 사용자 요청 시만 |
 | `dictionary.js` | develop | 1 | 7.6 | 번역기 |
 | `orchestrator.js` | develop | 1 | 23.7 | 조정자 |
-| `dbtool.mjs` | develop | 1 | 80.7 | 명령줄 |
+| `dbtool.mjs` | develop | 1 | 81.8 | 명령줄 |
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
@@ -54,11 +54,11 @@
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 27 | 448.8 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 11 | 436.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/textbook/**` | common | 11 | 443.8 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 19 | 298.5 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 211 | 587.4 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 296.7 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 297.3 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 106.3 | 형식 |
 | `*.md` | common | 4 | 64.5 | 최상위 문서 |
 | `.claude/**` | common | 6 | 36.4 | 도구 설정 |

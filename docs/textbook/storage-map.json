@@ -2481,5 +2481,373 @@
       "product": "제품 — 통과한 것: 생성 문서·보고서·증명 도장",
       "design": "설계실 — 사람이 쓴 의도: 설계·명세·작업 규칙. 생성물과 섞지 않는다"
     }
+  },
+  "authority": {
+    "_설명": "권한 구조 (STG-12 · DEC-0048): 등급 L0–L6 · 구역(고유 권한) · 쓰는 열쇠 · 판정 열쇠. 자리(files)의 level·write_key·judge_key 는 자기 구역과 같아야 한다. L5·L6 은 자동 제안하지 않는다(사람 확인).",
+    "levels": {
+      "L0": "저장소 밖 초안",
+      "L1": "작업 기록 — 사실이 아님",
+      "L2": "코드·문서 — 시험이 지킴",
+      "L3": "생성물 — 다시 만들 수 있음",
+      "L4": "장부 — 이유와 봉인",
+      "L5": "권위 데이터 — 판정과 봉인",
+      "L6": "지키는 장치 — 장부로도 못 엶"
+    },
+    "areas": {
+      "data:db": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.merge"
+        ],
+        "judge_keys": [
+          "judicial.gate"
+        ]
+      },
+      "data:prereg": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.prereg"
+        ],
+        "judge_keys": [
+          "judicial.protocol"
+        ]
+      },
+      "data:dictionary": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.dictionary"
+        ],
+        "judge_keys": [
+          "judicial.dictionary_audit"
+        ]
+      },
+      "data:assays": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.assays"
+        ],
+        "judge_keys": [
+          "judicial.assay_audit"
+        ]
+      },
+      "data:assumptions": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.assumptions"
+        ],
+        "judge_keys": [
+          "judicial.assumption_audit"
+        ]
+      },
+      "code:core": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:mcp": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:compiler": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:tools": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:judicial": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "evidence:fetched": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.fetch"
+        ],
+        "judge_keys": [
+          "(판정 없음 — 받은 그대로 + 받기 기록 사슬)"
+        ]
+      },
+      "code:legislative": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:engine": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop · field"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "gen:build": {
+        "level": "L3",
+        "write_keys": [
+          "gen.build (build.sh)"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:schema": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop · field"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "gen:derived": {
+        "level": "L3",
+        "write_keys": [
+          "gen.limitations",
+          "gen.retrieval"
+        ],
+        "judge_keys": [
+          "limitations --check",
+          "—"
+        ]
+      },
+      "gen:textbook": {
+        "level": "L3",
+        "write_keys": [
+          "gen.textbook"
+        ],
+        "judge_keys": [
+          "textbook --check"
+        ]
+      },
+      "ledger:storage-map": {
+        "level": "L4",
+        "write_keys": [
+          "(없음 — 지금 손)"
+        ],
+        "judge_keys": [
+          "textbook --check"
+        ]
+      },
+      "doc:spec": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop · field",
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "gen:hub": {
+        "level": "L3",
+        "write_keys": [
+          "gen.status (render)"
+        ],
+        "judge_keys": [
+          "status --check"
+        ]
+      },
+      "ledger:changes": {
+        "level": "L4",
+        "write_keys": [
+          "session:<모드> (+ dbtool insertChangesRow)"
+        ],
+        "judge_keys": [
+          "(없음)"
+        ]
+      },
+      "doc:history": {
+        "level": "L2",
+        "write_keys": [
+          "human"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "code:migration": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "human(형식 변환 승인) · judicial.validate"
+        ]
+      },
+      "code:tests": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop · field"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "guard:self-tests": {
+        "level": "L6",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "human(바꿀 때마다 확인)"
+        ]
+      },
+      "code:config": {
+        "level": "L2",
+        "write_keys": [
+          "session:develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "doc:scenario": {
+        "level": "L2",
+        "write_keys": [
+          "session:baseline · develop"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "doc:report": {
+        "level": "L2",
+        "write_keys": [
+          "session:<모드>"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "guard:settings": {
+        "level": "L6",
+        "write_keys": [
+          "human"
+        ],
+        "judge_keys": [
+          "tool.permissions(대조)"
+        ]
+      },
+      "work:<모드> (지금 없음 — 공용)": {
+        "level": "L1",
+        "write_keys": [
+          "session:<모드>"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "handoff": {
+        "level": "L1",
+        "write_keys": [
+          "clerk.handoff"
+        ],
+        "judge_keys": [
+          "(통합가가 1차 출처로 재확인)"
+        ]
+      },
+      "attest:registry": {
+        "level": "L5",
+        "write_keys": [
+          "clerk.attest"
+        ],
+        "judge_keys": [
+          "judicial.attest · judicial.acceptance"
+        ]
+      },
+      "gen:status": {
+        "level": "L3",
+        "write_keys": [
+          "gen.status"
+        ],
+        "judge_keys": [
+          "status --check"
+        ]
+      },
+      "ledger:rebuild-history": {
+        "level": "L4",
+        "write_keys": [
+          "(없음 — 재건 때 만든 기록)"
+        ],
+        "judge_keys": [
+          "rebuild 시험"
+        ]
+      },
+      "ledger:rules": {
+        "level": "L4",
+        "write_keys": [
+          "tool.rules"
+        ],
+        "judge_keys": [
+          "rules.check"
+        ]
+      },
+      "ledger:transitions": {
+        "level": "L4",
+        "write_keys": [
+          "clerk.transition"
+        ],
+        "judge_keys": [
+          "judicial.transition_audit"
+        ]
+      },
+      "ledger:plan": {
+        "level": "L4",
+        "write_keys": [
+          "tool.plan"
+        ],
+        "judge_keys": [
+          "state.check"
+        ]
+      },
+      "guard:gate": {
+        "level": "L6",
+        "write_keys": [
+          "human"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      },
+      "guard:receipts": {
+        "level": "L6",
+        "write_keys": [
+          "gate"
+        ],
+        "judge_keys": [
+          "—"
+        ]
+      }
+    }
   }
 }

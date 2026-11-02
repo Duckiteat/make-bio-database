@@ -275,6 +275,9 @@ switch (cmd) {
     for (const f of map.files) {
       if (!/^L[0-6]$/.test(f.level || '')) die(`storage-map: '${f.path}' 의 level 이 L0–L6 이 아님`);
       for (const k of ['area', 'write_key', 'judge_key']) if (!f[k]) die(`storage-map: '${f.path}' 에 ${k} 칸 없음`);
+      const ar = (map.authority || {}).areas?.[f.area];
+      if (!ar) die(`storage-map: '${f.path}' 의 구역 '${f.area}' 가 authority.areas 에 없음`);
+      if (ar.level !== f.level || !ar.write_keys.includes(f.write_key) || !ar.judge_keys.includes(f.judge_key)) die(`storage-map: '${f.path}' 의 등급·열쇠가 구역 '${f.area}' 표와 다름`);
       if (f.level === 'L5' && f.write_key === f.judge_key) die(`storage-map: '${f.path}' L5 는 쓰는 열쇠 ≠ 판정 열쇠(두 열쇠)`);
     }
     // 아키텍처 노드: 이름 하나에 파일 하나, 권한은 열거값, 경로는 실제 파일
@@ -288,7 +291,16 @@ switch (cmd) {
     }
     const md = textbookAppendix(loadDB(), map);
     if (flags.write) { CLERK.writeDerived('textbook', md, HERE); console.log('저장 (입법 서기): ' + rel(file)); }
-    if (unclassified.length) die('storage-map.json 에 분류되지 않은 파일:\n' + unclassified.map((p) => '  ' + p).join('\n'));
+    if (unclassified.length) {
+      // 칸 초안 제안 — 같은 폴더(가장 깊은 공통 접두)의 자리가 쥔 구역을 보여 준다. L5·L6 은 제안하지 않는다(사람 확인)
+      const hint = (p) => {
+        const parts = p.split('/'); for (let n = parts.length - 1; n >= 0; n--) {
+          const pre = parts.slice(0, n).join('/') + (n ? '/' : ''); const near = map.files.filter((x) => x.path.startsWith(pre) && x.area);
+          if (near.length) { const as = [...new Set(near.map((x) => x.area))]; const lv = near[0].level;
+            return as.length === 1 && !['L5', 'L6'].includes(lv) ? `  → 제안: area=${as[0]} level=${lv} write_key=${near[0].write_key} judge_key=${near[0].judge_key}` : '  → 제안 없음 (L5·L6 이거나 구역이 갈림 — 사람이 정함)'; } }
+        return '  → 제안 없음'; };
+      die('storage-map.json 에 분류되지 않은 파일:\n' + unclassified.map((p) => '  ' + p + '\n' + hint(p)).join('\n'));
+    }
     if (flags.check) {
       if ((existsSync(file) ? readFileSync(file, 'utf8') : '') !== md) die('교과서 부록이 현재 코드·데이터와 다름 — node dbtool.mjs textbook --write');
       console.log('교과서 부록 최신, 모든 파일 분류됨');

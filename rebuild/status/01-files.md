@@ -8,8 +8,8 @@
 |---|---|---|
 | data | 433 | 16296.1 |
 | rebuild | 31 | 6110.0 |
-| docs | 268 | 1770.8 |
-| (최상위) | 18 | 938.6 |
+| docs | 268 | 1778.4 |
+| (최상위) | 18 | 940.4 |
 | tests | 85 | 600.3 |
 | judicial | 30 | 567.0 |
 | attestations | 1 | 299.0 |
@@ -38,7 +38,7 @@
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
-| `CHANGES.md` | 296.7 |
+| `CHANGES.md` | 297.3 |
 | `rebuild/state/plan-log.jsonl` | 284.4 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
