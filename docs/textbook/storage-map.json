@@ -2821,6 +2821,33 @@
       "write_keys": [
         "human"
       ]
+    },
+    {
+      "class": "management",
+      "area": "code:tools",
+      "level": "L2",
+      "write_keys": [
+        "session:develop"
+      ],
+      "path": "rebuild/changes-draft.mjs",
+      "format": "Node 스크립트·모듈 (표준 출력에 CHANGES 초안 한 행)",
+      "writer": "사람·AI",
+      "readers": "사람 (CHANGES 행을 쓸 때) · tests/changes-draft.test.mjs",
+      "interpret": "CHANGES 초안 (STG-11e) — git 이 보는 바뀐 파일(스테이지 · 작업 트리 · 새 파일)과 새 변이 결과 · 장부 · 계획 사건에서 범위 칸 · 확인 칸을 채운 행을 낸다. 생성물은 폴더로 묶음. 제목 · 이유 · 영향은 손으로. 파일을 쓰지 않는다. 끝나는 조건: 범위 칸 ⊇ git diff 의 파일(범위가 덮지 못하면 종료 코드 1)."
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/changes-draft.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "CHANGES 초안 시험 — 임시 git 저장소에서 범위 칸이 바뀐 파일(일반 · 새 파일 · 생성물 · 중심 문서)을 모두 덮는지, 덮지 못하는 경우를 covers 가 아는지, 확인 칸이 변이 결과 · 장부 · 계획 사건을 세는지."
     }
   ],
   "governance": {

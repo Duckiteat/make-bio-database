@@ -133,3 +133,19 @@ test('⑨ 영수증 감사 (RULE-0529): GitHub 파일 쓰기 도구가 영수증
     assert.deepEqual(PR.auditReceipts(join(dir, 'nowhere')), [], '영수증 폴더가 없으면 비어 있음');
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('⑩ 세션 끊기 (STG-11f): 넘김 기록의 "다음에" 표 · 열린 작업 앞 셋 · 바뀐 파일 수로 첫 작업 자리에 닿는다', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'next-'));
+  try {
+    mkdirSync(join(dir, 'workspace'), { recursive: true }); mkdirSync(join(dir, 'rebuild', 'state'), { recursive: true });
+    writeFileSync(join(dir, 'workspace', 'NEXT-2026-01-01.md'), '# 옛 것\n## 다음에 할 일\n| a | b |\n|---|---|\n| 낡음 | x |\n');
+    writeFileSync(join(dir, 'workspace', 'NEXT-2026-02-02.md'), '# 새 넘김\n\n## 1. 지금\n| a |\n|---|\n| 무시 |\n\n## 2. 다음에 할 수 있는 일\n| 범위 | 이유 |\n|---|---|\n| 첫 일 | 이유 하나 |\n| 둘째 | 이유 둘 |\n\n## 3. 함정\n| 무시 | 무시 |\n');
+    const it = (id, st, mark) => JSON.stringify({ kind: 'item', id, state: st, mark, fields: { 단계: id + ' 제목' } });
+    writeFileSync(join(dir, 'rebuild', 'state', 'plans.jsonl'), [it('X-1', 'done', '☑'), it('X-2', 'open', '☐'), it('X-3', 'hold', '보류'), it('X-4', 'open', '☐'), it('X-5', 'partial', '◐'), it('X-6', 'open', '☐'), JSON.stringify({ kind: 'order', seq: ['X-1', 'X-2', 'X-3', 'X-4', 'X-5', 'X-6'].map((id) => ({ id, why: '' })) })].join('\n') + '\n');
+    const out = PR.nextFrom(dir).join('\n');
+    assert.match(out, /workspace\/NEXT-2026-02-02\.md \(이전 1 개는 낡음\)/); assert.doesNotMatch(out, /낡음 \| x/);
+    assert.match(out, /첫 일 \| 이유 하나/); assert.match(out, /둘째 \| 이유 둘/); assert.doesNotMatch(out, /무시/);
+    assert.match(out, /X-2 ☐/); assert.match(out, /X-4 ☐/); assert.match(out, /X-5 ◐/); assert.doesNotMatch(out, /X-3|X-1 |X-6/, '끝난 것 · 보류 · 넷째 이후는 안 보인다');
+    assert.match(PR.nextFrom(join(dir, 'nowhere')).join('\n'), /넘김 기록 없음/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});

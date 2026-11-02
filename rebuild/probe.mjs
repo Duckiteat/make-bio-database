@@ -141,6 +141,29 @@ export function auditReceipts(root = ROOT) {
   }
   return out;
 }
+// 세션 끊기 (STG-11f) — 새 세션이 넘김 기록과 탐침만으로 첫 작업 자리에 닿게 한다.
+//   넘김 기록 형식: workspace/NEXT-<날짜>.md — "다음에" 가 든 제목 아래 표가 다음에 할 수 있는 일(범위 · 이유 · 영향 · 확인).
+//   --next 는 가장 나중 넘김 기록의 그 표 · 열린 작업 앞 셋(계획 순서) · 바뀐 파일 수를 보인다. 읽기만 한다.
+export function nextFrom(root = ROOT) {
+  const dir = join(root, 'workspace'), out = [];
+  const docs = existsSync(dir) ? readdirSync(dir).filter((f) => /^NEXT-.*\.md$/.test(f)).sort() : [];
+  if (!docs.length) { out.push('넘김 기록 없음 — workspace/NEXT-<날짜>.md (끝내는 세션이 쓴다)'); }
+  else {
+    const f = docs[docs.length - 1], L = readFileSync(join(dir, f), 'utf8').split('\n');
+    out.push(`넘김 기록 — workspace/${f}${docs.length > 1 ? ` (이전 ${docs.length - 1} 개는 낡음)` : ''}`);
+    out.push(`  ${(L.find((l) => /^# /.test(l)) || '').slice(0, 120)}`);
+    const i = L.findIndex((l) => /^##\s.*다음에/.test(l));
+    if (i < 0) out.push('  "다음에" 제목이 없음 — 넘김 기록 형식 위반');
+    else { const t = []; for (let j = i + 1; j < L.length; j++) { if (/^##\s/.test(L[j])) break; if (/^\|/.test(L[j])) t.push(L[j]); } out.push(`  ${L[i].replace(/^##\s*/, '')}`, ...t.slice(2).map((r) => '  ' + r.slice(0, 200))); }
+  }
+  const recs = jsonl(join(root, 'rebuild', 'state', 'plans.jsonl')), items = new Map(recs.filter((r) => r.kind === 'item').map((r) => [r.id, r]));
+  const seq = (recs.find((r) => r.kind === 'order') || { seq: [] }).seq.map((o) => items.get(o.id)).filter((x) => x && OPEN(x) && x.state !== 'hold').slice(0, 3);
+  out.push('계획 순서의 열린 작업 앞 셋:', ...seq.map((x) => `  ${x.id} ${x.mark} ${String(Object.values(x.fields)[0] || '').slice(0, 60)}`));
+  const ch = git(['status', '--porcelain', '-uall'], root).split('\n').filter(Boolean).length;
+  out.push(`작업 트리: 바뀐 파일 ${ch}${ch ? ' — 이어받은 작업이 있다면 먼저 git status' : ''}`);
+  return out;
+}
+
 // 새 파일 (STG-12 · 연결 항목 제안) — 이번 작업에서 새로 생긴 파일(추적 안 됨 + 스테이지에 더해짐 + HEAD 에 없음)
 export function newFiles(root = ROOT) {
   const out = git(['status', '--porcelain', '--untracked-files=all'], root).split('\n').filter(Boolean).filter((l) => /^(\?\?| A|A )/.test(l)).map((l) => l.slice(3).replace(/^"|"$/g, ''));
@@ -233,12 +256,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     for (const b of fx.left) console.log(`남김 [${b.tier === 2 ? '제안 — 같은 검사인지 확인 뒤 rules.mjs apply 로 find 갱신 + 변이 재실행' : '이동 기록 없음 — 사람이 판단'}] ${b.kind} ${b.key}: ${b.path}`);
     process.exit(ok ? 0 : 1);
   }
+  if (args[0] === '--next') { console.log(nextFrom(ROOT).join('\n')); process.exit(0); }
   if (args[0] === '--audit') { const p = auditReceipts(ROOT); console.log(p.length ? p.join('\n') : '영수증 감사 — GitHub 파일 쓰기 도구 사용 0'); process.exit(p.length ? 1 : 0); }
   if (args[0] === '--new') { // 새 파일의 연결 후보 (제안 — 종료 코드 0)
     const fs = newFiles(ROOT), ls = await linkHints(ctx, fs);
     const ta = l6TestAdds(ctx);
     console.log([fs.length ? ls.join('\n') : '새 파일 0 — 연결 후보 없음', ...ta].join('\n')); process.exit(0);
   }
-  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new · --audit'); process.exit(2); }
+  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new · --audit · --next'); process.exit(2); }
   for (const l of await probe(ctx, args[0])) console.log(l);
 }

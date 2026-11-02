@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 167)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`
+원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 169)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`
 
 | 등급 | 구역 | 자리 | 규칙에 닿음 | 열린 계획에 닿음 | 연결 없음 |
 |---|---|---|---|---|---|
@@ -14,8 +14,8 @@
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
 | L2 | `code:mcp` | 4 | 2 | 0 | 2 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
-| L2 | `code:tests` | 39 | 20 | 0 | 19 |
-| L2 | `code:tools` | 15 | 6 | 1 | 8 |
+| L2 | `code:tests` | 40 | 20 | 0 | 20 |
+| L2 | `code:tools` | 16 | 6 | 1 | 9 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
 | L2 | `doc:spec` | 7 | 0 | 0 | 7 |
@@ -37,7 +37,7 @@
 | L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
-## 연결 없는 자리 (84)
+## 연결 없는 자리 (86)
 
 - `code:compiler`: `compiler/obs_operator.js` · `compiler/tape.js`
 - `code:config`: `.github/workflows/check.yml` · `.gitignore`
@@ -46,8 +46,8 @@
 - `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/stiffness.js`
 - `code:mcp`: `mcp/query.mjs` · `mcp/fetch.mjs`
 - `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`
-- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/affected.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/telomere.test.mjs` · `tests/bench_engine.js` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/FLOOR.json` · `tests/fixtures/augment/README.md`
-- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/state.mjs` · `rebuild/regen.mjs` · `rebuild/plan.mjs` · `rebuild/plan-import.mjs`
+- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/affected.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/telomere.test.mjs` · `tests/bench_engine.js` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/FLOOR.json` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs`
+- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/state.mjs` · `rebuild/regen.mjs` · `rebuild/plan.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs`
 - `doc:history`: `DESIGN-v4.md` · `FEATURES.md`
 - `doc:scenario`: `examples/scenarios/subjects.json`
 - `doc:spec`: `SCHEMA.md` · `README.md` · `docs/design/scaling-limits.md` · `data/fetched/README.md` · `docs/PROMPTS.md` · `docs/RUNBOOK.md` · `docs/project-overview.md`

@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · STG-11e CHANGES 초안 생성기 · STG-11f 세션 끊기 탐침(`--next`) | `rebuild/changes-draft.mjs` · `tests/changes-draft.test.mjs` 3 · `rebuild/probe.mjs` nextFrom · `--next` · `tests/probe.test.mjs` ⑩ · `workspace/NEXT-2026-11-02.md` · 저장 지도 2 자리 · 계획 STG-11e ☑ · STG-11f ◐ | 사용자 요청: 엔진을 뺀 남은 일 (DEC-0047 반복 기록 일의 자동화) | 초안은 범위 · 확인 칸만 채우고 이유 · 영향은 손으로. 넘김 기록 형식을 정함. 둘 다 파일을 쓰지 않음 | 시험 13 · precheck · `finish develop --full` |
 | 2026-11-02 · STG-12 정리 — 낡은 패치 삭제 · 묶음 파일 안내 · 비전문가용 요약 | `workspace/STG-12-l6-patch.diff`(삭제) · `workspace/STG-12-README.md` · `docs/reports/2026-11-02-authority-overview.md` §0 · 계획 STG-12 | 사용자 말씀: 코딩을 모르니 손에 닿지 않는 것이 바람직 — 꼬인 것은 풀고 감 | 감사에서 어긋남 없음. 다시 적용하면 헷갈릴 파일에 안내를 붙임 | `plan.mjs check` · precheck |
 | 2026-11-02 · STG-12 마감 — 완료 처리, 보류분 STG-12a 로 이동 · 다음 세션 넘김 문서 | 계획 STG-12(☑) · STG-12a(보류, 새 항목) · `workspace/NEXT-2026-11-02.md` | 사용자 결정: 번거로운 작업은 피하고 1번(마감)으로 | 문서 · 계획 기록만 — 코드 · 장부 · 설정 변경 없음. 사용자 손이 드는 L6 보강 7 가지는 STG-12a 에 모아 둠 | `plan.mjs check` · `finish develop --full` |
 | 2026-11-02 · 영수증 감사 RULE-0529 (GitHub 파일 쓰기 도구) · 사용자 부담 최소화 원칙 | `rebuild/probe.mjs` auditReceipts · `--audit` · `rebuild/precheck.mjs` 한 단계 · `tests/probe.test.mjs` ⑨ · 규칙 장부 RULE-0529 · 전체 보고서 §9 · 계획 STG-12 상태 ◐ | GitHub MCP 신원이 사용자 계정과 같아 그 도구의 커밋이 사람의 커밋과 구별되지 않음. 사용자 결정: 번거로운 작업은 피한다 | 쓰면 사전 검사가 막음(사후 감시) · 지금까지 1043 도구 사건 중 0 · 로컬 서명 · 해설 검증은 보류 | 시험 9 · 변이 caught · precheck |

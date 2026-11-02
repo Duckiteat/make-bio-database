@@ -70,6 +70,7 @@
 | `tests/assumptions.test.mjs` | 8 |
 | `tests/authority.test.mjs` | 5 |
 | `tests/bundle.test.mjs` | 5 |
+| `tests/changes-draft.test.mjs` | 3 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
 | `tests/dictionary.test.mjs` | 8 |
@@ -84,7 +85,7 @@
 | `tests/observations.test.mjs` | 10 |
 | `tests/permissions.test.mjs` | 2 |
 | `tests/perturb.test.mjs` | 4 |
-| `tests/probe.test.mjs` | 9 |
+| `tests/probe.test.mjs` | 10 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |
