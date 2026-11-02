@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 승인 묶음 판정(RULE-0528) — 분류 · 거부 · 지문 · 승인 화면 | `judicial/approval.js`(classify · decide · digest · screen) · `tests/approval.test.mjs` · 규칙 장부 RULE-0528 · 저장 지도 등록 · 계획 STG-12 효율 측정 | 사용자 요청: 효율을 재고 시작. 측정에서 L6 변경이 잦아(9일 82건) 모든 변경에 승인을 걸면 부담 → 줄만 더하는 시험 변경은 자동 통과로 | 눌러도 거부: 권한 넓힘 · 검사 느슨하게 · 검토 불가. 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인. 적용기와 문지기 연결은 아직 | tests/approval.test.mjs 9 · 변이 caught · precheck |
 | 2026-11-02 · 승인 묶음 설계 보고서 (L6 변경을 사람 승인 한 번으로) | `docs/reports/2026-11-02-approval-bundle.md` · 계획 STG-12 | 사용자 결정: 버튼 = 사람 승인 · 도구가 보여 줌 · 위반은 거부. 정책 파일을 바꾸면 바꾼 순간 새 정책이 적용되어 세션 안에서 못 끝낸 경험 | 설계만 — 코드 · 장부 · 설정 변경 없음. 구현은 한 묶음으로 사람이 한 번 적용 | `plan.mjs check` · `finish develop` |
 | 2026-11-02 · 생성 문서 `rebuild/status/11-links.md` — 구역별 자리 ↔ 규칙·계획 연결 | `rebuild/status.mjs` build(11-links · 요약 링크) · `rebuild/status/11-links.md` | 사용자 요청: 연결 항목 란을 자동으로. 문서마다 머리말에 박으면 복사본이 어긋나므로 원본(저장 지도 · 규칙 where · 계획)에서 생성 | 구역별 자리 수 · 규칙에 닿는 자리 · 열린 계획에 닿는 자리 · 연결 없는 자리 목록(후보 — 결함 아님) | status --check · precheck |
 | 2026-11-02 · 새 파일의 연결 후보 제안 (`probe.mjs --new`) · precheck 한 단계 | `rebuild/probe.mjs` newFiles · linkHints · `rebuild/precheck.mjs` STEPS · `tests/probe.test.mjs` ⑦ | 사용자 요청: 새 파일의 연결 지점을 자동으로 (STG-12) | 새 파일의 분류·규칙·읽는 시험·열린 계획을 보이고 연결이 없으면 알림 — 제안만, 실패하지 않음 | tests/probe.test.mjs 7 · precheck |

@@ -2744,6 +2744,33 @@
         "session:develop",
         "session:field"
       ]
+    },
+    {
+      "class": "law",
+      "area": "code:judicial",
+      "level": "L2",
+      "write_keys": [
+        "session:develop"
+      ],
+      "path": "judicial/approval.js",
+      "format": "ES 모듈 (classify · decide · digest · screen — 순수, 사법부)",
+      "writer": "사람·AI",
+      "readers": "tests/approval.test.mjs · (다음 단계) 적용기",
+      "interpret": "승인 묶음 판정 (STG-12) — L6 변경을 분류한다: 줄만 더함(자기 검사 시험은 자동 통과) · 승인 필요 · 권한을 넓힘 · 검사를 느슨하게 함 · 검토할 수 없음(후자 셋은 눌러도 거부). 묶음의 지문과 승인 화면(diff · 자리 정보)을 도구가 만든다. RULE-0528."
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/approval.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "승인 묶음 판정 시험 — 자동 통과 · 눌러도 거부 넷(느슨함 · 권한 넓힘 settings/modes · 검토 불가) · 좁히는 변경은 승인 · 지문 · 승인 화면."
     }
   ],
   "governance": {

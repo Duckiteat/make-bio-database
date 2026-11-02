@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 299.9 | 286 |  | 분류됨 1 |
+| `CHANGES.md` | 300.6 | 287 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -242,7 +242,7 @@
 | `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
-| `docs/plan/items/STG-12.md` | 6.5 | 34 |  | 생성물 |
+| `docs/plan/items/STG-12.md` | 7.6 | 36 |  | 생성물 |
 | `docs/plan/rebuild.md` | 25.2 | 251 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
@@ -282,7 +282,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 126.2 | 831 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 127.0 | 833 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |

@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (315 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (316 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 281 |
+| 잡음 `caught` | 282 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 281
+## 잡음 `caught` — 282
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -300,6 +300,7 @@
 | RULE-0525 | 정량 관찰은 원문 숫자(reported { value: 원문 십진 문자열, unit: 원문 단위, sd? } | replace | judicial/judicial.js | ⑧ 원문 자리수: 환산값 · 자리수 · precision · 해상도 sd · 원문 sd 가 정확히 맞아야 하고, 없으면 관문이 거부 |
 | RULE-0526 | 단위 체계는 스스로 맞아야 한다 — 단위 기호는 기본 차원의 유리수 지수(vocab.unitSymbols,  | replace | judicial/judicial.js | ⑨ 차원: 단위 문자열 → 기본 차원 · 속도 법칙 · SI 상수 · R 이 정확값의 한 번 반올림 |
 | RULE-0527 | 권한 구조는 저장 지도가 스스로 맞아야 한다 — 열쇠는 authority.keys 의 이름만, 자리는 자기  | replace | judicial/authority.js | 어기면 거부 — 여섯 가지 |
+| RULE-0528 | L6 변경은 승인 묶음으로만 — 도구가 만든 승인 화면(지문 · diff · 자리 정보)을 사람이 확인하고, | replace | judicial/approval.js | 눌러도 거부 ②: 권한을 넓힘 — settings 의 allow 추가 · deny 제거 · ask 제거 |
 
 ## 설정에 있음 `present` — 8
 
