@@ -1,0 +1,19 @@
+지문 41d880a0d7095212c4ea997fcce018a397690a002014cb234ea062d8dae161f3
+묶음 1 파일 — 자동 0 · 사람 승인 1 · 거부 0
+
+## 사람 승인 필요
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    +         ],
+    +         "except": [
+    +           "tests/authority.test.mjs",
+    +           "tests/approval.test.mjs",
+    +           "tests/gate.test.mjs",
+    +           "tests/affected.mjs",
+    +           "tests/trace.mjs",
+    +           "tests/snapshot.mjs",
+    +           "tests/permissions.test.mjs",
+    +           "tests/mutation/run.mjs",
+    +           "tests/governance.test.mjs",
+    +           "tests/rebuild.test.mjs",
+    +           "tests/bundle.test.mjs",
+    +           "docs/textbook/authority.json"
