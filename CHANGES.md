@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 저장 지도에 권한 칸 넷(level · area · write_key · judge_key)을 189 자리 전부에 넣음 · 칸 검사 | `docs/textbook/storage-map.json` files · `dbtool.mjs` textbook 검사 · `docs/reports/2026-11-02-identity-keys.md` §10 · 계획 STG-12 | 재검토 ② 사용자 결정(DEC-0048): 표는 저장 지도에, L5 는 두 열쇠 | 자리마다 등급 L0–L6 · 구역 · 열쇠가 있어야 textbook --check 통과, L5 는 쓰는 열쇠 ≠ 판정 열쇠 | `node dbtool.mjs textbook --check` · precheck |
 | 2026-11-02 · 없앤 초안 폴더의 쓰기 권한을 거둠 (빈틈 G1) · 인식키 비용 추정 | `rebuild/rules/modes.json` gate common write · 권한 장부 PERM-0014 · `docs/reports/2026-11-02-identity-keys.md` §8 비용 · §9 · 계획 STG-12 | 폴더(rebuild/draft/)는 없앴는데 문지기는 쓰기를 허용, rebuild 시험은 거부하던 자리 — 사용자 결정 '수정하자 바로'. 비용은 사용자 물음 | 권한을 줄이는 쪽 — 문지기가 그 자리 쓰기를 막음. 비용 추정: 평소 +1–3 %(상쇄 시 거의 0), 한 번 만드는 비용이 진짜 | permissions 시험 · 사전 검사 · 전체 시험 |
 | 2026-11-02 · 인식키 배정표 초안 (STG-12 첫 단계) | `docs/reports/2026-11-02-identity-keys.md` 신설 · 계획 STG-12 결과 덧붙임 | 자리와 작업마다 어떤 열쇠를 쥐어 줄지 전부 정리(사용자 요청) — 저장 지도 writer 칸 · 서기 함수와 구역 · 호출 코드 정적 검색 · 명령 장부 · 문지기 표에서 | 코드·데이터·권한 불변(초안). 빈틈 11 — G1 은 없앤 폴더의 쓰기 권한이 남은 것 | 자리 189 미분류 0 · plan check · 사전 검사 · 전체 시험 |
 | 2026-11-02 · 자리별 담당과 권한 — 재검토 안 (DEC-0048 · STG-12) | `docs/reports/2026-11-02-write-ownership.md` 신설 · 계획 DEC-0048 · STG-12 · 열린 질문 1 · 순서 · 넘김 문서 | 위치마다 담당 · 고유 권한 등급 · 도구마다 인식키 · '쓰기는 한 곳에' 재검토 (사용자 제안). 자리 189 중 153 이 담당 없음 | 코드·데이터 불변. 재검토를 엔진보다 먼저(순서에서 ASY-00 다음) | plan check 오류 0 · 사전 검사 · 전체 시험 |

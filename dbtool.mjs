@@ -271,6 +271,12 @@ switch (cmd) {
     const zones = (map.zones || {}).enum || {};
     for (const [k, c] of Object.entries(map.classes)) if (!zones[c.zone]) die(`storage-map: 분류 '${k}' 의 구역 '${c.zone}' 가 zones 에 없음`);
     for (const f of map.files) if (f.zone && !zones[f.zone]) die(`storage-map: '${f.path}' 의 구역 '${f.zone}' 가 zones 에 없음`);
+    // 권한 칸 (STG-12 · DEC-0048): 자리마다 등급 · 구역 · 쓰는 열쇠 · 판정 열쇠 — 빠지면 거부
+    for (const f of map.files) {
+      if (!/^L[0-6]$/.test(f.level || '')) die(`storage-map: '${f.path}' 의 level 이 L0–L6 이 아님`);
+      for (const k of ['area', 'write_key', 'judge_key']) if (!f[k]) die(`storage-map: '${f.path}' 에 ${k} 칸 없음`);
+      if (f.level === 'L5' && f.write_key === f.judge_key) die(`storage-map: '${f.path}' L5 는 쓰는 열쇠 ≠ 판정 열쇠(두 열쇠)`);
+    }
     // 아키텍처 노드: 이름 하나에 파일 하나, 권한은 열거값, 경로는 실제 파일
     const nodeNames = new Set();
     for (const f of map.files.filter((x) => x.node)) {

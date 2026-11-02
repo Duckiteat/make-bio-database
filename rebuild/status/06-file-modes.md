@@ -8,18 +8,18 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 284 | 7514.8 |
+| 공통 `common` | 284 | 7539.4 |
 | 정보 작성 `author` | 450 | 16526.0 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 172 | 2264.2 |
+| 디벨롭 `develop` | 172 | 2265.3 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 37 | 829.2 |
+| 점검·검증 `inspect` | 37 | 830.2 |
 
 ## 규칙별
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 31 | 6108.8 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 31 | 6110.0 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -46,19 +46,19 @@
 | `vocab.js` | develop | 1 | 58.5 | 통제 어휘 — 사용자 요청 시만 |
 | `dictionary.js` | develop | 1 | 7.6 | 번역기 |
 | `orchestrator.js` | develop | 1 | 23.7 | 조정자 |
-| `dbtool.mjs` | develop | 1 | 80.1 | 명령줄 |
+| `dbtool.mjs` | develop | 1 | 80.7 | 명령줄 |
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
 | `tests/**` | develop | 59 | 566.6 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 27 | 447.8 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 11 | 413.5 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/reports/**` | inspect | 27 | 448.8 | 보고서 — 읽기·점검 |
+| `docs/textbook/**` | common | 11 | 436.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 19 | 298.5 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 211 | 586.7 | 안내 문서 |
+| `docs/**` | common | 211 | 587.4 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 296.2 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 296.7 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 106.3 | 형식 |
 | `*.md` | common | 4 | 64.5 | 최상위 문서 |
 | `.claude/**` | common | 6 | 36.4 | 도구 설정 |
