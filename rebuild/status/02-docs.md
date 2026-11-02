@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 308.9 | 302 |  | 분류됨 1 |
+| `CHANGES.md` | 309.4 | 303 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -242,7 +242,7 @@
 | `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
-| `docs/plan/items/STG-12.md` | 23.1 | 72 |  | 생성물 |
+| `docs/plan/items/STG-12.md` | 24.0 | 74 |  | 생성물 |
 | `docs/plan/items/STG-12a.md` | 2.2 | 17 |  | 생성물 |
 | `docs/plan/rebuild.md` | 25.3 | 252 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
@@ -272,7 +272,7 @@
 | `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 18.7 | 194 |  | 미분류 |
 | `docs/reports/2026-11-02-approval-bundle.md` | 7.5 | 64 |  | 미분류 |
-| `docs/reports/2026-11-02-authority-overview.md` | 17.9 | 136 |  | 미분류 |
+| `docs/reports/2026-11-02-authority-overview.md` | 19.3 | 145 |  | 미분류 |
 | `docs/reports/2026-11-02-identity-keys.md` | 43.1 | 377 |  | 미분류 |
 | `docs/reports/2026-11-02-l6-test-split.md` | 10.4 | 72 |  | 미분류 |
 | `docs/reports/2026-11-02-write-ownership.md` | 7.2 | 70 |  | 미분류 |
@@ -292,6 +292,7 @@
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
+| `workspace/STG-12-README.md` | 0.9 | 7 |  | 미분류 |
 | `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
 | `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
 | `workspace/handoff/HANDOFF-template.md` | 2.3 | 30 |  | 분류됨 16 |
