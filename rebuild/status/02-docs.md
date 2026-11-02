@@ -9,8 +9,8 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 306.1 | 296 |  | 분류됨 1 |
-| `CLAUDE.md` | 7.7 | 98 | 입구 | 생성물 |
+| `CHANGES.md` | 306.6 | 297 |  | 분류됨 1 |
+| `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
@@ -242,7 +242,7 @@
 | `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
-| `docs/plan/items/STG-12.md` | 16.6 | 56 |  | 생성물 |
+| `docs/plan/items/STG-12.md` | 17.6 | 58 |  | 생성물 |
 | `docs/plan/rebuild.md` | 25.2 | 251 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
