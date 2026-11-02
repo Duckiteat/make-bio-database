@@ -273,7 +273,7 @@ switch (cmd) {
     for (const [k, c] of Object.entries(map.classes)) if (!zones[c.zone]) die(`storage-map: 분류 '${k}' 의 구역 '${c.zone}' 가 zones 에 없음`);
     for (const f of map.files) if (f.zone && !zones[f.zone]) die(`storage-map: '${f.path}' 의 구역 '${f.zone}' 가 zones 에 없음`);
     // 권한 구조 (STG-12 · DEC-0048): 열쇠 표 · 구역 표 · 자리 대조 — judicial/authority.js (순수)
-    { const e = checkAuthority(map); if (e.length) die(e.join('\n')); }
+    { const e = checkAuthority({ ...map, authority: readJSON(join(dir, 'authority.json')) }); if (e.length) die(e.join('\n')); }
     // 아키텍처 노드: 이름 하나에 파일 하나, 권한은 열거값, 경로는 실제 파일
     const nodeNames = new Set();
     for (const f of map.files.filter((x) => x.node)) {

@@ -2725,10 +2725,10 @@
       "writer": "사람·AI",
       "readers": "dbtool.mjs textbook --check · tests/authority.test.mjs",
       "interpret": "권한 구조 검사 (STG-12 · DEC-0048) — 저장 지도의 열쇠 표 · 구역 표 · 자리 · 서기 호출 표를 대조한다. 상속은 열쇠의 max_level 까지, L5 는 서기+사법부 두 열쇠, L6 세션 쓰기는 사람 판정, 담당 없는 구역 상한. 서기 쓰기 함수를 표 밖의 모듈이 부르면 거부.",
-      "level": "L2",
-      "area": "code:judicial",
+      "level": "L6",
+      "area": "guard:authority",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -2738,19 +2738,18 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "권한 구조 시험 — 지금 저장 지도가 통과 · 일부러 어긴 여섯 가지 거부 · 서기 쓰기 함수 호출 모듈이 표 안(코드 전체 훑기) · 표 밖 호출과 낡은 표 거부.",
-      "level": "L2",
-      "area": "code:tests",
+      "level": "L6",
+      "area": "guard:authority",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ]
     },
     {
       "class": "law",
-      "area": "code:judicial",
-      "level": "L2",
+      "area": "guard:authority",
+      "level": "L6",
       "write_keys": [
-        "session:develop"
+        "human"
       ],
       "path": "judicial/approval.js",
       "format": "ES 모듈 (classify · decide · digest · screen — 순수, 사법부)",
@@ -2760,11 +2759,10 @@
     },
     {
       "class": "verification",
-      "area": "code:tests",
-      "level": "L2",
+      "area": "guard:authority",
+      "level": "L6",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ],
       "path": "tests/approval.test.mjs",
       "format": "node:test",
@@ -2774,10 +2772,10 @@
     },
     {
       "class": "management",
-      "area": "code:tools",
-      "level": "L2",
+      "area": "guard:authority",
+      "level": "L6",
       "write_keys": [
-        "session:develop"
+        "human"
       ],
       "path": "rebuild/bundle.mjs",
       "format": "Node 스크립트·모듈 (show <패치> · verify <패치> <지문>)",
@@ -2787,17 +2785,29 @@
     },
     {
       "class": "verification",
-      "area": "code:tests",
-      "level": "L2",
+      "area": "guard:authority",
+      "level": "L6",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ],
       "path": "tests/bundle.test.mjs",
       "format": "node:test",
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "승인 묶음 보기·확인 시험 — 패치에서 바뀐 뒤 내용 · 승인 화면 첫 줄 지문 · 확인(지문 일치 통과 · 불일치 거부 · 권한을 넓히는 묶음 거부) · 한 글자 차이는 다른 지문."
+    },
+    {
+      "class": "spec",
+      "path": "docs/textbook/authority.json",
+      "format": "JSON — levels · areas(구역별 등급 · 쓰는 열쇠 · 판정 열쇠) · keys(열쇠 표) · callers(서기 쓰기 함수 → 열쇠 · 부를 수 있는 모듈)",
+      "writer": "사람 (승인 묶음)",
+      "readers": "dbtool.mjs textbook --check · judicial/authority.js · tests/authority.test.mjs",
+      "interpret": "권한의 뿌리 (STG-12 · DEC-0048) — 저장 지도(자리 목록)와 떼어 둔 이유: 자리 목록은 새 파일마다 자라지만 이 표는 거의 안 바뀌고, 바뀌면 권한이 바뀐다. 구역 guard:authority(L6, 사람만)에 속한다. 고치려면 승인 묶음 — 넓히는 변경(구역 열쇠 추가 · 등급 낮춤 · 호출 모듈 추가 · 열쇠 max_level 올림)은 눌러도 거부.",
+      "level": "L6",
+      "area": "guard:authority",
+      "write_keys": [
+        "human"
+      ]
     }
   ],
   "governance": {
@@ -2820,774 +2830,5 @@
       "product": "제품 — 통과한 것: 생성 문서·보고서·증명 도장",
       "design": "설계실 — 사람이 쓴 의도: 설계·명세·작업 규칙. 생성물과 섞지 않는다"
     }
-  },
-  "authority": {
-    "_설명": "권한 구조 (STG-12 · DEC-0048): 등급 L0–L6 · 구역(고유 권한) · 쓰는 열쇠 · 판정 열쇠. 자리(files)의 level·write_key·judge_key 는 자기 구역과 같아야 한다. L5·L6 은 자동 제안하지 않는다(사람 확인). 열쇠는 authority.keys 의 이름만 쓴다. 상속은 열쇠의 max_level 까지만(세션 L2, 도구·생성기 자기 구역, 사람 전부) — L5·L6 은 상속 없이 구역 표에 이름이 있어야 한다.",
-    "levels": {
-      "L0": "저장소 밖 초안",
-      "L1": "작업 기록 — 사실이 아님",
-      "L2": "코드·문서 — 시험이 지킴",
-      "L3": "생성물 — 다시 만들 수 있음",
-      "L4": "장부 — 이유와 봉인",
-      "L5": "권위 데이터 — 판정과 봉인",
-      "L6": "지키는 장치 — 장부로도 못 엶"
-    },
-    "areas": {
-      "data:db": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.merge"
-        ],
-        "judge_keys": [
-          "judicial.gate"
-        ]
-      },
-      "data:prereg": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.prereg"
-        ],
-        "judge_keys": [
-          "judicial.protocol"
-        ]
-      },
-      "data:dictionary": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.dictionary"
-        ],
-        "judge_keys": [
-          "judicial.dictionary_audit"
-        ]
-      },
-      "data:assays": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.assays"
-        ],
-        "judge_keys": [
-          "judicial.assay_audit"
-        ]
-      },
-      "data:assumptions": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.assumptions"
-        ],
-        "judge_keys": [
-          "judicial.assumption_audit"
-        ]
-      },
-      "code:core": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:mcp": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:compiler": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:tools": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:judicial": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "evidence:fetched": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.fetch"
-        ],
-        "judge_keys": [
-          "none"
-        ],
-        "예외": "판정 열쇠 없음 — 받은 그대로 + 받기 기록 사슬(FETCH_LOG)이 지킴"
-      },
-      "code:legislative": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:engine": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop",
-          "session:field"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "gen:build": {
-        "level": "L3",
-        "write_keys": [
-          "gen.build"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:schema": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop",
-          "session:field"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "gen:derived": {
-        "level": "L3",
-        "write_keys": [
-          "gen.limitations",
-          "gen.retrieval"
-        ],
-        "judge_keys": [
-          "check:limitations",
-          "none"
-        ]
-      },
-      "gen:textbook": {
-        "level": "L3",
-        "write_keys": [
-          "gen.textbook"
-        ],
-        "judge_keys": [
-          "check:textbook"
-        ]
-      },
-      "ledger:storage-map": {
-        "level": "L4",
-        "write_keys": [
-          "unassigned"
-        ],
-        "judge_keys": [
-          "check:textbook"
-        ]
-      },
-      "doc:spec": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop",
-          "session:field"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "gen:hub": {
-        "level": "L3",
-        "write_keys": [
-          "gen.status"
-        ],
-        "judge_keys": [
-          "check:status"
-        ]
-      },
-      "ledger:changes": {
-        "level": "L4",
-        "write_keys": [
-          "session:*"
-        ],
-        "judge_keys": [
-          "none"
-        ],
-        "예외": "L4 인데 세션이 덧붙임 — 맨 위 한 행만 (예외)"
-      },
-      "doc:history": {
-        "level": "L2",
-        "write_keys": [
-          "human"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "code:migration": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "human",
-          "judicial.validate"
-        ]
-      },
-      "code:tests": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop",
-          "session:field"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "guard:self-tests": {
-        "level": "L6",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "human"
-        ],
-        "예외": "L6 — 바꿀 때마다 사람 확인"
-      },
-      "code:config": {
-        "level": "L2",
-        "write_keys": [
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "doc:scenario": {
-        "level": "L2",
-        "write_keys": [
-          "session:baseline",
-          "session:develop"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "doc:report": {
-        "level": "L2",
-        "write_keys": [
-          "session:*"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "guard:settings": {
-        "level": "L6",
-        "write_keys": [
-          "human"
-        ],
-        "judge_keys": [
-          "check:permissions"
-        ]
-      },
-      "work:<모드> (지금 없음 — 공용)": {
-        "level": "L1",
-        "write_keys": [
-          "session:*"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "handoff": {
-        "level": "L1",
-        "write_keys": [
-          "clerk.handoff"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "attest:registry": {
-        "level": "L5",
-        "write_keys": [
-          "clerk.attest"
-        ],
-        "judge_keys": [
-          "judicial.attest",
-          "judicial.acceptance"
-        ]
-      },
-      "gen:status": {
-        "level": "L3",
-        "write_keys": [
-          "gen.status"
-        ],
-        "judge_keys": [
-          "check:status"
-        ]
-      },
-      "ledger:rebuild-history": {
-        "level": "L4",
-        "write_keys": [
-          "unassigned"
-        ],
-        "judge_keys": [
-          "check:rebuild-tests"
-        ]
-      },
-      "ledger:rules": {
-        "level": "L4",
-        "write_keys": [
-          "tool.rules"
-        ],
-        "judge_keys": [
-          "check:rules"
-        ]
-      },
-      "ledger:transitions": {
-        "level": "L4",
-        "write_keys": [
-          "clerk.transition"
-        ],
-        "judge_keys": [
-          "judicial.transition_audit"
-        ]
-      },
-      "ledger:plan": {
-        "level": "L4",
-        "write_keys": [
-          "tool.plan"
-        ],
-        "judge_keys": [
-          "check:plan"
-        ]
-      },
-      "guard:gate": {
-        "level": "L6",
-        "write_keys": [
-          "human"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      },
-      "guard:receipts": {
-        "level": "L6",
-        "write_keys": [
-          "gate"
-        ],
-        "judge_keys": [
-          "none"
-        ]
-      }
-    },
-    "keys": {
-      "human": {
-        "kind": "human",
-        "max_level": "L6",
-        "뜻": "사용자 — 전부 열 수 있고, L6 은 바꿀 때마다 확인"
-      },
-      "session:author": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "author 모드 세션의 손 쓰기 (문지기) — 상속은 L0–L2 까지"
-      },
-      "session:baseline": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "baseline 모드 세션의 손 쓰기 (문지기) — 상속은 L0–L2 까지"
-      },
-      "session:develop": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "develop 모드 세션의 손 쓰기 (문지기) — 상속은 L0–L2 까지"
-      },
-      "session:field": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "field 모드 세션의 손 쓰기 (문지기) — 상속은 L0–L2 까지"
-      },
-      "session:inspect": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "inspect 모드 세션의 손 쓰기 (문지기) — 상속은 L0–L2 까지"
-      },
-      "session:collector": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "collector 모드 세션의 손 쓰기 (문지기) — 상속은 L0–L2 까지"
-      },
-      "session:*": {
-        "kind": "session",
-        "max_level": "L2",
-        "뜻": "모드 가리지 않는 세션 열쇠 = 위 모드 열쇠 아무거나"
-      },
-      "unassigned": {
-        "kind": "debt",
-        "max_level": "L4",
-        "뜻": "아직 담당 열쇠가 없는 자리 — 손으로 쓰는 빚 (개수 상한 시험)"
-      },
-      "gate": {
-        "kind": "guard",
-        "max_level": "L6",
-        "뜻": "문지기 훅"
-      },
-      "tool.rules": {
-        "kind": "tool",
-        "max_level": "L4",
-        "뜻": "rebuild/rules.mjs apply"
-      },
-      "tool.plan": {
-        "kind": "tool",
-        "max_level": "L4",
-        "뜻": "rebuild/plan.mjs apply"
-      },
-      "clerk.merge": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 merge"
-      },
-      "clerk.prereg": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 prereg"
-      },
-      "clerk.dictionary": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 dictionary"
-      },
-      "clerk.assays": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 assays"
-      },
-      "clerk.assumptions": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 assumptions"
-      },
-      "clerk.fetch": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 fetch"
-      },
-      "clerk.attest": {
-        "kind": "clerk",
-        "max_level": "L5",
-        "뜻": "입법 서기 attest"
-      },
-      "clerk.transition": {
-        "kind": "clerk",
-        "max_level": "L4",
-        "뜻": "입법 서기 transition"
-      },
-      "clerk.handoff": {
-        "kind": "clerk",
-        "max_level": "L1",
-        "뜻": "입법 서기 handoff"
-      },
-      "gen.build": {
-        "kind": "gen",
-        "max_level": "L3",
-        "뜻": "생성기 build"
-      },
-      "gen.limitations": {
-        "kind": "gen",
-        "max_level": "L3",
-        "뜻": "생성기 limitations"
-      },
-      "gen.retrieval": {
-        "kind": "gen",
-        "max_level": "L3",
-        "뜻": "생성기 retrieval"
-      },
-      "gen.textbook": {
-        "kind": "gen",
-        "max_level": "L3",
-        "뜻": "생성기 textbook"
-      },
-      "gen.status": {
-        "kind": "gen",
-        "max_level": "L3",
-        "뜻": "생성기 status"
-      },
-      "judicial.gate": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 gate"
-      },
-      "judicial.protocol": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 protocol"
-      },
-      "judicial.dictionary_audit": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 dictionary_audit"
-      },
-      "judicial.assay_audit": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 assay_audit"
-      },
-      "judicial.assumption_audit": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 assumption_audit"
-      },
-      "judicial.attest": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 attest"
-      },
-      "judicial.acceptance": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 acceptance"
-      },
-      "judicial.transition_audit": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 transition_audit"
-      },
-      "judicial.validate": {
-        "kind": "judge",
-        "max_level": "L6",
-        "뜻": "사법부 판정 validate"
-      },
-      "check:textbook": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 textbook"
-      },
-      "check:status": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 status"
-      },
-      "check:rules": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 rules"
-      },
-      "check:plan": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 plan"
-      },
-      "check:limitations": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 limitations"
-      },
-      "check:rebuild-tests": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 rebuild-tests"
-      },
-      "check:permissions": {
-        "kind": "check",
-        "max_level": "L6",
-        "뜻": "기계 검사 permissions"
-      },
-      "none": {
-        "kind": "none",
-        "max_level": "L6",
-        "뜻": "판정 열쇠 없음 (받은 그대로 · 덧붙이기 · 사슬이 지킴)"
-      },
-      "draft": {
-        "kind": "draft",
-        "max_level": "L0",
-        "뜻": "저장소 밖 초안 쓰기 (writeDraft)"
-      }
-    },
-    "callers": {
-      "commitMerge": {
-        "key": "clerk.merge",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "sealGenesis": {
-        "key": "clerk.merge",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "commitMigration": {
-        "key": "clerk.merge",
-        "modules": [
-          "migrations/010-v10-to-v12-values.js"
-        ]
-      },
-      "registerPrereg": {
-        "key": "clerk.prereg",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "appendDictionary": {
-        "key": "clerk.dictionary",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "appendAssays": {
-        "key": "clerk.assays",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "appendAssumptions": {
-        "key": "clerk.assumptions",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "appendAttestations": {
-        "key": "clerk.attest",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "writeDerived": {
-        "key": "gen.textbook",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "writeRetrievalTasks": {
-        "key": "gen.retrieval",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "insertChangesRow": {
-        "key": "session:*",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "writeReport": {
-        "key": "session:*",
-        "modules": [
-          "dbtool.mjs",
-          "rebuild/read.mjs"
-        ]
-      },
-      "writeStatus": {
-        "key": "gen.status",
-        "modules": [
-          "rebuild/status.mjs"
-        ]
-      },
-      "writeHubDoc": {
-        "key": "gen.status",
-        "modules": [
-          "rebuild/status.mjs"
-        ]
-      },
-      "writePlanFile": {
-        "key": "gen.status",
-        "modules": [
-          "rebuild/status.mjs"
-        ]
-      },
-      "writeState": {
-        "key": "tool.plan",
-        "modules": [
-          "rebuild/plan.mjs"
-        ]
-      },
-      "writeLedger": {
-        "key": "tool.rules",
-        "modules": [
-          "rebuild/rules.mjs"
-        ]
-      },
-      "appendReceipt": {
-        "key": "gate",
-        "modules": [
-          "rebuild/gate.mjs"
-        ]
-      },
-      "publishReceipt": {
-        "key": "gate",
-        "modules": [
-          "rebuild/gate.mjs"
-        ]
-      },
-      "writeReceiptDoc": {
-        "key": "gate",
-        "modules": [
-          "rebuild/gate.mjs"
-        ]
-      },
-      "writeDraft": {
-        "key": "draft",
-        "modules": [
-          "dbtool.mjs",
-          "rebuild/gate.mjs",
-          "rebuild/probe.mjs"
-        ]
-      },
-      "writeDraftText": {
-        "key": "draft",
-        "modules": [
-          "rebuild/bundle.mjs",
-          "rebuild/rules.mjs"
-        ]
-      },
-      "fetchToInbox": {
-        "key": "clerk.fetch",
-        "modules": [
-          "dbtool.mjs",
-          "mcp/fetch.mjs"
-        ]
-      },
-      "postToInbox": {
-        "key": "clerk.fetch",
-        "modules": [
-          "mcp/fetch.mjs"
-        ]
-      },
-      "appendFetchLog": {
-        "key": "clerk.fetch",
-        "modules": [
-          "mcp/fetch.mjs"
-        ]
-      },
-      "appendTransition": {
-        "key": "clerk.transition",
-        "modules": [
-          "dbtool.mjs"
-        ]
-      },
-      "appendHandoff": {
-        "key": "clerk.handoff",
-        "modules": [
-          "mcp/clerk.mjs"
-        ]
-      }
-    },
-    "callers_설명": "서기(legislative/clerk.mjs)의 쓰기 함수 → 그 함수가 쥐는 열쇠 · 부를 수 있는 모듈. 시험(tests/authority.test.mjs)이 코드 전체를 훑어 표 밖의 호출을 거부한다. 열쇠는 모듈 단위로 시작하고, 한 파일이 여러 열쇠를 쥐면(dbtool.mjs) 진입점 단위는 다음 단계."
   }
 }

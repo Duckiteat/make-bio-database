@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { checkAuthority, checkCallers } from '../judicial/authority.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const load = () => JSON.parse(readFileSync(join(ROOT, 'docs/textbook/storage-map.json'), 'utf8'));
+const load = () => ({ ...JSON.parse(readFileSync(join(ROOT, 'docs/textbook/storage-map.json'), 'utf8')), authority: JSON.parse(readFileSync(join(ROOT, 'docs/textbook/authority.json'), 'utf8')) });
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'target', 'tests', 'workspace'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : /\.(mjs|js|cjs)$/.test(n) ? [relative(ROOT, p)] : []; });
 
 test('지금 저장 지도의 권한 구조가 통과한다', () => {

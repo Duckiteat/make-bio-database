@@ -13,7 +13,9 @@ import { fileURLToPath } from 'node:url';
 import { decide, digest, screen } from '../judicial/approval.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-export const ROLE_OF = { 'rebuild/gate.mjs': 'guard', '.claude/settings.json': 'settings', 'rebuild/rules/modes.json': 'modes' };
+export const ROLE_OF = { 'rebuild/gate.mjs': 'guard', '.claude/settings.json': 'settings', 'rebuild/rules/modes.json': 'modes', 'docs/textbook/authority.json': 'authority',
+  // 권한의 뿌리(구역 guard:authority) — 판정 코드 · 그 시험 · 이 도구: 고치려면 승인 묶음
+  'judicial/authority.js': 'guard', 'judicial/approval.js': 'guard', 'rebuild/bundle.mjs': 'guard', 'tests/authority.test.mjs': 'guard', 'tests/approval.test.mjs': 'guard', 'tests/bundle.test.mjs': 'guard' };
 const glob = (g) => new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\0').replace(/\*/g, '[^/]*').replace(/\0/g, '.*') + '$');
 
 // 패치가 건드리는 경로 (diff --git a/x b/x 머리)

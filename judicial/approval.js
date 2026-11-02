@@ -1,6 +1,6 @@
 // 승인 묶음 판정 (STG-12 · 승인 묶음 설계 보고서) — L6 변경을 분류하고, 승인 화면과 지문을 만든다.
 // 계약: 순수 — 값만 받고 값만 돌려준다 (읽기·쓰기·실행 없음, 사법부). 쓰기는 서기, 버튼(적용기)은 L6 라 사람이 승인한 묶음으로 따로.
-//   classify({ path, before, after, role }) → { kind, reasons[] }   role: 'settings'(설정 권한 목록) · 'modes'(문지기 모드 표) · 'guard'(문지기 코드) — 호출자가 저장 지도에서 넘긴다 (이 모듈은 자리 이름을 모른다)
+//   classify({ path, before, after, role }) → { kind, reasons[] }   role: 'settings'(설정 권한 목록) · 'modes'(문지기 모드 표) · 'authority'(권한 표) · 'guard'(문지기 코드 · 판정 코드 · 그 시험) — 호출자가 저장 지도에서 넘긴다 (이 모듈은 자리 이름을 모른다)
 //     kind: 'added_only'(줄만 더함) · 'changed'(승인 필요) · 'widened'(권한을 넓힘 — 거부) · 'loosened'(검사를 느슨하게 — 거부) · 'unreviewable'(검토할 수 없음 — 거부)
 //   decide(changes) → { auto[], approve[], refused[] }   자동 통과 · 사람 승인 필요 · 눌러도 거부
 //   digest(changes) → sha256 (파일 목록 + 바뀐 뒤 바이트의 지문)   screen(changes, areaOf) → 승인 화면 글
@@ -13,7 +13,7 @@ export const LIMITS = { maxChangedLines: 400, maxLineLength: 2000 };
 // 자동 통과 — 끔. 줄만 더하는 변경도 패턴으로는 속일 수 있고(assert 덮어쓰기 · 빈 순환이 통과) 이득은 7% 뿐이었다 (사후 점검). 켜려면 판정이 속지 않는다는 근거가 먼저.
 export const AUTO_PASS = false;
 const sha = (s) => createHash('sha256').update(s).digest('hex');
-const GUARD_ROLES = new Set(['settings', 'modes', 'guard']); // 문지기 · 설정 · 모드 표: 추가도 권한을 넓힐 수 있음 — 항상 사람
+const GUARD_ROLES = new Set(['settings', 'modes', 'authority', 'guard']); // 문지기 · 설정 · 모드 표: 추가도 권한을 넓힐 수 있음 — 항상 사람
 const isSelfTest = (p) => /^tests\/(?:[\w.-]+\.test\.mjs|affected\.mjs|trace\.mjs|snapshot\.mjs|mutation\/run\.mjs)$/.test(p);
 const lines = (s) => (s === '' ? [] : s.split('\n'));
 
@@ -62,6 +62,18 @@ function widened(role, before, after) {
       for (const f of ['except', 'protect']) for (const g of asSet(y[f])) if (!asSet(x[f]).has(g)) why.push(`${k}.${f} 에서 제거: ${g}`);
       for (const f of ['finish', 'finish_first']) for (const g of asSet(y[f])) if (!asSet(x[f]).has(g)) why.push(`${k}.${f} 에서 끝내기 전 시험을 줄임: ${g}`);
     }
+  }
+  // 권한의 뿌리(권한 표) — 구역에 열쇠가 늘거나 등급이 낮아지거나 판정 열쇠가 줄거나, 열쇠의 max_level 이 오르거나, 서기 함수를 부를 수 있는 모듈이 늘면 권한이 넓어진 것
+  if (role === 'authority' && b && a) {
+    const lv = (x) => Number(String(x || 'L0').slice(1));
+    for (const [n, z] of Object.entries(a.areas || {})) {
+      const y = (b.areas || {})[n]; if (!y) continue;
+      if (lv(z.level) < lv(y.level)) why.push(`구역 ${n}: 등급이 ${y.level} → ${z.level} (보호가 낮아짐)`);
+      for (const k of asSet(z.write_keys)) if (!asSet(y.write_keys).has(k)) why.push(`구역 ${n}: 쓰는 열쇠 추가 ${k}`);
+      for (const k of asSet(y.judge_keys)) if (!asSet(z.judge_keys).has(k)) why.push(`구역 ${n}: 판정 열쇠 제거 ${k}`);
+    }
+    for (const [k, v] of Object.entries(a.keys || {})) { const o = (b.keys || {})[k]; if (o && (lv(v.max_level) > lv(o.max_level) || v.kind !== o.kind)) why.push(`열쇠 ${k}: max_level ${o.max_level} → ${v.max_level} · 종류 ${o.kind} → ${v.kind}`); }
+    for (const [fn, c] of Object.entries(a.callers || {})) { const o = (b.callers || {})[fn]; if (!o) continue; for (const m of asSet(c.modules)) if (!asSet(o.modules).has(m)) why.push(`서기 함수 ${fn}: 부를 수 있는 모듈 추가 ${m}`); if (c.key !== o.key) why.push(`서기 함수 ${fn}: 열쇠 ${o.key} → ${c.key}`); }
   }
   return why;
 }

@@ -109,3 +109,18 @@ test('눌러도 거부 ⑥: 모드 표에서 끝내기 전 시험을 줄임', ()
   assert.equal(c(mk(['validate', 'affected']), mk(['validate'])).kind, 'widened');
   assert.equal(c(mk(['validate']), mk(['validate', 'affected'])).kind, 'changed', '시험을 더하는 것은 승인');
 });
+
+test('눌러도 거부 ⑦: 권한의 뿌리(권한 표) — 구역 열쇠 추가 · 등급 낮춤 · 판정 제거 · max_level 올림 · 호출 모듈 추가', () => {
+  const A = () => ({ levels: {}, keys: { 'session:x': { kind: 'session', max_level: 'L2' }, human: { kind: 'human', max_level: 'L6' } },
+    areas: { 'data:db': { level: 'L5', write_keys: ['clerk.merge'], judge_keys: ['judicial.gate'] }, 'code:x': { level: 'L2', write_keys: ['session:x'], judge_keys: ['none'] } },
+    callers: { commitMerge: { key: 'clerk.merge', modules: ['dbtool.mjs'] } } });
+  const c = (f) => { const a = A(); f(a); return classify({ path: 'cfg/authority.json', role: 'authority', before: set(A()), after: set(a) }); };
+  assert.equal(c((a) => { a.areas['data:db'].write_keys.push('session:x'); }).kind, 'widened', '구역에 쓰는 열쇠 추가');
+  assert.equal(c((a) => { a.areas['data:db'].level = 'L3'; }).kind, 'widened', '등급 낮춤');
+  assert.equal(c((a) => { a.areas['data:db'].judge_keys = []; }).kind, 'widened', '판정 열쇠 제거');
+  assert.equal(c((a) => { a.keys['session:x'].max_level = 'L5'; }).kind, 'widened', '열쇠의 max_level 올림');
+  assert.equal(c((a) => { a.callers.commitMerge.modules.push('evil.js'); }).kind, 'widened', '서기 함수를 부를 수 있는 모듈 추가');
+  assert.equal(c((a) => { a.callers.commitMerge.key = 'session:x'; }).kind, 'widened', '서기 함수의 열쇠 바꿈');
+  assert.equal(c((a) => { a.areas['code:x'].write_keys = []; }).kind, 'changed', '열쇠를 줄이는 것은 좁힘 — 사람 승인');
+  assert.equal(c((a) => { a.areas['new:z'] = { level: 'L1', write_keys: ['human'], judge_keys: ['none'] }; }).kind, 'changed', '새 구역은 사람 승인');
+});
