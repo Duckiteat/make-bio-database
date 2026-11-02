@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 298.8 | 281 |  | 분류됨 1 |
+| `CHANGES.md` | 299.6 | 282 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -43,7 +43,7 @@
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 12.2 | 59 |  | 생성물 |
 | `docs/plan/assay.md` | 4.9 | 82 |  | 생성물 |
-| `docs/plan/build.md` | 36.5 | 383 |  | 생성물 |
+| `docs/plan/build.md` | 38.4 | 392 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -93,6 +93,7 @@
 | `docs/plan/decisions/DEC-0047.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/decisions/DEC-0048.md` | 1.7 | 15 |  | 생성물 |
 | `docs/plan/decisions/DEC-0049.md` | 2.2 | 21 |  | 생성물 |
+| `docs/plan/decisions/DEC-0050.md` | 2.0 | 18 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.2 | 30 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -141,7 +142,7 @@
 | `docs/plan/items/PLAN-027.md` | 3.5 | 37 |  | 생성물 |
 | `docs/plan/items/PLAN-028.md` | 1.4 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-029.md` | 1.5 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-030.md` | 1.5 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-030.md` | 1.8 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-031.md` | 2.2 | 33 |  | 생성물 |
 | `docs/plan/items/PLAN-032.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-033.md` | 1.2 | 22 |  | 생성물 |
@@ -149,7 +150,7 @@
 | `docs/plan/items/PLAN-035.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-036.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-037.md` | 2.4 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-038.md` | 1.5 | 29 |  | 생성물 |
+| `docs/plan/items/PLAN-038.md` | 1.8 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-039.md` | 1.1 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-040.md` | 1.0 | 20 |  | 생성물 |
 | `docs/plan/items/PLAN-041.md` | 1.5 | 30 |  | 생성물 |
@@ -191,9 +192,9 @@
 | `docs/plan/items/PLAN-075.md` | 1.7 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-076.md` | 1.8 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-077.md` | 2.6 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-078.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-078.md` | 1.8 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-079.md` | 2.3 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-080.md` | 1.6 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-080.md` | 1.8 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-081.md` | 1.3 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-082.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-083.md` | 1.2 | 21 |  | 생성물 |
@@ -201,10 +202,10 @@
 | `docs/plan/items/PLAN-085.md` | 2.1 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-086.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-087.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-088.md` | 1.7 | 22 |  | 생성물 |
-| `docs/plan/items/PLAN-089.md` | 2.1 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-090.md` | 2.0 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-091.md` | 2.1 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-088.md` | 1.9 | 23 |  | 생성물 |
+| `docs/plan/items/PLAN-089.md` | 2.3 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-090.md` | 2.2 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-091.md` | 2.3 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-092.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-093.md` | 3.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
@@ -277,6 +278,7 @@
 | `docs/reports/2026-11-01-engine-teardown-2.md` | 9.7 | 57 |  | 미분류 |
 | `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
+| `docs/reports/2026-11-02-brain-source-sufficiency.md` | 17.4 | 93 |  | 미분류 |
 | `docs/reports/2026-11-02-engine-primer-qa.md` | 18.8 | 110 |  | 미분류 |
 | `docs/reports/2026-11-02-plan021-survey.md` | 13.6 | 89 |  | 미분류 |
 | `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 22.3 | 146 |  | 미분류 |
