@@ -87,10 +87,28 @@ test('④ 재현·정수 발화·원장: 같은 (seed, 궤적) → 같은 해시
   assert.ok(!v.error, v.error);
   assert.deepEqual(v.audit.filter((x) => x.fault === 'ENGINE_DEFECT' || x.fault === 'COMPILER_DEFECT'), []);
   assert.ok(v.verdict.mass.worst <= v.verdict.mass.tolerance && v.verdict.mass.replayWorst <= v.verdict.mass.tolerance, '원장·재생 1e-14');
-  // 난수: 같은 (seed, 궤적) 은 같은 수열
+  // 난수: 같은 (seed, 궤적) 은 같은 난수, 다른 궤적은 다름 (번호로 찾는 난수 — PLAN-020)
   const r1 = RNG.create(5, 2), r2 = RNG.create(5, 2), r3 = RNG.create(5, 3);
-  const s1 = Array.from({ length: 5 }, () => r1.uniform()); assert.deepEqual(Array.from({ length: 5 }, () => r2.uniform()), s1); assert.notDeepEqual(Array.from({ length: 5 }, () => r3.uniform()), s1);
+  const at = (r) => Array.from({ length: 5 }, (_, i) => r.uniformAt(0, i, 0));
+  const s1 = at(r1); assert.deepEqual(at(r2), s1); assert.notDeepEqual(at(r3), s1);
 });
+
+test('④b 카운터 기반 난수 (PLAN-020): 난수는 (seed, 궤적, 흐름, 번호, 부번호) 의 순수 함수 — 앞서 무엇을 뽑았든 같고 자리가 다르면 다르며 분포가 맞음', () => {
+  const a = RNG.create(7, 1), b = RNG.create(7, 1);
+  // 순서·횟수와 무관: b 가 먼저 다른 난수를 잔뜩 뽑아도 같은 자리의 값은 같다
+  for (let i = 0; i < 50; i++) b.uniformAt(3, i, 2); b.exp1(1, 9); b.poisson(40, 3, 4);
+  for (const [st, ix, sb] of [[0, 0, 0], [1, 5, 0], [6, 2, 3], [9, 100, 1]]) assert.equal(a.uniformAt(st, ix, sb), b.uniformAt(st, ix, sb), `(${st},${ix},${sb})`);
+  assert.equal(a.exp1(2, 3), b.exp1(2, 3)); assert.equal(a.poisson(3.5, 5, 8), b.poisson(3.5, 5, 8)); assert.equal(a.poisson(120, 5, 9), b.poisson(120, 5, 9));
+  // 자리가 다르면 값이 다르다 (흐름·번호·부번호·seed·궤적 각각)
+  const base = a.uniformAt(2, 3, 1);
+  for (const v of [a.uniformAt(3, 3, 1), a.uniformAt(2, 4, 1), a.uniformAt(2, 3, 2), RNG.create(8, 1).uniformAt(2, 3, 1), RNG.create(7, 2).uniformAt(2, 3, 1)]) assert.notEqual(v, base);
+  // 균등: 평균 0.5 · 분산 1/12 (큰 표본, 허용 4σ)
+  const n = 20000; let m = 0, q = 0; for (let i = 0; i < n; i++) { const u = a.uniformAt(11, i, 0); assert.ok(u >= 0 && u < 1); m += u; q += u * u; }
+  m /= n; const vr = q / n - m * m; assert.ok(Math.abs(m - 0.5) < 4 * Math.sqrt(1 / 12 / n), `평균 ${m}`); assert.ok(Math.abs(vr - 1 / 12) < 0.01, `분산 ${vr}`);
+  // 포아송 평균·분산이 μ (두 방식: μ < 10 곱셈법, μ ≥ 10 PTRS)
+  for (const mu of [3, 25, 400]) { let s1 = 0, s2 = 0; const k = 20000; for (let i = 0; i < k; i++) { const x = a.poisson(mu, 13, i); s1 += x; s2 += x * x; } const mean = s1 / k, v2 = s2 / k - mean * mean; assert.ok(Math.abs(mean - mu) < 4 * Math.sqrt(mu / k), `μ=${mu} 평균 ${mean}`); assert.ok(Math.abs(v2 - mu) < 0.08 * mu + 0.3, `μ=${mu} 분산 ${v2}`); }
+});
+
 
 test('⑤ 결정론 경로: stochastic 이 없으면 확률 원자료가 없고 결정 탐침이 돈다 · 확률 실행은 결정 탐침을 하지 않음', () => {
   const sc = SCN.read(new URL('examples/scenarios/fate-effector-pulse-long-hypothetical.json', ROOT));

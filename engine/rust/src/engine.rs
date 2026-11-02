@@ -67,7 +67,7 @@ pub struct Engine {
     sto: bool, stp: StoParams, rng: Rng,
     disc: Vec<u8>, mode: Vec<u8>, tq: Vec<f64>, pq: Vec<f64>, pub fired_ssa: Vec<f64>, pub fired_leap: Vec<f64>,
     col_of: Vec<usize>, spec: Vec<Vec<(usize, f64)>>, is_sig: Vec<bool>, mu: Vec<f64>, s2: Vec<f64>,
-    save_n: Vec<f64>, save_lo: Vec<f64>, save_t: Vec<f64>, save_cum: Vec<f64>, kl: Vec<f64>, nc: Vec<f64>, n_leap: usize,
+    save_n: Vec<f64>, save_lo: Vec<f64>, save_t: Vec<f64>, save_cum: Vec<f64>, kl: Vec<f64>, nc: Vec<f64>, n_leap: usize, ssa_idx: Vec<f64>, leap_idx: Vec<f64>, save_leap_idx: Vec<f64>,
     /// switches, ssaFires, ssaBlocked, leapRejects, rootEvals, draws, 사건 버퍼 넘침
     pub sto_stats: [f64; 7],
     reach_def: Vec<Vec<(usize, bool, f64, f64)>>, pub reach_t: Vec<f64>, pub mode_out: Vec<f64>,
@@ -179,7 +179,7 @@ impl Engine {
             sto, stp, rng: Rng::new(seed, traj),
             disc: vec![0; na_], mode: vec![0; na_], tq: vec![0.0; na_], pq: vec![0.0; na_], fired_ssa: vec![0.0; na_], fired_leap: vec![0.0; na_],
             col_of, spec, is_sig, mu: vec![0.0; nb], s2: vec![0.0; nb],
-            save_n: vec![0.0; nb], save_lo: vec![0.0; nb], save_t: vec![0.0; na_], save_cum: vec![0.0; 2 * nr], kl: vec![0.0; na_], nc: vec![0.0; nb], n_leap: 0,
+            save_n: vec![0.0; nb], save_lo: vec![0.0; nb], save_t: vec![0.0; na_], save_cum: vec![0.0; 2 * nr], kl: vec![0.0; na_], nc: vec![0.0; nb], n_leap: 0, ssa_idx: vec![0.0; na_], leap_idx: vec![0.0; na_], save_leap_idx: vec![0.0; na_],
             sto_stats: [0.0; 7], reach_t: vec![f64::NAN; ns], reach_def, mode_out: vec![0.0; na_],
         })
     }
@@ -335,7 +335,7 @@ impl Engine {
             let m: u8 = if first || cur == 0 { if coarse(1.0) { 0 } else if cnt < self.stp.ssa_max { 2 } else { 1 } }
                 else if coarse(h) { 0 } else if cur == 1 { if cnt < self.stp.ssa_max { 2 } else { 1 } }
                 else if cnt >= self.stp.ssa_max * h { 1 } else { 2 };
-            if m != cur || first { if !first { self.sto_stats[0] += 1.0; } if m == 2 { self.tq[k] = 0.0; self.pq[k] = self.rng.exp1(); } }
+            if m != cur || first { if !first { self.sto_stats[0] += 1.0; } if m == 2 { self.tq[k] = 0.0; let st = 2.0 * (self.act[k] as f64); self.pq[k] = self.rng.exp1(st, self.ssa_idx[k]); self.ssa_idx[k] += 1.0; } }
             self.mode[k] = m; self.disc[k] = if m > 0 { 1 } else { 0 }; if m == 1 { self.n_leap += 1; }
         }
     }
@@ -416,15 +416,15 @@ impl Engine {
                 let mut best = f64::NEG_INFINITY;
                 for k in 0..na_ { if self.mode[k] == 2 && self.tq[k] + self.xn[k] - self.pq[k] > best { best = self.tq[k] + self.xn[k] - self.pq[k]; fire = k as isize; } }
             }
-            if self.n_leap > 0 { self.save_n.copy_from_slice(&self.n); self.save_lo.copy_from_slice(&self.lo); self.save_t.copy_from_slice(&self.tq); self.save_cum.copy_from_slice(&self.cum); }
+            if self.n_leap > 0 { self.save_n.copy_from_slice(&self.n); self.save_lo.copy_from_slice(&self.lo); self.save_t.copy_from_slice(&self.tq); self.save_cum.copy_from_slice(&self.cum); self.save_leap_idx.copy_from_slice(&self.leap_idx); }
             for k in 0..na_ { if self.disc[k] == 0 { let x = self.xn[k]; if x != 0.0 { let j = self.act[k]; self.apply_extent(j, x); } } else { self.tq[k] += self.xn[k]; } }
             if self.n_leap > 0 {
                 self.nc.copy_from_slice(&self.n);
-                for k in 0..na_ { self.kl[k] = 0.0; if self.mode[k] == 1 { let kk = self.rng.poisson(self.xn[k]); if kk != 0.0 { let j = self.act[k]; self.apply_extent(j, kk); self.kl[k] = kk; } } }
+                for k in 0..na_ { self.kl[k] = 0.0; if self.mode[k] == 1 { let st = 2.0 * (self.act[k] as f64) + 1.0; let kk = self.rng.poisson(self.xn[k], st, self.leap_idx[k]); self.leap_idx[k] += 1.0; if kk != 0.0 { let j = self.act[k]; self.apply_extent(j, kk); self.kl[k] = kk; } } }
                 let mut neg = false;
                 for i in 0..self.nb { if !self.is_sig[i] && self.n[i] < 0.0 && self.n[i] < self.nc[i] { neg = true; break; } }
                 if neg {
-                    self.n.copy_from_slice(&self.save_n); self.lo.copy_from_slice(&self.save_lo); self.tq.copy_from_slice(&self.save_t); self.cum.copy_from_slice(&self.save_cum);
+                    self.n.copy_from_slice(&self.save_n); self.lo.copy_from_slice(&self.save_lo); self.tq.copy_from_slice(&self.save_t); self.cum.copy_from_slice(&self.save_cum); self.leap_idx.copy_from_slice(&self.save_leap_idx);
                     self.sto_stats[3] += 1.0; self.stats[3] += 1.0; self.iv_rej += 1.0; h = fmax(self.ctl.h_min, hu / 2.0); last_rej = true; continue;
                 }
                 for k in 0..na_ { self.fired_leap[k] += self.kl[k]; }
@@ -434,7 +434,7 @@ impl Engine {
                 let mut avail = true;
                 for q in 0..self.rules[j].cons.len() { let (i, n) = self.rules[j].cons[q]; if !(self.is_sig[i] || self.n[i] >= n) { avail = false; break; } }
                 if avail { self.apply_extent(j, 1.0); self.fired_ssa[k] += 1.0; self.sto_stats[1] += 1.0; } else { self.sto_stats[2] += 1.0; }
-                self.pq[k] += self.rng.exp1();
+                let st = 2.0 * (self.act[k] as f64); let e = self.rng.exp1(st, self.ssa_idx[k]); self.ssa_idx[k] += 1.0; self.pq[k] += e;
             }
             self.promote();
             self.stats[2] += 1.0; self.iv_steps += 1.0; self.iv_hmin = fmin(self.iv_hmin, hu); self.iv_hmax = fmax(self.iv_hmax, hu);

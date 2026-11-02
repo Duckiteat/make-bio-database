@@ -664,10 +664,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/fate_engine.js (확률 층)",
-      "interpret": "[행정] 4단계 ④ — 엔진 난수 xoshiro256++ (splitmix64 로 (seed, 궤적) 초기화), 균등·지수·포아송(곱셈법 μ < 10, PTRS). 확률 층의 모든 무작위는 여기서만 — 사법부는 쓰지 않는다.",
+      "interpret": "[행정] 4단계 ④ — 엔진 난수: 카운터 기반(PLAN-020) — 난수 하나는 (seed, 궤적, 흐름, 번호, 부번호) 의 순수 함수(splitmix64 마무리 네 번), 균등·지수·포아송(곱셈법 μ < 10, PTRS). 흐름 = 2·규칙 번호 + 종류. 확률 층의 모든 무작위는 여기서만 — 사법부는 쓰지 않는다.",
       "node": "EXECUTIVE_RNG",
       "governance": "Executive",
-      "refactor_strategy": "Rust(engine/rust/src/rng.rs)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다 — 해석해 시험(tests/stochastic.test.mjs ①)과 출생–사멸 JS = Rust 비트(tests/rust_engine.test.mjs ⑧)를 함께 맞춘다."
+      "refactor_strategy": "Rust(engine/rust/src/rng.rs)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다(번호 매기는 규칙은 engine/fate_engine.js 와 engine.rs 의 ssaIdx·leapIdx) — 해석해 시험(tests/stochastic.test.mjs ①)과 출생–사멸 JS = Rust 비트(tests/rust_engine.test.mjs ⑧)를 함께 맞춘다."
     },
     {
       "path": "engine/fate_rust.js",
@@ -727,7 +727,7 @@
       "format": "Rust",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/rust/src/engine.rs (확률 층)",
-      "interpret": "[행정] 4단계 ⑤ — 엔진 난수 xoshiro256++ · 포아송 PTRS (engine/rng.js 와 같은 알고리즘·산술 순서, 순수 Rust libm). 할당 없음.",
+      "interpret": "[행정] 4단계 ⑤ — 엔진 난수 카운터 기반 · 포아송 PTRS (engine/rng.js 와 같은 알고리즘·산술 순서, 순수 Rust libm). 할당 없음.",
       "node": "EXECUTIVE_RNG_RUST",
       "governance": "Executive",
       "refactor_strategy": "engine/rng.js 와 같은 커밋에서 맞춘다 — 출생–사멸 시나리오에서 JS = Rust 궤적 비트 일치(tests/rust_engine.test.mjs ⑧)가 지켜져야 한다."

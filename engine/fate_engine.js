@@ -20,7 +20,7 @@
 const C = require('../core.js');
 const IRB = require('../compiler/ir_builder.js'); // IR (컴파일러 — 순수): 조립·정수 번호·기호 도함수 테이프
 const TAPE = require('../compiler/tape.js');
-const RNG = require('./rng.js'); // 4단계 ④ 확률 층의 난수 (xoshiro256++)
+const RNG = require('./rng.js'); // 4단계 ④ 확률 층의 난수 (카운터 기반 — 번호로 찾는다)
 const V = C.VOCAB, VOL = C.VOL;
 
 
@@ -114,6 +114,8 @@ function simulateFate(db, sourceId, opt) {
   const firedSsa = new Float64Array(nA), firedLeap = new Float64Array(nA), stoStats = { switches: 0, ssaFires: 0, ssaBlocked: 0, leapRejects: 0, rootEvals: 0 };
   const COLOF = Int32Array.from(CL, (c) => PERM[c]); // 값 위치 → 원래 활성 규칙 번호 (가림용)
   let rng = null, nLeap = 0;
+  // 난수 번호: 규칙(전역 번호 act[k])마다 SSA 지수와 도약 포아송을 따로 센다 — 흐름 2·j (SSA) · 2·j+1 (도약). 거부된 도약은 번호를 되돌린다
+  const ssaIdx = new Float64Array(nA), leapIdx = new Float64Array(nA), saveLeapIdx = new Float64Array(nA);
   const buildM = (N, h) => {
     stats.jac++;
     VAL.fill(0);
@@ -210,7 +212,7 @@ function simulateFate(db, sourceId, opt) {
       else if (coarse(H)) m = 0;
       else if (cur === 1) m = cnt < CP.sto_ssa_max ? 2 : 1;
       else m = cnt >= CP.sto_ssa_max * H ? 1 : 2;
-      if (m !== cur || first) { if (!first) stoStats.switches++; if (m === 2) { Tq[k] = 0; Pq[k] = rng.exp1(); } }
+      if (m !== cur || first) { if (!first) stoStats.switches++; if (m === 2) { Tq[k] = 0; Pq[k] = rng.exp1(2 * act[k], ssaIdx[k]++); } }
       mode[k] = m; disc[k] = m > 0 ? 1 : 0; if (m === 1) nLeap++;
     }
   };
@@ -260,14 +262,14 @@ function simulateFate(db, sourceId, opt) {
         hu = b; clip = false; err = tryStep(N, hu);
         let best = -Infinity; for (let k = 0; k < nA; k++) if (mode[k] === 2 && Tq[k] + xn[k] - Pq[k] > best) { best = Tq[k] + xn[k] - Pq[k]; fire = k; }
       }
-      if (nLeap) { saveN.set(N); saveLO.set(LO); saveT.set(Tq); saveCUM = Float64Array.from(CUM); }
+      if (nLeap) { saveN.set(N); saveLO.set(LO); saveT.set(Tq); saveCUM = Float64Array.from(CUM); saveLeapIdx.set(leapIdx); }
       for (let k = 0; k < nA; k++) { if (!disc[k]) { if (xn[k] !== 0) applyExtent(act[k], N, xn[k]); } else Tq[k] += xn[k]; }
       if (nLeap) {
         NC.set(N); // 연속 부분만 적용한 상태 — 도약이 만든 음수만 거부한다 (h_min 에서 받아들인 연속 단계의 음수는 결정론과 같이 hMinHits)
-        for (let k = 0; k < nA; k++) { KL[k] = 0; if (mode[k] === 1) { const K = rng.poisson(xn[k]); if (K) { applyExtent(act[k], N, K); KL[k] = K; } } }
+        for (let k = 0; k < nA; k++) { KL[k] = 0; if (mode[k] === 1) { const K = rng.poisson(xn[k], 2 * act[k] + 1, leapIdx[k]++); if (K) { applyExtent(act[k], N, K); KL[k] = K; } } }
         let neg = false; for (let i = 0; i < nB; i++) if (!isSignal[i] && N[i] < 0 && N[i] < NC[i]) { neg = true; break; }
-        if (neg) { // 도약이 음수를 만들면 되돌리고 단계를 반으로 (난수는 이미 썼다 — seed 가 같으면 같은 경로)
-          N.set(saveN); LO.set(saveLO); Tq.set(saveT); CUM.set(saveCUM);
+        if (neg) { // 도약이 음수를 만들면 되돌리고 단계를 반으로 (난수 번호도 되돌린다 — 다시 시도하는 도약이 같은 번호의 난수를 쓴다)
+          N.set(saveN); LO.set(saveLO); Tq.set(saveT); CUM.set(saveCUM); leapIdx.set(saveLeapIdx);
           stoStats.leapRejects++; stats.rejected++; ival.rej++; h = Math.max(CP.h_min, hu / 2); lastRej = true; continue;
         }
         for (let k = 0; k < nA; k++) firedLeap[k] += KL[k];
@@ -276,7 +278,7 @@ function simulateFate(db, sourceId, opt) {
         const R = rules[act[fire]];
         if (R.ci.every((q) => isSignal[q.i] || N[q.i] >= q.n)) { applyExtent(act[fire], N, 1); firedSsa[fire]++; stoStats.ssaFires++; }
         else stoStats.ssaBlocked++; // 연속 속도 법칙의 성향이 분자 수 < 화학량에서도 0 이 아님 — 발화를 막고 다음 발화를 뽑는다 (솎아내기)
-        Pq[fire] += rng.exp1();
+        Pq[fire] += rng.exp1(2 * act[fire], ssaIdx[fire]++);
       }
       promote(N);
       stats.steps++; ival.steps++; ival.hMin = Math.min(ival.hMin, hu); ival.hMax = Math.max(ival.hMax, hu);

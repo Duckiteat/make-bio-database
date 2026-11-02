@@ -95,7 +95,7 @@
 | `tests/runbook.test.mjs` | 5 |
 | `tests/rust_engine.test.mjs` | 8 |
 | `tests/stats.test.mjs` | 7 |
-| `tests/stochastic.test.mjs` | 6 |
+| `tests/stochastic.test.mjs` | 7 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |
