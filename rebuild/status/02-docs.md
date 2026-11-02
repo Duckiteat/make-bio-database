@@ -270,6 +270,7 @@
 | `docs/reports/2026-11-01-engine-teardown-2.md` | 9.7 | 57 |  | 미분류 |
 | `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
+| `docs/reports/2026-11-02-engine-primer-qa.md` | 14.5 | 88 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
