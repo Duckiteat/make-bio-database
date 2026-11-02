@@ -1,4 +1,4 @@
-// 승인 묶음 판정 (STG-12 · docs/reports/2026-11-02-approval-bundle.md) — L6 변경을 분류하고, 승인 화면과 지문을 만든다.
+// 승인 묶음 판정 (STG-12 · 승인 묶음 설계 보고서) — L6 변경을 분류하고, 승인 화면과 지문을 만든다.
 // 계약: 순수 — 값만 받고 값만 돌려준다 (읽기·쓰기·실행 없음, 사법부). 쓰기는 서기, 버튼(적용기)은 L6 라 사람이 승인한 묶음으로 따로.
 //   classify({ path, before, after, role }) → { kind, reasons[] }   role: 'settings'(설정 권한 목록) · 'modes'(문지기 모드 표) · 'guard'(문지기 코드) — 호출자가 저장 지도에서 넘긴다 (이 모듈은 자리 이름을 모른다)
 //     kind: 'added_only'(줄만 더함) · 'changed'(승인 필요) · 'widened'(권한을 넓힘 — 거부) · 'loosened'(검사를 느슨하게 — 거부) · 'unreviewable'(검토할 수 없음 — 거부)
@@ -54,6 +54,28 @@ function widened(role, before, after) {
   return why;
 }
 
+// 자동 통과할 수 있는 추가인가 — 새 시험 블록을 통째로(최상위에서 시작해 최상위에서 닫힘, 괄호 균형, 검사 문장 1 개 이상) 더한 것뿐이고
+// 위험한 모양(종료 · 건너뛰기 · 에러 삼키기 · 항상 참 · 예외 · 목록 · 바닥값)이 없을 때. 기존 블록 안이나 목록에 줄을 끼우는 것은 사람 승인 (측정: 순수 추가 27 건 중 새 블록 19, 끼움 8, 위험 모양 7)
+const RISK = /process\.exit|\.(?:skip|todo|only)\b|catch\s*(?:\([^)]*\))?\s*\{\s*\}|assert\.ok\(\s*(?:true|1)\s*\)|예외|exception|allow|FLOOR|floor|ratchet|new Set\(\[|^\s*['"`][^'"`]*['"`],?\s*$/;
+export function unsafeAdditions(before, after) {
+  const b = lines(before), a = lines(after), hunks = [];
+  let i = 0, j = 0;
+  while (j < a.length) { if (i < b.length && a[j] === b[i]) { i++; j++; continue; } const st = j; while (j < a.length && !(i < b.length && a[j] === b[i])) j++; hunks.push([st, j]); }
+  const why = [];
+  for (const [st, en] of hunks) {
+    const h = a.slice(st, en), body = h.join('\n'), nz = h.filter((l) => l.trim());
+    const prev = [...a.slice(0, st)].reverse().find((l) => l.trim()) ?? '';
+    const bal = (re) => (body.match(re) || []).length;
+    if (!nz.length) continue;
+    if (!/^(?:test|describe)\(/.test(nz[0]) || !/^\}\);?\s*$/.test(nz[nz.length - 1])) why.push(`${st + 1} 째 줄 근처: 새 시험 블록을 통째로 더한 것이 아님`);
+    else if (prev && (/^\s/.test(prev) || /[{(,\[]\s*$/.test(prev))) why.push(`${st + 1} 째 줄 근처: 기존 블록 안에 끼움`);
+    else if (bal(/\(/g) !== bal(/\)/g) || bal(/\{/g) !== bal(/\}/g)) why.push(`${st + 1} 째 줄 근처: 괄호가 맞지 않음`);
+    else if (!ASSERT.test(body)) why.push(`${st + 1} 째 줄 근처: 검사 문장이 없는 시험`);
+    else { const r = h.find((l) => RISK.test(l)); if (r) why.push(`${st + 1} 째 줄 근처: 위험한 모양 — ${r.trim().slice(0, 60)}`); }
+  }
+  return why;
+}
+
 export function classify({ path, before = '', after = '', role = null }) {
   const reasons = [];
   const all = lines(after).concat(lines(before));
@@ -76,7 +98,11 @@ export function classify({ path, before = '', after = '', role = null }) {
     }
     if (loose.length) return { kind: 'loosened', reasons: tag(loose) };
   }
-  if (removed.length === 0 && !GUARD_ROLES.has(role)) return { kind: 'added_only', reasons: [] };
+  if (removed.length === 0 && !GUARD_ROLES.has(role)) {
+    if (!isSelfTest(path)) return { kind: 'added_only', reasons: [] };
+    const u = unsafeAdditions(before, after);
+    return u.length ? { kind: 'changed', reasons: u } : { kind: 'added_only', reasons: [] };
+  }
   return { kind: 'changed', reasons: GUARD_ROLES.has(role) ? ['문지기 · 설정 · 모드 표는 추가도 항상 사람 승인'] : [`${removed.length} 줄 삭제`] };
 }
 

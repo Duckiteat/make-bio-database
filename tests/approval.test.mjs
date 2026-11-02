@@ -1,4 +1,4 @@
-// 승인 묶음 판정 시험 (STG-12 · docs/reports/2026-11-02-approval-bundle.md) — 분류 · 거부 · 지문 · 승인 화면
+// 승인 묶음 판정 시험 (STG-12 · 승인 묶음 설계 보고서) — 분류 · 거부 · 지문 · 승인 화면
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { classify, decide, digest, screen, LIMITS } from '../judicial/approval.js';
@@ -7,11 +7,11 @@ const set = (o) => JSON.stringify(o, null, 2);
 const S = (p) => set({ permissions: { allow: ['Read', ...(p.allow || [])], ask: p.ask || [], deny: p.deny || ['Edit(data/db.json)'] } });
 const M = (develop) => set({ gate: { common: { write: ['x/status/**'], protect: ['workspace/receipts/**'] }, modes: { develop } } });
 
-test('자기 검사 시험: 줄만 더하면 자동 통과, 삭제가 있으면 사람 승인', () => {
+test('자기 검사 시험: 새 시험 블록을 통째로 더하면 자동 통과, 삭제가 있으면 사람 승인', () => {
   const t = "test('a', () => { assert.ok(1); });\n";
-  assert.equal(classify({ path: 'tests/rebuild.test.mjs', before: t, after: t + "test('b', () => { assert.ok(2); });\n" }).kind, 'added_only');
+  assert.equal(classify({ path: 'tests/rebuild.test.mjs', before: t, after: t + "\ntest('b', () => {\n  assert.equal(2, 2);\n});\n" }).kind, 'added_only');
   assert.equal(classify({ path: 'tests/rebuild.test.mjs', before: t + 'x\n', after: t + 'y\n' }).kind, 'changed');
-  const d = decide([{ path: 'tests/rebuild.test.mjs', before: t, after: t + "test('b', () => { assert.ok(2); });\n" }]);
+  const d = decide([{ path: 'tests/rebuild.test.mjs', before: t, after: t + "\ntest('b', () => {\n  assert.equal(2, 2);\n});\n" }]);
   assert.equal(d.auto.length, 1); assert.equal(d.approve.length + d.refused.length, 0);
 });
 
@@ -67,4 +67,15 @@ test('승인 화면: 지문이 첫 줄, 거부는 맨 위, 바뀐 줄 전부와 
   assert.ok(out.indexOf('거부 — 눌러도') < out.indexOf('사람 승인 필요'));
   assert.match(out, /guard\/gate\.mjs \[L6 guard:gate · human\]/);
   assert.match(out, /^\s+\+ b$/m); assert.match(out, /^\s+- assert\.ok\(1\);$/m);
+});
+
+test('줄만 더해도 사람 승인: 기존 블록 안에 끼움 · 목록에 줄 · 위험한 모양 · 검사 문장 없는 시험', () => {
+  const base = "import x from 'y';\n\ntest('a', () => {\n  assert.equal(1, 1);\n});\n";
+  const ap = (after) => classify({ path: 'tests/rebuild.test.mjs', before: base, after });
+  assert.equal(ap(base.replace('  assert.equal(1, 1);\n', '  assert.equal(1, 1);\n  return;\n  assert.equal(2, 2);\n')).kind, 'changed', '기존 블록 안에 끼움');
+  const list = "const OK = [\n  'a',\n];\n\ntest('t', () => {\n  assert.deepEqual(OK, ['a']);\n});\n";
+  assert.equal(classify({ path: 'tests/rebuild.test.mjs', before: list, after: list.replace("  'a',\n", "  'a',\n  'evil',\n") }).kind, 'changed', '목록에 줄 더하기');
+  for (const bad of ["test('x', () => {\n  process.exit(0);\n  assert.ok(0 === 0);\n});\n", "test('x', () => {\n  try { f(); } catch {}\n  assert.ok(1);\n});\n", "test('x', () => {\n  assert.ok(true);\n});\n", "test('x', () => {\n  const y = 1;\n});\n", "test('x', () => {\n  const FLOOR = 1;\n  assert.ok(FLOOR);\n});\n"])
+    assert.equal(ap(base + '\n' + bad).kind, 'changed', bad);
+  assert.equal(ap(base + "\ntest('ok', () => {\n  assert.equal(3, 3);\n});\n").kind, 'added_only', '안전한 새 블록은 자동 통과');
 });

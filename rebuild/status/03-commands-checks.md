@@ -65,7 +65,7 @@
 |---|---|
 | `tests/acceptance.test.mjs` | 9 |
 | `tests/affected.test.mjs` | 3 |
-| `tests/approval.test.mjs` | 9 |
+| `tests/approval.test.mjs` | 10 |
 | `tests/assays.test.mjs` | 4 |
 | `tests/assumptions.test.mjs` | 8 |
 | `tests/authority.test.mjs` | 5 |
