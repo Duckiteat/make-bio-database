@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 승인 묶음 1 적용 — develop 손 쓰기 좁힘(문지기 셋 except · 자기 검사 시험 8 ask) | `.claude/settings.json` ask +16 · `rebuild/rules/modes.json` develop.except +3 (둘 다 사용자가 GitHub 웹에서 커밋: ff47a45 · d12a4a1) · 권한 장부 PERM-0017 설명 · PERM-0023 (ops 적용) | STG-12 끝나는 조건 '손 쓰기를 L1·L2 로' — 사용자 결정 2026-11-02 | 묶음 패치와 글자까지 같음 확인 · RULE-0521 대조 통과 · 권한 시험 2 · 사전 검사 통과 | `permissions.test.mjs` · precheck · `finish develop --full` |
 | 2026-11-02 · 묶음 1 재구성(패치는 L6 둘, 장부는 ops 파일) · verify 가 낡은 패치를 알아보게 | `workspace/STG-12-bundle-1.patch` `.ops.json` `.screen.txt` · `rebuild/bundle.mjs` · `tests/bundle.test.mjs` 5 | 사후 점검 #5: 규칙 장부를 한 번 고치자 봉인 기록이 움직여 패치가 낡음 | 패치는 설정 · 모드 표만 — 규칙 장부가 움직여도 안 낡음. 새 지문 0c71e888… | verify 통과 · ops --dry 통과 · precheck |
 | 2026-11-02 · 승인 판정 보강: 자동 통과 끔 · 훅 삭제/변경 · 기본 모드 · 작업 폴더 · MCP 전부 허용 · 끝내기 시험 줄임을 거부 | `judicial/approval.js`(AUTO_PASS=false · widened 확장) · `tests/approval.test.mjs` 13 · 규칙 장부 RULE-0528 글 · 승인 묶음 보고서 §7 | 사후 점검(사용자 요청): 자동 통과가 속았고(assert 덮어쓰기 · 빈 순환) 훅 삭제가 '넓힘' 으로 분류되지 않았음 | 모든 L6 변경은 사람 승인 · 거부 목록 넷 → 여섯 | 시험 13 · 변이 caught · precheck |
 | 2026-11-02 · 승인 묶음 보기·확인 도구 `rebuild/bundle.mjs` · 첫 묶음 패치 | `rebuild/bundle.mjs`(show · verify) · `tests/bundle.test.mjs` 4 · `workspace/STG-12-bundle-1.patch` + `.screen.txt` · 계획 STG-12 | 사용자 요청: 승인 묶음을 실제로 준비해 승인 화면과 지문을 보여 줌 | 도구는 파일을 쓰지 않음. 패치는 L6 4 파일(설정 · 모드 표 · 권한 장부 · 봉인 기록)을 좁히는 변경 — 사람이 적용해야 효력 | 복제본에서 시험 66 통과 · verify 통과 · precheck |

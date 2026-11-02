@@ -87,12 +87,12 @@
 
 모드마다 쓸 명령은 그 모드 문서에 있다 (원본 `rebuild/rules/commands.jsonl`).
 
-## 상시 권한 (22)
+## 상시 권한 (23)
 
 권한은 장부(`rebuild/rules/permissions.jsonl`)에 있는 것만 — `.claude/settings.json` · 문지기 모드(`rebuild/rules/modes.json`)가 장부와 다르면 시험이 거부한다(RULE-0521). 문지기·자기 검사 장치는 장부로도 열 수 없다. 줄 하나(무엇·누가·언제·왜·철회)는 `node rebuild/read.mjs PERM-…`.
 
-- settings allow 9 · settings ask 5 · 문지기 write 7 · 문지기 also 1
+- settings allow 9 · settings ask 6 · 문지기 write 7 · 문지기 also 1
 - ⚠ `PERM-0002` settings allow — 경로 제한 없음 — 문지기 훅과 deny 에 기댐
 - ⚠ `PERM-0008` settings allow — find 는 -delete · -exec 로 지우거나 실행할 수 있음
 - ⚠ `PERM-0009` settings allow — cp 는 보호 자리를 덮어쓸 수 있음 (문지기는 도구 뒤 대조로 잡음)
-- ⚠ `PERM-0017` 문지기 write develop — 모든 자리 — except(data · attestations · handoff)와 문지기 protect 가 빼냄
+- ⚠ `PERM-0017` 문지기 write develop — 모든 자리 — except(data · attestations · handoff · 문지기 셋)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(저장 지도 authority)의 L1·L2 자리 목록으로
