@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1001 개 · 27619.0 KB"
+        "1004 개 · 27624.9 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "299 개 · 2331.1 KB"
+        "299 개 · 2332.8 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -118,17 +118,17 @@
        [
         "rebuild",
         "32",
-        "6160.3"
+        "6161.7"
        ],
        [
         "docs",
         "271",
-        "1823.9"
+        "1825.8"
        ],
        [
         "(최상위)",
         "18",
-        "948.2"
+        "948.8"
        ],
        [
         "tests",
@@ -157,8 +157,8 @@
        ],
        [
         "workspace",
-        "26",
-        "100.4"
+        "29",
+        "102.5"
        ],
        [
         "legislative",
@@ -247,7 +247,7 @@
        ],
        [
         "`CHANGES.md`",
-        "305.5"
+        "306.1"
        ],
        [
         "`attestations/registry.json`",
@@ -255,7 +255,7 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "297.4"
+        "298.2"
        ],
        [
         "`data/fetched/consensus/uniprot/P63092.json`",
@@ -279,7 +279,7 @@
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "248.1"
+        "248.7"
        ],
        [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "305.5",
-        "295",
+        "306.1",
+        "296",
         "",
         "분류됨 1"
        ],
@@ -1999,8 +1999,8 @@
        ],
        [
         "`docs/plan/items/STG-12.md`",
-        "15.9",
-        "54",
+        "16.6",
+        "56",
         "",
         "생성물"
        ],
@@ -2286,8 +2286,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "128.5",
-        "836",
+        "129.0",
+        "837",
         "",
         "생성물"
        ],
@@ -3991,7 +3991,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "1404 · 50 · 226",
+        "1405 · 50 · 227",
         "209 · 없음 2"
        ],
        [
@@ -4022,7 +4022,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "288 · 없음 0"
+        "289 · 없음 0"
        ],
        [
         "`code_head`",
@@ -4051,7 +4051,7 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "896 · 41 · 107",
+        "907 · 41 · 108",
         "209 · 없음 0"
        ],
        [
@@ -4402,12 +4402,12 @@
        [
         "공통 `common`",
         "286",
-        "7625.6"
+        "7628.9"
        ],
        [
         "정보 작성 `author`",
-        "454",
-        "16544.9"
+        "457",
+        "16547.0"
        ],
        [
         "기초시험 `baseline`",
@@ -4417,7 +4417,7 @@
        [
         "디벨롭 `develop`",
         "177",
-        "2312.6"
+        "2313.2"
        ],
        [
         "적분장 `field`",
@@ -4450,7 +4450,7 @@
         "`rebuild/**`",
         "common",
         "32",
-        "6160.3",
+        "6161.7",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -4526,8 +4526,8 @@
        [
         "`workspace/**`",
         "author",
-        "17",
-        "78.9",
+        "20",
+        "81.0",
         "수집가 작업 공간"
        ],
        [
@@ -4695,7 +4695,7 @@
         "`docs/textbook/**`",
         "common",
         "12",
-        "458.9",
+        "460.1",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
@@ -4709,7 +4709,7 @@
         "`docs/**`",
         "common",
         "211",
-        "599.8",
+        "600.5",
         "안내 문서"
        ],
        [
@@ -4723,7 +4723,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "305.5",
+        "306.1",
         "변경 기록"
        ],
        [
@@ -9115,10 +9115,10 @@
        [
         "L6",
         "`guard:gate`",
-        "1",
+        "2",
         "1",
         "0",
-        "0"
+        "1"
        ],
        [
         "L6",
@@ -9140,11 +9140,11 @@
      }
     ],
     "text": [
-     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 166)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
+     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 167)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
     ]
    },
    {
-    "heading": "연결 없는 자리 (86)",
+    "heading": "연결 없는 자리 (87)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/tape.js`",
@@ -9169,6 +9169,7 @@
      "- `data:assumptions`: `data/assumptions.jsonl`",
      "- `data:dictionary`: `data/dictionary.jsonl`",
      "- `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`",
+     "- `guard:gate`: `rebuild/rules/modes.json`",
      "- `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`",
      "- `guard:settings`: `.claude/settings.json`"
     ]

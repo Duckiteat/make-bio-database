@@ -1,0 +1,20 @@
+diff --git a/rebuild/rules/modes.json b/rebuild/rules/modes.json
+index e9f8c96..ad173cd 100644
+--- a/rebuild/rules/modes.json
++++ b/rebuild/rules/modes.json
+@@ -260,7 +260,14 @@
+           "workspace/handoff/**",
+           "rebuild/gate.mjs",
+           ".claude/settings.json",
+-          "rebuild/rules/modes.json"
++          "rebuild/rules/modes.json",
++          "judicial/authority.js",
++          "judicial/approval.js",
++          "rebuild/bundle.mjs",
++          "docs/textbook/authority.json",
++          "tests/authority.test.mjs",
++          "tests/approval.test.mjs",
++          "tests/bundle.test.mjs"
+         ],
+         "finish": [
+           "node tests/affected.mjs",

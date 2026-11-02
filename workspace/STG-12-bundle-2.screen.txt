@@ -1,0 +1,14 @@
+지문 d5bdefb75273dcfbb790176b34770f02253074664a4ab0d60bec3499c683bbbd
+묶음 1 파일 — 자동 0 · 사람 승인 1 · 거부 0
+
+## 사람 승인 필요
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "rebuild/rules/modes.json"
+    +           "rebuild/rules/modes.json",
+    +           "judicial/authority.js",
+    +           "judicial/approval.js",
+    +           "rebuild/bundle.mjs",
+    +           "docs/textbook/authority.json",
+    +           "tests/authority.test.mjs",
+    +           "tests/approval.test.mjs",
+    +           "tests/bundle.test.mjs"

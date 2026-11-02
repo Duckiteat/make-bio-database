@@ -2808,6 +2808,19 @@
       "write_keys": [
         "human"
       ]
+    },
+    {
+      "path": "rebuild/rules/modes.json",
+      "class": "management",
+      "format": "JSON — 모드 문서의 원본 + 문지기 정책(gate: 모드마다 write · except · also · finish, 수집가 역할)",
+      "writer": "사람 (승인 묶음)",
+      "readers": "rebuild/gate.mjs · rebuild/permissions.mjs · rebuild/render.mjs",
+      "interpret": "문지기 정책 (STG-12) — 이 파일을 바꾸면 바꾼 순간부터 새 정책이 적용된다. 그래서 develop 의 except 에 들어 사람만 고친다(승인 묶음). 장부 규칙 파일(rebuild/rules/*)과 같은 폴더지만 장부가 아니다.",
+      "level": "L6",
+      "area": "guard:gate",
+      "write_keys": [
+        "human"
+      ]
     }
   ],
   "governance": {
