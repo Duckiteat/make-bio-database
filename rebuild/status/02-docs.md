@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 313.2 | 309 |  | 분류됨 1 |
+| `CHANGES.md` | 320.7 | 318 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -23,7 +23,7 @@
 | `docs/design/conservation-classes.md` | 5.7 | 76 |  | 분류됨 47 |
 | `docs/design/dictionary-and-translation.md` | 16.0 | 203 |  | 분류됨 121 |
 | `docs/design/direction.md` | 6.4 | 46 |  | 분류됨 26 |
-| `docs/design/engine-port-roadmap.md` | 53.4 | 564 |  | 분류됨 369 |
+| `docs/design/engine-port-roadmap.md` | 53.5 | 564 |  | 분류됨 369 |
 | `docs/design/format-v12.md` | 10.1 | 101 |  | 분류됨 61 |
 | `docs/design/hybrid-multiscale-engine.md` | 35.8 | 340 |  | 분류됨 231 |
 | `docs/design/integral-field-engine.md` | 45.9 | 391 |  | 분류됨 235 |
@@ -41,9 +41,9 @@
 | `docs/modes/develop.md` | 6.0 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
-| `docs/plan/ORDER.md` | 13.2 | 57 |  | 생성물 |
+| `docs/plan/ORDER.md` | 19.1 | 75 |  | 생성물 |
 | `docs/plan/assay.md` | 4.9 | 82 |  | 생성물 |
-| `docs/plan/build.md` | 35.7 | 376 |  | 생성물 |
+| `docs/plan/build.md` | 41.6 | 415 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -92,6 +92,10 @@
 | `docs/plan/decisions/DEC-0046.md` | 1.9 | 19 |  | 생성물 |
 | `docs/plan/decisions/DEC-0047.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/decisions/DEC-0048.md` | 1.0 | 11 |  | 생성물 |
+| `docs/plan/decisions/DEC-0049.md` | 2.2 | 21 |  | 생성물 |
+| `docs/plan/decisions/DEC-0050.md` | 2.0 | 18 |  | 생성물 |
+| `docs/plan/decisions/DEC-0051.md` | 2.6 | 20 |  | 생성물 |
+| `docs/plan/decisions/DEC-0060.md` | 2.1 | 19 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -102,7 +106,7 @@
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-08.md` | 13.1 | 58 |  | 생성물 |
 | `docs/plan/items/ASY-09.md` | 3.1 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-10.md` | 1.6 | 21 |  | 생성물 |
+| `docs/plan/items/ASY-10.md` | 1.7 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-11.md` | 2.2 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-12.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-13.md` | 1.5 | 21 |  | 생성물 |
@@ -130,8 +134,8 @@
 | `docs/plan/items/PLAN-017.md` | 1.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-018.md` | 1.3 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-019.md` | 1.4 | 23 |  | 생성물 |
-| `docs/plan/items/PLAN-020.md` | 1.2 | 22 |  | 생성물 |
-| `docs/plan/items/PLAN-021.md` | 1.2 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-020.md` | 3.2 | 25 |  | 생성물 |
+| `docs/plan/items/PLAN-021.md` | 3.5 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-022.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-023.md` | 1.0 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-024.md` | 1.0 | 21 |  | 생성물 |
@@ -140,7 +144,7 @@
 | `docs/plan/items/PLAN-027.md` | 3.5 | 37 |  | 생성물 |
 | `docs/plan/items/PLAN-028.md` | 1.4 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-029.md` | 1.5 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-030.md` | 1.5 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-030.md` | 1.8 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-031.md` | 2.2 | 33 |  | 생성물 |
 | `docs/plan/items/PLAN-032.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-033.md` | 1.2 | 22 |  | 생성물 |
@@ -148,9 +152,9 @@
 | `docs/plan/items/PLAN-035.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-036.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-037.md` | 2.4 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-038.md` | 1.5 | 29 |  | 생성물 |
+| `docs/plan/items/PLAN-038.md` | 2.0 | 31 |  | 생성물 |
 | `docs/plan/items/PLAN-039.md` | 1.1 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-040.md` | 1.0 | 20 |  | 생성물 |
+| `docs/plan/items/PLAN-040.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-041.md` | 1.5 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-042.md` | 2.4 | 32 |  | 생성물 |
 | `docs/plan/items/PLAN-043.md` | 2.6 | 32 |  | 생성물 |
@@ -190,9 +194,9 @@
 | `docs/plan/items/PLAN-075.md` | 1.7 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-076.md` | 1.8 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-077.md` | 2.6 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-078.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-078.md` | 2.0 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-079.md` | 2.3 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-080.md` | 1.4 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-080.md` | 2.0 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-081.md` | 1.3 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-082.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-083.md` | 1.2 | 21 |  | 생성물 |
@@ -200,7 +204,17 @@
 | `docs/plan/items/PLAN-085.md` | 2.1 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-086.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-087.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-088.md` | 1.6 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-088.md` | 2.2 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-089.md` | 2.3 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-090.md` | 2.2 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-091.md` | 2.3 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-092.md` | 1.8 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-093.md` | 3.2 | 23 |  | 생성물 |
+| `docs/plan/items/PLAN-094.md` | 2.0 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-095.md` | 2.2 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-096.md` | 1.8 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-097.md` | 1.9 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-098.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -239,7 +253,7 @@
 | `docs/plan/items/STG-11a.md` | 4.0 | 32 |  | 생성물 |
 | `docs/plan/items/STG-11b.md` | 2.1 | 23 |  | 생성물 |
 | `docs/plan/items/STG-11c.md` | 3.3 | 25 |  | 생성물 |
-| `docs/plan/items/STG-11d.md` | 6.1 | 43 |  | 생성물 |
+| `docs/plan/items/STG-11d.md` | 7.3 | 45 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 2.0 | 23 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 2.0 | 19 |  | 생성물 |
 | `docs/plan/items/STG-12.md` | 24.7 | 76 |  | 생성물 |
@@ -270,29 +284,38 @@
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
 | `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
+| `docs/reports/2026-11-01-engine-teardown-2.md` | 9.7 | 57 |  | 미분류 |
+| `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 18.7 | 194 |  | 미분류 |
 | `docs/reports/2026-11-02-approval-bundle.md` | 7.5 | 64 |  | 미분류 |
 | `docs/reports/2026-11-02-authority-overview.md` | 19.3 | 145 |  | 미분류 |
+| `docs/reports/2026-11-02-brain-source-sufficiency.md` | 19.5 | 104 |  | 미분류 |
+| `docs/reports/2026-11-02-engine-primer-qa.md` | 18.8 | 110 |  | 미분류 |
 | `docs/reports/2026-11-02-identity-keys.md` | 43.1 | 377 |  | 미분류 |
 | `docs/reports/2026-11-02-l6-test-split.md` | 10.4 | 72 |  | 미분류 |
+| `docs/reports/2026-11-02-plan-triage.md` | 10.7 | 78 |  | 미분류 |
+| `docs/reports/2026-11-02-plan021-survey.md` | 13.6 | 89 |  | 미분류 |
+| `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 22.3 | 146 |  | 미분류 |
+| `docs/reports/2026-11-02-run-record-design.md` | 19.0 | 149 |  | 미분류 |
 | `docs/reports/2026-11-02-write-ownership.md` | 7.2 | 70 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 18.3 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 65.5 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 67.5 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 133.4 | 847 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 136.6 | 854 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
-| `workspace/NEXT-2026-11-02.md` | 7.7 | 49 |  | 미분류 |
+| `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
 | `workspace/STG-12-README.md` | 0.9 | 7 |  | 미분류 |
+| `workspace/WORKORDER-2026-11-02-engine.md` | 17.7 | 112 |  | 미분류 |
 | `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
 | `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
 | `workspace/handoff/HANDOFF-template.md` | 2.3 | 30 |  | 분류됨 16 |

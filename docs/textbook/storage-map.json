@@ -401,6 +401,22 @@
       ]
     },
     {
+      "path": "compiler/detmath.js",
+      "class": "source",
+      "format": "JS 모듈 (UMD)",
+      "writer": "사람·AI",
+      "readers": "compiler/tape.js, engine/fate_engine.js, engine/rng.js, tests/detmath.test.mjs",
+      "interpret": "[컴파일러] 결정론 수학(PLAN-021) — pow · log · exp 를 사칙연산과 비트 연산만으로(두 배 정밀도 로그 · 지수, 정수 지수는 곱셈 반복). 외부 Math.pow · exp · log 호출 0. engine/rust/src/detmath.rs 와 같은 계수 · 같은 연산 순서.",
+      "node": "COMPILER_DETMATH",
+      "governance": "Shared",
+      "refactor_strategy": "engine/rust/src/detmath.rs 와 같은 커밋에서 맞춘다 — 계수 · 연산 순서를 바꾸면 비트가 달라지므로 tests/detmath.test.mjs ①(정밀도) ②(JS = Rust)를 함께 맞춘다. 곱셈과 덧셈을 합치지 않는다.",
+      "level": "L2",
+      "area": "code:compiler",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "compiler/tape.js",
       "class": "law",
       "format": "UMD JavaScript",
@@ -971,10 +987,10 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/fate_engine.js (확률 층)",
-      "interpret": "[행정] 4단계 ④ — 엔진 난수 xoshiro256++ (splitmix64 로 (seed, 궤적) 초기화), 균등·지수·포아송(곱셈법 μ < 10, PTRS). 확률 층의 모든 무작위는 여기서만 — 사법부는 쓰지 않는다.",
+      "interpret": "[행정] 4단계 ④ — 엔진 난수: 카운터 기반(PLAN-020) — 난수 하나는 (seed, 궤적, 흐름, 번호, 부번호) 의 순수 함수(splitmix64 마무리 네 번), 균등·지수·포아송(곱셈법 μ < 10, PTRS). 흐름 = 2·규칙 번호 + 종류. 확률 층의 모든 무작위는 여기서만 — 사법부는 쓰지 않는다.",
       "node": "EXECUTIVE_RNG",
       "governance": "Executive",
-      "refactor_strategy": "Rust(engine/rust/src/rng.rs)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다 — 해석해 시험(tests/stochastic.test.mjs ①)과 출생–사멸 JS = Rust 비트(tests/rust_engine.test.mjs ⑧)를 함께 맞춘다.",
+      "refactor_strategy": "Rust(engine/rust/src/rng.rs)와 같은 알고리즘·같은 산술 순서. 바꾸면 같은 (seed, 궤적)의 궤적이 바뀐다(번호 매기는 규칙은 engine/fate_engine.js 와 engine.rs 의 ssaIdx·leapIdx) — 해석해 시험(tests/stochastic.test.mjs ①)과 출생–사멸 JS = Rust 비트(tests/rust_engine.test.mjs ⑧)를 함께 맞춘다.",
       "level": "L2",
       "area": "code:engine",
       "write_keys": [
@@ -1048,6 +1064,23 @@
       ]
     },
     {
+      "path": "engine/rust/src/detmath.rs",
+      "class": "source",
+      "format": "Rust 소스",
+      "writer": "사람·AI",
+      "readers": "engine/rust/src/{engine,tape,rng}.rs, tests/detmath.test.mjs (WASM 출구 fe_dm_*)",
+      "interpret": "[행정] 결정론 수학(PLAN-021) — pow · log · exp 를 사칙연산과 비트 연산만으로. compiler/detmath.js 와 같은 계수 · 같은 연산 순서라 JS 와 비트까지 같다. FMA 없음(빌드가 검사).",
+      "node": "EXECUTIVE_DETMATH_RUST",
+      "governance": "Executive",
+      "refactor_strategy": "compiler/detmath.js 와 같은 커밋에서 맞춘다 — tests/detmath.test.mjs ②(JS = Rust 비트)가 지켜져야 하고, 바꾸면 엔진 결과가 마지막 자리에서 바뀐다(tests/fingerprint.js 로 확인).",
+      "level": "L2",
+      "area": "code:engine",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "engine/rust/src/tape.rs",
       "class": "law",
       "format": "Rust 2021",
@@ -1070,7 +1103,7 @@
       "format": "Rust",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "engine/rust/src/engine.rs (확률 층)",
-      "interpret": "[행정] 4단계 ⑤ — 엔진 난수 xoshiro256++ · 포아송 PTRS (engine/rng.js 와 같은 알고리즘·산술 순서, 순수 Rust libm). 할당 없음.",
+      "interpret": "[행정] 4단계 ⑤ — 엔진 난수 카운터 기반 · 포아송 PTRS (engine/rng.js 와 같은 알고리즘·산술 순서, 순수 Rust libm). 할당 없음.",
       "node": "EXECUTIVE_RNG_RUST",
       "governance": "Executive",
       "refactor_strategy": "engine/rng.js 와 같은 커밋에서 맞춘다 — 출생–사멸 시나리오에서 JS = Rust 궤적 비트 일치(tests/rust_engine.test.mjs ⑧)가 지켜져야 한다.",
@@ -1944,6 +1977,21 @@
       ]
     },
     {
+      "path": "tests/clock.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "시계 시험(PLAN-092 안전망 → PLAN-093 정리) — 엔진이 시간을 세는 방법을 고정: 정상 격자의 기록 시각(JS = Rust)·출하 시나리오 t_end·신호 시각의 정렬 성질·K3(마지막 구간이 짧아도 기록 시각은 실제 적분 끝)·K4(격자 사이 신호 시각에서 적분을 끊고 그 시각에 신호를 바꿈)·K1(속도 엔진이 t_end 를 넘지 않음)·h_min 보다 가까운 신호는 격자점에서 적용·사법부 무결성 증명서가 K3·K4 실행에서도 통과.",
+      "refactor_strategy": "시계를 바꿀 때는 JS(engine/fate_engine.js)·Rust(engine/rust/src/engine.rs)·속도 엔진(core.js)을 같이 바꾸고 WASM 을 다시 빌드한다. 출하 시나리오의 시각열·궤적은 비트 불변이어야 한다(① ② 와 지문 대조).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/fate_suite.js",
       "class": "verification",
       "format": "Node CommonJS 스크립트 (+ module.exports.run)",
@@ -1964,6 +2012,36 @@
       "writer": "사람·AI",
       "readers": "사람(콘솔), 엔진 이식 판정",
       "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/fingerprint.js",
+      "class": "verification",
+      "format": "Node CommonJS 스크립트 (+ module.exports)",
+      "writer": "사람·AI",
+      "readers": "사람(콘솔), 엔진을 고치는 작업",
+      "interpret": "지문 대조 — 엔진을 고치기 전(snapshot)과 후(compare)의 결과가 비트까지 같은지 칸별 해시(시각열·궤적·신호 기록·사건·도달·결정·끝 상태·적분 요약·걸음 수·난수 소비)로 대조한다. 운명 엔진 파생이 아닌 시나리오 × JS·Rust + 속도 엔진 대표 시나리오 6 개. parity 명령은 같은 시나리오의 JS 와 Rust 칸이 같은지 대조한다. 기준 지문은 저장소에 커밋하지 않고 기본 시험에도 넣지 않는다(약 2 분).",
+      "refactor_strategy": "시나리오 이름 앞부분 → 시작 상태 표(FATE_SRC)와 속도 엔진 경로 표(RATE_PATH)만 시나리오가 늘 때 고친다. 칸을 더하면 기준 지문을 다시 만들어야 한다.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/detmath.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "결정론 수학 시험(PLAN-021) — 고정밀 기준값(BigInt)과 오차 대조(로그 ≤ 0.6 · 지수 ≤ 1.1 · 정수 지수 ≤ 0.6 · 분수 지수 ≤ 1.2 ulp) · JS = Rust 비트 일치(WASM 출구, 60 만 입력 + 경계 값 조합) · 경계 값 · 엔진 런타임에 외부 pow/log/exp 호출 없음.",
+      "refactor_strategy": "수학 함수를 바꾸면 ① ②를 먼저 맞춘다. ② 는 engine/rust/pkg/fate_core.wasm 이 최신이어야 한다(build.sh).",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [

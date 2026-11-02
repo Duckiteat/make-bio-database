@@ -67,7 +67,7 @@ pub struct Engine {
     sto: bool, stp: StoParams, rng: Rng,
     disc: Vec<u8>, mode: Vec<u8>, tq: Vec<f64>, pq: Vec<f64>, pub fired_ssa: Vec<f64>, pub fired_leap: Vec<f64>,
     col_of: Vec<usize>, spec: Vec<Vec<(usize, f64)>>, is_sig: Vec<bool>, mu: Vec<f64>, s2: Vec<f64>,
-    save_n: Vec<f64>, save_lo: Vec<f64>, save_t: Vec<f64>, save_cum: Vec<f64>, kl: Vec<f64>, nc: Vec<f64>, n_leap: usize,
+    save_n: Vec<f64>, save_lo: Vec<f64>, save_t: Vec<f64>, save_cum: Vec<f64>, kl: Vec<f64>, nc: Vec<f64>, n_leap: usize, ssa_idx: Vec<f64>, leap_idx: Vec<f64>, save_leap_idx: Vec<f64>,
     /// switches, ssaFires, ssaBlocked, leapRejects, rootEvals, draws, 사건 버퍼 넘침
     pub sto_stats: [f64; 7],
     reach_def: Vec<Vec<(usize, bool, f64, f64)>>, pub reach_t: Vec<f64>, pub mode_out: Vec<f64>,
@@ -157,8 +157,8 @@ impl Engine {
             m.into_iter().filter(|x| !is_sig[x.0]).collect()
         }).collect();
         let col_of: Vec<usize> = sp.col.iter().map(|&cc| sp.perm[cc]).collect();
-        // 관찰 격자 수: JS 와 같은 누적 t 루프로 센다
-        let mut n_steps = 0usize; { let mut t = 0.0; while t < t_end - 1e-9 { n_steps += 1; t += dt; } }
+        // 관찰 격자 수: JS 와 같은 식 (PLAN-093) — 구간 수 = ⌈(t1 − t0 − 1e-9)/Δ⌉ (1e-9 s 보다 짧은 적분은 하지 않는다)
+        let n_steps = if t_end - 1e-9 > 0.0 { libm::ceil((t_end - 1e-9) / dt) as usize } else { 0 };
         let n_rec_max = (n_steps + record_every - 1) / record_every;
         let max_ev = if sto { n_steps * nres.max(1) * 8 + 64 } else { n_steps * nres.max(1) };
         let h0 = ctl.h0;
@@ -179,7 +179,7 @@ impl Engine {
             sto, stp, rng: Rng::new(seed, traj),
             disc: vec![0; na_], mode: vec![0; na_], tq: vec![0.0; na_], pq: vec![0.0; na_], fired_ssa: vec![0.0; na_], fired_leap: vec![0.0; na_],
             col_of, spec, is_sig, mu: vec![0.0; nb], s2: vec![0.0; nb],
-            save_n: vec![0.0; nb], save_lo: vec![0.0; nb], save_t: vec![0.0; na_], save_cum: vec![0.0; 2 * nr], kl: vec![0.0; na_], nc: vec![0.0; nb], n_leap: 0,
+            save_n: vec![0.0; nb], save_lo: vec![0.0; nb], save_t: vec![0.0; na_], save_cum: vec![0.0; 2 * nr], kl: vec![0.0; na_], nc: vec![0.0; nb], n_leap: 0, ssa_idx: vec![0.0; na_], leap_idx: vec![0.0; na_], save_leap_idx: vec![0.0; na_],
             sto_stats: [0.0; 7], reach_t: vec![f64::NAN; ns], reach_def, mode_out: vec![0.0; na_],
         })
     }
@@ -307,11 +307,11 @@ impl Engine {
                 for k in 0..self.na_ { let x = self.xn[k]; if x != 0.0 { let j = self.act[k]; self.apply_extent(j, x); } }
                 self.stats[2] += 1.0; self.iv_steps += 1.0; self.iv_hmin = fmin(self.iv_hmin, hu); self.iv_hmax = fmax(self.iv_hmax, hu);
                 tt = if clip { t1 } else { tt + hu };
-                let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(fmax(err, 1e-10), -1.0 / 3.0)));
+                let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(fmax(err, 1e-10), -1.0 / 3.0)));
                 let hn = hu * fac; h = if clip { fmax(h, hn) } else { hn }; last_rej = false;
             } else {
                 self.stats[3] += 1.0; self.iv_rej += 1.0; if err < 0.0 { self.stats[4] += 1.0; }
-                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(err, -1.0 / 3.0)) };
+                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(err, -1.0 / 3.0)) };
                 h = fmax(self.ctl.h_min, hu * sh); last_rej = true;
             }
         }
@@ -335,7 +335,7 @@ impl Engine {
             let m: u8 = if first || cur == 0 { if coarse(1.0) { 0 } else if cnt < self.stp.ssa_max { 2 } else { 1 } }
                 else if coarse(h) { 0 } else if cur == 1 { if cnt < self.stp.ssa_max { 2 } else { 1 } }
                 else if cnt >= self.stp.ssa_max * h { 1 } else { 2 };
-            if m != cur || first { if !first { self.sto_stats[0] += 1.0; } if m == 2 { self.tq[k] = 0.0; self.pq[k] = self.rng.exp1(); } }
+            if m != cur || first { if !first { self.sto_stats[0] += 1.0; } if m == 2 { self.tq[k] = 0.0; let st = 2.0 * (self.act[k] as f64); self.pq[k] = self.rng.exp1(st, self.ssa_idx[k]); self.ssa_idx[k] += 1.0; } }
             self.mode[k] = m; self.disc[k] = if m > 0 { 1 } else { 0 }; if m == 1 { self.n_leap += 1; }
         }
     }
@@ -367,7 +367,7 @@ impl Engine {
     fn reach_g(&self, s: usize) -> f64 {
         if self.reach_def[s].is_empty() { return f64::INFINITY; }
         let mut g = f64::NEG_INFINITY;
-        for &(i, hi, th, tl) in &self.reach_def[s] { let x = fmax(self.n[i], 1e-9); g = fmax(g, if hi { libm::log(th / x) } else { libm::log(x / tl) }); }
+        for &(i, hi, th, tl) in &self.reach_def[s] { let x = fmax(self.n[i], 1e-9); g = fmax(g, if hi { crate::detmath::log(th / x) } else { crate::detmath::log(x / tl) }); }
         g
     }
     /// 확률 실행의 단계마다: 저장소 고갈·재생 사건과 상태 도달 (본 실행만)
@@ -395,7 +395,7 @@ impl Engine {
             let ok = err >= 0.0 && err <= 1.0;
             if !ok && hu > self.ctl.h_min {
                 self.stats[3] += 1.0; self.iv_rej += 1.0; if err < 0.0 { self.stats[4] += 1.0; }
-                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(err, -1.0 / 3.0)) };
+                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(err, -1.0 / 3.0)) };
                 h = fmax(self.ctl.h_min, hu * sh); last_rej = true; continue;
             }
             if !ok { self.stats[5] += 1.0; }
@@ -416,15 +416,15 @@ impl Engine {
                 let mut best = f64::NEG_INFINITY;
                 for k in 0..na_ { if self.mode[k] == 2 && self.tq[k] + self.xn[k] - self.pq[k] > best { best = self.tq[k] + self.xn[k] - self.pq[k]; fire = k as isize; } }
             }
-            if self.n_leap > 0 { self.save_n.copy_from_slice(&self.n); self.save_lo.copy_from_slice(&self.lo); self.save_t.copy_from_slice(&self.tq); self.save_cum.copy_from_slice(&self.cum); }
+            if self.n_leap > 0 { self.save_n.copy_from_slice(&self.n); self.save_lo.copy_from_slice(&self.lo); self.save_t.copy_from_slice(&self.tq); self.save_cum.copy_from_slice(&self.cum); self.save_leap_idx.copy_from_slice(&self.leap_idx); }
             for k in 0..na_ { if self.disc[k] == 0 { let x = self.xn[k]; if x != 0.0 { let j = self.act[k]; self.apply_extent(j, x); } } else { self.tq[k] += self.xn[k]; } }
             if self.n_leap > 0 {
                 self.nc.copy_from_slice(&self.n);
-                for k in 0..na_ { self.kl[k] = 0.0; if self.mode[k] == 1 { let kk = self.rng.poisson(self.xn[k]); if kk != 0.0 { let j = self.act[k]; self.apply_extent(j, kk); self.kl[k] = kk; } } }
+                for k in 0..na_ { self.kl[k] = 0.0; if self.mode[k] == 1 { let st = 2.0 * (self.act[k] as f64) + 1.0; let kk = self.rng.poisson(self.xn[k], st, self.leap_idx[k]); self.leap_idx[k] += 1.0; if kk != 0.0 { let j = self.act[k]; self.apply_extent(j, kk); self.kl[k] = kk; } } }
                 let mut neg = false;
                 for i in 0..self.nb { if !self.is_sig[i] && self.n[i] < 0.0 && self.n[i] < self.nc[i] { neg = true; break; } }
                 if neg {
-                    self.n.copy_from_slice(&self.save_n); self.lo.copy_from_slice(&self.save_lo); self.tq.copy_from_slice(&self.save_t); self.cum.copy_from_slice(&self.save_cum);
+                    self.n.copy_from_slice(&self.save_n); self.lo.copy_from_slice(&self.save_lo); self.tq.copy_from_slice(&self.save_t); self.cum.copy_from_slice(&self.save_cum); self.leap_idx.copy_from_slice(&self.save_leap_idx);
                     self.sto_stats[3] += 1.0; self.stats[3] += 1.0; self.iv_rej += 1.0; h = fmax(self.ctl.h_min, hu / 2.0); last_rej = true; continue;
                 }
                 for k in 0..na_ { self.fired_leap[k] += self.kl[k]; }
@@ -434,24 +434,32 @@ impl Engine {
                 let mut avail = true;
                 for q in 0..self.rules[j].cons.len() { let (i, n) = self.rules[j].cons[q]; if !(self.is_sig[i] || self.n[i] >= n) { avail = false; break; } }
                 if avail { self.apply_extent(j, 1.0); self.fired_ssa[k] += 1.0; self.sto_stats[1] += 1.0; } else { self.sto_stats[2] += 1.0; }
-                self.pq[k] += self.rng.exp1();
+                let st = 2.0 * (self.act[k] as f64); let e = self.rng.exp1(st, self.ssa_idx[k]); self.ssa_idx[k] += 1.0; self.pq[k] += e;
             }
             self.promote();
             self.stats[2] += 1.0; self.iv_steps += 1.0; self.iv_hmin = fmin(self.iv_hmin, hu); self.iv_hmax = fmax(self.iv_hmax, hu);
             tt = if clip { t1 } else { tt + hu };
-            let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(fmax(err, 1e-10), -1.0 / 3.0)));
+            let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(fmax(err, 1e-10), -1.0 / 3.0)));
             let hn = hu * fac; h = if clip { fmax(h, hn) } else { hn }; last_rej = false;
             if main { self.on_step(tt); }
         }
         self.h = h;
         self.sto_stats[5] = self.rng.draws;
     }
+    // 신호 q 의 시각 t 의 값 — 시각 비교의 허용치는 최소 걸음 h_min (JS signalAt 과 같음, PLAN-093)
+    fn sig_val(&self, q: usize, t: f64, zero: bool) -> f64 {
+        let mut v = 0.0;
+        if !zero { for e in &self.signals[q].ev { if e.0 <= t + self.ctl.h_min { v = e.1; } } }
+        v
+    }
     fn signal_at(&mut self, t: f64, zero: bool) {
-        for q in 0..self.nsig {
-            let mut v = 0.0;
-            if !zero { for e in &self.signals[q].ev { if e.0 <= t + 1e-9 { v = e.1; } } }
-            self.sig[q] = v;
-        }
+        for q in 0..self.nsig { self.sig[q] = self.sig_val(q, t, zero); }
+    }
+    // 구간 (ts, te) 안에서 신호가 바뀌는 다음 시각 — h_min 보다 가까운 변경은 가까운 쪽 끝에서 적용되므로 제외 (JS nextBreak)
+    fn next_break(&self, ts: f64, te: f64) -> f64 {
+        let hm = self.ctl.h_min; let mut b = f64::INFINITY;
+        for s in &self.signals { for e in &s.ev { if e.0 > ts + hm && e.0 < te - hm && e.0 < b { b = e.0; } } }
+        b
     }
 
     /// 한 번의 적분 (본 실행·결정 탐침 공유). main = 기록·스냅숏·사건을 남김, zero_signal = 신호 철회.
@@ -462,26 +470,41 @@ impl Engine {
         let s0 = self.stats;
         for r in 0..self.nres { let i = self.res_idx[r]; self.res_start[r] = self.n[i]; self.res_min[r] = self.n[i]; self.res_ok[r] = self.n[i] >= 1.0; self.res_watch[r] = self.n[i] >= 1.0; }
         let (mut per_min, mut per_max) = (f64::INFINITY, 0.0);
-        let mut step = 0usize; let mut t = t0;
+        let mut step = 0usize;
         if main { self.n_rec = 0; self.n_snap = 0; self.n_events = 0; }
         if self.sto && main { for s in 0..self.reach_t.len() { self.reach_t[s] = if self.reach_g(s) <= 0.0 { t0 } else { f64::NAN }; } }
-        while t < t1 - 1e-9 {
+        // 시계 (PLAN-093): 격자점은 정수 번호로 센다 t = t0 + k·Δ (누적 덧셈 없음) — JS run 과 같은 식
+        let n_run = if t1 - t0 - 1e-9 > 0.0 { libm::ceil((t1 - t0 - 1e-9) / self.dt) as usize } else { 0 };
+        while step < n_run {
+            let t = if step == 0 { t0 } else { t0 + (step as f64) * self.dt };
             self.signal_at(t, zero_signal);
             for q in 0..self.nsig { let i = self.signals[q].idx; self.n[i] = self.sig[q]; }
-            let te = if t1 - t < self.dt - 1e-9 { t1 } else { t + self.dt }; // 마지막 구간이 Δ 보다 짧으면 t1 에서 (사건 근 찾기의 다시 적분 — 격자 정렬 실행은 그대로)
-            if self.sto { self.partition(step == 0); self.integrate_sto(t, te, main); } else { self.integrate(t, te); }
+            let te = if step + 1 == n_run { t1 } else { t0 + ((step + 1) as f64) * self.dt }; // 마지막 구간은 t1 에서 끊는다 (Δ 보다 짧을 수 있음)
+            if self.sto { self.partition(step == 0); }
+            // 구간 안에서 신호가 바뀌면 그 시각에서 적분을 끊고 새 값을 놓는다 (신호를 덮어쓴 탐침은 끊지 않음). 기록되는 sig 는 구간 시작의 값
+            let mut ts = t; let (mut seg_steps, mut seg_rej) = (0.0, 0.0);
+            loop {
+                let nb = if zero_signal { f64::INFINITY } else { self.next_break(ts, te) };
+                let tn = if nb < te { nb } else { te };
+                if self.sto { self.integrate_sto(ts, tn, main); } else { self.integrate(ts, tn); }
+                seg_steps += self.iv_steps; seg_rej += self.iv_rej;
+                if tn >= te { break; }
+                for q in 0..self.nsig { let i = self.signals[q].idx; self.n[i] = self.sig_val(q, tn, false); }
+                ts = tn;
+            }
+            self.iv_steps = seg_steps; self.iv_rej = seg_rej;
             per_min = fmin(per_min, self.iv_steps); per_max = fmax(per_max, self.iv_steps);
             for r in 0..self.nres {
                 let i = self.res_idx[r]; let x = self.n[i];
                 self.res_min[r] = fmin(self.res_min[r], x);
                 if !self.res_watch[r] || self.sto { continue; } // 확률 실행은 단계마다 (on_step)
-                if self.res_ok[r] && x < 1.0 { self.res_ok[r] = false; if main { let k = self.n_events; self.events[3 * k] = t + self.dt; self.events[3 * k + 1] = 0.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
-                else if !self.res_ok[r] && x >= 1.0 { self.res_ok[r] = true; if main { let k = self.n_events; self.events[3 * k] = t + self.dt; self.events[3 * k + 1] = 1.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
+                if self.res_ok[r] && x < 1.0 { self.res_ok[r] = false; if main { let k = self.n_events; self.events[3 * k] = te; self.events[3 * k + 1] = 0.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
+                else if !self.res_ok[r] && x >= 1.0 { self.res_ok[r] = true; if main { let k = self.n_events; self.events[3 * k] = te; self.events[3 * k + 1] = 1.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
             }
             if main {
                 if step % self.record_every == 0 {
                     let k = self.n_rec; let (nb, nr, ns) = (self.nb, self.nr, self.nsig);
-                    self.rec_t[k] = t + self.dt;
+                    self.rec_t[k] = te;
                     self.rec_n[k * nb..(k + 1) * nb].copy_from_slice(&self.n);
                     self.rec_lo[k * nb..(k + 1) * nb].copy_from_slice(&self.lo);
                     self.rec_cum[k * 2 * nr..(k + 1) * 2 * nr].copy_from_slice(&self.cum);
@@ -490,9 +513,9 @@ impl Engine {
                     self.n_rec += 1;
                 }
                 let k = self.n_snap; let nb = self.nb;
-                self.snap_t[k] = t + self.dt; self.snap_n[k * nb..(k + 1) * nb].copy_from_slice(&self.n); self.n_snap += 1;
+                self.snap_t[k] = te; self.snap_n[k * nb..(k + 1) * nb].copy_from_slice(&self.n); self.n_snap += 1;
             }
-            t += self.dt; step += 1;
+            step += 1;
         }
         if main {
             self.run_info = [self.stats[2] - s0[2], self.stats[3] - s0[3], self.stats[4] - s0[4], self.stats[5] - s0[5], self.iv_hmin, self.iv_hmax, per_min, per_max];

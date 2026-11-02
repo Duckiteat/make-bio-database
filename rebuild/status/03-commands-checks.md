@@ -71,9 +71,11 @@
 | `tests/authority.test.mjs` | 5 |
 | `tests/bundle.test.mjs` | 5 |
 | `tests/changes-draft.test.mjs` | 3 |
+| `tests/clock.test.mjs` | 7 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
 | `tests/consistency.test.mjs` | 4 |
+| `tests/detmath.test.mjs` | 4 |
 | `tests/dictionary.test.mjs` | 8 |
 | `tests/dictionary_seal.test.mjs` | 4 |
 | `tests/dose_slope.test.mjs` | 6 |
@@ -103,7 +105,7 @@
 | `tests/runbook.test.mjs` | 5 |
 | `tests/rust_engine.test.mjs` | 8 |
 | `tests/stats.test.mjs` | 7 |
-| `tests/stochastic.test.mjs` | 6 |
+| `tests/stochastic.test.mjs` | 7 |
 | `tests/stoichiometry.test.mjs` | 4 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |

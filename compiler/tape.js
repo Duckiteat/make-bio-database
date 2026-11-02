@@ -15,19 +15,19 @@
 //   DHILL e K n fmax fmin smin (6) 힐 배율의 s 도함수 (n < 1 이면 s < smin 에서 smin 으로 기울기를 자름)
 'use strict';
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.DefDBTape = factory();
-})(typeof self !== 'undefined' ? self : this, function () {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./detmath.js'));
+  else root.DefDBTape = factory(root.DefDBDetMath);
+})(typeof self !== 'undefined' ? self : this, function (DM) {
   const OP = { CONST: 0, CONC: 1, DCONC: 2, CNT: 3, DCNT: 4, FAC: 5, MUL: 6, ADD: 7, POW: 8, DPOW: 9, SAT: 10, DSAT: 11, HILL: 12, DHILL: 13 };
   const ARITY = [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 5, 6];
   const NAMES = Object.keys(OP);
 
   // 힐 점유율과 그 도함수 (s ≥ 0)
-  const occOf = (s, K, n) => { const x = s > 0 ? Math.pow(s / K, n) : 0; return x / (1 + x); };
+  const occOf = (s, K, n) => { const x = s > 0 ? DM.pow(s / K, n) : 0; return x / (1 + x); };
   const docc = (s, K, n, smin) => {
     if (n < 1 && s < smin) s = smin;
     if (s <= 0) return n > 1 ? 0 : n === 1 ? 1 / K : 0;
-    const x = Math.pow(s / K, n); return n * x / (s * (1 + x) * (1 + x));
+    const x = DM.pow(s / K, n); return n * x / (s * (1 + x) * (1 + x));
   };
 
   // ctx: { cinv: Float64Array(nB) (IR species[i].cinv), buf: Float64Array(nB) (완충 상한 M, 없으면 Infinity), stack: Float64Array }
@@ -44,8 +44,8 @@
         case 5: st[sp++] = f; break;
         case 6: sp--; st[sp - 1] *= st[sp]; break;
         case 7: sp--; st[sp - 1] += st[sp]; break;
-        case 8: st[sp - 1] = Math.pow(st[sp - 1], t[p++]); break;
-        case 9: { const n = t[p++], a = st[sp - 1]; st[sp - 1] = n === 1 ? 1 : n * Math.pow(a, n - 1); break; }
+        case 8: st[sp - 1] = DM.pow(st[sp - 1], t[p++]); break;
+        case 9: { const n = t[p++], a = st[sp - 1]; st[sp - 1] = n === 1 ? 1 : n * DM.pow(a, n - 1); break; }
         case 10: { const K = t[p++], a = st[sp - 1]; st[sp - 1] = a / (a + K); break; }
         case 11: { const K = t[p++], a = st[sp - 1]; st[sp - 1] = K / ((a + K) * (a + K)); break; }
         case 12: { const e = t[p], K = t[p + 1], n = t[p + 2], fmax = t[p + 3], fmin = t[p + 4]; p += 5; const o = occOf(st[sp - 1], K, n); st[sp - 1] = e ? 1 + (fmax - 1) * o : fmin + (1 - fmin) * (1 - o); break; }
