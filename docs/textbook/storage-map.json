@@ -2771,6 +2771,33 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "승인 묶음 판정 시험 — 자동 통과 · 눌러도 거부 넷(느슨함 · 권한 넓힘 settings/modes · 검토 불가) · 좁히는 변경은 승인 · 지문 · 승인 화면."
+    },
+    {
+      "class": "management",
+      "area": "code:tools",
+      "level": "L2",
+      "write_keys": [
+        "session:develop"
+      ],
+      "path": "rebuild/bundle.mjs",
+      "format": "Node 스크립트·모듈 (show <패치> · verify <패치> <지문>)",
+      "writer": "사람·AI",
+      "readers": "사람 (승인 화면) · tests/bundle.test.mjs · (다음 단계) 적용기",
+      "interpret": "승인 묶음 보기·확인 (STG-12) — L6 변경 패치를 읽어 승인 화면(지문 · 거부 · 사람 승인 필요 · 자동 통과, 바뀐 줄 전부)과 지문을 내고, verify 는 지문이 같고 거부가 없을 때만 통과한다. 파일을 쓰지 않는다. 판정은 judicial/approval.js(RULE-0528)."
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/bundle.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "승인 묶음 보기·확인 시험 — 패치에서 바뀐 뒤 내용 · 승인 화면 첫 줄 지문 · 확인(지문 일치 통과 · 불일치 거부 · 권한을 넓히는 묶음 거부) · 한 글자 차이는 다른 지문."
     }
   ],
   "governance": {
@@ -3525,6 +3552,7 @@
       "writeDraftText": {
         "key": "draft",
         "modules": [
+          "rebuild/bundle.mjs",
           "rebuild/rules.mjs"
         ]
       },

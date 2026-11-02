@@ -1,0 +1,36 @@
+지문 43c4a1d813553867636e306572b0c02bc06f0f45d6103bcd9e1ff5689cb7b151
+묶음 4 파일 — 자동 0 · 사람 승인 4 · 거부 0
+
+## 사람 승인 필요
+- .claude/settings.json [L6 guard:settings · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -       "Bash(sh engine/rust/build.sh:*)"
+    +       "Bash(sh engine/rust/build.sh:*)",
+    +       "Edit(tests/gate.test.mjs)",
+    +       "Write(tests/gate.test.mjs)",
+    +       "Edit(tests/affected.mjs)",
+    +       "Write(tests/affected.mjs)",
+    +       "Edit(tests/trace.mjs)",
+    +       "Write(tests/trace.mjs)",
+    +       "Edit(tests/snapshot.mjs)",
+    +       "Write(tests/snapshot.mjs)",
+    +       "Edit(tests/permissions.test.mjs)",
+    +       "Write(tests/permissions.test.mjs)",
+    +       "Edit(tests/mutation/run.mjs)",
+    +       "Write(tests/mutation/run.mjs)",
+    +       "Edit(tests/governance.test.mjs)",
+    +       "Write(tests/governance.test.mjs)",
+    +       "Edit(tests/rebuild.test.mjs)",
+    +       "Write(tests/rebuild.test.mjs)"
+- rebuild/rules/changes.jsonl [L4 ledger:rules · tool.rules] — added_only
+    + {"seq": 296, "at": "2026-11-02", "why": "STG-12 승인 묶음 1 — develop 손 쓰기를 좁힘: 문지기 셋은 사람만, 자기 검사 시험 8 은 설정 ask (사용자 결정 2026-11-02)", "file": "permissions", "op": "set", "key": "PERM-0017", "before": {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드 전체 — 데이터·도장·핸드오프는 except 로 뺌", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff)와 문지기 protect 가 빼냄"}, "after": {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드·문서(L1·L2) 손 쓰기 — 데이터·도장·핸드오프와 L6 문지기(rebuild/gate.mjs · .claude/settings.json · rebuild/rules/modes.json)는 except 로 뺌 (STG-12 · DEC-0048)", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff · 문지기 셋)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(저장 지도 authority)의 L1·L2 자리 목록으로"}, "sha": "1befed05381cc2f28e19e8d9d3a5a722e9ef43e98d0ebd1176006ee627a20def"}
+    + {"seq": 297, "at": "2026-11-02", "why": "STG-12 승인 묶음 1 — develop 손 쓰기를 좁힘: 문지기 셋은 사람만, 자기 검사 시험 8 은 설정 ask (사용자 결정 2026-11-02)", "file": "permissions", "op": "add", "key": "PERM-0023", "before": null, "after": {"id": "PERM-0023", "layer": "settings", "list": "ask", "what": ["Edit(tests/gate.test.mjs)", "Write(tests/gate.test.mjs)", "Edit(tests/affected.mjs)", "Write(tests/affected.mjs)", "Edit(tests/trace.mjs)", "Write(tests/trace.mjs)", "Edit(tests/snapshot.mjs)", "Write(tests/snapshot.mjs)", "Edit(tests/permissions.test.mjs)", "Write(tests/permissions.test.mjs)", "Edit(tests/mutation/run.mjs)", "Write(tests/mutation/run.mjs)", "Edit(tests/governance.test.mjs)", "Write(tests/governance.test.mjs)", "Edit(tests/rebuild.test.mjs)", "Write(tests/rebuild.test.mjs)"], "why": "L6 자기 검사 시험(guard:self-tests)은 바꿀 때마다 사람이 확인 (STG-12 결정 4 · 사용자 2026-11-02) — 느슨하게 고쳐 스스로를 통과시키지 못하게", "by": "사용자 결정 2026-11-02", "at": "2026-11-02", "revoke": "`.claude/settings.json` 의 그 줄을 지우고(사람 — Claude Code 가 확인) 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)"}, "sha": "0708c0046b225ff2f7e863421ba095041df1b8db25d47eec019a438165ce5199"}
+- rebuild/rules/modes.json [L4 ledger:rules · tool.rules] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "workspace/handoff/**"
+    +           "workspace/handoff/**",
+    +           "rebuild/gate.mjs",
+    +           ".claude/settings.json",
+    +           "rebuild/rules/modes.json"
+- rebuild/rules/permissions.jsonl [L4 ledger:rules · tool.rules] — changed: 1 줄 삭제
+    - {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드 전체 — 데이터·도장·핸드오프는 except 로 뺌", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff)와 문지기 protect 가 빼냄"}
+    + {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드·문서(L1·L2) 손 쓰기 — 데이터·도장·핸드오프와 L6 문지기(rebuild/gate.mjs · .claude/settings.json · rebuild/rules/modes.json)는 except 로 뺌 (STG-12 · DEC-0048)", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff · 문지기 셋)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(저장 지도 authority)의 L1·L2 자리 목록으로"}
+    + {"id": "PERM-0023", "layer": "settings", "list": "ask", "what": ["Edit(tests/gate.test.mjs)", "Write(tests/gate.test.mjs)", "Edit(tests/affected.mjs)", "Write(tests/affected.mjs)", "Edit(tests/trace.mjs)", "Write(tests/trace.mjs)", "Edit(tests/snapshot.mjs)", "Write(tests/snapshot.mjs)", "Edit(tests/permissions.test.mjs)", "Write(tests/permissions.test.mjs)", "Edit(tests/mutation/run.mjs)", "Write(tests/mutation/run.mjs)", "Edit(tests/governance.test.mjs)", "Write(tests/governance.test.mjs)", "Edit(tests/rebuild.test.mjs)", "Write(tests/rebuild.test.mjs)"], "why": "L6 자기 검사 시험(guard:self-tests)은 바꿀 때마다 사람이 확인 (STG-12 결정 4 · 사용자 2026-11-02) — 느슨하게 고쳐 스스로를 통과시키지 못하게", "by": "사용자 결정 2026-11-02", "at": "2026-11-02", "revoke": "`.claude/settings.json` 의 그 줄을 지우고(사람 — Claude Code 가 확인) 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)"}
