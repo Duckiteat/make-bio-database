@@ -8,18 +8,18 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 286 | 7633.9 |
+| 공통 `common` | 286 | 7636.2 |
 | 정보 작성 `author` | 457 | 16547.0 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 177 | 2313.7 |
+| 디벨롭 `develop` | 177 | 2314.1 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 39 | 848.1 |
+| 점검·검증 `inspect` | 40 | 864.1 |
 
 ## 규칙별
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 32 | 6165.6 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 32 | 6167.1 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -53,12 +53,12 @@
 | `tests/**` | develop | 62 | 587.1 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 29 | 466.7 | 보고서 — 읽기·점검 |
+| `docs/reports/**` | inspect | 30 | 482.7 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 12 | 460.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 19 | 298.5 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 211 | 601.5 | 안내 문서 |
+| `docs/**` | common | 211 | 602.3 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 306.6 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 307.0 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 106.3 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
 | `.claude/**` | common | 6 | 37.0 | 도구 설정 |
