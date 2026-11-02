@@ -8,14 +8,14 @@
 |---|---|---|
 | data | 433 | 16296.1 |
 | rebuild | 28 | 6091.7 |
-| docs | 276 | 1808.5 |
-| (최상위) | 18 | 939.0 |
+| docs | 277 | 1818.9 |
+| (최상위) | 18 | 939.5 |
 | tests | 86 | 611.2 |
 | judicial | 30 | 567.0 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 17 | 207.6 |
-| workspace | 23 | 96.1 |
+| workspace | 23 | 96.4 |
 | legislative | 3 | 75.4 |
 | migrations | 13 | 59.8 |
 | compiler | 7 | 49.0 |
@@ -38,7 +38,7 @@
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
-| `CHANGES.md` | 297.2 |
+| `CHANGES.md` | 297.7 |
 | `rebuild/state/plan-log.jsonl` | 289.0 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |

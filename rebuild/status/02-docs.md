@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 297.2 | 279 |  | 분류됨 1 |
+| `CHANGES.md` | 297.7 | 280 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -278,6 +278,7 @@
 | `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
 | `docs/reports/2026-11-02-engine-primer-qa.md` | 18.8 | 110 |  | 미분류 |
+| `docs/reports/2026-11-02-plan021-survey.md` | 10.3 | 73 |  | 미분류 |
 | `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 22.3 | 146 |  | 미분류 |
 | `docs/reports/2026-11-02-run-record-design.md` | 19.0 | 149 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
@@ -295,7 +296,7 @@
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
-| `workspace/WORKORDER-2026-11-02-engine.md` | 15.6 | 100 |  | 미분류 |
+| `workspace/WORKORDER-2026-11-02-engine.md` | 15.9 | 100 |  | 미분류 |
 | `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
 | `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
 | `workspace/handoff/HANDOFF-template.md` | 2.3 | 30 |  | 분류됨 16 |
