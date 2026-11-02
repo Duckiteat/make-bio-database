@@ -1241,6 +1241,15 @@
       "interpret": "1·1.5단계 — WASM 최신성(해시)·JS 기준 구현과 동등(궤적 ≤ rtol, 운명·도달·결정·사건 같음, 단계 수 ±1%)·byteLength 불변·결정론·네이티브 = WASM 비트·네이티브 루프 할당 0·사법부 판정 PASS."
     },
     {
+      "path": "tests/clock.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "시계 안전망 시험(PLAN-092) — 엔진이 시간을 세는 방법의 지금 동작을 고정: 정상 격자의 기록 시각(JS = Rust)·출하 시나리오의 t_end·신호 시각이 모두 dt_slow 의 배수라는 성질·알려진 결함 K1(속도 엔진이 t_end 를 넘김)·K3(기록 시각 t+dt)·K4(신호가 다음 격자점에서 적용). 결함 줄은 PLAN-093 시계 정리가 의도적으로 갱신한다.",
+      "refactor_strategy": "시계 정리(PLAN-093)에서 ①②와 출하 시나리오의 시각열은 그대로 두고 ③④⑤의 결함 줄만 새 올바른 값으로 갱신한다 — 그 밖의 줄이 깨지면 의도하지 않은 변경이다."
+    },
+    {
       "path": "tests/fate_suite.js",
       "class": "verification",
       "format": "Node CommonJS 스크립트 (+ module.exports.run)",

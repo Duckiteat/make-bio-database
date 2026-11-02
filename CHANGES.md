@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 엔진 해부 보고서 + 시계 안전망 시험 + 계획 등록 (DEC-0048·0049) | `docs/reports/2026-11-01-engine-teardown*.md` · `2026-11-02-engine-primer-qa.md` · `-run-record-design.md` · `-reporting-guidelines-survey.md` · `tests/clock.test.mjs` · 계획 PLAN-089–093 | 엔진의 시간 세기(K1–K7)와 사법부 시간 처리를 해부해 기록하고, GMP 활용·학술지 논문 목표에 맞춰 계산 기록부·행위자 구분·주장 장부를 계획에 올림. 엔진 첫걸음으로 시계의 지금 동작을 못 박는 시험을 추가 | 엔진·판정 코드 불변 · 결과 불변 · 시험 5 개 추가(결함 K1·K3·K4 는 '지금은 이렇게 틀린다'로 고정 — PLAN-093 이 갱신) · 순서에 PLAN-092·093 이 앞에 들어감 | `node --test tests/clock.test.mjs` 통과 · plan check 오류 0 · 전체 시험 |
 | 2026-11-01 · 대화 밖으로 옮기기 — 기록만 (DEC-0047 갱신) | `docs/reports/2026-11-01-work-automation.md` §10 · 열린 질문 1 | 구조·절차·함정을 대화 메시지에서 Claude Code 의 다른 자리(skill · hook · subagent)로 옮기자는 사용자 제안 — 시기가 아니라는 사용자 판단 | 코드·데이터 · 순서 불변. 다시 꺼낼 조건: 도구(STG-11a–d) 뒤 절차가 안정될 때 | plan check 오류 0 · 전체 시험 |
 | 2026-11-01 · 규약과 습관 — 세션 끊기 · 기록 묶기 (DEC-0047 갱신) | `docs/reports/2026-11-01-work-automation.md` §9 · 계획 STG-11f · 열린 질문 1 · 순서 | 자동화 목록에서 빠졌던 둘(도구가 아닌 일하는 방식) — 사용자 결정 | 코드·데이터 불변. 세션 끊기는 순서에(11a 뒤), 기록 묶기는 결정하지 않고 열린 질문으로 | plan check 오류 0 · 전체 시험 |
 | 2026-11-01 · 바뀐 자리 따라 고치기 — 세 등급 (DEC-0047 갱신) | `docs/reports/2026-11-01-work-automation.md` §8 · 계획 STG-11d · STG-11a 범위 넓힘 · DEC-0047 갱신 | 탐침으로 바뀐 경로·지점을 고쳐 주는 시스템을 들이자는 사용자 제안 | 코드·데이터 불변. 자동 수정은 현재 상태를 가리키는 기계적 참조만, 변이 자리는 제안 뒤 확인 + 재실행, 과거 기록은 거부 | plan check 오류 0 · 전체 시험 |
