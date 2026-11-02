@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 새 파일의 연결 후보 제안 (`probe.mjs --new`) · precheck 한 단계 | `rebuild/probe.mjs` newFiles · linkHints · `rebuild/precheck.mjs` STEPS · `tests/probe.test.mjs` ⑦ | 사용자 요청: 새 파일의 연결 지점을 자동으로 (STG-12) | 새 파일의 분류·규칙·읽는 시험·열린 계획을 보이고 연결이 없으면 알림 — 제안만, 실패하지 않음 | tests/probe.test.mjs 7 · precheck |
 | 2026-11-02 · 권한 구조 검사를 순수 모듈로(RULE-0527) · 서기 호출 표 · 시험 | `judicial/authority.js`(checkAuthority · checkCallers) · `dbtool.mjs` textbook 검사가 부름 · `docs/textbook/storage-map.json` authority.callers(서기 쓰기 함수 27 → 열쇠 · 부를 수 있는 모듈) · `tests/authority.test.mjs` · 규칙 장부 RULE-0527 | 사용자 결정(DEC-0048): 권한 표와 코드가 어긋나지 않게 | 표 밖 모듈이 서기 쓰기 함수를 부르면 거부 · 낡은 표도 거부 · 위반 여섯 가지 거부 | tests/authority.test.mjs 5 · 변이 caught · precheck |
 | 2026-11-02 · 열쇠 모델: authority.keys 표 · 자리는 write_keys(부분집합) · 구역 표 대조 검사 | `docs/textbook/storage-map.json` authority.keys · areas · files(write_key/judge_key → write_keys) · `dbtool.mjs` textbook 검사 | 사용자 결정(DEC-0048): 구역은 열쇠 여럿 · 상위 키 상속은 max_level 까지 · L5·L6 상속 없음 | 열쇠 이름은 표에만 · max_level 초과는 사람·사법부 판정이나 예외 필요 · L5 는 서기+사법부 · L6 세션 쓰기는 사람 확인 · unassigned 상한 2 | 위반 6 가지를 일부러 넣어 거부 확인 · precheck |
 | 2026-11-02 · 저장 지도에 구역 표(authority) 추가 · 새 파일 칸 초안 제안 | `docs/textbook/storage-map.json` authority(등급 7 · 구역 39 · 구역별 열쇠) · `dbtool.mjs` textbook 검사(자리↔구역 표 대조 · 미분류 파일에 같은 폴더 구역 제안, L5·L6 은 제안 안 함) | 사용자 결정(DEC-0048): 새 파일에 구조를 자동으로 박되 권한은 넓히지 않음(RULE-0461) | 자리의 등급·열쇠가 구역 표와 다르면 거부, 새 파일은 제안과 함께 거부 | `textbook --check` · 새 파일 시험 |

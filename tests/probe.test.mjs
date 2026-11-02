@@ -87,3 +87,15 @@ test('⑥ 확인(ask) 명령을 감싼 스크립트는 설정 allow 에 없다 �
   }
   assert.ok(S.ask.some((a) => a.includes('textbook --write')), '감싼 명령이 여전히 확인(ask) 명령');
 });
+
+test('⑦ 새 파일의 연결 후보: 규칙에 닿는 파일은 규칙을 보이고, 어디에도 안 닿으면 알린다 (제안 — 막지 않음)', async () => {
+  const ctx = PR.context(PR.ROOT ?? undefined);
+  const hit = (await PR.linkHints(ctx, ['judicial/authority.js'])).join('\n');
+  assert.match(hit, /새 파일 judicial\/authority\.js/);
+  assert.match(hit, /규칙 1/);
+  assert.doesNotMatch(hit, /연결 없음/);
+  const miss = (await PR.linkHints(ctx, ['tests/authority.test.mjs'])).join('\n');
+  assert.match(miss, /새 파일 tests\/authority\.test\.mjs/);
+  assert.deepEqual(await PR.linkHints(ctx, ['없는/파일.js']), []); // 없는 파일은 건너뜀
+  assert.ok(Array.isArray(PR.newFiles()));
+});

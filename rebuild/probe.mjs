@@ -124,6 +124,22 @@ async function testsReading(root, file) {
     return Object.entries(m.tests || {}).filter(([, e]) => A.covers(e, file)).map(([t]) => t);
   } catch { return null; }
 }
+// 새 파일 (STG-12 · 연결 항목 제안) — 이번 작업에서 새로 생긴 파일(추적 안 됨 + 스테이지에 더해짐 + HEAD 에 없음)
+export function newFiles(root = ROOT) {
+  const out = git(['status', '--porcelain', '--untracked-files=all'], root).split('\n').filter(Boolean).filter((l) => /^(\?\?| A|A )/.test(l)).map((l) => l.slice(3).replace(/^"|"$/g, ''));
+  return out.filter((f) => !f.startsWith('workspace/') && !f.startsWith('.git/'));
+}
+// 새 파일마다 연결 후보: 분류 · 규칙 · 읽는 시험 · 열린 계획 (probe 가 이미 아는 것을 엮음) — 연결이 하나도 없으면 알린다. 막지는 않는다 (제안)
+export async function linkHints(ctx, files) {
+  const lines = [];
+  for (const f of files) {
+    if (!ctx.exists.has(f)) continue;
+    const ls = await probe(ctx, f), pick = (re) => ls.filter((l) => re.test(l)).map((l) => '  ' + l.slice(0, 200));
+    lines.push(`새 파일 ${f}`, ...pick(/^(분류|규칙|집행|읽는 시험|열린 계획|처방)/));
+    if (!ls.some((l) => /^(규칙|열린 계획)/.test(l))) lines.push('  연결 없음 — 닿는 규칙의 where 나 계획 항목의 결과에 이 경로를 적으면 탐침이 이어 준다 (node rebuild/rules.mjs apply · plan.mjs apply)');
+  }
+  return lines;
+}
 export async function probe(ctx, q) {
   const out = [], P = (s) => out.push(s);
   const rid = /^RULE-\d{4}$/.test(q) && q, item = /^(PLAN|ASY|STG)-[\w]+$/.test(q) && q;
@@ -188,6 +204,10 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     for (const b of fx.left) console.log(`남김 [${b.tier === 2 ? '제안 — 같은 검사인지 확인 뒤 rules.mjs apply 로 find 갱신 + 변이 재실행' : '이동 기록 없음 — 사람이 판단'}] ${b.kind} ${b.key}: ${b.path}`);
     process.exit(ok ? 0 : 1);
   }
-  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry]'); process.exit(2); }
+  if (args[0] === '--new') { // 새 파일의 연결 후보 (제안 — 종료 코드 0)
+    const fs = newFiles(ROOT), ls = await linkHints(ctx, fs);
+    console.log(fs.length ? ls.join('\n') : '새 파일 0 — 연결 후보 없음'); process.exit(0);
+  }
+  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new'); process.exit(2); }
   for (const l of await probe(ctx, args[0])) console.log(l);
 }

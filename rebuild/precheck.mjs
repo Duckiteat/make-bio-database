@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const STEPS = [
   ['node', ['rebuild/probe.mjs', '--check']],
+  ['node', ['rebuild/probe.mjs', '--new']], // 새 파일의 연결 후보 — 제안만, 실패하지 않음
   ['node', ['rebuild/rules.mjs', 'check']],
   ['node', ['rebuild/plan.mjs', 'check']],
   ['node', ['rebuild/status.mjs', '--check']],
