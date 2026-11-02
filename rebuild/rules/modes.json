@@ -207,7 +207,6 @@
     "common": {
       "write": [
         "rebuild/status/**",
-        "rebuild/draft/**",
         "rebuild/state/**",
         "docs/plan/**",
         "docs/textbook/90-부록-자동생성.md",
