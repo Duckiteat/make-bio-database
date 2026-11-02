@@ -197,7 +197,7 @@
 | 48 | [PLAN-048](items/PLAN-048.md) | 사각 지도 유지 | ☑ 2026-10-22 |
 | 88 | [PLAN-088](items/PLAN-088.md) | 엔진 정답 시험 + 변형 관계 시험 | ☐ |
 | 92 | [PLAN-092](items/PLAN-092.md) | 시계 안전망 시험 | ☑ 2026-11-02 |
-| 93 | [PLAN-093](items/PLAN-093.md) | 시계 정리 (관찰 격자 한정) | ☐ |
+| 93 | [PLAN-093](items/PLAN-093.md) | 시계 정리 (관찰 격자 한정) | ☑ 2026-11-02 |
 
 ### 7부 — 구조 재편 (가정·판정·측정법을 1급으로)
 
@@ -375,9 +375,9 @@
 
 ## 근거 점검 (계산 — 원본에서 센 것)
 
-- 작업 98: ☑ 완료 35 · ◐ 진행 9 · ☐ 대기 53 · 보류 보류 1
-- 걸어온 길: 사건 232 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 27)
+- 작업 98: ☑ 완료 36 · ◐ 진행 9 · ☐ 대기 52 · 보류 보류 1
+- 걸어온 길: 사건 234 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 29)
 - 결정 25 — 누가: 사용자 11 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
-- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-020 · PLAN-021 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-055 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-080 · PLAN-081 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-14 · ASY-15 · ASY-16 · PLAN-088 · PLAN-089 · PLAN-090 · PLAN-091 · ASY-10 · PLAN-093
+- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-020 · PLAN-021 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-055 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-080 · PLAN-081 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-14 · ASY-15 · ASY-16 · PLAN-088 · PLAN-089 · PLAN-090 · PLAN-091 · ASY-10
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)

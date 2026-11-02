@@ -595,7 +595,8 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
     const ev = (e) => { if (events.length < 200) events.push(e); };
     const stalls = {}, stiffA = new Float64Array(ids.length), stiffOrder = [];
     record(0);
-    const steps = Math.ceil(opt.t_end / opt.dt), every = opt.trace === 'full' ? 1 : Math.max(1, Math.floor(steps / 200));
+    // 시계 (PLAN-093): 온전한 걸음 nFull 개 + 남는 짧은 걸음 하나(tail). t_end 를 넘겨 돌지 않는다 — t_end 가 dt 의 배수이면 tail 이 없다
+    const nFull = Math.floor(opt.t_end / opt.dt + 1e-9), tail = opt.t_end - nFull * opt.dt, steps = nFull + (tail > 1e-9 ? 1 : 0), every = opt.trace === 'full' ? 1 : Math.max(1, Math.floor(steps / 200));
     // 단계 순환(예: 시트르산 회로): 저장소가 아닌 비가산 묶음으로 한 단계의 출력이 다음 단계의 입력이 되는 고리 — 강하게 연결된 성분
     const SG = new Map();
     for (const a of ids) for (const b of ids) if (a !== b && react.get(a).st.outputs.some((p) => !p.minor && !res.has(p.b) && react.get(b).st.inputs.some((q) => !q.minor && q.b === p.b))) { if (!SG.has(a)) SG.set(a, new Set()); SG.get(a).add(b); }
@@ -635,7 +636,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       return { names, chg: names.map((e) => changing.has(e)), oq: Int32Array.from(ops, (o) => o[0]), oc: Float64Array.from(ops, (o) => o[1]), on: Float64Array.from(ops, (o) => o[2]), os: Int8Array.from(ops, (o) => o[3]), val: new Float64Array(names.length), mnames, mops, mval: new Float64Array(mnames.length) };
     });
     for (let i = 1; i <= steps; i++) {
-      const t = +(i * opt.dt).toFixed(9);
+      const t = i <= nFull ? +(i * opt.dt).toFixed(9) : opt.t_end, hStep = i <= nFull ? opt.dt : tail; // 이번 걸음의 길이 (마지막 짧은 걸음만 dt 보다 짧음)
       // ① 반응 단계
       for (let j = 0; j < IR.steps.length; j++) {
         const S = IR.steps[j], k = S.k, Vr = S.V;
@@ -659,7 +660,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
           if (k.law === 'mass_action') v = k.k * prodIn * agentC - (k.reversible && k.k_r ? k.k_r * prodOut : 0);
           else if (k.law === 'binding') { const kon = k.k_on || (k.k_off && k.Kd ? k.k_off / k.Kd : 0), koff = k.k_off || (k.k_on && k.Kd ? k.k_on * k.Kd : 0); v = kon * prodIn - koff * prodOut; }
           else if (k.law === 'michaelis_menten') { const s0 = S.lawInsB.length ? cN(S.lawInsB[0], Vr) : 1; v = k.kcat * agentC * s0 / (k.Km + s0); }
-          xi = v * modF(S.mods) * NA * Vr * opt.dt;
+          xi = v * modF(S.mods) * NA * Vr * hStep;
         }
         const want = xi;
         // 적분 안정성: 속도 법칙 단계가 한 Δt 에 소비하려 한 입력의 비율 (오일러 적분은 이 비율이 작아야 믿을 수 있음)
@@ -691,7 +692,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
         let v = 0;
         if (s.law === 'zero_order') v = s.k.k;
         else if (s.law === 'mass_action') { let p = 1; for (let q = 0; q < s.consB.length; q++) { const c = cN(s.consB[q], s.V); p = p * (s.consSat[q] ? c / (c + Ksat) : c ** s.consN[q]); } v = s.k.k * p; }
-        let xi = v * modF(s.mods) * NA * s.V * opt.dt;
+        let xi = v * modF(s.mods) * NA * s.V * hStep;
         for (let q = 0; q < s.consB.length; q++) xi = Math.min(xi, Math.max(0, NN[s.consB[q]]) / s.consN[q]);
         if (!(xi > 0)) continue;
         for (let q = 0; q < s.consB.length; q++) { const b = s.consB[q], n = s.consN[q]; setN(b, NN[b] - n * xi); L1(b, 1, -n * xi); }
@@ -705,7 +706,7 @@ ${opt.material || '(여기에 정리할 자료를 붙여 넣으세요)'}
       // ③ 분해 규칙 (1차, 결정론 또는 확률적)
       for (const g of IR.degrs) {
         if (!(g.k > 0)) continue;
-        const n = Math.max(0, NN[g.b]), p = 1 - Math.exp(-g.k * modF(g.mods) * opt.dt);
+        const n = Math.max(0, NN[g.b]), p = 1 - Math.exp(-g.k * modF(g.mods) * hStep);
         if (!n) continue;
         const whole = Math.floor(n), frac = n - whole;
         const x = stochastic ? binomial(rand, whole, p) + (frac > 0 && rand() < p ? frac : 0) : n * p;

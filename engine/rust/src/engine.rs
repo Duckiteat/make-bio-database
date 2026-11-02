@@ -157,8 +157,8 @@ impl Engine {
             m.into_iter().filter(|x| !is_sig[x.0]).collect()
         }).collect();
         let col_of: Vec<usize> = sp.col.iter().map(|&cc| sp.perm[cc]).collect();
-        // 관찰 격자 수: JS 와 같은 누적 t 루프로 센다
-        let mut n_steps = 0usize; { let mut t = 0.0; while t < t_end - 1e-9 { n_steps += 1; t += dt; } }
+        // 관찰 격자 수: JS 와 같은 식 (PLAN-093) — 구간 수 = ⌈(t1 − t0 − 1e-9)/Δ⌉ (1e-9 s 보다 짧은 적분은 하지 않는다)
+        let n_steps = if t_end - 1e-9 > 0.0 { libm::ceil((t_end - 1e-9) / dt) as usize } else { 0 };
         let n_rec_max = (n_steps + record_every - 1) / record_every;
         let max_ev = if sto { n_steps * nres.max(1) * 8 + 64 } else { n_steps * nres.max(1) };
         let h0 = ctl.h0;
@@ -446,12 +446,20 @@ impl Engine {
         self.h = h;
         self.sto_stats[5] = self.rng.draws;
     }
+    // 신호 q 의 시각 t 의 값 — 시각 비교의 허용치는 최소 걸음 h_min (JS signalAt 과 같음, PLAN-093)
+    fn sig_val(&self, q: usize, t: f64, zero: bool) -> f64 {
+        let mut v = 0.0;
+        if !zero { for e in &self.signals[q].ev { if e.0 <= t + self.ctl.h_min { v = e.1; } } }
+        v
+    }
     fn signal_at(&mut self, t: f64, zero: bool) {
-        for q in 0..self.nsig {
-            let mut v = 0.0;
-            if !zero { for e in &self.signals[q].ev { if e.0 <= t + 1e-9 { v = e.1; } } }
-            self.sig[q] = v;
-        }
+        for q in 0..self.nsig { self.sig[q] = self.sig_val(q, t, zero); }
+    }
+    // 구간 (ts, te) 안에서 신호가 바뀌는 다음 시각 — h_min 보다 가까운 변경은 가까운 쪽 끝에서 적용되므로 제외 (JS nextBreak)
+    fn next_break(&self, ts: f64, te: f64) -> f64 {
+        let hm = self.ctl.h_min; let mut b = f64::INFINITY;
+        for s in &self.signals { for e in &s.ev { if e.0 > ts + hm && e.0 < te - hm && e.0 < b { b = e.0; } } }
+        b
     }
 
     /// 한 번의 적분 (본 실행·결정 탐침 공유). main = 기록·스냅숏·사건을 남김, zero_signal = 신호 철회.
@@ -462,26 +470,41 @@ impl Engine {
         let s0 = self.stats;
         for r in 0..self.nres { let i = self.res_idx[r]; self.res_start[r] = self.n[i]; self.res_min[r] = self.n[i]; self.res_ok[r] = self.n[i] >= 1.0; self.res_watch[r] = self.n[i] >= 1.0; }
         let (mut per_min, mut per_max) = (f64::INFINITY, 0.0);
-        let mut step = 0usize; let mut t = t0;
+        let mut step = 0usize;
         if main { self.n_rec = 0; self.n_snap = 0; self.n_events = 0; }
         if self.sto && main { for s in 0..self.reach_t.len() { self.reach_t[s] = if self.reach_g(s) <= 0.0 { t0 } else { f64::NAN }; } }
-        while t < t1 - 1e-9 {
+        // 시계 (PLAN-093): 격자점은 정수 번호로 센다 t = t0 + k·Δ (누적 덧셈 없음) — JS run 과 같은 식
+        let n_run = if t1 - t0 - 1e-9 > 0.0 { libm::ceil((t1 - t0 - 1e-9) / self.dt) as usize } else { 0 };
+        while step < n_run {
+            let t = if step == 0 { t0 } else { t0 + (step as f64) * self.dt };
             self.signal_at(t, zero_signal);
             for q in 0..self.nsig { let i = self.signals[q].idx; self.n[i] = self.sig[q]; }
-            let te = if t1 - t < self.dt - 1e-9 { t1 } else { t + self.dt }; // 마지막 구간이 Δ 보다 짧으면 t1 에서 (사건 근 찾기의 다시 적분 — 격자 정렬 실행은 그대로)
-            if self.sto { self.partition(step == 0); self.integrate_sto(t, te, main); } else { self.integrate(t, te); }
+            let te = if step + 1 == n_run { t1 } else { t0 + ((step + 1) as f64) * self.dt }; // 마지막 구간은 t1 에서 끊는다 (Δ 보다 짧을 수 있음)
+            if self.sto { self.partition(step == 0); }
+            // 구간 안에서 신호가 바뀌면 그 시각에서 적분을 끊고 새 값을 놓는다 (신호를 덮어쓴 탐침은 끊지 않음). 기록되는 sig 는 구간 시작의 값
+            let mut ts = t; let (mut seg_steps, mut seg_rej) = (0.0, 0.0);
+            loop {
+                let nb = if zero_signal { f64::INFINITY } else { self.next_break(ts, te) };
+                let tn = if nb < te { nb } else { te };
+                if self.sto { self.integrate_sto(ts, tn, main); } else { self.integrate(ts, tn); }
+                seg_steps += self.iv_steps; seg_rej += self.iv_rej;
+                if tn >= te { break; }
+                for q in 0..self.nsig { let i = self.signals[q].idx; self.n[i] = self.sig_val(q, tn, false); }
+                ts = tn;
+            }
+            self.iv_steps = seg_steps; self.iv_rej = seg_rej;
             per_min = fmin(per_min, self.iv_steps); per_max = fmax(per_max, self.iv_steps);
             for r in 0..self.nres {
                 let i = self.res_idx[r]; let x = self.n[i];
                 self.res_min[r] = fmin(self.res_min[r], x);
                 if !self.res_watch[r] || self.sto { continue; } // 확률 실행은 단계마다 (on_step)
-                if self.res_ok[r] && x < 1.0 { self.res_ok[r] = false; if main { let k = self.n_events; self.events[3 * k] = t + self.dt; self.events[3 * k + 1] = 0.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
-                else if !self.res_ok[r] && x >= 1.0 { self.res_ok[r] = true; if main { let k = self.n_events; self.events[3 * k] = t + self.dt; self.events[3 * k + 1] = 1.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
+                if self.res_ok[r] && x < 1.0 { self.res_ok[r] = false; if main { let k = self.n_events; self.events[3 * k] = te; self.events[3 * k + 1] = 0.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
+                else if !self.res_ok[r] && x >= 1.0 { self.res_ok[r] = true; if main { let k = self.n_events; self.events[3 * k] = te; self.events[3 * k + 1] = 1.0; self.events[3 * k + 2] = i as f64; self.n_events += 1; } }
             }
             if main {
                 if step % self.record_every == 0 {
                     let k = self.n_rec; let (nb, nr, ns) = (self.nb, self.nr, self.nsig);
-                    self.rec_t[k] = t + self.dt;
+                    self.rec_t[k] = te;
                     self.rec_n[k * nb..(k + 1) * nb].copy_from_slice(&self.n);
                     self.rec_lo[k * nb..(k + 1) * nb].copy_from_slice(&self.lo);
                     self.rec_cum[k * 2 * nr..(k + 1) * 2 * nr].copy_from_slice(&self.cum);
@@ -490,9 +513,9 @@ impl Engine {
                     self.n_rec += 1;
                 }
                 let k = self.n_snap; let nb = self.nb;
-                self.snap_t[k] = t + self.dt; self.snap_n[k * nb..(k + 1) * nb].copy_from_slice(&self.n); self.n_snap += 1;
+                self.snap_t[k] = te; self.snap_n[k * nb..(k + 1) * nb].copy_from_slice(&self.n); self.n_snap += 1;
             }
-            t += self.dt; step += 1;
+            step += 1;
         }
         if main {
             self.run_info = [self.stats[2] - s0[2], self.stats[3] - s0[3], self.stats[4] - s0[4], self.stats[5] - s0[5], self.iv_hmin, self.iv_hmax, per_min, per_max];

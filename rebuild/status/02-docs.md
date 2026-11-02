@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.1 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 294.4 | 276 |  | 분류됨 1 |
+| `CHANGES.md` | 295.4 | 277 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.5 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -92,7 +92,7 @@
 | `docs/plan/decisions/DEC-0046.md` | 1.9 | 19 |  | 생성물 |
 | `docs/plan/decisions/DEC-0047.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/decisions/DEC-0048.md` | 1.7 | 15 |  | 생성물 |
-| `docs/plan/decisions/DEC-0049.md` | 1.3 | 15 |  | 생성물 |
+| `docs/plan/decisions/DEC-0049.md` | 1.6 | 19 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.2 | 30 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -206,7 +206,7 @@
 | `docs/plan/items/PLAN-090.md` | 2.0 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-091.md` | 2.1 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-092.md` | 1.8 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-093.md` | 1.7 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-093.md` | 3.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -284,12 +284,12 @@
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 18.3 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 65.5 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 66.2 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 124.2 | 826 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 124.3 | 826 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 5.9 | 52 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
