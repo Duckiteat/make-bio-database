@@ -295,7 +295,7 @@
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
-| `workspace/WORKORDER-2026-11-02-engine.md` | 13.4 | 95 |  | 미분류 |
+| `workspace/WORKORDER-2026-11-02-engine.md` | 15.1 | 99 |  | 미분류 |
 | `workspace/handoff/HANDOFF-ikba-halflife.md` | 9.0 | 99 |  | 분류됨 54 |
 | `workspace/handoff/HANDOFF-telomere-quantitative.md` | 8.7 | 48 |  | 분류됨 30 |
 | `workspace/handoff/HANDOFF-template.md` | 2.3 | 30 |  | 분류됨 16 |
