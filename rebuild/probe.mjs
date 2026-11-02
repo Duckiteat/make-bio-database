@@ -5,7 +5,7 @@
 //   node rebuild/probe.mjs --fix [--dry]                                첫 등급 자동 수정(파일 이동 — 장부 · 계획) · 저장 지도는 고칠 줄만 보임 · 둘째 등급은 후보만
 // 새 지도를 손으로 만들지 않는다 — 이미 있는 기계 자료를 엮는다: 규칙 장부 where · 집행 장부 · links code: · 계획(자리) ·
 //   저장 지도(storage-map.json) · 시험 추적 지도(tests/affected.mjs mapFile) · git 함께 바뀜 · 단위 장부 분류.
-// 참조 세 등급 (docs/reports/2026-11-01-work-automation.md §8):
+// 참조 세 등급 (작업 자동화 보고서 §8 — docs/reports):
 //   1 자동 — 현재 상태를 가리키는 경로(규칙 where · 집행 file·tests · links code: · 열린 계획 항목의 자리 · 저장 지도 path): git 이 이동으로 본 것만
 //     장부·계획 도구로 고친다(이유를 단 사건). 2 제안 — 변이 자리(find)가 코드와 어긋남: 지워진 검사를 다시 가리키면 거짓 안심이므로 후보만(RULE-0461).
 //   3 안 고침 — 과거 기록(CHANGES · 결정·계획 이력 · 영수증 · 도장 · 봉인 · 데이터)은 읽지도 고치지도 않는다.

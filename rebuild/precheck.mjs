@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // 빠른 사전 검사 (STG-11c · DEC-0047) — 2 분짜리 전체 시험 전에 몇 초 안에 구조 실수를 잡는다. 전체 시험을 대신하지 않고 앞에 선다.
 //   node rebuild/precheck.mjs        구조 시험(rebuild · governance) · 깨진 참조(probe --check) · 생성 문서 --check · 계획 · 규칙 장부 검사
-// 근거(2026-11-01 영수증): 전체 시험 33 회 중 실패 8 회, 그중 약 6 회가 여기서 잡히는 구조 실수(규칙 번호 표기 · 변이 자리 · 장부 연결 · 생성 문서).
+// 근거(영수증 측정 — docs/reports 의 작업 자동화 보고서 §2): 전체 시험 33 회 중 실패 8 회, 그중 약 6 회가 여기서 잡히는 구조 실수(규칙 번호 표기 · 변이 자리 · 장부 연결 · 생성 문서).
 // 계약: 읽기·시험만 — 파일을 쓰지 않는다. 문지기(gate.mjs)와 별개 — finish · 커밋 문은 그대로다.
 import { spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
