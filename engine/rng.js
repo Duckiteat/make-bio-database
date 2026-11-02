@@ -9,6 +9,7 @@
 // 섞기: splitmix64 마무리(곱셈 둘·이동 셋)를 네 번 — 열쇠 = 섞기(seed·황금비 + 궤적·상수 + 1), 추출 = 섞기(섞기(섞기(열쇠 ^ 흐름·황금비) + 번호·상수) + 부번호·상수)
 // engine/rust/src/rng.rs 와 같은 알고리즘·같은 산술 순서. 사법부는 이 난수를 쓰지 않는다 (판정의 재표본은 judicial/stats.js 자기 생성기).
 'use strict';
+const DM = require('../compiler/detmath.js'); // 결정론 수학 (Rust 와 비트까지 같음)
 const M64 = (1n << 64n) - 1n;
 const GOLD = 0x9e3779b97f4a7c15n, K_TRAJ = 0xd1342543de82ef95n, K_IDX = 0xbf58476d1ce4e5b9n, K_SUB = 0x94d049bb133111ebn;
 
@@ -24,7 +25,7 @@ const HALF_LN_2PI = 0.9189385332046728;
 function lnFact(k) {
   if (k < 10) return LNFACT[k];
   const kp = k + 1;
-  return (kp - 0.5) * Math.log(kp) - kp + HALF_LN_2PI + (1 / 12 - 1 / (360 * kp * kp)) / kp;
+  return (kp - 0.5) * DM.log(kp) - kp + HALF_LN_2PI + (1 / 12 - 1 / (360 * kp * kp)) / kp;
 }
 
 function create(seed, trajectory) {
@@ -37,19 +38,19 @@ function create(seed, trajectory) {
     z = mix((z + BigInt(sub) * K_SUB) & M64);
     return Number(z >> 11n) * 1.1102230246251565e-16; // 2⁻⁵³
   };
-  const exp1 = (stream, idx) => -Math.log(1 - uniformAt(stream, idx, 0));
+  const exp1 = (stream, idx) => -DM.log(1 - uniformAt(stream, idx, 0));
   function poisson(mu, stream, idx) {
     if (!(mu > 0)) return 0;
     let sub = 0;
     const uniform = () => uniformAt(stream, idx, sub++);
-    if (mu < 10) { const L = Math.exp(-mu); let k = 0, p = uniform(); while (p > L) { k++; p *= uniform(); } return k; }
+    if (mu < 10) { const L = DM.exp(-mu); let k = 0, p = uniform(); while (p > L) { k++; p *= uniform(); } return k; }
     // PTRS: 변환 거부 (Hörmann 1993)
-    const slam = Math.sqrt(mu), loglam = Math.log(mu), b = 0.931 + 2.53 * slam, a = -0.059 + 0.02483 * b, invalpha = 1.1239 + 1.1328 / (b - 3.4), vr = 0.9277 - 3.6224 / (b - 2);
+    const slam = Math.sqrt(mu), loglam = DM.log(mu), b = 0.931 + 2.53 * slam, a = -0.059 + 0.02483 * b, invalpha = 1.1239 + 1.1328 / (b - 3.4), vr = 0.9277 - 3.6224 / (b - 2);
     for (;;) {
       const U = uniform() - 0.5, V = uniform(), us = 0.5 - Math.abs(U), k = Math.floor((2 * a / us + b) * U + mu + 0.43);
       if (us >= 0.07 && V <= vr) return k;
       if (k < 0 || (us < 0.013 && V > us)) continue;
-      if (Math.log(V) + Math.log(invalpha) - Math.log(a / (us * us) + b) <= -mu + k * loglam - lnFact(k)) return k;
+      if (DM.log(V) + DM.log(invalpha) - DM.log(a / (us * us) + b) <= -mu + k * loglam - lnFact(k)) return k;
     }
   }
   return { uniformAt, exp1, poisson, draws: () => draws, key: () => key.toString(16) };

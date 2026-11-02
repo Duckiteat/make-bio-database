@@ -286,6 +286,17 @@
       "refactor_strategy": "보정 종류를 늘리면 vocab.calibrationKinds·관찰 스키마·관문 검사를 같은 커밋에서 맞춘다. 같은 원본·같은 보정은 같은 값·같은 해시 — 결과가 바뀌는 수정은 이미 저장된 관찰 기록을 깨므로 하지 않는다(새 보정 종류로)."
     },
     {
+      "path": "compiler/detmath.js",
+      "class": "source",
+      "format": "JS 모듈 (UMD)",
+      "writer": "사람·AI",
+      "readers": "compiler/tape.js, engine/fate_engine.js, engine/rng.js, tests/detmath.test.mjs",
+      "interpret": "[컴파일러] 결정론 수학(PLAN-021) — pow · log · exp 를 사칙연산과 비트 연산만으로(두 배 정밀도 로그 · 지수, 정수 지수는 곱셈 반복). 외부 Math.pow · exp · log 호출 0. engine/rust/src/detmath.rs 와 같은 계수 · 같은 연산 순서.",
+      "node": "COMPILER_DETMATH",
+      "governance": "Shared",
+      "refactor_strategy": "engine/rust/src/detmath.rs 와 같은 커밋에서 맞춘다 — 계수 · 연산 순서를 바꾸면 비트가 달라지므로 tests/detmath.test.mjs ①(정밀도) ②(JS = Rust)를 함께 맞춘다. 곱셈과 덧셈을 합치지 않는다."
+    },
+    {
       "path": "compiler/tape.js",
       "class": "law",
       "format": "UMD JavaScript",
@@ -709,6 +720,17 @@
       "node": "EXECUTIVE_SOLVER",
       "governance": "Executive",
       "refactor_strategy": "적분기 변경은 이 파일 안에서 — 바깥 잘라내기·대체 래퍼 금지(1.5단계에서 관문·명시·뉴턴 경로는 판정 뒤 제거). 루프 안 할당 금지(tests/rust_engine.test.mjs ③⑤). 바꾸면 JS 기준 구현과의 동등 시험(②)이 통과하거나, 알고리즘 변경이면 compare 판정."
+    },
+    {
+      "path": "engine/rust/src/detmath.rs",
+      "class": "source",
+      "format": "Rust 소스",
+      "writer": "사람·AI",
+      "readers": "engine/rust/src/{engine,tape,rng}.rs, tests/detmath.test.mjs (WASM 출구 fe_dm_*)",
+      "interpret": "[행정] 결정론 수학(PLAN-021) — pow · log · exp 를 사칙연산과 비트 연산만으로. compiler/detmath.js 와 같은 계수 · 같은 연산 순서라 JS 와 비트까지 같다. FMA 없음(빌드가 검사).",
+      "node": "EXECUTIVE_DETMATH_RUST",
+      "governance": "Executive",
+      "refactor_strategy": "compiler/detmath.js 와 같은 커밋에서 맞춘다 — tests/detmath.test.mjs ②(JS = Rust 비트)가 지켜져야 하고, 바꾸면 엔진 결과가 마지막 자리에서 바뀐다(tests/fingerprint.js 로 확인)."
     },
     {
       "path": "engine/rust/src/tape.rs",
@@ -1271,8 +1293,17 @@
       "format": "Node CommonJS 스크립트 (+ module.exports)",
       "writer": "사람·AI",
       "readers": "사람(콘솔), 엔진을 고치는 작업",
-      "interpret": "지문 대조 — 엔진을 고치기 전(snapshot)과 후(compare)의 결과가 비트까지 같은지 칸별 해시(시각열·궤적·신호 기록·사건·도달·결정·끝 상태·적분 요약·걸음 수·난수 소비)로 대조한다. 운명 엔진 파생이 아닌 시나리오 × JS·Rust + 속도 엔진 대표 시나리오 6 개. 기준 지문은 저장소에 커밋하지 않고 기본 시험에도 넣지 않는다(약 2 분).",
+      "interpret": "지문 대조 — 엔진을 고치기 전(snapshot)과 후(compare)의 결과가 비트까지 같은지 칸별 해시(시각열·궤적·신호 기록·사건·도달·결정·끝 상태·적분 요약·걸음 수·난수 소비)로 대조한다. 운명 엔진 파생이 아닌 시나리오 × JS·Rust + 속도 엔진 대표 시나리오 6 개. parity 명령은 같은 시나리오의 JS 와 Rust 칸이 같은지 대조한다. 기준 지문은 저장소에 커밋하지 않고 기본 시험에도 넣지 않는다(약 2 분).",
       "refactor_strategy": "시나리오 이름 앞부분 → 시작 상태 표(FATE_SRC)와 속도 엔진 경로 표(RATE_PATH)만 시나리오가 늘 때 고친다. 칸을 더하면 기준 지문을 다시 만들어야 한다."
+    },
+    {
+      "path": "tests/detmath.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "결정론 수학 시험(PLAN-021) — 고정밀 기준값(BigInt)과 오차 대조(로그 ≤ 0.6 · 지수 ≤ 1.1 · 정수 지수 ≤ 0.6 · 분수 지수 ≤ 1.2 ulp) · JS = Rust 비트 일치(WASM 출구, 60 만 입력 + 경계 값 조합) · 경계 값 · 엔진 런타임에 외부 pow/log/exp 호출 없음.",
+      "refactor_strategy": "수학 함수를 바꾸면 ① ②를 먼저 맞춘다. ② 는 engine/rust/pkg/fate_core.wasm 이 최신이어야 한다(build.sh)."
     },
     {
       "path": "tests/collection_audit.test.mjs",

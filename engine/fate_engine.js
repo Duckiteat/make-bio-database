@@ -20,6 +20,7 @@
 const C = require('../core.js');
 const IRB = require('../compiler/ir_builder.js'); // IR (컴파일러 — 순수): 조립·정수 번호·기호 도함수 테이프
 const TAPE = require('../compiler/tape.js');
+const DM = require('../compiler/detmath.js'); // 결정론 수학 (JS · Rust 가 비트까지 같음)
 const RNG = require('./rng.js'); // 4단계 ④ 확률 층의 난수 (카운터 기반 — 번호로 찾는다)
 const V = C.VOCAB, VOL = C.VOL;
 
@@ -182,11 +183,11 @@ function simulateFate(db, sourceId, opt) {
         for (let k = 0; k < nA; k++) if (xn[k] !== 0) applyExtent(act[k], N, xn[k]);
         stats.steps++; ival.steps++; ival.hMin = Math.min(ival.hMin, hu); ival.hMax = Math.max(ival.hMax, hu);
         tt = clip ? t1 : tt + hu;
-        const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * Math.pow(Math.max(err, 1e-10), -1 / 3)));
+        const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * DM.pow(Math.max(err, 1e-10), -1 / 3)));
         const hn = hu * fac; h = clip ? Math.max(h, hn) : hn; lastRej = false;
       } else {
         stats.rejected++; ival.rej++; if (err < 0) stats.rejectedNeg++;
-        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * Math.pow(err, -1 / 3)))); lastRej = true;
+        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * DM.pow(err, -1 / 3)))); lastRej = true;
       }
     }
     ival.h = h;
@@ -245,7 +246,7 @@ function simulateFate(db, sourceId, opt) {
       let err = tryStep(N, hu);
       if (!(err >= 0 && err <= 1) && hu > CP.h_min) {
         stats.rejected++; ival.rej++; if (err < 0) stats.rejectedNeg++;
-        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * Math.pow(err, -1 / 3)))); lastRej = true; continue;
+        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * DM.pow(err, -1 / 3)))); lastRej = true; continue;
       }
       if (!(err >= 0 && err <= 1)) stats.hMinHits++;
       // SSA: 이 단계 안에서 내부 시각이 다음 발화에 닿으면, 닿는 단계 길이를 근 찾기(Illinois)로 — 그 길이로 받아들이고 한 번 발화
@@ -283,7 +284,7 @@ function simulateFate(db, sourceId, opt) {
       promote(N);
       stats.steps++; ival.steps++; ival.hMin = Math.min(ival.hMin, hu); ival.hMax = Math.max(ival.hMax, hu);
       tt = clip ? t1 : tt + hu;
-      const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * Math.pow(Math.max(err, 1e-10), -1 / 3)));
+      const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * DM.pow(Math.max(err, 1e-10), -1 / 3)));
       const hn = hu * fac; h = clip ? Math.max(h, hn) : hn; lastRej = false;
       if (onStep) onStep(N, tt);
     }
@@ -296,18 +297,18 @@ function simulateFate(db, sourceId, opt) {
     let s = 0, n = 0;
     for (const m of db.senses[sid].signature) {
       const b = `${m.ref}|${m.location}`, t = thr[b]; if (!t) continue;
-      const x = Math.max(N[at.get(b)], 1e-9), span = Math.log(t.high / t.low);
-      const d = m.level === 'high' ? (x >= t.high ? 0 : x <= t.low ? 1 : Math.log(t.high / x) / span) : (x <= t.low ? 0 : x >= t.high ? 1 : Math.log(x / t.low) / span);
+      const x = Math.max(N[at.get(b)], 1e-9), span = DM.log(t.high / t.low);
+      const d = m.level === 'high' ? (x >= t.high ? 0 : x <= t.low ? 1 : DM.log(t.high / x) / span) : (x <= t.low ? 0 : x >= t.high ? 1 : DM.log(x / t.low) / span);
       s += d; n++;
     }
     return n ? s / n : 1;
   };
   // 잘리지 않은 거리 (진전 감지용): 문턱 밖에서도 로그 거리가 계속 줄어드는지 본다
-  const rawDistance = (N, sid) => { let s = 0, n = 0; for (const m of db.senses[sid].signature) { const b = `${m.ref}|${m.location}`, t = thr[b]; if (!t) continue; const x = Math.max(N[at.get(b)], 1e-9), span = Math.log(t.high / t.low); s += Math.max(0, m.level === 'high' ? Math.log(t.high / x) / span : Math.log(x / t.low) / span); n++; } return n ? s / n : 1; };
+  const rawDistance = (N, sid) => { let s = 0, n = 0; for (const m of db.senses[sid].signature) { const b = `${m.ref}|${m.location}`, t = thr[b]; if (!t) continue; const x = Math.max(N[at.get(b)], 1e-9), span = DM.log(t.high / t.low); s += Math.max(0, m.level === 'high' ? DM.log(t.high / x) / span : DM.log(x / t.low) / span); n++; } return n ? s / n : 1; };
   // 상태 s 의 문턱 사건 함수: 서명 표지마다 문턱까지 남은 로그 거리 중 최대 (≤ 0 ⇔ 거리 0)
   const reachG = (sid) => { const ms = db.senses[sid].signature.map((m) => ({ i: at.get(`${m.ref}|${m.location}`), t: thr[`${m.ref}|${m.location}`], high: m.level === 'high' })).filter((m) => m.t);
     if (!ms.length) return () => Infinity; // 문턱 있는 표지가 없으면 도달을 판정할 수 없음 (distance 와 같게)
-    return (N) => ms.reduce((g, m) => { const x = Math.max(N[m.i], 1e-9); return Math.max(g, m.high ? Math.log(m.t.high / x) : Math.log(x / m.t.low)); }, -Infinity); };
+    return (N) => ms.reduce((g, m) => { const x = Math.max(N[m.i], 1e-9); return Math.max(g, m.high ? DM.log(m.t.high / x) : DM.log(x / m.t.low)); }, -Infinity); };
   const classify = (N) => { let best = null; for (const s of states) { const d = distance(N, s); if (d === 0) return { state: s, d: 0 }; if (!best || d < best.d) best = { state: null, nearest: s, d }; } return best; };
   // ===== 신호 일정 =====
   const sched = Object.entries(sc.signals || {}).map(([b, list]) => ({ i: at.get(b), list: [...list].sort((a, z) => a.t - z.t) }));

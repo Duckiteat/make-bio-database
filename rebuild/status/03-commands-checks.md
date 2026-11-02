@@ -70,6 +70,7 @@
 | `tests/clock.test.mjs` | 7 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
+| `tests/detmath.test.mjs` | 4 |
 | `tests/dictionary.test.mjs` | 8 |
 | `tests/dictionary_seal.test.mjs` | 4 |
 | `tests/dose_slope.test.mjs` | 6 |

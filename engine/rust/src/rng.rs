@@ -10,7 +10,7 @@ const HALF_LN_2PI: f64 = 0.9189385332046728;
 pub fn ln_fact(k: f64) -> f64 {
     if k < 10.0 { return LNFACT[k as usize]; }
     let kp = k + 1.0;
-    (kp - 0.5) * libm::log(kp) - kp + HALF_LN_2PI + (1.0 / 12.0 - 1.0 / (360.0 * kp * kp)) / kp
+    (kp - 0.5) * crate::detmath::log(kp) - kp + HALF_LN_2PI + (1.0 / 12.0 - 1.0 / (360.0 * kp * kp)) / kp
 }
 
 const GOLD: u64 = 0x9e3779b97f4a7c15;
@@ -41,23 +41,23 @@ impl Rng {
         (z >> 11) as f64 * 1.1102230246251565e-16
     }
     #[inline]
-    pub fn exp1(&mut self, stream: f64, idx: f64) -> f64 { -libm::log(1.0 - self.uniform_at(stream, idx, 0.0)) }
+    pub fn exp1(&mut self, stream: f64, idx: f64) -> f64 { -crate::detmath::log(1.0 - self.uniform_at(stream, idx, 0.0)) }
     pub fn poisson(&mut self, mu: f64, stream: f64, idx: f64) -> f64 {
         if !(mu > 0.0) { return 0.0; }
         let mut sub = 0.0;
         if mu < 10.0 {
-            let l = libm::exp(-mu); let mut k = 0.0; let mut p = self.uniform_at(stream, idx, sub); sub += 1.0;
+            let l = crate::detmath::exp(-mu); let mut k = 0.0; let mut p = self.uniform_at(stream, idx, sub); sub += 1.0;
             while p > l { k += 1.0; p *= self.uniform_at(stream, idx, sub); sub += 1.0; }
             return k;
         }
-        let slam = libm::sqrt(mu); let loglam = libm::log(mu); let b = 0.931 + 2.53 * slam; let a = -0.059 + 0.02483 * b;
+        let slam = libm::sqrt(mu); let loglam = crate::detmath::log(mu); let b = 0.931 + 2.53 * slam; let a = -0.059 + 0.02483 * b;
         let invalpha = 1.1239 + 1.1328 / (b - 3.4); let vr = 0.9277 - 3.6224 / (b - 2.0);
         loop {
             let u = self.uniform_at(stream, idx, sub) - 0.5; sub += 1.0; let v = self.uniform_at(stream, idx, sub); sub += 1.0; let us = 0.5 - libm::fabs(u);
             let k = libm::floor((2.0 * a / us + b) * u + mu + 0.43);
             if us >= 0.07 && v <= vr { return k; }
             if k < 0.0 || (us < 0.013 && v > us) { continue; }
-            if libm::log(v) + libm::log(invalpha) - libm::log(a / (us * us) + b) <= -mu + k * loglam - ln_fact(k) { return k; }
+            if crate::detmath::log(v) + crate::detmath::log(invalpha) - crate::detmath::log(a / (us * us) + b) <= -mu + k * loglam - ln_fact(k) { return k; }
         }
     }
 }

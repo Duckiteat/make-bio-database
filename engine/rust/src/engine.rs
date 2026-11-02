@@ -307,11 +307,11 @@ impl Engine {
                 for k in 0..self.na_ { let x = self.xn[k]; if x != 0.0 { let j = self.act[k]; self.apply_extent(j, x); } }
                 self.stats[2] += 1.0; self.iv_steps += 1.0; self.iv_hmin = fmin(self.iv_hmin, hu); self.iv_hmax = fmax(self.iv_hmax, hu);
                 tt = if clip { t1 } else { tt + hu };
-                let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(fmax(err, 1e-10), -1.0 / 3.0)));
+                let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(fmax(err, 1e-10), -1.0 / 3.0)));
                 let hn = hu * fac; h = if clip { fmax(h, hn) } else { hn }; last_rej = false;
             } else {
                 self.stats[3] += 1.0; self.iv_rej += 1.0; if err < 0.0 { self.stats[4] += 1.0; }
-                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(err, -1.0 / 3.0)) };
+                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(err, -1.0 / 3.0)) };
                 h = fmax(self.ctl.h_min, hu * sh); last_rej = true;
             }
         }
@@ -367,7 +367,7 @@ impl Engine {
     fn reach_g(&self, s: usize) -> f64 {
         if self.reach_def[s].is_empty() { return f64::INFINITY; }
         let mut g = f64::NEG_INFINITY;
-        for &(i, hi, th, tl) in &self.reach_def[s] { let x = fmax(self.n[i], 1e-9); g = fmax(g, if hi { libm::log(th / x) } else { libm::log(x / tl) }); }
+        for &(i, hi, th, tl) in &self.reach_def[s] { let x = fmax(self.n[i], 1e-9); g = fmax(g, if hi { crate::detmath::log(th / x) } else { crate::detmath::log(x / tl) }); }
         g
     }
     /// 확률 실행의 단계마다: 저장소 고갈·재생 사건과 상태 도달 (본 실행만)
@@ -395,7 +395,7 @@ impl Engine {
             let ok = err >= 0.0 && err <= 1.0;
             if !ok && hu > self.ctl.h_min {
                 self.stats[3] += 1.0; self.iv_rej += 1.0; if err < 0.0 { self.stats[4] += 1.0; }
-                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(err, -1.0 / 3.0)) };
+                let sh = if err < 0.0 { self.ctl.neg_shrink } else { fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(err, -1.0 / 3.0)) };
                 h = fmax(self.ctl.h_min, hu * sh); last_rej = true; continue;
             }
             if !ok { self.stats[5] += 1.0; }
@@ -439,7 +439,7 @@ impl Engine {
             self.promote();
             self.stats[2] += 1.0; self.iv_steps += 1.0; self.iv_hmin = fmin(self.iv_hmin, hu); self.iv_hmax = fmax(self.iv_hmax, hu);
             tt = if clip { t1 } else { tt + hu };
-            let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * libm::pow(fmax(err, 1e-10), -1.0 / 3.0)));
+            let fac = fmin(if last_rej { 1.0 } else { self.ctl.fac_max }, fmax(self.ctl.fac_min, self.ctl.safety * crate::detmath::pow(fmax(err, 1e-10), -1.0 / 3.0)));
             let hn = hu * fac; h = if clip { fmax(h, hn) } else { hn }; last_rej = false;
             if main { self.on_step(tt); }
         }

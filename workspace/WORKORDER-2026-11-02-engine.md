@@ -25,6 +25,7 @@
 | 시계 안전망 시험 `35dd9d6` | 고치기 전에 시계의 지금 동작을 시험으로 고정 (결과 불변) | **DEC-0049**, PLAN-092 (완료), PLAN-093 (대기), `tests/clock.test.mjs` | `node --test tests/clock.test.mjs` |
 | 시계 정리 `c5d15ca` (PLAN-093) | 격자점을 정수 번호로(`t = t0 + k·Δ`), 기록·스냅숏·사건 시각 = 실제 적분 끝(K3), 신호 변경 시각에서 구간을 쪼갬(K4), 속도 엔진이 `t_end` 를 넘지 않음(K1). JS · Rust · `core.js` 같이, WASM 다시 빌드 | 결정론 시나리오 26 × JS·Rust = 52 지문 **비트 불변** | CHANGES 맨 위 둘째 행 |
 | 지문 대조 도구 (PLAN-021 0단계) | 고치기 전후 결과를 칸별 해시로 대조하는 `tests/fingerprint.js` (snapshot · compare). 운명 엔진 52 + 속도 엔진 6 지문, 약 2 분, 두 번 돌려 같음(결정론) 확인, 일부러 고친 지문으로 검출 확인. 기준 지문은 커밋하지 않고 기본 시험에도 넣지 않음 | 시험 전체와 무관한 도구. `storage-map.json` 에 분류 | `node tests/fingerprint.js` |
+| 결정론 수학 (PLAN-021, 커밋은 `git log` 에서 `결정론 수학` 으로 찾는다) | `compiler/detmath.js` · `engine/rust/src/detmath.rs` — pow · log · exp 를 사칙연산과 비트 연산만으로. 엔진 런타임의 외부 `pow`·`log`·`exp` 호출 0. `build.sh` 에 FMA 가드. 지문 도구에 `parity` 명령 | **JS = Rust 비트 일치 26/26** (이전 1/26). 결정론 24 개는 수정 전 대비 궤적 상대차 ≤ 2.1e-9. 확률 실행 2 개 경로 바뀜 | `docs/reports/2026-11-02-plan021-survey.md` §7 |
 | 카운터 기반 난수 `75a747e` (PLAN-020 엔진 쪽) | 난수 = (seed, 궤적, 흐름, 번호, 부번호) 의 순수 함수. 거부된 도약은 번호를 되돌림. JS · Rust · WASM | **비트 연속성 한 번 단절**: 확률 실행 3 시나리오 궤적이 바뀜, 결정론 지문 46 개는 불변 | CHANGES 맨 위 행 |
 
 시험 상태: 마지막 `node rebuild/gate.mjs finish develop --full` 통과 (작업 지문 `fc417526`), 전체 시험 약 400 개.
@@ -44,7 +45,7 @@
 | 범위 | 이유 | 영향 | 확인 |
 |---|---|---|---|
 | 1. 계획 나누기 (의견 정리됨, 사용자 허락 대기) | 엔진 항목이 build 계획의 3·4·6·7부에 흩어져 있고 큰 항목(021, 080)은 단계로 쪼갤 필요가 있음. **의견(2026-11-02, 사용자 "ㄱㄱㄱ" 로 반영 지시): `engine` 계획(ENG-nn) 하나만 먼저 만든다.** `record`(REC-nn)는 PLAN-089 R0 에 착수할 때 만든다 — 지금은 설계 초안 단계라 build 7부에 있어도 불편이 없고, 새 계획 종류를 만들려면 공유 도구 코드 `rebuild/state.mjs` 를 고쳐야 해서 다른 세션과 충돌 위험이 큰 만큼 최소로 고친다. 옛 번호(PLAN-020 등)는 옮기지 않고 새 항목이 "부모: PLAN-nnn" 을 적고, 단계가 끝날 때 부모의 결과 칸에 "→ ENG-nn 완료" 를 적는다. 오늘 만든 089~093 은 그대로 | 도구 코드 `rebuild/state.mjs` 의 `PLANS` 등록(`engine`: `ENG-\d{2}`) 수정 필요 — **아직 안 함, 사용자 허락 필요**. **플랜 파일(`docs/plan/*.md`)은 생성물이라 손으로 고치지 않고 `plan.mjs apply` 로만** | 사용자에게 남은 질문: `rebuild/state.mjs` 수정 허락? (두 계획 모두 · 089~093 이동 여부는 위 의견으로 정리) |
-| 2. PLAN-021 정수 초월 함수 + FMA 금지 — 0단계(지문 대조 도구 `tests/fingerprint.js`)는 **끝남**. 사전 조사 보고서 `docs/reports/2026-11-02-plan021-survey.md` 완료(호출 지점 전수, JS 대 Rust 1 ulp 차이 측정 — pow 2.2~4.4 %, log 0.25~2 %, exp 0 %, FMA 현재 없음이나 보증 없음). **다음은 사용자 확인**: 방법 1(직접 구현) 대 방법 2(JS 가 Rust libm 을 WASM 으로 부름) 선택, 단계 S1~S7 초안 확인, 결과가 마지막 자리에서 바뀌는 것 허용 | 확률 실행의 JS 와 Rust 가 비트로 안 맞음(seed 1~3 에서 끝 상태 차이 2.6~6.5 %, `Math.pow` 대 `libm::pow` 의 끝자리). 맞아야 계산 기록부의 재현 검사(R3)가 의미를 가짐 | 열역학 속도(`exp`)의 마지막 자리가 바뀜 → 사용자 확인 필요. 규모 큼 → 시작 전에 범위를 단계로 쪼개 보여 줌 | `read.mjs PLAN-021` |
+| 2. PLAN-021 정수 초월 함수 + FMA 금지 — **엔진 런타임 완료**(§2). 남은 `Math.*`(속도 엔진 · 컴파일 단계 · 사법부)는 PLAN-080 · ASY-08 의 몫 | 완료 | `read.mjs PLAN-021` |
 | 3. PLAN-080 속도 엔진 하나로 | 속도 엔진(`simulateRate`)을 운명 엔진과 같은 IR·Rodas3 앞단으로. PLAN-055 · 056 과 묶임 | 속도 엔진 궤적이 한 번 바뀜 → 확인 필요 | `read.mjs PLAN-080` |
 | 4. 사법부 요청 대기 | ① 공통 난수 짝 판정(PLAN-020 남은 것) ② 벽시계를 판정에서 빼기(K7: `compare.js:39` 의 5 % 비용 기준) ③ `process_report` 신호 확인의 `T−dt` 가정(PLAN-093 남은 것) ④ 시각을 엔진과 다른 방식으로 다시 세는 독립 검사 | 모두 사법부 규칙이라 사용자 요청이 있을 때(RULE-0197) | 해부 2호 §2 |
 | 5. PLAN-089 계산 기록부 R0 | 코드 정체(커밋·작업 트리 깨끗함·파일 해시·WASM 해시·런타임 버전)를 결과에 묶음. 결과 불변 | 조정자 · 서기 코드 변경 → 사용자 요청 필요 | 설계 보고서 §6 |
@@ -55,7 +56,7 @@
 
 | 범위 | 이유 | 영향 | 확인 |
 |---|---|---|---|
-| `engine/rust/pkg/fate_core.wasm` · `.wasm.json` | 바이너리라 충돌을 손으로 못 푼다 | **병합 뒤 반드시 `sh engine/rust/build.sh`** 로 다시 빌드(소스 해시가 맞아야 `rust_engine.test` ① 통과). 같은 `rustc` 에서는 같은 해시가 나옴을 확인함(이 환경 rustc 1.97.0). 필요하면 `rustup target add wasm32-unknown-unknown` 먼저 | 이 세션에서 직접 함 |
+| `engine/rust/pkg/fate_core.wasm` · `.wasm.json` | 바이너리라 충돌을 손으로 못 푼다 | **병합 뒤 반드시 `sh engine/rust/build.sh`** 로 다시 빌드(빌드 때 FMA 가드가 돈다 — `objdump` 필요, 소스 해시가 맞아야 `rust_engine.test` ① 통과). 같은 `rustc` 에서는 같은 해시가 나옴을 확인함(이 환경 rustc 1.97.0). 필요하면 `rustup target add wasm32-unknown-unknown` 먼저 | 이 세션에서 직접 함 |
 | `rebuild/state/plans.jsonl` · `plan-log.jsonl` | 줄 단위 기록이라 두 세션이 각자 줄을 더하면 충돌. `seq` 가 겹침 | 한쪽의 `ops.json` 을 다시 `plan.mjs apply` 하는 편이 안전(손으로 합치지 말 것). 합친 뒤 `plan.mjs check` | 병합 규칙 |
 | `docs/plan/*` · `rebuild/status/*` · 교과서 부록 | 생성물 | 충돌은 한쪽 고르고 `node rebuild/status.mjs --write` 와 `node dbtool.mjs textbook --write` 로 다시 만든다 | 파일 머리 "생성물" |
 | `CHANGES.md` 맨 위 | 두 세션이 모두 맨 위에 행을 더함 | 행을 고치거나 지우지 않는다 — 두 행을 다 남김(날짜 순서만 정리) | CHANGES 머리말 |

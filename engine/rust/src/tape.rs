@@ -6,7 +6,7 @@ fn max0(x: f64) -> f64 { if x > 0.0 { x } else { 0.0 } }
 
 #[inline(always)]
 fn occ(s: f64, k: f64, n: f64) -> f64 {
-    let x = if s > 0.0 { libm::pow(s / k, n) } else { 0.0 };
+    let x = if s > 0.0 { crate::detmath::pow(s / k, n) } else { 0.0 };
     x / (1.0 + x)
 }
 
@@ -14,7 +14,7 @@ fn occ(s: f64, k: f64, n: f64) -> f64 {
 fn docc(mut s: f64, k: f64, n: f64, smin: f64) -> f64 {
     if n < 1.0 && s < smin { s = smin; }
     if s <= 0.0 { return if n > 1.0 { 0.0 } else if n == 1.0 { 1.0 / k } else { 0.0 }; }
-    let x = libm::pow(s / k, n);
+    let x = crate::detmath::pow(s / k, n);
     n * x / (s * (1.0 + x) * (1.0 + x))
 }
 
@@ -47,8 +47,8 @@ pub fn eval(t: &[f64], n: &[f64], f: f64, cinv: &[f64], buf: &[f64], st: &mut [f
             5 => { st[sp] = f; sp += 1; }
             6 => { sp -= 1; st[sp - 1] *= st[sp]; }
             7 => { sp -= 1; st[sp - 1] += st[sp]; }
-            8 => { let e = t[p]; p += 1; st[sp - 1] = libm::pow(st[sp - 1], e); }
-            9 => { let e = t[p]; p += 1; let a = st[sp - 1]; st[sp - 1] = if e == 1.0 { 1.0 } else { e * libm::pow(a, e - 1.0) }; }
+            8 => { let e = t[p]; p += 1; st[sp - 1] = crate::detmath::pow(st[sp - 1], e); }
+            9 => { let e = t[p]; p += 1; let a = st[sp - 1]; st[sp - 1] = if e == 1.0 { 1.0 } else { e * crate::detmath::pow(a, e - 1.0) }; }
             10 => { let k = t[p]; p += 1; let a = st[sp - 1]; st[sp - 1] = a / (a + k); }
             11 => { let k = t[p]; p += 1; let a = st[sp - 1]; st[sp - 1] = k / ((a + k) * (a + k)); }
             12 => {

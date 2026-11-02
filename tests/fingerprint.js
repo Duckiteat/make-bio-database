@@ -2,6 +2,7 @@
 // 지문 대조 — 엔진을 고치기 전과 후의 결과가 비트까지 같은지 확인하는 도구 (쓰기: 지정한 JSON 파일 하나)
 //   node tests/fingerprint.js snapshot <지문.json> [--only 이름조각] [--no-rate]   고치기 전에 지문을 만든다
 //   node tests/fingerprint.js compare  <지문.json> [<다른지문.json>] [--only 이름조각]   고친 뒤 대조 (두 번째가 없으면 지금 코드로 다시 만들어 대조)
+//   node tests/fingerprint.js parity   [<지문.json>] [--only 이름조각]   같은 시나리오의 JS 와 Rust 칸이 같은지 (지문 파일이 없으면 지금 코드로 만든다)
 // 운명 엔진: 파생이 아닌 시나리오를 JS · Rust 두 백엔드로 (결정 탐침 포함) · 속도 엔진: 대표 시나리오 몇 개.
 // 칸마다 따로 해시해서 어느 칸이 달라졌는지 좁힌다 — 시각열 · 궤적 · 신호 기록 · 사건 · 도달 · 결정 · 끝 상태 · 적분 요약 · 걸음 수 · 난수 소비.
 // 기준 지문은 저장소에 커밋하지 않는다: 해시는 실행기와 수학 함수 구현에 따라 달라질 수 있고, 의도한 변경마다 기준을 갈아야 하기 때문이다.
@@ -73,6 +74,20 @@ function compare(a, b) {
   return { same, diff, lines };
 }
 
+// 같은 시나리오의 JS 와 Rust 칸을 견줘 어느 칸이 다른지 — 시나리오별 한 줄
+function parity(snap) {
+  const lines = []; let same = 0, diff = 0;
+  for (const k of Object.keys(snap.runs)) {
+    const m = /^fate\|(.+)\|js$/.exec(k); if (!m) continue;
+    const a = snap.runs[k], b = snap.runs[`fate|${m[1]}|rust`];
+    if (!b || a.error || b.error) continue;
+    // steps 칸(전체 통계)은 뺀다: 결정 탐침을 워커 인스턴스가 나눠 돌려서 Rust 쪽 통계에는 탐침의 걸음이 안 잡힌다 — 본 실행의 걸음은 integrator 칸에 있다
+    const cols = Object.keys(a.fields).filter((c) => c !== 'steps' && a.fields[c] !== b.fields[c]);
+    if (!cols.length) same++; else { diff++; lines.push(`다름  ${m[1]}  달라진 칸: ${cols.join(' · ')}`); }
+  }
+  return { same, diff, lines };
+}
+
 function main(argv) {
   const [cmd, fileA, maybeB] = argv, flags = argv.filter((x) => x.startsWith('--'));
   const only = flags.includes('--only') ? argv[argv.indexOf('--only') + 1] : null, withRate = !flags.includes('--no-rate');
@@ -90,9 +105,15 @@ function main(argv) {
     console.log([...r.lines, `같음 ${r.same} · 다름 ${r.diff}`].join('\n'));
     return r.diff ? 1 : 0;
   }
-  console.error('사용: node tests/fingerprint.js snapshot <지문.json> [--only 조각] [--no-rate] · compare <지문.json> [<다른지문.json>] [--only 조각]');
+  if (cmd === 'parity') {
+    const snap = fileA && !fileA.startsWith('--') ? JSON.parse(fs.readFileSync(fileA, 'utf8')) : build(only, false);
+    const r = parity(snap);
+    console.log([...r.lines, `JS = Rust 같음 ${r.same} · 다름 ${r.diff}`].join('\n'));
+    return r.diff ? 1 : 0;
+  }
+  console.error('사용: node tests/fingerprint.js snapshot <지문.json> [--only 조각] [--no-rate] · compare <지문.json> [<다른지문.json>] [--only 조각] · parity [<지문.json>] [--only 조각]');
   return 2;
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { build, compare, fateFields, rateFields };
+module.exports = { build, compare, parity, fateFields, rateFields };
