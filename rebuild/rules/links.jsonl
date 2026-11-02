@@ -549,3 +549,5 @@
 {"from": "RULE-0527", "rel": "because", "to": "code:judicial/authority.js", "by": "judged", "note": "STG-12 / DEC-0048 — 구역마다 열쇠 여럿, 상위 키 상속은 max_level 까지, L5·L6 은 상속 없이 명시(RULE-0461)"}
 {"from": "RULE-0528", "rel": "because", "to": "code:judicial/approval.js", "by": "judged", "note": "STG-12 승인 묶음 — 클릭이 규칙을 대신하지 못함(RULE-0461). 적용기(L6)는 사람이 승인한 묶음으로 따로"}
 {"from": "RULE-0529", "rel": "because", "to": "code:rebuild/probe.mjs", "by": "judged", "note": "STG-12 점검 ⑩ — 명령 장부로 막으면 장부 ↔ 실제 도구 일치 시험(L6)과 부딪혀 사람 손이 필요해서, 사람 손이 필요 없는 감사로 둠"}
+{"from": "RULE-0530", "rel": "because", "to": "code:judicial/consistency.js", "by": "judged", "note": "ASY-14 끝나는 조건 — 알려진 불가능 조합을 잡음 · 바꿔 적힌 SD/SEM 표시 시험. 소수 자리수는 적힌 글에서 읽음(2.0 의 끝 0 이 숫자에서는 사라지므로)"}
+{"from": "RULE-0531", "rel": "because", "to": "code:judicial/stoichiometry.js", "by": "judged", "note": "ASY-15 끝나는 조건 — 불균형 반응 거부 · 검사 불가 반응 수가 보임. 실제 자료는 57 단계 모두 검사 불가(원소 정보는 부분 구조의 원자 수뿐이고 계수가 없음) — 그래서 연결하지 않고 함수와 보고까지"}
