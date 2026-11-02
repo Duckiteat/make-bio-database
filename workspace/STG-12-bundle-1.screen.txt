@@ -1,0 +1,29 @@
+지문 0c71e8886c3ff2495bb34a9e2851a77241ce8e367e224ed887bb50fdc245e1a2
+묶음 2 파일 — 자동 0 · 사람 승인 2 · 거부 0
+
+## 사람 승인 필요
+- .claude/settings.json [L6 guard:settings · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -       "Bash(sh engine/rust/build.sh:*)"
+    +       "Bash(sh engine/rust/build.sh:*)",
+    +       "Edit(tests/gate.test.mjs)",
+    +       "Write(tests/gate.test.mjs)",
+    +       "Edit(tests/affected.mjs)",
+    +       "Write(tests/affected.mjs)",
+    +       "Edit(tests/trace.mjs)",
+    +       "Write(tests/trace.mjs)",
+    +       "Edit(tests/snapshot.mjs)",
+    +       "Write(tests/snapshot.mjs)",
+    +       "Edit(tests/permissions.test.mjs)",
+    +       "Write(tests/permissions.test.mjs)",
+    +       "Edit(tests/mutation/run.mjs)",
+    +       "Write(tests/mutation/run.mjs)",
+    +       "Edit(tests/governance.test.mjs)",
+    +       "Write(tests/governance.test.mjs)",
+    +       "Edit(tests/rebuild.test.mjs)",
+    +       "Write(tests/rebuild.test.mjs)"
+- rebuild/rules/modes.json [L4 ledger:rules · tool.rules] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "workspace/handoff/**"
+    +           "workspace/handoff/**",
+    +           "rebuild/gate.mjs",
+    +           ".claude/settings.json",
+    +           "rebuild/rules/modes.json"

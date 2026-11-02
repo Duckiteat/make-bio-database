@@ -13,6 +13,7 @@
 - `2026-11-01` 커밋 전 기록: 2026-11-01 첫 묶음: 측정법 장부 data/assays.jsonl — 사전·가정 원장과 같은 추가 전용 사슬(seq · prev · root). 칸: key · label · rung(metrology · readout · separation · combined · interaction · cellular · computation) · principle · produces · noise · composed_of · separation · traceability · made{how · sources · alternatives · by} · revises · why. 사법부 judicial/assay_audit.js(RULE-0522 — 만든 방법·근거·버린 대안 필수 · 계량·분리 단은 값을 내지 않음 · 조합은 판독을 조합 · 분리 속성은 분리 단만 · 고치기는 revises + why), 서기 appendAssays(봉인), dbtool assay [add], validate 에 판정. 시험 tests/assays.test.mjs · 변이 caught. 남은 것: 관찰의 assay 칸 · 미등록 측정법 거부 · 같은 측정 깃발 · 기존 관찰 28 이관(정보 작성 모드) · PLAN-052 ☑
 - `2026-11-01` 커밋 전 기록: · 2026-11-01 (DEC-0045): 측정법의 잡음 칸을 measurement_noise 로(측정 잡음만 — 화학·생물 잡음은 계의 몫), 측정 잡음은 엔진이 뽑지 않는다는 기계 규칙 RULE-0523(엔진·컴파일러는 측정법을 읽지 않고 난수는 engine/rng.js 하나 — governance 시험 · 변이 caught). 다음 묶음: 관찰의 assay 칸 · 반복 종류(기술 · 생물) · 미등록 측정법 거부 · 같은 측정 깃발
 - `2026-11-01` 커밋 전 기록: · 2026-11-01 둘째 묶음: 관찰(정량·정성)에 선택 칸 assay · replicate_type(technical · biological) — 계약 · 정규화(있을 때만) · 사법부 checkAssayLink(RULE-0524 — 등록된 측정법만 · produces 에 관찰 종류 · 장부를 못 받으면 경고로 관문을 막음), dbtool 관문 넷과 validate · 조정자 validateWithRegistry 가 측정법 장부를 넘김, 같은 측정 깃발 sameMeasurement(계산만 — dbtool assay 가 보임). 시험 assays ④ · observations · 변이 caught. 남은 것(정보 작성 모드): 실제 측정법 항목 · 기존 관찰 28 에 assay · replicate_type(원문으로 확인한 것만) · 그 뒤 PLAN-052 ☑
+- `2026-11-02` 커밋 전 기록: 2026-11-02 전환 기록: develop → author — 옛 정량 관찰 22건에 측정법 · 반복 종류 · 원문 숫자를 원문에서 채우는 일(끝나는 조건 '기존 관찰 모두 측정법 또는 공백 등록')을 정보 작성 모드로 넘김 (workspace/transitions.jsonl, 질문 5 개)
 
 ## 걸어온 길
 
@@ -22,6 +23,7 @@
 - `2026-11-01` 커밋 전 기록 결과 처음 적힘 — ASY-00 첫 묶음 — 측정법 장부(만든 방법 · 근거 · 버린 대안 · 사다리의 단)를 사법부·서기·명령으로 (사용자 '문제없으면 바로 시작')
 - `2026-11-01` 커밋 전 기록 결과 덧붙음 — 측정법 선택을 두 목적(시드 표류 · 잡음 혼동)에 맞춤 (사용자 결정)
 - `2026-11-01` 커밋 전 기록 결과 덧붙음 — ASY-00 둘째 묶음 — 관찰이 측정법을 가리키게 (사용자 ㄱㄱㄱ)
+- `2026-11-02` 커밋 전 기록 결과 덧붙음 — 엔진을 뺀 남은 일 — 사용자 요청(2026-11-02 '엔진 제외하고 남은거 다 할거야'): 이 세션(디벨롭)에서 되는 것은 하고, 데이터는 전환 기록으로, L6 가 걸리는 것은 보류
 
 ## 닿는 결정
 

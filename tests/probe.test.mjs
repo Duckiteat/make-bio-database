@@ -5,7 +5,10 @@
 //   ⑥ 확인(ask) 명령을 감싼 스크립트는 설정 allow 에 없다 — 감싸서 확인을 건너뛰지 않음 (RULE-0461)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, appendFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import * as PR from '../rebuild/probe.mjs';
 import * as RU from '../rebuild/rules.mjs';
 
@@ -86,4 +89,63 @@ test('⑥ 확인(ask) 명령을 감싼 스크립트는 설정 allow 에 없다 �
     assert.ok(!S.allow.some((a) => a.includes(w)), `${w} 이 allow 에 있으면 확인 없이 교과서 부록을 씀`);
   }
   assert.ok(S.ask.some((a) => a.includes('textbook --write')), '감싼 명령이 여전히 확인(ask) 명령');
+});
+
+test('⑦ 새 파일의 연결 후보: 규칙에 닿는 파일은 규칙을 보이고, 어디에도 안 닿으면 알린다 (제안 — 막지 않음)', async () => {
+  const ctx = PR.context(PR.ROOT ?? undefined);
+  const hit = (await PR.linkHints(ctx, ['judicial/authority.js'])).join('\n');
+  assert.match(hit, /새 파일 judicial\/authority\.js/);
+  assert.match(hit, /규칙 1/);
+  assert.doesNotMatch(hit, /연결 없음/);
+  const miss = (await PR.linkHints(ctx, ['tests/authority.test.mjs'])).join('\n');
+  assert.match(miss, /새 파일 tests\/authority\.test\.mjs/);
+  assert.deepEqual(await PR.linkHints(ctx, ['없는/파일.js']), []); // 없는 파일은 건너뜀
+  assert.ok(Array.isArray(PR.newFiles()));
+});
+
+test('⑧ 자기 검사 시험(L6)에 새 시험 블록을 더하면 새 L2 파일로 안내한다 (제안 — 막지 않음)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'l6add-')), g = (...a) => execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', ...a], { cwd: dir, encoding: 'utf8' });
+  try {
+    g('init', '-q'); mkdirSync(join(dir, 'tests'));
+    for (const f of ['a.test.mjs', 'b.test.mjs']) writeFileSync(join(dir, 'tests', f), "test('x', () => {});\n");
+    g('add', '-A'); g('commit', '-qm', 'base');
+    const ctx = { root: dir, map: { files: [{ path: 'tests/a.test.mjs', area: 'guard:self-tests' }, { path: 'tests/b.test.mjs', area: 'code:tests' }] } };
+    assert.deepEqual(PR.l6TestAdds(ctx), [], '바뀐 것이 없으면 안내 없음');
+    appendFileSync(join(dir, 'tests/a.test.mjs'), "test('y', () => {});\ntest('z', () => {});\n");
+    appendFileSync(join(dir, 'tests/b.test.mjs'), "test('w', () => {});\n");
+    const out = PR.l6TestAdds(ctx);
+    assert.equal(out.length, 1, 'L6 파일만 — 일반 시험 파일에 더하는 것은 안내하지 않음');
+    assert.match(out[0], /tests\/a\.test\.mjs: 새 시험 블록 2 개 — 일상 시험이면 새 L2 파일/);
+    assert.deepEqual(PR.l6TestAdds({ root: dir, map: null }), []);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('⑨ 영수증 감사 (RULE-0529): GitHub 파일 쓰기 도구가 영수증에 있으면 잡고, 읽기 도구나 다른 일은 건드리지 않는다', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'audit-'));
+  try {
+    mkdirSync(join(dir, 'workspace', 'receipts'), { recursive: true });
+    const w = (name, evs) => writeFileSync(join(dir, 'workspace', 'receipts', name), evs.map((e) => JSON.stringify(e)).join('\n') + '\n');
+    w('ok.jsonl', [{ t: 'tool', tool: 'mcp__github__get_me' }, { t: 'tool', tool: 'mcp__github__create_pull_request' }, { t: 'tool', tool: 'Bash', target: 'echo push_files' }, { t: 'open', mode: 'develop' }]);
+    assert.deepEqual(PR.auditReceipts(dir), [], '읽기 도구 · PR 만들기 · 명령 글 속 이름은 통과');
+    w('bad.jsonl', [{ t: 'tool', tool: 'mcp__github__push_files', at: '2026-11-02T00:00:00Z' }, { t: 'tool', tool: 'mcp__github__create_or_update_file' }, { t: 'tool', tool: 'mcp__github__delete_file' }]);
+    const out = PR.auditReceipts(dir);
+    assert.equal(out.length, 3); assert.match(out[0], /^RULE-0529 영수증 bad\.jsonl:1 .*push_files/);
+    assert.deepEqual(PR.auditReceipts(join(dir, 'nowhere')), [], '영수증 폴더가 없으면 비어 있음');
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('⑩ 세션 끊기 (STG-11f): 넘김 기록의 "다음에" 표 · 열린 작업 앞 셋 · 바뀐 파일 수로 첫 작업 자리에 닿는다', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'next-'));
+  try {
+    mkdirSync(join(dir, 'workspace'), { recursive: true }); mkdirSync(join(dir, 'rebuild', 'state'), { recursive: true });
+    writeFileSync(join(dir, 'workspace', 'NEXT-2026-01-01.md'), '# 옛 것\n## 다음에 할 일\n| a | b |\n|---|---|\n| 낡음 | x |\n');
+    writeFileSync(join(dir, 'workspace', 'NEXT-2026-02-02.md'), '# 새 넘김\n\n## 1. 지금\n| a |\n|---|\n| 무시 |\n\n## 2. 다음에 할 수 있는 일\n| 범위 | 이유 |\n|---|---|\n| 첫 일 | 이유 하나 |\n| 둘째 | 이유 둘 |\n\n## 3. 함정\n| 무시 | 무시 |\n');
+    const it = (id, st, mark) => JSON.stringify({ kind: 'item', id, state: st, mark, fields: { 단계: id + ' 제목' } });
+    writeFileSync(join(dir, 'rebuild', 'state', 'plans.jsonl'), [it('X-1', 'done', '☑'), it('X-2', 'open', '☐'), it('X-3', 'hold', '보류'), it('X-4', 'open', '☐'), it('X-5', 'partial', '◐'), it('X-6', 'open', '☐'), JSON.stringify({ kind: 'order', seq: ['X-1', 'X-2', 'X-3', 'X-4', 'X-5', 'X-6'].map((id) => ({ id, why: '' })) })].join('\n') + '\n');
+    const out = PR.nextFrom(dir).join('\n');
+    assert.match(out, /workspace\/NEXT-2026-02-02\.md \(이전 1 개는 낡음\)/); assert.doesNotMatch(out, /낡음 \| x/);
+    assert.match(out, /첫 일 \| 이유 하나/); assert.match(out, /둘째 \| 이유 둘/); assert.doesNotMatch(out, /무시/);
+    assert.match(out, /X-2 ☐/); assert.match(out, /X-4 ☐/); assert.match(out, /X-5 ◐/); assert.doesNotMatch(out, /X-3|X-1 |X-6/, '끝난 것 · 보류 · 넷째 이후는 안 보인다');
+    assert.match(PR.nextFrom(join(dir, 'nowhere')).join('\n'), /넘김 기록 없음/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
 });

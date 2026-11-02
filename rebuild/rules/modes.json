@@ -257,7 +257,17 @@
         "except": [
           "data/**",
           "attestations/**",
-          "workspace/handoff/**"
+          "workspace/handoff/**",
+          "rebuild/gate.mjs",
+          ".claude/settings.json",
+          "rebuild/rules/modes.json",
+          "judicial/authority.js",
+          "judicial/approval.js",
+          "rebuild/bundle.mjs",
+          "docs/textbook/authority.json",
+          "tests/authority.test.mjs",
+          "tests/approval.test.mjs",
+          "tests/bundle.test.mjs"
         ],
         "finish": [
           "node tests/affected.mjs",
@@ -276,6 +286,20 @@
           "docs/**",
           "schemas/ffi/**",
           "CHANGES.md"
+        ],
+          "except": [
+          "tests/gate.test.mjs",
+          "tests/affected.mjs",
+          "tests/trace.mjs",
+          "tests/snapshot.mjs",
+          "tests/permissions.test.mjs",
+          "tests/mutation/run.mjs",
+          "tests/governance.test.mjs",
+          "tests/rebuild.test.mjs",
+          "tests/authority.test.mjs",
+          "tests/approval.test.mjs",
+          "tests/bundle.test.mjs",
+          "docs/textbook/authority.json"
         ],
         "finish": [
           "node tests/affected.mjs",

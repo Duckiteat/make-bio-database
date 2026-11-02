@@ -1,0 +1,45 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+index fe5bfb2..9a152f2 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -73,7 +73,23 @@
+       "Bash(node dbtool.mjs register:*)",
+       "Bash(git push:*)",
+       "Bash(cargo:*)",
+-      "Bash(sh engine/rust/build.sh:*)"
++      "Bash(sh engine/rust/build.sh:*)",
++      "Edit(tests/gate.test.mjs)",
++      "Write(tests/gate.test.mjs)",
++      "Edit(tests/affected.mjs)",
++      "Write(tests/affected.mjs)",
++      "Edit(tests/trace.mjs)",
++      "Write(tests/trace.mjs)",
++      "Edit(tests/snapshot.mjs)",
++      "Write(tests/snapshot.mjs)",
++      "Edit(tests/permissions.test.mjs)",
++      "Write(tests/permissions.test.mjs)",
++      "Edit(tests/mutation/run.mjs)",
++      "Write(tests/mutation/run.mjs)",
++      "Edit(tests/governance.test.mjs)",
++      "Write(tests/governance.test.mjs)",
++      "Edit(tests/rebuild.test.mjs)",
++      "Write(tests/rebuild.test.mjs)"
+     ],
+     "deny": [
+       "Edit(data/db.json)",
+diff --git a/rebuild/rules/modes.json b/rebuild/rules/modes.json
+index 6c94ef1..e9f8c96 100644
+--- a/rebuild/rules/modes.json
++++ b/rebuild/rules/modes.json
+@@ -257,7 +257,10 @@
+         "except": [
+           "data/**",
+           "attestations/**",
+-          "workspace/handoff/**"
++          "workspace/handoff/**",
++          "rebuild/gate.mjs",
++          ".claude/settings.json",
++          "rebuild/rules/modes.json"
+         ],
+         "finish": [
+           "node tests/affected.mjs",

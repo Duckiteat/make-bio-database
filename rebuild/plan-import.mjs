@@ -104,7 +104,8 @@ export function importHistory(root, plan, until) {
 // 결정의 원문이 그 판에 글자 그대로 있나 — 지금 글은 import.until 판에, 처음 글(first)은 그 커밋 판에
 export function checkDecisionSources(root, S) {
   const errs = [], until = S.plans[0].import.until, show = (h, f) => { try { return repairLegacy(git(root, 'show', `${h}:${f}`), f === STATE.PLANS.rebuild.legacy ? 'rebuild' : 'build').text; } catch { return null; } };
-  for (const d of S.decisions.filter((x) => x.src && x.src.file)) {
+  // 옛 문서의 커밋 판에서 가져온 결정(src.commit 이 있는 것)만 대조한다. 대화로 만든 결정(src.conversation, 커밋 없음)은 그 판이 없어 대조할 원문이 없다
+  for (const d of S.decisions.filter((x) => x.src && x.src.file && x.src.commit)) {
     const now = show(until, d.src.file);
     if (now == null || !now.includes(d.text)) errs.push(`${d.id}: 원문이 ${d.src.file} (${until.slice(0, 7)} 판)에 그대로 없음`);
     const first = show(d.src.commit, d.src.file);

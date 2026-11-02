@@ -10,11 +10,13 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const STEPS = [
   ['node', ['rebuild/probe.mjs', '--check']],
+  ['node', ['rebuild/probe.mjs', '--audit']], // 영수증에 GitHub 파일 쓰기 도구가 없는가 (RULE-0529)
+  ['node', ['rebuild/probe.mjs', '--new']], // 새 파일의 연결 후보 — 제안만, 실패하지 않음
   ['node', ['rebuild/rules.mjs', 'check']],
   ['node', ['rebuild/plan.mjs', 'check']],
   ['node', ['rebuild/status.mjs', '--check']],
   ['node', ['dbtool.mjs', 'textbook', '--check']],
-  ['node', ['--test', '--test-reporter=tap', 'tests/rebuild.test.mjs', 'tests/governance.test.mjs']],
+  ['node', ['--test', '--test-reporter=tap', 'tests/rebuild.test.mjs', 'tests/governance.test.mjs', 'tests/guard-matrix.test.mjs']],
 ];
 const env = { ...process.env }; delete env.NODE_TEST_CONTEXT; delete env.BIODB_TEST_SCOPE; // 겹친 시험 실행이 바깥 문맥을 물려받지 않게
 
@@ -26,6 +28,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`${ok ? 'ok  ' : 'FAIL'} ${line} (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
     if (!ok) { fail++; const out = (String(r.stdout || '') + String(r.stderr || '')).split('\n').filter((l) => /^\s*error:|^not ok|^\s+[+-] |RULE-|오류|거부|최신|깨진|없음/.test(l) && !/^# Subtest|^\s*ok \d/.test(l)).slice(0, 15); console.log(out.map((l) => '  ' + l.trim()).join('\n')); }
   }
+  // 얕은 복제에서는 git 역사 대조(계획 기록 ⑲ · 결정 원문)를 건너뛴다 — CI 는 전체 역사로 돌아 거기서만 드러나는 실패가 있다 (CI 가 며칠 빨갛게 간 일이 있었다)
+  try { if (spawnSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: ROOT, encoding: 'utf8' }).stdout.trim() === 'true') console.log('※ 얕은 복제 — 역사 대조 검사는 건너뜀. CI 는 전체 역사로 도니, push 전에 한 번: git fetch --unshallow 뒤 node --test tests/*.test.mjs'); } catch { /* git 없음 */ }
   console.log(fail ? `사전 검사 실패 ${fail} — 고친 뒤 다시 (전체 시험은 node rebuild/gate.mjs finish <모드>)` : '사전 검사 통과 — 이어서 node rebuild/gate.mjs finish <모드>');
   process.exit(fail ? 1 : 0);
 }

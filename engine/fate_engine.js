@@ -20,7 +20,8 @@
 const C = require('../core.js');
 const IRB = require('../compiler/ir_builder.js'); // IR (컴파일러 — 순수): 조립·정수 번호·기호 도함수 테이프
 const TAPE = require('../compiler/tape.js');
-const RNG = require('./rng.js'); // 4단계 ④ 확률 층의 난수 (xoshiro256++)
+const DM = require('../compiler/detmath.js'); // 결정론 수학 (JS · Rust 가 비트까지 같음)
+const RNG = require('./rng.js'); // 4단계 ④ 확률 층의 난수 (카운터 기반 — 번호로 찾는다)
 const V = C.VOCAB, VOL = C.VOL;
 
 
@@ -114,6 +115,8 @@ function simulateFate(db, sourceId, opt) {
   const firedSsa = new Float64Array(nA), firedLeap = new Float64Array(nA), stoStats = { switches: 0, ssaFires: 0, ssaBlocked: 0, leapRejects: 0, rootEvals: 0 };
   const COLOF = Int32Array.from(CL, (c) => PERM[c]); // 값 위치 → 원래 활성 규칙 번호 (가림용)
   let rng = null, nLeap = 0;
+  // 난수 번호: 규칙(전역 번호 act[k])마다 SSA 지수와 도약 포아송을 따로 센다 — 흐름 2·j (SSA) · 2·j+1 (도약). 거부된 도약은 번호를 되돌린다
+  const ssaIdx = new Float64Array(nA), leapIdx = new Float64Array(nA), saveLeapIdx = new Float64Array(nA);
   const buildM = (N, h) => {
     stats.jac++;
     VAL.fill(0);
@@ -180,11 +183,11 @@ function simulateFate(db, sourceId, opt) {
         for (let k = 0; k < nA; k++) if (xn[k] !== 0) applyExtent(act[k], N, xn[k]);
         stats.steps++; ival.steps++; ival.hMin = Math.min(ival.hMin, hu); ival.hMax = Math.max(ival.hMax, hu);
         tt = clip ? t1 : tt + hu;
-        const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * Math.pow(Math.max(err, 1e-10), -1 / 3)));
+        const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * DM.pow(Math.max(err, 1e-10), -1 / 3)));
         const hn = hu * fac; h = clip ? Math.max(h, hn) : hn; lastRej = false;
       } else {
         stats.rejected++; ival.rej++; if (err < 0) stats.rejectedNeg++;
-        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * Math.pow(err, -1 / 3)))); lastRej = true;
+        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * DM.pow(err, -1 / 3)))); lastRej = true;
       }
     }
     ival.h = h;
@@ -210,7 +213,7 @@ function simulateFate(db, sourceId, opt) {
       else if (coarse(H)) m = 0;
       else if (cur === 1) m = cnt < CP.sto_ssa_max ? 2 : 1;
       else m = cnt >= CP.sto_ssa_max * H ? 1 : 2;
-      if (m !== cur || first) { if (!first) stoStats.switches++; if (m === 2) { Tq[k] = 0; Pq[k] = rng.exp1(); } }
+      if (m !== cur || first) { if (!first) stoStats.switches++; if (m === 2) { Tq[k] = 0; Pq[k] = rng.exp1(2 * act[k], ssaIdx[k]++); } }
       mode[k] = m; disc[k] = m > 0 ? 1 : 0; if (m === 1) nLeap++;
     }
   };
@@ -243,7 +246,7 @@ function simulateFate(db, sourceId, opt) {
       let err = tryStep(N, hu);
       if (!(err >= 0 && err <= 1) && hu > CP.h_min) {
         stats.rejected++; ival.rej++; if (err < 0) stats.rejectedNeg++;
-        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * Math.pow(err, -1 / 3)))); lastRej = true; continue;
+        h = Math.max(CP.h_min, hu * (err < 0 ? CP.neg_shrink : Math.max(CP.fac_min, CP.safety * DM.pow(err, -1 / 3)))); lastRej = true; continue;
       }
       if (!(err >= 0 && err <= 1)) stats.hMinHits++;
       // SSA: 이 단계 안에서 내부 시각이 다음 발화에 닿으면, 닿는 단계 길이를 근 찾기(Illinois)로 — 그 길이로 받아들이고 한 번 발화
@@ -260,14 +263,14 @@ function simulateFate(db, sourceId, opt) {
         hu = b; clip = false; err = tryStep(N, hu);
         let best = -Infinity; for (let k = 0; k < nA; k++) if (mode[k] === 2 && Tq[k] + xn[k] - Pq[k] > best) { best = Tq[k] + xn[k] - Pq[k]; fire = k; }
       }
-      if (nLeap) { saveN.set(N); saveLO.set(LO); saveT.set(Tq); saveCUM = Float64Array.from(CUM); }
+      if (nLeap) { saveN.set(N); saveLO.set(LO); saveT.set(Tq); saveCUM = Float64Array.from(CUM); saveLeapIdx.set(leapIdx); }
       for (let k = 0; k < nA; k++) { if (!disc[k]) { if (xn[k] !== 0) applyExtent(act[k], N, xn[k]); } else Tq[k] += xn[k]; }
       if (nLeap) {
         NC.set(N); // 연속 부분만 적용한 상태 — 도약이 만든 음수만 거부한다 (h_min 에서 받아들인 연속 단계의 음수는 결정론과 같이 hMinHits)
-        for (let k = 0; k < nA; k++) { KL[k] = 0; if (mode[k] === 1) { const K = rng.poisson(xn[k]); if (K) { applyExtent(act[k], N, K); KL[k] = K; } } }
+        for (let k = 0; k < nA; k++) { KL[k] = 0; if (mode[k] === 1) { const K = rng.poisson(xn[k], 2 * act[k] + 1, leapIdx[k]++); if (K) { applyExtent(act[k], N, K); KL[k] = K; } } }
         let neg = false; for (let i = 0; i < nB; i++) if (!isSignal[i] && N[i] < 0 && N[i] < NC[i]) { neg = true; break; }
-        if (neg) { // 도약이 음수를 만들면 되돌리고 단계를 반으로 (난수는 이미 썼다 — seed 가 같으면 같은 경로)
-          N.set(saveN); LO.set(saveLO); Tq.set(saveT); CUM.set(saveCUM);
+        if (neg) { // 도약이 음수를 만들면 되돌리고 단계를 반으로 (난수 번호도 되돌린다 — 다시 시도하는 도약이 같은 번호의 난수를 쓴다)
+          N.set(saveN); LO.set(saveLO); Tq.set(saveT); CUM.set(saveCUM); leapIdx.set(saveLeapIdx);
           stoStats.leapRejects++; stats.rejected++; ival.rej++; h = Math.max(CP.h_min, hu / 2); lastRej = true; continue;
         }
         for (let k = 0; k < nA; k++) firedLeap[k] += KL[k];
@@ -276,12 +279,12 @@ function simulateFate(db, sourceId, opt) {
         const R = rules[act[fire]];
         if (R.ci.every((q) => isSignal[q.i] || N[q.i] >= q.n)) { applyExtent(act[fire], N, 1); firedSsa[fire]++; stoStats.ssaFires++; }
         else stoStats.ssaBlocked++; // 연속 속도 법칙의 성향이 분자 수 < 화학량에서도 0 이 아님 — 발화를 막고 다음 발화를 뽑는다 (솎아내기)
-        Pq[fire] += rng.exp1();
+        Pq[fire] += rng.exp1(2 * act[fire], ssaIdx[fire]++);
       }
       promote(N);
       stats.steps++; ival.steps++; ival.hMin = Math.min(ival.hMin, hu); ival.hMax = Math.max(ival.hMax, hu);
       tt = clip ? t1 : tt + hu;
-      const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * Math.pow(Math.max(err, 1e-10), -1 / 3)));
+      const fac = Math.min(lastRej ? 1 : CP.fac_max, Math.max(CP.fac_min, CP.safety * DM.pow(Math.max(err, 1e-10), -1 / 3)));
       const hn = hu * fac; h = clip ? Math.max(h, hn) : hn; lastRej = false;
       if (onStep) onStep(N, tt);
     }
@@ -294,22 +297,25 @@ function simulateFate(db, sourceId, opt) {
     let s = 0, n = 0;
     for (const m of db.senses[sid].signature) {
       const b = `${m.ref}|${m.location}`, t = thr[b]; if (!t) continue;
-      const x = Math.max(N[at.get(b)], 1e-9), span = Math.log(t.high / t.low);
-      const d = m.level === 'high' ? (x >= t.high ? 0 : x <= t.low ? 1 : Math.log(t.high / x) / span) : (x <= t.low ? 0 : x >= t.high ? 1 : Math.log(x / t.low) / span);
+      const x = Math.max(N[at.get(b)], 1e-9), span = DM.log(t.high / t.low);
+      const d = m.level === 'high' ? (x >= t.high ? 0 : x <= t.low ? 1 : DM.log(t.high / x) / span) : (x <= t.low ? 0 : x >= t.high ? 1 : DM.log(x / t.low) / span);
       s += d; n++;
     }
     return n ? s / n : 1;
   };
   // 잘리지 않은 거리 (진전 감지용): 문턱 밖에서도 로그 거리가 계속 줄어드는지 본다
-  const rawDistance = (N, sid) => { let s = 0, n = 0; for (const m of db.senses[sid].signature) { const b = `${m.ref}|${m.location}`, t = thr[b]; if (!t) continue; const x = Math.max(N[at.get(b)], 1e-9), span = Math.log(t.high / t.low); s += Math.max(0, m.level === 'high' ? Math.log(t.high / x) / span : Math.log(x / t.low) / span); n++; } return n ? s / n : 1; };
+  const rawDistance = (N, sid) => { let s = 0, n = 0; for (const m of db.senses[sid].signature) { const b = `${m.ref}|${m.location}`, t = thr[b]; if (!t) continue; const x = Math.max(N[at.get(b)], 1e-9), span = DM.log(t.high / t.low); s += Math.max(0, m.level === 'high' ? DM.log(t.high / x) / span : DM.log(x / t.low) / span); n++; } return n ? s / n : 1; };
   // 상태 s 의 문턱 사건 함수: 서명 표지마다 문턱까지 남은 로그 거리 중 최대 (≤ 0 ⇔ 거리 0)
   const reachG = (sid) => { const ms = db.senses[sid].signature.map((m) => ({ i: at.get(`${m.ref}|${m.location}`), t: thr[`${m.ref}|${m.location}`], high: m.level === 'high' })).filter((m) => m.t);
     if (!ms.length) return () => Infinity; // 문턱 있는 표지가 없으면 도달을 판정할 수 없음 (distance 와 같게)
-    return (N) => ms.reduce((g, m) => { const x = Math.max(N[m.i], 1e-9); return Math.max(g, m.high ? Math.log(m.t.high / x) : Math.log(x / m.t.low)); }, -Infinity); };
+    return (N) => ms.reduce((g, m) => { const x = Math.max(N[m.i], 1e-9); return Math.max(g, m.high ? DM.log(m.t.high / x) : DM.log(x / m.t.low)); }, -Infinity); };
   const classify = (N) => { let best = null; for (const s of states) { const d = distance(N, s); if (d === 0) return { state: s, d: 0 }; if (!best || d < best.d) best = { state: null, nearest: s, d }; } return best; };
   // ===== 신호 일정 =====
   const sched = Object.entries(sc.signals || {}).map(([b, list]) => ({ i: at.get(b), list: [...list].sort((a, z) => a.t - z.t) }));
-  const signalAt = (t, override) => sched.map((s) => { if (override) return override(s, t); let v = 0; for (const e of s.list) if (e.t <= t + 1e-9) v = e.n; return v; });
+  // 시계 (PLAN-093): 격자점은 정수 번호로 센다 t = t0 + k·Δ (누적 덧셈 없음) · 구간 수 = ⌈(t1 − t0 − 1e-9)/Δ⌉ (1e-9 s 보다 짧은 적분은 하지 않는다 — 나눗셈 반올림에 기대지 않음)
+  //   신호는 선언한 시각 그대로 바뀐다: 구간 안의 변경 시각에서 적분을 끊고 새 값을 놓는다. 시각 비교의 허용치는 최소 걸음 h_min — 그보다 가까운 변경은 가까운 쪽 끝에서 적용 (h_min 보다 짧은 조각을 만들지 않음)
+  const signalAt = (t, override) => sched.map((s) => { if (override) return override(s, t); let v = 0; for (const e of s.list) if (e.t <= t + CP.h_min) v = e.n; return v; });
+  const nextBreak = (ts, te) => { let b = Infinity; for (const s of sched) for (const e of s.list) if (e.t > ts + CP.h_min && e.t < te - CP.h_min && e.t < b) b = e.t; return b; };
   // ===== 한 번의 적분 (본 실행과 결정 탐침이 공유) — 관찰 격자 Δ 마다 신호(경계 조건)를 놓고 결합 적분, 기록·사건 =====
   const reservoirs = keys.map((b, i) => i).filter((i) => !isSignal[i] && !isMarker[i] && rules.some((R) => R.ci.some((q) => q.i === i)));
   function run(Nstart, t0, t1, ctl) {
@@ -332,22 +338,34 @@ function simulateFate(db, sourceId, opt) {
       for (const [sid, g] of reachFns) if (reach[sid] == null && g(Nn) <= 0) reach[sid] = tt;
     } : null;
     if (onStep) for (const [sid, g] of reachFns) if (g(N) <= 0) reach[sid] = t0;
-    for (let t = t0; t < t1 - 1e-9; t += dt, step++) {
+    const nSteps = t1 - t0 - 1e-9 > 0 ? Math.ceil((t1 - t0 - 1e-9) / dt) : 0;
+    for (; step < nSteps; step++) {
+      const t = step === 0 ? t0 : t0 + step * dt;
       // 신호 (경계 조건 — 질량 감사 밖)
       const sig = signalAt(t, ctl.signal);
       sched.forEach((s, j) => { N[s.i] = sig[j]; });
-      const te = t1 - t < dt - 1e-9 ? t1 : t + dt; // 마지막 구간이 Δ 보다 짧으면 t1 에서 끊는다 (사건 근 찾기의 다시 적분 — 격자 정렬 실행은 그대로)
-      if (STO) { partition(N, step === 0); integrateSto(N, t, te, onStep); } else integrate(N, t, te);
+      const te = step === nSteps - 1 ? t1 : t0 + (step + 1) * dt; // 마지막 구간은 t1 에서 끊는다 (Δ 보다 짧을 수 있음 — 사건 근 찾기의 다시 적분도 같다)
+      if (STO) partition(N, step === 0);
+      let ts = t, segSteps = 0, segRej = 0; // 구간 안에서 신호가 바뀌면 그 시각에서 적분을 끊고 새 값을 놓는다 (결정 탐침처럼 신호를 덮어쓴 실행은 끊지 않음)
+      for (;;) {
+        const nb = ctl.signal ? Infinity : nextBreak(ts, te), tn = nb < te ? nb : te;
+        if (STO) integrateSto(N, ts, tn, onStep); else integrate(N, ts, tn);
+        segSteps += ival.steps; segRej += ival.rej;
+        if (tn >= te) break;
+        const sg = signalAt(tn, null); sched.forEach((s, j) => { N[s.i] = sg[j]; });
+        ts = tn;
+      }
+      ival.steps = segSteps; ival.rej = segRej;
       perMin = Math.min(perMin, ival.steps); perMax = Math.max(perMax, ival.steps);
       // 저장소 고갈·재생 사건
       for (const [i, r] of resv) {
         r.min = Math.min(r.min, N[i]);
         if (!r.watch || STO) continue; // 처음부터 비어 있던 중간 산물(젖산·CO₂ …)은 고갈·재생 사건을 내지 않음 · 확률 실행은 단계마다(onStep)
-        if (r.state === 'ok' && N[i] < 1) { r.state = 'empty'; events.push({ t: t + dt, type: 'exhausted', bundle: keys[i] }); }
-        else if (r.state === 'empty' && N[i] >= 1) { r.state = 'ok'; events.push({ t: t + dt, type: 'regenerated', bundle: keys[i] }); }
+        if (r.state === 'ok' && N[i] < 1) { r.state = 'empty'; events.push({ t: te, type: 'exhausted', bundle: keys[i] }); }
+        else if (r.state === 'empty' && N[i] >= 1) { r.state = 'ok'; events.push({ t: te, type: 'regenerated', bundle: keys[i] }); }
       }
-      if (ctl.record && (step % (ctl.every || 1) === 0)) series.push({ t: t + dt, N: Float64Array.from(N), steps: ival.steps, rejects: ival.rej, sig, lo: Float64Array.from(LO), cumDD: Float64Array.from(CUM), cum: Float64Array.from({ length: rules.length }, (_, k) => CUM[2 * k] + CUM[2 * k + 1]) });
-      if (ctl.snapshots) ctl.snapshots.push({ t: t + dt, N: Float64Array.from(N) });
+      if (ctl.record && (step % (ctl.every || 1) === 0)) series.push({ t: te, N: Float64Array.from(N), steps: ival.steps, rejects: ival.rej, sig, lo: Float64Array.from(LO), cumDD: Float64Array.from(CUM), cum: Float64Array.from({ length: rules.length }, (_, k) => CUM[2 * k] + CUM[2 * k + 1]) });
+      if (ctl.snapshots) ctl.snapshots.push({ t: te, N: Float64Array.from(N) });
     }
     const integ = { method: 'rodas3', rtol: CP.rtol, atol: CP.atol, steps: stats.steps - steps0, rejected: stats.rejected - rej0, rejectedNeg: stats.rejectedNeg - neg0, hMinHits: stats.hMinHits - hit0, h: { min: ival.hMin, max: ival.hMax }, perInterval: { min: perMin, max: perMax } };
     return { N, lo: LO, cum: CUM, series, events, integrator: integ, resv, reach };

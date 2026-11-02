@@ -366,3 +366,12 @@
 | L1 | `handoff` | `workspace/handoff/*` | clerk.handoff | (통합가가 1차 출처로 재확인) | 작업자(collected 행) · 통합가(검증·상태) |
 | L1 | `work:<모드> (지금 없음 — 공용)` | `workspace/*` | session:<모드> | — | 작업자(Sonnet 등, workspace/ 안에서만) · 통합가(Opus/사람) |
 | L1 | `work:<모드> (지금 없음 — 공용)` | `workspace/tasks/*` | session:<모드> | — | 통합가(Opus/사람) |
+
+## 10. 재검토 ② 결정 (2026-11-02, 사용자)
+
+| 범위 | 이유 | 영향 | 확인 |
+|---|---|---|---|
+| 인식키 표는 저장 지도에 칸(등급 · 구역 · 쓰는 열쇠 · 판정 열쇠)을 넓혀 넣음 (§7-2) | 자리 목록이 이미 있음 | 저장 지도 약 +14 % | 사용자 결정 |
+| `dbtool.mjs`는 쪼개지 않고 진입점 열쇠(`dbtool.mjs#merge` 꼴) (§7-3) | 파일 쪼개기는 따로 | 명령 단위 열쇠 | 사용자 결정 |
+| L6 자기 검사 시험은 바꿀 때마다 사람 확인 (§7-4) | G11 | 설정 ask · 문지기에 반영 | 사용자 결정 |
+| 구역은 "제안 반영"으로 확정 → 40 구역: G5 `tests/fixtures` 분리 · G3·G6 `ledger:changes`·`doc:report` 덧붙이기 검사 · G10 `work:<모드>` 신설 · G7·G8 `limitations.md` 를 `gen:derived` 로 | 사용자 "ㄱㄱㄱ" | 다음: 저장 지도 칸 확장 → 정적 시험 → develop 손 쓰기를 L1 · L2 로 | 구현 세션 |

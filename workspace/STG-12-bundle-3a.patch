@@ -1,0 +1,25 @@
+diff --git a/rebuild/rules/modes.json b/rebuild/rules/modes.json
+index ad173cd..810be08 100644
+--- a/rebuild/rules/modes.json
++++ b/rebuild/rules/modes.json
+@@ -287,6 +287,20 @@
+           "schemas/ffi/**",
+           "CHANGES.md"
+         ],
++        "except": [
++          "tests/gate.test.mjs",
++          "tests/affected.mjs",
++          "tests/trace.mjs",
++          "tests/snapshot.mjs",
++          "tests/permissions.test.mjs",
++          "tests/mutation/run.mjs",
++          "tests/governance.test.mjs",
++          "tests/rebuild.test.mjs",
++          "tests/authority.test.mjs",
++          "tests/approval.test.mjs",
++          "tests/bundle.test.mjs",
++          "docs/textbook/authority.json"
++        ],
+         "finish": [
+           "node tests/affected.mjs",
+           "node dbtool.mjs validate",

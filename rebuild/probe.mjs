@@ -11,7 +11,7 @@
 //   3 안 고침 — 과거 기록(CHANGES · 결정·계획 이력 · 영수증 · 도장 · 봉인 · 데이터)은 읽지도 고치지도 않는다.
 // 계약: 질의 · --check 는 읽기만. --fix 는 rebuild/rules.mjs apply · rebuild/plan.mjs apply 를 부를 뿐(변경 묶음 초안은 저장소 밖 — 서기 writeDraft).
 //   저장 지도(docs/textbook/storage-map.json)는 서기 구역이 아니므로 쓰지 않고 고칠 줄을 보인다.
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import * as CLERK from '../legislative/clerk.mjs';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
@@ -124,6 +124,74 @@ async function testsReading(root, file) {
     return Object.entries(m.tests || {}).filter(([, e]) => A.covers(e, file)).map(([t]) => t);
   } catch { return null; }
 }
+// 영수증 감사 (STG-12 점검 ⑩ · RULE-0529) — GitHub 의 파일 쓰기 도구는 사용자 계정으로 커밋되어 사람의 커밋과 구별되지 않는다.
+//   그래서 쓰지 않는다 (L6 는 사람의 커밋으로만). 문지기 영수증(workspace/receipts)에 그 도구 사용이 있으면 사전 검사가 막는다 — 사후 감시.
+//   명령 장부로 막으면 장부 ↔ 실제 도구 일치 시험(L6)과 부딪혀서, 사람 손이 필요 없는 감사로 둔다.
+const AUDIT_RULE = 'RULE-0529'; // 영수증 감사의 규칙 번호
+export const GH_WRITE = /^mcp__[a-z0-9_]+__(?:push_files|create_or_update_file|delete_file)$/;
+export function auditReceipts(root = ROOT) {
+  const dir = join(root, 'workspace', 'receipts'), out = [];
+  if (!existsSync(dir)) return out;
+  for (const f of readdirSync(dir).filter((x) => x.endsWith('.jsonl')).sort()) {
+    for (const [i, l] of readFileSync(join(dir, f), 'utf8').split('\n').entries()) {
+      if (!l.trim()) continue;
+      let e; try { e = JSON.parse(l); } catch { out.push(`${AUDIT_RULE} 영수증 ${f}:${i + 1} 읽을 수 없음`); continue; }
+      if (e.t === 'tool' && GH_WRITE.test(String(e.tool || ''))) out.push(`${AUDIT_RULE} 영수증 ${f}:${i + 1} ${e.at || ''} — GitHub 파일 쓰기 도구 ${e.tool} (사용자 계정과 구별되지 않음 — L6 는 사람의 커밋으로만)`);
+    }
+  }
+  return out;
+}
+// 세션 끊기 (STG-11f) — 새 세션이 넘김 기록과 탐침만으로 첫 작업 자리에 닿게 한다.
+//   넘김 기록 형식: workspace/NEXT-<날짜>.md — "다음에" 가 든 제목 아래 표가 다음에 할 수 있는 일(범위 · 이유 · 영향 · 확인).
+//   --next 는 가장 나중 넘김 기록의 그 표 · 열린 작업 앞 셋(계획 순서) · 바뀐 파일 수를 보인다. 읽기만 한다.
+export function nextFrom(root = ROOT) {
+  const dir = join(root, 'workspace'), out = [];
+  const docs = existsSync(dir) ? readdirSync(dir).filter((f) => /^NEXT-.*\.md$/.test(f)).sort() : [];
+  if (!docs.length) { out.push('넘김 기록 없음 — workspace/NEXT-<날짜>.md (끝내는 세션이 쓴다)'); }
+  else {
+    const f = docs[docs.length - 1], L = readFileSync(join(dir, f), 'utf8').split('\n');
+    out.push(`넘김 기록 — workspace/${f}${docs.length > 1 ? ` (이전 ${docs.length - 1} 개는 낡음)` : ''}`);
+    out.push(`  ${(L.find((l) => /^# /.test(l)) || '').slice(0, 120)}`);
+    const i = L.findIndex((l) => /^##\s.*다음에/.test(l));
+    if (i < 0) out.push('  "다음에" 제목이 없음 — 넘김 기록 형식 위반');
+    else { const t = []; for (let j = i + 1; j < L.length; j++) { if (/^##\s/.test(L[j])) break; if (/^\|/.test(L[j])) t.push(L[j]); } out.push(`  ${L[i].replace(/^##\s*/, '')}`, ...t.slice(2).map((r) => '  ' + r.slice(0, 200))); }
+  }
+  const recs = jsonl(join(root, 'rebuild', 'state', 'plans.jsonl')), items = new Map(recs.filter((r) => r.kind === 'item').map((r) => [r.id, r]));
+  const seq = (recs.find((r) => r.kind === 'order') || { seq: [] }).seq.map((o) => items.get(o.id)).filter((x) => x && OPEN(x) && x.state !== 'hold').slice(0, 3);
+  out.push('계획 순서의 열린 작업 앞 셋:', ...seq.map((x) => `  ${x.id} ${x.mark} ${String(Object.values(x.fields)[0] || '').slice(0, 60)}`));
+  const ch = git(['status', '--porcelain', '-uall'], root).split('\n').filter(Boolean).length;
+  out.push(`작업 트리: 바뀐 파일 ${ch}${ch ? ' — 이어받은 작업이 있다면 먼저 git status' : ''}`);
+  return out;
+}
+
+// 새 파일 (STG-12 · 연결 항목 제안) — 이번 작업에서 새로 생긴 파일(추적 안 됨 + 스테이지에 더해짐 + HEAD 에 없음)
+export function newFiles(root = ROOT) {
+  const out = git(['status', '--porcelain', '--untracked-files=all'], root).split('\n').filter(Boolean).filter((l) => /^(\?\?| A|A )/.test(l)).map((l) => l.slice(3).replace(/^"|"$/g, ''));
+  return out.filter((f) => !f.startsWith('workspace/') && !f.startsWith('.git/'));
+}
+// 자기 검사 시험(L6) 파일에 새 시험 블록을 더하려는가 — 일상 시험은 새 L2 파일에 쓴다 (STG-12 · 분리 보고서 B안). 제안만 — 막지 않는다
+//   불변식(권한 · 서기 구역 · 규칙 번호 · 봉인)을 지키는 시험이면 L6 에 더해도 된다 — 그때는 승인 묶음으로
+export function l6TestAdds(ctx) {
+  const out = [];
+  for (const f of (ctx.map && ctx.map.files) || []) {
+    if (f.area !== 'guard:self-tests' || f.path.includes('*')) continue;
+    const d = git(['diff', '-U0', 'HEAD', '--', f.path], ctx.root);
+    const n = d.split('\n').filter((l) => /^\+test\(/.test(l)).length;
+    if (n) out.push(`${f.path}: 새 시험 블록 ${n} 개 — 일상 시험이면 새 L2 파일(tests/<주제>.test.mjs)에 쓴다. 스스로를 지키는 불변식이면 여기에 더해도 되지만 사람 승인이 필요하다`);
+  }
+  return out;
+}
+// 새 파일마다 연결 후보: 분류 · 규칙 · 읽는 시험 · 열린 계획 (probe 가 이미 아는 것을 엮음) — 연결이 하나도 없으면 알린다. 막지는 않는다 (제안)
+export async function linkHints(ctx, files) {
+  const lines = [];
+  for (const f of files) {
+    if (!ctx.exists.has(f)) continue;
+    const ls = await probe(ctx, f), pick = (re) => ls.filter((l) => re.test(l)).map((l) => '  ' + l.slice(0, 200));
+    lines.push(`새 파일 ${f}`, ...pick(/^(분류|규칙|집행|읽는 시험|열린 계획|처방)/));
+    if (!ls.some((l) => /^(규칙|열린 계획)/.test(l))) lines.push('  연결 없음 — 닿는 규칙의 where 나 계획 항목의 결과에 이 경로를 적으면 탐침이 이어 준다 (node rebuild/rules.mjs apply · plan.mjs apply)');
+  }
+  return lines;
+}
 export async function probe(ctx, q) {
   const out = [], P = (s) => out.push(s);
   const rid = /^RULE-\d{4}$/.test(q) && q, item = /^(PLAN|ASY|STG)-[\w]+$/.test(q) && q;
@@ -188,6 +256,17 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     for (const b of fx.left) console.log(`남김 [${b.tier === 2 ? '제안 — 같은 검사인지 확인 뒤 rules.mjs apply 로 find 갱신 + 변이 재실행' : '이동 기록 없음 — 사람이 판단'}] ${b.kind} ${b.key}: ${b.path}`);
     process.exit(ok ? 0 : 1);
   }
-  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry]'); process.exit(2); }
+  if (args[0] === '--next') { console.log(nextFrom(ROOT).join('\n')); process.exit(0); }
+  if (args[0] === '--merge-check') { // 병합 사전 점검 (rebuild/merge-check.mjs) — 다른 브랜치와 합치기 전에 충돌 · 번호 충돌을 미리 본다
+    if (!args[1]) { console.error('사용: node rebuild/probe.mjs --merge-check <브랜치 또는 커밋>'); process.exit(2); }
+    const { mergeCheck } = await import('./merge-check.mjs'), r = mergeCheck(args[1]); console.log(r.lines.join('\n')); process.exit(r.exit);
+  }
+  if (args[0] === '--audit') { const p = auditReceipts(ROOT); console.log(p.length ? p.join('\n') : '영수증 감사 — GitHub 파일 쓰기 도구 사용 0'); process.exit(p.length ? 1 : 0); }
+  if (args[0] === '--new') { // 새 파일의 연결 후보 (제안 — 종료 코드 0)
+    const fs = newFiles(ROOT), ls = await linkHints(ctx, fs);
+    const ta = l6TestAdds(ctx);
+    console.log([fs.length ? ls.join('\n') : '새 파일 0 — 연결 후보 없음', ...ta].join('\n')); process.exit(0);
+  }
+  if (!args[0]) { console.error('사용: node rebuild/probe.mjs <파일 | RULE-… | PLAN-…·ASY-…·STG-… | 이름> · --check · --fix [--dry] · --new · --audit · --next · --merge-check <브랜치>'); process.exit(2); }
   for (const l of await probe(ctx, args[0])) console.log(l);
 }

@@ -7,6 +7,7 @@
 pub mod engine;
 pub mod tape;
 pub mod rng;
+pub mod detmath;
 
 use engine::Engine;
 
@@ -88,3 +89,11 @@ fn buf(id: u32) -> (*const f64, usize) {
 pub extern "C" fn fe_ptr(id: u32) -> *const f64 { buf(id).0 }
 #[no_mangle]
 pub extern "C" fn fe_len(id: u32) -> u32 { buf(id).1 as u32 }
+
+/// 결정론 수학 시험용 출구 (tests/detmath.test.mjs 가 JS 구현과 비트 단위로 대조한다)
+#[no_mangle]
+pub extern "C" fn fe_dm_pow(x: f64, y: f64) -> f64 { detmath::pow(x, y) }
+#[no_mangle]
+pub extern "C" fn fe_dm_log(x: f64) -> f64 { detmath::log(x) }
+#[no_mangle]
+pub extern "C" fn fe_dm_exp(x: f64) -> f64 { detmath::exp(x) }

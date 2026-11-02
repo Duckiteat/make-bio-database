@@ -59,7 +59,7 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 
 ## 컴퓨터가 막는 규칙
 
-73 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+78 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
 
 - 권한·쓰기 (삼권 분립): RULE-0005 · RULE-0006 · RULE-0007 · RULE-0008 · RULE-0011 · RULE-0012 · RULE-0013 · RULE-0014 · RULE-0015 · RULE-0016 · RULE-0017 · RULE-0018 · RULE-0019 · RULE-0020 · RULE-0025 · RULE-0026 · RULE-0028 · RULE-0029 · RULE-0031 · RULE-0032 · RULE-0033 · RULE-0034 · RULE-0037 · RULE-0044 · RULE-0046 · RULE-0049 · RULE-0050 · RULE-0051 · RULE-0053 · RULE-0054 · RULE-0055 · RULE-0211 · RULE-0213 · RULE-0472 · RULE-0473 · RULE-0474 · RULE-0478 · RULE-0479
 - 데이터 넣기: RULE-0403
@@ -67,7 +67,7 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 - 한계: RULE-0085 · RULE-0086 · RULE-0087 · RULE-0124 · RULE-0125 · RULE-0126 · RULE-0131 · RULE-0156 · RULE-0162 · RULE-0168 · RULE-0171 · RULE-0177 · RULE-0178 · RULE-0220 · RULE-0221 · RULE-0228 · RULE-0243
 - 기전·시뮬레이션: RULE-0467
 - 검증·판정: RULE-0196 · RULE-0198 · RULE-0202 · RULE-0203 · RULE-0204 · RULE-0206 · RULE-0207 · RULE-0209 · RULE-0210 · RULE-0512
-- 코드에서 찾은 검사: RULE-0507 · RULE-0519 · RULE-0520 · RULE-0523 · RULE-0526
+- 코드에서 찾은 검사: RULE-0507 · RULE-0519 · RULE-0520 · RULE-0523 · RULE-0526 · RULE-0527 · RULE-0528 · RULE-0529 · RULE-0530 · RULE-0531
 
 ## 형식 설명
 

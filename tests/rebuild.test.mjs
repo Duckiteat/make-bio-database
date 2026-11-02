@@ -41,8 +41,12 @@ test('① 관리 파일이 최신이다 (node rebuild/status.mjs --write)', () =
 
 test('② 읽기 점검용: rebuild/ 밖의 코드는 rebuild/ 를 읽지 않는다', () => {
   const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); if (['.git', 'node_modules', 'target', 'rebuild'].includes(n)) return []; return statSync(p).isDirectory() ? walk(p) : [relative(ROOT, p)]; });
-  // 예외: 재건 도구의 시험 — 문지기 시험은 따로 있어야 변이 시험이 판정할 수 있다(rebuild.test 는 파일이 바뀌면 늘 빨개짐) · 작업 도구(탐침 · 규칙 한 번에) 시험도 같은 까닭
-  const code = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p) && !['tests/rebuild.test.mjs', 'tests/gate.test.mjs', 'tests/permissions.test.mjs', 'tests/probe.test.mjs'].includes(p));
+  // 예외: 재건 도구의 시험 — rebuild/ 의 모듈을 가져오는 시험(tests/ 안)은 그 도구를 시험하므로 rebuild/ 를 가리킨다.
+  //   손 목록 대신 코드에서 읽는다 — 새 도구 시험이 생겨도 이 시험을 고치지 않는다. 시험이 아닌 코드는 예외가 없다.
+  const importsRebuild = (p) => /^tests\//.test(p) && /(?:from\s+|import\(\s*|require\(\s*)['"]\.\.\/rebuild\//.test(readFileSync(join(ROOT, p), 'utf8'));
+  const all = walk(ROOT).filter((p) => /\.(js|mjs|html)$/.test(p));
+  assert.ok(all.some(importsRebuild), '재건 도구를 시험하는 파일이 하나는 있다');
+  const code = all.filter((p) => !importsRebuild(p));
   const users = code.filter((p) => /rebuild\//.test(readFileSync(join(ROOT, p), 'utf8')));
   assert.deepEqual(users, ['legislative/clerk.mjs'], 'rebuild/ 를 가리키는 코드');
   const clerk = readFileSync(join(ROOT, 'legislative/clerk.mjs'), 'utf8').split('\n').filter((l) => /rebuild\//.test(l));

@@ -65,10 +65,17 @@
 |---|---|
 | `tests/acceptance.test.mjs` | 9 |
 | `tests/affected.test.mjs` | 3 |
+| `tests/approval.test.mjs` | 14 |
 | `tests/assays.test.mjs` | 4 |
 | `tests/assumptions.test.mjs` | 8 |
+| `tests/authority.test.mjs` | 5 |
+| `tests/bundle.test.mjs` | 5 |
+| `tests/changes-draft.test.mjs` | 3 |
+| `tests/clock.test.mjs` | 7 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
+| `tests/consistency.test.mjs` | 4 |
+| `tests/detmath.test.mjs` | 4 |
 | `tests/dictionary.test.mjs` | 8 |
 | `tests/dictionary_seal.test.mjs` | 4 |
 | `tests/dose_slope.test.mjs` | 6 |
@@ -76,12 +83,15 @@
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 23 |
+| `tests/guard-matrix.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
+| `tests/merge-check.test.mjs` | 4 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 10 |
 | `tests/permissions.test.mjs` | 2 |
 | `tests/perturb.test.mjs` | 4 |
-| `tests/probe.test.mjs` | 6 |
+| `tests/plan-import-sources.test.mjs` | 2 |
+| `tests/probe.test.mjs` | 10 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |
@@ -95,7 +105,8 @@
 | `tests/runbook.test.mjs` | 5 |
 | `tests/rust_engine.test.mjs` | 8 |
 | `tests/stats.test.mjs` | 7 |
-| `tests/stochastic.test.mjs` | 6 |
+| `tests/stochastic.test.mjs` | 7 |
+| `tests/stoichiometry.test.mjs` | 4 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |

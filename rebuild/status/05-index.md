@@ -11,10 +11,10 @@
 | 이름공간 | 상태 | 모양 | 형식 | 발급 | 자리 | 토큰 | 정의 |
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1221 · 212 · 24 | 210 · 없음 2 |
-| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10403 · 218 · 228 | 212 · 없음 6 |
+| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10416 · 218 · 231 | 212 · 없음 6 |
 | `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 668 · 59 · 53 | 57 · 없음 2 |
-| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2663 · 127 · 174 | 124 · 없음 3 |
-| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 789 · 37 · 91 | 28 · 없음 9 |
+| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2668 · 127 · 177 | 124 · 없음 3 |
+| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 811 · 37 · 91 | 28 · 없음 9 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 90 · 73 · 9 | 68 · 없음 5 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2072 · 363 · 39 | 360 · 없음 3 |
 | `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1845 · 505 · 95 | — |
@@ -27,21 +27,21 @@
 | `attestation` | active | chain | `^[0-9a-f]{64}$` | judicial attestation (digest) | `attestations/registry.json` | — | — |
 | `patch_record` | active | file | `^\d{8}-\d{6}-.+\.json$` | clerk commitMerge | `data/patches/` | — | — |
 | `vocab_token` | active | vocab | `—` | human (vocab.js, user request) | `vocab.js` | — | — |
-| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 318 · 12 · 36 | 10 · 없음 2 |
+| `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 321 · 13 · 37 | 10 · 없음 3 |
 | `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 205 · 22 · 11 | 20 · 없음 2 |
 | `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 363 · 6 · 41 | 5 · 없음 1 |
 | `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10654 · 7281 · 10 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 11 · 1 · 5 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5042 · 529 · 105 | 526 · 없음 3 |
-| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 1376 · 50 · 220 | 209 · 없음 2 |
-| `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 209 · 없음 0 |
-| `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 22 · 없음 0 |
-| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 272 · 없음 0 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5268 · 534 · 134 | 531 · 없음 3 |
+| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 1641 · 56 · 252 | 224 · 없음 4 |
+| `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 224 · 없음 0 |
+| `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 23 · 없음 0 |
+| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 311 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
-| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 1574 · 93 · 130 | 209 · 없음 5 |
-| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 765 · 41 · 92 | 209 · 없음 0 |
-| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 72 · 10 · 10 | 209 · 없음 1 |
+| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 2213 · 103 · 168 | 224 · 없음 5 |
+| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 1227 · 42 · 118 | 224 · 없음 0 |
+| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 72 · 10 · 10 | 224 · 없음 1 |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `switch` | planned | token | `^SW-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `formula` | active | token | `^EQ-\d{4}$` | rebuild 6d (수식 기록) | `rebuild/rules/formulas.jsonl` | 50 · 14 · 11 | 13 · 없음 1 |
@@ -61,7 +61,7 @@
 | `ext_interpro` | external | token | `vocab.xrefs.InterPro.pattern` | InterPro | `data/db.json#senses.*.xrefs` | — | — |
 | `ext_pmid` | external | token | `vocab.xrefs.PMID.pattern` | PMID | `data/db.json#senses.*.xrefs` | — | — |
 | `ext_doi` | external | token | `vocab.xrefs.DOI.pattern` | DOI | `data/db.json#senses.*.xrefs` | — | — |
-| `ext_pmc` | external | token | `^PMC\d+$` | PubMed Central | `evidence.sources / inbox` | 21 · 5 · 9 | — |
+| `ext_pmc` | external | token | `^PMC\d+$` | PubMed Central | `evidence.sources / inbox` | 25 · 7 · 10 | — |
 | `fp_inchikey` | active | composite | `vocab.fingerprints.InChIKey.pattern` | tool (computed) | `data/db.json#senses.*.fingerprint` | — | — |
 | `fp_seq_sha256` | active | composite | `vocab.fingerprints.SEQ_SHA256.pattern` | tool (computed) | `data/db.json#senses.*.fingerprint` | — | — |
 | `fp_complex` | active | composite | `vocab.fingerprints.COMPLEX.pattern` | tool (computed) | `data/db.json#senses.*.fingerprint` | — | — |
@@ -84,11 +84,11 @@
 - `observation`: O000029 · O000999 · O800002 · O900001 · O900002 · O900003 · O900004 · O900009 · O999999
 - `value`: V000069 · V900000 · V900001 · V999998 · V999999
 - `assumption`: A000500 · A000999 · A999999
-- `audit_code`: AUDIT_PROBE · AUDIT_TEST
+- `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST
 - `criterion`: D3.asserted · S3.doi
 - `task`: TASK-009
 - `rule`: RULE-0999 · RULE-9519 · RULE-9999
-- `decision`: DEC-0098 · DEC-0099
+- `decision`: DEC-0098 · DEC-0099 · DEC-9998 · DEC-9999
 - `plan_item`: PLAN-901 · PLAN-902 · PLAN-997 · PLAN-998 · PLAN-999
 - `plan_direction`: DIR-0099
 - `formula`: EQ-9999
@@ -96,13 +96,13 @@
 ## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)
 
 - compiler/perturb.js:29 /^D\d{6}$/
-- dbtool.mjs:484 /^O\d{6}$/
-- dbtool.mjs:491 /^O\d{6}$/
-- dbtool.mjs:631 /^O\d{6}$/
-- dbtool.mjs:735 /^O\d{6}$/
-- dbtool.mjs:748 /^O\d{6}$/
-- dbtool.mjs:755 /^O\d{6}$/
-- dbtool.mjs:755 /^O\d{6}$/
+- dbtool.mjs:496 /^O\d{6}$/
+- dbtool.mjs:503 /^O\d{6}$/
+- dbtool.mjs:643 /^O\d{6}$/
+- dbtool.mjs:747 /^O\d{6}$/
+- dbtool.mjs:760 /^O\d{6}$/
+- dbtool.mjs:767 /^O\d{6}$/
+- dbtool.mjs:767 /^O\d{6}$/
 - judicial/acceptance.js:49 /^O\d{6}$/
 - judicial/assumption_audit.js:16 /^A\d{6}$/
 - judicial/judicial.js:300 /^[TDS]\d{6}$/
