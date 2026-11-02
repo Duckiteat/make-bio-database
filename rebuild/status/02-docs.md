@@ -286,6 +286,7 @@
 | `docs/reports/2026-11-01-work-automation.md` | 16.0 | 181 |  | 미분류 |
 | `docs/reports/2026-11-02-brain-source-sufficiency.md` | 19.5 | 104 |  | 미분류 |
 | `docs/reports/2026-11-02-engine-primer-qa.md` | 18.8 | 110 |  | 미분류 |
+| `docs/reports/2026-11-02-plan-triage.md` | 10.7 | 78 |  | 미분류 |
 | `docs/reports/2026-11-02-plan021-survey.md` | 13.6 | 89 |  | 미분류 |
 | `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 22.3 | 146 |  | 미분류 |
 | `docs/reports/2026-11-02-run-record-design.md` | 19.0 | 149 |  | 미분류 |

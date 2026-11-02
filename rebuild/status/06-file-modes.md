@@ -13,7 +13,7 @@
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 176 | 2309.2 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 42 | 911.1 |
+| 점검·검증 `inspect` | 43 | 921.7 |
 
 ## 규칙별
 
@@ -53,7 +53,7 @@
 | `tests/**` | develop | 61 | 586.9 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 32 | 529.7 | 보고서 — 읽기·점검 |
+| `docs/reports/**` | inspect | 33 | 540.3 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 11 | 419.2 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 19 | 298.6 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 223 | 626.9 | 안내 문서 |
