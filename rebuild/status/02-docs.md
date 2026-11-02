@@ -298,6 +298,7 @@
 | `docs/reports/2026-11-02-reporting-guidelines-survey.md` | 22.3 | 146 |  | 미분류 |
 | `docs/reports/2026-11-02-run-record-design.md` | 19.0 | 149 |  | 미분류 |
 | `docs/reports/2026-11-02-write-ownership.md` | 7.2 | 70 |  | 미분류 |
+| `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
