@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 286 | 7654.4 |
-| 정보 작성 `author` | 460 | 16549.1 |
+| 공통 `common` | 287 | 7662.7 |
+| 정보 작성 `author` | 461 | 16554.1 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 177 | 2316.9 |
+| 디벨롭 `develop` | 177 | 2317.3 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 40 | 865.9 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 32 | 6181.6 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 32 | 6186.5 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 357 | 13649.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 676.4 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 69 | 1032.5 | 병합 기록 |
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 23 | 83.1 | 수집가 작업 공간 |
+| `workspace/**` | author | 24 | 88.1 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 17 | 200.3 | 운명 엔진·Rust·결합점 |
@@ -56,9 +56,9 @@
 | `docs/reports/**` | inspect | 30 | 484.5 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 12 | 460.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 19 | 298.5 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 211 | 606.0 | 안내 문서 |
+| `docs/**` | common | 212 | 609.3 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 308.5 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 308.9 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 106.3 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
 | `.claude/**` | common | 6 | 37.0 | 도구 설정 |

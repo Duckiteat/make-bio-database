@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 308.5 | 301 |  | 분류됨 1 |
+| `CHANGES.md` | 308.9 | 302 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -41,7 +41,7 @@
 | `docs/modes/develop.md` | 5.9 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
-| `docs/plan/ORDER.md` | 10.3 | 54 |  | 생성물 |
+| `docs/plan/ORDER.md` | 10.4 | 54 |  | 생성물 |
 | `docs/plan/assay.md` | 4.9 | 82 |  | 생성물 |
 | `docs/plan/build.md` | 35.7 | 376 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
@@ -242,8 +242,9 @@
 | `docs/plan/items/STG-11d.md` | 5.3 | 41 |  | 생성물 |
 | `docs/plan/items/STG-11e.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/STG-11f.md` | 1.1 | 17 |  | 생성물 |
-| `docs/plan/items/STG-12.md` | 22.1 | 69 |  | 생성물 |
-| `docs/plan/rebuild.md` | 25.2 | 251 |  | 생성물 |
+| `docs/plan/items/STG-12.md` | 23.1 | 72 |  | 생성물 |
+| `docs/plan/items/STG-12a.md` | 2.2 | 17 |  | 생성물 |
+| `docs/plan/rebuild.md` | 25.3 | 252 |  | 생성물 |
 | `docs/project-overview.md` | 2.9 | 26 |  | 분류됨 14 |
 | `docs/reports/2026-10-15-gate-a-prime-tap-mhc1.md` | 3.0 | 21 |  | 분류됨 10 |
 | `docs/reports/2026-10-15-mhc1-qualitative-batch.md` | 2.9 | 26 |  | 분류됨 13 |
@@ -287,6 +288,7 @@
 | `docs/textbook/90-부록-자동생성.md` | 129.0 | 837 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
+| `workspace/NEXT-2026-11-02.md` | 5.0 | 42 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
