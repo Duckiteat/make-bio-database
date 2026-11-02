@@ -16,7 +16,7 @@ export const STEPS = [
   ['node', ['rebuild/plan.mjs', 'check']],
   ['node', ['rebuild/status.mjs', '--check']],
   ['node', ['dbtool.mjs', 'textbook', '--check']],
-  ['node', ['--test', '--test-reporter=tap', 'tests/rebuild.test.mjs', 'tests/governance.test.mjs']],
+  ['node', ['--test', '--test-reporter=tap', 'tests/rebuild.test.mjs', 'tests/governance.test.mjs', 'tests/guard-matrix.test.mjs']],
 ];
 const env = { ...process.env }; delete env.NODE_TEST_CONTEXT; delete env.BIODB_TEST_SCOPE; // 겹친 시험 실행이 바깥 문맥을 물려받지 않게
 

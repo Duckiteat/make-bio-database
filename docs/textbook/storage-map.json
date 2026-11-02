@@ -2943,6 +2943,20 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "결정 원문 대조 시험 — 대화로 만든 결정(src 에 파일은 있고 커밋은 없음)이 전체 이력 검사(checkDecisionSources)를 깨뜨리지 않고, 커밋이 있는 결정은 여전히 그 판과 대조한다."
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/guard-matrix.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test · rebuild/precheck.mjs",
+      "interpret": "보안 기준 고정 시험 (STG-12) — 기준 파일(문지기 · 설정 · 모드 표 · 권한의 뿌리 10)이 저장 지도에서 L6 인지 · author · baseline · field · inspect · 수집가가 L6 를 못 쓰는지 · develop 이 쓸 수 있는 L6 는 자기 검사 시험 8 뿐이고 설정 ask 에 있는지 · 정책에서 except 한 줄을 빼면 새는 것을 잡는지. 합치기 뒤에 보안 기준이 그대로인지 보는 용도. 이 시험 자체는 L2 라 develop 이 고칠 수 있다 — L6 로 올리는 일은 STG-12a."
     }
   ],
   "governance": {
