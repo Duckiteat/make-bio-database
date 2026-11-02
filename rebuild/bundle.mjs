@@ -24,7 +24,8 @@ export function applyPatch(patch, before) {
   const dir = mkdtempSync(join(tmpdir(), 'bundle-')), paths = pathsOf(patch), olds = {}; // 임시 폴더는 운영체제가 치운다 (저장소 밖)
   for (const p of paths) { const b = before(p); olds[p] = b; if (b != null) CLERK.writeDraftText(join(dir, p), b); }
   const pf = join(dir, '.patch'); CLERK.writeDraftText(pf, patch);
-  execFileSync('git', ['apply', '--unsafe-paths', '--directory=.', pf], { cwd: dir, stdio: 'pipe' });
+  try { execFileSync('git', ['apply', '--unsafe-paths', '--directory=.', pf], { cwd: dir, stdio: 'pipe' }); }
+  catch (e) { throw new Error(`패치가 지금 저장소에 맞지 않음(낡음) — 만든 쪽에 다시 만들어 달라고 한다: ${String(e.stderr || e.message).split('\n')[0]}`); }
   return paths.map((p) => ({ path: p, before: olds[p] ?? '', after: existsSync(join(dir, p)) ? readFileSync(join(dir, p), 'utf8') : '' }));
 }
 
@@ -51,6 +52,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const [cmd, file, want] = process.argv.slice(2);
   if (!['show', 'verify'].includes(cmd) || !file || (cmd === 'verify' && !want)) { console.error('사용: node rebuild/bundle.mjs show <패치> · verify <패치> <지문>'); process.exit(2); }
   const patch = readFileSync(file, 'utf8');
-  if (cmd === 'show') { process.stdout.write(show(patch)); process.exit(0); }
-  const r = verify(patch, want); console.log((r.ok ? '통과 — ' : '거부 — ') + r.why); process.exit(r.ok ? 0 : 1);
+  const fail = (e) => { console.error('거부 — ' + e.message); process.exit(1); };
+  if (cmd === 'show') { try { process.stdout.write(show(patch)); } catch (e) { fail(e); } process.exit(0); }
+  let r; try { r = verify(patch, want); } catch (e) { fail(e); } console.log((r.ok ? '통과 — ' : '거부 — ') + r.why); process.exit(r.ok ? 0 : 1);
 }

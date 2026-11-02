@@ -51,3 +51,8 @@ test('한 글자라도 다른 패치는 다른 지문', () => {
   const id = (t) => B.show(t.patch, '/nonexistent', t.before).split('\n')[0];
   assert.notEqual(id(a), id(b));
 });
+
+test('낡은 패치(지금 내용에 맞지 않음)는 알아볼 수 있는 오류로 거부', () => {
+  const t = make({ 'a.txt': 'x\n' }, { 'a.txt': 'x\ny\n' });
+  assert.throws(() => B.changesOf(t.patch, '/nonexistent', () => 'z\n'), /낡음/);
+});

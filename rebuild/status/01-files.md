@@ -7,15 +7,15 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 32 | 6150.7 |
-| docs | 270 | 1821.0 |
-| (최상위) | 18 | 946.0 |
-| tests | 88 | 618.8 |
+| rebuild | 32 | 6152.3 |
+| docs | 270 | 1821.7 |
+| (최상위) | 18 | 946.5 |
+| tests | 88 | 619.0 |
 | judicial | 32 | 583.0 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 17 | 200.3 |
-| workspace | 25 | 115.7 |
+| workspace | 26 | 100.4 |
 | legislative | 3 | 75.6 |
 | migrations | 13 | 59.8 |
 | compiler | 7 | 49.0 |
@@ -37,15 +37,15 @@
 | `data/fetched/uniprot/P61769.json` | 390.5 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
-| `CHANGES.md` | 303.5 |
+| `CHANGES.md` | 304.0 |
 | `attestations/registry.json` | 299.0 |
-| `rebuild/state/plan-log.jsonl` | 294.7 |
+| `rebuild/state/plan-log.jsonl` | 295.5 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `rebuild/rules/changes.jsonl` | 271.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `rebuild/state/plans.jsonl` | 246.2 |
+| `rebuild/state/plans.jsonl` | 246.7 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `judicial/judicial.js` | 184.9 |
 | `data/assumptions.jsonl` | 182.3 |
