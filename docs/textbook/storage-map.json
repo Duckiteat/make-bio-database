@@ -2717,6 +2717,33 @@
       "write_keys": [
         "unassigned"
       ]
+    },
+    {
+      "path": "judicial/authority.js",
+      "class": "law",
+      "format": "ES 모듈 (checkAuthority · checkCallers — 순수, 사법부)",
+      "writer": "사람·AI",
+      "readers": "dbtool.mjs textbook --check · tests/authority.test.mjs",
+      "interpret": "권한 구조 검사 (STG-12 · DEC-0048) — 저장 지도의 열쇠 표 · 구역 표 · 자리 · 서기 호출 표를 대조한다. 상속은 열쇠의 max_level 까지, L5 는 서기+사법부 두 열쇠, L6 세션 쓰기는 사람 판정, 담당 없는 구역 상한. 서기 쓰기 함수를 표 밖의 모듈이 부르면 거부.",
+      "level": "L2",
+      "area": "code:judicial",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
+      "path": "tests/authority.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "권한 구조 시험 — 지금 저장 지도가 통과 · 일부러 어긴 여섯 가지 거부 · 서기 쓰기 함수 호출 모듈이 표 안(코드 전체 훑기) · 표 밖 호출과 낡은 표 거부.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
     }
   ],
   "governance": {
@@ -3331,7 +3358,181 @@
         "kind": "none",
         "max_level": "L6",
         "뜻": "판정 열쇠 없음 (받은 그대로 · 덧붙이기 · 사슬이 지킴)"
+      },
+      "draft": {
+        "kind": "draft",
+        "max_level": "L0",
+        "뜻": "저장소 밖 초안 쓰기 (writeDraft)"
       }
-    }
+    },
+    "callers": {
+      "commitMerge": {
+        "key": "clerk.merge",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "sealGenesis": {
+        "key": "clerk.merge",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "commitMigration": {
+        "key": "clerk.merge",
+        "modules": [
+          "migrations/010-v10-to-v12-values.js"
+        ]
+      },
+      "registerPrereg": {
+        "key": "clerk.prereg",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "appendDictionary": {
+        "key": "clerk.dictionary",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "appendAssays": {
+        "key": "clerk.assays",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "appendAssumptions": {
+        "key": "clerk.assumptions",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "appendAttestations": {
+        "key": "clerk.attest",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "writeDerived": {
+        "key": "gen.textbook",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "writeRetrievalTasks": {
+        "key": "gen.retrieval",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "insertChangesRow": {
+        "key": "session:*",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "writeReport": {
+        "key": "session:*",
+        "modules": [
+          "dbtool.mjs",
+          "rebuild/read.mjs"
+        ]
+      },
+      "writeStatus": {
+        "key": "gen.status",
+        "modules": [
+          "rebuild/status.mjs"
+        ]
+      },
+      "writeHubDoc": {
+        "key": "gen.status",
+        "modules": [
+          "rebuild/status.mjs"
+        ]
+      },
+      "writePlanFile": {
+        "key": "gen.status",
+        "modules": [
+          "rebuild/status.mjs"
+        ]
+      },
+      "writeState": {
+        "key": "tool.plan",
+        "modules": [
+          "rebuild/plan.mjs"
+        ]
+      },
+      "writeLedger": {
+        "key": "tool.rules",
+        "modules": [
+          "rebuild/rules.mjs"
+        ]
+      },
+      "appendReceipt": {
+        "key": "gate",
+        "modules": [
+          "rebuild/gate.mjs"
+        ]
+      },
+      "publishReceipt": {
+        "key": "gate",
+        "modules": [
+          "rebuild/gate.mjs"
+        ]
+      },
+      "writeReceiptDoc": {
+        "key": "gate",
+        "modules": [
+          "rebuild/gate.mjs"
+        ]
+      },
+      "writeDraft": {
+        "key": "draft",
+        "modules": [
+          "dbtool.mjs",
+          "rebuild/gate.mjs",
+          "rebuild/probe.mjs"
+        ]
+      },
+      "writeDraftText": {
+        "key": "draft",
+        "modules": [
+          "rebuild/rules.mjs"
+        ]
+      },
+      "fetchToInbox": {
+        "key": "clerk.fetch",
+        "modules": [
+          "dbtool.mjs",
+          "mcp/fetch.mjs"
+        ]
+      },
+      "postToInbox": {
+        "key": "clerk.fetch",
+        "modules": [
+          "mcp/fetch.mjs"
+        ]
+      },
+      "appendFetchLog": {
+        "key": "clerk.fetch",
+        "modules": [
+          "mcp/fetch.mjs"
+        ]
+      },
+      "appendTransition": {
+        "key": "clerk.transition",
+        "modules": [
+          "dbtool.mjs"
+        ]
+      },
+      "appendHandoff": {
+        "key": "clerk.handoff",
+        "modules": [
+          "mcp/clerk.mjs"
+        ]
+      }
+    },
+    "callers_설명": "서기(legislative/clerk.mjs)의 쓰기 함수 → 그 함수가 쥐는 열쇠 · 부를 수 있는 모듈. 시험(tests/authority.test.mjs)이 코드 전체를 훑어 표 밖의 호출을 거부한다. 열쇠는 모듈 단위로 시작하고, 한 파일이 여러 열쇠를 쥐면(dbtool.mjs) 진입점 단위는 다음 단계."
   }
 }

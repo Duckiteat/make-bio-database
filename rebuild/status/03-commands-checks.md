@@ -67,6 +67,7 @@
 | `tests/affected.test.mjs` | 3 |
 | `tests/assays.test.mjs` | 4 |
 | `tests/assumptions.test.mjs` | 8 |
+| `tests/authority.test.mjs` | 5 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
 | `tests/dictionary.test.mjs` | 8 |
