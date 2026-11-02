@@ -119,3 +119,17 @@ test('⑧ 자기 검사 시험(L6)에 새 시험 블록을 더하면 새 L2 파�
     assert.deepEqual(PR.l6TestAdds({ root: dir, map: null }), []);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('⑨ 영수증 감사 (RULE-0529): GitHub 파일 쓰기 도구가 영수증에 있으면 잡고, 읽기 도구나 다른 일은 건드리지 않는다', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'audit-'));
+  try {
+    mkdirSync(join(dir, 'workspace', 'receipts'), { recursive: true });
+    const w = (name, evs) => writeFileSync(join(dir, 'workspace', 'receipts', name), evs.map((e) => JSON.stringify(e)).join('\n') + '\n');
+    w('ok.jsonl', [{ t: 'tool', tool: 'mcp__github__get_me' }, { t: 'tool', tool: 'mcp__github__create_pull_request' }, { t: 'tool', tool: 'Bash', target: 'echo push_files' }, { t: 'open', mode: 'develop' }]);
+    assert.deepEqual(PR.auditReceipts(dir), [], '읽기 도구 · PR 만들기 · 명령 글 속 이름은 통과');
+    w('bad.jsonl', [{ t: 'tool', tool: 'mcp__github__push_files', at: '2026-11-02T00:00:00Z' }, { t: 'tool', tool: 'mcp__github__create_or_update_file' }, { t: 'tool', tool: 'mcp__github__delete_file' }]);
+    const out = PR.auditReceipts(dir);
+    assert.equal(out.length, 3); assert.match(out[0], /^RULE-0529 영수증 bad\.jsonl:1 .*push_files/);
+    assert.deepEqual(PR.auditReceipts(join(dir, 'nowhere')), [], '영수증 폴더가 없으면 비어 있음');
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});

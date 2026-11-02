@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-02 · 영수증 감사 RULE-0529 (GitHub 파일 쓰기 도구) · 사용자 부담 최소화 원칙 | `rebuild/probe.mjs` auditReceipts · `--audit` · `rebuild/precheck.mjs` 한 단계 · `tests/probe.test.mjs` ⑨ · 규칙 장부 RULE-0529 · 전체 보고서 §9 · 계획 STG-12 상태 ◐ | GitHub MCP 신원이 사용자 계정과 같아 그 도구의 커밋이 사람의 커밋과 구별되지 않음. 사용자 결정: 번거로운 작업은 피한다 | 쓰면 사전 검사가 막음(사후 감시) · 지금까지 1043 도구 사건 중 0 · 로컬 서명 · 해설 검증은 보류 | 시험 9 · 변이 caught · precheck |
 | 2026-11-02 · 승인 묶음 3a 적용 — field 모드의 L6 쓰기 구멍 막음 | `rebuild/rules/modes.json` field.except +12 (사용자가 GitHub 웹에서 커밋: a5eecae) · 권한 장부 PERM-0019 설명(ops 적용) | 전체 보고서 §5 · 사용자 결정 2026-11-02(5개 모드 전부) | 패치와 의미 같음(공백 2 칸 차이) · `mayWrite` 실측: field L6 12 → 0 · 권한 시험 2 통과 | precheck · `finish develop --full` |
 | 2026-11-02 · 승인 묶음 3a 파일 — field 모드의 L6 쓰기 구멍 | `workspace/STG-12-bundle-3a.patch` `.ops.json` `.screen.txt` · 계획 STG-12 | 전체 보고서 §5 — field 의 쓰기 목록(`tests/**` · `docs/**`)이 L6 12 파일에 닿음. 사용자 결정 2026-11-02: 5개 모드 전부 · 지금 막기 | 패치는 모드 표 field.except 12 줄. 지문 41d880a0… · 사람이 커밋해야 효력 | verify 통과 · ops --dry · precheck |
 | 2026-11-02 · STG-12 전체 보고서 · 5개 모드 적용 판단 | `docs/reports/2026-11-02-authority-overview.md` · 계획 STG-12 | 사용자 요청: 전체를 보고서로 적고 5개 모드 전부에 쓸지 정함 | 문서만 — 코드 · 장부 · 설정 변경 없음. 실측으로 field 모드의 L6 12 파일 쓰기 구멍을 찾음 | `plan.mjs check` · `finish develop --full` |

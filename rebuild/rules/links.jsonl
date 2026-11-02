@@ -548,3 +548,4 @@
 {"from": "RULE-0526", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "ASY-08 끝나는 조건 — 차원 벡터 · SI 정의 상수 표 · 속도 법칙 차원 검사. 만들며 찾은 것: 어휘의 R 8.314462618 이 정확값 8.31446261815324 의 끝 다섯 자리를 자른 값이었음 (DEC-0045 · DEC-0046)"}
 {"from": "RULE-0527", "rel": "because", "to": "code:judicial/authority.js", "by": "judged", "note": "STG-12 / DEC-0048 — 구역마다 열쇠 여럿, 상위 키 상속은 max_level 까지, L5·L6 은 상속 없이 명시(RULE-0461)"}
 {"from": "RULE-0528", "rel": "because", "to": "code:judicial/approval.js", "by": "judged", "note": "STG-12 승인 묶음 — 클릭이 규칙을 대신하지 못함(RULE-0461). 적용기(L6)는 사람이 승인한 묶음으로 따로"}
+{"from": "RULE-0529", "rel": "because", "to": "code:rebuild/probe.mjs", "by": "judged", "note": "STG-12 점검 ⑩ — 명령 장부로 막으면 장부 ↔ 실제 도구 일치 시험(L6)과 부딪혀 사람 손이 필요해서, 사람 손이 필요 없는 감사로 둠"}

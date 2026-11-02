@@ -14,8 +14,8 @@
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
 | L2 | `code:mcp` | 4 | 2 | 0 | 2 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
-| L2 | `code:tests` | 39 | 19 | 0 | 20 |
-| L2 | `code:tools` | 15 | 4 | 1 | 10 |
+| L2 | `code:tests` | 39 | 20 | 0 | 19 |
+| L2 | `code:tools` | 15 | 6 | 1 | 8 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
 | L2 | `doc:spec` | 7 | 0 | 0 | 7 |
@@ -37,7 +37,7 @@
 | L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
-## 연결 없는 자리 (87)
+## 연결 없는 자리 (84)
 
 - `code:compiler`: `compiler/obs_operator.js` · `compiler/tape.js`
 - `code:config`: `.github/workflows/check.yml` · `.gitignore`
@@ -46,8 +46,8 @@
 - `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/stiffness.js`
 - `code:mcp`: `mcp/query.mjs` · `mcp/fetch.mjs`
 - `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`
-- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/affected.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/telomere.test.mjs` · `tests/bench_engine.js` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/FLOOR.json` · `tests/fixtures/augment/README.md` · `tests/probe.test.mjs`
-- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/state.mjs` · `rebuild/precheck.mjs` · `rebuild/regen.mjs` · `rebuild/probe.mjs` · `rebuild/plan.mjs` · `rebuild/plan-import.mjs`
+- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/affected.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/telomere.test.mjs` · `tests/bench_engine.js` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/FLOOR.json` · `tests/fixtures/augment/README.md`
+- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/state.mjs` · `rebuild/regen.mjs` · `rebuild/plan.mjs` · `rebuild/plan-import.mjs`
 - `doc:history`: `DESIGN-v4.md` · `FEATURES.md`
 - `doc:scenario`: `examples/scenarios/subjects.json`
 - `doc:spec`: `SCHEMA.md` · `README.md` · `docs/design/scaling-limits.md` · `data/fetched/README.md` · `docs/PROMPTS.md` · `docs/RUNBOOK.md` · `docs/project-overview.md`
