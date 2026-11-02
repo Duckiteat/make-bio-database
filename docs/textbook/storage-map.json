@@ -1266,6 +1266,15 @@
       "interpret": "엔진 측정 — 운명 엔진(결합 Rodas3) 본 실행 대 결정 탐침 시간·받아들인·거부한 단계·속도·야코비안 평가, JS 대 Rust/WASM, simulateRate 준비 대 루프. 이전 단계 기준선은 engine-port-roadmap §3·§4·§6."
     },
     {
+      "path": "tests/fingerprint.js",
+      "class": "verification",
+      "format": "Node CommonJS 스크립트 (+ module.exports)",
+      "writer": "사람·AI",
+      "readers": "사람(콘솔), 엔진을 고치는 작업",
+      "interpret": "지문 대조 — 엔진을 고치기 전(snapshot)과 후(compare)의 결과가 비트까지 같은지 칸별 해시(시각열·궤적·신호 기록·사건·도달·결정·끝 상태·적분 요약·걸음 수·난수 소비)로 대조한다. 운명 엔진 파생이 아닌 시나리오 × JS·Rust + 속도 엔진 대표 시나리오 6 개. 기준 지문은 저장소에 커밋하지 않고 기본 시험에도 넣지 않는다(약 2 분).",
+      "refactor_strategy": "시나리오 이름 앞부분 → 시작 상태 표(FATE_SRC)와 속도 엔진 경로 표(RATE_PATH)만 시나리오가 늘 때 고친다. 칸을 더하면 기준 지문을 다시 만들어야 한다."
+    },
+    {
       "path": "tests/collection_audit.test.mjs",
       "class": "verification",
       "format": "Node 테스트 (node:test)",
