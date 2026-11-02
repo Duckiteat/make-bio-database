@@ -10,6 +10,8 @@ const RULE = 'RULE-0461'; // 권한을 넓히는 길은 설정에 적힌 standin
 const R = 'RULE-0528'; // 승인 묶음: 눌러도 거부되는 것 — 거부 문장 앞에 붙는 규칙 번호
 const tag = (xs) => xs.map((x) => `${R} ${x}`);
 export const LIMITS = { maxChangedLines: 400, maxLineLength: 2000 };
+// 자동 통과 — 끔. 줄만 더하는 변경도 패턴으로는 속일 수 있고(assert 덮어쓰기 · 빈 순환이 통과) 이득은 7% 뿐이었다 (사후 점검). 켜려면 판정이 속지 않는다는 근거가 먼저.
+export const AUTO_PASS = false;
 const sha = (s) => createHash('sha256').update(s).digest('hex');
 const GUARD_ROLES = new Set(['settings', 'modes', 'guard']); // 문지기 · 설정 · 모드 표: 추가도 권한을 넓힐 수 있음 — 항상 사람
 const isSelfTest = (p) => /^tests\/(?:[\w.-]+\.test\.mjs|affected\.mjs|trace\.mjs|snapshot\.mjs|mutation\/run\.mjs)$/.test(p);
@@ -41,6 +43,15 @@ function widened(role, before, after) {
     for (const x of shrink('deny')) why.push(`deny 에서 제거: ${x}`);
     for (const x of shrink('ask')) if (asSet(P(a).allow).has(x) || !asSet(P(a).deny).has(x)) why.push(`ask 에서 제거(더 묻지 않게 됨): ${x}`);
     for (const x of grow('ask')) if (/^\*$|^Bash$|^Bash\(\*\)$|dangerously|bypass/i.test(x)) why.push(`마스터 권한 모양: ${x}`);
+    // 문지기 훅 — 지우거나 바꾸면 문지기가 꺼진다 (추가는 좁히는 쪽). 항목 = 사건 | 매처 | 명령
+    const hooks = (o) => new Set(Object.entries((o && o.hooks) || {}).flatMap(([ev, gs]) => (Array.isArray(gs) ? gs : []).flatMap((g) => ((g && g.hooks) || []).map((h) => `${ev} | ${g.matcher || '*'} | ${h.command || h.type}`))));
+    const ha = hooks(a);
+    for (const x of hooks(b)) if (!ha.has(x)) why.push(`훅이 사라지거나 바뀜: ${x}`);
+    // 기본 모드를 묻지 않는 쪽으로 · 작업 폴더를 늘림 · 프로젝트 MCP 서버를 전부 허용
+    const dm = (o) => String(P(o).defaultMode || 'default');
+    if (dm(a) !== dm(b) && /bypass|acceptEdits|dontAsk|auto/i.test(dm(a))) why.push(`기본 권한 모드가 ${dm(b)} → ${dm(a)} (덜 묻는 쪽)`);
+    for (const x of asSet(P(a).additionalDirectories)) if (!asSet(P(b).additionalDirectories).has(x)) why.push(`작업 폴더 추가: ${x}`);
+    if (a.enableAllProjectMcpServers === true && b.enableAllProjectMcpServers !== true) why.push('프로젝트 MCP 서버를 전부 허용');
   }
   if (role === 'modes' && b && a && b.gate && a.gate) {
     const lists = (g) => [['common', g.common || {}], ...Object.entries(g.modes || {}), ...Object.entries(g.roles || {})];
@@ -49,6 +60,7 @@ function widened(role, before, after) {
       const y = mb.get(k) || {};
       for (const f of ['write', 'also']) for (const g of asSet(x[f])) if (!asSet(y[f]).has(g)) why.push(`${k}.${f} 에 추가: ${g}`);
       for (const f of ['except', 'protect']) for (const g of asSet(y[f])) if (!asSet(x[f]).has(g)) why.push(`${k}.${f} 에서 제거: ${g}`);
+      for (const f of ['finish', 'finish_first']) for (const g of asSet(y[f])) if (!asSet(x[f]).has(g)) why.push(`${k}.${f} 에서 끝내기 전 시험을 줄임: ${g}`);
     }
   }
   return why;
@@ -110,7 +122,7 @@ export function decide(changes) {
   const out = { auto: [], approve: [], refused: [] };
   for (const c of changes) {
     const r = { path: c.path, ...classify(c) }; // c.role 은 classify 가 읽는다
-    if (r.kind === 'added_only' && isSelfTest(c.path)) out.auto.push(r);
+    if (AUTO_PASS && r.kind === 'added_only' && isSelfTest(c.path)) out.auto.push(r);
     else if (r.kind === 'widened' || r.kind === 'loosened' || r.kind === 'unreviewable') out.refused.push(r);
     else out.approve.push(r);
   }

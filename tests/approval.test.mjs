@@ -1,18 +1,19 @@
 // 승인 묶음 판정 시험 (STG-12 · 승인 묶음 설계 보고서) — 분류 · 거부 · 지문 · 승인 화면
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { classify, decide, digest, screen, LIMITS } from '../judicial/approval.js';
+import { classify, decide, digest, screen, LIMITS, AUTO_PASS } from '../judicial/approval.js';
 
 const set = (o) => JSON.stringify(o, null, 2);
 const S = (p) => set({ permissions: { allow: ['Read', ...(p.allow || [])], ask: p.ask || [], deny: p.deny || ['Edit(data/db.json)'] } });
 const M = (develop) => set({ gate: { common: { write: ['x/status/**'], protect: ['workspace/receipts/**'] }, modes: { develop } } });
 
-test('자기 검사 시험: 새 시험 블록을 통째로 더하면 자동 통과, 삭제가 있으면 사람 승인', () => {
+test('자기 검사 시험: 새 시험 블록 통째로는 added_only 로 분류하되 자동 통과는 꺼져 있다 · 삭제가 있으면 changed', () => {
   const t = "test('a', () => { assert.ok(1); });\n";
   assert.equal(classify({ path: 'tests/rebuild.test.mjs', before: t, after: t + "\ntest('b', () => {\n  assert.equal(2, 2);\n});\n" }).kind, 'added_only');
   assert.equal(classify({ path: 'tests/rebuild.test.mjs', before: t + 'x\n', after: t + 'y\n' }).kind, 'changed');
   const d = decide([{ path: 'tests/rebuild.test.mjs', before: t, after: t + "\ntest('b', () => {\n  assert.equal(2, 2);\n});\n" }]);
-  assert.equal(d.auto.length, 1); assert.equal(d.approve.length + d.refused.length, 0);
+  assert.equal(AUTO_PASS, false, '자동 통과는 꺼져 있다 — 패턴으로는 속일 수 있음');
+  assert.equal(d.auto.length, 0); assert.equal(d.approve.length, 1); assert.equal(d.refused.length, 0, '줄만 더해도 사람 승인');
 });
 
 test('눌러도 거부 ①: 검사를 느슨하게 — 검사 문장 줄이기 · 건너뛰기 · 바닥값 내리기', () => {
@@ -78,4 +79,33 @@ test('줄만 더해도 사람 승인: 기존 블록 안에 끼움 · 목록에 �
   for (const bad of ["test('x', () => {\n  process.exit(0);\n  assert.ok(0 === 0);\n});\n", "test('x', () => {\n  try { f(); } catch {}\n  assert.ok(1);\n});\n", "test('x', () => {\n  assert.ok(true);\n});\n", "test('x', () => {\n  const y = 1;\n});\n", "test('x', () => {\n  const FLOOR = 1;\n  assert.ok(FLOOR);\n});\n"])
     assert.equal(ap(base + '\n' + bad).kind, 'changed', bad);
   assert.equal(ap(base + "\ntest('ok', () => {\n  assert.equal(3, 3);\n});\n").kind, 'added_only', '안전한 새 블록은 자동 통과');
+});
+
+test('속이는 새 시험 블록이 자동 통과하지 못한다 — assert 덮어쓰기 · 빈 순환도 사람 승인', () => {
+  const base = "import x from 'y';\n\ntest('a', () => {\n  assert.equal(1, 1);\n});\n";
+  for (const body of ["test('t', () => {\n  assert.equal = () => {};\n  assert.equal(1, 2);\n});\n", "test('t', () => {\n  for (const x of []) assert.equal(x, 1);\n  assert.equal(1, 1);\n});\n"]) {
+    const d = decide([{ path: 'tests/rebuild.test.mjs', before: base, after: base + '\n' + body }]);
+    assert.equal(d.auto.length, 0, body); assert.equal(d.approve.length + d.refused.length, 1);
+  }
+});
+
+test('눌러도 거부 ⑤: 문지기 훅을 지우거나 바꿈 · 덜 묻는 기본 모드 · 작업 폴더 추가 · 프로젝트 MCP 전부 허용', () => {
+  const hk = (cmd, matcher = 'Bash') => ({ PreToolUse: [{ matcher, hooks: [{ type: 'command', command: cmd }] }] });
+  const cfg = (extra) => set({ permissions: { allow: ['Read'], ask: [], deny: [] }, hooks: hk('node guard hook pre'), ...extra });
+  const c = (before, after) => classify({ path: 'cfg/settings.json', role: 'settings', before, after });
+  assert.equal(c(cfg({}), set({ permissions: { allow: ['Read'], ask: [], deny: [] } })).kind, 'widened', '훅 통째로 삭제');
+  assert.equal(c(cfg({}), cfg({ hooks: hk('node guard hook pre', 'Edit') })).kind, 'widened', '훅 매처를 좁힘 = 바뀐 훅');
+  assert.equal(c(cfg({}), cfg({ hooks: hk('true') })).kind, 'widened', '훅 명령을 바꿈');
+  assert.equal(c(cfg({}), cfg({ permissions: { allow: ['Read'], ask: [], deny: [], defaultMode: 'bypassPermissions' } })).kind, 'widened');
+  assert.equal(c(cfg({}), cfg({ permissions: { allow: ['Read'], ask: [], deny: [], additionalDirectories: ['/'] } })).kind, 'widened');
+  assert.equal(c(cfg({}), cfg({ enableAllProjectMcpServers: true })).kind, 'widened');
+  const added = c(cfg({}), set({ permissions: { allow: ['Read'], ask: [], deny: [] }, hooks: { ...hk('node guard hook pre'), Stop: [{ hooks: [{ type: 'command', command: 'node guard hook stop' }] }] } }));
+  assert.equal(added.kind, 'changed', '훅을 더하는 것은 좁히는 쪽 — 거부가 아니라 사람 승인');
+});
+
+test('눌러도 거부 ⑥: 모드 표에서 끝내기 전 시험을 줄임', () => {
+  const mk = (finish) => set({ gate: { common: { write: ['x/**'], finish: ['plan check'] }, modes: { develop: { write: ['**'], finish } } } });
+  const c = (b, a) => classify({ path: 'cfg/modes.json', role: 'modes', before: b, after: a });
+  assert.equal(c(mk(['validate', 'affected']), mk(['validate'])).kind, 'widened');
+  assert.equal(c(mk(['validate']), mk(['validate', 'affected'])).kind, 'changed', '시험을 더하는 것은 승인');
 });
