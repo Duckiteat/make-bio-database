@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 320.7 | 318 |  | 분류됨 1 |
+| `CHANGES.md` | 321.4 | 319 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -194,7 +194,7 @@
 | `docs/plan/items/PLAN-075.md` | 1.7 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-076.md` | 1.8 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-077.md` | 2.6 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-078.md` | 2.0 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-078.md` | 2.9 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-079.md` | 2.3 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-080.md` | 2.0 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-081.md` | 1.3 | 21 |  | 생성물 |
@@ -283,7 +283,7 @@
 | `docs/reports/2026-10-25-structure-evaluation.md` | 8.5 | 69 |  | 분류됨 34 |
 | `docs/reports/2026-10-25-tca-resolution.md` | 6.9 | 45 |  | 분류됨 25 |
 | `docs/reports/2026-10-25-why-so-many-defects.md` | 6.4 | 47 |  | 분류됨 22 |
-| `docs/reports/2026-11-01-data-integrity.md` | 12.7 | 104 |  | 미분류 |
+| `docs/reports/2026-11-01-data-integrity.md` | 18.1 | 143 |  | 미분류 |
 | `docs/reports/2026-11-01-engine-teardown-2.md` | 9.7 | 57 |  | 미분류 |
 | `docs/reports/2026-11-01-engine-teardown.md` | 31.0 | 210 |  | 미분류 |
 | `docs/reports/2026-11-01-work-automation.md` | 18.7 | 194 |  | 미분류 |
