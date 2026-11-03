@@ -276,6 +276,19 @@
       ]
     },
     {
+      "path": "mcp/kinetics_search.mjs",
+      "class": "law",
+      "format": "Node ESM (순수 함수)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "mcp/fetch.mjs",
+      "interpret": "[MCP] 검색 계층 — 효소·종·파라미터로 Europe PMC 질의를 짜고(동의어 확장·사람 9606 고정·주입 거부), 검색 응답과 UniProt kinetics 필드를 후보 줄로 해석. 파일·네트워크 없음. 결과는 후보일 뿐 값·인용 근거가 아님.",
+      "level": "L2",
+      "area": "code:mcp",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "mcp/clerk.mjs",
       "class": "law",
       "format": "Node ESM (MCP 서버)",
@@ -1718,6 +1731,20 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "MCP 시험 — 프로토콜 · query 가 dbtool 과 같은 글·메모리 사본·파일 바뀌면 다시 읽음 · 역할 거부 · 단일 작성자 · 핸드오프 추가만 · 받기 기록 변조·파일 바뀜 · mcp 서버의 파일 쓰기 없음 · fetch 인자 검사.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/kinetics_search.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "검색 계층 시험 — 문헌 질의(동의어·사람 고정·주입 거부) · 검색 응답의 접근 상태 · UniProt 속도 상수 줄(근거 PMID·kcat 문장 그대로) · UniProt 주소 형식. 네트워크 없음.",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [

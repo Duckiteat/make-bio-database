@@ -139,5 +139,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 | `mcp resolve_doi` | evidence | DOI → Europe PMC |
 | `mcp brenda_kinetics` | evidence | BRENDA Km·kcat 받기 (계정 = 환경 변수) |
 | `dbtool assay` | registry | 측정법 장부 보기·추가 — 만든 방법 · 근거 · 버린 대안 · 사다리의 단 (사법부 검사 → 봉인 → 서기) |
+| `mcp search_literature` | evidence | 효소·파라미터·사람으로 후보 문헌 찾기 (후보만) |
+| `mcp uniprot_kinetics` | evidence | UniProt 사람 속도 상수와 근거 PMID 받기 (후보만) |
 
 읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool vocab` · `dbtool context` · `dbtool mechanism` · `dbtool pattern` · `dbtool resolution` · `dbtool audit-run` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool prompt` · `mcp validate_patch` · `mcp resolve_access` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp pattern` · `mcp limitations` · `mcp assume_uses` · `mcp qualgraph` · `mcp retraction` · `mcp inbox`

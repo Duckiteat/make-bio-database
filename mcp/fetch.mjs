@@ -11,23 +11,25 @@ import { createHash } from 'node:crypto';
 import * as CLERK from '../legislative/clerk.mjs';
 import { createRequire } from 'node:module';
 import { serve, need, ROLES } from './protocol.mjs';
+import * as KS from './kinetics_search.mjs';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = process.env.BIODB_DATA ? resolve(process.env.BIODB_DATA) : join(ROOT, 'data');
 const EPMC = join(DATA, 'fetched', 'europepmc');
 const API = 'https://www.ebi.ac.uk/europepmc/webservices/rest';
 // 원천별 예의 (동작 표): 요청 사이 최소 간격. 우리 쪽 개수를 늘려도 상대 제한이 상한이다 (§4.3 개수 규칙)
-const POLITE_MS = { europepmc: 350, brenda: 1000 };
+const POLITE_MS = { europepmc: 350, brenda: 1000, uniprot: 400 };
+const SEARCH_DIR = join(DATA, 'fetched', 'search'), UNIKIN_DIR = join(DATA, 'fetched', 'uniprot-kinetics');
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 const last = {};
 async function polite(src) { const wait = (last[src] || 0) + POLITE_MS[src] - Date.now(); if (wait > 0) await new Promise((r) => setTimeout(r, wait)); last[src] = Date.now(); }
 
 // 받기 한 건 → 서기 받기 + 받기 기록. 이미 있으면 다시 받지 않는다(기록에는 cached 로)
-async function get(file, url, refetch) {
+async function get(file, url, refetch, src = 'europepmc', dir = EPMC) {
   const base = file.replace(/\.(json|xml)$/, ''), ext = file.endsWith('.xml') ? '.xml' : '.json', present = existsSync(file) ? file : null;
-  if (!present || refetch) await polite('europepmc');
+  if (!present || refetch) await polite(src);
   const [r] = CLERK.fetchToInbox([{ file: base, urls: [url], present: refetch ? null : present }], { refetch: !!refetch });
   if (r.file && !r.file.endsWith(ext)) r.ok = false;
-  const [ev] = CLERK.appendFetchLog(EPMC, [{ ...r, url: r.url || url }]);
+  const [ev] = CLERK.appendFetchLog(dir, [{ ...r, url: r.url || url }]);
   return { ...r, log: ev };
 }
 // ===== BRENDA (계정 원천 — 사용자 결정: 수집가도 이 도구로) =====
@@ -93,6 +95,19 @@ const tools = [
       if (!med) return { text: `DOI ${doi}: 기록 ${hits.length} 개, PubMed 학술지 기록 없음 (원천 ${[...new Set(hits.map((x) => x.source))].join(',')})`, data: { doi, found: true, pmid: null, sources: hits.map((x) => x.source) } };
       const ab = await abstract(med.pmid, false), acc = access(ab.rec);
       return { text: `DOI ${doi} → PMID ${med.pmid} — ${ACCESS_KO[acc]} · 초록 ${relp(ab.file)} (받기 기록 #${r.log.seq}·#${ab.log.seq})`, data: { doi, pmid: med.pmid, access: acc, inbox: relp(ab.file) } }; } },
+  { name: 'search_literature', roles: W, description: '효소(이름·유전자·EC)·파라미터(kcat|km|vmax|halflife)·종(사람 9606)으로 Europe PMC 후보 문헌을 찾는다. 질의는 도구가 짠다(동의어 확장). 응답 원본은 수신함 data/fetched/search/ 에 받기 기록과 함께. 결과는 후보 목록일 뿐 — 값·인용 근거가 아니다: 값은 fetch_abstract / fetch_fulltext 로 원문을 받은 뒤 인용을 대조해야 한다', inputSchema: { type: 'object', properties: { enzyme: { type: 'string' }, gene: { type: 'string' }, ec: { type: 'string', description: '예: 1.1.1.37' }, param: { type: 'string', enum: Object.keys(KS.PARAMS) }, page_size: { type: 'integer' }, refetch: { type: 'boolean' } } },
+    run: async (a) => { const q = KS.buildLiteratureQuery({ enzyme: a.enzyme, gene: a.gene, ec: a.ec, param: a.param, taxon: 9606 }), url = KS.literatureUrl(q, a.page_size || 25), file = join(SEARCH_DIR, `LIT-${sha(url).slice(0, 16)}.json`);
+      const r = await get(file, url, a.refetch, 'europepmc', SEARCH_DIR);
+      if (!r.ok) return { text: `검색 실패 (${r.error || '형식'}) — 받기 기록 #${r.log.seq}`, isError: true };
+      const { hitCount, hits } = KS.parseLiterature(JSON.parse(readFileSync(file, 'utf8')));
+      return { text: [`질의: ${q}`, `전체 ${hitCount} 건 · 아래 ${hits.length} 건은 후보 (값·인용 근거 아님 — 원문을 받아 대조할 것)`, ...hits.map((h) => `  PMID ${h.pmid} · ${h.year || '?'} · ${h.access} · ${h.title.slice(0, 100)}`), `수신함 ${relp(file)} (sha256 ${(r.log.sha256 || '').slice(0, 12)}…, 받기 기록 #${r.log.seq}${r.log.cached ? ' · 이미 있음' : ''})`].join('\n'), data: { query: q, hitCount, hits, inbox: relp(file), sha256: r.log.sha256, log_seq: r.log.seq } }; } },
+  { name: 'uniprot_kinetics', roles: W, description: 'UniProt 사람(9606) 검토됨 항목의 큐레이션 속도 상수(Km·Vmax·kcat 문장)와 근거 PubMed 번호를 받는다 (EC · 접수번호 · 유전자 중 하나). 응답 원본은 수신함 data/fetched/uniprot-kinetics/ 에, 받기 기록과 함께. 2차 큐레이션 값이라 후보 — 근거 PMID 의 원문에서 확인한 뒤에만 쓴다', inputSchema: { type: 'object', properties: { ec: { type: 'string' }, accession: { type: 'string' }, gene: { type: 'string' }, refetch: { type: 'boolean' } } },
+    run: async (a) => { const url = KS.uniprotKineticsUrl({ ec: a.ec, accession: a.accession, gene: a.gene }), file = join(UNIKIN_DIR, `KIN-${sha(url).slice(0, 16)}.json`);
+      const r = await get(file, url, a.refetch, 'uniprot', UNIKIN_DIR);
+      if (!r.ok) return { text: `UniProt 받기 실패 (${r.error || '형식'}) — 받기 기록 #${r.log.seq}`, isError: true };
+      const rows = KS.parseUniprotKinetics(JSON.parse(readFileSync(file, 'utf8')));
+      const line = (x) => x.kind === 'kcat_note' ? `  ${x.accession} ${x.gene || ''} kcat 문장 · PMID ${x.pmids.join(',') || '없음'} · ${x.text.slice(0, 100)}` : `  ${x.accession} ${x.gene || ''} ${x.kind} ${x.value} ${x.unit} · ${x.substrate || x.condition || '?'} · PMID ${x.pmids.join(',') || '없음'}`;
+      return { text: [`UniProt 사람 검토됨 · 속도 상수 ${rows.length} 줄 (후보 — 근거 PMID 원문 확인 전에는 값으로 쓰지 않음)`, ...rows.slice(0, 60).map(line), `수신함 ${relp(file)} (sha256 ${(r.log.sha256 || '').slice(0, 12)}…, 받기 기록 #${r.log.seq}${r.log.cached ? ' · 이미 있음' : ''})`].join('\n'), data: { rows, inbox: relp(file), sha256: r.log.sha256, log_seq: r.log.seq } }; } },
   { name: 'brenda_kinetics', roles: W, description: 'BRENDA 에서 EC 번호·생물종의 Km(mM)·kcat(s⁻¹) 기록과 그 문헌의 PubMed 번호를 받는다 (계정은 환경 변수 — 이 도구는 계정 정보를 돌려주지 않는다). 받은 원본은 수신함 data/fetched/brenda/ 에, 받을 때마다 받기 기록. 값은 후보 — 사람(9606) 값만 사람 칸에', inputSchema: { type: 'object', properties: { ec: { type: 'string', description: '예: 1.1.1.37' }, organism: { type: 'string', description: '기본 Homo sapiens' }, kinds: { type: 'array', items: { type: 'string', enum: ['km', 'kcat'] } }, refetch: { type: 'boolean' } }, required: ['ec'] },
     run: async (a) => {
       const ec = need(a, 'ec', /^\d+\.\d+\.\d+\.\d+$/), org = a.organism == null ? 'Homo sapiens' : need(a, 'organism', /^[A-Za-z][A-Za-z .-]{1,60}$/);
