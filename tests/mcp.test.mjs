@@ -112,7 +112,7 @@ test('⑥ 받기 기록 검사: 통과 · 사슬 변조 · 받은 뒤 파일이 
 
 test('⑦ 삼권: query·fetch 는 파일을 직접 쓰지 않는다 — 쓰기는 입법 서기(clerk.mjs)를 지난다', () => {
   const W = /\b(writeFileSync|appendFileSync|renameSync|unlinkSync|mkdirSync|writeSync|createWriteStream|rmSync)\b/;
-  for (const f of ['mcp/query.mjs', 'mcp/fetch.mjs', 'mcp/protocol.mjs']) assert.ok(!W.test(readFileSync(join(ROOT, f), 'utf8')), `${f}: 파일 쓰기 함수`);
+  for (const f of ['mcp/query.mjs', 'mcp/fetch.mjs', 'mcp/protocol.mjs', 'mcp/kinetics_search.mjs']) assert.ok(!W.test(readFileSync(join(ROOT, f), 'utf8')), `${f}: 파일 쓰기 함수`);
   assert.ok(!/legislative\/clerk/.test(readFileSync(join(ROOT, 'mcp/query.mjs'), 'utf8')), 'query 는 서기를 부르지 않는다(읽기 전용)');
   assert.ok(!/child_process/.test(readFileSync(join(ROOT, 'mcp/query.mjs'), 'utf8')) && !/child_process/.test(readFileSync(join(ROOT, 'mcp/fetch.mjs'), 'utf8')));
 });
@@ -121,7 +121,7 @@ test('⑧ fetch 인자 검사 (네트워크 없음): PMID 형식이 아니면 �
   const { out } = call('fetch.mjs', [tool('fetch_fulltext', { pmid: 'PMC123; rm -rf' }), { method: 'tools/list' }]);
   assert.equal(out[0].result.isError, true);
   assert.match(text(out[0]), /형식이 아님/);
-  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext', 'resolve_doi', 'brenda_kinetics']);
+  assert.deepEqual(out[1].result.tools.map((t) => t.name), ['resolve_access', 'fetch_abstract', 'fetch_fulltext', 'resolve_doi', 'search_literature', 'uniprot_kinetics', 'brenda_kinetics']);
 });
 
 test('⑨ fetch resolve_doi 인자 검사 (네트워크 없음) · 수신함의 DOI 검색 기록도 출처 상태로 읽힌다', () => {

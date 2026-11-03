@@ -536,6 +536,8 @@
     revalidation_required:  { label: '재검증 필요 (근거 철회됨)', note: '등록된 검증 세트의 관찰이 철회됨 — 결론을 다시 세우기 전에는 검증으로 읽지 않는다(차단이 아니라 라벨)' },
   },
   // 속도 상수 칸의 SI 정준 단위. k·k0·k_r 은 차수에 따라 M^(1−order)·s⁻¹ (단위 문자열 'M^x s^-1', x = 1 − order)
+  // 기질 축 (docs/design/substrate-axis.md): 값의 열쇠에 기질(정의항 번호)을 두는 속성. 읽는 쪽(엔진의 첫 기질 Km)이 있는 것만 — 소비자가 생기면 더한다
+  substratedProperties: ['Km'],
   kineticUnits: { k_on: 'M^-1 s^-1', k_off: 's^-1', kcat: 's^-1', Kd: 'M', Km: 'M', K: 'M', half_life: 's', n: '1', fmax: '1', fmin: '1', dG_act: 'J/mol', dG0: 'J/mol' },
   uncertaintyKinds: {
     measurement: { label: '측정 잡음 (장비·분석)' },

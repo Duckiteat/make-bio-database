@@ -61,3 +61,5 @@
 {"cmd": "mcp inbox", "kind": "mcp", "modes": ["author", "inspect"], "writes": null, "what": "수신함 목록"}
 {"cmd": "mcp verify_collection", "kind": "mcp", "modes": ["inspect"], "writes": null, "what": "후보 판정"}
 {"cmd": "dbtool assay", "kind": "cli", "modes": ["author"], "writes": "registry", "writes_on": "^\\s*add\\b", "what": "측정법 장부 보기·추가 — 만든 방법 · 근거 · 버린 대안 · 사다리의 단 (사법부 검사 → 봉인 → 서기)"}
+{"cmd": "mcp search_literature", "kind": "mcp", "modes": ["author"], "writes": "evidence", "what": "효소·파라미터·사람으로 후보 문헌 찾기 (후보만)"}
+{"cmd": "mcp uniprot_kinetics", "kind": "mcp", "modes": ["author"], "writes": "evidence", "what": "UniProt 사람 속도 상수와 근거 PMID 받기 (후보만)"}

@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (319 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (322 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 285 |
+| 잡음 `caught` | 288 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 285
+## 잡음 `caught` — 288
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -304,6 +304,9 @@
 | RULE-0529 | GitHub 의 파일 쓰기 도구(push_files · create_or_update_file · delet | replace | rebuild/probe.mjs | ⑨ 영수증 감사 (RULE-0529): GitHub 파일 쓰기 도구가 영수증에 있으면 잡고, 읽기 도구나 다른 일은 건드리지 않는다 |
 | RULE-0530 | 원문 안의 앞뒤가 맞아야 한다 — SEM 은 SD/√n 에 적힌 자리수의 반올림 오차 안에서 맞고, SEM  | replace | judicial/consistency.js | SD ↔ SEM: SEM = SD/√n 이 맞으면 통과, 틀리면 사유, 바꿔 적은 것은 따로 |
 | RULE-0531 | 참여자 모두에 원소 조성이 있는 반응은 원자 · 전하가 균형이어야 한다(계수를 곱해 센다). 조성을 모르는  | replace | judicial/stoichiometry.js | 불균형은 거부 대상 — 무엇이 얼마나 모자란지 사유에 나온다 |
+| RULE-0532 | 기질(값의 substrate · 관찰의 observable.substrate)은 vocab.substrate | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
+| RULE-0533 | 한 (대상, 속성)의 현재 값은 모두 기질이 있거나 모두 없어야 한다 — 섞이면 엔진의 "첫 기질"(단계 입 | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
+| RULE-0534 | 값의 근거 관찰(by_substrate.from)이 observable.substrate 를 밝혔다면 그 값 | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
 
 ## 설정에 있음 `present` — 8
 

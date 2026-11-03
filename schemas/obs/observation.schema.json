@@ -50,6 +50,11 @@
             "param": {
               "type": "string"
             },
+            "substrate": {
+              "type": "string",
+              "pattern": "^D\\d{6}$",
+              "description": "기질 축 — 이 측정이 어느 기질에 대한 것인가(정의항 번호). kinetic_constant 의 Km 에만, 그 규칙 단계의 minor 아닌 입력이어야 한다 (docs/design/substrate-axis.md)"
+            },
             "also": {
               "type": "array",
               "items": { "type": "string", "minLength": 1 }

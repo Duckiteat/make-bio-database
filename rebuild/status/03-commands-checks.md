@@ -48,7 +48,7 @@
 | 서버 | 수 | 도구 |
 |---|---|---|
 | `mcp/clerk.mjs` | 10 | put_handoff · validate_patch · merge · augment_apply · register · assume_add · dictionary_add · accept · attest · write_derived |
-| `mcp/fetch.mjs` | 5 | resolve_access · fetch_abstract · fetch_fulltext · resolve_doi · brenda_kinetics |
+| `mcp/fetch.mjs` | 7 | resolve_access · fetch_abstract · fetch_fulltext · resolve_doi · search_literature · uniprot_kinetics · brenda_kinetics |
 | `mcp/query.mjs` | 12 | summary · map · context · mechanism · pattern · limitations · origin · assume_uses · qualgraph · retraction · inbox · verify_collection |
 
 ## 판정 거부 자리 (E( — 규칙 번호 없이 문장만)
@@ -57,7 +57,7 @@
 |---|---|
 | `judicial/assumption_audit.js` | 22 |
 | `judicial/contract.js` | 9 |
-| `judicial/judicial.js` | 455 |
+| `judicial/judicial.js` | 469 |
 
 ## 시험
 
@@ -84,6 +84,7 @@
 | `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 23 |
 | `tests/guard-matrix.test.mjs` | 4 |
+| `tests/kinetics_search.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/merge-check.test.mjs` | 4 |
 | `tests/mhc.test.mjs` | 11 |
@@ -107,6 +108,7 @@
 | `tests/stats.test.mjs` | 7 |
 | `tests/stochastic.test.mjs` | 7 |
 | `tests/stoichiometry.test.mjs` | 4 |
+| `tests/substrate_axis.test.mjs` | 5 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |

@@ -551,3 +551,6 @@
 {"from": "RULE-0529", "rel": "because", "to": "code:rebuild/probe.mjs", "by": "judged", "note": "STG-12 점검 ⑩ — 명령 장부로 막으면 장부 ↔ 실제 도구 일치 시험(L6)과 부딪혀 사람 손이 필요해서, 사람 손이 필요 없는 감사로 둠"}
 {"from": "RULE-0530", "rel": "because", "to": "code:judicial/consistency.js", "by": "judged", "note": "ASY-14 끝나는 조건 — 알려진 불가능 조합을 잡음 · 바꿔 적힌 SD/SEM 표시 시험. 소수 자리수는 적힌 글에서 읽음(2.0 의 끝 0 이 숫자에서는 사라지므로)"}
 {"from": "RULE-0531", "rel": "because", "to": "code:judicial/stoichiometry.js", "by": "judged", "note": "ASY-15 끝나는 조건 — 불균형 반응 거부 · 검사 불가 반응 수가 보임. 실제 자료는 57 단계 모두 검사 불가(원소 정보는 부분 구조의 원자 수뿐이고 계수가 없음) — 그래서 연결하지 않고 함수와 보고까지"}
+{"from": "RULE-0532", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "기질이 다른 Km 은 다른 양 — 열쇠에 기질이 없어 둘째 기질의 Km 이 못 들어왔다(O000007). 허용 속성 · 단계 입력 대조"}
+{"from": "RULE-0533", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "기질 없는 값은 첫 기질의 값으로 읽히므로 같은 속성에 기질 있는 값과 섞이면 모호하다"}
+{"from": "RULE-0534", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "다른 기질을 잰 관찰을 근거로 달면 엉뚱한 기질의 Km 이 들어간다"}

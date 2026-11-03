@@ -103,7 +103,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 
 ## 컴퓨터가 막는 규칙
 
-190 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+193 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
 
 - 권한·쓰기 (삼권 분립): RULE-0018 · RULE-0019 · RULE-0023 · RULE-0026 · RULE-0027 · RULE-0435 · RULE-0436
 - 수집·위임 (다른 AI·수집가): RULE-0274 · RULE-0275 · RULE-0285 · RULE-0286 · RULE-0287 · RULE-0289 · RULE-0290 · RULE-0291 · RULE-0293 · RULE-0295 · RULE-0296 · RULE-0297 · RULE-0299 · RULE-0300 · RULE-0460
@@ -112,7 +112,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 - 한계: RULE-0078 · RULE-0079 · RULE-0083 · RULE-0084 · RULE-0085 · RULE-0086 · RULE-0087 · RULE-0088 · RULE-0089 · RULE-0090 · RULE-0104 · RULE-0107 · RULE-0110 · RULE-0111 · RULE-0112 · RULE-0113 · RULE-0114 · RULE-0115 · RULE-0116 · RULE-0119 · RULE-0121 · RULE-0123 · RULE-0124 · RULE-0125 · RULE-0126 · RULE-0127 · RULE-0128 · RULE-0129 · RULE-0130 · RULE-0131 · RULE-0133 · RULE-0138 · RULE-0139 · RULE-0140 · RULE-0141 · RULE-0153 · RULE-0154 · RULE-0155 · RULE-0156 · RULE-0162 · RULE-0165 · RULE-0168 · RULE-0169 · RULE-0171 · RULE-0172 · RULE-0174 · RULE-0182 · RULE-0186 · RULE-0219 · RULE-0220 · RULE-0233
 - 검증·판정: RULE-0189 · RULE-0190 · RULE-0202 · RULE-0203
 - 규칙·코드·시험: RULE-0247 · RULE-0250 · RULE-0251
-- 코드에서 찾은 검사: RULE-0498 · RULE-0499 · RULE-0500 · RULE-0501 · RULE-0502 · RULE-0503 · RULE-0504 · RULE-0505 · RULE-0510 · RULE-0511 · RULE-0522 · RULE-0524 · RULE-0525
+- 코드에서 찾은 검사: RULE-0498 · RULE-0499 · RULE-0500 · RULE-0501 · RULE-0502 · RULE-0503 · RULE-0504 · RULE-0505 · RULE-0510 · RULE-0511 · RULE-0522 · RULE-0524 · RULE-0525 · RULE-0532 · RULE-0533 · RULE-0534
 - 기타: RULE-0216 · RULE-0217 · RULE-0218 · RULE-0246
 
 ## 형식 설명
@@ -139,5 +139,7 @@ description: "정보 작성 모드 — 정의·기전·관찰·외부 ID·한계
 | `mcp resolve_doi` | evidence | DOI → Europe PMC |
 | `mcp brenda_kinetics` | evidence | BRENDA Km·kcat 받기 (계정 = 환경 변수) |
 | `dbtool assay` | registry | 측정법 장부 보기·추가 — 만든 방법 · 근거 · 버린 대안 · 사다리의 단 (사법부 검사 → 봉인 → 서기) |
+| `mcp search_literature` | evidence | 효소·파라미터·사람으로 후보 문헌 찾기 (후보만) |
+| `mcp uniprot_kinetics` | evidence | UniProt 사람 속도 상수와 근거 PMID 받기 (후보만) |
 
 읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool vocab` · `dbtool context` · `dbtool mechanism` · `dbtool pattern` · `dbtool resolution` · `dbtool audit-run` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool prompt` · `mcp validate_patch` · `mcp resolve_access` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp pattern` · `mcp limitations` · `mcp assume_uses` · `mcp qualgraph` · `mcp retraction` · `mcp inbox`

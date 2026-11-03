@@ -300,6 +300,17 @@
     if (isObj(k.context)) o.context = normContext(k.context);
     // v10: 실측 상수는 관찰 기록의 파생값 — from: [{ param, obs: O… }]. lumped: 매개 단계를 생략해 맞춘 상수(원 관찰 참조 필수, 값 대조 없음)
     if (arr(k.from).length) o.from = arr(k.from).filter(isObj).map((f) => ({ param: str(f.param), obs: str(f.obs) }));
+    // 기질 축 (docs/design/substrate-axis.md §2.5): 기질(정의항 번호)별 값 — 평면 칸이 아니라 여기서만 기질이 다른 같은 속성을 싣는다
+    if (isObj(k.by_substrate)) {
+      o.by_substrate = {};
+      for (const sid of Object.keys(k.by_substrate).map(str).sort()) {
+        const e = k.by_substrate[sid], x = {};
+        if (!isObj(e)) continue;
+        for (const f of KIN_FIELDS) if (e[f] != null && e[f] !== '') x[f] = Number(e[f]);
+        if (arr(e.from).length) x.from = arr(e.from).map(str).filter(Boolean);
+        o.by_substrate[sid] = x;
+      }
+    }
     if (k.lumped) o.lumped = true;
     o.evidence = normEvidence(k.evidence);
     return o;
@@ -336,6 +347,7 @@
     for (const f of ['mean', 'sd', 'low', 'high']) if (typeof x[f] === 'number') o.value[f] = x[f];
     if (x.level != null) o.value.level = str(x.level);
     if (str(v.unit)) o.unit = str(v.unit);
+    if (str(v.substrate)) o.substrate = str(v.substrate); // 기질 축 — 열쇠의 일부 (substratedProperties 의 속성만)
     if (isObj(v.context)) o.context = normContext(v.context);
     o.evidence = normEvidence(v.evidence);
     if (arr(v.from).length) o.from = arr(v.from).map(str).filter(Boolean);
@@ -367,24 +379,46 @@
     if (v.unit) o.unit = v.unit; if (v.from && v.from.length) o.from = v.from[0]; if (v.note) o.note = v.note;
     return o;
   };
-  const valuesOfKinetics = (ref, k) => KIN_VALUE_FIELDS.filter((f) => k[f] != null).map((f) => {
-    const v = { subject: ref, property: f, value: { dist: 'point', mean: k[f] }, evidence: k.evidence, derivation: k.lumped ? 'lumped' : 'direct' };
-    if (k.context) v.context = k.context;
-    const fr = (k.from || []).filter((x) => x.param === f).map((x) => x.obs); if (fr.length) v.from = fr;
-    return normValue(v);
-  });
+  // 보기 → 값. by_substrate 에 있는 속성의 평면 칸은 첫 기질을 보이는 투영이라 값을 만들지 않는다 (보기 → 값 → 보기 왕복이 멱등)
+  const valuesOfKinetics = (ref, k) => {
+    const bs = isObj(k.by_substrate) ? k.by_substrate : {}, shadow = new Set(Object.values(bs).flatMap((e) => Object.keys(e)));
+    const mk = (f, mean, from, sub) => {
+      const v = { subject: ref, property: f, value: { dist: 'point', mean }, evidence: k.evidence, derivation: k.lumped ? 'lumped' : 'direct' };
+      if (sub) v.substrate = sub;
+      if (k.context) v.context = k.context;
+      if (from && from.length) v.from = from;
+      return normValue(v);
+    };
+    const plain = KIN_VALUE_FIELDS.filter((f) => k[f] != null && !shadow.has(f)).map((f) => mk(f, k[f], (k.from || []).filter((x) => x.param === f).map((x) => x.obs)));
+    const bySub = Object.keys(bs).sort().flatMap((sid) => KIN_VALUE_FIELDS.filter((f) => bs[sid][f] != null).map((f) => mk(f, bs[sid][f], bs[sid].from, sid)));
+    return plain.concat(bySub);
+  };
+  const valueKeyOf = (v) => `${v.property}|${v.substrate || ''}`; // 짝짓기 열쇠 (접기 · 맞추기) — 속성 + 기질
   const lawOfKinetics = (k) => normKineticLaw(k);
   // 규칙에 법칙 모양을 놓는다 — 키 순서를 normRule 과 같게(evidence 앞) 두어 정규화가 멱등이고 직렬화 해시가 안정적이게
   const placeLaw = (r, law) => { const ev = r.evidence; delete r.evidence; delete r.kinetic_law; if (law) r.kinetic_law = law; if (ev !== undefined) r.evidence = ev; };
-  function kineticsOf(law, vals) {
+  // primary = 이 규칙 단계의 첫 minor 아닌 입력(기질) — 엔진(core.js lawInsB[0])과 사법부(derivative.js lawIns[0])가 쓰는 "첫 기질".
+  //   기질 있는 값은 평면 칸에 첫 기질의 것만 투영한다 (엔진은 평면 칸만 읽음). 첫 기질의 값이 없으면 평면 칸을 비운다 — 다른 기질의 숫자를 대신 쓰지 않는다.
+  function kineticsOf(law, vals, primary) {
     const o = { law: law.law };
-    const by = new Map(vals.map(([, v]) => [v.property, v]));
+    const by = new Map(vals.filter(([, v]) => !v.substrate).map(([, v]) => [v.property, v]));
+    const bs = {};
+    for (const [, v] of vals) if (v.substrate) { (bs[v.substrate] = bs[v.substrate] || {})[v.property] = v; if (v.substrate === primary) by.set(v.property, v); }
     for (const f of KIN_FIELDS) { if (f === 'order') { if (law.order != null) o.order = law.order; continue; } if (by.has(f)) o[f] = by.get(f).value.mean; }
     if (law.reversible) o.reversible = true;
     if (law.env) o.env = { ...law.env };
     if (law.context) o.context = law.context;
     const from = KIN_FIELDS.flatMap((f) => (by.has(f) && by.get(f).from ? by.get(f).from.map((obs) => ({ param: f, obs })) : []));
     if (from.length) o.from = from;
+    if (Object.keys(bs).length) {
+      o.by_substrate = {};
+      for (const sid of Object.keys(bs).sort()) {
+        const e = {};
+        for (const f of KIN_FIELDS) if (bs[sid][f]) e[f] = bs[sid][f].value.mean;
+        const fr = [...new Set(Object.values(bs[sid]).flatMap((v) => v.from || []))]; if (fr.length) e.from = fr;
+        o.by_substrate[sid] = e;
+      }
+    }
     if (law.lumped) o.lumped = true;
     o.evidence = law.evidence;
     return o;
@@ -401,9 +435,11 @@
   // 보기 붙이기 (열거되지 않음 — JSON 에는 나가지 않는다)
   function attachViews(db) {
     const cur = currentValues(db), view = (o, k, v) => Object.defineProperty(o, k, { value: v, enumerable: false, writable: true, configurable: true });
+    const stepIds = Object.keys(db.steps || {}).sort();
+    const primaryOf = (ref) => { const st = stepIds.map((i) => db.steps[i]).find((s) => s.rule === ref), i = st && (st.inputs || []).find((p) => !p.minor); return i ? String(i.b).split('|')[0] : null; };
     for (const [sid, d] of Object.entries(db.senses)) {
       view(d, 'obs', (cur.get(sid) || []).filter(([, v]) => !KIN_VALUE_FIELDS.includes(v.property) || !v.subject.includes('/rule/')).map(([, v]) => obsOfValue(v)));
-      for (const r of d.rule) if (r.kinetic_law) view(r, 'kinetics', kineticsOf(r.kinetic_law, cur.get(`${sid}/rule/${r.id}`) || []));
+      for (const r of d.rule) if (r.kinetic_law) view(r, 'kinetics', kineticsOf(r.kinetic_law, cur.get(`${sid}/rule/${r.id}`) || [], primaryOf(`${sid}/rule/${r.id}`)));
     }
   }
   // 정규화의 마지막 단계: 입력이 준 obs·kinetics(보기이든 고친 배열이든)를 값 층과 맞춘다.
@@ -438,8 +474,8 @@
         placeLaw(r, lawOfKinetics(k));
         if (!hasValues) { for (const v of want) db.values[newId()] = v; continue; }
         if (canonJ(want) === canonJ(curK.map(([, v]) => { const { recorded_at, supersedes, evidence_at, ...rest } = v; return rest; }))) continue;
-        const left = new Map(curK.map(([id, v]) => [v.property, id]));
-        for (const v of want) { const id = left.get(v.property); if (id) { left.delete(v.property); const keep = db.values[id]; db.values[id] = Object.assign(v, keep.recorded_at ? { recorded_at: keep.recorded_at } : {}); } else db.values[newId()] = Object.assign(v, stampOf() ? { recorded_at: stampOf() } : {}); }
+        const left = new Map(curK.map(([id, v]) => [valueKeyOf(v), id]));
+        for (const v of want) { const id = left.get(valueKeyOf(v)); if (id) { left.delete(valueKeyOf(v)); const keep = db.values[id]; db.values[id] = Object.assign(v, keep.recorded_at ? { recorded_at: keep.recorded_at } : {}); } else db.values[newId()] = Object.assign(v, stampOf() ? { recorded_at: stampOf() } : {}); }
         for (const id of left.values()) delete db.values[id];
       }
     }
@@ -549,6 +585,7 @@
     const ob = isObj(b.observable) ? b.observable : {};
     const o = { observable: { kind: str(ob.kind), target: str(ob.target) } };
     if (str(ob.param)) o.observable.param = str(ob.param);
+    if (str(ob.substrate)) o.observable.substrate = str(ob.substrate); // 기질 축 — 정의항 번호
     if (arr(ob.also).length) o.observable.also = arr(ob.also).map(str);
     if (str(ob.denominator)) o.observable.denominator = str(ob.denominator);
     if (num(ob.threshold) !== undefined) o.observable.threshold = num(ob.threshold);
@@ -986,6 +1023,6 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, normObservation, normValue, contextKey, followMoved, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, normValue, contextKey, followMoved, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, valueKeyOf, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION });
 });
