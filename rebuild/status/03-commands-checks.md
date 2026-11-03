@@ -57,7 +57,7 @@
 |---|---|
 | `judicial/assumption_audit.js` | 22 |
 | `judicial/contract.js` | 9 |
-| `judicial/judicial.js` | 455 |
+| `judicial/judicial.js` | 469 |
 
 ## 시험
 
@@ -108,6 +108,7 @@
 | `tests/stats.test.mjs` | 7 |
 | `tests/stochastic.test.mjs` | 7 |
 | `tests/stoichiometry.test.mjs` | 4 |
+| `tests/substrate_axis.test.mjs` | 5 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |

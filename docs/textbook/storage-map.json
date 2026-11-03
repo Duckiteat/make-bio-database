@@ -1753,6 +1753,20 @@
       ]
     },
     {
+      "path": "tests/substrate_axis.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "기질 축 시험 — 패치의 kinetics.by_substrate 가 기질별 Km 을 값 층에 싣고 평면 Km 은 첫 기질의 값을 투영 · 첫 기질의 값이 없으면 평면 Km 을 비움 · 보기 왕복 멱등 · 사법부(허용 속성 · 단계 입력 · 섞임 · 관찰 기질) · 관찰의 observable.substrate (RULE-0532–0534).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/acceptance.test.mjs",
       "class": "verification",
       "format": "node:test",

@@ -247,14 +247,22 @@
     const vals = db.values || {}, KIN = M.KIN_VALUE_FIELDS, laws = new Set();
     for (const [sid, d] of Object.entries(db.senses)) for (const r of d.rule) if (r.kinetic_law) laws.add(`${sid}/rule/${r.id}`);
     const superseders = new Map(), cur = new Set([...M.currentValues(db).values()].flat().map(([id]) => id)), keys = new Map();
+    const substrates = new Map(); // 규칙 → 단계의 minor 아닌 입력 정의항 번호들 (기질 후보)
+    for (const st of Object.values(db.steps || {})) { if (!st.rule) continue; if (!substrates.has(st.rule)) substrates.set(st.rule, new Set()); for (const p of st.inputs || []) if (!p.minor) substrates.get(st.rule).add(String(p.b).split('|')[0]); }
     for (const [id, v] of Object.entries(vals)) {
       // 맥락 열쇠 (v12 §5) — 현재 값만 (대체·철회된 기록은 그때의 규약으로 남은 이력)
       if (cur.has(id)) {
         const w0 = `${id} (${v.subject} · ${v.property}) 맥락`, c = v.context || {};
         checkContextKeys(db, c, w0, E);
-        const k = `${v.subject}|${v.property}|${M.contextKey(c)}${v.value.dist === 'categorical' ? '|' + v.value.level : ''}`;
+        const k = `${v.subject}|${v.property}|${v.substrate || ''}|${M.contextKey(c)}${v.value.dist === 'categorical' ? '|' + v.value.level : ''}`;
         if (keys.has(k)) E('RULE-0233', w0, `같은 열쇠(대상·속성·맥락)의 현재 값이 둘 — ${keys.get(k)} 과 겹침 (새 값은 supersedes 로)`);
         keys.set(k, id);
+      }
+      // 기질 축 (docs/design/substrate-axis.md §2) — 속성은 substratedProperties 만, 기질은 그 규칙 단계의 minor 아닌 입력
+      if (v.substrate && !v.retracted) {
+        const ws = `${id} (${v.subject} · ${v.property}) 기질 ${v.substrate}`;
+        if (!(V.substratedProperties || []).includes(v.property)) E('RULE-0532', ws, `기질은 ${(V.substratedProperties || []).join(' | ')} 속성에만 — '${v.property}' 에는 쓸 수 없음`);
+        else if (!(substrates.get(v.subject) || new Set()).has(v.substrate)) E('RULE-0532', ws, `기질이 이 규칙 단계의 minor 아닌 입력에 없음 (입력: ${[...(substrates.get(v.subject) || [])].join(', ') || '없음'})`);
       }
       const w = `${id} (${v.subject} · ${v.property})`, isRule = v.subject.includes('/rule/');
       if (isRule ? !laws.has(v.subject) && !v.retracted : !db.senses[v.subject] && !v.retracted) E('RULE-0489', w, isRule ? '대상 규칙이 없거나 법칙 모양(kinetic_law)이 없음' : '대상 정의항이 없음');
@@ -277,6 +285,10 @@
         }
       }
     }
+    // 한 (대상, 속성)의 현재 값은 모두 기질이 있거나 모두 없다 — 섞이면 "첫 기질" 이 두 번 말해진다
+    const mixed = new Map();
+    for (const id of cur) { const v = vals[id]; if (v.retracted) continue; const k = `${v.subject}|${v.property}`, m = mixed.get(k) || { with: [], without: [] }; (v.substrate ? m.with : m.without).push(id); mixed.set(k, m); }
+    for (const [k, m] of mixed) if (m.with.length && m.without.length) E('RULE-0533', k, `기질 있는 값(${m.with.join(', ')})과 기질 없는 값(${m.without.join(', ')})이 섞임 — 한 규칙씩 모두 기질을 달아 대체`);
   }
   // 값은 바꾸지 않는다 (관찰 기록과 같은 규약): 이전 기록은 그대로 있어야 하고, 할 수 있는 것은 retracted 한 번 더하기뿐
   function valueImmutability(before, after) {
@@ -421,6 +433,12 @@
       const t = parseTarget(ob.target);
       if (!t || t.sub !== 'rule' || !db.senses[t.base] || !db.senses[t.base].rule.some((r) => r.id === t.key)) E('RULE-0402', w, `측정 대상 규칙 '${ob.target}' 없음 — D…/rule/키`);
       if (!KIN_FIELDS.includes(ob.param) || ob.param === 'order') E('RULE-0402', w, `속도 상수 칸 '${ob.param || ''}' — ${KIN_FIELDS.filter((f) => f !== 'order').join(', ')}`);
+      // 기질 축: 관찰이 기질을 밝힌 경우 — 허용 속성이고 그 규칙 단계의 minor 아닌 입력이어야 한다 (값의 기질 검사와 같은 규약)
+      if (ob.substrate !== undefined) {
+        const ins = new Set(Object.values(db.steps || {}).filter((st) => st.rule === ob.target).flatMap((st) => (st.inputs || []).filter((p) => !p.minor).map((p) => String(p.b).split('|')[0])));
+        if (!(V.substratedProperties || []).includes(ob.param)) E('RULE-0532', w, `기질(observable.substrate)은 ${(V.substratedProperties || []).join(' | ')} 칸에만 — '${ob.param || ''}' 에는 쓸 수 없음`);
+        else if (!ins.has(ob.substrate)) E('RULE-0532', w, `기질 ${ob.substrate} 이 이 규칙 단계의 minor 아닌 입력에 없음 (입력: ${[...ins].join(', ') || '없음'})`);
+      }
     }
     if (ob.kind === 'ratio') { if (!ob.denominator) E('RULE-0402', w, 'ratio 측정에는 분모 묶음(observable.denominator)이 필요함'); else checkBundle(db, ix, ob.denominator, `${w} 분모`, E); }
     if (ob.kind === 'fraction_above' && !(ob.threshold >= 0)) E('RULE-0402', w, 'fraction_above 측정에는 게이팅 문턱(threshold ≥ 0, 분자 수)이 필요함');
@@ -504,6 +522,24 @@
         E('RULE-0089', fw, `종이 다름 — 상수의 맥락은 '${kc.species}', 관찰은 '${oc.species}' (다른 종의 측정을 이 종의 상수로 적지 않는다)`);
       if (kc.location && oc.location && kc.location !== oc.location)
         E('RULE-0084', fw, `위치가 다름 — 상수의 맥락은 '${kc.location}', 관찰은 '${oc.location}'`);
+    }
+    // 기질 축: 기질별 값(by_substrate)의 근거 관찰도 같은 규약 — 같은 규칙·같은 칸을 같은 값으로 쟀고, 관찰이 기질을 밝혔다면 이 기질과 같아야 한다
+    for (const [sid, e] of Object.entries(k.by_substrate || {})) {
+      const sw = `${rw} 기질 ${sid}`, props = Object.keys(e).filter((p) => p !== 'from'), seen = new Set();
+      for (const obsId of e.from || []) {
+        const o = db.observations[obsId], fw = `${sw} 속도 출처 ${obsId}`;
+        if (!o) { E('RULE-0084', fw, '관찰 기록 없음'); continue; }
+        if (o.kind === 'qualitative') { E('RULE-0084', fw, '정성 관찰은 수치의 근거가 될 수 없음'); continue; }
+        if (o.use !== 'estimation') E('RULE-0405', fw, `용도가 ${o.use} 인 관찰은 상수 추정에 쓸 수 없음`);
+        if (o.retracted) E('RULE-0084', fw, '철회된 관찰을 참조함');
+        if (o.observable.kind !== 'kinetic_constant' || o.observable.target !== ref || !props.includes(o.observable.param)) { E('RULE-0084', fw, `관찰이 이 규칙(${ref})의 '${props.join('·')}' 을(를) 잰 것이 아님`); continue; }
+        seen.add(o.observable.param);
+        if (!near(o.value, e[o.observable.param])) E('RULE-0084', fw, `'${o.observable.param}' 값 ${e[o.observable.param]} 이(가) 관찰 값 ${o.value} 와 다름 — 실측 상수는 관찰에서 그대로`);
+        if (o.observable.substrate !== undefined && o.observable.substrate !== sid) E('RULE-0534', fw, `관찰의 기질 ${o.observable.substrate} 이(가) 값의 기질 ${sid} 와 다름`);
+        const kc = k.context || {}, oc = o.condition || {};
+        if (kc.species && oc.species && oc.species !== kc.species) E('RULE-0089', fw, `종이 다름(기질 ${sid}): 상수의 맥락은 '${kc.species}', 관찰은 '${oc.species}'`);
+      }
+      if (k.evidence.level === 'curated' && !k.lumped) { const miss = props.filter((p) => !seen.has(p)); if (miss.length) E('RULE-0084', sw, `문헌(curated) 기질별 상수 ${miss.join('·')} 에 관찰 기록(by_substrate.from)이 없음`); }
     }
     if (k.lumped && !from.length) E('RULE-0084', rw, '묶은 상수(lumped)에는 원 관찰 참조(from)가 필요함 — 기전을 세분할 때 다시 재지 않고 다시 계산하려고');
     if (k.evidence.level === 'curated' && !k.lumped) {

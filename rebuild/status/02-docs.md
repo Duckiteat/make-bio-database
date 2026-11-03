@@ -4,12 +4,12 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `.claude/skills/author/SKILL.md` | 13.4 | 145 |  | 미분류 |
+| `.claude/skills/author/SKILL.md` | 13.5 | 145 |  | 미분류 |
 | `.claude/skills/baseline/SKILL.md` | 4.6 | 71 |  | 미분류 |
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 322.9 | 320 |  | 분류됨 1 |
+| `CHANGES.md` | 324.7 | 321 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -33,6 +33,7 @@
 | `docs/design/rules-regulation-tests.md` | 9.8 | 112 |  | 분류됨 61 |
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.7 | 208 |  | 분류됨 102 |
+| `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
@@ -304,13 +305,13 @@
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
-| `docs/textbook/03-데이터-모델.md` | 18.3 | 184 |  | 분류됨 116 |
+| `docs/textbook/03-데이터-모델.md` | 19.2 | 184 |  | 분류됨 116 |
 | `docs/textbook/04-알고리즘.md` | 67.5 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 137.3 | 856 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 137.7 | 857 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

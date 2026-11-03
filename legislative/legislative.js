@@ -414,7 +414,7 @@
       }
       for (const r of d.rule || []) {
         const ref = `${sid}/rule/${r.id}`;
-        if (own(r, 'kinetics')) { const k = r.kinetics; delete r.kinetics; if (k) { M.placeLaw(r, M.lawOfKinetics(k)); diff(M.valuesOfKinetics(ref, k), cur.get(ref) || [], (v) => v.property, why0); } else delete r.kinetic_law; }
+        if (own(r, 'kinetics')) { const k = r.kinetics; delete r.kinetics; if (k) { M.placeLaw(r, M.lawOfKinetics(k)); diff(M.valuesOfKinetics(ref, k), cur.get(ref) || [], M.valueKeyOf, why0); } else delete r.kinetic_law; }
         if (r.kinetic_law) liveRules.add(ref);
       }
     }

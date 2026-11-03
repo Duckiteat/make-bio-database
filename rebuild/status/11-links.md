@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 184)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`
+원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 185)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`
 
 | 등급 | 구역 | 자리 | 규칙에 닿음 | 열린 계획에 닿음 | 연결 없음 |
 |---|---|---|---|---|---|
@@ -14,7 +14,7 @@
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
 | L2 | `code:mcp` | 5 | 2 | 0 | 3 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
-| L2 | `code:tests` | 49 | 22 | 0 | 27 |
+| L2 | `code:tests` | 50 | 23 | 0 | 27 |
 | L2 | `code:tools` | 17 | 6 | 2 | 10 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
