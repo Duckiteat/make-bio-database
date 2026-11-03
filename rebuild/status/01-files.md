@@ -15,7 +15,7 @@
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 213.5 |
-| workspace | 34 | 119.8 |
+| workspace | 34 | 121.4 |
 | legislative | 3 | 75.6 |
 | migrations | 13 | 59.8 |
 | compiler | 8 | 56.3 |

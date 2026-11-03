@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1055 개 · 28219.9 KB"
+        "1055 개 · 28221.5 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -158,7 +158,7 @@
        [
         "workspace",
         "34",
-        "119.8"
+        "121.4"
        ],
        [
         "legislative",
@@ -4018,7 +4018,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "10431 · 218 · 234",
+        "10441 · 218 · 235",
         "212 · 없음 6"
        ],
        [
@@ -4048,7 +4048,7 @@
         "`model.ID_RE.O`",
         "legislative merge (meta.next.O)",
         "`data/db.json#observations`",
-        "839 · 38 · 96",
+        "846 · 38 · 96",
         "28 · 없음 10"
        ],
        [
@@ -4058,7 +4058,7 @@
         "`^V\\d{6}$`",
         "legislative foldValues (meta.next.V)",
         "`data/db.json#values`",
-        "98 · 73 · 11",
+        "102 · 73 · 12",
         "68 · 없음 5"
        ],
        [
@@ -4238,7 +4238,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "5366 · 537 · 138",
+        "5370 · 537 · 138",
         "534 · 없음 3"
        ],
        [
@@ -4388,7 +4388,7 @@
         "`vocab.xrefs.UniProt.pattern`",
         "UniProt",
         "`data/db.json#senses.*.xrefs`",
-        "1261 · 57 · 36",
+        "1262 · 57 · 37",
         "—"
        ],
        [
@@ -4664,7 +4664,7 @@
        [
         "정보 작성 `author`",
         "462",
-        "16564.7"
+        "16566.3"
        ],
        [
         "기초시험 `baseline`",
@@ -4784,7 +4784,7 @@
         "`workspace/**`",
         "author",
         "25",
-        "98.3",
+        "100.0",
         "수집가 작업 공간"
        ],
        [
