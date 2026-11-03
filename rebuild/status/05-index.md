@@ -11,11 +11,11 @@
 | 이름공간 | 상태 | 모양 | 형식 | 발급 | 자리 | 토큰 | 정의 |
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1221 · 212 · 24 | 210 · 없음 2 |
-| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10416 · 218 · 231 | 212 · 없음 6 |
-| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 668 · 59 · 53 | 57 · 없음 2 |
+| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 10418 · 218 · 232 | 212 · 없음 6 |
+| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 669 · 59 · 54 | 57 · 없음 2 |
 | `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2671 · 127 · 179 | 124 · 없음 3 |
 | `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 819 · 37 · 92 | 28 · 없음 9 |
-| `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 90 · 73 · 9 | 68 · 없음 5 |
+| `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 94 · 73 · 10 | 68 · 없음 5 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2072 · 363 · 39 | 360 · 없음 3 |
 | `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1845 · 505 · 95 | — |
 | `sub_ref` | active | composite | `^D\d{6}/(site\|rule\|desc\|obs)/[A-Za-z0-9_]+$` | sense owner key | `data/db.json#senses.*.site\|rule\|desc\|obs` | — | — |
@@ -33,7 +33,7 @@
 | `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10654 · 7281 · 10 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 11 · 1 · 5 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5288 · 534 · 137 | 531 · 없음 3 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5290 · 534 · 137 | 531 · 없음 3 |
 | `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 1642 · 56 · 252 | 224 · 없음 4 |
 | `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 224 · 없음 0 |
 | `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 23 · 없음 0 |
