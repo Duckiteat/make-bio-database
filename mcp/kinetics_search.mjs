@@ -51,7 +51,7 @@ export function parseLiterature(json) {
   };
 }
 
-// UniProt: 사람(9606) 검토됨(Swiss-Prot) 항목의 큐레이션 속도 상수. 필드 이름은 `kinetics` (cc_ 접두사 없음, 2026-11-03 확인)
+// UniProt: 사람(9606) 검토됨(Swiss-Prot) 항목의 큐레이션 속도 상수. 필드 이름은 `kinetics` (cc_ 접두사 없음)
 const UNI = 'https://rest.uniprot.org/uniprotkb/search';
 export function uniprotKineticsUrl({ ec, accession, gene }) {
   let q;

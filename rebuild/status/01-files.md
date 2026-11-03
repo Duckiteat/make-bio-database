@@ -19,7 +19,7 @@
 | legislative | 3 | 75.6 |
 | migrations | 13 | 59.8 |
 | compiler | 8 | 56.3 |
-| mcp | 5 | 43.8 |
+| mcp | 5 | 43.7 |
 | schemas | 2 | 37.8 |
 | .claude | 6 | 37.2 |
 | .github | 1 | 2.1 |

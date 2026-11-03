@@ -37,7 +37,7 @@
 | `compiler/**` | develop | 8 | 56.3 | 컴파일러 |
 | `judicial/**` | develop | 34 | 590.9 | 사법부 코드 |
 | `legislative/**` | develop | 3 | 75.6 | 입법부 코드 |
-| `mcp/**` | develop | 5 | 43.8 | MCP 서버 |
+| `mcp/**` | develop | 5 | 43.7 | MCP 서버 |
 | `migrations/**` | develop | 13 | 59.8 | 형식 변환 |
 | `schemas/obs/**` | author | 1 | 15.0 | 관찰 포트 계약 |
 | `schemas/**` | develop | 1 | 22.8 | 원자료 계약 |
