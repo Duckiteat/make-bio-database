@@ -63,7 +63,7 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 <header>
   <span class="eyebrow">2026-2 AI 교과 연계 프로젝트 공모전 · 면역학 · 항원 처리와 제시</span>
   <h1>검증되는 면역학 노트</h1>
-  <p class="lead">면역학의 중심 단원인 MHC 항원 제시 경로를 AI와 함께 데이터로 옮기고, 유전자를 하나 끊었을 때 경로가 어디서 멈추는지 컴퓨터로 확인해 본 기록입니다.</p>
+  <p class="lead">AI와 함께 세포 모의 실험 엔진을 만들고, 면역학의 중심 단원인 MHC 항원 제시 경로를 그 위에 올려 유전자를 하나 끊었을 때 어디서 멈추는지 확인해 본 기록입니다.</p>
   <p class="muted">수업 과제로 쓴 결과물은 아닙니다. 수업에서 배운 내용 가운데 가장 핵심이라고 생각한 부분을 골라, AI가 틀린 말을 해도 걸러지는 구조를 직접 만들어 보았습니다. 사용한 AI 도구는 Claude (Claude Code)입니다.</p>
 </header>
 
@@ -131,7 +131,100 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 </section>
 
 <section>
-  <h2>면역학 내용: MHC II 경로를 11단계로</h2>
+  <h2>엔진: 무엇을 받아 무엇을 내놓나</h2>
+  <p>모의 실험을 돌리는 엔진은 생물학을 모릅니다. 분자 이름도, 세포 소기관 이름도 엔진 코드에는 한 글자도 없습니다. 생물학 지식은 전부 데이터에 있고, 엔진은 숫자로 번역된 계산 순서만 받아 실행합니다. 그래서 MHC 경로든 텔로미어든 엔진을 고치지 않고 데이터만 바꿔서 돌립니다.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 280" role="img" aria-label="데이터베이스와 시나리오를 컴파일러가 하나의 불변 계산표로 바꾸고, 엔진이 그 계산표만 받아 실행해 원자료를 내며, 감사가 원자료를 검증한다. 감사는 엔진이 받은 계산표가 컴파일러가 만든 것과 같은지 해시로 대조한다. 엔진 안에는 강성 적분, 사건 시각 찾기, 결정 탐침, 물질 원장 네 부분이 있다.">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="10" y="50" width="130" height="44" rx="4"/>
+        <rect x="10" y="116" width="130" height="44" rx="4"/>
+        <rect x="180" y="70" width="140" height="70" rx="4"/>
+        <rect x="360" y="50" width="180" height="110" rx="4" stroke-width="2.4"/>
+        <rect x="580" y="70" width="120" height="70" rx="4"/>
+        <rect x="740" y="70" width="150" height="70" rx="4"/>
+        <line x1="140" y1="72" x2="178" y2="94" marker-end="url(#a3)"/>
+        <line x1="140" y1="138" x2="178" y2="116" marker-end="url(#a3)"/>
+        <line x1="320" y1="105" x2="358" y2="105" marker-end="url(#a3)"/>
+        <line x1="540" y1="105" x2="578" y2="105" marker-end="url(#a3)"/>
+        <line x1="700" y1="105" x2="738" y2="105" marker-end="url(#a3)"/>
+        <polyline points="250,70 250,28 815,28 815,67" stroke-dasharray="5 4" marker-end="url(#a3)"/>
+        <polyline points="450,160 450,195"/><line x1="105" y1="195" x2="795" y2="195"/>
+        <line x1="105" y1="195" x2="105" y2="215"/><line x1="335" y1="195" x2="335" y2="215"/>
+        <line x1="565" y1="195" x2="565" y2="215"/><line x1="795" y1="195" x2="795" y2="215"/>
+        <rect x="10" y="215" width="190" height="50" rx="4"/>
+        <rect x="240" y="215" width="190" height="50" rx="4"/>
+        <rect x="470" y="215" width="190" height="50" rx="4"/>
+        <rect x="700" y="215" width="190" height="50" rx="4"/>
+      </g>
+      <g fill="currentColor" font-size="13" text-anchor="middle">
+        <text x="75" y="70" font-weight="700">데이터베이스</text><text x="75" y="86" font-size="11">분자·규칙</text>
+        <text x="75" y="136" font-weight="700">시나리오</text><text x="75" y="152" font-size="11">조건·예측</text>
+        <text x="250" y="100" font-weight="700">컴파일러</text><text x="250" y="119" font-size="11">숫자 계산표로 번역</text>
+        <text x="450" y="80" font-weight="700">엔진</text>
+        <text x="450" y="102" font-size="11">Rust/WASM: 기본</text>
+        <text x="450" y="120" font-size="11">JavaScript: 대조용</text>
+        <text x="450" y="142" font-size="11">두 결과가 같아야 통과</text>
+        <text x="640" y="100" font-weight="700">원자료</text><text x="640" y="119" font-size="11">궤적·사건 시각</text>
+        <text x="815" y="100" font-weight="700">감사</text><text x="815" y="119" font-size="11">11가지 확인 → 보고서</text>
+        <text x="532" y="20" font-size="11">엔진이 받은 계산표가 같은 것인지 해시로 대조</text>
+        <text x="105" y="237" font-weight="700">강성 적분</text><text x="105" y="254" font-size="11">빠른·느린 반응을 함께 풂</text>
+        <text x="335" y="237" font-weight="700">사건 시각 찾기</text><text x="335" y="254" font-size="11">문턱을 넘는 순간을 좁혀 감</text>
+        <text x="565" y="237" font-weight="700">결정 탐침</text><text x="565" y="254" font-size="11">신호를 끊어도 유지되는가</text>
+        <text x="795" y="237" font-weight="700">물질 원장</text><text x="795" y="254" font-size="11">들어온 양 = 나간 양</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>윗줄은 한 번의 실행이 지나는 길, 아랫줄은 엔진 안의 네 부분입니다. 엔진은 계산만 하고 파일을 쓰거나 자기 결과를 판정하지 못합니다.</figcaption>
+  </figure>
+  <ul>
+    <li><b>강성 적분.</b> 세포 안에는 1초 안에 끝나는 결합과 몇 시간이 걸리는 합성이 섞여 있습니다. 이런 문제에 쓰는 적분법(Rodas3)으로 단계 크기를 스스로 조절하며 풉니다.</li>
+    <li><b>결정 탐침.</b> "성숙에 도달했다"와 "성숙으로 결정됐다"를 구분합니다. 그 시점에 신호를 끊은 가상의 복사본을 돌려, 그래도 상태가 유지되면 결정된 것으로 봅니다.</li>
+    <li><b>두 번 만든 엔진.</b> 같은 알고리즘을 Rust와 JavaScript로 따로 구현해 결과를 맞춰 봅니다. 한쪽에만 있는 버그는 여기서 드러납니다.</li>
+    <li><b>물질 원장.</b> 인산기 같은 부분 구조가 반응을 거치며 어디로 갔는지 매 단계 장부를 맞춥니다. 허용 오차는 상대 1e-14입니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>어떻게 만들어졌나</h2>
+  <p>코드는 거의 전부 AI가 썼습니다. 제가 한 일은 방향을 정하고, 규칙을 승인하고, AI가 "됐다"고 말하는 것을 믿지 않는 장치를 요구한 것입니다.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 170" role="img" aria-label="10월 8일 물질을 유한하게 다루기 시작, 10월 9일 권한을 셋으로 분리하고 엔진을 Rust로 옮김, 10월 9일에서 10일 면역과 노화에 적용, 10월 15일에서 17일 관문 봉인과 AI 자기보고 불인정 설계, 10월 22일 현실 검증 조사에서 정량 검증 0건 확인.">
+      <line x1="40" y1="60" x2="860" y2="60" stroke="currentColor" stroke-width="1.4"/>
+      <g fill="currentColor">
+        <circle cx="75" cy="60" r="6"/><circle cx="225" cy="60" r="6"/><circle cx="375" cy="60" r="6"/>
+        <circle cx="525" cy="60" r="6"/><circle cx="675" cy="60" r="6"/>
+      </g>
+      <circle cx="825" cy="60" r="7" style="fill:var(--accent)"/>
+      <g fill="currentColor" font-size="12" text-anchor="middle">
+        <g font-size="11"><text x="75" y="38">10.08</text><text x="225" y="38">10.09</text><text x="375" y="38">10.09</text><text x="525" y="38">10.09–10</text><text x="675" y="38">10.15–17</text><text x="825" y="38">10.22</text></g>
+        <g font-weight="700"><text x="75" y="92">물질을 유한하게</text><text x="225" y="92">권한을 셋으로</text><text x="375" y="92">엔진을 Rust로</text><text x="525" y="92">면역·노화 적용</text><text x="675" y="92">자기보고 불인정</text><text x="825" y="92">현실 검증 조사</text></g>
+        <g font-size="11"><text x="75" y="111">공급·분해·고갈</text><text x="225" y="111">쓰기·계산·검증</text><text x="375" y="111">JS는 대조용으로</text><text x="525" y="111">MHC·텔로미어</text><text x="675" y="111">관문 봉인·검증 설계</text><text x="825" y="111">정량 검증 0건 확인</text></g>
+        <g font-size="11"><text x="75" y="128">무한 재료 없앰</text><text x="225" y="128">서로 호출 금지</text><text x="375" y="128">컴파일러·Rodas3</text><text x="525" y="128">엔진은 그대로</text><text x="675" y="128">통과 도장으로만 저장</text><text x="825" y="128">엔진보다 데이터 먼저</text></g>
+      </g>
+    </svg>
+    </div>
+    <figcaption>변경 기록이 남아 있는 10월 8일 이후의 전환점입니다. 그 이전 단계(데이터 형식 6판까지)는 그림에 넣지 않았습니다.</figcaption>
+  </figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>누가</th><th>맡은 일</th><th>남는 기록</th></tr></thead>
+    <tbody>
+      <tr><td>사람</td><td>방향과 우선순위 결정, 규칙 변경 승인, 결과 해석</td><td>방향 문서, 설계 문서 17편</td></tr>
+      <tr><td>AI</td><td>코드·데이터·문서 작성, 변경마다 이유 기록</td><td>변경 기록 159행, 엔진·컴파일러·검증 코드 약 1만 줄</td></tr>
+      <tr><td>기계</td><td>자동 검사, 거부해야 할 사례 모음을 계속 거부하는지 확인</td><td>테스트 271개 (전부 통과)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>가장 크게 방향이 바뀐 때는 10월 22일입니다. 엔진을 더 키우기 전에 "이 예측을 실제 측정값으로 반박할 수 있는가"를 조사했고, 숫자로 대조할 관찰이 0건이라는 결과가 나왔습니다. 그 뒤로 우선순위를 엔진 확장에서 데이터 수집으로 돌렸습니다.</p>
+</section>
+
+<section>
+  <h2>면역학에 적용: MHC II 경로를 11단계로</h2>
   <p>교과서 그림 한 장을 "어떤 분자가, 어디에서, 무엇으로 바뀌는가"의 단계로 나눴습니다. 각 단계에는 위치가 붙어 있어서, 같은 공간에 없는 분자끼리는 반응할 수 없습니다. MHC I 경로도 같은 방식으로 8단계로 넣었습니다.</p>
   <figure>
     <div class="scroll">
