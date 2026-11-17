@@ -1,0 +1,264 @@
+<title>검증되는 면역학 노트</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 배치: 한 단 읽기 문서. 도식 두 장이 중심이고 본문은 그 설명. */
+:root {
+  --bg: #f5f7f8; --panel: #ffffff; --fg: #15232b; --muted: #54656f; --line: #d3dbe0;
+  --accent: #a82a66;      /* 결손(끊은 곳) — 형광 염색의 자홍 */
+  --ok: #0c6f73;          /* 통과·도달 */
+  --tint: #e8eef1;
+  --display: "IBM Plex Sans KR", "Noto Sans KR", system-ui, sans-serif;
+  --body: "Noto Sans KR", system-ui, -apple-system, "Malgun Gothic", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #10191e; --panel: #172329; --fg: #e4ecef; --muted: #9db0ba; --line: #2f4049;
+  --accent: #f07fb4; --ok: #5cc9c4; --tint: #1e2d35; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #10191e; --panel: #172329; --fg: #e4ecef; --muted: #9db0ba; --line: #2f4049;
+  --accent: #f07fb4; --ok: #5cc9c4; --tint: #1e2d35; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; }
+main { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+section, header { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.375rem; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1.0625rem; font-weight: 600; }
+p, ul, ol { margin: 0; }
+ul, ol { padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--mono); font-size: 0.8125rem; color: var(--muted); letter-spacing: 0.04em; }
+.lead { font-size: 1.125rem; color: var(--fg); }
+.muted { color: var(--muted); }
+code, .id { font-family: var(--mono); font-size: 0.875em; background: var(--tint); padding: 1px 5px; border-radius: 3px; }
+.note { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.facts div { padding: 12px 8px 12px 0; }
+.facts b { display: block; font-family: var(--display); font-size: 1.5rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.facts span { font-size: 0.8125rem; color: var(--muted); }
+figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.scroll { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.scroll svg { display: block; min-width: 720px; width: 100%; height: auto; color: var(--fg); font-family: var(--body); }
+figcaption { font-size: 0.875rem; color: var(--muted); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--display); font-weight: 600; font-size: 0.8125rem; color: var(--muted); white-space: nowrap; }
+td.num { text-align: right; padding-right: 20px; white-space: nowrap; }
+th.num { text-align: right; padding-right: 20px; }
+.ok { color: var(--ok); font-weight: 700; }
+.ko { color: var(--accent); font-weight: 700; }
+.prompt { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.prompt .what { font-family: var(--display); font-weight: 600; font-size: 0.875rem; color: var(--ok); }
+.prompt q { quotes: none; font-size: 0.9375rem; }
+.prompt .why { font-size: 0.8125rem; color: var(--muted); }
+pre { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font-family: var(--mono); font-size: 0.8125rem; line-height: 1.7; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+
+<main>
+<header>
+  <span class="eyebrow">2026-2 AI 교과 연계 프로젝트 공모전 · 면역학 · 항원 처리와 제시</span>
+  <h1>검증되는 면역학 노트</h1>
+  <p class="lead">면역학의 중심 단원인 MHC 항원 제시 경로를 AI와 함께 데이터로 옮기고, 유전자를 하나 끊었을 때 경로가 어디서 멈추는지 컴퓨터로 확인해 본 기록입니다.</p>
+  <p class="muted">수업 과제로 쓴 결과물은 아닙니다. 수업에서 배운 내용 가운데 가장 핵심이라고 생각한 부분을 골라, AI가 틀린 말을 해도 걸러지는 구조를 직접 만들어 보았습니다. 사용한 AI 도구는 Claude (Claude Code)입니다.</p>
+</header>
+
+<section>
+  <h2>왜 만들었나</h2>
+  <p>AI에게 "MHC II 경로를 설명해 줘"라고 물으면 그럴듯한 글이 나옵니다. 문제는 그 글이 맞는지 확인할 방법이 없다는 점입니다. 유전자 번호를 지어내도, 단계 하나를 빼먹어도 읽는 사람은 알기 어렵습니다.</p>
+  <p>그래서 AI의 답을 글로 받지 않고 <b>데이터</b>로 받기로 했습니다. 데이터는 자동 검사를 통과해야만 저장되고, 저장된 데이터로는 모의 실험을 돌릴 수 있습니다. 경로가 실제로 이어지는지, 무엇을 끊으면 멈추는지를 글이 아니라 실행 결과로 봅니다.</p>
+  <div class="facts">
+    <div><b>212</b><span>정의한 분자·과정</span></div>
+    <div><b>160</b><span>반응 규칙</span></div>
+    <div><b>57</b><span>기전 단계</span></div>
+    <div><b>42</b><span>모의 실험 시나리오</span></div>
+    <div><b>115</b><span>기록한 한계</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>구조: AI의 답이 저장되기까지</h2>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 232" role="img" aria-label="교과서와 논문에서 고른 내용을 AI가 초안으로 쓰고, 자동 검사를 통과한 것만 데이터베이스에 저장되며, 그 데이터로 모의 실험을 돌리고 감사한 뒤 보고서를 낸다. 검사에서 거부되면 이유와 함께 AI에게 돌아가고, 감사에서 드러난 공백은 한계 목록에 쌓인다.">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+        <marker id="a1r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--accent)"/></marker>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="10" y="40" width="120" height="60" rx="4"/>
+        <rect x="160" y="40" width="120" height="60" rx="4"/>
+        <rect x="310" y="40" width="120" height="60" rx="4" stroke-width="2.4"/>
+        <rect x="460" y="40" width="120" height="60" rx="4"/>
+        <rect x="610" y="40" width="120" height="60" rx="4"/>
+        <rect x="760" y="40" width="130" height="60" rx="4"/>
+        <rect x="760" y="160" width="130" height="50" rx="4" stroke-dasharray="5 4"/>
+        <line x1="130" y1="70" x2="158" y2="70" marker-end="url(#a1)"/>
+        <line x1="280" y1="70" x2="308" y2="70" marker-end="url(#a1)"/>
+        <line x1="430" y1="70" x2="458" y2="70" marker-end="url(#a1)"/>
+        <line x1="580" y1="70" x2="608" y2="70" marker-end="url(#a1)"/>
+        <line x1="730" y1="70" x2="758" y2="70" marker-end="url(#a1)"/>
+        <line x1="825" y1="100" x2="825" y2="158" marker-end="url(#a1)"/>
+      </g>
+      <polyline points="370,100 370,150 220,150 220,103" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#a1r)"/>
+      <g fill="currentColor" font-size="13" text-anchor="middle">
+        <text x="70" y="66" font-weight="700">교과서·논문</text><text x="70" y="85" font-size="11">사람이 고름</text>
+        <text x="220" y="66" font-weight="700">AI 초안</text><text x="220" y="85" font-size="11">데이터 + 넣는 이유</text>
+        <text x="370" y="66" font-weight="700">관문</text><text x="370" y="85" font-size="11">자동 검사</text>
+        <text x="520" y="66" font-weight="700">데이터베이스</text><text x="520" y="85" font-size="11">직접 편집 금지</text>
+        <text x="670" y="66" font-weight="700">모의 실험</text><text x="670" y="85" font-size="11">계산만 함</text>
+        <text x="825" y="66" font-weight="700">감사·보고서</text><text x="825" y="85" font-size="11">계산과 따로 검증</text>
+        <text x="825" y="181" font-weight="700">한계 목록</text><text x="825" y="199" font-size="11">모르는 것 115건</text>
+        <text x="836" y="134" font-size="11" text-anchor="start">공백 등록</text>
+      </g>
+      <text x="295" y="170" font-size="12" text-anchor="middle" style="fill:var(--accent)" font-weight="700">거부 + 이유</text>
+      <text x="370" y="28" font-size="11" text-anchor="middle" fill="currentColor">여기를 통과해야만 저장</text>
+    </svg>
+    </div>
+    <figcaption>쓰는 쪽(AI 초안), 계산하는 쪽(모의 실험), 검증하는 쪽(관문·감사)을 서로 다른 코드로 나눴습니다. 계산하는 쪽은 자기 결과를 스스로 "맞다"고 판정할 수 없습니다.</figcaption>
+  </figure>
+  <h3>관문이 막는 것</h3>
+  <ul>
+    <li><b>지어낸 번호.</b> 유전자·단백질의 외부 ID가 확실하지 않으면 <code>unmapped</code>로 두고 한계에 적습니다. 그럴듯한 번호를 채우면 거부됩니다.</li>
+    <li><b>출처 없는 숫자.</b> 속도 상수는 측정값(관찰)이 먼저 등록돼 있어야 넣을 수 있습니다. 확인되지 않은 값은 "가상"이라고 표시한 시험 시나리오에서만 씁니다.</li>
+    <li><b>이유 없는 변경.</b> 모든 변경은 왜 넣는지를 적어야 하고, 그 기록이 남습니다.</li>
+    <li><b>사라지는 물질.</b> 반응 전후로 들어온 양과 나간 양이 맞지 않으면 감사에서 걸립니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>면역학 내용: MHC II 경로를 11단계로</h2>
+  <p>교과서 그림 한 장을 "어떤 분자가, 어디에서, 무엇으로 바뀌는가"의 단계로 나눴습니다. 각 단계에는 위치가 붙어 있어서, 같은 공간에 없는 분자끼리는 반응할 수 없습니다. MHC I 경로도 같은 방식으로 8단계로 넣었습니다.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 290" role="img" aria-label="MHC II는 소포체에서 불변 사슬과 조립되어 골지체를 지나 엔도솜으로 간다. 엔도솜에서 불변 사슬이 잘려 CLIP만 남고, HLA-DM이 CLIP을 항원 펩타이드로 바꿔 끼운 뒤 세포 표면에 제시된다. 항원 펩타이드는 세포 밖 항원이 섭취되어 엔도솜에서 카텝신 S에 잘려 만들어진다. HLA-DM 단계가 결손 실험 대상이다.">
+      <defs>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+      </defs>
+      <g fill="currentColor" opacity="0.06">
+        <rect x="10" y="44" width="190" height="236"/><rect x="210" y="44" width="120" height="236"/>
+        <rect x="340" y="44" width="350" height="236"/><rect x="700" y="44" width="190" height="236"/>
+      </g>
+      <g fill="currentColor" font-size="12" text-anchor="middle" font-weight="700">
+        <text x="105" y="30">소포체</text><text x="270" y="30">골지체</text><text x="515" y="30">엔도솜</text><text x="795" y="30">세포막 · 세포 밖</text>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="20" y="76" width="170" height="56" rx="4"/>
+        <rect x="220" y="76" width="100" height="56" rx="4"/>
+        <rect x="352" y="76" width="150" height="56" rx="4"/>
+        <rect x="712" y="76" width="166" height="56" rx="4"/>
+        <rect x="528" y="206" width="150" height="56" rx="4"/>
+        <rect x="712" y="206" width="166" height="56" rx="4"/>
+        <line x1="190" y1="104" x2="218" y2="104" marker-end="url(#a2)"/>
+        <line x1="320" y1="104" x2="350" y2="104" marker-end="url(#a2)"/>
+        <line x1="502" y1="104" x2="526" y2="104" marker-end="url(#a2)"/>
+        <line x1="678" y1="104" x2="710" y2="104" marker-end="url(#a2)"/>
+        <line x1="712" y1="234" x2="681" y2="234" marker-end="url(#a2)"/>
+        <line x1="603" y1="206" x2="603" y2="135" marker-end="url(#a2)"/>
+      </g>
+      <rect x="528" y="76" width="150" height="56" rx="4" fill="none" style="stroke:var(--accent)" stroke-width="2.6"/>
+      <g fill="currentColor" font-size="12.5" text-anchor="middle">
+        <text x="105" y="100" font-weight="700">MHC II αβ</text><text x="105" y="119" font-size="11">불변 사슬과 조립</text>
+        <text x="270" y="109" font-size="11">통과</text>
+        <text x="427" y="100" font-weight="700">불변 사슬 절단</text><text x="427" y="119" font-size="11">CLIP만 남음</text>
+        <text x="603" y="100" font-weight="700">HLA-DM</text><text x="603" y="119" font-size="11">CLIP → 펩타이드 교체</text>
+        <text x="795" y="100" font-weight="700">펩타이드–MHC II</text><text x="795" y="119" font-size="11">표면 제시</text>
+        <text x="603" y="230" font-weight="700">카텝신 S</text><text x="603" y="249" font-size="11">항원 → 펩타이드</text>
+        <text x="795" y="239" font-weight="700">세포 밖 단백질 항원</text>
+        <text x="612" y="174" font-size="11" text-anchor="start">펩타이드</text>
+        <text x="696" y="224" font-size="11">섭취</text>
+        <text x="795" y="152" font-size="11">LPS가 재섭취를 억제하면</text><text x="795" y="168" font-size="11">표면에 쌓임</text>
+      </g>
+      <text x="603" y="66" font-size="11.5" text-anchor="middle" style="fill:var(--accent)" font-weight="700">✕ 결손 실험에서 끊은 곳</text>
+    </svg>
+    </div>
+    <figcaption>윗줄은 MHC II 분자의 이동, 아랫줄은 항원의 이동입니다. 두 줄은 HLA-DM 단계에서 만납니다. 그래서 이 단계를 끊으면 양쪽 재료가 모두 있어도 표면 제시가 멈출 것이라고 예측할 수 있습니다.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>활용: 수지상 세포에 세 가지 실험을 걸어 보았다</h2>
+  <p>미성숙 수지상 세포에서 시작해, 세포 표면의 펩타이드–MHC II 수가 문턱을 넘으면 "성숙"으로 판정합니다. 실험마다 실행 전에 예측을 먼저 적고, 실행 뒤에는 고치지 못하게 했습니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>실험</th><th>조건</th><th>실행 전 예측</th><th>결과</th><th>무결성</th></tr></thead>
+    <tbody>
+      <tr><td>기준</td><td>신호 없음</td><td>미성숙에 머묾</td><td>미성숙에 머묾</td><td class="ok">PASS 11/11</td></tr>
+      <tr><td>원인</td><td>0.5 h에 LPS 투입</td><td>성숙에 도달</td><td><span class="ok">0.84 h에 성숙 도달</span></td><td class="ok">PASS 11/11</td></tr>
+      <tr><td>필수성</td><td>LPS + HLA-DM 결손</td><td>미성숙에 머묾</td><td><span class="ko">분화 정지</span></td><td class="ok">PASS 11/11</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>세포 표면 펩타이드–MHC II 분자 수</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>시각</th><th class="num">기준</th><th class="num">LPS</th><th class="num">LPS + HLA-DM 결손</th></tr></thead>
+    <tbody>
+      <tr><td>0.5 h</td><td class="num">1,683</td><td class="num">1,683</td><td class="num">0</td></tr>
+      <tr><td>1 h</td><td class="num">5,758</td><td class="num">27,300</td><td class="num">0</td></tr>
+      <tr><td>2 h</td><td class="num">11,530</td><td class="num">69,280</td><td class="num">0</td></tr>
+      <tr><td>4 h</td><td class="num">5,056</td><td class="num">69,380</td><td class="num">0</td></tr>
+      <tr><td>8 h</td><td class="num">435</td><td class="num">36,700</td><td class="num">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">성숙 판정 문턱은 20,000개입니다. 기준 실행은 한때 11,530개까지 오르지만 문턱에 못 미치고 내려갑니다. 4.84 h에 세포 밖 항원이 바닥나면서 세 실행 모두 그 뒤로는 줄어듭니다.</p>
+  <p class="note"><b>이 숫자가 말해 주는 것과 말해 주지 않는 것.</b> 실험에 쓴 속도 상수 41개는 모두 가상 값입니다. 따라서 "0.84시간"이나 "69,280개"는 실제 세포의 값이 아닙니다. 확인된 것은 넣은 규칙만으로 경로가 끝까지 이어진다는 점, 그리고 HLA-DM을 끊으면 표면 제시가 0이 된다는 구조적 결론입니다. 무결성 PASS는 계산이 규칙대로 이뤄졌다는 증명이고, 생물학적으로 옳다는 증명은 아닙니다.</p>
+</section>
+
+<section>
+  <h2>프롬프트 예시</h2>
+  <p>이 구조에서 AI에게 일을 시킬 때 쓰는 요청 형태입니다. 공통점은 답을 요구하지 않고 <b>검사받을 수 있는 형태</b>와 <b>모를 때의 행동</b>을 정해 준다는 것입니다.</p>
+  <div class="stack">
+    <div class="prompt"><span class="what">1. 교과서 내용을 단계로 나누기</span>
+      <q>MHC II 항원 처리·제시를 단계로 나눠 줘. 단계마다 반응 종류, 참여 분자, 일어나는 위치를 적어. 외부 ID가 확실하지 않으면 지어내지 말고 unmapped로 두고 한계에 등록해.</q>
+      <span class="why">모를 때 할 행동을 먼저 정해 주면 지어내기가 줄어듭니다.</span></div>
+    <div class="prompt"><span class="what">2. 검사에 걸렸을 때</span>
+      <q>이 패치를 validate로 검사해. 거부되면 검사 규칙을 느슨하게 하지 말고 데이터 쪽을 고쳐. 고칠 근거가 없으면 한계로 남겨.</q>
+      <span class="why">AI는 통과시키려고 규칙을 바꾸려는 경향이 있어, 그 길을 미리 막습니다.</span></div>
+    <div class="prompt"><span class="what">3. 결손 실험 만들기</span>
+      <q>성숙 조건 시나리오에서 HLA-DM만 없앤 파생 시나리오를 만들어. 돌리기 전에 예측을 먼저 적고, 결과는 끝 상태만 말하지 말고 과정 보고서로 줘.</q>
+      <span class="why">대조군을 복사하지 않고 "기준 + 한 가지 변화"로 정의해 비교가 공정합니다.</span></div>
+    <div class="prompt"><span class="what">4. 결과 해석</span>
+      <q>표면 펩타이드–MHC II가 0에 머문 이유를 규칙 번호로 추적해 줘. 가상 상수라서 말할 수 없는 부분은 따로 구분해.</q>
+      <span class="why">해석에서도 근거가 있는 말과 없는 말을 나누게 합니다.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>한계</h2>
+  <ul>
+    <li><b>숫자로 검증된 예측은 아직 없습니다.</b> 모의 실험이 내는 6가지 측정량 모두 대조할 정량 측정값이 0건입니다. 정성 관찰(무엇을 끊으면 무엇이 준다)만 5건 연결돼 있습니다.</li>
+    <li><b>속도 상수가 가상입니다.</b> 문헌 값이 확인된 것만 데이터에 넣는 규칙이라, 실험에는 가상 표시가 붙은 값을 썼습니다.</li>
+    <li><b>세포 안 공간을 구획 단위로만 봅니다.</b> 막 위에서의 확산이나 소포 하나하나는 다루지 않습니다.</li>
+    <li><b>MHC I 결손 실험(TAP, β2m)은 현재 판정이 나오지 않습니다.</b> 실행 결과가 형식 검사에 걸려 시스템이 판정을 거부합니다. 고친 뒤에 결과를 추가할 예정입니다.</li>
+  </ul>
+  <p>이런 공백은 숨기지 않고 한계 목록에 번호를 붙여 쌓아 둡니다. 현재 115건입니다.</p>
+</section>
+
+<section>
+  <h2>앞으로</h2>
+  <ol>
+    <li><b>문헌 측정값 수집.</b> 표면 MHC 분자 수, 반감기 같은 정량 관찰을 모아 가상 상수를 실제 값으로 바꾸고, 예측을 숫자로 반박할 수 있게 합니다.</li>
+    <li><b>MHC I 쪽 결손 실험 완성.</b> TAP·β2m 결손을 문헌의 표현형과 대조합니다.</li>
+    <li><b>T세포까지 연결.</b> 이미 들어 있는 CD8 T세포 분화(효과기·기억 전구) 상태와 항원 제시를 이어, 제시량이 분화에 미치는 영향을 봅니다.</li>
+    <li><b>수업에서 쓰기.</b> 시험 전에 "이 분자가 없으면 어디서 멈추는가"를 먼저 예측하고 실행으로 확인하는 연습 문제로 쓰려고 합니다.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>다른 학생이 따라 하려면</h2>
+  <p>Node.js만 있으면 됩니다. 저장소를 받은 뒤 최상위 폴더에서 실행합니다.</p>
+<pre>node dbtool.mjs mechanism D000178
+node dbtool.mjs fate D000202 --scenario examples/scenarios/mhc-dc-maturation-lps-hypothetical.json --report lps.md
+node dbtool.mjs fate D000202 --scenario examples/scenarios/mhc-dc-hladm-null-hypothetical.json --report hladm.md</pre>
+  <p>첫 줄은 MHC II 경로 11단계를 보여 주고, 나머지 두 줄은 위 표의 "원인"과 "필수성" 실험을 다시 돌려 과정 보고서를 만듭니다. 같은 입력이면 누구 컴퓨터에서든 같은 결과가 나옵니다.</p>
+  <p>이 저장소를 쓰지 않더라도 방법은 그대로 가져갈 수 있습니다. AI에게 글 대신 표나 단계 목록처럼 검사할 수 있는 형태로 답하게 하고, 모르는 것은 "모름"으로 남기게 하고, 실행하거나 대조하기 전에 예측을 먼저 적는 것입니다.</p>
+</section>
+
+<footer>표의 값은 2026년 11월 17일에 저장소에서 직접 실행해 얻은 과정 보고서에서 옮겼습니다. 모든 시나리오는 가상 상수(hypothetical)로 표시돼 있습니다.</footer>
+</main>

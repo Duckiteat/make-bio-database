@@ -1217,6 +1217,14 @@
       "interpret": "[과제] 작업자에게 맡기는 묶음(batch) 하나의 명세 — 임무·각 후보 필수 필드·경계·반환. 한 번에 하나."
     },
     {
+      "path": "workspace/contest/*",
+      "class": "log",
+      "format": "HTML (공모전 출품 설명 페이지, 손으로 씀)",
+      "writer": "사람 · 에이전트 (사용자 요청 시)",
+      "readers": "사람 (심사위원·다른 학생)",
+      "interpret": "[출품 설명] MHC II 항원 제시를 예로 구조·활용·한계·계획을 외부 독자에게 설명하는 페이지. 표의 값은 과정 보고서에서 옮긴 사본이다 — 근거는 fate 보고서이지 이 페이지가 아니다. db·엔진과 무관."
+    },
+    {
       "path": "docs/RUNBOOK.md",
       "class": "spec",
       "format": "Markdown (실행 설명서)",
