@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 328.0 | 324 |  | 분류됨 1 |
+| `CHANGES.md` | 329.3 | 325 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -44,7 +44,7 @@
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 20.9 | 76 |  | 생성물 |
-| `docs/plan/assay.md` | 5.4 | 84 |  | 생성물 |
+| `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
 | `docs/plan/build.md` | 41.8 | 416 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
@@ -208,7 +208,7 @@
 | `docs/plan/items/PLAN-085.md` | 2.1 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-086.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-087.md` | 1.2 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-088.md` | 2.2 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-088.md` | 3.9 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-089.md` | 2.3 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-090.md` | 2.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-091.md` | 2.3 | 22 |  | 생성물 |
@@ -312,12 +312,12 @@
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 19.8 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 67.5 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 68.7 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 138.7 | 859 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 139.1 | 860 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

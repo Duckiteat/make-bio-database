@@ -1976,6 +1976,20 @@
       ]
     },
     {
+      "path": "tests/engine_reference.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "엔진 정답 시험 + 변형 관계 시험 (PLAN-088) — DSMTS-002-01 이입–사멸 해석해 평균·분산 대조(정확 SSA 강제 · 기본 결합점의 분산 ½ = L000072 ②), 변형 관계 4: 부피 단위 바꿈 · 시간 척도(2 의 거듭제곱 비트 같음) · 부피 척도 Ω · 반응 나누기.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/mhc.test.mjs",
       "class": "verification",
       "format": "node:test",

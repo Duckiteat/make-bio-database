@@ -80,6 +80,7 @@
 | `tests/dictionary_seal.test.mjs` | 4 |
 | `tests/dose_slope.test.mjs` | 6 |
 | `tests/enforcement_gaps.test.mjs` | 26 |
+| `tests/engine_reference.test.mjs` | 6 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 23 |

@@ -168,6 +168,16 @@
       "why": "예시 시나리오 위 관찰 연산자 — 엔진 원자료의 표지·상태"
     },
     {
+      "file": "tests/engine_reference.test.mjs",
+      "ids": [
+        "D000148",
+        "D000165",
+        "D000170",
+        "D000174"
+      ],
+      "why": "예시 시나리오(stochastic-birth-death · fate-mixed-optimal)의 계를 엔진 정답 · 변형 관계 시험에 그대로 — 나눌 규칙 ref 와 시작 상태"
+    },
+    {
       "file": "tests/stochastic.test.mjs",
       "ids": [
         "D000165",
