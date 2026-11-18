@@ -2215,6 +2215,19 @@
       ]
     },
     {
+      "path": "docs/reports/sources/*.pdf",
+      "class": "history",
+      "format": "PDF (보고서가 검토한 원본 — 바꾸지 않음)",
+      "writer": "사람 (작성자 동의 받은 원본을 그대로 복사)",
+      "readers": "사람",
+      "interpret": "보고서가 가리키는 1차 출처가 아닌 원본(미발표 실험 노트 등) — 측정법 참고·한계 검토용. 관찰·측정법 장부의 source 가 될 수 없다(RULE-0115 · RULE-0291 · RULE-0344). 2026-11-labnote-nadh-a340-phedh: docs/reports/2026-11-18-labnote-nadh-a340-limits.md 의 원본.",
+      "level": "L2",
+      "area": "doc:report",
+      "write_keys": [
+        "session:*"
+      ]
+    },
+    {
       "path": "examples/observations/*.json",
       "class": "scenario",
       "format": "관찰 JSON (schemas/obs/observation.schema.json)",

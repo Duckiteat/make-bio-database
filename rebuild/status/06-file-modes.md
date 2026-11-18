@@ -8,12 +8,12 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 304 | 7872.2 |
+| 공통 `common` | 304 | 7873.4 |
 | 정보 작성 `author` | 462 | 16566.3 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 193 | 2438.9 |
+| 디벨롭 `develop` | 193 | 2439.8 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 51 | 1056.3 |
+| 점검·검증 `inspect` | 53 | 1144.9 |
 
 ## 규칙별
 
@@ -53,12 +53,12 @@
 | `tests/**` | develop | 73 | 650.3 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 41 | 674.9 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 12 | 485.6 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/reports/**` | inspect | 43 | 763.5 | 보고서 — 읽기·점검 |
+| `docs/textbook/**` | common | 12 | 486.7 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 20 | 307.8 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 226 | 675.5 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 324.7 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 325.6 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 106.3 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
 | `.claude/**` | common | 6 | 37.3 | 도구 설정 |
