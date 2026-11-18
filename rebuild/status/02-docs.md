@@ -5,18 +5,18 @@
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
 | `.claude/skills/author/SKILL.md` | 13.5 | 145 |  | 미분류 |
-| `.claude/skills/baseline/SKILL.md` | 4.6 | 71 |  | 미분류 |
+| `.claude/skills/baseline/SKILL.md` | 4.7 | 71 |  | 미분류 |
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 329.3 | 325 |  | 분류됨 1 |
+| `CHANGES.md` | 330.3 | 326 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
 | `SCHEMA.md` | 108.6 | 677 |  | 분류됨 427 |
 | `docs/PROMPTS.md` | 17.8 | 315 |  | 분류됨 151 |
-| `docs/RUNBOOK.md` | 22.4 | 328 |  | 분류됨 180 |
+| `docs/RUNBOOK.md` | 22.6 | 328 |  | 분류됨 180 |
 | `docs/design/abstraction-boundary.md` | 3.8 | 50 |  | 분류됨 31 |
 | `docs/design/authority-and-comprehension.md` | 4.9 | 46 |  | 분류됨 22 |
 | `docs/design/cell-fate-engine.md` | 14.1 | 114 |  | 분류됨 76 |
@@ -39,10 +39,10 @@
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
 | `docs/modes/author.md` | 13.2 | 140 |  | 생성물 |
-| `docs/modes/baseline.md` | 4.4 | 66 |  | 생성물 |
+| `docs/modes/baseline.md` | 4.5 | 66 |  | 생성물 |
 | `docs/modes/develop.md` | 6.0 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
-| `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
+| `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 20.9 | 76 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
 | `docs/plan/build.md` | 41.8 | 416 |  | 생성물 |
@@ -214,7 +214,7 @@
 | `docs/plan/items/PLAN-091.md` | 2.3 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-092.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-093.md` | 3.2 | 23 |  | 생성물 |
-| `docs/plan/items/PLAN-094.md` | 2.0 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-094.md` | 3.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-095.md` | 2.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-096.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-097.md` | 1.9 | 21 |  | 생성물 |
@@ -313,11 +313,11 @@
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 19.8 | 184 |  | 분류됨 116 |
 | `docs/textbook/04-알고리즘.md` | 68.7 | 376 |  | 분류됨 233 |
-| `docs/textbook/05-상호작용.md` | 13.3 | 138 |  | 분류됨 94 |
+| `docs/textbook/05-상호작용.md` | 14.0 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 139.1 | 860 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 139.9 | 862 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

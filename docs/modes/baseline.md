@@ -63,4 +63,4 @@
 | `mcp register` | registry | 사전 등록 |
 | `mcp assume_add` | registry | 가정 원장 추가 |
 
-읽기만: `dbtool map` · `dbtool mechanism` · `dbtool resolution` · `dbtool audit-run` · `dbtool simulate` · `dbtool grade` · `dbtool origin` · `dbtool compare` · `dbtool observe` · `mcp map` · `mcp mechanism` · `mcp origin` · `mcp assume_uses`
+읽기만: `dbtool map` · `dbtool mechanism` · `dbtool resolution` · `dbtool audit-run` · `dbtool simulate` · `dbtool grade` · `dbtool origin` · `dbtool compare` · `dbtool observe` · `mcp map` · `mcp mechanism` · `mcp origin` · `mcp assume_uses` · `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate`

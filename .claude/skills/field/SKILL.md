@@ -33,4 +33,4 @@ description: "적분장 모드 — 다음 엔진(공간·확률 장)의 설계�
 
 ## 쓸 명령 (모든 모드의 명령은 중심 문서)
 
-없음
+읽기만: `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate`

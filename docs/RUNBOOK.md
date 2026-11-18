@@ -140,7 +140,7 @@ BIODB_ROLE=integrator node mcp/clerk.mjs    # 쓰기 — 수집가는 put_handof
 ```
 
 Claude Code 등 MCP 클라이언트 설정 예(`.mcp.json` — 저장소에 두지 않고 쓰는 쪽에서):
-`{"mcpServers":{"biodb-query":{"command":"node","args":["mcp/query.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-fetch":{"command":"node","args":["mcp/fetch.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-clerk":{"command":"node","args":["mcp/clerk.mjs"],"env":{"BIODB_ROLE":"collector"}}}}`
+`{"mcpServers":{"biodb-query":{"command":"node","args":["mcp/query.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-fetch":{"command":"node","args":["mcp/fetch.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-clerk":{"command":"node","args":["mcp/clerk.mjs"],"env":{"BIODB_ROLE":"collector"}},"biodb-run":{"command":"node","args":["mcp/run.mjs"],"env":{"BIODB_ROLE":"collector"}}}}` — `biodb-run` 은 읽기 전용 실행(run_fate · run_ensemble · run_rate, 결과에 출처 꼬리표 · 탐색/규약)
 
 ---
 
@@ -265,7 +265,7 @@ node dbtool.mjs augment apply /tmp/.../patch.json
 ## 7. 바꾼 뒤 반드시 돌리는 것
 
 ```bash
-node --test tests/*.test.mjs          # 477/477 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
+node --test tests/*.test.mjs          # 482/482 (약 120 초) — 바닥값은 tests/fixtures/FLOOR.json
 node dbtool.mjs validate              # 오류 0 · 경고 0 · 유효한 증명 도장 178
 node dbtool.mjs limitations --check    # limitations.md 최신
 node dbtool.mjs limitations --detect   # 등록되지 않은 한계 후보 없음 (+ '다시 볼 한계': 재검토 조건 충족 — 종료 코드에 안 들어감)

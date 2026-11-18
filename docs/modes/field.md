@@ -28,4 +28,4 @@
 
 ## 쓸 명령 (모든 모드의 명령은 중심 문서)
 
-없음
+읽기만: `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate`

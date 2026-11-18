@@ -78,6 +78,15 @@
       "why": "MCP 조회와 dbtool 조회의 출력이 같은지 대조 — 기록 내용과 무관"
     },
     {
+      "file": "tests/mcp_run.test.mjs",
+      "ids": [
+        "D000051",
+        "D000165",
+        "D000174"
+      ],
+      "why": "실행 창구가 예시 시나리오(fate-mixed-optimal · gtp-exhaustion)의 대상을 그대로 돌림 — 시작 상태 · 경로 · 표지"
+    },
+    {
       "file": "tests/mhc.test.mjs",
       "ids": [
         "D000165",

@@ -82,4 +82,4 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 | `mcp dictionary_add` | registry | 사전 항목 추가 |
 | `mcp write_derived` | derived | 파생 문서 다시 쓰기 |
 
-읽기만: `dbtool validate` · `dbtool vocab` · `dbtool compare`
+읽기만: `dbtool validate` · `dbtool vocab` · `dbtool compare` · `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate`

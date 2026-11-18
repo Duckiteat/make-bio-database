@@ -263,6 +263,19 @@
       ]
     },
     {
+      "path": "mcp/run.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(에이전트)",
+      "interpret": "[MCP] run — 읽기 전용 실행(run_fate · run_ensemble · run_rate, PLAN-094). 결과마다 출처 꼬리표: 입력 지문(db · 시나리오 정준 해시 · IR · 코드) · 등급 · 가정 의존(가정 번호 · 첫 장면 기원) · 열린 한계 · 탐색/규약, 출력 해시. 쓰기 · 서기 · 자식 프로세스 없음.",
+      "level": "L2",
+      "area": "code:mcp",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "mcp/fetch.mjs",
       "class": "law",
       "format": "Node ESM (MCP 서버)",
@@ -1731,6 +1744,20 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "MCP 시험 — 프로토콜 · query 가 dbtool 과 같은 글·메모리 사본·파일 바뀌면 다시 읽음 · 역할 거부 · 단일 작성자 · 핸드오프 추가만 · 받기 기록 변조·파일 바뀜 · mcp 서버의 파일 쓰기 없음 · fetch 인자 검사.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/mcp_run.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "MCP 실행 서버 시험 — 도구 목록 · 쓰기 없음 · 같은 입력 같은 출력 해시 · data/ 불변 · 출처 꼬리표(등급 · 가정 의존 · 한계 · 탐색/규약, 등록 뒤 고치면 탐색) · 조정자 직접 호출과 같은 궤적 · 거부.",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [
