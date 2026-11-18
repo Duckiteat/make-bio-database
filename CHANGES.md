@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-18 · 출품 페이지 — 적분 기반 → 확률 시뮬레이터 | `workspace/contest/index.html` | 사용자 요청 — 적분 기반 비결정론은 빼고, 만들고 있는 확률 시뮬레이터로 | 한눈에 보기·로드맵 도식("만드는 중")·앞으로 2번 항목 교체 · 확률 시나리오 4개(`examples/scenarios/*stochastic*`)와 앙상블 판정을 근거로 서술 · 문서만 | Word→PDF 렌더 확인 · `textbook --check` |
 | 2026-11-18 · 출품 페이지 — AI 활용을 금지 지시·하네스로, 한눈에 보기 | `workspace/contest/index.html` | 사용자 요청 — "해라" 대신 "하지 마라"로 추론 경로를 제한했고, 추론·행동을 검사하는 하네스를 만들었다고 적기 · 전체 정리 | AI 절 교체(피한 지시↔쓴 지시 5쌍: `docs/PROMPTS.md` 금지 목록·CLAUDE.md · 하네스 도식 · 겹 6개 표: CLAUDE.md 81줄 중 금지·제한 46곳, `workspace/collector.settings.json` deny 14, 거부 사례 19·테스트 271 · 지시 예 3개를 금지 형태로) · 맨 위 한눈에 보기 4줄 · 문서만 | Word→PDF 렌더 확인(9쪽) · `textbook --check` |
 | 2026-11-18 · 출품 페이지 — 다섯 역할·추가와 빼기·영수증·로드맵 | `workspace/contest/index.html` | 사용자 요청 — 역할 5개, 데이터를 넣고 빼는 방식, 추적 가능성(영수증), 앞으로(적분 기반 비결정론 → 새 가설 검증)까지 | 새 절 3개(역할 표: `tripartite-governance.md` §0 · 추가/수정/빼기/이동/규칙 표: SCHEMA §8N·CLAUDE.md · 영수증 표: 패치 기록 62·사건 사슬 23 재생 일치(`log`)·도장 178·실험 증명서·사전 등록 4) · 앞으로 절을 로드맵 도식 + 4 항목으로 · 문서만 | Word→PDF 렌더 확인(8쪽) · `textbook --check` |
 | 2026-11-18 · 출품 페이지 — 실패한 곳과 고친 방법 절 | `workspace/contest/index.html` | 사용자 요청 — 실패 횟수·위치·이유와 그에 따른 조치를 적음 | 실패 9건 표(날짜·어디서·무엇·왜·조치), 근거는 이 파일의 해당 행(형식 v7 부분 구조 수지·안전장치 v11 레드팀·ChEBI 규약·벤치 측정 결함·근사 둘을 고침·실측 속도 수집 시도·작업 검증 설계·Phase 0 조사)과 11.17 MHC I 계약 위반 · 수치: 레드팀 11건 중 7건 통과(`EXPECT.json` 출처), 거부 말뭉치 19(`FLOOR.json`), 한계 115 중 열림 102 · 문서만 | Word→PDF 렌더 확인 · `textbook --check` |
