@@ -2017,6 +2017,20 @@
       ]
     },
     {
+      "path": "tests/judicial_time.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "사법부 시간 · 짝 판정 (PLAN-095) — 독립 시계(정수 산술 재계산 · 거부 사례), 벽시계 밖 비교 판정, 같은 시각 허용치(Δ 와 분리), 짧은 마지막 구간 신호의 증명서 오탐 없음, 공통 난수 짝 판정(짝 확인 · 검정력 · 영 가설 크기).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/mhc.test.mjs",
       "class": "verification",
       "format": "node:test",

@@ -554,3 +554,5 @@
 {"from": "RULE-0532", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "기질이 다른 Km 은 다른 양 — 열쇠에 기질이 없어 둘째 기질의 Km 이 못 들어왔다(O000007). 허용 속성 · 단계 입력 대조"}
 {"from": "RULE-0533", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "기질 없는 값은 첫 기질의 값으로 읽히므로 같은 속성에 기질 있는 값과 섞이면 모호하다"}
 {"from": "RULE-0534", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "다른 기질을 잰 관찰을 근거로 달면 엉뚱한 기질의 Km 이 들어간다"}
+{"from": "RULE-0535", "rel": "because", "to": "code:judicial/verifier.js", "by": "judged", "note": "엔진 시계 산술(t0 + k·Δ f64 곱 · 합)을 같은 방법으로 다시 세지 않는다 — 누적 덧셈 · 끝 넘김 · 빠진 기록을 잡음"}
+{"from": "RULE-0536", "rel": "because", "to": "code:judicial/stoch_audit.js", "by": "judged", "note": "짝이 아닌 두 앙상블의 차는 공통 잡음이 빠지지 않아 짝 t 검정의 가정이 깨진다"}

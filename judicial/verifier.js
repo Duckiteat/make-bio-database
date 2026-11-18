@@ -108,4 +108,40 @@ function verifyFate(db, r) {
   return out;
 }
 
-module.exports = { verifyFate, stoichFromDB };
+// ===== 독립 시계 검사 (PLAN-095 ①) — 기록 시각을 엔진과 다른 방법으로 다시 센다 =====
+//   엔진은 t = t0 + k·Δ 를 f64 로 곱하고 더한다. 여기서는 f64 값 t0 · Δ · t_end 를 그 자체로 정확한 2 진 유리수(정수 × 2^지수)로 풀어
+//   BigInt 정수 산술로 격자 수 K = 가장 작은 k (k·Δ ≥ t_end − t0 − 1e-9) 와 격자점 t0 + k·Δ 를 정확히 세고, 기록 시각과 대조한다:
+//   기록 수 = K · 마지막 기록 = t_end (비트까지) · 그 앞 기록 k 는 정확한 t0 + k·Δ 에서 2 ulp 안 (엔진의 곱 + 합 두 번 반올림) · 단조 증가.
+//   엔진의 시계 산술(누적 덧셈 · 끝 넘김 · 짧은 마지막 구간 누락 등)이 바뀌면 여기서 걸린다 — 같은 식을 같은 방법으로 다시 세지 않으므로.
+const BUF = new DataView(new ArrayBuffer(8));
+function exactQ(x) { // f64 → [정수 분자, 2 의 지수] (x = n · 2^e, 정확)
+  if (x === 0) return [0n, 0];
+  BUF.setFloat64(0, x); const hi = BUF.getUint32(0), lo = BUF.getUint32(4), sign = hi >>> 31 ? -1n : 1n, ex = (hi >>> 20) & 0x7ff;
+  let mant = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo);
+  if (ex) mant |= 1n << 52n;
+  return [sign * mant, (ex || 1) - 1075];
+}
+const common = (qs) => { const e = Math.min(...qs.map((q) => q[1])); return qs.map(([n, x]) => n << BigInt(x - e)).concat([e]); }; // 같은 지수로
+const ulp = (x) => { const a = Math.abs(x); if (!a) return Number.MIN_VALUE; const e = Math.floor(Math.log2(a)); return Math.pow(2, Math.max(e - 52, -1074)) * (Math.pow(2, e) > a ? 0.5 : 1); };
+function verifyClock(r, opt) {
+  opt = opt || {};
+  const t0 = opt.t0 || 0, dt = r.dt, tEnd = r.t_end, T = Array.from((r.process && r.process.times) || r.trajectory.map((x) => x.t)), problems = [];
+  if (!(dt > 0) || !(tEnd > t0)) return { ok: false, problems: [`Δ ${dt} · t_end ${tEnd} 가 시계를 세울 수 없음`], expected: 0, recorded: T.length };
+  const [n0, nd, nEnd, nEps, e] = common([exactQ(t0), exactQ(dt), exactQ(tEnd), exactQ(1e-9)]);
+  const span = nEnd - n0 - nEps, K = span <= 0n ? 1n : (span + nd - 1n) / nd; // ⌈span/Δ⌉ — 정수 나눗셈
+  const scale = (n) => (e >= 0 ? Number(n) * 2 ** e : Number(n) / 2 ** -e); // 비교용 (2 ulp 허용 안에서만 씀)
+  if (BigInt(T.length) !== K) problems.push(`기록 수 ${T.length} ≠ 정수로 센 격자 수 ${K}`);
+  const m = Math.min(T.length, Number(K));
+  for (let k = 1; k <= m; k++) {
+    const t = T[k - 1];
+    if (k === Number(K)) { if (t !== tEnd) problems.push(`마지막 기록 ${t} ≠ t_end ${tEnd}`); continue; }
+    const exact = scale(n0 + BigInt(k) * nd);
+    if (Math.abs(t - exact) > 2 * ulp(exact)) problems.push(`기록 ${k}: ${t} ≠ t0 + ${k}·Δ = ${exact} (${((t - exact) / ulp(exact)).toFixed(1)} ulp)`);
+    if (k > 1 && !(t > T[k - 2])) problems.push(`기록 ${k}: 시각이 늘지 않음 (${T[k - 2]} → ${t})`);
+    if (problems.length > 5) break;
+  }
+  if (T.some((t) => t > tEnd)) problems.push(`t_end ${tEnd} 를 넘은 기록`);
+  return { ok: !problems.length, problems, expected: Number(K), recorded: T.length };
+}
+
+module.exports = { verifyFate, stoichFromDB, verifyClock, exactQ };

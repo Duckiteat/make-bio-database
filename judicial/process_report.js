@@ -108,8 +108,10 @@ function processReport(r, ctx) {
   chk(`저장소 재생 — 모든 묶음 = 시작 + Σ 화학량 × 규칙 진행량 (규칙 밖 변경 없음), 매 단계 ≤ ${tol}`, rs.every((v) => v <= tol), `최대 ${fmt(Math.max(...rs))} @ ${h(T[argmax(rs)])}`);
   // 신호: 선언된 일정과 매 단계 일치 (본 실행에는 일정 밖 개입이 없음)
   let sigBad = 0; const decl = (s, t) => { let v = 0; for (const e of s.list) if (e.t <= t + 1e-9) v = e.n; return v; };
-  for (let j = 0; j < nT; j++) P.schedule.forEach((s, q) => { if ((P.sig[j] || [])[q] !== decl(s, T[j] - dt)) sigBad++; });
+  // 기록되는 신호 값은 그 구간 시작의 값 — 구간 시작은 앞 기록 시각(첫 기록은 시작 시각 0)이지 T − Δ 가 아니다: 마지막 구간은 t_end 에서 끊겨 Δ 보다 짧다 (PLAN-095 ④)
+  for (let j = 0; j < nT; j++) { const t0 = j ? T[j - 1] : 0; P.schedule.forEach((s, q) => { if ((P.sig[j] || [])[q] !== decl(s, t0)) sigBad++; }); }
   chk('신호 = 선언된 일정 (경계 조건) — 매 단계', sigBad === 0, `불일치 ${sigBad} / ${nT * P.schedule.length}`);
+  if (r.clock) chk('시계 — 기록 시각 = 정수 산술로 다시 센 관찰 격자 (엔진과 독립)', r.clock.ok, r.clock.ok ? `${r.clock.recorded} 기록 = ${r.clock.expected} 격자 · 끝 = t_end` : r.clock.problems.slice(0, 2).join(' · '));
   chk('결정론 — 같은 입력으로 다시 돌린 궤적 해시가 같음', ctx.rerunHash == null ? null : ctx.rerunHash === P.hash, ctx.rerunHash == null ? '다시 돌리지 않음' : `${P.hash.slice(0, 16)} ${ctx.rerunHash === P.hash ? '=' : '≠'} ${ctx.rerunHash.slice(0, 16)}`);
   const neg = Object.entries(r.final.N).filter(([b, v]) => v < -1e-6);
   chk('음수 저장소 없음', !neg.length, neg.map(([b, v]) => `${BL(b)} ${fmt(v)}`).join(', ') || '없음');
@@ -162,7 +164,7 @@ function processReport(r, ctx) {
         const mk = P.ruleInfo.findIndex((R) => R.layer === 'fast' && R.prods.some(([pb]) => pb === x.m.bundle));
         if (mk >= 0 && Math.abs(x.d) > 0.05) {
           const g0 = P.factorsAt(N0)[mk], g1 = P.factorsAt(series[jE])[mk];
-          const fl = (j) => (j < 1 ? null : (P.cum[j][mk] - P.cum[j - 1][mk]) / dt);
+          const fl = (j) => (j < 1 ? null : (P.cum[j][mk] - P.cum[j - 1][mk]) / (T[j] - T[j - 1])); // 실제 구간 길이 (마지막 구간은 Δ 보다 짧을 수 있음)
           trace.push(`      ← ${P.ruleInfo[mk].ref} 흐름 ${fmt(fl(1))} → ${fmt(fl(jE))} /s; 그 조절: ${P.ruleInfo[mk].mods.map((m, q) => `${BL(m.bundle)} ${m.effect === 'activates' ? '→' : '⊣'} ${fmt(g0[q])}→${fmt(g1[q])}`).join(', ') || '없음'}`);
         }
       });

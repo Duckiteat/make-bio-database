@@ -86,6 +86,7 @@
 | `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 23 |
 | `tests/guard-matrix.test.mjs` | 4 |
+| `tests/judicial_time.test.mjs` | 8 |
 | `tests/kinetics_search.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mcp_run.test.mjs` | 5 |

@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (322 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (324 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 288 |
+| 잡음 `caught` | 290 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 288
+## 잡음 `caught` — 290
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -307,6 +307,8 @@
 | RULE-0532 | 기질(값의 substrate · 관찰의 observable.substrate)은 vocab.substrate | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
 | RULE-0533 | 한 (대상, 속성)의 현재 값은 모두 기질이 있거나 모두 없어야 한다 — 섞이면 엔진의 "첫 기질"(단계 입 | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
 | RULE-0534 | 값의 근거 관찰(by_substrate.from)이 observable.substrate 를 밝혔다면 그 값 | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
+| RULE-0535 | 운명 엔진의 기록 시각은 사법부가 엔진과 다른 방법(f64 → 정확한 2 진 유리수, BigInt 정수 산술 | replace | judicial/verifier.js | ① 시계 거부: 끝을 넘긴 기록 · 누적 덧셈 시계 · 빠진 기록 — 엔진이 그렇게 세면 ENGINE_DEFECT |
+| RULE-0536 | 공통 난수 짝 판정(pairedCompare)은 같은 (seed, 궤적 번호) 쌍으로 돌린 두 앙상블에만 — | replace | judicial/stoch_audit.js | ⑤ 짝 판정: 짝이 아니면 거부 · 같은 변형이면 차이 없음(p = 1) |
 
 ## 설정에 있음 `present` — 8
 
