@@ -25,7 +25,7 @@ main { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; 
 section, header { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.3; }
 h1 { font-size: clamp(1.75rem, 5vw, 2.375rem); font-weight: 700; letter-spacing: -0.01em; }
-h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 8px; }
+h3 { font-size: 1.125rem; font-weight: 600; margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
 .sub { font-family: var(--display); font-size: 1.1875rem; font-weight: 500; color: var(--muted); margin-top: -6px; }
 h2 { font-size: 1.3125rem; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 p, ul, ol { margin: 0; }
@@ -45,6 +45,8 @@ td.when { white-space: nowrap; color: var(--muted); font-variant-numeric: tabula
 .summary dt { font-weight: 700; font-family: var(--display); }
 .summary dd { margin: 0; }
 @media (max-width: 520px) { .summary dl { grid-template-columns: 1fr; gap: 2px; } .summary dd { margin-bottom: 8px; } }
+h4 { font-family: var(--display); font-size: 0.9375rem; font-weight: 600; margin: 6px 0 0; color: var(--fg); }
+.trust-sub { }
 figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .scroll { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
 .scroll svg { display: block; min-width: 720px; width: 100%; height: auto; color: var(--fg); font-family: var(--body); }
@@ -137,8 +139,86 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 </section>
 
 <section>
+  <h2>결과: 이어진 지도</h2>
+  <p>MHC가 세포 표면에 항원을 보여 주는 기전, TCA 회로 같은 대사 경로와 사이클을 같은 지도 위에 연결하고 추가했습니다. 현재 경로 11개, 세포 상태 8개, 분자와 과정 212개가 이어져 있습니다.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 270" role="img" aria-label="세균 신호 LPS는 대식세포에서 NF-kB를 거쳐 TNF를 만들고, 수지상 세포에서는 MHC II 표면 제시를 늘려 성숙시킨다. 해당과정, TCA 회로, 지방산 분해 같은 대사 경로는 T세포에 에너지와 재료를 공급해 효과 T세포와 기억 T세포로의 분화를 좌우한다. MHC 제시와 T세포 분화 사이의 연결은 다음에 이을 곳이다.">
+      <defs>
+        <marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+      </defs>
+      <g fill="currentColor" font-size="12" font-weight="700" text-anchor="middle" opacity="0.75">
+        <text x="230" y="24">면역</text><text x="740" y="24">대사</text>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="20" y="111" width="130" height="58" rx="4"/>
+        <rect x="230" y="40" width="210" height="58" rx="4"/>
+        <rect x="230" y="182" width="210" height="58" rx="4"/>
+        <rect x="640" y="40" width="240" height="58" rx="4"/>
+        <rect x="640" y="182" width="240" height="58" rx="4"/>
+        <polyline points="150,130 190,130 190,69 228,69" marker-end="url(#m2)"/>
+        <polyline points="150,150 190,150 190,211 228,211" marker-end="url(#m2)"/>
+        <line x1="760" y1="98" x2="760" y2="180" marker-end="url(#m2)"/>
+      </g>
+      <line x1="440" y1="211" x2="638" y2="211" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#m2)"/>
+      <g fill="currentColor" font-size="13" text-anchor="middle">
+        <text x="85" y="135" font-weight="700">LPS</text><text x="85" y="154" font-size="11">세균 신호</text>
+        <text x="335" y="64" font-weight="700">대식세포</text><text x="335" y="83" font-size="11">NF-κB → TNF (염증 신호)</text>
+        <text x="335" y="206" font-weight="700">수지상 세포</text><text x="335" y="225" font-size="11">MHC II 표면 제시 → 성숙</text>
+        <text x="760" y="64" font-weight="700">해당과정 · TCA 회로 · 지방산 분해</text><text x="760" y="83" font-size="11">에너지와 재료</text>
+        <text x="760" y="206" font-weight="700">T세포 분화</text><text x="760" y="225" font-size="11">효과 T세포 · 기억 T세포</text>
+        <text x="770" y="144" font-size="11" text-anchor="start">공급</text>
+        <text x="539" y="201" font-size="11">다음에 이을 곳</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>실선은 지금 연결돼 돌아가는 부분, 점선은 앞으로 이을 부분입니다. 이 밖에 cAMP 신호, 글리코겐 분해, MHC I 경로, 섬유아세포의 노화(텔로미어)도 들어 있습니다.</figcaption>
+  </figure>
+  <p>지도 위에서 하나만 바꿔 본 실험의 예입니다. 실험마다 돌리기 전에 예측을 적었고, 세 실험 모두 예측과 같았습니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>바꾼 것</th><th>세포</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td>세균 신호(LPS)를 줌</td><td>수지상 세포</td><td class="ok">성숙함 · 표면 제시 문턱을 넘음</td></tr>
+      <tr><td>LPS를 주고 HLA-DM 하나만 뺌</td><td>수지상 세포</td><td class="ko">성숙 못 함 · 표면 제시 0개</td></tr>
+      <tr><td>포도당 공급을 끊음</td><td>활성화된 T세포</td><td class="ko">분화가 멈춤</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">HLA-DM은 MHC II에 자리를 맡아 둔 임시 조각(CLIP)을 빼고 진짜 항원 조각을 끼우는 단백질입니다. 이것 하나가 빠지면 MHC도 항원 조각도 다 있는데 표면 제시만 0이 됩니다. 교과서 설명과 같은 방향입니다.</p>
+</section>
+
+<section>
+  <h2>실패한 곳과 고친 방법</h2>
+  <p>만드는 동안 여러 번 실패했습니다. 실패를 지우지 않고 기록해 두었고, 그때마다 같은 실패가 다시 생기지 않게 규칙을 하나씩 더했습니다.</p>
+  <div class="facts">
+    <div><b>9건</b><span>기록에 남은 큰 실패</span></div>
+    <div><b>11건 중 7건</b><span>잘못된 데이터가 처음 검사를 통과</span></div>
+    <div><b>19건</b><span>지금은 매번 거부되는지 확인하는 사례</span></div>
+    <div><b>115건</b><span>모르는 것 기록 (13건 해결)</span></div>
+  </div>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>날짜</th><th>어디서</th><th>무엇이 실패했나</th><th>왜</th><th>그래서 이렇게 했다</th></tr></thead>
+    <tbody>
+      <tr><td class="when">10.08</td><td><b>재료 장부</b></td><td>장부 검사를 처음 켜자 기존 반응 규칙 4개가 오류로 걸림</td><td>반응에서 떨어져 나가는 부산물(피로인산·인산)을 빠뜨려, 재료가 계산 중에 사라지고 있었음</td><td>빠진 부산물을 규칙에 넣어 고치고, 계산 매 단계마다 장부를 맞추게 함</td></tr>
+      <tr><td class="when">10.10</td><td><b>자동 검사관</b></td><td>일부러 만든 잘못된 데이터 11건 중 7건이 검사를 통과</td><td>값만 슬쩍 바꾸기, 출처 기록 떼기, 생쥐 값을 사람 값으로 바꾸기를 검사가 보지 않았음</td><td>측정 기록과 값 대조, 단위·물리적 한계·생물 종 검사를 추가. 공격 사례를 보관해 매번 다시 거부되는지 확인</td></tr>
+      <tr><td class="when">10.10</td><td><b>분자 번호</b></td><td>같은 물질의 서로 다른 형태 번호가 섞여 있었고, 일부는 대조가 경고 없이 건너뛰어짐</td><td>한 물질에 공식 번호가 세 종류(중성 형태, 몸속 pH 형태, 묶음 분류)인데 구분 표시가 없었고, 묶음 분류에는 화학식이 없음</td><td>형태를 반드시 표시하게 하고, 몸속 형태라는 주장은 Rhea 반응식에 3번 이상 쓰일 때만 인정</td></tr>
+      <tr><td class="when">10.10</td><td><b>성능 측정</b></td><td>계산기가 경로에 따라 137배 느리다고 두 번 잘못 보고</td><td>일찍 멈춘 실행(200단계)도 계획한 6,000단계로 나눠 계산함. 계산기가 아니라 측정 방법의 오류</td><td>실제로 돈 단계 수로 나누도록 고치고, 잘못 보고한 표에 정정을 남김</td></tr>
+      <tr><td class="when">10.15</td><td><b>관찰 경로 찾기</b></td><td>관찰과 모델을 잇는 경로 탐색이 27,300쌍 중 46쌍에서 반대 방향 효과를 놓침</td><td>빠르게 하려고 쓴 근사 방법이 첫 경로만 보고 다른 경로를 버림</td><td>전부 탐색하는 방식으로 바꾸고, 한도에 닿으면 "판정 못 함"으로 표시</td></tr>
+      <tr><td class="when">10.16</td><td><b>측정값 수집</b></td><td>실제 반응 속도를 모으지 못함</td><td>SABIO-RK 주소 변경, eQuilibrator 접속 거부, BRENDA 계정 필요, UniProt에는 일부 값만 있음</td><td>값을 지어내지 않고 한계로 기록. 실측 속도가 2개뿐이라는 사실을 그대로 둠</td></tr>
+      <tr><td class="when">10.17</td><td><b>AI 완료 보고</b></td><td>데이터 수집을 맡긴 AI의 "다 했어요" 보고를 실행 기록 대조 없이 받아들임</td><td>결과를 확인하지 않고 보고만 믿는 구멍이 있었음</td><td>결과를 다른 쪽이 독립적으로 다시 만들어 대조하도록 설계함 (구현은 아직)</td></tr>
+      <tr><td class="when">10.22</td><td><b>현실 검증</b></td><td>계산 결과를 숫자로 대조할 실제 측정 기록이 0건</td><td>계산이 규칙대로 됐는지는 철저히 봤지만, 현실과 맞는지 볼 재료는 모으지 않았음</td><td>계산기 확장을 멈추고 측정값 수집을 먼저 하기로 우선순위를 바꿈</td></tr>
+      <tr><td class="when">11.17</td><td><b>MHC I 실험</b></td><td>TAP·β2m을 뺀 실험 2개가 판정 거부됨</td><td>계산 결과의 형식이 점검 규칙과 맞지 않음</td><td>결과를 지어내지 않고 실패로 보고. 고친 뒤 다시 돌릴 예정</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">"19건"은 검사를 통과하면 안 되는 잘못된 데이터 모음입니다. 검사 규칙을 바꿀 때마다 이 19건이 여전히 모두 거부되는지 자동으로 확인하고, 이 숫자는 줄일 수 없게 해 두었습니다. 규칙이 몰래 느슨해지는 것을 막기 위해서입니다.</p>
+</section>
+
+<section>
   <h2>AI 활용: "해라" 대신 "하지 마라"</h2>
-  <p>AI에게 "해라"라고 시키면 목표에 닿는 길이 여러 개 열리고, AI는 그중 가장 짧은 길을 고릅니다. 그 짧은 길이 검사 규칙을 느슨하게 하거나, 값을 그럴듯하게 지어내거나, 걸리는 검사를 꺼 버리는 길인 경우가 있었습니다(아래 "실패한 곳" 참고).</p>
+  <p>AI에게 "해라"라고 시키면 목표에 닿는 길이 여러 개 열리고, AI는 그중 가장 짧은 길을 고릅니다. 그 짧은 길이 검사 규칙을 느슨하게 하거나, 값을 그럴듯하게 지어내거나, 걸리는 검사를 꺼 버리는 길인 경우가 있었습니다(앞의 실패 표에서 "자동 검사관"과 "AI 완료 보고").</p>
   <p>그래서 지시를 "하지 마라" 형태로 짰습니다. 금지는 추론이 갈 수 있는 길 자체를 지우기 때문에, AI는 남은 정당한 길로만 일하게 됩니다. 이 프로젝트의 작업 규칙 문서는 81줄인데, 그중 46곳이 금지나 제한입니다.</p>
   <div class="tablewrap">
   <table>
@@ -221,7 +301,9 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 </section>
 
 <section>
-  <h2>다섯 역할로 나눈 구조</h2>
+  <h2>믿을 수 있는 이유</h2>
+  <p>여기까지가 무엇을 했고, 어디서 실패했고, 그래서 AI를 어떻게 다뤘는지입니다. 아래는 이 결과를 왜 믿을 수 있는지, 그리고 틀렸을 때 왜 찾아낼 수 있는지에 대한 장치입니다.</p>
+  <h3>다섯 역할로 나눈 구조</h3>
   <p>프로그램을 다섯 역할로 나누고, 역할마다 할 수 없는 일을 정해 두었습니다. 쓰는 쪽은 스스로 승인할 수 없고, 계산하는 쪽은 자기 결과에 점수를 매길 수 없고, 검사하는 쪽은 계산이나 데이터를 고칠 수 없습니다. 경계를 넘는 코드가 생기면 자동 검사가 막습니다.</p>
   <div class="tablewrap">
   <table>
@@ -236,12 +318,9 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
   </table>
   </div>
   <p class="muted">특히 계산 담당은 실제 관찰 기록을 아예 읽지 못하게 했습니다. 정답을 보면서 계산을 맞추면, 틀린 모델도 맞는 것처럼 보이기 때문입니다.</p>
-</section>
-
-<section>
-  <h2>데이터는 어디서 오고, 어떻게 검증하나</h2>
+  <h3>데이터는 어디서 오고, 어떻게 검증하나</h3>
   <p>AI가 기억하거나 그럴듯하게 말한 값은 그대로 믿지 않습니다. 공개된 생물학 데이터베이스에서 원본을 받아 와서, 프로그램이 정해진 규칙으로 대조한 것만 "확인됨"이 됩니다.</p>
-  <h3>가져오는 곳</h3>
+  <h4>가져오는 곳</h4>
   <div class="tablewrap">
   <table>
     <thead><tr><th>데이터베이스</th><th>무엇을 확인하나</th><th>받아 둔 원본</th></tr></thead>
@@ -288,18 +367,8 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
     </div>
     <figcaption>받아 온 원본은 실행하지 않고 읽기만 합니다. 도장에는 대조에 쓴 원본 파일의 지문이 붙어 있어서, 나중에 누구든 같은 파일로 다시 대조해 볼 수 있습니다.</figcaption>
   </figure>
-  <h3>대조 규칙</h3>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>대상</th><th>모두 맞아야 "확인됨"</th></tr></thead>
-    <tbody>
-      <tr><td>단백질</td><td>번호가 원본과 같음 · 사람 단백질임 · 이름이 원본과 같음 · 다른 항목과 겹치지 않음</td></tr>
-      <tr><td>저분자</td><td>이름이 원본과 같음(검색하면 정확히 하나) · 화학식의 원자 수가 선언한 구조와 같음 · 겹치지 않음</td></tr>
-      <tr><td>반응 참여 형태</td><td>몸속 pH에서의 형태라는 주장은 Rhea 반응식에 3번 이상 쓰여야 인정</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <h3>신뢰 등급: 어디에 쓸 수 있나</h3>
+  <p>대조할 때는 단백질은 번호·생물 종·이름이, 저분자는 이름과 화학식의 원자 수가 원본과 모두 맞아야 "확인됨"이 됩니다.</p>
+  <h4>신뢰 등급: 어디에 쓸 수 있나</h4>
   <p>모든 값에는 등급이 붙습니다. 사람이 점수를 매기지 않고, <b>출처</b>(도장이 있나, 논문 번호가 있나)와 <b>성질</b>(실제 측정·계산값인가, 추론인가)에서 프로그램이 계산합니다. 그래서 데이터가 스스로 등급을 올릴 수 없습니다.</p>
   <div class="tablewrap">
   <table>
@@ -315,7 +384,7 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
   </table>
   </div>
   <p class="muted">계산에 쓰는 상수가 "매개변수"보다 낮으면 실행이 거부됩니다. 아래 실험에 쓴 가상 값은 실험 조건에 "가상"이라고 선언했을 때만 예외로 허용됩니다.</p>
-  <h3>결과를 판별하는 방식</h3>
+  <h4>결과를 판별하는 방식</h4>
   <p>실험을 돌린 뒤에는 두 가지를 따로 판별합니다. 계산이 규칙대로 됐는지, 그리고 결과가 실제 관찰과 맞는지입니다.</p>
   <div class="tablewrap">
   <table>
@@ -329,24 +398,8 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
   </table>
   </div>
   <p class="muted">맞은 개수가 우연으로도 나올 수 있는 수준인지 함께 계산하고, 실행 전에 등록한 실험 계획 아래에서만 "일치"라고 결론 냅니다.</p>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>문제가 생겼을 때 원인 분류</th><th>고치는 곳</th></tr></thead>
-    <tbody>
-      <tr><td>결과 (문제 아님)</td><td>고치지 않음. 재료가 바닥나 멈춘 것도 결과로 보고</td></tr>
-      <tr><td>데이터 공백</td><td>모르는 것 목록에 올리고 확인된 값만 채움</td></tr>
-      <tr><td>데이터 모순</td><td>근거를 보고 틀린 쪽 데이터를 고침</td></tr>
-      <tr><td>수치 문제</td><td>계산 설정만 고침 (생물 값은 건드리지 않음)</td></tr>
-      <tr><td>계산기 결함</td><td>계산기 코드를 고침</td></tr>
-      <tr><td>번역기 결함</td><td>번역기 코드를 고침</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="muted">원인마다 고칠 수 있는 곳이 정해져 있어서, 결과를 맞추려고 데이터를 슬쩍 바꾸는 일을 막습니다. 모르는 것 목록도 속도 상수 공백, 농도 공백, 구조 공백, 재료 공백, 조절 연결 공백, 관찰 공백, 정체성 공백, 합의 공백의 8종류로 나눠 기록합니다.</p>
-</section>
-
-<section>
-  <h2>어떻게 추가하고 빼나</h2>
+  <p class="muted">문제가 생기면 원인을 여섯 가지(문제 아닌 결과·데이터 공백·데이터 모순·수치 문제·계산기 결함·번역기 결함)로 나누고, 원인마다 고칠 수 있는 곳을 정해 둡니다. 결과를 맞추려고 데이터를 슬쩍 바꾸는 일을 막기 위해서입니다.</p>
+  <h3>어떻게 추가하고 빼나</h3>
   <p>데이터는 정해진 길로만 들어가고, 한 번 들어간 기록은 지우지 않습니다. 틀렸던 값도 "언제 왜 바뀌었는지"와 함께 남겨 둡니다.</p>
   <div class="tablewrap">
   <table>
@@ -360,10 +413,7 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
     </tbody>
   </table>
   </div>
-</section>
-
-<section>
-  <h2>영수증: 모든 변경을 되짚을 수 있게</h2>
+  <h3>영수증: 모든 변경을 되짚을 수 있게</h3>
   <p>모든 변경과 실험에는 영수증이 남습니다. 누가 봐도 "이 데이터는 어디서 왔고, 언제 왜 바뀌었고, 이 결과는 어떤 입력에서 나왔는지"를 되짚어 갈 수 있게 하려는 것입니다. 영수증에는 파일 지문(SHA-256)이 들어 있어서, 내용이 한 글자만 바뀌어도 맞지 않게 됩니다.</p>
   <div class="tablewrap">
   <table>
@@ -377,84 +427,6 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
     </tbody>
   </table>
   </div>
-</section>
-
-<section>
-  <h2>결과: 이어진 지도</h2>
-  <p>MHC가 세포 표면에 항원을 보여 주는 기전, TCA 회로 같은 대사 경로와 사이클을 같은 지도 위에 연결하고 추가했습니다. 현재 경로 11개, 세포 상태 8개, 분자와 과정 212개가 이어져 있습니다.</p>
-  <figure>
-    <div class="scroll">
-    <svg viewBox="0 0 900 270" role="img" aria-label="세균 신호 LPS는 대식세포에서 NF-kB를 거쳐 TNF를 만들고, 수지상 세포에서는 MHC II 표면 제시를 늘려 성숙시킨다. 해당과정, TCA 회로, 지방산 분해 같은 대사 경로는 T세포에 에너지와 재료를 공급해 효과 T세포와 기억 T세포로의 분화를 좌우한다. MHC 제시와 T세포 분화 사이의 연결은 다음에 이을 곳이다.">
-      <defs>
-        <marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
-      </defs>
-      <g fill="currentColor" font-size="12" font-weight="700" text-anchor="middle" opacity="0.75">
-        <text x="230" y="24">면역</text><text x="740" y="24">대사</text>
-      </g>
-      <g fill="none" stroke="currentColor" stroke-width="1.4">
-        <rect x="20" y="111" width="130" height="58" rx="4"/>
-        <rect x="230" y="40" width="210" height="58" rx="4"/>
-        <rect x="230" y="182" width="210" height="58" rx="4"/>
-        <rect x="640" y="40" width="240" height="58" rx="4"/>
-        <rect x="640" y="182" width="240" height="58" rx="4"/>
-        <polyline points="150,130 190,130 190,69 228,69" marker-end="url(#m2)"/>
-        <polyline points="150,150 190,150 190,211 228,211" marker-end="url(#m2)"/>
-        <line x1="760" y1="98" x2="760" y2="180" marker-end="url(#m2)"/>
-      </g>
-      <line x1="440" y1="211" x2="638" y2="211" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#m2)"/>
-      <g fill="currentColor" font-size="13" text-anchor="middle">
-        <text x="85" y="135" font-weight="700">LPS</text><text x="85" y="154" font-size="11">세균 신호</text>
-        <text x="335" y="64" font-weight="700">대식세포</text><text x="335" y="83" font-size="11">NF-κB → TNF (염증 신호)</text>
-        <text x="335" y="206" font-weight="700">수지상 세포</text><text x="335" y="225" font-size="11">MHC II 표면 제시 → 성숙</text>
-        <text x="760" y="64" font-weight="700">해당과정 · TCA 회로 · 지방산 분해</text><text x="760" y="83" font-size="11">에너지와 재료</text>
-        <text x="760" y="206" font-weight="700">T세포 분화</text><text x="760" y="225" font-size="11">효과 T세포 · 기억 T세포</text>
-        <text x="770" y="144" font-size="11" text-anchor="start">공급</text>
-        <text x="539" y="201" font-size="11">다음에 이을 곳</text>
-      </g>
-    </svg>
-    </div>
-    <figcaption>실선은 지금 연결돼 돌아가는 부분, 점선은 앞으로 이을 부분입니다. 이 밖에 cAMP 신호, 글리코겐 분해, MHC I 경로, 섬유아세포의 노화(텔로미어)도 들어 있습니다.</figcaption>
-  </figure>
-  <p>지도 위에서 하나만 바꿔 본 실험의 예입니다. 실험마다 돌리기 전에 예측을 적었고, 세 실험 모두 예측과 같았습니다.</p>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>바꾼 것</th><th>세포</th><th>결과</th></tr></thead>
-    <tbody>
-      <tr><td>세균 신호(LPS)를 줌</td><td>수지상 세포</td><td class="ok">성숙함 · 표면 제시 문턱을 넘음</td></tr>
-      <tr><td>LPS를 주고 HLA-DM 하나만 뺌</td><td>수지상 세포</td><td class="ko">성숙 못 함 · 표면 제시 0개</td></tr>
-      <tr><td>포도당 공급을 끊음</td><td>활성화된 T세포</td><td class="ko">분화가 멈춤</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="muted">HLA-DM은 MHC II에 자리를 맡아 둔 임시 조각(CLIP)을 빼고 진짜 항원 조각을 끼우는 단백질입니다. 이것 하나가 빠지면 MHC도 항원 조각도 다 있는데 표면 제시만 0이 됩니다. 교과서 설명과 같은 방향입니다.</p>
-</section>
-
-<section>
-  <h2>실패한 곳과 고친 방법</h2>
-  <p>만드는 동안 여러 번 실패했습니다. 실패를 지우지 않고 기록해 두었고, 그때마다 같은 실패가 다시 생기지 않게 규칙을 하나씩 더했습니다.</p>
-  <div class="facts">
-    <div><b>9건</b><span>기록에 남은 큰 실패</span></div>
-    <div><b>11건 중 7건</b><span>잘못된 데이터가 처음 검사를 통과</span></div>
-    <div><b>19건</b><span>지금은 매번 거부되는지 확인하는 사례</span></div>
-    <div><b>115건</b><span>모르는 것 기록 (13건 해결)</span></div>
-  </div>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>날짜</th><th>어디서</th><th>무엇이 실패했나</th><th>왜</th><th>그래서 이렇게 했다</th></tr></thead>
-    <tbody>
-      <tr><td class="when">10.08</td><td><b>재료 장부</b></td><td>장부 검사를 처음 켜자 기존 반응 규칙 4개가 오류로 걸림</td><td>반응에서 떨어져 나가는 부산물(피로인산·인산)을 빠뜨려, 재료가 계산 중에 사라지고 있었음</td><td>빠진 부산물을 규칙에 넣어 고치고, 계산 매 단계마다 장부를 맞추게 함</td></tr>
-      <tr><td class="when">10.10</td><td><b>자동 검사관</b></td><td>일부러 만든 잘못된 데이터 11건 중 7건이 검사를 통과</td><td>값만 슬쩍 바꾸기, 출처 기록 떼기, 생쥐 값을 사람 값으로 바꾸기를 검사가 보지 않았음</td><td>측정 기록과 값 대조, 단위·물리적 한계·생물 종 검사를 추가. 공격 사례를 보관해 매번 다시 거부되는지 확인</td></tr>
-      <tr><td class="when">10.10</td><td><b>분자 번호</b></td><td>같은 물질의 서로 다른 형태 번호가 섞여 있었고, 일부는 대조가 경고 없이 건너뛰어짐</td><td>한 물질에 공식 번호가 세 종류(중성 형태, 몸속 pH 형태, 묶음 분류)인데 구분 표시가 없었고, 묶음 분류에는 화학식이 없음</td><td>형태를 반드시 표시하게 하고, 몸속 형태라는 주장은 Rhea 반응식에 3번 이상 쓰일 때만 인정</td></tr>
-      <tr><td class="when">10.10</td><td><b>성능 측정</b></td><td>계산기가 경로에 따라 137배 느리다고 두 번 잘못 보고</td><td>일찍 멈춘 실행(200단계)도 계획한 6,000단계로 나눠 계산함. 계산기가 아니라 측정 방법의 오류</td><td>실제로 돈 단계 수로 나누도록 고치고, 잘못 보고한 표에 정정을 남김</td></tr>
-      <tr><td class="when">10.15</td><td><b>관찰 경로 찾기</b></td><td>관찰과 모델을 잇는 경로 탐색이 27,300쌍 중 46쌍에서 반대 방향 효과를 놓침</td><td>빠르게 하려고 쓴 근사 방법이 첫 경로만 보고 다른 경로를 버림</td><td>전부 탐색하는 방식으로 바꾸고, 한도에 닿으면 "판정 못 함"으로 표시</td></tr>
-      <tr><td class="when">10.16</td><td><b>측정값 수집</b></td><td>실제 반응 속도를 모으지 못함</td><td>SABIO-RK 주소 변경, eQuilibrator 접속 거부, BRENDA 계정 필요, UniProt에는 일부 값만 있음</td><td>값을 지어내지 않고 한계로 기록. 실측 속도가 2개뿐이라는 사실을 그대로 둠</td></tr>
-      <tr><td class="when">10.17</td><td><b>AI 완료 보고</b></td><td>데이터 수집을 맡긴 AI의 "다 했어요" 보고를 실행 기록 대조 없이 받아들임</td><td>결과를 확인하지 않고 보고만 믿는 구멍이 있었음</td><td>결과를 다른 쪽이 독립적으로 다시 만들어 대조하도록 설계함 (구현은 아직)</td></tr>
-      <tr><td class="when">10.22</td><td><b>현실 검증</b></td><td>계산 결과를 숫자로 대조할 실제 측정 기록이 0건</td><td>계산이 규칙대로 됐는지는 철저히 봤지만, 현실과 맞는지 볼 재료는 모으지 않았음</td><td>계산기 확장을 멈추고 측정값 수집을 먼저 하기로 우선순위를 바꿈</td></tr>
-      <tr><td class="when">11.17</td><td><b>MHC I 실험</b></td><td>TAP·β2m을 뺀 실험 2개가 판정 거부됨</td><td>계산 결과의 형식이 점검 규칙과 맞지 않음</td><td>결과를 지어내지 않고 실패로 보고. 고친 뒤 다시 돌릴 예정</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="muted">"19건"은 검사를 통과하면 안 되는 잘못된 데이터 모음입니다. 검사 규칙을 바꿀 때마다 이 19건이 여전히 모두 거부되는지 자동으로 확인하고, 이 숫자는 줄일 수 없게 해 두었습니다. 규칙이 몰래 느슨해지는 것을 막기 위해서입니다.</p>
 </section>
 
 <section>
