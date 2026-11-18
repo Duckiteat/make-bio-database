@@ -1,4 +1,4 @@
-<title>검증되는 면역학 노트</title>
+<title>가상 세포 시뮬레이터</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -23,8 +23,10 @@ body { background: var(--bg); color: var(--fg); font-family: var(--body); font-s
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; }
 main { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px; }
 section, header { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-h1, h2 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.3; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.3; }
 h1 { font-size: clamp(1.75rem, 5vw, 2.375rem); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 8px; }
+.sub { font-family: var(--display); font-size: 1.1875rem; font-weight: 500; color: var(--muted); margin-top: -6px; }
 h2 { font-size: 1.3125rem; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 p, ul, ol { margin: 0; }
 ul, ol { padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; }
@@ -39,6 +41,7 @@ figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width:
 figcaption { font-size: 0.875rem; color: var(--muted); }
 .tablewrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+td.num, th.num { text-align: right; padding-right: 16px; white-space: nowrap; }
 th, td { text-align: left; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-family: var(--display); font-weight: 600; font-size: 0.8125rem; color: var(--muted); white-space: nowrap; }
 .ok { color: var(--ok); font-weight: 700; }
@@ -53,7 +56,8 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 <main>
 <header>
   <span class="eyebrow">2026-2 AI 교과 연계 프로젝트 공모전 · 분자생물학 · 면역학</span>
-  <h1>검증되는 면역학 노트</h1>
+  <h1>가상 세포 시뮬레이터</h1>
+  <p class="sub">배운 내용을 잇고, 작은 변화를 실험하다</p>
   <p class="lead">수업에서 따로 배운 생명 현상들을 하나의 지도로 잇고, 작은 변화 하나가 어떤 결과로 이어지는지 컴퓨터 속 가상 세포에서 확인해 본 노트입니다.</p>
 </header>
 
@@ -125,6 +129,113 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
     <div class="prompt"><span class="what">틀린 결과가 나왔을 때</span>
       <q>예측과 다르게 나온 이유를 단계별로 추적해서, 어느 상호작용에서 어긋났는지 찾아 줘. 검사 기준을 낮추지 말고 내용을 고쳐.</q></div>
   </div>
+</section>
+
+<section>
+  <h2>데이터는 어디서 오고, 어떻게 검증하나</h2>
+  <p>AI가 기억하거나 그럴듯하게 말한 값은 그대로 믿지 않습니다. 공개된 생물학 데이터베이스에서 원본을 받아 와서, 프로그램이 정해진 규칙으로 대조한 것만 "확인됨"이 됩니다.</p>
+  <h3>가져오는 곳</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>데이터베이스</th><th>무엇을 확인하나</th><th>받아 둔 원본</th></tr></thead>
+    <tbody>
+      <tr><td>UniProt</td><td>단백질의 공식 번호, 이름, 어느 생물의 것인지</td><td class="num">45개</td></tr>
+      <tr><td>ChEBI</td><td>저분자(ATP, 포도당 등)의 공식 번호, 화학식</td><td class="num">70개</td></tr>
+      <tr><td>Rhea</td><td>그 분자가 실제 반응식에 쓰이는지</td><td class="num">30개</td></tr>
+      <tr><td>Europe PMC</td><td>논문 서지 정보</td><td class="num">7개</td></tr>
+      <tr><td>BRENDA</td><td>효소 반응 속도</td><td class="num">2개</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 250" role="img" aria-label="공개 데이터베이스에서 원본을 받아 그대로 보관하고, 이름·생물 종·화학식을 대조해 맞으면 원본 파일의 지문을 붙인 확인 도장을 발급하고, 검사를 통과한 것만 저장한 뒤 신뢰 등급을 계산한다. 대조에서 맞지 않으면 모름으로 두고 모르는 것 목록에 올린다.">
+      <defs>
+        <marker id="m4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+        <marker id="m4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--accent)"/></marker>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="10" y="50" width="124" height="72" rx="4"/>
+        <rect x="162" y="50" width="124" height="72" rx="4"/>
+        <rect x="314" y="50" width="124" height="72" rx="4" stroke-width="2.4"/>
+        <rect x="466" y="50" width="124" height="72" rx="4"/>
+        <rect x="618" y="50" width="124" height="72" rx="4"/>
+        <rect x="770" y="50" width="124" height="72" rx="4"/>
+        <line x1="134" y1="86" x2="160" y2="86" marker-end="url(#m4)"/>
+        <line x1="286" y1="86" x2="312" y2="86" marker-end="url(#m4)"/>
+        <line x1="438" y1="86" x2="464" y2="86" marker-end="url(#m4)"/>
+        <line x1="590" y1="86" x2="616" y2="86" marker-end="url(#m4)"/>
+        <line x1="742" y1="86" x2="768" y2="86" marker-end="url(#m4)"/>
+      </g>
+      <rect x="314" y="172" width="124" height="58" rx="4" fill="none" style="stroke:var(--accent)" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <line x1="376" y1="122" x2="376" y2="170" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#m4r)"/>
+      <g fill="currentColor" font-size="13" text-anchor="middle">
+        <g font-weight="700"><text x="72" y="81">원본 DB</text><text x="224" y="81">받기</text><text x="376" y="81">대조</text><text x="528" y="81">확인 도장</text><text x="680" y="81">저장</text><text x="832" y="81">등급 계산</text></g>
+        <g font-size="11"><text x="72" y="100">UniProt·ChEBI·Rhea</text><text x="224" y="100">응답 그대로 보관</text><text x="376" y="100">이름·종·화학식</text><text x="528" y="100">원본 파일 지문 첨부</text><text x="680" y="100">검사 통과만</text><text x="832" y="100">어디에 쓸 수 있나</text></g>
+        <text x="386" y="150" font-size="11" text-anchor="start" style="fill:var(--accent)">맞지 않음</text>
+        <text x="376" y="197" font-weight="700" style="fill:var(--accent)">"모름"으로 둠</text>
+        <text x="376" y="216" font-size="11">모르는 것 목록에 올림</text>
+        <text x="528" y="34" font-size="11">도장 178개 발급</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>받아 온 원본은 실행하지 않고 읽기만 합니다. 도장에는 대조에 쓴 원본 파일의 지문이 붙어 있어서, 나중에 누구든 같은 파일로 다시 대조해 볼 수 있습니다.</figcaption>
+  </figure>
+  <h3>대조 규칙</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>대상</th><th>모두 맞아야 "확인됨"</th></tr></thead>
+    <tbody>
+      <tr><td>단백질</td><td>번호가 원본과 같음 · 사람 단백질임 · 이름이 원본과 같음 · 다른 항목과 겹치지 않음</td></tr>
+      <tr><td>저분자</td><td>이름이 원본과 같음(검색하면 정확히 하나) · 화학식의 원자 수가 선언한 구조와 같음 · 겹치지 않음</td></tr>
+      <tr><td>반응 참여 형태</td><td>몸속 pH에서의 형태라는 주장은 Rhea 반응식에 3번 이상 쓰여야 인정</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>신뢰 등급: 어디에 쓸 수 있나</h3>
+  <p>모든 값에는 등급이 붙습니다. 사람이 점수를 매기지 않고, <b>출처</b>(도장이 있나, 논문 번호가 있나)와 <b>성질</b>(실제 측정·계산값인가, 추론인가)에서 프로그램이 계산합니다. 그래서 데이터가 스스로 등급을 올릴 수 없습니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>등급</th><th>조건</th><th>쓸 수 있는 곳</th><th class="num">현재</th></tr></thead>
+    <tbody>
+      <tr><td><b>기준값</b></td><td>도장 + 실측·계산값 + 최신 합의와 일치</td><td>시뮬레이션의 고정점</td><td class="num">74</td></tr>
+      <tr><td><b>매개변수</b></td><td>논문 이상의 출처 + 요약 수치 이상</td><td>계산에 사용</td><td class="num">272</td></tr>
+      <tr><td><b>구간값</b></td><td>출처는 최상인데 값은 추론</td><td>오차 범위와 함께만</td><td class="num">0</td></tr>
+      <tr><td><b>지난값</b></td><td>더 새로운 합의와 어긋남</td><td>비교에만 (지우지 않음)</td><td class="num">0</td></tr>
+      <tr><td><b>참고</b></td><td>출처 없음 또는 추론</td><td>설명에만, 계산 금지</td><td class="num">306</td></tr>
+      <tr><td><b>차단</b></td><td>확인 불가·모순</td><td>계산·인용 금지</td><td class="num">3</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">계산에 쓰는 상수가 "매개변수"보다 낮으면 실행이 거부됩니다. 아래 실험에 쓴 가상 값은 실험 조건에 "가상"이라고 선언했을 때만 예외로 허용됩니다.</p>
+  <h3>결과를 판별하는 방식</h3>
+  <p>실험을 돌린 뒤에는 두 가지를 따로 판별합니다. 계산이 규칙대로 됐는지, 그리고 결과가 실제 관찰과 맞는지입니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>관찰과 비교한 판정</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td class="ok">맞음</td><td>논문에서 관찰된 방향과 같음</td></tr>
+      <tr><td class="ko">틀림</td><td>관찰과 반대 방향</td></tr>
+      <tr><td>보이지 못함</td><td>차이가 너무 작아 어느 쪽인지 말할 수 없음 (틀림이 아님)</td></tr>
+      <tr><td>무효</td><td>실험 설계가 잘못돼 판정할 수 없음 (예: 대조군 없음)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">맞은 개수가 우연으로도 나올 수 있는 수준인지 함께 계산하고, 실행 전에 등록한 실험 계획 아래에서만 "일치"라고 결론 냅니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>문제가 생겼을 때 원인 분류</th><th>고치는 곳</th></tr></thead>
+    <tbody>
+      <tr><td>결과 (문제 아님)</td><td>고치지 않음. 재료가 바닥나 멈춘 것도 결과로 보고</td></tr>
+      <tr><td>데이터 공백</td><td>모르는 것 목록에 올리고 확인된 값만 채움</td></tr>
+      <tr><td>데이터 모순</td><td>근거를 보고 틀린 쪽 데이터를 고침</td></tr>
+      <tr><td>수치 문제</td><td>계산 설정만 고침 (생물 값은 건드리지 않음)</td></tr>
+      <tr><td>계산기 결함</td><td>계산기 코드를 고침</td></tr>
+      <tr><td>번역기 결함</td><td>번역기 코드를 고침</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">원인마다 고칠 수 있는 곳이 정해져 있어서, 결과를 맞추려고 데이터를 슬쩍 바꾸는 일을 막습니다. 모르는 것 목록도 속도 상수 공백, 농도 공백, 구조 공백, 재료 공백, 조절 연결 공백, 관찰 공백, 정체성 공백, 합의 공백의 8종류로 나눠 기록합니다.</p>
 </section>
 
 <section>
