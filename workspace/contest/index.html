@@ -137,6 +137,24 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 </section>
 
 <section>
+  <h2>다섯 역할로 나눈 구조</h2>
+  <p>프로그램을 다섯 역할로 나누고, 역할마다 할 수 없는 일을 정해 두었습니다. 쓰는 쪽은 스스로 승인할 수 없고, 계산하는 쪽은 자기 결과에 점수를 매길 수 없고, 검사하는 쪽은 계산이나 데이터를 고칠 수 없습니다. 경계를 넘는 코드가 생기면 자동 검사가 막습니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>역할</th><th>하는 일</th><th>할 수 없는 일</th></tr></thead>
+    <tbody>
+      <tr><td><b>기록 담당 (입법)</b></td><td>데이터를 정의하고 고치는 초안을 만듦. 파일에 쓰는 것은 "서기" 한 곳만</td><td>스스로 검사하거나 승인하기</td></tr>
+      <tr><td><b>계산 담당 (행정)</b></td><td>저장된 지식을 읽고 시뮬레이션만 함</td><td>파일 쓰기, 자기 결과 판정, 관찰(정답) 보기</td></tr>
+      <tr><td><b>검사 담당 (사법)</b></td><td>검사·도장 발급·감사·보고서 작성</td><td>계산 실행, 데이터나 코드 고치기</td></tr>
+      <tr><td><b>번역기</b></td><td>지식과 실험 조건을 바뀌지 않는 숫자 계산표로 바꿈</td><td>쓰기, 판정</td></tr>
+      <tr><td><b>조정자</b></td><td>계산 → 결과 → 검사 순서로 이어 줌</td><td>직접 판정하거나 쓰기</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">특히 계산 담당은 실제 관찰 기록을 아예 읽지 못하게 했습니다. 정답을 보면서 계산을 맞추면, 틀린 모델도 맞는 것처럼 보이기 때문입니다.</p>
+</section>
+
+<section>
   <h2>데이터는 어디서 오고, 어떻게 검증하나</h2>
   <p>AI가 기억하거나 그럴듯하게 말한 값은 그대로 믿지 않습니다. 공개된 생물학 데이터베이스에서 원본을 받아 와서, 프로그램이 정해진 규칙으로 대조한 것만 "확인됨"이 됩니다.</p>
   <h3>가져오는 곳</h3>
@@ -244,6 +262,40 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 </section>
 
 <section>
+  <h2>어떻게 추가하고 빼나</h2>
+  <p>데이터는 정해진 길로만 들어가고, 한 번 들어간 기록은 지우지 않습니다. 틀렸던 값도 "언제 왜 바뀌었는지"와 함께 남겨 둡니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>작업</th><th>방법</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td><b>추가</b></td><td>초안을 저장소 밖에서 만들고 → 검사 → 관문 통과 시에만 저장. 새 항목은 임시 번호로 쓰고 저장할 때 정식 번호를 받음</td><td>변경 이유(why)가 없으면 거부</td></tr>
+      <tr><td><b>수정</b></td><td>값을 덮어쓰지 않고, 새 기록이 이전 기록을 대체한다고 적음. 이전 값은 그대로 남음</td><td>어느 날짜 기준으로든 그때 상태를 다시 볼 수 있음</td></tr>
+      <tr><td><b>빼기</b></td><td>지우지 않음. 측정 기록은 "철회" 표시만 가능하고, 철회하면 그 기록에 기대던 값과 결론을 찾아 알려 줌</td><td>철회된 근거 위에 남은 결론이 없게</td></tr>
+      <tr><td><b>합치기·나누기</b></td><td>번호를 지우고 새로 만들지 않고 "이동" 기록을 남김. 한 번 쓴 번호는 다시 쓰지 않음</td><td>옛 번호로 가리킨 곳이 엉뚱한 것을 가리키지 않게</td></tr>
+      <tr><td><b>규칙 고치기</b></td><td>검사 규칙은 사용자 요청으로만 바꿈. 바꿀 때마다 거부 사례 19건이 여전히 거부되는지 확인</td><td>데이터를 통과시키려고 규칙을 느슨하게 하는 것 방지</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>영수증: 모든 변경을 되짚을 수 있게</h2>
+  <p>모든 변경과 실험에는 영수증이 남습니다. 누가 봐도 "이 데이터는 어디서 왔고, 언제 왜 바뀌었고, 이 결과는 어떤 입력에서 나왔는지"를 되짚어 갈 수 있게 하려는 것입니다. 영수증에는 파일 지문(SHA-256)이 들어 있어서, 내용이 한 글자만 바뀌어도 맞지 않게 됩니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>영수증</th><th>담는 것</th><th class="num">현재</th></tr></thead>
+    <tbody>
+      <tr><td><b>패치 기록</b></td><td>무엇을, 왜 바꿨는지. 저장할 때 자동으로 보고서가 붙음</td><td class="num">62개</td></tr>
+      <tr><td><b>변경 사슬</b></td><td>모든 저장을 순서대로 이은 기록. 각 줄이 앞 줄의 지문을 담아 중간을 고치면 사슬이 끊김. 처음부터 다시 재생하면 지금 데이터와 같아야 함</td><td class="num">23건 · 재생 일치</td></tr>
+      <tr><td><b>확인 도장</b></td><td>원본 데이터베이스와 대조했다는 증명. 대조에 쓴 원본 파일의 지문이 붙음</td><td class="num">178개</td></tr>
+      <tr><td><b>실험 증명서</b></td><td>실험마다 입력·조건·결과의 지문과 11가지 점검 결과</td><td class="num">실험마다 1장</td></tr>
+      <tr><td><b>사전 등록</b></td><td>실험 전에 적은 예측과 판정 기준. 등록 뒤 고치면 등록이 무효가 됨</td><td class="num">4건</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
   <h2>결과: 이어진 지도</h2>
   <p>MHC가 세포 표면에 항원을 보여 주는 기전, TCA 회로 같은 대사 경로와 사이클을 같은 지도 위에 연결하고 추가했습니다. 현재 경로 11개, 세포 상태 8개, 분자와 과정 212개가 이어져 있습니다.</p>
   <figure>
@@ -332,10 +384,39 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 
 <section>
   <h2>앞으로</h2>
+  <p>지금은 가상 값으로 연결 구조만 확인하는 단계입니다. 앞으로 측정값을 채우고 시뮬레이터를 넓혀서, 궁극적으로는 검증된 것들을 바탕으로 새로운 가설을 검증하는 데 쓰려고 합니다.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 190" role="img" aria-label="지금은 가상 값으로 연결 구조를 확인하는 결정론 시뮬레이터다. 다음은 실측값을 채우고, 적분 기반 비결정론 시뮬레이터를 더하고, 실제와 맞춰 본 부분을 넓힌 뒤, 궁극적으로 검증된 것들을 바탕으로 새로운 가설을 검증하는 데 쓴다.">
+      <defs>
+        <marker id="m5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="10" y="60" width="148" height="86" rx="4" stroke-width="2.4"/>
+        <rect x="193" y="60" width="148" height="86" rx="4"/>
+        <rect x="376" y="60" width="148" height="86" rx="4"/>
+        <rect x="559" y="60" width="148" height="86" rx="4"/>
+        <line x1="158" y1="103" x2="191" y2="103" marker-end="url(#m5)"/>
+        <line x1="341" y1="103" x2="374" y2="103" marker-end="url(#m5)"/>
+        <line x1="524" y1="103" x2="557" y2="103" marker-end="url(#m5)"/>
+        <line x1="707" y1="103" x2="740" y2="103" marker-end="url(#m5)"/>
+      </g>
+      <rect x="742" y="60" width="148" height="86" rx="4" fill="none" style="stroke:var(--accent)" stroke-width="2.4"/>
+      <g fill="currentColor" font-size="13" text-anchor="middle">
+        <g font-size="11"><text x="84" y="44" font-weight="700">지금</text><text x="267" y="44">다음</text><text x="816" y="44" font-weight="700" style="fill:var(--accent)">궁극적 목표</text></g>
+        <g font-weight="700"><text x="84" y="92">결정론 시뮬레이터</text><text x="267" y="92">측정값 채우기</text><text x="450" y="92">비결정론 시뮬레이터</text><text x="633" y="92">검증된 핵심 넓히기</text><text x="816" y="92" style="fill:var(--accent)">새 가설 검증</text></g>
+        <g font-size="11"><text x="84" y="113">가상 값으로</text><text x="267" y="113">가상 값을</text><text x="450" y="113">적분 기반,</text><text x="633" y="113">실제와 맞춘</text><text x="816" y="113">검증된 것을</text></g>
+        <g font-size="11"><text x="84" y="130">연결 구조 확인</text><text x="267" y="130">실측값으로 교체</text><text x="450" y="130">우연까지 계산</text><text x="633" y="130">부분을 늘림</text><text x="816" y="130">바탕으로</text></g>
+      </g>
+    </svg>
+    </div>
+    <figcaption>왼쪽이 지금 위치이고, 오른쪽 끝이 이 프로젝트가 가려는 곳입니다.</figcaption>
+  </figure>
   <ol>
     <li><b>측정값 채우기.</b> 논문에서 실제 측정값을 모아 가상 값을 바꾸고, 계산 결과를 실제와 비교할 수 있게 합니다.</li>
-    <li><b>MHC와 T세포 잇기.</b> 지도의 점선 부분입니다. 표면에 제시된 양이 T세포 분화를 어떻게 바꾸는지 연결합니다.</li>
-    <li><b>공부에 쓰기.</b> "이 분자가 없으면 어디서 멈출까?"를 먼저 예측하고 실험으로 확인하는 방식으로 시험 공부에 쓰려고 합니다.</li>
+    <li><b>적분 기반 비결정론 시뮬레이터.</b> 분자 수가 적을 때 생기는 우연과 세포 안 공간에서 퍼지는 모습까지 계산하는 시뮬레이터를 더합니다. 지금은 설계와 첫 단계(재료가 정확히 보존되는 정수 계산)까지 했습니다.</li>
+    <li><b>지도 넓히기.</b> MHC 제시와 T세포 분화를 잇는 등, 아직 끊겨 있는 연결을 더합니다.</li>
+    <li><b>새 가설 검증.</b> 실제 측정과 맞춰 본 부분이 쌓이면, 그 위에서 아직 실험하지 않은 가설을 먼저 돌려 보고 결과를 예측합니다. 예측은 실행 전에 등록하고, 나중에 실제 실험과 맞춰 봅니다.</li>
   </ol>
 </section>
 
