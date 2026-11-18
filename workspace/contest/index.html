@@ -35,6 +35,11 @@ ul, ol { padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; 
 .muted { color: var(--muted); }
 code { font-family: var(--mono); font-size: 0.875em; background: var(--tint); padding: 1px 5px; border-radius: 3px; }
 .note { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.facts div { padding: 12px 8px 12px 0; }
+.facts b { display: block; font-family: var(--display); font-size: 1.5rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.facts span { font-size: 0.8125rem; color: var(--muted); }
+td.when { white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; }
 figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .scroll { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
 .scroll svg { display: block; min-width: 720px; width: 100%; height: auto; color: var(--fg); font-family: var(--body); }
@@ -286,6 +291,34 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
   </table>
   </div>
   <p class="muted">HLA-DM은 MHC II에 자리를 맡아 둔 임시 조각(CLIP)을 빼고 진짜 항원 조각을 끼우는 단백질입니다. 이것 하나가 빠지면 MHC도 항원 조각도 다 있는데 표면 제시만 0이 됩니다. 교과서 설명과 같은 방향입니다.</p>
+</section>
+
+<section>
+  <h2>실패한 곳과 고친 방법</h2>
+  <p>만드는 동안 여러 번 실패했습니다. 실패를 지우지 않고 기록해 두었고, 그때마다 같은 실패가 다시 생기지 않게 규칙을 하나씩 더했습니다.</p>
+  <div class="facts">
+    <div><b>9건</b><span>기록에 남은 큰 실패</span></div>
+    <div><b>11건 중 7건</b><span>잘못된 데이터가 처음 검사를 통과</span></div>
+    <div><b>19건</b><span>지금은 매번 거부되는지 확인하는 사례</span></div>
+    <div><b>115건</b><span>모르는 것 기록 (13건 해결)</span></div>
+  </div>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>날짜</th><th>어디서</th><th>무엇이 실패했나</th><th>왜</th><th>그래서 이렇게 했다</th></tr></thead>
+    <tbody>
+      <tr><td class="when">10.08</td><td><b>재료 장부</b></td><td>장부 검사를 처음 켜자 기존 반응 규칙 4개가 오류로 걸림</td><td>반응에서 떨어져 나가는 부산물(피로인산·인산)을 빠뜨려, 재료가 계산 중에 사라지고 있었음</td><td>빠진 부산물을 규칙에 넣어 고치고, 계산 매 단계마다 장부를 맞추게 함</td></tr>
+      <tr><td class="when">10.10</td><td><b>자동 검사관</b></td><td>일부러 만든 잘못된 데이터 11건 중 7건이 검사를 통과</td><td>값만 슬쩍 바꾸기, 출처 기록 떼기, 생쥐 값을 사람 값으로 바꾸기를 검사가 보지 않았음</td><td>측정 기록과 값 대조, 단위·물리적 한계·생물 종 검사를 추가. 공격 사례를 보관해 매번 다시 거부되는지 확인</td></tr>
+      <tr><td class="when">10.10</td><td><b>분자 번호</b></td><td>같은 물질의 서로 다른 형태 번호가 섞여 있었고, 일부는 대조가 경고 없이 건너뛰어짐</td><td>한 물질에 공식 번호가 세 종류(중성 형태, 몸속 pH 형태, 묶음 분류)인데 구분 표시가 없었고, 묶음 분류에는 화학식이 없음</td><td>형태를 반드시 표시하게 하고, 몸속 형태라는 주장은 Rhea 반응식에 3번 이상 쓰일 때만 인정</td></tr>
+      <tr><td class="when">10.10</td><td><b>성능 측정</b></td><td>계산기가 경로에 따라 137배 느리다고 두 번 잘못 보고</td><td>일찍 멈춘 실행(200단계)도 계획한 6,000단계로 나눠 계산함. 계산기가 아니라 측정 방법의 오류</td><td>실제로 돈 단계 수로 나누도록 고치고, 잘못 보고한 표에 정정을 남김</td></tr>
+      <tr><td class="when">10.15</td><td><b>관찰 경로 찾기</b></td><td>관찰과 모델을 잇는 경로 탐색이 27,300쌍 중 46쌍에서 반대 방향 효과를 놓침</td><td>빠르게 하려고 쓴 근사 방법이 첫 경로만 보고 다른 경로를 버림</td><td>전부 탐색하는 방식으로 바꾸고, 한도에 닿으면 "판정 못 함"으로 표시</td></tr>
+      <tr><td class="when">10.16</td><td><b>측정값 수집</b></td><td>실제 반응 속도를 모으지 못함</td><td>SABIO-RK 주소 변경, eQuilibrator 접속 거부, BRENDA 계정 필요, UniProt에는 일부 값만 있음</td><td>값을 지어내지 않고 한계로 기록. 실측 속도가 2개뿐이라는 사실을 그대로 둠</td></tr>
+      <tr><td class="when">10.17</td><td><b>AI 완료 보고</b></td><td>데이터 수집을 맡긴 AI의 "다 했어요" 보고를 실행 기록 대조 없이 받아들임</td><td>결과를 확인하지 않고 보고만 믿는 구멍이 있었음</td><td>결과를 다른 쪽이 독립적으로 다시 만들어 대조하도록 설계함 (구현은 아직)</td></tr>
+      <tr><td class="when">10.22</td><td><b>현실 검증</b></td><td>계산 결과를 숫자로 대조할 실제 측정 기록이 0건</td><td>계산이 규칙대로 됐는지는 철저히 봤지만, 현실과 맞는지 볼 재료는 모으지 않았음</td><td>계산기 확장을 멈추고 측정값 수집을 먼저 하기로 우선순위를 바꿈</td></tr>
+      <tr><td class="when">11.17</td><td><b>MHC I 실험</b></td><td>TAP·β2m을 뺀 실험 2개가 판정 거부됨</td><td>계산 결과의 형식이 점검 규칙과 맞지 않음</td><td>결과를 지어내지 않고 실패로 보고. 고친 뒤 다시 돌릴 예정</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">"19건"은 검사를 통과하면 안 되는 잘못된 데이터 모음입니다. 검사 규칙을 바꿀 때마다 이 19건이 여전히 모두 거부되는지 자동으로 확인하고, 이 숫자는 줄일 수 없게 해 두었습니다. 규칙이 몰래 느슨해지는 것을 막기 위해서입니다.</p>
 </section>
 
 <section>
