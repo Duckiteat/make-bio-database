@@ -7,9 +7,9 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 34 | 6294.9 |
-| docs | 301 | 2233.5 |
-| (최상위) | 18 | 971.7 |
+| rebuild | 34 | 6296.2 |
+| docs | 309 | 2249.1 |
+| (최상위) | 18 | 972.5 |
 | tests | 99 | 684.0 |
 | judicial | 34 | 595.4 |
 | attestations | 1 | 299.0 |
@@ -36,12 +36,12 @@
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
 | `rebuild/state/plan-log.jsonl` | 345.8 |
-| `CHANGES.md` | 325.6 |
+| `CHANGES.md` | 326.3 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
 | `rebuild/rules/changes.jsonl` | 293.2 |
-| `rebuild/state/plans.jsonl` | 286.6 |
+| `rebuild/state/plans.jsonl` | 288.0 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |

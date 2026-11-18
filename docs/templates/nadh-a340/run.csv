@@ -1,0 +1,23 @@
+field,label_ko,value,unit,note
+run_id,실행 번호,,,실험실 규칙대로 유일하게 (예: NADH-A340-2026-11-20-01)
+started_at,시작 시각,,ISO 8601,2026-11-20T14:05+09:00 처럼 시간대까지
+analyst,분석자,,,이니셜 또는 가명
+reviewer,검토자,,,분석자와 다른 사람
+reviewed_at,검토 시각,,ISO 8601,
+sop_id,따른 절차(SOP) 번호·판,,,
+instrument_model,판독기 모델,,,
+instrument_asset_id,판독기 자산 번호,,,
+instrument_last_qualified,판독기 마지막 적격성·교정일,,ISO 8601,
+read_mode,판독 방식,,,end-point 또는 kinetic
+wavelength_nm,파장,340,nm,
+bandwidth_nm,대역폭,,nm,기기 표시값
+pathcheck,광로 보정,,,on 또는 off (on 이면 기준 길이 적기)
+plate_type_lot,플레이트 종류·로트,,,
+well_volume_ul,웰 부피,200,µL,
+temp_setpoint_c,온도 설정,37,°C,
+temp_actual_c,온도 실측,,°C,기기 표시 실측값
+kinetic_interval_s,판독 간격,,s,kinetic 일 때
+kinetic_duration_s,판독 시간,,s,kinetic 일 때
+software_version,기기 소프트웨어·판,,,
+raw_file_name,원자료 파일 이름,,,기기가 내보낸 파일 그대로 (고치지 않음)
+raw_file_sha256,원자료 파일 sha256,,,sha256sum 파일이름 의 앞 64 자

@@ -2215,6 +2215,19 @@
       ]
     },
     {
+      "path": "docs/templates/*/*",
+      "class": "history",
+      "format": "Markdown 설명 + CSV 기록표 (영어 열쇠 + 한국어 이름 — LIMS 가져오기용)",
+      "writer": "사람·develop 세션 (손으로 — 판을 올릴 때 README 의 판 번호)",
+      "readers": "사람 (실험실에 주는 기록표)",
+      "interpret": "측정 1 회분 기록표 — 실험실 자료를 측정법 검증(ASY-09) 재료로 받기 위한 칸 (DEC-0061). ALCOA+ 원칙 · 원값만 · 반복 구분. 관찰 출처가 아니다. nadh-a340: NADH 340 nm 흡광 판독.",
+      "level": "L2",
+      "area": "doc:report",
+      "write_keys": [
+        "session:*"
+      ]
+    },
+    {
       "path": "docs/reports/sources/*.pdf",
       "class": "history",
       "format": "PDF (보고서가 검토한 원본 — 바꾸지 않음)",

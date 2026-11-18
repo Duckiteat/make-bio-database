@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.2 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.7 | 36 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 325.6 | 322 |  | 분류됨 1 |
+| `CHANGES.md` | 326.3 | 323 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -36,6 +36,7 @@
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
+| `docs/design/uncertainty-budget.md` | 7.0 | 80 |  | 미분류 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
 | `docs/modes/author.md` | 13.2 | 140 |  | 생성물 |
 | `docs/modes/baseline.md` | 4.4 | 66 |  | 생성물 |
@@ -43,7 +44,7 @@
 | `docs/modes/field.md` | 1.5 | 31 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.5 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 19.1 | 75 |  | 생성물 |
-| `docs/plan/assay.md` | 4.9 | 82 |  | 생성물 |
+| `docs/plan/assay.md` | 5.2 | 83 |  | 생성물 |
 | `docs/plan/build.md` | 41.6 | 415 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
@@ -97,6 +98,7 @@
 | `docs/plan/decisions/DEC-0050.md` | 2.0 | 18 |  | 생성물 |
 | `docs/plan/decisions/DEC-0051.md` | 2.6 | 20 |  | 생성물 |
 | `docs/plan/decisions/DEC-0060.md` | 2.1 | 19 |  | 생성물 |
+| `docs/plan/decisions/DEC-0061.md` | 1.6 | 13 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -105,9 +107,9 @@
 | `docs/plan/items/ASY-05.md` | 1.4 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-06.md` | 1.3 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-07.md` | 2.2 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-08.md` | 13.1 | 58 |  | 생성물 |
-| `docs/plan/items/ASY-09.md` | 3.1 | 32 |  | 생성물 |
-| `docs/plan/items/ASY-10.md` | 1.7 | 22 |  | 생성물 |
+| `docs/plan/items/ASY-08.md` | 13.4 | 59 |  | 생성물 |
+| `docs/plan/items/ASY-09.md` | 3.3 | 33 |  | 생성물 |
+| `docs/plan/items/ASY-10.md` | 2.0 | 23 |  | 생성물 |
 | `docs/plan/items/ASY-11.md` | 2.2 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-12.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/ASY-13.md` | 1.5 | 21 |  | 생성물 |
@@ -303,6 +305,7 @@
 | `docs/reports/2026-11-03-collection-search-layer-assessment.md` | 14.3 | 132 |  | 미분류 |
 | `docs/reports/2026-11-18-labnote-nadh-a340-limits.md` | 7.5 | 54 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
+| `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
@@ -312,7 +315,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 18.5 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 138.2 | 858 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 138.7 | 859 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

@@ -1,0 +1,5 @@
+well,role,sample_id,replicate_no,prep_id,matrix,nominal_nadh_um,enzyme_ref,enzyme_conc_um,substrate,substrate_conc_mm,nad_conc_mm,time_s,a340_raw,flag
+A1,blank,,1,S0,buffer,0,,,,,,0,,
+A2,standard,,1,S20,buffer,20,,,,,,0,,
+B1,kinetic,E1,1,K1,buffer,,ENZ-…,,L-Phe,10,,0,,
+B1,kinetic,E1,1,K1,buffer,,ENZ-…,,L-Phe,10,,30,,
