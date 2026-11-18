@@ -114,6 +114,54 @@ test('⑦ 불확도 출처: resolution 은 정규·sd > 0 에만 · 모르는 �
   assert.equal(C.checkObservation({ ...amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 1, basis: 'nope' } }) }).ok, false, '계약 모양도 출처 값을 본다');
 });
 
+test('⑦′ 불확도 예산 (ASY-08 · DEC-0061 · RULE-0090): 성분 모양 · random/systematic 필수 · sd = √Σu² · 해상도만은 거부 · 원문 SD 는 반복 성분', () => {
+  const rep = { source: 'repeatability', effect: 'random', type: 'A', u: 60, from: '반복 3 회의 SD (원문)' };
+  const ref = { source: 'reference_material', effect: 'systematic', type: 'A', u_rel: 0.05, from: '원액 A340 확인 3 회' };
+  const sd = Math.hypot(60, 0.05 * 1200);
+  const budget = (parts, extra) => amount({ uncertainty: { kind: 'combined', model: 'normal', sd, basis: 'budget', budget: parts }, ...extra });
+  passes({ observations: [budget([rep, ref])] });
+  rejectedFor({ observations: [budget([rep, { ...ref, effect: undefined }])] }, /effect ''.*필수/);
+  rejectedFor({ observations: [budget([rep, { ...ref, effect: 'maybe' }])] }, /effect 'maybe'/);
+  rejectedFor({ observations: [budget([rep, { ...ref, source: 'vibes' }])] }, /성분 종류 'vibes'/);
+  rejectedFor({ observations: [budget([rep, { ...ref, u: 1 }])] }, /u\(같은 단위\) 와 u_rel\(상대\) 중 하나만/);
+  rejectedFor({ observations: [budget([rep, { ...ref, from: '' }])] }, /어떻게 얻었는지\(from\)/);
+  rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 60, basis: 'budget', budget: [rep, ref] } })] }, /합성 √Σu²/);
+  rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 60, basis: 'reported', budget: [rep] } })] }, /basis 'budget' 일 때만/);
+  rejectedFor({ observations: [amount({ uncertainty: { kind: 'combined', model: 'normal', sd: 1, basis: 'budget', budget: [{ source: 'resolution', effect: 'random', type: 'B', u: 1, from: '마지막 자리' }] }, reported: { value: '1200', unit: 'molecule' } })] }, /해상도 성분만으로 된 예산/);
+  rejectedFor({ observations: [budget([{ ...rep, u: 59 }, ref].map((p, i) => (i ? { ...p, u_rel: Math.sqrt(sd * sd - 59 * 59) / 1200 } : p)))] }, /반복\(repeatability\) 성분이 없음/);
+  rejectedFor({ observations: [budget([rep, { ...ref, ref: 'O999999' }])] }, /관찰 O999999 이 없음/);
+  // 출처 없는 B 형: 사유(경고)로 관문이 멈춤 — 사람이 allowWarnings 로 받으면 등급은 D3.obs_bare
+  const unsourced = budget([rep, { ...ref, type: 'B', from: '제조사 규격으로 보임' }]);
+  rejectedFor({ observations: [unsourced] }, /B 형 성분\(reference_material\)에 출처\(cite\)가 없음/);
+  const RELI = req('../judicial/reliability.js'), ctx = {};
+  const measured = (o) => ({ ...o, evidence: { level: 'curated' } }); // 시험 기록의 computed 는 D2.estimate 라 등급 축만 보려고 바꿈 (저장하지 않음)
+  assert.equal(RELI.scoreObservation(measured(unsourced), ctx).cd, 'D3.obs_bare');
+  assert.equal(RELI.scoreObservation(measured(budget([rep, ref])), ctx).cd, 'D4.measured');
+  // 계약 모양
+  assert.ok(C.checkObservation(budget([rep, ref])).ok, JSON.stringify(C.checkObservation(budget([rep, ref])).violations));
+  assert.equal(C.checkObservation(budget([{ ...rep, effect: undefined }])).ok, false, '계약도 effect 를 요구');
+});
+
+test('⑦″ 예산의 판정: random 은 반복 수로 나누고 systematic 은 그대로 — 원액 오차는 반복해도 줄지 않는다', () => {
+  const OC = req('../judicial/obs_compare.js');
+  const parts = [{ source: 'repeatability', effect: 'random', type: 'A', u: 60, from: 'x' }, { source: 'reference_material', effect: 'systematic', type: 'A', u: 60, from: 'x' }];
+  const o = (r) => ({ observable: { kind: 'amount', target: BUNDLE }, value: 1200, uncertainty: { kind: 'combined', model: 'normal', sd: Math.hypot(60, 60), basis: 'budget', budget: parts }, replicates: r });
+  assert.equal(OC.scale(o(4), [1200]).noise, 3600 / 4 + 3600);
+  assert.equal(OC.scale(o(100), [1200]).noise, 3600 / 100 + 3600, '반복을 늘려도 systematic 3600 이 바닥');
+  const plain = { ...o(4), uncertainty: { kind: 'combined', model: 'normal', sd: Math.hypot(60, 60) } };
+  assert.ok(Math.abs(OC.scale(plain, [1200]).noise - 7200 / 4) < 1e-9, '예산이 없으면 지금처럼 전부 나눔 — 옛 관찰의 판정은 그대로');
+});
+
+test('⑧′ 내부 일관성 (ASY-14 · RULE-0530): 원문 sem · n · 정수 자료 — 앞뒤가 안 맞으면 사유로 관문이 멈춤', () => {
+  passes({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '60', sem: '34.6', n: 3 } })] });
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '60', sem: '60', n: 3 } })] }, /SEM 60 ≠ SD\/√n/);
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '60', sem: '90', n: 3 } })] }, /바꿔 적은 흔적/);
+  rejectedFor({ observations: [amount({ replicates: 3, reported: { value: '5.19', unit: 'molecule', n: 28, integer: true }, value: 5.19, uncertainty: { kind: 'measurement', model: 'normal', sd: 0.01, basis: 'resolution' } })] }, /GRIM/);
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '60', n: 5 } })] }, /원문 표본 수 n=5 과 반복 수 3/);
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '60', sem: 34.6, n: 3 } })] }, /reported\.sem.*십진 문자열/);
+  rejectedFor({ observations: [amount({ reported: { value: '1200', unit: 'molecule', sd: '60', n: 0 } })] }, /reported\.n/);
+});
+
 test('측정법이 붙은 관찰 (RULE-0524 · DEC-0045): 관문은 등록된 측정법만 · 장부를 못 받으면 경고로 막음', () => {
   const reg = new Map([['syn_counting', { key: 'syn_counting', rung: 'cellular', produces: ['amount'] }]]);
   const g = (o, opt) => J.gate(BASE, LEG.merge(BASE, P({ observations: [amount(o)] })), opt);

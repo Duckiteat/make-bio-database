@@ -550,6 +550,27 @@
   uncertaintyBases: {
     reported:   { label: '원문이 보고한 불확도' },
     resolution: { label: '미보고 — 유효 숫자 해상도로 채움 (잰 퍼짐 아님)', models: ['normal'] },
+    budget:     { label: '성분별 불확도 예산 — sd = √Σu² (성분마다 random/systematic, DEC-0061)', models: ['normal'] },
+  },
+  // 불확도 예산의 성분 (ASY-08 · DEC-0061 · docs/design/uncertainty-budget.md) — GUM 의 성분별 표준 불확도
+  budgetSources: {
+    readout:            { label: '판독 — 기기 잡음 · 검출 한계 근처의 흔들림' },
+    calibration:        { label: '교정 — 표준곡선 적합 · 기울기 불확도' },
+    reference_material: { label: '기준물질 — 원액 순도 · 공칭 농도 · 분해' },
+    volumetric:         { label: '부피 — 피펫 · 플라스크 허용 오차' },
+    matrix:             { label: '바탕 — 완충액 · 시료 바탕 효과' },
+    repeatability:      { label: '반복 — 같은 조건 반복의 퍼짐 (원문 SD)' },
+    resolution:         { label: '해상도 — 적힌 마지막 자리 (성분일 뿐 바닥이 아님)' },
+    propagated:         { label: '전파 — 계산에 들어간 다른 양(예: 효소 농도)의 불확도' },
+    other:              { label: '그 밖 — from 에 무엇인지' },
+  },
+  budgetEffects: {
+    random:     { label: '반복으로 줄어듦 — 평균의 분산에서 반복 수로 나눔' },
+    systematic: { label: '반복해도 그대로 (같은 원액 · 같은 곡선) — 반복 수로 나누지 않음' },
+  },
+  budgetTypes: {
+    A: { label: 'A 형 — 이 자료의 반복에서 통계로 (GUM 4.2)' },
+    B: { label: 'B 형 — 규격 · 문헌 · 판단에서 (GUM 4.3) — 출처(cite)가 없으면 근거로 주장하지 못함' },
   },
   noiseModels: {
     normal:    { label: '정규 (sd = 표준 편차, 같은 단위)' },

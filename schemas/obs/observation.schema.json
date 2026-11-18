@@ -114,8 +114,35 @@
             "basis": {
               "enum": [
                 "reported",
-                "resolution"
+                "resolution",
+                "budget"
               ]
+            },
+            "budget": {
+              "type": "array",
+              "minItems": 1,
+              "description": "성분별 불확도 예산 (basis 'budget' 일 때만) — sd = √Σu², 성분마다 random/systematic 필수 (DEC-0061 · RULE-0090)",
+              "items": {
+                "type": "object",
+                "required": ["source", "effect", "type", "from"],
+                "additionalProperties": false,
+                "properties": {
+                  "source": { "enum": ["readout", "calibration", "reference_material", "volumetric", "matrix", "repeatability", "resolution", "propagated", "other"] },
+                  "effect": { "enum": ["random", "systematic"] },
+                  "type": { "enum": ["A", "B"] },
+                  "u": { "type": "number", "minimum": 0, "description": "표준 불확도 — 값과 같은 단위(SI). u_rel 과 둘 중 하나만" },
+                  "u_rel": { "type": "number", "minimum": 0, "description": "상대 표준 불확도 — u = u_rel · |value|" },
+                  "from": { "type": "string", "minLength": 1, "description": "이 성분을 어떻게 얻었나" },
+                  "cite": {
+                    "type": "object",
+                    "required": ["db", "id"],
+                    "additionalProperties": false,
+                    "properties": { "db": { "enum": ["DOI", "PMID", "ISBN", "URL"] }, "id": { "type": "string", "minLength": 1 } }
+                  },
+                  "shared": { "type": "string", "minLength": 1, "description": "공유 열쇠 — 같은 원액 로트 · 같은 표준곡선. 같은 열쇠의 관찰끼리는 이 성분이 상관(독립 아님)" },
+                  "ref": { "type": "string", "pattern": "^O\\d{6}$", "description": "전파된 양의 관찰 번호" }
+                }
+              }
             }
           }
         },
@@ -151,11 +178,14 @@
           "type": "object",
           "required": ["value", "unit"],
           "additionalProperties": false,
-          "description": "원문 그대로의 값 — 자리수까지 문자열로. value·sd·precision 은 여기서 정확한 유리수 환산(한 번 반올림)으로 나와야 하고, 자리수가 하나라도 다르면 거부 (RULE-0525)",
+          "description": "원문 그대로의 값 — 자리수까지 문자열로. value·sd·precision 은 여기서 정확한 유리수 환산(한 번 반올림)으로 나와야 하고, 자리수가 하나라도 다르면 거부 (RULE-0525). sem · n · integer 는 내부 일관성 재료(RULE-0530)",
           "properties": {
             "value": { "type": "string", "pattern": "^-?(\\d+\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?$" },
             "unit": { "type": "string" },
-            "sd": { "type": "string", "pattern": "^(\\d+\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?$" }
+            "sd": { "type": "string", "pattern": "^(\\d+\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?$" },
+            "sem": { "type": "string", "pattern": "^(\\d+\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?$", "description": "원문 SEM 그대로 — 내부 일관성(RULE-0530, 사유이지 거부 아님)" },
+            "n": { "type": "integer", "minimum": 1, "description": "원문 표본 수 — 내부 일관성(RULE-0530)" },
+            "integer": { "type": "boolean", "description": "원 자료가 정수(세기 · 점수)인가 — GRIM(RULE-0530)" }
           }
         },
         "condition": {

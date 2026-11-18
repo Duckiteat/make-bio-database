@@ -595,6 +595,7 @@
     const u = isObj(b.uncertainty) ? b.uncertainty : {};
     o.uncertainty = { kind: str(u.kind), model: str(u.model), sd: num(u.sd) };
     if (u.basis !== undefined) o.uncertainty.basis = str(u.basis);
+    if (u.budget !== undefined) o.uncertainty.budget = arr(u.budget).map(normBudgetPart); // 성분별 예산 (ASY-08 · DEC-0061) — 있을 때만
     for (const k of ['precision', 'detection_limit', 'saturation', 'raw']) if (num(b[k]) !== undefined) o[k] = num(b[k]);
     o.replicates = b.replicates === null ? null : num(b.replicates); // null = 원문에 반복 수가 없음(미보고) — 1 로 적지 않는다
     o.condition = normObsCondition(b.condition);
@@ -608,9 +609,22 @@
     if (isObj(b.reported)) { // 원문 숫자 그대로 (ASY-08 — 자리수 대조 RULE-0525): 십진 문자열을 바꾸지 않는다
       const r = { value: b.reported.value, unit: str(b.reported.unit) }; // 숫자로 오면 그대로 둔다 — 문자열로 바꾸면 잃은 자리수(0.10 → 0.1)가 가려진다. 판정이 거부
       if (b.reported.sd != null) r.sd = b.reported.sd;
+      if (b.reported.sem != null) r.sem = b.reported.sem; // 내부 일관성 재료 (ASY-14 · RULE-0530) — 원문 그대로
+      if (b.reported.n != null) r.n = b.reported.n;
+      if (b.reported.integer != null) r.integer = b.reported.integer;
       o.reported = r;
     }
     return Object.assign(o, normObsCommon(b));
+  }
+  // 불확도 예산의 성분 하나 — 칸 순서 고정, 모르는 칸은 버리지 않고 판정이 거부하도록 그대로 (u · u_rel 은 수가 아니면 그대로 두어 판정이 잡음)
+  function normBudgetPart(p) {
+    p = isObj(p) ? p : {};
+    const o = { source: str(p.source), effect: str(p.effect), type: str(p.type) };
+    for (const k of ['u', 'u_rel']) if (p[k] !== undefined) o[k] = num(p[k]) !== undefined ? num(p[k]) : p[k];
+    o.from = str(p.from);
+    if (isObj(p.cite)) o.cite = { db: str(p.cite.db), id: str(p.cite.id) };
+    for (const k of ['shared', 'ref']) if (str(p[k])) o[k] = str(p[k]);
+    return o;
   }
   // 관찰 조건 = 맥락 열쇠(v12 §5) + 측정 시각·상태 (조건 목록은 끝에 — 기존 기록의 필드 순서 유지)
   function normObsCondition(c) {
