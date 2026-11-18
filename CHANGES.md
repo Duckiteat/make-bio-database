@@ -5,6 +5,7 @@
 
 | 날짜 · 커밋 주제 | Scope | Why | Impact | Verification |
 |---|---|---|---|---|
+| 2026-11-18 · 출품 페이지 — 비전공자용으로 다시 씀 | `workspace/contest/index.html` | 사용자 요청 — 심사위원이 비전공자일 수 있음 | 30초 요약·진열대 비유 도식 신설, 모든 도식·본문을 쉬운 말로, 기술 세부(Rodas3·해시·1e-14·점검 11항목·실행 명령)는 접는 칸으로, 용어 풀이 추가 · 수치·사실 변경 없음 · 문서만 | 도식 5장 화면 확인 · `textbook --check` |
 | 2026-11-17 · 출품 페이지 — 엔진 구조·제작 과정 도식 | `workspace/contest/index.html` | 사용자 요청 — 무엇을 넣었나보다 엔진의 형태와 만들어진 경위를 앞에 | 두 절 추가(엔진 실행 경로·네 부분 도식, 10.08 이후 전환점 연표·역할 표) · 문서만 | 도식 화면 확인 · `textbook --check` |
 | 2026-11-17 · 공모전 출품 설명 페이지 | `workspace/contest/index.html`(신설)·`docs/textbook/storage-map.json` | 대학 AI 교과 연계 프로젝트 공모전 출품 — 면역학 중심 단원(MHC II 항원 제시)으로 구조·활용·한계·계획을 외부 독자에게 설명 | 문서만 — db·엔진·규칙 변경 없음 · 표의 값은 `fate D000202` 과정 보고서 3 건(immature-baseline·maturation-lps·hladm-null)의 사본 · 발견: `mhc-i-tap-null`·`mhc-i-b2m-null` 은 원자료 계약 위반(`facts[0].kind` = `excluded`)으로 판정 거부 — 고치지 않고 페이지 한계에 적음 | `textbook --check` · `validate` |
 | 2026-10-22 · 세션 연속성 — 방향 문서 + 세션-시작 읽기 | `docs/design/direction.md`(신설)·`CLAUDE.md`·`agent-rules.md` 세션-시작 줄(동기) | 새 세션이 저장소만 읽고 지금 방향 감각으로 들어오게 — 기억이 아니라 저장소가 연속성을 준다 | 방향 문서: 북극성(현실검증)·방향값(자동결정률)·검증이 능력을 gate·우선순위(데이터 먼저·공간관찰>공간엔진·2부 가독성 먼저 규모 보류)·형태(한 엔진+불변 db, seam=사실 지위, 병렬=순수성+역할)·자동화(MCP, 사람 frontier·기계 routine)·수렴 경계·읽는 순서 · 세션-시작 읽기에 direction+철학 추가(CLAUDE.md+agent-rules 같은 커밋) | 문서만 · textbook 분류됨 · validate 0 |
