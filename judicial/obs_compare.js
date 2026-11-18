@@ -32,6 +32,18 @@ function sdOf(o, opt) {
   return isResolution(o) && conv === 'gum' ? o.uncertainty.sd * GUM_RECT : o.uncertainty.sd;
 }
 
+// 불확도 예산 (ASY-08 · DEC-0061): 평균의 분산 = Σ random u² / 반복 수 + Σ systematic u² — 같은 원액·같은 곡선의 오차는 반복해도 그대로.
+//   해상도 성분은 보고된 평균값 자체의 반올림이라 effect 와 무관하게 나누지 않는다 (해상도 sd 와 같은 원리)
+const isBudget = (o) => o.uncertainty.basis === 'budget' && Array.isArray(o.uncertainty.budget);
+function budgetVar(o, r) {
+  let v = 0;
+  for (const p of o.uncertainty.budget) {
+    const u = p.u !== undefined ? p.u : p.u_rel * Math.abs(o.value);
+    v += (u * u) / (p.effect === 'random' && p.source !== 'resolution' ? r : 1);
+  }
+  return v;
+}
+
 // 비교 척도로 옮긴 예측·관찰과 분산 성분
 function scale(o, samples, opt) {
   const u = o.uncertainty, r = reps(o), log = u.model === 'lognormal', sd = sdOf(o, opt);
@@ -39,7 +51,8 @@ function scale(o, samples, opt) {
   const xs = log ? finite.map((v) => Math.log(v)) : finite;
   const n = xs.length, mu = n ? S.mean(xs) : NaN, s2 = S.variance(xs);
   const y = log ? Math.log(o.value) : o.value;
-  let noise = (sd * sd) / (isResolution(o) ? 1 : r); // 관찰 평균의 측정(또는 합산) 분산 — 해상도는 보고된 평균값 자체의 반올림이라 반복 수로 줄지 않는다
+  let noise = isBudget(o) ? budgetVar(o, r) // 예산: random 은 반복 수로 나누고 systematic 은 그대로 (DEC-0061)
+    : (sd * sd) / (isResolution(o) ? 1 : r); // 관찰 평균의 측정(또는 합산) 분산 — 해상도는 보고된 평균값 자체의 반올림이라 반복 수로 줄지 않는다
   if (u.model === 'poisson') noise += Math.max(mu, 0) / r; // 계수 잡음
   if (o.observable.kind === 'fraction' || o.observable.kind === 'fraction_above') noise += (mu * (1 - mu)) / r; // r 개 세포를 센 비율의 표집 분산
   const mc = n > 1 ? s2 / n : 0; // 앙상블 평균의 몬테카를로 분산

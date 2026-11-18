@@ -6,12 +6,12 @@
 
 1. [PLAN-092](items/PLAN-092.md) 시계 안전망 시험 — ☑ 완료 · build — 엔진 먼저(DEC-0049) — 결과를 바꾸지 않고 시계의 지금 동작을 못 박는 안전망 (완료)
 2. [PLAN-093](items/PLAN-093.md) 시계 정리 (관찰 격자 한정) — ☑ 완료 · build — 안전망 위에서 시계 정리 — 출하 시나리오는 비트 불변이어야 함 (DEC-0049)
-3. [PLAN-077](items/PLAN-077.md) 추세 재확인 자동화가 실제로 돌게 — ◐ 진행 · build — 구조 평가 뒤 순서의 첫째(DEC-0030) — 추세 재확인이 실제로 돌게 (저장소 연결은 사용자 일 — 보류 중)
-4. [ASY-00](items/ASY-00.md) 틀 — ◐ 진행 · assay — 데이터를 모으기 전에 측정법 틀 — 나중이면 모은 기록을 모두 옮겨야 함 (DEC-0041) — 2026-11-02: 옛 정량 관찰 22건은 정보 작성 모드로 넘김 기록을 남김(다음 세션이 author 로 열어 시작)
-5. [ASY-12](items/ASY-12.md) 출처 고정 — ☐ 대기 · assay — 옛 관찰 22 의 원문 숫자 채우기가 이 위에서 해야 한 번에 끝남 (DEC-0046) — 2026-11-02: ASY-00 과 같은 22건이라 같은 정보 작성 세션에서
-6. [STG-11f](items/STG-11f.md) 세션 끊기 — ◐ 진행 · rebuild — 도구와 형식은 끝(probe --next · NEXT-*.md) — 남은 것은 다음 세션이 그것만으로 첫 작업 자리에 닿는지 영수증으로 확인 (DEC-0047)
-7. [ASY-08](items/ASY-08.md) 계량 기초 — ◐ 진행 · assay — 가장 기초 — 단위 · 상수 · 자리수 · 추적성 · 불확도 예산. 모든 판독이 이 단을 가리킴 (DEC-0043)
-8. [ASY-14](items/ASY-14.md) 내부 일관성 — ◐ 진행 · assay — 판정 함수까지 끝(judicial/consistency.js) — 관찰 형식에 sem · n · 평균 칸이 생기면 검증기에 잇는다(형식 변경은 사용자 요청). 들이는 값마다 걸러야 하니 모으기 전에 (DEC-0046)
+3. [ASY-08](items/ASY-08.md) 계량 기초 — ◐ 진행 · assay — 2026-11-18 앞으로(DEC-0062): 불확도 예산 칸 + 추적성 — ASY-14 와 같은 자리(정량 관찰의 불확도·원문 숫자)라 한 번의 형식 변경으로 묶음. 원래: 가장 기초 — 단위 · 상수 · 자리수 · 추적성 · 불확도 예산. 모든 판독이 이 단을 가리킴 (DEC-0043)
+4. [ASY-14](items/ASY-14.md) 내부 일관성 — ☑ 완료 · assay — 2026-11-18 앞으로(DEC-0062): ASY-08 과 한 묶음 — 원문 숫자에 sem · n · 정수 자료 칸, 검증기에 consistency 잇기. 원래: 판정 함수까지 끝(judicial/consistency.js) — 관찰 형식에 sem · n · 평균 칸이 생기면 검증기에 잇는다(형식 변경은 사용자 요청). 들이는 값마다 걸러야 하니 모으기 전에 (DEC-0046)
+5. [PLAN-077](items/PLAN-077.md) 추세 재확인 자동화가 실제로 돌게 — ◐ 진행 · build — 구조 평가 뒤 순서의 첫째(DEC-0030) — 추세 재확인이 실제로 돌게 (저장소 연결은 사용자 일 — 보류 중) — 2026-11-18: 11/3 실행이 저장소 미연결로 push 403, 결과 유실. 재발 방지는 예약 작업 지시문에 시작 전 push 확인(DEC-0062). 저장소 연결은 여전히 사용자 일
+6. [ASY-00](items/ASY-00.md) 틀 — ◐ 진행 · assay — 데이터를 모으기 전에 측정법 틀 — 나중이면 모은 기록을 모두 옮겨야 함 (DEC-0041) — 2026-11-02: 옛 정량 관찰 22건은 정보 작성 모드로 넘김 기록을 남김(다음 세션이 author 로 열어 시작)
+7. [ASY-12](items/ASY-12.md) 출처 고정 — ☐ 대기 · assay — 옛 관찰 22 의 원문 숫자 채우기가 이 위에서 해야 한 번에 끝남 (DEC-0046) — 2026-11-02: ASY-00 과 같은 22건이라 같은 정보 작성 세션에서
+8. [STG-11f](items/STG-11f.md) 세션 끊기 — ◐ 진행 · rebuild — 도구와 형식은 끝(probe --next · NEXT-*.md) — 남은 것은 다음 세션이 그것만으로 첫 작업 자리에 닿는지 영수증으로 확인 (DEC-0047)
 9. [ASY-13](items/ASY-13.md) 이중 독립 입력 — ☐ 대기 · assay — 실측 상수 모으기(78) 전에 절차로 서야 함 (DEC-0046)
 10. [ASY-01](items/ASY-01.md) 기초 판독 — ☐ 대기 · assay — 조합 측정법이 가리킬 기초 판독 먼저
 11. [ASY-02](items/ASY-02.md) 기초 분리 — ☐ 대기 · assay — 분리는 판독의 앞 단계 속성 — 조합(3) 전에
@@ -58,7 +58,7 @@
 
 - build: 37 / 103
 - rebuild: 39 / 42
-- assay: 0 / 17
+- assay: 1 / 17
 
 ## 순서가 바뀐 길
 
@@ -73,3 +73,4 @@
 - `2026-11-02` PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 — GMP 활용과 학술지 논문을 목표로 계산 과정의 기록·주장 추적·사람/AI 행위 분리가 계획에 없음 — 사용자가 계획 항목으로 올리라고 함 (DEC-0060)
 - `2026-11-02` PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-092 → PLAN-093 → PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 — 사용자가 엔진으로 넘어가자고 함 — 엔진 해부(K1–K7)에서 계획에 없던 시계 안전망 시험과 시계 정리를 올리고 순서 앞에 둠 (DEC-0049)
 - `2026-11-02` PLAN-092 → PLAN-093 → PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → ASY-10 ⇒ PLAN-092 → PLAN-093 → PLAN-077 → ASY-00 → STG-11c → STG-11b → STG-11a → STG-11f → ASY-08 → ASY-11 → STG-11d → STG-11e → ASY-12 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-10 — 사용자가 충분도 판정의 부족한 점 중 P9 를 뺀 모두를 계획에 올리라 하고 학회 수준의 신뢰를 가까운 목표로 정함 — 새 8부와 항목 5 개, 기존 항목 순서 편입 (DEC-0051)
+- `2026-11-18` PLAN-092 → PLAN-093 → PLAN-077 → ASY-00 → ASY-12 → STG-11f → ASY-08 → ASY-14 → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e ⇒ PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-077 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e — 사용자 승인(2026-11-18 "바로가자 … 플랜 077 은 정리해서 올려놓고, 이런 경우가 다시 일어나지 않게 막아보자") — ASY-08·14 를 한 형식 변경으로 맨 앞에, PLAN-077 실패 기록과 재발 방지

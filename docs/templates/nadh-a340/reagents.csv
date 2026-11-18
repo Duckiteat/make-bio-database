@@ -1,0 +1,4 @@
+reagent_id,name,catalogue_no,lot,expiry,prepared_at,prepared_by,nominal_conc,nominal_unit,matrix,storage,freeze_thaw_count,verified_conc,verified_unit,verified_how,note
+R1,NADH (disodium),,,,,,10,mM,TDW,deep freezer,,,,A340 (ε 출처 적기),원액 — 무게 · 순도 · 수분은 note 에
+R2,Tris-HCl pH 7.0,,,,,,1,M,TDW,실온,,,,,pH 를 맞춘 온도를 note 에
+R3,L-Phenylalanine,,,,,,100,mM,TDW,냉장,,,,,

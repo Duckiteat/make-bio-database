@@ -5,9 +5,9 @@
 //   시뮬레이션 감사는 행정부가 낸 원자료(raw)를 입력으로 받는다 — 여기서 simulate·simulateRate 를 부르지 않는다.
 //   오류를 찾으면 판결(보고서)만 낸다. 고치는 것은 별도 과정(에이전트 → 새 패치 → 입법 서기 → 재검증)이다.
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'), require('./reliability.js'));
-  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp, root.DefDBReliability);
-})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP, RELI) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'), require('./reliability.js'), require('./consistency.js'));
+  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp, root.DefDBReliability, root.DefDBConsistency);
+})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP, RELI, CONS) { // CONS: 내부 일관성(ASY-14) — 브라우저에 없으면 그 검사만 건너뜀
   'use strict';
   const {
     NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
@@ -403,8 +403,44 @@
     if (r.sd != null) {
       const s = M.exactQ(r.sd);
       if (!s || typeof r.sd !== 'string') E('RULE-0525', w, `원문 불확도(reported.sd) '${r.sd}' — 원문 그대로의 십진 문자열이어야 함`);
+      else if (o.uncertainty && o.uncertainty.basis === 'budget') { // 예산이면 원문 SD 는 반복 성분 하나 — 합성 sd 가 아니라 그 성분과 대조
+        const ws = M.qToF64(M.qMul(s, f));
+        if (!(o.uncertainty.budget || []).some((p) => p.source === 'repeatability' && p.u === ws)) E('RULE-0525', w, `원문 '± ${r.sd} ${r.unit}' 이 있는데 예산에 그 정확한 환산 ${ws} 을 u 로 가진 반복(repeatability) 성분이 없음`);
+      }
       else if (o.uncertainty && o.uncertainty.model === 'normal' && o.uncertainty.basis !== 'resolution') { const ws = M.qToF64(M.qMul(s, f)); if (ws !== o.uncertainty.sd) E('RULE-0525', w, `sd ${o.uncertainty.sd} 이 원문 '± ${r.sd} ${r.unit}' 의 정확한 환산 ${ws} 과 다름`); }
     }
+    // 내부 일관성 재료 (ASY-14) — 모양은 오류(RULE-0525), 앞뒤가 안 맞으면 사유(RULE-0530 — 원문이 틀렸을 수 있어 거부하지 않음)
+    if (r.sem != null && (typeof r.sem !== 'string' || !M.exactQ(r.sem))) E('RULE-0525', w, `원문 SEM(reported.sem) '${r.sem}' — 원문 그대로의 십진 문자열이어야 함`);
+    if (r.n != null && !(Number.isInteger(r.n) && r.n >= 1)) E('RULE-0525', w, `원문 표본 수(reported.n) '${r.n}' — 1 이상의 정수`);
+    if (r.integer != null && typeof r.integer !== 'boolean') E('RULE-0525', w, '정수 자료 표시(reported.integer)는 true | false');
+    if (r.n != null && o.replicates != null && r.n !== o.replicates) W('RULE-0530', w, `원문 표본 수 n=${r.n} 과 반복 수 ${o.replicates} 가 다름 — 어느 쪽이 맞는지 원문 확인`);
+    if (CONS && Number.isInteger(r.n)) for (const note of CONS.consistencyNotes({ mean: r.value, sd: r.sd, sem: r.sem, n: r.n, integer: r.integer })) W('RULE-0530', w, note.replace(/^RULE-0530 /, ''));
+  }
+  // 불확도 예산 (ASY-08 · DEC-0061 · RULE-0090): 성분마다 종류 · random/systematic(필수) · A/B · u 또는 u_rel 하나 · 얻은 방법.
+  //   sd = √Σu² (성분끼리 상관 없음 가정) · 해상도만으로 된 예산은 받지 않음(그건 basis resolution) · 출처 없는 B 형은 사유(근거로 주장 못 함 — 등급은 reliability 가 내림)
+  function checkBudget(db, o, w, E, W) {
+    const u = o.uncertainty, parts = u.budget;
+    const ub = V.uncertaintyBases.budget;
+    if (ub.models && !ub.models.includes(u.model)) E('RULE-0090', w, `불확도 예산은 잡음 모형 ${ub.models.join('·')} 에만 (성분이 값과 같은 단위)`);
+    if (!Array.isArray(parts) || !parts.length) { E('RULE-0090', w, "basis 'budget' 인데 성분(budget)이 없음"); return; }
+    let ss = 0, ok = true;
+    parts.forEach((p, i) => {
+      const pw = `${w} 예산 ${i + 1}`;
+      if (!V.budgetSources[p.source]) { E('RULE-0090', pw, `성분 종류 '${p.source}' — ${Object.keys(V.budgetSources).join(' | ')}`); ok = false; }
+      if (!V.budgetEffects[p.effect]) { E('RULE-0090', pw, `effect '${p.effect}' — ${Object.keys(V.budgetEffects).join(' | ')} (필수 — 반복으로 줄어드는가, DEC-0061)`); ok = false; }
+      if (!V.budgetTypes[p.type]) { E('RULE-0090', pw, `type '${p.type}' — ${Object.keys(V.budgetTypes).join(' | ')}`); ok = false; }
+      if (!p.from) E('RULE-0090', pw, '이 성분을 어떻게 얻었는지(from)가 없음');
+      const hasU = p.u !== undefined, hasR = p.u_rel !== undefined;
+      if (hasU === hasR) { E('RULE-0090', pw, 'u(같은 단위) 와 u_rel(상대) 중 하나만'); ok = false; }
+      const x = hasU ? p.u : hasR ? p.u_rel * Math.abs(o.value) : NaN;
+      if (!(Number.isFinite(hasU ? p.u : p.u_rel) && (hasU ? p.u : p.u_rel) >= 0)) { E('RULE-0090', pw, 'u · u_rel 은 0 이상의 수'); ok = false; }
+      else ss += x * x;
+      if (p.cite && !(['DOI', 'PMID', 'ISBN', 'URL'].includes(p.cite.db) && p.cite.id)) E('RULE-0090', pw, '출처(cite)는 { db: DOI|PMID|ISBN|URL, id }');
+      if (p.type === 'B' && !p.cite) W('RULE-0090', pw, `B 형 성분(${p.source})에 출처(cite)가 없음 — 판정에는 들어가나 근거로 주장할 수 없음 (등급 D3.obs_bare)`);
+      if (p.ref !== undefined && !(db.observations || {})[p.ref]) E('RULE-0090', pw, `전파된 양의 관찰 ${p.ref} 이 없음`);
+    });
+    if (parts.every((p) => p.source === 'resolution')) E('RULE-0090', w, "해상도 성분만으로 된 예산 — 해상도는 성분일 뿐 바닥이 아님 (그 경우는 basis 'resolution')");
+    if (ok && !near(Math.sqrt(ss), u.sd)) E('RULE-0090', w, `sd ${u.sd} 이 예산의 합성 √Σu² = ${Math.sqrt(ss)} 와 다름`);
   }
   function validateObservation(db, ix, id, o, E, W, opt) {
     const w = id;
@@ -475,7 +511,9 @@
         if (ub.models && !ub.models.includes(u.model)) E('RULE-0090', w, `해상도로 채운 sd 는 잡음 모형 ${ub.models.join('·')} 에만 (같은 단위의 마지막 자리)`);
         if (!(u.sd > 0)) E('RULE-0090', w, '해상도로 채운 sd 는 0 보다 커야 함 (마지막 자리 크기)');
       }
+      else if (u.basis === 'budget') checkBudget(db, o, w, E, W);
     }
+    if (u.budget !== undefined && u.basis !== 'budget') E('RULE-0090', w, "불확도 예산(budget)은 basis 'budget' 일 때만");
     if (!(o.replicates === null || (Number.isInteger(o.replicates) && o.replicates >= 1))) E('RULE-0108', w, '반복 수(replicates)는 1 이상의 정수 — 원문에 없으면 null(미보고), 1 로 적지 않는다');
     for (const k of ['precision', 'detection_limit', 'saturation']) if (o[k] != null && !(o[k] >= 0)) E('RULE-0107', w, `${k} 는 0 이상`);
     const c = o.condition;
