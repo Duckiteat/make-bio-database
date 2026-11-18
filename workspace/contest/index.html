@@ -40,6 +40,11 @@ code { font-family: var(--mono); font-size: 0.875em; background: var(--tint); pa
 .facts b { display: block; font-family: var(--display); font-size: 1.5rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
 .facts span { font-size: 0.8125rem; color: var(--muted); }
 td.when { white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; }
+.summary { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px 20px; }
+.summary dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; }
+.summary dt { font-weight: 700; font-family: var(--display); }
+.summary dd { margin: 0; }
+@media (max-width: 520px) { .summary dl { grid-template-columns: 1fr; gap: 2px; } .summary dd { margin-bottom: 8px; } }
 figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .scroll { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
 .scroll svg { display: block; min-width: 720px; width: 100%; height: auto; color: var(--fg); font-family: var(--body); }
@@ -65,6 +70,15 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
   <p class="sub">배운 내용을 잇고, 작은 변화를 실험하다</p>
   <p class="lead">수업에서 따로 배운 생명 현상들을 하나의 지도로 잇고, 작은 변화 하나가 어떤 결과로 이어지는지 컴퓨터 속 가상 세포에서 확인해 본 노트입니다.</p>
 </header>
+
+<div class="summary">
+  <dl>
+    <dt>무엇</dt><dd>수업에서 따로 배운 생명 현상을 한 지도로 잇고, 가상 세포에서 작은 변화의 결과를 실험하는 시뮬레이터 (경로 11개, 세포 상태 8개)</dd>
+    <dt>AI 활용</dt><dd>"해라" 대신 "하지 마라"로 짠 지시와, AI의 추론과 행동을 검사하는 하네스 안에서 AI가 코드와 데이터를 작성</dd>
+    <dt>신뢰</dt><dd>원본 데이터베이스 대조 도장 178개, 모든 변경에 남는 영수증, 실패 9건의 기록과 조치</dd>
+    <dt>한계와 목표</dt><dd>지금은 결정론·가상 값 단계. 측정값과 비결정론 시뮬레이터를 더해, 검증된 것을 바탕으로 새 가설을 검증하는 데까지</dd>
+  </dl>
+</div>
 
 <section>
   <h2>왜 만들었나</h2>
@@ -123,17 +137,87 @@ footer { font-size: 0.8125rem; color: var(--muted); border-top: 1px solid var(--
 </section>
 
 <section>
-  <h2>AI는 어떻게 썼나</h2>
-  <p>교과서 내용을 상호작용 형태로 옮기는 일, 실험 엔진과 분석 프로그램을 만드는 일을 AI(Claude)와 함께 했습니다. 방향을 정하고 결과가 맞는지 판단하는 일은 제가 했습니다.</p>
-  <p>AI는 그럴듯하게 틀릴 수 있어서, AI가 쓴 내용은 자동 검사를 통과해야만 저장되게 했습니다. 확실하지 않은 정보는 지어내지 말고 "모름"으로 남기게 했습니다.</p>
-  <div class="stack">
-    <div class="prompt"><span class="what">교과서 내용을 상호작용으로 옮길 때</span>
-      <q>MHC II 항원 제시를 단계로 나눠 줘. 단계마다 무엇이 무엇에 붙거나 잘리는지, 어느 구획에서 일어나는지 표로 적어. 확실하지 않으면 지어내지 말고 "모름"으로 남겨.</q></div>
-    <div class="prompt"><span class="what">작은 변화를 실험할 때</span>
-      <q>세균 신호 실험에서 HLA-DM 하나만 없앤 실험을 만들어. 다른 조건은 그대로 두고, 돌리기 전에 예측을 먼저 적어.</q></div>
-    <div class="prompt"><span class="what">틀린 결과가 나왔을 때</span>
-      <q>예측과 다르게 나온 이유를 단계별로 추적해서, 어느 상호작용에서 어긋났는지 찾아 줘. 검사 기준을 낮추지 말고 내용을 고쳐.</q></div>
+  <h2>AI 활용: "해라" 대신 "하지 마라"</h2>
+  <p>AI에게 "해라"라고 시키면 목표에 닿는 길이 여러 개 열리고, AI는 그중 가장 짧은 길을 고릅니다. 그 짧은 길이 검사 규칙을 느슨하게 하거나, 값을 그럴듯하게 지어내거나, 걸리는 검사를 꺼 버리는 길인 경우가 있었습니다(아래 "실패한 곳" 참고).</p>
+  <p>그래서 지시를 "하지 마라" 형태로 짰습니다. 금지는 추론이 갈 수 있는 길 자체를 지우기 때문에, AI는 남은 정당한 길로만 일하게 됩니다. 이 프로젝트의 작업 규칙 문서는 81줄인데, 그중 46곳이 금지나 제한입니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>피한 지시</th><th>대신 쓴 지시</th><th>막히는 길</th></tr></thead>
+    <tbody>
+      <tr><td><b>검사를 통과하게 만들어</b></td><td>거부 메시지대로 데이터를 고쳐. 검사 규칙은 고치지 마</td><td>규칙을 느슨하게 해서 통과시키기</td></tr>
+      <tr><td><b>빈칸을 채워</b></td><td>확인되지 않은 값은 지어내지 마. 모르면 "모름"으로 남겨</td><td>그럴듯한 값을 만들어 넣기</td></tr>
+      <tr><td><b>테스트를 통과시켜</b></td><td>테스트를 건너뛰거나 미루지 마</td><td>걸리는 테스트를 꺼 버리기</td></tr>
+      <tr><td><b>결과를 설명해</b></td><td>예측은 실행 전에 적고 실행 뒤에 고치지 마. 끝 상태만 말하지 마</td><td>결과에 맞춰 이야기 지어내기</td></tr>
+      <tr><td><b>끝내</b></td><td>완료했다고 스스로 보고하지 마. 결과는 다른 쪽이 다시 만들어 대조해</td><td>하지 않은 일을 했다고 하기</td></tr>
+    </tbody>
+  </table>
   </div>
+  <h3>추론과 행동을 검사하는 하네스</h3>
+  <p>금지만으로는 부족합니다. AI가 금지를 어기거나 빠뜨려도 잡히도록, AI 바깥에 추론과 행동을 검사하는 장치를 둘렀습니다. 이렇게 AI를 둘러싼 규칙과 검사의 묶음을 <b>하네스</b>(harness, 말에 채우는 마구)라고 부릅니다. AI를 믿는 대신, AI가 무엇을 하든 검사를 지나야만 결과가 남도록 만든 것입니다.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 900 270" role="img" aria-label="작업 규칙의 금지 조항이 AI에게 들어가 할 수 없는 길을 지운다. 하네스 안에서 AI의 추론은 추론 검사를, AI의 행동은 행동 검사를 거치고, 걸리면 이유와 함께 되돌아간다. 검사를 통과한 것만 저장소에 남는다.">
+      <defs>
+        <marker id="m6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+        <marker id="m6r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--accent)"/></marker>
+      </defs>
+      <rect x="196" y="24" width="436" height="234" rx="10" fill="currentColor" opacity="0.05"/>
+      <rect x="196" y="24" width="436" height="234" rx="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="6 4"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="10" y="60" width="160" height="64" rx="4"/>
+        <rect x="226" y="60" width="160" height="64" rx="4" stroke-width="2.4"/>
+        <rect x="446" y="60" width="160" height="64" rx="4" stroke-width="2.4"/>
+        <rect x="226" y="172" width="160" height="58" rx="4"/>
+        <rect x="446" y="172" width="160" height="58" rx="4"/>
+        <rect x="690" y="60" width="200" height="64" rx="4"/>
+        <line x1="170" y1="92" x2="224" y2="92" marker-end="url(#m6)"/>
+        <line x1="386" y1="92" x2="444" y2="92" marker-end="url(#m6)"/>
+        <line x1="606" y1="92" x2="688" y2="92" marker-end="url(#m6)"/>
+        <line x1="306" y1="124" x2="306" y2="170" marker-end="url(#m6)"/>
+        <line x1="526" y1="124" x2="526" y2="170" marker-end="url(#m6)"/>
+      </g>
+      <g fill="none" style="stroke:var(--accent)" stroke-width="1.5">
+        <polyline points="226,201 212,201 212,112 224,112" marker-end="url(#m6r)"/>
+        <polyline points="446,201 424,201 424,112 444,112" marker-end="url(#m6r)"/>
+      </g>
+      <g fill="currentColor" font-size="13" text-anchor="middle">
+        <text x="212" y="44" text-anchor="start" font-weight="700" font-size="12">하네스</text>
+        <text x="90" y="86" font-weight="700">작업 규칙</text><text x="90" y="105" font-size="11">금지·제한 46곳</text>
+        <text x="306" y="86" font-weight="700">AI 추론</text><text x="306" y="105" font-size="11">무엇을 할지 판단</text>
+        <text x="526" y="86" font-weight="700">AI 행동</text><text x="526" y="105" font-size="11">파일 쓰기·명령 실행</text>
+        <text x="306" y="196" font-weight="700">추론 검사</text><text x="306" y="214" font-size="11">예측 선등록·근거 표시</text>
+        <text x="526" y="196" font-weight="700">행동 검사</text><text x="526" y="214" font-size="11">권한 차단·관문·테스트</text>
+        <text x="790" y="86" font-weight="700">저장소</text><text x="790" y="105" font-size="11">검사를 통과한 것만</text>
+        <text x="197" y="150" font-size="11" text-anchor="end">길 지움</text>
+        <text x="416" y="248" font-size="11" style="fill:var(--accent)" font-weight="700">걸리면 거부 + 이유 → 다시</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>점선 안이 하네스입니다. 금지 조항이 할 수 없는 길을 먼저 지우고, 남은 길로 나온 추론과 행동도 각각 검사를 지나야 저장소에 닿습니다.</figcaption>
+  </figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>겹</th><th>무엇을 막나</th><th>실제 장치</th></tr></thead>
+    <tbody>
+      <tr><td><b>작업 규칙</b></td><td>지어내기, 데이터 직접 편집, 규칙 완화, 검사 건너뛰기</td><td>작업마다 자동으로 읽히는 규칙 문서 (금지·제한 46곳)</td></tr>
+      <tr><td><b>지시문 틀</b></td><td>지름길로 이끄는 지시</td><td>여섯 칸 틀(위치·임무·경계·검증·보고·멈춤)과 쓰면 안 되는 지시 목록</td></tr>
+      <tr><td><b>권한 차단</b></td><td>저장, 커밋, 규칙·계산기 파일 수정</td><td>자료 수집을 맡은 AI는 14가지 동작이 막힌 설정으로 실행</td></tr>
+      <tr><td><b>추론 검사</b></td><td>결과를 본 뒤 말 바꾸기, 추론을 사실처럼 쓰기</td><td>예측 사전 등록, 근거 수준(문헌·추론·계산·출처 없음·예측) 표시 의무</td></tr>
+      <tr><td><b>행동 검사</b></td><td>검사를 거치지 않은 저장, 역할 경계 넘기</td><td>관문, 역할 경계 테스트, 거부 사례 19건, 자동 검사 271개</td></tr>
+      <tr><td><b>결과 재확인</b></td><td>"다 했어요" 자기 보고</td><td>다른 쪽이 결과를 독립적으로 다시 만들어 대조 (설계 단계)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>이런 식으로 지시했다</h3>
+  <div class="stack">
+    <div class="prompt"><span class="what">교과서 내용을 옮길 때</span>
+      <q>MHC II 항원 제시를 단계로 나눠 표로 적어. 공식 번호를 추측해서 적지 마. 확실하지 않으면 "모름"으로 두고, 단계를 합쳐서 줄이지 마.</q></div>
+    <div class="prompt"><span class="what">작은 변화를 실험할 때</span>
+      <q>HLA-DM만 없앤 실험을 만들어. 다른 조건은 바꾸지 마. 예측은 돌리기 전에 적고, 돌린 뒤에 고치지 마.</q></div>
+    <div class="prompt"><span class="what">틀린 결과가 나왔을 때</span>
+      <q>예측과 다른 이유를 단계별로 추적해. 검사 기준을 낮추지 말고, 데이터를 결과에 맞춰 바꾸지 마. 근거가 없으면 모르는 것으로 남겨.</q></div>
+  </div>
+  <p class="muted">방향을 정하고, 규칙을 바꿀지 승인하고, 결과를 해석하는 일은 제가 했습니다. 코드·데이터·문서 작성은 AI(Claude)가 했습니다.</p>
 </section>
 
 <section>
