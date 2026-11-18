@@ -305,6 +305,7 @@
 | `docs/reports/2026-11-03-collection-dataset-structure-fit.md` | 18.2 | 132 |  | 미분류 |
 | `docs/reports/2026-11-03-collection-search-layer-assessment.md` | 14.3 | 132 |  | 미분류 |
 | `docs/reports/2026-11-18-labnote-nadh-a340-limits.md` | 7.5 | 54 |  | 미분류 |
+| `docs/reports/2026-11-18-uncertainty-budget-explained.md` | 18.8 | 212 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
