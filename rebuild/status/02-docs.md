@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 333.3 | 328 |  | 분류됨 1 |
+| `CHANGES.md` | 334.2 | 329 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -174,7 +174,7 @@
 | `docs/plan/items/PLAN-052.md` | 1.7 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-053.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-054.md` | 1.1 | 22 |  | 생성물 |
-| `docs/plan/items/PLAN-055.md` | 1.2 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-055.md` | 2.8 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-056.md` | 1.1 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-057.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-058.md` | 1.8 | 23 |  | 생성물 |
@@ -306,6 +306,7 @@
 | `docs/reports/2026-11-03-collection-search-layer-assessment.md` | 14.3 | 132 |  | 미분류 |
 | `docs/reports/2026-11-18-labnote-nadh-a340-limits.md` | 7.5 | 54 |  | 미분류 |
 | `docs/reports/2026-11-18-uncertainty-budget-explained.md` | 18.8 | 212 |  | 미분류 |
+| `docs/reports/2026-11-19-two-engine-gap.md` | 6.1 | 46 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
@@ -315,9 +316,9 @@
 | `docs/textbook/04-알고리즘.md` | 69.7 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 14.0 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
-| `docs/textbook/07-AI-작업-절차.md` | 19.0 | 186 |  | 분류됨 117 |
+| `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 140.6 | 864 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 141.3 | 866 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

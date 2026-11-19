@@ -662,6 +662,19 @@
       ]
     },
     {
+      "path": "judicial/engine_gap.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js, dbtool.mjs compare, tests",
+      "interpret": "[사법부] 두 엔진의 차이 판정 (PLAN-055) — 속도 엔진 · 운명 엔진 원자료의 공유 묶음 끝 값 차 · Δt 의존 · 허용 오차와 원인(시작량 기본값 · 계의 경계 · 즉시 단계 · Δt · 수치 · 설명 안 됨). 엔진을 돌리지 않는다.",
+      "level": "L2",
+      "area": "code:judicial",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "judicial/stats.js",
       "class": "law",
       "format": "Node CommonJS",
@@ -2037,6 +2050,20 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "확률 층 성향의 같은 분자 차수 (PLAN-096) — 2A → B 앙상블 대 화학 주 방정식(균일화) N(N−1) 해 · N² 해와 구별, JS = Rust 비트, 결정론 경로 불변(ff 지운 IR 과 비트 같음), 컴파일러 ff 칸.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/engine_gap.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "두 엔진의 차이 시험 (PLAN-055) — LPS 그대로(시작량 기본값만) · 시작량 맞춤(허용 1e-4 안 · 음수 거부 병리 없음) · MHC(즉시 단계 · 계의 경계) · unexplained 판정.",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [

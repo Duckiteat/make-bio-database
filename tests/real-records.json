@@ -205,6 +205,18 @@
       "why": "출생–사멸 예시 시나리오의 계에 시험용 2A → B 규칙을 자료 사본에만 더해 성향을 대조 · 포화 반응물 예(해당과정)"
     },
     {
+      "file": "tests/engine_gap.test.mjs",
+      "ids": [
+        "D000032",
+        "D000102",
+        "D000177",
+        "D000178",
+        "D000202",
+        "D000212"
+      ],
+      "why": "출하 시나리오(lps-tnf-validation · mhc-dc-immature-baseline)의 경로 · 세포 상태를 두 엔진으로 그대로 돌려 차이를 잰다 — ATP 시작량이 원인의 보기"
+    },
+    {
       "file": "tests/stochastic.test.mjs",
       "ids": [
         "D000165",

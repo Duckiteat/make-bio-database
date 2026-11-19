@@ -7,11 +7,11 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 433 | 16296.1 |
-| rebuild | 34 | 6332.7 |
-| docs | 311 | 2291.4 |
-| (최상위) | 18 | 984.4 |
-| tests | 103 | 726.8 |
-| judicial | 34 | 609.2 |
+| rebuild | 34 | 6335.7 |
+| docs | 312 | 2301.3 |
+| (최상위) | 18 | 987.2 |
+| tests | 104 | 731.3 |
+| judicial | 35 | 614.6 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 219.5 |
@@ -35,13 +35,13 @@
 | `data/log/genesis-db.json` | 608.9 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `rebuild/state/plan-log.jsonl` | 357.6 |
-| `CHANGES.md` | 333.3 |
+| `rebuild/state/plan-log.jsonl` | 359.5 |
+| `CHANGES.md` | 334.2 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `rebuild/rules/changes.jsonl` | 305.0 |
 | `attestations/registry.json` | 299.0 |
-| `rebuild/state/plans.jsonl` | 296.6 |
+| `rebuild/state/plans.jsonl` | 297.9 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
