@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1080 개 · 28579.1 KB"
+        "1128 개 · 28961.5 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "340 개 · 2786.0 KB"
+        "388 개 · 3167.3 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "35 개 · 442.3 KB"
+        "83 개 · 823.6 KB"
        ],
        [
         "장부 단위",
@@ -122,8 +122,8 @@
        ],
        [
         "docs",
-        "314",
-        "2314.2"
+        "362",
+        "2695.5"
        ],
        [
         "(최상위)",
@@ -158,7 +158,7 @@
        [
         "workspace",
         "37",
-        "146.4"
+        "147.5"
        ],
        [
         "legislative",
@@ -2453,6 +2453,342 @@
         "미분류"
        ],
        [
+        "`docs/reports/2026-11-19-baseline-sweep.md`",
+        "6.4",
+        "86",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/camp-competition-run.md`",
+        "16.4",
+        "122",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-effector-glucose-withheld-fate.md`",
+        "10.5",
+        "114",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-effector-il12-fate.md`",
+        "9.6",
+        "112",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-effector-pulse-long-fate.md`",
+        "9.7",
+        "114",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-effector-pulse-short-fate.md`",
+        "8.9",
+        "109",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-memory-fa-withheld-fate.md`",
+        "9.2",
+        "111",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-memory-il15-fate.md`",
+        "9.6",
+        "111",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-mixed-glucose-withheld-fate.md`",
+        "13.1",
+        "126",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/fate-mixed-optimal-fate.md`",
+        "9.8",
+        "113",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/gtp-exhaustion-run.md`",
+        "13.0",
+        "111",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/gtp-regeneration-run.md`",
+        "12.4",
+        "112",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/lps-run.md`",
+        "13.6",
+        "136",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/lps-tnf-validation-fate.md`",
+        "5.5",
+        "81",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-antigen-surge-stress-fate.md`",
+        "7.6",
+        "96",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-antigen-withheld-fate.md`",
+        "6.5",
+        "94",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-cathepsin-null-fate.md`",
+        "7.1",
+        "96",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-empty-start-fate.md`",
+        "6.0",
+        "90",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-hladm-null-fate.md`",
+        "7.1",
+        "96",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-immature-baseline-fate.md`",
+        "7.6",
+        "97",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-lps-pulse-short-fate.md`",
+        "9.3",
+        "106",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-maturation-lps-fate.md`",
+        "8.6",
+        "102",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-maturation-stochastic-ensemble.md`",
+        "1.0",
+        "19",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-maturation-stochastic-fate.md`",
+        "8.8",
+        "101",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-mature-antigen-fate.md`",
+        "8.7",
+        "102",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-dc-plc-from-components-fate.md`",
+        "7.2",
+        "98",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-i-b2m-null-run.md`",
+        "0.3",
+        "5",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-i-b2m-validation-fate.md`",
+        "7.8",
+        "99",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-i-tap-null-run.md`",
+        "0.3",
+        "5",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-i-tapasin-validation-fate.md`",
+        "7.5",
+        "100",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/mhc-ii-hladm-validation-fate.md`",
+        "7.8",
+        "99",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/stochastic-birth-death-ensemble.md`",
+        "0.8",
+        "16",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/stochastic-birth-death-fate.md`",
+        "7.2",
+        "85",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/stochastic-mixed-optimal-ensemble.md`",
+        "1.0",
+        "20",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/stochastic-mixed-optimal-fate.md`",
+        "9.3",
+        "111",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/tca-acetylcoa-exhaustion-run.md`",
+        "9.1",
+        "83",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/tca-co2-equilibrium-run.md`",
+        "8.9",
+        "90",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/tca-measured-kinetics-run.md`",
+        "9.7",
+        "89",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/tca-nad-exhaustion-run.md`",
+        "9.2",
+        "80",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-hayflick-fate.md`",
+        "9.6",
+        "112",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-law-isolation-fate.md`",
+        "8.7",
+        "109",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-mitogen-withheld-fate.md`",
+        "7.1",
+        "98",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-quiescence-validation-fate.md`",
+        "7.5",
+        "104",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-sharp-threshold-fate.md`",
+        "9.6",
+        "112",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-stochastic-attrition-ensemble.md`",
+        "1.1",
+        "21",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-stochastic-attrition-fate.md`",
+        "9.6",
+        "111",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-fate.md`",
+        "7.7",
+        "103",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-validation-fate.md`",
+        "8.0",
+        "105",
+        "",
+        "미분류"
+       ],
+       [
         "`docs/reports/2026-11-19-two-engine-gap.md`",
         "6.4",
         "46",
@@ -4113,7 +4449,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "10743 · 218 · 244",
+        "11569 · 218 · 292",
         "212 · 없음 6"
        ],
        [
@@ -4123,7 +4459,7 @@
         "`model.ID_RE.S`",
         "legislative merge (meta.next.S)",
         "`data/db.json#steps`",
-        "674 · 59 · 56",
+        "927 · 59 · 65",
         "57 · 없음 2"
        ],
        [
@@ -4133,7 +4469,7 @@
         "`model.ID_RE.L`",
         "legislative merge (meta.next.L)",
         "`data/db.json#limitations`",
-        "2702 · 127 · 187",
+        "2890 · 127 · 201",
         "124 · 없음 3"
        ],
        [
@@ -4273,7 +4609,7 @@
         "`^AUDIT_[A-Z_]+$`",
         "judicial (code literal)",
         "`judicial/*.js`",
-        "331 · 13 · 38",
+        "552 · 13 · 80",
         "10 · 없음 3"
        ],
        [
@@ -4333,7 +4669,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "5513 · 539 · 150",
+        "5518 · 539 · 151",
         "536 · 없음 3"
        ],
        [
@@ -4760,7 +5096,7 @@
        [
         "정보 작성 `author`",
         "465",
-        "16595.9"
+        "16597.0"
        ],
        [
         "기초시험 `baseline`",
@@ -4779,8 +5115,8 @@
        ],
        [
         "점검·검증 `inspect`",
-        "56",
-        "1178.7"
+        "104",
+        "1560.0"
        ]
       ]
      }
@@ -4880,7 +5216,7 @@
         "`workspace/**`",
         "author",
         "28",
-        "124.9",
+        "126.0",
         "수집가 작업 공간"
        ],
        [
@@ -5040,8 +5376,8 @@
        [
         "`docs/reports/**`",
         "inspect",
-        "46",
-        "797.3",
+        "94",
+        "1178.6",
         "보고서 — 읽기·점검"
        ],
        [
