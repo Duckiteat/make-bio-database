@@ -355,6 +355,7 @@
 | `docs/reports/2026-11-19-baseline-sweep/telomere-stochastic-attrition-fate.md` | 9.6 | 111 |  | 미분류 |
 | `docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-fate.md` | 7.7 | 103 |  | 미분류 |
 | `docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-validation-fate.md` | 8.0 | 105 |  | 미분류 |
+| `docs/reports/2026-11-19-pathway-walkthrough.md` | 4.4 | 49 |  | 미분류 |
 | `docs/reports/2026-11-19-two-engine-gap.md` | 6.4 | 46 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
