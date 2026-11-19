@@ -2031,6 +2031,20 @@
       ]
     },
     {
+      "path": "tests/propensity.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "확률 층 성향의 같은 분자 차수 (PLAN-096) — 2A → B 앙상블 대 화학 주 방정식(균일화) N(N−1) 해 · N² 해와 구별, JS = Rust 비트, 결정론 경로 불변(ff 지운 IR 과 비트 같음), 컴파일러 ff 칸.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/mhc.test.mjs",
       "class": "verification",
       "format": "node:test",

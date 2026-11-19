@@ -195,6 +195,16 @@
       "why": "예시 시나리오(fate-mixed-optimal · effector-il12 · stochastic-birth-death)의 계 — 시계 · 비교 · 짝 판정을 실제 실행 원자료로"
     },
     {
+      "file": "tests/propensity.test.mjs",
+      "ids": [
+        "D000165",
+        "D000166",
+        "D000170",
+        "D000174"
+      ],
+      "why": "출생–사멸 예시 시나리오의 계에 시험용 2A → B 규칙을 자료 사본에만 더해 성향을 대조 · 포화 반응물 예(해당과정)"
+    },
+    {
       "file": "tests/stochastic.test.mjs",
       "ids": [
         "D000165",

@@ -26,6 +26,7 @@ struct Rule {
     factor: Vec<f64>,
     drate: Vec<(usize, Vec<f64>)>,   // [(묶음, ∂rate/∂N 테이프 — FAC = f)]
     dfactor: Vec<(usize, Vec<f64>)>, // [(묶음, ∂f/∂N 테이프)]
+    ff: Vec<(usize, f64)>,           // 같은 분자 차수 [(묶음, n)] — 이산 규칙의 성향 보정 (PLAN-096)
 }
 
 struct Signal { idx: usize, ev: Vec<(f64, f64)> }
@@ -98,12 +99,30 @@ impl<'a> Cursor<'a> {
 fn fmax(a: f64, b: f64) -> f64 { if a > b { a } else { b } } // JS Math.max 의 순서·NaN 이외 의미
 #[inline(always)]
 fn fmin(a: f64, b: f64) -> f64 { if a < b { a } else { b } }
+/// 같은 분자 차수 보정 Π_g Π_{m<n} max(0, N−m)/N (PLAN-096) — JS ffCorr 와 같은 순서
+fn ff_corr(ff: &[(usize, f64)], n: &[f64]) -> f64 {
+    let mut c = 1.0;
+    for &(i, ng) in ff { let x = n[i]; if !(x > 0.0) { return 0.0; } let mut m = 1.0; while m < ng { c *= fmax(0.0, x - m) / x; m += 1.0; } }
+    c
+}
+/// ∂(보정)/∂N_i — JS ffDcorr 와 같은 순서
+fn ff_dcorr(ff: &[(usize, f64)], n: &[f64], i: usize) -> f64 {
+    let mut d = 0.0;
+    for g in 0..ff.len() {
+        if ff[g].0 != i { continue; }
+        let x = n[i]; let ng = ff[g].1; if !(x > 0.0) { return 0.0; }
+        let mut m = 1.0;
+        while m < ng { if x - m > 0.0 { let mut p = m / (x * x); let mut q = 1.0; while q < ng { if q != m { p *= fmax(0.0, x - q) / x; } q += 1.0; } d += p; } m += 1.0; }
+        for h in 0..ff.len() { if h == g { continue; } let y = n[ff[h].0]; let nh = ff[h].1; if !(y > 0.0) { return 0.0; } let mut m2 = 1.0; while m2 < nh { d *= fmax(0.0, y - m2) / y; m2 += 1.0; } }
+    }
+    d
+}
 
 impl Engine {
     /// IR 직렬 덩어리(engine/fate_rust.js pack)에서 엔진을 만든다. 모든 할당은 여기서 끝난다.
     pub fn new(blob: &[f64]) -> Result<Engine, &'static str> {
         let mut c = Cursor { d: blob, p: 0 };
-        if c.f() != 5.0 { return Err("blob version"); }
+        if c.f() != 6.0 { return Err("blob version"); }
         let (nb, nr, na_, nsig, nres) = (c.u(), c.u(), c.u(), c.u(), c.u());
         let (dt, t_end, horizon) = (c.f(), c.f(), c.f());
         let ctl = Ctl { rtol: c.f(), atol: c.f(), h0: c.f(), h_min: c.f(), safety: c.f(), fac_min: c.f(), fac_max: c.f(), neg_shrink: c.f(), pivot_rel: c.f() };
@@ -116,7 +135,8 @@ impl Engine {
             let mut prods = Vec::with_capacity(np); for _ in 0..np { let i = c.u(); let n = c.f(); prods.push((i, n)); }
             let lr = c.u(); let rate = c.vecf(lr); let lf = c.u(); let factor = c.vecf(lf);
             let drate = c.tapes(); let dfactor = c.tapes();
-            rules.push(Rule { cons, prods, rate, factor, drate, dfactor });
+            let nff = c.u(); let mut ff = Vec::with_capacity(nff); for _ in 0..nff { let i = c.u(); let n = c.f(); ff.push((i, n)); }
+            rules.push(Rule { cons, prods, rate, factor, drate, dfactor, ff });
         }
         if c.u() != na_ { return Err("active count"); }
         let act: Vec<usize> = (0..na_).map(|_| c.u()).collect();
@@ -207,7 +227,8 @@ impl Engine {
             let j = self.act[k];
             let n: &[f64] = if use_y { &self.y } else { &self.n };
             let f = tape::eval(&self.rules[j].factor, n, 1.0, &self.cinv, &self.buf, &mut self.stack);
-            let r = tape::eval(&self.rules[j].rate, n, f, &self.cinv, &self.buf, &mut self.stack);
+            let mut r = tape::eval(&self.rules[j].rate, n, f, &self.cinv, &self.buf, &mut self.stack);
+            if self.disc[k] != 0 && !self.rules[j].ff.is_empty() { r *= ff_corr(&self.rules[j].ff, n); }
             if to_f0 { self.f0[k] = r; } else { self.fy[k] = r; }
         }
     }
@@ -220,12 +241,15 @@ impl Engine {
             let j = self.act[k];
             let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack);
             let g = tape::eval(&self.rules[j].rate, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack);
+            let cc = if self.disc[k] != 0 && !self.rules[j].ff.is_empty() { ff_corr(&self.rules[j].ff, &self.n) } else { -1.0 };
             for d in 0..self.rules[j].drate.len() {
-                let val = tape::eval(&self.rules[j].drate[d].1, &self.n, f, &self.cinv, &self.buf, &mut self.stack);
+                let mut val = tape::eval(&self.rules[j].drate[d].1, &self.n, f, &self.cinv, &self.buf, &mut self.stack);
+                if cc >= 0.0 { val = val * cc + f * g * ff_dcorr(&self.rules[j].ff, &self.n, self.rules[j].drate[d].0); }
                 if val != 0.0 { for q in 0..self.sp.rate[k][d].len() { let (p, co) = self.sp.rate[k][d][q]; if self.disc[self.col_of[p]] == 0 { self.vals[p] -= val * co; } } }
             }
             for d in 0..self.rules[j].dfactor.len() {
-                let val = tape::eval(&self.rules[j].dfactor[d].1, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack) * g;
+                let mut val = tape::eval(&self.rules[j].dfactor[d].1, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack) * g;
+                if cc >= 0.0 { val = val * cc; }
                 if val != 0.0 { for q in 0..self.sp.factor[k][d].len() { let (p, co) = self.sp.factor[k][d][q]; if self.disc[self.col_of[p]] == 0 { self.vals[p] -= val * co; } } }
             }
         }
@@ -322,7 +346,8 @@ impl Engine {
     fn rate_at(&mut self, k: usize) -> f64 {
         let j = self.act[k];
         let f = tape::eval(&self.rules[j].factor, &self.n, 1.0, &self.cinv, &self.buf, &mut self.stack);
-        tape::eval(&self.rules[j].rate, &self.n, f, &self.cinv, &self.buf, &mut self.stack)
+        let r = tape::eval(&self.rules[j].rate, &self.n, f, &self.cinv, &self.buf, &mut self.stack);
+        r * (if self.rules[j].ff.is_empty() { 1.0 } else { ff_corr(&self.rules[j].ff, &self.n) }) // 이산 규칙만 부름 (도약 · 승격) — JS caoTau · promote 와 같은 식
     }
     #[inline]
     fn count(&self, k: usize) -> f64 { let mut c = f64::INFINITY; for &(i, _) in &self.spec[k] { c = fmin(c, self.n[i]); } c }

@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1071 개 · 28480.7 KB"
+        "1072 개 · 28502.8 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "336 개 · 2750.7 KB"
+        "336 개 · 2754.8 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "490 / 25"
+        "494 / 25"
        ],
        [
         "번호 이름공간",
@@ -118,22 +118,22 @@
        [
         "rebuild",
         "34",
-        "6329.5"
+        "6332.7"
        ],
        [
         "docs",
         "311",
-        "2288.2"
+        "2291.4"
        ],
        [
         "(최상위)",
         "18",
-        "983.0"
+        "984.4"
        ],
        [
         "tests",
-        "102",
-        "720.3"
+        "103",
+        "726.8"
        ],
        [
         "judicial",
@@ -153,12 +153,12 @@
        [
         "engine",
         "18",
-        "213.5"
+        "219.5"
        ],
        [
         "workspace",
         "34",
-        "121.4"
+        "122.3"
        ],
        [
         "legislative",
@@ -178,7 +178,7 @@
        [
         "compiler",
         "8",
-        "56.3"
+        "57.1"
        ],
        [
         "schemas",
@@ -239,11 +239,11 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "355.8"
+        "357.6"
        ],
        [
         "`CHANGES.md`",
-        "331.9"
+        "333.3"
        ],
        [
         "`data/fetched/consensus/uniprot/P04439.json`",
@@ -263,7 +263,7 @@
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "295.3"
+        "296.6"
        ],
        [
         "`data/fetched/consensus/uniprot/P63092.json`",
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "331.9",
-        "327",
+        "333.3",
+        "328",
         "",
         "분류됨 1"
        ],
@@ -1817,8 +1817,8 @@
        ],
        [
         "`docs/plan/items/PLAN-096.md`",
-        "1.8",
-        "21",
+        "3.5",
+        "23",
         "",
         "생성물"
        ],
@@ -2489,7 +2489,7 @@
        ],
        [
         "`docs/textbook/04-알고리즘.md`",
-        "69.1",
+        "69.7",
         "376",
         "",
         "분류됨 233"
@@ -2524,8 +2524,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "140.3",
-        "863",
+        "140.6",
+        "864",
         "",
         "생성물"
        ],
@@ -3057,6 +3057,10 @@
        [
         "`tests/probe.test.mjs`",
         "10"
+       ],
+       [
+        "`tests/propensity.test.mjs`",
+        "4"
        ],
        [
         "`tests/protocol.test.mjs`",
@@ -4077,7 +4081,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "10480 · 218 · 238",
+        "10491 · 218 · 239",
         "212 · 없음 6"
        ],
        [
@@ -4097,7 +4101,7 @@
         "`model.ID_RE.L`",
         "legislative merge (meta.next.L)",
         "`data/db.json#limitations`",
-        "2686 · 127 · 181",
+        "2694 · 127 · 182",
         "124 · 없음 3"
        ],
        [
@@ -4338,7 +4342,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "320 · 없음 0"
+        "321 · 없음 0"
        ],
        [
         "`code_head`",
@@ -4357,7 +4361,7 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "2386 · 103 · 190",
+        "2405 · 103 · 194",
         "226 · 없음 5"
        ],
        [
@@ -4719,12 +4723,12 @@
        [
         "공통 `common`",
         "313",
-        "7944.2"
+        "7950.6"
        ],
        [
         "정보 작성 `author`",
         "462",
-        "16570.9"
+        "16571.8"
        ],
        [
         "기초시험 `baseline`",
@@ -4733,8 +4737,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "197",
-        "2514.2"
+        "198",
+        "2529.0"
        ],
        [
         "적분장 `field`",
@@ -4767,7 +4771,7 @@
         "`rebuild/**`",
         "common",
         "34",
-        "6329.5",
+        "6332.7",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -4844,7 +4848,7 @@
         "`workspace/**`",
         "author",
         "25",
-        "100.0",
+        "100.9",
         "수집가 작업 공간"
        ],
        [
@@ -4865,14 +4869,14 @@
         "`engine/**`",
         "develop",
         "18",
-        "213.5",
+        "219.5",
         "운명 엔진·Rust·결합점"
        ],
        [
         "`compiler/**`",
         "develop",
         "8",
-        "56.3",
+        "57.1",
         "컴파일러"
        ],
        [
@@ -4983,8 +4987,8 @@
        [
         "`tests/**`",
         "develop",
-        "76",
-        "686.6",
+        "77",
+        "693.1",
         "시험"
        ],
        [
@@ -5012,7 +5016,7 @@
         "`docs/textbook/**`",
         "common",
         "12",
-        "495.5",
+        "497.0",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
@@ -5026,7 +5030,7 @@
         "`docs/**`",
         "common",
         "234",
-        "695.5",
+        "697.2",
         "안내 문서"
        ],
        [
@@ -5040,7 +5044,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "331.9",
+        "333.3",
         "변경 기록"
        ],
        [
@@ -9284,7 +9288,7 @@
         "`code:compiler`",
         "8",
         "3",
-        "5",
+        "4",
         "3"
        ],
        [
@@ -9308,8 +9312,8 @@
         "`code:engine`",
         "16",
         "2",
-        "3",
-        "12"
+        "2",
+        "13"
        ],
        [
         "L2",
@@ -9346,10 +9350,10 @@
        [
         "L2",
         "`code:tests`",
-        "53",
+        "54",
         "24",
         "0",
-        "29"
+        "30"
        ],
        [
         "L2",
@@ -9523,21 +9527,21 @@
      }
     ],
     "text": [
-     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 189)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
+     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 190)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
     ]
    },
    {
-    "heading": "연결 없는 자리 (99)",
+    "heading": "연결 없는 자리 (101)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
      "- `code:config`: `.github/workflows/check.yml` · `.gitignore`",
      "- `code:core`: `scenarios.js` · `inbox.js`",
-     "- `code:engine`: `engine/rng.js` · `engine/probe_pool.js` · `engine/probe_worker.js` · `engine/rust/src/detmath.rs` · `engine/rust/src/tape.rs` · `engine/rust/src/rng.rs` · `engine/rust/src/lib.rs` · `engine/rust/src/bin/fate_cli.rs` · `engine/rust/Cargo.toml` · `engine/rust/Cargo.lock` · `engine/rust/.gitignore` · `engine/rust/build.sh`",
+     "- `code:engine`: `engine/rng.js` · `engine/probe_pool.js` · `engine/probe_worker.js` · `engine/rust/src/engine.rs` · `engine/rust/src/detmath.rs` · `engine/rust/src/tape.rs` · `engine/rust/src/rng.rs` · `engine/rust/src/lib.rs` · `engine/rust/src/bin/fate_cli.rs` · `engine/rust/Cargo.toml` · `engine/rust/Cargo.lock` · `engine/rust/.gitignore` · `engine/rust/build.sh`",
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/stiffness.js`",
      "- `code:mcp`: `mcp/query.mjs` · `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
-     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/FLOOR.json` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs`",
+     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/FLOOR.json` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs`",
      "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/state.mjs` · `rebuild/regen.mjs` · `rebuild/plan.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`",
      "- `doc:history`: `DESIGN-v4.md` · `FEATURES.md`",
      "- `doc:scenario`: `examples/scenarios/subjects.json`",

@@ -97,6 +97,7 @@
 | `tests/perturb.test.mjs` | 4 |
 | `tests/plan-import-sources.test.mjs` | 2 |
 | `tests/probe.test.mjs` | 10 |
+| `tests/propensity.test.mjs` | 4 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |

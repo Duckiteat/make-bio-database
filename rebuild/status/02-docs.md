@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 331.9 | 327 |  | 분류됨 1 |
+| `CHANGES.md` | 333.3 | 328 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -216,7 +216,7 @@
 | `docs/plan/items/PLAN-093.md` | 3.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-094.md` | 3.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-095.md` | 4.1 | 23 |  | 생성물 |
-| `docs/plan/items/PLAN-096.md` | 1.8 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-096.md` | 3.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-097.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-098.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
@@ -312,12 +312,12 @@
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 19.8 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 69.1 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 69.7 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 14.0 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.0 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 140.3 | 863 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 140.6 | 864 |  | 생성물 |
 | `limitations.md` | 92.3 | 196 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
