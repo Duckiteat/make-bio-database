@@ -108,4 +108,30 @@ function ensembleText(sum) {
   return lines.join('\n');
 }
 
-module.exports = { auditTrajectory, reproducible, wilson, ensembleSummary, compareMethods, limitTrend, convergenceTrend, reductionVerdict, ensembleText };
+// ⑤′ 공통 난수 짝 판정 (PLAN-095 ⑤) — 변형 A · B 를 같은 (seed, 궤적) 쌍으로 돌린 앙상블을 쌍마다 비교한다.
+//   카운터 기반 난수(engine/rng.js)라 같은 (seed, 궤적, 규칙, 번호)는 두 변형에서 같은 난수 — 쌍의 차 d_i = B_i − A_i 에서
+//   공통 잡음이 빠져 독립 두 표본보다 적은 궤적으로 같은 효과를 본다. 짝이 아니면(seed · 궤적 번호가 다름) 판정하지 않는다.
+//   묶음마다: 평균 차 · 95 % 구간 · 짝 t 검정(양측, Bonferroni) · 분산 감소 = var(d) / (var(A) + var(B)) (1 이면 짝의 이득 없음).
+//   차가 모두 0 이면 '차이 없음'(p = 1). 결론은 'shown'(차이가 보임) · 'not_shown'(보이지 못함 — 같다는 뜻이 아님).
+const tSf2 = (t, df) => (df > 0 ? S.betaI(df / 2, 0.5, df / (df + t * t)) : 1); // 양측 p
+function pairedCompare(rawsA, rawsB, bundles, opt) {
+  opt = Object.assign({ alpha: S.ALPHA }, opt || {});
+  const n = rawsA.length;
+  if (!n || rawsB.length !== n) return { error: `짝 판정에는 같은 수의 궤적이 필요함 (A ${rawsA.length} · B ${rawsB.length})` };
+  const key = (r) => (r.stochastic ? `${r.stochastic.seed}/${r.stochastic.trajectory}` : null);
+  const bad = rawsA.map((r, i) => [key(r), key(rawsB[i]), i]).filter(([x, y]) => x == null || x !== y);
+  if (bad.length) return { error: `짝이 아님 — ${bad.length} 쌍의 (seed, 궤적)이 다름 (첫째: ${bad[0][2]}번 A ${bad[0][0]} · B ${bad[0][1]}). 공통 난수 판정은 같은 seed 와 같은 궤적 번호로 돌린 두 앙상블만`, rule: 'RULE-0536' };
+  const m = bundles.length;
+  const tests = bundles.map((b) => {
+    const xa = rawsA.map((r) => r.final.N[b]), xb = rawsB.map((r) => r.final.N[b]), d = xb.map((x, i) => x - xa[i]);
+    const md = S.mean(d), vd = S.variance(d), se = Math.sqrt(vd / n), df = n - 1;
+    const p = vd === 0 ? (md === 0 ? 1 : 0) : tSf2(md / se, df), tc = df > 0 ? tInv(1 - 0.025, df) : Infinity;
+    const vu = S.variance(xa) + S.variance(xb);
+    return { bundle: b, n, meanA: S.mean(xa), meanB: S.mean(xb), diff: md, ci: [md - tc * se, md + tc * se], p, shown: p < opt.alpha / m, varianceRatio: vu > 0 ? vd / vu : null };
+  });
+  return { n, alpha: opt.alpha, bonferroni: m, tests, shown: tests.some((t) => t.shown), method: 'paired_t_crn' };
+}
+// t 분포 분위 (이분 — betaI 의 역)
+function tInv(q, df) { let lo = 0, hi = 1e3; for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2; if (1 - tSf2(mid, df) / 2 < q) lo = mid; else hi = mid; } return (lo + hi) / 2; }
+
+module.exports = { auditTrajectory, reproducible, wilson, ensembleSummary, compareMethods, pairedCompare, limitTrend, convergenceTrend, reductionVerdict, ensembleText };

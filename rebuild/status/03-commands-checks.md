@@ -50,6 +50,7 @@
 | `mcp/clerk.mjs` | 10 | put_handoff · validate_patch · merge · augment_apply · register · assume_add · dictionary_add · accept · attest · write_derived |
 | `mcp/fetch.mjs` | 7 | resolve_access · fetch_abstract · fetch_fulltext · resolve_doi · search_literature · uniprot_kinetics · brenda_kinetics |
 | `mcp/query.mjs` | 12 | summary · map · context · mechanism · pattern · limitations · origin · assume_uses · qualgraph · retraction · inbox · verify_collection |
+| `mcp/run.mjs` | 3 | run_fate · run_ensemble · run_rate |
 
 ## 판정 거부 자리 (E( — 규칙 번호 없이 문장만)
 
@@ -80,12 +81,16 @@
 | `tests/dictionary_seal.test.mjs` | 4 |
 | `tests/dose_slope.test.mjs` | 6 |
 | `tests/enforcement_gaps.test.mjs` | 26 |
+| `tests/engine_gap.test.mjs` | 6 |
+| `tests/engine_reference.test.mjs` | 6 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
 | `tests/governance.test.mjs` | 23 |
 | `tests/guard-matrix.test.mjs` | 4 |
+| `tests/judicial_time.test.mjs` | 8 |
 | `tests/kinetics_search.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
+| `tests/mcp_run.test.mjs` | 5 |
 | `tests/merge-check.test.mjs` | 4 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 13 |
@@ -93,6 +98,7 @@
 | `tests/perturb.test.mjs` | 4 |
 | `tests/plan-import-sources.test.mjs` | 2 |
 | `tests/probe.test.mjs` | 10 |
+| `tests/propensity.test.mjs` | 4 |
 | `tests/protocol.test.mjs` | 3 |
 | `tests/qual_compare.test.mjs` | 7 |
 | `tests/qual_graph.test.mjs` | 8 |

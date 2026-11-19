@@ -16,7 +16,7 @@ const { OP } = require('./tape.js');
 const SLU = require('./sparse_lu.js');
 
 const V = M.VOCAB;
-const FORMAT = 'definition-db-fate-ir', IR_VERSION = 4; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분 · 3: 희소 LU 기호 분석(jac.lu)·J 항의 값 위치(jac.scatter) · 4: 묶음별 접은 상수 cinv = 1/(N_A·V) (엔진은 농도를 나눗셈 대신 곱셈으로)
+const FORMAT = 'definition-db-fate-ir', IR_VERSION = 4; // 2: 빠른 층 구조(fast·S) → 활성 규칙 전체(active·S) — 분할 없는 결합 적분 · 3: 희소 LU 기호 분석(jac.lu)·J 항의 값 위치(jac.scatter) · 4: 묶음별 접은 상수 cinv = 1/(N_A·V) (엔진은 농도를 나눗셈 대신 곱셈으로) · 규칙의 선택 칸 ff(같은 분자 차수, PLAN-096) · mg(속도식 밖 반응물, DEC-0063)는 판을 올리지 않는다 — 있을 때만 적어 없는 IR 의 해시가 그대로
 
 // ===== 계 조립: 상태들 → 규칙·묶음 =====
 function assemble(db, sourceId, sc) {
@@ -195,6 +195,20 @@ function buildFateIR(db, sourceId, sc, params) {
     mods: R.mods.map((m) => ({ ref: m.ref, owner: m.owner, b: m.b, i: at.get(m.b), effect: m.rule.effect, k: m.k })),
     ...(R.kind === 'step' ? { step: R.step, dir: R.dir, Vr: R.loc ? volL[R.loc] || 0 : 0, agents: R.agents.map((b) => at.get(b)), lawIns: R.lawIns.map((q) => ({ i: at.get(q.b), n: q.n })), lawOuts: R.lawOuts.map((q) => ({ i: at.get(q.b), n: q.n })) } : {}),
   }));
+  // 같은 분자 차수 (PLAN-096): 속도식이 c^n (정수 n ≥ 2) 로 쓰는 반응물 묶음 [[i, n], …] — 확률 층이 성향을 N^n 대신 N(N−1)…(N−n+1) 로 세게
+  //   (결정론 속도식은 그대로 — 엔진은 이산 규칙에서만 Π (N−m)/N 을 곱한다). 없으면 칸을 두지 않아 IR 해시가 그대로다
+  for (const R of rules) {
+    const law = R.k && R.k.law, pw = R.kind === 'step' ? (law === 'mass_action' || law === 'binding' ? R.lawIns : []) : R.kind === 'supply' && law === 'mass_action' ? R.cons.filter((q) => !q.sat) : [];
+    const ff = pw.filter((q) => Number.isInteger(q.n) && q.n >= 2).map((q) => [q.i, q.n]);
+    if (ff.length) R.ff = ff;
+    // 속도식 밖 반응물 (PLAN-080 앞 · DEC-0063): 단계가 소비하지만 속도식에 들어가지 않는 반응물(보조 입력 minor · 미카엘리스–멘텐의 둘째 기질부터)
+    //   [[i, n], …] — 엔진이 속도에 Π min(1, max(0, N)/n) 을 곱해 그 반응물이 화학량보다 적으면 0 을 향해 멈춘다(넉넉하면 정확히 ×1 — 궤적 그대로)
+    if (R.kind === 'step' && law) {
+      const inRate = new Set((law === 'michaelis_menten' ? R.lawIns.slice(0, 1) : R.lawIns).map((q) => q.i));
+      const mg = R.cons.filter((q) => !inRate.has(q.i)).map((q) => [q.i, q.n]);
+      if (mg.length) R.mg = mg;
+    }
+  }
   // 속도식 rate_j(N; f) — 엔진 rate() 와 같은 법칙. 교란 inhibit 은 시나리오 rule_scale 의 배율을 곱한다 (사법부 derivative 가 같은 배율로 재구성)
   const rateExpr = (R) => (R.scale != null ? mul(num(R.scale), rateExpr0(R)) : rateExpr0(R));
   const rateExpr0 = (R) => {

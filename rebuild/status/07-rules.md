@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 534 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 536 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 519 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 521 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 329 |
+| machine | 331 |
 | text | 203 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,13 +26,13 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 313 |
+| 1 곳 | 315 |
 | 2 곳 | 105 |
 | 3 곳 | 60 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 81 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 83 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -117,6 +117,8 @@
 | RULE-0269 | author · inspect | 내 결론을 주고 검토 요청 \| 그 결론을 확인해 주는 답이 돌아온다. 코드만 주고 판단은 받지 않는다 |
 | RULE-0289 | author · inspect | 후보마다 값·단위·종·세포·시각·불확도·출처+인용·use·규약 가능 |
 | RULE-0291 | author · inspect | 값을 적으면 source + quote 필수 |
+| RULE-0535 | develop · field | 운명 엔진의 기록 시각은 사법부가 엔진과 다른 방법(f64 → 정확한 2 진 유리수, BigInt 정수 산술)으로 다시 센 관찰 격자와 맞아야 한다 — 기록 수 = ⌈(t_end − t0 − 1e-9)/Δ⌉ · 마지 |
+| RULE-0536 | develop · field · baseline | 공통 난수 짝 판정(pairedCompare)은 같은 (seed, 궤적 번호) 쌍으로 돌린 두 앙상블에만 — 짝이 아니면 판정하지 않고 거부한다. 쌍의 차 d = B − A 로 평균 차 · 95 % t 구간 · 짝  |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 

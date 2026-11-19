@@ -78,6 +78,15 @@
       "why": "MCP 조회와 dbtool 조회의 출력이 같은지 대조 — 기록 내용과 무관"
     },
     {
+      "file": "tests/mcp_run.test.mjs",
+      "ids": [
+        "D000051",
+        "D000165",
+        "D000174"
+      ],
+      "why": "실행 창구가 예시 시나리오(fate-mixed-optimal · gtp-exhaustion)의 대상을 그대로 돌림 — 시작 상태 · 경로 · 표지"
+    },
+    {
       "file": "tests/mhc.test.mjs",
       "ids": [
         "D000165",
@@ -166,6 +175,46 @@
         "D000176"
       ],
       "why": "예시 시나리오 위 관찰 연산자 — 엔진 원자료의 표지·상태"
+    },
+    {
+      "file": "tests/engine_reference.test.mjs",
+      "ids": [
+        "D000148",
+        "D000165",
+        "D000170",
+        "D000174"
+      ],
+      "why": "예시 시나리오(stochastic-birth-death · fate-mixed-optimal)의 계를 엔진 정답 · 변형 관계 시험에 그대로 — 나눌 규칙 ref 와 시작 상태"
+    },
+    {
+      "file": "tests/judicial_time.test.mjs",
+      "ids": [
+        "D000165",
+        "D000174"
+      ],
+      "why": "예시 시나리오(fate-mixed-optimal · effector-il12 · stochastic-birth-death)의 계 — 시계 · 비교 · 짝 판정을 실제 실행 원자료로"
+    },
+    {
+      "file": "tests/propensity.test.mjs",
+      "ids": [
+        "D000165",
+        "D000166",
+        "D000170",
+        "D000174"
+      ],
+      "why": "출생–사멸 예시 시나리오의 계에 시험용 2A → B 규칙을 자료 사본에만 더해 성향을 대조 · 포화 반응물 예(해당과정)"
+    },
+    {
+      "file": "tests/engine_gap.test.mjs",
+      "ids": [
+        "D000032",
+        "D000102",
+        "D000177",
+        "D000178",
+        "D000202",
+        "D000212"
+      ],
+      "why": "출하 시나리오(lps-tnf-validation · mhc-dc-immature-baseline)의 경로 · 세포 상태를 두 엔진으로 그대로 돌려 차이를 잰다 — ATP 시작량이 원인의 보기"
     },
     {
       "file": "tests/stochastic.test.mjs",

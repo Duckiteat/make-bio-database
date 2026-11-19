@@ -16,6 +16,7 @@ const DRAFT = require('./legislative/augment_draft.js');
 const IRB = require('./compiler/ir_builder.js');
 const LOGA = require('./judicial/log_audit.js');
 const PROTO = require('./judicial/protocol.js');
+const GAP = require('./judicial/engine_gap.js');
 const V = require('./vocab.js');
 const OBSOP = require('./compiler/obs_operator.js');
 const STF = require('./judicial/stiffness.js');
@@ -301,4 +302,22 @@ function replayLog(log, currentText) {
   return LOGA.replayVerdict(log.genesis, log.events, replay, sha(currentText));
 }
 
-module.exports = { replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, reductionCheck, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+// ----- 두 엔진의 차이 (PLAN-055): 같은 경로 · 같은 시나리오를 속도 엔진(Δt · Δt/10)과 운명 엔진(본 · 허용 오차 1/1000)으로 → 사법부 engineGap -----
+//   pathway: 속도 엔진의 대상 경로 · state: 그 경로를 기전으로 가진 세포 상태(운명 엔진의 대상).
+//   opt.matchStart: 운명 엔진 시나리오에 없는 시작량을 속도 엔진의 시작 상태(세포 기본값 · 대사물 풀)로 채워 '입력 해석의 차'를 빼고 적분 차만 본다
+function engineGap(db, pathway, state, sc, opt) {
+  opt = Object.assign({ t_end: 60, dt: 1e-3 }, opt || {});
+  const { stochastic, ...base } = sc, s = { ...base, t_end: opt.t_end };
+  const rate = C.simulateRate(db, pathway, { scenario: s, t_end: opt.t_end, dt: opt.dt });
+  if (rate.error) return { error: rate.error };
+  const rateFine = C.simulateRate(db, pathway, { scenario: s, t_end: opt.t_end, dt: opt.dt / 10 });
+  const rateStart = { ...rate.series[0].N }, fs = JSON.parse(JSON.stringify(s));
+  if (opt.matchStart) { fs.amounts = fs.amounts || {}; for (const [b, v] of Object.entries(rateStart)) if (fs.amounts[b] == null && !(fs.buffered || {})[b]) fs.amounts[b] = v; }
+  const fateStart = { ...(fs.amounts || {}) }; for (const [b, v] of Object.entries(fs.buffered || {})) fateStart[b] = v.total;
+  const fate = F.simulateFate(db, state, { scenario: fs, engine: opt.engine || 'rust', commitment: false });
+  if (fate.error) return { error: fate.error };
+  const fateRef = F.simulateFate(db, state, { scenario: refScenario(fs), engine: opt.engine || 'rust', commitment: false });
+  return Object.assign(GAP.engineGap(db, { rate, rateFine, fate, fateRef, rateStart, fateStart, pathway }, opt), { fateSteps: fate.integrator.steps, fateRejectedNeg: fate.integrator.rejectedNeg });
+}
+
+module.exports = { engineGap, replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, reductionCheck, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };

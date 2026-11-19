@@ -7,7 +7,7 @@
 const crypto = require('crypto');
 const M = require('../model.js');
 const J = require('./judicial.js');
-const { verifyFate } = require('./verifier.js');
+const { verifyFate, verifyClock } = require('./verifier.js');
 const { checkFateRaw } = require('./contract.js');
 const { verifyIR } = require('./derivative.js');
 const REL = require('./reliability.js'); // 신뢰 지표 — 쓰인 상수의 등급 (②)
@@ -67,6 +67,9 @@ function judgeFate(db, r, ctx) {
   if (v.replayWorst > v.tolerance) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', '재생', `저장소 재생 검사 불일치 최대 ${v.replayWorst.toExponential(3)} — 규칙 진행량으로 설명되지 않는 변경`, '엔진 오류 또는 규칙 밖 개입');
   if (v.worst > v.tolerance) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', '전역', `부분 구조 원장 불일치 최대 ${v.worst.toExponential(3)} (상대)`, '적분기 오류 — 진행량 원장과 상태가 어긋남');
   for (const x of v.negatives) AE('RULE-0010', 'ENGINE_DEFECT', 'AUDIT_MASS', x.bundle, `음수 양 ${x.value}`, '엔진 오류');
+  // ②-1 독립 시계 (PLAN-095 ①): 기록 시각을 정수 산술로 다시 센 격자와 대조 — 엔진의 시계 산술을 믿지 않는다
+  const clock = verifyClock(r);
+  if (!clock.ok) AE('RULE-0535', 'ENGINE_DEFECT', 'AUDIT_SCHEMA', '시계', `기록 시각이 정수로 다시 센 관찰 격자와 다름 — ${clock.problems.slice(0, 3).join(' · ')}`, '엔진 시계(격자점 · 마지막 구간) 오류');
   // ②-2 수치: 최소 단계에서도 오차·양수성 시험을 통과하지 못해 그대로 받아들인 단계, 특이 행렬 (원장은 맞지만 적분기가 한계에 닿음 — 결합점·솔버 쪽)
   if (r.stats.hMinHits > 0 || r.stats.singular > 0) AE('RULE-0137', 'NUMERICAL', 'AUDIT_KINETIC', '수치', `Rodas3 최소 단계(h_min)에서 허용 오차를 넘긴 채 받아들인 단계 ${r.stats.hMinHits}회 · 특이 행렬 ${r.stats.singular}회 (받아들인 ${r.stats.steps}, 거부 ${r.stats.rejected}, 그중 음수 ${r.stats.rejectedNeg})`, '결합점(integrator.rtol·atol·h_min) 또는 솔버 단계 제어를 조정 — 생물 상수는 바꾸지 않는다');
   // ③ 분화 정지
@@ -97,7 +100,7 @@ function judgeFate(db, r, ctx) {
   const hash = trajectoryHash(r);
   return Object.assign({}, r, {
     ix, // 사법부 자기 색인 (엔진이 넘긴 편의 색인을 쓰지 않음)
-    audit, arrest, postMortem: pm, verification: v, contract, irCheck, grades,
+    audit, arrest, postMortem: pm, verification: v, contract, irCheck, grades, clock,
     mass: Object.assign({}, r.mass, { moieties: v.moieties, start: v.start, end: v.end, worst: v.worst, tolerance: v.tolerance, series: v.series, replayWorst: v.replayWorst, replaySeries: v.replaySeries }),
     process: Object.assign({}, r.process, { factorsAt, rawDistance, distance, hash }),
   });

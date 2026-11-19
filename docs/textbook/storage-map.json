@@ -263,6 +263,19 @@
       ]
     },
     {
+      "path": "mcp/run.mjs",
+      "class": "law",
+      "format": "Node ESM (MCP 서버)",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "MCP 클라이언트(에이전트)",
+      "interpret": "[MCP] run — 읽기 전용 실행(run_fate · run_ensemble · run_rate, PLAN-094). 결과마다 출처 꼬리표: 입력 지문(db · 시나리오 정준 해시 · IR · 코드) · 등급 · 가정 의존(가정 번호 · 첫 장면 기원) · 열린 한계 · 탐색/규약, 출력 해시. 쓰기 · 서기 · 자식 프로세스 없음.",
+      "level": "L2",
+      "area": "code:mcp",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "mcp/fetch.mjs",
       "class": "law",
       "format": "Node ESM (MCP 서버)",
@@ -642,6 +655,19 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, dbtool.mjs compare, tests",
       "interpret": "[사법] 비교 검토 판정 — 조정자가 돌린 두 변형의 원자료로 수치 L2(수렴 기준)·결과·궤적 차·질량(검증기)·판정(Optimization-Negative/Positive/Neutral/Trade-off/Behavior-Changing).",
+      "level": "L2",
+      "area": "code:judicial",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
+      "path": "judicial/engine_gap.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "orchestrator.js, dbtool.mjs compare, tests",
+      "interpret": "[사법부] 두 엔진의 차이 판정 (PLAN-055) — 속도 엔진 · 운명 엔진 원자료의 공유 묶음 끝 값 차 · Δt 의존 · 허용 오차와 원인(시작량 기본값 · 계의 경계 · 즉시 단계 · Δt · 수치 · 설명 안 됨). 엔진을 돌리지 않는다.",
       "level": "L2",
       "area": "code:judicial",
       "write_keys": [
@@ -1739,6 +1765,20 @@
       ]
     },
     {
+      "path": "tests/mcp_run.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "MCP 실행 서버 시험 — 도구 목록 · 쓰기 없음 · 같은 입력 같은 출력 해시 · data/ 불변 · 출처 꼬리표(등급 · 가정 의존 · 한계 · 탐색/규약, 등록 뒤 고치면 탐색) · 조정자 직접 호출과 같은 궤적 · 거부.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/kinetics_search.test.mjs",
       "class": "verification",
       "format": "node:test",
@@ -1968,6 +2008,62 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "혼성 확률 층 — 출생–사멸 해석해(정확 SSA·τ-도약 영역, χ²·이산 AD), SSA 대 τ-도약 두 표본, 결정론 극한(Ω 1·4·16), 재현·정수 발화·원장, 결정론 경로(확률 원자료 없음·탐침), 구간 안 승격(폭주 방지).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/engine_reference.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "엔진 정답 시험 + 변형 관계 시험 (PLAN-088) — DSMTS-002-01 이입–사멸 해석해 평균·분산 대조(정확 SSA 강제 · 기본 결합점의 분산 ½ = L000072 ②), 변형 관계 4: 부피 단위 바꿈 · 시간 척도(2 의 거듭제곱 비트 같음) · 부피 척도 Ω · 반응 나누기.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/judicial_time.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "사법부 시간 · 짝 판정 (PLAN-095) — 독립 시계(정수 산술 재계산 · 거부 사례), 벽시계 밖 비교 판정, 같은 시각 허용치(Δ 와 분리), 짧은 마지막 구간 신호의 증명서 오탐 없음, 공통 난수 짝 판정(짝 확인 · 검정력 · 영 가설 크기).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/propensity.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "확률 층 성향의 같은 분자 차수 (PLAN-096) — 2A → B 앙상블 대 화학 주 방정식(균일화) N(N−1) 해 · N² 해와 구별, JS = Rust 비트, 결정론 경로 불변(ff 지운 IR 과 비트 같음), 컴파일러 ff 칸.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/engine_gap.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "두 엔진의 차이 시험 (PLAN-055) — LPS 그대로(시작량 기본값만) · 시작량 맞춤(허용 1e-4 안 · 음수 거부 병리 없음) · MHC(즉시 단계 · 계의 경계) · unexplained 판정.",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [

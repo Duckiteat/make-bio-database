@@ -87,4 +87,4 @@ description: "점검·검증 모드 — 상태를 읽거나(L0·L1·L2), 모은 
 | `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |
 | `mcp accept` | attestation | 승인 도장 |
 
-읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool attest` · `dbtool observe` · `mcp attest` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection`
+읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool attest` · `dbtool observe` · `mcp attest` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection` · `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate`
