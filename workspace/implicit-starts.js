@@ -1,4 +1,4 @@
-// 숨은 시작량 목록 (DEC-0063 ① 준비, 2026-11-19) — 읽기만. 실행: node workspace/NEXT-2026-11-19-implicit-starts.js (요약) · --json > workspace/NEXT-2026-11-19-implicit-starts.json (목록)
+// 숨은 시작량 목록 (DEC-0063 ① 준비) — 읽기만. 실행: node workspace/implicit-starts.js (요약) · --json > workspace/implicit-starts.json (목록)
 //   속도 엔진 시나리오: 시작 상태(series[0])에서 시나리오가 주지 않은 묶음과 그 값 · 출처(pool = 대사물 풀, default = 세포 기본값 · amount 기본)
 //   운명 엔진 시나리오: IR 묶음 중 시나리오가 주지 않아 0 에서 시작하는 수 · 사전 등록 여부
 const R=require('path').resolve(__dirname,'..')+'/';const C=require(R+'core.js'),IRB=require(R+'compiler/ir_builder.js'),S=require(R+'scenarios.js'),fs=require('fs');const db=C.normalize(require(R+'data/db.json'));
