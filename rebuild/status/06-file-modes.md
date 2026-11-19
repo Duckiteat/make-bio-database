@@ -9,9 +9,9 @@
 | 모드 | 파일 | KB |
 |---|---|---|
 | 공통 `common` | 314 | 7964.7 |
-| 정보 작성 `author` | 462 | 16571.8 |
+| 정보 작성 `author` | 465 | 16596.0 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 200 | 2550.7 |
+| 디벨롭 `develop` | 200 | 2551.4 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 55 | 1170.1 |
 
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 25 | 100.9 | 수집가 작업 공간 |
+| `workspace/**` | author | 28 | 125.0 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
@@ -58,7 +58,7 @@
 | `docs/design/**` | common | 21 | 314.9 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 235 | 702.0 | 안내 문서 |
 | `limitations.md` | author | 1 | 92.3 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 335.4 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 336.1 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 108.6 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
 | `.claude/**` | common | 6 | 37.6 | 도구 설정 |

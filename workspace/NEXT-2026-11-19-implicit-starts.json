@@ -1,0 +1,987 @@
+{
+ "rate": {
+  "camp-competition-hypothetical.json": {
+   "target": "D000051",
+   "registered": false,
+   "bundles": 31,
+   "implicit": [
+    [
+     "D000027|extracellular",
+     10,
+     "default"
+    ],
+    [
+     "D000030|plasma_membrane",
+     10,
+     "default"
+    ],
+    [
+     "D000035|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000031|plasma_membrane",
+     10,
+     "default"
+    ],
+    [
+     "D000032|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000042|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000049|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000043|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000047|glycogen_granule",
+     1000,
+     "pool"
+    ],
+    [
+     "D000037|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000052|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000029|nucleotide:GDP_bound|plasma_membrane",
+     10,
+     "default"
+    ],
+    [
+     "D000044|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000030|ligand:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000029|nucleotide:GTP_bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000036|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000031|gs_site:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000039|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000122|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000056|cnb_a:bound|cnb_b:bound|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000057|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000034|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000043|pka_phos:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000033|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000044|reg_phos:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000048|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000046|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000144|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000167|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000145|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000168|cytosol",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "gtp-exhaustion-hypothetical.json": {
+   "target": "D000051",
+   "registered": false,
+   "bundles": 31,
+   "implicit": [
+    [
+     "D000042|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000049|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000043|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000047|glycogen_granule",
+     1000,
+     "pool"
+    ],
+    [
+     "D000052|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000044|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000030|ligand:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000029|nucleotide:GTP_bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000031|gs_site:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000039|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000056|cnb_a:bound|cnb_b:bound|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000057|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000043|pka_phos:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000044|reg_phos:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000048|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000046|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000144|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000167|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000145|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000168|cytosol",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "gtp-regeneration-hypothetical.json": {
+   "target": "D000051",
+   "registered": false,
+   "bundles": 31,
+   "implicit": [
+    [
+     "D000042|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000049|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000043|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000047|glycogen_granule",
+     1000,
+     "pool"
+    ],
+    [
+     "D000052|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000044|cytosol",
+     10,
+     "default"
+    ],
+    [
+     "D000030|ligand:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000029|nucleotide:GTP_bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000031|gs_site:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000039|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000056|cnb_a:bound|cnb_b:bound|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000057|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000043|pka_phos:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000044|reg_phos:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000048|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000046|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000144|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000167|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000145|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000168|cytosol",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "lps-hypothetical.json": {
+   "target": "D000102",
+   "registered": false,
+   "bundles": 50,
+   "implicit": [
+    [
+     "D000100|nucleoplasm",
+     2,
+     "default"
+    ],
+    [
+     "D000065|lps_site:bound|extracellular",
+     0,
+     "default"
+    ],
+    [
+     "D000066|lps_site:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000069|lps_pocket:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000070|lps_pocket:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000070|lps_pocket:bound|tir:bound|plasma_membrane",
+     0,
+     "default"
+    ],
+    [
+     "D000075|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000075|irak1_t209:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000075|irak1_t209:phosphorylated|traf6:bound|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000075|irak1_t209:phosphorylated|k63_ub:K63_polyubiquitinated|traf6:bound|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000081|tak1_act:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000085|ikkb_s177:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000085|ikkb_s177:phosphorylated|ikkb_s181:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000090|ikba_s32:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000090|ikba_s32:phosphorylated|ikba_s36:phosphorylated|ikba_ub:K48_polyubiquitinated|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000089|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000099|cytosol",
+     0,
+     "default"
+    ],
+    [
+     "D000089|nucleoplasm",
+     0,
+     "default"
+    ],
+    [
+     "D000100|kb_site:bound|nucleoplasm",
+     0,
+     "default"
+    ],
+    [
+     "D000101|nucleoplasm",
+     0,
+     "default"
+    ],
+    [
+     "D000036|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000035|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000046|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000144|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000167|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000145|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000168|cytosol",
+     1000,
+     "pool"
+    ],
+    [
+     "D000204|nucleoplasm",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "tca-acetylcoa-exhaustion-hypothetical.json": {
+   "target": "D000148",
+   "registered": false,
+   "bundles": 29,
+   "implicit": [
+    [
+     "D000137|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000138|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000139|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000160|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000140|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000141|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000142|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000143|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000033|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000032|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000169|mito_matrix",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "tca-co2-equilibrium-hypothetical.json": {
+   "target": "D000148",
+   "registered": false,
+   "bundles": 29,
+   "implicit": [
+    [
+     "D000137|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000138|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000139|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000160|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000140|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000141|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000142|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000143|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000033|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000032|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000169|mito_matrix",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "tca-measured-kinetics-hypothetical.json": {
+   "target": "D000148",
+   "registered": false,
+   "bundles": 29,
+   "implicit": [
+    [
+     "D000137|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000139|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000160|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000140|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000141|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000142|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000143|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000033|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000032|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000169|mito_matrix",
+     1000,
+     "pool"
+    ]
+   ]
+  },
+  "tca-nad-exhaustion-hypothetical.json": {
+   "target": "D000148",
+   "registered": false,
+   "bundles": 29,
+   "implicit": [
+    [
+     "D000137|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000138|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000139|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000160|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000140|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000141|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000142|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000143|mito_matrix",
+     0,
+     "default"
+    ],
+    [
+     "D000033|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000032|mito_matrix",
+     1000,
+     "pool"
+    ],
+    [
+     "D000169|mito_matrix",
+     1000,
+     "pool"
+    ]
+   ]
+  }
+ },
+ "fate": {
+  "fate-effector-glucose-withheld-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 3
+  },
+  "fate-effector-il12-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 3
+  },
+  "fate-effector-pulse-long-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 3
+  },
+  "fate-effector-pulse-short-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 3
+  },
+  "fate-memory-fa-withheld-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 3
+  },
+  "fate-memory-il15-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 3
+  },
+  "fate-mixed-glucose-withheld-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 2
+  },
+  "fate-mixed-optimal-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 2
+  },
+  "lps-tnf-validation-hypothetical.json": {
+   "target": "D000212",
+   "registered": false,
+   "bundles": 42,
+   "implicitZero": 21
+  },
+  "mhc-dc-antigen-surge-stress-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 28
+  },
+  "mhc-dc-antigen-withheld-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 28
+  },
+  "mhc-dc-cathepsin-null-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 35
+  },
+  "mhc-dc-empty-start-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 29
+  },
+  "mhc-dc-hladm-null-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 35
+  },
+  "mhc-dc-immature-baseline-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 29
+  },
+  "mhc-dc-lps-pulse-short-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 28
+  },
+  "mhc-dc-maturation-lps-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 28
+  },
+  "mhc-dc-maturation-stochastic-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 28
+  },
+  "mhc-dc-mature-antigen-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 28
+  },
+  "mhc-dc-plc-from-components-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 25
+  },
+  "mhc-i-b2m-null-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 35
+  },
+  "mhc-i-b2m-validation-hypothetical.json": {
+   "target": "D000202",
+   "registered": true,
+   "bundles": 35,
+   "implicitZero": 29
+  },
+  "mhc-i-tap-null-hypothetical.json": {
+   "target": "D000202",
+   "registered": false,
+   "bundles": 35,
+   "implicitZero": 35
+  },
+  "mhc-i-tapasin-validation-hypothetical.json": {
+   "target": "D000202",
+   "registered": true,
+   "bundles": 35,
+   "implicitZero": 25
+  },
+  "mhc-ii-hladm-validation-hypothetical.json": {
+   "target": "D000202",
+   "registered": true,
+   "bundles": 35,
+   "implicitZero": 29
+  },
+  "stochastic-birth-death-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 19
+  },
+  "stochastic-mixed-optimal-hypothetical.json": {
+   "target": "D000174",
+   "registered": false,
+   "bundles": 20,
+   "implicitZero": 2
+  },
+  "telomere-hayflick-hypothetical.json": {
+   "target": "D000210",
+   "registered": false,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-law-isolation-hypothetical.json": {
+   "target": "D000210",
+   "registered": false,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-mitogen-withheld-hypothetical.json": {
+   "target": "D000210",
+   "registered": false,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-quiescence-validation-hypothetical.json": {
+   "target": "D000210",
+   "registered": true,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-sharp-threshold-hypothetical.json": {
+   "target": "D000210",
+   "registered": false,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-stochastic-attrition-hypothetical.json": {
+   "target": "D000210",
+   "registered": false,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-telomerase-hypothetical.json": {
+   "target": "D000210",
+   "registered": false,
+   "bundles": 5,
+   "implicitZero": 0
+  },
+  "telomere-telomerase-validation-hypothetical.json": {
+   "target": "D000210",
+   "registered": true,
+   "bundles": 5,
+   "implicitZero": 0
+  }
+ }
+}
