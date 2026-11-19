@@ -55,3 +55,27 @@ test('④ 판정: 어느 원인에도 맞지 않는 차는 unexplained · ok 거
   const w = G.engineGap({ steps: {} }, { ...raw, fateStart: { [b]: 0 } });
   assert.equal(w.rows[0].cause, 'start_default');
 });
+
+// ===== 속도식 밖 반응물 막기 (DEC-0063) =====
+const F = req('../engine/fate_engine.js'), IRB = req('../compiler/ir_builder.js'), FA = req('../judicial/fate_audit.js');
+test('⑤ 막기: LPS 그대로(ATP 0) 운명 실행이 음수 거부를 되풀이하지 않음 — 1800 s 를 200 단계 안 · ATP 는 0 에서 멈춤 · JS = Rust 비트 · 감사 결함 없음', () => {
+  const runs = ['js', 'rust'].map((engine) => F.simulateFate(BASE, 'D000212', { scenario: LPS, engine, commitment: false }));
+  for (const r of runs) {
+    assert.ok(r.integrator.steps < 200, `${r.engine}: 단계 ${r.integrator.steps} (막기 전에는 5 s 에 47 만)`);
+    assert.ok(r.series.every((N) => N[r.keys.indexOf('D000032|cytosol')] >= 0), 'ATP 가 음수로 가지 않음');
+  }
+  assert.equal(FA.trajectoryHash(runs[0]), FA.trajectoryHash(runs[1]), 'JS = Rust');
+  const v = ORCH.runFate(BASE, 'D000212', { scenario: LPS, commitment: false });
+  assert.ok(!v.audit.some((a) => ['ENGINE_DEFECT', 'COMPILER_DEFECT'].includes(a.fault)), JSON.stringify(v.audit.slice(0, 2)));
+  const ir = IRB.buildFateIR(BASE, 'D000212', LPS);
+  assert.ok(ir.rules.filter((R) => R.mg).length >= 9 && ir.rules.filter((R) => R.mg).every((R) => R.kind === 'step'), '인산화 단계들에 mg');
+});
+
+test('⑥ 막기는 넉넉하면 정확히 ×1 — ATP 를 주면 mg 를 지운 IR 과 비트 같음 (JS · Rust)', () => {
+  const sc = JSON.parse(JSON.stringify(LPS)); sc.amounts['D000032|cytosol'] = 1e8; sc.t_end = 600;
+  const ir = IRB.buildFateIR(BASE, 'D000212', sc), bare = JSON.parse(JSON.stringify(ir)); for (const r of bare.rules) delete r.mg;
+  for (const engine of ['js', 'rust']) {
+    const a = F.simulateFate(BASE, 'D000212', { scenario: sc, ir, engine, commitment: false }), b = F.simulateFate(BASE, 'D000212', { scenario: sc, ir: bare, engine, commitment: false });
+    assert.equal(FA.trajectoryHash(a), FA.trajectoryHash(b), engine);
+  }
+});

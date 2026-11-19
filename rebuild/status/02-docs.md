@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 334.2 | 329 |  | 분류됨 1 |
+| `CHANGES.md` | 335.4 | 330 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -45,7 +45,7 @@
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 20.9 | 76 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 41.8 | 416 |  | 생성물 |
+| `docs/plan/build.md` | 42.0 | 417 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -100,6 +100,7 @@
 | `docs/plan/decisions/DEC-0060.md` | 2.1 | 19 |  | 생성물 |
 | `docs/plan/decisions/DEC-0061.md` | 1.6 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0062.md` | 1.4 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0063.md` | 1.4 | 13 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -174,8 +175,8 @@
 | `docs/plan/items/PLAN-052.md` | 1.7 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-053.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-054.md` | 1.1 | 22 |  | 생성물 |
-| `docs/plan/items/PLAN-055.md` | 2.8 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-056.md` | 1.1 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-055.md` | 3.0 | 25 |  | 생성물 |
+| `docs/plan/items/PLAN-056.md` | 1.3 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-057.md` | 1.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-058.md` | 1.8 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-059.md` | 1.6 | 23 |  | 생성물 |
@@ -200,7 +201,7 @@
 | `docs/plan/items/PLAN-077.md` | 3.8 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-078.md` | 2.9 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-079.md` | 2.3 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-080.md` | 2.0 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-080.md` | 3.3 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-081.md` | 1.3 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-082.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-083.md` | 1.2 | 21 |  | 생성물 |
@@ -306,14 +307,14 @@
 | `docs/reports/2026-11-03-collection-search-layer-assessment.md` | 14.3 | 132 |  | 미분류 |
 | `docs/reports/2026-11-18-labnote-nadh-a340-limits.md` | 7.5 | 54 |  | 미분류 |
 | `docs/reports/2026-11-18-uncertainty-budget-explained.md` | 18.8 | 212 |  | 미분류 |
-| `docs/reports/2026-11-19-two-engine-gap.md` | 6.1 | 46 |  | 미분류 |
+| `docs/reports/2026-11-19-two-engine-gap.md` | 6.4 | 46 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
 | `docs/textbook/02-저장-위치와-방식.md` | 11.6 | 125 |  | 분류됨 81 |
 | `docs/textbook/03-데이터-모델.md` | 19.8 | 184 |  | 분류됨 116 |
-| `docs/textbook/04-알고리즘.md` | 69.7 | 376 |  | 분류됨 233 |
+| `docs/textbook/04-알고리즘.md` | 70.3 | 376 |  | 분류됨 233 |
 | `docs/textbook/05-상호작용.md` | 14.0 | 138 |  | 분류됨 94 |
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |

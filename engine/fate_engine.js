@@ -113,7 +113,25 @@ function simulateFate(db, sourceId, opt) {
     }
     return d;
   };
-  const rhs = (N, out) => { stats.rhs++; for (let k = 0; k < nA; k++) { const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx); out[k] = TAPE.evalTape(IR.jac.rate[j], N, f, tctx); if (disc[k] && FF[k].length) out[k] *= ffCorr(k, N); } };
+  // 속도식 밖 반응물 막기 (DEC-0063): 단계가 소비하지만 속도식에 없는 반응물(보조 입력 · MM 의 둘째 기질부터)이 화학량 n 보다 적으면 속도에 min(1, max(0, N)/n) — 넉넉하면 정확히 ×1.
+//   결정론 · 이산 모두. MG[k] = [묶음, n, …] (IR rules[j].mg). Rust engine.rs minor_gate · d_minor_gate 와 같은 순서
+  const MG = act.map((j) => (IR.rules[j].mg || []).flat());
+  const minorGate = (k, N) => { const L = MG[k]; let c = 1; for (let g = 0; g < L.length; g += 2) c *= Math.min(1, Math.max(0, N[L[g]]) / L[g + 1]); return c; };
+  const dMinorGate = (k, N, i) => {
+    const L = MG[k]; let d = 0;
+    for (let g = 0; g < L.length; g += 2) {
+      if (L[g] !== i) continue;
+      const x = N[i], n = L[g + 1]; if (!(x > 0 && x < n)) continue;
+      let p = 1 / n; for (let h = 0; h < L.length; h += 2) if (h !== g) p *= Math.min(1, Math.max(0, N[L[h]]) / L[h + 1]);
+      d += p;
+    }
+    return d;
+  };
+  // 성향 · 속도 배율 = (이산이면 같은 분자 차수 보정) × (속도식 밖 반응물 막기) — 둘 다 없으면 부르지 않아 산술이 그대로
+  const hasMul = (k) => (disc[k] && FF[k].length > 0) || MG[k].length > 0;
+  const mulOf = (k, N) => (disc[k] && FF[k].length ? ffCorr(k, N) : 1) * (MG[k].length ? minorGate(k, N) : 1);
+  const dmulOf = (k, N, i) => { const a = disc[k] && FF[k].length, b = MG[k].length; return (a ? ffDcorr(k, N, i) : 0) * (b ? minorGate(k, N) : 1) + (a ? ffCorr(k, N) : 1) * (b ? dMinorGate(k, N, i) : 0); };
+  const rhs = (N, out) => { stats.rhs++; for (let k = 0; k < nA; k++) { const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx); out[k] = TAPE.evalTape(IR.jac.rate[j], N, f, tctx); if (hasMul(k)) out[k] *= mulOf(k, N); } };
   // M = I/(γh) − J 를 희소 패턴(IR jac.lu — 최소 차수 순서·채움, compiler/sparse_lu.js)의 값 배열에 조립하고 제자리 LU (3단계).
   //   조립: 규칙마다 dRate 다음 dFactor, 항마다 IR 이 준 [위치, 화학량] 순서 — Rust 와 같은 순서. 대각 1/(γh) 은 마지막에.
   //   분해: 행 단위, 피벗 교환 없음 — 행을 밀집 작업 벡터로 흩뿌리고 앞 행들의 U 로 소거한 뒤 모은다. |u_rr| < pivot_rel × 행 최대면 특이(단계 거부).
@@ -135,8 +153,8 @@ function simulateFate(db, sourceId, opt) {
     stats.jac++;
     VAL.fill(0);
     for (let k = 0; k < nA; k++) {
-      const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), g = TAPE.evalTape(IR.jac.rate[j], N, 1, tctx), cc = disc[k] && FF[k].length ? ffCorr(k, N) : -1; // cc ≥ 0: 보정된 이산 행
-      IR.jac.dRate[j].forEach((d, di) => { let v = TAPE.evalTape(d.t, N, f, tctx); if (cc >= 0) v = v * cc + f * g * ffDcorr(k, N, d.i); if (v) { const sl = SCR.rate[k][di]; for (let q = 0; q < sl.length; q += 2) if (!disc[COLOF[sl[q]]]) VAL[sl[q]] -= v * sl[q + 1]; } });
+      const j = act[k], f = TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), g = TAPE.evalTape(IR.jac.rate[j], N, 1, tctx), cc = hasMul(k) ? mulOf(k, N) : -1; // cc ≥ 0: 배율이 붙은 행
+      IR.jac.dRate[j].forEach((d, di) => { let v = TAPE.evalTape(d.t, N, f, tctx); if (cc >= 0) v = v * cc + f * g * dmulOf(k, N, d.i); if (v) { const sl = SCR.rate[k][di]; for (let q = 0; q < sl.length; q += 2) if (!disc[COLOF[sl[q]]]) VAL[sl[q]] -= v * sl[q + 1]; } });
       IR.jac.dFactor[j].forEach((d, di) => { let v = TAPE.evalTape(d.t, N, 1, tctx) * g; if (cc >= 0) v = v * cc; if (v) { const sl = SCR.factor[k][di]; for (let q = 0; q < sl.length; q += 2) if (!disc[COLOF[sl[q]]]) VAL[sl[q]] -= v * sl[q + 1]; } });
     }
     const d0 = 1 / (ROD.g * h);
@@ -234,7 +252,7 @@ function simulateFate(db, sourceId, opt) {
   // Cao·Gillespie·Petzold (2006): 도약 규칙이 바꾸는 분자마다 기대 변화 μ 와 분산 σ² 가 ε·N 을 넘지 않는 τ
   const caoTau = (N) => {
     MU.fill(0); S2.fill(0);
-    for (let k = 0; k < nA; k++) { if (mode[k] !== 1) continue; const j = act[k], a = Math.max(0, TAPE.evalTape(IR.jac.rate[j], N, TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), tctx) * (FF[k].length ? ffCorr(k, N) : 1)); for (const [i, v] of SPEC[k]) { MU[i] += v * a; S2[i] += v * v * a; } }
+    for (let k = 0; k < nA; k++) { if (mode[k] !== 1) continue; const j = act[k], a = Math.max(0, TAPE.evalTape(IR.jac.rate[j], N, TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), tctx) * (hasMul(k) ? mulOf(k, N) : 1)); for (const [i, v] of SPEC[k]) { MU[i] += v * a; S2[i] += v * v * a; } }
     let tau = Infinity;
     for (let i = 0; i < nB; i++) { if (!S2[i]) continue; const b = Math.max(CP.leap_eps * N[i], 1); if (MU[i]) tau = Math.min(tau, b / Math.abs(MU[i])); tau = Math.min(tau, (b * b) / S2[i]); }
     return tau;
@@ -245,7 +263,7 @@ function simulateFate(db, sourceId, opt) {
     for (let k = 0; k < nA; k++) {
       if (!disc[k]) continue;
       let cnt = Infinity; for (const [i] of SPEC[k]) cnt = Math.min(cnt, N[i]);
-      const j = act[k], a = Math.abs(TAPE.evalTape(IR.jac.rate[j], N, TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), tctx) * (FF[k].length ? ffCorr(k, N) : 1));
+      const j = act[k], a = Math.abs(TAPE.evalTape(IR.jac.rate[j], N, TAPE.evalTape(IR.jac.factor[j], N, 1, tctx), tctx) * (hasMul(k) ? mulOf(k, N) : 1));
       if (cnt >= CP.sto_ode_min * CP.sto_hyst || a >= CP.sto_fast * CP.sto_hyst) { if (mode[k] === 1) nLeap--; mode[k] = 0; disc[k] = 0; stoStats.switches++; }
     }
   };

@@ -18,8 +18,8 @@ function pack(a) {
   const nB = IR.keys.length, nR = IR.rules.length, nA = IR.jac.active.length, out = [];
   const P = (...x) => { for (const v of x) out.push(+v); };
   const tapes = (list) => { P(list.length); for (const x of list) P(x.i, x.t.length, ...x.t); };
-  // 덩어리 판 6 (PLAN-096): 규칙마다 같은 분자 차수 목록 ff [묶음, n] 이 도함수 테이프 뒤에. 판 5: 아보가드로 수 칸을 빼고 부피 자리에 컴파일러가 접은 cinv = 1/(N_A·V) (IR 4)
-  P(6, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, recordEvery);
+  // 덩어리 판 7 (DEC-0063): ff 다음에 속도식 밖 반응물 mg [묶음, n]. 판 6 (PLAN-096): 규칙마다 같은 분자 차수 목록 ff [묶음, n] 이 도함수 테이프 뒤에. 판 5: 아보가드로 수 칸을 빼고 부피 자리에 컴파일러가 접은 cinv = 1/(N_A·V) (IR 4)
+  P(7, nB, nR, nA, sched.length, reservoirs.length, dt, tEnd, horizon, CP.rtol, CP.atol, CP.h0, CP.h_min, CP.safety, CP.fac_min, CP.fac_max, CP.neg_shrink, CP.pivot_rel, recordEvery);
   for (let i = 0; i < nB; i++) P(N0[i]);
   for (const s of IR.species) P(s.cinv);
   for (const s of IR.species) P(s.buf == null ? Infinity : s.buf);
@@ -30,6 +30,7 @@ function pack(a) {
     P(IR.jac.rate[j].length, ...IR.jac.rate[j], IR.jac.factor[j].length, ...IR.jac.factor[j]);
     tapes(IR.jac.dRate[j]); tapes(IR.jac.dFactor[j]);
     const ff = R.ff || []; P(ff.length); for (const [i, n] of ff) P(i, n);
+    const mg = R.mg || []; P(mg.length); for (const [i, n] of mg) P(i, n);
   });
   P(nA, ...IR.jac.active);
   for (let i = 0; i < nB; i++) { const s = IR.jac.S[i]; P(s.length); for (const [k, c] of s) P(k, c); }
