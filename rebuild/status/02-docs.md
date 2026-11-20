@@ -365,7 +365,8 @@
 | `docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-validation-fate.md` | 8.0 | 105 |  | 미분류 |
 | `docs/reports/2026-11-19-pathway-walkthrough.md` | 4.9 | 52 |  | 미분류 |
 | `docs/reports/2026-11-19-two-engine-gap.md` | 6.4 | 46 |  | 미분류 |
-| `docs/reports/2026-11-20-orchestration-explained.md` | 20.1 | 273 |  | 미분류 |
+| `docs/reports/2026-11-20-orchestration-explained.md` | 20.2 | 274 |  | 미분류 |
+| `docs/reports/2026-11-20-orchestration-modules-flow.md` | 20.3 | 352 |  | 미분류 |
 | `docs/reports/2026-11-20-orchestration-tabletop.md` | 7.5 | 53 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |

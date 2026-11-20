@@ -1,6 +1,7 @@
 # 작업 조율(오케스트레이션) 쉽게 풀어 쓰기 — 컴퓨터 기초부터
 
 > 2026-11-20 · develop 모드 · 사용자가 읽으려고 쓴 설명서다. 규격 문서가 아니다(규격은 PLAN-099 에서 만든다).
+> 모듈별 흐름 · MCP 가 생기고 쓰이는 과정은 `docs/reports/2026-11-20-orchestration-modules-flow.md`.
 > 함께 읽을 것: 결정 DEC-0064 · DEC-0065 (`node rebuild/read.mjs DEC-0064`) · 가상 실행 보고서 `docs/reports/2026-11-20-orchestration-tabletop.md`
 
 이 문서는 다섯 부분이다.
