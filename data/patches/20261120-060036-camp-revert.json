@@ -1,0 +1,225 @@
+{
+  "applied_at": "2026-11-20T06:00:36.191Z",
+  "result": {
+    "added": [
+      "L000127"
+    ],
+    "updated": [
+      "D000031"
+    ],
+    "removed": [
+      "S000058"
+    ],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "limitations": [
+          "L000127"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000031"
+        ]
+      },
+      "removed": {
+        "steps": [
+          "S000058"
+        ]
+      },
+      "fields": {
+        "D000031": [
+          "rule"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "직전 패치(20261120-055503-camp-sources)에서 더한 AC 꺼짐 단계 S000058 을 되돌린다. 속도 상수가 없어 모든 단계가 즉시 발화하는 지금, AC 켜짐↔꺼짐 순환이 생기자 단계 순서가 바뀌어 Gs 자체 비활성화(S000004)가 AC 활성화(S000003)보다 먼저 발화하고, Gs-GTP 가 매 라운드 다 사라져 cAMP 가 전혀 만들어지지 않았다 — simulate D000050 · D000051(사건 기반·속도 기반 모두)에서 cAMP·PKA·글리코겐 분해가 사라짐. 감사 오류가 줄어든 것(AUDIT_MASS 2 → 0)도 AC 가 켜지지 않아서였다. 그래서 단계 대신 한계로 등록한다(출처는 그대로: Cassel, Levkovitz & Selinger 1977). 다른 출처 달기는 그대로 둔다.",
+    "impact": {
+      "rules": [
+        "D000029/rule/ac_activation"
+      ],
+      "senses": [
+        "D000029"
+      ],
+      "steps": [
+        "S000003",
+        "S000005"
+      ],
+      "pathways": [
+        "D000050",
+        "D000051"
+      ],
+      "limitations": [
+        {
+          "id": "L000018",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000127",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000127",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 23,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 4,
+  "why": "직전 패치(20261120-055503-camp-sources)에서 더한 AC 꺼짐 단계 S000058 을 되돌린다. 속도 상수가 없어 모든 단계가 즉시 발화하는 지금, AC 켜짐↔꺼짐 순환이 생기자 단계 순서가 바뀌어 Gs 자체 비활성화(S000004)가 AC 활성화(S000003)보다 먼저 발화하고, Gs-GTP 가 매 라운드 다 사라져 cAMP 가 전혀 만들어지지 않았다 — simulate D000050 · D000051(사건 기반·속도 기반 모두)에서 cAMP·PKA·글리코겐 분해가 사라짐. 감사 오류가 줄어든 것(AUDIT_MASS 2 → 0)도 AC 가 켜지지 않아서였다. 그래서 단계 대신 한계로 등록한다(출처는 그대로: Cassel, Levkovitz & Selinger 1977). 다른 출처 달기는 그대로 둔다.",
+  "remove": [
+    "S000058"
+  ],
+  "senses": [
+    {
+      "id": "D000031",
+      "rule": [
+        {
+          "id": "active",
+          "type": "meaning",
+          "label": "Gsα 결합 시 활성",
+          "when": {
+            "gs_site": "bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1907",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9417641",
+                "citation": "Tesmer et al., 1997"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cyclization",
+          "type": "transition",
+          "label": "cAMP 합성",
+          "action": "고리화",
+          "agent": true,
+          "via_site": "catalytic",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000039",
+              "D000122"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 아데닐산 고리화효소가 ATP 를 cAMP 와 피로인산(PPi)으로 바꾼다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1074/jbc.272.44.27787",
+                "citation": "Dessauer & Gilman, 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9346923",
+                "citation": "Dessauer & Gilman, 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1907",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9417641",
+                "citation": "Tesmer et al., 1997"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000031/site/gs_site",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "AC 가 꺼지는 단계가 없다 — Gs 가 GTP 를 가수분해해 꺼져도 AC[gs_site 결합] 는 켜진 채 cAMP 를 계속 만든다. 실제로는 AC–Gs–GTP 복합체에서 GTP 가 가수분해되면 계가 비활성으로 돌아간다(Cassel, Levkovitz & Selinger 1977, PMID 203612 — 꺼짐 반응 1차 속도 상수 koff 15 min⁻¹, 칠면조 적혈구 막). 2026-11-20 꺼짐 단계(modify, gs_site −bound)를 넣어 보았으나, 속도 상수가 없어 모든 단계가 즉시 발화하는 지금은 켜짐↔꺼짐 순환이 단계 순서를 바꿔 Gs 비활성화가 AC 활성화보다 먼저 일어나 cAMP 가 전혀 만들어지지 않았다(같은 날 되돌림). L000018(Gs 가 AC 에 흡수되지 않음)과 같은 뿌리",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "즉시 발화 순서가 순환 추가에 따라 바뀌지 않게 하는 엔진 쪽 결정(develop) 또는 S000003·S000004·꺼짐 단계의 속도 상수(사람 값) — 둘 중 하나가 있은 뒤 꺼짐 규칙(초안: 패치 기록 20261120-055503 의 D000031/rule/gs_release)을 다시 넣는다"
+          }
+        ]
+      },
+      "found_in": "경로 해부 D000050 · 전환 기록 #8 — 2026-11-20 꺼짐 단계 시도와 되돌림 (simulate D000050 · D000051 전후 비교)"
+    }
+  ],
+  "recorded_at": "2026-11-20T06:00:35.986Z"
+}

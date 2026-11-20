@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 336.7 | 332 |  | 분류됨 1 |
+| `CHANGES.md` | 337.7 | 333 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -307,8 +307,58 @@
 | `docs/reports/2026-11-03-collection-search-layer-assessment.md` | 14.3 | 132 |  | 미분류 |
 | `docs/reports/2026-11-18-labnote-nadh-a340-limits.md` | 7.5 | 54 |  | 미분류 |
 | `docs/reports/2026-11-18-uncertainty-budget-explained.md` | 18.8 | 212 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep.md` | 6.4 | 86 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/camp-competition-run.md` | 16.4 | 122 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-effector-glucose-withheld-fate.md` | 10.5 | 114 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-effector-il12-fate.md` | 9.6 | 112 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-effector-pulse-long-fate.md` | 9.7 | 114 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-effector-pulse-short-fate.md` | 8.9 | 109 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-memory-fa-withheld-fate.md` | 9.2 | 111 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-memory-il15-fate.md` | 9.6 | 111 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-mixed-glucose-withheld-fate.md` | 13.1 | 126 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/fate-mixed-optimal-fate.md` | 9.8 | 113 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/gtp-exhaustion-run.md` | 13.0 | 111 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/gtp-regeneration-run.md` | 12.4 | 112 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/lps-run.md` | 13.6 | 136 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/lps-tnf-validation-fate.md` | 5.5 | 81 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-antigen-surge-stress-fate.md` | 7.6 | 96 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-antigen-withheld-fate.md` | 6.5 | 94 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-cathepsin-null-fate.md` | 7.1 | 96 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-empty-start-fate.md` | 6.0 | 90 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-hladm-null-fate.md` | 7.1 | 96 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-immature-baseline-fate.md` | 7.6 | 97 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-lps-pulse-short-fate.md` | 9.3 | 106 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-maturation-stochastic-ensemble.md` | 1.0 | 19 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-maturation-stochastic-fate.md` | 8.8 | 101 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-mature-antigen-fate.md` | 8.7 | 102 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-dc-plc-from-components-fate.md` | 7.2 | 98 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-i-b2m-null-run.md` | 0.3 | 5 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-i-b2m-validation-fate.md` | 7.8 | 99 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-i-tap-null-run.md` | 0.3 | 5 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-i-tapasin-validation-fate.md` | 7.5 | 100 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/mhc-ii-hladm-validation-fate.md` | 7.8 | 99 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/stochastic-birth-death-ensemble.md` | 0.8 | 16 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/stochastic-birth-death-fate.md` | 7.2 | 85 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/stochastic-mixed-optimal-ensemble.md` | 1.0 | 20 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/stochastic-mixed-optimal-fate.md` | 9.3 | 111 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/tca-acetylcoa-exhaustion-run.md` | 9.1 | 83 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/tca-co2-equilibrium-run.md` | 8.9 | 90 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/tca-measured-kinetics-run.md` | 9.7 | 89 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/tca-nad-exhaustion-run.md` | 9.2 | 80 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-hayflick-fate.md` | 9.6 | 112 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-law-isolation-fate.md` | 8.7 | 109 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-mitogen-withheld-fate.md` | 7.1 | 98 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-quiescence-validation-fate.md` | 7.5 | 104 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-sharp-threshold-fate.md` | 9.6 | 112 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-stochastic-attrition-ensemble.md` | 1.1 | 21 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-stochastic-attrition-fate.md` | 9.6 | 111 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-fate.md` | 7.7 | 103 |  | 미분류 |
+| `docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-validation-fate.md` | 8.0 | 105 |  | 미분류 |
+| `docs/reports/2026-11-19-pathway-walkthrough.md` | 4.9 | 52 |  | 미분류 |
 | `docs/reports/2026-11-19-two-engine-gap.md` | 6.4 | 46 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
+| `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
@@ -319,8 +369,8 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 141.3 | 866 |  | 생성물 |
-| `limitations.md` | 92.3 | 196 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 141.8 | 867 |  | 생성물 |
+| `limitations.md` | 95.6 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |

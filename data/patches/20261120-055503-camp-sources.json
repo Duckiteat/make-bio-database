@@ -1,0 +1,1473 @@
+{
+  "applied_at": "2026-11-20T05:55:03.413Z",
+  "result": {
+    "added": [
+      "S000058",
+      "L000125",
+      "L000126"
+    ],
+    "updated": [
+      "D000050",
+      "D000027",
+      "D000030",
+      "D000029",
+      "D000031",
+      "D000042",
+      "D000056",
+      "D000057",
+      "D000049",
+      "D000039"
+    ],
+    "removed": [],
+    "mapped": []
+  },
+  "report": {
+    "scope": {
+      "files": [
+        "data/db.json",
+        "data/patches/"
+      ],
+      "added": {
+        "steps": [
+          "S000058"
+        ],
+        "limitations": [
+          "L000125",
+          "L000126"
+        ]
+      },
+      "updated": {
+        "senses": [
+          "D000050",
+          "D000027",
+          "D000030",
+          "D000029",
+          "D000031",
+          "D000042",
+          "D000056",
+          "D000057",
+          "D000049",
+          "D000039"
+        ]
+      },
+      "removed": {},
+      "fields": {
+        "D000050": [
+          "desc"
+        ],
+        "D000027": [
+          "desc"
+        ],
+        "D000030": [
+          "desc",
+          "rule"
+        ],
+        "D000029": [
+          "desc",
+          "rule"
+        ],
+        "D000031": [
+          "desc",
+          "rule"
+        ],
+        "D000042": [
+          "desc",
+          "rule"
+        ],
+        "D000056": [
+          "desc"
+        ],
+        "D000057": [
+          "desc",
+          "rule"
+        ],
+        "D000049": [
+          "desc",
+          "rule",
+          "note"
+        ],
+        "D000039": [
+          "desc"
+        ]
+      }
+    },
+    "measured_changed": [],
+    "why": "전환 기록 #8 (baseline→author, 2026-11-20): D000050 cAMP 신호 전달의 단계 규칙·분자 설명에 1차 출처를 단다. 출처는 모두 mcp/fetch.mjs 로 받은 Europe PMC 기록·초록(data/fetched/europepmc/MED-*.json, 받기 기록)과 대조한 것만 curated 로 올렸다 — 초록이 직접 말하지 않는 부분은 문장을 줄이거나(에피네프린의 투쟁-도피 · AC 의 증폭 문장) asserted 로 남긴다(PDE basal). 사용자 결정(2026-11-20): 끄는 단계를 더한다 — AC 꺼짐(Cassel 1977 조절 GTPase 고리)은 지금 형식으로 넣고(S+1), 수용체 해리·PKA 재결합은 리간드를 풀어 내보내는 효과 형식이 관문에 없어 한계 2 건으로 등록하고 develop 으로 넘긴다. 화학 구조 정의(ATP·AMP·GTP·GDP·Pi·PPi)는 ChEBI 대조(verified)가 근거라 문헌 출처를 달지 않는다.",
+    "impact": {
+      "rules": [],
+      "senses": [
+        "D000043",
+        "D000051",
+        "D000053",
+        "D000059",
+        "D000122"
+      ],
+      "steps": [
+        "S000001",
+        "S000002",
+        "S000003",
+        "S000004",
+        "S000005",
+        "S000006",
+        "S000007",
+        "S000008",
+        "S000058"
+      ],
+      "pathways": [
+        "D000050",
+        "D000051"
+      ],
+      "limitations": [
+        {
+          "id": "L000005",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000015",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000016",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000018",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000028",
+          "before": "resolved",
+          "after": "resolved"
+        },
+        {
+          "id": "L000044",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000106",
+          "before": "open",
+          "after": "open"
+        },
+        {
+          "id": "L000125",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000126",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "limitation_status_changed": [
+        {
+          "id": "L000125",
+          "before": null,
+          "after": "open"
+        },
+        {
+          "id": "L000126",
+          "before": null,
+          "after": "open"
+        }
+      ],
+      "regenerate": [
+        "limitations.md",
+        "docs/textbook/90-부록-자동생성.md"
+      ]
+    },
+    "verification": {
+      "gate": "pass",
+      "errors": 0,
+      "warnings": 23,
+      "new_errors": 0,
+      "new_warnings": 0,
+      "undetected_gaps": 0,
+      "augment_candidates": 1
+    }
+  },
+  "format": "definition-db-patch",
+  "version": 4,
+  "why": "전환 기록 #8 (baseline→author, 2026-11-20): D000050 cAMP 신호 전달의 단계 규칙·분자 설명에 1차 출처를 단다. 출처는 모두 mcp/fetch.mjs 로 받은 Europe PMC 기록·초록(data/fetched/europepmc/MED-*.json, 받기 기록)과 대조한 것만 curated 로 올렸다 — 초록이 직접 말하지 않는 부분은 문장을 줄이거나(에피네프린의 투쟁-도피 · AC 의 증폭 문장) asserted 로 남긴다(PDE basal). 사용자 결정(2026-11-20): 끄는 단계를 더한다 — AC 꺼짐(Cassel 1977 조절 GTPase 고리)은 지금 형식으로 넣고(S+1), 수용체 해리·PKA 재결합은 리간드를 풀어 내보내는 효과 형식이 관문에 없어 한계 2 건으로 등록하고 develop 으로 넘긴다. 화학 구조 정의(ATP·AMP·GTP·GDP·Pi·PPi)는 ChEBI 대조(verified)가 근거라 문헌 출처를 달지 않는다.",
+  "senses": [
+    {
+      "id": "D000050",
+      "desc": [
+        {
+          "text": "Gs 단백질이 아데닐산 고리화효소를 활성화해 cAMP가 만들어지고, cAMP가 단백질 키네이스 A를 활성화하는 신호 전달 경로",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포생물학"
+          },
+          "links": [
+            {
+              "to": "D000024",
+              "rel": "is_a",
+              "span": "신호 전달 경로"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1104607",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              },
+              {
+                "db": "PMID",
+                "id": "15692043",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": []
+    },
+    {
+      "id": "D000027",
+      "desc": [
+        {
+          "text": "부신 속질의 크로마핀 세포에서 분비되어 혈당을 높이는 호르몬",
+          "field": "생리학",
+          "context": {
+            "scope": "생리학"
+          },
+          "links": [
+            {
+              "to": "D000026",
+              "rel": "is_a",
+              "span": "호르몬"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.3390/cancers11081121",
+                "citation": "Berends et al., 2019"
+              },
+              {
+                "db": "PMID",
+                "id": "31390824",
+                "citation": "Berends et al., 2019"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1152/ajpendo.1983.245.3.e294",
+                "citation": "Saccà et al., 1983"
+              },
+              {
+                "db": "PMID",
+                "id": "6614167",
+                "citation": "Saccà et al., 1983"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": []
+    },
+    {
+      "id": "D000030",
+      "desc": [
+        {
+          "text": "에피네프린과 결합하면 Gs 단백질을 활성화하는 세포막 수용체",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포생물학 (간·근육 세포)"
+          },
+          "links": [
+            {
+              "to": "D000025",
+              "rel": "is_a",
+              "span": "수용체"
+            },
+            {
+              "to": "D000027",
+              "rel": "refers",
+              "span": "에피네프린"
+            },
+            {
+              "to": "D000029",
+              "rel": "refers",
+              "span": "Gs 단백질"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [
+        {
+          "id": "active",
+          "type": "meaning",
+          "label": "리간드 결합 시 활성",
+          "when": {
+            "ligand": "bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(20)79672-9",
+                "citation": "De Lean, Stadel & Lefkowitz, 1980"
+              },
+              {
+                "db": "PMID",
+                "id": "6248546",
+                "citation": "De Lean, Stadel & Lefkowitz, 1980"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "리간드 없음 — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              }
+            ]
+          }
+        },
+        {
+          "id": "ligand_binding",
+          "type": "transition",
+          "label": "수용체 활성화",
+          "action": "결합",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "ligand",
+            "partner": "D000027",
+            "add": [
+              "bound"
+            ]
+          },
+          "regulators": [],
+          "where": [
+            "plasma_membrane"
+          ],
+          "text": "에피네프린이 β-아드레날린 수용체의 바깥쪽 결합 부위에 결합해 수용체의 구조가 바뀐다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(20)79672-9",
+                "citation": "De Lean, Stadel & Lefkowitz, 1980"
+              },
+              {
+                "db": "PMID",
+                "id": "6248546",
+                "citation": "De Lean, Stadel & Lefkowitz, 1980"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gs_gef",
+          "type": "transition",
+          "label": "Gs 활성화",
+          "action": "뉴클레오타이드 교환",
+          "agent": true,
+          "via_site": "coupling",
+          "effect": {
+            "type": "modify",
+            "target": "D000029",
+            "site": "nucleotide",
+            "add": [
+              "GTP_bound"
+            ],
+            "remove": [
+              "GDP_bound"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000035"
+            ],
+            "produces": [
+              "D000036"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 수용체가 세포질 쪽 면에서 Gs 의 α 소단위에서 GDP 를 내보내고 GTP 가 붙게 한다. 수용체는 그대로 남아 다른 Gs 를 계속 활성화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10488",
+                "citation": "Chung et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21956331",
+                "citation": "Chung et al., 2011"
+              }
+            ]
+          }
+        }
+      ],
+      "note": "β1·β2·β3 아형이 있어 분자 부류로 둔다. 일곱 번 막을 관통하는 G 단백질 연결 수용체."
+    },
+    {
+      "id": "D000029",
+      "desc": [
+        {
+          "text": "활성화되면 아데닐산 고리화효소를 활성화하는 G 단백질",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포생물학"
+          },
+          "links": [
+            {
+              "to": "D000028",
+              "rel": "is_a",
+              "span": "G 단백질"
+            },
+            {
+              "to": "D000031",
+              "rel": "refers",
+              "span": "아데닐산 고리화효소"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1943",
+                "citation": "Sunahara et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9395396",
+                "citation": "Sunahara et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1038/nature10361",
+                "citation": "Rasmussen et al., 2011"
+              },
+              {
+                "db": "PMID",
+                "id": "21772288",
+                "citation": "Rasmussen et al., 2011"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [
+        {
+          "id": "on",
+          "type": "meaning",
+          "label": "GTP 결합 — 활성",
+          "when": {
+            "nucleotide": "GTP_bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "203612",
+                "citation": "Cassel, Levkovitz & Selinger, 1977"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1943",
+                "citation": "Sunahara et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9395396",
+                "citation": "Sunahara et al., 1997"
+              }
+            ]
+          }
+        },
+        {
+          "id": "off",
+          "type": "meaning",
+          "label": "GDP 결합 — 비활성",
+          "when": {
+            "nucleotide": "GDP_bound"
+          },
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "203612",
+                "citation": "Cassel, Levkovitz & Selinger, 1977"
+              }
+            ]
+          }
+        },
+        {
+          "id": "ac_activation",
+          "type": "transition",
+          "label": "아데닐산 고리화효소 활성화",
+          "action": "결합",
+          "agent": true,
+          "via_component": "D000053",
+          "effect": {
+            "type": "modify",
+            "target": "D000031",
+            "site": "gs_site",
+            "add": [
+              "bound"
+            ]
+          },
+          "regulators": [],
+          "text": "GTP 가 붙은 Gs α 소단위가 아데닐산 고리화효소에 결합해 활성화한다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1943",
+                "citation": "Sunahara et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9395396",
+                "citation": "Sunahara et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1907",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9417641",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gtpase",
+          "type": "transition",
+          "label": "Gs 자체 비활성화",
+          "action": "가수분해",
+          "agent": false,
+          "via_component": "D000053",
+          "effect": {
+            "type": "modify",
+            "site": "nucleotide",
+            "add": [
+              "GDP_bound"
+            ],
+            "remove": [
+              "GTP_bound"
+            ]
+          },
+          "with": {
+            "consumes": [],
+            "produces": [
+              "D000037"
+            ]
+          },
+          "regulators": [],
+          "text": "Gs α 소단위가 스스로 GTP 를 GDP 로 가수분해해 비활성으로 돌아간다. 신호가 저절로 꺼지는 장치.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/0005-2744(76)90206-0",
+                "citation": "Cassel & Selinger, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "188466",
+                "citation": "Cassel & Selinger, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "203612",
+                "citation": "Cassel, Levkovitz & Selinger, 1977"
+              }
+            ]
+          }
+        }
+      ],
+      "note": "활성화되면 실제로는 α(GTP) 와 βγ 로 갈라지지만, 여기서는 삼량체를 한 단위로 두고 α 소단위의 뉴클레오타이드 부위만 추적한다."
+    },
+    {
+      "id": "D000031",
+      "desc": [
+        {
+          "text": "ATP를 cAMP로 바꾸는 세포막 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000009",
+              "rel": "is_a",
+              "span": "효소"
+            },
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1907",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9417641",
+                "citation": "Tesmer et al., 1997"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [
+        {
+          "id": "active",
+          "type": "meaning",
+          "label": "Gsα 결합 시 활성",
+          "when": {
+            "gs_site": "bound"
+          },
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1907",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9417641",
+                "citation": "Tesmer et al., 1997"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1146/annurev.pa.36.040196.002333",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              },
+              {
+                "db": "PMID",
+                "id": "8725398",
+                "citation": "Sunahara, Dessauer & Gilman, 1996"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cyclization",
+          "type": "transition",
+          "label": "cAMP 합성",
+          "action": "고리화",
+          "agent": true,
+          "via_site": "catalytic",
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000039",
+              "D000122"
+            ]
+          },
+          "regulators": [],
+          "text": "활성 아데닐산 고리화효소가 ATP 를 cAMP 와 피로인산(PPi)으로 바꾼다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1074/jbc.272.44.27787",
+                "citation": "Dessauer & Gilman, 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9346923",
+                "citation": "Dessauer & Gilman, 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.278.5345.1907",
+                "citation": "Tesmer et al., 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9417641",
+                "citation": "Tesmer et al., 1997"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gs_release",
+          "type": "transition",
+          "label": "아데닐산 고리화효소 꺼짐",
+          "action": "해리",
+          "agent": false,
+          "effect": {
+            "type": "modify",
+            "site": "gs_site",
+            "remove": [
+              "bound"
+            ]
+          },
+          "regulators": [],
+          "where": [
+            "plasma_membrane"
+          ],
+          "text": "AC 에 붙은 Gs 의 GTP 가 가수분해되면 AC 가 비활성으로 돌아간다(조절 GTPase 고리의 꺼짐 반응). 이 모델은 Gs 를 AC 에 흡수하지 않으므로(L000018) Gs 쪽 변화 없이 AC 의 gs_site 만 비운다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "PMID",
+                "id": "203612",
+                "citation": "Cassel, Levkovitz & Selinger, 1977"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/0005-2744(76)90206-0",
+                "citation": "Cassel & Selinger, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "188466",
+                "citation": "Cassel & Selinger, 1976"
+              }
+            ]
+          }
+        }
+      ],
+      "note": "여러 아형(AC1–9)이 있어 분자 부류로 둔다. 막관통 도메인 두 묶음과 세포질 쪽 촉매 도메인을 가진다."
+    },
+    {
+      "id": "D000042",
+      "desc": [
+        {
+          "text": "cAMP가 결합하면 활성화되어 표적 단백질의 세린·트레오닌을 인산화하는 단백질 키네이스",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1104607",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              },
+              {
+                "db": "PMID",
+                "id": "15692043",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(17)33447-6",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "179996",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.72.9.3448",
+                "citation": "Kemp et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "1059131",
+                "citation": "Kemp et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "1766667",
+                "citation": "Abate, Marshak & Curran, 1991"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [
+        {
+          "id": "holo",
+          "type": "meaning",
+          "label": "전효소(R2C2) — 비활성",
+          "when": {},
+          "activity": "inactive",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1104607",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              },
+              {
+                "db": "PMID",
+                "id": "15692043",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1074/jbc.273.46.30448",
+                "citation": "Zhao et al., 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "9804812",
+                "citation": "Zhao et al., 1998"
+              }
+            ]
+          }
+        },
+        {
+          "id": "camp_release",
+          "type": "transition",
+          "label": "PKA 활성화",
+          "action": "해리",
+          "agent": false,
+          "effect": {
+            "type": "dissociate",
+            "partner": "D000039",
+            "partner_site": {
+              "component": "D000056",
+              "sites": [
+                "cnb_a",
+                "cnb_b"
+              ]
+            }
+          },
+          "regulators": [],
+          "text": "cAMP 가 조절 소단위마다 두 자리(A·B)에 결합하면 촉매 소단위 두 개가 떨어져 나와 활성이 된다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1074/jbc.273.46.30448",
+                "citation": "Zhao et al., 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "9804812",
+                "citation": "Zhao et al., 1998"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1021/bi00376a003",
+                "citation": "Weber et al., 1987"
+              },
+              {
+                "db": "PMID",
+                "id": "3030405",
+                "citation": "Weber et al., 1987"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(17)33447-6",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "179996",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              }
+            ]
+          }
+        }
+      ],
+      "note": "전효소는 조절 소단위 2개 + 촉매 소단위 2개(R2C2). 효소 번호(EC 2.7.11.11)는 촉매 소단위 정의항으로 옮겼다."
+    },
+    {
+      "id": "D000056",
+      "desc": [
+        {
+          "text": "단백질 키네이스 A 의 조절 소단위로, cAMP 가 없을 때 촉매 소단위에 결합해 활성을 막는 단백질",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000042",
+              "rel": "refers",
+              "span": "단백질 키네이스 A"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            },
+            {
+              "to": "D000005",
+              "rel": "is_a",
+              "span": "단백질"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1074/jbc.272.51.31998",
+                "citation": "Gibson & Taylor, 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9405392",
+                "citation": "Gibson & Taylor, 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(17)33447-6",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "179996",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1021/bi00376a003",
+                "citation": "Weber et al., 1987"
+              },
+              {
+                "db": "PMID",
+                "id": "3030405",
+                "citation": "Weber et al., 1987"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [],
+      "note": "RIα·RIβ·RIIα·RIIβ 아형이 있어 분자 부류로 둔다. 조절 소단위 하나에 cAMP 결합 자리가 둘(A·B)."
+    },
+    {
+      "id": "D000057",
+      "desc": [
+        {
+          "text": "단백질 키네이스 A 의 촉매 소단위로, ATP 의 인산기를 표적 단백질의 세린·트레오닌에 옮기는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000041",
+              "rel": "is_a",
+              "span": "단백질 키네이스"
+            },
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.72.9.3448",
+                "citation": "Kemp et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "1059131",
+                "citation": "Kemp et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "1766667",
+                "citation": "Abate, Marshak & Curran, 1991"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [
+        {
+          "id": "free",
+          "type": "meaning",
+          "label": "풀려난 촉매 소단위 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(17)33447-6",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "179996",
+                "citation": "Rangel-Aldao & Rosen, 1976"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1126/science.1104607",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              },
+              {
+                "db": "PMID",
+                "id": "15692043",
+                "citation": "Kim, Xuong & Taylor, 2005"
+              }
+            ]
+          }
+        },
+        {
+          "id": "phk_phos",
+          "type": "transition",
+          "label": "인산화효소 키네이스 활성화",
+          "action": "인산화",
+          "agent": true,
+          "effect": {
+            "type": "modify",
+            "target": "D000043",
+            "site": "pka_phos",
+            "add": [
+              "phosphorylated"
+            ]
+          },
+          "with": {
+            "consumes": [
+              "D000032"
+            ],
+            "produces": [
+              "D000033"
+            ]
+          },
+          "regulators": [],
+          "text": "풀려난 PKA 촉매 소단위가 인산화효소 키네이스의 조절 소단위를 인산화해 활성화한다.",
+          "evidence": {
+            "level": "asserted"
+          }
+        }
+      ],
+      "note": "Cα·Cβ 아형이 있어 분자 부류로 둔다. 효소 번호(EC)는 촉매 소단위가 가진다."
+    },
+    {
+      "id": "D000049",
+      "desc": [
+        {
+          "text": "cAMP를 AMP로 가수분해하여 cAMP 신호를 끝내는 효소",
+          "field": "생화학",
+          "context": {
+            "scope": "생화학"
+          },
+          "links": [
+            {
+              "to": "D000009",
+              "rel": "is_a",
+              "span": "효소"
+            },
+            {
+              "to": "D000039",
+              "rel": "refers",
+              "span": "cAMP"
+            },
+            {
+              "to": "D000034",
+              "rel": "refers",
+              "span": "AMP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.95.15.8991",
+                "citation": "Soderling, Bayuga & Beavo, 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "9671792",
+                "citation": "Soderling, Bayuga & Beavo, 1998"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1124/pr.58.3.5",
+                "citation": "Bender & Beavo, 2006"
+              },
+              {
+                "db": "PMID",
+                "id": "16968949",
+                "citation": "Bender & Beavo, 2006"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": [
+        {
+          "id": "basal",
+          "type": "meaning",
+          "label": "기본 — 활성",
+          "when": {},
+          "activity": "active",
+          "evidence": {
+            "level": "asserted"
+          }
+        },
+        {
+          "id": "camp_hydrolysis",
+          "type": "transition",
+          "label": "cAMP 분해 (신호 종료)",
+          "action": "가수분해",
+          "agent": true,
+          "effect": {
+            "type": "convert",
+            "consumes": [
+              "D000039"
+            ],
+            "produces": [
+              "D000034"
+            ]
+          },
+          "regulators": [],
+          "text": "포스포다이에스터레이스가 cAMP 를 AMP 로 바꿔 신호를 끈다.",
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1073/pnas.95.15.8991",
+                "citation": "Soderling, Bayuga & Beavo, 1998"
+              },
+              {
+                "db": "PMID",
+                "id": "9671792",
+                "citation": "Soderling, Bayuga & Beavo, 1998"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1124/pr.58.3.5",
+                "citation": "Bender & Beavo, 2006"
+              },
+              {
+                "db": "PMID",
+                "id": "16968949",
+                "citation": "Bender & Beavo, 2006"
+              }
+            ]
+          }
+        }
+      ],
+      "note": "기본 상태를 활성으로 둔 것은 단순화다 — PDE 는 인산화·cGMP 결합 등으로 조절되지만(Francis et al., 2011) 이 경로에서는 조절을 다루지 않는다. 그래서 basal 규칙은 출처 없이(asserted) 남긴다."
+    },
+    {
+      "id": "D000039",
+      "desc": [
+        {
+          "text": "ATP로부터 만들어지는 고리형 AMP로, 대표적인 2차 전령",
+          "field": "세포생물학",
+          "context": {
+            "scope": "세포생물학"
+          },
+          "links": [
+            {
+              "to": "D000038",
+              "rel": "is_a",
+              "span": "2차 전령"
+            },
+            {
+              "to": "D000032",
+              "rel": "refers",
+              "span": "ATP"
+            }
+          ],
+          "examples": [],
+          "evidence": {
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1074/jbc.272.44.27787",
+                "citation": "Dessauer & Gilman, 1997"
+              },
+              {
+                "db": "PMID",
+                "id": "9346923",
+                "citation": "Dessauer & Gilman, 1997"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1124/pr.58.3.5",
+                "citation": "Bender & Beavo, 2006"
+              },
+              {
+                "db": "PMID",
+                "id": "16968949",
+                "citation": "Bender & Beavo, 2006"
+              }
+            ]
+          },
+          "by": "Claude",
+          "at": "2026-10-08"
+        }
+      ],
+      "rule": []
+    }
+  ],
+  "steps": [
+    {
+      "id": "S+1",
+      "rule": "D000031/rule/gs_release",
+      "agents": [],
+      "inputs": [
+        {
+          "b": "D000031|gs_site:bound|plasma_membrane"
+        }
+      ],
+      "outputs": [
+        {
+          "b": "D000031|plasma_membrane"
+        }
+      ],
+      "regulators": [],
+      "part_of": [
+        "D000050"
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L+1",
+      "target": "D000030/site/ligand",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "에피네프린이 β 수용체에서 떨어지는 단계가 없다 — 결합(S000001)만 있어 한 번 결합한 수용체는 계속 활성이고, 에피네프린을 끊어도 Gs 활성화가 멈추지 않는다. 실제로는 결합이 가역이다(De Lean et al., 1980 — 구아닌 뉴클레오타이드가 삼원 복합체를 불안정하게 해 호르몬과 G 단백질이 떨어진다). 지금 관문은 결합 상대(partner)를 부위에 흡수하는 방향만 받고, 부위에서 풀어 출력으로 내보내는 효과 형식이 없어 데이터만으로 단계를 넣을 수 없다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "부위의 리간드를 풀어 주는 효과(결합의 역 — partner 를 출력으로) 를 엔진·관문에 더한 뒤(develop) 수용체 해리 규칙·단계를 넣는다. 속도 상수(k_off)는 사람 β2 수용체 실측이 필요"
+          }
+        ]
+      },
+      "found_in": "경로 해부 D000050 (2026-11-19 docs/reports/2026-11-19-pathway-walkthrough.md) · 전환 기록 #8 (2026-11-20)"
+    },
+    {
+      "id": "L+2",
+      "target": "D000042",
+      "type": "Structural_Gap",
+      "requirement": {
+        "text": "PKA 가 다시 묶이는 단계가 없다 — cAMP 가 줄어도 풀린 촉매 소단위(D000057)는 계속 활성이다. 실제로는 cAMP 가 없으면 조절 소단위가 촉매 소단위와 완전히 다시 결합한다(Rangel-Aldao & Rosen, 1976). 재결합은 조절 소단위에서 cAMP 4 개가 풀려나야 하는데, 지금 관문은 결합 상대를 흡수하는 방향(dissociate 의 partner)만 받고 풀어 내보내는 형식이 없어 데이터만으로 단계를 넣을 수 없다",
+        "needs": [
+          {
+            "kind": "manual",
+            "text": "구성 요소 부위의 리간드를 풀며 결합체를 다시 만드는 효과(associate 의 역 partner — cAMP 를 출력으로)를 엔진·관문에 더한 뒤(develop) PKA 재결합 규칙·단계를 넣는다"
+          }
+        ]
+      },
+      "found_in": "경로 해부 D000050 (2026-11-19 docs/reports/2026-11-19-pathway-walkthrough.md) · 전환 기록 #8 (2026-11-20)"
+    }
+  ],
+  "recorded_at": "2026-11-20T05:55:03.257Z"
+}
