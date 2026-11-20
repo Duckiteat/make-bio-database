@@ -12,7 +12,7 @@
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1221 · 212 · 24 | 210 · 없음 2 |
 | `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 11826 · 218 · 297 | 212 · 없음 6 |
-| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1002 · 60 · 70 | 57 · 없음 3 |
+| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1006 · 60 · 70 | 57 · 없음 3 |
 | `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2936 · 130 · 205 | 127 · 없음 3 |
 | `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 848 · 38 · 97 | 28 · 없음 10 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 102 · 73 · 12 | 68 · 없음 5 |
