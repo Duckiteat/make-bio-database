@@ -32,12 +32,12 @@
 | L5 | `data:db` | 1 | 1 | 0 | 0 |
 | L5 | `data:dictionary` | 1 | 0 | 0 | 1 |
 | L5 | `data:prereg` | 1 | 1 | 0 | 0 |
-| L6 | `guard:authority` | 7 | 4 | 0 | 3 |
-| L6 | `guard:gate` | 2 | 1 | 1 | 1 |
+| L6 | `guard:authority` | 7 | 4 | 1 | 3 |
+| L6 | `guard:gate` | 2 | 1 | 2 | 0 |
 | L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
-## 연결 없는 자리 (103)
+## 연결 없는 자리 (102)
 
 - `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`
 - `code:config`: `.github/workflows/check.yml` · `.gitignore`
@@ -61,6 +61,5 @@
 - `data:assumptions`: `data/assumptions.jsonl`
 - `data:dictionary`: `data/dictionary.jsonl`
 - `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`
-- `guard:gate`: `rebuild/rules/modes.json`
 - `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`
 - `guard:settings`: `.claude/settings.json`
