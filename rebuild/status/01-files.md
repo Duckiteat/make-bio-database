@@ -6,16 +6,16 @@
 
 | 폴더 | 파일 | KB |
 |---|---|---|
-| data | 433 | 16296.1 |
+| data | 483 | 16696.4 |
 | rebuild | 34 | 6339.0 |
 | docs | 366 | 2722.9 |
-| (최상위) | 18 | 989.6 |
+| (최상위) | 18 | 992.9 |
 | tests | 104 | 733.2 |
 | judicial | 35 | 614.6 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
-| workspace | 37 | 149.0 |
+| workspace | 37 | 150.8 |
 | legislative | 3 | 75.6 |
 | migrations | 13 | 59.8 |
 | mcp | 6 | 59.1 |
@@ -31,7 +31,7 @@
 | `rebuild/ledger/units.jsonl` | 4681.8 |
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
-| `data/db.json` | 676.4 |
+| `data/db.json` | 696.6 |
 | `data/log/genesis-db.json` | 608.9 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |

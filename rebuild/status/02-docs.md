@@ -370,7 +370,7 @@
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
 | `docs/textbook/90-부록-자동생성.md` | 141.3 | 866 |  | 생성물 |
-| `limitations.md` | 92.3 | 196 |  | 생성물 |
+| `limitations.md` | 95.6 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
