@@ -43,9 +43,9 @@
 | `docs/modes/develop.md` | 6.0 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.6 | 32 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
-| `docs/plan/ORDER.md` | 23.1 | 83 |  | 생성물 |
+| `docs/plan/ORDER.md` | 24.3 | 84 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 43.0 | 433 |  | 생성물 |
+| `docs/plan/build.md` | 43.4 | 435 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -102,6 +102,7 @@
 | `docs/plan/decisions/DEC-0062.md` | 1.4 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0063.md` | 1.4 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0064.md` | 1.6 | 16 |  | 생성물 |
+| `docs/plan/decisions/DEC-0065.md` | 1.9 | 16 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -221,12 +222,12 @@
 | `docs/plan/items/PLAN-096.md` | 3.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-097.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-098.md` | 1.9 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-099.md` | 2.4 | 30 |  | 생성물 |
-| `docs/plan/items/PLAN-100.md` | 2.4 | 30 |  | 생성물 |
-| `docs/plan/items/PLAN-101.md` | 1.7 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-102.md` | 2.4 | 30 |  | 생성물 |
-| `docs/plan/items/PLAN-103.md` | 1.8 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-104.md` | 2.2 | 30 |  | 생성물 |
+| `docs/plan/items/PLAN-099.md` | 4.7 | 40 |  | 생성물 |
+| `docs/plan/items/PLAN-100.md` | 4.7 | 49 |  | 생성물 |
+| `docs/plan/items/PLAN-101.md` | 4.0 | 49 |  | 생성물 |
+| `docs/plan/items/PLAN-102.md` | 4.0 | 40 |  | 생성물 |
+| `docs/plan/items/PLAN-103.md` | 2.0 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-104.md` | 3.9 | 40 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -364,6 +365,7 @@
 | `docs/reports/2026-11-19-baseline-sweep/telomere-telomerase-validation-fate.md` | 8.0 | 105 |  | 미분류 |
 | `docs/reports/2026-11-19-pathway-walkthrough.md` | 4.9 | 52 |  | 미분류 |
 | `docs/reports/2026-11-19-two-engine-gap.md` | 6.4 | 46 |  | 미분류 |
+| `docs/reports/2026-11-20-orchestration-tabletop.md` | 7.5 | 53 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
