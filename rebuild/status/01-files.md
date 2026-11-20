@@ -8,9 +8,9 @@
 |---|---|---|
 | data | 483 | 16696.4 |
 | rebuild | 34 | 6339.0 |
-| docs | 366 | 2722.9 |
-| (최상위) | 18 | 992.9 |
-| tests | 104 | 733.2 |
+| docs | 366 | 2724.1 |
+| (최상위) | 18 | 993.9 |
+| tests | 104 | 733.4 |
 | judicial | 35 | 614.6 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
@@ -36,7 +36,7 @@
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
 | `rebuild/state/plan-log.jsonl` | 360.8 |
-| `CHANGES.md` | 336.7 |
+| `CHANGES.md` | 337.7 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `rebuild/rules/changes.jsonl` | 305.0 |

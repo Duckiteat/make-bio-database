@@ -78,7 +78,9 @@ test('새 항목은 다음 번호를 받고, 임시 번호 참조도 함께 바�
   assert.equal(res.db.terms[res.db.senses[D2].term].names.ko, '테스트 하위', '이름만 적은 term 은 새 개념이 됨');
 });
 test('삭제한 번호는 다시 쓰지 않음', () => {
-  const last = 'S' + String(BASE.meta.next.S - 1).padStart(6, '0'), next = 'S' + String(BASE.meta.next.S).padStart(6, '0');
+  // 마지막 배정 번호(next.S − 1)는 이미 지워졌을 수 있다 — db 에 실제로 있는 가장 큰 단계 번호를 지운다.
+  const last = Object.keys(BASE.steps).sort().at(-1), next = 'S' + String(BASE.meta.next.S).padStart(6, '0');
+  assert.ok(last && last < next, '지울 단계가 있고 배정기보다 작음');
   const res = passes({ remove: [last] });
   const st = { ...BASE.steps[last], id: 'S+1' };
   const res2 = LEG.merge(res.db, P({ steps: [st] }));

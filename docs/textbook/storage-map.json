@@ -2311,6 +2311,19 @@
       ]
     },
     {
+      "path": "docs/reports/*/*",
+      "class": "history",
+      "format": "보고서 하위 폴더 — Markdown 실행별 보고서 · 그 보고서를 만든 생성 스크립트(.cjs)·주석(.json)·모양(.css)",
+      "writer": "baseline 세션 (일괄 실행 · 경로 해부 — 손으로·생성 스크립트로)",
+      "readers": "사람",
+      "interpret": "한 보고서가 여러 파일로 나뉠 때의 묶음. 2026-11-19-baseline-sweep: 시나리오 43 개 일괄 실행의 실행별 보고서. 2026-11-19-pathway-walkthrough: 경로 해부(D000050 cAMP 등)의 생성 스크립트·주석·모양.",
+      "level": "L2",
+      "area": "doc:report",
+      "write_keys": [
+        "session:*"
+      ]
+    },
+    {
       "path": "docs/templates/*/*",
       "class": "history",
       "format": "Markdown 설명 + CSV 기록표 (영어 열쇠 + 한국어 이름 — LIMS 가져오기용)",
