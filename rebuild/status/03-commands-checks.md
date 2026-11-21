@@ -64,7 +64,7 @@
 
 | 파일 | 시험 |
 |---|---|
-| `tests/acceptance.test.mjs` | 9 |
+| `tests/acceptance.test.mjs` | 10 |
 | `tests/affected.test.mjs` | 3 |
 | `tests/approval.test.mjs` | 14 |
 | `tests/assays.test.mjs` | 4 |
@@ -90,6 +90,7 @@
 | `tests/judicial_time.test.mjs` | 8 |
 | `tests/kinetics_search.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
+| `tests/mcp_config.test.mjs` | 2 |
 | `tests/mcp_run.test.mjs` | 5 |
 | `tests/merge-check.test.mjs` | 4 |
 | `tests/mhc.test.mjs` | 11 |
@@ -115,6 +116,8 @@
 | `tests/stochastic.test.mjs` | 7 |
 | `tests/stoichiometry.test.mjs` | 4 |
 | `tests/substrate_axis.test.mjs` | 5 |
+| `tests/supervise.test.mjs` | 8 |
+| `tests/supervise_approval.test.mjs` | 7 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |

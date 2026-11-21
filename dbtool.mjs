@@ -638,13 +638,13 @@ switch (cmd) {
   }
   case 'accept': {
     // 인정 (사법부 judicial/acceptance.js, build-plan 72): 인자 없으면 (기록, 용도) 표. <O…>… --use evidence --reason "…" 은 승인 도장,
-    //   --revoke 는 철회. 승인 역할은 BIODB_ROLE(human 기본 · integrator) — collector 는 못 한다. 축·관계 조건을 넘는 승인은 서기가 거부
+    //   --revoke 는 철회. 승인자는 integrator (BIODB_ROLE 이 없어도 integrator — PLAN-106: 'human' 을 기본값으로 적던 구멍을 막음, 사람 승인의 증거는 병합). collector · human 이름표는 발급 검사가 거부
     const db = loadDB(), reg = ATT.readRegistry(HERE), input = relInput(db, reg);
     const ids = args.filter((a) => /^O\d{6}$/.test(a));
     if (!ids.length) { const t = ACC.table(db, { ...input, registry: reg }); console.log(ACC.text(t)); process.exit(t.invalid.length ? 1 : 0); }
     const use = flags.use, reason = flags.reason && flags.reason !== true ? String(flags.reason) : '';
     if (!ACC.HIGH.includes(use)) die(`--use ${ACC.HIGH.join(' | ')} (서술·비교·추정은 승인 없이 계산된다)`);
-    const by = process.env.BIODB_ROLE || 'human', date = new Date().toISOString().slice(0, 10);
+    const by = process.env.BIODB_ROLE || 'integrator', date = new Date().toISOString().slice(0, 10);
     const stamps = ids.map((id) => ACC.issue({ id, use, by, reason, date, verdict: flags.revoke ? 'revoked' : 'approved' }));
     const f = CLERK.appendAttestations({ root: HERE, stamps, db, context: input });
     console.log(`승인 도장 ${stamps.length} (${flags.revoke ? '철회' : '승인'} · ${use} · ${by}) 기록 (입법 서기): ${rel(f)}`);

@@ -1630,6 +1630,34 @@
       ]
     },
     {
+      "path": "tests/supervise.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs",
+      "interpret": "감독 장부 시험 — 한 바퀴 · 결정적 접기 · 승인 · 범위 · 누가 칸 거부 · 금지 전이 · 독립성 · 재시도 한도 · 두 브랜치 번호 겹침 · 계획 대조 · 서기 (PLAN-100).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/supervise_approval.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "승인 증거 판정 시험 — 대상 없음 · 병합 전 · 처음 나타난 커밋 · 지운 파일 · 설정 막음 없음 · 영수증 AI 병합(시각 창) · 계산된 상태 · 임시 git 저장소의 스쿼시 · 진짜 머지(본줄기) · 영수증 (PLAN-102).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/affected.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님) — 기본 · --full · --list",
@@ -1771,6 +1799,20 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "MCP 실행 서버 시험 — 도구 목록 · 쓰기 없음 · 같은 입력 같은 출력 해시 · data/ 불변 · 출처 꼬리표(등급 · 가정 의존 · 한계 · 탐색/규약, 등록 뒤 고치면 탐색) · 조정자 직접 호출과 같은 궤적 · 거부.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/mcp_config.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": ".mcp.json 시험 — 읽기 서버만 · 스크립트 있음 · 사람 역할 이름표 없음 · 읽기 서버는 파일을 쓰지 않고 서기를 부르지 않음 (PLAN-105).",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [
@@ -2390,6 +2432,19 @@
       ]
     },
     {
+      "path": ".mcp.json",
+      "class": "config",
+      "format": "MCP 서버 설정 JSON (Claude Code 가 세션에 꽂음)",
+      "writer": "사람·AI",
+      "readers": "Claude Code (이 저장소를 연 세션) · tests/mcp_config.test.mjs",
+      "interpret": "세션에 꽂는 저장소 MCP 서버 (PLAN-105) — 지금은 읽기 서버 둘(biodb-query · biodb-run, 역할 collector)만. 쓰기 서버(clerk · fetch)는 저장소당 작성자 하나 잠금을 세션 내내 잡아 CLI 쓰기를 막아 잠금 방식을 정한 뒤에. 사람 역할 이름표 금지. 호출은 문지기 훅(mcp__.*)과 영수증을 지남.",
+      "level": "L2",
+      "area": "code:config",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "data/fetched/README.md",
       "class": "spec",
       "format": "Markdown",
@@ -2777,6 +2832,19 @@
       ]
     },
     {
+      "path": "judicial/supervise_approval.js",
+      "class": "law",
+      "format": "ES 모듈 (judge · derive — 순수, 사법부)",
+      "writer": "사람·AI (사용자 요청 시)",
+      "readers": "rebuild/supervise.mjs evidence · status · tests/supervise_approval.test.mjs",
+      "interpret": "감독 장부의 승인 증거 판정 (PLAN-102) — 넘긴 커밋에서 바뀐 바이트가 main 본줄기에 처음 모두 나타난 커밋을 찾고, 그 시점 설정에 AI 의 PR 병합 막음이 있나 · 영수증에 그 시각의 AI 병합 호출이 있나로 승인 · 병합만 확인 · AI 병합 흔적을 가른다. 승인 대기 · 반영 · 완료를 계산(장부에 적지 않음). 문지기 보호(L6)로 올릴지는 사용자 결정(PLAN-108 P6 과 함께).",
+      "level": "L2",
+      "area": "code:judicial",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "rebuild/read.mjs",
       "class": "management",
       "format": "Node 스크립트 (표준 출력만 — 파일을 쓰지 않음)",
@@ -2809,6 +2877,19 @@
       "writer": "사람·AI",
       "readers": "rebuild/status.mjs (계획 문서 생성) · rebuild/plan.mjs · rebuild/read.mjs · rebuild/plan-import.mjs · tests/rebuild.test.mjs ⑯–⑲",
       "interpret": "계획 기록 (6c · DEC-0027) — 계획은 기록, 글은 생성물. check 가 정확성(참조가 풀림 · 지금 = 사건을 접은 것 · 근거 있는 종합·방향 · 인용이 원문에 그대로)을 보고, 통과해야 쓴다.",
+      "level": "L2",
+      "area": "code:tools",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
+      "path": "rebuild/supervise.mjs",
+      "class": "management",
+      "format": "Node 스크립트 + 모듈 (status · check · propose · start · handoff · block · cancel <사건.json> [--dry] [--human] / 순수 — shape · fold · check · admit · render)",
+      "writer": "사람·AI",
+      "readers": "사람·AI · tests/supervise.test.mjs",
+      "interpret": "감독 장부 (PLAN-100 · docs/design/supervisor.md) — 상위 작업 SUP- 과 실행 기록의 덧붙이기 장부. 승인 사건 없음(증거에서 계산), 계약에 범위 · 승인 칸 없음, 누가 · 모드 · 문지기 칸은 영수증에서. 검사를 통과해야 서기(appendSupervise)로 씀.",
       "level": "L2",
       "area": "code:tools",
       "write_keys": [

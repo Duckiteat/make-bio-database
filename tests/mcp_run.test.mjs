@@ -27,11 +27,12 @@ const text = (m) => m.result.content[0].text;
 // data/ 의 모든 파일 내용 지문 — 실행 앞뒤가 같아야 한다
 const dataSnapshot = () => { const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : [`${join(d, e.name)}:${statSync(join(d, e.name)).size}:${sha(readFileSync(join(d, e.name)))}`])); return sha(walk(join(ROOT, 'data')).sort().join('\n')); };
 
-test('① 도구 목록: 역할 셋 모두 실행 도구 셋 — 서버 코드에 파일 쓰기 · 서기 · 자식 프로세스 없음', () => {
-  for (const role of ['collector', 'integrator', 'human']) {
+test('① 도구 목록: 이름표로 줄 수 있는 역할 둘 모두 실행 도구 셋 · human 이름표는 시작 거부 — 서버 코드에 파일 쓰기 · 서기 · 자식 프로세스 없음', () => {
+  for (const role of ['collector', 'integrator']) {
     const [m] = call([{ method: 'tools/list' }], { BIODB_ROLE: role });
     assert.deepEqual(m.result.tools.map((t) => t.name).sort(), ['run_ensemble', 'run_fate', 'run_rate'], role);
   }
+  assert.deepEqual(call([{ method: 'tools/list' }], { BIODB_ROLE: 'human' }), [], 'human 이름표로는 서버가 뜨지 않는다 (PLAN-105)');
   const src = readFileSync(join(ROOT, 'mcp', 'run.mjs'), 'utf8');
   assert.ok(!/\b(writeFileSync|appendFileSync|mkdirSync|rmSync|unlinkSync|renameSync|copyFileSync|cpSync|createWriteStream|writeFile|appendFile)\b/.test(src), '파일 쓰기 함수');
   assert.ok(!/legislative\/clerk|mcp\/clerk/.test(src), '서기를 부르지 않는다');

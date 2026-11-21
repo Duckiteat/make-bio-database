@@ -57,8 +57,14 @@ function verifyAcceptStamp(st, db, opt) {
   return { ok: !reasons.length, reasons, key };
 }
 
+// 새로 발급하는 도장의 승인자 — integrator 만 (PLAN-106 · RP1 · DEC-0066 U1 · DEC-0069).
+//   'human' 은 발급하지 않는다: 도장을 쓰는 쪽(CLI · MCP)이 이름표로 적는 값이라 AI 도 'human' 을 적을 수 있었다(등록부의 accept 6 개가 by human 인데
+//   넣은 커밋 853cb42 의 작성자는 Claude). 사람 승인의 증거는 도장이 아니라 사람의 병합(judicial/supervise_approval.js)이다.
+//   이미 있는 by human 도장은 재검증(verifyAcceptStamp)에서 그대로 읽는다 — 처리는 열린 질문(U2).
+const ISSUE_APPROVERS = ['integrator'];
 // 발급 검사(서기가 부름): 도장 자체 + 지금 축·관계 조건. itemsOpt = reliability.items 의 opt(도장·문헌 상태·추세)
 function checkIssue(st, db, itemsOpt) {
+  if (st && !ISSUE_APPROVERS.includes(st.by)) return { ok: false, reasons: [`새 승인 도장의 승인자 '${st.by}' — ${ISSUE_APPROVERS.join(' | ')} 만 (사람 승인은 도장이 아니라 사람의 병합이 증거 — PLAN-106)`], key: st.subject ? ATT.subjectKey(st.subject) : '?' };
   const t = table(db, { ...(itemsOpt || {}), registry: { stamps: [] } });
   const hit = st && st.subject ? t.rows.find((x) => x.row.what === 'observation' && x.row.sense === st.subject.sense) : null;
   return verifyAcceptStamp(st, db, { row: hit ? hit.row : null, ctx: t.ctx });
