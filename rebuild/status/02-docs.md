@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 340.5 | 335 |  | 분류됨 1 |
+| `CHANGES.md` | 341.5 | 336 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -46,7 +46,7 @@
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 30.0 | 98 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 48.4 | 475 |  | 생성물 |
+| `docs/plan/build.md` | 49.0 | 477 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -234,7 +234,7 @@
 | `docs/plan/items/PLAN-102.md` | 8.0 | 53 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 4.0 | 43 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 6.4 | 70 |  | 생성물 |
-| `docs/plan/items/PLAN-105.md` | 2.1 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-105.md` | 3.7 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-106.md` | 2.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
@@ -403,7 +403,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 143.7 | 871 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 144.5 | 873 |  | 생성물 |
 | `limitations.md` | 95.6 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

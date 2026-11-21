@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1220 개 · 29921.7 KB"
+        "1222 개 · 29934.2 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "423 개 · 3554.8 KB"
+        "423 개 · 3558.9 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "515 / 25"
+        "517 / 25"
        ],
        [
         "번호 이름공간",
@@ -118,22 +118,22 @@
        [
         "rebuild",
         "35",
-        "6459.0"
+        "6463.0"
        ],
        [
         "docs",
         "400",
-        "3101.9"
+        "3106.2"
        ],
        [
         "(최상위)",
-        "18",
-        "996.7"
+        "19",
+        "998.1"
        ],
        [
         "tests",
-        "106",
-        "748.8"
+        "107",
+        "751.1"
        ],
        [
         "judicial",
@@ -173,7 +173,7 @@
        [
         "mcp",
         "6",
-        "59.1"
+        "59.8"
        ],
        [
         "compiler",
@@ -231,7 +231,7 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "418.1"
+        "420.0"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -243,11 +243,11 @@
        ],
        [
         "`CHANGES.md`",
-        "340.5"
+        "341.5"
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "335.9"
+        "338.0"
        ],
        [
         "`data/fetched/consensus/uniprot/P04439.json`",
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "340.5",
-        "335",
+        "341.5",
+        "336",
         "",
         "분류됨 1"
        ],
@@ -627,8 +627,8 @@
        ],
        [
         "`docs/plan/build.md`",
-        "48.4",
-        "475",
+        "49.0",
+        "477",
         "",
         "생성물"
        ],
@@ -1943,8 +1943,8 @@
        ],
        [
         "`docs/plan/items/PLAN-105.md`",
-        "2.1",
-        "22",
+        "3.7",
+        "24",
         "",
         "생성물"
        ],
@@ -3126,8 +3126,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "143.7",
-        "871",
+        "144.5",
+        "873",
         "",
         "생성물"
        ],
@@ -3638,6 +3638,10 @@
        [
         "`tests/mcp.test.mjs`",
         "12"
+       ],
+       [
+        "`tests/mcp_config.test.mjs`",
+        "2"
        ],
        [
         "`tests/mcp_run.test.mjs`",
@@ -4932,7 +4936,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "5638 · 539 · 171",
+        "5643 · 539 · 171",
         "536 · 없음 3"
        ],
        [
@@ -4942,7 +4946,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "2297 · 68 · 307",
+        "2299 · 68 · 308",
         "251 · 없음 6"
        ],
        [
@@ -4973,7 +4977,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "328 · 없음 0"
+        "329 · 없음 0"
        ],
        [
         "`code_head`",
@@ -4992,7 +4996,7 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "3952 · 119 · 239",
+        "3973 · 119 · 242",
         "251 · 없음 5"
        ],
        [
@@ -5320,7 +5324,7 @@
      "- model.js:44 /^S\\d{6}$/",
      "- model.js:44 /^L\\d{6}$/",
      "- model.js:44 /^O\\d{6}$/",
-     "- tests/mcp_run.test.mjs:66 /^L\\d{6}$/"
+     "- tests/mcp_run.test.mjs:67 /^L\\d{6}$/"
     ]
    },
    {
@@ -5339,7 +5343,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/index/file-modes.jsonl` (규칙 45, 위에서부터 첫 규칙이 이긴다). 파일마다 어느 모드가 주로 건드리는지."
+     "원본: `rebuild/index/file-modes.jsonl` (규칙 46, 위에서부터 첫 규칙이 이긴다). 파일마다 어느 모드가 주로 건드리는지."
     ]
    },
    {
@@ -5355,7 +5359,7 @@
        [
         "공통 `common`",
         "339",
-        "8199.7"
+        "8208.0"
        ],
        [
         "정보 작성 `author`",
@@ -5369,8 +5373,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "203",
-        "2578.0"
+        "205",
+        "2582.3"
        ],
        [
         "적분장 `field`",
@@ -5403,7 +5407,7 @@
         "`rebuild/**`",
         "common",
         "35",
-        "6459.0",
+        "6463.0",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -5529,7 +5533,7 @@
         "`mcp/**`",
         "develop",
         "6",
-        "59.1",
+        "59.8",
         "MCP 서버"
        ],
        [
@@ -5619,8 +5623,8 @@
        [
         "`tests/**`",
         "develop",
-        "80",
-        "715.1",
+        "81",
+        "717.4",
         "시험"
        ],
        [
@@ -5648,7 +5652,7 @@
         "`docs/textbook/**`",
         "common",
         "12",
-        "505.8",
+        "507.8",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
@@ -5662,7 +5666,7 @@
         "`docs/**`",
         "common",
         "258",
-        "797.0",
+        "799.3",
         "안내 문서"
        ],
        [
@@ -5676,7 +5680,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "340.5",
+        "341.5",
         "변경 기록"
        ],
        [
@@ -5713,6 +5717,13 @@
         "1",
         "0.0",
         "설정"
+       ],
+       [
+        "`.mcp.json`",
+        "develop",
+        "1",
+        "0.3",
+        "세션에 꽂는 MCP 서버 설정 (PLAN-105)"
        ]
       ]
      }
@@ -9926,10 +9937,10 @@
        [
         "L2",
         "`code:config`",
-        "2",
+        "3",
         "0",
         "0",
-        "2"
+        "3"
        ],
        [
         "L2",
@@ -9982,10 +9993,10 @@
        [
         "L2",
         "`code:tests`",
-        "57",
+        "58",
         "24",
         "2",
-        "31"
+        "32"
        ],
        [
         "L2",
@@ -10159,21 +10170,21 @@
      }
     ],
     "text": [
-     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 196)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
+     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 198)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
     ]
    },
    {
-    "heading": "연결 없는 자리 (101)",
+    "heading": "연결 없는 자리 (103)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
-     "- `code:config`: `.github/workflows/check.yml` · `.gitignore`",
+     "- `code:config`: `.github/workflows/check.yml` · `.gitignore` · `.mcp.json`",
      "- `code:core`: `scenarios.js` · `inbox.js`",
      "- `code:engine`: `engine/rng.js` · `engine/probe_pool.js` · `engine/probe_worker.js` · `engine/rust/src/engine.rs` · `engine/rust/src/detmath.rs` · `engine/rust/src/tape.rs` · `engine/rust/src/rng.rs` · `engine/rust/src/lib.rs` · `engine/rust/src/bin/fate_cli.rs` · `engine/rust/Cargo.toml` · `engine/rust/Cargo.lock` · `engine/rust/.gitignore` · `engine/rust/build.sh`",
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/stiffness.js` · `judicial/supervise_approval.js`",
      "- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
-     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs`",
+     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs`",
      "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/supervise.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs`",
      "- `doc:history`: `DESIGN-v4.md` · `FEATURES.md`",
      "- `doc:scenario`: `examples/scenarios/subjects.json`",

@@ -1807,6 +1807,20 @@
       ]
     },
     {
+      "path": "tests/mcp_config.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": ".mcp.json 시험 — 읽기 서버만 · 스크립트 있음 · 사람 역할 이름표 없음 · 읽기 서버는 파일을 쓰지 않고 서기를 부르지 않음 (PLAN-105).",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/kinetics_search.test.mjs",
       "class": "verification",
       "format": "node:test",
@@ -2411,6 +2425,19 @@
       "writer": "사람·AI",
       "readers": "git",
       "interpret": "",
+      "level": "L2",
+      "area": "code:config",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
+      "path": ".mcp.json",
+      "class": "config",
+      "format": "MCP 서버 설정 JSON (Claude Code 가 세션에 꽂음)",
+      "writer": "사람·AI",
+      "readers": "Claude Code (이 저장소를 연 세션) · tests/mcp_config.test.mjs",
+      "interpret": "세션에 꽂는 저장소 MCP 서버 (PLAN-105) — 지금은 읽기 서버 둘(biodb-query · biodb-run, 역할 collector)만. 쓰기 서버(clerk · fetch)는 저장소당 작성자 하나 잠금을 세션 내내 잡아 CLI 쓰기를 막아 잠금 방식을 정한 뒤에. 사람 역할 이름표 금지. 호출은 문지기 훅(mcp__.*)과 영수증을 지남.",
       "level": "L2",
       "area": "code:config",
       "write_keys": [

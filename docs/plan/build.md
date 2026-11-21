@@ -299,7 +299,7 @@
 | 102 | [PLAN-102](items/PLAN-102.md) | 승인 증거 판정 | ☑ 2026-11-21 |
 | 103 | [PLAN-103](items/PLAN-103.md) | 첫 순환 — cAMP (손으로, 순차) | ☐ |
 | 104 | [PLAN-104](items/PLAN-104.md) | 배정 자동화 (Hybrid) | ☐ |
-| 105 | [PLAN-105](items/PLAN-105.md) | MCP 연결 | ☐ |
+| 105 | [PLAN-105](items/PLAN-105.md) | MCP 연결 | ◐ 2026-11-21 |
 | 111 | [PLAN-111](items/PLAN-111.md) | RP2 병합 사전 점검 넓히기 | ☐ |
 | 114 | [PLAN-114](items/PLAN-114.md) | Governor 의 CI 겹 | ☐ |
 
@@ -464,12 +464,14 @@
 - develop-core / develop-tools / lab(B 안) 확정 시점 — 지금은 장기 목표 · 설계 가설(DEC-0066), 모드 표 · 권한은 바꾸지 않음 — 열림
 - AI 의 PR 병합 — 영수증상 2026-11-02 AI 세션이 PR #10(STG-12 권한 구조)을 GitHub 도구로 병합했고 merged_by 는 사람 계정. 설정에 병합 도구 막음이 없다. (가) 설정 deny 로 막고 병합 = 사람으로 둘지 (나) 서명으로 증명할지 (다) 둘 다 — 결정 전까지 PLAN-102 의 "병합 = 사람 승인" 은 성립하지 않는다 (DEC-0068) — **풀림** `2026-11-21` 사용자: 다 — 지금 가(설정 deny, PLAN-113), 높은 위험 변경에 나중에 나(서명 — 열린 질문 "사람 승인의 증명" 에서) (DEC-0069 · PLAN-113)
 - GitHub 쪽 main 보호(직접 push 금지 · 필수 검사 · 병합 권한) — 저장소 설정이라 사용자가 판단 (DEC-0070 V3 · 검토 보고서 S4 ② · DIR-0009 에도 "main 보호 켜기 — 사용자 일") — 열림
+- MCP 쓰기 서버(clerk · fetch)의 잠금 — 세션 내내 잡는 지금 방식을 (가) 그대로 두고 쓰기를 모두 MCP 로 옮길지 (나) 쓰기 한 번마다 잡고 놓게 바꿀지 (다) 쓰기 서버는 꽂지 않고 CLI 로 둘지 (PLAN-105 · RULE-0018 단일 작성자) — 열림
+- 감독 도구를 MCP 도구로 낼지 — 감독 장부 코드가 rebuild/ 안에 있어 mcp/ 가 가져오면 구조 시험(rebuild/ 밖 코드는 rebuild/ 를 읽지 않는다)과 부딪힘: (가) CLI 로만 (나) 감독 장부의 순수 부분을 rebuild/ 밖으로 옮김 (PLAN-105 · PLAN-100) — 열림
 
 ## 근거 점검 (계산 — 원본에서 센 것)
 
-- 작업 119: ☑ 완료 45 · ◐ 진행 12 · ☐ 대기 61 · 보류 보류 1
-- 걸어온 길: 사건 309 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 104)
+- 작업 119: ☑ 완료 45 · ◐ 진행 13 · ☐ 대기 60 · 보류 보류 1
+- 걸어온 길: 사건 311 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 106)
 - 결정 36 — 누가: 사용자 22 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
-- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-081 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-101 · PLAN-103 · PLAN-104 · PLAN-105 · PLAN-106 · PLAN-111 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-114
+- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-081 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-101 · PLAN-103 · PLAN-104 · PLAN-106 · PLAN-111 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-114
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)

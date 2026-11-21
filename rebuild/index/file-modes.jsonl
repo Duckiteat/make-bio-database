@@ -43,3 +43,4 @@
 {"pattern": ".claude/**", "mode": "common", "why": "도구 설정"}
 {"pattern": ".github/**", "mode": "develop", "why": "CI"}
 {"pattern": ".gitignore", "mode": "develop", "why": "설정"}
+{"pattern":".mcp.json","mode":"develop","why":"세션에 꽂는 MCP 서버 설정 (PLAN-105)"}

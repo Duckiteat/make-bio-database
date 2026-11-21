@@ -90,6 +90,7 @@
 | `tests/judicial_time.test.mjs` | 8 |
 | `tests/kinetics_search.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
+| `tests/mcp_config.test.mjs` | 2 |
 | `tests/mcp_run.test.mjs` | 5 |
 | `tests/merge-check.test.mjs` | 4 |
 | `tests/mhc.test.mjs` | 11 |

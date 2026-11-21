@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "biodb-query": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["mcp/query.mjs"],
+      "env": { "BIODB_ROLE": "collector" }
+    },
+    "biodb-run": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["mcp/run.mjs"],
+      "env": { "BIODB_ROLE": "collector" }
+    }
+  }
+}

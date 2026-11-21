@@ -70,6 +70,9 @@ test('③ 역할: 기본 collector 는 clerk 의 권위 쓰기를 못 보고, �
   assert.match(text(m.out[0]), /사람 역할만/);
   const bad = call('query.mjs', [{ method: 'tools/list' }], { BIODB_ROLE: 'admin' });
   assert.notEqual(bad.status, 0);
+  // 사람 역할은 이름표로 주지 않는다 (PLAN-105 · RP1) — 켜는 쪽이 스스로 적는 값이라 AI 도 human 을 적을 수 있다
+  const h = call('clerk.mjs', [{ method: 'tools/list' }], { BIODB_ROLE: 'human' });
+  assert.notEqual(h.status, 0);
 });
 
 test('④ 단일 작성자: clerk 가 떠 있으면 둘째 clerk 도, dbtool 쓰기도 막힌다', async () => {

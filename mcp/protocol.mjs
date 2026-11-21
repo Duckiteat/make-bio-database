@@ -7,9 +7,13 @@ import { createInterface } from 'node:readline';
 export const ROLES = ['collector', 'integrator', 'human'];
 const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 
+// 이름표(환경 변수)로 줄 수 있는 역할 — 사람 역할은 이름표로 주지 않는다: 서버를 켜는 쪽이 스스로 적는 값이라 AI 도 human 을 적을 수 있다
+//   (RP1 · DEC-0066 · PLAN-105). 사람의 일(--allow-warnings 같은 것)은 사람이 직접 도는 CLI(설정 ask)로, 사람 승인의 증거는 병합(DEC-0069).
+export const ENV_ROLES = ['collector', 'integrator'];
 export function roleOf(env = process.env) {
   const r = env.BIODB_ROLE || 'collector';
-  if (!ROLES.includes(r)) throw new Error(`BIODB_ROLE '${r}' — ${ROLES.join(' | ')}`);
+  if (r === 'human') throw new Error("BIODB_ROLE 'human' — 사람 역할은 이름표로 주지 않는다 (켜는 쪽이 스스로 적는 값이라 승인 증거가 못 됨, PLAN-105). collector | integrator");
+  if (!ENV_ROLES.includes(r)) throw new Error(`BIODB_ROLE '${r}' — ${ENV_ROLES.join(' | ')}`);
   return r;
 }
 
