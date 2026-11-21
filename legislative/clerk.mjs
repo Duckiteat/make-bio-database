@@ -68,11 +68,18 @@ let held = null;
 const put = (zone, file, text) => { const abs = zoned(zone, file); if (LOCKED.has(zone) && !held) { const r = relative(ROOT, abs); if (r && !r.startsWith('..')) { writerLock(ROOT); } } mkdirSync(dirname(abs), { recursive: true }); const tmp = abs + '.part'; writeFileSync(tmp, text); renameSync(tmp, abs); log.push(relative(process.cwd(), abs) || abs); return abs; };
 
 // ① 병합 기록: 관문 봉인이 통과이고 봉인의 db 가 쓸 db 와 같을 때만 data/patches/ 기록 + data/db.json
+//   비교 후 교체 (PLAN-081): 봉인에 병합이 읽은 디스크 db 의 sha256(base_sha256, 파일이 없으면 'none')이 있어야 하고, 잠금을 먼저 잡은 뒤
+//   지금 디스크 db 가 그것과 같을 때만 쓴다 — 두 병합이 같은 db 를 읽고 차례로 쓰면 뒤의 것이 앞의 갱신을 덮던 틈(잃어버린 갱신)을 막는다.
+export const baseOf = (dbPath) => (existsSync(dbPath) ? sha(readFileSync(dbPath, 'utf8')) : 'none');
 export function commitMerge({ dbPath, db, records, seal }) {
   if (!ATT.checkSeal(seal)) refuse('RULE-0015', '관문 봉인이 없거나 변조됨');
   if (!seal.ok) refuse('RULE-0422', `관문 판결이 거부 (오류 ${seal.errors}, 경고 ${seal.warnings})`);
   const text = serialize(db);
   if (sha(text) !== seal.db_sha256) refuse('RULE-0015', '봉인된 db 와 쓰려는 db 가 다름 — 판결을 다른 데이터에 재사용할 수 없음');
+  zoned('registry', dbPath);
+  if (typeof seal.base_sha256 !== 'string' || !seal.base_sha256) refuse('RULE-0015', '봉인에 병합이 읽은 db 의 sha256(base_sha256)이 없음 — 비교 후 교체를 할 수 없음');
+  { const r = relative(ROOT, resolve(dbPath)); if (r && !r.startsWith('..') && !held) writerLock(ROOT); }
+  if (baseOf(dbPath) !== seal.base_sha256) refuse('RULE-0015', '병합이 읽은 뒤 디스크의 db 가 바뀜 — 다른 병합이 먼저 썼다. 다시 읽고 관문부터 다시 (잃어버린 갱신 방지)');
   const patchDir = join(dirname(dbPath), 'patches'), written = [];
   for (const r of records) written.push(put('registry', join(patchDir, `${stamp()}-${r.name.replace(/\.json$/, '')}.json`), JSON.stringify({ applied_at: new Date().toISOString(), ...r.record }, null, 2) + '\n'));
   const event = appendEvent(dirname(dbPath), records, seal);

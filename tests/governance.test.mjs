@@ -351,7 +351,7 @@ test('⑩ 델타 기록 (S1): 기원 봉인 → 병합마다 사건 추가 → �
     const patch = { format: 'definition-db-patch', version: 9, why: '기록 시험', terms: [{ id: 'T+1', names: { ko } }], senses: [{ id: 'D+1', term: 'T+1', kind: 'concept', desc: [{ text: '시험', field: '생화학', context: { scope: '시험' } }] }] };
     const res = LEG.ingest(db, patch), g = J.gate(db, res, {});
     assert.ok(g.ok, g.errors.map((e) => e.msg).join('; '));
-    const w = CLERK.commitMerge({ dbPath, db: res.db, records: [{ name: 'p.json', record: { result: {}, report: {}, ...patch } }], seal: ATT.sealVerdict(g, res.db) });
+    const w = CLERK.commitMerge({ dbPath, db: res.db, records: [{ name: 'p.json', record: { result: {}, report: {}, ...patch } }], seal: ATT.sealVerdict(g, res.db, { base_sha256: CLERK.baseOf(dbPath) }) });
     assert.ok(w.event && w.event.prev, '사건이 기록됨'); db = res.db;
   }
   const log = CLERK.readLog(dir);
@@ -544,4 +544,29 @@ test('측정 잡음은 엔진이 뽑지 않는다 (RULE-0523 · DEC-0045) — �
   assert.deepEqual(reads, [], '엔진·컴파일러가 측정법(측정 잡음)을 읽음');
   const rand = runtime.filter((p) => p !== 'engine/rng.js' && /Math\.random|crypto\.random|getRandomValues/.test(src(p)));
   assert.deepEqual(rand, [], '난수를 engine/rng.js 밖에서 만듦 — 같은 (seed, 궤적) 이 같은 궤적이 아니게 된다');
+});
+
+test('⑯ 쓰기의 비교 후 교체 (PLAN-081): 같은 db 를 읽은 두 병합 — 앞의 것만 쓰고 뒤의 것은 거부 · base 없는 봉인 거부', async () => {
+  const CLERK = await import('../legislative/clerk.mjs');
+  const { writeFileSync, mkdirSync } = await import('node:fs');
+  const dir = join(tmpdir(), `cas-test-${process.pid}`), dbPath = join(dir, 'db.json');
+  rmSync(dir, { recursive: true, force: true }); mkdirSync(dir, { recursive: true });
+  writeFileSync(dbPath, JSON.stringify(BASE, null, 2) + '\n');
+  const base = CLERK.baseOf(dbPath);
+  const merge = (ko) => {
+    const patch = { format: 'definition-db-patch', version: 9, why: '동시 병합 시험', terms: [{ id: 'T+1', names: { ko } }], senses: [{ id: 'D+1', term: 'T+1', kind: 'concept', desc: [{ text: '시험', field: '생화학', context: { scope: '시험' } }] }] };
+    const res = LEG.ingest(BASE, patch), g = J.gate(BASE, res, {});
+    assert.ok(g.ok, g.errors.map((e) => e.msg).join('; '));
+    return { db: res.db, records: [{ name: `${ko}.json`, record: { result: {}, report: {}, ...patch } }], g };
+  };
+  // 두 병합이 같은 디스크 db(base)를 읽고 각자 관문을 통과
+  const A = merge('동시병합시험A'), B = merge('동시병합시험B');
+  assert.throws(() => CLERK.commitMerge({ dbPath, db: A.db, records: A.records, seal: ATT.sealVerdict(A.g, A.db) }), /base_sha256/, 'base 없는 봉인은 거부');
+  assert.throws(() => CLERK.commitMerge({ dbPath, db: A.db, records: A.records, seal: { ...ATT.sealVerdict(A.g, A.db, { base_sha256: base }), base_sha256: 'x' } }), /변조/, 'base 를 바꾸면 봉인 digest 가 깨진다');
+  CLERK.commitMerge({ dbPath, db: A.db, records: A.records, seal: ATT.sealVerdict(A.g, A.db, { base_sha256: base }) });
+  assert.throws(() => CLERK.commitMerge({ dbPath, db: B.db, records: B.records, seal: ATT.sealVerdict(B.g, B.db, { base_sha256: base }) }), /디스크의 db 가 바뀜/, '뒤의 병합은 앞의 갱신을 덮지 못한다');
+  assert.equal(readFileSync(dbPath, 'utf8'), JSON.stringify(A.db, null, 2) + '\n', '디스크에는 앞의 병합만');
+  // 다시 읽으면(새 base) 통과
+  const B2 = { ...B }; CLERK.commitMerge({ dbPath, db: B2.db, records: B2.records, seal: ATT.sealVerdict(B2.g, B2.db, { base_sha256: CLERK.baseOf(dbPath) }) });
+  rmSync(dir, { recursive: true, force: true });
 });

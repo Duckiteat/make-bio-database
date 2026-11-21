@@ -99,7 +99,9 @@ const scenarioFiles = () => Object.fromEntries(readdirSync(SCENARIO_DIR).filter(
 const subjectOf = (path) => { const m = existsSync(SUBJECTS) ? readJSON(SUBJECTS).subjects : {}; return m[basename(path)] || null; };
 // 통제 토큰 청중 (--audience ko|en|both): 사전 라벨러를 행정부 번역 함수에 주입 (16A). 없으면 기본 한글
 const audienceOpt = () => { if (!flags.audience || flags.audience === true) return {}; try { return { label: req('./dictionary.js').labeler({ audience: flags.audience }) }; } catch (e) { die(e.message); } };
-const loadDB = () => (existsSync(DB_PATH) ? DefDB.normalize(readJSON(DB_PATH)) : DefDB.emptyDB());
+// 비교 후 교체 (PLAN-081): 이 프로세스가 처음 읽은 디스크 db 의 sha256 — 병합 봉인에 넣어 서기가 쓰기 직전에 대조한다
+let DB_BASE = null;
+const loadDB = () => { if (DB_BASE === null) DB_BASE = CLERK.baseOf(DB_PATH); return existsSync(DB_PATH) ? DefDB.normalize(readJSON(DB_PATH)) : DefDB.emptyDB(); };
 const rel = (p) => relative(process.cwd(), p) || p;
 const printIssues = (errors, warnings) => {
   for (const e of errors) console.log(`오류  ${e.where}: ${e.msg}`);
@@ -184,7 +186,7 @@ switch (cmd) {
         : g.errors.length ? `오류 ${g.errors.length} — 패치를 거부했습니다. 위 메시지대로 패치를 고치세요.`
         : `패치가 새 경고 ${g.warnings.length}개를 만듦 — 거부했습니다. 고치거나 --allow-warnings 로 명시적으로 허용하세요.`);
       applied.push({ name: basename(p), record: { result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...patch } });
-      db = res.db; seal = ATT.sealVerdict(g, db); // 사법부 판결 봉인 — 서기는 이 봉인의 db 만 쓴다
+      db = res.db; seal = ATT.sealVerdict(g, db, { base_sha256: DB_BASE }); // 사법부 판결 봉인 — 서기는 이 봉인의 db 만 쓴다
     }
     if (flags.dry) { console.log('관문 통과 (--dry: 저장하지 않음)'); break; }
     const w = CLERK.commitMerge({ dbPath: DB_PATH, db, records: applied, seal });
@@ -383,7 +385,7 @@ switch (cmd) {
       if (!g.ok || badSt.length) die('관문 거부 — 패치를 저장하지 않음');
       if (sub === 'build') { console.log(`관문 통과 — 병합하려면: node dbtool.mjs augment apply${flags.sync ? ' --sync' : ''}`); break; }
       const r = res.report, name = drafted ? basename(args[1]).replace(/\.json$/, '') : 'auto-augmentation';
-      const w = CLERK.commitMerge({ dbPath: DB_PATH, db: res.db, records: [{ name, record: { result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch } }], seal: ATT.sealVerdict(g, res.db) });
+      const w = CLERK.commitMerge({ dbPath: DB_PATH, db: res.db, records: [{ name, record: { result: { added: r.added, updated: r.updated, removed: r.removed, mapped: r.mapped }, report: rep, ...b.patch } }], seal: ATT.sealVerdict(g, res.db, { base_sha256: DB_BASE }) });
       if (b.stamps.length) console.log('증명 등록부 (입법 서기): ' + rel(CLERK.appendAttestations({ root: HERE, stamps: b.stamps, db: res.db })));
       CLERK.insertChangesRow(DRAFT.changesRow(rel(w.records[0]), rep, b.rows, date, !!drafted), HERE);
       // 생성물 자동 갱신: limitations.md · 교과서 부록

@@ -17,7 +17,7 @@
 | `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 849 · 38 · 98 | 28 · 없음 10 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 103 · 73 · 13 | 68 · 없음 5 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2075 · 363 · 41 | 360 · 없음 3 |
-| `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1857 · 505 · 98 | — |
+| `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1860 · 505 · 98 | — |
 | `sub_ref` | active | composite | `^D\d{6}/(site\|rule\|desc\|obs)/[A-Za-z0-9_]+$` | sense owner key | `data/db.json#senses.*.site\|rule\|desc\|obs` | — | — |
 | `bundle_key` | active | composite | `^D\d{6}(\\|[a-z0-9_]+:[A-Za-z0-9_]+)*\\|[a-z_]+$` | derived (not issued) | `computed from sense+site+location` | — | — |
 | `event` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/log/events.jsonl` | — | — |
@@ -34,13 +34,13 @@
 | `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10661 · 7281 · 11 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 12 · 1 · 6 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5654 · 539 · 172 | 536 · 없음 3 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5660 · 539 · 173 | 536 · 없음 3 |
 | `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 2340 · 70 · 314 | 253 · 없음 6 |
 | `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 253 · 없음 0 |
 | `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 23 · 없음 0 |
-| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 330 · 없음 0 |
+| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 331 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
-| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 4181 · 119 · 248 | 253 · 없음 5 |
+| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 4190 · 119 · 249 | 253 · 없음 5 |
 | `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 1561 · 43 · 127 | 253 · 없음 1 |
 | `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 95 · 11 · 14 | 253 · 없음 1 |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
@@ -98,13 +98,13 @@
 ## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)
 
 - compiler/perturb.js:29 /^D\d{6}$/
-- dbtool.mjs:496 /^O\d{6}$/
-- dbtool.mjs:503 /^O\d{6}$/
-- dbtool.mjs:643 /^O\d{6}$/
-- dbtool.mjs:747 /^O\d{6}$/
-- dbtool.mjs:760 /^O\d{6}$/
-- dbtool.mjs:767 /^O\d{6}$/
-- dbtool.mjs:767 /^O\d{6}$/
+- dbtool.mjs:498 /^O\d{6}$/
+- dbtool.mjs:505 /^O\d{6}$/
+- dbtool.mjs:645 /^O\d{6}$/
+- dbtool.mjs:749 /^O\d{6}$/
+- dbtool.mjs:762 /^O\d{6}$/
+- dbtool.mjs:769 /^O\d{6}$/
+- dbtool.mjs:769 /^O\d{6}$/
 - judicial/acceptance.js:49 /^O\d{6}$/
 - judicial/assumption_audit.js:16 /^A\d{6}$/
 - judicial/judicial.js:312 /^[TDS]\d{6}$/
