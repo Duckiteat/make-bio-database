@@ -8,7 +8,7 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 341 | 8239.3 |
+| 공통 `common` | 341 | 8242.2 |
 | 정보 작성 `author` | 515 | 17004.8 |
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 205 | 2585.4 |
@@ -55,7 +55,7 @@
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 108 | 1470.0 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 12 | 507.8 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
-| `docs/design/**` | common | 23 | 344.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
+| `docs/design/**` | common | 23 | 347.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 259 | 806.9 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.6 | 한계 등록부 (생성물) |
 | `CHANGES.md` | develop | 1 | 342.5 | 변경 기록 |

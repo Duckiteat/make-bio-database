@@ -36,7 +36,7 @@
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
 | `docs/design/supervisor.md` | 14.2 | 203 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
-| `docs/design/transfer-judgment.md` | 14.9 | 171 |  | 미분류 |
+| `docs/design/transfer-judgment.md` | 17.9 | 221 |  | 미분류 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
