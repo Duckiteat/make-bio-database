@@ -9,9 +9,9 @@
 | 모드 | 파일 | KB |
 |---|---|---|
 | 공통 `common` | 344 | 8265.5 |
-| 정보 작성 `author` | 515 | 17006.4 |
+| 정보 작성 `author` | 515 | 17008.1 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 206 | 2600.4 |
+| 디벨롭 `develop` | 206 | 2601.3 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 118 | 1851.4 |
 
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 28 | 131.8 | 수집가 작업 공간 |
+| `workspace/**` | author | 28 | 133.5 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
@@ -50,7 +50,7 @@
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
-| `tests/**` | develop | 82 | 728.9 | 시험 |
+| `tests/**` | develop | 82 | 729.1 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 108 | 1470.0 | 보고서 — 읽기·점검 |
@@ -58,7 +58,7 @@
 | `docs/design/**` | common | 23 | 347.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 260 | 812.2 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.6 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 345.3 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 346.0 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 108.6 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
 | `.claude/**` | common | 6 | 37.6 | 도구 설정 |

@@ -9,13 +9,13 @@
 | data | 483 | 16696.4 |
 | rebuild | 37 | 6487.4 |
 | docs | 403 | 3139.2 |
-| (최상위) | 19 | 1002.2 |
-| tests | 108 | 762.6 |
+| (최상위) | 19 | 1002.9 |
+| tests | 108 | 762.8 |
 | judicial | 36 | 621.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
-| workspace | 37 | 153.3 |
+| workspace | 37 | 155.0 |
 | legislative | 3 | 77.6 |
 | migrations | 13 | 59.8 |
 | mcp | 6 | 59.8 |
@@ -36,8 +36,8 @@
 | `rebuild/state/plan-log.jsonl` | 428.0 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
+| `CHANGES.md` | 346.0 |
 | `rebuild/state/plans.jsonl` | 345.4 |
-| `CHANGES.md` | 345.3 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `rebuild/rules/changes.jsonl` | 305.0 |
