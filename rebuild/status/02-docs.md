@@ -36,6 +36,7 @@
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
 | `docs/design/supervisor.md` | 14.2 | 203 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
+| `docs/design/transfer-judgment.md` | 14.9 | 171 |  | 미분류 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
@@ -46,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 31.6 | 99 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 49.9 | 479 |  | 생성물 |
+| `docs/plan/build.md` | 50.9 | 480 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
