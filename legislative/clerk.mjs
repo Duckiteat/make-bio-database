@@ -272,6 +272,15 @@ export function writeState(name, content, root) {
   if (name === 'plan-log.jsonl' && existsSync(f) && !content.startsWith(readFileSync(f, 'utf8'))) refuse('RULE-0014', '계획의 걸어온 길(plan-log.jsonl)은 덧붙이기만 — 옛 사건을 고치거나 지울 수 없다');
   return put('rebuild', f, content);
 }
+// 감독 장부 (PLAN-100 · docs/design/supervisor.md · DEC-0064–0070): 재건 관리 구역의 계획 기록 폴더 안 supervise.jsonl — 덧붙이기만.
+//   부르는 쪽(감독 도구 supervise.mjs)이 장부 검사(check)를 통과시킨 사건 줄만 넘긴다. 서기는 판단하지 않고, 한 줄짜리인지와 끝에 붙이는지만 지킨다.
+export const SUPERVISE = join('rebuild', 'state', 'supervise.jsonl');
+export function appendSupervise(lines, root) {
+  if (!Array.isArray(lines) || !lines.length || lines.some((l) => typeof l !== 'string' || !l.trim() || l.includes('\n'))) refuse('RULE-0014', '감독 장부에는 한 줄짜리 사건만 덧붙인다');
+  const f = join(root || ROOT, SUPERVISE), old = existsSync(f) ? readFileSync(f, 'utf8') : '';
+  if (old && !old.endsWith('\n')) refuse('RULE-0014', '감독 장부의 끝이 줄바꿈이 아님 — 손으로 고친 흔적');
+  return put('rebuild', f, old + lines.map((l) => l + '\n').join(''));
+}
 // 규칙 장부 (규칙 폴더의 .jsonl 여섯) — 장부 고치기 도구가 검사한 글만. 사건 기록(changes.jsonl)은 덧붙이기만: 새 글이 옛 글로 시작해야 한다
 export function writeLedger(name, content, root) {
   if (!/^(rules|review|formulas|enforcement|links|commands|permissions|changes)\.jsonl$/.test(name)) refuse('RULE-0014', `규칙 장부 이름 '${name}' — rules · review · formulas · enforcement · links · commands · permissions · changes (.jsonl) 만`);

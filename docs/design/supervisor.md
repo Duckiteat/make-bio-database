@@ -43,8 +43,8 @@
 | 무엇 | 이름 [정함] | 까닭 |
 |---|---|---|
 | 층 | 감독 (Supervisor) | DEC-0068 |
-| 장부 | 감독 장부 — `rebuild/state/` 아래 덧붙이기 장부 하나 (파일 이름은 PLAN-100) | F1 공통 구역 (DEC-0066) |
-| 명령 | `dbtool supervise <하위 명령>` | 명령 장부에 줄로 (PLAN-100) |
+| 장부 | 감독 장부 — `rebuild/state/supervise.jsonl` (덧붙이기만, 서기 `appendSupervise`) | F1 공통 구역 (DEC-0066) |
+| 명령 | `node rebuild/supervise.mjs <status · check · propose · start · handoff · block · cancel>` — 계획 장부의 `rebuild/plan.mjs` 와 같은 자리 (v0 의 `dbtool supervise` 에서 바꿈, PLAN-100: 공통 구역을 쓰는 관리 도구라 명령 장부 · 모드별 막기가 필요 없음) | MCP 도구(PLAN-105)는 같은 함수를 부른다 |
 | 상위 작업 번호 | `SUP-0001` … | 번호 사전에 먼저 등록 (PLAN-100) — `ORCH-` 는 쓰지 않음 (조정자 · 내장 조율과 섞임) |
 | 실행 번호 | `SUP-0001/r1` … | 상위 작업 안의 차례 |
 

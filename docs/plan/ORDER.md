@@ -8,8 +8,8 @@
 2. [PLAN-093](items/PLAN-093.md) 시계 정리 (관찰 격자 한정) — ☑ 완료 · build — 안전망 위에서 시계 정리 — 출하 시나리오는 비트 불변이어야 함 (DEC-0049)
 3. [ASY-08](items/ASY-08.md) 계량 기초 — ◐ 진행 · assay — 2026-11-18 앞으로(DEC-0062): 불확도 예산 칸 + 추적성 — ASY-14 와 같은 자리(정량 관찰의 불확도·원문 숫자)라 한 번의 형식 변경으로 묶음. 원래: 가장 기초 — 단위 · 상수 · 자리수 · 추적성 · 불확도 예산. 모든 판독이 이 단을 가리킴 (DEC-0043)
 4. [ASY-14](items/ASY-14.md) 내부 일관성 — ☑ 완료 · assay — 2026-11-18 앞으로(DEC-0062): ASY-08 과 한 묶음 — 원문 숫자에 sem · n · 정수 자료 칸, 검증기에 consistency 잇기. 원래: 판정 함수까지 끝(judicial/consistency.js) — 관찰 형식에 sem · n · 평균 칸이 생기면 검증기에 잇는다(형식 변경은 사용자 요청). 들이는 값마다 걸러야 하니 모으기 전에 (DEC-0046)
-5. [PLAN-099](items/PLAN-099.md) 조율 규격 = 감독(Supervisor) 규격 — ◐ 진행 · build — DEC-0067 — 조율 먼저: 규격
-6. [PLAN-100](items/PLAN-100.md) 조율 장부 + 명령 — ☐ 대기 · build — DEC-0067 — 조율 장부 + 명령 (공통 구역)
+5. [PLAN-099](items/PLAN-099.md) 조율 규격 = 감독(Supervisor) 규격 — ☑ 완료 · build — DEC-0067 — 조율 먼저: 규격
+6. [PLAN-100](items/PLAN-100.md) 감독 장부 + 명령 — ☑ 완료 · build — DEC-0067 — 조율 장부 + 명령 (공통 구역)
 7. [PLAN-113](items/PLAN-113.md) AI 의 PR 병합 막기 — ☐ 대기 · build — DEC-0069 — 병합 = 사람이 성립해야 승인 증거 판정(102)이 뜻을 가짐 · 사용자 커밋 한 줄
 8. [PLAN-102](items/PLAN-102.md) 승인 증거 판정 — ☐ 대기 · build — DEC-0067 — 병합 = 승인 판정 (RP1 의 취약 경로를 대신)
 9. [PLAN-105](items/PLAN-105.md) MCP 연결 — ☐ 대기 · build — DEC-0067 — 작업 세션이 MCP 를 쓰게
@@ -73,7 +73,7 @@
 
 ## 끝난 것
 
-- build: 42 / 119
+- build: 44 / 119
 - rebuild: 39 / 42
 - assay: 1 / 17
 

@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 337.7 | 333 |  | 분류됨 1 |
+| `CHANGES.md` | 339.3 | 334 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -34,7 +34,7 @@
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.7 | 208 |  | 분류됨 102 |
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
-| `docs/design/supervisor.md` | 13.9 | 203 |  | 미분류 |
+| `docs/design/supervisor.md` | 14.2 | 203 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
@@ -228,8 +228,8 @@
 | `docs/plan/items/PLAN-096.md` | 3.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-097.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-098.md` | 1.9 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-099.md` | 10.1 | 62 |  | 생성물 |
-| `docs/plan/items/PLAN-100.md` | 7.9 | 70 |  | 생성물 |
+| `docs/plan/items/PLAN-099.md` | 10.5 | 65 |  | 생성물 |
+| `docs/plan/items/PLAN-100.md` | 12.8 | 88 |  | 생성물 |
 | `docs/plan/items/PLAN-101.md` | 5.2 | 59 |  | 생성물 |
 | `docs/plan/items/PLAN-102.md` | 6.7 | 51 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 4.0 | 43 |  | 생성물 |
@@ -403,7 +403,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 141.8 | 867 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 142.7 | 869 |  | 생성물 |
 | `limitations.md` | 95.6 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
