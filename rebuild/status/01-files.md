@@ -7,11 +7,11 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 483 | 16696.4 |
-| rebuild | 35 | 6449.4 |
-| docs | 400 | 3097.3 |
-| (최상위) | 18 | 995.5 |
-| tests | 105 | 741.5 |
-| judicial | 35 | 614.6 |
+| rebuild | 35 | 6457.6 |
+| docs | 400 | 3101.2 |
+| (최상위) | 18 | 996.7 |
+| tests | 106 | 748.8 |
+| judicial | 36 | 620.2 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
@@ -33,11 +33,11 @@
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 696.6 |
 | `data/log/genesis-db.json` | 608.9 |
-| `rebuild/state/plan-log.jsonl` | 415.6 |
+| `rebuild/state/plan-log.jsonl` | 417.2 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `CHANGES.md` | 339.3 |
-| `rebuild/state/plans.jsonl` | 334.4 |
+| `CHANGES.md` | 340.5 |
+| `rebuild/state/plans.jsonl` | 335.5 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `rebuild/rules/changes.jsonl` | 305.0 |

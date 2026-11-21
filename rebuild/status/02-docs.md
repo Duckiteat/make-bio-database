@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 339.3 | 334 |  | 분류됨 1 |
+| `CHANGES.md` | 340.5 | 335 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -231,7 +231,7 @@
 | `docs/plan/items/PLAN-099.md` | 10.5 | 65 |  | 생성물 |
 | `docs/plan/items/PLAN-100.md` | 12.8 | 88 |  | 생성물 |
 | `docs/plan/items/PLAN-101.md` | 5.2 | 59 |  | 생성물 |
-| `docs/plan/items/PLAN-102.md` | 6.7 | 51 |  | 생성물 |
+| `docs/plan/items/PLAN-102.md` | 8.0 | 53 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 4.0 | 43 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 6.4 | 70 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 2.1 | 22 |  | 생성물 |
@@ -403,7 +403,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 142.7 | 869 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 143.7 | 871 |  | 생성물 |
 | `limitations.md` | 95.6 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |

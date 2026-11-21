@@ -2,6 +2,7 @@
 // 감독 장부 (PLAN-100 · 설계 docs/design/supervisor.md · DEC-0064–0070) — 상위 작업(SUP-…)과 실행 기록(run, SUP-…/r…)의 덧붙이기 장부.
 //   node rebuild/supervise.mjs status [SUP-…]                          지금 상태 (장부를 접은 것 — 읽기만)
 //   node rebuild/supervise.mjs check                                   장부 검사만
+//   node rebuild/supervise.mjs evidence <SUP-…>                        승인 판정 · 계산된 상태 (git 읽기만 — 판정은 judicial/supervise_approval.js, PLAN-102)
 //   node rebuild/supervise.mjs <propose|start|handoff|block|cancel> <사건.json> [--dry] [--human <이름>]
 // 계약: load 는 읽기만, check · fold · admit 는 값만 돌려준다(순수). 파일 쓰기는 입법 서기(appendSupervise)만.
 // 정한 것 (설계 §3 · §4 · §5):
@@ -15,7 +16,9 @@
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import * as CLERK from '../legislative/clerk.mjs';
+import * as AP from '../judicial/supervise_approval.js';
 import { MODES, liveRoot, readReceipt } from './gate.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -212,18 +215,62 @@ export function admit(events, ev, input, who, R, now = new Date().toISOString())
   return errors.length ? { errors } : { event: out };
 }
 
+// ── 승인 증거의 사실 모으기 (PLAN-102 — git 읽기만, 판정은 사법부 judicial/supervise_approval.js) ──────────
+const git = (root, ...a) => execFileSync('git', ['-c', 'core.quotepath=false', ...a], { cwd: root, encoding: 'utf8', maxBuffer: 256 << 20, stdio: ['ignore', 'pipe', 'ignore'] });
+const tryGit = (root, ...a) => { try { return git(root, ...a); } catch { return null; } };
+export function mainRefOf(root = ROOT) { for (const r of ['origin/main', 'main']) if (tryGit(root, 'rev-parse', '--verify', '--quiet', r + '^{commit}')) return r; return null; }
+// 경로들의 blob (없는 경로는 null) — 커밋 하나에서
+function blobsAt(root, rev, paths) {
+  const out = Object.fromEntries(paths.map((p) => [p, null]));
+  const txt = tryGit(root, 'ls-tree', '-r', rev, '--', ...paths) || '';
+  for (const l of txt.split('\n').filter(Boolean)) { const m = l.match(/^\d+ blob ([0-9a-f]+)\t(.+)$/); if (m && m[2] in out) out[m[2]] = m[1]; }
+  return out;
+}
+const denyAt = (root, rev) => { const t = tryGit(root, 'show', `${rev}:.claude/settings.json`); try { return t ? (JSON.parse(t).permissions?.deny || []).includes(AP.MERGE_TOOL) : false; } catch { return false; } };
+// 영수증에 남은 PR 병합 호출 — main 의 영수증 파일에서 (영수증이 없는 실행 환경의 병합은 여기 잡히지 않는다 — 그래서 ③ 설정 막음이 따로 필요)
+function aiMergesAt(root, rev) {
+  const names = (tryGit(root, 'ls-tree', '--name-only', rev, 'workspace/receipts/') || '').split('\n').filter((f) => f.endsWith('.jsonl'));
+  const out = [];
+  for (const f of names) for (const l of (tryGit(root, 'show', `${rev}:${f}`) || '').split('\n')) { if (!l.includes(AP.MERGE_TOOL)) continue; try { const e = JSON.parse(l); if (e.tool === AP.MERGE_TOOL) out.push({ at: e.at, receipt: f.replace(/^.*\//, '').replace(/\.jsonl$/, '') }); } catch { /* 줄 아님 */ } }
+  return out;
+}
+// 상위 작업 하나의 승인 판정 + 계산된 상태. 사실을 못 모으면(얕은 복제 · 커밋 없음) 그 까닭을 돌려준다.
+export function evidence(sup, root = ROOT) {
+  const pre = sup.runs.filter((r) => r.mode !== 'baseline' && r.result === 'handed_off');
+  const last = pre[pre.length - 1];
+  if (!last) return { verdict: null, derived: AP.derive(sup, null), note: '넘긴 실행 없음' };
+  const tip = last.outputs.commits[last.outputs.commits.length - 1], main = mainRefOf(root);
+  if (!main) return { verdict: null, derived: AP.derive(sup, null), note: 'main 을 찾지 못함' };
+  if (tryGit(root, 'cat-file', '-e', tip + '^{commit}') === null) return { verdict: null, derived: AP.derive(sup, null), note: `넘긴 커밋 ${tip} 이 이 저장소에 없음 (가져오기 필요)` };
+  const first = sup.runs.find((r) => r.base);
+  const base = (first && tryGit(root, 'cat-file', '-e', first.base + '^{commit}') !== null ? first.base : (tryGit(root, 'merge-base', tip, main) || '').trim());
+  if (!base) return { verdict: null, derived: AP.derive(sup, null), note: '분기점을 찾지 못함' };
+  const paths = (tryGit(root, 'diff', '--name-only', base, tip) || '').split('\n').filter(Boolean);
+  const target = blobsAt(root, tip, paths);
+  // main 의 본줄기(첫 부모 사슬)만 — 진짜 머지면 작업 브랜치의 커밋도 main 역사에 들어오지만, 병합된 지점은 본줄기 위의 머지 커밋이다
+  const commits = (tryGit(root, 'rev-list', '--first-parent', '--reverse', `${base}..${main}`) || '').split('\n').filter(Boolean)
+    .map((sha) => ({ sha, time: (tryGit(root, 'show', '-s', '--format=%cI', sha) || '').trim(), blobs: blobsAt(root, sha, paths), denyMerge: denyAt(root, sha) }));
+  const baseTime = Date.parse((tryGit(root, 'show', '-s', '--format=%cI', base) || '').trim());
+  const aiMerges = aiMergesAt(root, main).filter((m) => !Number.isFinite(baseTime) || Date.parse(m.at) >= baseTime);
+  const verdict = AP.judge({ target, commits, aiMerges });
+  const onApproved = {};
+  if (verdict.commit) for (const r of sup.runs.filter((x) => x.mode === 'baseline')) onApproved[r.run] = !!(r.base && tryGit(root, 'merge-base', '--is-ancestor', verdict.commit, r.base) !== null);
+  return { verdict, derived: AP.derive(sup, verdict, onApproved), tip, base, main, files: paths.length };
+}
+
 // ── 보기 ──────────────────────────────────────────────────────────────────
 const NEXT = { planned: '첫 실행을 기다림', running: '진행 중', blocked: '막힘 — 사람이 봐야 함', cancelled: '취소됨' };
-export function render(sups) {
+export function render(sups, ev = {}) {
   if (!sups.length) return '감독 장부 — 상위 작업 없음';
   const cell = (x) => String(x ?? '').replace(/\|/g, '\\|');
   const L = ['| 상위 작업 | 계획 작업 | 상태 | 실행 | 지금 |', '|---|---|---|---|---|'];
   for (const s of sups) {
     const runs = s.runs.map((r) => `${r.run.split('/')[1]} ${r.mode}·${r.executor}${r.enforcement && !r.enforcement.hooks ? '(문지기 없음)' : ''}·${r.result}`).join(' → ') || '—';
-    const now = s.state === 'running' && !s.active ? `다음 실행을 기다림 (steps ${s.steps.join(' → ')})` : s.state === 'blocked' ? `막힘 ${s.blocked.cause}: ${s.blocked.why}` : NEXT[s.state];
-    L.push(`| ${s.id} | ${s.plan_item} | ${s.state} | ${cell(runs)} | ${cell(now)} |`);
+    const d = ev[s.id] && ev[s.id].derived, state = d ? d.state : s.state;
+    const now = d && d.why ? d.why : s.state === 'running' && !s.active ? `다음 실행을 기다림 (steps ${s.steps.join(' → ')})` : s.state === 'blocked' ? `막힘 ${s.blocked.cause}: ${s.blocked.why}` : NEXT[s.state];
+    L.push(`| ${s.id} | ${s.plan_item} | ${state} | ${cell(runs)} | ${cell(now)} |`);
   }
-  L.push('', '승인 대기 · 반영 · 완료는 증거에서 계산한다 (PLAN-102 — 아직 계산하지 않음).');
+  L.push('', '승인 대기 · 반영 · 완료는 장부에 적지 않고 증거에서 계산한다 (judicial/supervise_approval.js — 자세히: node rebuild/supervise.mjs evidence <SUP-…>).');
   return L.join('\n');
 }
 
@@ -232,8 +279,17 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const [cmd, file, ...rest] = process.argv.slice(2);
   const events = load(), R = refs();
   if (cmd === 'check') { const e = check(events, R); console.log(e.length ? e.join('\n') : `감독 장부 정확 — 사건 ${events.length} · 오류 0`); process.exit(e.length ? 1 : 0); }
-  if (cmd === 'status') { const f = fold(events, R); const sel = file ? f.sups.filter((s) => s.id === file) : f.sups; console.log(render(sel)); if (f.errors.length) console.log(`\n장부 오류 ${f.errors.length}:\n- ${f.errors.join('\n- ')}`); process.exit(f.errors.length ? 1 : 0); }
-  if (!EVENTS.includes(cmd) || !file) { console.error(`사용: node rebuild/supervise.mjs status [SUP-…] · check · <${EVENTS.join('|')}> <사건.json> [--dry] [--human <이름>]`); process.exit(2); }
+  if (cmd === 'status') { const f = fold(events, R); const sel = file ? f.sups.filter((s) => s.id === file) : f.sups; const ev = Object.fromEntries(sel.filter((s) => !['planned', 'blocked', 'cancelled'].includes(s.state) && !s.active).map((s) => [s.id, evidence(s)])); console.log(render(sel, ev)); if (f.errors.length) console.log(`\n장부 오류 ${f.errors.length}:\n- ${f.errors.join('\n- ')}`); process.exit(f.errors.length ? 1 : 0); }
+  if (cmd === 'evidence') {
+    const f = fold(events, R), s = f.sups.find((x) => x.id === file);
+    if (!s) { console.error(`상위 작업 '${file || ''}' 없음`); process.exit(2); }
+    const e = evidence(s);
+    console.log(`${s.id} — 계산된 상태 ${e.derived.state}${e.derived.why ? ' · ' + e.derived.why : ''}`);
+    if (e.note) console.log(`사실을 다 모으지 못함: ${e.note}`);
+    if (e.verdict) { console.log(`승인 판정 ${e.verdict.status} — ${e.verdict.text}`); console.log(`  대상: 분기점 ${String(e.base).slice(0, 7)} → 넘긴 커밋 ${String(e.tip).slice(0, 7)} · 파일 ${e.files} · main ${e.main}`); for (const r of e.verdict.reasons) console.log(`  - ${r}`); }
+    process.exit(0);
+  }
+  if (!EVENTS.includes(cmd) || !file) { console.error(`사용: node rebuild/supervise.mjs status [SUP-…] · check · evidence <SUP-…> · <${EVENTS.join('|')}> <사건.json> [--dry] [--human <이름>]`); process.exit(2); }
   let input; try { input = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { console.error(`입력 JSON 을 읽지 못함: ${e.message}`); process.exit(2); }
   const hi = rest.indexOf('--human');
   let who = sessionFromReceipts();

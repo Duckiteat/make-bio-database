@@ -11,7 +11,7 @@
 5. [PLAN-099](items/PLAN-099.md) 조율 규격 = 감독(Supervisor) 규격 — ☑ 완료 · build — DEC-0067 — 조율 먼저: 규격
 6. [PLAN-100](items/PLAN-100.md) 감독 장부 + 명령 — ☑ 완료 · build — DEC-0067 — 조율 장부 + 명령 (공통 구역)
 7. [PLAN-113](items/PLAN-113.md) AI 의 PR 병합 막기 — ☐ 대기 · build — DEC-0069 — 병합 = 사람이 성립해야 승인 증거 판정(102)이 뜻을 가짐 · 사용자 커밋 한 줄
-8. [PLAN-102](items/PLAN-102.md) 승인 증거 판정 — ☐ 대기 · build — DEC-0067 — 병합 = 승인 판정 (RP1 의 취약 경로를 대신)
+8. [PLAN-102](items/PLAN-102.md) 승인 증거 판정 — ☑ 완료 · build — DEC-0067 — 병합 = 승인 판정 (RP1 의 취약 경로를 대신)
 9. [PLAN-105](items/PLAN-105.md) MCP 연결 — ☐ 대기 · build — DEC-0067 — 작업 세션이 MCP 를 쓰게
 10. [PLAN-101](items/PLAN-101.md) 승인 PR 권한(F6) — ☐ 대기 · build — DEC-0067 — 첫 순환 승인 PR 은 사용자
 11. [PLAN-103](items/PLAN-103.md) 첫 순환 — cAMP (손으로, 순차) — ☐ 대기 · build — DEC-0067 — 첫 순환 손으로 (순차)
@@ -73,7 +73,7 @@
 
 ## 끝난 것
 
-- build: 44 / 119
+- build: 45 / 119
 - rebuild: 39 / 42
 - assay: 1 / 17
 
