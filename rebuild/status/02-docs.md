@@ -372,6 +372,7 @@
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |
+| `docs/reports/project-roadmap-audit.md` | 63.6 | 639 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
 | `docs/textbook/00-목차.md` | 5.0 | 45 |  | 분류됨 28 |
 | `docs/textbook/01-원칙과-구조.md` | 9.4 | 101 |  | 분류됨 55 |
