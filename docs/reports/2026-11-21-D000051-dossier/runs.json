@@ -1,0 +1,5569 @@
+{
+ "steps": [
+  {
+   "id": "S000001",
+   "rule": "D000030/rule/ligand_binding",
+   "label": "수용체 활성화",
+   "action": "결합",
+   "text": "에피네프린이 β-아드레날린 수용체의 바깥쪽 결합 부위에 결합해 수용체의 구조가 바뀐다.",
+   "effect": {
+    "type": "modify",
+    "site": "ligand",
+    "partner": "D000027",
+    "add": [
+     "bound"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1038/nature10361",
+      "citation": "Rasmussen et al., 2011"
+     },
+     {
+      "db": "PMID",
+      "id": "21772288",
+      "citation": "Rasmussen et al., 2011"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1016/s0021-9258(20)79672-9",
+      "citation": "De Lean, Stadel & Lefkowitz, 1980"
+     },
+     {
+      "db": "PMID",
+      "id": "6248546",
+      "citation": "De Lean, Stadel & Lefkowitz, 1980"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [],
+   "inputs": [
+    {
+     "b": "D000027|extracellular"
+    },
+    {
+     "b": "D000030|plasma_membrane"
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000030|ligand:bound|plasma_membrane"
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000002",
+   "rule": "D000030/rule/gs_gef",
+   "label": "Gs 활성화",
+   "action": "뉴클레오타이드 교환",
+   "text": "활성 수용체가 세포질 쪽 면에서 Gs 의 α 소단위에서 GDP 를 내보내고 GTP 가 붙게 한다. 수용체는 그대로 남아 다른 Gs 를 계속 활성화한다.",
+   "effect": {
+    "type": "modify",
+    "target": "D000029",
+    "site": "nucleotide",
+    "add": [
+     "GTP_bound"
+    ],
+    "remove": [
+     "GDP_bound"
+    ]
+   },
+   "with": {
+    "consumes": [
+     "D000035"
+    ],
+    "produces": [
+     "D000036"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1038/nature10361",
+      "citation": "Rasmussen et al., 2011"
+     },
+     {
+      "db": "PMID",
+      "id": "21772288",
+      "citation": "Rasmussen et al., 2011"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1038/nature10488",
+      "citation": "Chung et al., 2011"
+     },
+     {
+      "db": "PMID",
+      "id": "21956331",
+      "citation": "Chung et al., 2011"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [
+    {
+     "b": "D000030|ligand:bound|plasma_membrane"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000029|nucleotide:GDP_bound|plasma_membrane"
+    },
+    {
+     "b": "D000035|cytosol",
+     "minor": true
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000029|nucleotide:GTP_bound|plasma_membrane"
+    },
+    {
+     "b": "D000036|cytosol",
+     "minor": true
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000003",
+   "rule": "D000029/rule/ac_activation",
+   "label": "아데닐산 고리화효소 활성화",
+   "action": "결합",
+   "text": "GTP 가 붙은 Gs α 소단위가 아데닐산 고리화효소에 결합해 활성화한다.",
+   "effect": {
+    "type": "modify",
+    "target": "D000031",
+    "site": "gs_site",
+    "add": [
+     "bound"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1126/science.278.5345.1943",
+      "citation": "Sunahara et al., 1997"
+     },
+     {
+      "db": "PMID",
+      "id": "9395396",
+      "citation": "Sunahara et al., 1997"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1126/science.278.5345.1907",
+      "citation": "Tesmer et al., 1997"
+     },
+     {
+      "db": "PMID",
+      "id": "9417641",
+      "citation": "Tesmer et al., 1997"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1146/annurev.pa.36.040196.002333",
+      "citation": "Sunahara, Dessauer & Gilman, 1996"
+     },
+     {
+      "db": "PMID",
+      "id": "8725398",
+      "citation": "Sunahara, Dessauer & Gilman, 1996"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [
+    {
+     "b": "D000029|nucleotide:GTP_bound|plasma_membrane"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000031|plasma_membrane"
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000031|gs_site:bound|plasma_membrane"
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000004",
+   "rule": "D000029/rule/gtpase",
+   "label": "Gs 자체 비활성화",
+   "action": "가수분해",
+   "text": "Gs α 소단위가 스스로 GTP 를 GDP 로 가수분해해 비활성으로 돌아간다. 신호가 저절로 꺼지는 장치.",
+   "effect": {
+    "type": "modify",
+    "site": "nucleotide",
+    "add": [
+     "GDP_bound"
+    ],
+    "remove": [
+     "GTP_bound"
+    ]
+   },
+   "with": {
+    "consumes": [],
+    "produces": [
+     "D000037"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1016/0005-2744(76)90206-0",
+      "citation": "Cassel & Selinger, 1976"
+     },
+     {
+      "db": "PMID",
+      "id": "188466",
+      "citation": "Cassel & Selinger, 1976"
+     },
+     {
+      "db": "PMID",
+      "id": "203612",
+      "citation": "Cassel, Levkovitz & Selinger, 1977"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [],
+   "inputs": [
+    {
+     "b": "D000029|nucleotide:GTP_bound|plasma_membrane"
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000029|nucleotide:GDP_bound|plasma_membrane"
+    },
+    {
+     "b": "D000037|cytosol",
+     "minor": true
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000005",
+   "rule": "D000031/rule/cyclization",
+   "label": "cAMP 합성",
+   "action": "고리화",
+   "text": "활성 아데닐산 고리화효소가 ATP 를 cAMP 와 피로인산(PPi)으로 바꾼다.",
+   "effect": {
+    "type": "convert",
+    "consumes": [
+     "D000032"
+    ],
+    "produces": [
+     "D000039",
+     "D000122"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1074/jbc.272.44.27787",
+      "citation": "Dessauer & Gilman, 1997"
+     },
+     {
+      "db": "PMID",
+      "id": "9346923",
+      "citation": "Dessauer & Gilman, 1997"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1126/science.278.5345.1907",
+      "citation": "Tesmer et al., 1997"
+     },
+     {
+      "db": "PMID",
+      "id": "9417641",
+      "citation": "Tesmer et al., 1997"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [
+    {
+     "b": "D000031|gs_site:bound|plasma_membrane"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000032|cytosol"
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000039|cytosol"
+    },
+    {
+     "b": "D000122|cytosol",
+     "minor": true
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000006",
+   "rule": "D000042/rule/camp_release",
+   "label": "PKA 활성화",
+   "action": "해리",
+   "text": "cAMP 가 조절 소단위마다 두 자리(A·B)에 결합하면 촉매 소단위 두 개가 떨어져 나와 활성이 된다.",
+   "effect": {
+    "type": "dissociate",
+    "partner": "D000039",
+    "partner_site": {
+     "component": "D000056",
+     "sites": [
+      "cnb_a",
+      "cnb_b"
+     ]
+    }
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1074/jbc.273.46.30448",
+      "citation": "Zhao et al., 1998"
+     },
+     {
+      "db": "PMID",
+      "id": "9804812",
+      "citation": "Zhao et al., 1998"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1021/bi00376a003",
+      "citation": "Weber et al., 1987"
+     },
+     {
+      "db": "PMID",
+      "id": "3030405",
+      "citation": "Weber et al., 1987"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1016/s0021-9258(17)33447-6",
+      "citation": "Rangel-Aldao & Rosen, 1976"
+     },
+     {
+      "db": "PMID",
+      "id": "179996",
+      "citation": "Rangel-Aldao & Rosen, 1976"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [],
+   "inputs": [
+    {
+     "b": "D000042|cytosol"
+    },
+    {
+     "b": "D000039|cytosol",
+     "n": 4
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000056|cnb_a:bound|cnb_b:bound|cytosol",
+     "n": 2
+    },
+    {
+     "b": "D000057|cytosol",
+     "n": 2
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000007",
+   "rule": "D000049/rule/camp_hydrolysis",
+   "label": "cAMP 분해 (신호 종료)",
+   "action": "가수분해",
+   "text": "포스포다이에스터레이스가 cAMP 를 AMP 로 바꿔 신호를 끈다.",
+   "effect": {
+    "type": "convert",
+    "consumes": [
+     "D000039"
+    ],
+    "produces": [
+     "D000034"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "curated",
+    "sources": [
+     {
+      "db": "DOI",
+      "id": "10.1073/pnas.95.15.8991",
+      "citation": "Soderling, Bayuga & Beavo, 1998"
+     },
+     {
+      "db": "PMID",
+      "id": "9671792",
+      "citation": "Soderling, Bayuga & Beavo, 1998"
+     },
+     {
+      "db": "DOI",
+      "id": "10.1124/pr.58.3.5",
+      "citation": "Bender & Beavo, 2006"
+     },
+     {
+      "db": "PMID",
+      "id": "16968949",
+      "citation": "Bender & Beavo, 2006"
+     }
+    ]
+   },
+   "regulators": [],
+   "agents": [
+    {
+     "b": "D000049|cytosol"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000039|cytosol"
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000034|cytosol"
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000008",
+   "rule": "D000057/rule/phk_phos",
+   "label": "인산화효소 키네이스 활성화",
+   "action": "인산화",
+   "text": "풀려난 PKA 촉매 소단위가 인산화효소 키네이스의 조절 소단위를 인산화해 활성화한다.",
+   "effect": {
+    "type": "modify",
+    "target": "D000043",
+    "site": "pka_phos",
+    "add": [
+     "phosphorylated"
+    ]
+   },
+   "with": {
+    "consumes": [
+     "D000032"
+    ],
+    "produces": [
+     "D000033"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "asserted"
+   },
+   "regulators": [],
+   "agents": [
+    {
+     "b": "D000057|cytosol"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000043|cytosol"
+    },
+    {
+     "b": "D000032|cytosol",
+     "minor": true
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000043|pka_phos:phosphorylated|cytosol"
+    },
+    {
+     "b": "D000033|cytosol",
+     "minor": true
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000009",
+   "rule": "D000043/rule/gp_phos",
+   "label": "글리코겐 인산화효소 활성화",
+   "action": "인산화",
+   "text": "활성 인산화효소 키네이스(γ 촉매 소단위)가 글리코겐 인산화효소 b형을 인산화해 활성 a형으로 바꾼다.",
+   "effect": {
+    "type": "modify",
+    "target": "D000044",
+    "site": "reg_phos",
+    "add": [
+     "phosphorylated"
+    ]
+   },
+   "with": {
+    "consumes": [
+     "D000032"
+    ],
+    "produces": [
+     "D000033"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "asserted"
+   },
+   "regulators": [],
+   "agents": [
+    {
+     "b": "D000043|pka_phos:phosphorylated|cytosol"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000044|cytosol"
+    },
+    {
+     "b": "D000032|cytosol",
+     "minor": true
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000044|reg_phos:phosphorylated|cytosol"
+    },
+    {
+     "b": "D000033|cytosol",
+     "minor": true
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000010",
+   "rule": "D000044/rule/phosphorolysis",
+   "label": "글리코겐 가인산분해",
+   "action": "가인산분해",
+   "text": "a형 글리코겐 인산화효소가 글리코겐 말단의 포도당 잔기를 무기 인산으로 떼어 포도당-1-인산을 만든다. 효소 자신은 변하지 않고 반복 작용한다.",
+   "effect": {
+    "type": "convert",
+    "consumes": [
+     "D000047"
+    ],
+    "produces": [
+     "D000048"
+    ]
+   },
+   "with": {
+    "consumes": [
+     "D000037"
+    ],
+    "produces": []
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "asserted"
+   },
+   "regulators": [
+    {
+     "b": "D000046|cytosol"
+    }
+   ],
+   "agents": [
+    {
+     "b": "D000044|reg_phos:phosphorylated|cytosol"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000047|glycogen_granule"
+    },
+    {
+     "b": "D000037|cytosol",
+     "minor": true
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000048|cytosol"
+    },
+    {
+     "b": "D000047|glycogen_granule",
+     "minor": true
+    }
+   ],
+   "context": null
+  },
+  {
+   "id": "S000011",
+   "rule": "D000052/rule/gp_dephos",
+   "label": "포스포릴레이스 비활성화",
+   "action": "탈인산화",
+   "text": "PP1 이 a형 글리코겐 인산화효소에서 인산기를 떼어 b형으로 되돌린다.",
+   "effect": {
+    "type": "modify",
+    "target": "D000044",
+    "site": "reg_phos",
+    "remove": [
+     "phosphorylated"
+    ]
+   },
+   "with": {
+    "consumes": [],
+    "produces": [
+     "D000037"
+    ]
+   },
+   "kinetics": null,
+   "evidence": {
+    "level": "asserted"
+   },
+   "regulators": [
+    {
+     "b": "D000046|cytosol"
+    }
+   ],
+   "agents": [
+    {
+     "b": "D000052|cytosol"
+    }
+   ],
+   "inputs": [
+    {
+     "b": "D000044|reg_phos:phosphorylated|cytosol"
+    }
+   ],
+   "outputs": [
+    {
+     "b": "D000044|cytosol"
+    },
+    {
+     "b": "D000037|cytosol",
+     "minor": true
+    }
+   ],
+   "context": null
+  }
+ ],
+ "runs": {
+  "none": {
+   "file": null,
+   "scenarioRaw": null,
+   "resolved": null,
+   "pick": [
+    0,
+    0.3,
+    0.6,
+    1.2,
+    3,
+    6,
+    15,
+    30,
+    60
+   ],
+   "traj": {
+    "D000027|extracellular": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000030|plasma_membrane": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000035|cytosol": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000031|plasma_membrane": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000032|cytosol": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000042|cytosol": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000049|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000043|cytosol": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000047|glycogen_granule": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000037|cytosol": [
+     1000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000
+    ],
+    "D000052|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000029|nucleotide:GDP_bound|plasma_membrane": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000044|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000030|ligand:bound|plasma_membrane": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000029|nucleotide:GTP_bound|plasma_membrane": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000036|cytosol": [
+     1000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000
+    ],
+    "D000031|gs_site:bound|plasma_membrane": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000039|cytosol": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000122|cytosol": [
+     1000,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500
+    ],
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": [
+     0,
+     20,
+     20,
+     20,
+     20,
+     20,
+     20,
+     20,
+     20
+    ],
+    "D000057|cytosol": [
+     0,
+     20,
+     20,
+     20,
+     20,
+     20,
+     20,
+     20,
+     20
+    ],
+    "D000034|cytosol": [
+     0,
+     460,
+     460,
+     460,
+     460,
+     460,
+     460,
+     460,
+     460
+    ],
+    "D000043|pka_phos:phosphorylated|cytosol": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000033|cytosol": [
+     1000,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500
+    ],
+    "D000044|reg_phos:phosphorylated|cytosol": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000048|cytosol": [
+     0,
+     490,
+     490,
+     490,
+     490,
+     490,
+     490,
+     490,
+     490
+    ],
+    "D000046|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000144|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000167|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000145|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000168|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ]
+   },
+   "start": {
+    "D000027|extracellular": 10,
+    "D000030|plasma_membrane": 10,
+    "D000035|cytosol": 1000,
+    "D000031|plasma_membrane": 10,
+    "D000032|cytosol": 1000,
+    "D000042|cytosol": 10,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 10,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 1000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10,
+    "D000044|cytosol": 10,
+    "D000030|ligand:bound|plasma_membrane": 0,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000036|cytosol": 1000,
+    "D000031|gs_site:bound|plasma_membrane": 0,
+    "D000039|cytosol": 0,
+    "D000122|cytosol": 1000,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0,
+    "D000057|cytosol": 0,
+    "D000034|cytosol": 0,
+    "D000043|pka_phos:phosphorylated|cytosol": 0,
+    "D000033|cytosol": 1000,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 0,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "final": {
+    "D000027|extracellular": 0,
+    "D000030|plasma_membrane": 0,
+    "D000035|cytosol": 0,
+    "D000031|plasma_membrane": 0,
+    "D000032|cytosol": 0,
+    "D000042|cytosol": 0,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 0,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 2000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10,
+    "D000044|cytosol": 10,
+    "D000030|ligand:bound|plasma_membrane": 10,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000036|cytosol": 2000,
+    "D000031|gs_site:bound|plasma_membrane": 10,
+    "D000039|cytosol": 0,
+    "D000122|cytosol": 1500,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 20,
+    "D000057|cytosol": 20,
+    "D000034|cytosol": 460,
+    "D000043|pka_phos:phosphorylated|cytosol": 10,
+    "D000033|cytosol": 1500,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 490,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "cum": {
+    "S000001": 10,
+    "S000002": 1000,
+    "S000003": 10,
+    "S000004": 1000,
+    "S000005": 500,
+    "S000006": 10,
+    "S000008": 10,
+    "S000009": 490,
+    "S000010": 490,
+    "S000011": 490,
+    "S000007": 460
+   },
+   "firstFire": {
+    "S000001": 0.001,
+    "S000002": 0.001,
+    "S000003": 0.001,
+    "S000004": 0.001,
+    "S000005": 0.001,
+    "S000006": 0.001,
+    "S000008": 0.001,
+    "S000009": 0.001,
+    "S000010": 0.001,
+    "S000011": 0.001,
+    "S000007": 0.005
+   },
+   "firstReach": {
+    "D000030|ligand:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0.001,
+    "D000036|cytosol": 0.001,
+    "D000031|gs_site:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 0.001,
+    "D000037|cytosol": 0.001,
+    "D000039|cytosol": 0.001,
+    "D000122|cytosol": 0.001,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0.001,
+    "D000057|cytosol": 0.001,
+    "D000043|pka_phos:phosphorylated|cytosol": 0.001,
+    "D000033|cytosol": 0.001,
+    "D000044|reg_phos:phosphorylated|cytosol": 0.001,
+    "D000048|cytosol": 0.001,
+    "D000047|glycogen_granule": 0.001,
+    "D000044|cytosol": 0.001,
+    "D000034|cytosol": 0.005
+   },
+   "events": [
+    {
+     "t": 0.05,
+     "type": "stalled",
+     "step": "S000009",
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "t": 0.05,
+     "type": "exhausted",
+     "bundle": "D000032|cytosol"
+    },
+    {
+     "t": 0.051,
+     "type": "stalled",
+     "step": "S000005",
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "t": 0.051,
+     "type": "stalled",
+     "step": "S000009",
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "t": 0.1,
+     "type": "exhausted",
+     "bundle": "D000035|cytosol"
+    },
+    {
+     "t": 0.101,
+     "type": "stalled",
+     "step": "S000002",
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   ],
+   "stalls": {
+    "S000009": {
+     "t": 0.05,
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    "S000005": {
+     "t": 0.051,
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    "S000002": {
+     "t": 0.101,
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   },
+   "negatives": {},
+   "stiff": {},
+   "kinUsed": [],
+   "kineticGaps": [
+    "D000123/rule/gtp_regeneration",
+    "D000124/rule/amp_recharge",
+    "D000125/rule/ppi_hydrolysis",
+    "D000126/rule/atp_supply",
+    "D000170/rule/aerobic_glycolysis",
+    "D000171/rule/pyruvate_reduction",
+    "D000173/rule/atp_hydrolysis_load",
+    "S000001",
+    "S000002",
+    "S000003",
+    "S000004",
+    "S000005",
+    "S000006",
+    "S000007",
+    "S000008",
+    "S000009",
+    "S000010",
+    "S000011"
+   ],
+   "reservoirs": {
+    "D000035|cytosol": {
+     "start": 1000,
+     "min": 0,
+     "max": 1000,
+     "state": "exhausted",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "episodes": 1,
+     "firstExhausted": 0.1,
+     "lastExhausted": 0.1,
+     "end": 0
+    },
+    "D000036|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 2000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 2000
+    },
+    "D000037|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 2000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 2000
+    },
+    "D000122|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1500,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1500
+    },
+    "D000032|cytosol": {
+     "start": 1000,
+     "min": 0,
+     "max": 1000,
+     "state": "exhausted",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "episodes": 1,
+     "firstExhausted": 0.05,
+     "lastExhausted": 0.05,
+     "end": 0
+    },
+    "D000033|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1500,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1500
+    },
+    "D000047|glycogen_granule": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000046|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000144|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000167|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000145|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000168|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    }
+   },
+   "ledger": {
+    "D000027|extracellular": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|plasma_membrane": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|ligand:bound|plasma_membrane": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GDP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000035|cytosol": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GTP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000036|cytosol": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|plasma_membrane": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|gs_site:bound|plasma_membrane": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000037|cytosol": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000032|cytosol": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000039|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000122|cytosol": {
+     "reaction": 500,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000042|cytosol": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": {
+     "reaction": 20,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000057|cytosol": {
+     "reaction": 20,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|cytosol": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|pka_phos:phosphorylated|cytosol": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000033|cytosol": {
+     "reaction": 500,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|reg_phos:phosphorylated|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000047|glycogen_granule": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000048|cytosol": {
+     "reaction": 490,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000034|cytosol": {
+     "reaction": 460,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    }
+   },
+   "stepCycles": [
+    [
+     "S000002",
+     "S000004"
+    ],
+    [
+     "S000009",
+     "S000011"
+    ]
+   ],
+   "peakRate": 990,
+   "zeroAt": {
+    "D000032|cytosol": 0.05,
+    "D000035|cytosol": 0.1
+   },
+   "approx": [
+    "S000001",
+    "S000002",
+    "S000003",
+    "S000004",
+    "S000005"
+   ],
+   "supplies": [
+    {
+     "ref": "D000123/rule/gtp_regeneration",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000036|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000035|cytosol",
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000124/rule/amp_recharge",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000034|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000125/rule/ppi_hydrolysis",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000122|cytosol"
+     ],
+     "produces": [
+      "D000037|cytosol"
+     ]
+    },
+    {
+     "ref": "D000126/rule/atp_supply",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000170/rule/aerobic_glycolysis",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000046|cytosol",
+      "D000144|cytosol",
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000167|cytosol",
+      "D000145|cytosol",
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000171/rule/pyruvate_reduction",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000167|cytosol",
+      "D000145|cytosol"
+     ],
+     "produces": [
+      "D000168|cytosol",
+      "D000144|cytosol"
+     ]
+    },
+    {
+     "ref": "D000173/rule/atp_hydrolysis_load",
+     "V": null,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ]
+    }
+   ],
+   "channels": {
+    "covalent": {
+     "D000121": -10
+    },
+    "source": {},
+    "lost": {},
+    "recycle": {},
+    "violation": {}
+   },
+   "facts": [],
+   "modulationGaps": []
+  },
+  "camp-competition": {
+   "file": "examples/scenarios/camp-competition-hypothetical.json",
+   "scenarioRaw": {
+    "name": "cAMP 경쟁 가상 시나리오 (감사 시험용)",
+    "hypothetical": true,
+    "_설명": "가상 값. PKA 활성화(cAMP 4분자 협동 결합)에 binding 법칙을 잘못 쓴 예와 Kd 가 k_off/k_on 과 맞지 않는 예를 일부러 넣어 감사가 잡는지 본다.",
+    "cell": "hepatocyte",
+    "volumes": {
+     "cytosol": {
+      "value": {
+       "assume": "A000332"
+      },
+      "unit": "fL"
+     },
+     "extracellular": {
+      "value": {
+       "assume": "A000346"
+      },
+      "unit": "fL"
+     }
+    },
+    "kinetics": {
+     "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": {
+       "assume": "A000009"
+      },
+      "Km": {
+       "assume": "A000008"
+      },
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000042/rule/camp_release": {
+      "law": "binding",
+      "k_on": {
+       "assume": "A000007"
+      },
+      "k_off": {
+       "assume": "A000006"
+      },
+      "Kd": {
+       "assume": "A000005"
+      },
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     }
+    }
+   },
+   "resolved": {
+    "volumes": {
+     "cytosol": {
+      "value": 4000,
+      "unit": "fL"
+     },
+     "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+     }
+    },
+    "kinetics": {
+     "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000042/rule/camp_release": {
+      "law": "binding",
+      "k_on": 10000000,
+      "k_off": 1,
+      "Kd": 1e-9,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     }
+    },
+    "cell": "hepatocyte"
+   },
+   "pick": [
+    0,
+    0.3,
+    0.6,
+    1.2,
+    3,
+    6,
+    15,
+    30,
+    60
+   ],
+   "traj": {
+    "D000027|extracellular": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000030|plasma_membrane": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000035|cytosol": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000031|plasma_membrane": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000032|cytosol": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000042|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000049|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000043|cytosol": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000047|glycogen_granule": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000037|cytosol": [
+     1000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000
+    ],
+    "D000052|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000029|nucleotide:GDP_bound|plasma_membrane": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000044|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000030|ligand:bound|plasma_membrane": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000029|nucleotide:GTP_bound|plasma_membrane": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000036|cytosol": [
+     1000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000,
+     2000
+    ],
+    "D000031|gs_site:bound|plasma_membrane": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000039|cytosol": [
+     0,
+     499.9971413428797,
+     499.994028505707,
+     499.98780288948825,
+     499.9691265058365,
+     499.93800074970875,
+     499.84463510490093,
+     499.68906443490965,
+     499.3780683082896
+    ],
+    "D000122|cytosol": [
+     1000,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500
+    ],
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": [
+     0,
+     9.671193221269185e-32,
+     2.0808299685743646e-31,
+     4.308168059263527e-31,
+     1.0989516763407624e-30,
+     2.2122879708680874e-30,
+     5.5506338183031654e-30,
+     1.1109004249545662e-29,
+     2.220500369108595e-29
+    ],
+    "D000057|cytosol": [
+     0,
+     9.671193221269185e-32,
+     2.0808299685743646e-31,
+     4.308168059263527e-31,
+     1.0989516763407624e-30,
+     2.2122879708680874e-30,
+     5.5506338183031654e-30,
+     1.1109004249545662e-29,
+     2.220500369108595e-29
+    ],
+    "D000034|cytosol": [
+     0,
+     0.002858657120306522,
+     0.0059714942930140305,
+     0.01219711051175065,
+     0.030873494163212688,
+     0.0619992502910195,
+     0.1553648950986646,
+     0.3109355650900144,
+     0.6219316917104516
+    ],
+    "D000043|pka_phos:phosphorylated|cytosol": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000033|cytosol": [
+     1000,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500,
+     1500
+    ],
+    "D000044|reg_phos:phosphorylated|cytosol": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000048|cytosol": [
+     0,
+     490,
+     490,
+     490,
+     490,
+     490,
+     490,
+     490,
+     490
+    ],
+    "D000046|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000144|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000167|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000145|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000168|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ]
+   },
+   "start": {
+    "D000027|extracellular": 10,
+    "D000030|plasma_membrane": 10,
+    "D000035|cytosol": 1000,
+    "D000031|plasma_membrane": 10,
+    "D000032|cytosol": 1000,
+    "D000042|cytosol": 10,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 10,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 1000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10,
+    "D000044|cytosol": 10,
+    "D000030|ligand:bound|plasma_membrane": 0,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000036|cytosol": 1000,
+    "D000031|gs_site:bound|plasma_membrane": 0,
+    "D000039|cytosol": 0,
+    "D000122|cytosol": 1000,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0,
+    "D000057|cytosol": 0,
+    "D000034|cytosol": 0,
+    "D000043|pka_phos:phosphorylated|cytosol": 0,
+    "D000033|cytosol": 1000,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 0,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "final": {
+    "D000027|extracellular": 0,
+    "D000030|plasma_membrane": 0,
+    "D000035|cytosol": 0,
+    "D000031|plasma_membrane": 0,
+    "D000032|cytosol": 0,
+    "D000042|cytosol": 10,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 0,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 2000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10,
+    "D000044|cytosol": 10,
+    "D000030|ligand:bound|plasma_membrane": 10,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000036|cytosol": 2000,
+    "D000031|gs_site:bound|plasma_membrane": 10,
+    "D000039|cytosol": 499.3780683082896,
+    "D000122|cytosol": 1500,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 2.220500369108595e-29,
+    "D000057|cytosol": 2.220500369108595e-29,
+    "D000034|cytosol": 0.6219316917104516,
+    "D000043|pka_phos:phosphorylated|cytosol": 10,
+    "D000033|cytosol": 1500,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 490,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "cum": {
+    "S000001": 10,
+    "S000002": 1000,
+    "S000003": 10,
+    "S000004": 1000,
+    "S000005": 500,
+    "S000006": 1.1102501845542975e-29,
+    "S000007": 0.6219316917104516,
+    "S000008": 10,
+    "S000009": 490,
+    "S000010": 490,
+    "S000011": 490
+   },
+   "firstFire": {
+    "S000001": 0.001,
+    "S000002": 0.001,
+    "S000003": 0.001,
+    "S000004": 0.001,
+    "S000005": 0.001,
+    "S000006": 0.001,
+    "S000007": 0.001,
+    "S000008": 0.001,
+    "S000009": 0.001,
+    "S000010": 0.001,
+    "S000011": 0.001
+   },
+   "firstReach": {
+    "D000030|ligand:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0.001,
+    "D000036|cytosol": 0.001,
+    "D000031|gs_site:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 0.001,
+    "D000037|cytosol": 0.001,
+    "D000039|cytosol": 0.001,
+    "D000122|cytosol": 0.001,
+    "D000043|pka_phos:phosphorylated|cytosol": 0.001,
+    "D000033|cytosol": 0.001,
+    "D000044|reg_phos:phosphorylated|cytosol": 0.001,
+    "D000048|cytosol": 0.001,
+    "D000047|glycogen_granule": 0.001,
+    "D000044|cytosol": 0.001
+   },
+   "events": [
+    {
+     "t": 0.05,
+     "type": "stalled",
+     "step": "S000009",
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "t": 0.05,
+     "type": "exhausted",
+     "bundle": "D000032|cytosol"
+    },
+    {
+     "t": 0.051,
+     "type": "stalled",
+     "step": "S000005",
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "t": 0.051,
+     "type": "stalled",
+     "step": "S000009",
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "t": 0.1,
+     "type": "exhausted",
+     "bundle": "D000035|cytosol"
+    },
+    {
+     "t": 0.101,
+     "type": "stalled",
+     "step": "S000002",
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   ],
+   "stalls": {
+    "S000009": {
+     "t": 0.05,
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    "S000005": {
+     "t": 0.051,
+     "by": [
+      "D000032|cytosol"
+     ]
+    },
+    "S000002": {
+     "t": 0.101,
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   },
+   "negatives": {},
+   "stiff": {
+    "S000006": 1.8562461213066432e-35,
+    "S000007": 2.0756652171593496e-8
+   },
+   "kinUsed": [
+    {
+     "ref": "D000042/rule/camp_release",
+     "step": "S000006",
+     "owner": "D000042",
+     "kin": {
+      "law": "binding",
+      "k_on": 10000000,
+      "k_off": 1,
+      "Kd": 1e-9,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000049/rule/camp_hydrolysis",
+     "step": "S000007",
+     "owner": "D000049",
+     "kin": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    }
+   ],
+   "kineticGaps": [
+    "D000123/rule/gtp_regeneration",
+    "D000124/rule/amp_recharge",
+    "D000125/rule/ppi_hydrolysis",
+    "D000126/rule/atp_supply",
+    "D000170/rule/aerobic_glycolysis",
+    "D000171/rule/pyruvate_reduction",
+    "D000173/rule/atp_hydrolysis_load",
+    "S000001",
+    "S000002",
+    "S000003",
+    "S000004",
+    "S000005",
+    "S000008",
+    "S000009",
+    "S000010",
+    "S000011"
+   ],
+   "reservoirs": {
+    "D000035|cytosol": {
+     "start": 1000,
+     "min": 0,
+     "max": 1000,
+     "state": "exhausted",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "episodes": 1,
+     "firstExhausted": 0.1,
+     "lastExhausted": 0.1,
+     "end": 0
+    },
+    "D000036|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 2000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 2000
+    },
+    "D000037|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 2000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 2000
+    },
+    "D000122|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1500,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1500
+    },
+    "D000032|cytosol": {
+     "start": 1000,
+     "min": 0,
+     "max": 1000,
+     "state": "exhausted",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "episodes": 1,
+     "firstExhausted": 0.05,
+     "lastExhausted": 0.05,
+     "end": 0
+    },
+    "D000033|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1500,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1500
+    },
+    "D000047|glycogen_granule": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000046|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000144|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000167|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000145|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000168|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    }
+   },
+   "ledger": {
+    "D000027|extracellular": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|plasma_membrane": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|ligand:bound|plasma_membrane": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GDP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000035|cytosol": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GTP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000036|cytosol": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|plasma_membrane": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|gs_site:bound|plasma_membrane": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000037|cytosol": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000032|cytosol": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000039|cytosol": {
+     "reaction": 499.3780683082896,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000122|cytosol": {
+     "reaction": 500,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000042|cytosol": {
+     "reaction": -1.1102501845542975e-29,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": {
+     "reaction": 2.220500369108595e-29,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000057|cytosol": {
+     "reaction": 2.220500369108595e-29,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000034|cytosol": {
+     "reaction": 0.6219316917104516,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|cytosol": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|pka_phos:phosphorylated|cytosol": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000033|cytosol": {
+     "reaction": 500,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|reg_phos:phosphorylated|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000047|glycogen_granule": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000048|cytosol": {
+     "reaction": 490,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    }
+   },
+   "stepCycles": [
+    [
+     "S000002",
+     "S000004"
+    ],
+    [
+     "S000009",
+     "S000011"
+    ]
+   ],
+   "peakRate": 990,
+   "zeroAt": {
+    "D000032|cytosol": 0.05,
+    "D000035|cytosol": 0.1
+   },
+   "approx": [
+    "S000001",
+    "S000002",
+    "S000003",
+    "S000004",
+    "S000005"
+   ],
+   "supplies": [
+    {
+     "ref": "D000123/rule/gtp_regeneration",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000036|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000035|cytosol",
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000124/rule/amp_recharge",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000034|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000125/rule/ppi_hydrolysis",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000122|cytosol"
+     ],
+     "produces": [
+      "D000037|cytosol"
+     ]
+    },
+    {
+     "ref": "D000126/rule/atp_supply",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000170/rule/aerobic_glycolysis",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000046|cytosol",
+      "D000144|cytosol",
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000167|cytosol",
+      "D000145|cytosol",
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000171/rule/pyruvate_reduction",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000167|cytosol",
+      "D000145|cytosol"
+     ],
+     "produces": [
+      "D000168|cytosol",
+      "D000144|cytosol"
+     ]
+    },
+    {
+     "ref": "D000173/rule/atp_hydrolysis_load",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ]
+    }
+   ],
+   "channels": {
+    "covalent": {
+     "D000121": -10
+    },
+    "source": {},
+    "lost": {},
+    "recycle": {},
+    "violation": {}
+   },
+   "facts": [],
+   "modulationGaps": []
+  },
+  "gtp-exhaustion": {
+   "file": "examples/scenarios/gtp-exhaustion-hypothetical.json",
+   "scenarioRaw": {
+    "name": "GTP 고갈 가상 시나리오 (공급 없음)",
+    "_설명": "가상 값. 공급 규칙에 속도를 주지 않아 GTP 저장소가 Gs 순환에 소비만 되고 고갈된다 — 엔진이 고갈을 멈춤(stall)으로 처리하고 무너지지 않는지 본다. data/db.json 에 들어가지 않는다.",
+    "hypothetical": true,
+    "cell": "hepatocyte",
+    "volumes": {
+     "cytosol": {
+      "value": {
+       "assume": "A000332"
+      },
+      "unit": "fL"
+     },
+     "extracellular": {
+      "value": {
+       "assume": "A000346"
+      },
+      "unit": "fL"
+     }
+    },
+    "amounts": {
+     "D000027|extracellular": {
+      "assume": "A000188"
+     },
+     "D000030|plasma_membrane": {
+      "assume": "A000190"
+     },
+     "D000029|nucleotide:GDP_bound|plasma_membrane": {
+      "assume": "A000189"
+     },
+     "D000031|plasma_membrane": {
+      "assume": "A000191"
+     }
+    },
+    "reservoirs": {
+     "D000035|cytosol": {
+      "assume": "A000271"
+     },
+     "D000036|cytosol": {
+      "assume": "A000273"
+     },
+     "D000032|cytosol": {
+      "assume": "A000265"
+     },
+     "D000033|cytosol": {
+      "assume": "A000267"
+     },
+     "D000034|cytosol": {
+      "assume": "A000269"
+     },
+     "D000037|cytosol": {
+      "assume": "A000277"
+     },
+     "D000122|cytosol": {
+      "assume": "A000283"
+     }
+    },
+    "kinetics": {
+     "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000002"
+      },
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000001"
+      },
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": {
+       "assume": "A000004"
+      },
+      "Km": {
+       "assume": "A000003"
+      },
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": {
+       "assume": "A000009"
+      },
+      "Km": {
+       "assume": "A000008"
+      },
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     }
+    }
+   },
+   "resolved": {
+    "volumes": {
+     "cytosol": {
+      "value": 4000,
+      "unit": "fL"
+     },
+     "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+     }
+    },
+    "amounts": {
+     "D000027|extracellular": 2000,
+     "D000030|plasma_membrane": 1000,
+     "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+     "D000031|plasma_membrane": 1000
+    },
+    "reservoirs": {
+     "D000035|cytosol": 20000,
+     "D000036|cytosol": 0,
+     "D000032|cytosol": 2000000,
+     "D000033|cytosol": 200000,
+     "D000034|cytosol": 0,
+     "D000037|cytosol": 2000000,
+     "D000122|cytosol": 0
+    },
+    "kinetics": {
+     "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": 100000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": 0.5,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.0001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     }
+    },
+    "cell": "hepatocyte"
+   },
+   "pick": [
+    0,
+    0.3,
+    0.6,
+    1.2,
+    3,
+    6,
+    15,
+    30,
+    60
+   ],
+   "traj": {
+    "D000027|extracellular": [
+     2000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000030|plasma_membrane": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000035|cytosol": [
+     20000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000031|plasma_membrane": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000032|cytosol": [
+     2000000,
+     1996977.657763193,
+     1993965.3339772657,
+     1987940.7417588157,
+     1969867.4079555369,
+     1939746.661289108,
+     1849395.4970045965,
+     1698847.162942829,
+     1397889.1742285464
+    ],
+    "D000042|cytosol": [
+     10,
+     6.914440797827368,
+     3.8334943157220716,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000049|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000043|cytosol": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000047|glycogen_granule": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000037|cytosol": [
+     2000000,
+     2020000,
+     2020000,
+     2020000,
+     2020000,
+     2020000,
+     2020000,
+     2020000,
+     2020000
+    ],
+    "D000052|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000029|nucleotide:GDP_bound|plasma_membrane": [
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000
+    ],
+    "D000044|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000036|cytosol": [
+     0,
+     20000,
+     20000,
+     20000,
+     20000,
+     20000,
+     20000,
+     20000,
+     20000
+    ],
+    "D000033|cytosol": [
+     200000,
+     203010,
+     206010,
+     212010,
+     230010,
+     260010,
+     350010,
+     500010,
+     800010
+    ],
+    "D000034|cytosol": [
+     0,
+     0,
+     0,
+     0.000021824437977162384,
+     0.0017404507922255527,
+     0.010652857915711005,
+     0.08168201153501008,
+     0.34073938084424726,
+     1.3341915013498324
+    ],
+    "D000122|cytosol": [
+     0,
+     12.342236808690464,
+     24.666022737111653,
+     49.25824118699618,
+     122.59204446430506,
+     243.33871089262527,
+     594.5029954003468,
+     1142.8370571751016,
+     2100.825771464291
+    ],
+    "D000030|ligand:bound|plasma_membrane": [
+     0,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000029|nucleotide:GTP_bound|plasma_membrane": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000031|gs_site:bound|plasma_membrane": [
+     0,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000039|cytosol": [
+     0,
+     0,
+     0,
+     9.258219362558243,
+     82.590304013513,
+     203.3280580347104,
+     554.4213133888146,
+     1102.4963177942584,
+     2059.491579962927
+    ],
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": [
+     0,
+     6.171118404345232,
+     12.333011368555827,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997
+    ],
+    "D000057|cytosol": [
+     0,
+     6.171118404345232,
+     12.333011368555827,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997,
+     19.99999999999997
+    ],
+    "D000043|pka_phos:phosphorylated|cytosol": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000044|reg_phos:phosphorylated|cytosol": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000048|cytosol": [
+     0,
+     3000,
+     6000,
+     12000,
+     30000,
+     60000,
+     150000,
+     300000,
+     600000
+    ],
+    "D000046|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000144|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000167|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000145|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000168|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ]
+   },
+   "start": {
+    "D000027|extracellular": 2000,
+    "D000030|plasma_membrane": 1000,
+    "D000035|cytosol": 20000,
+    "D000031|plasma_membrane": 1000,
+    "D000032|cytosol": 2000000,
+    "D000042|cytosol": 10,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 10,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 2000000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+    "D000044|cytosol": 10,
+    "D000036|cytosol": 0,
+    "D000033|cytosol": 200000,
+    "D000034|cytosol": 0,
+    "D000122|cytosol": 0,
+    "D000030|ligand:bound|plasma_membrane": 0,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000031|gs_site:bound|plasma_membrane": 0,
+    "D000039|cytosol": 0,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0,
+    "D000057|cytosol": 0,
+    "D000043|pka_phos:phosphorylated|cytosol": 0,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 0,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "final": {
+    "D000027|extracellular": 1000,
+    "D000030|plasma_membrane": 0,
+    "D000035|cytosol": 0,
+    "D000031|plasma_membrane": 0,
+    "D000032|cytosol": 1397889.1742285464,
+    "D000042|cytosol": 0,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 0,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 2020000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+    "D000044|cytosol": 10,
+    "D000036|cytosol": 20000,
+    "D000033|cytosol": 800010,
+    "D000034|cytosol": 1.3341915013498324,
+    "D000122|cytosol": 2100.825771464291,
+    "D000030|ligand:bound|plasma_membrane": 1000,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000031|gs_site:bound|plasma_membrane": 1000,
+    "D000039|cytosol": 2059.491579962927,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 19.99999999999997,
+    "D000057|cytosol": 19.99999999999997,
+    "D000043|pka_phos:phosphorylated|cytosol": 10,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 600000,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "cum": {
+    "S000001": 1000,
+    "S000002": 20000,
+    "S000003": 1000,
+    "S000004": 20000,
+    "S000005": 2100.825771464291,
+    "S000006": 9.999999999999986,
+    "S000008": 10,
+    "S000009": 600000,
+    "S000010": 600000,
+    "S000011": 600000,
+    "S000007": 1.3341915013498324
+   },
+   "firstFire": {
+    "S000001": 0.001,
+    "S000002": 0.001,
+    "S000003": 0.001,
+    "S000004": 0.001,
+    "S000005": 0.001,
+    "S000006": 0.001,
+    "S000008": 0.001,
+    "S000009": 0.001,
+    "S000010": 0.001,
+    "S000011": 0.001,
+    "S000007": 0.974
+   },
+   "firstReach": {
+    "D000030|ligand:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0.001,
+    "D000036|cytosol": 0.001,
+    "D000031|gs_site:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 0.001,
+    "D000037|cytosol": 0.001,
+    "D000043|pka_phos:phosphorylated|cytosol": 0.001,
+    "D000033|cytosol": 0.001,
+    "D000044|reg_phos:phosphorylated|cytosol": 0.001,
+    "D000048|cytosol": 0.001,
+    "D000047|glycogen_granule": 0.001,
+    "D000044|cytosol": 0.001,
+    "D000122|cytosol": 0.025,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0.049,
+    "D000057|cytosol": 0.049,
+    "D000039|cytosol": 0.999,
+    "D000034|cytosol": 51.683
+   },
+   "events": [
+    {
+     "t": 0.002,
+     "type": "exhausted",
+     "bundle": "D000035|cytosol"
+    },
+    {
+     "t": 0.003,
+     "type": "stalled",
+     "step": "S000002",
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   ],
+   "stalls": {
+    "S000002": {
+     "t": 0.003,
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   },
+   "negatives": {},
+   "stiff": {
+    "S000005": 2.0636978535814187e-8,
+    "S000007": 2.0756738306613686e-8
+   },
+   "kinUsed": [
+    {
+     "ref": "D000030/rule/gs_gef",
+     "step": "S000002",
+     "owner": "D000030",
+     "kin": {
+      "law": "mass_action",
+      "k": 100000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000029/rule/gtpase",
+     "step": "S000004",
+     "owner": "D000029",
+     "kin": {
+      "law": "mass_action",
+      "k": 0.5,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000031/rule/cyclization",
+     "step": "S000005",
+     "owner": "D000031",
+     "kin": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.0001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000049/rule/camp_hydrolysis",
+     "step": "S000007",
+     "owner": "D000049",
+     "kin": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    }
+   ],
+   "kineticGaps": [
+    "D000123/rule/gtp_regeneration",
+    "D000124/rule/amp_recharge",
+    "D000125/rule/ppi_hydrolysis",
+    "D000126/rule/atp_supply",
+    "D000170/rule/aerobic_glycolysis",
+    "D000171/rule/pyruvate_reduction",
+    "D000173/rule/atp_hydrolysis_load",
+    "S000001",
+    "S000003",
+    "S000006",
+    "S000008",
+    "S000009",
+    "S000010",
+    "S000011"
+   ],
+   "reservoirs": {
+    "D000035|cytosol": {
+     "start": 20000,
+     "min": 0,
+     "max": 20000,
+     "state": "exhausted",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "episodes": 1,
+     "firstExhausted": 0.002,
+     "lastExhausted": 0.002,
+     "end": 0
+    },
+    "D000036|cytosol": {
+     "start": 0,
+     "min": 0,
+     "max": 20000,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 20000
+    },
+    "D000037|cytosol": {
+     "start": 2000000,
+     "min": 2000000,
+     "max": 2020000,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 2020000
+    },
+    "D000122|cytosol": {
+     "start": 0,
+     "min": 0,
+     "max": 2100.825771464291,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 2100.825771464291
+    },
+    "D000032|cytosol": {
+     "start": 2000000,
+     "min": 1397889.1742285464,
+     "max": 2000000,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 1397889.1742285464
+    },
+    "D000033|cytosol": {
+     "start": 200000,
+     "min": 200000,
+     "max": 800010,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 800010
+    },
+    "D000047|glycogen_granule": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000046|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000144|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000167|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000145|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000168|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    }
+   },
+   "ledger": {
+    "D000027|extracellular": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|plasma_membrane": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|ligand:bound|plasma_membrane": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GDP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000035|cytosol": {
+     "reaction": -20000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GTP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000036|cytosol": {
+     "reaction": 20000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|plasma_membrane": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|gs_site:bound|plasma_membrane": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000037|cytosol": {
+     "reaction": 20000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000032|cytosol": {
+     "reaction": -602110.8257714623,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000039|cytosol": {
+     "reaction": 2059.491579962927,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000122|cytosol": {
+     "reaction": 2100.825771464291,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000042|cytosol": {
+     "reaction": -9.999999999999986,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": {
+     "reaction": 19.99999999999997,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000057|cytosol": {
+     "reaction": 19.99999999999997,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|cytosol": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|pka_phos:phosphorylated|cytosol": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000033|cytosol": {
+     "reaction": 600010,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|reg_phos:phosphorylated|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000047|glycogen_granule": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000048|cytosol": {
+     "reaction": 600000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000034|cytosol": {
+     "reaction": 1.3341915013498324,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    }
+   },
+   "stepCycles": [
+    [
+     "S000002",
+     "S000004"
+    ],
+    [
+     "S000009",
+     "S000011"
+    ]
+   ],
+   "peakRate": 10000,
+   "zeroAt": {
+    "D000035|cytosol": 0.002
+   },
+   "approx": [
+    "S000001",
+    "S000002",
+    "S000003",
+    "S000004",
+    "S000005"
+   ],
+   "supplies": [
+    {
+     "ref": "D000123/rule/gtp_regeneration",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000036|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000035|cytosol",
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000124/rule/amp_recharge",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000034|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000125/rule/ppi_hydrolysis",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000122|cytosol"
+     ],
+     "produces": [
+      "D000037|cytosol"
+     ]
+    },
+    {
+     "ref": "D000126/rule/atp_supply",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000170/rule/aerobic_glycolysis",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000046|cytosol",
+      "D000144|cytosol",
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000167|cytosol",
+      "D000145|cytosol",
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000171/rule/pyruvate_reduction",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000167|cytosol",
+      "D000145|cytosol"
+     ],
+     "produces": [
+      "D000168|cytosol",
+      "D000144|cytosol"
+     ]
+    },
+    {
+     "ref": "D000173/rule/atp_hydrolysis_load",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ]
+    }
+   ],
+   "channels": {
+    "covalent": {
+     "D000121": -10
+    },
+    "source": {},
+    "lost": {},
+    "recycle": {},
+    "violation": {}
+   },
+   "facts": [],
+   "modulationGaps": []
+  },
+  "gtp-regeneration": {
+   "file": "examples/scenarios/gtp-regeneration-hypothetical.json",
+   "scenarioRaw": {
+    "name": "GTP 재생 가상 시나리오 (공급 있음)",
+    "_설명": "가상 값. 고갈 시나리오와 같고, NDPK(GDP + ATP → GTP + ADP)·ATP 재생(ADP + Pi → ATP)·아데닐산 키네이스·PPase 공급 규칙에 가상 속도를 주어 GTP–GDP 순환과 ATP 순환이 닫히는지 본다.",
+    "hypothetical": true,
+    "cell": "hepatocyte",
+    "volumes": {
+     "cytosol": {
+      "value": {
+       "assume": "A000332"
+      },
+      "unit": "fL"
+     },
+     "extracellular": {
+      "value": {
+       "assume": "A000346"
+      },
+      "unit": "fL"
+     }
+    },
+    "amounts": {
+     "D000027|extracellular": {
+      "assume": "A000188"
+     },
+     "D000030|plasma_membrane": {
+      "assume": "A000190"
+     },
+     "D000029|nucleotide:GDP_bound|plasma_membrane": {
+      "assume": "A000189"
+     },
+     "D000031|plasma_membrane": {
+      "assume": "A000191"
+     }
+    },
+    "reservoirs": {
+     "D000035|cytosol": {
+      "assume": "A000271"
+     },
+     "D000036|cytosol": {
+      "assume": "A000273"
+     },
+     "D000032|cytosol": {
+      "assume": "A000265"
+     },
+     "D000033|cytosol": {
+      "assume": "A000267"
+     },
+     "D000034|cytosol": {
+      "assume": "A000269"
+     },
+     "D000037|cytosol": {
+      "assume": "A000277"
+     },
+     "D000122|cytosol": {
+      "assume": "A000283"
+     }
+    },
+    "kinetics": {
+     "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000002"
+      },
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000001"
+      },
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": {
+       "assume": "A000004"
+      },
+      "Km": {
+       "assume": "A000003"
+      },
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": {
+       "assume": "A000009"
+      },
+      "Km": {
+       "assume": "A000008"
+      },
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000123/rule/gtp_regeneration": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000050"
+      },
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000126/rule/atp_supply": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000055"
+      },
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000124/rule/amp_recharge": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000052"
+      },
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000125/rule/ppi_hydrolysis": {
+      "law": "mass_action",
+      "k": {
+       "assume": "A000053"
+      },
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     }
+    }
+   },
+   "resolved": {
+    "volumes": {
+     "cytosol": {
+      "value": 4000,
+      "unit": "fL"
+     },
+     "extracellular": {
+      "value": 10000,
+      "unit": "fL"
+     }
+    },
+    "amounts": {
+     "D000027|extracellular": 2000,
+     "D000030|plasma_membrane": 1000,
+     "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+     "D000031|plasma_membrane": 1000
+    },
+    "reservoirs": {
+     "D000035|cytosol": 20000,
+     "D000036|cytosol": 0,
+     "D000032|cytosol": 2000000,
+     "D000033|cytosol": 200000,
+     "D000034|cytosol": 0,
+     "D000037|cytosol": 2000000,
+     "D000122|cytosol": 0
+    },
+    "kinetics": {
+     "D000030/rule/gs_gef": {
+      "law": "mass_action",
+      "k": 100000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000029/rule/gtpase": {
+      "law": "mass_action",
+      "k": 0.5,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000031/rule/cyclization": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.0001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000049/rule/camp_hydrolysis": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000123/rule/gtp_regeneration": {
+      "law": "mass_action",
+      "k": 1000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000126/rule/atp_supply": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000124/rule/amp_recharge": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     },
+     "D000125/rule/ppi_hydrolysis": {
+      "law": "mass_action",
+      "k": 10,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      }
+     }
+    },
+    "cell": "hepatocyte"
+   },
+   "pick": [
+    0,
+    0.3,
+    0.6,
+    1.2,
+    3,
+    6,
+    15,
+    30,
+    60
+   ],
+   "traj": {
+    "D000027|extracellular": [
+     2000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000030|plasma_membrane": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000035|cytosol": [
+     20000,
+     16.581115179168727,
+     16.557512701437368,
+     16.512200626737755,
+     16.390095720732628,
+     16.225016383210626,
+     15.912327920297193,
+     15.643316648655768,
+     15.25642583440522
+    ],
+    "D000031|plasma_membrane": [
+     1000,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000032|cytosol": [
+     2000000,
+     1997076.6265144853,
+     1994234.137352159,
+     1988777.1198186197,
+     1974071.7797491406,
+     1954190.8766389117,
+     1916532.6065934324,
+     1884133.4527446476,
+     1837535.3153376668
+    ],
+    "D000042|cytosol": [
+     10,
+     6.914369244507298,
+     3.8331515554366153,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000049|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000043|cytosol": [
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000047|glycogen_granule": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000037|cytosol": [
+     2000000,
+     2019901.3907851772,
+     2019755.859655147,
+     2019237.5238745587,
+     2016016.4650442514,
+     2006018.9047093152,
+     1954035.9015600132,
+     1837021.8712251643,
+     1584769.6215783297
+    ],
+    "D000052|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000029|nucleotide:GDP_bound|plasma_membrane": [
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000,
+     10000
+    ],
+    "D000044|cytosol": [
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000036|cytosol": [
+     0,
+     19983.418884820832,
+     19983.442487298562,
+     19983.487799373263,
+     19983.609904279267,
+     19983.77498361679,
+     19984.087672079702,
+     19984.356683351343,
+     19984.743574165594
+    ],
+    "D000033|cytosol": [
+     200000,
+     202911.0309624885,
+     205741.19525405817,
+     211173.61410939597,
+     225805.53512906664,
+     245565.14785598512,
+     282865.1572446915,
+     314677.8959078946,
+     360126.995879925
+    ],
+    "D000034|cytosol": [
+     0,
+     0,
+     0,
+     0.00002171653566422482,
+     0.0016491038866104258,
+     0.009352550443336747,
+     0.05847149708633235,
+     0.18475607637344696,
+     0.48711686964106726
+    ],
+    "D000122|cytosol": [
+     0,
+     3.8720540898828295,
+     4.056436885696034,
+     4.055089080494655,
+     4.025116328587142,
+     3.9845702405062005,
+     3.9078402553046074,
+     3.8420305102511794,
+     3.7477202907213036
+    ],
+    "D000030|ligand:bound|plasma_membrane": [
+     0,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000029|nucleotide:GTP_bound|plasma_membrane": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000031|gs_site:bound|plasma_membrane": [
+     0,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000039|cytosol": [
+     0,
+     0,
+     0,
+     9.266050251605378,
+     82.68347267125749,
+     203.96615254115022,
+     562.1776903852538,
+     1148.4665913979343,
+     2297.2016655270554
+    ],
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": [
+     0,
+     6.171261510985398,
+     12.333696889126774,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018
+    ],
+    "D000057|cytosol": [
+     0,
+     6.171261510985398,
+     12.333696889126774,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018,
+     20.000000000000018
+    ],
+    "D000043|pka_phos:phosphorylated|cytosol": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10,
+     10
+    ],
+    "D000044|reg_phos:phosphorylated|cytosol": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "D000048|cytosol": [
+     0,
+     3000,
+     6000,
+     12000,
+     30000,
+     60000,
+     150000,
+     300000,
+     600000
+    ],
+    "D000046|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000144|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000167|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000145|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ],
+    "D000168|cytosol": [
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000,
+     1000
+    ]
+   },
+   "start": {
+    "D000027|extracellular": 2000,
+    "D000030|plasma_membrane": 1000,
+    "D000035|cytosol": 20000,
+    "D000031|plasma_membrane": 1000,
+    "D000032|cytosol": 2000000,
+    "D000042|cytosol": 10,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 10,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 2000000,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+    "D000044|cytosol": 10,
+    "D000036|cytosol": 0,
+    "D000033|cytosol": 200000,
+    "D000034|cytosol": 0,
+    "D000122|cytosol": 0,
+    "D000030|ligand:bound|plasma_membrane": 0,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000031|gs_site:bound|plasma_membrane": 0,
+    "D000039|cytosol": 0,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0,
+    "D000057|cytosol": 0,
+    "D000043|pka_phos:phosphorylated|cytosol": 0,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 0,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "final": {
+    "D000027|extracellular": 1000,
+    "D000030|plasma_membrane": 0,
+    "D000035|cytosol": 15.25642583440522,
+    "D000031|plasma_membrane": 0,
+    "D000032|cytosol": 1837535.3153376668,
+    "D000042|cytosol": 0,
+    "D000049|cytosol": 10,
+    "D000043|cytosol": 0,
+    "D000047|glycogen_granule": 1000,
+    "D000037|cytosol": 1584769.6215783297,
+    "D000052|cytosol": 10,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 10000,
+    "D000044|cytosol": 10,
+    "D000036|cytosol": 19984.743574165594,
+    "D000033|cytosol": 360126.995879925,
+    "D000034|cytosol": 0.48711686964106726,
+    "D000122|cytosol": 3.7477202907213036,
+    "D000030|ligand:bound|plasma_membrane": 1000,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0,
+    "D000031|gs_site:bound|plasma_membrane": 1000,
+    "D000039|cytosol": 2297.2016655270554,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 20.000000000000018,
+    "D000057|cytosol": 20.000000000000018,
+    "D000043|pka_phos:phosphorylated|cytosol": 10,
+    "D000044|reg_phos:phosphorylated|cytosol": 0,
+    "D000048|cytosol": 600000,
+    "D000046|cytosol": 1000,
+    "D000144|cytosol": 1000,
+    "D000167|cytosol": 1000,
+    "D000145|cytosol": 1000,
+    "D000168|cytosol": 1000
+   },
+   "cum": {
+    "S000001": 1000,
+    "S000002": 962773.8052456994,
+    "S000003": 1000,
+    "S000004": 962773.8052456994,
+    "S000005": 2338.6240029417377,
+    "S000006": 10.000000000000009,
+    "S000008": 10,
+    "S000009": 600000,
+    "S000010": 600000,
+    "S000011": 600000,
+    "S000007": 1.422337414723696
+   },
+   "firstFire": {
+    "S000001": 0.001,
+    "S000002": 0.001,
+    "S000003": 0.001,
+    "S000004": 0.001,
+    "S000005": 0.001,
+    "S000006": 0.001,
+    "S000008": 0.001,
+    "S000009": 0.001,
+    "S000010": 0.001,
+    "S000011": 0.001,
+    "S000007": 0.974
+   },
+   "firstReach": {
+    "D000030|ligand:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GTP_bound|plasma_membrane": 0.001,
+    "D000036|cytosol": 0.001,
+    "D000031|gs_site:bound|plasma_membrane": 0.001,
+    "D000029|nucleotide:GDP_bound|plasma_membrane": 0.001,
+    "D000037|cytosol": 0.001,
+    "D000043|pka_phos:phosphorylated|cytosol": 0.001,
+    "D000033|cytosol": 0.001,
+    "D000044|reg_phos:phosphorylated|cytosol": 0.001,
+    "D000048|cytosol": 0.001,
+    "D000047|glycogen_granule": 0.001,
+    "D000044|cytosol": 0.001,
+    "D000122|cytosol": 0.028,
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": 0.049,
+    "D000057|cytosol": 0.049,
+    "D000039|cytosol": 0.999
+   },
+   "events": [
+    {
+     "t": 0.003,
+     "type": "stalled",
+     "step": "S000002",
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   ],
+   "stalls": {
+    "S000002": {
+     "t": 0.003,
+     "by": [
+      "D000035|cytosol"
+     ]
+    }
+   },
+   "negatives": {},
+   "stiff": {
+    "S000005": 2.0599599351413446e-8,
+    "S000007": 2.0756738267289546e-8
+   },
+   "kinUsed": [
+    {
+     "ref": "D000123/rule/gtp_regeneration",
+     "step": null,
+     "owner": "D000123",
+     "kin": {
+      "law": "mass_action",
+      "k": 1000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000124/rule/amp_recharge",
+     "step": null,
+     "owner": "D000124",
+     "kin": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000125/rule/ppi_hydrolysis",
+     "step": null,
+     "owner": "D000125",
+     "kin": {
+      "law": "mass_action",
+      "k": 10,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000126/rule/atp_supply",
+     "step": null,
+     "owner": "D000126",
+     "kin": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000030/rule/gs_gef",
+     "step": "S000002",
+     "owner": "D000030",
+     "kin": {
+      "law": "mass_action",
+      "k": 100000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000029/rule/gtpase",
+     "step": "S000004",
+     "owner": "D000029",
+     "kin": {
+      "law": "mass_action",
+      "k": 0.5,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000031/rule/cyclization",
+     "step": "S000005",
+     "owner": "D000031",
+     "kin": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.0001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    },
+    {
+     "ref": "D000049/rule/camp_hydrolysis",
+     "step": "S000007",
+     "owner": "D000049",
+     "kin": {
+      "law": "michaelis_menten",
+      "kcat": 5,
+      "Km": 0.000001,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     }
+    }
+   ],
+   "kineticGaps": [
+    "D000170/rule/aerobic_glycolysis",
+    "D000171/rule/pyruvate_reduction",
+    "D000173/rule/atp_hydrolysis_load",
+    "S000001",
+    "S000003",
+    "S000006",
+    "S000008",
+    "S000009",
+    "S000010",
+    "S000011"
+   ],
+   "reservoirs": {
+    "D000035|cytosol": {
+     "start": 20000,
+     "min": 15.25642583440522,
+     "max": 20000,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 15.25642583440522
+    },
+    "D000036|cytosol": {
+     "start": 0,
+     "min": 0,
+     "max": 19984.743574165594,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 19984.743574165594
+    },
+    "D000037|cytosol": {
+     "start": 2000000,
+     "min": 1584769.6215783297,
+     "max": 2019974.6651455697,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 1584769.6215783297
+    },
+    "D000122|cytosol": {
+     "start": 0,
+     "min": 0,
+     "max": 4.061254432356296,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 3.7477202907213036
+    },
+    "D000032|cytosol": {
+     "start": 2000000,
+     "min": 1837535.3153376668,
+     "max": 2000000,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 1837535.3153376668
+    },
+    "D000033|cytosol": {
+     "start": 200000,
+     "min": 200000,
+     "max": 360126.995879925,
+     "state": "ok",
+     "source": "init",
+     "consumers": [],
+     "producers": [],
+     "end": 360126.995879925
+    },
+    "D000047|glycogen_granule": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000046|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000144|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000167|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000145|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    },
+    "D000168|cytosol": {
+     "start": 1000,
+     "min": 1000,
+     "max": 1000,
+     "state": "ok",
+     "source": "bulk",
+     "consumers": [],
+     "producers": [],
+     "end": 1000
+    }
+   },
+   "ledger": {
+    "D000027|extracellular": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|plasma_membrane": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000030|ligand:bound|plasma_membrane": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GDP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000035|cytosol": {
+     "reaction": -962773.8052456994,
+     "supply": 942789.0616715326,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000029|nucleotide:GTP_bound|plasma_membrane": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000036|cytosol": {
+     "reaction": 962773.8052456994,
+     "supply": -942789.0616715326,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|plasma_membrane": {
+     "reaction": -1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000031|gs_site:bound|plasma_membrane": {
+     "reaction": 1000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000037|cytosol": {
+     "reaction": 962773.8052456994,
+     "supply": -1378004.1836673915,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000032|cytosol": {
+     "reaction": -602348.6240029389,
+     "supply": 439883.939340613,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000039|cytosol": {
+     "reaction": 2297.2016655270554,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000122|cytosol": {
+     "reaction": 2338.6240029417377,
+     "supply": -2334.8762826510365,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000042|cytosol": {
+     "reaction": -10.000000000000009,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000056|cnb_a:bound|cnb_b:bound|cytosol": {
+     "reaction": 20.000000000000018,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000057|cytosol": {
+     "reaction": 20.000000000000018,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|cytosol": {
+     "reaction": -10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000043|pka_phos:phosphorylated|cytosol": {
+     "reaction": 10,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000033|cytosol": {
+     "reaction": 600010,
+     "supply": -439883.0041200756,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000044|reg_phos:phosphorylated|cytosol": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000047|glycogen_granule": {
+     "reaction": 0,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000048|cytosol": {
+     "reaction": 600000,
+     "supply": 0,
+     "degradation": 0,
+     "recycle": 0
+    },
+    "D000034|cytosol": {
+     "reaction": 1.422337414723696,
+     "supply": -0.9352205450826414,
+     "degradation": 0,
+     "recycle": 0
+    }
+   },
+   "stepCycles": [
+    [
+     "S000002",
+     "S000004"
+    ],
+    [
+     "S000009",
+     "S000011"
+    ]
+   ],
+   "peakRate": 26557.257745829345,
+   "zeroAt": {},
+   "approx": [
+    "S000001",
+    "S000002",
+    "S000003",
+    "S000004",
+    "S000005"
+   ],
+   "supplies": [
+    {
+     "ref": "D000123/rule/gtp_regeneration",
+     "V": 4e-12,
+     "active": true,
+     "kin": {
+      "law": "mass_action",
+      "k": 1000000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     },
+     "consumes": [
+      "D000036|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000035|cytosol",
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000124/rule/amp_recharge",
+     "V": 4e-12,
+     "active": true,
+     "kin": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     },
+     "consumes": [
+      "D000034|cytosol",
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol"
+     ]
+    },
+    {
+     "ref": "D000125/rule/ppi_hydrolysis",
+     "V": 4e-12,
+     "active": true,
+     "kin": {
+      "law": "mass_action",
+      "k": 10,
+      "order": 1,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     },
+     "consumes": [
+      "D000122|cytosol"
+     ],
+     "produces": [
+      "D000037|cytosol"
+     ]
+    },
+    {
+     "ref": "D000126/rule/atp_supply",
+     "V": 4e-12,
+     "active": true,
+     "kin": {
+      "law": "mass_action",
+      "k": 100000,
+      "order": 2,
+      "evidence": {
+       "level": "predicted",
+       "confidence": 0
+      },
+      "src": "scenario"
+     },
+     "consumes": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000170/rule/aerobic_glycolysis",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000046|cytosol",
+      "D000144|cytosol",
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ],
+     "produces": [
+      "D000167|cytosol",
+      "D000145|cytosol",
+      "D000032|cytosol"
+     ]
+    },
+    {
+     "ref": "D000171/rule/pyruvate_reduction",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000167|cytosol",
+      "D000145|cytosol"
+     ],
+     "produces": [
+      "D000168|cytosol",
+      "D000144|cytosol"
+     ]
+    },
+    {
+     "ref": "D000173/rule/atp_hydrolysis_load",
+     "V": 4e-12,
+     "active": false,
+     "kin": null,
+     "consumes": [
+      "D000032|cytosol"
+     ],
+     "produces": [
+      "D000033|cytosol",
+      "D000037|cytosol"
+     ]
+    }
+   ],
+   "channels": {
+    "covalent": {
+     "D000121": -10
+    },
+    "source": {},
+    "lost": {},
+    "recycle": {},
+    "violation": {}
+   },
+   "facts": [],
+   "modulationGaps": []
+  }
+ },
+ "entInfo": {
+  "D000027": {
+   "name": "에피네프린",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:71406",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 '(<i>R</i>)-adrenaline(1+)' · 화학식 C9H14NO3 (전하 1) · 부분 구조 대조 no_moieties · data/fetched/chebi/CHEBI_71406.json · sha256:eb46d165135d"
+    }
+   ],
+   "components": []
+  },
+  "D000030": {
+   "name": "β-아드레날린 수용체",
+   "kind": "molecule_class",
+   "xrefs": [],
+   "membrane": {
+    "association": "integral",
+    "location": "plasma_membrane"
+   },
+   "note": "β1·β2·β3 아형이 있어 분자 부류로 둔다. 일곱 번 막을 관통하는 G 단백질 연결 수용체.",
+   "components": []
+  },
+  "D000029": {
+   "name": "Gs 단백질",
+   "kind": "complex",
+   "xrefs": [],
+   "membrane": {
+    "association": "lipid_anchored",
+    "location": "plasma_membrane",
+    "side": "cytosolic"
+   },
+   "note": "활성화되면 실제로는 α(GTP) 와 βγ 로 갈라지지만, 여기서는 삼량체를 한 단위로 두고 α 소단위의 뉴클레오타이드 부위만 추적한다.",
+   "components": [
+    {
+     "ref": "D000053",
+     "n": 1,
+     "role": "α 소단위"
+    },
+    {
+     "ref": "D000054",
+     "n": 1,
+     "role": "β 소단위"
+    },
+    {
+     "ref": "D000055",
+     "n": 1,
+     "role": "γ 소단위"
+    }
+   ]
+  },
+  "D000035": {
+   "name": "GTP",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:15996",
+     "status": "verified",
+     "role": "parent",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP' · 화학식 C10H16N5O14P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15996.json · sha256:5cfcfae1d683"
+    },
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:37565",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GTP(4−)' · 화학식 C10H12N5O14P3 (전하 -4) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_37565.json · sha256:dc104325ae45"
+    }
+   ],
+   "components": []
+  },
+  "D000036": {
+   "name": "GDP",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:17552",
+     "status": "verified",
+     "role": "parent",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP' · 화학식 C10H15N5O11P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_17552.json · sha256:90d9c12f49d4"
+    },
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:58189",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'GDP(3−)' · 화학식 C10H12N5O11P2 (전하 -3) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_58189.json · sha256:743dbfff4cc0"
+    }
+   ],
+   "components": []
+  },
+  "D000031": {
+   "name": "아데닐산 고리화효소",
+   "kind": "molecule_class",
+   "xrefs": [
+    {
+     "db": "EC",
+     "id": "EC 4.6.1.1",
+     "status": "asserted"
+    }
+   ],
+   "membrane": {
+    "association": "integral",
+    "location": "plasma_membrane"
+   },
+   "note": "여러 아형(AC1–9)이 있어 분자 부류로 둔다. 막관통 도메인 두 묶음과 세포질 쪽 촉매 도메인을 가진다.",
+   "components": []
+  },
+  "D000037": {
+   "name": "무기 인산",
+   "kind": "ion",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:43474",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'hydrogenphosphate' · 화학식 HO4P (전하 -2) · 부분 구조 대조 ok (C0 N0 P1 S0 일치) · data/fetched/chebi/CHEBI_43474.json · sha256:f24cf6e1d046"
+    }
+   ],
+   "components": []
+  },
+  "D000032": {
+   "name": "ATP",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:15422",
+     "status": "verified",
+     "role": "parent",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP' · 화학식 C10H16N5O13P3 (전하 0) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_15422.json · sha256:a670e0983205"
+    },
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:30616",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ATP(4−)' · 화학식 C10H12N5O13P3 (전하 -4) · 부분 구조 대조 ok (C10 N5 P3 S0 일치) · data/fetched/chebi/CHEBI_30616.json · sha256:f08b56153e1e"
+    }
+   ],
+   "components": []
+  },
+  "D000039": {
+   "name": "cAMP",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:17489",
+     "status": "verified",
+     "role": "parent",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'cAMP' · 화학식 C10H12N5O6P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_17489.json · sha256:9cd012a699fc"
+    },
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:58165",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 '3',5'-cyclic AMP(1−)' · 화학식 C10H11N5O6P (전하 -1) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_58165.json · sha256:a050c7df1700"
+    }
+   ],
+   "components": []
+  },
+  "D000122": {
+   "name": "피로인산",
+   "kind": "ion",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:33019",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'diphosphate(3−)' · 화학식 HO7P2 (전하 -3) · 부분 구조 대조 ok (C0 N0 P2 S0 일치) · data/fetched/chebi/CHEBI_33019.json · sha256:0df99980abb4"
+    }
+   ],
+   "components": []
+  },
+  "D000042": {
+   "name": "단백질 키네이스 A",
+   "kind": "complex",
+   "xrefs": [],
+   "note": "전효소는 조절 소단위 2개 + 촉매 소단위 2개(R2C2). 효소 번호(EC 2.7.11.11)는 촉매 소단위 정의항으로 옮겼다.",
+   "components": [
+    {
+     "ref": "D000056",
+     "n": 2,
+     "role": "조절 소단위 R"
+    },
+    {
+     "ref": "D000057",
+     "n": 2,
+     "role": "촉매 소단위 C"
+    }
+   ]
+  },
+  "D000056": {
+   "name": "PKA 조절 소단위",
+   "kind": "molecule_class",
+   "xrefs": [],
+   "note": "RIα·RIβ·RIIα·RIIβ 아형이 있어 분자 부류로 둔다. 조절 소단위 하나에 cAMP 결합 자리가 둘(A·B).",
+   "components": []
+  },
+  "D000057": {
+   "name": "PKA 촉매 소단위",
+   "kind": "molecule_class",
+   "xrefs": [
+    {
+     "db": "EC",
+     "id": "EC 2.7.11.11",
+     "status": "asserted"
+    }
+   ],
+   "note": "Cα·Cβ 아형이 있어 분자 부류로 둔다. 효소 번호(EC)는 촉매 소단위가 가진다.",
+   "components": []
+  },
+  "D000049": {
+   "name": "포스포다이에스터레이스",
+   "kind": "molecule_class",
+   "xrefs": [
+    {
+     "db": "EC",
+     "id": "EC 3.1.4.17",
+     "status": "asserted"
+    }
+   ],
+   "note": "기본 상태를 활성으로 둔 것은 단순화다 — PDE 는 인산화·cGMP 결합 등으로 조절되지만(Francis et al., 2011) 이 경로에서는 조절을 다루지 않는다. 그래서 basal 규칙은 출처 없이(asserted) 남긴다.",
+   "components": []
+  },
+  "D000034": {
+   "name": "AMP",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:16027",
+     "status": "verified",
+     "role": "parent",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP' · 화학식 C10H14N5O7P (전하 0) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_16027.json · sha256:598f1aaedc27"
+    },
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:456215",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'AMP(2−)' · 화학식 C10H12N5O7P (전하 -2) · 부분 구조 대조 ok (C10 N5 P1 S0 일치) · data/fetched/chebi/CHEBI_456215.json · sha256:ec01487109d8"
+    }
+   ],
+   "components": []
+  },
+  "D000043": {
+   "name": "인산화효소 키네이스",
+   "kind": "complex",
+   "xrefs": [
+    {
+     "db": "EC",
+     "id": "EC 2.7.11.19",
+     "status": "asserted"
+    }
+   ],
+   "note": "(αβγδ)4 의 16량체. δ 소단위는 칼모듈린이라 칼슘 이온으로도 활성화된다(칼슘 경로는 아직 없음).",
+   "components": [
+    {
+     "ref": "D000058",
+     "n": 4,
+     "role": "α 조절 소단위"
+    },
+    {
+     "ref": "D000059",
+     "n": 4,
+     "role": "β 조절 소단위"
+    },
+    {
+     "ref": "D000060",
+     "n": 4,
+     "role": "γ 촉매 소단위"
+    },
+    {
+     "ref": "D000061",
+     "n": 4,
+     "role": "δ 소단위(칼모듈린)"
+    }
+   ]
+  },
+  "D000033": {
+   "name": "ADP",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:16761",
+     "status": "verified",
+     "role": "parent",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP' · 화학식 C10H15N5O10P2 (전하 0) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_16761.json · sha256:9258c8520c91"
+    },
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:456216",
+     "status": "verified",
+     "role": "physiological",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'ADP(3−)' · 화학식 C10H12N5O10P2 (전하 -3) · 부분 구조 대조 ok (C10 N5 P2 S0 일치) · data/fetched/chebi/CHEBI_456216.json · sha256:1ed228cbc8ac"
+    }
+   ],
+   "components": []
+  },
+  "D000044": {
+   "name": "글리코겐 인산화효소",
+   "kind": "molecule_class",
+   "xrefs": [
+    {
+     "db": "EC",
+     "id": "EC 2.4.1.1",
+     "status": "asserted"
+    }
+   ],
+   "note": "인산화된 a형이 활성형, 비인산화 b형은 덜 활성. 이름에 '인산화'가 들어가지만 단백질 키네이스가 아니라 가인산분해 효소다. 동종 이량체이며 간형·근육형·뇌형 아형이 있어 분자 부류로 둔다.",
+   "components": []
+  },
+  "D000047": {
+   "name": "글리코겐",
+   "kind": "macromolecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:28087",
+     "status": "verified",
+     "role": "class",
+     "note": "ChEBI 조회 2026-10-10 · 이름 일치 'glycogen' · 화학식 없음 · 부분 구조 대조 skipped · data/fetched/chebi/CHEBI_28087.json · sha256:4cb21197f16d"
+    }
+   ],
+   "components": []
+  },
+  "D000048": {
+   "name": "포도당-1-인산",
+   "kind": "small_molecule",
+   "xrefs": [
+    {
+     "db": "ChEBI",
+     "id": "CHEBI:58601",
+     "status": "asserted",
+     "role": "physiological",
+     "note": "pH 7.3 우세 종 α-D-glucose 1-phosphate(2−) — 큐레이션된 반응 DB(Rhea)의 반응식에서 이 번호가 참여자로 쓰임. 보강 고리가 확인할 것"
+    }
+   ],
+   "components": []
+  },
+  "D000052": {
+   "name": "단백질 인산가수분해효소 1",
+   "kind": "molecule_class",
+   "xrefs": [
+    {
+     "db": "EC",
+     "id": "EC 3.1.3.16",
+     "status": "asserted"
+    }
+   ],
+   "note": "촉매 소단위는 여러 아형(α·β·γ)이 있어 분자 부류로 둔다.",
+   "components": []
+  }
+ },
+ "names": {
+  "D000027|extracellular": "에피네프린",
+  "D000030|plasma_membrane": "β-아드레날린 수용체",
+  "D000035|cytosol": "GTP",
+  "D000031|plasma_membrane": "아데닐산 고리화효소",
+  "D000032|cytosol": "ATP",
+  "D000042|cytosol": "단백질 키네이스 A",
+  "D000049|cytosol": "포스포다이에스터레이스",
+  "D000043|cytosol": "인산화효소 키네이스",
+  "D000047|glycogen_granule": "글리코겐",
+  "D000037|cytosol": "무기 인산",
+  "D000052|cytosol": "단백질 인산가수분해효소 1",
+  "D000029|nucleotide:GDP_bound|plasma_membrane": "Gs 단백질",
+  "D000044|cytosol": "글리코겐 인산화효소",
+  "D000030|ligand:bound|plasma_membrane": "β-아드레날린 수용체",
+  "D000029|nucleotide:GTP_bound|plasma_membrane": "Gs 단백질",
+  "D000036|cytosol": "GDP",
+  "D000031|gs_site:bound|plasma_membrane": "아데닐산 고리화효소",
+  "D000039|cytosol": "cAMP",
+  "D000122|cytosol": "피로인산",
+  "D000056|cnb_a:bound|cnb_b:bound|cytosol": "PKA 조절 소단위",
+  "D000057|cytosol": "PKA 촉매 소단위",
+  "D000034|cytosol": "AMP",
+  "D000043|pka_phos:phosphorylated|cytosol": "인산화효소 키네이스",
+  "D000033|cytosol": "ADP",
+  "D000044|reg_phos:phosphorylated|cytosol": "글리코겐 인산화효소",
+  "D000048|cytosol": "포도당-1-인산",
+  "D000046|cytosol": "포도당",
+  "D000144|cytosol": "NAD⁺",
+  "D000167|cytosol": "피루브산",
+  "D000145|cytosol": "NADH",
+  "D000168|cytosol": "젖산"
+ }
+}
