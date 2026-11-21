@@ -368,6 +368,7 @@
 | `docs/reports/2026-11-20-orchestration-explained.md` | 20.2 | 274 |  | 미분류 |
 | `docs/reports/2026-11-20-orchestration-modules-flow.md` | 20.3 | 352 |  | 미분류 |
 | `docs/reports/2026-11-20-orchestration-tabletop.md` | 7.5 | 53 |  | 미분류 |
+| `docs/reports/2026-11-21-gap-map-and-direction.md` | 8.9 | 131 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/templates/nadh-a340/README.md` | 2.9 | 38 |  | 미분류 |
