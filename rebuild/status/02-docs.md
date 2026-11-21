@@ -34,6 +34,7 @@
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.7 | 208 |  | 분류됨 102 |
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
+| `docs/design/supervisor.md` | 13.9 | 203 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
@@ -43,9 +44,9 @@
 | `docs/modes/develop.md` | 6.0 | 80 |  | 생성물 |
 | `docs/modes/field.md` | 1.6 | 32 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
-| `docs/plan/ORDER.md` | 28.3 | 96 |  | 생성물 |
+| `docs/plan/ORDER.md` | 30.0 | 98 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 47.1 | 462 |  | 생성물 |
+| `docs/plan/build.md` | 48.4 | 475 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -107,6 +108,7 @@
 | `docs/plan/decisions/DEC-0067.md` | 1.3 | 7 |  | 생성물 |
 | `docs/plan/decisions/DEC-0068.md` | 2.6 | 16 |  | 생성물 |
 | `docs/plan/decisions/DEC-0069.md` | 1.2 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0070.md` | 1.4 | 15 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -226,12 +228,12 @@
 | `docs/plan/items/PLAN-096.md` | 3.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-097.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-098.md` | 1.9 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-099.md` | 8.7 | 59 |  | 생성물 |
-| `docs/plan/items/PLAN-100.md` | 6.8 | 60 |  | 생성물 |
+| `docs/plan/items/PLAN-099.md` | 10.1 | 62 |  | 생성물 |
+| `docs/plan/items/PLAN-100.md` | 7.9 | 70 |  | 생성물 |
 | `docs/plan/items/PLAN-101.md` | 5.2 | 59 |  | 생성물 |
 | `docs/plan/items/PLAN-102.md` | 6.7 | 51 |  | 생성물 |
-| `docs/plan/items/PLAN-103.md` | 2.8 | 33 |  | 생성물 |
-| `docs/plan/items/PLAN-104.md` | 5.5 | 60 |  | 생성물 |
+| `docs/plan/items/PLAN-103.md` | 4.0 | 43 |  | 생성물 |
+| `docs/plan/items/PLAN-104.md` | 6.4 | 70 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 2.1 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-106.md` | 2.2 | 22 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
@@ -241,6 +243,7 @@
 | `docs/plan/items/PLAN-111.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-112.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 1.9 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-114.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
