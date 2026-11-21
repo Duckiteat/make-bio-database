@@ -7,15 +7,15 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 483 | 16696.4 |
-| rebuild | 35 | 6471.7 |
-| docs | 402 | 3131.6 |
+| rebuild | 36 | 6473.6 |
+| docs | 403 | 3134.0 |
 | (최상위) | 19 | 999.1 |
 | tests | 107 | 752.3 |
 | judicial | 36 | 621.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
-| workspace | 37 | 151.7 |
+| workspace | 37 | 153.3 |
 | legislative | 3 | 76.6 |
 | migrations | 13 | 59.8 |
 | mcp | 6 | 59.8 |
@@ -36,8 +36,8 @@
 | `rebuild/state/plan-log.jsonl` | 424.4 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
+| `rebuild/state/plans.jsonl` | 343.3 |
 | `CHANGES.md` | 342.5 |
-| `rebuild/state/plans.jsonl` | 342.3 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `rebuild/rules/changes.jsonl` | 305.0 |
