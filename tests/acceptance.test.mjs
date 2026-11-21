@@ -21,7 +21,7 @@ const T = ACC.table(db, { ...input, registry: reg });
 const obsRow = (t, id) => t.rows.find((x) => x.row.what === 'observation' && x.row.sense === id);
 const SYN = 'O900001', TPL = Object.values(db.observations).find((o) => o.kind === 'qualitative' && o.use === 'validation' && !o.retracted);
 const sdb = { ...db, observations: { ...db.observations, [SYN]: { ...TPL } } };
-const stamp = (o) => ACC.issue({ id: SYN, use: 'evidence', by: 'human', reason: '시험', date: '2026-10-25', ...o });
+const stamp = (o) => ACC.issue({ id: SYN, use: 'evidence', by: 'integrator', reason: '시험', date: '2026-10-25', ...o });
 
 test('① 지금 표: 추정 인정 = anchor·parameter · 서술 = blocked 말고 전부 · 검증 근거 = 승인된 정성 관찰뿐 · 기준 0', () => {
   const sum = REL.summary(T.rows.map((x) => x.row)).byGrade;
@@ -54,14 +54,14 @@ test('② 승인 없음 → needs_approval · 승인 → accepted · 축이 내�
 
 test('③ 승인은 축·관계 조건을 넘지 못한다 — 서기가 쓰지 않는다', () => {
   const est = Object.entries(db.observations).find(([, o]) => o.use === 'estimation')[0];
-  const r = ACC.checkIssue(ACC.issue({ id: est, use: 'evidence', by: 'human', reason: '시험', date: '2026-10-25' }), db, input);
+  const r = ACC.checkIssue(ACC.issue({ id: est, use: 'evidence', by: 'integrator', reason: '시험', date: '2026-10-25' }), db, input);
   assert.equal(r.ok, false); assert.match(r.reasons.join(), /넘지 못한다/);
   assert.ok(ACC.checkIssue(stamp(), sdb, input).ok, '조건을 넘는 관찰의 승인은 통과');
   const dir = mkdtempSync(join(tmpdir(), 'acc-')); mkdirSync(join(dir, 'attestations'));
   try {
-    assert.throws(() => CLERK.appendAttestations({ root: dir, db, context: input, stamps: [ACC.issue({ id: est, use: 'evidence', by: 'human', reason: '시험', date: '2026-10-25' })] }), /넘지 못한다/);
+    assert.throws(() => CLERK.appendAttestations({ root: dir, db, context: input, stamps: [ACC.issue({ id: est, use: 'evidence', by: 'integrator', reason: '시험', date: '2026-10-25' })] }), /넘지 못한다/);
     assert.ok(!existsSync(join(dir, ATT.REGISTRY)), '거부되면 등록부를 쓰지 않음');
-    assert.throws(() => CLERK.appendAttestations({ root: dir, db: sdb, context: input, stamps: [ACC.issue({ id: SYN, use: 'standard', by: 'human', reason: '시험', date: '2026-10-25' })] }), /I 축/);
+    assert.throws(() => CLERK.appendAttestations({ root: dir, db: sdb, context: input, stamps: [ACC.issue({ id: SYN, use: 'standard', by: 'integrator', reason: '시험', date: '2026-10-25' })] }), /I 축/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -146,4 +146,18 @@ test('⑨ 승인 이력: 승인 → 철회 → 재승인이 등록부에 모두 
     assert.equal(obsRow(ACC.table(sdb, { ...input, registry: reg2 }), SYN).uses.evidence.status, 'accepted');
     assert.throws(() => put({ reason: '다시 승인' }), /이미 있음/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('⑥ PLAN-106 (RP1): 새 승인 도장은 승인자 human 으로 발급하지 않는다 — 이미 있는 human 도장은 그대로 읽힌다', () => {
+  // 발급 검사(서기 · CLI · MCP 가 모두 지남) — 이름표로 적는 human 은 승인 증거가 못 된다
+  const r = ACC.checkIssue(stamp({ by: 'human' }), sdb, input);
+  assert.equal(r.ok, false); assert.match(r.reasons.join(), /승인자 'human' — integrator 만/);
+  const dir = mkdtempSync(join(tmpdir(), 'acc-h-')); mkdirSync(join(dir, 'attestations'));
+  try {
+    assert.throws(() => CLERK.appendAttestations({ root: dir, db: sdb, context: input, stamps: [stamp({ by: 'human' })] }), /integrator 만/);
+    assert.ok(!existsSync(join(dir, ATT.REGISTRY)), '거부되면 등록부를 쓰지 않음');
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+  assert.ok(ACC.checkIssue(stamp(), sdb, input).ok, 'integrator 발급은 통과');
+  // 재검증: 등록부의 옛 by human 도장은 지우거나 고치지 않고 그대로 읽는다 (처리는 열린 질문 U2)
+  assert.ok(ACC.verifyAcceptStamp(stamp({ by: 'human' }), sdb).ok, '옛 human 도장의 재검증');
 });

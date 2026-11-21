@@ -64,7 +64,7 @@
 
 | 파일 | 시험 |
 |---|---|
-| `tests/acceptance.test.mjs` | 9 |
+| `tests/acceptance.test.mjs` | 10 |
 | `tests/affected.test.mjs` | 3 |
 | `tests/approval.test.mjs` | 14 |
 | `tests/assays.test.mjs` | 4 |

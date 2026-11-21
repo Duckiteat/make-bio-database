@@ -137,6 +137,7 @@
 | [DEC-0068](decisions/DEC-0068.md) | 2026-11-21 | 사용자 | 설계 | 작업 조율의 정체 — Supervisor(감독)이다, Claude 내장 조율(하위 에이전트 · fork · 작업 목록)과 다르다 | 6 |
 | [DEC-0069](decisions/DEC-0069.md) | 2026-11-21 | 사용자 | 설계 | 사람 승인의 증거 — 다: 지금은 AI 의 PR 병합을 설정으로 막아 병합 = 사람, 높은 위험 변경(권한 · 판정 기준)에는 나중에 사용자 기기 키 서명을 더함 | 3 |
 | [DEC-0070](decisions/DEC-0070.md) | 2026-11-21 | 사용자 | 설계 | 독립형 오케스트레이터 — 방향으로 기록 · 계약은 감독 장부 · Governor CI 겹 · 둘째 실행 모듈은 사람 작업 흐름 | 5 |
+| [DEC-0071](decisions/DEC-0071.md) | 2026-11-21 | 사용자 | 순서 | 순서 고침 — RP1(106)을 첫 순환(103) 앞으로, 과학 한 걸음(112)을 103 바로 뒤로 | 3 |
 
 ## 4. 작업 — 결과와 걸어온 길
 
@@ -285,7 +286,7 @@
 | 96 | [PLAN-096](items/PLAN-096.md) | 확률 층 정확도 확인 | ☑ 2026-11-19 |
 | 97 | [PLAN-097](items/PLAN-097.md) | 확률장 재가동의 전제 — 반박할 공간 관찰 조사 | ☐ |
 | 98 | [PLAN-098](items/PLAN-098.md) | 가설 세우기 · 검증 고리 | ☐ |
-| 106 | [PLAN-106](items/PLAN-106.md) | RP1 승인자 기본값 | ☐ |
+| 106 | [PLAN-106](items/PLAN-106.md) | RP1 승인자 기본값 | ◐ 2026-11-21 |
 | 112 | [PLAN-112](items/PLAN-112.md) | D000051 세로 뚫기 — 실험 하나 | ☐ |
 | 113 | [PLAN-113](items/PLAN-113.md) | AI 의 PR 병합 막기 | ◐ 2026-11-21 |
 
@@ -295,7 +296,7 @@
 |---|---|---|---|
 | 99 | [PLAN-099](items/PLAN-099.md) | 조율 규격 = 감독(Supervisor) 규격 | ☑ 2026-11-21 |
 | 100 | [PLAN-100](items/PLAN-100.md) | 감독 장부 + 명령 | ☑ 2026-11-21 |
-| 101 | [PLAN-101](items/PLAN-101.md) | 승인 PR 권한(F6) | ☐ |
+| 101 | [PLAN-101](items/PLAN-101.md) | 승인 PR 권한(F6) | ☑ 2026-11-21 |
 | 102 | [PLAN-102](items/PLAN-102.md) | 승인 증거 판정 | ☑ 2026-11-21 |
 | 103 | [PLAN-103](items/PLAN-103.md) | 첫 순환 — cAMP (손으로, 순차) | ☐ |
 | 104 | [PLAN-104](items/PLAN-104.md) | 배정 자동화 (Hybrid) | ☐ |
@@ -469,9 +470,9 @@
 
 ## 근거 점검 (계산 — 원본에서 센 것)
 
-- 작업 119: ☑ 완료 45 · ◐ 진행 13 · ☐ 대기 60 · 보류 보류 1
-- 걸어온 길: 사건 311 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 106)
-- 결정 36 — 누가: 사용자 22 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
+- 작업 119: ☑ 완료 46 · ◐ 진행 14 · ☐ 대기 58 · 보류 보류 1
+- 걸어온 길: 사건 315 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 110)
+- 결정 37 — 누가: 사용자 23 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
-- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-081 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-101 · PLAN-103 · PLAN-104 · PLAN-106 · PLAN-111 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-114
+- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-081 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-111 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-114
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)
