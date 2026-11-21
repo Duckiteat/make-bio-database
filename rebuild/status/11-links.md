@@ -34,7 +34,7 @@
 | L5 | `data:prereg` | 1 | 1 | 0 | 0 |
 | L6 | `guard:authority` | 7 | 4 | 1 | 3 |
 | L6 | `guard:gate` | 2 | 1 | 1 | 1 |
-| L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
+| L6 | `guard:self-tests` | 8 | 4 | 1 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
 ## 연결 없는 자리 (97)
