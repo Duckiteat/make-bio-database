@@ -8,14 +8,14 @@
 |---|---|---|
 | data | 483 | 16696.4 |
 | rebuild | 34 | 6339.0 |
-| docs | 372 | 2913.8 |
+| docs | 374 | 3505.2 |
 | (최상위) | 18 | 993.9 |
 | tests | 104 | 733.4 |
 | judicial | 35 | 614.6 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
-| workspace | 37 | 151.7 |
+| workspace | 37 | 153.7 |
 | legislative | 3 | 75.6 |
 | migrations | 13 | 59.8 |
 | mcp | 6 | 59.1 |
@@ -33,6 +33,7 @@
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 696.6 |
 | `data/log/genesis-db.json` | 608.9 |
+| `docs/reports/2026-11-21-D000051-dossier/D000051-dossier.pdf` | 565.2 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
 | `rebuild/state/plan-log.jsonl` | 360.8 |
@@ -52,4 +53,3 @@
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
 | `data/fetched/consensus/uniprot/Q04206.json` | 167.2 |
-| `data/fetched/uniprot/Q04206.json` | 167.2 |

@@ -9,11 +9,11 @@
 | 모드 | 파일 | KB |
 |---|---|---|
 | 공통 `common` | 314 | 7966.0 |
-| 정보 작성 `author` | 515 | 17004.8 |
+| 정보 작성 `author` | 515 | 17006.7 |
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 200 | 2553.2 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 114 | 1777.1 |
+| 점검·검증 `inspect` | 116 | 2368.5 |
 
 ## 규칙별
 
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 28 | 130.3 | 수집가 작업 공간 |
+| `workspace/**` | author | 28 | 132.2 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
@@ -53,7 +53,7 @@
 | `tests/**` | develop | 78 | 699.7 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 104 | 1395.7 | 보고서 — 읽기·점검 |
+| `docs/reports/**` | inspect | 106 | 1987.1 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 12 | 501.1 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 21 | 314.9 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 235 | 702.0 | 안내 문서 |

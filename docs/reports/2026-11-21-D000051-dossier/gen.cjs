@@ -98,10 +98,24 @@ H.push(`<title>글리코겐 분해 해부</title><link rel="stylesheet" href="ht
 ol.real{margin:0;padding-left:1.2em;font-size:.88rem} .two{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media (max-width:700px){.two{grid-template-columns:1fr}}
 .box{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0} .box h4{margin:0 0 6px;font-size:.85rem;color:var(--muted)} .box p{margin:0;font-size:.9rem}
 .note{border-left:3px solid var(--warn);padding:8px 12px;background:var(--warn-bg);border-radius:0 6px 6px 0;max-width:80ch}
-td code{font-size:.78em} main>*{min-width:0} nav a{white-space:normal;max-width:100%}</style>`);
+td code{font-size:.78em} main>*{min-width:0} nav a{white-space:normal;max-width:100%}
+.dl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.dlb{display:inline-grid;padding:6px 14px;border-radius:6px;background:var(--accent);color:var(--surface);text-decoration:none;font-weight:600;font-size:.9rem;line-height:1.3}
+.dlb small{font-weight:400;font-size:.72rem;opacity:.85} .dlb:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+@media print{.dl{display:none}}</style>`);
 H.push('<main><header class="top"><p class="eyebrow">make-bio-database · baseline · 2026-11-21 · 코어 8ac7dea</p><h1>에피네프린 → 글리코겐 분해, 단계마다</h1>');
 H.push(`<p class="lede">D000051 의 11 단계를 하나씩: 어디서 일어났는지, 실제로는 몇 단계로 나뉘는지, 시작량이 끝에 얼마가 되었는지, 어디서 왜 멈췄는지, 화학·생물로 맞는지, 용액과 속도는 어땠는지. 엔진을 시나리오 4 가지로 60 초씩 돌린 결과다.</p>`);
 H.push(`<p class="note">값은 전부 가상이거나 기본값이고, 즉시 처리 단계가 많아 시각·횟수는 Δt 에 따라 바뀐다. 아래 숫자는 "이 설정에서 이렇게 흘렀다" 이지 예측이 아니다. 화학·생물 판정은 Claude 의 교과서 지식이며 원문과 대조하지 않았다.</p>`);
+const DL = [['D000051-dossier.pdf', 'PDF', '인쇄·공유용 (A4 가로)'], ['D000051-dossier.docx', 'Word', '고쳐 쓰기용'], ['D000051-dossier.md', 'Markdown', '저장소 원문']];
+H.push(`<div class="dl" id="dl"><b>문서 내려받기</b>${DL.map(([fn, lab, sub]) => `<a class="dlb" href="${fn}" download="${fn}" data-fn="${fn}">${lab}<small>${sub}</small></a>`).join('')}<span class="muted" id="dlmsg" role="status"></span></div>
+<script type="application/octet-stream" id="docx64">${fs.existsSync(path.join(HERE, 'D000051-dossier.docx')) ? fs.readFileSync(path.join(HERE, 'D000051-dossier.docx')).toString('base64') : ''}</script>
+<script>(function(){var msg=document.getElementById('dlmsg');var dl=null;
+function getBlob(fn){if(/\\.docx$/.test(fn)){var s=atob(document.getElementById('docx64').textContent.trim()),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return Promise.resolve(new Blob([u]));}
+return fetch(fn).then(function(r){if(!r.ok)throw new Error(r.status);return r.blob();});}
+if(window.claude&&claude.use){claude.use('downloads').then(function(x){dl=x;}).catch(function(){});}
+document.querySelectorAll('.dlb').forEach(function(a){a.addEventListener('click',function(e){if(!dl)return;e.preventDefault();var fn=a.dataset.fn;msg.textContent='준비 중…';
+getBlob(fn).then(function(b){return dl.save({filename:fn,data:b});})
+.then(function(){msg.textContent=fn+' 저장됨';}).catch(function(err){var c=err&&err.code;msg.textContent=c==='declined'?'저장 취소됨':c==='rate_limited'?'잠시 뒤 다시 눌러 주세요':'이 화면에서는 저장할 수 없습니다';});});});})();</script>`);
 H.push(`<nav>${steps.map((s) => `<a href="#${s.id}">${s.id.slice(-2)} ${esc(s.label)}</a>`).join('')}</nav></header>`);
 H.push('<section><h2>반응이 일어난 곳</h2>' + tbl(['무엇', '값'], [['세포', esc(N.env.cell)], ['부피', esc(N.env.volumes)], ['막', esc(N.env.membrane)], ['용액 조건', esc(N.env.solution)], ['환산', esc(N.env.conc1)]]));
 H.push(`<h3 class="sec">시작 기질 (${MAIN})</h3>` + tbl(['묶음', '시작 분자 수', '환산', '실제 간세포와 비교 (대략)'], Object.entries(r0.start).filter(([, n]) => n).map(([b, n]) => [esc(bname(b)), f(n), b.includes('extracellular') ? (n / (NA * 1e-11) * 1e9).toPrecision(3) + ' nM' : b.includes('plasma_membrane') ? '막 (면적 농도 없음)' : conc(n), esc(REAL[b] || '')])) + '</section>');
