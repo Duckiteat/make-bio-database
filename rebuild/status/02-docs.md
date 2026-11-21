@@ -46,7 +46,7 @@
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 31.6 | 99 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 49.2 | 478 |  | 생성물 |
+| `docs/plan/build.md` | 49.9 | 479 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
