@@ -10,7 +10,7 @@
 4. [ASY-14](items/ASY-14.md) 내부 일관성 — ☑ 완료 · assay — 2026-11-18 앞으로(DEC-0062): ASY-08 과 한 묶음 — 원문 숫자에 sem · n · 정수 자료 칸, 검증기에 consistency 잇기. 원래: 판정 함수까지 끝(judicial/consistency.js) — 관찰 형식에 sem · n · 평균 칸이 생기면 검증기에 잇는다(형식 변경은 사용자 요청). 들이는 값마다 걸러야 하니 모으기 전에 (DEC-0046)
 5. [PLAN-099](items/PLAN-099.md) 조율 규격 = 감독(Supervisor) 규격 — ☑ 완료 · build — DEC-0067 — 조율 먼저: 규격
 6. [PLAN-100](items/PLAN-100.md) 감독 장부 + 명령 — ☑ 완료 · build — DEC-0067 — 조율 장부 + 명령 (공통 구역)
-7. [PLAN-113](items/PLAN-113.md) AI 의 PR 병합 막기 — ☐ 대기 · build — DEC-0069 — 병합 = 사람이 성립해야 승인 증거 판정(102)이 뜻을 가짐 · 사용자 커밋 한 줄
+7. [PLAN-113](items/PLAN-113.md) AI 의 PR 병합 막기 — ◐ 진행 · build — DEC-0069 — 병합 = 사람이 성립해야 승인 증거 판정(102)이 뜻을 가짐 · 사용자 커밋 한 줄
 8. [PLAN-102](items/PLAN-102.md) 승인 증거 판정 — ☑ 완료 · build — DEC-0067 — 병합 = 승인 판정 (RP1 의 취약 경로를 대신)
 9. [PLAN-105](items/PLAN-105.md) MCP 연결 — ☐ 대기 · build — DEC-0067 — 작업 세션이 MCP 를 쓰게
 10. [PLAN-101](items/PLAN-101.md) 승인 PR 권한(F6) — ☐ 대기 · build — DEC-0067 — 첫 순환 승인 PR 은 사용자

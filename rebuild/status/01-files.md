@@ -7,8 +7,8 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 483 | 16696.4 |
-| rebuild | 35 | 6457.6 |
-| docs | 400 | 3101.2 |
+| rebuild | 35 | 6459.0 |
+| docs | 400 | 3101.9 |
 | (최상위) | 18 | 996.7 |
 | tests | 106 | 748.8 |
 | judicial | 36 | 620.2 |
@@ -33,11 +33,11 @@
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 696.6 |
 | `data/log/genesis-db.json` | 608.9 |
-| `rebuild/state/plan-log.jsonl` | 417.2 |
+| `rebuild/state/plan-log.jsonl` | 418.1 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
 | `CHANGES.md` | 340.5 |
-| `rebuild/state/plans.jsonl` | 335.5 |
+| `rebuild/state/plans.jsonl` | 335.9 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `rebuild/rules/changes.jsonl` | 305.0 |
