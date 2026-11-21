@@ -112,7 +112,8 @@
       "Read(.env)",
       "Read(.env.*)",
       "Read(**/id_rsa)",
-      "Read(**/*.pem)"
+      "Read(**/*.pem)",
+      "mcp__github__merge_pull_request"
     ]
   },
   "hooks": {
