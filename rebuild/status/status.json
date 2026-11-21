@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1194 개 · 29517.8 KB"
+        "1195 개 · 29558.1 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "401 개 · 3265.3 KB"
+        "402 개 · 3305.7 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "88 개 · 885.4 KB"
+        "89 개 · 925.7 KB"
        ],
        [
         "장부 단위",
@@ -122,8 +122,8 @@
        ],
        [
         "docs",
-        "378",
-        "2812.4"
+        "379",
+        "2852.7"
        ],
        [
         "(최상위)",
@@ -2901,6 +2901,13 @@
         "미분류"
        ],
        [
+        "`docs/reports/project-management-system-audit.md`",
+        "40.3",
+        "477",
+        "",
+        "미분류"
+       ],
+       [
         "`docs/templates/nadh-a340/README.md`",
         "2.9",
         "38",
@@ -4530,7 +4537,7 @@
         "`model.ID_RE.T`",
         "legislative merge (meta.next.T)",
         "`data/db.json#terms`",
-        "1221 · 212 · 24",
+        "1222 · 212 · 25",
         "210 · 없음 2"
        ],
        [
@@ -4540,7 +4547,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "11845 · 218 · 303",
+        "11849 · 218 · 304",
         "212 · 없음 6"
        ],
        [
@@ -4550,7 +4557,7 @@
         "`model.ID_RE.S`",
         "legislative merge (meta.next.S)",
         "`data/db.json#steps`",
-        "1008 · 60 · 71",
+        "1009 · 60 · 72",
         "57 · 없음 3"
        ],
        [
@@ -4560,7 +4567,7 @@
         "`model.ID_RE.L`",
         "legislative merge (meta.next.L)",
         "`data/db.json#limitations`",
-        "2938 · 130 · 206",
+        "2939 · 130 · 207",
         "127 · 없음 3"
        ],
        [
@@ -4570,7 +4577,7 @@
         "`model.ID_RE.O`",
         "legislative merge (meta.next.O)",
         "`data/db.json#observations`",
-        "848 · 38 · 97",
+        "849 · 38 · 98",
         "28 · 없음 10"
        ],
        [
@@ -4580,7 +4587,7 @@
         "`^V\\d{6}$`",
         "legislative foldValues (meta.next.V)",
         "`data/db.json#values`",
-        "102 · 73 · 12",
+        "103 · 73 · 13",
         "68 · 없음 5"
        ],
        [
@@ -4590,7 +4597,7 @@
         "`^A\\d{6}$`",
         "clerk appendAssumptions (seq)",
         "`data/assumptions.jsonl`",
-        "2074 · 363 · 40",
+        "2075 · 363 · 41",
         "360 · 없음 3"
        ],
        [
@@ -4720,7 +4727,7 @@
         "`^TASK-\\d{3}$`",
         "integrator",
         "`workspace/tasks/`",
-        "388 · 6 · 46",
+        "392 · 6 · 47",
         "5 · 없음 1"
        ],
        [
@@ -4730,7 +4737,7 @@
         "`^U\\d{4,}$`",
         "classification (rebuild PLAN §5)",
         "`rebuild/ledger/*.jsonl`",
-        "10660 · 7281 · 10",
+        "10661 · 7281 · 11",
         "—"
        ],
        [
@@ -4740,7 +4747,7 @@
         "`^trig_[A-Za-z0-9]+$`",
         "claude.ai",
         "`claude.ai scheduled tasks`",
-        "11 · 1 · 5",
+        "12 · 1 · 6",
         "—"
        ],
        [
@@ -4760,7 +4767,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "5578 · 539 · 161",
+        "5597 · 539 · 162",
         "536 · 없음 3"
        ],
        [
@@ -4770,7 +4777,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "1899 · 61 · 280",
+        "1904 · 61 · 281",
         "235 · 없음 4"
        ],
        [
@@ -4820,7 +4827,7 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "2814 · 110 · 212",
+        "2827 · 110 · 213",
         "235 · 없음 6"
        ],
        [
@@ -4830,7 +4837,7 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "1338 · 42 · 121",
+        "1343 · 42 · 122",
         "235 · 없음 0"
        ],
        [
@@ -4870,7 +4877,7 @@
         "`^EQ-\\d{4}$`",
         "rebuild 6d (수식 기록)",
         "`rebuild/rules/formulas.jsonl`",
-        "50 · 14 · 11",
+        "51 · 14 · 12",
         "13 · 없음 1"
        ],
        [
@@ -5206,8 +5213,8 @@
        ],
        [
         "점검·검증 `inspect`",
-        "112",
-        "1644.3"
+        "113",
+        "1684.6"
        ]
       ]
      }
@@ -5467,8 +5474,8 @@
        [
         "`docs/reports/**`",
         "inspect",
-        "102",
-        "1262.9",
+        "103",
+        "1303.2",
         "보고서 — 읽기·점검"
        ],
        [
