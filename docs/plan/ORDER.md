@@ -20,7 +20,7 @@
 14. [PLAN-081](items/PLAN-081.md) 쓰기의 비교 후 교체 — ☑ 완료 · build — DEC-0067 — 자동 배정 전에 RP2 a (잃어버린 갱신)
 15. [PLAN-111](items/PLAN-111.md) RP2 병합 사전 점검 넓히기 — ☑ 완료 · build — DEC-0067 — 자동 배정 전에 RP2 b (브랜치 사이 번호 충돌 탐지)
 16. [PLAN-077](items/PLAN-077.md) 추세 재확인 자동화가 실제로 돌게 — ◐ 진행 · build — 2026-11-18 DEC-0062 · DEC-0067 — 예약 작업이 결과를 남기게 (자동 배정의 전제)
-17. [PLAN-114](items/PLAN-114.md) Governor 의 CI 겹 — ☐ 대기 · build — DEC-0070 — 자동 배정이 실행 모듈을 늘리기 전에 Governor 를 실행 환경 밖(CI)에 한 겹
+17. [PLAN-114](items/PLAN-114.md) Governor 의 CI 겹 — ☑ 완료 · build — DEC-0070 — 자동 배정이 실행 모듈을 늘리기 전에 Governor 를 실행 환경 밖(CI)에 한 겹
 18. [PLAN-104](items/PLAN-104.md) 배정 자동화 (Hybrid) — ☐ 대기 · build — DEC-0067 — 자동 배정 (선행: 106 · 081 · 111 · 077)
 19. [PLAN-107](items/PLAN-107.md) M1 관측 묶음 — ☐ 대기 · build — DEC-0067 — 관측 묶음
 20. [PLAN-108](items/PLAN-108.md) 탐지기 보호 — ☐ 대기 · build — DEC-0067 — 탐지기 보호
@@ -73,7 +73,7 @@
 
 ## 끝난 것
 
-- build: 49 / 119
+- build: 50 / 119
 - rebuild: 39 / 42
 - assay: 1 / 17
 
