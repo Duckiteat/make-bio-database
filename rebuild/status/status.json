@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1226 개 · 29984.7 KB"
+        "1226 개 · 29993.1 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "426 개 · 3589.6 KB"
+        "426 개 · 3591.2 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "519 / 25"
+        "522 / 25"
        ],
        [
         "번호 이름공간",
@@ -118,22 +118,22 @@
        [
         "rebuild",
         "36",
-        "6475.4"
+        "6479.1"
        ],
        [
         "docs",
         "403",
-        "3134.9"
+        "3135.7"
        ],
        [
         "(최상위)",
         "19",
-        "1000.4"
+        "1001.2"
        ],
        [
         "tests",
         "107",
-        "754.6"
+        "757.7"
        ],
        [
         "judicial",
@@ -231,7 +231,7 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "425.6"
+        "426.5"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -243,11 +243,11 @@
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "343.9"
+        "344.4"
        ],
        [
         "`CHANGES.md`",
-        "343.5"
+        "344.3"
        ],
        [
         "`data/fetched/consensus/uniprot/P04439.json`",
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "343.5",
-        "338",
+        "344.3",
+        "339",
         "",
         "분류됨 1"
        ],
@@ -2006,8 +2006,8 @@
        ],
        [
         "`docs/plan/items/PLAN-111.md`",
-        "1.8",
-        "21",
+        "2.5",
+        "23",
         "",
         "생성물"
        ],
@@ -3670,7 +3670,7 @@
        ],
        [
         "`tests/merge-check.test.mjs`",
-        "4"
+        "7"
        ],
        [
         "`tests/mhc.test.mjs`",
@@ -4727,7 +4727,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "11936 · 219 · 320",
+        "11944 · 219 · 321",
         "212 · 없음 7"
        ],
        [
@@ -4777,8 +4777,8 @@
         "`^A\\d{6}$`",
         "clerk appendAssumptions (seq)",
         "`data/assumptions.jsonl`",
-        "2075 · 363 · 41",
-        "360 · 없음 3"
+        "2081 · 365 · 42",
+        "360 · 없음 5"
        ],
        [
         "`temp_id`",
@@ -4998,7 +4998,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "331 · 없음 0"
+        "332 · 없음 0"
        ],
        [
         "`code_head`",
@@ -5017,7 +5017,7 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "4190 · 119 · 249",
+        "4201 · 119 · 251",
         "253 · 없음 5"
        ],
        [
@@ -5311,7 +5311,7 @@
      "- `limitation`: L000128 · L900001 · L999999",
      "- `observation`: O000029 · O000999 · O800002 · O900000 · O900001 · O900002 · O900003 · O900004 · O900009 · O999999",
      "- `value`: V000069 · V900000 · V900001 · V999998 · V999999",
-     "- `assumption`: A000500 · A000999 · A999999",
+     "- `assumption`: A000500 · A000999 · A900001 · A900002 · A999999",
      "- `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST",
      "- `criterion`: D3.asserted · S3.doi",
      "- `task`: TASK-009",
@@ -5380,7 +5380,7 @@
        [
         "공통 `common`",
         "343",
-        "8249.2"
+        "8253.7"
        ],
        [
         "정보 작성 `author`",
@@ -5395,7 +5395,7 @@
        [
         "디벨롭 `develop`",
         "205",
-        "2590.0"
+        "2593.9"
        ],
        [
         "적분장 `field`",
@@ -5428,7 +5428,7 @@
         "`rebuild/**`",
         "common",
         "36",
-        "6475.4",
+        "6479.1",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -5645,7 +5645,7 @@
         "`tests/**`",
         "develop",
         "81",
-        "720.9",
+        "724.0",
         "시험"
        ],
        [
@@ -5687,7 +5687,7 @@
         "`docs/**`",
         "common",
         "260",
-        "810.2",
+        "810.9",
         "안내 문서"
        ],
        [
@@ -5701,7 +5701,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "343.5",
+        "344.3",
         "변경 기록"
        ],
        [
@@ -10016,16 +10016,16 @@
         "`code:tests`",
         "58",
         "24",
-        "2",
-        "32"
+        "1",
+        "33"
        ],
        [
         "L2",
         "`code:tools`",
         "18",
         "6",
-        "6",
-        "8"
+        "5",
+        "9"
        ],
        [
         "L2",
@@ -10195,7 +10195,7 @@
     ]
    },
    {
-    "heading": "연결 없는 자리 (103)",
+    "heading": "연결 없는 자리 (105)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
@@ -10205,8 +10205,8 @@
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/stiffness.js` · `judicial/supervise_approval.js`",
      "- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
-     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs`",
-     "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/supervise.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs`",
+     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs`",
+     "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/supervise.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`",
      "- `doc:history`: `DESIGN-v4.md` · `FEATURES.md`",
      "- `doc:scenario`: `examples/scenarios/subjects.json`",
      "- `doc:spec`: `SCHEMA.md` · `README.md` · `docs/design/scaling-limits.md` · `data/fetched/README.md` · `docs/PROMPTS.md` · `docs/RUNBOOK.md` · `docs/project-overview.md`",

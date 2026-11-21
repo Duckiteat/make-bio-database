@@ -92,7 +92,7 @@
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mcp_config.test.mjs` | 2 |
 | `tests/mcp_run.test.mjs` | 5 |
-| `tests/merge-check.test.mjs` | 4 |
+| `tests/merge-check.test.mjs` | 7 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 13 |
 | `tests/permissions.test.mjs` | 2 |

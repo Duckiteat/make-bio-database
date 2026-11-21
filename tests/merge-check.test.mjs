@@ -65,3 +65,45 @@ test('통합: 겹침이 없으면 종료 코드 0 · 없는 브랜치는 2', () 
     const bad = M.mergeCheck('없는브랜치', r.dir); assert.equal(bad.exit, 2); assert.match(bad.lines[0], /읽을 수 없음/);
   } finally { rmSync(r.dir, { recursive: true, force: true }); }
 });
+
+// PLAN-111 — db.json 의 새 번호 · 가정 원장 · 전환 기록의 차례 겹침
+const db = (senses) => JSON.stringify({ format: 'definition-db', meta: { next: {} }, terms: {}, senses, steps: {}, limitations: {}, observations: {}, values: {} }, null, 2) + '\n';
+const asm = (seq, id, v) => JSON.stringify({ seq, id, value: v, prev: 'p' });
+const tr = (seq, why) => JSON.stringify({ seq, from: 'develop', to: 'author', why });
+
+test('읽는 함수: db 번호 · seq 와 가정 번호', () => {
+  assert.deepEqual([...M.dbIdsOf(db({ D900001: { k: 1 } })).keys()], ['D900001']);
+  assert.equal(M.dbIdsOf('깨진 json').size, 0);
+  assert.deepEqual([...M.seqsOf(asm(1, 'A900001', 1) + '\n' + tr(2, 'x') + '\n').keys()], ['seq 1', 'A900001', 'seq 2']);
+});
+
+test('통합 (PLAN-111): 두 브랜치가 같은 새 db 번호 · 가정 번호 · 전환 seq 를 다른 내용에 — 번호 충돌로 잡음 · 계획 기록 seq 는 막지 않음', () => {
+  const r = setup();
+  try {
+    r.put('data/db.json', db({ D900001: { k: 'base' } })); r.put('data/assumptions.jsonl', asm(1, 'A900001', 1) + '\n'); r.put('workspace/transitions.jsonl', tr(1, '기반') + '\n');
+    r.g('add', '-A'); r.g('commit', '-qm', 'ledgers');
+    r.g('checkout', '-qb', 'b');
+    r.put('data/db.json', db({ D900001: { k: 'base' }, D900002: { k: '그쪽' } })); r.add('data/assumptions.jsonl', asm(2, 'A900002', 'b') + '\n'); r.add('workspace/transitions.jsonl', tr(2, '그쪽') + '\n');
+    r.add('rebuild/state/plan-log.jsonl', '{"seq":2,"w":"b"}\n'); r.g('add', '-A'); r.g('commit', '-qm', 'b');
+    r.g('checkout', '-q', 'main');
+    r.put('data/db.json', db({ D900001: { k: 'base' }, D900002: { k: '우리' } })); r.add('data/assumptions.jsonl', asm(2, 'A900002', 'a') + '\n'); r.add('workspace/transitions.jsonl', tr(2, '우리') + '\n');
+    r.add('rebuild/state/plan-log.jsonl', '{"seq":2,"w":"a"}\n'); r.g('add', '-A'); r.g('commit', '-qm', 'a');
+    const res = M.mergeCheck('b', r.dir), text = res.lines.join('\n');
+    assert.equal(res.exit, 1);
+    assert.match(text, /db \(T · D · S · L · O · V\)[^\n]*\n\s+★ 번호 충돌 1: D900002/);
+    assert.match(text, /가정 원장[^\n]*\n\s+★ 번호 충돌 2: seq 2 · A900002/);
+    assert.match(text, /전환 기록[^\n]*\n\s+★ 번호 충돌 1: seq 2/);
+    assert.match(text, /계획 기록 \(seq\)[^\n]*\n\s+차례 겹침 1: seq 2 — 합칠 때 다시 매긴다/);
+    assert.match(text, /결론: 번호 충돌 4/);
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});
+
+test('통합 (PLAN-111): 계획 기록 seq 만 겹치면 막지 않는다', () => {
+  const r = setup();
+  try {
+    r.g('checkout', '-qb', 'b'); r.add('rebuild/state/plan-log.jsonl', '{"seq":2,"w":"b"}\n'); r.g('add', '-A'); r.g('commit', '-qm', 'b');
+    r.g('checkout', '-q', 'main'); r.add('rebuild/state/plan-log.jsonl', '{"seq":2,"w":"a"}\n'); r.g('add', '-A'); r.g('commit', '-qm', 'a');
+    const res = M.mergeCheck('b', r.dir);
+    assert.match(res.lines.join('\n'), /차례 겹침 1: seq 2/); assert.equal(res.exit, 0, res.lines.join('\n'));
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});

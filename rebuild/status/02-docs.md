@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 343.5 | 338 |  | 분류됨 1 |
+| `CHANGES.md` | 344.3 | 339 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -243,7 +243,7 @@
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-110.md` | 1.5 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-111.md` | 1.8 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-111.md` | 2.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-112.md` | 2.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 1.8 | 21 |  | 생성물 |
