@@ -112,7 +112,7 @@
 | `docs/plan/decisions/DEC-0070.md` | 1.4 | 15 |  | 생성물 |
 | `docs/plan/decisions/DEC-0071.md` | 1.1 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0072.md` | 1.5 | 13 |  | 생성물 |
-| `docs/plan/decisions/DEC-0073.md` | 3.3 | 18 |  | 생성물 |
+| `docs/plan/decisions/DEC-0073.md` | 4.0 | 19 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
