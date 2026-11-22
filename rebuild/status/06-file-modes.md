@@ -8,8 +8,8 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 344 | 8265.5 |
-| 정보 작성 `author` | 515 | 17008.1 |
+| 공통 `common` | 344 | 8266.0 |
+| 정보 작성 `author` | 539 | 17196.8 |
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 206 | 2601.3 |
 | 적분장 `field` | 0 | 0.0 |
@@ -19,11 +19,11 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 37 | 6487.4 | 재건 관리 — 모든 모드가 읽기만 |
-| `data/fetched/**` | author | 405 | 13954.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
-| `data/db.json` | author | 1 | 696.6 | 지식 원본 — 패치·관문으로만 |
-| `data/patches/**` | author | 71 | 1082.5 | 병합 기록 |
-| `data/log/**` | author | 3 | 732.7 | 델타 기록 |
+| `rebuild/**` | common | 37 | 6487.9 | 재건 관리 — 모든 모드가 읽기만 |
+| `data/fetched/**` | author | 428 | 14096.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
+| `data/db.json` | author | 1 | 707.2 | 지식 원본 — 패치·관문으로만 |
+| `data/patches/**` | author | 72 | 1105.4 | 병합 기록 |
+| `data/log/**` | author | 3 | 745.8 | 델타 기록 |
 | `data/assumptions.jsonl` | author | 1 | 182.3 | 가정 원장 |
 | `data/dictionary.jsonl` | develop | 1 | 45.5 | 말 사전 — 통제 토큰의 영어 |
 | `data/preregistrations.jsonl` | baseline | 1 | 2.8 | 사전 등록부 |
