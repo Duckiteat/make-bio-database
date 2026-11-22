@@ -112,7 +112,7 @@
 | `docs/plan/decisions/DEC-0070.md` | 1.4 | 15 |  | 생성물 |
 | `docs/plan/decisions/DEC-0071.md` | 1.1 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0072.md` | 1.5 | 13 |  | 생성물 |
-| `docs/plan/decisions/DEC-0073.md` | 2.5 | 16 |  | 생성물 |
+| `docs/plan/decisions/DEC-0073.md` | 2.9 | 17 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -248,7 +248,7 @@
 | `docs/plan/items/PLAN-112.md` | 2.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 3.1 | 23 |  | 생성물 |
-| `docs/plan/items/PLAN-115.md` | 2.7 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-115.md` | 6.6 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -393,6 +393,7 @@
 | `docs/reports/2026-11-21-plan-process-develop-split-deadzones.md` | 19.3 | 238 |  | 미분류 |
 | `docs/reports/2026-11-21-platform-independent-orchestrator-review.md` | 18.6 | 223 |  | 미분류 |
 | `docs/reports/2026-11-21-self-improvement-loop-minimal.md` | 28.7 | 353 |  | 미분류 |
+| `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
