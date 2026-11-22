@@ -29,7 +29,7 @@
 | L5 | `attest:registry` | 1 | 0 | 0 | 1 |
 | L5 | `data:assays` | 1 | 0 | 0 | 1 |
 | L5 | `data:assumptions` | 1 | 0 | 0 | 1 |
-| L5 | `data:db` | 1 | 1 | 0 | 0 |
+| L5 | `data:db` | 1 | 1 | 1 | 0 |
 | L5 | `data:dictionary` | 1 | 0 | 0 | 1 |
 | L5 | `data:prereg` | 1 | 1 | 0 | 0 |
 | L6 | `guard:authority` | 7 | 4 | 0 | 3 |
