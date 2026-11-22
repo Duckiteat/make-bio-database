@@ -7,8 +7,8 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 507 | 16885.1 |
-| rebuild | 37 | 6500.1 |
-| docs | 407 | 3192.0 |
+| rebuild | 37 | 6500.6 |
+| docs | 407 | 3192.4 |
 | (최상위) | 19 | 1002.9 |
 | tests | 108 | 762.8 |
 | judicial | 36 | 621.1 |
@@ -36,7 +36,7 @@
 | `rebuild/state/plan-log.jsonl` | 433.5 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `rebuild/state/plans.jsonl` | 350.3 |
+| `rebuild/state/plans.jsonl` | 350.7 |
 | `CHANGES.md` | 346.0 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
