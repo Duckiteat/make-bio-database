@@ -11,10 +11,10 @@
 | 이름공간 | 상태 | 모양 | 형식 | 발급 | 자리 | 토큰 | 정의 |
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1222 · 212 · 25 | 210 · 없음 2 |
-| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 12107 · 219 · 325 | 212 · 없음 7 |
-| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1080 · 60 · 79 | 57 · 없음 3 |
-| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2977 · 130 · 212 | 127 · 없음 3 |
-| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 849 · 38 · 98 | 28 · 없음 10 |
+| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 12145 · 219 · 326 | 212 · 없음 7 |
+| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1101 · 60 · 82 | 57 · 없음 3 |
+| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2990 · 130 · 213 | 127 · 없음 3 |
+| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 852 · 39 · 99 | 28 · 없음 11 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 103 · 73 · 13 | 68 · 없음 5 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2081 · 365 · 42 | 360 · 없음 5 |
 | `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1860 · 505 · 98 | — |
@@ -28,21 +28,21 @@
 | `patch_record` | active | file | `^\d{8}-\d{6}-.+\.json$` | clerk commitMerge | `data/patches/` | — | — |
 | `vocab_token` | active | vocab | `—` | human (vocab.js, user request) | `vocab.js` | — | — |
 | `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 558 · 13 · 84 | 10 · 없음 3 |
-| `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 221 · 22 · 17 | 20 · 없음 2 |
+| `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 223 · 22 · 18 | 20 · 없음 2 |
 | `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 394 · 6 · 48 | 5 · 없음 1 |
 | `supervise_task` | active | token | `^SUP-\d{4}$` | 감독 장부 rebuild/supervise.mjs propose (장부의 가장 큰 번호 + 1 — 두 브랜치가 겹치면 장부 검사가 잡음) | `rebuild/state/supervise.jsonl` | 0 · 0 · 0 | — |
 | `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10661 · 7281 · 11 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 12 · 1 · 6 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5679 · 539 · 176 | 536 · 없음 3 |
-| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 2383 · 71 · 320 | 255 · 없음 6 |
-| `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 255 · 없음 0 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5707 · 539 · 177 | 536 · 없음 3 |
+| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 2407 · 71 · 323 | 256 · 없음 6 |
+| `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 256 · 없음 0 |
 | `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 23 · 없음 0 |
 | `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 334 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
-| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 4256 · 120 · 257 | 255 · 없음 5 |
-| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 1561 · 43 · 127 | 255 · 없음 1 |
-| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 97 · 11 · 15 | 255 · 없음 1 |
+| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 4320 · 121 · 260 | 256 · 없음 5 |
+| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 1561 · 43 · 127 | 256 · 없음 1 |
+| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 97 · 11 · 15 | 256 · 없음 1 |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `switch` | planned | token | `^SW-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `formula` | active | token | `^EQ-\d{4}$` | rebuild 6d (수식 기록) | `rebuild/rules/formulas.jsonl` | 51 · 14 · 12 | 13 · 없음 1 |
@@ -82,7 +82,7 @@
 - `sense`: D000213 · D800001 · D900001 · D900002 · D900050 · D900101 · D999999
 - `step`: S000058 · S000059 · S900001
 - `limitation`: L000128 · L900001 · L999999
-- `observation`: O000029 · O000999 · O800002 · O900000 · O900001 · O900002 · O900003 · O900004 · O900009 · O999999
+- `observation`: O000029 · O000031 · O000999 · O800002 · O900000 · O900001 · O900002 · O900003 · O900004 · O900009 · O999999
 - `value`: V000069 · V900000 · V900001 · V999998 · V999999
 - `assumption`: A000500 · A000999 · A900001 · A900002 · A999999
 - `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST

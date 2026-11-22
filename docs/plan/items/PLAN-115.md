@@ -10,7 +10,7 @@
 
 ## 결과 (날짜별)
 
-- 결과 기록 없음
+- `2026-11-22` 커밋 전 기록: 2026-11-22 설계 보고서 docs/reports/2026-11-22-plan-115-claim-layer-design.md — 권고 C 혼합 최소판: 새 모음 claims.C… 하나(칸 경로 하나 + 근거 줄 여러 개: 출처 · 인용 위치(파일 sha256 + exact) · 방향 supports/contradicts/qualifies · 종류 direct/background/interpretation/absent · 맥락 · by), 생물 술어 어휘는 새로 만들지 않음(규칙 칸이 이미 표현), Assessment = 근거 줄 · Decision = 병합(DEC- 이름 충돌 피함), 칸 · 규칙 상태는 저장하지 않고 계산(새 TMS 없음), retractionImpact 를 출처 · 근거 줄 출발로 확장, quoteCheck 재사용, 이관 = 규칙마다 '#*' 주장 1 건(curated 를 supported 로 올리지 않음, 등급 · 궤적 비트 동일). 조사에서 찾은 것: 엔진 · 컴파일러는 근거를 보지 않고 관문은 속도 상수에만 — 규칙 구조는 asserted 30 · abstracted 64 도 시뮬레이션에 들어감 · needMet xref 가 상태를 안 봄(L000030). 시범 표: S000009 via_component · Ser14 unsupported · D000043 basal 은 contested. 사용자 결정 대기 Q1–Q11 (보고서 §16). SCH-… 카드는 여전히 없음 — 확인 불가로 표시
 
 ## 걸어온 길
 
@@ -24,6 +24,7 @@
 이후: **주장 층 — 칸 단위 근거** (DEC-0073 ⑦) — 지금 규칙 하나에 evidence 하나라 curated 가 via_component · regulators[].note 같은 구조 칸까지 보증하는 것처럼 읽힌다(SUP-0001/r1 P1 검토). 주장 하나 = 대상 칸 경로 + 출처 하나 + 맥락(종 · 조직 · 조건) + 방향(지지 · 반박) + 종류(직접 측정 · 배경 문장 · 해석) + 초록 인용(받은 파일 해시와 함께). 규칙의 근거 수준은 적지 않고 주장에서 계산(핵심 칸 중 가장 약한 칸 · 반박이 있으면 다툼). 기존 규칙 evidence 는 이관으로 '규칙 전체를 덮는 주장 1 건' 이 됨. 함께: 한계 needs xref 해소가 asserted xref 를 세는 문제(L000030 이 resolved 로 나옴). SUP-0001 P3 이전 판정 설계(docs/design/transfer-judgment.md 의 주장 단위 · 맥락)와 겹치므로 같이 설계. 설계 입력(사용자 제공 SCHEMA_DATA 카드, 이 저장소에 없음 — 세션에 붙이거나 다시 받아야 함): SCH-0212 N 항 관계 · SCH-0214 마이크로 이론 · SCH-0164 진리 유지 체계 · SCH-0186 인용 선택자 · SCH-0074 PROV · SCH-0213 관계 특성 선언, 관계 어휘의 역 · 대칭 선언 방식. 기존 dbtool retraction · qualgraph 위에 얹을 수 있는지 먼저 확인 · 설계 지시서(사용자 제공 2026-11-22, 원문 보존 docs/reports/2026-11-22-plan-115-design-brief.md): Claim · Evidence Fragment · Observation · Assessment · Decision · Context 논리 모델, 혼합형 관계(단순 Edge + Claim), 관계 어휘 · 맥락 일반화 · PROV 최소 구조 · TMS 대 retraction · qualgraph, 효율 비교(A 기존 · B 전부 Claim · C 혼합), 글리코겐 인산화효소 시범, 이관 — 산출물은 설계 보고서 하나(구현은 별도 승인 뒤)
 
 </details>
+- `2026-11-22` 커밋 전 기록 결과 처음 적힘 — PLAN-115 설계 보고서 완료 (지시서대로 조사 · 설계만, 구현은 별도 승인 뒤) — 전환 기록 #16 을 받은 develop 세션
 
 ## 닿는 결정
 
