@@ -15,7 +15,7 @@
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
-| workspace | 37 | 155.0 |
+| workspace | 37 | 156.8 |
 | legislative | 3 | 77.6 |
 | migrations | 13 | 59.8 |
 | mcp | 6 | 59.8 |
