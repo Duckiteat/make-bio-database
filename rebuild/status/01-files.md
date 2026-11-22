@@ -6,8 +6,8 @@
 
 | 폴더 | 파일 | KB |
 |---|---|---|
-| data | 483 | 16696.4 |
-| rebuild | 37 | 6487.4 |
+| data | 507 | 16885.1 |
+| rebuild | 37 | 6487.9 |
 | docs | 403 | 3139.2 |
 | (최상위) | 19 | 1002.9 |
 | tests | 108 | 762.8 |
@@ -31,7 +31,7 @@
 | `rebuild/ledger/units.jsonl` | 4681.8 |
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
-| `data/db.json` | 696.6 |
+| `data/db.json` | 707.2 |
 | `data/log/genesis-db.json` | 608.9 |
 | `rebuild/state/plan-log.jsonl` | 428.0 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
