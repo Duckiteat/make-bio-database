@@ -391,6 +391,7 @@
 | `docs/reports/2026-11-21-plan-process-develop-split-deadzones.md` | 19.3 | 238 |  | 미분류 |
 | `docs/reports/2026-11-21-platform-independent-orchestrator-review.md` | 18.6 | 223 |  | 미분류 |
 | `docs/reports/2026-11-21-self-improvement-loop-minimal.md` | 28.7 | 353 |  | 미분류 |
+| `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |
