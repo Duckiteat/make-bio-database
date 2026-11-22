@@ -17,6 +17,16 @@ jobs:
           rustup toolchain install stable --profile minimal
           cd engine/rust && cargo test --release && cargo build --release --bin fate_cli
           # 커밋된 WASM 이 지금 소스로 빌드됐는지는 tests/rust_engine.test.mjs ① 이 소스 해시로 검사 (rustc 버전마다 WASM 바이트는 다를 수 있어 다시 빌드해 비교하지 않음)
+      - name: 구역 점검 (Governor CI 겹 — 커밋이 선언한 모드의 쓰기 구역 밖 변경을 거부 · 선언 없음은 알리기만, PLAN-114)
+        env:
+          BASE_PR: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          BASE="${BASE_PR:-$BEFORE}"
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            BASE=$(git merge-base origin/main HEAD 2>/dev/null || git rev-list --max-parents=0 HEAD | tail -1)
+          fi
+          node rebuild/ci-zone.mjs "$BASE" HEAD
       - name: 규칙 테스트
         run: node --test tests/*.test.mjs
       - name: 저장소 전체 검사

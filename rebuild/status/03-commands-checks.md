@@ -72,6 +72,7 @@
 | `tests/authority.test.mjs` | 5 |
 | `tests/bundle.test.mjs` | 5 |
 | `tests/changes-draft.test.mjs` | 3 |
+| `tests/ci_zone.test.mjs` | 3 |
 | `tests/clock.test.mjs` | 7 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
@@ -85,14 +86,14 @@
 | `tests/engine_reference.test.mjs` | 6 |
 | `tests/gap_schema.test.mjs` | 3 |
 | `tests/gate.test.mjs` | 4 |
-| `tests/governance.test.mjs` | 23 |
+| `tests/governance.test.mjs` | 24 |
 | `tests/guard-matrix.test.mjs` | 4 |
 | `tests/judicial_time.test.mjs` | 8 |
 | `tests/kinetics_search.test.mjs` | 4 |
 | `tests/mcp.test.mjs` | 12 |
 | `tests/mcp_config.test.mjs` | 2 |
 | `tests/mcp_run.test.mjs` | 5 |
-| `tests/merge-check.test.mjs` | 4 |
+| `tests/merge-check.test.mjs` | 7 |
 | `tests/mhc.test.mjs` | 11 |
 | `tests/observations.test.mjs` | 13 |
 | `tests/permissions.test.mjs` | 2 |

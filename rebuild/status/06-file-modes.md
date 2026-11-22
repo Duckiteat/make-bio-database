@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 340 | 8220.8 |
-| 정보 작성 `author` | 515 | 17004.8 |
+| 공통 `common` | 344 | 8265.5 |
+| 정보 작성 `author` | 515 | 17008.1 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 205 | 2585.4 |
+| 디벨롭 `develop` | 206 | 2601.3 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 118 | 1851.4 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 35 | 6469.9 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 37 | 6487.4 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 405 | 13954.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 696.6 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 71 | 1082.5 | 병합 기록 |
@@ -30,13 +30,13 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 28 | 130.3 | 수집가 작업 공간 |
+| `workspace/**` | author | 28 | 133.5 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
 | `compiler/**` | develop | 8 | 57.8 | 컴파일러 |
 | `judicial/**` | develop | 36 | 621.1 | 사법부 코드 |
-| `legislative/**` | develop | 3 | 76.6 | 입법부 코드 |
+| `legislative/**` | develop | 3 | 77.6 | 입법부 코드 |
 | `mcp/**` | develop | 6 | 59.8 | MCP 서버 |
 | `migrations/**` | develop | 13 | 59.8 | 형식 변환 |
 | `schemas/obs/**` | author | 1 | 17.6 | 관찰 포트 계약 |
@@ -46,23 +46,23 @@
 | `vocab.js` | develop | 1 | 60.4 | 통제 어휘 — 사용자 요청 시만 |
 | `dictionary.js` | develop | 1 | 7.6 | 번역기 |
 | `orchestrator.js` | develop | 1 | 25.5 | 조정자 |
-| `dbtool.mjs` | develop | 1 | 81.3 | 명령줄 |
+| `dbtool.mjs` | develop | 1 | 81.6 | 명령줄 |
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 26 | 33.7 | 거부 말뭉치 |
-| `tests/**` | develop | 81 | 718.6 | 시험 |
+| `tests/**` | develop | 82 | 729.1 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 108 | 1470.0 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 12 | 507.8 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
-| `docs/design/**` | common | 22 | 329.1 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 259 | 805.1 | 안내 문서 |
+| `docs/textbook/**` | common | 12 | 510.0 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/design/**` | common | 23 | 347.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
+| `docs/**` | common | 260 | 812.2 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.6 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 342.5 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 346.0 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 108.6 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
 | `.claude/**` | common | 6 | 37.6 | 도구 설정 |
-| `.github/**` | develop | 1 | 2.1 | CI |
+| `.github/**` | develop | 1 | 2.6 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
 | `.mcp.json` | develop | 1 | 0.3 | 세션에 꽂는 MCP 서버 설정 (PLAN-105) |
 

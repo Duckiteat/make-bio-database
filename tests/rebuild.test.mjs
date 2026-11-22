@@ -277,7 +277,8 @@ test('⑳ 코드 주석에 이력(날짜·예전)이 없다 — 이력은 CHANGE
   assert.equal(historyComments('  /' + '/ 기준 표 (' + '2026-10-24 결정)').length, 1);
   assert.equal(historyComments('x(); // 예' + '전 Stop 훅').length, 1);
   assert.equal(historyComments("const AT = '2026-10-23'; // 사건 시각\n// 이유: 보존 법칙\nfetch('https://x.org/a')").length, 0);
-  const files = execFileSync('git', ['ls-files', '*.js', '*.mjs'], { cwd: ROOT, encoding: 'utf8' }).trim().split('\n')
+  // --others: 아직 커밋 전인 새 파일도 — 끝내기 전 시험(gate finish)은 커밋 전에 돈다 (새 파일의 날짜 주석이 CI 에서야 잡히던 구멍)
+  const files = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '*.js', '*.mjs'], { cwd: ROOT, encoding: 'utf8' }).trim().split('\n')
     .filter((f) => !f.startsWith('migrations/') && !f.startsWith('node_modules/') && existsSync(join(ROOT, f)));
   const bad = files.flatMap((f) => historyComments(readFileSync(join(ROOT, f), 'utf8')).map(([n, l]) => `${f}:${n} ${l.trim().slice(0, 80)}`));
   assert.deepEqual(bad, [], '주석의 이력은 CHANGES.md 로 옮기고 이유만 남긴다');

@@ -2,7 +2,7 @@
 // 병합 사전 점검 — 다른 브랜치(다른 세션이 일하는 곳)를 합치기 전에 어디서 충돌하고 어떤 번호가 겹치는지 미리 본다. 읽기만 한다.
 //   node rebuild/merge-check.mjs <브랜치 또는 커밋>        (probe.mjs --merge-check <브랜치> 와 같다)
 // 방법: git merge-tree 로 작업 트리를 건드리지 않고 시험 합치기 → 충돌 파일을 종류별로(다시 만들면 되는 것 · 합집합 · 손으로) 나누고,
-//   번호(DEC · PLAN · STG · ASY · RULE · PERM)가 양쪽에서 새로 생겨 같은 번호가 다른 내용을 가리키는지(번호 충돌) 본다.
+//   번호(DEC · PLAN · STG · ASY · RULE · PERM · db 의 T · D · S · L · O · V · 가정 A)와 덧붙이기 장부의 차례(seq)가 양쪽에서 새로 생겨 같은 번호가 다른 내용을 가리키는지(번호 충돌) 본다.
 // 번호는 두 세션이 서로 모르는 채 "다음 번호"를 똑같이 집기 때문에 겹친다 — git 은 줄이 다르게 붙으면 충돌로도 안 보일 수 있어 따로 센다.
 // 종료 코드: 0 = 번호 충돌 없고 손으로 풀 충돌 없음 · 1 = 번호 충돌이나 손으로 풀 충돌이 있음 · 2 = 점검 못 함 (사용법 · 얕은 복제 · 오래된 git)
 import { execFileSync } from 'node:child_process';
@@ -46,8 +46,35 @@ export function compareIds(base, a, b) {
   return out;
 }
 
-// 번호를 읽는 파일 — [경로, 이름]
-export const ID_FILES = [['rebuild/state/plans.jsonl', '계획 (DEC · PLAN · STG · ASY …)'], ['rebuild/rules/rules.jsonl', '규칙 (RULE)'], ['rebuild/rules/permissions.jsonl', '상시 권한 (PERM)']];
+// db.json 의 새 번호 (PLAN-111) — 브랜치마다 meta.next 로 따로 발급하므로 두 쪽이 같은 T · D · S · L · O · V 를 다른 내용에 줄 수 있다
+export const DB_COLLECTIONS = ['terms', 'senses', 'steps', 'limitations', 'observations', 'values'];
+export function dbIdsOf(text) {
+  const m = new Map(); let db; try { db = JSON.parse(String(text || '')); } catch { return m; }
+  for (const c of DB_COLLECTIONS) for (const [id, v] of Object.entries((db && db[c]) || {})) m.set(id, JSON.stringify(v));
+  return m;
+}
+// 덧붙이기 장부의 차례(seq) — 두 쪽이 같은 seq 를 다른 줄에 쓰면 사슬(prev · root)이 갈린다. id 가 있으면(가정 A…) 번호도 함께
+export function seqsOf(text) {
+  const m = new Map();
+  for (const l of String(text || '').split('\n')) { if (!l.trim()) continue; let o; try { o = JSON.parse(l); } catch { continue; } if (!o || typeof o !== 'object') continue;
+    if (Number.isInteger(o.seq)) m.set(`seq ${o.seq}`, l); if (typeof o.id === 'string') m.set(o.id, l); }
+  return m;
+}
+
+// 번호를 읽는 파일 — [경로, 이름, 읽는 함수, 겹치면 막는가]
+//   계획 기록(plan-log)의 seq 겹침은 알리기만 한다 — 합칠 때 seq 를 다시 매기는 것이 정해진 풀이(두 쪽 합집합)
+export const ID_FILES = [
+  ['rebuild/state/plans.jsonl', '계획 (DEC · PLAN · STG · ASY …)', idsOf, true],
+  ['rebuild/rules/rules.jsonl', '규칙 (RULE)', idsOf, true],
+  ['rebuild/rules/permissions.jsonl', '상시 권한 (PERM)', idsOf, true],
+  ['data/db.json', 'db (T · D · S · L · O · V)', dbIdsOf, true],
+  ['data/assumptions.jsonl', '가정 원장 (A · seq)', seqsOf, true],
+  ['workspace/transitions.jsonl', '전환 기록 (seq)', seqsOf, true],
+  ['data/dictionary.jsonl', '사전 (seq)', seqsOf, true],
+  ['data/assays.jsonl', '측정법 (seq)', seqsOf, true],
+  ['data/preregistrations.jsonl', '사전 등록 (seq)', seqsOf, true],
+  ['rebuild/state/plan-log.jsonl', '계획 기록 (seq)', seqsOf, false],
+];
 
 // 새 파일이 우리 권한 칸(level · area · write_keys)을 갖췄는지 — 그쪽이 권한 모델 이전에 갈라졌다면 새 자리에 칸이 없다
 //   새 자리 = 분기점의 저장 지도에 없던 자리 (옛 자리는 합칠 때 우리 칸이 남는다)
@@ -91,12 +118,15 @@ export function mergeCheck(ref, root = ROOT) {
   // 번호 충돌
   P('', '## 번호 충돌');
   let coll = 0;
-  for (const [file, name] of ID_FILES) {
+  for (const [file, name, read, blocks] of ID_FILES) {
     const rd = (rev) => { try { return git(['show', `${rev}:${file}`], root); } catch { return ''; } };
-    const c = compareIds(idsOf(rd(base)), idsOf(rd(head)), idsOf(rd(out.tip)));
-    coll += c.collisions.length;
+    const c = compareIds(read(rd(base)), read(rd(head)), read(rd(out.tip)));
+    if (!c.onlyA.length && !c.onlyB.length && !c.sameNew.length && !c.collisions.length && !c.bothModified.length && !ID_FILES.slice(0, 3).some(([f]) => f === file)) continue;
+    if (blocks) coll += c.collisions.length;
     P(`- ${name}: 새로 — 우리 ${c.onlyA.length} · 그쪽 ${c.onlyB.length}${c.sameNew.length ? ` · 같은 내용으로 양쪽에 ${c.sameNew.length}` : ''}`);
-    if (c.collisions.length) P(`    ★ 번호 충돌 ${c.collisions.length}: ${c.collisions.join(' · ')} — 같은 번호가 다른 내용을 가리킴. 한쪽(보통 나중에 합치는 쪽)을 새 번호로 바꾸고 참조도 함께`);
+    const list = (xs) => `${xs.slice(0, 12).join(' · ')}${xs.length > 12 ? ' …' : ''}`;
+    if (c.collisions.length && blocks) P(`    ★ 번호 충돌 ${c.collisions.length}: ${list(c.collisions)} — 같은 번호가 다른 내용을 가리킴. 한쪽(보통 나중에 합치는 쪽)을 새 번호로 바꾸고 참조도 함께`);
+    if (c.collisions.length && !blocks) P(`    차례 겹침 ${c.collisions.length}: ${list(c.collisions)} — 합칠 때 다시 매긴다 (막지 않음)`);
     if (c.bothModified.length) P(`    양쪽이 다르게 고친 기존 항목 ${c.bothModified.length}: ${c.bothModified.slice(0, 12).join(' · ')}${c.bothModified.length > 12 ? ' …' : ''} — 결과 글을 합쳐야 함`);
   }
   if (!coll) P('  (번호 충돌 없음)');

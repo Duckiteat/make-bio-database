@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.3 | 85 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 90 |  | 미분류 |
-| `CHANGES.md` | 342.5 | 337 |  | 분류됨 1 |
+| `CHANGES.md` | 346.0 | 341 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -36,6 +36,7 @@
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
 | `docs/design/supervisor.md` | 14.2 | 203 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
+| `docs/design/transfer-judgment.md` | 17.9 | 221 |  | 미분류 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
@@ -46,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.6 | 85 |  | 생성물 |
 | `docs/plan/ORDER.md` | 31.6 | 99 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 49.2 | 478 |  | 생성물 |
+| `docs/plan/build.md` | 51.2 | 481 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -110,6 +111,7 @@
 | `docs/plan/decisions/DEC-0069.md` | 1.2 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0070.md` | 1.4 | 15 |  | 생성물 |
 | `docs/plan/decisions/DEC-0071.md` | 1.1 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0072.md` | 1.5 | 13 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -193,7 +195,7 @@
 | `docs/plan/items/PLAN-061.md` | 1.1 | 17 |  | 생성물 |
 | `docs/plan/items/PLAN-062.md` | 1.1 | 17 |  | 생성물 |
 | `docs/plan/items/PLAN-063.md` | 1.0 | 17 |  | 생성물 |
-| `docs/plan/items/PLAN-064.md` | 1.3 | 17 |  | 생성물 |
+| `docs/plan/items/PLAN-064.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-065.md` | 4.0 | 44 |  | 생성물 |
 | `docs/plan/items/PLAN-066.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/PLAN-067.md` | 1.2 | 17 |  | 생성물 |
@@ -211,7 +213,7 @@
 | `docs/plan/items/PLAN-078.md` | 2.9 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-079.md` | 2.3 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-080.md` | 3.3 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-081.md` | 1.5 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-081.md` | 2.5 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-082.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-083.md` | 1.2 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-084.md` | 1.1 | 21 |  | 생성물 |
@@ -233,7 +235,7 @@
 | `docs/plan/items/PLAN-100.md` | 12.8 | 88 |  | 생성물 |
 | `docs/plan/items/PLAN-101.md` | 5.8 | 61 |  | 생성물 |
 | `docs/plan/items/PLAN-102.md` | 8.0 | 53 |  | 생성물 |
-| `docs/plan/items/PLAN-103.md` | 4.1 | 44 |  | 생성물 |
+| `docs/plan/items/PLAN-103.md` | 4.3 | 45 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 6.4 | 70 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 3.7 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-106.md` | 3.3 | 25 |  | 생성물 |
@@ -241,10 +243,10 @@
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-110.md` | 1.5 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-111.md` | 1.8 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-112.md` | 2.0 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-111.md` | 2.5 | 23 |  | 생성물 |
+| `docs/plan/items/PLAN-112.md` | 2.2 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-114.md` | 1.8 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-114.md` | 3.1 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -404,7 +406,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 144.5 | 873 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 145.3 | 875 |  | 생성물 |
 | `limitations.md` | 95.6 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
