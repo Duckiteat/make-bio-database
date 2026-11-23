@@ -10,7 +10,7 @@
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.9 | 89 |  | 미분류 |
 | `CHANGES.md` | 357.8 | 351 |  | 분류됨 1 |
-| `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
+| `CLAUDE.md` | 8.0 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
 | `README.md` | 24.7 | 233 |  | 분류됨 153 |
@@ -126,7 +126,7 @@
 | `docs/plan/decisions/DEC-0084.md` | 2.7 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0085.md` | 4.7 | 18 |  | 생성물 |
 | `docs/plan/decisions/DEC-0086.md` | 2.3 | 17 |  | 생성물 |
-| `docs/plan/decisions/DEC-0087.md` | 2.0 | 12 |  | 생성물 |
+| `docs/plan/decisions/DEC-0087.md` | 2.5 | 16 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -253,7 +253,7 @@
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 8.6 | 82 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-106.md` | 9.6 | 48 |  | 생성물 |
+| `docs/plan/items/PLAN-106.md` | 10.1 | 50 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
@@ -412,7 +412,7 @@
 | `docs/reports/2026-11-22-plan-115-claim-layer-design.md` | 53.0 | 439 |  | 미분류 |
 | `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
-| `docs/reports/2026-11-23-attack-path-matrix.md` | 11.2 | 82 |  | 미분류 |
+| `docs/reports/2026-11-23-attack-path-matrix.md` | 11.5 | 82 |  | 미분류 |
 | `docs/reports/2026-11-23-derived-artifact-freshness-review.md` | 5.0 | 36 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-106-independent-review.md` | 8.1 | 58 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-g5-bypass-scenarios.md` | 7.9 | 52 |  | 미분류 |
@@ -436,7 +436,7 @@
 | `docs/textbook/90-부록-자동생성.md` | 149.0 | 882 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
 | `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
-| `workspace/DEC-0087-check-code-l6-bundle.README.md` | 2.5 | 20 |  | 미분류 |
+| `workspace/DEC-0087-check-code-l6-bundle.README.md` | 3.3 | 22 |  | 미분류 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
