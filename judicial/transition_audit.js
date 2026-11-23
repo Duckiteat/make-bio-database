@@ -1,5 +1,6 @@
 // 사법부 — 전환 기록 검사 (재건 PLAN §3, 6c). 한 세션 = 한 모드: 다른 모드가 필요하면 세션은 전환 기록을 남기고 끝난다.
-//   기록 하나 = { from, to, at, why, target[], files[], open[] } — 다음 세션이 이것만 받고 새 모드로 시작한다(산문 NEXT-*.md 를 대신).
+//   기록 하나 = { from, to, at, why, target[], files[], open[], sup? } — 다음 세션이 이것만 받고 새 모드로 시작한다(산문 NEXT-*.md 를 대신).
+//   sup(선택, DEC-0081) = 이 전환이 어느 상위 작업(감독 장부 SUP-…)의 일인지 — 감독 장부가 넘김이 가리킨 전환 기록과 자기 상위 작업이 같은지 본다.
 //   쓰기는 입법 서기(appendTransition)만, 서기는 이 검사가 통과할 때만 붙인다. 이 파일은 읽기·판정만.
 'use strict';
 const fs = require('fs');
@@ -7,6 +8,7 @@ const path = require('path');
 const V = require('../vocab.js');
 
 const FIELDS = ['from', 'to', 'at', 'why', 'target', 'files', 'open'];
+const OPTIONAL = ['sup']; // 선택 칸 (DEC-0081) — 옛 기록에는 없다
 // 가리킬 수 있는 번호 — 데이터(T·D·S·O·L·V)·가정(A)·규칙(RULE-)·하위 번호(D…/site|rule/키)
 const TARGET_RE = /^(?:[TDSOLV]\d{6}(?:\/(?:site|rule)\/[a-z0-9_]+)?|A\d{6}|RULE-\d{4})$/;
 
@@ -14,8 +16,9 @@ const TARGET_RE = /^(?:[TDSOLV]\d{6}(?:\/(?:site|rule)\/[a-z0-9_]+)?|A\d{6}|RULE
 function checkTransition(rec, root) {
   const errors = [], rules = [], err = (rule, m) => { errors.push(m); rules.push(rule); }; // rules[i] = errors[i] 의 규칙 번호
   if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return { ok: false, errors: ['전환 기록은 JSON 객체'], rules: ['RULE-0513'] };
-  const extra = Object.keys(rec).filter((k) => !FIELDS.includes(k));
-  if (extra.length) err('RULE-0513', `받지 않는 칸 ${extra.join(', ')} — ${FIELDS.join(' · ')} (순번 seq 는 서기가 붙인다)`);
+  const extra = Object.keys(rec).filter((k) => !FIELDS.includes(k) && !OPTIONAL.includes(k));
+  if (extra.length) err('RULE-0513', `받지 않는 칸 ${extra.join(', ')} — ${FIELDS.join(' · ')} · 선택 ${OPTIONAL.join(' · ')} (순번 seq 는 서기가 붙인다)`);
+  if (rec.sup !== undefined && !/^SUP-\d{4}$/.test(String(rec.sup))) err('RULE-0513', `sup '${rec.sup}' — 상위 작업 번호 SUP-네 자리 (없으면 칸을 빼기)`);
   for (const k of ['from', 'to']) if (!V.sessionModes[rec[k]]) err('RULE-0513', `${k} '${rec[k]}' — ${Object.keys(V.sessionModes).join(' | ')}`);
   if (rec.from && rec.from === rec.to) err('RULE-0513', 'from 과 to 가 같음 — 같은 모드면 전환이 아니라 그 세션에서 계속');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(rec.at || '') || Number.isNaN(Date.parse(rec.at))) err('RULE-0513', 'at 은 YYYY-MM-DD');
@@ -32,4 +35,4 @@ function checkTransition(rec, root) {
   return { ok: !errors.length, errors, rules };
 }
 
-module.exports = { FIELDS, TARGET_RE, checkTransition };
+module.exports = { FIELDS, OPTIONAL, TARGET_RE, checkTransition };

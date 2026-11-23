@@ -33,7 +33,13 @@ export const CAUSE_KIND = {
   ENGINE_DEFECT: 'deny', COMPILER_DEFECT: 'deny', EXEC_FAILURE: 'deny',
 };
 export const KIND_LABEL = { deny: '거부', hold: '보류' };
-export const MAX_ATTEMPTS = 3; // 같은 모드의 run — 처음 1 + 재시도 2 (DEC-0065 ⑤)
+export const MAX_ATTEMPTS = 3;
+// 넘김 · 입력이 가리킨 전환 기록이 다른 상위 작업의 것인가 (DEC-0081 · RULE-0545): 전환 기록에 sup 가 있을 때만 판정 — 없는 옛 기록은 판정하지 않는다
+const LINK_RULE = 'RULE-0545';
+function linkErr(R, seq, sup, where, E) {
+  const own = R && R.transitionSup && R.transitionSup.get(seq);
+  if (own && sup && own !== sup) E.push(`${where} — 전환 기록 #${seq} 은 ${own} 의 것, 이 사건은 ${sup} (${LINK_RULE}: 다른 상위 작업의 기록을 잇지 않는다)`);
+} // 같은 모드의 run — 처음 1 + 재시도 2 (DEC-0065 ⑤)
 const COMMON = ['id', 'at', 'ev', 'sup', 'by', 'why'];
 // 사건마다 받는 칸 — 그 밖의 칸은 거부 (범위 · 승인 칸을 끼워 넣지 못하게)
 export const FIELDS = {
@@ -67,6 +73,7 @@ export function refs(root = ROOT) {
     items: new Set(plans.filter((r) => r.kind === 'item').map((r) => r.id)),
     decisions: new Set(plans.filter((r) => r.kind === 'decision').map((r) => r.id)),
     transitions: new Set(jsonl(join(root, 'workspace/transitions.jsonl')).map((t) => t.seq)),
+    transitionSup: new Map(jsonl(join(root, 'workspace/transitions.jsonl')).filter((t) => t.sup).map((t) => [t.seq, t.sup])), // 선택 칸 sup 가 있는 전환 기록만 (DEC-0081)
     files: (p) => existsSync(join(root, p)),
   };
 }
@@ -106,6 +113,7 @@ function shape(e, R) {
     else {
       for (const k of Object.keys(e.inputs)) if (!['transitions', 'files', 'ids'].includes(k)) E.push(`inputs.${k} — transitions · files · ids 만`);
       for (const s of e.inputs.transitions || []) if (R && !R.transitions.has(s)) E.push(`inputs.transitions ${s} — 전환 기록에 없음`);
+      for (const s of e.inputs.transitions || []) linkErr(R, s, e.sup, `inputs.transitions ${s}`, E);
       for (const p of e.inputs.files || []) if (!str(p) || p.startsWith('/') || p.split('/').includes('..') || (R && !R.files(p))) E.push(`inputs.files '${p}' — 없거나 저장소 상대 경로가 아님`);
       for (const i of e.inputs.ids || []) if (!ID_ANY.test(String(i))) E.push(`inputs.ids '${i}' — T · D · S · O · L · V · A · RULE 번호만`);
     }
@@ -122,6 +130,7 @@ function shape(e, R) {
   if (e.ev === 'handoff') {
     if (!RUN_RE.test(e.run || '')) E.push(`run '${e.run}'`);
     if (!Number.isInteger(e.transition_seq) || (R && !R.transitions.has(e.transition_seq))) E.push(`transition_seq ${e.transition_seq} — 전환 기록에 없음 (넘기기 전에 dbtool transition)`);
+    else linkErr(R, e.transition_seq, e.sup, `transition_seq ${e.transition_seq}`, E);
     if (!isObj(e.verify) || e.verify.finish !== 'pass') E.push("verify.finish 가 'pass' 가 아님 — 끝내기 검사(gate finish <모드> --full)를 통과한 뒤에 넘긴다");
     if (!isObj(e.outputs) || !Array.isArray(e.outputs.commits) || !e.outputs.commits.length || e.outputs.commits.some((c) => !/^[0-9a-f]{7,40}$/.test(c))) E.push('outputs.commits — 커밋 해시 목록');
   }
@@ -326,7 +335,7 @@ export function report(sup, root = ROOT) {
     ['근거', last && last.cited.length ? `작성 패치의 문헌 출처 ${last.cited.length}: PMID ${last.cited.join(' · ')}` : '작성 패치의 문헌 출처 없음 (또는 검수 전)'],
     ['검증', sup.runs.map((r) => `${r.run} finish ${(r.verify && r.verify.finish) || '—'}`).join(' / ')],
     ['독립 검수', ind.length ? ind.map((x) => `${x.run} ${x.level} — ${Object.entries(x.factors).map(([k, v]) => `${k} ${v.ok === true ? '○' : v.ok === false ? '✗' : '?'}${v.estimated ? '(추정)' : ''}`).join(' · ')}`).join(' / ') : '검수 실행 없음'],
-    ['절차 감사', sup.runs.map((r) => `${r.run} 문지기 ${r.enforcement && r.enforcement.hooks ? '있음' : '없음'} · 영수증 ${receiptOf(root, r.session) ? '있음' : '없음'}`).join(' / ')],
+    ['절차 감사', sup.runs.map((r) => { const t = r.transition_seq && trOf(r.transition_seq); return `${r.run} 문지기 ${r.enforcement && r.enforcement.hooks ? '있음' : '없음'} · 영수증 ${receiptOf(root, r.session) ? '있음' : '없음'}${t ? ` · 전환 #${t.seq} ${t.sup ? (t.sup === sup.id ? '같은 작업(sup)' : `다른 작업 ${t.sup}`) : '연결 확인 못 함(sup 없음)'}` : ''}`; }).join(' / ')],
     ['실패 이력', [...Object.entries(attempts).filter(([, n]) => n > 1).map(([m, n]) => `${m} 시도 ${n}`), ...sup.runs.filter((r) => r.result === 'blocked').map((r) => `${r.run} 막힘`), ...(sup.blocked ? [`지금 막힘(${KIND_LABEL[CAUSE_KIND[sup.blocked.cause]]}) ${sup.blocked.cause}: ${sup.blocked.why}`] : [])].join(' / ') || '없음'],
     ['미해결', sup.runs.map((r) => r.transition_seq && trOf(r.transition_seq)).filter(Boolean).slice(-1).flatMap((t) => (t.open || []).map((o) => `#${t.seq}: ${o}`)).join(' / ') || '없음'],
     ['영향 분석', paths.length ? `${Object.entries(area).map(([k, n]) => `${k} ${n}`).join(' · ')}${touchesCore.length ? ` — ⚠ 판정 · 엔진 · 권위 데이터에 닿음 ${touchesCore.length}` : ''}` : '—'],

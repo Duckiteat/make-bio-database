@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 544 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 545 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 529 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 530 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 339 |
+| machine | 340 |
 | text | 203 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,13 +26,13 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 323 |
+| 1 곳 | 324 |
 | 2 곳 | 105 |
 | 3 곳 | 60 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 91 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 92 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -127,6 +127,7 @@
 | RULE-0542 | author · inspect · develop | 도장 등록부(attestations/registry.json)를 바꾸는 변경은 그 모드가 낼 수 있는 도장 종류(모드표 gate.modes[m].stamps — author: verified · trend / ins |
 | RULE-0543 | develop · inspect | 감독의 최종 권고(계산)는 독립 검수가 서지 않으면 hold 다 — ① 검수(inspect) 뒤에 작성 실행이 더 넘김(승인 대상에 검수하지 않은 바이트가 든다 — 다시 검수할 때까지) ② 독립성 다섯 요소 중 하나 |
 | RULE-0544 | author · inspect · develop · baseline · field | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transitions.jsonl)은 덧붙이기만 — 모드를 선언한 커밋이 부모의 줄을 하나라도 고치거나 지우면 CI 구역 |
+| RULE-0545 | author · inspect · develop · baseline · field | 감독 장부의 넘김(transition_seq) · 제안 입력(inputs.transitions)이 가리킨 전환 기록에 선택 칸 sup(상위 작업 번호)가 있으면 그 사건의 상위 작업과 같아야 한다 — 다르면 다른 작 |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 
