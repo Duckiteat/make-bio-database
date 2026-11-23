@@ -7,7 +7,7 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 507 | 16885.1 |
-| rebuild | 38 | 6672.9 |
+| rebuild | 38 | 6676.3 |
 | docs | 437 | 3487.8 |
 | (최상위) | 19 | 1029.2 |
 | tests | 116 | 816.7 |
@@ -21,7 +21,7 @@
 | mcp | 6 | 59.8 |
 | compiler | 8 | 57.8 |
 | schemas | 2 | 40.5 |
-| .claude | 6 | 38.2 |
+| .claude | 6 | 38.4 |
 | .github | 1 | 3.5 |
 
 ## 큰 파일 25
@@ -38,7 +38,7 @@
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
 | `CHANGES.md` | 359.7 |
-| `rebuild/rules/changes.jsonl` | 348.3 |
+| `rebuild/rules/changes.jsonl` | 351.4 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |

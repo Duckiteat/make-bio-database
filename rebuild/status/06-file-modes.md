@@ -8,7 +8,7 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 365 | 8565.8 |
+| 공통 `common` | 365 | 8569.3 |
 | 정보 작성 `author` | 559 | 17307.3 |
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 215 | 2708.4 |
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 38 | 6672.9 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 38 | 6676.3 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 428 | 14096.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 707.2 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 72 | 1105.4 | 병합 기록 |
@@ -61,7 +61,7 @@
 | `CHANGES.md` | develop | 1 | 359.7 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 112.6 | 형식 |
 | `*.md` | common | 4 | 65.0 | 최상위 문서 |
-| `.claude/**` | common | 6 | 38.2 | 도구 설정 |
+| `.claude/**` | common | 6 | 38.4 | 도구 설정 |
 | `.github/**` | develop | 1 | 3.5 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
 | `.mcp.json` | develop | 1 | 0.3 | 세션에 꽂는 MCP 서버 설정 (PLAN-105) |
