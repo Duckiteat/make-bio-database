@@ -3388,6 +3388,33 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "CI 구역 점검 시험 — 판정(구역 안 · 밖 · 선언 없음 · 영수증 제외 · 마지막 open) · 임시 git 저장소의 통합(구역 밖 종료 코드 1 · 선언 없음 알리기만 · 병합 커밋 건너뜀 · 없는 범위 2 · 정책은 부모에서)."
+    },
+    {
+      "class": "management",
+      "area": "code:tools",
+      "level": "L2",
+      "write_keys": [
+        "session:develop"
+      ],
+      "path": "rebuild/trust-check.mjs",
+      "format": "Node 스크립트·모듈 (<base> <head> — 읽기 전용)",
+      "writer": "사람·AI",
+      "readers": "CI (.github/workflows/trust.yml — main 의 사본으로만) · tests/trust_check.test.mjs",
+      "interpret": "독립 판정 (DEC-0088 Q2 · DEC-0089) — 갈림점 → head 의 순 변경으로 ① 도장 등록부 정책(승인 도장 지우기 · 바꾸기 · 승인자 밖 새 승인 도장 — 병합 커밋 속도, N9) ② 지키는 자리(저장 지도 L6 + 판정 코드의 require · import 의존 닫힘 — N10) 변경을 사람 확인으로 실패. 기준(지도 · 의존)은 판정하는 쪽(main) 파일. 승인 묶음 적용 뒤 L6 (guard:gate)"
+    },
+    {
+      "class": "verification",
+      "area": "code:tests",
+      "level": "L2",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ],
+      "path": "tests/trust_check.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "독립 판정 시험 — 의존 찾기 · 닫힘 · 지키는 자리(영수증 제외) · 실제 판정 코드의 닫힘에 N10 파일 · 보통 변경 통과 · model.js 한 줄 사람 확인 · 병합 커밋 속 도장 지우기(N9) · 승인자 밖 새 도장 · PR 이 지도를 낮춰도 main 지도로. 승인 묶음 적용 뒤 L6"
     }
   ],
   "governance": {
