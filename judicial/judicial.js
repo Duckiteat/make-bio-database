@@ -5,9 +5,9 @@
 //   시뮬레이션 감사는 행정부가 낸 원자료(raw)를 입력으로 받는다 — 여기서 simulate·simulateRate 를 부르지 않는다.
 //   오류를 찾으면 판결(보고서)만 낸다. 고치는 것은 별도 과정(에이전트 → 새 패치 → 입법 서기 → 재검증)이다.
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'), require('./reliability.js'), require('./consistency.js'));
-  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp, root.DefDBReliability, root.DefDBConsistency);
-})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP, RELI, CONS) { // CONS: 내부 일관성(ASY-14) — 브라우저에 없으면 그 검사만 건너뜀
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('../vocab.js'), require('../model.js'), require('../compiler/obs_operator.js'), require('./reliability.js'), require('./consistency.js'), require('./collection_audit.js'));
+  else root.DefDBJudicial = factory(root.DefDBVocab, root.DefDBModel, root.DefDBObsOp, root.DefDBReliability, root.DefDBConsistency, root.DefDBCollectionAudit);
+})(typeof self !== 'undefined' ? self : this, function (V, M, OBSOP, RELI, CONS, QA) { // CONS: 내부 일관성(ASY-14) — 브라우저에 없으면 그 검사만 건너뜀
   'use strict';
   const {
     NA, VOL, SAT_K, hillFactor, ruleLine, SITE_RE, supplyRules, modulationIndex,
@@ -83,7 +83,7 @@
     for (const x of checkUnitSystem()) E('RULE-0526', x.where, x.msg); // 단위 체계 자체 (ASY-08)
     if (db._version) E('RULE-0206', '데이터베이스', `형식 버전 ${db._version} — 버전 ${VERSION} 로 변환해야 함 (migrations/ 참고)`);
     const ix = index(db), L = ix.label;
-    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations], ['V', db.values || {}]]) {
+    for (const [p, table] of [['T', db.terms], ['D', db.senses], ['S', db.steps], ['L', db.limitations], ['O', db.observations], ['V', db.values || {}], ['C', db.claims || {}]]) {
       const max = Math.max(0, ...Object.keys(table).map((id) => parseInt(id.slice(1), 10) || 0));
       if (db.meta.next[p] <= max) E('RULE-0061', 'meta.next', `${p} 다음 번호(${db.meta.next[p]})가 이미 쓰인 번호(${max}) 이하 — 번호 재사용 위험`);
     }
@@ -116,10 +116,89 @@
     for (const [id, st] of Object.entries(db.steps)) validateStep(db, ix, id, st, E, W);
     for (const [id, l] of Object.entries(db.limitations)) validateLimitation(db, ix, id, l, E, W);
     for (const [id, o] of Object.entries(db.observations)) validateObservation(db, ix, id, o, E, W, opt);
+    validateClaims(db, opt, E, W);
     validateMoved(db, E);
     validateValues(db, E);
     checkAttestations(db, opt, E, W);
     return { errors, warnings };
+  }
+  // ===== 주장 층 (PLAN-115 · DEC-0075 · SCHEMA §주장) =====
+  // 칸 하나가 지금 그 규칙에 있는가 — vocab.claimFields 이름 · '*' · 'regulators:D…'
+  function claimFieldPresent(r, field) {
+    const ef = r.effect || {};
+    if (field === '*' || field === 'exists') return true;
+    if (field.startsWith('regulators:')) return (r.regulators || []).some((g) => g.ref === field.slice(11));
+    return ({
+      'effect.target': !!r.effect, 'effect.site': !!ef.site,
+      'effect.change': !!(arr(ef.add).length || arr(ef.remove).length || arr(ef.consumes).length || arr(ef.produces).length || ef.type),
+      via_component: !!r.via_component, via_site: !!r.via_site, agent: r.agent === true,
+      with: !!(r.with && (arr(r.with.consumes).length || arr(r.with.produces).length)), regulators: arr(r.regulators).length > 0,
+      activity: r.type === 'meaning',
+    })[field] === true;
+  }
+  // opt.fetched: { [file sha256]: { source: {db,id}, doi, title, abstract } } — 조정자가 data/fetched 와 FETCH_LOG 에서 읽어 넘긴다 (사법부는 파일을 읽지 않음)
+  function validateClaims(db, opt, E, W) {
+    const claims = db.claims || {}, fetched = opt && opt.fetched;
+    let unchecked = 0;
+    for (const [id, c] of Object.entries(claims)) {
+      const w = `주장 ${id}`;
+      if (!isId('C', id)) E('RULE-0537', id, "주장 번호는 'C' + 숫자 6자리");
+      const t = M.parseClaimTarget(c.target), d = t && db.senses[t.sense], r = d && d.rule.find((x) => x.id === t.rule);
+      if (!t) E('RULE-0537', w, `대상 '${c.target}' — 'D…/rule/키#칸' 모양이어야 함`);
+      else if (!r) E('RULE-0537', w, `대상 규칙 ${t.ref} 이 없음`);
+      else {
+        const allowed = V.claimFields[r.type], base = t.field.startsWith('regulators:') ? 'regulators' : t.field;
+        if (!allowed) E('RULE-0537', w, `규칙 종류 '${r.type}' 에는 주장 칸이 정해지지 않음 (vocab.claimFields)`);
+        else if (t.field !== '*' && ![...allowed.core, ...allowed.aux].includes(base)) E('RULE-0537', w, `칸 '${t.field}' 은(는) ${r.type} 규칙의 주장 칸이 아님 — ${['*', ...allowed.core, ...allowed.aux].join(' | ')}`);
+        else if (!claimFieldPresent(r, t.field)) E('RULE-0537', w, `칸 '${t.field}' 이 지금 ${t.ref} 에 없음 — 없는 칸에 근거를 달 수 없음`);
+      }
+      checkContext(c.context, w + ' 맥락', E); checkContextKeys(db, c.context, w + ' 맥락', E);
+      if (c.context.system && !V.contextSystems[c.context.system]) E('RULE-0538', w + ' 맥락', `실험계 '${c.context.system}' — ${Object.keys(V.contextSystems).join(' | ')}`);
+      if (!c.evidence.length) W('RULE-0538', w, '근거 줄이 없음 — 칸 상태는 unsupported');
+      c.evidence.forEach((e, i) => {
+        const ew = `${w} 근거 ${i + 1}`;
+        if (!V.claimStances[e.stance]) E('RULE-0538', ew, `방향 '${e.stance}' — ${Object.keys(V.claimStances).join(' | ')}`);
+        if (!V.claimEvidenceKinds[e.kind]) E('RULE-0538', ew, `종류 '${e.kind}' — ${Object.keys(V.claimEvidenceKinds).join(' | ')}`);
+        if (!V.claimAgents[e.by.agent]) E('RULE-0538', ew, `적은 쪽(by.agent) '${e.by.agent}' — ${Object.keys(V.claimAgents).join(' | ')} (AI 가 적은 줄은 ai — 기준이 아님, RULE-0494)`);
+        if (!e.at || Number.isNaN(Date.parse(e.at))) E('RULE-0538', ew, '평가 시각(at)이 없음');
+        if (!e.source && !(e.from || []).length) E('RULE-0538', ew, '출처(source)도 관찰(from)도 없음 — 근거 줄은 어디서 왔는지가 있어야 함');
+        if (e.source) {
+          if (!['DOI', 'PMID'].includes(e.source.db)) E('RULE-0538', ew, `출처 종류 '${e.source.db}' — DOI 또는 PMID`);
+          else if (!new RegExp(V.xrefs[e.source.db].pattern).test(e.source.id)) E('RULE-0538', ew, `출처 ${e.source.db} '${e.source.id}' 형식 틀림`);
+        }
+        for (const o of e.from || []) if (!db.observations[o]) E('RULE-0538', ew, `관찰 ${o} 이 없음`);
+        checkContext(e.context, ew + ' 맥락', E); checkContextKeys(db, e.context, ew + ' 맥락', E);
+        if (e.context.system && !V.contextSystems[e.context.system]) E('RULE-0538', ew + ' 맥락', `실험계 '${e.context.system}' — ${Object.keys(V.contextSystems).join(' | ')}`);
+        const L0 = e.locator;
+        if ((V.claimEvidenceKinds[e.kind] || {}).locator && !(L0 && /^[0-9a-f]{64}$/.test(L0.file_sha256) && L0.exact)) { E('RULE-0539', ew, '직접(direct) 근거는 인용 위치가 필요함 — locator { file_sha256(받은 원문 파일), exact(원문 그대로) }'); return; }
+        if (!L0) return;
+        if (!V.locatorParts[L0.part]) E('RULE-0538', ew, `인용 자리 '${L0.part}' — ${Object.keys(V.locatorParts).join(' | ')}`);
+        if (!fetched) { unchecked++; return; }
+        const f = fetched[L0.file_sha256];
+        if (!f) { E('RULE-0540', ew, `인용 파일 sha256 ${L0.file_sha256.slice(0, 12)}… 이 받은 원문(FETCH_LOG)에 없음`); return; }
+        if (e.source && !((e.source.db === f.source.db && e.source.id === f.source.id) || (e.source.db === 'DOI' && f.doi && f.doi.toLowerCase() === e.source.id.toLowerCase()))) E('RULE-0540', ew, `출처 ${e.source.db}:${e.source.id} 와 인용 파일의 출처 ${f.source.db}:${f.source.id} 가 다름`);
+        const text = L0.part === 'title' ? f.title : L0.part === 'abstract' ? f.abstract : null;
+        if (text == null) { W('RULE-0540', ew, `인용 자리 '${L0.part}' 는 받은 원문(제목 · 초록)으로 대조할 수 없음 — 사람이 원본을 확인`); return; }
+        const q = QA ? QA.normText(L0.exact) : String(L0.exact).toLowerCase();
+        if (q.length < 12) E('RULE-0540', ew, `인용이 너무 짧음(${q.length}자) — 문장 단위로`);
+        else if (!(QA ? QA.normText(text) : String(text).toLowerCase()).includes(q)) E('RULE-0540', ew, `인용 문구가 받은 원문(${L0.part})에 없음 — 없는 인용 · 고쳐 쓴 인용`);
+      });
+    }
+    // 건수를 문구에 넣지 않는다 (관문은 where+msg 로 새 경고를 가린다)
+    if (unchecked) W('RULE-0540', '주장 인용', '인용 문구를 받은 원문과 대조하지 않음 — node dbtool.mjs validate (data/fetched · FETCH_LOG) 로 확인할 것');
+  }
+  // 주장은 덧붙이기만: 기존 주장의 칸 · 기존 근거 줄은 그대로, 줄은 뒤에 더하기만, 철회는 한 번, 지울 수 없음, 새 주장은 기록 시각 (RULE-0541)
+  function claimImmutability(before, after) {
+    const out = [], B = before.claims || {}, A = after.claims || {}, cj = (x) => JSON.stringify(x === undefined ? null : x);
+    for (const [id, b] of Object.entries(B)) {
+      const a = A[id];
+      if (!a) { out.push({ rule: 'RULE-0541', where: id, msg: '주장은 지울 수 없음 — 잘못된 주장은 retracted 로 표시' }); continue; }
+      for (const k of ['target', 'says', 'context', 'recorded_at', 'note']) if (cj(a[k]) !== cj(b[k])) out.push({ rule: 'RULE-0541', where: id, msg: `주장의 '${k}' 은(는) 바꿀 수 없음 — 다른 주장은 새 번호로` });
+      if (a.evidence.length < b.evidence.length || b.evidence.some((e, i) => cj(e) !== cj(a.evidence[i]))) out.push({ rule: 'RULE-0541', where: id, msg: '기존 근거 줄은 바꾸거나 지울 수 없음 — 새 평가는 새 줄로 덧붙임 (반박이면 stance contradicts)' });
+      if (b.retracted && cj(a.retracted) !== cj(b.retracted)) out.push({ rule: 'RULE-0541', where: id, msg: '주장의 철회 표시는 바꾸거나 지울 수 없음' });
+    }
+    for (const [id, a] of Object.entries(A)) if (!B[id] && !a.recorded_at) out.push({ rule: 'RULE-0541', where: id, msg: '새 주장에 기록 시각(recorded_at)이 없음 — dbtool 이 찍는다' });
+    return out;
   }
   // 'verified' 는 외부 도장으로만 (삼권 분립 §3): 데이터·엔진은 스스로 verified 를 선언할 수 없다
   function checkAttestations(db, opt, E, W) {
@@ -1255,12 +1334,12 @@
   }
 
   function gate(dbBefore, result, opt) {
-    const vo = opt && (opt.attestations || opt.assays) ? { attestations: opt.attestations, assays: opt.assays } : undefined;
+    const vo = opt && (opt.attestations || opt.assays || opt.fetched) ? { attestations: opt.attestations, assays: opt.assays, fetched: opt.fetched } : undefined;
     const b0 = normalize(dbBefore), before = validate(b0, vo), after = validate(result.db, vo);
     const key = (i) => i.where + '|' + i.msg, old = new Set([...before.errors, ...before.warnings].map(key));
     // 새 정량 관찰은 원문 숫자가 있어야 한다 (RULE-0525 — 옛 관찰의 '없음' 은 경고로 남기지만 새로 들어오는 것은 거부)
     const noReported = Object.entries(result.db.observations || {}).filter(([id, o]) => !(b0.observations || {})[id] && o.kind !== 'qualitative' && !o.reported).map(([id]) => ({ rule: 'RULE-0525', where: id, msg: '새 정량 관찰에 원문 숫자(reported { value: 원문 십진 문자열, unit: 원문 단위, sd? })가 없음 — 자리수를 대조할 수 없으면 들이지 않는다' }));
-    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...patchPolicy(b0, result), ...noReported];
+    const errors = [...result.report.errors, ...after.errors.filter((i) => !old.has(key(i))), ...observationImmutability(b0, result.db), ...valueImmutability(b0, result.db), ...claimImmutability(b0, result.db), ...patchPolicy(b0, result), ...noReported];
     const warnings = after.warnings.filter((i) => !old.has(key(i)));
     const r = result.report;
     const changed = r.added.length + r.updated.length + r.removed.length > 0;
@@ -1999,7 +2078,7 @@
   }
 
   return Object.freeze({ parseDim, dimKey, checkUnitSystem, auditRate, checkAttestations,
-    needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
+    needMet, limitationStatus, kindAllowed, checkEvidence, checkContext, validate, validateLimitation, validateObservation, validateClaims, claimImmutability, claimFieldPresent, observationImmutability, valueImmutability, validateValues, obsUnit, validateSense, MASS_REL_TOL, moietyImbalance, validateSupply, validateDegradation,
     validateModulation, validateCellState, checkBundle, validateStep, gate, patchPolicy, refsOfRule, patchReport, refineCheck, refineText, retractionImpact, retractionText, augmentCandidates, patchReportText, audit,
     auditText, limitationRows, limitationsText, limitationsMarkdown, detectGaps, reviewCandidates, coverageMap, coverageMapText, simulateText, thermoIssues, thermoLoops, kineticIssues, siteRefsOf, resolutionPlan, resolutionText,
     gapSuggest, massSuggest, simulateRateText, auditRun });

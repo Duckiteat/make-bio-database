@@ -41,7 +41,7 @@
   // 동일성 보존을 검사하는 효과 (화학 변환이 없는 물리적 변화)
   const CONSERVING = new Set(['dissociate', 'associate', 'transport', 'transfer', 'degrade']);
 
-  const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/, L: /^L\d{6}$/, O: /^O\d{6}$/ };
+  const ID_RE = { T: /^T\d{6}$/, D: /^D\d{6}$/, S: /^S\d{6}$/, L: /^L\d{6}$/, O: /^O\d{6}$/, C: /^C\d{6}$/ };
   const fmtId = (p, n) => p + String(n).padStart(6, '0');
   const isId = (p, id) => ID_RE[p].test(String(id));
   const isTemp = (p, id) => !id || new RegExp('^' + p + '\\+').test(String(id));
@@ -158,6 +158,12 @@
     for (const [id, o] of Object.entries(isObj(input.observations) ? input.observations : {})) if (isObj(o)) db.observations[id] = normObservation(o);
     for (const [id, v] of Object.entries(isObj(input.values) ? input.values : {})) if (isObj(v)) db.values[id] = normValue(v);
     reconcileValues(db, input);
+    // 주장 층 (PLAN-115 · DEC-0075) — moved 처럼 있을 때만: 빈 표 · 번호를 더하면 기존 db 의 직렬화가 바뀐다
+    if (isObj(input.claims) && Object.keys(input.claims).length) {
+      db.claims = {};
+      for (const [id, c] of Object.entries(input.claims)) if (isObj(c)) db.claims[id] = normClaim(c);
+    }
+    if (db.claims || parseInt(nx.C, 10) > 0) db.meta.next.C = Math.max(1, parseInt(nx.C, 10) || 1);
     // 번호 이동 (형식 v12 §6) — 있을 때만 (빈 표를 더하면 기존 db 의 직렬화가 바뀐다)
     if (isObj(input.moved) && Object.keys(input.moved).length) {
       db.moved = {};
@@ -630,12 +636,48 @@
   function normObsCondition(c) {
     c = isObj(c) ? c : {};
     const o = { species: str(c.species) };
-    for (const k of ['location', 'cell']) if (str(c[k])) o[k] = str(c[k]);
+    for (const k of ['location', 'cell', 'tissue', 'system']) if (str(c[k])) o[k] = str(c[k]); // tissue · system 은 DEC-0075 Q8 (있을 때만 — 기존 기록 그대로)
     for (const k of ['temperature_K', 'pH', 'time_s']) if (num(c[k]) !== undefined) o[k] = num(c[k]);
     if (arr(c.states).length) o.states = arr(c.states).map(str);
     if (Array.isArray(c.condition)) { if (c.condition.length) o.condition = c.condition.map(str).filter(Boolean); }
     else if (str(c.condition)) o.condition = str(c.condition);
     return o;
+  }
+  // 주장 (PLAN-115 · SCHEMA §주장): 대상 칸 하나 + 근거 줄. 덧붙이기만 — 근거 줄을 더하거나 retracted 를 한 번
+  function normLocator(l) {
+    if (!isObj(l)) return undefined;
+    const o = { file_sha256: str(l.file_sha256), part: str(l.part) || 'abstract', exact: str(l.exact) };
+    for (const k of ['prefix', 'suffix']) if (str(l[k])) o[k] = str(l[k]);
+    return o;
+  }
+  function normClaimEvidence(e) {
+    e = isObj(e) ? e : {};
+    const o = {};
+    if (isObj(e.source)) o.source = { db: str(e.source.db), id: str(e.source.id) };
+    if (arr(e.from).length) o.from = arr(e.from).map(str).filter(Boolean);
+    const loc = normLocator(e.locator); if (loc) o.locator = loc;
+    o.stance = str(e.stance); o.kind = str(e.kind);
+    o.context = normObsCondition(e.context);
+    const by = isObj(e.by) ? e.by : {};
+    o.by = { agent: str(by.agent) }; for (const k of ['who', 'session']) if (str(by[k])) o.by[k] = str(by[k]);
+    o.at = str(e.at);
+    if (str(e.note)) o.note = str(e.note);
+    return o;
+  }
+  function normClaim(c) {
+    const o = { target: str(c.target) };
+    if (str(c.says)) o.says = str(c.says);
+    o.context = normObsCondition(c.context);
+    o.evidence = arr(c.evidence).map(normClaimEvidence);
+    if (str(c.recorded_at)) o.recorded_at = str(c.recorded_at);
+    if (str(c.note)) o.note = str(c.note);
+    if (isObj(c.retracted)) { o.retracted = { note: str(c.retracted.note) }; if (str(c.retracted.at)) o.retracted.at = str(c.retracted.at); }
+    return o;
+  }
+  // 대상 칸 경로 'D…/rule/키#칸' → { sense, rule, field } (칸은 vocab.claimFields 이름 · '*' · 'regulators:D…')
+  function parseClaimTarget(t) {
+    const m = /^(D\d{6})\/rule\/([^#\s]+)#(\S+)$/.exec(String(t || ''));
+    return m ? { sense: m[1], rule: m[2], ref: `${m[1]}/rule/${m[2]}`, field: m[3] } : null;
   }
   // 두 종류 공통: 조건 · 출처 · 용도 · 근거 · 실험 묶음 · 두 시간 · 철회 (필드 순서는 v10 그대로 — 기존 기록의 직렬화가 바뀌지 않게)
   function normObsCommon(b) {
@@ -1037,6 +1079,6 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, normObservation, normValue, contextKey, followMoved, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, valueKeyOf, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, normValue, normClaim, normClaimEvidence, parseClaimTarget, contextKey, followMoved, normKineticLaw, currentValues, attachViews, valueOfObs, obsOfValue, valuesOfKinetics, valueKeyOf, lawOfKinetics, kineticsOf, KIN_VALUE_FIELDS, canonJ, obsKey, placeLaw, asOf, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION });
 });
