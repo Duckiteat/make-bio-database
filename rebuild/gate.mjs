@@ -17,6 +17,8 @@ import { createHash } from 'node:crypto';
 import * as CLERK from '../legislative/clerk.mjs';
 import { createRequire } from 'node:module';
 const ATT = createRequire(import.meta.url)('../judicial/attestation.js'); // 도장 등록부 정책 (DEC-0078)
+const TA = createRequire(import.meta.url)('../judicial/transition_audit.js'); // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544) — 판정 함수
+import { APPEND_ONLY } from './ci-zone.mjs'; // 같은 목록을 CI 구역 점검과 함께 (ci-zone 은 이 파일의 violations 를 실행 때만 부른다 — 가져오기 고리지만 맨 위에서 쓰지 않음)
 
 const CODE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sha = (x) => createHash('sha256').update(x).digest('hex');
@@ -238,6 +240,14 @@ function hook(event, input, root) {
       try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
       const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
       if (sv.length) { add({ t: 'violation', rule: 'RULE-0542', files: ['attestations/registry.json'], why: sv.map((v) => v.msg).join(' · ') }); code = say('RULE-0542', `도장 등록부 정책 밖 — ${sv.map((v) => v.msg).join(' · ')} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로`); }
+    }
+    // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 ③ · RULE-0544): 이 호출이 바꿨으면 HEAD 의 글과 견준다 — CI 구역 점검과 같은 판정 · 같은 목록
+    if (st.mode) for (const f of APPEND_ONLY.filter((p) => changed.includes(p))) {
+      let headTxt = '', nowTxt = '';
+      try { headTxt = git(root, 'show', `HEAD:${f}`); } catch { /* 새 파일 */ }
+      try { nowTxt = readFileSync(join(root, f), 'utf8'); } catch { /* 지워짐 */ }
+      const lv = TA.appendOnly(headTxt, nowTxt);
+      if (lv.length) { add({ t: 'violation', rule: 'RULE-0544', files: [f], why: lv[0].msg }); code = say('RULE-0544', `${f}: ${lv[0].msg} — 되돌리거나(git checkout -- ${f}) 서기 명령(dbtool transition · supervise)으로 덧붙이기만`); }
     }
     if (bad.length) { const why = st.mode ? `${st.role || st.mode} 에서 바뀌면 안 되는 파일` : '모드를 열기 전에 저장소 파일이 바뀜'; add({ t: 'violation', rule: st.mode ? 'RULE-0515' : 'RULE-0514', files: bad, why }); code = say(st.mode ? 'RULE-0515' : 'RULE-0514', `${why}: ${bad.join(' · ')} — 되돌리거나(git checkout -- <파일>) 전환 기록을 남기고 끝낸다`); }
     save();
