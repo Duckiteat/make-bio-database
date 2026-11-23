@@ -1702,6 +1702,20 @@
       ]
     },
     {
+      "path": "tests/bypass_scenarios.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "PLAN-116 G5 우회 시나리오 (DEC-0079) — 기존 시험이 다루지 않던 것만: inspect 가 data 를 쓴 커밋 거부(A2) · 감독 장부 · 전환 기록의 기존 줄 고침 거부(C4, RULE-0544) · 검수 뒤 작성 넘김은 보류(B4, RULE-0543) · 검수 영수증 없음은 보류(C2 · C3). 임시 git 저장소의 실제 커밋과 감독 장부의 실제 접기로.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/affected.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님) — 기본 · --full · --list",
@@ -3362,7 +3376,7 @@
       "format": "Node 스크립트·모듈 (<base> [head] — 읽기 전용)",
       "writer": "사람·AI",
       "readers": "CI (.github/workflows/check.yml 구역 점검) · tests/ci_zone.test.mjs",
-      "interpret": "Governor 의 CI 겹 (PLAN-114) — base..head 의 병합 아닌 커밋마다, 그 커밋이 바꾼 영수증의 마지막 open 사건을 모드 선언으로 읽고 문지기의 violations 로 쓰기 구역 밖 변경을 찾는다. 정책은 부모 커밋의 modes.json. 선언 없는 커밋은 사람의 커밋으로 보고 알리기만. 구역 밖이 있으면 종료 코드 1."
+      "interpret": "Governor 의 CI 겹 (PLAN-114) — base..head 의 병합 아닌 커밋마다, 그 커밋이 바꾼 영수증의 마지막 open 사건을 모드 선언으로 읽고 문지기의 violations 로 쓰기 구역 밖 변경을 찾는다. 정책은 부모 커밋의 modes.json. 선언 없는 커밋은 사람의 커밋으로 보고 알리기만. 구역 밖이 있으면 종료 코드 1. · 도장 등록부 정책(registryPolicy — DEC-0078) · 감독 장부 · 전환 기록 덧붙이기만(appendOnly — DEC-0079 · RULE-0544)"
     },
     {
       "class": "verification",

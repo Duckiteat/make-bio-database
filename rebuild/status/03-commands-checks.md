@@ -72,6 +72,7 @@
 | `tests/assumptions.test.mjs` | 8 |
 | `tests/authority.test.mjs` | 5 |
 | `tests/bundle.test.mjs` | 5 |
+| `tests/bypass_scenarios.test.mjs` | 4 |
 | `tests/changes-draft.test.mjs` | 3 |
 | `tests/ci_zone.test.mjs` | 3 |
 | `tests/claims.test.mjs` | 9 |

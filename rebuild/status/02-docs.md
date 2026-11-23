@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.5 | 86 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 89 |  | 미분류 |
-| `CHANGES.md` | 351.6 | 345 |  | 분류됨 1 |
+| `CHANGES.md` | 352.8 | 346 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -34,7 +34,7 @@
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.7 | 208 |  | 분류됨 102 |
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
-| `docs/design/supervisor.md` | 16.4 | 213 |  | 미분류 |
+| `docs/design/supervisor.md` | 16.9 | 214 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/transfer-judgment.md` | 17.9 | 221 |  | 미분류 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
@@ -42,12 +42,12 @@
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
 | `docs/modes/author.md` | 13.3 | 140 |  | 생성물 |
 | `docs/modes/baseline.md` | 4.5 | 67 |  | 생성물 |
-| `docs/modes/develop.md` | 6.2 | 81 |  | 생성물 |
+| `docs/modes/develop.md` | 6.3 | 81 |  | 생성물 |
 | `docs/modes/field.md` | 1.6 | 32 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.6 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 34.3 | 102 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 52.9 | 489 |  | 생성물 |
+| `docs/plan/build.md` | 53.2 | 490 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -118,6 +118,7 @@
 | `docs/plan/decisions/DEC-0076.md` | 2.6 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0077.md` | 2.2 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0078.md` | 3.3 | 15 |  | 생성물 |
+| `docs/plan/decisions/DEC-0079.md` | 2.7 | 11 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -254,7 +255,7 @@
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 3.1 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.3 | 39 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 6.3 | 36 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 8.1 | 39 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -404,6 +405,7 @@
 | `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
 | `docs/reports/2026-11-23-derived-artifact-freshness-review.md` | 5.0 | 36 |  | 미분류 |
+| `docs/reports/2026-11-23-plan-116-g5-bypass-scenarios.md` | 7.6 | 52 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-phase1-governance-mapping.md` | 22.7 | 128 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
@@ -420,11 +422,12 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 148.2 | 881 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 148.8 | 882 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
+| `workspace/PLAN-116-G3-README.md` | 2.6 | 17 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |

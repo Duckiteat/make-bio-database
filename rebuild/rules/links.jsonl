@@ -562,3 +562,5 @@
 {"from": "RULE-0540", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "문구 대조를 끄면 고쳐 쓴 인용 · 없는 인용이 통과"}
 {"from": "RULE-0541", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "근거 줄 불변 검사를 끄면 지지 줄을 반박으로 몰래 바꿀 수 있음"}
 {"from": "RULE-0542", "rel": "because", "to": "code:judicial/attestation.js", "by": "judged", "note": "승인 도장 지우기 검사를 끄면 검수 도장을 지워도 통과"}
+{"from": "RULE-0543", "rel": "because", "to": "code:judicial/supervise_approval.js", "by": "judged", "note": "검수 뒤 변경 검사를 끄면 검수하지 않은 바이트가 '병합해도 됨' 으로 나옴"}
+{"from": "RULE-0544", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "덧붙이기만 검사를 끄면 검수 기록을 사후에 고쳐도 CI 가 통과"}
