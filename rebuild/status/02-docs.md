@@ -249,7 +249,7 @@
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 3.1 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 8.0 | 31 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 2.3 | 17 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 3.5 | 18 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -398,6 +398,7 @@
 | `docs/reports/2026-11-22-plan-115-claim-layer-design.md` | 53.0 | 439 |  | 미분류 |
 | `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
+| `docs/reports/2026-11-23-plan-116-phase1-governance-mapping.md` | 22.7 | 128 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |
