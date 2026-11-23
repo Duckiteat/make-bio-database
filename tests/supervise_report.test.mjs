@@ -70,3 +70,13 @@ test('⑤ G4 승인 보고서: 제안서 §8 의 12 칸이 그 순서로 · 승�
   assert.match(r.text, /승인이 아니다 — 병합 = 사람/);
   assert.equal(r.recommendation.code, 'hold');
 });
+
+test('⑥ G3 권한 요소: 겹친 도장 자리는 두 모드가 도장 종류를 선언했고 겹치지 않을 때만 갈림 — 정책 없음 · 종류 겹침은 그대로 limited (DEC-0078)', () => {
+  const f = (as, is) => AP.independence(base({ author: { modes: ['author'], sessions: ['aaaa1111-aaa'], zones: AZ, stamps: as }, inspect: { mode: 'inspect', session: 'bbbb2222-bbb', zone: IZ, stamps: is } })).factors.authority;
+  assert.equal(f(['verified', 'trend'], ['accept']).ok, true);
+  assert.equal(f(null, ['accept']).ok, false, '작성 쪽 정책 없음');
+  assert.equal(f(['verified', 'trend'], null).ok, false, '검수 쪽 정책 없음');
+  assert.equal(f(['verified', 'trend'], ['accept', 'trend']).ok, false, '추세 도장이 겹침');
+  assert.equal(f(['verified'], []).ok, false, '검수 쪽이 아무 도장도 못 내면 갈린 것이 아니라 정책이 빈 것');
+  assert.equal(AP.independence(base({ author: { modes: ['author'], sessions: ['aaaa1111-aaa'], zones: ['data/**', 'attestations/**'], stamps: ['verified'] }, inspect: { mode: 'inspect', session: 'bbbb2222-bbb', zone: ['data/**', 'attestations/**'], stamps: ['accept'] } })).factors.authority.ok, false, '내용 정책이 없는 자리(data)의 겹침은 그대로');
+});

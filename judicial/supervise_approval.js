@@ -55,16 +55,21 @@ export function derive(sup, verdict, baselineOnApproved = {}) {
 }
 
 // ── 검수 독립성 (PLAN-116 G3 · DEC-0077 · 제안서 §7.2 다섯 요소) — 사실은 감독 도구가 모아 넘긴다(장부 · 모드 표 · 영수증 · git) ──
-//   facts = { author: { modes:[…], sessions:[…], zones:[glob…] }, inspect: { mode, session, zone:[glob…] },
+//   facts = { author: { modes:[…], sessions:[…], zones:[glob…], stamps:[…]|null }, inspect: { mode, session, zone:[glob…], stamps:[…]|null },
 //             receipt: null | { touches: n(원문 자리를 가리킨 도구 호출 수), pmids:[…](그 호출의 글에 나온 문헌 번호) }, cited:[PMID…](작성 패치가 단 출처) }
 //   요소마다 { ok: true | false | null(셀 수 없음), why, estimated? } — 정보 접근 · 판단 근거는 영수증의 명령 글에서 추정(estimated: true): 실제로 읽었는지는 사람이 본다.
 //   수준: 다섯 다 true → full · 하나라도 false → limited · false 없이 null 이 있음 → unknown
-export const SHARED_ZONE = ['docs/reports/**']; // 보고서 자리는 모든 검토가 쓴다 — 권한 겹침으로 치지 않음
+export const SHARED_ZONE = ['docs/reports/**'];
+export const CONTENT_SPLIT = { 'attestations/**': 'stamps' }; // 그 자리의 내용을 모드마다 나누는 정책 칸 (모드표 gate.modes[m].stamps — DEC-0078) // 보고서 자리는 모든 검토가 쓴다 — 권한 겹침으로 치지 않음
 export function independence(f) {
   const a = f.author || {}, i = f.inspect || {}, out = {};
   out.role = { ok: i.mode === 'inspect' && !(a.modes || []).includes('inspect'), why: `작성 ${(a.modes || []).join('·') || '없음'} · 검수 ${i.mode || '없음'}` };
-  const overlap = (i.zone || []).filter((z) => (a.zones || []).includes(z) && !SHARED_ZONE.includes(z));
-  out.authority = { ok: overlap.length === 0, why: overlap.length ? `검수 모드가 작성 모드와 같은 자리에 쓸 수 있음: ${overlap.join(' · ')}` : '검수 모드의 쓰기 자리가 작성 모드와 겹치지 않음 (보고서 자리 빼고)' };
+  // 겹친 자리 중 내용 정책으로 갈리는 것(CONTENT_SPLIT — 도장 등록부는 도장 종류, DEC-0078): 두 쪽이 모두 정책을 선언했고(null 아님) 종류가 겹치지 않을 때만 갈린 것으로.
+  //   정책이 없거나 겹치면 그대로 겹침 — 계산 기준을 완화하지 않는다. 정책의 강제는 ci-zone · 문지기가 한다(여기서는 선언만 본다).
+  const raw = (i.zone || []).filter((z) => (a.zones || []).includes(z) && !SHARED_ZONE.includes(z));
+  const split = raw.filter((z) => { const c = CONTENT_SPLIT[z]; if (!c) return false; const x = a[c], y = i[c]; return Array.isArray(x) && Array.isArray(y) && y.length > 0 && !x.some((k) => y.includes(k)); });
+  const overlap = raw.filter((z) => !split.includes(z));
+  out.authority = { ok: overlap.length === 0, why: overlap.length ? `검수 모드가 작성 모드와 같은 자리에 쓸 수 있음: ${overlap.join(' · ')}${raw.some((z) => CONTENT_SPLIT[z]) && !split.length ? ' (내용 정책 — 모드표 stamps — 이 없거나 겹침)' : ''}` : `검수 모드의 쓰기 자리가 작성 모드와 겹치지 않음 (보고서 자리 빼고${split.length ? ` · ${split.join(' · ')} 는 도장 종류로 갈림: 작성 ${a.stamps.join('·') || '없음'} / 검수 ${i.stamps.join('·')}` : ''})` };
   out.execution = { ok: !!i.session && !(a.sessions || []).includes(i.session), why: `검수 세션 ${i.session || '?'} · 작성 세션 ${(a.sessions || []).join('·') || '?'}` };
   if (!f.receipt) {
     out.info_access = { ok: null, estimated: true, why: '검수 세션의 영수증이 없음 — 무엇을 읽었는지 셀 수 없음' };

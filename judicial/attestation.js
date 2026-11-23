@@ -116,4 +116,23 @@ function sealVerdict(gate, db, extra) {
 }
 const checkSeal = (s) => !!s && s.digest === (() => { const { digest, ...rest } = s; return sha(canon(rest)); })();
 
-module.exports = { FORMAT, REGISTRY, emptyRegistry, readRegistry, issue, verifyStamp, validStamps, subjectKey, digestOf, sealVerdict, checkSeal, canon };
+// 등록부 정책 (PLAN-116 G3 · DEC-0078): 한 변경(before → after)이 그 모드가 낼 수 있는 도장 종류(kinds)만 건드렸나.
+//   ① 새로 생기거나 갈아 끼운 도장의 종류는 kinds 안 ② kinds 밖 종류의 기존 도장은 지우거나 바꾸지 못함 ③ 승인 도장(accept)은 누구도 지우거나 바꾸지 못함(추가만 —
+//   서기도 accept 는 추가만 한다) · 갈아 끼우기는 같은 주체 · 같은 종류의 새 도장이 있을 때만(서기의 verified · trend 갈아 끼우기와 같은 뜻).
+//   kinds 가 null 이면(모드표에 정책이 없음) ①② 는 보지 않고 ③ 만 — 정책이 없는 판에서도 승인 도장 지우기는 잡는다. 순수 — 값만 받는다.
+const APPEND_ONLY = ['accept'];
+function registryPolicy(before, after, kinds) {
+  const out = [], k = (s) => JSON.stringify(s), A = (after && after.stamps) || [], B = (before && before.stamps) || [];
+  const inA = new Set(A.map(k)), inB = new Set(B.map(k)), allowed = kinds == null ? null : new Set(kinds);
+  for (const s of B) {
+    if (inA.has(k(s))) continue;
+    const key = s.subject ? subjectKey(s.subject) : '?', replaced = A.some((x) => !inB.has(k(x)) && x.claim === s.claim && x.subject && s.subject && subjectKey(x.subject) === key);
+    if (APPEND_ONLY.includes(s.claim)) out.push({ rule: 'RULE-0542', msg: `승인 도장 ${key} 이 지워지거나 바뀜 — 승인 도장은 추가만 (철회는 revoked 도장을 새로)` });
+    else if (allowed && !allowed.has(s.claim)) out.push({ rule: 'RULE-0542', msg: `${s.claim} 도장 ${key} 이 지워지거나 바뀜 — 이 모드가 낼 수 있는 도장(${[...allowed].join(' · ') || '없음'}) 밖` });
+    else if (allowed && !replaced) out.push({ rule: 'RULE-0542', msg: `${s.claim} 도장 ${key} 이 지워짐 — 같은 주체의 새 도장으로 갈아 끼울 때만 바뀐다` });
+  }
+  if (allowed) for (const s of A) if (!inB.has(k(s)) && !allowed.has(s.claim)) out.push({ rule: 'RULE-0542', msg: `${s.claim} 도장 ${s.subject ? subjectKey(s.subject) : '?'} 을 이 모드는 낼 수 없음 — 낼 수 있는 도장 ${[...allowed].join(' · ') || '없음'} (모드표 stamps)` });
+  return out;
+}
+
+module.exports = { registryPolicy, APPEND_ONLY, FORMAT, REGISTRY, emptyRegistry, readRegistry, issue, verifyStamp, validStamps, subjectKey, digestOf, sealVerdict, checkSeal, canon };

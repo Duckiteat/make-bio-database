@@ -109,6 +109,7 @@
 | `tests/qualitative.test.mjs` | 9 |
 | `tests/real_records.test.mjs` | 2 |
 | `tests/rebuild.test.mjs` | 27 |
+| `tests/registry_policy.test.mjs` | 4 |
 | `tests/rejections.test.mjs` | 3 |
 | `tests/reliability_criteria.test.mjs` | 12 |
 | `tests/retraction_propagation.test.mjs` | 4 |
@@ -121,7 +122,7 @@
 | `tests/substrate_axis.test.mjs` | 5 |
 | `tests/supervise.test.mjs` | 8 |
 | `tests/supervise_approval.test.mjs` | 7 |
-| `tests/supervise_report.test.mjs` | 5 |
+| `tests/supervise_report.test.mjs` | 6 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |

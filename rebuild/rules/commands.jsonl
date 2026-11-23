@@ -13,7 +13,7 @@
 {"cmd": "dbtool resolution", "kind": "cli", "modes": ["author", "baseline"], "writes": null, "what": "혼합 해상도 계획 (pool·site·structure)"}
 {"cmd": "dbtool audit-run", "kind": "cli", "modes": ["author", "baseline"], "writes": null, "what": "감사: 스키마·해상도·속도 무결성·질량 보존"}
 {"cmd": "dbtool simulate", "kind": "cli", "modes": ["baseline"], "writes": null, "what": "속도 기반 시뮬레이션 (질량 감사)"}
-{"cmd": "dbtool augment", "kind": "cli", "modes": ["author"], "writes": "evidence · registry", "writes_on": "^\\s*(fetch|apply)\\b", "what": "자동 보강 고리 plan → fetch → build → apply (원본 대조)"}
+{"cmd": "dbtool augment", "kind": "cli", "modes": ["author"], "writes": "evidence · registry · attestation", "writes_on": "^\\s*(fetch|apply)\\b", "what": "자동 보강 고리 plan → fetch → build → apply (원본 대조)"}
 {"cmd": "dbtool grade", "kind": "cli", "modes": ["author", "baseline", "inspect"], "writes": null, "what": "신뢰 지표 (S, D) → 등급"}
 {"cmd": "dbtool origin", "kind": "cli", "modes": ["baseline"], "writes": null, "what": "첫 장면 기원 — 시나리오 시작 숫자의 출처"}
 {"cmd": "dbtool assume", "kind": "cli", "modes": ["author", "baseline"], "writes": "registry", "writes_on": "^\\s*add\\b", "what": "가정 원장 보기·추가(add — 감사·봉인 뒤 서기)"}
@@ -27,7 +27,7 @@
 {"cmd": "dbtool log", "kind": "cli", "modes": ["inspect"], "writes": null, "what": "병합 기록 사슬·재생 검사"}
 {"cmd": "dbtool attest", "kind": "cli", "modes": ["inspect"], "writes": null, "what": "증명 등록부 재검증 — 읽기만 (재검증 결과를 보여 줄 뿐 쓰지 않는다)"}
 {"cmd": "dbtool accept", "kind": "cli", "modes": ["inspect"], "writes": "attestation", "writes_on": "^\\s*[^-\\s]", "what": "높은 용도 승인·철회 도장"}
-{"cmd": "dbtool trend", "kind": "cli", "modes": ["author", "inspect"], "writes": "evidence · attestation", "writes_on": "--(fetch|write)\\b", "what": "추세 점검 — 합의 수신함 받기(--fetch)·도장(--write)"}
+{"cmd": "dbtool trend", "kind": "cli", "modes": ["author"], "writes": "evidence · attestation", "writes_on": "--(fetch|write)\\b", "what": "추세 점검 — 합의 수신함 받기(--fetch)·도장(--write)"}
 {"cmd": "dbtool compare", "kind": "cli", "modes": ["develop", "baseline"], "writes": null, "what": "비교 검토 — 복잡도·수치 L2·결과"}
 {"cmd": "dbtool fate", "kind": "cli", "modes": ["baseline"], "writes": "report", "writes_on": "--report\\s+[^-\\s]", "what": "운명 시뮬레이션 + 과정 보고서"}
 {"cmd": "dbtool observe", "kind": "cli", "modes": ["baseline", "inspect"], "writes": null, "what": "관찰 대조 — 등록 규약 아래에서만 일치 결론"}

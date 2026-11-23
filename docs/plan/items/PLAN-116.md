@@ -33,3 +33,4 @@
 
 - [DEC-0074](../decisions/DEC-0074.md) 2026-11-23 사람 손을 덜 타는 구조 먼저 — 주장 층(115) → 승인 보조(116 G2–G4) → 자동 배정(104) → D000051 주장 층 시범(112, 자동 순환) · author P1 손 고침은 시범으로 흡수
 - [DEC-0077](../decisions/DEC-0077.md) 2026-11-23 PLAN-116 G2–G4 만 — Deny/Hold 사유 표 · 검수 독립성 계산 · 승인 보고서 읽기 명령 (모두 계산, 장부에 새 칸 없음)
+- [DEC-0078](../decisions/DEC-0078.md) 2026-11-23 도장 등록부 — 모드마다 낼 수 있는 도장 종류(author: verified · trend / inspect: accept) · 승인 도장은 누구도 지우거나 바꾸지 못함 · trend --write 는 author 만

@@ -291,15 +291,18 @@ function citedBy(root, commits) {
   }
   return [...out];
 }
-const zoneOf = (mode, root) => { try { return JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8')).gate.modes[mode].write || []; } catch { return []; } };
+const modeOf = (mode, root) => { try { return JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8')).gate.modes[mode] || {}; } catch { return {}; } };
+const zoneOf = (mode, root) => modeOf(mode, root).write || [];
+// 모드가 낼 수 있는 도장 종류 (모드표 stamps — DEC-0078). 칸이 없으면 null(정책 없음) — 여러 모드면 하나라도 없으면 null
+const stampsOf = (modes, root) => { const l = modes.map((m) => modeOf(m, root).stamps); return l.every(Array.isArray) ? [...new Set(l.flat())] : null; };
 // 검수 실행마다 독립성 사실 → 판정
 export function independenceOf(sup, root = ROOT) {
   return sup.runs.filter((r) => r.mode === 'inspect').map((ir) => {
     const before = sup.runs.slice(0, sup.runs.indexOf(ir)).filter((r) => !['inspect', 'baseline'].includes(r.mode));
     const rc = receiptOf(root, ir.session);
     const facts = {
-      author: { modes: [...new Set(before.map((r) => r.mode))], sessions: before.map((r) => r.session), zones: [...new Set(before.flatMap((r) => zoneOf(r.mode, root)))] },
-      inspect: { mode: ir.mode, session: ir.session, zone: zoneOf('inspect', root) },
+      author: { modes: [...new Set(before.map((r) => r.mode))], sessions: before.map((r) => r.session), zones: [...new Set(before.flatMap((r) => zoneOf(r.mode, root)))], stamps: stampsOf([...new Set(before.map((r) => r.mode))], root) },
+      inspect: { mode: ir.mode, session: ir.session, zone: zoneOf('inspect', root), stamps: stampsOf(['inspect'], root) },
       receipt: rc ? rawTouches(rc.events) : null,
       cited: citedBy(root, before.flatMap((r) => (r.outputs && r.outputs.commits) || [])),
     };
