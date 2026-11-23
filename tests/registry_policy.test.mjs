@@ -113,3 +113,14 @@ test('⑥ 선언(영수증) 없는 커밋도 도장 등록부의 승인 도장 �
     } finally { rmSync(r2.dir, { recursive: true, force: true }); }
   } finally { rmSync(r.dir, { recursive: true, force: true }); }
 });
+
+test('⑦ CI 구역 점검은 기준(main)의 판정 코드로도 돈다 — 이 커밋의 코드와 둘 다 (DEC-0086 D2 · RULE-0549)', () => {
+  const RULE = 'RULE-0549';
+  const wf = readFileSync(join(ROOT, '.github/workflows/check.yml'), 'utf8');
+  const step = wf.split(/\n\s*- name: /).find((s) => s.includes('ci-zone.mjs'));
+  assert.ok(step, `${RULE}: 구역 점검 단계가 있다`);
+  assert.match(step, /git archive origin\/main \| tar -x -C "\$TRUSTED"/, `${RULE}: main 의 트리를 임시 폴더에 푼다`);
+  assert.match(step, /GIT_DIR="\$PWD\/\.git" node "\$TRUSTED\/rebuild\/ci-zone\.mjs" "\$BASE" "\$HEAD_SHA"/, `${RULE}: main 의 판정 코드로 이 커밋 범위를 본다`);
+  assert.match(step, /\n\s*node rebuild\/ci-zone\.mjs "\$BASE" HEAD/, `${RULE}: 이 커밋의 판정 코드로도 본다`);
+  assert.ok(step.indexOf('$TRUSTED/rebuild/ci-zone.mjs') < step.lastIndexOf('node rebuild/ci-zone.mjs'), `${RULE}: 기준 코드가 먼저`);
+});

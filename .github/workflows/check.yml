@@ -26,6 +26,18 @@ jobs:
           if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             BASE=$(git merge-base origin/main HEAD 2>/dev/null || git rev-list --max-parents=0 HEAD | tail -1)
           fi
+          # ① 기준(main)의 판정 코드로 — 이 커밋이 판정 코드를 약하게 고쳐도 속지 않는다 (DEC-0086 D2 · RULE-0549 · 공격 경로 N3)
+          #    main 의 트리를 임시 폴더에 풀고, 이 저장소의 git 기록(GIT_DIR)에 대고 돌린다. 작업 트리는 건드리지 않는다
+          HEAD_SHA=$(git rev-parse HEAD)
+          if git cat-file -e origin/main:rebuild/ci-zone.mjs 2>/dev/null; then
+            TRUSTED="$RUNNER_TEMP/trusted-main"; mkdir -p "$TRUSTED"
+            git archive origin/main | tar -x -C "$TRUSTED"
+            echo "기준 판정 코드: origin/main $(git rev-parse --short origin/main)"
+            GIT_DIR="$PWD/.git" node "$TRUSTED/rebuild/ci-zone.mjs" "$BASE" "$HEAD_SHA"
+          else
+            echo "기준(main)에 판정 코드가 없음 — ① 건너뜀"
+          fi
+          # ② 이 커밋의 판정 코드로 — main 에 아직 없는 새 규칙까지
           node rebuild/ci-zone.mjs "$BASE" HEAD
       - name: 규칙 테스트
         run: node --test tests/*.test.mjs

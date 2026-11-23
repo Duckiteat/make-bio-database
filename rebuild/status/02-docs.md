@@ -44,10 +44,10 @@
 | `docs/modes/baseline.md` | 4.5 | 67 |  | 생성물 |
 | `docs/modes/develop.md` | 6.3 | 81 |  | 생성물 |
 | `docs/modes/field.md` | 1.6 | 32 |  | 생성물 |
-| `docs/modes/inspect.md` | 6.6 | 84 |  | 생성물 |
+| `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 34.3 | 102 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 54.9 | 496 |  | 생성물 |
+| `docs/plan/build.md` | 55.1 | 497 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -125,6 +125,7 @@
 | `docs/plan/decisions/DEC-0083.md` | 3.1 | 18 |  | 생성물 |
 | `docs/plan/decisions/DEC-0084.md` | 2.7 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0085.md` | 4.7 | 18 |  | 생성물 |
+| `docs/plan/decisions/DEC-0086.md` | 1.8 | 13 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -251,7 +252,7 @@
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 8.6 | 82 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-106.md` | 8.7 | 42 |  | 생성물 |
+| `docs/plan/items/PLAN-106.md` | 8.8 | 43 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
@@ -259,9 +260,9 @@
 | `docs/plan/items/PLAN-111.md` | 2.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-112.md` | 2.9 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
-| `docs/plan/items/PLAN-114.md` | 4.1 | 27 |  | 생성물 |
+| `docs/plan/items/PLAN-114.md` | 4.3 | 28 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.3 | 39 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 11.0 | 50 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 11.2 | 51 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
