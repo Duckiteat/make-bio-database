@@ -143,6 +143,7 @@
 | [DEC-0074](decisions/DEC-0074.md) | 2026-11-23 | 사용자 | 순서 | 사람 손을 덜 타는 구조 먼저 — 주장 층(115) → 승인 보조(116 G2–G4) → 자동 배정(104) → D000051 주장 층 시범(112, 자동 순환) · author P1 손 고침은 시범으로 흡수 | 5 |
 | [DEC-0075](decisions/DEC-0075.md) | 2026-11-23 | 사용자 | 설계 | 주장 층 형식 — 권고 그대로: 새 모음 claims 하나 · 생물 술어 어휘 없음 · via_component 는 보조 칸 · L000030 은 (가) 검증된 외부 ID 만 해소 · 관찰 조건에 tissue · system | 1 |
 | [DEC-0076](decisions/DEC-0076.md) | 2026-11-23 | 사용자 | 설계 | develop 에 생성물 재생성 하나만 — 명령 장부 'dbtool limitations' 의 쓰는 갈래(--write)를 develop 에 허락 · limitations.md 직접 수정 권한으로 넓히지 않음 | 1 |
+| [DEC-0077](decisions/DEC-0077.md) | 2026-11-23 | 사용자 | 설계 | PLAN-116 G2–G4 만 — Deny/Hold 사유 표 · 검수 독립성 계산 · 승인 보고서 읽기 명령 (모두 계산, 장부에 새 칸 없음) | 1 |
 
 ## 4. 작업 — 결과와 걸어온 길
 
@@ -309,7 +310,7 @@
 | 105 | [PLAN-105](items/PLAN-105.md) | MCP 연결 | ◐ 2026-11-21 |
 | 111 | [PLAN-111](items/PLAN-111.md) | RP2 병합 사전 점검 넓히기 | ☑ 2026-11-21 |
 | 114 | [PLAN-114](items/PLAN-114.md) | Governor 의 CI 겹 | ☑ 2026-11-21 |
-| 116 | [PLAN-116](items/PLAN-116.md) | 거버넌스 — 권한 분리 · 독립 검증 대조 조사 | ☐ |
+| 116 | [PLAN-116](items/PLAN-116.md) | 거버넌스 — 권한 분리 · 독립 검증 대조 조사 | ◐ 2026-11-23 |
 
 ### 10부 — 자기 개선 루프 (관측 · 제안 · 승인 · 증거)
 
@@ -479,9 +480,9 @@
 
 ## 근거 점검 (계산 — 원본에서 센 것)
 
-- 작업 121: ☑ 완료 50 · ◐ 진행 14 · ☐ 대기 56 · 보류 보류 1
-- 걸어온 길: 사건 332 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 127)
-- 결정 42 — 누가: 사용자 28 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
+- 작업 121: ☑ 완료 50 · ◐ 진행 15 · ☐ 대기 55 · 보류 보류 1
+- 걸어온 길: 사건 334 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 129)
+- 결정 43 — 누가: 사용자 29 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
-- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-116
+- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)

@@ -121,6 +121,7 @@
 | `tests/substrate_axis.test.mjs` | 5 |
 | `tests/supervise.test.mjs` | 8 |
 | `tests/supervise_approval.test.mjs` | 7 |
+| `tests/supervise_report.test.mjs` | 5 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |

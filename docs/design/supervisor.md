@@ -142,6 +142,15 @@
 | 같은 세션이 만든 결과를 같은 세션(또는 그 하위 에이전트)이 inspect | 독립성 | 거부 — inspect run 의 세션 ≠ author run 의 세션 |
 | 계약에 범위 · 승인 칸을 씀 | 3.3 | 모르는 칸 거부 |
 
+### 4.5 막힘의 두 종류 · 검수 독립성 · 승인 보고서 [정함 — DEC-0077, PLAN-116 G2–G4]
+
+| 무엇 | 정한 것 | 자리 |
+|---|---|---|
+| 막힘 두 종류 | 원인 태그 일곱을 **거부**(deny — 필수 검증 실패 · 결함: ENGINE_DEFECT · COMPILER_DEFECT · EXEC_FAILURE)와 **보류**(hold — 근거 부족 · 해석 불확실 · 검증 불일치 · 원인 모름: FINDING · DATA_GAP · DOMAIN_CONFLICT · NUMERICAL)로. 사건 형식은 그대로 | `rebuild/supervise.mjs` CAUSE_KIND |
+| 검수 독립성 | 다섯 요소 — 역할(검수 모드 ≠ 작성 모드) · 권한(쓰기 자리가 겹치지 않음, 보고서 자리 빼고) · 실행(세션 ≠) · 정보 접근(검수 영수증에 원문 자리 호출이 있음 — 추정) · 판단 근거(작성 패치의 PMID 를 검수 영수증이 모두 가리킴 — 추정). 다섯 다 → full · 하나라도 아님 → limited · 셀 수 없음 → unknown | `judicial/supervise_approval.js` independence |
+| 승인 보고서 | 제안서 §8 의 12 칸(작업 목적 · 실행 내역 · 변경 내역 · 근거 · 검증 · 독립 검수 · 절차 감사 · 실패 이력 · 미해결 · 영향 분석 · 승인 대상 · 최종 권고)을 읽기 명령이 계산 — Supervisor 는 보여 주기만(§5 그대로) | `node rebuild/supervise.mjs report <SUP-…>` |
+| 최종 권고 | 규칙으로: 막힘 거부 → deny · 막힘 보류 · 검수 전 · 독립성 limited · 판정 못 함 → hold · 끝내기 실패 → deny · 병합 전 + 나머지 → mergeable(사용자 결정) · 승인됨 → approved. **승인이 아니다** — 병합 = 사람 | `judicial/supervise_approval.js` recommend |
+
 ---
 
 ## 5. 누가 무엇을 쓰나
