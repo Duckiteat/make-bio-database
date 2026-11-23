@@ -15,6 +15,8 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import * as CLERK from '../legislative/clerk.mjs';
+import { createRequire } from 'node:module';
+const ATT = createRequire(import.meta.url)('../judicial/attestation.js'); // 도장 등록부 정책 (DEC-0078)
 
 const CODE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sha = (x) => createHash('sha256').update(x).digest('hex');
@@ -229,6 +231,14 @@ function hook(event, input, root) {
     S.snap = snap;
     const bad = violations(P, st.mode, st.role, changed);
     let code = 0;
+    // 도장 등록부 정책 (DEC-0078 · RULE-0542): 이 호출이 등록부를 바꿨으면 HEAD 의 등록부와 견준다 — 그 모드가 낼 수 있는 도장 종류(모드표 stamps)만 · 승인 도장은 추가만
+    if (st.mode && changed.includes('attestations/registry.json')) {
+      let headReg = { stamps: [] }, nowReg;
+      try { headReg = JSON.parse(git(root, 'show', 'HEAD:attestations/registry.json')); } catch { /* 새 등록부 */ }
+      try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
+      const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
+      if (sv.length) { add({ t: 'violation', rule: 'RULE-0542', files: ['attestations/registry.json'], why: sv.map((v) => v.msg).join(' · ') }); code = say('RULE-0542', `도장 등록부 정책 밖 — ${sv.map((v) => v.msg).join(' · ')} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로`); }
+    }
     if (bad.length) { const why = st.mode ? `${st.role || st.mode} 에서 바뀌면 안 되는 파일` : '모드를 열기 전에 저장소 파일이 바뀜'; add({ t: 'violation', rule: st.mode ? 'RULE-0515' : 'RULE-0514', files: bad, why }); code = say(st.mode ? 'RULE-0515' : 'RULE-0514', `${why}: ${bad.join(' · ')} — 되돌리거나(git checkout -- <파일>) 전환 기록을 남기고 끝낸다`); }
     save();
     return code;

@@ -169,3 +169,22 @@ test('④ 영수증은 문지기만: 고치거나 지우면 쓰는 도구가 막
     assert.equal(b.status, 2); assert.match(b.stderr, /지워지거나 고쳐짐/);
   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
 });
+
+test('⑳ 도장 등록부 정책 (DEC-0078 · RULE-0542): author 가 셸로 승인 도장을 더하면 막힘 · inspect 는 됨 · 승인 도장 지우기는 inspect 도 막힘', () => {
+  const st = (claim, sense) => ({ subject: { sense, field: claim === 'accept' ? 'accept' : 'xref', ns: claim === 'accept' ? 'evidence' : 'ChEBI', value: sense }, claim, issued_at: '2026-01-01', by: 'integrator', reason: 'x' });
+  const REG = { stamps: [st('verified', 'D900001'), st('accept', 'O900001')] };
+  const one = (mode, next) => {
+    const d = repo();
+    try {
+      mkdirSync(join(d, 'attestations')); writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG));
+      execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'reg'], { cwd: d });
+      tool(d, 'Bash', { command: `node rebuild/gate.mjs open ${mode}` });
+      return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(next)));
+    } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+  };
+  const forged = { stamps: [...REG.stamps, st('accept', 'O900002')] };
+  const a = one('author', forged); assert.equal(a.status, 2); assert.match(a.stderr, /\[RULE-0542\]/);
+  assert.equal(one('inspect', forged).status, 0, 'inspect 의 승인 도장');
+  const i = one('inspect', { stamps: [REG.stamps[0]] }); assert.equal(i.status, 2); assert.match(i.stderr, /승인 도장은 추가만/);
+  assert.equal(one('author', { stamps: [{ ...REG.stamps[0], issued_at: '2026-02-01' }, REG.stamps[1]] }).status, 0, 'author 의 신원 도장 갈아 끼우기');
+});
