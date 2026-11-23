@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 548 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 549 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 533 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 534 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 343 |
+| machine | 344 |
 | text | 203 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,13 +26,13 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 327 |
+| 1 곳 | 328 |
 | 2 곳 | 105 |
 | 3 곳 | 60 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 95 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 96 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -131,6 +131,7 @@
 | RULE-0546 | author · inspect · develop | 도장 등록부에 새로 생긴 승인 도장(accept)의 승인자(by)는 발급 검사와 같은 목록(acceptance.js ISSUE_APPROVERS — integrator)만 — 셸로 등록부를 직접 써서 by: huma |
 | RULE-0547 | author · inspect · develop | 재검증(verifyAcceptStamp — validate · attest · finish 가 부름)이 읽는 by: human 승인 도장은 등록부에 이미 있던 6 개의 지문(acceptance.js LEGACY_HU |
 | RULE-0548 | author · inspect · develop | CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다  |
+| RULE-0549 | author · inspect · develop | CI 구역 점검(등록부 정책 · 덧붙이기만 장부 포함)은 기준(origin/main)의 판정 코드로 한 번, 이 커밋의 판정 코드로 한 번 — 둘 다 통과해야 한다. 이 커밋이 판정 코드(rebuild/ci-zone |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 
