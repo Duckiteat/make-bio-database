@@ -118,7 +118,7 @@
 | `docs/plan/decisions/DEC-0076.md` | 2.6 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0077.md` | 2.2 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0078.md` | 3.8 | 16 |  | 생성물 |
-| `docs/plan/decisions/DEC-0079.md` | 2.7 | 11 |  | 생성물 |
+| `docs/plan/decisions/DEC-0079.md` | 3.0 | 15 |  | 생성물 |
 | `docs/plan/decisions/DEC-0080.md` | 1.5 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0081.md` | 1.9 | 12 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
@@ -245,7 +245,7 @@
 | `docs/plan/items/PLAN-101.md` | 5.8 | 61 |  | 생성물 |
 | `docs/plan/items/PLAN-102.md` | 8.0 | 53 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
-| `docs/plan/items/PLAN-104.md` | 6.9 | 72 |  | 생성물 |
+| `docs/plan/items/PLAN-104.md` | 8.3 | 81 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 3.7 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-106.md` | 3.3 | 25 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |

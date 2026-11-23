@@ -5,7 +5,7 @@
 - **계획 · 부**: build 104 · 9부 — 작업 조율 (여러 모드 세션을 잇는 상위 작업)
 - **작업**: **배정 자동화 (Hybrid)** — PLAN-103 에서 깨진 곳에만 검사를 켠다(RULE-0462). Supervisor 가 클라우드 세션을 순차로 띄움(동시 하나). 자동 배정은 author · inspect · baseline 만 — develop · field 는 needs_user 로 멈춤(F11). 세션 첫 일 = push 권한 확인(F13, PLAN-077 교훈) · 마지막 일 = Supervisor 에게 끝 알림 + Supervisor 늦은 깨우기로 확인(F5). 정책: 정지 스위치 하나 · ORCH 당 세션 수 · 재시도 2 · 시간 제한 — 넘기면 blocked + 사람(F12). Supervisor 는 모드 세션을 대신 열지 않고 승인 · 병합 권한 없음
 - **자리**: 조율 장부 명령(PLAN-100) · 정책 파일(rebuild/state 아래, 새) · 예약 작업 지시문
-- **끝나는 조건**: 두 번째 순환을 Supervisor 가 사람 손 없이 awaiting_approval 까지 끌고 감 · 재시도 한도 넘김 → blocked 시험 · 승인은 여전히 사용자 병합뿐 · **선행: PLAN-106 · 081 · 111 · 113 · 114 완료(DEC-0067 · 0070)**
+- **끝나는 조건**: 두 번째 순환을 Supervisor 가 사람 손 없이 awaiting_approval 까지 끌고 감 · 재시도 한도 넘김 → blocked 시험 · 승인은 여전히 사용자 병합뿐 · D4(PLAN-116 G5 · DEC-0079): 자동 배정은 author · inspect · baseline 만 — develop · field(사용자 요청이 있어야 하는 모드)를 자동으로 띄우려 하면 거부하고 needs_user 로 멈추는 것을 시험으로 확인(정상 배정은 통과 · 검사를 끄면 시험이 실패) · **선행: PLAN-106 · 081 · 111 · 113 · 114 완료(DEC-0067 · 0070)**
 - **상태**: ☐ 대기
 
 ## 결과 (날짜별)
@@ -58,6 +58,15 @@
 이전: 두 번째 순환을 Supervisor 가 사람 손 없이 awaiting_approval 까지 끌고 감 · 재시도 한도 넘김 → blocked 시험 · 승인은 여전히 사용자 병합뿐 · **선행: PLAN-106 · 081 · 111 완료(DEC-0067)**
 
 이후: 두 번째 순환을 Supervisor 가 사람 손 없이 awaiting_approval 까지 끌고 감 · 재시도 한도 넘김 → blocked 시험 · 승인은 여전히 사용자 병합뿐 · **선행: PLAN-106 · 081 · 111 · 113 · 114 완료(DEC-0067 · 0070)**
+
+</details>
+- `2026-11-23` 커밋 전 기록 '끝나는 조건' 칸이 바뀜 — 사용자 승인(세션 답 2026-11-23 '가자' — 제안: D4 를 PLAN-104 의 끝나는 조건으로, 계획 기록만)
+
+  <details><summary>이전 · 이후</summary>
+
+이전: 두 번째 순환을 Supervisor 가 사람 손 없이 awaiting_approval 까지 끌고 감 · 재시도 한도 넘김 → blocked 시험 · 승인은 여전히 사용자 병합뿐 · **선행: PLAN-106 · 081 · 111 · 113 · 114 완료(DEC-0067 · 0070)**
+
+이후: 두 번째 순환을 Supervisor 가 사람 손 없이 awaiting_approval 까지 끌고 감 · 재시도 한도 넘김 → blocked 시험 · 승인은 여전히 사용자 병합뿐 · D4(PLAN-116 G5 · DEC-0079): 자동 배정은 author · inspect · baseline 만 — develop · field(사용자 요청이 있어야 하는 모드)를 자동으로 띄우려 하면 거부하고 needs_user 로 멈추는 것을 시험으로 확인(정상 배정은 통과 · 검사를 끄면 시험이 실패) · **선행: PLAN-106 · 081 · 111 · 113 · 114 완료(DEC-0067 · 0070)**
 
 </details>
 
