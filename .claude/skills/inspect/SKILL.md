@@ -64,14 +64,14 @@ description: "점검·검증 모드 — 상태를 읽거나(L0·L1·L2), 모은 
 
 ## 컴퓨터가 막는 규칙
 
-30 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+35 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
 
 - 권한·쓰기 (삼권 분립): RULE-0027
 - 수집·위임 (다른 AI·수집가): RULE-0289 · RULE-0291 · RULE-0292 · RULE-0294 · RULE-0482 · RULE-0484 · RULE-0485
 - 데이터 넣기: RULE-0433
 - 한계: RULE-0096 · RULE-0097 · RULE-0098 · RULE-0099 · RULE-0100 · RULE-0101 · RULE-0102 · RULE-0103 · RULE-0104 · RULE-0115 · RULE-0223 · RULE-0224 · RULE-0225 · RULE-0226 · RULE-0227 · RULE-0228 · RULE-0231
 - 기전·시뮬레이션: RULE-0284
-- 코드에서 찾은 검사: RULE-0506 · RULE-0508 · RULE-0509
+- 코드에서 찾은 검사: RULE-0506 · RULE-0508 · RULE-0509 · RULE-0537 · RULE-0538 · RULE-0539 · RULE-0540 · RULE-0541
 
 ## 형식 설명
 
@@ -87,4 +87,4 @@ description: "점검·검증 모드 — 상태를 읽거나(L0·L1·L2), 모은 
 | `dbtool trend` | evidence · attestation | 추세 점검 — 합의 수신함 받기(--fetch)·도장(--write) |
 | `mcp accept` | attestation | 승인 도장 |
 
-읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool attest` · `dbtool observe` · `mcp attest` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection` · `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate`
+읽기만: `dbtool validate` · `dbtool report` · `dbtool map` · `dbtool audit` · `dbtool context` · `dbtool mechanism` · `dbtool grade` · `dbtool qualgraph` · `dbtool retraction` · `dbtool verify-collection` · `dbtool verify-run` · `dbtool log` · `dbtool attest` · `dbtool observe` · `mcp attest` · `mcp map` · `mcp context` · `mcp mechanism` · `mcp limitations` · `mcp qualgraph` · `mcp retraction` · `mcp inbox` · `mcp verify_collection` · `mcp run_fate` · `mcp run_ensemble` · `mcp run_rate` · `dbtool claims`

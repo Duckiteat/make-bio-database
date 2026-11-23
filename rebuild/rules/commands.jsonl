@@ -66,3 +66,4 @@
 {"cmd": "mcp run_fate", "kind": "mcp", "modes": ["baseline", "develop", "field", "inspect"], "writes": null, "what": "운명 엔진 실행 + 출처 꼬리표 (읽기 전용)"}
 {"cmd": "mcp run_ensemble", "kind": "mcp", "modes": ["baseline", "develop", "field", "inspect"], "writes": null, "what": "확률 앙상블 + 출처 꼬리표 (읽기 전용)"}
 {"cmd": "mcp run_rate", "kind": "mcp", "modes": ["baseline", "develop", "field", "inspect"], "writes": null, "what": "속도 엔진 실행 + 출처 꼬리표 (읽기 전용)"}
+{"cmd": "dbtool claims", "kind": "cli", "modes": ["author", "inspect", "develop"], "writes": null, "what": "주장 층 칸 상태 · 규칙 계산 수준 (--assume 철회 가정)"}

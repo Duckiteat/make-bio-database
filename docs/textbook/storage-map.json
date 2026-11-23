@@ -755,6 +755,22 @@
       ]
     },
     {
+      "path": "judicial/claims.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool claims, tests/claims.test.mjs",
+      "interpret": "[사법] PLAN-115 주장 층 — 주장(claims.C…)의 근거 줄에서 규칙 칸마다 상태(supported · supported_elsewhere · inferred · legacy · contested · refuted · unsupported)와 규칙의 계산 수준(핵심 칸 중 가장 약한 것)을 계산. 칸에 주장이 없으면 '*' 주장, 없으면 규칙 evidence 의 legacy 보기. --assume 로 출처 · 관찰 · 주장 철회를 가정. 저장 · 쓰기 · 파일 읽기 없음.",
+      "node": "JUDICIAL_CLAIMS",
+      "governance": "Judicial",
+      "refactor_strategy": "상태 이름 · 순위는 vocab.claimStates, 칸 목록은 vocab.claimFields — 여기서 규칙 종류나 칸 이름을 새로 정하지 않는다. 검사(모양 · 불변 · 인용 대조)는 judicial.js validateClaims · claimImmutability.",
+      "level": "L2",
+      "area": "code:judicial",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "judicial/collection_audit.js",
       "class": "law",
       "format": "Node CommonJS (읽기 전용·순수)",
@@ -1994,6 +2010,20 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "정성 그래프 0 층 판정 — 합성 기전으로 지지·모순 후보·경로 없음·부호 섞임·효과 모르는 조절·음성 되먹임 무시·정의상 판정·세포 상태 표지·긴장·대상 아님, 양방향 색인(철회 제외), 지금 저장소에서 그래프가 섬.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/claims.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "주장 층 — db 바이트 그대로 · 새 주장 번호 · 대상 칸(RULE-0537) · 근거 줄 모양(0538) · 직접 근거 인용 위치(0539) · 받은 초록과 인용 대조(0540) · 덧붙이기만(0541) · 칸 상태(legacy · supported · supported_elsewhere · contested · unsupported) · 철회 가정 · needs xref 는 verified 만(L000030).",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [

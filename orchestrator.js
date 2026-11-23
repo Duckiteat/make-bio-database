@@ -273,13 +273,40 @@ function augmentBuild(db, opt) {
 }
 
 // ----- 전체 검사 (증명 등록부 포함) -----
+// 받은 원문 (주장 층의 인용 대조 — PLAN-115): data/fetched/<원천>/FETCH_LOG.jsonl 의 ok 줄마다, 파일의 지금 sha256 이 기록과 같을 때만
+//   { [sha256]: { source: {db, id}, doi, title, abstract } }. 지금은 Europe PMC 응답 모양만 읽는다 — 다른 원천은 아직 인용 대조 대상이 아님. 읽기만.
+function fetchedTexts(dataDir) {
+  const fs = require('fs'), path = require('path'), crypto = require('crypto'), out = {}, fdir = path.join(dataDir, 'fetched');
+  if (!fs.existsSync(fdir)) return out;
+  const top = path.dirname(dataDir);
+  for (const src of fs.readdirSync(fdir)) {
+    const lf = path.join(fdir, src, 'FETCH_LOG.jsonl');
+    if (!fs.existsSync(lf)) continue;
+    for (const l of fs.readFileSync(lf, 'utf8').split('\n')) {
+      if (!l.trim()) continue;
+      const e = JSON.parse(l);
+      if (!e.ok || !e.file || !e.sha256 || out[e.sha256]) continue;
+      const abs = path.join(top, e.file);
+      if (!fs.existsSync(abs)) continue;
+      const bytes = fs.readFileSync(abs);
+      if (crypto.createHash('sha256').update(bytes).digest('hex') !== e.sha256) continue; // 바뀐 파일은 원문이 아니다 (받기 기록 검사가 따로 오류)
+      let j; try { j = JSON.parse(bytes.toString('utf8')); } catch { continue; }
+      const x = j && j.resultList && Array.isArray(j.resultList.result) && j.resultList.result[0];
+      if (!x || !x.pmid) continue;
+      out[e.sha256] = { source: { db: 'PMID', id: String(x.pmid) }, doi: x.doi || null, title: x.title || '', abstract: x.abstractText || '' };
+    }
+  }
+  return out;
+}
+
 function validateWithRegistry(db, root, opt) {
-  const reg = ATT.readRegistry(root), v = ATT.validStamps(C.normalize(db), reg, Object.assign({ root }, opt || {}));
+  opt = Object.assign({}, opt || {}); const fetched = opt.fetched; delete opt.fetched;
+  const reg = ATT.readRegistry(root), v = ATT.validStamps(C.normalize(db), reg, Object.assign({ root }, opt));
   // 측정법 장부(data/assays.jsonl)의 현재 측정법 — 관찰의 assay 대조 (RULE-0524). 읽기만
   const fs = require('fs'), path = require('path'), af = path.join(root, 'data', 'assays.jsonl');
   const events = fs.existsSync(af) ? fs.readFileSync(af, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)) : [];
   const assays = require('./judicial/assay_audit.js').audit(events).current;
-  return Object.assign(J.validate(C.normalize(db), { attestations: v.keys, assays }), { attestations: v });
+  return Object.assign(J.validate(C.normalize(db), { attestations: v.keys, assays, fetched }), { attestations: v });
 }
 
 // ----- 델타 기록 재생 (S1): 기원 스냅숏에서 사건의 패치를 입법부 순수 병합으로 차례로 적용 → 사건마다 sha256 → 사법부 판정 -----
@@ -320,4 +347,4 @@ function engineGap(db, pathway, state, sc, opt) {
   return Object.assign(GAP.engineGap(db, { rate, rateFine, fate, fateRef, rateStart, fateStart, pathway }, opt), { fateSteps: fate.integrator.steps, fateRejectedNeg: fate.integrator.rejectedNeg });
 }
 
-module.exports = { engineGap, replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, reductionCheck, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };
+module.exports = { fetchedTexts, engineGap, replayLog, observeFate, observeQualitative, runEnsemble, scaleScenario, ensembleLimit, convergenceSweep, reductionCheck, runRate, simulateText, simulateRateText, resolutionPlan, resolutionText, auditRun, runFate, fateBrief, runVariant, refScenario, compare, augmentBuild, validateWithRegistry, pools };

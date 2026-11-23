@@ -114,6 +114,7 @@ const rateOpt = () => ({ scenario: flags.scenario ? loadScenario(flags.scenario)
   until_death: flags['until-death'] ? true : undefined, window: flags.window != null ? +flags.window : undefined, death_frac: flags['death-frac'] != null ? +flags['death-frac'] : undefined });
 // 사법부가 검증한 증명 도장 열쇠 (validate·관문에 넘김)
 const attestations = (db) => ATT.validStamps(db, ATT.readRegistry(HERE), { root: HERE });
+const fetched = () => ORCH.fetchedTexts(dirname(DB_PATH)); // 받은 원문 — 주장의 인용 대조 (PLAN-115 · RULE-0540)
 const assays = () => req('./judicial/assay_audit.js').audit(CLERK.readAssays(dirname(DB_PATH))).current; // 측정법 장부의 현재 측정법 — 관문·검사가 관찰의 assay 를 대조 (RULE-0524)
 const REL = req('./judicial/reliability.js'); // 사법부 — 신뢰 지표 (S·D 쌍 → 등급)
 const TR = req('./judicial/trend.js');        // 사법부 — 추세 점검 (시간 축: 합의와 같은가)
@@ -137,7 +138,7 @@ switch (cmd) {
   }
   case 'validate': {
     if (args[0]) { // 패치 검사: 관문 미리 보기 + 부분 구조 수지(ΣIn = ΣOut, 상대 1e-14 — validate 규칙) + 정제 점검의 새 문제
-      const db = loadDB(), patch = stamped(readJSON(args[0])), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys, assays: assays() });
+      const db = loadDB(), patch = stamped(readJSON(args[0])), res = LEG.ingest(db, patch), g = J.gate(db, res, { attestations: attestations(db).keys, assays: assays(), fetched: fetched() });
       printIssues(g.errors, g.warnings);
       const before = J.refineCheck(db).issues.map((x) => x.type + x.where), ref = J.refineCheck(res.db), fresh = ref.issues.filter((x) => !before.includes(x.type + x.where));
       for (const x of fresh) console.log(`  △ [${x.type}] ${x.msg}`);
@@ -147,7 +148,7 @@ switch (cmd) {
       console.log(`— 패치 ${args[0]}: 관문 ${g.ok ? '통과' : '거부'} (새 오류 ${g.errors.length}, 새 경고 ${g.warnings.length}) · 정제 점검 새 문제 ${fresh.length}`);
       process.exit(g.ok ? 0 : 1);
     }
-    const r = ORCH.validateWithRegistry(loadDB(), HERE);
+    const r = ORCH.validateWithRegistry(loadDB(), HERE, { fetched: fetched() });
     printIssues(r.errors, r.warnings);
     for (const f of r.attestations.failed) console.log(`오류  증명 ${f.key}: ${f.reasons.join(' · ')}`);
     const dict = req('./judicial/dictionary_audit.js').audit(CLERK.readDictionary(dirname(DB_PATH))); // 사전 봉인 (16A) — 사슬·revises·렌더 모호·덮임
@@ -175,7 +176,7 @@ switch (cmd) {
     const applied = [], att = attestations(db).keys;
     for (const p of args) {
       const patch = stamped(readJSON(p));
-      const res = LEG.ingest(db, patch), g = J.gate(db, res, { allowWarnings: !!flags['allow-warnings'], attestations: att, assays: assays() }), r = res.report;
+      const res = LEG.ingest(db, patch), g = J.gate(db, res, { allowWarnings: !!flags['allow-warnings'], attestations: att, assays: assays(), fetched: fetched() }), r = res.report;
       console.log(`${p}: 추가 ${r.added.length}, 수정 ${r.updated.length}, 삭제 ${r.removed.length}`);
       for (const [a, b] of Object.entries(r.idmap)) console.log(`  id   ${a} → ${b}`);
       for (const m of r.mapped) console.log(`  매핑 ${m.from} → ${m.to}  (${m.via})`);
@@ -370,7 +371,7 @@ switch (cmd) {
       const fresh = b.stamps.map((st) => ATT.verifyStamp(st, res.db, { root: HERE })), badSt = fresh.filter((v) => !v.ok);
       for (const v of badSt) console.log(`  ✗ 도장 ${v.key}: ${v.reasons.join(' · ')}`);
       const att = [...attestations(db).keys, ...fresh.filter((v) => v.ok).map((v) => v.key)];
-      const g = J.gate(db, res, { attestations: att, assays: assays() }), rep = J.patchReport(db, res, b.patch, g);
+      const g = J.gate(db, res, { attestations: att, assays: assays(), fetched: fetched() }), rep = J.patchReport(db, res, b.patch, g);
       printIssues(g.errors, g.warnings);
       console.log(J.patchReportText(rep, DefDB.index(res.db)));
       console.log(`패치 초안 (입법 서기): ${out} · 증명 도장 ${b.stamps.length} (유효 ${fresh.length - badSt.length})`);
@@ -499,6 +500,13 @@ switch (cmd) {
     const v = QG.qualGraphVerdict(loadDB(), ids.length ? { ids } : {});
     if (flags.json) console.log(JSON.stringify({ rows: v.rows, counts: v.counts, index: v.index, graph: v.graph }, null, 2));
     else console.log(QG.qualGraphText(v));
+    break;
+  }
+  case 'claims': { // 주장 층 칸 상태 (PLAN-115): 규칙 칸마다 근거 줄에서 계산한 상태 · 규칙 계산 수준 — 읽기만, db 불변. --assume PMID:…,O…,C… 로 철회를 가정
+    const CL = req('./judicial/claims.js'), sel = args.find((a) => !a.startsWith('--')) || null;
+    const opt = flags.assume ? { assume: String(flags.assume).split(',').map((x) => x.trim()).filter(Boolean) } : {};
+    if (flags.json) console.log(JSON.stringify(CL.claimsReport(loadDB(), sel, opt), null, 2));
+    else console.log(CL.claimsText(loadDB(), sel, opt));
     break;
   }
   case 'retraction': { // 파생 그래프 · 철회 전파 (build-plan 13): 철회된(또는 <O…> 로 철회를 가정한) 관찰에 기댄 현재 값·상수·단계·경로 — 읽기만, db 불변
@@ -687,7 +695,7 @@ switch (cmd) {
     const CMP = req('./judicial/compare.js');
     const dbA = loadDB(), x = DefDB.resolveRef(DefDB.index(dbA), flags.state); if (x.error) die(x.error);
     let dbB = dbA;
-    if (flags.patch) { const res = LEG.ingest(dbA, readJSON(flags.patch)), g = J.gate(dbA, res, { attestations: attestations(dbA).keys, assays: assays() }); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
+    if (flags.patch) { const res = LEG.ingest(dbA, readJSON(flags.patch)), g = J.gate(dbA, res, { attestations: attestations(dbA).keys, assays: assays(), fetched: fetched() }); printIssues(g.errors, g.warnings); if (g.errors.length) die('패치가 관문을 통과하지 못함'); dbB = res.db; }
     const scA = loadScenario(flags.scenario, x.id, dbA).scenario, scB = flags['scenario-b'] ? loadScenario(flags['scenario-b'], x.id, dbA).scenario : JSON.parse(JSON.stringify(scA));
     if (flags.hours) { scA.t_end = +flags.hours * 3600; scB.t_end = +flags.hours * 3600; }
     const r = ORCH.compare(dbA, dbB, x.id, scA, scB, { refHours: +(flags['ref-hours'] || 3) });
@@ -783,7 +791,7 @@ switch (cmd) {
     break;
   }
   default:
-    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | assume | dictionary | origin | qualgraph | retraction | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
+    die('명령: status | validate | merge | map | audit | vocab | context | mechanism | simulate | fate | observe | compare | augment | attest | trend | resolution | audit-run | pattern | limitations | textbook | grade | report | log | register | assume | dictionary | origin | qualgraph | retraction | claims | evidence | verify-collection | verify-run | prompt  (형식 변환은 migrations/, 파일 맨 위 주석 참고)');
 }
 
 // ===== 교과서 부록 생성 (결정적: 같은 코드·데이터면 같은 결과) =====

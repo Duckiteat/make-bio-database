@@ -556,3 +556,8 @@
 {"from": "RULE-0534", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "다른 기질을 잰 관찰을 근거로 달면 엉뚱한 기질의 Km 이 들어간다"}
 {"from": "RULE-0535", "rel": "because", "to": "code:judicial/verifier.js", "by": "judged", "note": "엔진 시계 산술(t0 + k·Δ f64 곱 · 합)을 같은 방법으로 다시 세지 않는다 — 누적 덧셈 · 끝 넘김 · 빠진 기록을 잡음"}
 {"from": "RULE-0536", "rel": "because", "to": "code:judicial/stoch_audit.js", "by": "judged", "note": "짝이 아닌 두 앙상블의 차는 공통 잡음이 빠지지 않아 짝 t 검정의 가정이 깨진다"}
+{"from": "RULE-0537", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "칸 존재 검사를 끄면 규칙에 없는 칸(via_component 없는 phk_phos)에 근거가 붙음"}
+{"from": "RULE-0538", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "출처 검사를 끄면 어디서 왔는지 모르는 근거 줄이 들어옴"}
+{"from": "RULE-0539", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "인용 위치 검사를 끄면 문장 없이 direct 를 주장할 수 있음"}
+{"from": "RULE-0540", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "문구 대조를 끄면 고쳐 쓴 인용 · 없는 인용이 통과"}
+{"from": "RULE-0541", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "근거 줄 불변 검사를 끄면 지지 줄을 반박으로 몰래 바꿀 수 있음"}

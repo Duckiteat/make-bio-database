@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (324 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (329 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 290 |
+| 잡음 `caught` | 295 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 290
+## 잡음 `caught` — 295
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -309,6 +309,11 @@
 | RULE-0534 | 값의 근거 관찰(by_substrate.from)이 observable.substrate 를 밝혔다면 그 값 | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
 | RULE-0535 | 운명 엔진의 기록 시각은 사법부가 엔진과 다른 방법(f64 → 정확한 2 진 유리수, BigInt 정수 산술 | replace | judicial/verifier.js | ① 시계 거부: 끝을 넘긴 기록 · 누적 덧셈 시계 · 빠진 기록 — 엔진이 그렇게 세면 ENGINE_DEFECT |
 | RULE-0536 | 공통 난수 짝 판정(pairedCompare)은 같은 (seed, 궤적 번호) 쌍으로 돌린 두 앙상블에만 — | replace | judicial/stoch_audit.js | ⑤ 짝 판정: 짝이 아니면 거부 · 같은 변형이면 차이 없음(p = 1) |
+| RULE-0537 | 주장의 대상은 'D…/rule/키#칸' — 있는 규칙의, 그 규칙 종류의 주장 칸(vocab.claimFie | replace | judicial/judicial.js | ③ RULE-0537 대상 칸: 모양 · 없는 규칙 · 그 종류의 칸이 아님 · 지금 규칙에 없는 칸 |
+| RULE-0538 | 주장의 근거 줄은 방향(claimStances) · 종류(claimEvidenceKinds) · 적은 쪽(c | replace | judicial/judicial.js | ④ RULE-0538 근거 줄 모양: 방향 · 종류 · 적은 쪽 · 출처 · 실험계 어휘 |
+| RULE-0539 | 직접(direct) 근거 줄은 인용 위치 locator { file_sha256(받은 원문 파일), exac | replace | judicial/judicial.js | ⑤ RULE-0539 직접 근거는 인용 위치(파일 sha256 + 원문 그대로)가 있어야 |
+| RULE-0540 | 근거 줄의 인용은 받은 원문과 대조한다 — 파일 sha256 이 FETCH_LOG 에 있고(파일이 그대로), | replace | judicial/judicial.js | ⑥ RULE-0540 인용 대조: 고쳐 쓴 인용 · 다른 논문의 파일 · 모르는 파일 — 그리고 원문을 안 주면 경고만 |
+| RULE-0541 | 주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나  | replace | judicial/judicial.js | ⑦ RULE-0541 덧붙이기만: 줄 덧붙이기 · 철회 한 번은 됨 — 칸 바꾸기 · 줄 고치기 · 지우기 · 두 번 철회 · 기록 시각 없음은 거부 |
 
 ## 설정에 있음 `present` — 8
 

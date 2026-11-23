@@ -629,10 +629,23 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 - **내부 일관성 재료** (ASY-14 · RULE-0530, 2026-11-18): `reported` 에 선택 칸 `sem`(원문 십진 문자열) · `n`(원문 표본 수, 1 이상 정수) · `integer`(원 자료가 정수인가). 모양은 오류(RULE-0525), 앞뒤(SEM = SD/√n · SEM > SD 뒤바뀜 · GRIM · n ≠ replicates)는 경고 — 원문이 틀렸을 수 있어 거부가 아니라 사람에게(`judicial/consistency.js`).
 - **차원과 SI 상수** (ASY-08 · RULE-0526): 어휘 `unitSymbols`(단위 기호 → 기본 차원 L·M·T·I·Θ·N·J + 개수 #, 지수는 유리수 문자열 — 분수 차수의 M^0.5 s^-1 도 됨) · `siConstants`(2019 SI 정의 상수 정확값 문자열) · `siDerived`(R · F — 정의 상수의 정확한 곱). 엔진의 `thermo.R` 은 손으로 적지 않고 `siDerived.R` 의 한 번 반올림(전의 8.314462618 은 끝 다섯 자리 잘림 — 8.31446261815324 로 바뀜). 사법부 `checkUnitSystem` 이 기호 · 환산표 정준 · 측정량 · 속도 칸 · 속도 법칙 차원 식 · ΔG/(RT) 무차원 · 상수 곱을 매 validate 에서 본다. db 형식 불변.
 
+## 8Q. 주장 층 — 칸 단위 근거 (PLAN-115 · DEC-0075, 형식 v12 의 선택 칸)
+
+- **왜**: 규칙의 `evidence` 하나는 규칙 전체에 붙는다 — `curated` 가 `via_component` · `effect.site` · `regulators` 같은 칸까지 보증하는 것처럼 읽힌다. 주장은 **칸 하나** 에 근거를 단다.
+- **자리**: 최상위 `claims { C…: 주장 }` · 번호 `meta.next.C`. `moved` 처럼 **있을 때만** 직렬화한다 — 주장이 없으면 db.json 은 그대로(형식 버전 그대로).
+- **주장**: `{ target: 'D…/rule/키#칸', says?, context, evidence: [근거 줄], recorded_at, note?, retracted? { note, at? } }`. 칸 = `vocab.claimFields[규칙 종류]` 의 `core`(계산 수준을 정함) · `aux`(표시만) 이름 · `'*'`(규칙 전체) · `'regulators:D…'`(조절자 하나). 칸은 지금 그 규칙에 있어야 한다(RULE-0537). 방향은 주장 → 정의 하나(RULE-0488) — 규칙은 주장을 가리키지 않는다.
+- **근거 줄** (= 평가 하나): `{ source? {db: DOI|PMID, id}, from? [O…], locator? { file_sha256, part, exact, prefix?, suffix? }, stance: supports | contradicts | qualifies, kind: direct | background | interpretation | absent, context, by { agent: human | ai | tool, who?, session? }, at, note? }` (RULE-0538). `direct` 는 locator 필수(RULE-0539). `absent` = 확인했으나 원문이 그 칸을 말하지 않음(줄 0 과 다름).
+- **맥락**: 관찰 조건과 같은 칸 — `species · tissue · cell · location · system · temperature_K · pH · condition`. `system` = `vocab.contextSystems`(in_vivo · ex_vivo · cell_free · purified · recombinant). 관찰 조건에도 `tissue` · `system` 을 쓸 수 있다(있을 때만).
+- **인용 대조** (RULE-0540): `file_sha256` 은 `data/fetched/<원천>/FETCH_LOG.jsonl` 에 있고 파일이 그대로여야 하며, 출처가 그 파일의 논문이고, `exact` 가 그 자리(`title` · `abstract`)에 정규화(`collection_audit.normText`) 뒤 그대로 있어야 한다. 조정자(`orchestrator.fetchedTexts`)가 읽어 넘기고 사법부는 파일을 읽지 않는다. 그 밖의 자리(본문 · 그림 · 표)는 경고 — 사람이 원본 확인. **문구 존재만 기계** — 그 문장이 칸을 뒷받침하는지는 사람 · inspect.
+- **불변** (RULE-0541): 패치 `claims: [{ target, … }]`(새 주장, 임시 번호 C+…) · `{ id, evidence_add: [줄] }`(뒤에 덧붙임) · `{ id, retracted }`(한 번). 기존 칸 · 기존 줄을 바꾸거나 주장을 지우는 것은 거부 — 관문이 병합 결과 전체를 비교한다(`claimImmutability`).
+- **칸 상태는 계산** (`judicial/claims.js` · `dbtool claims [D…|S…|D…/rule/키] [--assume PMID:…,O…,C…]`): 살아 있는 줄에서 supported · supported_elsewhere(다른 종에서만 — 자동 승격 없음) · inferred · contested(지지와 반박을 함께 남김) · refuted · unsupported. 칸에 주장이 없으면 `'*'` 주장, 그것도 없으면 규칙 `evidence` 의 보기 `legacy`(옛 level 그대로 — curated 를 supported 로 올리지 않음). 규칙의 계산 수준 = 핵심 칸 중 가장 약한 것. 상태 이름 · 순위 = `vocab.claimStates`.
+- **엔진**: 주장은 IR 에 들어가지 않는다 — 시뮬레이션 결과 비트 그대로(RULE-0036). 구조 관문은 나중(DEC-0075 Q7).
+
 ## 변경 기록
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-11-23 | (주장 층 §8Q) | 최상위 선택 칸 `claims { C… }` · `meta.next.C`(있을 때만 — db.json 그대로) · 어휘 `claimStances` · `claimEvidenceKinds` · `claimAgents` · `locatorParts` · `contextSystems` · `claimFields` · `claimStates` · 종 9986(집토끼) · 관찰 조건 `tissue` · `system`(있을 때만) · 사법부 `validateClaims` · `claimImmutability`(RULE-0537–0541) · 계산 `judicial/claims.js` · `dbtool claims`. 옮길 기록 없음 |
 | 2026-11-18 | (불확도 예산 · 내부 일관성) | 정량 관찰 `uncertainty.basis` 에 `budget` · 선택 칸 `uncertainty.budget`(성분 — effect 필수) · `reported.sem` · `reported.n` · `reported.integer` — 계약 `schemas/obs/observation.schema.json` · 정규화(있을 때만) · 사법부 `checkBudget`(RULE-0090) · `checkReported` 의 내부 일관성(RULE-0530) · 비교 `budgetVar` · 등급 `unsourcedB`. 어휘 `budgetSources` · `budgetEffects` · `budgetTypes`. 옮길 기록 없음(새 칸은 선택) — 이관 스크립트 필요 없음 (DEC-0061 · DEC-0062) |
 | 2026-11-01 | (차원 · SI 상수) | 어휘 `unitSymbols` · `siConstants` · `siDerived` 신설, `thermo.R` 은 유도(정확값 한 번 반올림), `model.NA` 는 SI 표에서. 사법부 `checkUnitSystem`(RULE-0526). db 형식 불변 — 옮길 기록 없음 |
 | 2026-11-01 | (원문 숫자) | 정량 관찰에 `reported { value, unit, sd? }`(원문 그대로의 십진 문자열) — 계약 `schemas/obs/observation.schema.json` · 정규화(있을 때만, 값 그대로) · 사법부 `checkReported` · 관문(새 정량 관찰은 필수)(RULE-0525). `vocab.unitExact` 신설, `unitFactors` 는 거기서 유도(비트 단위로 같음). 옮길 기록 없음(옛 관찰은 경고 — 원문에서 채움) — 이관 스크립트 필요 없음 |

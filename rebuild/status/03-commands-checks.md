@@ -29,6 +29,7 @@
 | `assay` | **빠짐** |
 | `register` | **빠짐** |
 | `qualgraph` | **빠짐** |
+| `claims` | **빠짐** |
 | `retraction` | **빠짐** |
 | `evidence` | **빠짐** |
 | `verify-collection` | **빠짐** |
@@ -58,7 +59,7 @@
 |---|---|
 | `judicial/assumption_audit.js` | 22 |
 | `judicial/contract.js` | 9 |
-| `judicial/judicial.js` | 486 |
+| `judicial/judicial.js` | 508 |
 
 ## 시험
 
@@ -73,6 +74,7 @@
 | `tests/bundle.test.mjs` | 5 |
 | `tests/changes-draft.test.mjs` | 3 |
 | `tests/ci_zone.test.mjs` | 3 |
+| `tests/claims.test.mjs` | 8 |
 | `tests/clock.test.mjs` | 7 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
@@ -123,4 +125,4 @@
 | `tests/transitions.test.mjs` | 2 |
 | `tests/values.test.mjs` | 4 |
 
-거부 말뭉치: 25
+거부 말뭉치: 28

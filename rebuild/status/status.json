@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1261 개 · 30405.3 KB"
+        "1267 개 · 30480.8 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "435 개 · 3757.9 KB"
+        "436 개 · 3771.5 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "101 개 · 1262.4 KB"
+        "101 개 · 1262.7 KB"
        ],
        [
         "장부 단위",
@@ -41,7 +41,7 @@
        ],
        [
         "dbtool 명령 / 머리 주석에 적힌 것",
-        "36 / 24"
+        "37 / 24"
        ],
        [
         "MCP 도구",
@@ -49,15 +49,15 @@
        ],
        [
         "판정 거부 자리 E( (규칙 번호 없음)",
-        "517"
+        "539"
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "525 / 25"
+        "533 / 28"
        ],
        [
         "번호 이름공간",
-        "57 (active 36 · planned 3 · legacy 2 · external 16)"
+        "58 (active 37 · planned 3 · legacy 2 · external 16)"
        ],
        [
         "미등록 번호 모양 / 겹침 / 예외",
@@ -65,15 +65,15 @@
        ],
        [
         "같은 번호 형식을 코드에 따로 적은 곳",
-        "19"
+        "20"
        ],
        [
         "규칙 장부 RULE",
-        "536"
+        "541"
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "290 / 0 / 0"
+        "295 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -81,7 +81,7 @@
        ],
        [
         "규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함",
-        "219 / 21 / 284"
+        "224 / 21 / 284"
        ]
       ]
      }
@@ -118,27 +118,27 @@
        [
         "rebuild",
         "37",
-        "6516.7"
+        "6538.9"
        ],
        [
         "docs",
-        "412",
-        "3302.1"
+        "413",
+        "3311.9"
        ],
        [
         "(최상위)",
         "19",
-        "1002.9"
+        "1016.6"
        ],
        [
         "tests",
-        "108",
-        "762.8"
+        "112",
+        "775.4"
        ],
        [
         "judicial",
-        "36",
-        "621.1"
+        "37",
+        "636.4"
        ],
        [
         "attestations",
@@ -163,7 +163,7 @@
        [
         "legislative",
         "3",
-        "77.6"
+        "79.4"
        ],
        [
         "migrations",
@@ -188,7 +188,7 @@
        [
         ".claude",
         "6",
-        "37.6"
+        "37.9"
        ],
        [
         ".github",
@@ -231,7 +231,7 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "440.5"
+        "442.3"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -243,11 +243,15 @@
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "359.3"
+        "362.5"
        ],
        [
         "`CHANGES.md`",
-        "346.0"
+        "347.6"
+       ],
+       [
+        "`rebuild/rules/changes.jsonl`",
+        "315.5"
        ],
        [
         "`data/fetched/consensus/uniprot/P04439.json`",
@@ -256,10 +260,6 @@
        [
         "`data/fetched/uniprot/P04439.json`",
         "314.5"
-       ],
-       [
-        "`rebuild/rules/changes.jsonl`",
-        "305.0"
        ],
        [
         "`attestations/registry.json`",
@@ -283,7 +283,7 @@
        ],
        [
         "`judicial/judicial.js`",
-        "194.0"
+        "201.8"
        ],
        [
         "`docs/reports/2026-10-23-constraints-tests-inventory.md`",
@@ -303,7 +303,7 @@
        ],
        [
         "`docs/textbook/storage-map.json`",
-        "168.3"
+        "170.1"
        ],
        [
         "`data/fetched/consensus/uniprot/Q04206.json`",
@@ -361,15 +361,15 @@
        ],
        [
         "`.claude/skills/inspect/SKILL.md`",
-        "6.8",
+        "6.9",
         "90",
         "",
         "미분류"
        ],
        [
         "`CHANGES.md`",
-        "346.0",
-        "341",
+        "347.6",
+        "342",
         "",
         "분류됨 1"
        ],
@@ -403,8 +403,8 @@
        ],
        [
         "`SCHEMA.md`",
-        "108.6",
-        "677",
+        "112.4",
+        "690",
         "",
         "분류됨 427"
        ],
@@ -585,7 +585,7 @@
        ],
        [
         "`docs/modes/author.md`",
-        "13.2",
+        "13.3",
         "140",
         "",
         "생성물"
@@ -599,7 +599,7 @@
        ],
        [
         "`docs/modes/develop.md`",
-        "6.0",
+        "6.1",
         "80",
         "",
         "생성물"
@@ -613,7 +613,7 @@
        ],
        [
         "`docs/modes/inspect.md`",
-        "6.6",
+        "6.7",
         "85",
         "",
         "생성물"
@@ -634,8 +634,8 @@
        ],
        [
         "`docs/plan/build.md`",
-        "51.9",
-        "485",
+        "52.2",
+        "486",
         "",
         "생성물"
        ],
@@ -1098,6 +1098,13 @@
         "`docs/plan/decisions/DEC-0074.md`",
         "3.2",
         "19",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0075.md`",
+        "2.2",
+        "11",
         "",
         "생성물"
        ],
@@ -2048,8 +2055,8 @@
        ],
        [
         "`docs/plan/items/PLAN-115.md`",
-        "8.2",
-        "32",
+        "10.1",
+        "36",
         "",
         "생성물"
        ],
@@ -3168,14 +3175,14 @@
        ],
        [
         "`docs/textbook/03-데이터-모델.md`",
-        "19.8",
+        "20.7",
         "184",
         "",
         "분류됨 116"
        ],
        [
         "`docs/textbook/04-알고리즘.md`",
-        "70.3",
+        "71.4",
         "376",
         "",
         "분류됨 233"
@@ -3210,8 +3217,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "145.3",
-        "875",
+        "146.7",
+        "879",
         "",
         "생성물"
        ],
@@ -3493,6 +3500,10 @@
         "**빠짐**"
        ],
        [
+        "`claims`",
+        "**빠짐**"
+       ],
+       [
         "`retraction`",
         "**빠짐**"
        ],
@@ -3603,7 +3614,7 @@
        ],
        [
         "`judicial/judicial.js`",
-        "486"
+        "508"
        ]
       ]
      }
@@ -3654,6 +3665,10 @@
        [
         "`tests/ci_zone.test.mjs`",
         "3"
+       ],
+       [
+        "`tests/claims.test.mjs`",
+        "8"
        ],
        [
         "`tests/clock.test.mjs`",
@@ -3855,7 +3870,7 @@
      }
     ],
     "text": [
-     "거부 말뭉치: 25"
+     "거부 말뭉치: 28"
     ]
    }
   ]
@@ -4759,7 +4774,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/index/namespaces.jsonl` (이름공간 57) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다."
+     "원본: `rebuild/index/namespaces.jsonl` (이름공간 58) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다."
     ]
    },
    {
@@ -4794,7 +4809,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "12163 · 219 · 330",
+        "12196 · 219 · 334",
         "212 · 없음 7"
        ],
        [
@@ -4804,7 +4819,7 @@
         "`model.ID_RE.S`",
         "legislative merge (meta.next.S)",
         "`data/db.json#steps`",
-        "1101 · 60 · 82",
+        "1103 · 60 · 83",
         "57 · 없음 3"
        ],
        [
@@ -4814,7 +4829,7 @@
         "`model.ID_RE.L`",
         "legislative merge (meta.next.L)",
         "`data/db.json#limitations`",
-        "2994 · 130 · 214",
+        "3004 · 130 · 215",
         "127 · 없음 3"
        ],
        [
@@ -4838,6 +4853,16 @@
         "68 · 없음 5"
        ],
        [
+        "`claim`",
+        "active",
+        "token",
+        "`model.ID_RE.C`",
+        "legislative merge (meta.next.C)",
+        "`data/db.json#claims`",
+        "13 · 1 · 1",
+        "0 · 없음 1"
+       ],
+       [
         "`assumption`",
         "active",
         "token",
@@ -4851,10 +4876,10 @@
         "`temp_id`",
         "active",
         "token",
-        "`^[TDSLOA]\\+[A-Za-z0-9_]+$`",
+        "`^[TDSLOAC]\\+[A-Za-z0-9_]+$`",
         "patch author (patch-local)",
         "`patch files (merge assigns real id)`",
-        "1860 · 505 · 98",
+        "1861 · 506 · 98",
         "—"
        ],
        [
@@ -5024,8 +5049,8 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "5717 · 539 · 179",
-        "536 · 없음 3"
+        "5890 · 544 · 181",
+        "541 · 없음 3"
        ],
        [
         "`decision`",
@@ -5034,8 +5059,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "2469 · 72 · 325",
-        "257 · 없음 6"
+        "2516 · 73 · 328",
+        "258 · 없음 6"
        ],
        [
         "`assay_stage`",
@@ -5045,7 +5070,7 @@
         "측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번)",
         "`rebuild/state/plans.jsonl`",
         "0 · 0 · 0",
-        "257 · 없음 0"
+        "258 · 없음 0"
        ],
        [
         "`permission`",
@@ -5065,7 +5090,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "334 · 없음 0"
+        "335 · 없음 0"
        ],
        [
         "`code_head`",
@@ -5084,8 +5109,8 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "4562 · 121 · 262",
-        "257 · 없음 5"
+        "4620 · 121 · 271",
+        "258 · 없음 5"
        ],
        [
         "`plan_stage`",
@@ -5095,7 +5120,7 @@
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
         "1594 · 43 · 128",
-        "257 · 없음 1"
+        "258 · 없음 1"
        ],
        [
         "`plan_direction`",
@@ -5105,7 +5130,7 @@
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
         "98 · 11 · 16",
-        "257 · 없음 1"
+        "258 · 없음 1"
        ],
        [
         "`test`",
@@ -5378,6 +5403,7 @@
      "- `limitation`: L000128 · L900001 · L999999",
      "- `observation`: O000029 · O000031 · O000999 · O800002 · O900000 · O900001 · O900002 · O900003 · O900004 · O900009 · O999999",
      "- `value`: V000069 · V900000 · V900001 · V999998 · V999999",
+     "- `claim`: C000001",
      "- `assumption`: A000500 · A000999 · A900001 · A900002 · A999999",
      "- `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST",
      "- `criterion`: D3.asserted · S3.doi",
@@ -5395,16 +5421,16 @@
     "tables": [],
     "text": [
      "- compiler/perturb.js:29 /^D\\d{6}$/",
-     "- dbtool.mjs:498 /^O\\d{6}$/",
-     "- dbtool.mjs:505 /^O\\d{6}$/",
-     "- dbtool.mjs:645 /^O\\d{6}$/",
-     "- dbtool.mjs:749 /^O\\d{6}$/",
-     "- dbtool.mjs:762 /^O\\d{6}$/",
-     "- dbtool.mjs:769 /^O\\d{6}$/",
-     "- dbtool.mjs:769 /^O\\d{6}$/",
+     "- dbtool.mjs:499 /^O\\d{6}$/",
+     "- dbtool.mjs:513 /^O\\d{6}$/",
+     "- dbtool.mjs:653 /^O\\d{6}$/",
+     "- dbtool.mjs:757 /^O\\d{6}$/",
+     "- dbtool.mjs:770 /^O\\d{6}$/",
+     "- dbtool.mjs:777 /^O\\d{6}$/",
+     "- dbtool.mjs:777 /^O\\d{6}$/",
      "- judicial/acceptance.js:49 /^O\\d{6}$/",
      "- judicial/assumption_audit.js:16 /^A\\d{6}$/",
-     "- judicial/judicial.js:312 /^[TDS]\\d{6}$/",
+     "- judicial/judicial.js:391 /^[TDS]\\d{6}$/",
      "- mcp/clerk.mjs:50 /^O\\d{6}$/",
      "- mcp/query.mjs:61 /^A\\d{6}$/",
      "- model.js:44 /^T\\d{6}$/",
@@ -5412,6 +5438,7 @@
      "- model.js:44 /^S\\d{6}$/",
      "- model.js:44 /^L\\d{6}$/",
      "- model.js:44 /^O\\d{6}$/",
+     "- model.js:44 /^C\\d{6}$/",
      "- tests/mcp_run.test.mjs:67 /^L\\d{6}$/"
     ]
    },
@@ -5446,13 +5473,13 @@
       "rows": [
        [
         "공통 `common`",
-        "348",
-        "8319.9"
+        "349",
+        "8352.0"
        ],
        [
         "정보 작성 `author`",
         "539",
-        "17207.1"
+        "17210.9"
        ],
        [
         "기초시험 `baseline`",
@@ -5461,8 +5488,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "206",
-        "2601.3"
+        "211",
+        "2640.9"
        ],
        [
         "적분장 `field`",
@@ -5495,7 +5522,7 @@
         "`rebuild/**`",
         "common",
         "37",
-        "6516.7",
+        "6538.9",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -5606,15 +5633,15 @@
        [
         "`judicial/**`",
         "develop",
-        "36",
-        "621.1",
+        "37",
+        "636.4",
         "사법부 코드"
        ],
        [
         "`legislative/**`",
         "develop",
         "3",
-        "77.6",
+        "79.4",
         "입법부 코드"
        ],
        [
@@ -5656,14 +5683,14 @@
         "`model.js`",
         "develop",
         "1",
-        "74.6",
+        "77.0",
         "공유"
        ],
        [
         "`vocab.js`",
         "develop",
         "1",
-        "60.4",
+        "63.9",
         "통제 어휘 — 사용자 요청 시만"
        ],
        [
@@ -5677,14 +5704,14 @@
         "`orchestrator.js`",
         "develop",
         "1",
-        "25.5",
+        "27.2",
         "조정자"
        ],
        [
         "`dbtool.mjs`",
         "develop",
         "1",
-        "81.6",
+        "82.4",
         "명령줄"
        ],
        [
@@ -5704,15 +5731,15 @@
        [
         "`tests/fixtures/rejections/**`",
         "develop",
-        "26",
-        "33.7",
+        "29",
+        "35.7",
         "거부 말뭉치"
        ],
        [
         "`tests/**`",
         "develop",
-        "82",
-        "729.1",
+        "83",
+        "739.7",
         "시험"
        ],
        [
@@ -5740,7 +5767,7 @@
         "`docs/textbook/**`",
         "common",
         "12",
-        "510.0",
+        "515.2",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
@@ -5753,8 +5780,8 @@
        [
         "`docs/**`",
         "common",
-        "264",
-        "837.3",
+        "265",
+        "841.8",
         "안내 문서"
        ],
        [
@@ -5768,14 +5795,14 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "346.0",
+        "347.6",
         "변경 기록"
        ],
        [
         "`SCHEMA.md`",
         "author",
         "1",
-        "108.6",
+        "112.4",
         "형식"
        ],
        [
@@ -5789,7 +5816,7 @@
         "`.claude/**`",
         "common",
         "6",
-        "37.6",
+        "37.9",
         "도구 설정"
        ],
        [
@@ -5841,7 +5868,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/rules/rules.jsonl` · 규칙 536 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
+     "원본: `rebuild/rules/rules.jsonl` · 규칙 541 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
     ]
    },
    {
@@ -5868,7 +5895,7 @@
      }
     ],
     "text": [
-     "살아 있는 규칙 521 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
+     "살아 있는 규칙 526 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
     ]
    },
    {
@@ -5882,7 +5909,7 @@
       "rows": [
        [
         "machine",
-        "331"
+        "336"
        ],
        [
         "text",
@@ -5912,7 +5939,7 @@
       "rows": [
        [
         "1 곳",
-        "315"
+        "320"
        ],
        [
         "2 곳",
@@ -5936,7 +5963,7 @@
     "text": []
    },
    {
-    "heading": "여러 모드에 걸친 규칙 83 (6 단계 모드 문서에서 빠지면 안 되는 것)",
+    "heading": "여러 모드에 걸친 규칙 88 (6 단계 모드 문서에서 빠지면 안 되는 것)",
     "tables": [
      {
       "head": [
@@ -6359,6 +6386,31 @@
         "RULE-0536",
         "develop · field · baseline",
         "공통 난수 짝 판정(pairedCompare)은 같은 (seed, 궤적 번호) 쌍으로 돌린 두 앙상블에만 — 짝이 아니면 판정하지 않고 거부한다. 쌍의 차 d = B − A 로 평균 차 · 95 % t 구간 · 짝 "
+       ],
+       [
+        "RULE-0537",
+        "author · develop · inspect",
+        "주장의 대상은 'D…/rule/키#칸' — 있는 규칙의, 그 규칙 종류의 주장 칸(vocab.claimFields core · aux · '*' · 'regulators:D…')이고 지금 그 규칙에 있는 칸이어야 한"
+       ],
+       [
+        "RULE-0538",
+        "author · develop · inspect",
+        "주장의 근거 줄은 방향(claimStances) · 종류(claimEvidenceKinds) · 적은 쪽(claimAgents — AI 는 ai) · 평가 시각 · 출처(DOI · PMID) 또는 관찰(O…)이 있어"
+       ],
+       [
+        "RULE-0539",
+        "author · develop · inspect",
+        "직접(direct) 근거 줄은 인용 위치 locator { file_sha256(받은 원문 파일), exact(원문 그대로) } 가 있어야 한다 — 직접 측정이라 말하려면 그 문장을 가리켜야"
+       ],
+       [
+        "RULE-0540",
+        "author · develop · inspect",
+        "근거 줄의 인용은 받은 원문과 대조한다 — 파일 sha256 이 FETCH_LOG 에 있고(파일이 그대로), 출처가 그 파일의 논문이고, exact 가 그 자리(제목 · 초록)에 정규화 뒤 그대로 있어야 한다. 원문"
+       ],
+       [
+        "RULE-0541",
+        "author · develop · inspect",
+        "주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나 지우지 않고 새 줄을 뒤에(evidence_add), 철회는 한 번, 주장은 지울 수 없음, 새 주장은 기록"
        ]
       ]
      }
@@ -6395,7 +6447,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "규칙 536 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (558 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
+     "규칙 541 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (563 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
     ]
    },
    {
@@ -6448,8 +6500,8 @@
       "rows": [
        [
         "because",
-        "192",
-        "181"
+        "197",
+        "186"
        ],
        [
         "inline",
@@ -6485,7 +6537,7 @@
      }
     ],
     "text": [
-     "이유가 있는 규칙 219 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
+     "이유가 있는 규칙 224 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
     ]
    },
    {
@@ -6515,8 +6567,8 @@
        ],
        [
         "코드 머리 주석",
-        "34",
-        "34"
+        "39",
+        "39"
        ],
        [
         "한계",
@@ -6562,8 +6614,8 @@
        ],
        [
         "정보 작성 `author`",
-        "311",
-        "100",
+        "316",
+        "105",
         "198"
        ],
        [
@@ -6574,8 +6626,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "118",
-        "61",
+        "123",
+        "66",
         "52"
        ],
        [
@@ -6586,8 +6638,8 @@
        ],
        [
         "점검·검증 `inspect`",
-        "70",
-        "45",
+        "75",
+        "50",
         "24"
        ]
       ]
@@ -7642,7 +7694,7 @@
       "rows": [
        [
         "잡음 `caught`",
-        "290"
+        "295"
        ],
        [
         "설정에 있음 `present`",
@@ -7660,7 +7712,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (324 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (329 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -7671,7 +7723,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 290",
+    "heading": "잡음 `caught` — 295",
     "tables": [
      {
       "head": [
@@ -9711,6 +9763,41 @@
         "replace",
         "judicial/stoch_audit.js",
         "⑤ 짝 판정: 짝이 아니면 거부 · 같은 변형이면 차이 없음(p = 1)"
+       ],
+       [
+        "RULE-0537",
+        "주장의 대상은 'D…/rule/키#칸' — 있는 규칙의, 그 규칙 종류의 주장 칸(vocab.claimFie",
+        "replace",
+        "judicial/judicial.js",
+        "③ RULE-0537 대상 칸: 모양 · 없는 규칙 · 그 종류의 칸이 아님 · 지금 규칙에 없는 칸"
+       ],
+       [
+        "RULE-0538",
+        "주장의 근거 줄은 방향(claimStances) · 종류(claimEvidenceKinds) · 적은 쪽(c",
+        "replace",
+        "judicial/judicial.js",
+        "④ RULE-0538 근거 줄 모양: 방향 · 종류 · 적은 쪽 · 출처 · 실험계 어휘"
+       ],
+       [
+        "RULE-0539",
+        "직접(direct) 근거 줄은 인용 위치 locator { file_sha256(받은 원문 파일), exac",
+        "replace",
+        "judicial/judicial.js",
+        "⑤ RULE-0539 직접 근거는 인용 위치(파일 sha256 + 원문 그대로)가 있어야"
+       ],
+       [
+        "RULE-0540",
+        "근거 줄의 인용은 받은 원문과 대조한다 — 파일 sha256 이 FETCH_LOG 에 있고(파일이 그대로),",
+        "replace",
+        "judicial/judicial.js",
+        "⑥ RULE-0540 인용 대조: 고쳐 쓴 인용 · 다른 논문의 파일 · 모르는 파일 — 그리고 원문을 안 주면 경고만"
+       ],
+       [
+        "RULE-0541",
+        "주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나 ",
+        "replace",
+        "judicial/judicial.js",
+        "⑦ RULE-0541 덧붙이기만: 줄 덧붙이기 · 철회 한 번은 됨 — 칸 바꾸기 · 줄 고치기 · 지우기 · 두 번 철회 · 기록 시각 없음은 거부"
        ]
       ]
      }
@@ -10049,10 +10136,10 @@
        [
         "L2",
         "`code:judicial`",
-        "34",
+        "35",
         "25",
         "10",
-        "7"
+        "8"
        ],
        [
         "L2",
@@ -10081,8 +10168,8 @@
        [
         "L2",
         "`code:tests`",
-        "59",
-        "24",
+        "60",
+        "25",
         "1",
         "34"
        ],
@@ -10258,18 +10345,18 @@
      }
     ],
     "text": [
-     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 200)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
+     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 202)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
     ]
    },
    {
-    "heading": "연결 없는 자리 (107)",
+    "heading": "연결 없는 자리 (108)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
      "- `code:config`: `.github/workflows/check.yml` · `.gitignore` · `.mcp.json`",
      "- `code:core`: `scenarios.js` · `inbox.js`",
      "- `code:engine`: `engine/rng.js` · `engine/probe_pool.js` · `engine/probe_worker.js` · `engine/rust/src/engine.rs` · `engine/rust/src/detmath.rs` · `engine/rust/src/tape.rs` · `engine/rust/src/rng.rs` · `engine/rust/src/lib.rs` · `engine/rust/src/bin/fate_cli.rs` · `engine/rust/Cargo.toml` · `engine/rust/Cargo.lock` · `engine/rust/.gitignore` · `engine/rust/build.sh`",
-     "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/stiffness.js` · `judicial/supervise_approval.js`",
+     "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/claims.js` · `judicial/stiffness.js` · `judicial/supervise_approval.js`",
      "- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
      "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/guard-matrix.test.mjs` · `tests/ci_zone.test.mjs`",
