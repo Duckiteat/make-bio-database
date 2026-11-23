@@ -7,10 +7,10 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 507 | 16885.1 |
-| rebuild | 38 | 6677.5 |
-| docs | 437 | 3488.5 |
+| rebuild | 38 | 6677.6 |
+| docs | 437 | 3489.6 |
 | (최상위) | 19 | 1029.2 |
-| tests | 116 | 816.7 |
+| tests | 116 | 816.9 |
 | judicial | 37 | 649.5 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
@@ -22,7 +22,7 @@
 | compiler | 8 | 57.8 |
 | schemas | 2 | 40.5 |
 | .claude | 6 | 38.4 |
-| .github | 1 | 3.5 |
+| .github | 2 | 5.4 |
 
 ## 큰 파일 25
 
@@ -51,5 +51,5 @@
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
-| `docs/textbook/storage-map.json` | 174.5 |
+| `docs/textbook/storage-map.json` | 175.1 |
 | `rebuild/rules/rules.jsonl` | 173.4 |

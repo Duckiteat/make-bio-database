@@ -281,7 +281,9 @@
           "judicial/transition_audit.js",
           "tests/registry_policy.test.mjs",
           "tests/acceptance.test.mjs",
-          "tests/guard-matrix.test.mjs"
+          "tests/guard-matrix.test.mjs",
+          "rebuild/trust-check.mjs",
+          "tests/trust_check.test.mjs"
         ],
         "finish": [
           "node tests/affected.mjs",
@@ -317,6 +319,7 @@
           "tests/registry_policy.test.mjs",
           "tests/acceptance.test.mjs",
           "tests/guard-matrix.test.mjs",
+          "tests/trust_check.test.mjs",
           "docs/textbook/authority.json"
         ],
         "finish": [
