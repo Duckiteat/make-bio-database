@@ -2746,6 +2746,20 @@
       ]
     },
     {
+      "path": "tests/fixtures/claims/data/fetched/europepmc/*",
+      "class": "verification",
+      "format": "Europe PMC 응답 JSON 3 · FETCH_LOG.jsonl 3 줄 (data/fetched/europepmc 에서 그대로 옮김)",
+      "writer": "사람·AI",
+      "readers": "tests/claims.test.mjs",
+      "interpret": "주장 층 시험의 인용 재료 — 실제로 받은 초록(PMID 164350 · 6245074 · 168880). 시험이 아직 판정되지 않은 데이터(P1 패치 — DEC-0073)에 기대지 않게 (DEC-0091). data/db.json 에 들어가지 않는다.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "attestations/registry.json",
       "class": "attestation",
       "format": "JSON {format: definition-db-attestations, version, stamps[]}",

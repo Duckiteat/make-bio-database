@@ -37,3 +37,4 @@
 - [DEC-0074](../decisions/DEC-0074.md) 2026-11-23 사람 손을 덜 타는 구조 먼저 — 주장 층(115) → 승인 보조(116 G2–G4) → 자동 배정(104) → D000051 주장 층 시범(112, 자동 순환) · author P1 손 고침은 시범으로 흡수
 - [DEC-0075](../decisions/DEC-0075.md) 2026-11-23 주장 층 형식 — 권고 그대로: 새 모음 claims 하나 · 생물 술어 어휘 없음 · via_component 는 보조 칸 · L000030 은 (가) 검증된 외부 ID 만 해소 · 관찰 조건에 tissue · system
 - [DEC-0076](../decisions/DEC-0076.md) 2026-11-23 develop 에 생성물 재생성 하나만 — 명령 장부 'dbtool limitations' 의 쓰는 갈래(--write)를 develop 에 허락 · limitations.md 직접 수정 권한으로 넓히지 않음
+- [DEC-0091](../decisions/DEC-0091.md) 2026-11-24 main 병합은 거버넌스만 먼저 — P1 데이터 커밋(178c43a)을 뺀 새 브랜치 · 주장 층 시험은 자체 시험 재료로

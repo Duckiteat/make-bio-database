@@ -21,6 +21,7 @@
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0090: AI 봇 계정 1(Write) — 절차 docs/reports/2026-11-23-ai-bot-identity-setup.md (사람이 GitHub · claude.ai 에서)
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0089 묶음 1 적용 확인: 사용자 커밋 d064809(Duckiteat) — .claude/settings.json 이 묶음(5c9b9532)+손 편집과 바이트 동일 · 권한 장부 PERM-0012 allow · 장부 검사 오류 0 · 권한 · 승인 · 보호 기준 시험 20 통과 · data · attestations 변경 0. 이 세션 다음 작업 프로세스에서 mcp__github__enable_pr_auto_merge 가 도구 목록에서 빠짐(deny 동작). 남은 것: Allow auto-merge 끄기(사용자 GitHub) · 묶음 2(독립 판정) · 봇 계정(DEC-0090)
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 GitHub Allow auto-merge 꺼짐(사용자 확인) — N12 는 Claude 설정 deny · 서버 설정 두 겹. DEC-0089 묶음 2 적용 확인: 사용자 커밋 a71393d(Duckiteat, 한 번에 적용 스크립트 — 전체 시험 통과 때만 커밋) — modes.json · storage-map.json · guard-matrix 시험 · .github/workflows/trust.yml 이 묶음(9a18ecb7)과 바이트 동일 · 보호 기준 · 독립 판정 · 권한 시험 14 통과 · develop 은 새 L6 셋을 못 씀 · data · attestations · 설정 변경 0. 첫 적용 시도의 실패는 생성 순서(부록 뒤 관리 파일) 와 pull 막힘 — 묶음 문제 아님. 남은 것: 이 브랜치를 main 에 병합(사람) 뒤 main 규칙 필수 검사에 independent-judge · 봇 계정(DEC-0090)
+- `2026-11-24` 커밋 전 기록: · 2026-11-24 DEC-0091: 거버넌스만 먼저 main 으로 — P1 커밋을 뺀 새 브랜치 claude/governance-trust-core · 주장 층 시험 재료를 tests/fixtures 로
 
 ## 걸어온 길
 
@@ -46,6 +47,7 @@
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — AI 전용 GitHub 신원은 봇 계정 1 개(Write) · 절차 문서
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 1 적용 확인 — 사용자 커밋 d064809
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 2 적용 확인 — 사용자 커밋 a71393d · Allow auto-merge 꺼짐(사용자 확인)
+- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — PR #18 을 그대로 병합하지 않고 거버넌스만 따로(나), 막히면 주장 층 시험을 자체 재료로(나-2)
 
 ## 닿는 결정
 
@@ -63,3 +65,4 @@
 - [DEC-0088](../decisions/DEC-0088.md) 2026-11-23 상호 권한 · 독립 신뢰 경계 제안서를 PLAN-116 2 차 입력(최종 정의 후보)으로 — AI 전용 GitHub 신원 · 보안 핵심 먼저 · Hard Veto 와 중재자 정의를 지킬 수 있게
 - [DEC-0089](../decisions/DEC-0089.md) 2026-11-23 git push 확인 창을 지금 없앰(가) · 사람 클릭에 기대지 않는 안전 구조(보안 핵심)를 먼저 빠르게
 - [DEC-0090](../decisions/DEC-0090.md) 2026-11-23 AI 전용 GitHub 신원 = 봇 계정 1 개(협업자 Write) — 모든 Claude 세션이 씀, 승인 · 병합 · 설정 · 규칙 우회는 사람 계정만
+- [DEC-0091](../decisions/DEC-0091.md) 2026-11-24 main 병합은 거버넌스만 먼저 — P1 데이터 커밋(178c43a)을 뺀 새 브랜치 · 주장 층 시험은 자체 시험 재료로
