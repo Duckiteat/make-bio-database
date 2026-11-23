@@ -47,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 34.3 | 102 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 55.3 | 498 |  | 생성물 |
+| `docs/plan/build.md` | 55.6 | 499 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -127,6 +127,7 @@
 | `docs/plan/decisions/DEC-0085.md` | 4.7 | 18 |  | 생성물 |
 | `docs/plan/decisions/DEC-0086.md` | 2.3 | 17 |  | 생성물 |
 | `docs/plan/decisions/DEC-0087.md` | 2.5 | 16 |  | 생성물 |
+| `docs/plan/decisions/DEC-0088.md` | 2.8 | 14 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -248,12 +249,12 @@
 | `docs/plan/items/PLAN-098.md` | 1.9 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-099.md` | 10.5 | 65 |  | 생성물 |
 | `docs/plan/items/PLAN-100.md` | 12.8 | 88 |  | 생성물 |
-| `docs/plan/items/PLAN-101.md` | 5.8 | 61 |  | 생성물 |
+| `docs/plan/items/PLAN-101.md` | 6.1 | 62 |  | 생성물 |
 | `docs/plan/items/PLAN-102.md` | 8.0 | 53 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
-| `docs/plan/items/PLAN-104.md` | 8.6 | 82 |  | 생성물 |
+| `docs/plan/items/PLAN-104.md` | 8.8 | 83 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-106.md` | 10.1 | 50 |  | 생성물 |
+| `docs/plan/items/PLAN-106.md` | 10.3 | 51 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
@@ -263,7 +264,7 @@
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 4.3 | 28 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.3 | 39 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 11.4 | 52 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 12.4 | 55 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -415,6 +416,8 @@
 | `docs/reports/2026-11-23-attack-matrix-independent-review.md` | 19.6 | 97 |  | 미분류 |
 | `docs/reports/2026-11-23-attack-path-matrix.md` | 11.5 | 82 |  | 미분류 |
 | `docs/reports/2026-11-23-derived-artifact-freshness-review.md` | 5.0 | 36 |  | 미분류 |
+| `docs/reports/2026-11-23-mutual-authority-trust-architecture-proposal.md` | 22.2 | 635 |  | 미분류 |
+| `docs/reports/2026-11-23-mutual-authority-trust-architecture-review-notes.md` | 4.9 | 34 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-106-independent-review.md` | 8.1 | 58 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-g5-bypass-scenarios.md` | 7.9 | 52 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-phase1-governance-mapping.md` | 22.7 | 128 |  | 미분류 |
