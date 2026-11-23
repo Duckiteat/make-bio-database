@@ -316,7 +316,7 @@
 | RULE-0541 | 주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나  | replace | judicial/judicial.js | ⑦ RULE-0541 덧붙이기만: 줄 덧붙이기 · 철회 한 번은 됨 — 칸 바꾸기 · 줄 고치기 · 지우기 · 두 번 철회 · 기록 시각 없음은 거부 |
 | RULE-0542 | 도장 등록부(attestations/registry.json)를 바꾸는 변경은 그 모드가 낼 수 있는 도장  | replace | judicial/attestation.js | ② 판정: 승인 도장은 어느 모드도 지우거나 바꾸지 못함 — 모드표에 정책이 없어도 |
 | RULE-0543 | 감독의 최종 권고(계산)는 독립 검수가 서지 않으면 hold 다 — ① 검수(inspect) 뒤에 작성 실행 | replace | judicial/supervise_approval.js | B4 검수 뒤에 작성이 더 넘기면 최종 권고는 보류 — 승인 대상에 검수하지 않은 변경 (SUP-0001 의 모양) · 다시 검수하면 풀림 |
-| RULE-0544 | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transi | replace | rebuild/ci-zone.mjs | C4 검수 · 넘김 기록(감독 장부 · 전환 기록)의 기존 줄을 고치면 CI 가 거부 — 덧붙이기는 통과 · 선언 없는(사람의) 커밋은 알리기만 |
+| RULE-0544 | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transi | replace | judicial/transition_audit.js | C4 검수 · 넘김 기록(감독 장부 · 전환 기록)의 기존 줄을 고치면 CI 가 거부 — 덧붙이기는 통과 · 선언 없는(사람의) 커밋은 알리기만 |
 | RULE-0545 | 감독 장부의 넘김(transition_seq) · 제안 입력(inputs.transitions)이 가리킨 전 | replace | rebuild/supervise.mjs | E3 넘김이 다른 상위 작업의 전환 기록을 가리키면 거부 — 같은 작업 · sup 없는 옛 기록은 통과 · 전환 기록의 sup 칸 모양 (DEC-0081 · RU |
 
 ## 설정에 있음 `present` — 8

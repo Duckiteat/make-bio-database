@@ -16,15 +16,10 @@ import { violations } from './gate.mjs';
 import { createRequire } from 'node:module';
 const ATT = createRequire(import.meta.url)('../judicial/attestation.js');
 const REGISTRY = 'attestations/registry.json';
-// 덧붙이기만 하는 기록 (DEC-0079 ③ · RULE-0544): 서기는 끝에 줄을 붙이기만 한다 — 커밋이 부모의 줄을 하나라도 고치거나 지우면 검수 · 넘김의 기록이 사후에 바뀐 것
-export const APPEND_ONLY = ['rebuild/state/supervise.jsonl', 'workspace/transitions.jsonl'];
-export function appendOnly(before, after) {
-  const count = new Map();
-  for (const l of String(after || '').split('\n')) if (l.trim()) count.set(l, (count.get(l) || 0) + 1);
-  const lost = [];
-  for (const l of String(before || '').split('\n')) { if (!l.trim()) continue; const n = count.get(l) || 0; if (n) count.set(l, n - 1); else lost.push(l); }
-  return lost.length ? [{ rule: 'RULE-0544', msg: `기존 줄 ${lost.length} 이 고쳐지거나 지워짐 — 덧붙이기만 (첫 줄: ${lost[0].slice(0, 80)})` }] : [];
-}
+// 덧붙이기만 하는 기록 (DEC-0079 ③ · RULE-0544) — 판정은 judicial/transition_audit.js (문지기와 같은 함수)
+const TA = createRequire(import.meta.url)('../judicial/transition_audit.js');
+export const APPEND_ONLY = ['rebuild/state/supervise.jsonl', 'workspace/transitions.jsonl']; // 문지기(rebuild/gate.mjs)도 이 목록을 가져다 쓴다
+export const appendOnly = TA.appendOnly;
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RECEIPT_RE = /^workspace\/receipts\/[^/]+\.jsonl$/;

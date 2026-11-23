@@ -35,4 +35,14 @@ function checkTransition(rec, root) {
   return { ok: !errors.length, errors, rules };
 }
 
-module.exports = { FIELDS, OPTIONAL, TARGET_RE, checkTransition };
+// 덧붙이기만 하는 기록 (DEC-0079 ③ · RULE-0544): 서기는 끝에 줄을 붙이기만 한다 — 바뀐 뒤 글에 바뀌기 전의 줄이 모두(같은 수만큼) 남아 있어야 한다.
+//   줄 순서가 바뀐 것은 고침이 아니다(두 브랜치를 합친 장부). 어느 파일에 적용하는지는 부르는 쪽(CI 구역 점검 · 문지기)이 정한다 — 이 함수는 글만 본다
+function appendOnly(before, after) {
+  const count = new Map();
+  for (const l of String(after || '').split('\n')) if (l.trim()) count.set(l, (count.get(l) || 0) + 1);
+  const lost = [];
+  for (const l of String(before || '').split('\n')) { if (!l.trim()) continue; const n = count.get(l) || 0; if (n) count.set(l, n - 1); else lost.push(l); }
+  return lost.length ? [{ rule: 'RULE-0544', msg: `기존 줄 ${lost.length} 이 고쳐지거나 지워짐 — 덧붙이기만 (첫 줄: ${lost[0].slice(0, 80)})` }] : [];
+}
+
+module.exports = { FIELDS, OPTIONAL, TARGET_RE, checkTransition, appendOnly };

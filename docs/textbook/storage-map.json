@@ -2896,7 +2896,7 @@
       "format": "CommonJS 모듈 (사법부 — 읽기·판정만)",
       "writer": "사람·AI (사용자 요청 시)",
       "readers": "legislative/clerk.mjs appendTransition · tests/transitions.test.mjs",
-      "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513.",
+      "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513. · appendOnly(감독 장부 · 전환 기록 덧붙이기만 — CI 구역 점검과 문지기가 같이 씀, RULE-0544) · 선택 칸 sup(DEC-0081)",
       "level": "L2",
       "area": "code:judicial",
       "write_keys": [
