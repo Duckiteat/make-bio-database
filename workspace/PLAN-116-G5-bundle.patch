@@ -1,0 +1,49 @@
+diff --git a/rebuild/gate.mjs b/rebuild/gate.mjs
+--- a/rebuild/gate.mjs
++++ b/rebuild/gate.mjs
+@@ -17,6 +17,8 @@
+ import * as CLERK from '../legislative/clerk.mjs';
+ import { createRequire } from 'node:module';
+ const ATT = createRequire(import.meta.url)('../judicial/attestation.js'); // 도장 등록부 정책 (DEC-0078)
++const TA = createRequire(import.meta.url)('../judicial/transition_audit.js'); // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544) — 판정 함수
++import { APPEND_ONLY } from './ci-zone.mjs'; // 같은 목록을 CI 구역 점검과 함께 (ci-zone 은 이 파일의 violations 를 실행 때만 부른다 — 가져오기 고리지만 맨 위에서 쓰지 않음)
+ 
+ const CODE = join(dirname(fileURLToPath(import.meta.url)), '..');
+ const sha = (x) => createHash('sha256').update(x).digest('hex');
+@@ -238,6 +240,14 @@
+       try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
+       const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
+       if (sv.length) { add({ t: 'violation', rule: 'RULE-0542', files: ['attestations/registry.json'], why: sv.map((v) => v.msg).join(' · ') }); code = say('RULE-0542', `도장 등록부 정책 밖 — ${sv.map((v) => v.msg).join(' · ')} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로`); }
++    }
++    // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 ③ · RULE-0544): 이 호출이 바꿨으면 HEAD 의 글과 견준다 — CI 구역 점검과 같은 판정 · 같은 목록
++    if (st.mode) for (const f of APPEND_ONLY.filter((p) => changed.includes(p))) {
++      let headTxt = '', nowTxt = '';
++      try { headTxt = git(root, 'show', `HEAD:${f}`); } catch { /* 새 파일 */ }
++      try { nowTxt = readFileSync(join(root, f), 'utf8'); } catch { /* 지워짐 */ }
++      const lv = TA.appendOnly(headTxt, nowTxt);
++      if (lv.length) { add({ t: 'violation', rule: 'RULE-0544', files: [f], why: lv[0].msg }); code = say('RULE-0544', `${f}: ${lv[0].msg} — 되돌리거나(git checkout -- ${f}) 서기 명령(dbtool transition · supervise)으로 덧붙이기만`); }
+     }
+     if (bad.length) { const why = st.mode ? `${st.role || st.mode} 에서 바뀌면 안 되는 파일` : '모드를 열기 전에 저장소 파일이 바뀜'; add({ t: 'violation', rule: st.mode ? 'RULE-0515' : 'RULE-0514', files: bad, why }); code = say(st.mode ? 'RULE-0515' : 'RULE-0514', `${why}: ${bad.join(' · ')} — 되돌리거나(git checkout -- <파일>) 전환 기록을 남기고 끝낸다`); }
+     save();
+diff --git a/tests/gate.test.mjs b/tests/gate.test.mjs
+--- a/tests/gate.test.mjs
++++ b/tests/gate.test.mjs
+@@ -188,3 +188,18 @@
+   const i = one('inspect', { stamps: [REG.stamps[0]] }); assert.equal(i.status, 2); assert.match(i.stderr, /승인 도장은 추가만/);
+   assert.equal(one('author', { stamps: [{ ...REG.stamps[0], issued_at: '2026-02-01' }, REG.stamps[1]] }).status, 0, 'author 의 신원 도장 갈아 끼우기');
+ });
++
++test('㉑ 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544): 셸로 기존 줄을 고치면 막힘 · 덧붙이기는 됨', () => {
++  const L1 = '{"seq":1,"why":"검수 끝"}\n';
++  const one = (next) => {
++    const d = repo();
++    try {
++      mkdirSync(join(d, 'workspace'), { recursive: true }); writeFileSync(join(d, 'workspace/transitions.jsonl'), L1);
++      execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'tr'], { cwd: d });
++      tool(d, 'Bash', { command: 'node rebuild/gate.mjs open author' });
++      return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'workspace/transitions.jsonl'), next));
++    } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
++  };
++  const bad = one('{"seq":1,"why":"검수 안 함"}\n'); assert.equal(bad.status, 2); assert.match(bad.stderr, /\[RULE-0544\]/);
++  assert.equal(one(L1 + '{"seq":2,"why":"다음"}\n').status, 0, '덧붙이기');
++});
