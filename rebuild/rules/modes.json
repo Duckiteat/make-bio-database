@@ -203,7 +203,7 @@
     }
   ],
   "gate": {
-    "_what": "문지기 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — rebuild/gate.mjs 가 읽는다. write = 이 모드에서 바뀌어도 되는 저장소 경로(glob, ** = 아래 전부) · finish = 끝내기 전 시험 묶음(종료 코드 0 이어야 통과 — 통과해야 git commit·push). 저장소 밖(스크래치·임시)은 다루지 않는다. 명령의 허용·금지는 여기 적지 않는다 — 명령 장부(rebuild/rules/commands.jsonl)의 modes · writes · writes_on · collector 에서 계산(재건 9 단계, 사용자 결정 2026-10-29: 장부 하나로).",
+    "_what": "문지기 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — rebuild/gate.mjs 가 읽는다. write = 이 모드에서 바뀌어도 되는 저장소 경로(glob, ** = 아래 전부) · finish = 끝내기 전 시험 묶음(종료 코드 0 이어야 통과 — 통과해야 git commit·push). 저장소 밖(스크래치·임시)은 다루지 않는다. 명령의 허용·금지는 여기 적지 않는다 — 명령 장부(rebuild/rules/commands.jsonl)의 modes · writes · writes_on · collector 에서 계산(재건 9 단계, 사용자 결정 2026-10-29: 장부 하나로). stamps = 그 모드가 도장 등록부에 낼 수 있는 도장 종류 (DEC-0078 — 승인 도장은 누구도 지우거나 바꾸지 못함, RULE-0542).",
     "common": {
       "write": [
         "rebuild/status/**",
@@ -233,6 +233,10 @@
           "workspace/handoff/**",
           "docs/reports/**"
         ],
+        "stamps": [
+          "verified",
+          "trend"
+        ],
         "finish": [
           "node dbtool.mjs validate",
           "node dbtool.mjs limitations --detect",
@@ -246,6 +250,7 @@
           "data/assumptions.jsonl",
           "data/preregistrations.jsonl"
         ],
+        "stamps": [],
         "finish": [
           "node dbtool.mjs validate"
         ]
@@ -254,6 +259,7 @@
         "write": [
           "**"
         ],
+        "stamps": [],
         "except": [
           "data/**",
           "attestations/**",
@@ -267,7 +273,17 @@
           "docs/textbook/authority.json",
           "tests/authority.test.mjs",
           "tests/approval.test.mjs",
-          "tests/bundle.test.mjs"
+          "tests/bundle.test.mjs",
+          ".github/**",
+          "rebuild/ci-zone.mjs",
+          "judicial/attestation.js",
+          "judicial/acceptance.js",
+          "judicial/transition_audit.js",
+          "tests/registry_policy.test.mjs",
+          "tests/acceptance.test.mjs",
+          "tests/guard-matrix.test.mjs",
+          "rebuild/trust-check.mjs",
+          "tests/trust_check.test.mjs"
         ],
         "finish": [
           "node tests/affected.mjs",
@@ -287,6 +303,7 @@
           "schemas/ffi/**",
           "CHANGES.md"
         ],
+        "stamps": [],
           "except": [
           "tests/gate.test.mjs",
           "tests/affected.mjs",
@@ -299,6 +316,10 @@
           "tests/authority.test.mjs",
           "tests/approval.test.mjs",
           "tests/bundle.test.mjs",
+          "tests/registry_policy.test.mjs",
+          "tests/acceptance.test.mjs",
+          "tests/guard-matrix.test.mjs",
+          "tests/trust_check.test.mjs",
           "docs/textbook/authority.json"
         ],
         "finish": [
@@ -311,6 +332,9 @@
         "write": [
           "attestations/**",
           "docs/reports/**"
+        ],
+        "stamps": [
+          "accept"
         ],
         "finish": [
           "node dbtool.mjs validate"

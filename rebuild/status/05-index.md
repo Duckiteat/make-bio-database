@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/index/namespaces.jsonl` (이름공간 57) · 예외 `rebuild/index/exceptions.jsonl` (3). 참조 색인은 저장하지 않고 계산한다.
+원본: `rebuild/index/namespaces.jsonl` (이름공간 58) · 예외 `rebuild/index/exceptions.jsonl` (4). 참조 색인은 저장하지 않고 계산한다.
 
 ## 이름공간
 
@@ -11,13 +11,14 @@
 | 이름공간 | 상태 | 모양 | 형식 | 발급 | 자리 | 토큰 | 정의 |
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1222 · 212 · 25 | 210 · 없음 2 |
-| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 11949 · 219 · 321 | 212 · 없음 7 |
-| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1030 · 60 · 75 | 57 · 없음 3 |
-| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 2948 · 130 · 209 | 127 · 없음 3 |
-| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 849 · 38 · 98 | 28 · 없음 10 |
+| `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 12136 · 221 · 341 | 212 · 없음 9 |
+| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1092 · 60 · 82 | 57 · 없음 3 |
+| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 3027 · 130 · 216 | 127 · 없음 3 |
+| `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 891 · 40 · 106 | 28 · 없음 12 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 103 · 73 · 13 | 68 · 없음 5 |
+| `claim` | active | token | `model.ID_RE.C` | legislative merge (meta.next.C) | `data/db.json#claims` | 13 · 1 · 1 | 0 · 없음 1 |
 | `assumption` | active | token | `^A\d{6}$` | clerk appendAssumptions (seq) | `data/assumptions.jsonl` | 2081 · 365 · 42 | 360 · 없음 5 |
-| `temp_id` | active | token | `^[TDSLOA]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1860 · 505 · 98 | — |
+| `temp_id` | active | token | `^[TDSLOAC]\+[A-Za-z0-9_]+$` | patch author (patch-local) | `patch files (merge assigns real id)` | 1861 · 506 · 98 | — |
 | `sub_ref` | active | composite | `^D\d{6}/(site\|rule\|desc\|obs)/[A-Za-z0-9_]+$` | sense owner key | `data/db.json#senses.*.site\|rule\|desc\|obs` | — | — |
 | `bundle_key` | active | composite | `^D\d{6}(\\|[a-z0-9_]+:[A-Za-z0-9_]+)*\\|[a-z_]+$` | derived (not issued) | `computed from sense+site+location` | — | — |
 | `event` | active | chain | `^[1-9]\d*$` | clerk (seq, prev, root) | `data/log/events.jsonl` | — | — |
@@ -28,21 +29,21 @@
 | `patch_record` | active | file | `^\d{8}-\d{6}-.+\.json$` | clerk commitMerge | `data/patches/` | — | — |
 | `vocab_token` | active | vocab | `—` | human (vocab.js, user request) | `vocab.js` | — | — |
 | `audit_code` | active | token | `^AUDIT_[A-Z_]+$` | judicial (code literal) | `judicial/*.js` | 558 · 13 · 84 | 10 · 없음 3 |
-| `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 221 · 22 · 17 | 20 · 없음 2 |
+| `criterion` | active | token | `^(S[0-4]\|D[0-4]\|T\|I)\.[a-z_]+$` | judicial/reliability.js CRITERIA | `judicial/reliability.js#CRITERIA` | 223 · 22 · 18 | 20 · 없음 2 |
 | `task` | active | token | `^TASK-\d{3}$` | integrator | `workspace/tasks/` | 394 · 6 · 48 | 5 · 없음 1 |
 | `supervise_task` | active | token | `^SUP-\d{4}$` | 감독 장부 rebuild/supervise.mjs propose (장부의 가장 큰 번호 + 1 — 두 브랜치가 겹치면 장부 검사가 잡음) | `rebuild/state/supervise.jsonl` | 0 · 0 · 0 | — |
 | `ledger_unit` | active | token | `^U\d{4,}$` | classification (rebuild PLAN §5) | `rebuild/ledger/*.jsonl` | 10661 · 7281 · 11 | — |
 | `scheduled_task` | external | token | `^trig_[A-Za-z0-9]+$` | claude.ai | `claude.ai scheduled tasks` | 12 · 1 · 6 | — |
 | `inbox_file` | active | token | `^(MED\|PMC)-\d+$` | clerk fetchToInbox (file stem) | `data/fetched/europepmc/` | 29 · 10 · 10 | — |
-| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 5663 · 539 · 173 | 536 · 없음 3 |
-| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 2343 · 70 · 315 | 253 · 없음 6 |
-| `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 253 · 없음 0 |
-| `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 23 · 없음 0 |
-| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 334 · 없음 0 |
+| `rule` | active | token | `^RULE-\d{4}$` | rebuild 5 단계 (규칙 장부) | `rebuild/rules/rules.jsonl` | 6377 · 552 · 223 | 549 · 없음 3 |
+| `decision` | active | token | `^DEC-\d{4}$` | rebuild 6c (계획 기록 — 결정, 순번) | `rebuild/state/plans.jsonl` | 3282 · 89 · 385 | 274 · 없음 6 |
+| `assay_stage` | active | token | `^ASY-\d{2}$` | 측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번) | `rebuild/state/plans.jsonl` | 0 · 0 · 0 | 274 · 없음 0 |
+| `permission` | active | token | `^PERM-\d{4}$` | rebuild 10g (상시 권한 장부 — rebuild/rules.mjs apply, 순번) | `rebuild/rules/permissions.jsonl` | 0 · 0 · 0 | 25 · 없음 0 |
+| `change` | active | token | `^CHG-\d{4}$` | 계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다 | `CHANGES.md` | 94 · 40 · 2 | 346 · 없음 0 |
 | `code_head` | active | file | `^code:[\w./-]+\.m?js$` | — (파일 경로) | `코드 파일 맨 위 주석 (계약·이유)` | — | — |
-| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 4218 · 119 · 254 | 253 · 없음 5 |
-| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 1561 · 43 · 127 | 253 · 없음 1 |
-| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 97 · 11 · 15 | 253 · 없음 1 |
+| `plan_item` | active | token | `^PLAN-(?:\d{3}[ap]?\|H\d{2})$` | rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H) | `rebuild/state/plans.jsonl` | 5051 · 121 · 303 | 274 · 없음 5 |
+| `plan_stage` | active | token | `^STG-\d{2}[a-z]?p{0,3}$` | rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp) | `rebuild/state/plans.jsonl` | 1598 · 43 · 129 | 274 · 없음 1 |
+| `plan_direction` | active | token | `^DIR-\d{4}$` | rebuild 6c (계획 기록 — 나아갈 방향, 순번) | `rebuild/state/plans.jsonl` | 98 · 11 · 16 | 274 · 없음 1 |
 | `test` | planned | token | `^TEST-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `switch` | planned | token | `^SW-\d{4}$` | (planned) | `(planned)` | 0 · 0 · 0 | — |
 | `formula` | active | token | `^EQ-\d{4}$` | rebuild 6d (수식 기록) | `rebuild/rules/formulas.jsonl` | 51 · 14 · 12 | 13 · 없음 1 |
@@ -79,11 +80,12 @@
 ## 가리켜졌는데 정의되지 않은 번호 (지운 번호·시험용 가짜 번호·다음 번호 포함 — 정보)
 
 - `term`: T000211 · T999999
-- `sense`: D000213 · D800001 · D900001 · D900002 · D900050 · D900101 · D999999
+- `sense`: D000213 · D800001 · D900001 · D900002 · D900003 · D900009 · D900050 · D900101 · D999999
 - `step`: S000058 · S000059 · S900001
 - `limitation`: L000128 · L900001 · L999999
-- `observation`: O000029 · O000999 · O800002 · O900000 · O900001 · O900002 · O900003 · O900004 · O900009 · O999999
+- `observation`: O000029 · O000031 · O000999 · O800002 · O900000 · O900001 · O900002 · O900003 · O900004 · O900005 · O900009 · O999999
 - `value`: V000069 · V900000 · V900001 · V999998 · V999999
+- `claim`: C000001
 - `assumption`: A000500 · A000999 · A900001 · A900002 · A999999
 - `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST
 - `criterion`: D3.asserted · S3.doi
@@ -98,16 +100,16 @@
 ## 같은 번호 형식을 코드에 따로 적은 곳 (5·9 단계에서 하나로)
 
 - compiler/perturb.js:29 /^D\d{6}$/
-- dbtool.mjs:498 /^O\d{6}$/
-- dbtool.mjs:505 /^O\d{6}$/
-- dbtool.mjs:645 /^O\d{6}$/
-- dbtool.mjs:749 /^O\d{6}$/
-- dbtool.mjs:762 /^O\d{6}$/
-- dbtool.mjs:769 /^O\d{6}$/
-- dbtool.mjs:769 /^O\d{6}$/
-- judicial/acceptance.js:49 /^O\d{6}$/
+- dbtool.mjs:499 /^O\d{6}$/
+- dbtool.mjs:513 /^O\d{6}$/
+- dbtool.mjs:653 /^O\d{6}$/
+- dbtool.mjs:757 /^O\d{6}$/
+- dbtool.mjs:770 /^O\d{6}$/
+- dbtool.mjs:777 /^O\d{6}$/
+- dbtool.mjs:777 /^O\d{6}$/
+- judicial/acceptance.js:58 /^O\d{6}$/
 - judicial/assumption_audit.js:16 /^A\d{6}$/
-- judicial/judicial.js:312 /^[TDS]\d{6}$/
+- judicial/judicial.js:392 /^[TDS]\d{6}$/
 - mcp/clerk.mjs:50 /^O\d{6}$/
 - mcp/query.mjs:61 /^A\d{6}$/
 - model.js:44 /^T\d{6}$/
@@ -115,6 +117,7 @@
 - model.js:44 /^S\d{6}$/
 - model.js:44 /^L\d{6}$/
 - model.js:44 /^O\d{6}$/
+- model.js:44 /^C\d{6}$/
 - tests/mcp_run.test.mjs:67 /^L\d{6}$/
 
 ## 이름공간 표 형식 오류

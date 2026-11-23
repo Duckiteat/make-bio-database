@@ -10,7 +10,11 @@ import * as G from '../rebuild/gate.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..'), J = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 // 기준 — 사람의 커밋으로만 바뀌어야 하는 파일 (문지기 · 설정 · 모드 표 · 권한의 뿌리)
-const CORE = ['rebuild/gate.mjs', '.claude/settings.json', 'rebuild/rules/modes.json', 'docs/textbook/authority.json', 'judicial/authority.js', 'judicial/approval.js', 'rebuild/bundle.mjs', 'tests/authority.test.mjs', 'tests/approval.test.mjs', 'tests/bundle.test.mjs'];
+const CORE = ['rebuild/gate.mjs', '.claude/settings.json', 'rebuild/rules/modes.json', 'docs/textbook/authority.json', 'judicial/authority.js', 'judicial/approval.js', 'rebuild/bundle.mjs', 'tests/authority.test.mjs', 'tests/approval.test.mjs', 'tests/bundle.test.mjs',
+  // 도장 등록부 · CI 구역 점검의 판정 코드와 그 시험 — 같은 push 안에서 검사를 끄는 길을 세션 안에서 막는다 (DEC-0087 D3 · 공격 경로 N3)
+  '.github/workflows/check.yml', 'rebuild/ci-zone.mjs', 'judicial/attestation.js', 'judicial/acceptance.js', 'judicial/transition_audit.js', 'tests/registry_policy.test.mjs', 'tests/acceptance.test.mjs', 'tests/guard-matrix.test.mjs',
+  // 독립 판정 — main 의 코드로만 도는 워크플로 · 판정 · 그 시험 (DEC-0089 · 공격 경로 N9 · N10 · C6)
+  '.github/workflows/trust.yml', 'rebuild/trust-check.mjs', 'tests/trust_check.test.mjs'];
 // develop 이 설정 ask 로만 쓸 수 있는 자기 검사 시험
 const SELF_TESTS = ['tests/gate.test.mjs', 'tests/affected.mjs', 'tests/trace.mjs', 'tests/snapshot.mjs', 'tests/permissions.test.mjs', 'tests/mutation/run.mjs', 'tests/governance.test.mjs', 'tests/rebuild.test.mjs'];
 

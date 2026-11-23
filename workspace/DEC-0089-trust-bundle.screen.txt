@@ -1,0 +1,83 @@
+지문 9a18ecb7c060524debe4b164d05b9bd38ee30944118da1423bcb0db7ae0b7aef
+묶음 4 파일 — 자동 0 · 사람 승인 4 · 거부 0
+
+## 사람 승인 필요
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "tests/guard-matrix.test.mjs"
+    +           "tests/guard-matrix.test.mjs",
+    +           "rebuild/trust-check.mjs",
+    +           "tests/trust_check.test.mjs"
+    +           "tests/trust_check.test.mjs",
+- docs/textbook/storage-map.json [L4 ledger:storage-map · unassigned] — changed: 9 줄 삭제
+    -       "level": "L2",
+    -       "level": "L2",
+    -         "session:develop"
+    -       "area": "code:tools",
+    -         "session:develop",
+    -         "session:field"
+    -       "area": "code:tests",
+    -       "interpret": "독립 판정 (DEC-0088 Q2 · DEC-0089) — 갈림점 → head 의 순 변경으로 ① 도장 등록부 정책(승인 도장 지우기 · 바꾸기 · 승인자 밖 새 승인 도장 — 병합 커밋 속도, N9) ② 지키는 자리(저장 지도 L6 + 판정 코드의 require · import 의존 닫힘 — N10) 변경을 사람 확인으로 실패. 기준(지도 · 의존)은 판정하는 쪽(main) 파일. 승인 묶음 적용 뒤 L6 (guard:gate)"
+    -       "interpret": "독립 판정 시험 — 의존 찾기 · 닫힘 · 지키는 자리(영수증 제외) · 실제 판정 코드의 닫힘에 N10 파일 · 보통 변경 통과 · model.js 한 줄 사람 확인 · 병합 커밋 속 도장 지우기(N9) · 승인자 밖 새 도장 · PR 이 지도를 낮춰도 main 지도로. 승인 묶음 적용 뒤 L6"
+    +     },
+    +     {
+    +       "write_keys": [
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +         "human"
+    +         "human"
+    +         "human"
+    +       "class": "management",
+    +       ],
+    +       "path": ".github/workflows/trust.yml",
+    +       "format": "GitHub Actions 워크플로 (pull_request_target)",
+    +       "writer": "사람",
+    +       "readers": "GitHub Actions",
+    +       "interpret": "독립 판정 워크플로 (DEC-0088 Q2 · DEC-0089) — pull_request_target 이라 워크플로 · 판정 코드 · 의존 파일이 모두 main 의 것. PR 은 git 객체로만 가져와 rebuild/trust-check.mjs 로 순 변경을 판정(실행하지 않음 · 권한 읽기만 · 비밀 값 없음). main 규칙의 필수 검사로 걸어야 힘이 있다(사용자 GitHub 설정)"
+    +       "interpret": "독립 판정 (DEC-0088 Q2 · DEC-0089) — 갈림점 → head 의 순 변경으로 ① 도장 등록부 정책(승인 도장 지우기 · 바꾸기 · 승인자 밖 새 승인 도장 — 병합 커밋 속도, N9) ② 지키는 자리(저장 지도 L6 + 판정 코드의 require · import 의존 닫힘 — N10) 변경을 사람 확인으로 실패. 기준(지도 · 의존)은 판정하는 쪽(main) 파일 — L6 (DEC-0089 승인 묶음)"
+    +       "interpret": "독립 판정 시험 — 의존 찾기 · 닫힘 · 지키는 자리(영수증 제외) · 실제 판정 코드의 닫힘에 N10 파일 · 보통 변경 통과 · model.js 한 줄 사람 확인 · 병합 커밋 속 도장 지우기(N9) · 승인자 밖 새 도장 · PR 이 지도를 낮춰도 main 지도로 — L6 (DEC-0089 승인 묶음)"
+- tests/guard-matrix.test.mjs [L6 guard:gate · human] — changed: 1 줄 삭제
+    -   '.github/workflows/check.yml', 'rebuild/ci-zone.mjs', 'judicial/attestation.js', 'judicial/acceptance.js', 'judicial/transition_audit.js', 'tests/registry_policy.test.mjs', 'tests/acceptance.test.mjs', 'tests/guard-matrix.test.mjs'];
+    +   '.github/workflows/check.yml', 'rebuild/ci-zone.mjs', 'judicial/attestation.js', 'judicial/acceptance.js', 'judicial/transition_audit.js', 'tests/registry_policy.test.mjs', 'tests/acceptance.test.mjs', 'tests/guard-matrix.test.mjs',
+    +   // 독립 판정 — main 의 코드로만 도는 워크플로 · 판정 · 그 시험 (DEC-0089 · 공격 경로 N9 · N10 · C6)
+    +   '.github/workflows/trust.yml', 'rebuild/trust-check.mjs', 'tests/trust_check.test.mjs'];
+- .github/workflows/trust.yml — added_only
+    + name: trust
+    + # 독립 판정 (DEC-0088 Q2 · DEC-0089) — 사람 클릭에 기대지 않는 안전 구조의 첫 겹.
+    + # pull_request_target: 이 워크플로 · 판정 코드(rebuild/trust-check.mjs) · 그 의존 파일은 모두 main(기준 브랜치)의 것이다.
+    + #   PR 이 이 파일 · 판정 코드 · model.js 를 바꿔도 이 검사에는 닿지 않는다(C6 · N10). PR 의 코드는 실행하지 않고 git 객체로만 읽는다.
+    + #   권한은 읽기만 · 비밀 값 없음. 병합 커밋 · 커밋 나누기와 상관없이 갈림점 → head 의 순 변경으로 본다(N9).
+    + # 힘이 생기려면: main 규칙 세트의 필수 검사에 'independent-judge' 를 건다(사용자 GitHub 설정). 실패한 PR 은 사람이 규칙 우회로만 병합 — 기록이 남는다.
+    + on:
+    +   pull_request_target:
+    +     branches: [main]
+    +     types: [opened, synchronize, reopened]
+    + permissions:
+    +   contents: read
+    + jobs:
+    +   independent-judge:
+    +     runs-on: ubuntu-latest
+    +     steps:
+    +       - uses: actions/checkout@v4
+    +         with:
+    +         with:
+    +           ref: ${{ github.event.pull_request.base.sha }}
+    +           fetch-depth: 0
+    +       - uses: actions/setup-node@v4
+    +           node-version: 22
+    +       - name: PR 의 커밋을 git 객체로만 가져옴 (작업 트리는 main 그대로 — PR 코드는 실행하지 않음)
+    +         env:
+    +         env:
+    +           PR: ${{ github.event.pull_request.number }}
+    +           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    +           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    +         run: |
+    +           git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
+    +           test "$(git rev-parse refs/remotes/pr/head)" = "$HEAD_SHA"
+    +       - name: 독립 판정 — main 의 코드로 순 변경 (도장 등록부 정책 · 지키는 자리)
+    +           BASE: ${{ github.event.pull_request.base.sha }}
+    +         run: node rebuild/trust-check.mjs "$BASE" "$HEAD_SHA"
+    + 

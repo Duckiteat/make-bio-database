@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 536 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 549 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 521 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 534 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 331 |
+| machine | 344 |
 | text | 203 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,13 +26,13 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 315 |
+| 1 곳 | 328 |
 | 2 곳 | 105 |
 | 3 곳 | 60 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 83 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 96 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -119,6 +119,19 @@
 | RULE-0291 | author · inspect | 값을 적으면 source + quote 필수 |
 | RULE-0535 | develop · field | 운명 엔진의 기록 시각은 사법부가 엔진과 다른 방법(f64 → 정확한 2 진 유리수, BigInt 정수 산술)으로 다시 센 관찰 격자와 맞아야 한다 — 기록 수 = ⌈(t_end − t0 − 1e-9)/Δ⌉ · 마지 |
 | RULE-0536 | develop · field · baseline | 공통 난수 짝 판정(pairedCompare)은 같은 (seed, 궤적 번호) 쌍으로 돌린 두 앙상블에만 — 짝이 아니면 판정하지 않고 거부한다. 쌍의 차 d = B − A 로 평균 차 · 95 % t 구간 · 짝  |
+| RULE-0537 | author · develop · inspect | 주장의 대상은 'D…/rule/키#칸' — 있는 규칙의, 그 규칙 종류의 주장 칸(vocab.claimFields core · aux · '*' · 'regulators:D…')이고 지금 그 규칙에 있는 칸이어야 한 |
+| RULE-0538 | author · develop · inspect | 주장의 근거 줄은 방향(claimStances) · 종류(claimEvidenceKinds) · 적은 쪽(claimAgents — AI 는 ai) · 평가 시각 · 출처(DOI · PMID) 또는 관찰(O…)이 있어 |
+| RULE-0539 | author · develop · inspect | 직접(direct) 근거 줄은 인용 위치 locator { file_sha256(받은 원문 파일), exact(원문 그대로) } 가 있어야 한다 — 직접 측정이라 말하려면 그 문장을 가리켜야 |
+| RULE-0540 | author · develop · inspect | 근거 줄의 인용은 받은 원문과 대조한다 — 파일 sha256 이 FETCH_LOG 에 있고(파일이 그대로), 출처가 그 파일의 논문이고, exact 가 그 자리(제목 · 초록)에 정규화 뒤 그대로 있어야 한다. 원문 |
+| RULE-0541 | author · develop · inspect | 주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나 지우지 않고 새 줄을 뒤에(evidence_add), 철회는 한 번, 주장은 지울 수 없음, 새 주장은 기록 |
+| RULE-0542 | author · inspect · develop | 도장 등록부(attestations/registry.json)를 바꾸는 변경은 그 모드가 낼 수 있는 도장 종류(모드표 gate.modes[m].stamps — author: verified · trend / ins |
+| RULE-0543 | develop · inspect | 감독의 최종 권고(계산)는 독립 검수가 서지 않으면 hold 다 — ① 검수(inspect) 뒤에 작성 실행이 더 넘김(승인 대상에 검수하지 않은 바이트가 든다 — 다시 검수할 때까지) ② 독립성 다섯 요소 중 하나 |
+| RULE-0544 | author · inspect · develop · baseline · field | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transitions.jsonl)은 덧붙이기만 — 모드를 선언한 커밋이 부모의 줄을 하나라도 고치거나 지우면 CI 구역 |
+| RULE-0545 | author · inspect · develop · baseline · field | 감독 장부의 넘김(transition_seq) · 제안 입력(inputs.transitions)이 가리킨 전환 기록에 선택 칸 sup(상위 작업 번호)가 있으면 그 사건의 상위 작업과 같아야 한다 — 다르면 다른 작 |
+| RULE-0546 | author · inspect · develop | 도장 등록부에 새로 생긴 승인 도장(accept)의 승인자(by)는 발급 검사와 같은 목록(acceptance.js ISSUE_APPROVERS — integrator)만 — 셸로 등록부를 직접 써서 by: huma |
+| RULE-0547 | author · inspect · develop | 재검증(verifyAcceptStamp — validate · attest · finish 가 부름)이 읽는 by: human 승인 도장은 등록부에 이미 있던 6 개의 지문(acceptance.js LEGACY_HU |
+| RULE-0548 | author · inspect · develop | CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다  |
+| RULE-0549 | author · inspect · develop | CI 구역 점검(등록부 정책 · 덧붙이기만 장부 포함)은 기준(origin/main)의 판정 코드로 한 번, 이 커밋의 판정 코드로 한 번 — 둘 다 통과해야 한다. 이 커밋이 판정 코드(rebuild/ci-zone |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 

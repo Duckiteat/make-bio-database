@@ -159,5 +159,10 @@ test('⑥ PLAN-106 (RP1): 새 승인 도장은 승인자 human 으로 발급하�
   } finally { rmSync(dir, { recursive: true, force: true }); }
   assert.ok(ACC.checkIssue(stamp(), sdb, input).ok, 'integrator 발급은 통과');
   // 재검증: 등록부의 옛 by human 도장은 지우거나 고치지 않고 그대로 읽는다 (처리는 열린 질문 U2)
-  assert.ok(ACC.verifyAcceptStamp(stamp({ by: 'human' }), sdb).ok, '옛 human 도장의 재검증');
+  // 새로 쓴 by human 도장(셸 위조)은 재검증에서 무효 — 읽는 human 도장은 옛 6 개의 지문뿐 (DEC-0084 · RULE-0547)
+  assert.match(ACC.verifyAcceptStamp(stamp({ by: 'human' }), sdb).reasons.join(), /새 by: human 승인 도장/, '새 human 도장 = 무효');
+  assert.equal(ACC.LEGACY_HUMAN.length, 6, '지문 목록은 늘리지 않는다');
+  const leg = stamp({ by: 'human' }); leg.digest = ACC.LEGACY_HUMAN[0]; // 지문이 목록에 있으면 승인자 검사는 지남(digest 불일치만 남음)
+  assert.ok(!ACC.verifyAcceptStamp(leg, sdb).reasons.some((r) => /새 by: human/.test(r)), '옛 지문의 human 도장은 승인자 검사를 지남');
+  assert.ok(ACC.verifyAcceptStamp(stamp({ by: 'integrator' }), sdb).ok, 'integrator 도장은 그대로');
 });

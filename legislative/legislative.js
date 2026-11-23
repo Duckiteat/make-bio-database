@@ -15,7 +15,7 @@
     lev, similar, VTABLES, VNAME, VIX, mapVocab, vlabel, parseXref, xrefKey, xrefLabel, fpKey, locAncestors,
     locSides, sameFamily, locCompatible, taxAncestors, parseBundle, bundleKey, emptyDB, normalize, normTerm, normEvidence, normContext, normDesc,
     normSite, normRule, normKinetics, KIN_FIELDS, SIGNED_KIN, ENV_FIELDS, normObs, SENSE_FIELDS, normSense, normPart, normStep, normNeed,
-    normLimitation, normObservation, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
+    normLimitation, normObservation, normClaim, normClaimEvidence, parseTarget, index, lookupName, mechIndex, defaultTier, moietyOf, entityTally, resolveRef, suggest, stepLine, targets,
     chains, MOTIFS, trajectory, RT, sccs, parseLoose, PATCH_FORMAT, VERSION,
   } = M;
 
@@ -174,6 +174,26 @@
       }
       const id = alloc('O'); if (rid) report.idmap[rid] = id; report.added.push(id);
       db.observations[id] = normObservation(Object.assign({}, raw, str(patchIn.recorded_at) ? { recorded_at: str(patchIn.recorded_at) } : {})); touchedObs.push([id, db.observations[id]]);
+    }
+    // 3d. 주장 (PLAN-115 · SCHEMA §주장) — 새 주장 · 기존 주장에 근거 줄 덧붙이기(evidence_add) · 철회 한 번(retracted). 고치기 · 지우기 없음
+    for (const raw of arr(patchIn.claims)) {
+      if (!isObj(raw)) { ERR('RULE-0505', 'claims', '주장 항목이 객체가 아님'); continue; }
+      if (!db.claims) db.claims = {};
+      if (!db.meta.next.C) db.meta.next.C = 1;
+      const rid = str(raw.id);
+      if (rid && !isTemp('C', rid)) {
+        const c = db.claims[rid];
+        if (!c) { ERR('RULE-0060', rid, '없는 주장 번호 — 새 주장은 임시 번호(C+1)를 쓸 것'); continue; }
+        const extra = Object.keys(raw).filter((k) => !['id', 'retracted', 'evidence_add'].includes(k));
+        if (extra.length || (!isObj(raw.retracted) && !arr(raw.evidence_add).length)) { ERR('RULE-0541', rid, `주장은 바꿀 수 없음 — 기존 번호에는 evidence_add(근거 줄 덧붙이기) · retracted 만 (적은 필드: ${extra.join(', ') || '없음'})`); continue; }
+        if (isObj(raw.retracted) && c.retracted) { ERR('RULE-0541', rid, '이미 철회된 주장 — 철회 표시는 한 번'); continue; }
+        const n = { ...c, evidence: [...c.evidence, ...arr(raw.evidence_add).map(normClaimEvidence)] };
+        if (isObj(raw.retracted)) n.retracted = normClaim({ retracted: raw.retracted }).retracted;
+        db.claims[rid] = n; report.updated.push(rid);
+        continue;
+      }
+      const id = alloc('C'); if (rid) report.idmap[rid] = id; report.added.push(id);
+      db.claims[id] = normClaim(Object.assign({}, raw, str(patchIn.recorded_at) ? { recorded_at: str(patchIn.recorded_at) } : {}));
     }
     // 4. 참조·어휘 매핑
     const ix = index(db);
@@ -359,6 +379,7 @@
       if (db.steps[r]) { delete db.steps[r]; report.removed.push(r); continue; }
       if (db.limitations[r]) { delete db.limitations[r]; report.removed.push(r); continue; }
       if (db.observations[r]) { ERR('RULE-0110', r, '관찰 기록은 지울 수 없음 — 잘못된 관찰은 retracted 로 표시'); continue; }
+      if (db.claims && db.claims[r]) { ERR('RULE-0541', r, '주장은 지울 수 없음 — 잘못된 주장은 retracted 로 표시'); continue; }
       if (db.terms[r]) {
         for (const [sid, s] of Object.entries(db.senses)) if (s.term === r) { delete db.senses[sid]; gone.add(sid); report.removed.push(sid); }
         delete db.terms[r]; report.removed.push(r); continue;

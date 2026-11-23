@@ -1,0 +1,41 @@
+{
+ "at": "2026-11-23",
+ "why": "DEC-0078 ⑤ — 모드표 stamps 를 권한 장부에 (장부에 없는 권한은 없다 RULE-0461 · RULE-0521)",
+ "ops": [
+  {
+   "op": "add",
+   "file": "permissions",
+   "row": {
+    "id": "PERM-0024",
+    "layer": "gate",
+    "mode": "author",
+    "list": "stamps",
+    "what": [
+     "verified",
+     "trend"
+    ],
+    "why": "신원 도장(augment apply — judicial/identity.js 가 원본과 대조) · 추세 도장(trend --write — 새 원본 재확인)은 정보 작성의 일 (DEC-0078)",
+    "by": "user (DEC-0078 — 세션 답 2026-11-23)",
+    "at": "2026-11-23",
+    "revoke": "`rebuild/rules/modes.json` gate.modes.author.stamps 에서 지우고 이 줄을 지운다 (node rebuild/rules.mjs apply)"
+   }
+  },
+  {
+   "op": "add",
+   "file": "permissions",
+   "row": {
+    "id": "PERM-0025",
+    "layer": "gate",
+    "mode": "inspect",
+    "list": "stamps",
+    "what": [
+     "accept"
+    ],
+    "why": "승인 도장(accept — 높은 용도 승인 · 철회)은 점검의 일 — 작성과 검수의 도장 종류가 겹치지 않게 (DEC-0078)",
+    "by": "user (DEC-0078 — 세션 답 2026-11-23)",
+    "at": "2026-11-23",
+    "revoke": "`rebuild/rules/modes.json` gate.modes.inspect.stamps 에서 지우고 이 줄을 지운다 (node rebuild/rules.mjs apply)"
+   }
+  }
+ ]
+}

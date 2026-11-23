@@ -1,0 +1,10 @@
+지문 5c9b9532c29562a4c71e22bf0e5028e1a3382441598048aea49e75ca639ebc32
+묶음 1 파일 — 자동 0 · 사람 승인 1 · 거부 0
+
+## 사람 승인 필요
+- .claude/settings.json [L6 guard:settings · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -       "mcp__github__merge_pull_request"
+    +       "Bash(git push -f:*)",
+    +       "Bash(git push origin main:*)",
+    +       "mcp__github__merge_pull_request",
+    +       "mcp__github__enable_pr_auto_merge"

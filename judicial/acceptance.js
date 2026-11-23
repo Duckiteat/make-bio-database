@@ -13,7 +13,15 @@ const ATT = require('./attestation.js');
 const ISSUER = 'judicial/acceptance.js';
 const { USES, accept } = REL; // 용도별 판정은 reliability 하나 — 관문(constantVerdict)과 같은 함수 (build-plan 74)
 const HIGH = Object.keys(USES).filter((u) => USES[u].approval);
-const APPROVERS = ['human', 'integrator']; // 승인할 수 있는 역할 (사용자 결정: 통합 에이전트도 — 사람은 나중에 철회할 수 있다)
+const APPROVERS = ['human', 'integrator'];
+// 재검증이 읽는 by human 승인 도장 — 등록부에 이미 있던 6 개의 지문(digest)만 (DEC-0084 · RULE-0547). 다시 판정하지 않고 그대로 읽는다(U2).
+//   셸로 써 넣은 새 by human 도장은 validate · attest · finish 에서 무효 — CI · 문지기(RULE-0546)보다 앞의 겹. 목록은 늘리지 않는다.
+const LEGACY_RULE = 'RULE-0547';
+const LEGACY_HUMAN = [
+  '3f0dd3f72e04752fcdd9431710417096fc294566448147222d9989976d482e2a', '455a004dc979684347abbed58eb8fa8e0c4552502535b4089400d846fab4df05',
+  '661d4acbd17cdb523b50d857617fdec1380f91b0d821bc7ca7cd30c7108c2ef5', '1326be09813b39a2557c3afba848b4c45c5b8f14c6fa951d636efae896249196',
+  '3e5fe30120f6f4a8d9f31cc7b7b7e2216eeae47d4775598397157dfeb3446d96', '4c76fef98dfc011d89638e7452d5014ec0967e5e8c467f8c883b57cb97d384a3',
+]; // 승인할 수 있는 역할 (사용자 결정: 통합 에이전트도 — 사람은 나중에 철회할 수 있다)
 
 // 추정에 쓰인 관찰: use 가 estimation 이거나, 어떤 값(속도 상수·정의항 obs)의 from 이 가리킴
 function estimatedObservations(db) {
@@ -42,6 +50,7 @@ function verifyAcceptStamp(st, db, opt) {
   if (ATT.digestOf(st) !== st.digest) reasons.push('digest 불일치 — 도장이 발급 뒤 바뀜(변조)');
   if (!HIGH.includes(st.subject.ns)) reasons.push(`승인이 필요한 용도가 아님 '${st.subject.ns}' — ${HIGH.join(' | ')}`);
   if (!APPROVERS.includes(st.by)) reasons.push(`승인 역할 '${st.by}' — ${APPROVERS.join(' | ')} 만`);
+  else if (st.by === 'human' && !LEGACY_HUMAN.includes(st.digest)) reasons.push(`새 by: human 승인 도장 — 읽는 human 도장은 옛 6 개(지문 고정 · U2)뿐, 새 도장은 ${ISSUE_APPROVERS.join(' | ')} 만 (${LEGACY_RULE})`);
   if (!['approved', 'revoked'].includes(st.verdict)) reasons.push(`판정 '${st.verdict}' — approved | revoked`);
   if (!String(st.reason || '').trim()) reasons.push('이유가 없음 — 승인·철회는 이유를 적는다');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(st.issued_at || ''))) reasons.push('발급일 형식이 아님 (YYYY-MM-DD)');
@@ -120,4 +129,4 @@ function text(t) {
   return L.join('\n');
 }
 
-module.exports = { ISSUER, USES, HIGH, APPROVERS, accept, issue, verifyAcceptStamp, checkIssue, table, weakest, summary, text, autoTop, keyOf, estimatedObservations };
+module.exports = { ISSUER, USES, HIGH, APPROVERS, ISSUE_APPROVERS, LEGACY_HUMAN, accept, issue, verifyAcceptStamp, checkIssue, table, weakest, summary, text, autoTop, keyOf, estimatedObservations };

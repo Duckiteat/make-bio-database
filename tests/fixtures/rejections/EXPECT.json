@@ -101,6 +101,18 @@
     "6f-반복수-빠짐.json": {
       "msg": "반복 수(replicates)",
       "rule": "RULE-0108"
+    },
+    "7a-주장-없는-칸.json": {
+      "msg": "이 지금 D000057/rule/phk_phos 에 없음",
+      "rule": "RULE-0537"
+    },
+    "7b-직접근거-인용없음.json": {
+      "msg": "직접(direct) 근거는 인용 위치가 필요함",
+      "rule": "RULE-0539"
+    },
+    "7c-근거줄-출처없음.json": {
+      "msg": "출처(source)도 관찰(from)도 없음",
+      "rule": "RULE-0538"
     }
   },
   "_출처2": "2026-10-15 — 병합 규약(why · 미등록 한계 · 정제 점검)을 CLI 에서 사법부 관문(patchPolicy)으로 옮기며 더한 3 건. CLI 를 거치지 않는 병합도 막히는지 본다.",

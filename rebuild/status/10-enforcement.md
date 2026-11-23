@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (324 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (337 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 290 |
+| 잡음 `caught` | 303 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 290
+## 잡음 `caught` — 303
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -309,6 +309,19 @@
 | RULE-0534 | 값의 근거 관찰(by_substrate.from)이 observable.substrate 를 밝혔다면 그 값 | replace | judicial/judicial.js | ④ 사법부: 속성 · 입력 · 섞임 · 관찰 기질 |
 | RULE-0535 | 운명 엔진의 기록 시각은 사법부가 엔진과 다른 방법(f64 → 정확한 2 진 유리수, BigInt 정수 산술 | replace | judicial/verifier.js | ① 시계 거부: 끝을 넘긴 기록 · 누적 덧셈 시계 · 빠진 기록 — 엔진이 그렇게 세면 ENGINE_DEFECT |
 | RULE-0536 | 공통 난수 짝 판정(pairedCompare)은 같은 (seed, 궤적 번호) 쌍으로 돌린 두 앙상블에만 — | replace | judicial/stoch_audit.js | ⑤ 짝 판정: 짝이 아니면 거부 · 같은 변형이면 차이 없음(p = 1) |
+| RULE-0537 | 주장의 대상은 'D…/rule/키#칸' — 있는 규칙의, 그 규칙 종류의 주장 칸(vocab.claimFie | replace | judicial/judicial.js | ③ RULE-0537 대상 칸: 모양 · 없는 규칙 · 그 종류의 칸이 아님 · 지금 규칙에 없는 칸 |
+| RULE-0538 | 주장의 근거 줄은 방향(claimStances) · 종류(claimEvidenceKinds) · 적은 쪽(c | replace | judicial/judicial.js | ④ RULE-0538 근거 줄 모양: 방향 · 종류 · 적은 쪽 · 출처 · 실험계 어휘 |
+| RULE-0539 | 직접(direct) 근거 줄은 인용 위치 locator { file_sha256(받은 원문 파일), exac | replace | judicial/judicial.js | ⑤ RULE-0539 직접 근거는 인용 위치(파일 sha256 + 원문 그대로)가 있어야 |
+| RULE-0540 | 근거 줄의 인용은 받은 원문과 대조한다 — 파일 sha256 이 FETCH_LOG 에 있고(파일이 그대로), | replace | judicial/judicial.js | ⑥ RULE-0540 인용 대조: 고쳐 쓴 인용 · 다른 논문의 파일 · 모르는 파일 — 그리고 원문을 안 주면 경고만 |
+| RULE-0541 | 주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나  | replace | judicial/judicial.js | ⑦ RULE-0541 덧붙이기만: 줄 덧붙이기 · 철회 한 번은 됨 — 칸 바꾸기 · 줄 고치기 · 지우기 · 두 번 철회 · 기록 시각 없음은 거부 |
+| RULE-0542 | 도장 등록부(attestations/registry.json)를 바꾸는 변경은 그 모드가 낼 수 있는 도장  | replace | judicial/attestation.js | ② 판정: 승인 도장은 어느 모드도 지우거나 바꾸지 못함 — 모드표에 정책이 없어도 |
+| RULE-0543 | 감독의 최종 권고(계산)는 독립 검수가 서지 않으면 hold 다 — ① 검수(inspect) 뒤에 작성 실행 | replace | judicial/supervise_approval.js | B4 검수 뒤에 작성이 더 넘기면 최종 권고는 보류 — 승인 대상에 검수하지 않은 변경 (SUP-0001 의 모양) · 다시 검수하면 풀림 |
+| RULE-0544 | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transi | replace | judicial/transition_audit.js | C4 검수 · 넘김 기록(감독 장부 · 전환 기록)의 기존 줄을 고치면 CI 가 거부 — 덧붙이기는 통과 · 선언 없는(사람의) 커밋은 알리기만 |
+| RULE-0545 | 감독 장부의 넘김(transition_seq) · 제안 입력(inputs.transitions)이 가리킨 전 | replace | rebuild/supervise.mjs | E3 넘김이 다른 상위 작업의 전환 기록을 가리키면 거부 — 같은 작업 · sup 없는 옛 기록은 통과 · 전환 기록의 sup 칸 모양 (DEC-0081 · RU |
+| RULE-0546 | 도장 등록부에 새로 생긴 승인 도장(accept)의 승인자(by)는 발급 검사와 같은 목록(acceptanc | replace | judicial/attestation.js | ⑤ 새 승인 도장의 승인자는 발급 검사와 같은 목록(integrator)만 — inspect 의 셸 by: human 위조 거부 · 정상 발급 · 옛 도장은 보지 |
+| RULE-0547 | 재검증(verifyAcceptStamp — validate · attest · finish 가 부름)이 읽는 | replace | judicial/acceptance.js | ⑥ PLAN-106 (RP1): 새 승인 도장은 승인자 human 으로 발급하지 않는다 — 이미 있는 human 도장은 그대로 읽힌다 |
+| RULE-0548 | CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지  | replace | rebuild/ci-zone.mjs | ⑥ 선언(영수증) 없는 커밋도 도장 등록부의 승인 도장 정책은 본다 — by: human 새 도장 · 승인 도장 지우기는 종료 1, 다른 변경은 알리기만 (DEC |
+| RULE-0549 | CI 구역 점검(등록부 정책 · 덧붙이기만 장부 포함)은 기준(origin/main)의 판정 코드로 한 번, | replace | .github/workflows/check.yml | ⑦ CI 구역 점검은 기준(main)의 판정 코드로도 돈다 — 이 커밋의 코드와 둘 다 (DEC-0086 D2 · RULE-0549) |
 
 ## 설정에 있음 `present` — 8
 

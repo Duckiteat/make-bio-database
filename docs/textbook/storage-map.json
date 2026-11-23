@@ -755,6 +755,22 @@
       ]
     },
     {
+      "path": "judicial/claims.js",
+      "class": "law",
+      "format": "Node CommonJS",
+      "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
+      "readers": "dbtool claims, tests/claims.test.mjs",
+      "interpret": "[사법] PLAN-115 주장 층 — 주장(claims.C…)의 근거 줄에서 규칙 칸마다 상태(supported · supported_elsewhere · inferred · legacy · contested · refuted · unsupported)와 규칙의 계산 수준(핵심 칸 중 가장 약한 것)을 계산. 칸에 주장이 없으면 '*' 주장, 없으면 규칙 evidence 의 legacy 보기. --assume 로 출처 · 관찰 · 주장 철회를 가정. 저장 · 쓰기 · 파일 읽기 없음.",
+      "node": "JUDICIAL_CLAIMS",
+      "governance": "Judicial",
+      "refactor_strategy": "상태 이름 · 순위는 vocab.claimStates, 칸 목록은 vocab.claimFields — 여기서 규칙 종류나 칸 이름을 새로 정하지 않는다. 검사(모양 · 불변 · 인용 대조)는 judicial.js validateClaims · claimImmutability.",
+      "level": "L2",
+      "area": "code:judicial",
+      "write_keys": [
+        "session:develop"
+      ]
+    },
+    {
       "path": "judicial/collection_audit.js",
       "class": "law",
       "format": "Node CommonJS (읽기 전용·순수)",
@@ -853,11 +869,11 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, legislative/clerk.mjs, dbtool.mjs, tests",
-      "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음). 재검증은 **주체 하나로 좁혀서** 한다(그 정의항만 새로 만든 얕은 겹침 사본 + 그 과제 하나) — 중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다. validStamps 는 정규화·색인을 한 번만 만들어 넘긴다.",
-      "level": "L2",
-      "area": "code:judicial",
+      "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음). 재검증은 **주체 하나로 좁혀서** 한다(그 정의항만 새로 만든 얕은 겹침 사본 + 그 과제 하나) — 중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다. validStamps 는 정규화·색인을 한 번만 만들어 넘긴다. · registryPolicy(DEC-0078): 등록부 변경이 그 모드가 낼 수 있는 도장 종류(모드표 stamps)만 건드렸나 · 승인 도장은 추가만",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -880,10 +896,10 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "legislative/clerk.mjs (승인 도장 발급 검사), judicial/evidence_report.js (가장 약한 근거), dbtool.mjs accept·attest, mcp/clerk.mjs accept, tests",
       "interpret": "[사법] 인정 (build-plan 72) — 인정은 (기록, 용도) 순서쌍. 용도 다섯(서술·비교·추정·검증 근거·기준)마다 축 조건(S·D·T) ∧ 관계 조건(기준 종 · 추정에 쓰지 않음 · 확인된 문헌) ∧ 높은 용도는 승인 도장(claim 'accept', 사람·통합 에이전트, 이유 필수). 승인은 축 조건을 넘지 못하고, 축이 내려가면 '재검토'. 결론은 가장 약한 근거를 따른다. 용도별 판정 함수(USES·accept)는 reliability.js 에 있고 이 파일은 표·승인 도장·가장 약한 근거를 맡는다.",
-      "level": "L2",
-      "area": "code:judicial",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -1658,6 +1674,47 @@
       ]
     },
     {
+      "path": "tests/supervise_report.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "PLAN-116 G2–G4 — 원인 태그 일곱의 거부 · 보류 분류 · 검수 독립성 다섯 요소(full · limited · unknown) · 영수증 추정 · 최종 권고 규칙 · 승인 보고서 12 칸 순서.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/registry_policy.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "도장 등록부 정책 (PLAN-116 G3 · DEC-0078 · RULE-0542) — author 의 승인 도장 위반 · inspect 의 추세 도장 위반 · 승인 도장 지우기 · 고치기는 정책이 없어도 위반 · 서기의 갈아 끼우기는 통과 · 임시 git 저장소에서 CI 구역 점검(ci-zone)이 실제 커밋을 거부.",
+      "level": "L6",
+      "area": "guard:gate",
+      "write_keys": [
+        "human"
+      ]
+    },
+    {
+      "path": "tests/bypass_scenarios.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "PLAN-116 G5 우회 시나리오 (DEC-0079) — 기존 시험이 다루지 않던 것만: inspect 가 data 를 쓴 커밋 거부(A2) · 감독 장부 · 전환 기록의 기존 줄 고침 거부(C4, RULE-0544) · 검수 뒤 작성 넘김은 보류(B4, RULE-0543) · 검수 영수증 없음은 보류(C2 · C3). 임시 git 저장소의 실제 커밋과 감독 장부의 실제 접기로.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/affected.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님) — 기본 · --full · --list",
@@ -1855,11 +1912,10 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "인정 시험 — 지금 표(추정 = anchor·parameter, 검증 근거 = 승인된 정성 관찰 6, 기준 0) · 승인·재검토·철회 · 승인이 축 조건을 넘으면 서기 거부 · 역할·이유·변조 · 관계 조건 · 가장 약한 근거로 보고서 판정.",
-      "level": "L2",
-      "area": "code:tests",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ]
     },
     {
@@ -1994,6 +2050,20 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs, CI",
       "interpret": "정성 그래프 0 층 판정 — 합성 기전으로 지지·모순 후보·경로 없음·부호 섞임·효과 모르는 조절·음성 되먹임 무시·정의상 판정·세포 상태 표지·긴장·대상 아님, 양방향 색인(철회 제외), 지금 저장소에서 그래프가 섬.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/claims.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test tests/*.test.mjs, CI",
+      "interpret": "주장 층 — db 바이트 그대로 · 새 주장 번호 · 대상 칸(RULE-0537) · 근거 줄 모양(0538) · 직접 근거 인용 위치(0539) · 받은 초록과 인용 대조(0540) · 덧붙이기만(0541) · 칸 상태(legacy · supported · supported_elsewhere · contested · unsupported) · 철회 가정 · needs xref 는 verified 만(L000030).",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [
@@ -2291,11 +2361,24 @@
       "writer": "사람·AI",
       "readers": "GitHub",
       "interpret": "푸시마다: 테스트, validate, limitations --check, textbook --check, index.html = viewer.html.",
-      "level": "L2",
-      "area": "code:config",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
+    },
+    {
+      "class": "management",
+      "area": "guard:gate",
+      "level": "L6",
+      "write_keys": [
+        "human"
+      ],
+      "path": ".github/workflows/trust.yml",
+      "format": "GitHub Actions 워크플로 (pull_request_target)",
+      "writer": "사람",
+      "readers": "GitHub Actions",
+      "interpret": "독립 판정 워크플로 (DEC-0088 Q2 · DEC-0089) — pull_request_target 이라 워크플로 · 판정 코드 · 의존 파일이 모두 main 의 것. PR 은 git 객체로만 가져와 rebuild/trust-check.mjs 로 순 변경을 판정(실행하지 않음 · 권한 읽기만 · 비밀 값 없음). main 규칙의 필수 검사로 걸어야 힘이 있다(사용자 GitHub 설정)"
     },
     {
       "path": "examples/*.json",
@@ -2663,6 +2746,20 @@
       ]
     },
     {
+      "path": "tests/fixtures/claims/data/fetched/europepmc/*",
+      "class": "verification",
+      "format": "Europe PMC 응답 JSON 3 · FETCH_LOG.jsonl 3 줄 (data/fetched/europepmc 에서 그대로 옮김)",
+      "writer": "사람·AI",
+      "readers": "tests/claims.test.mjs",
+      "interpret": "주장 층 시험의 인용 재료 — 실제로 받은 초록(PMID 164350 · 6245074 · 168880). 시험이 아직 판정되지 않은 데이터(P1 패치 — DEC-0073)에 기대지 않게 (DEC-0091). data/db.json 에 들어가지 않는다.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "attestations/registry.json",
       "class": "attestation",
       "format": "JSON {format: definition-db-attestations, version, stamps[]}",
@@ -2824,20 +2921,20 @@
       "format": "CommonJS 모듈 (사법부 — 읽기·판정만)",
       "writer": "사람·AI (사용자 요청 시)",
       "readers": "legislative/clerk.mjs appendTransition · tests/transitions.test.mjs",
-      "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513.",
-      "level": "L2",
-      "area": "code:judicial",
+      "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513. · appendOnly(감독 장부 · 전환 기록 덧붙이기만 — CI 구역 점검과 문지기가 같이 씀, RULE-0544) · 선택 칸 sup(DEC-0081)",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
       "path": "judicial/supervise_approval.js",
       "class": "law",
-      "format": "ES 모듈 (judge · derive — 순수, 사법부)",
+      "format": "ES 모듈 (judge · derive · independence · recommend — 순수, 사법부)",
       "writer": "사람·AI (사용자 요청 시)",
       "readers": "rebuild/supervise.mjs evidence · status · tests/supervise_approval.test.mjs",
-      "interpret": "감독 장부의 승인 증거 판정 (PLAN-102) — 넘긴 커밋에서 바뀐 바이트가 main 본줄기에 처음 모두 나타난 커밋을 찾고, 그 시점 설정에 AI 의 PR 병합 막음이 있나 · 영수증에 그 시각의 AI 병합 호출이 있나로 승인 · 병합만 확인 · AI 병합 흔적을 가른다. 승인 대기 · 반영 · 완료를 계산(장부에 적지 않음). 문지기 보호(L6)로 올릴지는 사용자 결정(PLAN-108 P6 과 함께).",
+      "interpret": "감독 장부의 승인 증거 판정 (PLAN-102) — 넘긴 커밋에서 바뀐 바이트가 main 본줄기에 처음 모두 나타난 커밋을 찾고, 그 시점 설정에 AI 의 PR 병합 막음이 있나 · 영수증에 그 시각의 AI 병합 호출이 있나로 승인 · 병합만 확인 · AI 병합 흔적을 가른다. 승인 대기 · 반영 · 완료를 계산(장부에 적지 않음). 문지기 보호(L6)로 올릴지는 사용자 결정(PLAN-108 P6 과 함께). · independence(다섯 요소 — 역할 · 권한 · 실행 · 정보 접근(추정) · 판단 근거(추정) → full · limited · unknown) · recommend(최종 권고를 규칙으로 — 거부 · 보류 · 병합해도 됨 · 이미 승인; 승인이 아님)",
       "level": "L2",
       "area": "code:judicial",
       "write_keys": [
@@ -2886,10 +2983,10 @@
     {
       "path": "rebuild/supervise.mjs",
       "class": "management",
-      "format": "Node 스크립트 + 모듈 (status · check · propose · start · handoff · block · cancel <사건.json> [--dry] [--human] / 순수 — shape · fold · check · admit · render)",
+      "format": "Node 스크립트 + 모듈 (status · check · evidence · report · propose · start · handoff · block · cancel <사건.json> [--dry] [--human] / 순수 — shape · fold · check · admit · render)",
       "writer": "사람·AI",
       "readers": "사람·AI · tests/supervise.test.mjs",
-      "interpret": "감독 장부 (PLAN-100 · docs/design/supervisor.md) — 상위 작업 SUP- 과 실행 기록의 덧붙이기 장부. 승인 사건 없음(증거에서 계산), 계약에 범위 · 승인 칸 없음, 누가 · 모드 · 문지기 칸은 영수증에서. 검사를 통과해야 서기(appendSupervise)로 씀.",
+      "interpret": "감독 장부 (PLAN-100 · docs/design/supervisor.md) — 상위 작업 SUP- 과 실행 기록의 덧붙이기 장부. 승인 사건 없음(증거에서 계산), 계약에 범위 · 승인 칸 없음, 누가 · 모드 · 문지기 칸은 영수증에서. 검사를 통과해야 서기(appendSupervise)로 씀. · PLAN-116 G2–G4 (DEC-0077): 막힘 원인 태그의 두 종류 CAUSE_KIND(거부 deny · 보류 hold) · 검수 독립성 사실 모으기(모드 표의 쓰기 자리 · 검수 세션 영수증의 원문 자리 호출 · 작성 패치의 PMID) · 승인 보고서 report — 제안서 §8 의 12 칸을 장부 · 영수증 · git · 전환 기록에서 계산(쓰지 않음, Supervisor 가 쓰는 글 아님)",
       "level": "L2",
       "area": "code:tools",
       "write_keys": [
@@ -3281,11 +3378,10 @@
     },
     {
       "class": "verification",
-      "area": "code:tests",
-      "level": "L2",
+      "area": "guard:gate",
+      "level": "L6",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ],
       "path": "tests/guard-matrix.test.mjs",
       "format": "node:test",
@@ -3295,16 +3391,16 @@
     },
     {
       "class": "management",
-      "area": "code:tools",
-      "level": "L2",
+      "area": "guard:gate",
+      "level": "L6",
       "write_keys": [
-        "session:develop"
+        "human"
       ],
       "path": "rebuild/ci-zone.mjs",
       "format": "Node 스크립트·모듈 (<base> [head] — 읽기 전용)",
       "writer": "사람·AI",
       "readers": "CI (.github/workflows/check.yml 구역 점검) · tests/ci_zone.test.mjs",
-      "interpret": "Governor 의 CI 겹 (PLAN-114) — base..head 의 병합 아닌 커밋마다, 그 커밋이 바꾼 영수증의 마지막 open 사건을 모드 선언으로 읽고 문지기의 violations 로 쓰기 구역 밖 변경을 찾는다. 정책은 부모 커밋의 modes.json. 선언 없는 커밋은 사람의 커밋으로 보고 알리기만. 구역 밖이 있으면 종료 코드 1."
+      "interpret": "Governor 의 CI 겹 (PLAN-114) — base..head 의 병합 아닌 커밋마다, 그 커밋이 바꾼 영수증의 마지막 open 사건을 모드 선언으로 읽고 문지기의 violations 로 쓰기 구역 밖 변경을 찾는다. 정책은 부모 커밋의 modes.json. 선언 없는 커밋은 사람의 커밋으로 보고 알리기만. 구역 밖이 있으면 종료 코드 1. · 도장 등록부 정책(registryPolicy — DEC-0078) · 감독 장부 · 전환 기록 덧붙이기만(appendOnly — DEC-0079 · RULE-0544)"
     },
     {
       "class": "verification",
@@ -3319,6 +3415,32 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "CI 구역 점검 시험 — 판정(구역 안 · 밖 · 선언 없음 · 영수증 제외 · 마지막 open) · 임시 git 저장소의 통합(구역 밖 종료 코드 1 · 선언 없음 알리기만 · 병합 커밋 건너뜀 · 없는 범위 2 · 정책은 부모에서)."
+    },
+    {
+      "class": "management",
+      "area": "guard:gate",
+      "level": "L6",
+      "write_keys": [
+        "human"
+      ],
+      "path": "rebuild/trust-check.mjs",
+      "format": "Node 스크립트·모듈 (<base> <head> — 읽기 전용)",
+      "writer": "사람·AI",
+      "readers": "CI (.github/workflows/trust.yml — main 의 사본으로만) · tests/trust_check.test.mjs",
+      "interpret": "독립 판정 (DEC-0088 Q2 · DEC-0089) — 갈림점 → head 의 순 변경으로 ① 도장 등록부 정책(승인 도장 지우기 · 바꾸기 · 승인자 밖 새 승인 도장 — 병합 커밋 속도, N9) ② 지키는 자리(저장 지도 L6 + 판정 코드의 require · import 의존 닫힘 — N10) 변경을 사람 확인으로 실패. 기준(지도 · 의존)은 판정하는 쪽(main) 파일 — L6 (DEC-0089 승인 묶음)"
+    },
+    {
+      "class": "verification",
+      "area": "guard:gate",
+      "level": "L6",
+      "write_keys": [
+        "human"
+      ],
+      "path": "tests/trust_check.test.mjs",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "독립 판정 시험 — 의존 찾기 · 닫힘 · 지키는 자리(영수증 제외) · 실제 판정 코드의 닫힘에 N10 파일 · 보통 변경 통과 · model.js 한 줄 사람 확인 · 병합 커밋 속 도장 지우기(N9) · 승인자 밖 새 도장 · PR 이 지도를 낮춰도 main 지도로 — L6 (DEC-0089 승인 묶음)"
     }
   ],
   "governance": {
