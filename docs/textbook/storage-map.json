@@ -870,10 +870,10 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, legislative/clerk.mjs, dbtool.mjs, tests",
       "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음). 재검증은 **주체 하나로 좁혀서** 한다(그 정의항만 새로 만든 얕은 겹침 사본 + 그 과제 하나) — 중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다. validStamps 는 정규화·색인을 한 번만 만들어 넘긴다. · registryPolicy(DEC-0078): 등록부 변경이 그 모드가 낼 수 있는 도장 종류(모드표 stamps)만 건드렸나 · 승인 도장은 추가만",
-      "level": "L2",
-      "area": "code:judicial",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -896,10 +896,10 @@
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "legislative/clerk.mjs (승인 도장 발급 검사), judicial/evidence_report.js (가장 약한 근거), dbtool.mjs accept·attest, mcp/clerk.mjs accept, tests",
       "interpret": "[사법] 인정 (build-plan 72) — 인정은 (기록, 용도) 순서쌍. 용도 다섯(서술·비교·추정·검증 근거·기준)마다 축 조건(S·D·T) ∧ 관계 조건(기준 종 · 추정에 쓰지 않음 · 확인된 문헌) ∧ 높은 용도는 승인 도장(claim 'accept', 사람·통합 에이전트, 이유 필수). 승인은 축 조건을 넘지 못하고, 축이 내려가면 '재검토'. 결론은 가장 약한 근거를 따른다. 용도별 판정 함수(USES·accept)는 reliability.js 에 있고 이 파일은 표·승인 도장·가장 약한 근거를 맡는다.",
-      "level": "L2",
-      "area": "code:judicial",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -1694,11 +1694,10 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "도장 등록부 정책 (PLAN-116 G3 · DEC-0078 · RULE-0542) — author 의 승인 도장 위반 · inspect 의 추세 도장 위반 · 승인 도장 지우기 · 고치기는 정책이 없어도 위반 · 서기의 갈아 끼우기는 통과 · 임시 git 저장소에서 CI 구역 점검(ci-zone)이 실제 커밋을 거부.",
-      "level": "L2",
-      "area": "code:tests",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ]
     },
     {
@@ -1913,11 +1912,10 @@
       "writer": "사람·AI",
       "readers": "node --test tests/*.test.mjs",
       "interpret": "인정 시험 — 지금 표(추정 = anchor·parameter, 검증 근거 = 승인된 정성 관찰 6, 기준 0) · 승인·재검토·철회 · 승인이 축 조건을 넘으면 서기 거부 · 역할·이유·변조 · 관계 조건 · 가장 약한 근거로 보고서 판정.",
-      "level": "L2",
-      "area": "code:tests",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ]
     },
     {
@@ -2363,10 +2361,10 @@
       "writer": "사람·AI",
       "readers": "GitHub",
       "interpret": "푸시마다: 테스트, validate, limitations --check, textbook --check, index.html = viewer.html.",
-      "level": "L2",
-      "area": "code:config",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -2897,10 +2895,10 @@
       "writer": "사람·AI (사용자 요청 시)",
       "readers": "legislative/clerk.mjs appendTransition · tests/transitions.test.mjs",
       "interpret": "전환 기록 검사 — 칸·모드(vocab.sessionModes)·날짜·이유·번호·파일·질문. 오류마다 RULE-0513. · appendOnly(감독 장부 · 전환 기록 덧붙이기만 — CI 구역 점검과 문지기가 같이 씀, RULE-0544) · 선택 칸 sup(DEC-0081)",
-      "level": "L2",
-      "area": "code:judicial",
+      "level": "L6",
+      "area": "guard:gate",
       "write_keys": [
-        "session:develop"
+        "human"
       ]
     },
     {
@@ -3353,11 +3351,10 @@
     },
     {
       "class": "verification",
-      "area": "code:tests",
-      "level": "L2",
+      "area": "guard:gate",
+      "level": "L6",
       "write_keys": [
-        "session:develop",
-        "session:field"
+        "human"
       ],
       "path": "tests/guard-matrix.test.mjs",
       "format": "node:test",
@@ -3367,10 +3364,10 @@
     },
     {
       "class": "management",
-      "area": "code:tools",
-      "level": "L2",
+      "area": "guard:gate",
+      "level": "L6",
       "write_keys": [
-        "session:develop"
+        "human"
       ],
       "path": "rebuild/ci-zone.mjs",
       "format": "Node 스크립트·모듈 (<base> [head] — 읽기 전용)",

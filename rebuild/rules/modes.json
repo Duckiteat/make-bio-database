@@ -273,7 +273,15 @@
           "docs/textbook/authority.json",
           "tests/authority.test.mjs",
           "tests/approval.test.mjs",
-          "tests/bundle.test.mjs"
+          "tests/bundle.test.mjs",
+          ".github/**",
+          "rebuild/ci-zone.mjs",
+          "judicial/attestation.js",
+          "judicial/acceptance.js",
+          "judicial/transition_audit.js",
+          "tests/registry_policy.test.mjs",
+          "tests/acceptance.test.mjs",
+          "tests/guard-matrix.test.mjs"
         ],
         "finish": [
           "node tests/affected.mjs",
@@ -306,6 +314,9 @@
           "tests/authority.test.mjs",
           "tests/approval.test.mjs",
           "tests/bundle.test.mjs",
+          "tests/registry_policy.test.mjs",
+          "tests/acceptance.test.mjs",
+          "tests/guard-matrix.test.mjs",
           "docs/textbook/authority.json"
         ],
         "finish": [
