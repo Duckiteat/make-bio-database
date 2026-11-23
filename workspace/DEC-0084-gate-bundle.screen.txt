@@ -1,0 +1,82 @@
+지문 655599c6734689fbb8b63a5aba092e29b4d67fd3c8c1afa4d421a1de29f411c8
+묶음 2 파일 — 자동 0 · 사람 승인 2 · 거부 0
+
+## 사람 승인 필요
+- rebuild/gate.mjs [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    - const RE = { open: /\bgate\.mjs\s+open\b(?:\s+([a-z]+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+([a-z]+))?/, commit: /\bgit\s+(?:-C\s+\S+\s+)?commit\b/, push: /\bgit\s+(?:-C\s+\S+\s+)?push\b/ };
+    -     const why = decidePre(P, st, input, root);
+    -     // 도장 등록부 정책 (DEC-0078 · RULE-0542): 이 호출이 등록부를 바꿨으면 HEAD 의 등록부와 견준다 — 그 모드가 낼 수 있는 도장 종류(모드표 stamps)만 · 승인 도장은 추가만
+    -     if (st.mode && changed.includes('attestations/registry.json')) {
+    -       let headReg = { stamps: [] }, nowReg;
+    -       try { headReg = JSON.parse(git(root, 'show', 'HEAD:attestations/registry.json')); } catch { /* 새 등록부 */ }
+    -       try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
+    -       const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
+    -       if (sv.length) { add({ t: 'violation', rule: 'RULE-0542', files: ['attestations/registry.json'], why: sv.map((v) => v.msg).join(' · ') }); code = say('RULE-0542', `도장 등록부 정책 밖 — ${sv.map((v) => v.msg).join(' · ')} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로`); }
+    -     }
+    -     }
+    -     // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 ③ · RULE-0544): 이 호출이 바꿨으면 HEAD 의 글과 견준다 — CI 구역 점검과 같은 판정 · 같은 목록
+    -     if (st.mode) for (const f of APPEND_ONLY.filter((p) => changed.includes(p))) {
+    -       let headTxt = '', nowTxt = '';
+    -       try { headTxt = git(root, 'show', `HEAD:${f}`); } catch { /* 새 파일 */ }
+    -       try { nowTxt = readFileSync(join(root, f), 'utf8'); } catch { /* 지워짐 */ }
+    -       const lv = TA.appendOnly(headTxt, nowTxt);
+    -       if (lv.length) { add({ t: 'violation', rule: 'RULE-0544', files: [f], why: lv[0].msg }); code = say('RULE-0544', `${f}: ${lv[0].msg} — 되돌리거나(git checkout -- ${f}) 서기 명령(dbtool transition · supervise)으로 덧붙이기만`); }
+    + }
+    + const RE = { open: /\bgate\.mjs\s+open\b(?:\s+([a-z]+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+([a-z]+))?/, commit: /\bgit(?:\s+(?:-[Cc]\s*\S+|--(?:git-dir|work-tree|namespace|exec-path|config-env)(?:=|\s+)\S+|--[a-z][\w-]*))*\s+commit\b/, push: /\bgit(?:\s+(?:-[Cc]\s*\S+|--(?:git-dir|work-tree|namespace|exec-path|config-env)(?:=|\s+)\S+|--[a-z][\w-]*))*\s+push\b/ }; // git 의 전역 옵션(-c k=v · -C 경로 · --git-dir …) 뒤도 (DEC-0084 (c))
+    +   }
+    +   }
+    +   return out;
+    + // 도장 등록부 정책 (DEC-0078 · RULE-0542 — 새 승인 도장의 승인자는 RULE-0546) · 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 ③ · RULE-0544):
+    + //   바뀐 것이 있으면 HEAD 의 글과 견준다 — CI 구역 점검과 같은 판정 · 같은 목록. 도구 뒤(이 호출이 바꾼 것)와 도구 앞(도구 호출 밖에서 바뀐 것 — DEC-0084 (b))이 같이 쓴다
+    + function ledgerViolations(P, st, root, changed) {
+    +   const out = [];
+    +   if (!st.mode) return out;
+    +   if (changed.includes('attestations/registry.json')) {
+    +     let headReg = { stamps: [] }, nowReg;
+    +     try { headReg = JSON.parse(git(root, 'show', 'HEAD:attestations/registry.json')); } catch { /* 새 등록부 */ }
+    +     try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
+    +     const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
+    +     const rule = sv.some((v) => v.rule === 'RULE-0546') ? 'RULE-0546' : 'RULE-0542', why = sv.map((v) => v.msg).join(' · ');
+    +     if (sv.length) out.push({ rule, files: ['attestations/registry.json'], why, msg: `도장 등록부 정책 밖 — ${why} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로` });
+    +   for (const f of APPEND_ONLY.filter((p) => changed.includes(p))) {
+    +     let headTxt = '', nowTxt = '';
+    +     try { headTxt = git(root, 'show', `HEAD:${f}`); } catch { /* 새 파일 */ }
+    +     try { nowTxt = readFileSync(join(root, f), 'utf8'); } catch { /* 지워짐 */ }
+    +     const lv = TA.appendOnly(headTxt, nowTxt);
+    +     if (lv.length) out.push({ rule: 'RULE-0544', files: [f], why: lv[0].msg, msg: `${f}: ${lv[0].msg} — 되돌리거나(git checkout -- ${f}) 서기 명령(dbtool transition · supervise)으로 덧붙이기만` });
+    +     // 도구 호출 밖(뒤로 돌린 프로세스 등)에서 바뀐 등록부 · 장부도 같은 판정 — 이 호출을 막고 영수증에 남긴다 (DEC-0084 (b))
+    +     const lv = ledgerViolations(P, st, root, outside);
+    +     for (const v of lv) add({ t: 'violation', rule: v.rule, files: v.files, why: `도구 호출 밖에서 — ${v.why}` });
+    +     const why = decidePre(P, st, input, root) || (lv.length ? { rule: lv[0].rule, msg: `도구 호출 밖에서 바뀜 — ${lv[0].msg}` } : null);
+    +     // 도장 등록부 정책 · 덧붙이기만 장부 — 이 호출이 바꾼 것 (도구 밖에서 바뀐 것은 다음 호출의 앞에서 같은 판정 — ledgerViolations)
+    +     for (const v of ledgerViolations(P, st, root, changed)) { add({ t: 'violation', rule: v.rule, files: v.files, why: v.why }); code = say(v.rule, v.msg); }
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — changed: 187 째 줄 근처: 새 시험 블록을 통째로 더한 것이 아님
+    + 
+    + });
+    +   const d = repo();
+    +   try {
+    +   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+    +   const h = one('inspect', { stamps: [...REG.stamps, { ...st('accept', 'O900003'), by: 'human' }] }); assert.equal(h.status, 2); assert.match(h.stderr, /\[RULE-0546\]/, '셸 by: human 승인 도장의 꼬리표 (DEC-0084 (d))');
+    + test('㉒ 도구 호출 밖에서 바뀐 등록부 · 장부도 같은 판정 (DEC-0084 (b)) · git 전역 옵션 뒤의 commit 도 커밋으로 봄 (DEC-0084 (c))', () => {
+    +   const st = (claim, sense, by) => ({ subject: { sense, field: 'accept', ns: 'evidence', value: sense }, claim, issued_at: '2026-01-01', by, reason: 'x' });
+    +   const REG = { stamps: [st('accept', 'O900001', 'integrator')] };
+    +     mkdirSync(join(d, 'attestations')); writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG));
+    +     mkdirSync(join(d, 'workspace'), { recursive: true }); writeFileSync(join(d, 'workspace/transitions.jsonl'), '{"seq":1}\n');
+    +     execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'reg'], { cwd: d });
+    +     assert.equal(tool(d, 'Bash', { command: 'node rebuild/gate.mjs open inspect' }).status, 0);
+    +     // 도구 밖(뒤로 돌린 프로세스)에서 by: human 승인 도장 — 다음 호출의 앞에서 막힘
+    +     writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify({ stamps: [...REG.stamps, st('accept', 'O900002', 'human')] }));
+    +     const r = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    +     assert.equal(r.status, 2); assert.match(r.stderr, /\[RULE-0546\]/); assert.match(r.stderr, /도구 호출 밖/);
+    +     assert.ok(receipt(d).some((e) => e.t === 'violation' && e.rule === 'RULE-0546'), '영수증에 남음');
+    +     // 도구 밖에서 전환 기록의 기존 줄을 고침
+    +     writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG)); hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    +     writeFileSync(join(d, 'workspace/transitions.jsonl'), '{"seq":1,"x":2}\n');
+    +     const r2 = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    +     assert.equal(r2.status, 2); assert.match(r2.stderr, /\[RULE-0544\]/);
+    +     // 정상: 도구 밖 변경이 정책 안이면 막지 않음
+    +     writeFileSync(join(d, 'workspace/transitions.jsonl'), '{"seq":1}\n{"seq":2}\n');
+    +     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } }).status, 0, '덧붙이기는 됨');
+    +     // git 전역 옵션 뒤의 commit — 끝내기 전 시험이 없으니 막힘
+    +     for (const c of ['git -c user.name=x commit -m y', 'git --git-dir=.git commit -m y', 'git -C . -c a=b commit -qm y', 'git --no-pager push']) assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: c } }).status, 2, c);
+    +     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'git log --grep commit' } }).status, 0, '커밋이 아닌 git 명령');

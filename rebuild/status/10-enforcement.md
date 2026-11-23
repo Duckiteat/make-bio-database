@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (334 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (336 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 300 |
+| 잡음 `caught` | 302 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 300
+## 잡음 `caught` — 302
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -319,6 +319,8 @@
 | RULE-0544 | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transi | replace | judicial/transition_audit.js | C4 검수 · 넘김 기록(감독 장부 · 전환 기록)의 기존 줄을 고치면 CI 가 거부 — 덧붙이기는 통과 · 선언 없는(사람의) 커밋은 알리기만 |
 | RULE-0545 | 감독 장부의 넘김(transition_seq) · 제안 입력(inputs.transitions)이 가리킨 전 | replace | rebuild/supervise.mjs | E3 넘김이 다른 상위 작업의 전환 기록을 가리키면 거부 — 같은 작업 · sup 없는 옛 기록은 통과 · 전환 기록의 sup 칸 모양 (DEC-0081 · RU |
 | RULE-0546 | 도장 등록부에 새로 생긴 승인 도장(accept)의 승인자(by)는 발급 검사와 같은 목록(acceptanc | replace | judicial/attestation.js | ⑤ 새 승인 도장의 승인자는 발급 검사와 같은 목록(integrator)만 — inspect 의 셸 by: human 위조 거부 · 정상 발급 · 옛 도장은 보지 |
+| RULE-0547 | 재검증(verifyAcceptStamp — validate · attest · finish 가 부름)이 읽는 | replace | judicial/acceptance.js | ⑥ PLAN-106 (RP1): 새 승인 도장은 승인자 human 으로 발급하지 않는다 — 이미 있는 human 도장은 그대로 읽힌다 |
+| RULE-0548 | CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지  | replace | rebuild/ci-zone.mjs | ⑥ 선언(영수증) 없는 커밋도 도장 등록부의 승인 도장 정책은 본다 — by: human 새 도장 · 승인 도장 지우기는 종료 1, 다른 변경은 알리기만 (DEC |
 
 ## 설정에 있음 `present` — 8
 

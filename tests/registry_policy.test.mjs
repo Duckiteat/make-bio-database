@@ -92,3 +92,24 @@ test('⑤ 새 승인 도장의 승인자는 발급 검사와 같은 목록(integ
     assert.equal(res.exit, 1); assert.match(res.lines.join('\n'), /승인자 'human'/);
   } finally { rmSync(r.dir, { recursive: true, force: true }); }
 });
+
+test('⑥ 선언(영수증) 없는 커밋도 도장 등록부의 승인 도장 정책은 본다 — by: human 새 도장 · 승인 도장 지우기는 종료 1, 다른 변경은 알리기만 (DEC-0084 · RULE-0548)', () => {
+  const human = st('accept', 'O900005', { by: 'human', reason: '선언 없이', verdict: 'approved' });
+  const r = setup();
+  try {
+    r.put('notes.txt', 'x'); r.commit('선언 없는 다른 변경');
+    let res = Z.zoneCheck(r.base, 'HEAD', r.dir);
+    assert.equal(res.exit, 0, '등록부를 안 건드린 선언 없는 커밋은 알리기만'); assert.equal(res.commits[0].status, 'undeclared');
+    r.put('attestations/registry.json', JSON.stringify(plus(human), null, 2)); r.commit('선언 없이 by human 승인 도장');
+    res = Z.zoneCheck(r.base, 'HEAD', r.dir);
+    assert.equal(res.exit, 1); assert.match(res.lines.join('\n'), /RULE-0548/); assert.match(res.lines.join('\n'), /승인자 'human'/);
+    const r2 = setup();
+    try {
+      r2.put('attestations/registry.json', JSON.stringify(plus(st('verified', 'D900009')), null, 2)); r2.commit('선언 없이 신원 도장 더함');
+      assert.equal(Z.zoneCheck(r2.base, 'HEAD', r2.dir).exit, 0, '승인 도장 밖의 변경은 종류 정책을 보지 않음(선언이 없으니 모드가 없다)');
+      r2.put('attestations/registry.json', JSON.stringify({ ...REG, stamps: REG.stamps.filter((s) => s.claim !== 'accept') }, null, 2)); r2.commit('선언 없이 승인 도장 지움');
+      const res2 = Z.zoneCheck(r2.base, 'HEAD', r2.dir);
+      assert.equal(res2.exit, 1); assert.match(res2.lines.join('\n'), /승인 도장은 추가만/);
+    } finally { rmSync(r2.dir, { recursive: true, force: true }); }
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});

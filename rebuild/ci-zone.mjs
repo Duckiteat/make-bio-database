@@ -3,7 +3,7 @@
 //   node rebuild/ci-zone.mjs <base> [head]      base..head 의 커밋마다 판정 (head 기본 HEAD)
 // 정한 것 (사용자 결정 — PLAN-114 결과 글):
 //   · 모드 선언 = 그 커밋이 바꾼 영수증(workspace/receipts/*.jsonl)의 마지막 'open' 사건(mode · role). 문지기가 쓰는 파일이라 새로 적을 것이 없다.
-//   · 선언 없는 커밋(사람의 커밋 · 훅 없이 만든 커밋)은 알리기만 — 통과시키고 바뀐 파일을 남긴다.
+//   · 선언 없는 커밋(사람의 커밋 · 훅 없이 만든 커밋)은 알리기만 — 통과시키고 바뀐 파일을 남긴다. 단 도장 등록부의 승인 도장 정책만은 본다(DEC-0084 · RULE-0548).
 //   · 판정은 문지기의 함수 그대로(gate.mjs violations) — 새 판정 코드 없음. 정책(modes.json)은 그 커밋의 부모에서 읽는다: 커밋이 자기 정책을 넓혀 통과하지 못하게.
 //   · 병합 커밋은 건너뛴다 — 합쳐 온 커밋은 그 자체로 판정된다.
 //   · 영수증 파일 자체는 판정에서 뺀다 — 선언이고, 문지기가 쓴다.
@@ -42,9 +42,14 @@ export function declaredOf(receipts) {
 //   선언이 여럿이면 바뀐 파일마다 어느 선언으로든 쓸 수 있어야 한다
 //   reg = { before, after } — 그 커밋이 도장 등록부를 바꿨으면 부모 · 커밋의 등록부(JSON). 등록부 정책(DEC-0078): 선언된 모드가 낼 수 있는 도장 종류(모드표 stamps)만 —
 //   선언 중 하나라도 그 변경을 허락하면 통과. 정책이 없는 모드(stamps 칸 없음)는 승인 도장 지우기 · 바꾸기만 본다(judicial/attestation.js registryPolicy)
+const UNDECLARED_RULE = 'RULE-0548'; // 선언 없는 커밋의 등록부 정책 (DEC-0084 (c))
 export function judgeCommit(P, changed, decl, reg, ledgers) {
   const files = changed.filter((p) => !isReceipt(p));
-  if (!decl.length) return { status: 'undeclared', files, bad: [], stamps: [], rewrites: [] };
+  if (!decl.length) {
+    // 선언 없음은 알리기만 — 단 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 · 새 도장의 승인자)만은 본다(DEC-0084 (c) · RULE-0546): 사람의 커밋도 by: human 도장을 새로 넣을 일은 없다
+    const stamps = reg ? ATT.registryPolicy(reg.before, reg.after, null).map((v) => ({ ...v, via: UNDECLARED_RULE })) : [];
+    return { status: stamps.length ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], modes: ['선언 없음'] };
+  }
   const bad = files.filter((f) => decl.every((d) => violations(P, d.mode, d.role, [f]).length));
   let stamps = [];
   if (reg) {
@@ -78,7 +83,7 @@ export function zoneCheck(base, head = 'HEAD', root = ROOT) {
     const h = `${x.c.slice(0, 8)} ${String(x.subject || '').slice(0, 60)}`;
     if (x.status === 'violation' && x.bad.length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')} 의 쓰기 구역 밖 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
     for (const v of x.status === 'violation' ? x.rewrites || [] : []) out.lines.push(`✗ ${h} — ${v.file}: ${v.msg}`);
-    if (x.status === 'violation' && (x.stamps || []).length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')} 의 도장 등록부 정책 밖 ${x.stamps.length}: ${x.stamps.slice(0, 4).map((v) => v.msg).join(' · ')}${x.stamps.length > 4 ? ' …' : ''}`);
+    if (x.status === 'violation' && (x.stamps || []).length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')}${x.stamps[0].via ? ` (${x.stamps[0].via})` : ''} 의 도장 등록부 정책 밖 ${x.stamps.length}: ${x.stamps.slice(0, 4).map((v) => v.msg).join(' · ')}${x.stamps.length > 4 ? ' …' : ''}`);
     else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 → 사람의 커밋으로 봄 (알리기만) · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
     else if (x.status === 'no_policy') out.lines.push(`· ${h} — 부모에 문지기 정책이 없음 (문지기 이전 커밋) — 건너뜀`);
   }

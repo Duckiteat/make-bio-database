@@ -566,3 +566,5 @@
 {"from": "RULE-0544", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "덧붙이기만 검사를 끄면 검수 기록을 사후에 고쳐도 CI 가 통과"}
 {"from": "RULE-0545", "rel": "because", "to": "code:rebuild/supervise.mjs", "by": "judged", "note": "연결 검사를 끄면 다른 상위 작업의 전환 기록으로 넘김을 적을 수 있음"}
 {"from": "RULE-0546", "rel": "because", "to": "code:judicial/attestation.js", "by": "judged", "note": "승인자 검사를 끄면 inspect 가 셸로 쓴 by: human 승인 도장이 CI 와 문지기를 지남"}
+{"from": "RULE-0547", "rel": "because", "to": "code:judicial/acceptance.js", "by": "judged", "note": "지문 검사를 끄면 셸로 쓴 새 by: human 승인 도장이 로컬 재검증을 지나 finish 가 커밋을 연다"}
+{"from": "RULE-0548", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "선언 없는 커밋의 등록부 검사를 끄면 영수증 없이 커밋한 by: human 승인 도장이 CI 를 지남"}
