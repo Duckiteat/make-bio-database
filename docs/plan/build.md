@@ -140,6 +140,7 @@
 | [DEC-0071](decisions/DEC-0071.md) | 2026-11-21 | 사용자 | 순서 | 순서 고침 — RP1(106)을 첫 순환(103) 앞으로, 과학 한 걸음(112)을 103 바로 뒤로 | 3 |
 | [DEC-0072](decisions/DEC-0072.md) | 2026-11-21 | 사용자 | 설계 | 이전 판정 v0.1 — 단위 · 주장 여덟 · 상태 여섯을 SUP-0001 사례 검토에 쓰고, SUP-0001 을 네 산출물로 감독 장부에 올린다 | 3 |
 | [DEC-0073](decisions/DEC-0073.md) | 2026-11-22 | 사용자 | 순서 | P1 패치는 그대로 병합하지 않는다 — 검토 권고를 author 의 독립 변경으로 반영 → inspect 재검토(필드별 근거) → develop 주장 층 | 2 |
+| [DEC-0074](decisions/DEC-0074.md) | 2026-11-23 | 사용자 | 순서 | 사람 손을 덜 타는 구조 먼저 — 주장 층(115) → 승인 보조(116 G2–G4) → 자동 배정(104) → D000051 주장 층 시범(112, 자동 순환) · author P1 손 고침은 시범으로 흡수 | 5 |
 
 ## 4. 작업 — 결과와 걸어온 길
 
@@ -477,8 +478,8 @@
 ## 근거 점검 (계산 — 원본에서 센 것)
 
 - 작업 121: ☑ 완료 50 · ◐ 진행 13 · ☐ 대기 57 · 보류 보류 1
-- 걸어온 길: 사건 328 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 123)
-- 결정 39 — 누가: 사용자 25 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
+- 걸어온 길: 사건 329 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 124)
+- 결정 40 — 누가: 사용자 26 · 사용자와 합의 4 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
-- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-115
+- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-115 · PLAN-116
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)

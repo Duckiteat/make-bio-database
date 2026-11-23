@@ -16,58 +16,60 @@
 10. [PLAN-101](items/PLAN-101.md) 승인 PR 권한(F6) — ☑ 완료 · build — DEC-0067 — 첫 순환 승인 PR 은 사용자
 11. [PLAN-106](items/PLAN-106.md) RP1 승인자 기본값 — ◐ 진행 · build — DEC-0071 — 작고, 103 순환의 inspect 도장이 이 구멍(승인자 기본값 human)을 쓰지 않게 103 앞으로
 12. [PLAN-103](items/PLAN-103.md) 첫 순환 — cAMP (손으로, 순차) — ☐ 대기 · build — DEC-0067 — 첫 순환 손으로 (순차)
-13. [PLAN-112](items/PLAN-112.md) D000051 세로 뚫기 — 실험 하나 — ☐ 대기 · build — DEC-0071 — 메타 편중(E2 · E3: 이미 2 사이클 넘게 개발체계만) — 103 바로 뒤로
-14. [PLAN-081](items/PLAN-081.md) 쓰기의 비교 후 교체 — ☑ 완료 · build — DEC-0067 — 자동 배정 전에 RP2 a (잃어버린 갱신)
-15. [PLAN-111](items/PLAN-111.md) RP2 병합 사전 점검 넓히기 — ☑ 완료 · build — DEC-0067 — 자동 배정 전에 RP2 b (브랜치 사이 번호 충돌 탐지)
-16. [PLAN-077](items/PLAN-077.md) 추세 재확인 자동화가 실제로 돌게 — ◐ 진행 · build — 2026-11-18 DEC-0062 · DEC-0067 — 예약 작업이 결과를 남기게 (자동 배정의 전제)
-17. [PLAN-114](items/PLAN-114.md) Governor 의 CI 겹 — ☑ 완료 · build — DEC-0070 — 자동 배정이 실행 모듈을 늘리기 전에 Governor 를 실행 환경 밖(CI)에 한 겹
-18. [PLAN-104](items/PLAN-104.md) 배정 자동화 (Hybrid) — ☐ 대기 · build — DEC-0067 — 자동 배정 (선행: 106 · 081 · 111 · 077)
-19. [PLAN-107](items/PLAN-107.md) M1 관측 묶음 — ☐ 대기 · build — DEC-0067 — 관측 묶음
-20. [PLAN-108](items/PLAN-108.md) 탐지기 보호 — ☐ 대기 · build — DEC-0067 — 탐지기 보호
-21. [PLAN-109](items/PLAN-109.md) M2 · M4 1 단계 (형식 변경 없이) — ☐ 대기 · build — DEC-0067 — 제안 · 증거 1 단계
-22. [ASY-00](items/ASY-00.md) 틀 — ◐ 진행 · assay — 데이터를 모으기 전에 측정법 틀 — 나중이면 모은 기록을 모두 옮겨야 함 (DEC-0041) — 2026-11-02: 옛 정량 관찰 22건은 정보 작성 모드로 넘김 기록을 남김(다음 세션이 author 로 열어 시작)
-23. [ASY-12](items/ASY-12.md) 출처 고정 — ☐ 대기 · assay — 옛 관찰 22 의 원문 숫자 채우기가 이 위에서 해야 한 번에 끝남 (DEC-0046) — 2026-11-02: ASY-00 과 같은 22건이라 같은 정보 작성 세션에서
-24. [STG-11f](items/STG-11f.md) 세션 끊기 — ◐ 진행 · rebuild — 도구와 형식은 끝(probe --next · NEXT-*.md) — 남은 것은 다음 세션이 그것만으로 첫 작업 자리에 닿는지 영수증으로 확인 (DEC-0047)
-25. [ASY-13](items/ASY-13.md) 이중 독립 입력 — ☐ 대기 · assay — 실측 상수 모으기(78) 전에 절차로 서야 함 (DEC-0046)
-26. [ASY-01](items/ASY-01.md) 기초 판독 — ☐ 대기 · assay — 조합 측정법이 가리킬 기초 판독 먼저
-27. [ASY-02](items/ASY-02.md) 기초 분리 — ☐ 대기 · assay — 분리는 판독의 앞 단계 속성 — 조합(3) 전에
-28. [ASY-03](items/ASY-03.md) 분리 + 판독 — ☐ 대기 · assay — 78 이 모을 속도 상수의 측정법(효소 활성 분광 등)
-29. [ASY-09](items/ASY-09.md) 검증 축 — ☐ 대기 · assay — 정량 측정이 들어오는 3 과 함께 — 값마다 검증 근거 수준 (DEC-0043)
-30. [PLAN-088](items/PLAN-088.md) 엔진 정답 시험 + 변형 관계 시험 — ☑ 완료 · build — 실측 상수로 비교를 시작하기 전에 엔진 쪽 근거 — 관문 D 의 바탕 (DEC-0046) — 2026-11-02: 엔진 시스템 일은 다른 세션이 하고 있어 이 계열은 건드리지 않음
-31. [PLAN-094](items/PLAN-094.md) 실행 인터페이스 (읽기 전용 MCP) — ☑ 완료 · build — 인공간뇌가 돌려서 예측을 받는 길 — 운명 엔진은 JS = Rust 비트 일치라 인터페이스를 지금 열어도 안정적 (DEC-0051 · 충분도 판정 C2)
-32. [PLAN-095](items/PLAN-095.md) 사법부 시간 · 짝 판정 — ☑ 완료 · build — 시간 · 짝 판정 · 벽시계 — 학회 수준의 재현과 독립 검증의 전제 (DEC-0051 · 충분도 판정 A4 · B4)
-33. [PLAN-096](items/PLAN-096.md) 확률 층 정확도 확인 — ☑ 완료 · build — 확률 층 정확도 확인 — 소수 분자 영역의 신뢰, 코드 확인이 먼저 (충분도 판정 B6)
-34. [PLAN-055](items/PLAN-055.md) 두 갈래 차이 측정 → 하나로 — ☑ 완료 · build — 엔진 하나로 가는 첫걸음 — 두 엔진 차이를 먼저 잼 (충분도 판정 A5)
-35. [PLAN-080](items/PLAN-080.md) 속도 엔진 하나로 — ◐ 진행 · build — 속도 엔진을 운명 엔진과 하나로 — 바닥이 둘인 모순 제거 (충분도 판정 A5, 속도 엔진 궤적이 바뀜)
-36. [PLAN-056](items/PLAN-056.md) 엔진 경계 — ☐ 대기 · build — 엔진 경계 정리 — 80 과 묶임 (충분도 판정 A5)
-37. [PLAN-089](items/PLAN-089.md) 계산 기록부 — ☐ 대기 · build — GMP·논문 목표의 빈 곳(계산 과정 기록). R0(코드 정체)은 엔진과 무관해 먼저 가능하나 R3(재현 검사)는 안전망 시험·시계 정리·난수 정리 뒤에 의미가 있음 (DEC-0060)
-38. [PLAN-090](items/PLAN-090.md) 사람/AI 행위자 구분 — ☐ 대기 · build — 행위자 구분은 새 기록 줄마다 필요해서 계산 기록부·주장 장부와 함께 설계 — 학술 규범(저자는 사람, AI 사용 공개) (DEC-0060)
-39. [PLAN-110](items/PLAN-110.md) M2 · M4 2 단계 (형식 변경) — ☐ 대기 · build — DEC-0066 — 형식 변경은 1 단계(109)를 돌려 본 뒤, 행위자 구분(090)과 묶음
-40. [PLAN-091](items/PLAN-091.md) 주장 장부 — ☐ 대기 · build — 계산 기록부(89)와 행위자 구분(90) 위에서 — 주장 → 실행 → 입력·코드 사슬 (DEC-0060)
-41. [PLAN-098](items/PLAN-098.md) 가설 세우기 · 검증 고리 — ☐ 대기 · build — 가설 → 사전 등록 → 실행 → 판정 → 주장의 사슬 — 089 · 091 위에서 (DEC-0051 가설 검증 목표)
-42. [PLAN-078](items/PLAN-078.md) 실측 상수 늘리기 — ☐ 대기 · build — 북극성 ①의 병목 — 측정법·검증 칸이 선 뒤 실측 상수를 모음
-43. [ASY-15](items/ASY-15.md) 화학량 보존 — ◐ 진행 · assay — 판정 함수와 보고까지 끝(judicial/stoichiometry.js) — 지금 단계 57 모두 검사 불가, 화학식과 계수가 자료에 들어오면 검증기에 잇는다. 78 이 저분자 반응 상수를 들이며 화학식이 생김 (DEC-0046)
-44. [ASY-04](items/ASY-04.md) 상호작용 — ☐ 대기 · assay — 경쟁 판정의 바탕인 Kd — 78 다음으로 필요해질 상수
-45. [PLAN-071](items/PLAN-071.md) 검증 상태 = 기록의 축 묶음 (S, D, T, I) — ☐ 대기 · build — 검증 상태 축 — I 축(독립성)은 같은 측정 깃발(ASY-00) 위에
-46. [ASY-16](items/ASY-16.md) 여러 출처 합의 — ☐ 대기 · assay — 독립성 축(71) 위에, 독립 출처가 쌓인 뒤 (DEC-0046)
-47. [ASY-05](items/ASY-05.md) 세포 수준 — ☐ 대기 · assay — 정성 검증 판독의 측정법
-48. [PLAN-079](items/PLAN-079.md) 규칙 문서 한 곳 — ◐ 진행 · build — 규칙 문서 한 곳 — 구조 평가 뒤 순서의 끝(DEC-0030)
-49. [PLAN-040](items/PLAN-040.md) 공인 신뢰성 틀 대응표 — ☐ 대기 · build — 공인 신뢰성 틀 대응표(V&V 40 · FDA · 실무 10 규칙, 원문 확인) — 학회 수준의 신뢰 기준 (DEC-0051 · 지침 조사 보고서)
-50. [PLAN-038](items/PLAN-038.md) SBML core(반응망) · SED-ML(규약·교란·측정) · OMEX(묶음) 내보내기 — ☐ 대기 · build — SBML · SED-ML · OMEX 내보내기 — 밖으로 가져가 재현 가능하게 (충분도 판정 C9)
-51. [PLAN-097](items/PLAN-097.md) 확률장 재가동의 전제 — 반박할 공간 관찰 조사 — ☐ 대기 · build — 확률장 재가동 전제 — 반박할 공간 관찰이 있는지부터 (field 모드 멈춤 규칙, 충분도 판정 B7–B10)
-52. [ASY-11](items/ASY-11.md) 사슬 꼬리 — ☐ 대기 · assay — 권한 표(L6)에 head 기록 구역을 더해야 하는 일이라 사용자 손이 든다 — 보류(STG-12a ⑧). 원래 이유: 가장 싸고 모든 장부에 닿음, 자료가 쌓이기 전에 (DEC-0046)
-53. [STG-12a](items/STG-12a.md) L6 보강 묶음 — 보류 보류 · rebuild — 사용자 손이 드는 L6 보강 — 사용자가 원할 때만 연다(2026-11-02 원칙). 열지 않아도 평소 작업에 영향이 없고 영수증 감사(RULE-0529)가 사후 감시
-54. [ASY-10](items/ASY-10.md) GMP 자료 받기 — ☐ 대기 · assay — 실제 GMP 자료 출처가 생길 때 — 그때까지는 순서 끝 (DEC-0043)
-55. [STG-12](items/STG-12.md) 자리별 담당과 권한 재검토 — ☑ 완료 · rebuild — 엔진 일보다 먼저 — 오늘 만든 도구 바로 밑의 구조라 미루면 도구가 지금 방식에 굳음 (DEC-0048) — 끝남
-56. [STG-11c](items/STG-11c.md) 빠른 사전 검사 — ☑ 완료 · rebuild — 가장 싸고 바로 실패를 줄임 — 다음 작업들이 규칙을 더하는 일이라 먼저 (DEC-0047) — 끝남
-57. [STG-11b](items/STG-11b.md) 재생성 한 번에 — ☑ 완료 · rebuild — 11a 가 부름 (DEC-0047) — 끝남
-58. [STG-11a](items/STG-11a.md) 규칙 한 번에 — ☑ 완료 · rebuild — ASY-08 · 11 · 12 가 규칙을 더함 — 그대로 효과 (DEC-0047) — 끝남
-59. [STG-11d](items/STG-11d.md) 파일 탐침 — ☑ 완료 · rebuild — 효과는 가장 크지만 설계가 큼 — 앞의 셋이 만든 자리 정보를 씀 (DEC-0047) — 끝남
-60. [STG-11e](items/STG-11e.md) CHANGES 초안 — ☑ 완료 · rebuild — 탐침의 바뀐 자리 정보를 씀 (DEC-0047) — 끝남
+13. [PLAN-081](items/PLAN-081.md) 쓰기의 비교 후 교체 — ☑ 완료 · build — DEC-0067 — 자동 배정 전에 RP2 a (잃어버린 갱신)
+14. [PLAN-111](items/PLAN-111.md) RP2 병합 사전 점검 넓히기 — ☑ 완료 · build — DEC-0067 — 자동 배정 전에 RP2 b (브랜치 사이 번호 충돌 탐지)
+15. [PLAN-077](items/PLAN-077.md) 추세 재확인 자동화가 실제로 돌게 — ◐ 진행 · build — 2026-11-18 DEC-0062 · DEC-0067 — 예약 작업이 결과를 남기게 (자동 배정의 전제)
+16. [PLAN-114](items/PLAN-114.md) Governor 의 CI 겹 — ☑ 완료 · build — DEC-0070 — 자동 배정이 실행 모듈을 늘리기 전에 Governor 를 실행 환경 밖(CI)에 한 겹
+17. [PLAN-115](items/PLAN-115.md) 주장 층 — 칸 단위 근거 — ☐ 대기 · build — DEC-0074 — 사람 손을 덜 타야 데이터가 빨리 쌓임: 주장 층 형식 · 이관 · 칸 상태 계산 · 인용 자동 대조(설계 보고서 §15 단계 0–2) 먼저 — 데이터를 칸 단위로 다시 쓰게 되므로 지금 형식으로 손 고침을 하지 않음
+18. [PLAN-116](items/PLAN-116.md) 거버넌스 — 권한 분리 · 독립 검증 대조 조사 — ☐ 대기 · build — DEC-0074 — 검수 독립성 계산 · Deny/Hold 사유 · 승인 보고서 한 장(1 단계 보고서 G2–G4): 사람이 산출물 전체가 아니라 한 장만 보게 — 자동 배정의 선행
+19. [PLAN-104](items/PLAN-104.md) 배정 자동화 (Hybrid) — ☐ 대기 · build — DEC-0067 — 자동 배정 (선행: 106 · 081 · 111 · 077) · DEC-0074: 115 · 116 뒤 — 상위 작업 하나가 규칙 여러 개, 병합은 묶음마다 한 번
+20. [PLAN-112](items/PLAN-112.md) D000051 세로 뚫기 — 실험 하나 — ☐ 대기 · build — DEC-0074 — D000051 을 주장 층 시범으로 자동 순환에서(과학 일 + 기계 시험). 앞 자리(DEC-0071 메타 편중)는 이 시범이 과학 축이라 여기로 — author 의 P1 손 고침은 이 시범으로 흡수
+21. [PLAN-107](items/PLAN-107.md) M1 관측 묶음 — ☐ 대기 · build — DEC-0067 — 관측 묶음
+22. [PLAN-108](items/PLAN-108.md) 탐지기 보호 — ☐ 대기 · build — DEC-0067 — 탐지기 보호
+23. [PLAN-109](items/PLAN-109.md) M2 · M4 1 단계 (형식 변경 없이) — ☐ 대기 · build — DEC-0067 — 제안 · 증거 1 단계
+24. [ASY-00](items/ASY-00.md) 틀 — ◐ 진행 · assay — 데이터를 모으기 전에 측정법 틀 — 나중이면 모은 기록을 모두 옮겨야 함 (DEC-0041) — 2026-11-02: 옛 정량 관찰 22건은 정보 작성 모드로 넘김 기록을 남김(다음 세션이 author 로 열어 시작)
+25. [ASY-12](items/ASY-12.md) 출처 고정 — ☐ 대기 · assay — 옛 관찰 22 의 원문 숫자 채우기가 이 위에서 해야 한 번에 끝남 (DEC-0046) — 2026-11-02: ASY-00 과 같은 22건이라 같은 정보 작성 세션에서
+26. [STG-11f](items/STG-11f.md) 세션 끊기 — ◐ 진행 · rebuild — 도구와 형식은 끝(probe --next · NEXT-*.md) — 남은 것은 다음 세션이 그것만으로 첫 작업 자리에 닿는지 영수증으로 확인 (DEC-0047)
+27. [ASY-13](items/ASY-13.md) 이중 독립 입력 — ☐ 대기 · assay — 실측 상수 모으기(78) 전에 절차로 서야 함 (DEC-0046)
+28. [ASY-01](items/ASY-01.md) 기초 판독 — ☐ 대기 · assay — 조합 측정법이 가리킬 기초 판독 먼저
+29. [ASY-02](items/ASY-02.md) 기초 분리 — ☐ 대기 · assay — 분리는 판독의 앞 단계 속성 — 조합(3) 전에
+30. [ASY-03](items/ASY-03.md) 분리 + 판독 — ☐ 대기 · assay — 78 이 모을 속도 상수의 측정법(효소 활성 분광 등)
+31. [ASY-09](items/ASY-09.md) 검증 축 — ☐ 대기 · assay — 정량 측정이 들어오는 3 과 함께 — 값마다 검증 근거 수준 (DEC-0043)
+32. [PLAN-088](items/PLAN-088.md) 엔진 정답 시험 + 변형 관계 시험 — ☑ 완료 · build — 실측 상수로 비교를 시작하기 전에 엔진 쪽 근거 — 관문 D 의 바탕 (DEC-0046) — 2026-11-02: 엔진 시스템 일은 다른 세션이 하고 있어 이 계열은 건드리지 않음
+33. [PLAN-094](items/PLAN-094.md) 실행 인터페이스 (읽기 전용 MCP) — ☑ 완료 · build — 인공간뇌가 돌려서 예측을 받는 길 — 운명 엔진은 JS = Rust 비트 일치라 인터페이스를 지금 열어도 안정적 (DEC-0051 · 충분도 판정 C2)
+34. [PLAN-095](items/PLAN-095.md) 사법부 시간 · 짝 판정 — ☑ 완료 · build — 시간 · 짝 판정 · 벽시계 — 학회 수준의 재현과 독립 검증의 전제 (DEC-0051 · 충분도 판정 A4 · B4)
+35. [PLAN-096](items/PLAN-096.md) 확률 층 정확도 확인 — ☑ 완료 · build — 확률 층 정확도 확인 — 소수 분자 영역의 신뢰, 코드 확인이 먼저 (충분도 판정 B6)
+36. [PLAN-055](items/PLAN-055.md) 두 갈래 차이 측정 → 하나로 — ☑ 완료 · build — 엔진 하나로 가는 첫걸음 — 두 엔진 차이를 먼저 잼 (충분도 판정 A5)
+37. [PLAN-080](items/PLAN-080.md) 속도 엔진 하나로 — ◐ 진행 · build — 속도 엔진을 운명 엔진과 하나로 — 바닥이 둘인 모순 제거 (충분도 판정 A5, 속도 엔진 궤적이 바뀜)
+38. [PLAN-056](items/PLAN-056.md) 엔진 경계 — ☐ 대기 · build — 엔진 경계 정리 — 80 과 묶임 (충분도 판정 A5)
+39. [PLAN-089](items/PLAN-089.md) 계산 기록부 — ☐ 대기 · build — GMP·논문 목표의 빈 곳(계산 과정 기록). R0(코드 정체)은 엔진과 무관해 먼저 가능하나 R3(재현 검사)는 안전망 시험·시계 정리·난수 정리 뒤에 의미가 있음 (DEC-0060)
+40. [PLAN-090](items/PLAN-090.md) 사람/AI 행위자 구분 — ☐ 대기 · build — 행위자 구분은 새 기록 줄마다 필요해서 계산 기록부·주장 장부와 함께 설계 — 학술 규범(저자는 사람, AI 사용 공개) (DEC-0060)
+41. [PLAN-110](items/PLAN-110.md) M2 · M4 2 단계 (형식 변경) — ☐ 대기 · build — DEC-0066 — 형식 변경은 1 단계(109)를 돌려 본 뒤, 행위자 구분(090)과 묶음
+42. [PLAN-091](items/PLAN-091.md) 주장 장부 — ☐ 대기 · build — 계산 기록부(89)와 행위자 구분(90) 위에서 — 주장 → 실행 → 입력·코드 사슬 (DEC-0060)
+43. [PLAN-098](items/PLAN-098.md) 가설 세우기 · 검증 고리 — ☐ 대기 · build — 가설 → 사전 등록 → 실행 → 판정 → 주장의 사슬 — 089 · 091 위에서 (DEC-0051 가설 검증 목표)
+44. [PLAN-078](items/PLAN-078.md) 실측 상수 늘리기 — ☐ 대기 · build — 북극성 ①의 병목 — 측정법·검증 칸이 선 뒤 실측 상수를 모음
+45. [ASY-15](items/ASY-15.md) 화학량 보존 — ◐ 진행 · assay — 판정 함수와 보고까지 끝(judicial/stoichiometry.js) — 지금 단계 57 모두 검사 불가, 화학식과 계수가 자료에 들어오면 검증기에 잇는다. 78 이 저분자 반응 상수를 들이며 화학식이 생김 (DEC-0046)
+46. [ASY-04](items/ASY-04.md) 상호작용 — ☐ 대기 · assay — 경쟁 판정의 바탕인 Kd — 78 다음으로 필요해질 상수
+47. [PLAN-071](items/PLAN-071.md) 검증 상태 = 기록의 축 묶음 (S, D, T, I) — ☐ 대기 · build — 검증 상태 축 — I 축(독립성)은 같은 측정 깃발(ASY-00) 위에
+48. [ASY-16](items/ASY-16.md) 여러 출처 합의 — ☐ 대기 · assay — 독립성 축(71) 위에, 독립 출처가 쌓인 뒤 (DEC-0046)
+49. [ASY-05](items/ASY-05.md) 세포 수준 — ☐ 대기 · assay — 정성 검증 판독의 측정법
+50. [PLAN-079](items/PLAN-079.md) 규칙 문서 한 곳 — ◐ 진행 · build — 규칙 문서 한 곳 — 구조 평가 뒤 순서의 끝(DEC-0030)
+51. [PLAN-040](items/PLAN-040.md) 공인 신뢰성 틀 대응표 — ☐ 대기 · build — 공인 신뢰성 틀 대응표(V&V 40 · FDA · 실무 10 규칙, 원문 확인) — 학회 수준의 신뢰 기준 (DEC-0051 · 지침 조사 보고서)
+52. [PLAN-038](items/PLAN-038.md) SBML core(반응망) · SED-ML(규약·교란·측정) · OMEX(묶음) 내보내기 — ☐ 대기 · build — SBML · SED-ML · OMEX 내보내기 — 밖으로 가져가 재현 가능하게 (충분도 판정 C9)
+53. [PLAN-097](items/PLAN-097.md) 확률장 재가동의 전제 — 반박할 공간 관찰 조사 — ☐ 대기 · build — 확률장 재가동 전제 — 반박할 공간 관찰이 있는지부터 (field 모드 멈춤 규칙, 충분도 판정 B7–B10)
+54. [ASY-11](items/ASY-11.md) 사슬 꼬리 — ☐ 대기 · assay — 권한 표(L6)에 head 기록 구역을 더해야 하는 일이라 사용자 손이 든다 — 보류(STG-12a ⑧). 원래 이유: 가장 싸고 모든 장부에 닿음, 자료가 쌓이기 전에 (DEC-0046)
+55. [STG-12a](items/STG-12a.md) L6 보강 묶음 — 보류 보류 · rebuild — 사용자 손이 드는 L6 보강 — 사용자가 원할 때만 연다(2026-11-02 원칙). 열지 않아도 평소 작업에 영향이 없고 영수증 감사(RULE-0529)가 사후 감시
+56. [ASY-10](items/ASY-10.md) GMP 자료 받기 — ☐ 대기 · assay — 실제 GMP 자료 출처가 생길 때 — 그때까지는 순서 끝 (DEC-0043)
+57. [STG-12](items/STG-12.md) 자리별 담당과 권한 재검토 — ☑ 완료 · rebuild — 엔진 일보다 먼저 — 오늘 만든 도구 바로 밑의 구조라 미루면 도구가 지금 방식에 굳음 (DEC-0048) — 끝남
+58. [STG-11c](items/STG-11c.md) 빠른 사전 검사 — ☑ 완료 · rebuild — 가장 싸고 바로 실패를 줄임 — 다음 작업들이 규칙을 더하는 일이라 먼저 (DEC-0047) — 끝남
+59. [STG-11b](items/STG-11b.md) 재생성 한 번에 — ☑ 완료 · rebuild — 11a 가 부름 (DEC-0047) — 끝남
+60. [STG-11a](items/STG-11a.md) 규칙 한 번에 — ☑ 완료 · rebuild — ASY-08 · 11 · 12 가 규칙을 더함 — 그대로 효과 (DEC-0047) — 끝남
+61. [STG-11d](items/STG-11d.md) 파일 탐침 — ☑ 완료 · rebuild — 효과는 가장 크지만 설계가 큼 — 앞의 셋이 만든 자리 정보를 씀 (DEC-0047) — 끝남
+62. [STG-11e](items/STG-11e.md) CHANGES 초안 — ☑ 완료 · rebuild — 탐침의 바뀐 자리 정보를 씀 (DEC-0047) — 끝남
 
-## 순서 밖 — 대기·진행·논의·보류 (52)
+## 순서 밖 — 대기·진행·논의·보류 (50)
 
-- **build**: [PLAN-012](items/PLAN-012.md) ◐ · [PLAN-012a](items/PLAN-012a.md) ◐ · [PLAN-013](items/PLAN-013.md) ◐ · [PLAN-015](items/PLAN-015.md) ☐ · [PLAN-016](items/PLAN-016.md) ☐ · [PLAN-016a](items/PLAN-016a.md) ◐ · [PLAN-017](items/PLAN-017.md) ☐ · [PLAN-018](items/PLAN-018.md) ☐ · [PLAN-019](items/PLAN-019.md) ☐ · [PLAN-020](items/PLAN-020.md) ◐ · [PLAN-023](items/PLAN-023.md) ☐ · [PLAN-024](items/PLAN-024.md) ☐ · [PLAN-025](items/PLAN-025.md) ◐ · [PLAN-026](items/PLAN-026.md) ☐ · [PLAN-028](items/PLAN-028.md) ☐ · [PLAN-029](items/PLAN-029.md) ☐ · [PLAN-030](items/PLAN-030.md) ☐ · [PLAN-031](items/PLAN-031.md) ☐ · [PLAN-032](items/PLAN-032.md) ☐ · [PLAN-033](items/PLAN-033.md) ☐ · [PLAN-034](items/PLAN-034.md) ☐ · [PLAN-035](items/PLAN-035.md) ☐ · [PLAN-036](items/PLAN-036.md) ☐ · [PLAN-039](items/PLAN-039.md) ☐ · [PLAN-047](items/PLAN-047.md) ◐ · [PLAN-115](items/PLAN-115.md) ☐ · [PLAN-116](items/PLAN-116.md) ☐ · [PLAN-050](items/PLAN-050.md) ☐ · [PLAN-051](items/PLAN-051.md) ☐ · [PLAN-052](items/PLAN-052.md) ☐ · [PLAN-053](items/PLAN-053.md) ☐ · [PLAN-054](items/PLAN-054.md) ☐ · [PLAN-062](items/PLAN-062.md) ☐ · [PLAN-063](items/PLAN-063.md) ☐ · [PLAN-064](items/PLAN-064.md) ☐ · [PLAN-H01](items/PLAN-H01.md) 보류 · [PLAN-065](items/PLAN-065.md) ☐ · [PLAN-050p](items/PLAN-050p.md) ☐ · [PLAN-066](items/PLAN-066.md) ☐ · [PLAN-067](items/PLAN-067.md) ☐ · [PLAN-068](items/PLAN-068.md) ☐ · [PLAN-070](items/PLAN-070.md) ◐ · [PLAN-070p](items/PLAN-070p.md) ☐ · [PLAN-082](items/PLAN-082.md) ☐ · [PLAN-083](items/PLAN-083.md) ☐ · [PLAN-084](items/PLAN-084.md) ☐ · [PLAN-086](items/PLAN-086.md) ☐ · [PLAN-087](items/PLAN-087.md) ☐ · [PLAN-057](items/PLAN-057.md) ☐
+- **build**: [PLAN-012](items/PLAN-012.md) ◐ · [PLAN-012a](items/PLAN-012a.md) ◐ · [PLAN-013](items/PLAN-013.md) ◐ · [PLAN-015](items/PLAN-015.md) ☐ · [PLAN-016](items/PLAN-016.md) ☐ · [PLAN-016a](items/PLAN-016a.md) ◐ · [PLAN-017](items/PLAN-017.md) ☐ · [PLAN-018](items/PLAN-018.md) ☐ · [PLAN-019](items/PLAN-019.md) ☐ · [PLAN-020](items/PLAN-020.md) ◐ · [PLAN-023](items/PLAN-023.md) ☐ · [PLAN-024](items/PLAN-024.md) ☐ · [PLAN-025](items/PLAN-025.md) ◐ · [PLAN-026](items/PLAN-026.md) ☐ · [PLAN-028](items/PLAN-028.md) ☐ · [PLAN-029](items/PLAN-029.md) ☐ · [PLAN-030](items/PLAN-030.md) ☐ · [PLAN-031](items/PLAN-031.md) ☐ · [PLAN-032](items/PLAN-032.md) ☐ · [PLAN-033](items/PLAN-033.md) ☐ · [PLAN-034](items/PLAN-034.md) ☐ · [PLAN-035](items/PLAN-035.md) ☐ · [PLAN-036](items/PLAN-036.md) ☐ · [PLAN-039](items/PLAN-039.md) ☐ · [PLAN-047](items/PLAN-047.md) ◐ · [PLAN-050](items/PLAN-050.md) ☐ · [PLAN-051](items/PLAN-051.md) ☐ · [PLAN-052](items/PLAN-052.md) ☐ · [PLAN-053](items/PLAN-053.md) ☐ · [PLAN-054](items/PLAN-054.md) ☐ · [PLAN-062](items/PLAN-062.md) ☐ · [PLAN-063](items/PLAN-063.md) ☐ · [PLAN-064](items/PLAN-064.md) ☐ · [PLAN-H01](items/PLAN-H01.md) 보류 · [PLAN-065](items/PLAN-065.md) ☐ · [PLAN-050p](items/PLAN-050p.md) ☐ · [PLAN-066](items/PLAN-066.md) ☐ · [PLAN-067](items/PLAN-067.md) ☐ · [PLAN-068](items/PLAN-068.md) ☐ · [PLAN-070](items/PLAN-070.md) ◐ · [PLAN-070p](items/PLAN-070p.md) ☐ · [PLAN-082](items/PLAN-082.md) ☐ · [PLAN-083](items/PLAN-083.md) ☐ · [PLAN-084](items/PLAN-084.md) ☐ · [PLAN-086](items/PLAN-086.md) ☐ · [PLAN-087](items/PLAN-087.md) ☐ · [PLAN-057](items/PLAN-057.md) ☐
 - **rebuild**: [STG-06](items/STG-06.md) ◐
 - **assay**: [ASY-06](items/ASY-06.md) 보류 · [ASY-07](items/ASY-07.md) ☐
 
@@ -97,3 +99,4 @@
 - `2026-11-21` PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-103 → PLAN-106 → PLAN-081 → PLAN-111 → PLAN-112 → PLAN-077 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e ⇒ PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-103 → PLAN-106 → PLAN-081 → PLAN-111 → PLAN-112 → PLAN-077 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e — DEC-0069 — 사람 승인의 증거를 다로 확정 · AI 의 PR 병합 막기(PLAN-113)
 - `2026-11-21` PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-103 → PLAN-106 → PLAN-081 → PLAN-111 → PLAN-112 → PLAN-077 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e ⇒ PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-103 → PLAN-106 → PLAN-081 → PLAN-111 → PLAN-112 → PLAN-077 → PLAN-114 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e — DEC-0070 — 독립형 오케스트레이터 검토의 권장 결정 전부
 - `2026-11-21` PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-103 → PLAN-106 → PLAN-081 → PLAN-111 → PLAN-112 → PLAN-077 → PLAN-114 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e ⇒ PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-106 → PLAN-103 → PLAN-112 → PLAN-081 → PLAN-111 → PLAN-077 → PLAN-114 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e — DEC-0071 순서 고침 · PLAN-101 결정 기록으로 끝
+- `2026-11-23` PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-106 → PLAN-103 → PLAN-112 → PLAN-081 → PLAN-111 → PLAN-077 → PLAN-114 → PLAN-104 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e ⇒ PLAN-092 → PLAN-093 → ASY-08 → ASY-14 → PLAN-099 → PLAN-100 → PLAN-113 → PLAN-102 → PLAN-105 → PLAN-101 → PLAN-106 → PLAN-103 → PLAN-081 → PLAN-111 → PLAN-077 → PLAN-114 → PLAN-115 → PLAN-116 → PLAN-104 → PLAN-112 → PLAN-107 → PLAN-108 → PLAN-109 → ASY-00 → ASY-12 → STG-11f → ASY-13 → ASY-01 → ASY-02 → ASY-03 → ASY-09 → PLAN-088 → PLAN-094 → PLAN-095 → PLAN-096 → PLAN-055 → PLAN-080 → PLAN-056 → PLAN-089 → PLAN-090 → PLAN-110 → PLAN-091 → PLAN-098 → PLAN-078 → ASY-15 → ASY-04 → PLAN-071 → ASY-16 → ASY-05 → PLAN-079 → PLAN-040 → PLAN-038 → PLAN-097 → ASY-11 → STG-12a → ASY-10 → STG-12 → STG-11c → STG-11b → STG-11a → STG-11d → STG-11e — 사용자 결정(세션 답 2026-11-23 '나는 구조가 지금 내손을 덜타야 더빨리 빠르게 쌓인다고 보거든. 왜냐면 지금 데이터 싹 갈게생겼는데 이걸 그냥 둘순없으니따' · 선택 '권고 순서로')
