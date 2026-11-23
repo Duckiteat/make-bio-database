@@ -565,3 +565,4 @@
 {"from": "RULE-0543", "rel": "because", "to": "code:judicial/supervise_approval.js", "by": "judged", "note": "검수 뒤 변경 검사를 끄면 검수하지 않은 바이트가 '병합해도 됨' 으로 나옴"}
 {"from": "RULE-0544", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "덧붙이기만 검사를 끄면 검수 기록을 사후에 고쳐도 CI 가 통과"}
 {"from": "RULE-0545", "rel": "because", "to": "code:rebuild/supervise.mjs", "by": "judged", "note": "연결 검사를 끄면 다른 상위 작업의 전환 기록으로 넘김을 적을 수 있음"}
+{"from": "RULE-0546", "rel": "because", "to": "code:judicial/attestation.js", "by": "judged", "note": "승인자 검사를 끄면 inspect 가 셸로 쓴 by: human 승인 도장이 CI 와 문지기를 지남"}

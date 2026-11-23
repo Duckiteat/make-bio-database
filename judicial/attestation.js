@@ -119,7 +119,9 @@ const checkSeal = (s) => !!s && s.digest === (() => { const { digest, ...rest } 
 // 등록부 정책 (PLAN-116 G3 · DEC-0078): 한 변경(before → after)이 그 모드가 낼 수 있는 도장 종류(kinds)만 건드렸나.
 //   ① 새로 생기거나 갈아 끼운 도장의 종류는 kinds 안 ② kinds 밖 종류의 기존 도장은 지우거나 바꾸지 못함 ③ 승인 도장(accept)은 누구도 지우거나 바꾸지 못함(추가만 —
 //   서기도 accept 는 추가만 한다) · 갈아 끼우기는 같은 주체 · 같은 종류의 새 도장이 있을 때만(서기의 verified · trend 갈아 끼우기와 같은 뜻).
-//   kinds 가 null 이면(모드표에 정책이 없음) ①② 는 보지 않고 ③ 만 — 정책이 없는 판에서도 승인 도장 지우기는 잡는다. 순수 — 값만 받는다.
+//   ④ 새로 생긴 승인 도장의 승인자는 발급 검사와 같은 목록(acceptance.js ISSUE_APPROVERS — integrator)만: 셸로 by: human 도장을 써 넣는 길을 막는다(DEC-0083 · RULE-0546).
+//     이미 있던 도장(옛 by: human 6 — U2)은 보지 않는다 — 새로 생긴 것만.
+//   kinds 가 null 이면(모드표에 정책이 없음) ①② 는 보지 않고 ③ ④ 만 — 정책이 없는 판에서도 승인 도장 지우기 · 승인자 위조는 잡는다. 순수 — 값만 받는다.
 const APPEND_ONLY = ['accept'];
 function registryPolicy(before, after, kinds) {
   const out = [], k = (s) => JSON.stringify(s), A = (after && after.stamps) || [], B = (before && before.stamps) || [];
@@ -131,6 +133,9 @@ function registryPolicy(before, after, kinds) {
     else if (allowed && !allowed.has(s.claim)) out.push({ rule: 'RULE-0542', msg: `${s.claim} 도장 ${key} 이 지워지거나 바뀜 — 이 모드가 낼 수 있는 도장(${[...allowed].join(' · ') || '없음'}) 밖` });
     else if (allowed && !replaced) out.push({ rule: 'RULE-0542', msg: `${s.claim} 도장 ${key} 이 지워짐 — 같은 주체의 새 도장으로 갈아 끼울 때만 바뀐다` });
   }
+  // ④ 승인자 — 늦게 가져온다(acceptance.js 가 이 파일을 가져오므로 맨 위에서 가져오면 고리)
+  const issuers = require('./acceptance.js').ISSUE_APPROVERS;
+  for (const s of A) if (!inB.has(k(s)) && APPEND_ONLY.includes(s.claim) && !issuers.includes(s.by)) out.push({ rule: 'RULE-0546', msg: `새 승인 도장 ${s.subject ? subjectKey(s.subject) : '?'} 의 승인자 '${s.by}' — ${issuers.join(' | ')} 만 (발급 검사와 같음 — 사람 승인의 증거는 도장이 아니라 사람의 병합)` });
   if (allowed) for (const s of A) if (!inB.has(k(s)) && !allowed.has(s.claim)) out.push({ rule: 'RULE-0542', msg: `${s.claim} 도장 ${s.subject ? subjectKey(s.subject) : '?'} 을 이 모드는 낼 수 없음 — 낼 수 있는 도장 ${[...allowed].join(' · ') || '없음'} (모드표 stamps)` });
   return out;
 }
