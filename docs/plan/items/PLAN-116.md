@@ -14,6 +14,7 @@
 - `2026-11-23` 커밋 전 기록: 2026-11-23 G2–G4 구현 (DEC-0077): G2 원인 태그 일곱 → 거부 deny(ENGINE_DEFECT · COMPILER_DEFECT · EXEC_FAILURE) · 보류 hold(FINDING · DATA_GAP · DOMAIN_CONFLICT · NUMERICAL) — rebuild/supervise.mjs CAUSE_KIND, 사건 형식 그대로 · G3 검수 독립성 다섯 요소 계산(judicial/supervise_approval.js independence — 정보 접근 · 판단 근거는 영수증 명령 글에서 추정) · G4 승인 보고서 node rebuild/supervise.mjs report <SUP-…> (제안서 §8 12 칸 · 최종 권고는 규칙 recommend · 승인 아님). SUP-0001 에 돌린 결과: r2 독립성 limited — 권한 요소 ✗(author 와 inspect 의 쓰기 자리가 attestations/** 에서 겹침 — 모드 표의 사실, 바꾸지 않음 · 사용자 결정 대기) · 정보 접근 ○ · 판단 근거 ○(작성 패치 PMID 11 모두 검수 영수증이 가리킴) · 최종 권고 hold. 남은 것: G1 위험 단계 이름 · G5 우회 대본 시험 · G6–G8
 - `2026-11-23` 커밋 전 기록: 2026-11-23 G3 권한: author(augment apply 신원 도장 · trend 추세 도장)와 inspect(accept 승인 도장 · trend)가 attestations/** 를 함께 씀 — 메모리 시험으로 author 의 승인 도장 위조 · 도장 지우기가 탐지되지 않음을 확인. 사용자 결정 DEC-0078: 도장 종류로 나눔(author verified · trend / inspect accept · 승인 도장은 추가만) · trend 는 author 만. develop 커밋 bc9bfad — 판정 registryPolicy(RULE-0542) · CI 강제 · 독립성 권한 요소가 내용 정책을 봄(정책이 없으면 그대로 limited). L6(모드표 stamps · 문지기 · 권한 장부 PERM-0024 · 0025 · 자기 검사 시험)은 승인 묶음 workspace/PLAN-116-G3-bundle.* (git apply --check 통과 · 지문 28d566583c1e…) — 사용자 커밋 대기, 그 전까지 SUP-0001 r2 권한 요소 ✗ 그대로. G5: 시나리오 A–E 대조 보고서 docs/reports/2026-11-23-plan-116-g5-bypass-scenarios.md — 탐지되지 않던 셋을 고침(DEC-0079): 검수 뒤 작성 넘김 · 독립성 unknown 은 hold(RULE-0543) · 감독 장부 · 전환 기록 덧붙이기만(CI, RULE-0544) · 시험 tests/bypass_scenarios.test.mjs. SUP-0001 최종 권고 hold — 검수 뒤 r3 author. 미해결: E3(전환 기록에 상위 작업 칸 — 형식 변경) · D4(PLAN-104 미구현) · 문지기의 장부 덧붙이기만 검사(다음 묶음). 남은 것: G1 · G6–G8
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 G3 승인 묶음 적용됨(사용자 커밋 01f5856 — 원격 대조: 묶음과 바이트 동일 · 권한 장부 두 줄 · data · 도장 변경 0). 모드표 stamps 가 서서 CI · 문지기가 모드별 도장 종류를 판정. SUP-0001 r2 독립성 limited → full(권한 ○, 정보 접근 · 판단 근거는 여전히 추정). 최종 권고는 hold 그대로 — 검수 뒤 r3 author(RULE-0543) — SUP-0001 다시 검수 · 취소는 사용자 결정 대기
+- `2026-11-23` 커밋 전 기록: · 2026-11-23 E3 고침(DEC-0081 — 사용자 (가)): 전환 기록에 선택 칸 sup(상위 작업 번호) · 감독 장부의 넘김 · 제안 입력이 가리킨 전환 기록의 sup 가 다른 상위 작업이면 거부(RULE-0545, 변이 caught) · sup 없는 옛 기록은 판정하지 않고 승인 보고서 절차 감사에 '연결 확인 못 함' · 옛 기록 그대로. 남은 것: D4(PLAN-104 미구현) · 문지기의 장부 덧붙이기만 검사(L6) · G1 · G6–G8
 
 ## 걸어온 길
 
@@ -32,6 +33,7 @@
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — PLAN-116 G2–G4 구현 (DEC-0077)
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — PLAN-116 G3 권한 개선 · G5 우회 시나리오 (DEC-0078 · DEC-0079)
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — G3 승인 묶음 적용 확인 (사용자 커밋 01f5856)
+- `2026-11-23` 커밋 전 기록 결과 덧붙음 — PLAN-116 G5 E3 구현 (DEC-0081)
 
 ## 닿는 결정
 
@@ -39,3 +41,4 @@
 - [DEC-0077](../decisions/DEC-0077.md) 2026-11-23 PLAN-116 G2–G4 만 — Deny/Hold 사유 표 · 검수 독립성 계산 · 승인 보고서 읽기 명령 (모두 계산, 장부에 새 칸 없음)
 - [DEC-0078](../decisions/DEC-0078.md) 2026-11-23 도장 등록부 — 모드마다 낼 수 있는 도장 종류(author: verified · trend / inspect: accept) · 승인 도장은 누구도 지우거나 바꾸지 못함 · trend --write 는 author 만
 - [DEC-0079](../decisions/DEC-0079.md) 2026-11-23 G5 — 검수 뒤 바뀐 대상 · 검수 영수증 없음은 보류 · 감독 장부와 전환 기록은 CI 에서 덧붙이기만 (탐지되지 않던 우회 셋)
+- [DEC-0081](../decisions/DEC-0081.md) 2026-11-23 전환 기록에 선택 칸 sup(상위 작업 번호) — DEC-0065 ② '전환 형식 불변' 을 이 한 칸만큼 고침 · 감독 장부 넘김이 다른 상위 작업의 전환 기록을 가리키면 거부

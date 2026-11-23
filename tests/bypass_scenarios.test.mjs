@@ -87,3 +87,20 @@ test('C2 · C3 검수 세션의 영수증이 없으면(무엇을 읽었는지 �
   assert.equal(r.code, 'hold'); assert.equal(r.rule, 'RULE-0543'); assert.match(r.reasons.join(' '), /info_access/);
   assert.equal(rec(sup, null).code, 'hold', '독립성 계산 자체가 없어도 보류');
 });
+
+test('E3 넘김이 다른 상위 작업의 전환 기록을 가리키면 거부 — 같은 작업 · sup 없는 옛 기록은 통과 · 전환 기록의 sup 칸 모양 (DEC-0081 · RULE-0545)', async () => {
+  const RX = { ...R, transitions: new Set([11, 12, 13]), transitionSup: new Map([[11, 'SUP-0001'], [12, 'SUP-0002']]) };
+  const evs = [];
+  const add = (ev, input, w) => SV.admit(evs, ev, { why: '시험', ...input }, w, RX, new Date(Date.UTC(2026, 10, 23, 1, 0, evs.length)).toISOString());
+  for (const [ev, input, w] of [PROP, ['start', { sup: 'SUP-0001', branch: 'b' }, A]]) { const r = add(ev, input, w); assert.ok(r.event, (r.errors || []).join(' · ')); evs.push(r.event); }
+  const wrong = add('handoff', HAND(12, 'aaaaaa1'), A);
+  assert.ok(wrong.errors && wrong.errors.some((m) => /RULE-0545/.test(m) && /SUP-0002/.test(m)), JSON.stringify(wrong));
+  assert.ok(add('handoff', HAND(11, 'aaaaaa1'), A).event, '같은 작업의 전환 기록');
+  assert.ok(add('handoff', HAND(13, 'aaaaaa1'), A).event, 'sup 가 없는 옛 기록은 판정하지 않음');
+  const { createRequire } = await import('node:module');
+  const TA = createRequire(import.meta.url)('../judicial/transition_audit.js');
+  const rec = { from: 'author', to: 'inspect', at: '2026-11-23', why: '시험', target: ['D900001'], files: [], open: [] };
+  assert.equal(TA.checkTransition({ ...rec, sup: 'SUP-0001' }).ok, true);
+  assert.equal(TA.checkTransition(rec).ok, true, 'sup 는 선택');
+  assert.equal(TA.checkTransition({ ...rec, sup: 'S1' }).ok, false);
+});

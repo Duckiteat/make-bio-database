@@ -192,7 +192,7 @@
 |---|---|---|---|
 | `workspace/tasks/TASK-*.md` | 수집가 묶음 과제 | `inputs` 가 가리킬 수 있음 | 안 바뀜 |
 | `workspace/handoff/` | 수집 후보 · 상태 | 참조만 | 안 바뀜 |
-| `workspace/transitions.jsonl` | 모드 인계 (칸 7, 사법부 검사) | run 의 `transition_seq` 가 가리킴 — 연결 방향은 감독 → 전환 | **안 바뀜** (칸 추가 없음) |
+| `workspace/transitions.jsonl` | 모드 인계 (칸 7, 사법부 검사) | run 의 `transition_seq` 가 가리킴 — 연결 방향은 감독 → 전환 | 선택 칸 `sup`(상위 작업 번호) 하나만 더함 (DEC-0081) — 넘김이 다른 상위 작업의 전환 기록을 가리키면 장부 검사가 거부(RULE-0545), sup 없는 옛 기록은 보고서에 '연결 확인 못 함' |
 | `workspace/receipts/` | 도구 호출 영수증 (문지기 훅) | run 의 `receipt` 가 가리킴 | 안 바뀜 |
 | `rebuild/gate.mjs` | 모드 · 쓰기 통제 · 끝내기 검사 | `start` 의 전제 · `verify` 의 출처 | 안 바뀜 (우회 금지) |
 | 계획 장부 | 계획 · 결정 · 순서 | `plan_item` · 결정 번호 | 안 바뀜 |
