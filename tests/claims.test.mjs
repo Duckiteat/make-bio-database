@@ -1,5 +1,6 @@
 // 주장 층 (PLAN-115 · DEC-0075 · SCHEMA §주장) — 칸 단위 근거의 형식 · 관문 · 불변 · 인용 대조 · 칸 상태 계산
-//   인용은 저장소에 받아 둔 실제 초록(data/fetched/europepmc)에서 — 지어낸 문장으로 시험하지 않는다.
+//   인용은 실제로 받은 초록에서 — 지어낸 문장으로 시험하지 않는다. 시험 재료는 tests/fixtures/claims/ (data/fetched/europepmc 의 세 파일과 그 FETCH_LOG 줄을 그대로 옮김):
+//   시험이 아직 판정되지 않은 데이터(P1 패치 — DEC-0073)에 기대지 않게 (DEC-0091). db 는 저장소의 것을 읽되, 옛 근거가 curated 인 규칙이 필요한 ⑧ 은 시험 안에서 만든다.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -9,7 +10,7 @@ const req = createRequire(import.meta.url);
 const M = req('../model.js'), J = req('../judicial/judicial.js'), LEG = req('../legislative/legislative.js'), ORCH = req('../orchestrator.js'), CL = req('../judicial/claims.js');
 const RAW = readFileSync(new URL('../data/db.json', import.meta.url), 'utf8');
 const BASE = M.normalize(JSON.parse(RAW));
-const FETCHED = ORCH.fetchedTexts(new URL('../data', import.meta.url).pathname);
+const FETCHED = ORCH.fetchedTexts(new URL('./fixtures/claims/data', import.meta.url).pathname);
 const shaOf = (pmid) => Object.entries(FETCHED).find(([, v]) => v.source.id === pmid)[0];
 const AT = '2026-11-23T00:00:00.000Z';
 const row = (o) => ({ stance: 'supports', kind: 'direct', context: { species: '9986' }, by: { agent: 'ai' }, at: '2026-11-23', ...o });
@@ -86,12 +87,15 @@ test('⑦ RULE-0541 덧붙이기만: 줄 덧붙이기 · 철회 한 번은 됨 �
 });
 
 test('⑧ 칸 상태 계산: legacy(옛 근거의 보기) · supported_elsewhere · contested · unsupported(초록에 없음) · 철회 가정 · 보조 칸은 수준을 내리지 않음', () => {
-  const lg = CL.ruleView(BASE, 'D000043/rule/gp_phos');
+  // 시험 재료: 옛 근거가 curated 인 규칙 하나 — 저장소 db 의 판정 상태와 상관없이 (DEC-0091)
+  const CUR = JSON.parse(JSON.stringify(BASE));
+  CUR.senses.D000043.rule.find((x) => x.id === 'gp_phos').evidence = { level: 'curated', sources: [{ db: 'PMID', id: '6245074' }, { db: 'PMID', id: '168880' }] };
+  const lg = CL.ruleView(CUR, 'D000043/rule/gp_phos');
   assert.equal(lg.level, 'legacy'); // curated 를 supported 로 올리지 않는다
   assert.ok(lg.fields.every((f) => f.state === 'legacy'));
   assert.equal(CL.ruleView(BASE, 'D000043/rule/basal').level, 'unsupported'); // asserted 규칙
   const src = (id) => ({ db: 'PMID', id });
-  const db = merge(BASE, [
+  const db = merge(CUR, [
     { target: 'D000043/rule/gp_phos#exists', context: { species: '9606' }, evidence: [row({ source: src('6245074'), locator: { file_sha256: shaOf('6245074'), exact: q6245074 } }), row({ source: src('168880'), context: { species: '9606' }, locator: { file_sha256: shaOf('168880'), exact: 'converted into phosphorylase a by incubation at 20degreesC' } })] },
     { target: 'D000043/rule/gp_phos#via_component', context: { species: '9606' }, evidence: [row({ kind: 'absent', source: src('6245074') }), row({ kind: 'absent', source: src('168880') })] },
     { target: 'D000043/rule/basal#activity', context: { species: '9606' }, evidence: [row({ kind: 'interpretation', source: src('6245074') }), row({ stance: 'contradicts', kind: 'direct', source: src('6245074'), locator: { file_sha256: shaOf('6245074'), exact: q6245074 } })] },
