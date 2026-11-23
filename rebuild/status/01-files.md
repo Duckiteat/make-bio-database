@@ -8,13 +8,13 @@
 |---|---|---|
 | data | 507 | 16885.1 |
 | rebuild | 37 | 6657.1 |
-| docs | 430 | 3418.9 |
+| docs | 431 | 3438.5 |
 | (최상위) | 19 | 1027.3 |
 | tests | 115 | 812.1 |
 | judicial | 37 | 649.5 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
-| workspace | 50 | 235.1 |
+| workspace | 50 | 236.6 |
 | engine | 18 | 224.9 |
 | legislative | 3 | 79.4 |
 | migrations | 13 | 59.8 |

@@ -412,6 +412,7 @@
 | `docs/reports/2026-11-22-plan-115-claim-layer-design.md` | 53.0 | 439 |  | 미분류 |
 | `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
+| `docs/reports/2026-11-23-attack-matrix-independent-review.md` | 19.6 | 97 |  | 미분류 |
 | `docs/reports/2026-11-23-attack-path-matrix.md` | 11.5 | 82 |  | 미분류 |
 | `docs/reports/2026-11-23-derived-artifact-freshness-review.md` | 5.0 | 36 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-106-independent-review.md` | 8.1 | 58 |  | 미분류 |
