@@ -1,0 +1,75 @@
+지문 ca113fa3903b9c594ebba697315cf8a60be6155f178a5eb0a11adf27ff8abd56
+묶음 3 파일 — 자동 0 · 사람 승인 3 · 거부 0
+
+## 사람 승인 필요
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "tests/bundle.test.mjs"
+    +           "tests/bundle.test.mjs",
+    +           ".github/**",
+    +           "rebuild/ci-zone.mjs",
+    +           "judicial/attestation.js",
+    +           "judicial/acceptance.js",
+    +           "judicial/transition_audit.js",
+    +           "tests/registry_policy.test.mjs",
+    +           "tests/registry_policy.test.mjs",
+    +           "tests/acceptance.test.mjs",
+    +           "tests/acceptance.test.mjs",
+    +           "tests/guard-matrix.test.mjs"
+    +           "tests/guard-matrix.test.mjs",
+- docs/textbook/storage-map.json [L4 ledger:storage-map · unassigned] — changed: 27 줄 삭제
+    -       "level": "L2",
+    -       "level": "L2",
+    -       "level": "L2",
+    -       "level": "L2",
+    -       "level": "L2",
+    -       "level": "L2",
+    -       "level": "L2",
+    -       "level": "L2",
+    -         "session:develop"
+    -         "session:develop"
+    -         "session:develop"
+    -         "session:develop"
+    -         "session:develop"
+    -       "area": "code:tools",
+    -       "area": "code:judicial",
+    -       "area": "code:judicial",
+    -       "area": "code:judicial",
+    -         "session:develop",
+    -         "session:develop",
+    -         "session:develop",
+    -         "session:field"
+    -         "session:field"
+    -         "session:field"
+    -       "area": "code:tests",
+    -       "area": "code:tests",
+    -       "area": "code:tests",
+    -       "area": "code:config",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "level": "L6",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +       "area": "guard:gate",
+    +         "human"
+    +         "human"
+    +         "human"
+    +         "human"
+    +         "human"
+    +         "human"
+    +         "human"
+    +         "human"
+- tests/guard-matrix.test.mjs [L2 code:tests · session:develop, session:field] — changed: 1 줄 삭제
+    - const CORE = ['rebuild/gate.mjs', '.claude/settings.json', 'rebuild/rules/modes.json', 'docs/textbook/authority.json', 'judicial/authority.js', 'judicial/approval.js', 'rebuild/bundle.mjs', 'tests/authority.test.mjs', 'tests/approval.test.mjs', 'tests/bundle.test.mjs'];
+    + const CORE = ['rebuild/gate.mjs', '.claude/settings.json', 'rebuild/rules/modes.json', 'docs/textbook/authority.json', 'judicial/authority.js', 'judicial/approval.js', 'rebuild/bundle.mjs', 'tests/authority.test.mjs', 'tests/approval.test.mjs', 'tests/bundle.test.mjs',
+    +   // 도장 등록부 · CI 구역 점검의 판정 코드와 그 시험 — 같은 push 안에서 검사를 끄는 길을 세션 안에서 막는다 (DEC-0087 D3 · 공격 경로 N3)
+    +   '.github/workflows/check.yml', 'rebuild/ci-zone.mjs', 'judicial/attestation.js', 'judicial/acceptance.js', 'judicial/transition_audit.js', 'tests/registry_policy.test.mjs', 'tests/acceptance.test.mjs', 'tests/guard-matrix.test.mjs'];

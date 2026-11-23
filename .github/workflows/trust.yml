@@ -1,0 +1,35 @@
+name: trust
+# 독립 판정 (DEC-0088 Q2 · DEC-0089) — 사람 클릭에 기대지 않는 안전 구조의 첫 겹.
+# pull_request_target: 이 워크플로 · 판정 코드(rebuild/trust-check.mjs) · 그 의존 파일은 모두 main(기준 브랜치)의 것이다.
+#   PR 이 이 파일 · 판정 코드 · model.js 를 바꿔도 이 검사에는 닿지 않는다(C6 · N10). PR 의 코드는 실행하지 않고 git 객체로만 읽는다.
+#   권한은 읽기만 · 비밀 값 없음. 병합 커밋 · 커밋 나누기와 상관없이 갈림점 → head 의 순 변경으로 본다(N9).
+# 힘이 생기려면: main 규칙 세트의 필수 검사에 'independent-judge' 를 건다(사용자 GitHub 설정). 실패한 PR 은 사람이 규칙 우회로만 병합 — 기록이 남는다.
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+jobs:
+  independent-judge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: PR 의 커밋을 git 객체로만 가져옴 (작업 트리는 main 그대로 — PR 코드는 실행하지 않음)
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
+          test "$(git rev-parse refs/remotes/pr/head)" = "$HEAD_SHA"
+      - name: 독립 판정 — main 의 코드로 순 변경 (도장 등록부 정책 · 지키는 자리)
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node rebuild/trust-check.mjs "$BASE" "$HEAD_SHA"

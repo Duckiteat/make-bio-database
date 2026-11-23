@@ -2,6 +2,7 @@
 // 감독 장부 (PLAN-100 · 설계 docs/design/supervisor.md · DEC-0064–0070) — 상위 작업(SUP-…)과 실행 기록(run, SUP-…/r…)의 덧붙이기 장부.
 //   node rebuild/supervise.mjs status [SUP-…]                          지금 상태 (장부를 접은 것 — 읽기만)
 //   node rebuild/supervise.mjs check                                   장부 검사만
+//   node rebuild/supervise.mjs report <SUP-…>                          승인 보고서 12 칸 · 검수 독립성 · 최종 권고 (계산 — 읽기만, PLAN-116 G2–G4)
 //   node rebuild/supervise.mjs evidence <SUP-…>                        승인 판정 · 계산된 상태 (git 읽기만 — 판정은 judicial/supervise_approval.js, PLAN-102)
 //   node rebuild/supervise.mjs <propose|start|handoff|block|cancel> <사건.json> [--dry] [--human <이름>]
 // 계약: load 는 읽기만, check · fold · admit 는 값만 돌려준다(순수). 파일 쓰기는 입법 서기(appendSupervise)만.
@@ -26,7 +27,19 @@ export const LEDGER = CLERK.SUPERVISE;
 export const EVENTS = ['propose', 'start', 'handoff', 'block', 'cancel'];
 export const EXECUTORS = ['claude-code', 'human'];
 export const CAUSES = ['FINDING', 'DATA_GAP', 'DOMAIN_CONFLICT', 'NUMERICAL', 'ENGINE_DEFECT', 'COMPILER_DEFECT', 'EXEC_FAILURE'];
-export const MAX_ATTEMPTS = 3; // 같은 모드의 run — 처음 1 + 재시도 2 (DEC-0065 ⑤)
+// 막힘의 두 종류 (PLAN-116 G2 · DEC-0077): deny = 필수 검증 실패 · 결함 — 고친 뒤 다시 · hold = 근거 부족 · 해석 불확실 · 검증 불일치 · 원인 모름 — 사람 판단
+export const CAUSE_KIND = {
+  FINDING: 'hold', DATA_GAP: 'hold', DOMAIN_CONFLICT: 'hold', NUMERICAL: 'hold',
+  ENGINE_DEFECT: 'deny', COMPILER_DEFECT: 'deny', EXEC_FAILURE: 'deny',
+};
+export const KIND_LABEL = { deny: '거부', hold: '보류' };
+export const MAX_ATTEMPTS = 3;
+// 넘김 · 입력이 가리킨 전환 기록이 다른 상위 작업의 것인가 (DEC-0081 · RULE-0545): 전환 기록에 sup 가 있을 때만 판정 — 없는 옛 기록은 판정하지 않는다
+const LINK_RULE = 'RULE-0545';
+function linkErr(R, seq, sup, where, E) {
+  const own = R && R.transitionSup && R.transitionSup.get(seq);
+  if (own && sup && own !== sup) E.push(`${where} — 전환 기록 #${seq} 은 ${own} 의 것, 이 사건은 ${sup} (${LINK_RULE}: 다른 상위 작업의 기록을 잇지 않는다)`);
+} // 같은 모드의 run — 처음 1 + 재시도 2 (DEC-0065 ⑤)
 const COMMON = ['id', 'at', 'ev', 'sup', 'by', 'why'];
 // 사건마다 받는 칸 — 그 밖의 칸은 거부 (범위 · 승인 칸을 끼워 넣지 못하게)
 export const FIELDS = {
@@ -60,6 +73,7 @@ export function refs(root = ROOT) {
     items: new Set(plans.filter((r) => r.kind === 'item').map((r) => r.id)),
     decisions: new Set(plans.filter((r) => r.kind === 'decision').map((r) => r.id)),
     transitions: new Set(jsonl(join(root, 'workspace/transitions.jsonl')).map((t) => t.seq)),
+    transitionSup: new Map(jsonl(join(root, 'workspace/transitions.jsonl')).filter((t) => t.sup).map((t) => [t.seq, t.sup])), // 선택 칸 sup 가 있는 전환 기록만 (DEC-0081)
     files: (p) => existsSync(join(root, p)),
   };
 }
@@ -99,6 +113,7 @@ function shape(e, R) {
     else {
       for (const k of Object.keys(e.inputs)) if (!['transitions', 'files', 'ids'].includes(k)) E.push(`inputs.${k} — transitions · files · ids 만`);
       for (const s of e.inputs.transitions || []) if (R && !R.transitions.has(s)) E.push(`inputs.transitions ${s} — 전환 기록에 없음`);
+      for (const s of e.inputs.transitions || []) linkErr(R, s, e.sup, `inputs.transitions ${s}`, E);
       for (const p of e.inputs.files || []) if (!str(p) || p.startsWith('/') || p.split('/').includes('..') || (R && !R.files(p))) E.push(`inputs.files '${p}' — 없거나 저장소 상대 경로가 아님`);
       for (const i of e.inputs.ids || []) if (!ID_ANY.test(String(i))) E.push(`inputs.ids '${i}' — T · D · S · O · L · V · A · RULE 번호만`);
     }
@@ -115,6 +130,7 @@ function shape(e, R) {
   if (e.ev === 'handoff') {
     if (!RUN_RE.test(e.run || '')) E.push(`run '${e.run}'`);
     if (!Number.isInteger(e.transition_seq) || (R && !R.transitions.has(e.transition_seq))) E.push(`transition_seq ${e.transition_seq} — 전환 기록에 없음 (넘기기 전에 dbtool transition)`);
+    else linkErr(R, e.transition_seq, e.sup, `transition_seq ${e.transition_seq}`, E);
     if (!isObj(e.verify) || e.verify.finish !== 'pass') E.push("verify.finish 가 'pass' 가 아님 — 끝내기 검사(gate finish <모드> --full)를 통과한 뒤에 넘긴다");
     if (!isObj(e.outputs) || !Array.isArray(e.outputs.commits) || !e.outputs.commits.length || e.outputs.commits.some((c) => !/^[0-9a-f]{7,40}$/.test(c))) E.push('outputs.commits — 커밋 해시 목록');
   }
@@ -169,7 +185,7 @@ export function fold(events, R) {
       if (s.active !== e.run) { errors.push(`${where}: 실행 ${e.run} 는 진행 중이 아님`); continue; }
       if (r.session !== e.by.session) { errors.push(`${where}: 실행 ${e.run} 를 시작한 세션(${r.session})만 그 실행의 사건을 적는다`); continue; }
       r.ended = e.at;
-      if (e.ev === 'handoff') { r.transition_seq = e.transition_seq; r.outputs = e.outputs; r.result = 'handed_off'; s.active = null; }
+      if (e.ev === 'handoff') { r.transition_seq = e.transition_seq; r.outputs = e.outputs; r.verify = e.verify || null; r.result = 'handed_off'; s.active = null; }
       else { r.result = 'blocked'; s.active = null; s.state = 'blocked'; s.blocked = { cause: e.cause, why: e.why, at: e.at }; }
       continue;
     }
@@ -258,6 +274,77 @@ export function evidence(sup, root = ROOT) {
   return { verdict, derived: AP.derive(sup, verdict, onApproved), tip, base, main, files: paths.length };
 }
 
+// ── 검수 독립성 · 승인 보고서의 사실 모으기 (PLAN-116 G3 · G4 — 읽기만, 판정은 judicial/supervise_approval.js) ──
+const RAW_RE = /data\/fetched\/|europepmc|ebi\.ac\.uk|mcp__biodb-fetch__/;
+// 세션 꼬리 → 그 세션의 영수증 사건 (작업 트리에 없으면 main 에서)
+function receiptOf(root, tag) {
+  const d = join(root, 'workspace/receipts');
+  const f = existsSync(d) && readdirSync(d).find((x) => x.endsWith(`-${tag}.jsonl`));
+  let txt = f ? readFileSync(join(d, f), 'utf8') : null;
+  if (!txt) { const m = mainRefOf(root), n = m && (tryGit(root, 'ls-tree', '--name-only', m, 'workspace/receipts/') || '').split('\n').find((x) => x.endsWith(`-${tag}.jsonl`)); txt = n ? tryGit(root, 'show', `${m}:${n}`) : null; }
+  if (!txt) return null;
+  return { name: f ? f.slice(0, -6) : tag, events: txt.split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean) };
+}
+// 영수증에서 원문 자리를 가리킨 도구 호출 — 그 글에 나온 문헌 번호(MED-… · 5–8 자리 수)를 모음 (추정)
+export function rawTouches(events) {
+  const hits = events.filter((e) => e.t === 'tool' && RAW_RE.test(String(e.target || '') + ' ' + String(e.tool || '')));
+  const pmids = new Set();
+  for (const e of hits) for (const m of String(e.target || '').matchAll(/(?:MED-)?\b(\d{5,8})\b/g)) pmids.add(m[1]);
+  return { touches: hits.length, pmids: [...pmids] };
+}
+// 작성 실행이 넘긴 커밋의 패치 파일이 단 문헌 출처 (PMID)
+function citedBy(root, commits) {
+  const out = new Set();
+  for (const c of commits || []) for (const f of (tryGit(root, 'show', '--name-only', '--format=', c) || '').split('\n').filter((x) => /^data\/patches\/.+\.json$/.test(x))) {
+    for (const m of (tryGit(root, 'show', `${c}:${f}`) || '').matchAll(/"db"\s*:\s*"PMID"\s*,\s*"id"\s*:\s*"(\d+)"/g)) out.add(m[1]);
+  }
+  return [...out];
+}
+const modeOf = (mode, root) => { try { return JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8')).gate.modes[mode] || {}; } catch { return {}; } };
+const zoneOf = (mode, root) => modeOf(mode, root).write || [];
+// 모드가 낼 수 있는 도장 종류 (모드표 stamps — DEC-0078). 칸이 없으면 null(정책 없음) — 여러 모드면 하나라도 없으면 null
+const stampsOf = (modes, root) => { const l = modes.map((m) => modeOf(m, root).stamps); return l.every(Array.isArray) ? [...new Set(l.flat())] : null; };
+// 검수 실행마다 독립성 사실 → 판정
+export function independenceOf(sup, root = ROOT) {
+  return sup.runs.filter((r) => r.mode === 'inspect').map((ir) => {
+    const before = sup.runs.slice(0, sup.runs.indexOf(ir)).filter((r) => !['inspect', 'baseline'].includes(r.mode));
+    const rc = receiptOf(root, ir.session);
+    const facts = {
+      author: { modes: [...new Set(before.map((r) => r.mode))], sessions: before.map((r) => r.session), zones: [...new Set(before.flatMap((r) => zoneOf(r.mode, root)))], stamps: stampsOf([...new Set(before.map((r) => r.mode))], root) },
+      inspect: { mode: ir.mode, session: ir.session, zone: zoneOf('inspect', root), stamps: stampsOf(['inspect'], root) },
+      receipt: rc ? rawTouches(rc.events) : null,
+      cited: citedBy(root, before.flatMap((r) => (r.outputs && r.outputs.commits) || [])),
+    };
+    return { run: ir.run, receipt: rc && rc.name, ...AP.independence(facts), cited: facts.cited };
+  });
+}
+// 승인 보고서 (제안서 §8 의 12 칸) — 장부 · 영수증 · git · 전환 기록에서. 쓰지 않는다. Supervisor 가 쓰는 글이 아님 (DEC-0065 ① · DEC-0077)
+export function report(sup, root = ROOT) {
+  const ev = evidence(sup, root), ind = independenceOf(sup, root), last = ind[ind.length - 1] || null;
+  const rec = AP.recommend({ sup, verdict: ev.verdict, kindOf: (c) => CAUSE_KIND[c], indep: last });
+  const trs = jsonl(join(root, 'workspace/transitions.jsonl')), trOf = (n) => trs.find((t) => t.seq === n);
+  const paths = ev.base && ev.tip ? (tryGit(root, 'diff', '--name-only', ev.base, ev.tip) || '').split('\n').filter(Boolean) : [];
+  const area = {}; for (const p of paths) { const k = p.startsWith('data/') ? p.split('/').slice(0, 2).join('/') : p.includes('/') ? p.split('/')[0] + '/' : p; area[k] = (area[k] || 0) + 1; }
+  const touchesCore = paths.filter((p) => /^(judicial|engine|compiler|legislative)\/|^(model|core|vocab)\.js$|^data\/db\.json$/.test(p));
+  const cell = (x) => String(x ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  const attempts = {}; for (const r of sup.runs) attempts[r.mode] = (attempts[r.mode] || 0) + 1;
+  const rows = [
+    ['작업 목적', `${sup.purpose} (계획 ${sup.plan_item} · 결정 ${sup.decision})`],
+    ['실행 내역', sup.runs.map((r) => `${r.run} ${r.mode} · 세션 ${r.session} · ${r.result}${r.transition_seq ? ` · 전환 #${r.transition_seq}` : ''}`).join(' / ') || '없음'],
+    ['변경 내역', ev.base ? `${String(ev.base).slice(0, 7)} → ${String(ev.tip).slice(0, 7)} · 파일 ${paths.length}: ${paths.slice(0, 12).join(' · ')}${paths.length > 12 ? ` … (+${paths.length - 12})` : ''}` : `계산 못 함 — ${ev.note || ''}`],
+    ['근거', last && last.cited.length ? `작성 패치의 문헌 출처 ${last.cited.length}: PMID ${last.cited.join(' · ')}` : '작성 패치의 문헌 출처 없음 (또는 검수 전)'],
+    ['검증', sup.runs.map((r) => `${r.run} finish ${(r.verify && r.verify.finish) || '—'}`).join(' / ')],
+    ['독립 검수', ind.length ? ind.map((x) => `${x.run} ${x.level} — ${Object.entries(x.factors).map(([k, v]) => `${k} ${v.ok === true ? '○' : v.ok === false ? '✗' : '?'}${v.estimated ? '(추정)' : ''}`).join(' · ')}`).join(' / ') : '검수 실행 없음'],
+    ['절차 감사', sup.runs.map((r) => { const t = r.transition_seq && trOf(r.transition_seq); return `${r.run} 문지기 ${r.enforcement && r.enforcement.hooks ? '있음' : '없음'} · 영수증 ${receiptOf(root, r.session) ? '있음' : '없음'}${t ? ` · 전환 #${t.seq} ${t.sup ? (t.sup === sup.id ? '같은 작업(sup)' : `다른 작업 ${t.sup}`) : '연결 확인 못 함(sup 없음)'}` : ''}`; }).join(' / ')],
+    ['실패 이력', [...Object.entries(attempts).filter(([, n]) => n > 1).map(([m, n]) => `${m} 시도 ${n}`), ...sup.runs.filter((r) => r.result === 'blocked').map((r) => `${r.run} 막힘`), ...(sup.blocked ? [`지금 막힘(${KIND_LABEL[CAUSE_KIND[sup.blocked.cause]]}) ${sup.blocked.cause}: ${sup.blocked.why}`] : [])].join(' / ') || '없음'],
+    ['미해결', sup.runs.map((r) => r.transition_seq && trOf(r.transition_seq)).filter(Boolean).slice(-1).flatMap((t) => (t.open || []).map((o) => `#${t.seq}: ${o}`)).join(' / ') || '없음'],
+    ['영향 분석', paths.length ? `${Object.entries(area).map(([k, n]) => `${k} ${n}`).join(' · ')}${touchesCore.length ? ` — ⚠ 판정 · 엔진 · 권위 데이터에 닿음 ${touchesCore.length}` : ''}` : '—'],
+    ['승인 대상', ev.verdict ? `넘긴 커밋 ${String(ev.tip).slice(0, 7)} 의 파일 ${ev.files} 바이트 · 판정 ${ev.verdict.status} — ${ev.verdict.text}` : `계산 못 함 — ${ev.note || ''}`],
+    ['최종 권고', `${rec.code} — ${rec.text}${rec.reasons.length ? ` (${rec.reasons.join(' · ')})` : ''}`],
+  ];
+  return { rows, recommendation: rec, independence: ind, evidence: ev, text: [`# 승인 보고서 — ${sup.id} (계산된 상태 ${ev.derived.state})`, '', '> 생성물 — 감독 장부 · 영수증 · git · 전환 기록에서 계산 (node rebuild/supervise.mjs report). 승인이 아니다 — 병합 = 사람 (DEC-0069). (추정) 칸은 영수증의 명령 글에서 셈.', '', '| 항목 | 내용 |', '|---|---|', ...rows.map(([k, v]) => `| ${k} | ${cell(v)} |`)].join('\n') };
+}
+
 // ── 보기 ──────────────────────────────────────────────────────────────────
 const NEXT = { planned: '첫 실행을 기다림', running: '진행 중', blocked: '막힘 — 사람이 봐야 함', cancelled: '취소됨' };
 export function render(sups, ev = {}) {
@@ -267,7 +354,7 @@ export function render(sups, ev = {}) {
   for (const s of sups) {
     const runs = s.runs.map((r) => `${r.run.split('/')[1]} ${r.mode}·${r.executor}${r.enforcement && !r.enforcement.hooks ? '(문지기 없음)' : ''}·${r.result}`).join(' → ') || '—';
     const d = ev[s.id] && ev[s.id].derived, state = d ? d.state : s.state;
-    const now = d && d.why ? d.why : s.state === 'running' && !s.active ? `다음 실행을 기다림 (steps ${s.steps.join(' → ')})` : s.state === 'blocked' ? `막힘 ${s.blocked.cause}: ${s.blocked.why}` : NEXT[s.state];
+    const now = d && d.why ? d.why : s.state === 'running' && !s.active ? `다음 실행을 기다림 (steps ${s.steps.join(' → ')})` : s.state === 'blocked' ? `막힘(${KIND_LABEL[CAUSE_KIND[s.blocked.cause]] || '?'}) ${s.blocked.cause}: ${s.blocked.why}` : NEXT[s.state];
     L.push(`| ${s.id} | ${s.plan_item} | ${state} | ${cell(runs)} | ${cell(now)} |`);
   }
   L.push('', '승인 대기 · 반영 · 완료는 장부에 적지 않고 증거에서 계산한다 (judicial/supervise_approval.js — 자세히: node rebuild/supervise.mjs evidence <SUP-…>).');
@@ -280,6 +367,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const events = load(), R = refs();
   if (cmd === 'check') { const e = check(events, R); console.log(e.length ? e.join('\n') : `감독 장부 정확 — 사건 ${events.length} · 오류 0`); process.exit(e.length ? 1 : 0); }
   if (cmd === 'status') { const f = fold(events, R); const sel = file ? f.sups.filter((s) => s.id === file) : f.sups; const ev = Object.fromEntries(sel.filter((s) => !['planned', 'blocked', 'cancelled'].includes(s.state) && !s.active).map((s) => [s.id, evidence(s)])); console.log(render(sel, ev)); if (f.errors.length) console.log(`\n장부 오류 ${f.errors.length}:\n- ${f.errors.join('\n- ')}`); process.exit(f.errors.length ? 1 : 0); }
+  if (cmd === 'report') {
+    const f = fold(events, R), s = f.sups.find((x) => x.id === file);
+    if (!s) { console.error(`상위 작업 '${file || ''}' 없음`); process.exit(2); }
+    console.log(report(s).text);
+    process.exit(0);
+  }
   if (cmd === 'evidence') {
     const f = fold(events, R), s = f.sups.find((x) => x.id === file);
     if (!s) { console.error(`상위 작업 '${file || ''}' 없음`); process.exit(2); }
@@ -289,7 +382,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (e.verdict) { console.log(`승인 판정 ${e.verdict.status} — ${e.verdict.text}`); console.log(`  대상: 분기점 ${String(e.base).slice(0, 7)} → 넘긴 커밋 ${String(e.tip).slice(0, 7)} · 파일 ${e.files} · main ${e.main}`); for (const r of e.verdict.reasons) console.log(`  - ${r}`); }
     process.exit(0);
   }
-  if (!EVENTS.includes(cmd) || !file) { console.error(`사용: node rebuild/supervise.mjs status [SUP-…] · check · evidence <SUP-…> · <${EVENTS.join('|')}> <사건.json> [--dry] [--human <이름>]`); process.exit(2); }
+  if (!EVENTS.includes(cmd) || !file) { console.error(`사용: node rebuild/supervise.mjs status [SUP-…] · check · evidence <SUP-…> · report <SUP-…> · <${EVENTS.join('|')}> <사건.json> [--dry] [--human <이름>]`); process.exit(2); }
   let input; try { input = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { console.error(`입력 JSON 을 읽지 못함: ${e.message}`); process.exit(2); }
   const hi = rest.indexOf('--human');
   let who = sessionFromReceipts();

@@ -67,7 +67,7 @@ const NETS = [
   /\btrig_[A-Za-z0-9]+/g,                                               // 예약 작업
 ];
 const NET_MD = /(?<![\w.])(?:S[0-4]|D[0-4]|T|I)\.[a-z_]+\b/g;            // 신뢰 기준 번호 (문서에서만 — 코드에선 속성 접근과 겹침)
-const SKIP = (p) => p.startsWith('data/fetched/') || p.startsWith('rebuild/index/') || /\.(wasm|png|jpg|gz)$/.test(p);
+const SKIP = (p) => p.startsWith('data/fetched/') || p.startsWith('tests/fixtures/claims/data/fetched/') /* 받은 원문을 그대로 옮긴 시험 재료 (DEC-0091) */ || p.startsWith('rebuild/index/') || /\.(wasm|png|jpg|gz)$/.test(p);
 
 export function build() {
   const R = registry(), files = repoFiles();

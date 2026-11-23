@@ -15,6 +15,10 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import * as CLERK from '../legislative/clerk.mjs';
+import { createRequire } from 'node:module';
+const ATT = createRequire(import.meta.url)('../judicial/attestation.js'); // 도장 등록부 정책 (DEC-0078)
+const TA = createRequire(import.meta.url)('../judicial/transition_audit.js'); // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544) — 판정 함수
+import { APPEND_ONLY } from './ci-zone.mjs'; // 같은 목록을 CI 구역 점검과 함께 (ci-zone 은 이 파일의 violations 를 실행 때만 부른다 — 가져오기 고리지만 맨 위에서 쓰지 않음)
 
 const CODE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sha = (x) => createHash('sha256').update(x).digest('hex');
@@ -56,7 +60,7 @@ export function commandBlock(P, mode, role, cmd, args) {
 // 셸 명령 안의 dbtool 호출들 — 이름과 그 뒤 인자 (다음 && ; | 줄바꿈 전까지)
 export const dbtoolCalls = (code) => [...String(code).matchAll(/\bdbtool\.mjs\s+([a-z-]+)([^\n;&|]*)/g)].map((m) => ({ cmd: 'dbtool ' + m[1], args: m[2] }));
 export const MCP_RE = /^mcp__.+__([a-z_]+)$/;
-const RE = { open: /\bgate\.mjs\s+open\b(?:\s+([a-z]+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+([a-z]+))?/, commit: /\bgit\s+(?:-C\s+\S+\s+)?commit\b/, push: /\bgit\s+(?:-C\s+\S+\s+)?push\b/ };
+const RE = { open: /\bgate\.mjs\s+open\b(?:\s+([a-z]+))?/, finish: /\bgate\.mjs\s+finish\b(?:\s+([a-z]+))?/, commit: /\bgit(?:\s+(?:-[Cc]\s*\S+|--(?:git-dir|work-tree|namespace|exec-path|config-env)(?:=|\s+)\S+|--[a-z][\w-]*))*\s+commit\b/, push: /\bgit(?:\s+(?:-[Cc]\s*\S+|--(?:git-dir|work-tree|namespace|exec-path|config-env)(?:=|\s+)\S+|--[a-z][\w-]*))*\s+push\b/ }; // git 의 전역 옵션(-c k=v · -C 경로 · --git-dir …) 뒤도 (DEC-0084 (c))
 // 명령에서 '실행되는 부분' 만 — heredoc 본문과 따옴표 속 글을 지운다. 글로 적은 명령 이름(커밋 메시지·기록 본문)을 실행으로 읽지 않으려고.
 //   따옴표 속에 숨긴 실행(bash -c "…")은 여기서 못 보지만, 그 실행이 바꾼 파일은 도구 뒤 대조(violations)가 잡는다.
 export function codeOf(cmd) {
@@ -118,6 +122,28 @@ export function decidePre(P, st, input, root) {
   }
   return null;
 }
+// 도장 등록부 정책 (DEC-0078 · RULE-0542 — 새 승인 도장의 승인자는 RULE-0546) · 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 ③ · RULE-0544):
+//   바뀐 것이 있으면 HEAD 의 글과 견준다 — CI 구역 점검과 같은 판정 · 같은 목록. 도구 뒤(이 호출이 바꾼 것)와 도구 앞(도구 호출 밖에서 바뀐 것 — DEC-0084 (b))이 같이 쓴다
+function ledgerViolations(P, st, root, changed) {
+  const out = [];
+  if (!st.mode) return out;
+  if (changed.includes('attestations/registry.json')) {
+    let headReg = { stamps: [] }, nowReg;
+    try { headReg = JSON.parse(git(root, 'show', 'HEAD:attestations/registry.json')); } catch { /* 새 등록부 */ }
+    try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
+    const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
+    const rule = sv.some((v) => v.rule === 'RULE-0546') ? 'RULE-0546' : 'RULE-0542', why = sv.map((v) => v.msg).join(' · ');
+    if (sv.length) out.push({ rule, files: ['attestations/registry.json'], why, msg: `도장 등록부 정책 밖 — ${why} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로` });
+  }
+  for (const f of APPEND_ONLY.filter((p) => changed.includes(p))) {
+    let headTxt = '', nowTxt = '';
+    try { headTxt = git(root, 'show', `HEAD:${f}`); } catch { /* 새 파일 */ }
+    try { nowTxt = readFileSync(join(root, f), 'utf8'); } catch { /* 지워짐 */ }
+    const lv = TA.appendOnly(headTxt, nowTxt);
+    if (lv.length) out.push({ rule: 'RULE-0544', files: [f], why: lv[0].msg, msg: `${f}: ${lv[0].msg} — 되돌리거나(git checkout -- ${f}) 서기 명령(dbtool transition · supervise)으로 덧붙이기만` });
+  }
+  return out;
+}
 // 도구가 바꾼 파일 중 이 모드에서 바뀌면 안 되는 것 (셸로 쓴 것도 여기서 잡힌다)
 export const violations = (P, mode, role, changed) => changed.filter((r) => protectedPath(P, r) || !mode || !mayWrite(P, mode, role, r));
 
@@ -126,7 +152,9 @@ const git = (root, ...a) => execFileSync('git', a, { cwd: root, encoding: 'utf8'
 const RECEIPTS = 'workspace/receipts/';
 const files = (root) => git(root, 'ls-files', '-co', '--exclude-standard', '-z').split('\0').filter((f) => f && !f.startsWith(RECEIPTS));
 // 빠른 지문(크기·시각) — 도구 호출 앞뒤 대조용 · 내용 지문 — 끝내기 전 시험과 커밋을 잇는 작업 지문
-export function snapshot(root) { const o = {}; for (const f of files(root)) { try { const s = statSync(join(root, f)); o[f] = [s.size, Math.round(s.mtimeMs)]; } catch { o[f] = null; } } return o; }
+// 도장 등록부 · 덧붙이기만 장부는 내용 지문까지 — 크기와 시각을 보존한 셸 쓰기도 대조에 걸린다 (DEC-0085 D4 · 공격 경로 N1)
+const contentSnap = (f) => f === 'attestations/registry.json' || APPEND_ONLY.includes(f); // 부를 때 읽음 — ci-zone 과의 가져오기 고리 때문에 맨 위에서 쓰지 않는다
+export function snapshot(root) { const o = {}; for (const f of files(root)) { try { const s = statSync(join(root, f)); o[f] = contentSnap(f) ? [s.size, Math.round(s.mtimeMs), sha(readFileSync(join(root, f)))] : [s.size, Math.round(s.mtimeMs)]; } catch { o[f] = null; } } return o; }
 export const diffSnap = (a, b) => [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])].filter((f) => JSON.stringify((a || {})[f] ?? null) !== JSON.stringify((b || {})[f] ?? null)).sort();
 export function workHash(root) { const h = createHash('sha256'); for (const f of files(root).sort()) { h.update(f + '\0'); try { h.update(sha(readFileSync(join(root, f)))); } catch { h.update('deleted'); } h.update('\n'); } return h.digest('hex'); }
 const branchOf = (root) => { try { return git(root, 'rev-parse', '--abbrev-ref', 'HEAD').trim(); } catch { return '?'; } };
@@ -211,7 +239,10 @@ function hook(event, input, root) {
   if (event === 'pre') {
     const snap = snapshot(root), outside = S.snap ? diffSnap(S.snap, snap) : [];
     if (outside.length) add({ t: 'outside', what: '도구 호출 밖에서 바뀜', changed: outside });
-    const why = decidePre(P, st, input, root);
+    // 도구 호출 밖(뒤로 돌린 프로세스 등)에서 바뀐 등록부 · 장부도 같은 판정 — 이 호출을 막고 영수증에 남긴다 (DEC-0084 (b))
+    const lv = ledgerViolations(P, st, root, outside);
+    for (const v of lv) add({ t: 'violation', rule: v.rule, files: v.files, why: `도구 호출 밖에서 — ${v.why}` });
+    const why = decidePre(P, st, input, root) || (lv.length ? { rule: lv[0].rule, msg: `도구 호출 밖에서 바뀜 — ${lv[0].msg}` } : null);
     S.snap = snap; S.pre_at = Date.now();
     if (why) add({ t: 'block', tool: input.tool_name, target: target(input), rule: why.rule, why: why.msg });
     else if (input.tool_name === 'Bash' && st.evs.length && RE.commit.test(codeOf((input.tool_input || {}).command))) { add({ t: 'publish', what: '이 커밋에 영수증을 실음' }); publish(); }
@@ -229,6 +260,8 @@ function hook(event, input, root) {
     S.snap = snap;
     const bad = violations(P, st.mode, st.role, changed);
     let code = 0;
+    // 도장 등록부 정책 · 덧붙이기만 장부 — 이 호출이 바꾼 것 (도구 밖에서 바뀐 것은 다음 호출의 앞에서 같은 판정 — ledgerViolations)
+    for (const v of ledgerViolations(P, st, root, changed)) { add({ t: 'violation', rule: v.rule, files: v.files, why: v.why }); code = say(v.rule, v.msg); }
     if (bad.length) { const why = st.mode ? `${st.role || st.mode} 에서 바뀌면 안 되는 파일` : '모드를 열기 전에 저장소 파일이 바뀜'; add({ t: 'violation', rule: st.mode ? 'RULE-0515' : 'RULE-0514', files: bad, why }); code = say(st.mode ? 'RULE-0515' : 'RULE-0514', `${why}: ${bad.join(' · ')} — 되돌리거나(git checkout -- <파일>) 전환 기록을 남기고 끝낸다`); }
     save();
     return code;

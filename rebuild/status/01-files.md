@@ -6,23 +6,23 @@
 
 | 폴더 | 파일 | KB |
 |---|---|---|
-| data | 483 | 16696.4 |
-| rebuild | 37 | 6487.4 |
-| docs | 403 | 3139.2 |
-| (최상위) | 19 | 1002.9 |
-| tests | 108 | 762.8 |
-| judicial | 36 | 621.1 |
+| data | 507 | 16885.1 |
+| rebuild | 38 | 6681.4 |
+| docs | 438 | 3494.5 |
+| (최상위) | 19 | 1030.1 |
+| tests | 120 | 839.7 |
+| judicial | 37 | 649.5 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
+| workspace | 58 | 265.3 |
 | engine | 18 | 224.9 |
-| workspace | 37 | 155.0 |
-| legislative | 3 | 77.6 |
+| legislative | 3 | 79.4 |
 | migrations | 13 | 59.8 |
 | mcp | 6 | 59.8 |
 | compiler | 8 | 57.8 |
 | schemas | 2 | 40.5 |
-| .claude | 6 | 37.6 |
-| .github | 1 | 2.6 |
+| .claude | 6 | 38.4 |
+| .github | 2 | 5.4 |
 
 ## 큰 파일 25
 
@@ -31,25 +31,25 @@
 | `rebuild/ledger/units.jsonl` | 4681.8 |
 | `data/fetched/consensus/uniprot/P04637.json` | 854.2 |
 | `data/fetched/uniprot/P04637.json` | 854.2 |
-| `data/db.json` | 696.6 |
+| `data/db.json` | 707.2 |
 | `data/log/genesis-db.json` | 608.9 |
-| `rebuild/state/plan-log.jsonl` | 428.0 |
+| `rebuild/state/plan-log.jsonl` | 460.8 |
+| `rebuild/state/plans.jsonl` | 410.9 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `CHANGES.md` | 346.0 |
-| `rebuild/state/plans.jsonl` | 345.4 |
+| `CHANGES.md` | 360.5 |
+| `rebuild/rules/changes.jsonl` | 351.4 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
-| `rebuild/rules/changes.jsonl` | 305.0 |
 | `attestations/registry.json` | 299.0 |
 | `data/fetched/consensus/uniprot/P63092.json` | 281.5 |
 | `data/fetched/uniprot/P63092.json` | 281.5 |
 | `data/fetched/consensus/uniprot/P01911.json` | 253.4 |
 | `data/fetched/uniprot/P01911.json` | 253.4 |
-| `judicial/judicial.js` | 194.0 |
+| `judicial/judicial.js` | 202.0 |
 | `docs/reports/2026-10-23-constraints-tests-inventory.md` | 188.8 |
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
-| `docs/textbook/storage-map.json` | 168.3 |
-| `data/fetched/consensus/uniprot/Q04206.json` | 167.2 |
+| `docs/textbook/storage-map.json` | 175.8 |
+| `rebuild/rules/rules.jsonl` | 173.4 |

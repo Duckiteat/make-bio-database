@@ -79,6 +79,7 @@
     '9606':  { label: '사람', name: 'Homo sapiens', parent: '40674', aliases: ['인간', 'human'] },
     '10090': { label: '생쥐', name: 'Mus musculus', parent: '40674', aliases: ['mouse'] },
     '10116': { label: '집쥐', name: 'Rattus norvegicus', parent: '40674', aliases: ['rat'] },
+    '9986':  { label: '집토끼', name: 'Oryctolagus cuniculus', parent: '40674', aliases: ['rabbit', '토끼'] }, // 글리코겐 인산화효소 고전 생화학 문헌의 종 (PLAN-115 주장 층 — 근거 줄 맥락)
     '4932':  { label: '출아효모', name: 'Saccharomyces cerevisiae', parent: '4751', aliases: ['효모', 'yeast'] },
     '562':   { label: '대장균', name: 'Escherichia coli', parent: '2', aliases: ['E. coli'] },
   },
@@ -614,6 +615,55 @@
   obsUses: {
     estimation: { label: '상수 추정용 — kinetics.from 이 참조할 수 있음, 판정에 쓰지 않음' },
     validation: { label: '검증용 — 사법부 관찰 비교만, 상수 추정에 쓰지 않음' },
+  },
+
+  // ===== 주장 층 (PLAN-115 · DEC-0075 · SCHEMA §주장) — 칸 단위 근거 =====
+  //   주장(claims.C…) 하나 = 규칙의 칸 하나(target 'D…/rule/키#칸') + 근거 줄 여럿. 생물 술어는 새로 두지 않는다 — 규칙 칸이 이미 말한다.
+  //   칸 상태 · 규칙 계산 수준은 저장하지 않고 judicial/claims.js 가 계산한다.
+  claimStances: {
+    supports:    { label: '지지 — 근거가 이 칸을 말함' },
+    contradicts: { label: '반박 — 근거가 반대를 말함 (지우지 않고 다툼으로 남김)' },
+    qualifies:   { label: '한정 — 조건 · 맥락을 좁힘 (지지도 반박도 아님)' },
+  },
+  claimEvidenceKinds: {
+    direct:         { label: '직접 측정 · 관찰 — 인용 위치(locator.exact) 필수', locator: true },
+    background:     { label: '배경 문장 · 관례 — 원문의 서론 · 일반 진술' },
+    interpretation: { label: '해석 — 저자 또는 작성자의 추론' },
+    absent:         { label: '초록에 없음 — 확인했으나 이 칸을 말하지 않음 (근거 없음과 다름)' },
+  },
+  claimAgents: {
+    human: { label: '사람이 적음' },
+    ai:    { label: 'AI 세션이 적음 — 후보 (기준이 아님, RULE-0494)' },
+    tool:  { label: '도구가 적음' },
+  },
+  locatorParts: {
+    abstract: { label: '초록' }, title: { label: '제목' }, full_text: { label: '본문' }, figure: { label: '그림' },
+    table: { label: '표' }, supplement: { label: '보충 자료' }, db_record: { label: '데이터베이스 기록' },
+  },
+  contextSystems: {
+    in_vivo:     { label: '생체 안 (개체)' },
+    ex_vivo:     { label: '생체 밖 조직 · 분리 세포' },
+    cell_free:   { label: '무세포 (균질액 · 분획)' },
+    purified:    { label: '정제 단백질 (시험관)' },
+    recombinant: { label: '재조합 단백질' },
+  },
+  // 규칙 종류마다 주장할 수 있는 칸 — core 는 규칙의 계산 수준을 정하는 칸(가장 약한 것), aux 는 표시만 (DEC-0075 Q2: via_component 는 보조)
+  //   '*' = 규칙 전체(옛 근거의 보기) · 'regulators:D…' = 그 조절자 하나
+  claimFields: {
+    transition:  { core: ['exists', 'effect.target', 'effect.site', 'effect.change'], aux: ['via_component', 'via_site', 'with', 'regulators', 'agent'] },
+    meaning:     { core: ['activity'], aux: [] },
+    supply:      { core: ['exists'], aux: ['with'] },
+    degradation: { core: ['exists'], aux: [] },
+    modulation:  { core: ['exists'], aux: [] },
+  },
+  claimStates: {
+    supported:           { label: '지지됨 — 철회되지 않은 직접 지지 줄, 반박 없음 (주장 맥락에서)', rank: 5 },
+    supported_elsewhere: { label: '다른 맥락에서만 지지됨 — 이전 판정 전에는 이 맥락의 지지가 아님', rank: 4 },
+    inferred:            { label: '추론 — 지지 줄이 배경 · 해석뿐', rank: 3 },
+    legacy:              { label: '옛 근거 — 규칙 전체 evidence 의 보기 (칸 단위 확인 전)', rank: 2 },
+    contested:           { label: '다툼 — 지지와 반박이 함께 (합치지 않음)', rank: 1 },
+    unsupported:         { label: '근거 없음 — 줄 없음 · 초록에 없음뿐 · 지지 줄이 모두 철회', rank: 0 },
+    refuted:             { label: '반박됨 — 반박 줄만', rank: 0 },
   },
 
   // ===== 근거 수준 =====

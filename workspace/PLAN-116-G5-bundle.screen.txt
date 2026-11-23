@@ -1,0 +1,31 @@
+지문 237599a508e9de0a33c0fa0ca2e09dedb0ba91237cf7458c4d47f453c26c739d
+묶음 2 파일 — 자동 0 · 사람 승인 2 · 거부 0
+
+## 사람 승인 필요
+- rebuild/gate.mjs [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    + const TA = createRequire(import.meta.url)('../judicial/transition_audit.js'); // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544) — 판정 함수
+    + import { APPEND_ONLY } from './ci-zone.mjs'; // 같은 목록을 CI 구역 점검과 함께 (ci-zone 은 이 파일의 violations 를 실행 때만 부른다 — 가져오기 고리지만 맨 위에서 쓰지 않음)
+    +     }
+    +     // 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 ③ · RULE-0544): 이 호출이 바꿨으면 HEAD 의 글과 견준다 — CI 구역 점검과 같은 판정 · 같은 목록
+    +     if (st.mode) for (const f of APPEND_ONLY.filter((p) => changed.includes(p))) {
+    +       let headTxt = '', nowTxt = '';
+    +       try { headTxt = git(root, 'show', `HEAD:${f}`); } catch { /* 새 파일 */ }
+    +       try { nowTxt = readFileSync(join(root, f), 'utf8'); } catch { /* 지워짐 */ }
+    +       const lv = TA.appendOnly(headTxt, nowTxt);
+    +       if (lv.length) { add({ t: 'violation', rule: 'RULE-0544', files: [f], why: lv[0].msg }); code = say('RULE-0544', `${f}: ${lv[0].msg} — 되돌리거나(git checkout -- ${f}) 서기 명령(dbtool transition · supervise)으로 덧붙이기만`); }
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — added_only
+    + 
+    + });
+    +     const d = repo();
+    +     try {
+    +     } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+    +   };
+    + test('㉑ 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544): 셸로 기존 줄을 고치면 막힘 · 덧붙이기는 됨', () => {
+    +   const L1 = '{"seq":1,"why":"검수 끝"}\n';
+    +   const one = (next) => {
+    +       mkdirSync(join(d, 'workspace'), { recursive: true }); writeFileSync(join(d, 'workspace/transitions.jsonl'), L1);
+    +       execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'tr'], { cwd: d });
+    +       tool(d, 'Bash', { command: 'node rebuild/gate.mjs open author' });
+    +       return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'workspace/transitions.jsonl'), next));
+    +   const bad = one('{"seq":1,"why":"검수 안 함"}\n'); assert.equal(bad.status, 2); assert.match(bad.stderr, /\[RULE-0544\]/);
+    +   assert.equal(one(L1 + '{"seq":2,"why":"다음"}\n').status, 0, '덧붙이기');

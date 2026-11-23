@@ -5,7 +5,7 @@
 //   ④ 영수증 사슬: 고치거나 지우면 쓰는 도구가 막힌다
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, mkdirSync, rmSync, readdirSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, readFileSync, existsSync, mkdirSync, rmSync, readdirSync, statSync, utimesSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { spawnSync, execFileSync } from 'node:child_process';
@@ -72,7 +72,9 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   // 명령 장부 하나로 (재건 9 단계): 쓰는 명령은 장부의 모드에서만 · 어느 인자에서 쓰는지(writes_on)까지
   assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs merge --dry p.json' }), null, 'merge --dry 는 읽기');
   assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --detect' }), null, '--detect 는 읽기');
-  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --write' }), /^RULE-0515 /);
+  assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --write' }), null, '사용자 결정 DEC-0076: 생성물 재생성(--write) 하나만 디벨롭도');
+  assert.match(pre({ mode: 'baseline' }, 'Bash', { command: 'node dbtool.mjs limitations --write' }), /^RULE-0515 /, '그 밖 모드는 그대로 막힘');
+  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs trend --write' }), /^RULE-0515 /, '쓰는 갈래(writes_on)에서만 막는 명령은 그대로');
   assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs attest' }), null, 'attest 는 재검증만 — 쓰지 않는다');
   assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs accept O000019 --use validation --reason x' }), /inspect 모드의 일/, '승인 도장은 점검에서만');
   assert.equal(pre({ mode: 'inspect' }, 'Bash', { command: 'node dbtool.mjs accept O000019 --use validation --reason x' }), null);
@@ -165,5 +167,75 @@ test('④ 영수증은 문지기만: 고치거나 지우면 쓰는 도구가 막
     rmSync(f); // 통째로 지워도
     const b = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node rebuild/gate.mjs open author' } });
     assert.equal(b.status, 2); assert.match(b.stderr, /지워지거나 고쳐짐/);
+  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+});
+
+test('⑳ 도장 등록부 정책 (DEC-0078 · RULE-0542): author 가 셸로 승인 도장을 더하면 막힘 · inspect 는 됨 · 승인 도장 지우기는 inspect 도 막힘', () => {
+  const st = (claim, sense) => ({ subject: { sense, field: claim === 'accept' ? 'accept' : 'xref', ns: claim === 'accept' ? 'evidence' : 'ChEBI', value: sense }, claim, issued_at: '2026-01-01', by: 'integrator', reason: 'x' });
+  const REG = { stamps: [st('verified', 'D900001'), st('accept', 'O900001')] };
+  const one = (mode, next) => {
+    const d = repo();
+    try {
+      mkdirSync(join(d, 'attestations')); writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG));
+      execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'reg'], { cwd: d });
+      tool(d, 'Bash', { command: `node rebuild/gate.mjs open ${mode}` });
+      return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(next)));
+    } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+  };
+  const forged = { stamps: [...REG.stamps, st('accept', 'O900002')] };
+  const a = one('author', forged); assert.equal(a.status, 2); assert.match(a.stderr, /\[RULE-0542\]/);
+  const h = one('inspect', { stamps: [...REG.stamps, { ...st('accept', 'O900003'), by: 'human' }] }); assert.equal(h.status, 2); assert.match(h.stderr, /\[RULE-0546\]/, '셸 by: human 승인 도장의 꼬리표 (DEC-0084 (d))');
+  assert.equal(one('inspect', forged).status, 0, 'inspect 의 승인 도장');
+  const i = one('inspect', { stamps: [REG.stamps[0]] }); assert.equal(i.status, 2); assert.match(i.stderr, /승인 도장은 추가만/);
+  assert.equal(one('author', { stamps: [{ ...REG.stamps[0], issued_at: '2026-02-01' }, REG.stamps[1]] }).status, 0, 'author 의 신원 도장 갈아 끼우기');
+});
+
+test('㉑ 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544): 셸로 기존 줄을 고치면 막힘 · 덧붙이기는 됨', () => {
+  const L1 = '{"seq":1,"why":"검수 끝"}\n';
+  const one = (next) => {
+    const d = repo();
+    try {
+      mkdirSync(join(d, 'workspace'), { recursive: true }); writeFileSync(join(d, 'workspace/transitions.jsonl'), L1);
+      execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'tr'], { cwd: d });
+      tool(d, 'Bash', { command: 'node rebuild/gate.mjs open author' });
+      return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'workspace/transitions.jsonl'), next));
+    } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+  };
+  const bad = one('{"seq":1,"why":"검수 안 함"}\n'); assert.equal(bad.status, 2); assert.match(bad.stderr, /\[RULE-0544\]/);
+  assert.equal(one(L1 + '{"seq":2,"why":"다음"}\n').status, 0, '덧붙이기');
+});
+
+test('㉒ 도구 호출 밖에서 바뀐 등록부 · 장부도 같은 판정 (DEC-0084 (b)) · 크기 · 시각 보존 쓰기도 내용 지문으로 (DEC-0085 D4) · git 전역 옵션 뒤의 commit 도 커밋으로 봄 (DEC-0084 (c))', () => {
+  const st = (claim, sense, by) => ({ subject: { sense, field: 'accept', ns: 'evidence', value: sense }, claim, issued_at: '2026-01-01', by, reason: 'x' });
+  const REG = { stamps: [st('accept', 'O900001', 'integrator')] };
+  const d = repo();
+  try {
+    mkdirSync(join(d, 'attestations')); writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG));
+    mkdirSync(join(d, 'workspace'), { recursive: true }); writeFileSync(join(d, 'workspace/transitions.jsonl'), '{"seq":1}\n');
+    execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'reg'], { cwd: d });
+    assert.equal(tool(d, 'Bash', { command: 'node rebuild/gate.mjs open inspect' }).status, 0);
+    // 도구 밖(뒤로 돌린 프로세스)에서 by: human 승인 도장 — 다음 호출의 앞에서 막힘
+    writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify({ stamps: [...REG.stamps, st('accept', 'O900002', 'human')] }));
+    const r = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    assert.equal(r.status, 2); assert.match(r.stderr, /\[RULE-0546\]/); assert.match(r.stderr, /도구 호출 밖/);
+    assert.ok(receipt(d).some((e) => e.t === 'violation' && e.rule === 'RULE-0546'), '영수증에 남음');
+    // 도구 밖에서 전환 기록의 기존 줄을 고침
+    writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG)); hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    writeFileSync(join(d, 'workspace/transitions.jsonl'), '{"seq":1,"x":2}\n');
+    const r2 = hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    assert.equal(r2.status, 2); assert.match(r2.stderr, /\[RULE-0544\]/);
+    // 정상: 도구 밖 변경이 정책 안이면 막지 않음
+    writeFileSync(join(d, 'workspace/transitions.jsonl'), '{"seq":1}\n{"seq":2}\n');
+    assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } }).status, 0, '덧붙이기는 됨');
+    // 크기 · 시각을 보존한 셸 쓰기도 내용 지문으로 잡힘 (DEC-0085 D4 · N1)
+    const f = join(d, 'attestations/registry.json'); writeFileSync(f, JSON.stringify(REG)); hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    const s0 = statSync(f), same = JSON.stringify({ stamps: [{ ...REG.stamps[0], by: 'human', reason: 'x_____' }] });
+    assert.equal(same.length, JSON.stringify(REG).length, '같은 크기');
+    const sn = tool(d, 'Bash', { command: 'node -e 1' }, () => { writeFileSync(f, same); utimesSync(f, s0.atime, s0.mtime); });
+    assert.equal(sn.status, 2, '크기 · 시각 보존 쓰기'); assert.match(sn.stderr, /\[RULE-0546\]/);
+    writeFileSync(f, JSON.stringify(REG)); hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'node -e 1' } });
+    // git 전역 옵션 뒤의 commit — 끝내기 전 시험이 없으니 막힘
+    for (const c of ['git -c user.name=x commit -m y', 'git --git-dir=.git commit -m y', 'git -C . -c a=b commit -qm y', 'git --no-pager push']) assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: c } }).status, 2, c);
+    assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'git log --grep commit' } }).status, 0, '커밋이 아닌 git 명령');
   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
 });

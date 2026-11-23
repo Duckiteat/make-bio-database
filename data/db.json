@@ -4288,7 +4288,30 @@
           ],
           "examples": [],
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1111/j.1432-1033.1975.tb03909.x",
+                "citation": "Cohen, Watson & Dixon, 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "164350",
+                "citation": "Cohen, Watson & Dixon, 1975"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(19)85694-6",
+                "citation": "Chrisman & Exton, 1980"
+              },
+              {
+                "db": "PMID",
+                "id": "6245074",
+                "citation": "Chrisman & Exton, 1980"
+              }
+            ],
+            "note": "출처별 맥락 — Cohen 1975: 토끼 골격근 정제 효소, PKA 가 α·β 소단위를 인산화(직접). Chrisman & Exton 1980: 토끼 간 글리코겐 침전물, PKA 촉매 소단위가 활성화를 높이고 분리한 간 인산화효소 키네이스가 골격근 인산화효소 b 를 인산화·활성화(직접). \"인산화되어 활성화\" 의 연결(인산화 → 활성)은 두 초록을 합친 해석. 사람 자료 없음(토끼)."
           },
           "by": "Claude",
           "at": "2026-10-08"
@@ -4315,7 +4338,20 @@
           },
           "activity": "active",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(19)85694-6",
+                "citation": "Chrisman & Exton, 1980"
+              },
+              {
+                "db": "PMID",
+                "id": "6245074",
+                "citation": "Chrisman & Exton, 1980"
+              }
+            ],
+            "note": "토끼 간 글리코겐 침전물 — PKA 촉매 소단위 첨가 시 인산화효소 키네이스 활성 2–3 배(직접 측정). 활성 증가가 인산화 때문이라는 것은 해석. 비인산화형이 완전히 비활성(basal)인지는 이 초록이 말하지 않음 — basal 은 asserted 로 둠."
           }
         },
         {
@@ -4354,7 +4390,30 @@
           "regulators": [],
           "text": "활성 인산화효소 키네이스(γ 촉매 소단위)가 글리코겐 인산화효소 b형을 인산화해 활성 a형으로 바꾼다.",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(19)85694-6",
+                "citation": "Chrisman & Exton, 1980"
+              },
+              {
+                "db": "PMID",
+                "id": "6245074",
+                "citation": "Chrisman & Exton, 1980"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1042/bj1470023",
+                "citation": "Lederer et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "168880",
+                "citation": "Lederer et al., 1975"
+              }
+            ],
+            "note": "출처별 맥락 — Chrisman & Exton 1980: 토끼 간에서 분리한 인산화효소 키네이스가 토끼 골격근 인산화효소 b 를 인산화·활성화(직접, MgATP 필요). Lederer et al. 1975: 사람 적혈구 용혈액의 인산화효소 키네이스가 ATP·Mg²⁺ 존재에서 첨가한 근육 인산화효소 b 를 활성화(직접, 측정법). 두 출처 모두 기질은 근육형 효소 — 간형 기질에 대한 직접 측정 아님. γ 촉매 소단위가 한다는 귀속(via_component)과 Ser14 잔기는 이 초록들이 말하지 않음(설계 문서 Q6)."
           }
         }
       ],
@@ -4404,7 +4463,30 @@
           ],
           "examples": [],
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1152/ajpendo.00425.2001",
+                "citation": "Ercan-Fang et al., 2002"
+              },
+              {
+                "db": "PMID",
+                "id": "12067839",
+                "citation": "Ercan-Fang et al., 2002"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(05)00006-7",
+                "citation": "Rath et al., 2000"
+              },
+              {
+                "db": "PMID",
+                "id": "10949035",
+                "citation": "Rath et al., 2000"
+              }
+            ],
+            "note": "출처별 맥락 — Ercan-Fang et al. 2002: 재조합 사람 간 글리코겐 인산화효소 a, 시험관 — 직접 측정: 무기 인산 Km 5 mM(쥐 효소의 약 5 배). Rath et al. 2000: 사람 간 효소 a 의 결정 구조 — \"글리코겐을 포도당-1-인산으로 분해\" 는 초록의 배경 문장(이 연구의 측정 아님)."
           },
           "by": "Claude",
           "at": "2026-10-08"
@@ -4456,7 +4538,30 @@
           },
           "activity": "active",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1042/bj1590689",
+                "citation": "Lederer & Stalmans, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "1008826",
+                "citation": "Lederer & Stalmans, 1976"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1042/bj1470023",
+                "citation": "Lederer et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "168880",
+                "citation": "Lederer et al., 1975"
+              }
+            ],
+            "note": "출처별 맥락 — Lederer & Stalmans 1976: 사람 간에서 정제한 a·b 두 형, 합성 방향 측정 — b 형은 V 가 낮고 포도당-1-인산 친화도가 낮음(직접). Lederer et al. 1975: 사람 적혈구 용혈액 — b 형은 AMP 가 있어도 a 형보다 약 10 배 덜 활성(직접). a 형 = 인산화형이라는 대응은 이 초록들이 직접 보이지 않음(관례)."
           }
         },
         {
@@ -4466,7 +4571,30 @@
           "when": {},
           "activity": "partial",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1042/bj1590689",
+                "citation": "Lederer & Stalmans, 1976"
+              },
+              {
+                "db": "PMID",
+                "id": "1008826",
+                "citation": "Lederer & Stalmans, 1976"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1042/bj1470023",
+                "citation": "Lederer et al., 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "168880",
+                "citation": "Lederer et al., 1975"
+              }
+            ],
+            "note": "사람 간(1976) · 사람 적혈구(1975) — b 형은 낮은 V 로 부분 활성(직접). 사람 간 b 형은 AMP 가 V 를 a 형만큼 올림(1976) — AMP 경로는 이 단계 모형에 없음."
           }
         },
         {
@@ -4500,7 +4628,30 @@
           ],
           "text": "a형 글리코겐 인산화효소가 글리코겐 말단의 포도당 잔기를 무기 인산으로 떼어 포도당-1-인산을 만든다. 효소 자신은 변하지 않고 반복 작용한다.",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1152/ajpendo.00425.2001",
+                "citation": "Ercan-Fang et al., 2002"
+              },
+              {
+                "db": "PMID",
+                "id": "12067839",
+                "citation": "Ercan-Fang et al., 2002"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s1097-2765(05)00006-7",
+                "citation": "Rath et al., 2000"
+              },
+              {
+                "db": "PMID",
+                "id": "10949035",
+                "citation": "Rath et al., 2000"
+              }
+            ],
+            "note": "출처별 맥락 — Ercan-Fang et al. 2002: 재조합 사람 간 효소 a, 무기 인산 1·5 mM, 세포 내 추정 농도의 효과 물질 — 직접 측정: 포도당이 활성을 억제(쥐 효소보다 약 2 배 강함), AMP 는 촉진, ADP·ATP 는 억제. Rath et al. 2000: 생성물(포도당-1-인산)은 배경 문장. 조절자 note 의 \"촉매 자리 결합 · 탈인산화되기 쉬운 구조\" 는 이 초록들이 말하지 않음(해석)."
           }
         }
       ],
@@ -4945,7 +5096,20 @@
           ],
           "examples": [],
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1111/j.1432-1033.1986.tb09554.x",
+                "citation": "Alemany et al., 1986"
+              },
+              {
+                "db": "PMID",
+                "id": "3007140",
+                "citation": "Alemany et al., 1986"
+              }
+            ],
+            "note": "쥐 간 글리코겐·마이크로솜 분획(기질은 토끼 골격근 효소) — 직접 측정: 억제제-1·-2 감수성과 트립신 반응이 PP1 촉매 소단위와 같고, 이 효소가 글리코겐 합성효소·인산화효소 탈인산화 활성 거의 전부를 맡음(결론은 저자 해석 포함). 인산화효소 키네이스 β 소단위도 탈인산화. \"세린·트레오닌\" 일반 특이성은 이 초록이 말하지 않음."
           },
           "by": "Claude",
           "at": "2026-10-08"
@@ -4992,7 +5156,40 @@
           ],
           "text": "PP1 이 a형 글리코겐 인산화효소에서 인산기를 떼어 b형으로 되돌린다.",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1111/j.1432-1033.1986.tb09554.x",
+                "citation": "Alemany et al., 1986"
+              },
+              {
+                "db": "PMID",
+                "id": "3007140",
+                "citation": "Alemany et al., 1986"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1042/0264-6021:3410545",
+                "citation": "Wang, 1999"
+              },
+              {
+                "db": "PMID",
+                "id": "10417316",
+                "citation": "Wang, 1999"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1139/o81-054",
+                "citation": "Kasvinsky, Fletterick & Madsen, 1981"
+              },
+              {
+                "db": "PMID",
+                "id": "6794883",
+                "citation": "Kasvinsky, Fletterick & Madsen, 1981"
+              }
+            ],
+            "note": "출처별 맥락 — Alemany et al. 1986: 쥐 간 분획의 인산화효소 탈인산화 활성 = PP1 형(직접 측정 + 해석). Wang 1999: 시험관, PP1 이 인산화효소 a 를 탈인산화(직접, 종은 초록에 없음). Kasvinsky, Fletterick & Madsen 1981: 쥐 분리 간세포 — 포도당이 인산화효소 a → b 전환을 촉진(직접, 카페인과 함께 1.7 배). 포도당 효과를 맡는 효소가 PP1 인지는 1981 초록이 이름하지 않음(해석). 사람 자료 없음."
           }
         }
       ],
@@ -5368,7 +5565,30 @@
           "regulators": [],
           "text": "풀려난 PKA 촉매 소단위가 인산화효소 키네이스의 조절 소단위를 인산화해 활성화한다.",
           "evidence": {
-            "level": "asserted"
+            "level": "curated",
+            "sources": [
+              {
+                "db": "DOI",
+                "id": "10.1111/j.1432-1033.1975.tb03909.x",
+                "citation": "Cohen, Watson & Dixon, 1975"
+              },
+              {
+                "db": "PMID",
+                "id": "164350",
+                "citation": "Cohen, Watson & Dixon, 1975"
+              },
+              {
+                "db": "DOI",
+                "id": "10.1016/s0021-9258(19)85694-6",
+                "citation": "Chrisman & Exton, 1980"
+              },
+              {
+                "db": "PMID",
+                "id": "6245074",
+                "citation": "Chrisman & Exton, 1980"
+              }
+            ],
+            "note": "출처별 맥락 — Cohen, Watson & Dixon 1975: 토끼 골격근, 정제 효소, 시험관 — 직접 측정: cAMP 의존 단백질 키네이스가 인산화효소 키네이스의 α·β 소단위 세린 하나씩(효소 200 여 세린 중 둘)을 인산화(³²P 펩타이드 서열). Chrisman & Exton 1980: 토끼 간 글리코겐 침전물(무세포) — 직접 측정: PKA 촉매 소단위가 간 인산화효소 키네이스에 의한 활성화를 2–3 배 높임. 간 효소의 인산화 자체는 이 초록이 보이지 않음(해석). 사람 자료 없음 — 종이 다름(토끼)."
           }
         }
       ],
