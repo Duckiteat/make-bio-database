@@ -53,3 +53,50 @@ export function derive(sup, verdict, baselineOnApproved = {}) {
   const ok = sup.runs.find((r) => r.mode === 'baseline' && r.result === 'handed_off' && baselineOnApproved[r.run]);
   return ok ? { state: 'completed', why: `승인 + baseline ${ok.run} 이 승인 커밋 위에서 끝남` } : { state: 'applying', why: '승인 — baseline 확인 대기 (승인 커밋 위에서 시작한 baseline 실행)' };
 }
+
+// ── 검수 독립성 (PLAN-116 G3 · DEC-0077 · 제안서 §7.2 다섯 요소) — 사실은 감독 도구가 모아 넘긴다(장부 · 모드 표 · 영수증 · git) ──
+//   facts = { author: { modes:[…], sessions:[…], zones:[glob…] }, inspect: { mode, session, zone:[glob…] },
+//             receipt: null | { touches: n(원문 자리를 가리킨 도구 호출 수), pmids:[…](그 호출의 글에 나온 문헌 번호) }, cited:[PMID…](작성 패치가 단 출처) }
+//   요소마다 { ok: true | false | null(셀 수 없음), why, estimated? } — 정보 접근 · 판단 근거는 영수증의 명령 글에서 추정(estimated: true): 실제로 읽었는지는 사람이 본다.
+//   수준: 다섯 다 true → full · 하나라도 false → limited · false 없이 null 이 있음 → unknown
+export const SHARED_ZONE = ['docs/reports/**']; // 보고서 자리는 모든 검토가 쓴다 — 권한 겹침으로 치지 않음
+export function independence(f) {
+  const a = f.author || {}, i = f.inspect || {}, out = {};
+  out.role = { ok: i.mode === 'inspect' && !(a.modes || []).includes('inspect'), why: `작성 ${(a.modes || []).join('·') || '없음'} · 검수 ${i.mode || '없음'}` };
+  const overlap = (i.zone || []).filter((z) => (a.zones || []).includes(z) && !SHARED_ZONE.includes(z));
+  out.authority = { ok: overlap.length === 0, why: overlap.length ? `검수 모드가 작성 모드와 같은 자리에 쓸 수 있음: ${overlap.join(' · ')}` : '검수 모드의 쓰기 자리가 작성 모드와 겹치지 않음 (보고서 자리 빼고)' };
+  out.execution = { ok: !!i.session && !(a.sessions || []).includes(i.session), why: `검수 세션 ${i.session || '?'} · 작성 세션 ${(a.sessions || []).join('·') || '?'}` };
+  if (!f.receipt) {
+    out.info_access = { ok: null, estimated: true, why: '검수 세션의 영수증이 없음 — 무엇을 읽었는지 셀 수 없음' };
+    out.basis = { ok: null, estimated: true, why: '영수증 없음' };
+  } else {
+    out.info_access = { ok: f.receipt.touches > 0, estimated: true, why: f.receipt.touches > 0 ? `원문 자리(data/fetched · 원천 응답)를 가리킨 도구 호출 ${f.receipt.touches}` : '원문 자리를 가리킨 도구 호출 없음 — 작성자의 글만 읽었을 수 있음' };
+    const cited = [...new Set(f.cited || [])], seen = new Set(f.receipt.pmids || []), hit = cited.filter((p) => seen.has(p));
+    out.basis = !cited.length ? { ok: null, estimated: true, why: '작성 패치에 문헌 출처가 없음 — 판단 근거를 셀 수 없음' }
+      : { ok: hit.length === cited.length, estimated: true, why: `작성 패치의 출처 ${cited.length} 중 검수 영수증이 원문을 가리킨 것 ${hit.length}${hit.length < cited.length ? ` (빠짐 ${cited.filter((p) => !seen.has(p)).join('·')})` : ''}` };
+  }
+  const vals = Object.values(out).map((x) => x.ok);
+  return { level: vals.every((v) => v === true) ? 'full' : vals.includes(false) ? 'limited' : 'unknown', factors: out };
+}
+
+// ── 최종 권고 (PLAN-116 G4 · DEC-0077) — 규칙으로 계산한다(AI 의 문장이 아님). 승인이 아니다: 병합 = 사람 ──
+//   sup: 접은 상위 작업 · verdict: judge() 또는 null · kindOf: 원인 태그 → 'deny' | 'hold' · indep: independence() 또는 null
+export function recommend({ sup, verdict, kindOf, indep }) {
+  const r = (code, text, reasons = []) => ({ code, text, reasons });
+  if (sup.state === 'cancelled') return r('cancelled', '취소됨');
+  if (sup.state === 'blocked' && sup.blocked) {
+    const k = kindOf(sup.blocked.cause);
+    return k === 'deny' ? r('deny', `병합하지 않음 (거부) — ${sup.blocked.cause}: 필수 검증 실패 · 결함`, [sup.blocked.why]) : r('hold', `보류 — ${sup.blocked.cause}: 사람 판단 필요`, [sup.blocked.why]);
+  }
+  if (sup.active) return r('running', `진행 중 — ${sup.active}`);
+  const failed = sup.runs.filter((x) => x.verify && x.verify.finish && x.verify.finish !== 'pass');
+  if (failed.length) return r('deny', '병합하지 않음 (거부) — 끝내기 시험이 통과하지 않은 실행', failed.map((x) => x.run));
+  if (sup.steps.includes('inspect') && !sup.runs.some((x) => x.mode === 'inspect' && x.result === 'handed_off')) return r('hold', '보류 — 독립 검수 전');
+  if (indep && indep.level === 'limited') return r('hold', '보류 — 독립성 제한적', Object.entries(indep.factors).filter(([, v]) => v.ok === false).map(([k, v]) => `${k}: ${v.why}`));
+  if (!verdict) return r('hold', '보류 — 승인 대상을 계산하지 못함');
+  if (verdict.status === 'approved') return r('approved', '이미 승인됨 — 사람이 병합');
+  if (verdict.status === 'merged_ai' || verdict.status === 'merged_unguarded') return r('hold', `확인 필요 — ${verdict.text}`);
+  if (verdict.status === 'empty') return r('hold', '보류 — 승인 대상 파일 없음');
+  const caveat = indep && indep.level === 'unknown' ? ' (독립성 일부를 셀 수 없음 — 사람이 확인)' : '';
+  return r('mergeable', `병합해도 됨 — 사용자 결정${caveat}`, ['병합 = 사람 승인 (DEC-0069) · 승인 대상 바이트가 바뀌면 이 권고는 무효']);
+}

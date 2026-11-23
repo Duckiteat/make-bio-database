@@ -1674,6 +1674,20 @@
       ]
     },
     {
+      "path": "tests/supervise_report.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "PLAN-116 G2–G4 — 원인 태그 일곱의 거부 · 보류 분류 · 검수 독립성 다섯 요소(full · limited · unknown) · 영수증 추정 · 최종 권고 규칙 · 승인 보고서 12 칸 순서.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
       "path": "tests/affected.mjs",
       "class": "verification",
       "format": "Node 스크립트 (node:test 묶음이 아님) — 기본 · --full · --list",
@@ -2864,10 +2878,10 @@
     {
       "path": "judicial/supervise_approval.js",
       "class": "law",
-      "format": "ES 모듈 (judge · derive — 순수, 사법부)",
+      "format": "ES 모듈 (judge · derive · independence · recommend — 순수, 사법부)",
       "writer": "사람·AI (사용자 요청 시)",
       "readers": "rebuild/supervise.mjs evidence · status · tests/supervise_approval.test.mjs",
-      "interpret": "감독 장부의 승인 증거 판정 (PLAN-102) — 넘긴 커밋에서 바뀐 바이트가 main 본줄기에 처음 모두 나타난 커밋을 찾고, 그 시점 설정에 AI 의 PR 병합 막음이 있나 · 영수증에 그 시각의 AI 병합 호출이 있나로 승인 · 병합만 확인 · AI 병합 흔적을 가른다. 승인 대기 · 반영 · 완료를 계산(장부에 적지 않음). 문지기 보호(L6)로 올릴지는 사용자 결정(PLAN-108 P6 과 함께).",
+      "interpret": "감독 장부의 승인 증거 판정 (PLAN-102) — 넘긴 커밋에서 바뀐 바이트가 main 본줄기에 처음 모두 나타난 커밋을 찾고, 그 시점 설정에 AI 의 PR 병합 막음이 있나 · 영수증에 그 시각의 AI 병합 호출이 있나로 승인 · 병합만 확인 · AI 병합 흔적을 가른다. 승인 대기 · 반영 · 완료를 계산(장부에 적지 않음). 문지기 보호(L6)로 올릴지는 사용자 결정(PLAN-108 P6 과 함께). · independence(다섯 요소 — 역할 · 권한 · 실행 · 정보 접근(추정) · 판단 근거(추정) → full · limited · unknown) · recommend(최종 권고를 규칙으로 — 거부 · 보류 · 병합해도 됨 · 이미 승인; 승인이 아님)",
       "level": "L2",
       "area": "code:judicial",
       "write_keys": [
@@ -2916,10 +2930,10 @@
     {
       "path": "rebuild/supervise.mjs",
       "class": "management",
-      "format": "Node 스크립트 + 모듈 (status · check · propose · start · handoff · block · cancel <사건.json> [--dry] [--human] / 순수 — shape · fold · check · admit · render)",
+      "format": "Node 스크립트 + 모듈 (status · check · evidence · report · propose · start · handoff · block · cancel <사건.json> [--dry] [--human] / 순수 — shape · fold · check · admit · render)",
       "writer": "사람·AI",
       "readers": "사람·AI · tests/supervise.test.mjs",
-      "interpret": "감독 장부 (PLAN-100 · docs/design/supervisor.md) — 상위 작업 SUP- 과 실행 기록의 덧붙이기 장부. 승인 사건 없음(증거에서 계산), 계약에 범위 · 승인 칸 없음, 누가 · 모드 · 문지기 칸은 영수증에서. 검사를 통과해야 서기(appendSupervise)로 씀.",
+      "interpret": "감독 장부 (PLAN-100 · docs/design/supervisor.md) — 상위 작업 SUP- 과 실행 기록의 덧붙이기 장부. 승인 사건 없음(증거에서 계산), 계약에 범위 · 승인 칸 없음, 누가 · 모드 · 문지기 칸은 영수증에서. 검사를 통과해야 서기(appendSupervise)로 씀. · PLAN-116 G2–G4 (DEC-0077): 막힘 원인 태그의 두 종류 CAUSE_KIND(거부 deny · 보류 hold) · 검수 독립성 사실 모으기(모드 표의 쓰기 자리 · 검수 세션 영수증의 원문 자리 호출 · 작성 패치의 PMID) · 승인 보고서 report — 제안서 §8 의 12 칸을 장부 · 영수증 · git · 전환 기록에서 계산(쓰지 않음, Supervisor 가 쓰는 글 아님)",
       "level": "L2",
       "area": "code:tools",
       "write_keys": [
