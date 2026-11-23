@@ -72,7 +72,9 @@ test('② 판단: 모드 · 막는 명령 · 끝내기 전 시험 없이는 커�
   // 명령 장부 하나로 (재건 9 단계): 쓰는 명령은 장부의 모드에서만 · 어느 인자에서 쓰는지(writes_on)까지
   assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs merge --dry p.json' }), null, 'merge --dry 는 읽기');
   assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --detect' }), null, '--detect 는 읽기');
-  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --write' }), /^RULE-0515 /);
+  assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs limitations --write' }), null, '사용자 결정 DEC-0076: 생성물 재생성(--write) 하나만 디벨롭도');
+  assert.match(pre({ mode: 'baseline' }, 'Bash', { command: 'node dbtool.mjs limitations --write' }), /^RULE-0515 /, '그 밖 모드는 그대로 막힘');
+  assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs trend --write' }), /^RULE-0515 /, '쓰는 갈래(writes_on)에서만 막는 명령은 그대로');
   assert.equal(pre(dev, 'Bash', { command: 'node dbtool.mjs attest' }), null, 'attest 는 재검증만 — 쓰지 않는다');
   assert.match(pre(dev, 'Bash', { command: 'node dbtool.mjs accept O000019 --use validation --reason x' }), /inspect 모드의 일/, '승인 도장은 점검에서만');
   assert.equal(pre({ mode: 'inspect' }, 'Bash', { command: 'node dbtool.mjs accept O000019 --use validation --reason x' }), null);

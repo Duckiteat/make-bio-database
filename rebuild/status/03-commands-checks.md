@@ -74,7 +74,7 @@
 | `tests/bundle.test.mjs` | 5 |
 | `tests/changes-draft.test.mjs` | 3 |
 | `tests/ci_zone.test.mjs` | 3 |
-| `tests/claims.test.mjs` | 8 |
+| `tests/claims.test.mjs` | 9 |
 | `tests/clock.test.mjs` | 7 |
 | `tests/collection_audit.test.mjs` | 13 |
 | `tests/conservation.test.mjs` | 3 |
