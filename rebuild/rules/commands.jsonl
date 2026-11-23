@@ -7,7 +7,7 @@
 {"cmd": "dbtool vocab", "kind": "cli", "modes": ["author", "develop"], "writes": null, "what": "통제 어휘 보기"}
 {"cmd": "dbtool context", "kind": "cli", "modes": ["author", "inspect"], "writes": null, "what": "이름의 뜻이 여럿일 때 맥락별 정의항"}
 {"cmd": "dbtool mechanism", "kind": "cli", "modes": ["author", "baseline", "inspect"], "writes": null, "what": "기전(위·아래 단계)"}
-{"cmd": "dbtool limitations", "kind": "cli", "modes": ["author", "inspect"], "writes": "derived", "writes_on": "--write\\b", "what": "한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect)"}
+{"cmd": "dbtool limitations", "kind": "cli", "modes": ["author", "inspect", "develop"], "writes": "derived", "writes_on": "--write\\b", "what": "한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect)"}
 {"cmd": "dbtool pattern", "kind": "cli", "modes": ["author"], "writes": null, "what": "경로의 상위 패턴(모티프)"}
 {"cmd": "dbtool textbook", "kind": "cli", "modes": ["author", "develop"], "writes": "derived", "writes_on": "--write\\b", "what": "교과서 부록 생성(--write)·최신·파일 분류 검사"}
 {"cmd": "dbtool resolution", "kind": "cli", "modes": ["author", "baseline"], "writes": null, "what": "혼합 해상도 계획 (pool·site·structure)"}

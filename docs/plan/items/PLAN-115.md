@@ -12,6 +12,7 @@
 
 - `2026-11-22` 커밋 전 기록: 2026-11-22 설계 보고서 docs/reports/2026-11-22-plan-115-claim-layer-design.md — 권고 C 혼합 최소판: 새 모음 claims.C… 하나(칸 경로 하나 + 근거 줄 여러 개: 출처 · 인용 위치(파일 sha256 + exact) · 방향 supports/contradicts/qualifies · 종류 direct/background/interpretation/absent · 맥락 · by), 생물 술어 어휘는 새로 만들지 않음(규칙 칸이 이미 표현), Assessment = 근거 줄 · Decision = 병합(DEC- 이름 충돌 피함), 칸 · 규칙 상태는 저장하지 않고 계산(새 TMS 없음), retractionImpact 를 출처 · 근거 줄 출발로 확장, quoteCheck 재사용, 이관 = 규칙마다 '#*' 주장 1 건(curated 를 supported 로 올리지 않음, 등급 · 궤적 비트 동일). 조사에서 찾은 것: 엔진 · 컴파일러는 근거를 보지 않고 관문은 속도 상수에만 — 규칙 구조는 asserted 30 · abstracted 64 도 시뮬레이션에 들어감 · needMet xref 가 상태를 안 봄(L000030). 시범 표: S000009 via_component · Ser14 unsupported · D000043 basal 은 contested. 사용자 결정 대기 Q1–Q11 (보고서 §16). SCH-… 카드는 여전히 없음 — 확인 불가로 표시
 - `2026-11-23` 커밋 전 기록: 2026-11-23 단계 1–2 구현: 최상위 선택 칸 claims{C…}(있을 때만 — db.json 바이트 그대로) · 근거 줄(source · from · locator{file_sha256, exact} · stance · kind · context · by · at) · 어휘 일곱(vocab claimStances · claimEvidenceKinds · claimAgents · locatorParts · contextSystems · claimFields · claimStates) · 종 9986 · 관찰 조건 tissue · system · 관문 validateClaims · claimImmutability(RULE-0537–0541, 변이 다섯 caught) · 인용 대조는 조정자 fetchedTexts(FETCH_LOG sha256 그대로인 Europe PMC 원문 138) → 사법부 normText 대조 · 칸 상태 계산 judicial/claims.js · dbtool claims [--assume] · 거부 말뭉치 7a–7c · 시험 tests/claims.test.mjs 8 · SCHEMA §8Q · 교과서 3.8 · 4.5.1. 단계 0(needs xref 는 verified 만 — L000030)은 빠짐: 한계 상태가 바뀌면 limitations.md 를 다시 만들어야 하는데 그 명령(dbtool limitations --write)은 author · inspect 몫이라 develop 커밋이 끝내기 시험(limitations.md 최신)을 통과할 수 없음 — 사용자 결정 대기(develop 에 그 명령을 허락 · 또는 develop 이 코드만 커밋하지 않고 author 가 같은 브랜치에서 이어 받는 절차). 남은 끝나는 조건: 단계 0 · D000051 칸 단위 주장 시범(PLAN-112)
+- `2026-11-23` 커밋 전 기록: 2026-11-23 단계 0: needMet 의 xref need 는 status verified 만 — 한계 127 중 L000030 하나만 resolved → open(시험 claims ⑨ 가 옛 판정과 견줘 정확히 L000030 만인지 확인) · 명령 장부 'dbtool limitations' modes 에 develop(DEC-0076 — 쓰는 갈래는 --write 하나, limitations.md 손 고침 권한은 넓히지 않음, 최신성 시험이 거부) · 재생성 전후 지문: data/ · attestations/ · limitations.md 509 파일 중 limitations.md 만 바뀜(요약 Identity_Gap 3/9 → 4/8 · L000030 행) · 자기 검사 시험 gate ② 를 결정에 맞춤(사용자 확인) · 일반화 검토 docs/reports/2026-11-23-derived-artifact-freshness-review.md (원칙 P1–P4 초안 — 장부화는 하지 않음). 남은 끝나는 조건: D000051 칸 단위 주장 시범(PLAN-112)
 
 ## 걸어온 길
 
@@ -28,9 +29,11 @@
 - `2026-11-22` 커밋 전 기록 결과 처음 적힘 — PLAN-115 설계 보고서 완료 (지시서대로 조사 · 설계만, 구현은 별도 승인 뒤) — 전환 기록 #16 을 받은 develop 세션
 - `2026-11-23` 커밋 전 기록 상태 ☐ → ◐ 2026-11-23 — PLAN-115 구현 단계 1–2 (DEC-0075) — 단계 0 은 모드 경계에 걸려 빠짐
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — PLAN-115 구현 단계 1–2 (DEC-0075) — 단계 0 은 모드 경계에 걸려 빠짐
+- `2026-11-23` 커밋 전 기록 결과 덧붙음 — PLAN-115 단계 0 (DEC-0076 조건부 승인)
 
 ## 닿는 결정
 
 - [DEC-0073](../decisions/DEC-0073.md) 2026-11-22 P1 패치는 그대로 병합하지 않는다 — 검토 권고를 author 의 독립 변경으로 반영 → inspect 재검토(필드별 근거) → develop 주장 층
 - [DEC-0074](../decisions/DEC-0074.md) 2026-11-23 사람 손을 덜 타는 구조 먼저 — 주장 층(115) → 승인 보조(116 G2–G4) → 자동 배정(104) → D000051 주장 층 시범(112, 자동 순환) · author P1 손 고침은 시범으로 흡수
 - [DEC-0075](../decisions/DEC-0075.md) 2026-11-23 주장 층 형식 — 권고 그대로: 새 모음 claims 하나 · 생물 술어 어휘 없음 · via_component 는 보조 칸 · L000030 은 (가) 검증된 외부 ID 만 해소 · 관찰 조건에 tissue · system
+- [DEC-0076](../decisions/DEC-0076.md) 2026-11-23 develop 에 생성물 재생성 하나만 — 명령 장부 'dbtool limitations' 의 쓰는 갈래(--write)를 develop 에 허락 · limitations.md 직접 수정 권한으로 넓히지 않음

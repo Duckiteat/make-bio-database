@@ -112,3 +112,14 @@ test('⑧ 칸 상태 계산: legacy(옛 근거의 보기) · supported_elsewhere
   assert.equal(CL.ruleView(db, 'D000043/rule/gp_phos', { assume: ['PMID:168880', 'PMID:6245074'] }).fields.find((x) => x.field === 'exists').state, 'unsupported');
   assert.match(CL.claimsText(db, 'S000009'), /계산 수준/);
 });
+
+test('⑨ 한계 needs xref 는 verified 번호만 채운다 — 바뀌는 한계는 L000030 하나뿐 (DEC-0075 Q6 · DEC-0076)', () => {
+  assert.equal(J.limitationStatus(BASE, BASE.limitations.L000030).status, 'open'); // CHEBI:58601 은 asserted
+  const up = JSON.parse(JSON.stringify(BASE)); up.senses.D000048.xrefs[0].status = 'verified';
+  assert.equal(J.limitationStatus(up, up.limitations.L000030).status, 'resolved');
+  // 옛 판정(상태를 보지 않음)과 견주어 상태가 달라지는 한계 = 정확히 L000030
+  const oldMet = (n) => (n.kind === 'xref' ? (BASE.senses[n.on] || { xrefs: [] }).xrefs.some((x) => x.db === n.db) : J.needMet(BASE, n));
+  const oldStatus = (l) => { const met = l.requirement.needs.map(oldMet); return met.length && met.every(Boolean) ? 'resolved' : l.resolution ? 'resolved_manual' : 'open'; };
+  const changed = Object.entries(BASE.limitations).filter(([, l]) => oldStatus(l) !== J.limitationStatus(BASE, l).status).map(([id]) => id);
+  assert.deepEqual(changed, ['L000030']);
+});

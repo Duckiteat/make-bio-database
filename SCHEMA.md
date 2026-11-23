@@ -645,6 +645,7 @@ ChEBI 에는 같은 물질에 세 종류의 항목이 있다 — 중성 모체(A
 
 | 날짜 | 버전 | 내용 |
 |---|---|---|
+| 2026-11-23 | (한계 needs xref) | `needs: [{ kind: 'xref', db, on }]` 은 그 정의항의 그 db 번호가 status verified 일 때만 충족 — asserted 번호로 Identity_Gap 이 닫히지 않음(L000030 이 다시 열림, DEC-0075 Q6 · DEC-0076). 옮길 기록 없음 |
 | 2026-11-23 | (주장 층 §8Q) | 최상위 선택 칸 `claims { C… }` · `meta.next.C`(있을 때만 — db.json 그대로) · 어휘 `claimStances` · `claimEvidenceKinds` · `claimAgents` · `locatorParts` · `contextSystems` · `claimFields` · `claimStates` · 종 9986(집토끼) · 관찰 조건 `tissue` · `system`(있을 때만) · 사법부 `validateClaims` · `claimImmutability`(RULE-0537–0541) · 계산 `judicial/claims.js` · `dbtool claims`. 옮길 기록 없음 |
 | 2026-11-18 | (불확도 예산 · 내부 일관성) | 정량 관찰 `uncertainty.basis` 에 `budget` · 선택 칸 `uncertainty.budget`(성분 — effect 필수) · `reported.sem` · `reported.n` · `reported.integer` — 계약 `schemas/obs/observation.schema.json` · 정규화(있을 때만) · 사법부 `checkBudget`(RULE-0090) · `checkReported` 의 내부 일관성(RULE-0530) · 비교 `budgetVar` · 등급 `unsourcedB`. 어휘 `budgetSources` · `budgetEffects` · `budgetTypes`. 옮길 기록 없음(새 칸은 선택) — 이관 스크립트 필요 없음 (DEC-0061 · DEC-0062) |
 | 2026-11-01 | (차원 · SI 상수) | 어휘 `unitSymbols` · `siConstants` · `siDerived` 신설, `thermo.R` 은 유도(정확값 한 번 반올림), `model.NA` 는 SI 표에서. 사법부 `checkUnitSystem`(RULE-0526). db 형식 불변 — 옮길 기록 없음 |

@@ -8,18 +8,18 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 349 | 8352.0 |
-| 정보 작성 `author` | 539 | 17210.9 |
+| 공통 `common` | 350 | 8361.5 |
+| 정보 작성 `author` | 539 | 17211.2 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 211 | 2640.9 |
+| 디벨롭 `develop` | 211 | 2644.1 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 123 | 1989.2 |
+| 점검·검증 `inspect` | 124 | 1994.2 |
 
 ## 규칙별
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 37 | 6538.9 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 37 | 6543.9 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 428 | 14096.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 707.2 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 72 | 1105.4 | 병합 기록 |
@@ -35,7 +35,7 @@
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
 | `compiler/**` | develop | 8 | 57.8 | 컴파일러 |
-| `judicial/**` | develop | 37 | 636.4 | 사법부 코드 |
+| `judicial/**` | develop | 37 | 636.6 | 사법부 코드 |
 | `legislative/**` | develop | 3 | 79.4 | 입법부 코드 |
 | `mcp/**` | develop | 6 | 59.8 | MCP 서버 |
 | `migrations/**` | develop | 13 | 59.8 | 형식 변환 |
@@ -50,18 +50,18 @@
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 29 | 35.7 | 거부 말뭉치 |
-| `tests/**` | develop | 83 | 739.7 | 시험 |
+| `tests/**` | develop | 83 | 741.3 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 113 | 1607.8 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 12 | 515.2 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/reports/**` | inspect | 114 | 1612.8 | 보고서 — 읽기·점검 |
+| `docs/textbook/**` | common | 12 | 515.3 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 23 | 347.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 265 | 841.8 | 안내 문서 |
-| `limitations.md` | author | 1 | 95.6 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 347.6 | 변경 기록 |
-| `SCHEMA.md` | author | 1 | 112.4 | 형식 |
+| `docs/**` | common | 266 | 846.0 | 안내 문서 |
+| `limitations.md` | author | 1 | 95.5 | 한계 등록부 (생성물) |
+| `CHANGES.md` | develop | 1 | 349.0 | 변경 기록 |
+| `SCHEMA.md` | author | 1 | 112.6 | 형식 |
 | `*.md` | common | 4 | 64.7 | 최상위 문서 |
-| `.claude/**` | common | 6 | 37.9 | 도구 설정 |
+| `.claude/**` | common | 6 | 38.0 | 도구 설정 |
 | `.github/**` | develop | 1 | 2.6 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
 | `.mcp.json` | develop | 1 | 0.3 | 세션에 꽂는 MCP 서버 설정 (PLAN-105) |

@@ -12,7 +12,7 @@
 | Resource_Gap | 6 | 0 | 6 |
 | Regulatory_Gap | 12 | 0 | 12 |
 | Observation_Gap | 16 | 0 | 16 |
-| Identity_Gap | 3 | 9 | 12 |
+| Identity_Gap | 4 | 8 | 12 |
 | Consensus_Gap | 1 | 0 | 1 |
 
 ## Kinetic_Gap — 속도·친화도·시간 상수 공백
@@ -179,7 +179,7 @@
 |---|---|---|---|---|---|---|
 | L000028 | D000027 (에피네프린) | Identity_Gap | 에피네프린의 ChEBI 항목(adrenaline 대 (R)-adrenaline)을 원본에서 골라 번호를 확인 — 지금은 unmapped: ChEBI 에 adrenaline 과 (R)-adrenaline 항목이 따로 있어 어느 것인지·번호를 원본에서 확인해야 함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000027 에피네프린 | resolved (1/1) | — |
 | L000029 | D000037 (무기 인산) | Identity_Gap | 무기 인산을 대표할 ChEBI 항목(phosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: Pi 는 pH 에 따라 H2PO4⁻/HPO4²⁻ 가 섞인 표기 — 특정 ChEBI 종을 정하지 않음<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000037 무기 인산 | resolved (1/1) | — |
-| L000030 | D000048 (포도당-1-인산) | Identity_Gap | 포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000048 포도당-1-인산 | resolved (1/1) | — |
+| L000030 | D000048 (포도당-1-인산) | Identity_Gap | 포도당-1-인산의 ChEBI 항목(α-D-포도당 1-인산 등)을 골라 번호를 확인 — 지금은 unmapped: ChEBI 항목(α-D-포도당 1-인산 등) 선택·번호 미확인<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ ChEBI ID @ D000048 포도당-1-인산 | open (0/1) | — |
 | L000031 | D000062 (피리독살 인산) | Identity_Gap | 피리독살 인산의 ChEBI 번호를 원본에서 확인 — 지금은 unmapped: ChEBI 번호 원본 미확인 (네트워크로 대조할 수 없어 비워 둠)<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000062 피리독살 인산 | resolved (1/1) | — |
 | L000032 | D000122 (피로인산) | Identity_Gap | 피로인산을 대표할 ChEBI 항목(diphosphate 계열)을 정하고 번호를 원본에서 확인 — 지금은 unmapped: pH 에 따라 이온화 상태가 다른 여러 ChEBI 항목(diphosphate(4−), 등)으로 나뉘어 있고 번호를 원본과 대조하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✓ ChEBI ID @ D000122 피로인산 | resolved (1/1) | — |
 | L000033 | D000101 (TNF mRNA) | Identity_Gap | TNF mRNA 전사체 ID — 외부 ID 어휘에 RefSeq(NM_)·Ensembl 전사체 체계가 없어 정체성을 외부 ID 로 고정하지 못함<br>발견: Traceable Evolution Protocol: unmapped 값은 모두 한계로 등록 (detectGaps Identity_Gap) | ✗ 수동: vocab.js xrefs 에 전사체 ID 체계(RefSeq NM_ 또는 Ensembl ENST)를 사람이 검토해 추가한 뒤, 원본에서 확인한 TNF 표준 전사체 ID 를 등록 | open (0/1) | — |

@@ -77,6 +77,7 @@ description: "디벨롭 모드 — 엔진·컴파일러·판정 규칙·도구 �
 
 | 쓰는 명령 | 구역 | 무엇 |
 |---|---|---|
+| `dbtool limitations` | derived | 한계 등록부 출력·limitations.md 생성(--write)·미등록 후보(--detect) |
 | `dbtool textbook` | derived | 교과서 부록 생성(--write)·최신·파일 분류 검사 |
 | `dbtool dictionary` | registry | 사전(en) 보기·추가 |
 | `mcp dictionary_add` | registry | 사전 항목 추가 |

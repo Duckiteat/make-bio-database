@@ -29,7 +29,8 @@
       const t = parseTarget(n.site), d = t && db.senses[t.base], st = d && d.site[t.key];
       return !!st && !st.residue_unknown && !!st.numbering && !!(st.numbering[d.reference_species || V.defaultReferenceSpecies] || Object.keys(st.numbering).length);
     }
-    if (n.kind === 'xref') { const d = db.senses[n.on]; return !!d && d.xrefs.some((x) => x.db === n.db); }
+    // 외부 ID 요구는 원본과 대조된(verified — 유효한 도장은 validate 가 따로 요구) 번호만 채운다: asserted 번호는 "확인" 이 아니다 (DEC-0075 Q6)
+    if (n.kind === 'xref') { const d = db.senses[n.on]; return !!d && d.xrefs.some((x) => x.db === n.db && x.status === 'verified'); }
     if (n.kind === 'kinetics') {
       const t = parseTarget(n.rule), d = t && db.senses[t.base], r = d && d.rule.find((x) => x.id === t.key);
       // 분해 규칙은 k(k_deg) 와 half_life 가 서로를 대신한다 (k = ln2 / t½)
