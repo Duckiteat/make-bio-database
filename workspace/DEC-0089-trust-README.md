@@ -1,5 +1,7 @@
 # DEC-0089 승인 묶음 2 — 독립 판정 워크플로 (main 의 코드로만 · 사람 클릭에 기대지 않는 첫 겹)
 
+> **적용 끝 — 다시 적용하지 않는다.** 2026-11-23 사용자 커밋 `a71393d`(Duckiteat, `DEC-0089-trust-apply.sh`). develop 대조: 네 파일이 묶음과 바이트 동일 · 시험 14 통과 · develop 은 새 L6 셋을 못 씀 · data · attestations · 설정 변경 0. 남은 것: main 병합(사람) 뒤 필수 검사 `independent-judge`.
+
 > 사용자 커밋 대상. develop 세션은 `.github/**` · 모드표를 쓰지 못한다 — 이 묶음은 **적용하지 않은 제안** 이다. 판정 코드 `rebuild/trust-check.mjs` 와 시험 `tests/trust_check.test.mjs` 는 develop 이 이미 커밋했다(L2). 이 묶음이 그 둘과 워크플로를 L6 로 올린다.
 > develop 세션의 확인: 시험 5 통과(N9 병합 커밋 속 도장 지우기 · N10 model.js 한 줄 · PR 이 저장 지도를 낮춤 — 모두 실패로 잡음, 보통 변경은 통과) · 묶음을 메모리에서 적용한 모드표로 어느 모드도 새 L6 셋을 못 씀 · develop 은 자기 검사 시험 8 만. **워크플로가 GitHub 에서 실제로 도는 것은 아직 못 봄** — 아래 10 단계가 첫 확인.
 
