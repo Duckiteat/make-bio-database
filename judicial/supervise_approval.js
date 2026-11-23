@@ -97,11 +97,18 @@ export function recommend({ sup, verdict, kindOf, indep }) {
   const failed = sup.runs.filter((x) => x.verify && x.verify.finish && x.verify.finish !== 'pass');
   if (failed.length) return r('deny', '병합하지 않음 (거부) — 끝내기 시험이 통과하지 않은 실행', failed.map((x) => x.run));
   if (sup.steps.includes('inspect') && !sup.runs.some((x) => x.mode === 'inspect' && x.result === 'handed_off')) return r('hold', '보류 — 독립 검수 전');
-  if (indep && indep.level === 'limited') return r('hold', '보류 — 독립성 제한적', Object.entries(indep.factors).filter(([, v]) => v.ok === false).map(([k, v]) => `${k}: ${v.why}`));
+  // 검수 뒤에 작성이 더 넘기면 승인 대상(마지막으로 넘긴 커밋)에 검수하지 않은 바이트가 든다 (DEC-0079 ① · RULE-0543)
+  if (sup.steps.includes('inspect')) {
+    const lastI = sup.runs.map((x) => x.mode === 'inspect' && x.result === 'handed_off').lastIndexOf(true);
+    const after = sup.runs.slice(lastI + 1).filter((x) => !['inspect', 'baseline'].includes(x.mode) && x.result === 'handed_off');
+    if (after.length) return { ...r('hold', '보류 — 검수 뒤에 작성이 더 넘김: 승인 대상에 검수하지 않은 변경이 든다 (다시 검수)', after.map((x) => `${x.run} ${x.mode}`)), rule: 'RULE-0543' };
+  }
+  if (indep && indep.level === 'limited') return { ...r('hold', '보류 — 독립성 제한적', Object.entries(indep.factors).filter(([, v]) => v.ok === false).map(([k, v]) => `${k}: ${v.why}`)), rule: 'RULE-0543' };
+  // 다섯 요소가 모두 서지 않으면(셀 수 없음 포함) 독립 검증으로 치지 않는다 — 제안서 §7.2 (DEC-0079 ②)
+  if (sup.steps.includes('inspect') && (!indep || indep.level !== 'full')) return { ...r('hold', '보류 — 독립성을 다 셀 수 없음 (검수 영수증 · 인용 출처가 없어 정보 접근 · 판단 근거를 모름) — 사람이 확인', indep ? Object.entries(indep.factors).filter(([, v]) => v.ok === null).map(([k, v]) => `${k}: ${v.why}`) : ['독립성 계산 없음']), rule: 'RULE-0543' };
   if (!verdict) return r('hold', '보류 — 승인 대상을 계산하지 못함');
   if (verdict.status === 'approved') return r('approved', '이미 승인됨 — 사람이 병합');
   if (verdict.status === 'merged_ai' || verdict.status === 'merged_unguarded') return r('hold', `확인 필요 — ${verdict.text}`);
   if (verdict.status === 'empty') return r('hold', '보류 — 승인 대상 파일 없음');
-  const caveat = indep && indep.level === 'unknown' ? ' (독립성 일부를 셀 수 없음 — 사람이 확인)' : '';
-  return r('mergeable', `병합해도 됨 — 사용자 결정${caveat}`, ['병합 = 사람 승인 (DEC-0069) · 승인 대상 바이트가 바뀌면 이 권고는 무효']);
+  return r('mergeable', '병합해도 됨 — 사용자 결정', ['병합 = 사람 승인 (DEC-0069) · 승인 대상 바이트가 바뀌면 이 권고는 무효']);
 }

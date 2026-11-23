@@ -1,0 +1,48 @@
+지문 28d566583c1e0d0e26c773019f90c3e94485f1c6dc77ef802d80f32a9c4a20b2
+묶음 3 파일 — 자동 0 · 사람 승인 3 · 거부 0
+
+## 사람 승인 필요
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -     "_what": "문지기 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — rebuild/gate.mjs 가 읽는다. write = 이 모드에서 바뀌어도 되는 저장소 경로(glob, ** = 아래 전부) · finish = 끝내기 전 시험 묶음(종료 코드 0 이어야 통과 — 통과해야 git commit·push). 저장소 밖(스크래치·임시)은 다루지 않는다. 명령의 허용·금지는 여기 적지 않는다 — 명령 장부(rebuild/rules/commands.jsonl)의 modes · writes · writes_on · collector 에서 계산(재건 9 단계, 사용자 결정 2026-10-29: 장부 하나로).",
+    +     "_what": "문지기 (재건 7 단계 · DEC-0018 · 사용자 결정 2026-10-29) — rebuild/gate.mjs 가 읽는다. write = 이 모드에서 바뀌어도 되는 저장소 경로(glob, ** = 아래 전부) · finish = 끝내기 전 시험 묶음(종료 코드 0 이어야 통과 — 통과해야 git commit·push). 저장소 밖(스크래치·임시)은 다루지 않는다. 명령의 허용·금지는 여기 적지 않는다 — 명령 장부(rebuild/rules/commands.jsonl)의 modes · writes · writes_on · collector 에서 계산(재건 9 단계, 사용자 결정 2026-10-29: 장부 하나로). stamps = 그 모드가 도장 등록부에 낼 수 있는 도장 종류 (DEC-0078 — 승인 도장은 누구도 지우거나 바꾸지 못함, RULE-0542).",
+    +         ],
+    +         ],
+    +         "stamps": [
+    +         "stamps": [
+    +           "verified",
+    +           "trend"
+    +         "stamps": [],
+    +         "stamps": [],
+    +         "stamps": [],
+    +           "accept"
+- rebuild/gate.mjs [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    + import { createRequire } from 'node:module';
+    + const ATT = createRequire(import.meta.url)('../judicial/attestation.js'); // 도장 등록부 정책 (DEC-0078)
+    +     // 도장 등록부 정책 (DEC-0078 · RULE-0542): 이 호출이 등록부를 바꿨으면 HEAD 의 등록부와 견준다 — 그 모드가 낼 수 있는 도장 종류(모드표 stamps)만 · 승인 도장은 추가만
+    +     if (st.mode && changed.includes('attestations/registry.json')) {
+    +       let headReg = { stamps: [] }, nowReg;
+    +       try { headReg = JSON.parse(git(root, 'show', 'HEAD:attestations/registry.json')); } catch { /* 새 등록부 */ }
+    +       try { nowReg = JSON.parse(readFileSync(join(root, 'attestations/registry.json'), 'utf8')); } catch { nowReg = { stamps: [] }; }
+    +       const m = P.modes[st.mode] || {}, sv = ATT.registryPolicy(headReg, nowReg, st.role ? [] : Array.isArray(m.stamps) ? m.stamps : null);
+    +       if (sv.length) { add({ t: 'violation', rule: 'RULE-0542', files: ['attestations/registry.json'], why: sv.map((v) => v.msg).join(' · ') }); code = say('RULE-0542', `도장 등록부 정책 밖 — ${sv.map((v) => v.msg).join(' · ')} — 되돌리거나(git checkout -- attestations/registry.json) 그 도장을 낼 수 있는 모드로`); }
+    +     }
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — added_only
+    + 
+    + });
+    + test('⑳ 도장 등록부 정책 (DEC-0078 · RULE-0542): author 가 셸로 승인 도장을 더하면 막힘 · inspect 는 됨 · 승인 도장 지우기는 inspect 도 막힘', () => {
+    +   const st = (claim, sense) => ({ subject: { sense, field: claim === 'accept' ? 'accept' : 'xref', ns: claim === 'accept' ? 'evidence' : 'ChEBI', value: sense }, claim, issued_at: '2026-01-01', by: 'integrator', reason: 'x' });
+    +   const REG = { stamps: [st('verified', 'D900001'), st('accept', 'O900001')] };
+    +   const one = (mode, next) => {
+    +     const d = repo();
+    +     try {
+    +       mkdirSync(join(d, 'attestations')); writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(REG));
+    +       execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'reg'], { cwd: d });
+    +       tool(d, 'Bash', { command: `node rebuild/gate.mjs open ${mode}` });
+    +       return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'attestations/registry.json'), JSON.stringify(next)));
+    +     } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+    +   };
+    +   const forged = { stamps: [...REG.stamps, st('accept', 'O900002')] };
+    +   const a = one('author', forged); assert.equal(a.status, 2); assert.match(a.stderr, /\[RULE-0542\]/);
+    +   assert.equal(one('inspect', forged).status, 0, 'inspect 의 승인 도장');
+    +   const i = one('inspect', { stamps: [REG.stamps[0]] }); assert.equal(i.status, 2); assert.match(i.stderr, /승인 도장은 추가만/);
+    +   assert.equal(one('author', { stamps: [{ ...REG.stamps[0], issued_at: '2026-02-01' }, REG.stamps[1]] }).status, 0, 'author 의 신원 도장 갈아 끼우기');

@@ -55,7 +55,8 @@ test('④ G4 최종 권고는 규칙: 거부 · 보류 · 검수 전 · 독립�
   assert.equal(rec({}), 'mergeable');
   assert.equal(rec({}, { status: 'approved' }), 'approved');
   assert.equal(rec({}, { status: 'merged_ai', text: 'AI 병합' }), 'hold');
-  assert.match(AP.recommend({ sup: sup(), verdict: { status: 'not_merged' }, kindOf, indep: AP.independence(base({ receipt: null })) }).text, /사람이 확인/);
+  const unk = AP.recommend({ sup: sup(), verdict: { status: 'not_merged' }, kindOf, indep: AP.independence(base({ receipt: null })) });
+  assert.equal(unk.code, 'hold', '검수 영수증이 없으면 독립 검증으로 치지 않는다 (DEC-0079 ②)'); assert.match(unk.text, /다 셀 수 없음/);
 });
 
 test('⑤ G4 승인 보고서: 제안서 §8 의 12 칸이 그 순서로 · 승인이 아니라고 적음 · 쓰지 않음', () => {

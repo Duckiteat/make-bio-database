@@ -149,8 +149,9 @@
 | 막힘 두 종류 | 원인 태그 일곱을 **거부**(deny — 필수 검증 실패 · 결함: ENGINE_DEFECT · COMPILER_DEFECT · EXEC_FAILURE)와 **보류**(hold — 근거 부족 · 해석 불확실 · 검증 불일치 · 원인 모름: FINDING · DATA_GAP · DOMAIN_CONFLICT · NUMERICAL)로. 사건 형식은 그대로 | `rebuild/supervise.mjs` CAUSE_KIND |
 | 검수 독립성 | 다섯 요소 — 역할(검수 모드 ≠ 작성 모드) · 권한(쓰기 자리가 겹치지 않음, 보고서 자리 빼고) · 실행(세션 ≠) · 정보 접근(검수 영수증에 원문 자리 호출이 있음 — 추정) · 판단 근거(작성 패치의 PMID 를 검수 영수증이 모두 가리킴 — 추정). 다섯 다 → full · 하나라도 아님 → limited · 셀 수 없음 → unknown | `judicial/supervise_approval.js` independence |
 | 승인 보고서 | 제안서 §8 의 12 칸(작업 목적 · 실행 내역 · 변경 내역 · 근거 · 검증 · 독립 검수 · 절차 감사 · 실패 이력 · 미해결 · 영향 분석 · 승인 대상 · 최종 권고)을 읽기 명령이 계산 — Supervisor 는 보여 주기만(§5 그대로) | `node rebuild/supervise.mjs report <SUP-…>` |
+| 검수 · 넘김 기록 (DEC-0079) | 감독 장부 · 전환 기록은 덧붙이기만 — 모드를 선언한 커밋이 기존 줄을 고치거나 지우면 CI 구역 점검이 거부(줄 순서만 바뀐 것은 통과 · 사람의 커밋은 알리기만). 문지기 쪽 검사는 아직 없음 | `rebuild/ci-zone.mjs` appendOnly · RULE-0544 |
 | 도장 등록부 권한 (DEC-0078) | author 와 inspect 가 `attestations/**` 를 함께 쓴다 — 모드표 `stamps` 로 낼 수 있는 도장 종류를 나눔(author: verified · trend / inspect: accept) · 승인 도장은 누구도 지우거나 바꾸지 못함 · 강제는 CI 구역 점검(`rebuild/ci-zone.mjs`)과 문지기 도구 뒤 대조(승인 묶음). 독립성의 권한 요소는 두 모드가 `stamps` 를 선언했고 겹치지 않을 때만 그 자리를 갈린 것으로 — 정책이 없으면 그대로 limited | `judicial/attestation.js` registryPolicy · RULE-0542 |
-| 최종 권고 | 규칙으로: 막힘 거부 → deny · 막힘 보류 · 검수 전 · 독립성 limited · 판정 못 함 → hold · 끝내기 실패 → deny · 병합 전 + 나머지 → mergeable(사용자 결정) · 승인됨 → approved. **승인이 아니다** — 병합 = 사람 | `judicial/supervise_approval.js` recommend |
+| 최종 권고 | 규칙으로: 막힘 거부 → deny · 막힘 보류 · 검수 전 · **검수 뒤에 작성이 더 넘김** · 독립성 limited · **독립성 unknown** · 판정 못 함 → hold (DEC-0079 · RULE-0543) · 끝내기 실패 → deny · 병합 전 + 나머지 → mergeable(사용자 결정) · 승인됨 → approved. **승인이 아니다** — 병합 = 사람 | `judicial/supervise_approval.js` recommend |
 
 ---
 
