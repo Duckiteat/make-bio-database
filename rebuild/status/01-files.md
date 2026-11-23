@@ -14,7 +14,7 @@
 | judicial | 37 | 649.5 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
-| workspace | 56 | 255.2 |
+| workspace | 57 | 261.5 |
 | engine | 18 | 224.9 |
 | legislative | 3 | 79.4 |
 | migrations | 13 | 59.8 |

@@ -9,7 +9,7 @@
 | 모드 | 파일 | KB |
 |---|---|---|
 | 공통 `common` | 364 | 8559.9 |
-| 정보 작성 `author` | 558 | 17301.1 |
+| 정보 작성 `author` | 559 | 17307.3 |
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 215 | 2708.4 |
 | 적분장 `field` | 0 | 0.0 |
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 47 | 233.7 | 수집가 작업 공간 |
+| `workspace/**` | author | 48 | 240.0 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
