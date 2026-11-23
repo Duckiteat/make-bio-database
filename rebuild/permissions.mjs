@@ -10,14 +10,14 @@ import { join } from 'node:path';
 const RULE = 'RULE-0521';
 export const PROTECTED = ['.claude/settings.json', '.claude/settings.local.json', '.claude/settings', 'rebuild/gate.mjs', 'rebuild/rules/modes.json', 'rebuild/rules/permissions.jsonl'];
 export const MASTER = [/^\*$/, /^Bash$/, /^Bash\(\*\)$/, /^Bash\(:\*\)$/, /^mcp__.*\*/, /^Bash\(sudo\b/, /dangerously|bypass/i];
-const LISTS = { settings: ['allow', 'ask'], gate: ['write', 'also'] };
+const LISTS = { settings: ['allow', 'ask'], gate: ['write', 'also', 'stamps'] }; // stamps = 그 모드가 낼 수 있는 도장 종류 (DEC-0078 — 권한이므로 장부 줄이 있어야)
 
-// 두 곳에서 지금 권한을 읽는다 — { settings: { allow, ask }, gate: { 모드: { write, also } } }
+// 두 곳에서 지금 권한을 읽는다 — { settings: { allow, ask }, gate: { 모드: { write, also, stamps } } }
 export function load(root) {
   const S = JSON.parse(readFileSync(join(root, '.claude/settings.json'), 'utf8')).permissions || {};
   const G = JSON.parse(readFileSync(join(root, 'rebuild/rules/modes.json'), 'utf8')).gate;
   const gate = { common: { write: G.common.write || [], also: [] } };
-  for (const [m, x] of Object.entries(G.modes)) gate[m] = { write: x.write || [], also: x.also || [] };
+  for (const [m, x] of Object.entries(G.modes)) gate[m] = { write: x.write || [], also: x.also || [], stamps: x.stamps || [] };
   for (const [r, x] of Object.entries(G.roles || {})) gate[`role:${r}`] = { write: x.write || [], also: [] };
   const f = join(root, 'rebuild/rules/permissions.jsonl');
   const rows = existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : [];

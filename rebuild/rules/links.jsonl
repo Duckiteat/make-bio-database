@@ -561,3 +561,4 @@
 {"from": "RULE-0539", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "인용 위치 검사를 끄면 문장 없이 direct 를 주장할 수 있음"}
 {"from": "RULE-0540", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "문구 대조를 끄면 고쳐 쓴 인용 · 없는 인용이 통과"}
 {"from": "RULE-0541", "rel": "because", "to": "code:judicial/judicial.js", "by": "judged", "note": "근거 줄 불변 검사를 끄면 지지 줄을 반박으로 몰래 바꿀 수 있음"}
+{"from": "RULE-0542", "rel": "because", "to": "code:judicial/attestation.js", "by": "judged", "note": "승인 도장 지우기 검사를 끄면 검수 도장을 지워도 통과"}

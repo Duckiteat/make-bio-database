@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 541 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 542 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 526 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 527 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 336 |
+| machine | 337 |
 | text | 203 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,13 +26,13 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 320 |
+| 1 곳 | 321 |
 | 2 곳 | 105 |
 | 3 곳 | 60 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 88 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 89 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -124,6 +124,7 @@
 | RULE-0539 | author · develop · inspect | 직접(direct) 근거 줄은 인용 위치 locator { file_sha256(받은 원문 파일), exact(원문 그대로) } 가 있어야 한다 — 직접 측정이라 말하려면 그 문장을 가리켜야 |
 | RULE-0540 | author · develop · inspect | 근거 줄의 인용은 받은 원문과 대조한다 — 파일 sha256 이 FETCH_LOG 에 있고(파일이 그대로), 출처가 그 파일의 논문이고, exact 가 그 자리(제목 · 초록)에 정규화 뒤 그대로 있어야 한다. 원문 |
 | RULE-0541 | author · develop · inspect | 주장은 덧붙이기만 — 기존 주장의 대상 · 문장 · 맥락 · 기록 시각은 그대로, 기존 근거 줄은 바꾸거나 지우지 않고 새 줄을 뒤에(evidence_add), 철회는 한 번, 주장은 지울 수 없음, 새 주장은 기록 |
+| RULE-0542 | author · inspect · develop | 도장 등록부(attestations/registry.json)를 바꾸는 변경은 그 모드가 낼 수 있는 도장 종류(모드표 gate.modes[m].stamps — author: verified · trend / ins |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 

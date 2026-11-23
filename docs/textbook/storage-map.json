@@ -869,7 +869,7 @@
       "format": "Node CommonJS",
       "writer": "사람·AI (사용자 요청 시, 테스트 필수)",
       "readers": "orchestrator.js, legislative/clerk.mjs, dbtool.mjs, tests",
-      "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음). 재검증은 **주체 하나로 좁혀서** 한다(그 정의항만 새로 만든 얕은 겹침 사본 + 그 과제 하나) — 중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다. validStamps 는 정규화·색인을 한 번만 만들어 넘긴다.",
+      "interpret": "[사법] 증명 등록부 — 도장 발급(issue)·검증(digest + 증거 sha256 + 같은 확인 재실행)·관문 판결 봉인(sealVerdict: 서기가 쓸 db 의 sha256 을 묶음). 재검증은 **주체 하나로 좁혀서** 한다(그 정의항만 새로 만든 얕은 겹침 사본 + 그 과제 하나) — 중복 검사는 전체 db 의 색인으로 하므로 좁혀도 약해지지 않는다. validStamps 는 정규화·색인을 한 번만 만들어 넘긴다. · registryPolicy(DEC-0078): 등록부 변경이 그 모드가 낼 수 있는 도장 종류(모드표 stamps)만 건드렸나 · 승인 도장은 추가만",
       "level": "L2",
       "area": "code:judicial",
       "write_keys": [
@@ -1680,6 +1680,20 @@
       "writer": "사람·AI",
       "readers": "node --test",
       "interpret": "PLAN-116 G2–G4 — 원인 태그 일곱의 거부 · 보류 분류 · 검수 독립성 다섯 요소(full · limited · unknown) · 영수증 추정 · 최종 권고 규칙 · 승인 보고서 12 칸 순서.",
+      "level": "L2",
+      "area": "code:tests",
+      "write_keys": [
+        "session:develop",
+        "session:field"
+      ]
+    },
+    {
+      "path": "tests/registry_policy.test.mjs",
+      "class": "verification",
+      "format": "node:test",
+      "writer": "사람·AI",
+      "readers": "node --test",
+      "interpret": "도장 등록부 정책 (PLAN-116 G3 · DEC-0078 · RULE-0542) — author 의 승인 도장 위반 · inspect 의 추세 도장 위반 · 승인 도장 지우기 · 고치기는 정책이 없어도 위반 · 서기의 갈아 끼우기는 통과 · 임시 git 저장소에서 CI 구역 점검(ci-zone)이 실제 커밋을 거부.",
       "level": "L2",
       "area": "code:tests",
       "write_keys": [
