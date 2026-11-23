@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/enforcement.jsonl` (333 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
+원본: `rebuild/rules/enforcement.jsonl` (334 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. "기계가 막는다(machine)" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다.
 
 | 결과 | 규칙 |
 |---|---|
-| 잡음 `caught` | 299 |
+| 잡음 `caught` | 300 |
 | 설정에 있음 `present` | 8 |
 | 시험 통과 (자리 변이 없음) `test_passes` | 26 |
 | 아직 시험 안 함 (machine) | 0 |
@@ -15,7 +15,7 @@
 
 없음
 
-## 잡음 `caught` — 299
+## 잡음 `caught` — 300
 
 | 규칙 | 내용 | 변이 | 파일 | 빨개진 시험 · 메모 |
 |---|---|---|---|---|
@@ -318,6 +318,7 @@
 | RULE-0543 | 감독의 최종 권고(계산)는 독립 검수가 서지 않으면 hold 다 — ① 검수(inspect) 뒤에 작성 실행 | replace | judicial/supervise_approval.js | B4 검수 뒤에 작성이 더 넘기면 최종 권고는 보류 — 승인 대상에 검수하지 않은 변경 (SUP-0001 의 모양) · 다시 검수하면 풀림 |
 | RULE-0544 | 감독 장부(rebuild/state/supervise.jsonl)와 전환 기록(workspace/transi | replace | judicial/transition_audit.js | C4 검수 · 넘김 기록(감독 장부 · 전환 기록)의 기존 줄을 고치면 CI 가 거부 — 덧붙이기는 통과 · 선언 없는(사람의) 커밋은 알리기만 |
 | RULE-0545 | 감독 장부의 넘김(transition_seq) · 제안 입력(inputs.transitions)이 가리킨 전 | replace | rebuild/supervise.mjs | E3 넘김이 다른 상위 작업의 전환 기록을 가리키면 거부 — 같은 작업 · sup 없는 옛 기록은 통과 · 전환 기록의 sup 칸 모양 (DEC-0081 · RU |
+| RULE-0546 | 도장 등록부에 새로 생긴 승인 도장(accept)의 승인자(by)는 발급 검사와 같은 목록(acceptanc | replace | judicial/attestation.js | ⑤ 새 승인 도장의 승인자는 발급 검사와 같은 목록(integrator)만 — inspect 의 셸 by: human 위조 거부 · 정상 발급 · 옛 도장은 보지 |
 
 ## 설정에 있음 `present` — 8
 

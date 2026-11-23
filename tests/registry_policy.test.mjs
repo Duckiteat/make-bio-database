@@ -73,3 +73,22 @@ test('④ CI 구역 점검 (실제 커밋): author 선언으로 승인 도장을
     } finally { rmSync(r2.dir, { recursive: true, force: true }); }
   } finally { rmSync(r.dir, { recursive: true, force: true }); }
 });
+
+test('⑤ 새 승인 도장의 승인자는 발급 검사와 같은 목록(integrator)만 — inspect 의 셸 by: human 위조 거부 · 정상 발급 · 옛 도장은 보지 않음 · CI 실제 커밋 (DEC-0083 · RULE-0546)', () => {
+  const ACC = createRequire(import.meta.url)('../judicial/acceptance.js');
+  assert.deepEqual(ACC.ISSUE_APPROVERS, ['integrator'], '발급 검사와 같은 목록을 쓴다');
+  const human = st('accept', 'O900003', { by: 'human', reason: '위조', verdict: 'approved' });
+  const integ = st('accept', 'O900003', { by: 'integrator', reason: '정상', verdict: 'approved' });
+  assert.ok(ATT.registryPolicy(REG, plus(human), INSPECT).some((v) => v.rule === 'RULE-0546'), 'inspect 의 by: human = 거부');
+  assert.ok(ATT.registryPolicy(REG, plus(human), null).some((v) => v.rule === 'RULE-0546'), '모드표에 정책이 없어도 거부');
+  assert.equal(ATT.registryPolicy(REG, plus(integ), INSPECT).length, 0, 'integrator 의 정상 발급은 통과');
+  const old = { ...REG, stamps: [...REG.stamps, st('accept', 'O900004', { by: 'human', reason: '옛 도장', verdict: 'approved' })] };
+  assert.equal(ATT.registryPolicy(old, old, INSPECT).length, 0, '이미 있던 by: human 도장은 다시 판정하지 않음 (U2)');
+  assert.equal(ATT.registryPolicy(old, { ...old, stamps: [...old.stamps, integ] }, INSPECT).length, 0, '옛 도장 곁에 새 정상 도장');
+  const r = setup();
+  try {
+    r.put('workspace/receipts/i.jsonl', open('inspect')); r.put('attestations/registry.json', JSON.stringify(plus(human), null, 2)); r.commit('inspect 가 셸로 by human 승인 도장');
+    const res = Z.zoneCheck(r.base, 'HEAD', r.dir);
+    assert.equal(res.exit, 1); assert.match(res.lines.join('\n'), /승인자 'human'/);
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});

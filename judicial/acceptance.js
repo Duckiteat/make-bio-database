@@ -120,4 +120,4 @@ function text(t) {
   return L.join('\n');
 }
 
-module.exports = { ISSUER, USES, HIGH, APPROVERS, accept, issue, verifyAcceptStamp, checkIssue, table, weakest, summary, text, autoTop, keyOf, estimatedObservations };
+module.exports = { ISSUER, USES, HIGH, APPROVERS, ISSUE_APPROVERS, accept, issue, verifyAcceptStamp, checkIssue, table, weakest, summary, text, autoTop, keyOf, estimatedObservations };

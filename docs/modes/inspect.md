@@ -59,14 +59,14 @@
 
 ## 컴퓨터가 막는 규칙
 
-39 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+40 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
 
 - 권한·쓰기 (삼권 분립): RULE-0027
 - 수집·위임 (다른 AI·수집가): RULE-0289 · RULE-0291 · RULE-0292 · RULE-0294 · RULE-0482 · RULE-0484 · RULE-0485
 - 데이터 넣기: RULE-0433
 - 한계: RULE-0096 · RULE-0097 · RULE-0098 · RULE-0099 · RULE-0100 · RULE-0101 · RULE-0102 · RULE-0103 · RULE-0104 · RULE-0115 · RULE-0223 · RULE-0224 · RULE-0225 · RULE-0226 · RULE-0227 · RULE-0228 · RULE-0231
 - 기전·시뮬레이션: RULE-0284
-- 코드에서 찾은 검사: RULE-0506 · RULE-0508 · RULE-0509 · RULE-0537 · RULE-0538 · RULE-0539 · RULE-0540 · RULE-0541 · RULE-0542 · RULE-0543 · RULE-0544 · RULE-0545
+- 코드에서 찾은 검사: RULE-0506 · RULE-0508 · RULE-0509 · RULE-0537 · RULE-0538 · RULE-0539 · RULE-0540 · RULE-0541 · RULE-0542 · RULE-0543 · RULE-0544 · RULE-0545 · RULE-0546
 
 ## 형식 설명
 
