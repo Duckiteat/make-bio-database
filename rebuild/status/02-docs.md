@@ -412,6 +412,7 @@
 | `docs/reports/2026-11-23-plan-106-independent-review.md` | 8.1 | 58 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-g5-bypass-scenarios.md` | 7.9 | 52 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-phase1-governance-mapping.md` | 22.7 | 128 |  | 미분류 |
+| `docs/reports/2026-11-23-rule-0546-independent-review.md` | 10.2 | 52 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |
