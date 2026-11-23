@@ -13,12 +13,12 @@
 ## 적용 순서 (사람 — Codespaces, 한 단계씩)
 
 1. `git pull`
-2. `node rebuild/bundle.mjs verify workspace/DEC-0089-trust-bundle.patch <지문>` — `통과` (지문은 `workspace/DEC-0089-trust-bundle.screen.txt` 첫 줄)
+2. `node rebuild/bundle.mjs verify workspace/DEC-0089-trust-bundle.patch 9a18ecb7c060524debe4b164d05b9bd38ee30944118da1423bcb0db7ae0b7aef` — `통과`
 3. `git apply workspace/DEC-0089-trust-bundle.patch && git status --short` — 네 줄: modes.json · storage-map.json · guard-matrix.test.mjs · `.github/workflows/trust.yml`(새)
 4. `node rebuild/status.mjs --write && node dbtool.mjs textbook --write`
 5. `node --test tests/guard-matrix.test.mjs tests/trust_check.test.mjs tests/authority.test.mjs 2>&1 | tail -6` — `# fail 0`
 6. `node --test tests/*.test.mjs 2>&1 | tail -6` — `# fail 0`
-7. `git add -A && git commit -m "L6: independent judge workflow (DEC-0089, bundle <지문 12 자>)" && git push`
+7. `git add -A && git commit -m "L6: independent judge workflow (DEC-0089, bundle 9a18ecb7c060)" && git push`
 8. 이 브랜치를 main 에 병합 (사람) — `pull_request_target` 은 main 에 있는 워크플로만 돌므로 **병합 뒤 다음 PR 부터** 힘이 생긴다
 9. GitHub 설정(웹) → Rules(또는 Branches) → main 규칙 → **Require status checks** 에 `independent-judge` 추가
 10. 확인: 아무 작업 브랜치에서 PR 을 열어 `independent-judge` 가 돌고, 판정 코드 파일(예: `model.js`)을 한 줄 바꾼 시험 PR 이 실패하는지 본다 (확인 뒤 그 PR 은 닫음)
