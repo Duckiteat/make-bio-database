@@ -19,6 +19,7 @@
 - `2026-11-23` 커밋 전 기록: · 2 차 입력(DEC-0088): 사용자 제안서 '상호 권한 · 책임 및 독립 신뢰 경계 아키텍처' 원문 docs/reports/2026-11-23-mutual-authority-trust-architecture-proposal.md · 통합가 첫 검토 docs/reports/2026-11-23-mutual-authority-trust-architecture-review-notes.md. 결정: AI 전용 GitHub 신원 방향 · 보안 핵심 먼저 · Hard Veto 와 중재자 정의를 지킬 수 있게. 다음: develop 설계 검토(13 장 여덟 항목 + 오케스트레이션 등 미논의 항목) → 사용자 결정 → 구현
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0089: git push ask → allow(가 — deny 묶음 + 손 편집, 적용 전) · 보안 핵심(사람 클릭에 기대지 않는 구조)을 먼저 빠르게
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0090: AI 봇 계정 1(Write) — 절차 docs/reports/2026-11-23-ai-bot-identity-setup.md (사람이 GitHub · claude.ai 에서)
+- `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0089 묶음 1 적용 확인: 사용자 커밋 d064809(Duckiteat) — .claude/settings.json 이 묶음(5c9b9532)+손 편집과 바이트 동일 · 권한 장부 PERM-0012 allow · 장부 검사 오류 0 · 권한 · 승인 · 보호 기준 시험 20 통과 · data · attestations 변경 0. 이 세션 다음 작업 프로세스에서 mcp__github__enable_pr_auto_merge 가 도구 목록에서 빠짐(deny 동작). 남은 것: Allow auto-merge 끄기(사용자 GitHub) · 묶음 2(독립 판정) · 봇 계정(DEC-0090)
 
 ## 걸어온 길
 
@@ -42,6 +43,7 @@
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — 사용자 제안서(상호 권한 · 독립 신뢰 경계)를 PLAN-116 의 2 차 입력으로 받고, 통합가 권고 Q1–Q4 를 사용자가 따르기로 함 ("ㄱㄱㄱ")
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — git push 확인 창을 지금 없애고(가), 사람이 버튼을 누르지 않아도 안전한 구조(보안 핵심)를 먼저 · 빠르게
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — AI 전용 GitHub 신원은 봇 계정 1 개(Write) · 절차 문서
+- `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 1 적용 확인 — 사용자 커밋 d064809
 
 ## 닿는 결정
 
