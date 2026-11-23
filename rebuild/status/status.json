@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1304 개 · 30896.0 KB"
+        "1313 개 · 30935.7 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "461 개 · 3950.6 KB"
+        "464 개 · 3963.9 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "113 개 · 1367.7 KB"
+        "115 개 · 1374.2 KB"
        ],
        [
         "장부 단위",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "555 / 28"
+        "560 / 28"
        ],
        [
         "번호 이름공간",
@@ -117,23 +117,23 @@
        ],
        [
         "rebuild",
-        "37",
-        "6660.8"
+        "38",
+        "6670.6"
        ],
        [
         "docs",
-        "434",
-        "3470.4"
+        "435",
+        "3476.8"
        ],
        [
         "(최상위)",
         "19",
-        "1027.3"
+        "1029.2"
        ],
        [
         "tests",
-        "115",
-        "812.1"
+        "116",
+        "816.7"
        ],
        [
         "judicial",
@@ -152,8 +152,8 @@
        ],
        [
         "workspace",
-        "50",
-        "238.3"
+        "56",
+        "255.2"
        ],
        [
         "engine",
@@ -231,11 +231,11 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "457.8"
+        "458.3"
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "404.2"
+        "406.2"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -247,7 +247,7 @@
        ],
        [
         "`CHANGES.md`",
-        "357.8"
+        "359.7"
        ],
        [
         "`rebuild/rules/changes.jsonl`",
@@ -302,12 +302,12 @@
         "179.6"
        ],
        [
-        "`rebuild/rules/rules.jsonl`",
-        "173.4"
+        "`docs/textbook/storage-map.json`",
+        "174.5"
        ],
        [
-        "`docs/textbook/storage-map.json`",
-        "173.0"
+        "`rebuild/rules/rules.jsonl`",
+        "173.4"
        ]
       ]
      }
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "357.8",
-        "351",
+        "359.7",
+        "352",
         "",
         "분류됨 1"
        ],
@@ -634,8 +634,8 @@
        ],
        [
         "`docs/plan/build.md`",
-        "55.6",
-        "499",
+        "55.8",
+        "500",
         "",
         "생성물"
        ],
@@ -1196,6 +1196,13 @@
         "`docs/plan/decisions/DEC-0088.md`",
         "2.8",
         "14",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0089.md`",
+        "2.4",
+        "15",
         "",
         "생성물"
        ],
@@ -2055,8 +2062,8 @@
        ],
        [
         "`docs/plan/items/PLAN-102.md`",
-        "8.0",
-        "53",
+        "8.2",
+        "54",
         "",
         "생성물"
        ],
@@ -2069,8 +2076,8 @@
        ],
        [
         "`docs/plan/items/PLAN-104.md`",
-        "8.8",
-        "83",
+        "9.0",
+        "84",
         "",
         "생성물"
        ],
@@ -2132,15 +2139,15 @@
        ],
        [
         "`docs/plan/items/PLAN-113.md`",
-        "3.5",
-        "26",
+        "3.7",
+        "27",
         "",
         "생성물"
        ],
        [
         "`docs/plan/items/PLAN-114.md`",
-        "4.3",
-        "28",
+        "4.5",
+        "29",
         "",
         "생성물"
        ],
@@ -2153,8 +2160,8 @@
        ],
        [
         "`docs/plan/items/PLAN-116.md`",
-        "12.4",
-        "55",
+        "13.0",
+        "58",
         "",
         "생성물"
        ],
@@ -3364,8 +3371,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "149.0",
-        "882",
+        "150.0",
+        "884",
         "",
         "생성물"
        ],
@@ -3387,6 +3394,20 @@
         "`workspace/DEC-0087-check-code-l6-bundle.README.md`",
         "3.3",
         "22",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/DEC-0089-README.md`",
+        "2.9",
+        "25",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/DEC-0089-trust-README.md`",
+        "3.6",
+        "26",
         "",
         "미분류"
        ],
@@ -4048,6 +4069,10 @@
        [
         "`tests/transitions.test.mjs`",
         "2"
+       ],
+       [
+        "`tests/trust_check.test.mjs`",
+        "5"
        ],
        [
         "`tests/values.test.mjs`",
@@ -5236,7 +5261,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "6366 · 552 · 218",
+        "6376 · 552 · 222",
         "549 · 없음 3"
        ],
        [
@@ -5246,8 +5271,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "3120 · 86 · 373",
-        "271 · 없음 6"
+        "3184 · 87 · 380",
+        "272 · 없음 6"
        ],
        [
         "`assay_stage`",
@@ -5257,7 +5282,7 @@
         "측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번)",
         "`rebuild/state/plans.jsonl`",
         "0 · 0 · 0",
-        "271 · 없음 0"
+        "272 · 없음 0"
        ],
        [
         "`permission`",
@@ -5277,7 +5302,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "344 · 없음 0"
+        "345 · 없음 0"
        ],
        [
         "`code_head`",
@@ -5296,8 +5321,8 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "4999 · 121 · 299",
-        "271 · 없음 5"
+        "5015 · 121 · 300",
+        "272 · 없음 5"
        ],
        [
         "`plan_stage`",
@@ -5307,7 +5332,7 @@
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
         "1598 · 43 · 129",
-        "271 · 없음 1"
+        "272 · 없음 1"
        ],
        [
         "`plan_direction`",
@@ -5317,7 +5342,7 @@
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
         "98 · 11 · 16",
-        "271 · 없음 1"
+        "272 · 없음 1"
        ],
        [
         "`test`",
@@ -5660,13 +5685,13 @@
       "rows": [
        [
         "공통 `common`",
-        "362",
-        "8543.7"
+        "364",
+        "8559.9"
        ],
        [
         "정보 작성 `author`",
-        "552",
-        "17284.2"
+        "558",
+        "17301.1"
        ],
        [
         "기초시험 `baseline`",
@@ -5675,8 +5700,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "214",
-        "2701.8"
+        "215",
+        "2708.4"
        ],
        [
         "적분장 `field`",
@@ -5708,8 +5733,8 @@
        [
         "`rebuild/**`",
         "common",
-        "37",
-        "6660.8",
+        "38",
+        "6670.6",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -5785,8 +5810,8 @@
        [
         "`workspace/**`",
         "author",
-        "41",
-        "216.8",
+        "47",
+        "233.7",
         "수집가 작업 공간"
        ],
        [
@@ -5925,8 +5950,8 @@
        [
         "`tests/**`",
         "develop",
-        "86",
-        "776.3",
+        "87",
+        "781.0",
         "시험"
        ],
        [
@@ -5954,7 +5979,7 @@
         "`docs/textbook/**`",
         "common",
         "12",
-        "520.5",
+        "523.0",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
@@ -5967,8 +5992,8 @@
        [
         "`docs/**`",
         "common",
-        "278",
-        "902.8",
+        "279",
+        "906.7",
         "안내 문서"
        ],
        [
@@ -5982,7 +6007,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "357.8",
+        "359.7",
         "변경 기록"
        ],
        [
@@ -10451,18 +10476,18 @@
        [
         "L2",
         "`code:tests`",
-        "60",
+        "61",
         "25",
         "1",
-        "34"
+        "35"
        ],
        [
         "L2",
         "`code:tools`",
-        "18",
+        "19",
         "7",
         "5",
-        "8"
+        "9"
        ],
        [
         "L2",
@@ -10628,11 +10653,11 @@
      }
     ],
     "text": [
-     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 205)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
+     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 207)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
     ]
    },
    {
-    "heading": "연결 없는 자리 (106)",
+    "heading": "연결 없는 자리 (108)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
@@ -10642,8 +10667,8 @@
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/claims.js` · `judicial/stiffness.js`",
      "- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
-     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs`",
-     "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`",
+     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs` · `tests/trust_check.test.mjs`",
+     "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs` · `rebuild/trust-check.mjs`",
      "- `doc:history`: `DESIGN-v4.md` · `FEATURES.md`",
      "- `doc:scenario`: `examples/scenarios/subjects.json`",
      "- `doc:spec`: `SCHEMA.md` · `README.md` · `docs/design/scaling-limits.md` · `data/fetched/README.md` · `docs/PROMPTS.md` · `docs/RUNBOOK.md` · `docs/project-overview.md`",

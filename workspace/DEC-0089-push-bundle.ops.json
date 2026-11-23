@@ -1,0 +1,16 @@
+{
+ "at": "2026-11-23",
+ "why": "DEC-0089 가 — git push 확인 창을 없앰: 작업 브랜치 push 는 허용, main 은 GitHub 보호(PR 필수 · rules 필수)가 지키고 force push · main 직접 push · AI 의 병합 · 자동 병합 켜기는 설정 deny",
+ "ops": [
+  {"op": "set", "file": "permissions", "key": "PERM-0012", "fields": {
+   "list": "allow",
+   "why": "작업 브랜치 push 는 사람 확인 없이 — 매번 누르는 확인 창은 약한 보안이면서 자율성을 깎는다. main 은 GitHub 보호(PR 필수 · 필수 검사)가 지키고, force push(--force · -f) · main 직접 push · AI 의 PR 병합 · 자동 병합 켜기는 설정 deny (문지기는 여전히 finish --full 뒤에만 push 를 연다)",
+   "by": "user (DEC-0089 — 세션 답 2026-11-23 \"지금 가로 하되\")",
+   "at": "2026-11-23",
+   "revoke": "`.claude/settings.json` 에서 `Bash(git push:*)` 를 allow 에서 ask 로 되돌리고(사람 — 보호 파일) 이 줄의 list 를 ask 로 (node rebuild/rules.mjs apply)"
+  }},
+  {"op": "set", "file": "permissions", "key": "PERM-0007", "fields": {
+   "why": "git 읽기·커밋 — 커밋은 문지기가 끝내기 전 시험으로 막는다 (push 는 PERM-0012)"
+  }}
+ ]
+}
