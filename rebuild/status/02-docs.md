@@ -445,7 +445,7 @@
 | `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
 | `workspace/DEC-0087-check-code-l6-bundle.README.md` | 3.3 | 22 |  | 미분류 |
 | `workspace/DEC-0089-README.md` | 3.3 | 27 |  | 미분류 |
-| `workspace/DEC-0089-trust-README.md` | 3.6 | 26 |  | 미분류 |
+| `workspace/DEC-0089-trust-README.md` | 3.8 | 26 |  | 미분류 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
