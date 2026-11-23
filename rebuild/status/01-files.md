@@ -7,10 +7,10 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 507 | 16885.1 |
-| rebuild | 37 | 6653.1 |
-| docs | 430 | 3417.8 |
+| rebuild | 37 | 6653.5 |
+| docs | 430 | 3417.6 |
 | (최상위) | 19 | 1027.1 |
-| tests | 115 | 811.7 |
+| tests | 115 | 812.1 |
 | judicial | 37 | 649.5 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
@@ -52,4 +52,4 @@
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
 | `rebuild/rules/rules.jsonl` | 173.4 |
-| `docs/textbook/storage-map.json` | 173.1 |
+| `docs/textbook/storage-map.json` | 173.0 |
