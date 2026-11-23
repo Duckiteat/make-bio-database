@@ -15,7 +15,7 @@
 1. `git pull`
 2. `node rebuild/bundle.mjs verify workspace/DEC-0089-trust-bundle.patch 9a18ecb7c060524debe4b164d05b9bd38ee30944118da1423bcb0db7ae0b7aef` — `통과`
 3. `git apply workspace/DEC-0089-trust-bundle.patch && git status --short` — 네 줄: modes.json · storage-map.json · guard-matrix.test.mjs · `.github/workflows/trust.yml`(새)
-4. `node rebuild/status.mjs --write && node dbtool.mjs textbook --write`
+4. `node rebuild/status.mjs --write && node dbtool.mjs textbook --write && node rebuild/status.mjs --write` (부록 뒤에 관리 파일을 한 번 더 — 한 번에 하려면 `bash workspace/DEC-0089-trust-apply.sh`)
 5. `node --test tests/guard-matrix.test.mjs tests/trust_check.test.mjs tests/authority.test.mjs 2>&1 | tail -6` — `# fail 0`
 6. `node --test tests/*.test.mjs 2>&1 | tail -6` — `# fail 0`
 7. `git add -A && git commit -m "L6: independent judge workflow (DEC-0089, bundle 9a18ecb7c060)" && git push`
