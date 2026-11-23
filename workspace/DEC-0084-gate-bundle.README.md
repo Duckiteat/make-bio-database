@@ -1,5 +1,7 @@
 # DEC-0084 · DEC-0085 승인 묶음 — 문지기: 도구 밖 등록부 · 장부 변경도 판정 · 등록부 · 장부는 내용 지문으로 대조 · git 전역 옵션 뒤 commit · 꼬리표 RULE-0546
 
+> **적용 끝 — 다시 적용하지 않는다.** 2026-11-23 사용자가 Codespaces 에서 단계마다 확인하며 적용 · 커밋 `7279a5c`(Duckiteat) · push. 시험: 문지기 7/7 · 전체 554 중 통과 552 · 실패 0 · 건너뜀 2(Codespace 환경). develop 세션 대조: 보호 파일 2 가 묶음과 바이트 동일 · 전체 554 통과 · 건너뜀 0 · data · attestations 변경 0. 6 단계의 `npm test` 는 틀렸다(이 저장소에 package.json 이 없음 — 통합가가 확인하지 않음) → CI 와 같은 `node --test tests/*.test.mjs` 로 대신함. 받은 뒤 문지기가 등록부를 '바뀜' 으로 한 번 알림 — 대조 지문의 형식이 바뀌어서(크기 · 시각 → + 내용 지문)이고 등록부 sha256 은 그대로(12d72375…).
+
 > 사용자 커밋 대상. develop 세션은 문지기(L6)를 쓰지 못한다 — 이 묶음은 **적용하지 않은 제안** 이다. develop 세션에서는 시험을 돌리지 못했다(보호 파일을 복사본으로 만드는 일이 거부됨) — **4 단계의 시험이 첫 실행** 이다.
 
 | 범위 | 이유 | 영향 | 확인 |
@@ -13,7 +15,7 @@
 3. `git apply workspace/DEC-0084-gate-bundle.patch && git status --short` — `rebuild/gate.mjs` · `tests/gate.test.mjs` 둘만
 4. `node --test tests/gate.test.mjs 2>&1 | tail -8` — `# fail 0` (실패하면 멈추고 화면을 develop 세션에 보낸다 — 되돌리기는 `git checkout -- rebuild/gate.mjs tests/gate.test.mjs`)
 5. `node rebuild/status.mjs --write` — 문지기 시험이 6 → 7 개라(㉒) 생성 문서가 바뀐다(G5 때 빠뜨린 단계)
-6. `npm test 2>&1 | tail -5` — `# fail 0`
+6. `node --test tests/*.test.mjs 2>&1 | tail -8` — `# fail 0` (처음 적은 `npm test` 는 틀림)
 7. `git add -A && git commit -m "L6: gate outside-change ledger check, git global opts, RULE-0546 label (DEC-0084, bundle 4cb5b8ed3b50)"` 그리고 `git push origin ccr-2a8c4e06-0zo0i6`
 8. develop 세션이 원격에서 받아 대조(묶음과 바이트 동일 · 전체 시험)
 

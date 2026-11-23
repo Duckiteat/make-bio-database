@@ -124,7 +124,7 @@
 | `docs/plan/decisions/DEC-0082.md` | 1.8 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0083.md` | 3.1 | 18 |  | 생성물 |
 | `docs/plan/decisions/DEC-0084.md` | 2.7 | 13 |  | 생성물 |
-| `docs/plan/decisions/DEC-0085.md` | 4.1 | 17 |  | 생성물 |
+| `docs/plan/decisions/DEC-0085.md` | 4.7 | 18 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -251,7 +251,7 @@
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 8.6 | 82 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-106.md` | 8.2 | 40 |  | 생성물 |
+| `docs/plan/items/PLAN-106.md` | 8.7 | 42 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
@@ -433,7 +433,7 @@
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
 | `docs/textbook/90-부록-자동생성.md` | 149.0 | 882 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
-| `workspace/DEC-0084-gate-bundle.README.md` | 2.7 | 20 |  | 미분류 |
+| `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
