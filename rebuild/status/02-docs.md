@@ -47,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 34.3 | 102 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 55.8 | 500 |  | 생성물 |
+| `docs/plan/build.md` | 56.0 | 501 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -129,6 +129,7 @@
 | `docs/plan/decisions/DEC-0087.md` | 2.5 | 16 |  | 생성물 |
 | `docs/plan/decisions/DEC-0088.md` | 2.8 | 14 |  | 생성물 |
 | `docs/plan/decisions/DEC-0089.md` | 2.4 | 15 |  | 생성물 |
+| `docs/plan/decisions/DEC-0090.md` | 2.2 | 14 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -251,9 +252,9 @@
 | `docs/plan/items/PLAN-099.md` | 10.5 | 65 |  | 생성물 |
 | `docs/plan/items/PLAN-100.md` | 12.8 | 88 |  | 생성물 |
 | `docs/plan/items/PLAN-101.md` | 6.1 | 62 |  | 생성물 |
-| `docs/plan/items/PLAN-102.md` | 8.2 | 54 |  | 생성물 |
+| `docs/plan/items/PLAN-102.md` | 8.4 | 55 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
-| `docs/plan/items/PLAN-104.md` | 9.0 | 84 |  | 생성물 |
+| `docs/plan/items/PLAN-104.md` | 9.2 | 85 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-106.md` | 10.3 | 51 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
@@ -263,9 +264,9 @@
 | `docs/plan/items/PLAN-111.md` | 2.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-112.md` | 2.9 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 3.7 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-114.md` | 4.5 | 29 |  | 생성물 |
+| `docs/plan/items/PLAN-114.md` | 4.7 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.3 | 39 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 13.0 | 58 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 13.5 | 61 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -414,6 +415,7 @@
 | `docs/reports/2026-11-22-plan-115-claim-layer-design.md` | 53.0 | 439 |  | 미분류 |
 | `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
+| `docs/reports/2026-11-23-ai-bot-identity-setup.md` | 7.4 | 79 |  | 미분류 |
 | `docs/reports/2026-11-23-attack-matrix-independent-review.md` | 19.6 | 97 |  | 미분류 |
 | `docs/reports/2026-11-23-attack-path-matrix.md` | 11.5 | 82 |  | 미분류 |
 | `docs/reports/2026-11-23-derived-artifact-freshness-review.md` | 5.0 | 36 |  | 미분류 |
