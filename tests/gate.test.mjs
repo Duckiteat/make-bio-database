@@ -188,3 +188,18 @@ test('⑳ 도장 등록부 정책 (DEC-0078 · RULE-0542): author 가 셸로 승
   const i = one('inspect', { stamps: [REG.stamps[0]] }); assert.equal(i.status, 2); assert.match(i.stderr, /승인 도장은 추가만/);
   assert.equal(one('author', { stamps: [{ ...REG.stamps[0], issued_at: '2026-02-01' }, REG.stamps[1]] }).status, 0, 'author 의 신원 도장 갈아 끼우기');
 });
+
+test('㉑ 감독 장부 · 전환 기록은 덧붙이기만 (DEC-0079 · RULE-0544): 셸로 기존 줄을 고치면 막힘 · 덧붙이기는 됨', () => {
+  const L1 = '{"seq":1,"why":"검수 끝"}\n';
+  const one = (next) => {
+    const d = repo();
+    try {
+      mkdirSync(join(d, 'workspace'), { recursive: true }); writeFileSync(join(d, 'workspace/transitions.jsonl'), L1);
+      execFileSync('git', ['add', '-A'], { cwd: d }); execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'tr'], { cwd: d });
+      tool(d, 'Bash', { command: 'node rebuild/gate.mjs open author' });
+      return tool(d, 'Bash', { command: 'node -e 1' }, () => writeFileSync(join(d, 'workspace/transitions.jsonl'), next));
+    } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+  };
+  const bad = one('{"seq":1,"why":"검수 안 함"}\n'); assert.equal(bad.status, 2); assert.match(bad.stderr, /\[RULE-0544\]/);
+  assert.equal(one(L1 + '{"seq":2,"why":"다음"}\n').status, 0, '덧붙이기');
+});

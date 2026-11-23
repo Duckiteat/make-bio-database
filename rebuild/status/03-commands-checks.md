@@ -88,7 +88,7 @@
 | `tests/engine_gap.test.mjs` | 6 |
 | `tests/engine_reference.test.mjs` | 6 |
 | `tests/gap_schema.test.mjs` | 3 |
-| `tests/gate.test.mjs` | 5 |
+| `tests/gate.test.mjs` | 6 |
 | `tests/governance.test.mjs` | 24 |
 | `tests/guard-matrix.test.mjs` | 4 |
 | `tests/judicial_time.test.mjs` | 8 |
