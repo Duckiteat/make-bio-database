@@ -8,18 +8,18 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 361 | 8530.5 |
-| 정보 작성 `author` | 552 | 17280.3 |
+| 공통 `common` | 361 | 8535.2 |
+| 정보 작성 `author` | 552 | 17281.0 |
 | 기초시험 `baseline` | 45 | 287.8 |
 | 디벨롭 `develop` | 214 | 2701.8 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 128 | 2031.5 |
+| 점검·검증 `inspect` | 128 | 2031.8 |
 
 ## 규칙별
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 37 | 6653.5 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 37 | 6657.1 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 428 | 14096.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 707.2 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 72 | 1105.4 | 병합 기록 |
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 41 | 212.9 | 수집가 작업 공간 |
+| `workspace/**` | author | 41 | 213.7 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
@@ -53,14 +53,14 @@
 | `tests/**` | develop | 86 | 776.3 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 118 | 1650.2 | 보고서 — 읽기·점검 |
+| `docs/reports/**` | inspect | 118 | 1650.5 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 12 | 520.5 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 23 | 350.0 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 277 | 897.0 | 안내 문서 |
+| `docs/**` | common | 277 | 898.0 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.5 | 한계 등록부 (생성물) |
 | `CHANGES.md` | develop | 1 | 357.8 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 112.6 | 형식 |
-| `*.md` | common | 4 | 64.7 | 최상위 문서 |
+| `*.md` | common | 4 | 65.0 | 최상위 문서 |
 | `.claude/**` | common | 6 | 38.2 | 도구 설정 |
 | `.github/**` | develop | 1 | 3.5 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
