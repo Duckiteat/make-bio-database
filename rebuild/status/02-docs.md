@@ -266,7 +266,7 @@
 | `docs/plan/items/PLAN-113.md` | 3.7 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 4.7 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.3 | 39 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 13.5 | 61 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 14.2 | 63 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -444,7 +444,7 @@
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
 | `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
 | `workspace/DEC-0087-check-code-l6-bundle.README.md` | 3.3 | 22 |  | 미분류 |
-| `workspace/DEC-0089-README.md` | 2.9 | 25 |  | 미분류 |
+| `workspace/DEC-0089-README.md` | 3.3 | 27 |  | 미분류 |
 | `workspace/DEC-0089-trust-README.md` | 3.6 | 26 |  | 미분류 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
