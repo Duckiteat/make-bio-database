@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.5 | 86 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.8 | 89 |  | 미분류 |
-| `CHANGES.md` | 355.6 | 349 |  | 분류됨 1 |
+| `CHANGES.md` | 356.5 | 350 |  | 분류됨 1 |
 | `CLAUDE.md` | 7.8 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -118,7 +118,7 @@
 | `docs/plan/decisions/DEC-0076.md` | 2.6 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0077.md` | 2.2 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0078.md` | 3.8 | 16 |  | 생성물 |
-| `docs/plan/decisions/DEC-0079.md` | 3.0 | 15 |  | 생성물 |
+| `docs/plan/decisions/DEC-0079.md` | 3.4 | 16 |  | 생성물 |
 | `docs/plan/decisions/DEC-0080.md` | 1.5 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0081.md` | 1.9 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0082.md` | 1.8 | 13 |  | 생성물 |
@@ -258,7 +258,7 @@
 | `docs/plan/items/PLAN-113.md` | 3.5 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 3.1 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.3 | 39 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 9.8 | 45 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 10.2 | 47 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -431,7 +431,7 @@
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
 | `workspace/PLAN-116-G3-README.md` | 3.1 | 19 |  | 미분류 |
-| `workspace/PLAN-116-G5-README.md` | 1.9 | 18 |  | 미분류 |
+| `workspace/PLAN-116-G5-README.md` | 2.5 | 20 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
