@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 353 | 8419.3 |
+| 공통 `common` | 353 | 8423.3 |
 | 정보 작성 `author` | 543 | 17227.1 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 214 | 2678.8 |
+| 디벨롭 `develop` | 214 | 2680.5 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 125 | 2001.8 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 37 | 6581.6 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 37 | 6585.6 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 428 | 14096.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 707.2 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 72 | 1105.4 | 병합 기록 |
@@ -50,7 +50,7 @@
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 29 | 35.7 | 거부 말뭉치 |
-| `tests/**` | develop | 86 | 762.5 | 시험 |
+| `tests/**` | develop | 86 | 764.3 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 115 | 1620.4 | 보고서 — 읽기·점검 |
