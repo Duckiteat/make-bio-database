@@ -124,7 +124,7 @@
 | `docs/plan/decisions/DEC-0082.md` | 1.8 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0083.md` | 3.1 | 18 |  | 생성물 |
 | `docs/plan/decisions/DEC-0084.md` | 2.7 | 13 |  | 생성물 |
-| `docs/plan/decisions/DEC-0085.md` | 3.4 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0085.md` | 4.1 | 17 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -251,7 +251,7 @@
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 8.6 | 82 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-106.md` | 7.9 | 38 |  | 생성물 |
+| `docs/plan/items/PLAN-106.md` | 8.2 | 40 |  | 생성물 |
 | `docs/plan/items/PLAN-107.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-108.md` | 1.8 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-109.md` | 1.8 | 21 |  | 생성물 |
@@ -410,7 +410,7 @@
 | `docs/reports/2026-11-22-plan-115-claim-layer-design.md` | 53.0 | 439 |  | 미분류 |
 | `docs/reports/2026-11-22-plan-115-design-brief.md` | 16.4 | 540 |  | 미분류 |
 | `docs/reports/2026-11-22-sup-0001-r1-p1-review.md` | 26.3 | 118 |  | 미분류 |
-| `docs/reports/2026-11-23-attack-path-matrix.md` | 10.0 | 80 |  | 미분류 |
+| `docs/reports/2026-11-23-attack-path-matrix.md` | 10.8 | 82 |  | 미분류 |
 | `docs/reports/2026-11-23-derived-artifact-freshness-review.md` | 5.0 | 36 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-106-independent-review.md` | 8.1 | 58 |  | 미분류 |
 | `docs/reports/2026-11-23-plan-116-g5-bypass-scenarios.md` | 7.9 | 52 |  | 미분류 |
