@@ -309,12 +309,25 @@ function finish(mode, root, full) {
   return pass ? 0 : 1;
 }
 
+// 문지기가 예외로 판단하지 못할 때 (RULE-0550 · 공격 경로 N11 · PLAN-117) — fail-closed: 쓰는 도구는 막고(종료 2), 읽는 도구만 통과.
+//   전에는 모든 예외를 통과시켜, 영수증 한 줄을 망가뜨리면 문지기가 꺼진 것과 같았다. 목록에 없는 도구는 쓰는 도구로 본다(모르면 막음).
+export const READ_TOOLS = ['Read', 'Grep', 'Glob', 'LS', 'ToolSearch', 'WebSearch', 'WebFetch', 'TaskList', 'TaskGet'];
+const READ_MCP_RE = /^mcp__biodb-(?:query|run)__/; // 읽기 전용 서버 (.mcp.json — 저장소를 바꾸지 않음)
+const FAIL_RULE = 'RULE-0550';
+export function failClosed(event, input, err) {
+  const t = (input && input.tool_name) || '';
+  const reads = READ_TOOLS.includes(t) || READ_MCP_RE.test(t);
+  if (event === 'pre' && !reads) { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류로 판단하지 못함 — 쓰는 도구(${t || '이름 없음'})를 막는다 (fail-closed). 사람에게 알린다: ${err && err.message}\n`); return 2; }
+  process.stderr.write(`문지기 오류 (${event}${t ? ' · ' + t : ''} — ${event === 'pre' ? '읽는 도구라 통과' : '막을 수 없는 단계'}, 영수증에 남지 않았을 수 있음): ${err && err.message}\n`);
+  return 0;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [cmd, arg, ...rest] = process.argv.slice(2);
   const root = (() => { try { return git(process.env.CLAUDE_PROJECT_DIR || process.cwd(), 'rev-parse', '--show-toplevel').trim(); } catch { return process.env.CLAUDE_PROJECT_DIR || process.cwd(); } })();
   if (cmd === 'hook') {
     let input = {}; try { input = JSON.parse(readFileSync(0, 'utf8') || '{}'); } catch { /* 빈 입력 */ }
-    let code = 0; try { code = hook(arg, input, root); } catch (e) { process.stderr.write(`문지기 오류 (통과시킴 — 영수증에 남지 않았을 수 있음): ${e.message}\n`); code = 0; }
+    let code = 0; try { code = hook(arg, input, root); } catch (e) { code = failClosed(arg, input, e); }
     process.exit(code);
   } else if (cmd === 'open') {
     if (!MODES.includes(arg)) { console.error(`모드 '${arg || ''}' — ${MODES.join(' | ')}`); process.exit(2); }

@@ -4,12 +4,12 @@
 
 | 문서 | KB | 줄 | 입구 | 분류 |
 |---|---|---|---|---|
-| `.claude/skills/author/SKILL.md` | 13.6 | 145 |  | 미분류 |
-| `.claude/skills/baseline/SKILL.md` | 4.7 | 72 |  | 미분류 |
+| `.claude/skills/author/SKILL.md` | 13.7 | 145 |  | 미분류 |
+| `.claude/skills/baseline/SKILL.md` | 4.8 | 72 |  | 미분류 |
 | `.claude/skills/develop/SKILL.md` | 6.6 | 86 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.9 | 89 |  | 미분류 |
-| `CHANGES.md` | 360.5 | 353 |  | 분류됨 1 |
+| `CHANGES.md` | 361.3 | 354 |  | 분류됨 1 |
 | `CLAUDE.md` | 8.0 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -34,15 +34,15 @@
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.7 | 208 |  | 분류됨 102 |
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
-| `docs/design/supervisor.md` | 17.2 | 214 |  | 미분류 |
+| `docs/design/supervisor.md` | 17.3 | 214 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/transfer-judgment.md` | 17.9 | 221 |  | 미분류 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
 | `docs/design/uncertainty-budget.md` | 7.2 | 80 |  | 미분류 |
 | `docs/design/work-verification.md` | 11.6 | 136 |  | 분류됨 88 |
 | `docs/modes/author.md` | 13.4 | 140 |  | 생성물 |
-| `docs/modes/baseline.md` | 4.5 | 67 |  | 생성물 |
-| `docs/modes/develop.md` | 6.3 | 81 |  | 생성물 |
+| `docs/modes/baseline.md` | 4.6 | 67 |  | 생성물 |
+| `docs/modes/develop.md` | 6.4 | 81 |  | 생성물 |
 | `docs/modes/field.md` | 1.6 | 32 |  | 생성물 |
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 38.7 | 121 |  | 생성물 |
@@ -464,7 +464,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 150.9 | 886 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 151.4 | 887 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
 | `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
 | `workspace/DEC-0087-check-code-l6-bundle.README.md` | 3.3 | 22 |  | 미분류 |

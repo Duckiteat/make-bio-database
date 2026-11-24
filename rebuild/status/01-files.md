@@ -7,10 +7,10 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 483 | 16696.4 |
-| rebuild | 38 | 6728.0 |
-| docs | 461 | 3633.8 |
-| (최상위) | 19 | 1030.1 |
-| tests | 120 | 839.7 |
+| rebuild | 38 | 6739.6 |
+| docs | 461 | 3635.3 |
+| (최상위) | 19 | 1030.9 |
+| tests | 120 | 845.1 |
 | judicial | 37 | 649.5 |
 | workspace | 63 | 345.4 |
 | attestations | 1 | 299.0 |
@@ -21,8 +21,8 @@
 | mcp | 6 | 59.8 |
 | compiler | 8 | 57.8 |
 | schemas | 2 | 40.5 |
-| .claude | 6 | 38.4 |
-| .github | 2 | 5.4 |
+| .claude | 6 | 38.5 |
+| .github | 3 | 7.3 |
 
 ## 큰 파일 25
 
@@ -37,8 +37,8 @@
 | `rebuild/state/plans.jsonl` | 434.6 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `CHANGES.md` | 360.5 |
-| `rebuild/rules/changes.jsonl` | 351.4 |
+| `CHANGES.md` | 361.3 |
+| `rebuild/rules/changes.jsonl` | 356.1 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
@@ -51,5 +51,5 @@
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
-| `docs/textbook/storage-map.json` | 175.8 |
-| `rebuild/rules/rules.jsonl` | 173.4 |
+| `docs/textbook/storage-map.json` | 176.5 |
+| `rebuild/rules/rules.jsonl` | 175.0 |

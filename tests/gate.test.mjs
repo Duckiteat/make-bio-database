@@ -239,3 +239,21 @@ test('㉒ 도구 호출 밖에서 바뀐 등록부 · 장부도 같은 판정 (D
     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'git log --grep commit' } }).status, 0, '커밋이 아닌 git 명령');
   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
 });
+
+test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과', () => {
+  // 판단 (순수) — 목록에 없는 도구는 쓰는 도구로 본다
+  for (const t of ['Write', 'Edit', 'Bash', 'NotebookEdit', 'mcp__github__push_files', 'mcp__biodb-clerk__merge', 'Agent', '']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 2, t || '이름 없음');
+  for (const t of ['Read', 'Grep', 'Glob', 'mcp__biodb-query__summary', 'mcp__biodb-run__run_fate']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 0, t);
+  for (const ev of ['post', 'stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 막을 수 없는 단계`);
+  // 끝에서 끝 — live 영수증에 깨진 줄 하나(공격 경로 N11 의 재현)로 훅이 예외를 낸다
+  const d = repo();
+  try {
+    assert.equal(tool(d, 'Bash', { command: 'node rebuild/gate.mjs open develop' }).status, 0);
+    const r = RD(d), f = join(r, readdirSync(r).find((x) => x.endsWith('.jsonl')));
+    writeFileSync(f, readFileSync(f, 'utf8') + '깨진 줄\n');
+    const w = hook(d, 'pre', { tool_name: 'Write', tool_input: { file_path: join(d, 'engine/e.js') } });
+    assert.equal(w.status, 2, '쓰는 도구는 막힘'); assert.match(w.stderr, /\[RULE-0550\]/); assert.match(w.stderr, /fail-closed/);
+    assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'ls' } }).status, 2, '셸도 막힘');
+    assert.equal(hook(d, 'pre', { tool_name: 'Read', tool_input: { file_path: join(d, 'core.js') } }).status, 0, '읽는 도구는 통과 — 사람이 원인을 볼 수 있게');
+  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+});

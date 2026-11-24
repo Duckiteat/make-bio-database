@@ -569,3 +569,5 @@
 {"from": "RULE-0547", "rel": "because", "to": "code:judicial/acceptance.js", "by": "judged", "note": "지문 검사를 끄면 셸로 쓴 새 by: human 승인 도장이 로컬 재검증을 지나 finish 가 커밋을 연다"}
 {"from": "RULE-0548", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "선언 없는 커밋의 등록부 검사를 끄면 영수증 없이 커밋한 by: human 승인 도장이 CI 를 지남"}
 {"from": "RULE-0549", "rel": "because", "to": "code:tests/registry_policy.test.mjs", "by": "judged", "note": "기준 코드 단계(.github/workflows/check.yml)를 빼면 판정 코드를 약하게 고친 커밋이 자기 코드로만 판정받아 CI 를 지남 — 시험 ⑦ 이 그 단계를 지킴"}
+{"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남"}
+{"from": "RULE-0550", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과"}

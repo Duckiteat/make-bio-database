@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1327 개 · 31077.3 KB"
+        "1328 개 · 31098.6 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "491 개 · 4126.9 KB"
+        "491 개 · 4128.6 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "120 개 · 1479.8 KB"
+        "120 개 · 1480.1 KB"
        ],
        [
         "장부 단위",
@@ -53,7 +53,7 @@
        ],
        [
         "시험 (test·it) / 거부 말뭉치",
-        "560 / 28"
+        "563 / 28"
        ],
        [
         "번호 이름공간",
@@ -69,11 +69,11 @@
        ],
        [
         "규칙 장부 RULE",
-        "549"
+        "551"
        ],
        [
         "집행 변이 시험 — 잡음 / 놓침 / 아직 안 함",
-        "303 / 0 / 0"
+        "305 / 0 / 0"
        ],
        [
         "규칙 검토 — 결정 남은 규칙 / 전체",
@@ -81,7 +81,7 @@
        ],
        [
         "규칙 맥락 — 이유 있음 / 경위만 / 찾지 못함",
-        "232 / 21 / 284"
+        "234 / 21 / 284"
        ]
       ]
      }
@@ -118,22 +118,22 @@
        [
         "rebuild",
         "38",
-        "6728.0"
+        "6739.6"
        ],
        [
         "docs",
         "461",
-        "3633.8"
+        "3635.3"
        ],
        [
         "(최상위)",
         "19",
-        "1030.1"
+        "1030.9"
        ],
        [
         "tests",
         "120",
-        "839.7"
+        "845.1"
        ],
        [
         "judicial",
@@ -188,12 +188,12 @@
        [
         ".claude",
         "6",
-        "38.4"
+        "38.5"
        ],
        [
         ".github",
-        "2",
-        "5.4"
+        "3",
+        "7.3"
        ]
       ]
      }
@@ -247,11 +247,11 @@
        ],
        [
         "`CHANGES.md`",
-        "360.5"
+        "361.3"
        ],
        [
         "`rebuild/rules/changes.jsonl`",
-        "351.4"
+        "356.1"
        ],
        [
         "`data/fetched/consensus/uniprot/P04439.json`",
@@ -303,11 +303,11 @@
        ],
        [
         "`docs/textbook/storage-map.json`",
-        "175.8"
+        "176.5"
        ],
        [
         "`rebuild/rules/rules.jsonl`",
-        "173.4"
+        "175.0"
        ]
       ]
      }
@@ -333,14 +333,14 @@
       "rows": [
        [
         "`.claude/skills/author/SKILL.md`",
-        "13.6",
+        "13.7",
         "145",
         "",
         "미분류"
        ],
        [
         "`.claude/skills/baseline/SKILL.md`",
-        "4.7",
+        "4.8",
         "72",
         "",
         "미분류"
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "360.5",
-        "353",
+        "361.3",
+        "354",
         "",
         "분류됨 1"
        ],
@@ -543,7 +543,7 @@
        ],
        [
         "`docs/design/supervisor.md`",
-        "17.2",
+        "17.3",
         "214",
         "",
         "미분류"
@@ -592,14 +592,14 @@
        ],
        [
         "`docs/modes/baseline.md`",
-        "4.5",
+        "4.6",
         "67",
         "",
         "생성물"
        ],
        [
         "`docs/modes/develop.md`",
-        "6.3",
+        "6.4",
         "81",
         "",
         "생성물"
@@ -3553,8 +3553,8 @@
        ],
        [
         "`docs/textbook/90-부록-자동생성.md`",
-        "150.9",
-        "886",
+        "151.4",
+        "887",
         "",
         "생성물"
        ],
@@ -4053,7 +4053,7 @@
        ],
        [
         "`tests/ci_zone.test.mjs`",
-        "3"
+        "5"
        ],
        [
         "`tests/claims.test.mjs`",
@@ -4109,7 +4109,7 @@
        ],
        [
         "`tests/gate.test.mjs`",
-        "7"
+        "8"
        ],
        [
         "`tests/governance.test.mjs`",
@@ -5450,8 +5450,8 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "6512 · 554 · 233",
-        "549 · 없음 5"
+        "6568 · 554 · 235",
+        "551 · 없음 3"
        ],
        [
         "`decision`",
@@ -5460,7 +5460,7 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "3535 · 91 · 412",
+        "3543 · 91 · 413",
         "295 · 없음 6"
        ],
        [
@@ -5491,7 +5491,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "346 · 없음 0"
+        "347 · 없음 0"
        ],
        [
         "`code_head`",
@@ -5510,7 +5510,7 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "5640 · 139 · 330",
+        "5662 · 139 · 333",
         "295 · 없음 5"
        ],
        [
@@ -5809,7 +5809,7 @@
      "- `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST",
      "- `criterion`: D3.asserted · S3.doi",
      "- `task`: TASK-009",
-     "- `rule`: RULE-0550 · RULE-0551 · RULE-0999 · RULE-9519 · RULE-9999",
+     "- `rule`: RULE-0999 · RULE-9519 · RULE-9999",
      "- `decision`: DEC-0052 · DEC-0059 · DEC-0098 · DEC-0099 · DEC-9998 · DEC-9999",
      "- `plan_item`: PLAN-901 · PLAN-902 · PLAN-997 · PLAN-998 · PLAN-999",
      "- `plan_stage`: STG-11",
@@ -5875,7 +5875,7 @@
        [
         "공통 `common`",
         "386",
-        "8675.3"
+        "8688.5"
        ],
        [
         "정보 작성 `author`",
@@ -5889,8 +5889,8 @@
        ],
        [
         "디벨롭 `develop`",
-        "220",
-        "2734.1"
+        "221",
+        "2742.2"
        ],
        [
         "적분장 `field`",
@@ -5923,7 +5923,7 @@
         "`rebuild/**`",
         "common",
         "38",
-        "6728.0",
+        "6739.6",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -6140,7 +6140,7 @@
         "`tests/**`",
         "develop",
         "91",
-        "804.0",
+        "809.3",
         "시험"
        ],
        [
@@ -6168,21 +6168,21 @@
         "`docs/textbook/**`",
         "common",
         "12",
-        "525.3",
+        "526.5",
         "교과서 — 재건으로 읽기 모드가 대신할 글"
        ],
        [
         "`docs/design/**`",
         "common",
         "23",
-        "350.0",
+        "350.1",
         "설계 문서 — 장부 단위가 모드를 따로 가짐"
        ],
        [
         "`docs/**`",
         "common",
         "301",
-        "962.3",
+        "962.4",
         "안내 문서"
        ],
        [
@@ -6196,7 +6196,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "360.5",
+        "361.3",
         "변경 기록"
        ],
        [
@@ -6217,14 +6217,14 @@
         "`.claude/**`",
         "common",
         "6",
-        "38.4",
+        "38.5",
         "도구 설정"
        ],
        [
         "`.github/**`",
         "develop",
-        "2",
-        "5.4",
+        "3",
+        "7.3",
         "CI"
        ],
        [
@@ -6269,7 +6269,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "원본: `rebuild/rules/rules.jsonl` · 규칙 549 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
+     "원본: `rebuild/rules/rules.jsonl` · 규칙 551 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음."
     ]
    },
    {
@@ -6296,7 +6296,7 @@
      }
     ],
     "text": [
-     "살아 있는 규칙 534 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
+     "살아 있는 규칙 536 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2"
     ]
    },
    {
@@ -6310,7 +6310,7 @@
       "rows": [
        [
         "machine",
-        "344"
+        "346"
        ],
        [
         "text",
@@ -6340,7 +6340,7 @@
       "rows": [
        [
         "1 곳",
-        "328"
+        "330"
        ],
        [
         "2 곳",
@@ -6364,7 +6364,7 @@
     "text": []
    },
    {
-    "heading": "여러 모드에 걸친 규칙 96 (6 단계 모드 문서에서 빠지면 안 되는 것)",
+    "heading": "여러 모드에 걸친 규칙 98 (6 단계 모드 문서에서 빠지면 안 되는 것)",
     "tables": [
      {
       "head": [
@@ -6852,6 +6852,16 @@
         "RULE-0549",
         "author · inspect · develop",
         "CI 구역 점검(등록부 정책 · 덧붙이기만 장부 포함)은 기준(origin/main)의 판정 코드로 한 번, 이 커밋의 판정 코드로 한 번 — 둘 다 통과해야 한다. 이 커밋이 판정 코드(rebuild/ci-zone"
+       ],
+       [
+        "RULE-0551",
+        "author · baseline · develop · field · inspect",
+        "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의 "
+       ],
+       [
+        "RULE-0550",
+        "author · baseline · develop · field · inspect",
+        "문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도구 포함)는 막고, 읽는 도구(Read · Grep · Glob · 읽기 전용 MCP 등)만 통과한다. 영수"
        ]
       ]
      }
@@ -6888,7 +6898,7 @@
     "heading": null,
     "tables": [],
     "text": [
-     "규칙 549 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (571 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
+     "규칙 551 의 맥락. ① 자리 맥락은 원문에서 계산해 단위의 `ctx` 에 둔다. ② 관계 맥락은 `rebuild/rules/links.jsonl` (573 행) — 규칙마다 판정 행이 하나 이상이다. 대상은 문서 단위(U…, 보고서 문장 포함)·변경 기록 행(CHG-…, 아래부터 순번)·코드 머리 주석(code:경로)·한계(L…)·패치 why(patch:파일). 근처 문단의 이유는 자동으로 잇지 않는다(시험해 보니 대부분 다른 규칙의 이유였다) — 판정만 잇는다. ③ 조건 맥락(when·must·unless·else)은 5c 에서."
     ]
    },
    {
@@ -6941,8 +6951,8 @@
       "rows": [
        [
         "because",
-        "205",
-        "194"
+        "207",
+        "196"
        ],
        [
         "inline",
@@ -6978,7 +6988,7 @@
      }
     ],
     "text": [
-     "이유가 있는 규칙 232 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
+     "이유가 있는 규칙 234 · 경위만 있는 규칙 21 · 이유를 찾지 못한 규칙 284 (문서 근처·변경 기록·코드 머리 주석·한계·보고서·패치 why 를 모두 본 뒤, 은퇴 규칙 제외)"
     ]
    },
    {
@@ -7008,8 +7018,8 @@
        ],
        [
         "코드 머리 주석",
-        "47",
-        "47"
+        "49",
+        "49"
        ],
        [
         "한계",
@@ -7055,32 +7065,32 @@
        ],
        [
         "정보 작성 `author`",
-        "323",
-        "112",
+        "325",
+        "114",
         "198"
        ],
        [
         "기초시험 `baseline`",
-        "70",
-        "39",
+        "72",
+        "41",
         "24"
        ],
        [
         "디벨롭 `develop`",
-        "131",
-        "74",
+        "133",
+        "76",
         "52"
        ],
        [
         "적분장 `field`",
-        "23",
-        "9",
+        "25",
+        "11",
         "2"
        ],
        [
         "점검·검증 `inspect`",
-        "83",
-        "58",
+        "85",
+        "60",
         "24"
        ]
       ]
@@ -8135,7 +8145,7 @@
       "rows": [
        [
         "잡음 `caught`",
-        "303"
+        "305"
        ],
        [
         "설정에 있음 `present`",
@@ -8153,7 +8163,7 @@
      }
     ],
     "text": [
-     "원본: `rebuild/rules/enforcement.jsonl` (337 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
+     "원본: `rebuild/rules/enforcement.jsonl` (339 행) · 다시 돌리기: `node tests/mutation/run.mjs --spec rebuild/rules/enforcement.jsonl --check --jobs 3`. \"기계가 막는다(machine)\" 는 규칙의 집행 자리를 저장소 밖 사본에서 일부러 망가뜨리고, 시험이 하나라도 빨개지면 잡음, 모두 통과하면 놓침이다. 놓침은 `rebuild/rules/review.jsonl` 의 `enforcement_gap` 으로 사용자 확인을 기다린다."
     ]
    },
    {
@@ -8164,7 +8174,7 @@
     ]
    },
    {
-    "heading": "잡음 `caught` — 303",
+    "heading": "잡음 `caught` — 305",
     "tables": [
      {
       "head": [
@@ -10295,6 +10305,20 @@
         "replace",
         ".github/workflows/check.yml",
         "⑦ CI 구역 점검은 기준(main)의 판정 코드로도 돈다 — 이 커밋의 코드와 둘 다 (DEC-0086 D2 · RULE-0549)"
+       ],
+       [
+        "RULE-0551",
+        "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GIT",
+        "replace",
+        "rebuild/ci-zone.mjs",
+        "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"
+       ],
+       [
+        "RULE-0550",
+        "문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도",
+        "replace",
+        "rebuild/gate.mjs",
+        "㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과"
        ]
       ]
      }
@@ -10666,9 +10690,9 @@
         "L2",
         "`code:tests`",
         "60",
-        "25",
+        "26",
         "1",
-        "34"
+        "33"
        ],
        [
         "L2",
@@ -10817,10 +10841,10 @@
        [
         "L6",
         "`guard:gate`",
-        "13",
+        "14",
         "7",
         "5",
-        "5"
+        "6"
        ],
        [
         "L6",
@@ -10842,7 +10866,7 @@
      }
     ],
     "text": [
-     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 208)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
+     "원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 209)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`"
     ]
    },
    {
@@ -10856,7 +10880,7 @@
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/claims.js` · `judicial/stiffness.js`",
      "- `code:mcp`: `mcp/run.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
-     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs`",
+     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs`",
      "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`",
      "- `doc:history`: `DESIGN-v4.md` · `FEATURES.md`",
      "- `doc:scenario`: `examples/scenarios/subjects.json`",
@@ -10871,7 +10895,7 @@
      "- `data:assumptions`: `data/assumptions.jsonl`",
      "- `data:dictionary`: `data/dictionary.jsonl`",
      "- `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`",
-     "- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `tests/trust_check.test.mjs`",
+     "- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `.github/CODEOWNERS` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `tests/trust_check.test.mjs`",
      "- `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`",
      "- `guard:settings`: `.claude/settings.json`"
     ]
