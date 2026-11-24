@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.6 | 86 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.9 | 89 |  | 미분류 |
-| `CHANGES.md` | 360.5 | 353 |  | 분류됨 1 |
+| `CHANGES.md` | 363.1 | 356 |  | 분류됨 1 |
 | `CLAUDE.md` | 8.0 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -47,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 34.3 | 102 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 56.4 | 503 |  | 생성물 |
+| `docs/plan/build.md` | 57.2 | 507 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -132,6 +132,9 @@
 | `docs/plan/decisions/DEC-0090.md` | 2.2 | 14 |  | 생성물 |
 | `docs/plan/decisions/DEC-0091.md` | 1.7 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0092.md` | 2.1 | 11 |  | 생성물 |
+| `docs/plan/decisions/DEC-0093.md` | 1.5 | 12 |  | 생성물 |
+| `docs/plan/decisions/DEC-0094.md` | 1.8 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0095.md` | 1.8 | 11 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -254,7 +257,7 @@
 | `docs/plan/items/PLAN-099.md` | 10.5 | 65 |  | 생성물 |
 | `docs/plan/items/PLAN-100.md` | 12.8 | 88 |  | 생성물 |
 | `docs/plan/items/PLAN-101.md` | 6.1 | 62 |  | 생성물 |
-| `docs/plan/items/PLAN-102.md` | 8.4 | 55 |  | 생성물 |
+| `docs/plan/items/PLAN-102.md` | 8.8 | 57 |  | 생성물 |
 | `docs/plan/items/PLAN-103.md` | 5.7 | 49 |  | 생성물 |
 | `docs/plan/items/PLAN-104.md` | 9.2 | 85 |  | 생성물 |
 | `docs/plan/items/PLAN-105.md` | 4.6 | 27 |  | 생성물 |
@@ -266,9 +269,10 @@
 | `docs/plan/items/PLAN-111.md` | 2.5 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-112.md` | 3.1 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-113.md` | 3.7 | 27 |  | 생성물 |
-| `docs/plan/items/PLAN-114.md` | 4.7 | 30 |  | 생성물 |
+| `docs/plan/items/PLAN-114.md` | 4.8 | 31 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.4 | 40 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 15.9 | 69 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 17.9 | 76 |  | 생성물 |
+| `docs/plan/items/PLAN-117.md` | 2.9 | 17 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -428,6 +432,7 @@
 | `docs/reports/2026-11-23-plan-116-phase1-governance-mapping.md` | 22.7 | 128 |  | 미분류 |
 | `docs/reports/2026-11-23-rule-0546-independent-review.md` | 10.2 | 52 |  | 미분류 |
 | `docs/reports/2026-11-24-bot-identity-check.md` | 10.4 | 74 |  | 미분류 |
+| `docs/reports/2026-11-24-security-bundles-check.md` | 3.0 | 12 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |
@@ -445,10 +450,16 @@
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
 | `docs/textbook/90-부록-자동생성.md` | 150.9 | 886 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
+| `workspace/21-security-bundles-README.md` | 2.9 | 25 |  | 미분류 |
+| `workspace/CODEOWNERS-README.md` | 2.9 | 25 |  | 미분류 |
 | `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
 | `workspace/DEC-0087-check-code-l6-bundle.README.md` | 3.3 | 22 |  | 미분류 |
 | `workspace/DEC-0089-README.md` | 3.3 | 27 |  | 미분류 |
 | `workspace/DEC-0089-trust-README.md` | 4.1 | 28 |  | 미분류 |
+| `workspace/DEC-0092-README.md` | 2.8 | 24 |  | 미분류 |
+| `workspace/DEC-0094-ci-zone-README.md` | 3.5 | 23 |  | 미분류 |
+| `workspace/DEC-0095-hooks-README.md` | 2.5 | 22 |  | 미분류 |
+| `workspace/N11-fail-closed-README.md` | 3.5 | 26 |  | 미분류 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |

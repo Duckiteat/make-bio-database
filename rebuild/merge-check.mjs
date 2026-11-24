@@ -57,7 +57,7 @@ export function dbIdsOf(text) {
 export function seqsOf(text) {
   const m = new Map();
   for (const l of String(text || '').split('\n')) { if (!l.trim()) continue; let o; try { o = JSON.parse(l); } catch { continue; } if (!o || typeof o !== 'object') continue;
-    if (Number.isInteger(o.seq)) m.set(`seq ${o.seq}`, l); if (typeof o.id === 'string') m.set(o.id, l); }
+    if (Number.isInteger(o.seq) || (typeof o.seq === 'string' && o.seq)) m.set(`seq ${o.seq}`, l); if (typeof o.id === 'string') m.set(o.id, l); } // seq: 전환 기록은 "21a" 문자열도 (DEC-0092)
   return m;
 }
 

@@ -129,7 +129,7 @@ function shape(e, R) {
   }
   if (e.ev === 'handoff') {
     if (!RUN_RE.test(e.run || '')) E.push(`run '${e.run}'`);
-    if (!Number.isInteger(e.transition_seq) || (R && !R.transitions.has(e.transition_seq))) E.push(`transition_seq ${e.transition_seq} — 전환 기록에 없음 (넘기기 전에 dbtool transition)`);
+    if (!(Number.isInteger(e.transition_seq) || /^[1-9]\d*[a-z]+$/.test(String(e.transition_seq))) || (R && !R.transitions.has(e.transition_seq))) E.push(`transition_seq ${e.transition_seq} — 전환 기록에 없음 (넘기기 전에 dbtool transition) · 옛 정수 또는 "21a" (DEC-0092)`);
     else linkErr(R, e.transition_seq, e.sup, `transition_seq ${e.transition_seq}`, E);
     if (!isObj(e.verify) || e.verify.finish !== 'pass') E.push("verify.finish 가 'pass' 가 아님 — 끝내기 검사(gate finish <모드> --full)를 통과한 뒤에 넘긴다");
     if (!isObj(e.outputs) || !Array.isArray(e.outputs.commits) || !e.outputs.commits.length || e.outputs.commits.some((c) => !/^[0-9a-f]{7,40}$/.test(c))) E.push('outputs.commits — 커밋 해시 목록');

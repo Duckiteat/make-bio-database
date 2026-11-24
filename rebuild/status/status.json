@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1301 개 · 30828.2 KB"
+        "1326 개 · 30973.2 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "469 개 · 3994.9 KB"
+        "480 개 · 4029.9 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "117 개 · 1392.9 KB"
+        "124 개 · 1413.9 KB"
        ],
        [
         "장부 단위",
@@ -118,17 +118,17 @@
        [
         "rebuild",
         "38",
-        "6683.3"
+        "6695.1"
        ],
        [
         "docs",
-        "440",
-        "3507.5"
+        "445",
+        "3521.9"
        ],
        [
         "(최상위)",
         "19",
-        "1030.1"
+        "1032.6"
        ],
        [
         "tests",
@@ -141,6 +141,11 @@
         "649.5"
        ],
        [
+        "workspace",
+        "78",
+        "383.5"
+       ],
+       [
         "attestations",
         "1",
         "299.0"
@@ -149,11 +154,6 @@
         "examples",
         "47",
         "289.6"
-       ],
-       [
-        "workspace",
-        "58",
-        "267.4"
        ],
        [
         "engine",
@@ -231,11 +231,11 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "460.8"
+        "464.8"
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "412.8"
+        "420.4"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -247,7 +247,7 @@
        ],
        [
         "`CHANGES.md`",
-        "360.5"
+        "363.1"
        ],
        [
         "`rebuild/rules/changes.jsonl`",
@@ -368,8 +368,8 @@
        ],
        [
         "`CHANGES.md`",
-        "360.5",
-        "353",
+        "363.1",
+        "356",
         "",
         "분류됨 1"
        ],
@@ -634,8 +634,8 @@
        ],
        [
         "`docs/plan/build.md`",
-        "56.4",
-        "503",
+        "57.2",
+        "507",
         "",
         "생성물"
        ],
@@ -1223,6 +1223,27 @@
        [
         "`docs/plan/decisions/DEC-0092.md`",
         "2.1",
+        "11",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0093.md`",
+        "1.5",
+        "12",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0094.md`",
+        "1.8",
+        "13",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0095.md`",
+        "1.8",
         "11",
         "",
         "생성물"
@@ -2083,8 +2104,8 @@
        ],
        [
         "`docs/plan/items/PLAN-102.md`",
-        "8.4",
-        "55",
+        "8.8",
+        "57",
         "",
         "생성물"
        ],
@@ -2167,8 +2188,8 @@
        ],
        [
         "`docs/plan/items/PLAN-114.md`",
-        "4.7",
-        "30",
+        "4.8",
+        "31",
         "",
         "생성물"
        ],
@@ -2181,8 +2202,15 @@
        ],
        [
         "`docs/plan/items/PLAN-116.md`",
-        "15.9",
-        "69",
+        "17.9",
+        "76",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-117.md`",
+        "2.9",
+        "17",
         "",
         "생성물"
        ],
@@ -3300,6 +3328,13 @@
         "미분류"
        ],
        [
+        "`docs/reports/2026-11-24-security-bundles-check.md`",
+        "3.0",
+        "12",
+        "",
+        "미분류"
+       ],
+       [
         "`docs/reports/collection-system-develop-brief.md`",
         "6.5",
         "69",
@@ -3419,6 +3454,20 @@
         "생성물"
        ],
        [
+        "`workspace/21-security-bundles-README.md`",
+        "2.9",
+        "25",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/CODEOWNERS-README.md`",
+        "2.9",
+        "25",
+        "",
+        "미분류"
+       ],
+       [
         "`workspace/DEC-0084-gate-bundle.README.md`",
         "3.5",
         "22",
@@ -3443,6 +3492,34 @@
         "`workspace/DEC-0089-trust-README.md`",
         "4.1",
         "28",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/DEC-0092-README.md`",
+        "2.8",
+        "24",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/DEC-0094-ci-zone-README.md`",
+        "3.5",
+        "23",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/DEC-0095-hooks-README.md`",
+        "2.5",
+        "22",
+        "",
+        "미분류"
+       ],
+       [
+        "`workspace/N11-fail-closed-README.md`",
+        "3.5",
+        "26",
         "",
         "미분류"
        ],
@@ -5056,7 +5133,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "12136 · 221 · 341",
+        "12140 · 221 · 343",
         "212 · 없음 9"
        ],
        [
@@ -5086,7 +5163,7 @@
         "`model.ID_RE.O`",
         "legislative merge (meta.next.O)",
         "`data/db.json#observations`",
-        "891 · 40 · 106",
+        "892 · 40 · 107",
         "28 · 없음 12"
        ],
        [
@@ -5296,8 +5373,8 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "6385 · 552 · 224",
-        "549 · 없음 3"
+        "6473 · 553 · 237",
+        "549 · 없음 4"
        ],
        [
         "`decision`",
@@ -5306,8 +5383,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "3290 · 90 · 387",
-        "275 · 없음 6"
+        "3565 · 93 · 413",
+        "279 · 없음 6"
        ],
        [
         "`assay_stage`",
@@ -5317,7 +5394,7 @@
         "측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번)",
         "`rebuild/state/plans.jsonl`",
         "0 · 0 · 0",
-        "275 · 없음 0"
+        "279 · 없음 0"
        ],
        [
         "`permission`",
@@ -5337,7 +5414,7 @@
         "계산 — CHANGES.md 의 행을 아래(가장 오래된 행)부터 센 순번. 행은 맨 위에 더하기만 하므로 번호가 바뀌지 않는다",
         "`CHANGES.md`",
         "94 · 40 · 2",
-        "346 · 없음 0"
+        "349 · 없음 0"
        ],
        [
         "`code_head`",
@@ -5356,8 +5433,8 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "5055 · 121 · 304",
-        "275 · 없음 5"
+        "5106 · 122 · 313",
+        "279 · 없음 5"
        ],
        [
         "`plan_stage`",
@@ -5367,7 +5444,7 @@
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
         "1598 · 43 · 129",
-        "275 · 없음 1"
+        "279 · 없음 1"
        ],
        [
         "`plan_direction`",
@@ -5376,8 +5453,8 @@
         "`^DIR-\\d{4}$`",
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "98 · 11 · 16",
-        "275 · 없음 1"
+        "99 · 11 · 17",
+        "279 · 없음 1"
        ],
        [
         "`test`",
@@ -5655,7 +5732,7 @@
      "- `audit_code`: AUDIT_PROBE · AUDIT_RULE · AUDIT_TEST",
      "- `criterion`: D3.asserted · S3.doi",
      "- `task`: TASK-009",
-     "- `rule`: RULE-0999 · RULE-9519 · RULE-9999",
+     "- `rule`: RULE-0550 · RULE-0999 · RULE-9519 · RULE-9999",
      "- `decision`: DEC-0052 · DEC-0059 · DEC-0098 · DEC-0099 · DEC-9998 · DEC-9999",
      "- `plan_item`: PLAN-901 · PLAN-902 · PLAN-997 · PLAN-998 · PLAN-999",
      "- `plan_stage`: STG-11",
@@ -5720,13 +5797,13 @@
       "rows": [
        [
         "공통 `common`",
-        "367",
-        "8585.5"
+        "371",
+        "8608.8"
        ],
        [
         "정보 작성 `author`",
-        "536",
-        "17124.5"
+        "556",
+        "17240.6"
        ],
        [
         "기초시험 `baseline`",
@@ -5736,7 +5813,7 @@
        [
         "디벨롭 `develop`",
         "220",
-        "2734.1"
+        "2736.6"
        ],
        [
         "적분장 `field`",
@@ -5745,8 +5822,8 @@
        ],
        [
         "점검·검증 `inspect`",
-        "133",
-        "2096.4"
+        "134",
+        "2099.4"
        ]
       ]
      }
@@ -5769,7 +5846,7 @@
         "`rebuild/**`",
         "common",
         "38",
-        "6683.3",
+        "6695.1",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -5845,8 +5922,8 @@
        [
         "`workspace/**`",
         "author",
-        "49",
-        "245.9",
+        "69",
+        "362.0",
         "수집가 작업 공간"
        ],
        [
@@ -6006,8 +6083,8 @@
        [
         "`docs/reports/**`",
         "inspect",
-        "123",
-        "1715.0",
+        "124",
+        "1718.0",
         "보고서 — 읽기·점검"
        ],
        [
@@ -6027,8 +6104,8 @@
        [
         "`docs/**`",
         "common",
-        "282",
-        "917.3",
+        "286",
+        "928.7",
         "안내 문서"
        ],
        [
@@ -6042,7 +6119,7 @@
         "`CHANGES.md`",
         "develop",
         "1",
-        "360.5",
+        "363.1",
         "변경 기록"
        ],
        [
@@ -10481,7 +10558,7 @@
         "`code:judicial`",
         "32",
         "24",
-        "8",
+        "9",
         "7"
        ],
        [
@@ -10513,15 +10590,15 @@
         "`code:tests`",
         "60",
         "25",
-        "1",
-        "34"
+        "2",
+        "33"
        ],
        [
         "L2",
         "`code:tools`",
         "18",
         "7",
-        "5",
+        "6",
         "8"
        ],
        [
@@ -10692,7 +10769,7 @@
     ]
    },
    {
-    "heading": "연결 없는 자리 (109)",
+    "heading": "연결 없는 자리 (108)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
@@ -10702,7 +10779,7 @@
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/claims.js` · `judicial/stiffness.js`",
      "- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
-     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs`",
+     "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs`",
      "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`",
      "- `doc:history`: `DESIGN-v4.md` · `FEATURES.md`",
      "- `doc:scenario`: `examples/scenarios/subjects.json`",

@@ -1,0 +1,163 @@
+지문 f45217aaa87a4ac50e6a6cb2f1de6b81e656b26fe7ee939bcfa6412332bac00c
+묶음 3 파일 — 자동 0 · 사람 승인 3 · 거부 0
+
+## 사람 승인 필요
+- judicial/transition_audit.js [L6 guard:gate · human] — changed: 2 줄 삭제
+    - const OPTIONAL = ['sup']; // 선택 칸 (DEC-0081) — 옛 기록에는 없다
+    - module.exports = { FIELDS, OPTIONAL, TARGET_RE, checkTransition, appendOnly };
+    + //   번호(DEC-0092 · DEC-0093): 한 묶음의 일은 같은 번호 + 글자 — seq "21a" → "21b" → … (z 다음 aa). 새 기록은 work(일의 번호)를 주고 서기가 글자를 붙인다.
+    + //   새 번호의 첫 기록(…a)은 opened_by: DEC-… (그 번호를 연 사람 결정) · 완결은 close: true (사람이 PR 승인) — 완결된 번호에는 더 붙이지 않는다.
+    + //   옛 기록 #1–#20 은 정수 seq 그대로 읽는다(두 #20 포함) — 새 방식은 그 뒤부터.
+    + 
+    + const OPTIONAL = ['sup', 'work', 'opened_by', 'close']; // 선택 칸 — sup(DEC-0081) · work · opened_by · close(DEC-0092) — 옛 기록에는 없다
+    +   if (rec.work !== undefined && !(Number.isInteger(rec.work) && rec.work > 0)) err('RULE-0513', `work '${rec.work}' — 일의 번호는 양의 정수 (글자는 서기가 붙인다)`);
+    +   if (rec.opened_by !== undefined && !/^DEC-\d{4}$/.test(String(rec.opened_by))) err('RULE-0513', `opened_by '${rec.opened_by}' — 새 번호를 연 결정 DEC-네 자리`);
+    +   if (rec.close !== undefined && rec.close !== true) err('RULE-0513', 'close 는 true 만 (완결이 아니면 칸을 빼기)');
+    +   }
+    +   }
+    +   }
+    + }
+    + }
+    + }
+    + }
+    + }
+    + // ── 번호 (DEC-0092 · DEC-0093) ──
+    + // 글자: a … z, aa … az, ba … (z 다음 aa — 길이가 먼저, 같은 길이는 사전순)
+    + function nextLetter(l) {
+    +   const c = String(l).split(''); let i = c.length - 1;
+    +   while (i >= 0 && c[i] === 'z') { c[i] = 'a'; i--; }
+    +   if (i < 0) return 'a' + c.join('');
+    +   c[i] = String.fromCharCode(c[i].charCodeAt(0) + 1); return c.join('');
+    + const letterCmp = (a, b) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0);
+    + // seq → { num, letter } (새 방식) · { num, legacy: true } (옛 정수) · null (읽을 수 없음)
+    + function parseSeq(seq) {
+    +   if (Number.isInteger(seq) && seq > 0) return { num: seq, legacy: true };
+    +   const m = typeof seq === 'string' && /^([1-9]\d*)([a-z]+)$/.exec(seq);
+    +   return m ? { num: Number(m[1]), letter: m[2] } : null;
+    + // 번호마다 묶음 — { num → { entries: [{rec, letter}], closed, opened_by } } (옛 정수는 legacy 집합)
+    + function works(records) {
+    +   const by = new Map(), legacy = new Set();
+    +   for (const r of records || []) {
+    +     const p = parseSeq(r && r.seq); if (!p) continue;
+    +     if (p.legacy) { legacy.add(p.num); continue; }
+    +     const w = by.get(p.num) || by.set(p.num, { num: p.num, entries: [], closed: false, opened_by: null }).get(p.num);
+    +     w.entries.push({ rec: r, letter: p.letter }); if (r.close === true) w.closed = true; if (p.letter === 'a' && r.opened_by) w.opened_by = r.opened_by;
+    +   for (const w of by.values()) w.entries.sort((x, y) => letterCmp(x.letter, y.letter));
+    +   return { by, legacy };
+    + // 새 기록 rec 이 받을 seq — prev: 지금 장부 · decisions: 계획에 있는 결정 번호 집합(Set) — 없으면 존재 확인을 건너뜀
+    + function nextSeq(prev, rec, decisions) {
+    +   const errors = [], rules = [], err = (rule, m) => { errors.push(m); rules.push(rule); };
+    +   if (!rec || !Number.isInteger(rec.work) || rec.work < 1) { err('RULE-0513', 'work 가 없음 — 이 일의 번호(양의 정수). 새 번호는 사람 결정으로만 연다 (opened_by: DEC-…)'); return { ok: false, errors, rules, seq: null }; }
+    +   const { by, legacy } = works(prev), w = by.get(rec.work);
+    +   let seq = null;
+    +   if (!w) {
+    +     if (legacy.has(rec.work)) err('RULE-0513', `번호 ${rec.work} 는 옛 기록(정수 seq)이 썼음 — 새 번호를 사람 결정으로 연다`);
+    +     if (!rec.opened_by) err('RULE-0513', `번호 ${rec.work} 는 새 번호 — 첫 기록에는 opened_by: DEC-… (그 번호를 연 사람 결정)`);
+    +     else if (decisions && !decisions.has(rec.opened_by)) err('RULE-0513', `opened_by ${rec.opened_by} — 계획에 그 결정이 없음`);
+    +     else { const other = [...by.values()].find((x) => x.opened_by === rec.opened_by); if (other) err('RULE-0513', `opened_by ${rec.opened_by} — 그 결정은 이미 번호 ${other.num} 을 열었음`); }
+    +     seq = rec.work + 'a';
+    +   } else {
+    +     if (w.closed) err('RULE-0513', `번호 ${rec.work} 는 완결됨 — 더 붙이지 않는다 (다음 일은 새 번호, 사람 결정으로)`);
+    +     if (rec.opened_by) err('RULE-0513', `opened_by 는 새 번호의 첫 기록에만 — 번호 ${rec.work} 는 이미 열림 (${w.opened_by || '?'})`);
+    +     seq = rec.work + nextLetter(w.entries[w.entries.length - 1].letter);
+    +   return { ok: !errors.length, errors, rules, seq };
+    + // 장부 전체 검사 — 두 브랜치를 합친 뒤에도 (같은 글자 둘 · 완결 뒤 기록 · 첫 기록의 opened_by)
+    + function checkLedger(records) {
+    +   const out = [], E = (m) => out.push({ rule: 'RULE-0513', msg: m });
+    +   const seen = new Map();
+    +   (records || []).forEach((r, i) => {
+    +     const p = parseSeq(r && r.seq);
+    +     if (!p) { E(`${i + 1} 번째 줄 seq '${r && r.seq}' — 옛 정수 또는 번호 + 글자("21a")`); return; }
+    +     if (p.legacy) return; // 옛 기록은 그대로 (DEC-0092 ⑤ — 두 #20 포함)
+    +     if (seen.has(r.seq)) E(`seq ${r.seq} 가 둘 — 두 브랜치가 같은 글자를 씀 (뒤의 것을 다음 글자로 다시 기록)`); else seen.set(r.seq, i);
+    +   });
+    +   const { by, legacy } = works(records);
+    +   for (const w of by.values()) {
+    +     if (legacy.has(w.num)) E(`번호 ${w.num} 를 옛 기록과 새 기록이 함께 씀`);
+    +     const first = w.entries[0];
+    +     if (first.letter !== 'a') E(`번호 ${w.num} 의 첫 기록이 ${w.num}${first.letter} — ${w.num}a 부터`);
+    +     else if (!first.rec.opened_by) E(`${w.num}a 에 opened_by 가 없음 — 새 번호는 사람 결정으로만`);
+    +     for (const e of w.entries.slice(1)) if (e.rec.opened_by) E(`${w.num}${e.letter} 의 opened_by — 첫 기록에만`);
+    +     const ci = w.entries.findIndex((e) => e.rec.close === true);
+    +     if (ci >= 0 && ci < w.entries.length - 1) E(`번호 ${w.num} 은 ${w.num}${w.entries[ci].letter} 에서 완결됨 — 그 뒤 기록 ${w.entries.slice(ci + 1).map((e) => w.num + e.letter).join(' · ')}`);
+    +   const opens = new Map();
+    +   for (const w of by.values()) if (w.opened_by) { if (opens.has(w.opened_by)) E(`${w.opened_by} 가 번호 ${opens.get(w.opened_by)} · ${w.num} 를 함께 엶 — 결정 하나 = 번호 하나`); else opens.set(w.opened_by, w.num); }
+    +   return out;
+    + // 열린 일(완결 안 된 번호) — 문지기 시작 안내 · 목록용
+    + const openWorks = (records) => [...works(records).by.values()].filter((w) => !w.closed).map((w) => ({ num: w.num, last: w.num + w.entries[w.entries.length - 1].letter, count: w.entries.length, opened_by: w.opened_by }));
+    + module.exports = { FIELDS, OPTIONAL, TARGET_RE, checkTransition, appendOnly, nextLetter, parseSeq, works, nextSeq, checkLedger, openWorks };
+- legislative/clerk.mjs [L2 code:legislative · session:develop] — changed: 3 줄 삭제
+    - // 전환 기록 (한 세션 = 한 모드): 검사 통과 뒤 순번(seq)을 붙여 끝에 한 줄 — 앞선 줄은 그대로 둔다
+    -   const line = JSON.stringify({ seq: prev.length + 1, ...Object.fromEntries(TA.FIELDS.map((k) => [k, rec[k]])) });
+    -   return put('transition', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + line + '\n');
+    + // 전환 기록 (한 세션 = 한 모드): 검사 통과 뒤 번호(seq)를 붙여 끝에 한 줄 — 앞선 줄은 그대로 둔다
+    + //   번호 (DEC-0092 · DEC-0093): rec.work = 일의 번호 → 서기가 그 번호의 다음 글자를 붙인다 ("21a" → "21b"). 새 번호의 첫 기록은 opened_by: DEC-…
+    + //   (그 결정이 계획에 있는지는 시험이 실제 장부로 본다) · 완결은 close: true. 판정은 judicial/transition_audit.js (nextSeq · checkLedger)
+    +   const n = TA.nextSeq(prev, rec, null); // 결정이 계획에 있는지는 서기가 보지 않는다(재건 관리 구역을 읽지 않음, 읽기 점검 ②) — 시험이 실제 장부로 본다(tests/transitions.test.mjs)
+    +   if (!n.ok) refuse(n.rules[0], `전환 기록 번호 — ${n.errors.join(' · ')}`);
+    +   const out = { seq: n.seq, ...Object.fromEntries(TA.FIELDS.map((k) => [k, rec[k]])), ...Object.fromEntries(TA.OPTIONAL.filter((k) => k !== 'work' && rec[k] !== undefined).map((k) => [k, rec[k]])) }; // work 는 seq 에 담김
+    +   const bad = TA.checkLedger([...prev, out]);
+    +   if (bad.length) refuse('RULE-0513', `전환 기록 장부 — ${bad.map((b) => b.msg).join(' · ')}`);
+    +   return put('transition', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + JSON.stringify(out) + '\n');
+- tests/transitions.test.mjs [L2 code:tests · session:develop, session:field] — changed: 5 줄 삭제
+    - test('RULE-0513 서기는 검사 통과 뒤에만, 끝에만 붙이고 순번을 매긴다', () => {
+    -     assert.throws(() => CLERK.appendTransition({ ...OK, why: '' }, root), (e) => e.rule === 'RULE-0513');
+    -     CLERK.appendTransition(OK, root); CLERK.appendTransition({ ...OK, from: 'develop', to: 'baseline', why: '고친 뒤 다시 기초시험' }, root);
+    -     assert.deepEqual(t.map((x) => [x.seq, x.from, x.to]), [[1, 'baseline', 'develop'], [2, 'develop', 'baseline']]);
+    -     assert.equal(readFileSync(join(root, CLERK.TRANSITIONS), 'utf8').split('\n').filter(Boolean).length, 2);
+    + import * as STATE from '../rebuild/state.mjs';
+    + 
+    + 
+    + 
+    + });
+    + });
+    + });
+    + test('RULE-0513 서기는 검사 통과 뒤에만, 끝에만 붙이고 번호 + 글자를 매긴다 (DEC-0092 · DEC-0093)', () => {
+    +     mkdirSync(join(root, 'workspace'), { recursive: true });
+    +     writeFileSync(join(root, CLERK.TRANSITIONS), '{"seq":1,"from":"inspect","to":"develop"}\n{"seq":2,"from":"develop","to":"inspect"}\n'); // 옛 정수 기록
+    +     const rule = (re) => (e) => e.rule === 'RULE-0513' && re.test(e.message);
+    +     assert.throws(() => CLERK.appendTransition({ ...OK, why: '' }, root), rule(/why/));
+    +     assert.throws(() => CLERK.appendTransition(OK, root), rule(/work 가 없음/));
+    +     assert.throws(() => CLERK.appendTransition({ ...OK, work: 3 }, root), rule(/opened_by/));
+    +     assert.throws(() => CLERK.appendTransition({ ...OK, work: 2, opened_by: 'DEC-0001' }, root), rule(/옛 기록/));
+    +     CLERK.appendTransition({ ...OK, work: 3, opened_by: 'DEC-0001', sup: 'SUP-0001' }, root);
+    +     assert.throws(() => CLERK.appendTransition({ ...OK, work: 3, opened_by: 'DEC-0001' }, root), rule(/첫 기록에만/));
+    +     assert.throws(() => CLERK.appendTransition({ ...OK, work: 4, opened_by: 'DEC-0001' }, root), rule(/이미 번호 3/));
+    +     CLERK.appendTransition({ ...OK, work: 3, from: 'develop', to: 'baseline', why: '고친 뒤 다시 기초시험' }, root);
+    +     CLERK.appendTransition({ ...OK, work: 4, opened_by: 'DEC-0002' }, root); // 두 일이 함께 진행
+    +     CLERK.appendTransition({ ...OK, work: 3, close: true }, root);
+    +     assert.throws(() => CLERK.appendTransition({ ...OK, work: 3 }, root), rule(/완결됨/));
+    +     assert.deepEqual(t.map((x) => x.seq), [1, 2, '3a', '3b', '4a', '3c']);
+    +     assert.equal(t[2].opened_by, 'DEC-0001'); assert.equal(t[2].sup, 'SUP-0001'); assert.equal(t[2].work, undefined); assert.equal(t[5].close, true);
+    +     assert.deepEqual(TA.openWorks(t), [{ num: 4, last: '4a', count: 1, opened_by: 'DEC-0002' }]);
+    + test('RULE-0513 번호 글자 — z 다음 aa · 새 칸 형식', () => {
+    +   assert.deepEqual(['a', 'y', 'z', 'az', 'zz'].map(TA.nextLetter), ['b', 'z', 'aa', 'ba', 'aaa']);
+    +   assert.deepEqual(TA.parseSeq(20), { num: 20, legacy: true });
+    +   assert.deepEqual(TA.parseSeq('21ab'), { num: 21, letter: 'ab' });
+    +   for (const s of ['21', '021a', '21A', 0, -1, null]) assert.equal(TA.parseSeq(s), null, String(s));
+    +   const bad = (rec, re) => { const v = TA.checkTransition(rec, ROOT); assert.equal(v.ok, false); assert.match(v.errors.join(' · '), re); };
+    +   bad({ ...OK, work: '21' }, /work/); bad({ ...OK, work: 0 }, /work/);
+    +   bad({ ...OK, opened_by: 'PLAN-116' }, /opened_by/); bad({ ...OK, close: false }, /close/);
+    +   assert.ok(TA.checkTransition({ ...OK, work: 21, opened_by: 'DEC-0093', close: true }, ROOT).ok);
+    +   // 결정 집합을 주면 존재를 본다 (서기는 null — 실제 장부는 아래 시험이 계획과 대조)
+    +   assert.match(TA.nextSeq([], { ...OK, work: 3, opened_by: 'DEC-0009' }, new Set(['DEC-0001'])).errors.join(' · '), /계획에 그 결정이 없음/);
+    +   assert.equal(TA.nextSeq([], { ...OK, work: 3, opened_by: 'DEC-0001' }, new Set(['DEC-0001'])).seq, '3a');
+    + test('RULE-0513 장부 전체 — 두 브랜치를 합친 뒤 같은 글자 · 완결 뒤 기록 · opened_by 를 잡는다', () => {
+    +   const r = (seq, o = {}) => ({ seq, ...o });
+    +   const msgs = (recs) => TA.checkLedger(recs).map((x) => x.msg).join(' · ');
+    +   assert.deepEqual(TA.checkLedger([r(20), r(20), r('21a', { opened_by: 'DEC-0001' }), r('21b'), r('22a', { opened_by: 'DEC-0002' })]), []); // 옛 #20 둘은 그대로
+    +   assert.match(msgs([r('21a', { opened_by: 'DEC-0001' }), r('21b'), r('21b')]), /21b 가 둘/);
+    +   assert.match(msgs([r('21a', { opened_by: 'DEC-0001' }), r('21b', { close: true }), r('21c')]), /완결됨 — 그 뒤 기록 21c/);
+    +   assert.match(msgs([r('21b', { opened_by: 'DEC-0001' })]), /21a 부터/);
+    +   assert.match(msgs([r('21a')]), /opened_by 가 없음/);
+    +   assert.match(msgs([r('21a', { opened_by: 'DEC-0001' }), r('21b', { opened_by: 'DEC-0001' })]), /첫 기록에만/);
+    +   assert.match(msgs([r('21a', { opened_by: 'DEC-0001' }), r('22a', { opened_by: 'DEC-0001' })]), /결정 하나 = 번호 하나/);
+    +   assert.match(msgs([r(21), r('21a', { opened_by: 'DEC-0001' })]), /옛 기록과 새 기록/);
+    +   assert.match(msgs([r('x')]), /seq 'x'/);
+    +   // 병합 순서가 바뀌어도(덧붙이기 장부를 합친 순서) 글자 순으로 본다
+    +   assert.deepEqual(TA.checkLedger([r('21b'), r('21a', { opened_by: 'DEC-0001' })]), []);
+    + test('RULE-0513 이 저장소의 전환 기록 장부가 검사를 통과하고, 새 번호를 연 결정(opened_by)이 계획에 있다', () => {
+    +   const t = CLERK.readTransitions(ROOT);
+    +   assert.deepEqual(TA.checkLedger(t), []);
+    +   const decisions = new Set(STATE.load(ROOT).decisions.map((d) => d.id));
+    +   assert.deepEqual(t.filter((r) => r.opened_by && !decisions.has(r.opened_by)).map((r) => `${r.seq} ${r.opened_by}`), [], '계획에 없는 결정이 번호를 엶');
