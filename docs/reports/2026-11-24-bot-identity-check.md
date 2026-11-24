@@ -53,5 +53,22 @@
 | independent-judge 미등록 | 같은 원인으로 읽힌다 | default branch 를 main 으로 바꾼 직후 `trust` 워크플로 등록(id 428510760, 2026-11-24 01:55:57Z) — 그 전 `list_workflows` 는 check 하나 | trust.yml 이 main 에만 있고 default branch 에 없어서 GitHub 이 등록하지 않았다 |
 | 사람의 수정 | default branch → main · 규칙 세트 `main` 이 "Applies to 1 target: main" · Bypass 비어 있음 · Active | 사용자 캡처 10:57 | 규칙이 main 에 걸렸다 |
 | PR #21 | 01:52:47Z Duckiteat 병합 · 승인 0 건 | PR #21 `merged_by` · 리뷰 목록 | 수정 전에 병합 — 시험 아님 |
-| 이 PR 의 병합 가능 상태 | _채움 대기_ | 이 PR `mergeable_state` (검사 끝난 뒤) | 기대 `blocked` |
-| 이 PR 의 `independent-judge` | _채움 대기_ | 검사 목록 · pull_request_target 실행 | 기대 — 돌고 통과(지키는 자리 안 바꿈) |
+| PR #22 의 병합 | 2026-11-24 02:04:10Z Duckiteat 병합 · 승인 0 건 | PR #22 `merged_by` · 리뷰 목록 | 확인 보고 전 병합 — 승인 규칙 시험이 되지 않음(그때 Required approvals 값은 모름) |
+| PR #22 의 `independent-judge` | **처음으로 돌고 통과** (01:58:22–28Z) | PR #22 검사 목록 | 미등록 원인이 default branch 였음이 확인됨 |
+
+## 규칙 세트 완성 뒤 시험 (2026-11-24)
+
+| 확인 | 결과 | 근거 | 의미 |
+|---|---|---|---|
+| 규칙 세트 `main` | Applies to main · Required approvals 1 · 필수 검사 rules · independent-judge (GitHub Actions) · Require branches up to date · Block force pushes · Restrict deletions · Bypass 비어 있음 | 사용자 캡처 11:08 · 11:12 와 "저장했다" | 봇 PR 은 사람 승인 + 두 검사 통과 없이는 병합되지 않아야 한다 |
+| PR #23 의 병합 가능 상태 | **`blocked`** — 검사 셋 다 통과한 뒤에도 (02:20:38Z 이후) | PR #23 `mergeable_state` · 사람 화면 "Review required · Merging is blocked — At least 1 approving review is required" (사용자 캡처 11:22) | 6-2 충족 — 봇 PR 은 사람 승인 없이 병합되지 않는다. GitHub 서버가 막는다(AI 쪽 설정과 무관) |
+| PR #23 의 필수 검사 | rules(push · PR) · independent-judge 모두 success — "All checks have passed · 3 successful checks" | PR #23 검사 목록 · 사람 화면 | 독립 판정이 필수 검사로 돈다 — 전환 기록 #20 열린 일 '필수 검사에 independent-judge 추가' 끝 |
+
+## 종합
+
+| 절차서 6 장 | 결과 | 근거 | 남은 것 |
+|---|---|---|---|
+| 6-1 push · PR · Actions actor = 봇 | 충족 | 실행 #528–#532 · PR #20–#23 작성자 daduteria | — |
+| 6-2 봇 병합 거부 | 충족(조회로) — 봇의 병합 시도는 하지 않음(설정 deny) | PR #23 `blocked` · "Review required" | — |
+| 6-3 사람 승인 뒤 병합 | PR #23 을 사람이 승인 → 병합하면 충족 | — | 사람 |
+| 6-4 봇으로 Settings | 시도하지 않음 — 역할 write 로 대신 확인 | 협업자 조회 | — |
