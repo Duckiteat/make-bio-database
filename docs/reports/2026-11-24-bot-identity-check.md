@@ -61,5 +61,14 @@
 | 확인 | 결과 | 근거 | 의미 |
 |---|---|---|---|
 | 규칙 세트 `main` | Applies to main · Required approvals 1 · 필수 검사 rules · independent-judge (GitHub Actions) · Require branches up to date · Block force pushes · Restrict deletions · Bypass 비어 있음 | 사용자 캡처 11:08 · 11:12 와 "저장했다" | 봇 PR 은 사람 승인 + 두 검사 통과 없이는 병합되지 않아야 한다 |
-| 이 PR 의 병합 가능 상태 | _채움 대기_ | 이 PR `mergeable_state` (검사 끝난 뒤) | 기대 `blocked` |
-| 이 PR 의 필수 검사 | _채움 대기_ | 검사 목록 | 기대 — rules · independent-judge 둘 다 통과 |
+| PR #23 의 병합 가능 상태 | **`blocked`** — 검사 셋 다 통과한 뒤에도 (02:20:38Z 이후) | PR #23 `mergeable_state` · 사람 화면 "Review required · Merging is blocked — At least 1 approving review is required" (사용자 캡처 11:22) | 6-2 충족 — 봇 PR 은 사람 승인 없이 병합되지 않는다. GitHub 서버가 막는다(AI 쪽 설정과 무관) |
+| PR #23 의 필수 검사 | rules(push · PR) · independent-judge 모두 success — "All checks have passed · 3 successful checks" | PR #23 검사 목록 · 사람 화면 | 독립 판정이 필수 검사로 돈다 — 전환 기록 #20 열린 일 '필수 검사에 independent-judge 추가' 끝 |
+
+## 종합
+
+| 절차서 6 장 | 결과 | 근거 | 남은 것 |
+|---|---|---|---|
+| 6-1 push · PR · Actions actor = 봇 | 충족 | 실행 #528–#532 · PR #20–#23 작성자 daduteria | — |
+| 6-2 봇 병합 거부 | 충족(조회로) — 봇의 병합 시도는 하지 않음(설정 deny) | PR #23 `blocked` · "Review required" | — |
+| 6-3 사람 승인 뒤 병합 | PR #23 을 사람이 승인 → 병합하면 충족 | — | 사람 |
+| 6-4 봇으로 Settings | 시도하지 않음 — 역할 write 로 대신 확인 | 협업자 조회 | — |
