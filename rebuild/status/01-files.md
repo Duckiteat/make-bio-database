@@ -7,12 +7,12 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 483 | 16696.4 |
-| rebuild | 38 | 6684.6 |
-| docs | 441 | 3509.6 |
-| (최상위) | 19 | 1031.0 |
+| rebuild | 38 | 6692.8 |
+| docs | 443 | 3516.1 |
+| (최상위) | 19 | 1031.8 |
 | tests | 120 | 839.7 |
 | judicial | 37 | 649.5 |
-| workspace | 68 | 326.9 |
+| workspace | 74 | 374.2 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
@@ -33,11 +33,11 @@
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 696.6 |
 | `data/log/genesis-db.json` | 608.9 |
-| `rebuild/state/plan-log.jsonl` | 460.8 |
-| `rebuild/state/plans.jsonl` | 414.0 |
+| `rebuild/state/plan-log.jsonl` | 464.3 |
+| `rebuild/state/plans.jsonl` | 418.6 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `CHANGES.md` | 361.4 |
+| `CHANGES.md` | 362.2 |
 | `rebuild/rules/changes.jsonl` | 351.4 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
