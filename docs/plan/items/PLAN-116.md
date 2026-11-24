@@ -22,6 +22,7 @@
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0089 묶음 1 적용 확인: 사용자 커밋 d064809(Duckiteat) — .claude/settings.json 이 묶음(5c9b9532)+손 편집과 바이트 동일 · 권한 장부 PERM-0012 allow · 장부 검사 오류 0 · 권한 · 승인 · 보호 기준 시험 20 통과 · data · attestations 변경 0. 이 세션 다음 작업 프로세스에서 mcp__github__enable_pr_auto_merge 가 도구 목록에서 빠짐(deny 동작). 남은 것: Allow auto-merge 끄기(사용자 GitHub) · 묶음 2(독립 판정) · 봇 계정(DEC-0090)
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 GitHub Allow auto-merge 꺼짐(사용자 확인) — N12 는 Claude 설정 deny · 서버 설정 두 겹. DEC-0089 묶음 2 적용 확인: 사용자 커밋 a71393d(Duckiteat, 한 번에 적용 스크립트 — 전체 시험 통과 때만 커밋) — modes.json · storage-map.json · guard-matrix 시험 · .github/workflows/trust.yml 이 묶음(9a18ecb7)과 바이트 동일 · 보호 기준 · 독립 판정 · 권한 시험 14 통과 · develop 은 새 L6 셋을 못 씀 · data · attestations · 설정 변경 0. 첫 적용 시도의 실패는 생성 순서(부록 뒤 관리 파일) 와 pull 막힘 — 묶음 문제 아님. 남은 것: 이 브랜치를 main 에 병합(사람) 뒤 main 규칙 필수 검사에 independent-judge · 봇 계정(DEC-0090)
 - `2026-11-24` 커밋 전 기록: · 2026-11-24 DEC-0091: 거버넌스만 먼저 main 으로 — P1 커밋을 뺀 새 브랜치 claude/governance-trust-core · 주장 층 시험 재료를 tests/fixtures 로
+- `2026-11-24` 커밋 전 기록: · 2026-11-24 체계 지도 docs/reports/2026-11-24-governance-system-map.md(보고서 25+1 편 · 네 영역 × 두 겹) · 오케스트레이터 설계 연구 docs/reports/2026-11-24-orchestrator-parallel-architecture-design.md — 남은 보안 셋(N11 · ci-zone · CODEOWNERS)은 PLAN-117 로
 
 ## 걸어온 길
 
@@ -48,6 +49,7 @@
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 1 적용 확인 — 사용자 커밋 d064809
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 2 적용 확인 — 사용자 커밋 a71393d · Allow auto-merge 꺼짐(사용자 확인)
 - `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — PR #18 을 그대로 병합하지 않고 거버넌스만 따로(나), 막히면 주장 층 시험을 자체 재료로(나-2)
+- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 DEC-0093 — 오케스트레이터를 MVP(최종 형식) → 범위 → 병렬 → 자율 순서로 계획
 
 ## 닿는 결정
 

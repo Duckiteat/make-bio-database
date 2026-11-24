@@ -10,12 +10,12 @@
 | L2 | `code:config` | 2 | 0 | 0 | 2 |
 | L2 | `code:core` | 6 | 4 | 2 | 2 |
 | L2 | `code:engine` | 16 | 2 | 2 | 13 |
-| L2 | `code:judicial` | 32 | 24 | 8 | 7 |
+| L2 | `code:judicial` | 32 | 24 | 9 | 7 |
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
-| L2 | `code:mcp` | 6 | 2 | 3 | 3 |
+| L2 | `code:mcp` | 6 | 2 | 4 | 2 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
 | L2 | `code:tests` | 60 | 25 | 1 | 34 |
-| L2 | `code:tools` | 18 | 7 | 5 | 8 |
+| L2 | `code:tools` | 18 | 7 | 6 | 8 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
 | L2 | `doc:spec` | 7 | 0 | 0 | 7 |
@@ -33,18 +33,18 @@
 | L5 | `data:dictionary` | 1 | 0 | 0 | 1 |
 | L5 | `data:prereg` | 1 | 1 | 0 | 0 |
 | L6 | `guard:authority` | 7 | 4 | 1 | 3 |
-| L6 | `guard:gate` | 13 | 7 | 3 | 6 |
+| L6 | `guard:gate` | 13 | 7 | 5 | 5 |
 | L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
-## 연결 없는 자리 (109)
+## 연결 없는 자리 (107)
 
 - `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`
 - `code:config`: `.gitignore` · `.mcp.json`
 - `code:core`: `scenarios.js` · `inbox.js`
 - `code:engine`: `engine/rng.js` · `engine/probe_pool.js` · `engine/probe_worker.js` · `engine/rust/src/engine.rs` · `engine/rust/src/detmath.rs` · `engine/rust/src/tape.rs` · `engine/rust/src/rng.rs` · `engine/rust/src/lib.rs` · `engine/rust/src/bin/fate_cli.rs` · `engine/rust/Cargo.toml` · `engine/rust/Cargo.lock` · `engine/rust/.gitignore` · `engine/rust/build.sh`
 - `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/claims.js` · `judicial/stiffness.js`
-- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`
+- `code:mcp`: `mcp/run.mjs` · `mcp/kinetics_search.mjs`
 - `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`
 - `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs`
 - `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`
@@ -61,6 +61,6 @@
 - `data:assumptions`: `data/assumptions.jsonl`
 - `data:dictionary`: `data/dictionary.jsonl`
 - `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`
-- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `rebuild/trust-check.mjs` · `tests/trust_check.test.mjs`
+- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `tests/trust_check.test.mjs`
 - `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`
 - `guard:settings`: `.claude/settings.json`

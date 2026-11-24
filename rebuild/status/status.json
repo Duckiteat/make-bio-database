@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1302 개 · 30849.2 KB"
+        "1322 개 · 30995.4 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,11 +25,11 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "470 개 · 4015.9 KB"
+        "490 개 · 4119.9 KB"
        ],
        [
         "아직 분류하지 않은 문서",
-        "118 개 · 1413.9 KB"
+        "119 개 · 1474.2 KB"
        ],
        [
         "장부 단위",
@@ -118,12 +118,12 @@
        [
         "rebuild",
         "38",
-        "6683.3"
+        "6725.5"
        ],
        [
         "docs",
-        "441",
-        "3528.5"
+        "461",
+        "3632.5"
        ],
        [
         "(최상위)",
@@ -231,11 +231,11 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "460.8"
+        "482.2"
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "412.8"
+        "433.6"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -620,8 +620,8 @@
        ],
        [
         "`docs/plan/ORDER.md`",
-        "34.3",
-        "102",
+        "38.7",
+        "121",
         "",
         "생성물"
        ],
@@ -634,8 +634,8 @@
        ],
        [
         "`docs/plan/build.md`",
-        "56.4",
-        "503",
+        "60.5",
+        "546",
         "",
         "생성물"
        ],
@@ -1224,6 +1224,13 @@
         "`docs/plan/decisions/DEC-0092.md`",
         "2.1",
         "11",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0093.md`",
+        "3.8",
+        "31",
         "",
         "생성물"
        ],
@@ -2090,15 +2097,15 @@
        ],
        [
         "`docs/plan/items/PLAN-103.md`",
-        "5.7",
-        "49",
+        "6.3",
+        "52",
         "",
         "생성물"
        ],
        [
         "`docs/plan/items/PLAN-104.md`",
-        "9.2",
-        "85",
+        "9.8",
+        "87",
         "",
         "생성물"
        ],
@@ -2153,8 +2160,8 @@
        ],
        [
         "`docs/plan/items/PLAN-112.md`",
-        "3.1",
-        "27",
+        "3.6",
+        "29",
         "",
         "생성물"
        ],
@@ -2181,8 +2188,134 @@
        ],
        [
         "`docs/plan/items/PLAN-116.md`",
-        "15.9",
-        "69",
+        "16.4",
+        "71",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-117.md`",
+        "1.8",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-118.md`",
+        "1.6",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-119.md`",
+        "1.7",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-120.md`",
+        "1.7",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-121.md`",
+        "1.9",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-122.md`",
+        "1.9",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-123.md`",
+        "1.7",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-124.md`",
+        "1.7",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-125.md`",
+        "1.4",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-126.md`",
+        "1.6",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-127.md`",
+        "1.6",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-128.md`",
+        "1.6",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-129.md`",
+        "1.5",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-130.md`",
+        "1.5",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-131.md`",
+        "1.5",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-132.md`",
+        "1.6",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-133.md`",
+        "1.6",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-134.md`",
+        "1.4",
+        "21",
         "",
         "생성물"
        ],
@@ -3303,6 +3436,13 @@
         "`docs/reports/2026-11-24-governance-system-map.md`",
         "21.0",
         "208",
+        "",
+        "미분류"
+       ],
+       [
+        "`docs/reports/2026-11-24-orchestrator-parallel-architecture-design.md`",
+        "60.3",
+        "520",
         "",
         "미분류"
        ],
@@ -5063,7 +5203,7 @@
         "`model.ID_RE.D`",
         "legislative merge (meta.next.D)",
         "`data/db.json#senses`",
-        "12138 · 221 · 342",
+        "12142 · 221 · 344",
         "212 · 없음 9"
        ],
        [
@@ -5303,7 +5443,7 @@
         "`^RULE-\\d{4}$`",
         "rebuild 5 단계 (규칙 장부)",
         "`rebuild/rules/rules.jsonl`",
-        "6386 · 552 · 225",
+        "6400 · 552 · 228",
         "549 · 없음 3"
        ],
        [
@@ -5313,8 +5453,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "3313 · 90 · 388",
-        "275 · 없음 6"
+        "3494 · 91 · 408",
+        "295 · 없음 6"
        ],
        [
         "`assay_stage`",
@@ -5324,7 +5464,7 @@
         "측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번)",
         "`rebuild/state/plans.jsonl`",
         "0 · 0 · 0",
-        "275 · 없음 0"
+        "295 · 없음 0"
        ],
        [
         "`permission`",
@@ -5363,8 +5503,8 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "5069 · 121 · 305",
-        "275 · 없음 5"
+        "5571 · 139 · 325",
+        "295 · 없음 5"
        ],
        [
         "`plan_stage`",
@@ -5373,8 +5513,8 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "1600 · 43 · 130",
-        "275 · 없음 1"
+        "1632 · 43 · 130",
+        "295 · 없음 1"
        ],
        [
         "`plan_direction`",
@@ -5383,8 +5523,8 @@
         "`^DIR-\\d{4}$`",
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "98 · 11 · 16",
-        "275 · 없음 1"
+        "101 · 12 · 17",
+        "295 · 없음 1"
        ],
        [
         "`test`",
@@ -5727,8 +5867,8 @@
       "rows": [
        [
         "공통 `common`",
-        "367",
-        "8585.5"
+        "386",
+        "8671.5"
        ],
        [
         "정보 작성 `author`",
@@ -5752,8 +5892,8 @@
        ],
        [
         "점검·검증 `inspect`",
-        "134",
-        "2117.4"
+        "135",
+        "2177.7"
        ]
       ]
      }
@@ -5776,7 +5916,7 @@
         "`rebuild/**`",
         "common",
         "38",
-        "6683.3",
+        "6725.5",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -6013,8 +6153,8 @@
        [
         "`docs/reports/**`",
         "inspect",
-        "124",
-        "1736.0",
+        "125",
+        "1796.3",
         "보고서 — 읽기·점검"
        ],
        [
@@ -6034,8 +6174,8 @@
        [
         "`docs/**`",
         "common",
-        "282",
-        "917.3",
+        "301",
+        "961.0",
         "안내 문서"
        ],
        [
@@ -10488,7 +10628,7 @@
         "`code:judicial`",
         "32",
         "24",
-        "8",
+        "9",
         "7"
        ],
        [
@@ -10504,8 +10644,8 @@
         "`code:mcp`",
         "6",
         "2",
-        "3",
-        "3"
+        "4",
+        "2"
        ],
        [
         "L2",
@@ -10528,7 +10668,7 @@
         "`code:tools`",
         "18",
         "7",
-        "5",
+        "6",
         "8"
        ],
        [
@@ -10672,8 +10812,8 @@
         "`guard:gate`",
         "13",
         "7",
-        "3",
-        "6"
+        "5",
+        "5"
        ],
        [
         "L6",
@@ -10699,7 +10839,7 @@
     ]
    },
    {
-    "heading": "연결 없는 자리 (109)",
+    "heading": "연결 없는 자리 (107)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
@@ -10707,7 +10847,7 @@
      "- `code:core`: `scenarios.js` · `inbox.js`",
      "- `code:engine`: `engine/rng.js` · `engine/probe_pool.js` · `engine/probe_worker.js` · `engine/rust/src/engine.rs` · `engine/rust/src/detmath.rs` · `engine/rust/src/tape.rs` · `engine/rust/src/rng.rs` · `engine/rust/src/lib.rs` · `engine/rust/src/bin/fate_cli.rs` · `engine/rust/Cargo.toml` · `engine/rust/Cargo.lock` · `engine/rust/.gitignore` · `engine/rust/build.sh`",
      "- `code:judicial`: `judicial/dependency.js` · `judicial/fault.js` · `judicial/engine_gap.js` · `judicial/stats.js` · `judicial/qual_graph.js` · `judicial/claims.js` · `judicial/stiffness.js`",
-     "- `code:mcp`: `mcp/run.mjs` · `mcp/fetch.mjs` · `mcp/kinetics_search.mjs`",
+     "- `code:mcp`: `mcp/run.mjs` · `mcp/kinetics_search.mjs`",
      "- `code:migration`: `migrations/010-v10-to-v12-values.js` · `migrations/002-id-map.json`",
      "- `code:tests`: `tests/dictionary_seal.test.mjs` · `tests/enforcement_gaps.test.mjs` · `tests/transitions.test.mjs` · `tests/supervise.test.mjs` · `tests/supervise_approval.test.mjs` · `tests/supervise_report.test.mjs` · `tests/affected.test.mjs` · `tests/mcp_run.test.mjs` · `tests/mcp_config.test.mjs` · `tests/kinetics_search.test.mjs` · `tests/gap_schema.test.mjs` · `tests/retraction_propagation.test.mjs` · `tests/dose_slope.test.mjs` · `tests/qual_compare.test.mjs` · `tests/qual_graph.test.mjs` · `tests/qualitative.test.mjs` · `tests/engine_reference.test.mjs` · `tests/propensity.test.mjs` · `tests/engine_gap.test.mjs` · `tests/telomere.test.mjs` · `tests/clock.test.mjs` · `tests/bench_engine.js` · `tests/fingerprint.js` · `tests/detmath.test.mjs` · `tests/collection_audit.test.mjs` · `tests/conservation.test.mjs` · `tests/bench_index.js` · `tests/runbook.test.mjs` · `tests/fixtures/brenda/km-sample.xml` · `tests/fixtures/augment/README.md` · `tests/changes-draft.test.mjs` · `tests/merge-check.test.mjs` · `tests/plan-import-sources.test.mjs` · `tests/ci_zone.test.mjs`",
      "- `code:tools`: `viewer.html` · `rebuild/index.mjs` · `rebuild/read.mjs` · `rebuild/render.mjs` · `rebuild/regen.mjs` · `rebuild/plan-import.mjs` · `rebuild/changes-draft.mjs` · `rebuild/merge-check.mjs`",
@@ -10724,7 +10864,7 @@
      "- `data:assumptions`: `data/assumptions.jsonl`",
      "- `data:dictionary`: `data/dictionary.jsonl`",
      "- `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`",
-     "- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `rebuild/trust-check.mjs` · `tests/trust_check.test.mjs`",
+     "- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `tests/trust_check.test.mjs`",
      "- `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`",
      "- `guard:settings`: `.claude/settings.json`"
     ]
