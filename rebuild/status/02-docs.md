@@ -446,11 +446,13 @@
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
 | `docs/textbook/90-부록-자동생성.md` | 150.9 | 886 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
+| `workspace/CODEOWNERS-README.md` | 2.2 | 20 |  | 미분류 |
 | `workspace/DEC-0084-gate-bundle.README.md` | 3.5 | 22 |  | 미분류 |
 | `workspace/DEC-0087-check-code-l6-bundle.README.md` | 3.3 | 22 |  | 미분류 |
 | `workspace/DEC-0089-README.md` | 3.3 | 27 |  | 미분류 |
 | `workspace/DEC-0089-trust-README.md` | 4.1 | 28 |  | 미분류 |
 | `workspace/DEC-0092-README.md` | 2.8 | 24 |  | 미분류 |
+| `workspace/N11-fail-closed-README.md` | 3.3 | 25 |  | 미분류 |
 | `workspace/NEXT-2026-11-01.md` | 6.9 | 61 |  | 미분류 |
 | `workspace/NEXT-2026-11-02.md` | 9.0 | 58 |  | 미분류 |
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
