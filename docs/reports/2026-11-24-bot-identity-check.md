@@ -42,5 +42,5 @@
 | PR #20 승인 | 0 건 | PR #20 리뷰 목록 비어 있음 | 승인 없이 병합됐다 — 아래 원인 |
 | 원인 — main 규칙 세트 | 규칙 세트 `main` 이 Active · 규칙 4 개(Restrict deletions · Require a pull request · Require status checks · Block force pushes)인데 **targeting 0 branches** | 사용자 화면 캡처(Settings → Rules → Rulesets) | 이름만 main 이고 아무 브랜치도 지키지 않았다 — PR #20 이 승인 0 건으로 `clean` 이었던 이유. 봇(write)이 병합할 수 있는 구멍이었고, 막던 것은 AI 쪽 설정 deny 뿐 |
 | 사람의 수정 | 대상 = default branch · Required approvals = 1 · Bypass list 비어 있음 · 필수 검사 `rules` 로 저장 (사용자 보고) | 사용자 대화 "저장했다" — 봇은 규칙 세트 화면을 읽지 못해 직접 대조 못 함 | 봇 병합을 GitHub 서버가 막는다 — 이 보고서를 실은 PR 의 병합 상태로 확인(아래 줄) |
-| 이 PR 의 병합 가능 상태 | _채움 대기_ | 이 PR `mergeable_state` (검사 끝난 뒤) | 기대 `blocked` — 승인 1 건 없이는 병합 불가 |
+| 이 PR(#21) 의 병합 가능 상태 | 검사 진행 중 `blocked` → 검사(rules 둘 다 success, 01:44Z) 끝난 뒤 **`clean`** — 기대와 다름 | PR #21 `mergeable_state` (01:45Z, head 5c1b607), 리뷰 0 건 | 수정 뒤에도 봇 PR 이 승인 없이 병합 가능한 상태로 읽힌다 — 저장된 규칙 세트가 main 에 걸리지 않았거나(대상) 승인 수가 0 일 수 있다. 원인 모름 — 고치지 않음(RULE-0262). 사람이 규칙 세트 목록의 'targeting N branches' 와 PR #21 병합 칸의 문구를 확인 |
 | `independent-judge` | 여전히 등록되지 않음 | `list_workflows` 에 `check` 하나 | 필수 검사 추가(나)는 Actions 탭 확인 뒤 |
