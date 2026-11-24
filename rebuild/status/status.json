@@ -13,7 +13,7 @@
       "rows": [
        [
         "저장소 파일 (관리 파일 제외)",
-        "1358 개 · 31421.4 KB"
+        "1360 개 · 31436.1 KB"
        ],
        [
         "입구 문서 1 곳 합",
@@ -25,7 +25,7 @@
        ],
        [
         "문서(.md, data·tests·rebuild 밖)",
-        "503 개 · 4174.2 KB"
+        "505 개 · 4181.7 KB"
        ],
        [
         "아직 분류하지 않은 문서",
@@ -118,12 +118,12 @@
        [
         "rebuild",
         "38",
-        "6767.9"
+        "6775.1"
        ],
        [
         "docs",
-        "466",
-        "3652.7"
+        "468",
+        "3660.2"
        ],
        [
         "(최상위)",
@@ -231,11 +231,11 @@
        ],
        [
         "`rebuild/state/plan-log.jsonl`",
-        "488.1"
+        "491.8"
        ],
        [
         "`rebuild/state/plans.jsonl`",
-        "443.9"
+        "447.5"
        ],
        [
         "`data/fetched/consensus/uniprot/P61769.json`",
@@ -620,8 +620,8 @@
        ],
        [
         "`docs/plan/ORDER.md`",
-        "38.7",
-        "121",
+        "41.0",
+        "123",
         "",
         "생성물"
        ],
@@ -634,8 +634,8 @@
        ],
        [
         "`docs/plan/build.md`",
-        "61.5",
-        "550",
+        "61.9",
+        "552",
         "",
         "생성물"
        ],
@@ -1258,6 +1258,13 @@
        [
         "`docs/plan/decisions/DEC-0097.md`",
         "2.1",
+        "13",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/decisions/DEC-0098.md`",
+        "2.0",
         "13",
         "",
         "생성물"
@@ -2223,15 +2230,15 @@
        ],
        [
         "`docs/plan/items/PLAN-117.md`",
-        "3.7",
-        "23",
+        "3.9",
+        "24",
         "",
         "생성물"
        ],
        [
         "`docs/plan/items/PLAN-118.md`",
-        "4.1",
-        "28",
+        "4.4",
+        "29",
         "",
         "생성물"
        ],
@@ -2343,6 +2350,13 @@
        [
         "`docs/plan/items/PLAN-134.md`",
         "1.4",
+        "21",
+        "",
+        "생성물"
+       ],
+       [
+        "`docs/plan/items/PLAN-135.md`",
+        "2.4",
         "21",
         "",
         "생성물"
@@ -5548,8 +5562,8 @@
         "`^DEC-\\d{4}$`",
         "rebuild 6c (계획 기록 — 결정, 순번)",
         "`rebuild/state/plans.jsonl`",
-        "4303 · 95 · 446",
-        "299 · 없음 6"
+        "4322 · 95 · 448",
+        "301 · 없음 5"
        ],
        [
         "`assay_stage`",
@@ -5559,7 +5573,7 @@
         "측정법 계획 (rebuild/state.mjs PLANS.assay — 단계 순번)",
         "`rebuild/state/plans.jsonl`",
         "0 · 0 · 0",
-        "299 · 없음 0"
+        "301 · 없음 0"
        ],
        [
         "`permission`",
@@ -5598,8 +5612,8 @@
         "`^PLAN-(?:\\d{3}[ap]?|H\\d{2})$`",
         "rebuild 6c (계획 기록 — 원래 순번에서 계산: 12A→a · 50′→p · (보류)→H)",
         "`rebuild/state/plans.jsonl`",
-        "5808 · 139 · 348",
-        "299 · 없음 5"
+        "6067 · 140 · 350",
+        "301 · 없음 5"
        ],
        [
         "`plan_stage`",
@@ -5608,8 +5622,8 @@
         "`^STG-\\d{2}[a-z]?p{0,3}$`",
         "rebuild 6c (계획 기록 — 재건 단계 순번에서: 5a→05a · 0′→00p · 5b″→05bpp)",
         "`rebuild/state/plans.jsonl`",
-        "1645 · 43 · 133",
-        "299 · 없음 1"
+        "1677 · 43 · 133",
+        "301 · 없음 1"
        ],
        [
         "`plan_direction`",
@@ -5619,7 +5633,7 @@
         "rebuild 6c (계획 기록 — 나아갈 방향, 순번)",
         "`rebuild/state/plans.jsonl`",
         "103 · 12 · 19",
-        "299 · 없음 1"
+        "301 · 없음 1"
        ],
        [
         "`test`",
@@ -5898,7 +5912,7 @@
      "- `criterion`: D3.asserted · S3.doi",
      "- `task`: TASK-009",
      "- `rule`: RULE-0999 · RULE-9519 · RULE-9999",
-     "- `decision`: DEC-0052 · DEC-0059 · DEC-0098 · DEC-0099 · DEC-9998 · DEC-9999",
+     "- `decision`: DEC-0052 · DEC-0059 · DEC-0099 · DEC-9998 · DEC-9999",
      "- `plan_item`: PLAN-901 · PLAN-902 · PLAN-997 · PLAN-998 · PLAN-999",
      "- `plan_stage`: STG-11",
      "- `plan_direction`: DIR-0099",
@@ -5962,8 +5976,8 @@
       "rows": [
        [
         "공통 `common`",
-        "390",
-        "8731.5"
+        "392",
+        "8746.2"
        ],
        [
         "정보 작성 `author`",
@@ -6011,7 +6025,7 @@
         "`rebuild/**`",
         "common",
         "38",
-        "6767.9",
+        "6775.1",
         "재건 관리 — 모든 모드가 읽기만"
        ],
        [
@@ -6269,8 +6283,8 @@
        [
         "`docs/**`",
         "common",
-        "305",
-        "977.0",
+        "307",
+        "984.5",
         "안내 문서"
        ],
        [
@@ -10931,8 +10945,8 @@
         "`guard:gate`",
         "14",
         "7",
-        "5",
-        "6"
+        "6",
+        "5"
        ],
        [
         "L6",
@@ -10958,7 +10972,7 @@
     ]
    },
    {
-    "heading": "연결 없는 자리 (106)",
+    "heading": "연결 없는 자리 (105)",
     "tables": [],
     "text": [
      "- `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`",
@@ -10983,7 +10997,7 @@
      "- `data:assumptions`: `data/assumptions.jsonl`",
      "- `data:dictionary`: `data/dictionary.jsonl`",
      "- `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`",
-     "- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `.github/CODEOWNERS` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs` · `tests/trust_check.test.mjs`",
+     "- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `.github/CODEOWNERS` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs`",
      "- `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`",
      "- `guard:settings`: `.claude/settings.json`"
     ]
