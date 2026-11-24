@@ -276,7 +276,7 @@
 | `docs/plan/items/PLAN-115.md` | 11.4 | 40 |  | 생성물 |
 | `docs/plan/items/PLAN-116.md` | 18.7 | 79 |  | 생성물 |
 | `docs/plan/items/PLAN-117.md` | 3.9 | 24 |  | 생성물 |
-| `docs/plan/items/PLAN-118.md` | 4.4 | 29 |  | 생성물 |
+| `docs/plan/items/PLAN-118.md` | 5.4 | 31 |  | 생성물 |
 | `docs/plan/items/PLAN-119.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-120.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-121.md` | 1.9 | 21 |  | 생성물 |
