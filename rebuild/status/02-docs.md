@@ -270,7 +270,7 @@
 | `docs/plan/items/PLAN-114.md` | 4.7 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.4 | 40 |  | 생성물 |
 | `docs/plan/items/PLAN-116.md` | 16.4 | 71 |  | 생성물 |
-| `docs/plan/items/PLAN-117.md` | 1.8 | 21 |  | 생성물 |
+| `docs/plan/items/PLAN-117.md` | 3.1 | 23 |  | 생성물 |
 | `docs/plan/items/PLAN-118.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-119.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-120.md` | 1.7 | 21 |  | 생성물 |
@@ -475,6 +475,7 @@
 | `workspace/NEXT-2026-11-19.md` | 6.2 | 33 |  | 미분류 |
 | `workspace/PLAN-116-G3-README.md` | 3.1 | 19 |  | 미분류 |
 | `workspace/PLAN-116-G5-README.md` | 2.5 | 20 |  | 미분류 |
+| `workspace/PLAN-117-README.md` | 5.7 | 38 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |
