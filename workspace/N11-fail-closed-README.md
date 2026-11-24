@@ -16,7 +16,8 @@
 1. `git pull`
 2. `node rebuild/bundle.mjs verify workspace/N11-fail-closed-bundle.patch 74185256122eda5b1a8b040d665fb3685f82c0f6bd16a6404c181061ab8bacd0` — `통과`
 3. `git apply workspace/N11-fail-closed-bundle.patch`
-4. `.claude/settings.json` 을 손으로: `"node rebuild/gate.mjs hook pre"` → `"node rebuild/gate.mjs hook pre || exit 2"`, `"node rebuild/gate.mjs hook post"` → `"node rebuild/gate.mjs hook post || exit 2"` (따옴표 안 끝에 붙임 — 두 줄만)
+4. `.claude/settings.json` 두 줄을 이 명령 그대로(손으로 고치지 않는다 — 5 번 묶음 DEC-0095 의 지문이 이 결과의 바이트에 걸려 있다):
+   `sed -i 's|node rebuild/gate.mjs hook pre"|node rebuild/gate.mjs hook pre \|\| exit 2"|; s|node rebuild/gate.mjs hook post"|node rebuild/gate.mjs hook post \|\| exit 2"|' .claude/settings.json && grep -c 'exit 2' .claude/settings.json` — `2`
 5. `git status --short` — `rebuild/gate.mjs` · `tests/gate.test.mjs` · `.claude/settings.json` 셋만
 6. `node rebuild/status.mjs --write && node --test tests/gate.test.mjs 2>&1 | tail -6` — `# fail 0`
 7. `node --test tests/*.test.mjs 2>&1 | tail -6` — `# fail 0`

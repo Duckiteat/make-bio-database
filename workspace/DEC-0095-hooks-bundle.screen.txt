@@ -1,0 +1,22 @@
+지문 52795fe3b6d624e46058084de5ab1e47fba2864edda8eb18be198d6e017a3a69
+묶음 3 파일 — 자동 0 · 사람 승인 3 · 거부 0
+
+## 사람 승인 필요
+- .claude/settings.json [L6 guard:settings · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    +       "Edit(.claude/settings.local.json)",
+    +       "Write(.claude/settings.local.json)",
+    +       "Edit(.claude/hooks/**)",
+    +       "Write(.claude/hooks/**)",
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "tests/trust_check.test.mjs"
+    +           "tests/trust_check.test.mjs",
+    +           ".claude/settings.local.json",
+    +           ".claude/hooks/**"
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — added_only
+    + 
+    + });
+    + test('㉔ 훅을 끄는 자리는 어느 모드도 못 쓴다 (DEC-0095 — settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길)', () => {
+    +   const P = JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).gate;
+    +   for (const m of G.MODES) for (const f of ['.claude/settings.local.json', '.claude/settings.json', '.claude/hooks/x.sh']) assert.equal(G.mayWrite(P, m, null, f), false, `${m}: ${f}`);
+    +   const deny = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8')).permissions.deny;
+    +   for (const t of ['Edit', 'Write']) for (const f of ['.claude/settings.local.json', '.claude/hooks/**']) assert.ok(deny.includes(`${t}(${f})`), `deny ${t}(${f})`);

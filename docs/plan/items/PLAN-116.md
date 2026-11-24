@@ -23,6 +23,7 @@
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 GitHub Allow auto-merge 꺼짐(사용자 확인) — N12 는 Claude 설정 deny · 서버 설정 두 겹. DEC-0089 묶음 2 적용 확인: 사용자 커밋 a71393d(Duckiteat, 한 번에 적용 스크립트 — 전체 시험 통과 때만 커밋) — modes.json · storage-map.json · guard-matrix 시험 · .github/workflows/trust.yml 이 묶음(9a18ecb7)과 바이트 동일 · 보호 기준 · 독립 판정 · 권한 시험 14 통과 · develop 은 새 L6 셋을 못 씀 · data · attestations · 설정 변경 0. 첫 적용 시도의 실패는 생성 순서(부록 뒤 관리 파일) 와 pull 막힘 — 묶음 문제 아님. 남은 것: 이 브랜치를 main 에 병합(사람) 뒤 main 규칙 필수 검사에 independent-judge · 봇 계정(DEC-0090)
 - `2026-11-24` 커밋 전 기록: · 2026-11-24 DEC-0091: 거버넌스만 먼저 main 으로 — P1 커밋을 뺀 새 브랜치 claude/governance-trust-core · 주장 층 시험 재료를 tests/fixtures 로
 - `2026-11-24` 커밋 전 기록: · 2026-11-24 21 번 일(DEC-0093 · DEC-0094, develop 세션 브랜치 ccr-9574a8fa-d9r28z): 승인 묶음 넷(적용 전 — 사람이 적용 · 병합, 순서 workspace/21-security-bundles-README.md) ① DEC-0092 전환 기록 번호 = 일 묶음(seq "21a" · opened_by · close · 장부 전체 검사) ② N11 문지기 fail-closed(오류 = 쓰는 도구 막힘 · 훅 명령 || exit 2 는 손 편집 — 승인 도구는 훅 변경을 받지 않음) ③ CODEOWNERS = Duckiteat 전부 ④ DEC-0094 ci-zone 선언 없음 = AI, 사람 서명(GitHub 검증 + 커미터 Duckiteat)만 예외 · 새 규칙 RULE-0550. 작업 사본에 넷 모두 → 전체 시험 564 통과. 승인 증거를 GitHub 사실로는 설계만 → PLAN-117. 찾은 것: 서기가 전환 기록의 sup 칸을 받고도 저장하지 않았음(묶음 ① 에서 고침)
+- `2026-11-24` 커밋 전 기록: · 2026-11-24 점검(사용자 질문 셋) → DEC-0095: 묶음 5(훅을 끄는 자리 settings.local.json · .claude/hooks 는 어느 모드도 못 씀) · 운영 규칙 넷 · 보고서 docs/reports/2026-11-24-security-bundles-check.md. 1–5 번 적용 사본 전체 시험 565 통과
 
 ## 걸어온 길
 
@@ -50,6 +51,7 @@
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 2 적용 확인 — 사용자 커밋 a71393d · Allow auto-merge 꺼짐(사용자 확인)
 - `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — PR #18 을 그대로 병합하지 않고 거버넌스만 따로(나), 막히면 주장 층 시험을 자체 재료로(나-2)
 - `2026-11-24` 커밋 전 기록 결과 덧붙음 — 21 번 일(DEC-0093) develop 세션 결과 — 승인 묶음 넷, 적용 전
+- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — 보안 묶음 점검 결과에 '규정에 맞게 적어'
 
 ## 닿는 결정
 
@@ -71,3 +73,4 @@
 - [DEC-0092](../decisions/DEC-0092.md) 2026-11-24 전환 기록 번호를 일 묶음 단위로 — 같은 일은 같은 번호 + 글자(20a · 20b …), 사람이 완결을 찍으면 다음 번호
 - [DEC-0093](../decisions/DEC-0093.md) 2026-11-24 main #20 의 보안 묶음 순서 · DEC-0092 세부 — seq "21a" 문자열 · 새 번호는 opened_by: DEC-… · 이 일은 새 번호 21
 - [DEC-0094](../decisions/DEC-0094.md) 2026-11-24 CI 구역 점검 — 선언(영수증) 없는 커밋은 AI 로 봄, 예외는 GitHub 이 검증한 사람 계정 서명뿐
+- [DEC-0095](../decisions/DEC-0095.md) 2026-11-24 훅을 끄는 자리(.claude/settings.local.json · .claude/hooks/**)는 어느 모드도 못 쓴다 · 운영 규칙 넷(PR 은 봇이 연다 · 마지막 커밋은 봇 · Merge commit · Codespaces 에서만 고침)
