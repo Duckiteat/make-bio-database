@@ -244,7 +244,8 @@ test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예
   // 판단 (순수) — 목록에 없는 도구는 쓰는 도구로 본다
   for (const t of ['Write', 'Edit', 'Bash', 'NotebookEdit', 'mcp__github__push_files', 'mcp__biodb-clerk__merge', 'Agent', '']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 2, t || '이름 없음');
   for (const t of ['Read', 'Grep', 'Glob', 'mcp__biodb-query__summary', 'mcp__biodb-run__run_fate']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 0, t);
-  for (const ev of ['post', 'stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 막을 수 없는 단계`);
+  assert.equal(G.failClosed('post', { tool_name: 'Write' }, new Error('x')), 2, 'post 는 이미 실행된 뒤 — 종료 2 로 AI 에게 알림');
+  for (const ev of ['stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 알리기만 (멈춤을 막으면 되풀이)`);
   // 끝에서 끝 — live 영수증에 깨진 줄 하나(공격 경로 N11 의 재현)로 훅이 예외를 낸다
   const d = repo();
   try {
@@ -255,5 +256,28 @@ test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예
     assert.equal(w.status, 2, '쓰는 도구는 막힘'); assert.match(w.stderr, /\[RULE-0550\]/); assert.match(w.stderr, /fail-closed/);
     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'ls' } }).status, 2, '셸도 막힘');
     assert.equal(hook(d, 'pre', { tool_name: 'Read', tool_input: { file_path: join(d, 'core.js') } }).status, 0, '읽는 도구는 통과 — 사람이 원인을 볼 수 있게');
+    const po = hook(d, 'post', { tool_name: 'Bash', tool_input: { command: 'echo' }, tool_response: {} });
+    assert.equal(po.status, 2, 'post 오류는 알림 (종료 2)'); assert.match(po.stderr, /\[RULE-0550\]/);
+  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+});
+
+test('㉔ 훅을 끄는 자리는 어느 모드도 못 쓴다 (DEC-0095 — settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길) · 문지기가 불러지기 전에 죽어도 막힘 (훅 명령 끝 || exit 2 — 다른 세션의 N11 묶음, DEC-0097 섞기)', () => {
+  const P = JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).gate;
+  for (const m of G.MODES) for (const f of ['.claude/settings.local.json', '.claude/settings.json', '.claude/hooks/x.sh']) assert.equal(G.mayWrite(P, m, null, f), false, `${m}: ${f}`);
+  const S = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8'));
+  for (const t of ['Edit', 'Write']) for (const f of ['.claude/settings.local.json', '.claude/hooks/**']) assert.ok(S.permissions.deny.includes(`${t}(${f})`), `deny ${t}(${f})`);
+  for (const ev of ['PreToolUse', 'PostToolUse']) for (const h of S.hooks[ev].flatMap((x) => x.hooks)) assert.match(h.command, /node rebuild\/gate\.mjs hook (pre|post) \|\| exit 2$/, `${ev}: ${h.command}`);
+});
+
+test('㉕ 시작 안내에 열린 일 (DEC-0092 · 다른 세션의 N11 묶음, DEC-0097 섞기): 완결 안 된 번호를 한 줄로 · 완결된 번호는 안 보임', () => {
+  const d = repo();
+  try {
+    const rec = (seq, extra = {}) => JSON.stringify({ seq, from: 'inspect', to: 'develop', at: '2026-11-24', why: 'x', target: [], files: [], open: [], ...extra });
+    mkdirSync(join(d, 'workspace'), { recursive: true });
+    writeFileSync(join(d, 'workspace/transitions.jsonl'), [rec(20), rec('21a', { opened_by: 'DEC-0093' }), rec('21b'), rec('22a', { opened_by: 'DEC-0096' }), rec('22b', { close: true })].join('\n') + '\n');
+    const s = hook(d, 'session-start', {});
+    assert.equal(s.status, 0);
+    assert.match(s.stdout, /열린 일\(완결 전 번호\): 21 — 21b 까지 2 기록 · 연 결정 DEC-0093/);
+    assert.doesNotMatch(s.stdout, /22 — 22/, '완결된 번호는 열린 일이 아님');
   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
 });

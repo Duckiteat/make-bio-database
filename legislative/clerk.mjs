@@ -398,7 +398,9 @@ export function appendFetchLog(dir, results) {
 }
 
 // ⑨ 핸드오프 추가 (outsourcing-and-mcp.md §4.3): 수집가가 쓸 수 있는 유일한 자리. 후보 줄을 붙이기만 한다 — 고치거나 지우지 않는다.
-// 전환 기록 (한 세션 = 한 모드): 검사 통과 뒤 순번(seq)을 붙여 끝에 한 줄 — 앞선 줄은 그대로 둔다
+// 전환 기록 (한 세션 = 한 모드): 검사 통과 뒤 번호(seq)를 붙여 끝에 한 줄 — 앞선 줄은 그대로 둔다
+//   번호 (DEC-0092 · DEC-0093): rec.work = 일의 번호 → 서기가 그 번호의 다음 글자를 붙인다 ("21a" → "21b"). 새 번호의 첫 기록은 opened_by: DEC-…
+//   (그 결정이 계획에 있는지는 시험이 실제 장부로 본다) · 완결은 close: true. 판정은 judicial/transition_audit.js (nextSeq · checkLedger)
 const TA = require('../judicial/transition_audit.js');
 export const TRANSITIONS = 'workspace/transitions.jsonl';
 export function readTransitions(root) { const f = join(root || ROOT, TRANSITIONS); return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []; }
@@ -406,8 +408,12 @@ export function appendTransition(rec, root) {
   const v = TA.checkTransition(rec, root || ROOT);
   if (!v.ok) refuse(v.rules[0], `전환 기록 검사 실패 — ${v.errors.join(' · ')}`);
   const f = join(root || ROOT, TRANSITIONS), prev = readTransitions(root);
-  const line = JSON.stringify({ seq: prev.length + 1, ...Object.fromEntries(TA.FIELDS.map((k) => [k, rec[k]])) });
-  return put('transition', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + line + '\n');
+  const n = TA.nextSeq(prev, rec, null); // 결정이 계획에 있는지는 서기가 보지 않는다(재건 관리 구역을 읽지 않음, 읽기 점검 ②) — 시험이 실제 장부로 본다(tests/transitions.test.mjs)
+  if (!n.ok) refuse(n.rules[0], `전환 기록 번호 — ${n.errors.join(' · ')}`);
+  const out = { seq: n.seq, ...Object.fromEntries(TA.FIELDS.map((k) => [k, rec[k]])), ...Object.fromEntries(TA.OPTIONAL.filter((k) => k !== 'work' && rec[k] !== undefined).map((k) => [k, rec[k]])) }; // work 는 seq 에 담김
+  const bad = TA.checkLedger([...prev, out]);
+  if (bad.length) refuse('RULE-0513', `전환 기록 장부 — ${bad.map((b) => b.msg).join(' · ')}`);
+  return put('transition', f, (existsSync(f) ? readFileSync(f, 'utf8') : '') + JSON.stringify(out) + '\n');
 }
 export function appendHandoff(name, lines) {
   if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(String(name))) refuse('RULE-0019', `핸드오프 이름 '${name}' — 소문자·숫자·하이픈만`);

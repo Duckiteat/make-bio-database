@@ -2390,8 +2390,8 @@
       "path": ".github/CODEOWNERS",
       "format": "GitHub CODEOWNERS (자리 · @계정)",
       "writer": "사람",
-      "readers": "GitHub (Require review from Code Owners) · rebuild/ci-zone.mjs (부모 커밋의 @계정 = 사람 계정, RULE-0551)",
-      "interpret": "사람 계정 목록 (PLAN-117 · DEC-0090) — L6 자리를 바꾸는 PR 에 이 계정의 리뷰를 요구(규칙 세트에서 켜야 힘이 있음). CI 구역 점검은 여기 적힌 계정만 사람으로 보고, 그 밖의 계정(봇)이 민 선언 없는 커밋을 거부한다. AI 계정을 적지 않는다"
+      "readers": "GitHub (Require review from Code Owners)",
+      "interpret": "사람 계정 목록 (PLAN-117 · DEC-0090) — L6 자리를 바꾸는 PR 에 이 계정의 리뷰를 요구(규칙 세트에서 켜야 힘이 있음). 계정 목록은 CI 구역 점검의 사람 계정(rebuild/ci-zone.mjs HUMANS — 사람 서명 커밋의 커미터, DEC-0094)과 같게 둔다. AI 계정을 적지 않는다"
     },
     {
       "path": "examples/*.json",

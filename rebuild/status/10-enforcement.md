@@ -322,7 +322,7 @@
 | RULE-0547 | 재검증(verifyAcceptStamp — validate · attest · finish 가 부름)이 읽는 | replace | judicial/acceptance.js | ⑥ PLAN-106 (RP1): 새 승인 도장은 승인자 human 으로 발급하지 않는다 — 이미 있는 human 도장은 그대로 읽힌다 |
 | RULE-0548 | CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지  | replace | rebuild/ci-zone.mjs | ⑥ 선언(영수증) 없는 커밋도 도장 등록부의 승인 도장 정책은 본다 — by: human 새 도장 · 승인 도장 지우기는 종료 1, 다른 변경은 알리기만 (DEC |
 | RULE-0549 | CI 구역 점검(등록부 정책 · 덧붙이기만 장부 포함)은 기준(origin/main)의 판정 코드로 한 번, | replace | .github/workflows/check.yml | ⑦ CI 구역 점검은 기준(main)의 판정 코드로도 돈다 — 이 커밋의 코드와 둘 다 (DEC-0086 D2 · RULE-0549) |
-| RULE-0551 | CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GIT | replace | rebuild/ci-zone.mjs | 사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정 |
+| RULE-0551 | CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일 | replace | rebuild/ci-zone.mjs | 판정 (순수): 선언한 모드의 구역 안 · 밖 · 선언 없음(사람 서명이면 알리기만 · 아니면 AI 로 봄, DEC-0094) · 영수증 자체는 판정 밖 |
 | RULE-0550 | 문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도 | replace | rebuild/gate.mjs | ㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과 |
 
 ## 설정에 있음 `present` — 8

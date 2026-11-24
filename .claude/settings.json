@@ -102,6 +102,10 @@
       "Write(data/preregistrations.jsonl)",
       "Edit(attestations/**)",
       "Write(attestations/**)",
+      "Edit(.claude/settings.local.json)",
+      "Write(.claude/settings.local.json)",
+      "Edit(.claude/hooks/**)",
+      "Write(.claude/hooks/**)",
       "Edit(data/fetched/**)",
       "Write(data/fetched/**)",
       "Bash(rm -rf:*)",
@@ -136,7 +140,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node rebuild/gate.mjs hook pre"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node rebuild/gate.mjs hook pre || exit 2"
           }
         ]
       }
@@ -147,7 +151,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node rebuild/gate.mjs hook post"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node rebuild/gate.mjs hook post || exit 2"
           }
         ]
       }

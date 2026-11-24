@@ -60,6 +60,7 @@
 | `judicial/assumption_audit.js` | 22 |
 | `judicial/contract.js` | 9 |
 | `judicial/judicial.js` | 508 |
+| `judicial/transition_audit.js` | 8 |
 
 ## 시험
 
@@ -88,7 +89,7 @@
 | `tests/engine_gap.test.mjs` | 6 |
 | `tests/engine_reference.test.mjs` | 6 |
 | `tests/gap_schema.test.mjs` | 3 |
-| `tests/gate.test.mjs` | 8 |
+| `tests/gate.test.mjs` | 10 |
 | `tests/governance.test.mjs` | 24 |
 | `tests/guard-matrix.test.mjs` | 4 |
 | `tests/judicial_time.test.mjs` | 8 |
@@ -125,7 +126,7 @@
 | `tests/supervise_approval.test.mjs` | 7 |
 | `tests/supervise_report.test.mjs` | 6 |
 | `tests/telomere.test.mjs` | 7 |
-| `tests/transitions.test.mjs` | 2 |
+| `tests/transitions.test.mjs` | 5 |
 | `tests/trust_check.test.mjs` | 5 |
 | `tests/values.test.mjs` | 4 |
 

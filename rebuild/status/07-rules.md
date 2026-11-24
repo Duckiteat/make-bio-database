@@ -132,7 +132,7 @@
 | RULE-0547 | author · inspect · develop | 재검증(verifyAcceptStamp — validate · attest · finish 가 부름)이 읽는 by: human 승인 도장은 등록부에 이미 있던 6 개의 지문(acceptance.js LEGACY_HU |
 | RULE-0548 | author · inspect · develop | CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다  |
 | RULE-0549 | author · inspect · develop | CI 구역 점검(등록부 정책 · 덧붙이기만 장부 포함)은 기준(origin/main)의 판정 코드로 한 번, 이 커밋의 판정 코드로 한 번 — 둘 다 통과해야 한다. 이 커밋이 판정 코드(rebuild/ci-zone |
-| RULE-0551 | author · baseline · develop · field · inspect | CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의  |
+| RULE-0551 | author · baseline · develop · field · inspect | CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일(영수증 밖)이 있으면 위반. 사람 서명 = GitHub 이 검증한 서명(verification.verifi |
 | RULE-0550 | author · baseline · develop · field · inspect | 문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도구 포함)는 막고, 읽는 도구(Read · Grep · Glob · 읽기 전용 MCP 등)만 통과한다. 영수 |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
