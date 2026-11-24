@@ -33,3 +33,14 @@
 | (0) main 규칙의 '병합 전 승인 필요(1 명)' 가 켜져 있는지 확인 | 사람(Duckiteat) | Settings → Rules (또는 Branch protection) | 봇 PR #20 이 승인 0 건으로 `clean`. 켜져 있지 않으면 봇이 (설정 deny 를 우회하는 길로) 병합할 수 있는 구멍 |
 | (가) 이 PR 을 승인 · 병합 (6-3) | 사람(Duckiteat) | GitHub PR 화면 | merged_by = 사람 확인. 봇은 병합 · 승인하지 않는다 |
 | (나) main 규칙 세트의 필수 검사에 `independent-judge` 추가 | 사람(Duckiteat) | Settings → Rules | 첫 PR 에서 independent-judge 가 돈 뒤라야 검사 이름이 목록에 뜬다. **이 PR 에서는 돌지 않았다** — 먼저 Actions 탭에서 trust 워크플로가 등록 · 활성인지 보고(위 재현 절차), 한 번 돈 뒤 추가. 그 전에 (가) 로 병합해도 이 PR 은 지키는 자리를 바꾸지 않는다(docs/reports · 생성물 · 영수증만) |
+
+## 병합 뒤 (2026-11-24) — PR #20 결과와 main 규칙 수정
+
+| 확인 | 결과 | 근거 | 의미 |
+|---|---|---|---|
+| PR #20 병합한 사람 (6-3) | Duckiteat, 2026-11-24 00:47Z (병합 커밋 cac94ba) | PR #20 `merged_by` | 6-3 충족 — 병합은 사람 이름으로 남았다 |
+| PR #20 승인 | 0 건 | PR #20 리뷰 목록 비어 있음 | 승인 없이 병합됐다 — 아래 원인 |
+| 원인 — main 규칙 세트 | 규칙 세트 `main` 이 Active · 규칙 4 개(Restrict deletions · Require a pull request · Require status checks · Block force pushes)인데 **targeting 0 branches** | 사용자 화면 캡처(Settings → Rules → Rulesets) | 이름만 main 이고 아무 브랜치도 지키지 않았다 — PR #20 이 승인 0 건으로 `clean` 이었던 이유. 봇(write)이 병합할 수 있는 구멍이었고, 막던 것은 AI 쪽 설정 deny 뿐 |
+| 사람의 수정 | 대상 = default branch · Required approvals = 1 · Bypass list 비어 있음 · 필수 검사 `rules` 로 저장 (사용자 보고) | 사용자 대화 "저장했다" — 봇은 규칙 세트 화면을 읽지 못해 직접 대조 못 함 | 봇 병합을 GitHub 서버가 막는다 — 이 보고서를 실은 PR 의 병합 상태로 확인(아래 줄) |
+| 이 PR 의 병합 가능 상태 | _채움 대기_ | 이 PR `mergeable_state` (검사 끝난 뒤) | 기대 `blocked` — 승인 1 건 없이는 병합 불가 |
+| `independent-judge` | 여전히 등록되지 않음 | `list_workflows` 에 `check` 하나 | 필수 검사 추가(나)는 Actions 탭 확인 뒤 |
