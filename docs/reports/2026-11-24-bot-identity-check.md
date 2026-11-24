@@ -44,3 +44,14 @@
 | 사람의 수정 | 대상 = default branch · Required approvals = 1 · Bypass list 비어 있음 · 필수 검사 `rules` 로 저장 (사용자 보고) | 사용자 대화 "저장했다" — 봇은 규칙 세트 화면을 읽지 못해 직접 대조 못 함 | 봇 병합을 GitHub 서버가 막는다 — 이 보고서를 실은 PR 의 병합 상태로 확인(아래 줄) |
 | 이 PR(#21) 의 병합 가능 상태 | 검사 진행 중 `blocked` → 검사(rules 둘 다 success, 01:44Z) 끝난 뒤 **`clean`** — 기대와 다름 | PR #21 `mergeable_state` (01:45Z, head 5c1b607), 리뷰 0 건 | 수정 뒤에도 봇 PR 이 승인 없이 병합 가능한 상태로 읽힌다 — 저장된 규칙 세트가 main 에 걸리지 않았거나(대상) 승인 수가 0 일 수 있다. 원인 모름 — 고치지 않음(RULE-0262). 사람이 규칙 세트 목록의 'targeting N branches' 와 PR #21 병합 칸의 문구를 확인 |
 | `independent-judge` | 여전히 등록되지 않음 | `list_workflows` 에 `check` 하나 | 필수 검사 추가(나)는 Actions 탭 확인 뒤 |
+
+## 원인 — default branch 가 main 이 아니었다 (2026-11-24)
+
+| 확인 | 결과 | 근거 | 의미 |
+|---|---|---|---|
+| 저장소 default branch | `claude/states-and-mapping` 이었다 | 규칙 세트 Target = Default → "Applies to 1 target: claude/state…" (사용자 캡처 10:53) · `check` 워크플로의 html_url 이 그 브랜치를 가리킴 | 규칙 세트가 main 이 아닌 옛 작업 브랜치를 지켰다 — PR #20 · #21 이 승인 0 건으로 `clean` 이었던 원인 |
+| independent-judge 미등록 | 같은 원인으로 읽힌다 | default branch 를 main 으로 바꾼 직후 `trust` 워크플로 등록(id 428510760, 2026-11-24 01:55:57Z) — 그 전 `list_workflows` 는 check 하나 | trust.yml 이 main 에만 있고 default branch 에 없어서 GitHub 이 등록하지 않았다 |
+| 사람의 수정 | default branch → main · 규칙 세트 `main` 이 "Applies to 1 target: main" · Bypass 비어 있음 · Active | 사용자 캡처 10:57 | 규칙이 main 에 걸렸다 |
+| PR #21 | 01:52:47Z Duckiteat 병합 · 승인 0 건 | PR #21 `merged_by` · 리뷰 목록 | 수정 전에 병합 — 시험 아님 |
+| 이 PR 의 병합 가능 상태 | _채움 대기_ | 이 PR `mergeable_state` (검사 끝난 뒤) | 기대 `blocked` |
+| 이 PR 의 `independent-judge` | _채움 대기_ | 검사 목록 · pull_request_target 실행 | 기대 — 돌고 통과(지키는 자리 안 바꿈) |
