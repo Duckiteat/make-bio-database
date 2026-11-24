@@ -22,7 +22,9 @@
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 DEC-0089 묶음 1 적용 확인: 사용자 커밋 d064809(Duckiteat) — .claude/settings.json 이 묶음(5c9b9532)+손 편집과 바이트 동일 · 권한 장부 PERM-0012 allow · 장부 검사 오류 0 · 권한 · 승인 · 보호 기준 시험 20 통과 · data · attestations 변경 0. 이 세션 다음 작업 프로세스에서 mcp__github__enable_pr_auto_merge 가 도구 목록에서 빠짐(deny 동작). 남은 것: Allow auto-merge 끄기(사용자 GitHub) · 묶음 2(독립 판정) · 봇 계정(DEC-0090)
 - `2026-11-23` 커밋 전 기록: · 2026-11-23 GitHub Allow auto-merge 꺼짐(사용자 확인) — N12 는 Claude 설정 deny · 서버 설정 두 겹. DEC-0089 묶음 2 적용 확인: 사용자 커밋 a71393d(Duckiteat, 한 번에 적용 스크립트 — 전체 시험 통과 때만 커밋) — modes.json · storage-map.json · guard-matrix 시험 · .github/workflows/trust.yml 이 묶음(9a18ecb7)과 바이트 동일 · 보호 기준 · 독립 판정 · 권한 시험 14 통과 · develop 은 새 L6 셋을 못 씀 · data · attestations · 설정 변경 0. 첫 적용 시도의 실패는 생성 순서(부록 뒤 관리 파일) 와 pull 막힘 — 묶음 문제 아님. 남은 것: 이 브랜치를 main 에 병합(사람) 뒤 main 규칙 필수 검사에 independent-judge · 봇 계정(DEC-0090)
 - `2026-11-24` 커밋 전 기록: · 2026-11-24 DEC-0091: 거버넌스만 먼저 main 으로 — P1 커밋을 뺀 새 브랜치 claude/governance-trust-core · 주장 층 시험 재료를 tests/fixtures 로
-- `2026-11-24` 커밋 전 기록: · 2026-11-24 체계 지도 docs/reports/2026-11-24-governance-system-map.md(보고서 25+1 편 · 네 영역 × 두 겹) · 오케스트레이터 설계 연구 docs/reports/2026-11-24-orchestrator-parallel-architecture-design.md — 남은 보안 셋(N11 · ci-zone · CODEOWNERS)은 PLAN-117 로
+- `2026-11-24` 커밋 전 기록: · 2026-11-24 21 번 일(DEC-0093 · DEC-0094, develop 세션 브랜치 ccr-9574a8fa-d9r28z): 승인 묶음 넷(적용 전 — 사람이 적용 · 병합, 순서 workspace/21-security-bundles-README.md) ① DEC-0092 전환 기록 번호 = 일 묶음(seq "21a" · opened_by · close · 장부 전체 검사) ② N11 문지기 fail-closed(오류 = 쓰는 도구 막힘 · 훅 명령 || exit 2 는 손 편집 — 승인 도구는 훅 변경을 받지 않음) ③ CODEOWNERS = Duckiteat 전부 ④ DEC-0094 ci-zone 선언 없음 = AI, 사람 서명(GitHub 검증 + 커미터 Duckiteat)만 예외 · 새 규칙 RULE-0550. 작업 사본에 넷 모두 → 전체 시험 564 통과. 승인 증거를 GitHub 사실로는 설계만 → PLAN-117. 찾은 것: 서기가 전환 기록의 sup 칸을 받고도 저장하지 않았음(묶음 ① 에서 고침)
+- `2026-11-24` 커밋 전 기록: · 2026-11-24 점검(사용자 질문 셋) → DEC-0095: 묶음 5(훅을 끄는 자리 settings.local.json · .claude/hooks 는 어느 모드도 못 씀) · 운영 규칙 넷 · 보고서 docs/reports/2026-11-24-security-bundles-check.md. 1–5 번 적용 사본 전체 시험 565 통과
+- `2026-11-24` 커밋 전 기록: · 2026-11-24 체계 지도 docs/reports/2026-11-24-governance-system-map.md(보고서 25+1 편 · 네 영역 × 두 겹) · 오케스트레이터 설계 연구 docs/reports/2026-11-24-orchestrator-parallel-architecture-design.md — 남은 보안 셋(N11 · ci-zone · CODEOWNERS)은 PLAN-118 로
 
 ## 걸어온 길
 
@@ -49,7 +51,9 @@
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 1 적용 확인 — 사용자 커밋 d064809
 - `2026-11-23` 커밋 전 기록 결과 덧붙음 — DEC-0089 묶음 2 적용 확인 — 사용자 커밋 a71393d · Allow auto-merge 꺼짐(사용자 확인)
 - `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — PR #18 을 그대로 병합하지 않고 거버넌스만 따로(나), 막히면 주장 층 시험을 자체 재료로(나-2)
-- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 DEC-0093 — 오케스트레이터를 MVP(최종 형식) → 범위 → 병렬 → 자율 순서로 계획
+- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 21 번 일(DEC-0093) develop 세션 결과 — 승인 묶음 넷, 적용 전
+- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 — 보안 묶음 점검 결과에 '규정에 맞게 적어'
+- `2026-11-24` 커밋 전 기록 결과 덧붙음 — 사용자 결정 DEC-0096(처음 DEC-0093 으로 적음) · DEC-0097 — main(PR #25)과 번호가 겹쳐 다시 매겨 적용
 
 ## 닿는 결정
 
@@ -69,3 +73,7 @@
 - [DEC-0090](../decisions/DEC-0090.md) 2026-11-23 AI 전용 GitHub 신원 = 봇 계정 1 개(협업자 Write) — 모든 Claude 세션이 씀, 승인 · 병합 · 설정 · 규칙 우회는 사람 계정만
 - [DEC-0091](../decisions/DEC-0091.md) 2026-11-24 main 병합은 거버넌스만 먼저 — P1 데이터 커밋(178c43a)을 뺀 새 브랜치 · 주장 층 시험은 자체 시험 재료로
 - [DEC-0092](../decisions/DEC-0092.md) 2026-11-24 전환 기록 번호를 일 묶음 단위로 — 같은 일은 같은 번호 + 글자(20a · 20b …), 사람이 완결을 찍으면 다음 번호
+- [DEC-0093](../decisions/DEC-0093.md) 2026-11-24 main #20 의 보안 묶음 순서 · DEC-0092 세부 — seq "21a" 문자열 · 새 번호는 opened_by: DEC-… · 이 일은 새 번호 21
+- [DEC-0094](../decisions/DEC-0094.md) 2026-11-24 CI 구역 점검 — 선언(영수증) 없는 커밋은 AI 로 봄, 예외는 GitHub 이 검증한 사람 계정 서명뿐
+- [DEC-0095](../decisions/DEC-0095.md) 2026-11-24 훅을 끄는 자리(.claude/settings.local.json · .claude/hooks/**)는 어느 모드도 못 쓴다 · 운영 규칙 넷(PR 은 봇이 연다 · 마지막 커밋은 봇 · Merge commit · Codespaces 에서만 고침)
+- [DEC-0097](../decisions/DEC-0097.md) 2026-11-24 보안 셋 섞기 — fail-closed · CODEOWNERS 는 이 브랜치의 적용분(d600490), ci-zone 은 DEC-0094(사람 서명 커밋만 사람)로 다시, 묶음 5(훅을 끄는 자리)는 이 브랜치에 맞춰 다시

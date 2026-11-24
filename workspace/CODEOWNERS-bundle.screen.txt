@@ -1,0 +1,26 @@
+지문 0b8613e0baf1009ca7e52e593ce9219f2dd213385fe11a464bb0cedcfb652000
+묶음 2 파일 — 자동 0 · 사람 승인 2 · 거부 0
+
+## 사람 승인 필요
+- .github/CODEOWNERS — added_only
+    + # 코드 소유자 (DEC-0093 ③ · 절차서 docs/reports/2026-11-23-ai-bot-identity-setup.md 7 장)
+    + # 모든 자리의 소유자 = 사람 계정 하나. main 규칙 세트의 "Require review from Code Owners" 를 켜면
+    + # 어느 PR 이든 승인은 이 계정의 것이어야 병합된다 — 봇(daduteria) · 다른 협업자의 승인으로는 병합되지 않는다.
+    + # 보호 자리(L6)만이 아니라 전부인 이유: 판정 코드의 의존(N10)처럼 L6 밖 파일이 판정을 바꿀 수 있다 — 자리를 고르면 빈틈이 생긴다.
+    + # 이 파일 자체는 L6(저장 지도) — AI 세션은 쓰지 못하고, 바꾸려면 승인 묶음 + 사람 병합.
+    + * @Duckiteat
+    + 
+- docs/textbook/storage-map.json [L4 ledger:storage-map · unassigned] — added_only
+    +     },
+    +     {
+    +       "write_keys": [
+    +       "level": "L6",
+    +       "area": "guard:gate",
+    +         "human"
+    +       "class": "management",
+    +       ],
+    +       "writer": "사람",
+    +       "path": ".github/CODEOWNERS",
+    +       "format": "GitHub CODEOWNERS (글)",
+    +       "readers": "GitHub (PR 검토 요구)",
+    +       "interpret": "코드 소유자 = 사람 계정 Duckiteat, 모든 자리(DEC-0093 ③). main 규칙 세트의 Require review from Code Owners 를 켜야 힘이 있다(사용자 GitHub 설정) — 그러면 봇 · 다른 협업자의 승인으로는 병합되지 않는다"

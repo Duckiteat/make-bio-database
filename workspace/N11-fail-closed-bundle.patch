@@ -1,0 +1,79 @@
+diff --git a/rebuild/gate.mjs b/rebuild/gate.mjs
+index 2d0ea62..483b5e3 100644
+--- a/rebuild/gate.mjs
++++ b/rebuild/gate.mjs
+@@ -215,6 +215,27 @@ export function receiptIntact(root, name, rc) {
+   if (rc && (lines.length < rc.n || (rc.n && sha(lines[rc.n - 1]) !== rc.last))) return `문지기가 쓴 ${rc.n} 줄이 지금 ${lines.length} 줄 — 지워지거나 고쳐짐`;
+   return null;
+ }
++// 열린 일(완결 안 된 번호, DEC-0092) — 시작 안내에 한 줄. 다음 기록은 그 번호의 다음 글자 (dbtool transition 에 work)
++function openWorksLine(root) {
++  const f = join(root, 'workspace/transitions.jsonl'); if (!existsSync(f)) return '';
++  const w = TA.openWorks(readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
++  return w.length ? '열린 일(완결 전 번호): ' + w.map((x) => `${x.num} — ${x.last} 까지 ${x.count} 기록 · 연 결정 ${x.opened_by || '?'}`).join(' / ') + ' — 이 일을 잇는 기록은 work 에 그 번호, 새 일은 사람 결정(opened_by: DEC-…)으로 새 번호' : '';
++}
++// 문지기 오류 때 (N11 fail-closed · DEC-0093 ②): 도구 앞(pre)이면 막는다 — 읽기 전용 조회 · 실행 서버만 열어 둔다.
++//   Read · Grep · Glob 은 훅을 거치지 않으므로(설정 matcher) 원인을 읽을 수 있다. 셸은 읽기만인지 가릴 수 없으므로 막는다.
++//   도구 뒤(post)는 이미 실행된 뒤라 알리기만(종료 2 = AI 에게 보임) · 시작 · 멈춤은 알리기만(멈춤을 막으면 되풀이된다).
++export const READ_ONLY_TOOL = /^mcp__biodb-(?:query|run)__/;
++export function failClosed(event, input, err) {
++  const m = String((err && err.message) || err).split('\n')[0].slice(0, 300);
++  if (event === 'pre') {
++    if (READ_ONLY_TOOL.test(String((input && input.tool_name) || ''))) { process.stderr.write(`문지기 오류 (읽기 전용 도구만 통과): ${m}\n`); return 0; }
++    process.stderr.write(`문지기 [RULE-0517]: 문지기 오류 — 쓰는 도구를 막는다 (fail-closed, N11). 사람에게 알린다 — 원인을 고칠 때까지 셸 · 편집 · 쓰는 도구는 막힘 (Read · Grep · Glob 은 열림): ${m}\n`);
++    return 2;
++  }
++  if (event === 'post') { process.stderr.write(`문지기 [RULE-0517]: 문지기 오류 — 이 도구 뒤 대조 · 영수증이 남지 않았을 수 있다. 사람에게 알린다: ${m}\n`); return 2; }
++  process.stderr.write(`문지기 오류 (${event}) — 사람에게 알린다: ${m}\n`);
++  return 0;
++}
+ function hook(event, input, root) {
+   const P = loadPolicy(), sc = scratch(root, input.session_id), S = readJson(sc) || {};
+   let st = state(root, input.session_id, P);
+@@ -233,7 +254,8 @@ function hook(event, input, root) {
+     const tr = existsSync(join(root, 'workspace/transitions.jsonl')) ? readFileSync(join(root, 'workspace/transitions.jsonl'), 'utf8').split('\n').filter(Boolean).slice(-3).map((l) => JSON.parse(l)) : [];
+     process.stdout.write([`문지기 (재건 7 단계): 이 세션은 모드 하나로 시작한다 — node rebuild/gate.mjs open <${MODES.join('|')}>.`, st.mode ? `이미 열린 모드: ${st.mode}` : '아직 연 모드 없음 — 열기 전에는 저장소 파일을 쓰지 않는다.',
+       st.role ? `역할: ${st.role} (${P.roles[st.role].mode} 모드만)` : '', '끝내기 전: node rebuild/gate.mjs finish <모드> — 통과해야 git commit (바뀐 것에 닿는 시험만). push 는 finish <모드> --full (전체) 뒤에.',
+-      tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : ''].filter(Boolean).join('\n') + '\n');
++      tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : '',
++      openWorksLine(root)].filter(Boolean).join('\n') + '\n');
+     return 0;
+   }
+   if (event === 'pre') {
+@@ -314,7 +336,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)
+   const root = (() => { try { return git(process.env.CLAUDE_PROJECT_DIR || process.cwd(), 'rev-parse', '--show-toplevel').trim(); } catch { return process.env.CLAUDE_PROJECT_DIR || process.cwd(); } })();
+   if (cmd === 'hook') {
+     let input = {}; try { input = JSON.parse(readFileSync(0, 'utf8') || '{}'); } catch { /* 빈 입력 */ }
+-    let code = 0; try { code = hook(arg, input, root); } catch (e) { process.stderr.write(`문지기 오류 (통과시킴 — 영수증에 남지 않았을 수 있음): ${e.message}\n`); code = 0; }
++    let code = 0; try { code = hook(arg, input, root); } catch (e) { code = failClosed(arg, input, e); } // 오류 = 막힘 (N11)
+     process.exit(code);
+   } else if (cmd === 'open') {
+     if (!MODES.includes(arg)) { console.error(`모드 '${arg || ''}' — ${MODES.join(' | ')}`); process.exit(2); }
+diff --git a/tests/gate.test.mjs b/tests/gate.test.mjs
+index 80b153f..54965df 100644
+--- a/tests/gate.test.mjs
++++ b/tests/gate.test.mjs
+@@ -239,3 +239,23 @@ test('㉒ 도구 호출 밖에서 바뀐 등록부 · 장부도 같은 판정 (D
+     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'git log --grep commit' } }).status, 0, '커밋이 아닌 git 명령');
+   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+ });
++
++test('㉓ 문지기 오류 = 막힘 (N11 fail-closed · DEC-0093 ②): live 영수증에 깨진 줄 → 쓰는 도구 pre 는 2 · 읽기 전용 서버만 통과 · post 도 알림(2) · 설정의 훅 명령은 다른 종료 코드도 2 로', () => {
++  const d = repo();
++  try {
++    assert.equal(tool(d, 'Bash', { command: 'node rebuild/gate.mjs open develop' }).status, 0);
++    const r = RD(d), f = readdirSync(r).find((x) => x.endsWith('.jsonl'));
++    writeFileSync(join(r, f), readFileSync(join(r, f), 'utf8') + '{깨진 줄\n'); // 공격 재검토 N11 의 재현 — 전에는 모두 종료 0 ("통과시킴")
++    for (const [name, x] of [['Edit', { file_path: join(d, 'rebuild/gate.mjs') }], ['Write', { file_path: join(d, 'attestations/registry.json') }], ['Bash', { command: 'git commit -am x' }], ['mcp__github__push_files', {}]]) {
++      const a = hook(d, 'pre', { tool_name: name, tool_input: x });
++      assert.equal(a.status, 2, `${name}: 오류면 막힘`); assert.match(a.stderr, /fail-closed/);
++    }
++    assert.equal(hook(d, 'pre', { tool_name: 'mcp__biodb-query__summary', tool_input: {} }).status, 0, '읽기 전용 조회 서버는 열림');
++    const p = hook(d, 'post', { tool_name: 'Bash', tool_input: { command: 'echo' }, tool_response: {} });
++    assert.equal(p.status, 2, 'post 오류는 알림'); assert.doesNotMatch(p.stderr, /통과시킴/);
++    assert.equal(hook(d, 'stop', {}).status, 0, '멈춤은 막지 않음(되풀이 방지) — 알리기만');
++  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
++  // 훅 스크립트가 불러지기 전에 죽으면(문법 오류 · 의존 누락) node 는 1 — Claude Code 는 2 만 막힘으로 본다. 설정이 다른 코드도 2 로 바꾼다
++  const hooks = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8')).hooks;
++  for (const ev of ['PreToolUse', 'PostToolUse']) for (const h of hooks[ev].flatMap((x) => x.hooks)) assert.match(h.command, /node rebuild\/gate\.mjs hook (pre|post) \|\| exit 2$/, `${ev}: ${h.command}`);
++});

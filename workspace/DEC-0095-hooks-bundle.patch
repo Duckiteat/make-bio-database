@@ -1,0 +1,45 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+index b47ab45..b28a47a 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -102,6 +102,10 @@
+       "Write(data/preregistrations.jsonl)",
+       "Edit(attestations/**)",
+       "Write(attestations/**)",
++      "Edit(.claude/settings.local.json)",
++      "Write(.claude/settings.local.json)",
++      "Edit(.claude/hooks/**)",
++      "Write(.claude/hooks/**)",
+       "Edit(data/fetched/**)",
+       "Write(data/fetched/**)",
+       "Bash(rm -rf:*)",
+diff --git a/rebuild/rules/modes.json b/rebuild/rules/modes.json
+index 7ba3ece..820c8e3 100644
+--- a/rebuild/rules/modes.json
++++ b/rebuild/rules/modes.json
+@@ -283,7 +283,9 @@
+           "tests/acceptance.test.mjs",
+           "tests/guard-matrix.test.mjs",
+           "rebuild/trust-check.mjs",
+-          "tests/trust_check.test.mjs"
++          "tests/trust_check.test.mjs",
++          ".claude/settings.local.json",
++          ".claude/hooks/**"
+         ],
+         "finish": [
+           "node tests/affected.mjs",
+diff --git a/tests/gate.test.mjs b/tests/gate.test.mjs
+index 54965df..2bc30af 100644
+--- a/tests/gate.test.mjs
++++ b/tests/gate.test.mjs
+@@ -259,3 +259,10 @@ test('㉓ 문지기 오류 = 막힘 (N11 fail-closed · DEC-0093 ②): live 영
+   const hooks = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8')).hooks;
+   for (const ev of ['PreToolUse', 'PostToolUse']) for (const h of hooks[ev].flatMap((x) => x.hooks)) assert.match(h.command, /node rebuild\/gate\.mjs hook (pre|post) \|\| exit 2$/, `${ev}: ${h.command}`);
+ });
++
++test('㉔ 훅을 끄는 자리는 어느 모드도 못 쓴다 (DEC-0095 — settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길)', () => {
++  const P = JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).gate;
++  for (const m of G.MODES) for (const f of ['.claude/settings.local.json', '.claude/settings.json', '.claude/hooks/x.sh']) assert.equal(G.mayWrite(P, m, null, f), false, `${m}: ${f}`);
++  const deny = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8')).permissions.deny;
++  for (const t of ['Edit', 'Write']) for (const f of ['.claude/settings.local.json', '.claude/hooks/**']) assert.ok(deny.includes(`${t}(${f})`), `deny ${t}(${f})`);
++});

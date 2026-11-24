@@ -159,7 +159,11 @@
 | [DEC-0090](decisions/DEC-0090.md) | 2026-11-23 | 사용자 | 설계 | AI 전용 GitHub 신원 = 봇 계정 1 개(협업자 Write) — 모든 Claude 세션이 씀, 승인 · 병합 · 설정 · 규칙 우회는 사람 계정만 | 4 |
 | [DEC-0091](decisions/DEC-0091.md) | 2026-11-24 | 사용자 | 순서 | main 병합은 거버넌스만 먼저 — P1 데이터 커밋(178c43a)을 뺀 새 브랜치 · 주장 층 시험은 자체 시험 재료로 | 3 |
 | [DEC-0092](decisions/DEC-0092.md) | 2026-11-24 | 사용자와 합의 | 설계 | 전환 기록 번호를 일 묶음 단위로 — 같은 일은 같은 번호 + 글자(20a · 20b …), 사람이 완결을 찍으면 다음 번호 | 1 |
-| [DEC-0093](decisions/DEC-0093.md) | 2026-11-24 | 사용자 | 순서 | 오케스트레이터 순서 — MVP(최종 형식으로 · 있는 것 최대한) → 범위 넓히기 → 병렬 → 자율(사람은 주제 · 결정 · 확인 · 승락만) | 21 |
+| [DEC-0093](decisions/DEC-0093.md) | 2026-11-24 | 사용자 | 순서 | main #20 의 보안 묶음 순서 · DEC-0092 세부 — seq "21a" 문자열 · 새 번호는 opened_by: DEC-… · 이 일은 새 번호 21 | 2 |
+| [DEC-0094](decisions/DEC-0094.md) | 2026-11-24 | 사용자 | 설계 | CI 구역 점검 — 선언(영수증) 없는 커밋은 AI 로 봄, 예외는 GitHub 이 검증한 사람 계정 서명뿐 | 3 |
+| [DEC-0095](decisions/DEC-0095.md) | 2026-11-24 | 사용자와 합의 | 설계 | 훅을 끄는 자리(.claude/settings.local.json · .claude/hooks/**)는 어느 모드도 못 쓴다 · 운영 규칙 넷(PR 은 봇이 연다 · 마지막 커밋은 봇 · Merge commit · Codespaces 에서만 고침) | 1 |
+| [DEC-0096](decisions/DEC-0096.md) | 2026-11-24 | 사용자 | 순서 | 오케스트레이터 순서 — MVP(최종 형식으로 · 있는 것 최대한) → 범위 넓히기 → 병렬 → 자율(사람은 주제 · 결정 · 확인 · 승락만) | 21 |
+| [DEC-0097](decisions/DEC-0097.md) | 2026-11-24 | 사용자 | 방법 | 보안 셋 섞기 — fail-closed · CODEOWNERS 는 이 브랜치의 적용분(d600490), ci-zone 은 DEC-0094(사람 서명 커밋만 사람)로 다시, 묶음 5(훅을 끄는 자리)는 이 브랜치에 맞춰 다시 | 3 |
 
 ## 4. 작업 — 결과와 걸어온 길
 
@@ -327,6 +331,7 @@
 | 111 | [PLAN-111](items/PLAN-111.md) | RP2 병합 사전 점검 넓히기 | ☑ 2026-11-21 |
 | 114 | [PLAN-114](items/PLAN-114.md) | Governor 의 CI 겹 | ☑ 2026-11-21 |
 | 116 | [PLAN-116](items/PLAN-116.md) | 거버넌스 — 권한 분리 · 독립 검증 대조 조사 | ◐ 2026-11-23 |
+| 117 | [PLAN-117](items/PLAN-117.md) | 승인 증거를 GitHub 사실로 | ☐ 2026-11-24 |
 
 ### 10부 — 자기 개선 루프 (관측 · 제안 · 승인 · 증거)
 
@@ -341,8 +346,7 @@
 
 | # | 번호 | 작업 | 상태 |
 |---|---|---|---|
-| 117 | [PLAN-117](items/PLAN-117.md) | 보안 묶음 마무리 | ◐ 2026-11-24 |
-| 118 | [PLAN-118](items/PLAN-118.md) | 승인 증거를 GitHub 사실로 | ☐ |
+| 118 | [PLAN-118](items/PLAN-118.md) | 보안 묶음 마무리 | ◐ 2026-11-24 |
 | 119 | [PLAN-119](items/PLAN-119.md) | 성장 속도 기준선 | ☐ |
 | 120 | [PLAN-120](items/PLAN-120.md) | 오케스트레이터 설계 독립 재검토 | ☐ |
 | 121 | [PLAN-121](items/PLAN-121.md) | MVP ① 감독 장부 형식 일반화 | ☐ |
@@ -510,7 +514,7 @@
 
 `2026-11-24` · 사용자 · 갈 길
 
-**왜**: DEC-0093. 데이터베이스 성장 속도를 사람 손이 아니라 오케스트레이터가 정하게 — 단 Supervisor 는 쓰지 않고(DEC-0065 ①) 승인은 사람 계정의 병합(DEC-0090)
+**왜**: DEC-0096. 데이터베이스 성장 속도를 사람 손이 아니라 오케스트레이터가 정하게 — 단 Supervisor 는 쓰지 않고(DEC-0065 ①) 승인은 사람 계정의 병합(DEC-0090)
 
 **먼저 할 것**: PLAN-121 (121 MVP ① 감독 장부 형식 일반화 · ☐) · PLAN-122 (122 MVP ② 순수 함수 넷 최소판 · ☐) · PLAN-124 (124 MVP ④ 실증 · ☐)
 
@@ -539,8 +543,8 @@
 ## 근거 점검 (계산 — 원본에서 센 것)
 
 - 작업 139: ☑ 완료 50 · ◐ 진행 16 · ☐ 대기 72 · 보류 보류 1
-- 걸어온 길: 사건 382 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 177)
-- 결정 59 — 누가: 사용자 44 · 사용자와 합의 5 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
+- 걸어온 길: 사건 385 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 180)
+- 결정 63 — 누가: 사용자 47 · 사용자와 합의 6 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
-- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-118 · PLAN-119 · PLAN-120 · PLAN-121 · PLAN-122 · PLAN-123 · PLAN-124 · PLAN-125 · PLAN-126 · PLAN-127 · PLAN-128 · PLAN-129 · PLAN-130 · PLAN-131 · PLAN-132 · PLAN-133 · PLAN-134
+- 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-117 · PLAN-119 · PLAN-120 · PLAN-121 · PLAN-122 · PLAN-123 · PLAN-124 · PLAN-125 · PLAN-126 · PLAN-127 · PLAN-128 · PLAN-129 · PLAN-130 · PLAN-131 · PLAN-132 · PLAN-133 · PLAN-134
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)

@@ -8,18 +8,18 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 386 | 8688.5 |
-| 정보 작성 `author` | 541 | 17202.5 |
+| 공통 `common` | 390 | 8713.8 |
+| 정보 작성 `author` | 561 | 17318.6 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 221 | 2742.2 |
+| 디벨롭 `develop` | 221 | 2744.8 |
 | 적분장 `field` | 0 | 0.0 |
-| 점검·검증 `inspect` | 135 | 2177.7 |
+| 점검·검증 `inspect` | 136 | 2180.7 |
 
 ## 규칙별
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 38 | 6739.6 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 38 | 6751.5 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 405 | 13954.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 696.6 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 71 | 1082.5 | 병합 기록 |
@@ -30,7 +30,7 @@
 | `attestations/**` | inspect | 1 | 299.0 | 증명 도장 — 승인 도장은 점검·검증이 남긴다 |
 | `workspace/tasks/**` | inspect | 7 | 15.0 | 과제 — 통합가가 쓴다 |
 | `workspace/handoff/NEXT-*` | common | 2 | 6.5 | 세션 넘김 — 전환 기록이 대신할 것 |
-| `workspace/**` | author | 54 | 323.9 | 수집가 작업 공간 |
+| `workspace/**` | author | 74 | 440.1 | 수집가 작업 공간 |
 | `examples/scenarios/**` | baseline | 44 | 285.0 | 시나리오 — 기초시험이 돌린다 |
 | `examples/**` | author | 3 | 4.6 | 예시 패치·합성 관찰 |
 | `engine/**` | develop | 18 | 224.9 | 운명 엔진·Rust·결합점 |
@@ -53,12 +53,12 @@
 | `tests/**` | develop | 91 | 809.3 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
-| `docs/reports/**` | inspect | 125 | 1796.3 | 보고서 — 읽기·점검 |
+| `docs/reports/**` | inspect | 126 | 1799.3 | 보고서 — 읽기·점검 |
 | `docs/textbook/**` | common | 12 | 526.5 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 23 | 350.1 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 301 | 962.4 | 안내 문서 |
+| `docs/**` | common | 305 | 975.9 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.5 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 361.3 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 363.9 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 112.6 | 형식 |
 | `*.md` | common | 4 | 65.0 | 최상위 문서 |
 | `.claude/**` | common | 6 | 38.5 | 도구 설정 |
