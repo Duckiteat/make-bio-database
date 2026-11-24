@@ -1,5 +1,5 @@
-지문 b1306dc9c64e7da8940858e7dde04eaf251985360888233cd5bfc2341be34a46
-묶음 16 파일 — 자동 0 · 사람 승인 16 · 거부 0
+지문 f502939827ab24518c315029c8719f65890c0ae98efa40c74f68055b7512ad6a
+묶음 17 파일 — 자동 0 · 사람 승인 17 · 거부 0
 
 ## 사람 승인 필요
 - .claude/settings.json [L6 guard:settings · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
@@ -101,6 +101,18 @@
     +   const [base, head] = argv;
     +   if (!base) { console.error('사용: node rebuild/ci-zone.mjs <base> [head] [--signatures <파일>]'); process.exit(2); }
     +   const r = zoneCheck(base, head || 'HEAD', ROOT, signatures); console.log(r.lines.join('\n')); process.exit(r.exit);
+- rebuild/gate.mjs [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -       tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : ''].filter(Boolean).join('\n') + '\n');
+    + }
+    + // 열린 일(완결 안 된 번호, DEC-0092) — 시작 안내에 한 줄. 다음 기록은 그 번호의 다음 글자 (dbtool transition 에 work) — 다른 세션의 N11 묶음, DEC-0097 섞기
+    + function openWorksLine(root) {
+    +   const f = join(root, 'workspace/transitions.jsonl'); if (!existsSync(f) || typeof TA.openWorks !== 'function') return '';
+    +   const w = TA.openWorks(readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
+    +   return w.length ? '열린 일(완결 전 번호): ' + w.map((x) => `${x.num} — ${x.last} 까지 ${x.count} 기록 · 연 결정 ${x.opened_by || '?'}`).join(' / ') + ' — 이 일을 잇는 기록은 work 에 그 번호, 새 일은 사람 결정(opened_by: DEC-…)으로 새 번호' : '';
+    +       tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : '',
+    +       openWorksLine(root)].filter(Boolean).join('\n') + '\n');
+    +   // 도구 뒤(post)는 이미 실행된 뒤라 막지 못한다 — 종료 2 로 AI 에게 보이게 알린다(다른 세션의 N11 묶음, DEC-0097 섞기). 시작 · 멈춤은 알리기만(멈춤을 막으면 되풀이된다)
+    +   if (event === 'post') { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류 — 이 도구(${t || '이름 없음'}) 뒤 대조 · 영수증이 남지 않았을 수 있다. 사람에게 알린다: ${err && err.message}\n`); return 2; }
 - rebuild/rules/changes.jsonl [L4 ledger:rules · tool.rules] — added_only
     + {"seq": 392, "at": "2026-11-24", "why": "DEC-0097 섞기 — ci-zone 을 DEC-0094(사람 서명)로: RULE-0551 뜻을 계정 → 서명으로 · RULE-0548 문장(DEC-0094 묶음 4 의 ops 그대로)", "file": "rules", "op": "set", "key": "RULE-0548", "before": {"id": "RULE-0548", "text": "CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다 — 영수증을 빼고 커밋해 RULE-0546 을 피하는 길을 막는다. 그 밖의 변경은 전처럼 알리기만(PLAN-114 의 '선언 없음 = 사람의 커밋' 을 이 한 가지만큼 좁힘)", "modes": ["author", "inspect", "develop"], "where": "rebuild/ci-zone.mjs judgeCommit · tests/registry_policy.test.mjs ⑥", "from_code": "2026-11-23 RULE-0546 두 번째 독립 재검토(세션 브랜치 claude/rule-0546-independent-review · 5d42c41) R1 — 선언 없는 커밋은 등록부 정책을 지나침 (DEC-0084)", "enforce": "machine"}, "after": {"id": "RULE-0548", "text": "CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다 — 영수증을 빼고 커밋해 RULE-0546 을 피하는 길을 막는다. 사람 서명 커밋도 이 정책은 본다(그 밖의 변경은 알리기만) · 사람 서명도 없는 커밋은 RULE-0550 (DEC-0094)", "modes": ["author", "inspect", "develop"], "where": "rebuild/ci-zone.mjs judgeCommit · tests/registry_policy.test.mjs ⑥", "from_code": "2026-11-23 RULE-0546 두 번째 독립 재검토(세션 브랜치 claude/rule-0546-independent-review · 5d42c41) R1 — 선언 없는 커밋은 등록부 정책을 지나침 (DEC-0084)", "enforce": "machine"}, "sha": "93dbf76c06a2fbe79553649a91537bef7fa0463a7272c13977c5d7a0b749684a"}
     + {"seq": 393, "at": "2026-11-24", "why": "DEC-0097 섞기 — ci-zone 을 DEC-0094(사람 서명)로: RULE-0551 뜻을 계정 → 서명으로 · RULE-0548 문장(DEC-0094 묶음 4 의 ops 그대로)", "file": "rules", "op": "set", "key": "RULE-0551", "before": {"id": "RULE-0551", "text": "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의 커밋(알리기만), 그 밖의 계정(봇)이면 문지기를 거치지 않은 AI 커밋으로 거부한다. 행위자나 사람 목록을 모르면 옛 판정(알리기만). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · zoneCheck · humansOf · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · 2026-11-24 봇 신원 확인(push actor = daduteria) · PLAN-117", "enforce": "machine"}, "after": {"id": "RULE-0551", "text": "CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일(영수증 밖)이 있으면 위반. 사람 서명 = GitHub 이 검증한 서명(verification.verified)이고 커미터 계정이 사람 계정(rebuild/ci-zone.mjs HUMANS · .github/CODEOWNERS 와 같은 목록). 작성자 이메일 · 웹 흐름 서명 · push 계정은 사람의 증거가 아니고, 서명 사실이 없으면 사람이 아니다(fail-closed). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로). PLAN-114 의 '선언 없음 = 사람의 커밋' 을 버림 (DEC-0094 · DEC-0097)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · humanSigned · zoneCheck · .github/workflows/check.yml 서명 사실 · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · DEC-0094(다른 develop 세션, main PR #25 의 묶음 4 — 처음 번호 RULE-0550) · DEC-0097 섞기: 처음 이 브랜치에서 push 계정으로 판정하던 RULE-0551 을 서명 판정으로 바꿈 — push 계정 판정은 사람이 마지막에 push 하면 봇의 선언 없는 커밋도 통과하는 구멍", "enforce": "machine"}, "sha": "1bfb6729c458f2bd49b07fb51a10f3ae7a1e6afb2c697c8c44e95295194308c9"}
@@ -198,15 +210,33 @@
     +     const onBot = Z.zoneCheck(r.base, 'HEAD', r.dir, {}, { main: 'main' });
     +     assert.match(onBot.lines.join('\n'), /main 에 든 커밋 제외/);
     +     assert.equal(Z.zoneCheck(r.base, 'HEAD', r.dir, {}, { main: 'main' }).exit, 1, 'main 으로의 push 는 빼지 않음 — 서명 없는 선언 없음은 AI');
-- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — added_only
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — changed: 1 줄 삭제
+    -   for (const ev of ['post', 'stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 막을 수 없는 단계`);
+    + 
     + 
     + });
+    + });
+    +   const d = repo();
+    +   try {
+    +   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+    +   assert.equal(G.failClosed('post', { tool_name: 'Write' }, new Error('x')), 2, 'post 는 이미 실행된 뒤 — 종료 2 로 AI 에게 알림');
+    +   for (const ev of ['stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 알리기만 (멈춤을 막으면 되풀이)`);
+    +     const po = hook(d, 'post', { tool_name: 'Bash', tool_input: { command: 'echo' }, tool_response: {} });
+    +     assert.equal(po.status, 2, 'post 오류는 알림 (종료 2)'); assert.match(po.stderr, /\[RULE-0550\]/);
     + test('㉔ 훅을 끄는 자리는 어느 모드도 못 쓴다 (DEC-0095 — settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길) · 문지기가 불러지기 전에 죽어도 막힘 (훅 명령 끝 || exit 2 — 다른 세션의 N11 묶음, DEC-0097 섞기)', () => {
     +   const P = JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).gate;
     +   for (const m of G.MODES) for (const f of ['.claude/settings.local.json', '.claude/settings.json', '.claude/hooks/x.sh']) assert.equal(G.mayWrite(P, m, null, f), false, `${m}: ${f}`);
     +   const S = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8'));
     +   for (const t of ['Edit', 'Write']) for (const f of ['.claude/settings.local.json', '.claude/hooks/**']) assert.ok(S.permissions.deny.includes(`${t}(${f})`), `deny ${t}(${f})`);
     +   for (const ev of ['PreToolUse', 'PostToolUse']) for (const h of S.hooks[ev].flatMap((x) => x.hooks)) assert.match(h.command, /node rebuild\/gate\.mjs hook (pre|post) \|\| exit 2$/, `${ev}: ${h.command}`);
+    + test('㉕ 시작 안내에 열린 일 (DEC-0092 · 다른 세션의 N11 묶음, DEC-0097 섞기): 완결 안 된 번호를 한 줄로 · 완결된 번호는 안 보임', () => {
+    +     const rec = (seq, extra = {}) => JSON.stringify({ seq, from: 'inspect', to: 'develop', at: '2026-11-24', why: 'x', target: [], files: [], open: [], ...extra });
+    +     mkdirSync(join(d, 'workspace'), { recursive: true });
+    +     writeFileSync(join(d, 'workspace/transitions.jsonl'), [rec(20), rec('21a', { opened_by: 'DEC-0093' }), rec('21b'), rec('22a', { opened_by: 'DEC-0096' }), rec('22b', { close: true })].join('\n') + '\n');
+    +     const s = hook(d, 'session-start', {});
+    +     assert.equal(s.status, 0);
+    +     assert.match(s.stdout, /열린 일\(완결 전 번호\): 21 — 21b 까지 2 기록 · 연 결정 DEC-0093/);
+    +     assert.doesNotMatch(s.stdout, /22 — 22/, '완결된 번호는 열린 일이 아님');
 - tests/registry_policy.test.mjs [L6 guard:gate · human] — changed: 8 줄 삭제
     -     let res = Z.zoneCheck(r.base, 'HEAD', r.dir);
     -     r.put('notes.txt', 'x'); r.commit('선언 없는 다른 변경');

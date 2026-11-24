@@ -12,7 +12,7 @@
 | (최상위) | 19 | 1033.5 |
 | tests | 120 | 845.1 |
 | judicial | 37 | 649.5 |
-| workspace | 88 | 591.6 |
+| workspace | 88 | 602.0 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |

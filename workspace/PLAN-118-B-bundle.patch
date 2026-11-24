@@ -223,6 +223,42 @@ index 1be5f9e..dd15471 100644
 +  if (!base) { console.error('사용: node rebuild/ci-zone.mjs <base> [head] [--signatures <파일>]'); process.exit(2); }
 +  const r = zoneCheck(base, head || 'HEAD', ROOT, signatures); console.log(r.lines.join('\n')); process.exit(r.exit);
  }
+diff --git a/rebuild/gate.mjs b/rebuild/gate.mjs
+index 0dcaab6..8ef9e7f 100644
+--- a/rebuild/gate.mjs
++++ b/rebuild/gate.mjs
+@@ -215,6 +215,12 @@ export function receiptIntact(root, name, rc) {
+   if (rc && (lines.length < rc.n || (rc.n && sha(lines[rc.n - 1]) !== rc.last))) return `문지기가 쓴 ${rc.n} 줄이 지금 ${lines.length} 줄 — 지워지거나 고쳐짐`;
+   return null;
+ }
++// 열린 일(완결 안 된 번호, DEC-0092) — 시작 안내에 한 줄. 다음 기록은 그 번호의 다음 글자 (dbtool transition 에 work) — 다른 세션의 N11 묶음, DEC-0097 섞기
++function openWorksLine(root) {
++  const f = join(root, 'workspace/transitions.jsonl'); if (!existsSync(f) || typeof TA.openWorks !== 'function') return '';
++  const w = TA.openWorks(readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
++  return w.length ? '열린 일(완결 전 번호): ' + w.map((x) => `${x.num} — ${x.last} 까지 ${x.count} 기록 · 연 결정 ${x.opened_by || '?'}`).join(' / ') + ' — 이 일을 잇는 기록은 work 에 그 번호, 새 일은 사람 결정(opened_by: DEC-…)으로 새 번호' : '';
++}
+ function hook(event, input, root) {
+   const P = loadPolicy(), sc = scratch(root, input.session_id), S = readJson(sc) || {};
+   let st = state(root, input.session_id, P);
+@@ -233,7 +239,8 @@ function hook(event, input, root) {
+     const tr = existsSync(join(root, 'workspace/transitions.jsonl')) ? readFileSync(join(root, 'workspace/transitions.jsonl'), 'utf8').split('\n').filter(Boolean).slice(-3).map((l) => JSON.parse(l)) : [];
+     process.stdout.write([`문지기 (재건 7 단계): 이 세션은 모드 하나로 시작한다 — node rebuild/gate.mjs open <${MODES.join('|')}>.`, st.mode ? `이미 열린 모드: ${st.mode}` : '아직 연 모드 없음 — 열기 전에는 저장소 파일을 쓰지 않는다.',
+       st.role ? `역할: ${st.role} (${P.roles[st.role].mode} 모드만)` : '', '끝내기 전: node rebuild/gate.mjs finish <모드> — 통과해야 git commit (바뀐 것에 닿는 시험만). push 는 finish <모드> --full (전체) 뒤에.',
+-      tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : ''].filter(Boolean).join('\n') + '\n');
++      tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : '',
++      openWorksLine(root)].filter(Boolean).join('\n') + '\n');
+     return 0;
+   }
+   if (event === 'pre') {
+@@ -318,6 +325,8 @@ export function failClosed(event, input, err) {
+   const t = (input && input.tool_name) || '';
+   const reads = READ_TOOLS.includes(t) || READ_MCP_RE.test(t);
+   if (event === 'pre' && !reads) { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류로 판단하지 못함 — 쓰는 도구(${t || '이름 없음'})를 막는다 (fail-closed). 사람에게 알린다: ${err && err.message}\n`); return 2; }
++  // 도구 뒤(post)는 이미 실행된 뒤라 막지 못한다 — 종료 2 로 AI 에게 보이게 알린다(다른 세션의 N11 묶음, DEC-0097 섞기). 시작 · 멈춤은 알리기만(멈춤을 막으면 되풀이된다)
++  if (event === 'post') { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류 — 이 도구(${t || '이름 없음'}) 뒤 대조 · 영수증이 남지 않았을 수 있다. 사람에게 알린다: ${err && err.message}\n`); return 2; }
+   process.stderr.write(`문지기 오류 (${event}${t ? ' · ' + t : ''} — ${event === 'pre' ? '읽는 도구라 통과' : '막을 수 없는 단계'}, 영수증에 남지 않았을 수 있음): ${err && err.message}\n`);
+   return 0;
+ }
 diff --git a/rebuild/rules/changes.jsonl b/rebuild/rules/changes.jsonl
 index 2b97542..0cf739a 100644
 --- a/rebuild/rules/changes.jsonl
@@ -427,13 +463,27 @@ index 3bb70fd..d00068d 100644
  });
  
 diff --git a/tests/gate.test.mjs b/tests/gate.test.mjs
-index f9c0c4d..c9de7c8 100644
+index f9c0c4d..ae26117 100644
 --- a/tests/gate.test.mjs
 +++ b/tests/gate.test.mjs
-@@ -257,3 +257,11 @@ test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예
+@@ -244,7 +244,8 @@ test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예
+   // 판단 (순수) — 목록에 없는 도구는 쓰는 도구로 본다
+   for (const t of ['Write', 'Edit', 'Bash', 'NotebookEdit', 'mcp__github__push_files', 'mcp__biodb-clerk__merge', 'Agent', '']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 2, t || '이름 없음');
+   for (const t of ['Read', 'Grep', 'Glob', 'mcp__biodb-query__summary', 'mcp__biodb-run__run_fate']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 0, t);
+-  for (const ev of ['post', 'stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 막을 수 없는 단계`);
++  assert.equal(G.failClosed('post', { tool_name: 'Write' }, new Error('x')), 2, 'post 는 이미 실행된 뒤 — 종료 2 로 AI 에게 알림');
++  for (const ev of ['stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 알리기만 (멈춤을 막으면 되풀이)`);
+   // 끝에서 끝 — live 영수증에 깨진 줄 하나(공격 경로 N11 의 재현)로 훅이 예외를 낸다
+   const d = repo();
+   try {
+@@ -255,5 +256,28 @@ test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예
+     assert.equal(w.status, 2, '쓰는 도구는 막힘'); assert.match(w.stderr, /\[RULE-0550\]/); assert.match(w.stderr, /fail-closed/);
+     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'ls' } }).status, 2, '셸도 막힘');
      assert.equal(hook(d, 'pre', { tool_name: 'Read', tool_input: { file_path: join(d, 'core.js') } }).status, 0, '읽는 도구는 통과 — 사람이 원인을 볼 수 있게');
-   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
- });
++    const po = hook(d, 'post', { tool_name: 'Bash', tool_input: { command: 'echo' }, tool_response: {} });
++    assert.equal(po.status, 2, 'post 오류는 알림 (종료 2)'); assert.match(po.stderr, /\[RULE-0550\]/);
++  } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
++});
 +
 +test('㉔ 훅을 끄는 자리는 어느 모드도 못 쓴다 (DEC-0095 — settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길) · 문지기가 불러지기 전에 죽어도 막힘 (훅 명령 끝 || exit 2 — 다른 세션의 N11 묶음, DEC-0097 섞기)', () => {
 +  const P = JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).gate;
@@ -442,6 +492,19 @@ index f9c0c4d..c9de7c8 100644
 +  for (const t of ['Edit', 'Write']) for (const f of ['.claude/settings.local.json', '.claude/hooks/**']) assert.ok(S.permissions.deny.includes(`${t}(${f})`), `deny ${t}(${f})`);
 +  for (const ev of ['PreToolUse', 'PostToolUse']) for (const h of S.hooks[ev].flatMap((x) => x.hooks)) assert.match(h.command, /node rebuild\/gate\.mjs hook (pre|post) \|\| exit 2$/, `${ev}: ${h.command}`);
 +});
++
++test('㉕ 시작 안내에 열린 일 (DEC-0092 · 다른 세션의 N11 묶음, DEC-0097 섞기): 완결 안 된 번호를 한 줄로 · 완결된 번호는 안 보임', () => {
++  const d = repo();
++  try {
++    const rec = (seq, extra = {}) => JSON.stringify({ seq, from: 'inspect', to: 'develop', at: '2026-11-24', why: 'x', target: [], files: [], open: [], ...extra });
++    mkdirSync(join(d, 'workspace'), { recursive: true });
++    writeFileSync(join(d, 'workspace/transitions.jsonl'), [rec(20), rec('21a', { opened_by: 'DEC-0093' }), rec('21b'), rec('22a', { opened_by: 'DEC-0096' }), rec('22b', { close: true })].join('\n') + '\n');
++    const s = hook(d, 'session-start', {});
++    assert.equal(s.status, 0);
++    assert.match(s.stdout, /열린 일\(완결 전 번호\): 21 — 21b 까지 2 기록 · 연 결정 DEC-0093/);
++    assert.doesNotMatch(s.stdout, /22 — 22/, '완결된 번호는 열린 일이 아님');
+   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+ });
 diff --git a/tests/registry_policy.test.mjs b/tests/registry_policy.test.mjs
 index bd43110..c48d39b 100644
 --- a/tests/registry_policy.test.mjs
