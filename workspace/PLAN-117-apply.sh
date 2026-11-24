@@ -13,6 +13,7 @@ FP=82625e9c1dc7cfc933f326d505c04b16be137825e13dcc69e93617decc296363
 PATCH=workspace/PLAN-117-bundle.patch
 ROW=workspace/PLAN-117-changes-row.txt
 LOG=workspace/PLAN-117-apply.log
+TMPLOG="$(mktemp)" # 시험 중 기록은 저장소 밖에 — 저장소 안에 두면 파일 목록이 바뀌어 "관리 파일 최신" 시험이 깨진다
 BR=ccr-b0ff4012-x9uzg9
 say() { echo; echo "== $*"; }
 
@@ -35,17 +36,16 @@ say "5) 생성물"
 node rebuild/status.mjs --write >/dev/null && node rebuild/regen.mjs >/dev/null && node rebuild/status.mjs --write >/dev/null || { echo "멈춤: 생성물"; exit 1; }
 
 say "6) 전체 시험"
-node --test --test-reporter=tap tests/*.test.mjs > "$LOG.tmp" 2>&1
-FAIL=$(grep -E '^# fail ' "$LOG.tmp" | awk '{print $3}')
-grep -E '^# (tests|pass|fail) ' "$LOG.tmp"
-if [ "${DRY:-0}" = "1" ]; then echo "DRY — 커밋 · push 하지 않음 (fail=${FAIL:-?})"; rm -f "$LOG.tmp"; exit 0; fi
+node --test --test-reporter=tap tests/*.test.mjs > "$TMPLOG" 2>&1
+FAIL=$(grep -E '^# fail ' "$TMPLOG" | awk '{print $3}')
+grep -E '^# (tests|pass|fail) ' "$TMPLOG"
+if [ "${DRY:-0}" = "1" ]; then mv "$TMPLOG" "$LOG"; grep -E '^not ok' "$LOG" | head -20; echo "DRY — 커밋 · push 하지 않음 (fail=${FAIL:-?}) · 기록 $LOG"; exit 0; fi
 if [ "${FAIL:-1}" = "0" ]; then
-  rm -f "$LOG.tmp"
+  rm -f "$TMPLOG"
   git add -A && git commit -m "L6: gate fail-closed · ci-zone account check · CODEOWNERS (PLAN-117, bundle 82625e9c1dc7)" && git push origin "$BR" && echo "끝 — 커밋 · push 됨. README 의 다음 단계(병합 · GitHub 설정)로"
 else
-  mv "$LOG.tmp" "$LOG.keep"
   git stash push -u -m "PLAN-117 실패한 시도 $(date -u +%H%M%S)"
-  mv "$LOG.keep" "$LOG"
+  mv "$TMPLOG" "$LOG"
   grep -E '^not ok' "$LOG" | head -20
   git add "$LOG" && git commit -m "PLAN-117 apply failed — test log for develop" && git push origin "$BR"
   echo "실패 — 시험 기록만 push 했다. develop 세션에 알린다."
