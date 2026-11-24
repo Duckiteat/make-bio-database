@@ -283,7 +283,9 @@
           "tests/acceptance.test.mjs",
           "tests/guard-matrix.test.mjs",
           "rebuild/trust-check.mjs",
-          "tests/trust_check.test.mjs"
+          "tests/trust_check.test.mjs",
+          ".claude/settings.local.json",
+          ".claude/hooks/**"
         ],
         "finish": [
           "node tests/affected.mjs",

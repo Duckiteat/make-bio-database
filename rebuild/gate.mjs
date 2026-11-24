@@ -215,6 +215,12 @@ export function receiptIntact(root, name, rc) {
   if (rc && (lines.length < rc.n || (rc.n && sha(lines[rc.n - 1]) !== rc.last))) return `문지기가 쓴 ${rc.n} 줄이 지금 ${lines.length} 줄 — 지워지거나 고쳐짐`;
   return null;
 }
+// 열린 일(완결 안 된 번호, DEC-0092) — 시작 안내에 한 줄. 다음 기록은 그 번호의 다음 글자 (dbtool transition 에 work) — 다른 세션의 N11 묶음, DEC-0097 섞기
+function openWorksLine(root) {
+  const f = join(root, 'workspace/transitions.jsonl'); if (!existsSync(f) || typeof TA.openWorks !== 'function') return '';
+  const w = TA.openWorks(readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
+  return w.length ? '열린 일(완결 전 번호): ' + w.map((x) => `${x.num} — ${x.last} 까지 ${x.count} 기록 · 연 결정 ${x.opened_by || '?'}`).join(' / ') + ' — 이 일을 잇는 기록은 work 에 그 번호, 새 일은 사람 결정(opened_by: DEC-…)으로 새 번호' : '';
+}
 function hook(event, input, root) {
   const P = loadPolicy(), sc = scratch(root, input.session_id), S = readJson(sc) || {};
   let st = state(root, input.session_id, P);
@@ -233,7 +239,8 @@ function hook(event, input, root) {
     const tr = existsSync(join(root, 'workspace/transitions.jsonl')) ? readFileSync(join(root, 'workspace/transitions.jsonl'), 'utf8').split('\n').filter(Boolean).slice(-3).map((l) => JSON.parse(l)) : [];
     process.stdout.write([`문지기 (재건 7 단계): 이 세션은 모드 하나로 시작한다 — node rebuild/gate.mjs open <${MODES.join('|')}>.`, st.mode ? `이미 열린 모드: ${st.mode}` : '아직 연 모드 없음 — 열기 전에는 저장소 파일을 쓰지 않는다.',
       st.role ? `역할: ${st.role} (${P.roles[st.role].mode} 모드만)` : '', '끝내기 전: node rebuild/gate.mjs finish <모드> — 통과해야 git commit (바뀐 것에 닿는 시험만). push 는 finish <모드> --full (전체) 뒤에.',
-      tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : ''].filter(Boolean).join('\n') + '\n');
+      tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : '',
+      openWorksLine(root)].filter(Boolean).join('\n') + '\n');
     return 0;
   }
   if (event === 'pre') {
@@ -309,12 +316,27 @@ function finish(mode, root, full) {
   return pass ? 0 : 1;
 }
 
+// 문지기가 예외로 판단하지 못할 때 (RULE-0550 · 공격 경로 N11 · PLAN-117) — fail-closed: 쓰는 도구는 막고(종료 2), 읽는 도구만 통과.
+//   전에는 모든 예외를 통과시켜, 영수증 한 줄을 망가뜨리면 문지기가 꺼진 것과 같았다. 목록에 없는 도구는 쓰는 도구로 본다(모르면 막음).
+export const READ_TOOLS = ['Read', 'Grep', 'Glob', 'LS', 'ToolSearch', 'WebSearch', 'WebFetch', 'TaskList', 'TaskGet'];
+const READ_MCP_RE = /^mcp__biodb-(?:query|run)__/; // 읽기 전용 서버 (.mcp.json — 저장소를 바꾸지 않음)
+const FAIL_RULE = 'RULE-0550';
+export function failClosed(event, input, err) {
+  const t = (input && input.tool_name) || '';
+  const reads = READ_TOOLS.includes(t) || READ_MCP_RE.test(t);
+  if (event === 'pre' && !reads) { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류로 판단하지 못함 — 쓰는 도구(${t || '이름 없음'})를 막는다 (fail-closed). 사람에게 알린다: ${err && err.message}\n`); return 2; }
+  // 도구 뒤(post)는 이미 실행된 뒤라 막지 못한다 — 종료 2 로 AI 에게 보이게 알린다(다른 세션의 N11 묶음, DEC-0097 섞기). 시작 · 멈춤은 알리기만(멈춤을 막으면 되풀이된다)
+  if (event === 'post') { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류 — 이 도구(${t || '이름 없음'}) 뒤 대조 · 영수증이 남지 않았을 수 있다. 사람에게 알린다: ${err && err.message}\n`); return 2; }
+  process.stderr.write(`문지기 오류 (${event}${t ? ' · ' + t : ''} — ${event === 'pre' ? '읽는 도구라 통과' : '막을 수 없는 단계'}, 영수증에 남지 않았을 수 있음): ${err && err.message}\n`);
+  return 0;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [cmd, arg, ...rest] = process.argv.slice(2);
   const root = (() => { try { return git(process.env.CLAUDE_PROJECT_DIR || process.cwd(), 'rev-parse', '--show-toplevel').trim(); } catch { return process.env.CLAUDE_PROJECT_DIR || process.cwd(); } })();
   if (cmd === 'hook') {
     let input = {}; try { input = JSON.parse(readFileSync(0, 'utf8') || '{}'); } catch { /* 빈 입력 */ }
-    let code = 0; try { code = hook(arg, input, root); } catch (e) { process.stderr.write(`문지기 오류 (통과시킴 — 영수증에 남지 않았을 수 있음): ${e.message}\n`); code = 0; }
+    let code = 0; try { code = hook(arg, input, root); } catch (e) { code = failClosed(arg, input, e); }
     process.exit(code);
   } else if (cmd === 'open') {
     if (!MODES.includes(arg)) { console.error(`모드 '${arg || ''}' — ${MODES.join(' | ')}`); process.exit(2); }

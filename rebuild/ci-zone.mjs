@@ -1,15 +1,19 @@
 #!/usr/bin/env node
 // Governor 의 CI 겹 (PLAN-114 · DEC-0070 V2 · DIR-0010) — 커밋마다 "선언한 모드의 쓰기 구역 밖 변경" 을 서버 쪽에서 본다. 읽기만 한다.
-//   node rebuild/ci-zone.mjs <base> [head]      base..head 의 커밋마다 판정 (head 기본 HEAD)
+//   node rebuild/ci-zone.mjs <base> [head] [--signatures <파일>]   base..head 의 커밋마다 판정 (head 기본 HEAD)
+//     서명 사실 파일 = { <커밋 sha>: { verified, committer } } — 워크플로가 GitHub API 로 모은다 (DEC-0094)
 // 정한 것 (사용자 결정 — PLAN-114 결과 글):
 //   · 모드 선언 = 그 커밋이 바꾼 영수증(workspace/receipts/*.jsonl)의 마지막 'open' 사건(mode · role). 문지기가 쓰는 파일이라 새로 적을 것이 없다.
-//   · 선언 없는 커밋(사람의 커밋 · 훅 없이 만든 커밋)은 알리기만 — 통과시키고 바뀐 파일을 남긴다. 단 도장 등록부의 승인 도장 정책만은 본다(DEC-0084 · RULE-0548).
+//   · 선언 없는 커밋은 AI 로 본다(DEC-0094 — 전에는 '사람의 커밋' 으로 알리기만, 공격 재검토 N8): '모드 없음' 이라 바꾼 파일이 있으면 위반.
+//     예외 = 사람 서명 커밋: GitHub 이 검증한 서명(verified)이고 커미터 계정이 HUMANS — 그 커밋만 알리기만(도장 등록부의 승인 도장 정책은 본다, DEC-0084 · RULE-0548).
+//     작성자 이메일은 흉내 낼 수 있어 보지 않는다 · 웹 흐름(web-flow) 서명은 API 로 작성자를 정할 수 있어 예외가 아니다 · 사실이 없으면 아무도 사람이 아니다(fail-closed).
 //   · 판정은 문지기의 함수 그대로(gate.mjs violations) — 새 판정 코드 없음. 정책(modes.json)은 그 커밋의 부모에서 읽는다: 커밋이 자기 정책을 넓혀 통과하지 못하게.
 //   · 병합 커밋은 건너뛴다 — 합쳐 온 커밋은 그 자체로 판정된다.
 //   · 영수증 파일 자체는 판정에서 뺀다 — 선언이고, 문지기가 쓴다.
 // 한계: 영수증도 커밋 안의 파일이라 훅 없이 만든 커밋은 영수증을 꾸밀 수 있다. 그래도 꾸민 모드의 구역은 넘지 못한다(권한의 뿌리는 모든 모드의 except).
-// 종료 코드: 0 = 구역 밖 변경 없음 (선언 없음은 알리기만) · 1 = 구역 밖 변경 · 2 = 점검 못 함
+// 종료 코드: 0 = 구역 밖 변경 없음 (사람 서명 커밋은 알리기만) · 1 = 구역 밖 변경 (선언도 사람 서명도 없는 변경 포함) · 2 = 점검 못 함
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { violations } from './gate.mjs';
@@ -22,6 +26,10 @@ export const APPEND_ONLY = ['rebuild/state/supervise.jsonl', 'workspace/transiti
 export const appendOnly = TA.appendOnly;
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+// 사람 계정 (DEC-0090 — 협업자 조회: Duckiteat 만 admin · 봇 daduteria 는 write). 이 파일은 L6 — 바꾸려면 승인 묶음 + 사람 병합
+export const HUMANS = ['Duckiteat'];
+// 서명 사실 하나 → 사람 서명인가 (순수)
+export const humanSigned = (fact) => !!(fact && fact.verified === true && HUMANS.includes(fact.committer));
 const RECEIPT_RE = /^workspace\/receipts\/[^/]+\.jsonl$/;
 const isReceipt = (p) => /^workspace\/receipts\//.test(p);
 const git = (args, root) => execFileSync('git', ['-c', 'core.quotepath=false', ...args], { cwd: root, encoding: 'utf8', maxBuffer: 256 << 20, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -42,13 +50,18 @@ export function declaredOf(receipts) {
 //   선언이 여럿이면 바뀐 파일마다 어느 선언으로든 쓸 수 있어야 한다
 //   reg = { before, after } — 그 커밋이 도장 등록부를 바꿨으면 부모 · 커밋의 등록부(JSON). 등록부 정책(DEC-0078): 선언된 모드가 낼 수 있는 도장 종류(모드표 stamps)만 —
 //   선언 중 하나라도 그 변경을 허락하면 통과. 정책이 없는 모드(stamps 칸 없음)는 승인 도장 지우기 · 바꾸기만 본다(judicial/attestation.js registryPolicy)
-const UNDECLARED_RULE = 'RULE-0548'; // 선언 없는 커밋의 등록부 정책 (DEC-0084 (c))
-export function judgeCommit(P, changed, decl, reg, ledgers) {
+const UNDECLARED_RULE = 'RULE-0548';
+const NO_DECL = '선언 · 사람 서명 없음'; // DEC-0094
+const NO_DECL_RULE = 'RULE-0551'; // 선언도 사람 서명도 없는 커밋 = AI (DEC-0094) // 선언 없는 커밋의 등록부 정책 (DEC-0084 (c))
+export function judgeCommit(P, changed, decl, reg, ledgers, human = false) {
   const files = changed.filter((p) => !isReceipt(p));
   if (!decl.length) {
-    // 선언 없음은 알리기만 — 단 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 · 새 도장의 승인자)만은 본다(DEC-0084 (c) · RULE-0546): 사람의 커밋도 by: human 도장을 새로 넣을 일은 없다
+    // 선언 없음 — 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 · 새 도장의 승인자)은 늘 본다(DEC-0084 (c) · RULE-0546): 사람의 커밋도 by: human 도장을 새로 넣을 일은 없다
     const stamps = reg ? ATT.registryPolicy(reg.before, reg.after, null).map((v) => ({ ...v, via: UNDECLARED_RULE })) : [];
-    return { status: stamps.length ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], modes: ['선언 없음'] };
+    if (human) return { status: stamps.length ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], modes: ['사람 서명'] }; // 사람 서명 커밋은 알리기만
+    // 선언도 사람 서명도 없음 = AI 의 '모드 없음' 커밋 (DEC-0094) — 바꾼 파일 전부가 구역 밖 (문지기의 모드 열기 전 변경 RULE-0514 와 같은 뜻)
+    const rewrites = (ledgers || []).flatMap((x) => appendOnly(x.before, x.after).map((v) => ({ ...v, file: x.file })));
+    return { status: files.length || stamps.length || rewrites.length ? 'violation' : 'ok', files, bad: files, stamps, rewrites, modes: [NO_DECL] };
   }
   const bad = files.filter((f) => decl.every((d) => violations(P, d.mode, d.role, [f]).length));
   let stamps = [];
@@ -60,10 +73,15 @@ export function judgeCommit(P, changed, decl, reg, ledgers) {
   return { status: bad.length || stamps.length || rewrites.length ? 'violation' : 'ok', files, bad, stamps, rewrites, modes: [...new Set(decl.map((d) => d.role ? `${d.mode}/${d.role}` : d.mode))] };
 }
 
-export function zoneCheck(base, head = 'HEAD', root = ROOT) {
-  const out = { base, head, commits: [], exit: 0, lines: [] };
+// main 에 이미 들어간 커밋은 다시 판정하지 않는다 (PLAN-118 · DEC-0097) — 사람이 병합해 받아들인 것이고, 봇이 main 을 자기 브랜치로 합쳐 오면
+//   그 커밋들(서명 없는 옛 사람 커밋 포함)이 push 범위에 들어온다. 단 head 자체가 main 에 들어 있으면(main 으로의 push) 빼지 않는다 — 빼면 아무것도 판정하지 않게 된다.
+export function zoneCheck(base, head = 'HEAD', root = ROOT, signatures = {}, opt = {}) {
+  const out = { base, head, commits: [], exit: 0, lines: [] }, sig = signatures || {};
+  const mainRef = opt.main === undefined ? ['origin/main', 'main'].find((r) => { try { git(['rev-parse', '--verify', '-q', r + '^{commit}'], root); return true; } catch { return false; } }) : opt.main;
+  let exclude = [];
+  if (mainRef) { try { git(['merge-base', '--is-ancestor', head, mainRef], root); } catch { exclude = ['--not', mainRef]; } }
   let list;
-  try { list = git(['rev-list', '--reverse', '--no-merges', `${base}..${head}`], root).split('\n').filter(Boolean); }
+  try { list = git(['rev-list', '--reverse', '--no-merges', `${base}..${head}`, ...exclude], root).split('\n').filter(Boolean); }
   catch { out.exit = 2; out.lines.push(`범위 '${base}..${head}' 를 읽을 수 없음 — 전체 역사가 필요 (fetch-depth: 0)`); return out; }
   for (const c of list) {
     let parent; try { parent = git(['rev-parse', '--verify', '-q', `${c}^`], root).trim(); } catch { parent = null; }
@@ -75,16 +93,17 @@ export function zoneCheck(base, head = 'HEAD', root = ROOT) {
     const decl = declaredOf(changed.filter((p) => RECEIPT_RE.test(p)).map((file) => ({ file, text: show(c, file, root) })));
     const reg = changed.includes(REGISTRY) ? { before: JSON.parse(show(parent, REGISTRY, root) || '{"stamps":[]}'), after: JSON.parse(show(c, REGISTRY, root) || '{"stamps":[]}') } : null;
     const ledgers = APPEND_ONLY.filter((f) => changed.includes(f)).map((file) => ({ file, before: show(parent, file, root) || '', after: show(c, file, root) || '' }));
-    out.commits.push({ c, subject: git(['log', '-1', '--format=%s', c], root).trim(), ...judgeCommit(P, changed, decl, reg, ledgers) });
+    out.commits.push({ c, subject: git(['log', '-1', '--format=%s', c], root).trim(), ...judgeCommit(P, changed, decl, reg, ledgers, humanSigned(sig[c])) });
   }
   const n = (s) => out.commits.filter((x) => x.status === s).length;
-  out.lines.push(`구역 점검 (CI 겹) — ${base.slice(0, 8)}..${head.slice(0, 8)} · 커밋 ${out.commits.length} (병합 커밋 제외) · 통과 ${n('ok')} · 선언 없음 ${n('undeclared')} · 정책 없음 ${n('no_policy')}${n('no_parent') ? ` · 부모 없음 ${n('no_parent')}` : ''} · 구역 밖 ${n('violation')}`);
+  out.lines.push(`구역 점검 (CI 겹) — ${base.slice(0, 8)}..${head.slice(0, 8)} · 커밋 ${out.commits.length} (병합 커밋 · main 에 든 커밋 제외) · 통과 ${n('ok')} · 사람 서명(선언 없음) ${n('undeclared')} · 정책 없음 ${n('no_policy')}${n('no_parent') ? ` · 부모 없음 ${n('no_parent')}` : ''} · 구역 밖 ${n('violation')}`);
   for (const x of out.commits) {
     const h = `${x.c.slice(0, 8)} ${String(x.subject || '').slice(0, 60)}`;
-    if (x.status === 'violation' && x.bad.length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')} 의 쓰기 구역 밖 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
+    if (x.status === 'violation' && x.bad.length && x.modes[0] === NO_DECL) out.lines.push(`✗ ${h} — 모드 선언(영수증)도 사람 서명도 없는 커밋 → AI 로 봄 (DEC-0094 · ${NO_DECL_RULE}): 바뀐 파일 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
+    else if (x.status === 'violation' && x.bad.length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')} 의 쓰기 구역 밖 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
     for (const v of x.status === 'violation' ? x.rewrites || [] : []) out.lines.push(`✗ ${h} — ${v.file}: ${v.msg}`);
     if (x.status === 'violation' && (x.stamps || []).length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')}${x.stamps[0].via ? ` (${x.stamps[0].via})` : ''} 의 도장 등록부 정책 밖 ${x.stamps.length}: ${x.stamps.slice(0, 4).map((v) => v.msg).join(' · ')}${x.stamps.length > 4 ? ' …' : ''}`);
-    else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 → 사람의 커밋으로 봄 (알리기만) · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+    else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 · 사람 서명(${HUMANS.join(' · ')}) → 알리기만 · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
     else if (x.status === 'no_policy') out.lines.push(`· ${h} — 부모에 문지기 정책이 없음 (문지기 이전 커밋) — 건너뜀`);
   }
   out.exit = n('violation') ? 1 : 0;
@@ -92,7 +111,10 @@ export function zoneCheck(base, head = 'HEAD', root = ROOT) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const [base, head] = process.argv.slice(2);
-  if (!base) { console.error('사용: node rebuild/ci-zone.mjs <base> [head]'); process.exit(2); }
-  const r = zoneCheck(base, head || 'HEAD'); console.log(r.lines.join('\n')); process.exit(r.exit);
+  const argv = process.argv.slice(2), si = argv.indexOf('--signatures');
+  let signatures = {};
+  if (si >= 0) { try { signatures = JSON.parse(readFileSync(argv[si + 1], 'utf8')); } catch (e) { console.error(`서명 사실 '${argv[si + 1]}' 을 읽을 수 없음: ${e.message}`); process.exit(2); } argv.splice(si, 2); }
+  const [base, head] = argv;
+  if (!base) { console.error('사용: node rebuild/ci-zone.mjs <base> [head] [--signatures <파일>]'); process.exit(2); }
+  const r = zoneCheck(base, head || 'HEAD', ROOT, signatures); console.log(r.lines.join('\n')); process.exit(r.exit);
 }

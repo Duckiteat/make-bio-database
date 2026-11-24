@@ -1,0 +1,34 @@
+# 사람 계정 (PLAN-117 · DEC-0090) — L6 자리(지키는 장치)를 바꾸는 PR 은 이 계정의 리뷰가 필요하다.
+#   힘이 생기려면 main 규칙 세트에서 "Require review from Code Owners" 를 켠다 (사람 — GitHub 설정).
+#   사람 계정 목록은 rebuild/ci-zone.mjs 의 HUMANS(DEC-0094 — 사람 서명 커밋의 커미터)와 같아야 한다 — 하나를 바꾸면 둘 다 바꾼다.
+#   이 파일도 L6(.github/**) — 사람 커밋으로만 바뀐다. AI 계정(봇)을 여기 적지 않는다.
+# 자리 목록은 저장 지도(docs/textbook/storage-map.json)의 L6 와 문지기 보호 목록에서 — 하나를 더하면 여기도 더한다.
+
+/.github/                         @Duckiteat
+/.claude/settings.json            @Duckiteat
+/rebuild/gate.mjs                 @Duckiteat
+/rebuild/rules/modes.json         @Duckiteat
+/rebuild/ci-zone.mjs              @Duckiteat
+/rebuild/trust-check.mjs          @Duckiteat
+/rebuild/bundle.mjs               @Duckiteat
+/docs/textbook/authority.json     @Duckiteat
+/judicial/authority.js            @Duckiteat
+/judicial/approval.js             @Duckiteat
+/judicial/attestation.js          @Duckiteat
+/judicial/acceptance.js           @Duckiteat
+/judicial/transition_audit.js     @Duckiteat
+/tests/gate.test.mjs              @Duckiteat
+/tests/registry_policy.test.mjs   @Duckiteat
+/tests/affected.mjs               @Duckiteat
+/tests/trace.mjs                  @Duckiteat
+/tests/snapshot.mjs               @Duckiteat
+/tests/permissions.test.mjs       @Duckiteat
+/tests/mutation/run.mjs           @Duckiteat
+/tests/acceptance.test.mjs        @Duckiteat
+/tests/governance.test.mjs        @Duckiteat
+/tests/rebuild.test.mjs           @Duckiteat
+/tests/authority.test.mjs         @Duckiteat
+/tests/approval.test.mjs          @Duckiteat
+/tests/bundle.test.mjs            @Duckiteat
+/tests/guard-matrix.test.mjs      @Duckiteat
+/tests/trust_check.test.mjs       @Duckiteat

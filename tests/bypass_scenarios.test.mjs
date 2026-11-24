@@ -40,11 +40,11 @@ test('C4 검수 · 넘김 기록(감독 장부 · 전환 기록)의 기존 줄�
     r.put('workspace/receipts/a.jsonl', open('author') + '{"t":"tool"}\n'); r.put('rebuild/state/supervise.jsonl', L1.replace('propose', 'cancel') + L2); const edit = r.commit('줄을 고침');
     r.put('workspace/receipts/a.jsonl', open('author') + '{"t":"tool"}\n{"t":"tool"}\n'); r.put('workspace/transitions.jsonl', '{"seq":1,"why":"검수 안 함"}\n'); const edit2 = r.commit('전환 기록을 고침');
     r.put('workspace/transitions.jsonl', '{"seq":1,"why":"사람이 고침"}\n'); const human = r.commit('사람의 커밋');
-    const res = Z.zoneCheck(r.base, 'HEAD', r.dir), by = (c) => res.commits.find((x) => x.c === c);
+    const res = Z.zoneCheck(r.base, 'HEAD', r.dir, { [human]: { verified: true, committer: 'Duckiteat' } }), by = (c) => res.commits.find((x) => x.c === c); // 사람 서명 사실 (DEC-0094)
     assert.equal(by(add).status, 'ok');
     assert.equal(by(edit).status, 'violation'); assert.equal(by(edit).rewrites[0].file, 'rebuild/state/supervise.jsonl');
     assert.equal(by(edit2).status, 'violation'); assert.equal(by(edit2).rewrites[0].file, 'workspace/transitions.jsonl');
-    assert.equal(by(human).status, 'undeclared', '선언 없음은 알리기만 (PLAN-114 사용자 결정 그대로)');
+    assert.equal(by(human).status, 'undeclared', '사람 서명 커밋은 알리기만 (DEC-0094 — 서명 사실이 없으면 AI 로 봄)');
     assert.equal(res.exit, 1);
   } finally { done(r); }
   // 줄 순서만 바뀐 것(두 브랜치를 합친 장부)은 고침이 아니다

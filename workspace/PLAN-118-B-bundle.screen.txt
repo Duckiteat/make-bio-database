@@ -1,0 +1,257 @@
+지문 f502939827ab24518c315029c8719f65890c0ae98efa40c74f68055b7512ad6a
+묶음 17 파일 — 자동 0 · 사람 승인 17 · 거부 0
+
+## 사람 승인 필요
+- .claude/settings.json [L6 guard:settings · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    +       "Edit(.claude/settings.local.json)",
+    +       "Write(.claude/settings.local.json)",
+    +       "Edit(.claude/hooks/**)",
+    +       "Write(.claude/hooks/**)",
+- .github/CODEOWNERS [L6 guard:gate · human] — changed: 1 줄 삭제
+    - #   rebuild/ci-zone.mjs 는 부모 커밋의 이 파일에 적힌 @계정을 "사람 계정" 으로 읽는다(RULE-0551) — 여기 없는 계정이 민 선언 없는 커밋은 AI 커밋으로 거부.
+    + #   사람 계정 목록은 rebuild/ci-zone.mjs 의 HUMANS(DEC-0094 — 사람 서명 커밋의 커미터)와 같아야 한다 — 하나를 바꾸면 둘 다 바꾼다.
+- .github/workflows/check.yml [L6 guard:gate · human] — changed: 3 줄 삭제
+    -       - name: 구역 점검 (Governor CI 겹 — 커밋이 선언한 모드의 쓰기 구역 밖 변경을 거부 · 선언 없음은 알리기만, PLAN-114)
+    -             GIT_DIR="$PWD/.git" node "$TRUSTED/rebuild/ci-zone.mjs" "$BASE" "$HEAD_SHA"
+    -           node rebuild/ci-zone.mjs "$BASE" HEAD
+    +       - name: 구역 점검 (Governor CI 겹 — 커밋이 선언한 모드의 쓰기 구역 밖 변경을 거부 · 선언 없는 커밋은 사람 서명일 때만 알리기만, PLAN-114 · DEC-0094)
+    +           GH_TOKEN: ${{ github.token }}
+    +           # 서명 사실 (DEC-0094): 커밋마다 GitHub 이 검증한 서명인지 · 커미터 계정 — 작성자 이메일은 흉내 낼 수 있어 쓰지 않는다
+    +           #   조회가 실패한 커밋은 사실이 없음 = 사람 아님(fail-closed). 판정(사람 계정 목록)은 ci-zone.mjs 의 HUMANS
+    +           SIG="$RUNNER_TEMP/signatures.json"
+    +           for c in $(git rev-list --no-merges "$BASE..$HEAD_SHA"); do
+    +             gh api "repos/$GITHUB_REPOSITORY/commits/$c" --jq "{\"$c\": {verified: .commit.verification.verified, committer: .committer.login}}" || echo "서명 사실 조회 실패: $c" >&2
+    +           done | jq -s 'add // {}' > "$SIG"
+    +           echo "서명 사실: $(jq 'length' "$SIG") 커밋 · 검증된 서명 $(jq '[.[] | select(.verified == true)] | length' "$SIG")"
+    +             GIT_DIR="$PWD/.git" node "$TRUSTED/rebuild/ci-zone.mjs" "$BASE" "$HEAD_SHA" --signatures "$SIG"
+    +           node rebuild/ci-zone.mjs "$BASE" HEAD --signatures "$SIG"
+- docs/design/supervisor.md [L2 doc:history · human] — changed: 1 줄 삭제
+    - | 검수 · 넘김 기록 (DEC-0079) | 감독 장부 · 전환 기록은 덧붙이기만 — 모드를 선언한 커밋이 기존 줄을 고치거나 지우면 CI 구역 점검이 거부(줄 순서만 바뀐 것은 통과 · 사람의 커밋은 알리기만 — 사람 = push · PR 을 일으킨 계정이 부모 커밋 `.github/CODEOWNERS` 의 @계정, 그 밖의 계정이 민 선언 없는 커밋은 거부 RULE-0551). 문지기 쪽 검사는 아직 없음 | `rebuild/ci-zone.mjs` appendOnly · RULE-0544 |
+    + | 검수 · 넘김 기록 (DEC-0079) | 감독 장부 · 전환 기록은 덧붙이기만 — 모드를 선언한 커밋이 기존 줄을 고치거나 지우면 CI 구역 점검이 거부(줄 순서만 바뀐 것은 통과 · 선언 없는 커밋은 사람 서명 커밋(GitHub 이 검증한 서명 · 커미터가 사람 계정)일 때만 알리기만, 아니면 AI 로 보고 거부 — RULE-0551 · DEC-0094). 문지기 쪽 검사는 아직 없음 | `rebuild/ci-zone.mjs` appendOnly · RULE-0544 |
+- docs/textbook/storage-map.json [L4 ledger:storage-map · unassigned] — changed: 2 줄 삭제
+    -       "readers": "GitHub (Require review from Code Owners) · rebuild/ci-zone.mjs (부모 커밋의 @계정 = 사람 계정, RULE-0551)",
+    -       "interpret": "사람 계정 목록 (PLAN-117 · DEC-0090) — L6 자리를 바꾸는 PR 에 이 계정의 리뷰를 요구(규칙 세트에서 켜야 힘이 있음). CI 구역 점검은 여기 적힌 계정만 사람으로 보고, 그 밖의 계정(봇)이 민 선언 없는 커밋을 거부한다. AI 계정을 적지 않는다"
+    +       "readers": "GitHub (Require review from Code Owners)",
+    +       "interpret": "사람 계정 목록 (PLAN-117 · DEC-0090) — L6 자리를 바꾸는 PR 에 이 계정의 리뷰를 요구(규칙 세트에서 켜야 힘이 있음). 계정 목록은 CI 구역 점검의 사람 계정(rebuild/ci-zone.mjs HUMANS — 사람 서명 커밋의 커미터, DEC-0094)과 같게 둔다. AI 계정을 적지 않는다"
+- rebuild/ci-zone.mjs [L6 guard:gate · human] — changed: 33 줄 삭제
+    - //   node rebuild/ci-zone.mjs <base> [head]      base..head 의 커밋마다 판정 (head 기본 HEAD)
+    - //   · 선언 없는 커밋(사람의 커밋 · 훅 없이 만든 커밋)은 알리기만 — 통과시키고 바뀐 파일을 남긴다. 단 도장 등록부의 승인 도장 정책만은 본다(DEC-0084 · RULE-0548).
+    - // 종료 코드: 0 = 구역 밖 변경 없음 (선언 없음은 알리기만) · 1 = 구역 밖 변경 · 2 = 점검 못 함
+    - }
+    - const UNDECLARED_RULE = 'RULE-0548'; // 선언 없는 커밋의 등록부 정책 (DEC-0084 (c))
+    - const AGENT_RULE = 'RULE-0551'; // AI 계정이 민 커밋은 모드 선언이 있어야 한다 (PLAN-117 · DEC-0090)
+    - // 사람 계정 = 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정 (L6 · 사람 커밋으로만 바뀜 — 커밋이 자기를 사람으로 올리지 못하게 부모에서 읽는다). 팀(@조직/팀)은 세지 않는다
+    - export const OWNERS = '.github/CODEOWNERS';
+    - export function humansOf(text) {
+    -   const out = new Set();
+    -   for (const l of String(text || '').split('\n')) { const s = l.replace(/#.*/, ''); for (const m of s.matchAll(/(?:^|\s)@([A-Za-z0-9-]+)(?=\s|$)/g)) out.add(m[1].toLowerCase()); }
+    -   return [...out];
+    - // who = { actor, human: true | false | null } — null 이면 모름(행위자 · 사람 목록이 없음: 옛 판정 그대로 알리기만)
+    - export const whoOf = (actor, humans) => ({ actor: actor || null, human: actor && humans && humans.length ? humans.includes(String(actor).toLowerCase()) : null });
+    - export function judgeCommit(P, changed, decl, reg, ledgers, who = { actor: null, human: null }) {
+    -     // AI 계정(봇)이 민 커밋인데 선언이 없음 — 문지기를 거치지 않은 AI 커밋(따옴표 속 커밋 N8 · 훅 없는 실행 B1)이라 거부. 사람 계정이면 전처럼 알리기만 (RULE-0551)
+    -     const agent = who && who.human === false;
+    -     return { status: stamps.length || agent ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], agent, who, modes: ['선언 없음'] };
+    - // actor: 이 push · PR 을 일으킨 GitHub 계정 — CI 에서는 GitHub 이 정하는 GITHUB_ACTOR(실행 환경이 꾸밀 수 없음). 없으면 모름(옛 판정)
+    - // main 에 이미 들어간 커밋은 다시 판정하지 않는다 — 사람이 병합해 받아들인 것이고, 봇이 main 을 자기 브랜치로 합쳐 오면 그 커밋들이 범위에 들어온다.
+    - //   단 head 자체가 main 에 들어 있으면(main 으로의 push) 빼지 않는다 — 빼면 아무것도 판정하지 않게 된다.
+    - export function zoneCheck(base, head = 'HEAD', root = ROOT, opt = {}) {
+    -   const out = { base, head, commits: [], exit: 0, lines: [] };
+    -   const actor = opt.actor === undefined ? (process.env.GITHUB_ACTOR || null) : opt.actor;
+    -     const who = whoOf(actor, show(parent, OWNERS, root) === null ? null : humansOf(show(parent, OWNERS, root)));
+    -     out.commits.push({ c, subject: git(['log', '-1', '--format=%s', c], root).trim(), ...judgeCommit(P, changed, decl, reg, ledgers, who) });
+    -   out.lines.push(`구역 점검 (CI 겹) — ${base.slice(0, 8)}..${head.slice(0, 8)} · 행위자 ${actor || '모름'} · 커밋 ${out.commits.length} (병합 커밋 · main 에 이미 든 커밋 제외) · 통과 ${n('ok')} · 선언 없음 ${n('undeclared')} · 정책 없음 ${n('no_policy')}${n('no_parent') ? ` · 부모 없음 ${n('no_parent')}` : ''} · 구역 밖 ${n('violation')}`);
+    -     if (x.status === 'violation' && x.bad.length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')} 의 쓰기 구역 밖 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
+    -     if (x.status === 'violation' && x.agent) out.lines.push(`✗ ${h} — AI 계정(${x.who.actor})이 민 커밋인데 모드 선언(영수증)이 없음 (${AGENT_RULE}) — 문지기를 거치지 않은 커밋 · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+    -     else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 → ${x.who && x.who.human ? `사람 계정(${x.who.actor})의 커밋 (알리기만)` : '사람의 커밋으로 봄 (알리기만) · 행위자 또는 사람 계정 목록(CODEOWNERS)을 모름'} · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+    -   const [base, head] = process.argv.slice(2);
+    -   if (!base) { console.error('사용: node rebuild/ci-zone.mjs <base> [head]'); process.exit(2); }
+    -   const r = zoneCheck(base, head || 'HEAD'); console.log(r.lines.join('\n')); process.exit(r.exit);
+    + //   node rebuild/ci-zone.mjs <base> [head] [--signatures <파일>]   base..head 의 커밋마다 판정 (head 기본 HEAD)
+    + //     서명 사실 파일 = { <커밋 sha>: { verified, committer } } — 워크플로가 GitHub API 로 모은다 (DEC-0094)
+    + //   · 선언 없는 커밋은 AI 로 본다(DEC-0094 — 전에는 '사람의 커밋' 으로 알리기만, 공격 재검토 N8): '모드 없음' 이라 바꾼 파일이 있으면 위반.
+    + //     예외 = 사람 서명 커밋: GitHub 이 검증한 서명(verified)이고 커미터 계정이 HUMANS — 그 커밋만 알리기만(도장 등록부의 승인 도장 정책은 본다, DEC-0084 · RULE-0548).
+    + //     작성자 이메일은 흉내 낼 수 있어 보지 않는다 · 웹 흐름(web-flow) 서명은 API 로 작성자를 정할 수 있어 예외가 아니다 · 사실이 없으면 아무도 사람이 아니다(fail-closed).
+    + // 종료 코드: 0 = 구역 밖 변경 없음 (사람 서명 커밋은 알리기만) · 1 = 구역 밖 변경 (선언도 사람 서명도 없는 변경 포함) · 2 = 점검 못 함
+    + import { readFileSync } from 'node:fs';
+    + // 사람 계정 (DEC-0090 — 협업자 조회: Duckiteat 만 admin · 봇 daduteria 는 write). 이 파일은 L6 — 바꾸려면 승인 묶음 + 사람 병합
+    + export const HUMANS = ['Duckiteat'];
+    + // 서명 사실 하나 → 사람 서명인가 (순수)
+    + export const humanSigned = (fact) => !!(fact && fact.verified === true && HUMANS.includes(fact.committer));
+    + const UNDECLARED_RULE = 'RULE-0548';
+    + const NO_DECL = '선언 · 사람 서명 없음'; // DEC-0094
+    + const NO_DECL_RULE = 'RULE-0551'; // 선언도 사람 서명도 없는 커밋 = AI (DEC-0094) // 선언 없는 커밋의 등록부 정책 (DEC-0084 (c))
+    + export function judgeCommit(P, changed, decl, reg, ledgers, human = false) {
+    +     if (human) return { status: stamps.length ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], modes: ['사람 서명'] }; // 사람 서명 커밋은 알리기만
+    +     // 선언도 사람 서명도 없음 = AI 의 '모드 없음' 커밋 (DEC-0094) — 바꾼 파일 전부가 구역 밖 (문지기의 모드 열기 전 변경 RULE-0514 와 같은 뜻)
+    +     const rewrites = (ledgers || []).flatMap((x) => appendOnly(x.before, x.after).map((v) => ({ ...v, file: x.file })));
+    +     return { status: files.length || stamps.length || rewrites.length ? 'violation' : 'ok', files, bad: files, stamps, rewrites, modes: [NO_DECL] };
+    + // main 에 이미 들어간 커밋은 다시 판정하지 않는다 (PLAN-118 · DEC-0097) — 사람이 병합해 받아들인 것이고, 봇이 main 을 자기 브랜치로 합쳐 오면
+    + //   그 커밋들(서명 없는 옛 사람 커밋 포함)이 push 범위에 들어온다. 단 head 자체가 main 에 들어 있으면(main 으로의 push) 빼지 않는다 — 빼면 아무것도 판정하지 않게 된다.
+    + export function zoneCheck(base, head = 'HEAD', root = ROOT, signatures = {}, opt = {}) {
+    +   const out = { base, head, commits: [], exit: 0, lines: [] }, sig = signatures || {};
+    +     out.commits.push({ c, subject: git(['log', '-1', '--format=%s', c], root).trim(), ...judgeCommit(P, changed, decl, reg, ledgers, humanSigned(sig[c])) });
+    +   out.lines.push(`구역 점검 (CI 겹) — ${base.slice(0, 8)}..${head.slice(0, 8)} · 커밋 ${out.commits.length} (병합 커밋 · main 에 든 커밋 제외) · 통과 ${n('ok')} · 사람 서명(선언 없음) ${n('undeclared')} · 정책 없음 ${n('no_policy')}${n('no_parent') ? ` · 부모 없음 ${n('no_parent')}` : ''} · 구역 밖 ${n('violation')}`);
+    +     if (x.status === 'violation' && x.bad.length && x.modes[0] === NO_DECL) out.lines.push(`✗ ${h} — 모드 선언(영수증)도 사람 서명도 없는 커밋 → AI 로 봄 (DEC-0094 · ${NO_DECL_RULE}): 바뀐 파일 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
+    +     else if (x.status === 'violation' && x.bad.length) out.lines.push(`✗ ${h} — 선언 ${x.modes.join(' · ')} 의 쓰기 구역 밖 ${x.bad.length}: ${x.bad.slice(0, 12).join(' · ')}${x.bad.length > 12 ? ' …' : ''}`);
+    +     else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 · 사람 서명(${HUMANS.join(' · ')}) → 알리기만 · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+    +   const argv = process.argv.slice(2), si = argv.indexOf('--signatures');
+    +   let signatures = {};
+    +   if (si >= 0) { try { signatures = JSON.parse(readFileSync(argv[si + 1], 'utf8')); } catch (e) { console.error(`서명 사실 '${argv[si + 1]}' 을 읽을 수 없음: ${e.message}`); process.exit(2); } argv.splice(si, 2); }
+    +   const [base, head] = argv;
+    +   if (!base) { console.error('사용: node rebuild/ci-zone.mjs <base> [head] [--signatures <파일>]'); process.exit(2); }
+    +   const r = zoneCheck(base, head || 'HEAD', ROOT, signatures); console.log(r.lines.join('\n')); process.exit(r.exit);
+- rebuild/gate.mjs [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -       tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : ''].filter(Boolean).join('\n') + '\n');
+    + }
+    + // 열린 일(완결 안 된 번호, DEC-0092) — 시작 안내에 한 줄. 다음 기록은 그 번호의 다음 글자 (dbtool transition 에 work) — 다른 세션의 N11 묶음, DEC-0097 섞기
+    + function openWorksLine(root) {
+    +   const f = join(root, 'workspace/transitions.jsonl'); if (!existsSync(f) || typeof TA.openWorks !== 'function') return '';
+    +   const w = TA.openWorks(readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
+    +   return w.length ? '열린 일(완결 전 번호): ' + w.map((x) => `${x.num} — ${x.last} 까지 ${x.count} 기록 · 연 결정 ${x.opened_by || '?'}`).join(' / ') + ' — 이 일을 잇는 기록은 work 에 그 번호, 새 일은 사람 결정(opened_by: DEC-…)으로 새 번호' : '';
+    +       tr.length ? '최근 전환 기록: ' + tr.map((r) => `#${r.seq} ${r.from}→${r.to} (${r.at}) ${r.why.slice(0, 80)}`).join(' / ') : '',
+    +       openWorksLine(root)].filter(Boolean).join('\n') + '\n');
+    +   // 도구 뒤(post)는 이미 실행된 뒤라 막지 못한다 — 종료 2 로 AI 에게 보이게 알린다(다른 세션의 N11 묶음, DEC-0097 섞기). 시작 · 멈춤은 알리기만(멈춤을 막으면 되풀이된다)
+    +   if (event === 'post') { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류 — 이 도구(${t || '이름 없음'}) 뒤 대조 · 영수증이 남지 않았을 수 있다. 사람에게 알린다: ${err && err.message}\n`); return 2; }
+- rebuild/rules/changes.jsonl [L4 ledger:rules · tool.rules] — added_only
+    + {"seq": 392, "at": "2026-11-24", "why": "DEC-0097 섞기 — ci-zone 을 DEC-0094(사람 서명)로: RULE-0551 뜻을 계정 → 서명으로 · RULE-0548 문장(DEC-0094 묶음 4 의 ops 그대로)", "file": "rules", "op": "set", "key": "RULE-0548", "before": {"id": "RULE-0548", "text": "CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다 — 영수증을 빼고 커밋해 RULE-0546 을 피하는 길을 막는다. 그 밖의 변경은 전처럼 알리기만(PLAN-114 의 '선언 없음 = 사람의 커밋' 을 이 한 가지만큼 좁힘)", "modes": ["author", "inspect", "develop"], "where": "rebuild/ci-zone.mjs judgeCommit · tests/registry_policy.test.mjs ⑥", "from_code": "2026-11-23 RULE-0546 두 번째 독립 재검토(세션 브랜치 claude/rule-0546-independent-review · 5d42c41) R1 — 선언 없는 커밋은 등록부 정책을 지나침 (DEC-0084)", "enforce": "machine"}, "after": {"id": "RULE-0548", "text": "CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다 — 영수증을 빼고 커밋해 RULE-0546 을 피하는 길을 막는다. 사람 서명 커밋도 이 정책은 본다(그 밖의 변경은 알리기만) · 사람 서명도 없는 커밋은 RULE-0550 (DEC-0094)", "modes": ["author", "inspect", "develop"], "where": "rebuild/ci-zone.mjs judgeCommit · tests/registry_policy.test.mjs ⑥", "from_code": "2026-11-23 RULE-0546 두 번째 독립 재검토(세션 브랜치 claude/rule-0546-independent-review · 5d42c41) R1 — 선언 없는 커밋은 등록부 정책을 지나침 (DEC-0084)", "enforce": "machine"}, "sha": "93dbf76c06a2fbe79553649a91537bef7fa0463a7272c13977c5d7a0b749684a"}
+    + {"seq": 393, "at": "2026-11-24", "why": "DEC-0097 섞기 — ci-zone 을 DEC-0094(사람 서명)로: RULE-0551 뜻을 계정 → 서명으로 · RULE-0548 문장(DEC-0094 묶음 4 의 ops 그대로)", "file": "rules", "op": "set", "key": "RULE-0551", "before": {"id": "RULE-0551", "text": "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의 커밋(알리기만), 그 밖의 계정(봇)이면 문지기를 거치지 않은 AI 커밋으로 거부한다. 행위자나 사람 목록을 모르면 옛 판정(알리기만). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · zoneCheck · humansOf · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · 2026-11-24 봇 신원 확인(push actor = daduteria) · PLAN-117", "enforce": "machine"}, "after": {"id": "RULE-0551", "text": "CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일(영수증 밖)이 있으면 위반. 사람 서명 = GitHub 이 검증한 서명(verification.verified)이고 커미터 계정이 사람 계정(rebuild/ci-zone.mjs HUMANS · .github/CODEOWNERS 와 같은 목록). 작성자 이메일 · 웹 흐름 서명 · push 계정은 사람의 증거가 아니고, 서명 사실이 없으면 사람이 아니다(fail-closed). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로). PLAN-114 의 '선언 없음 = 사람의 커밋' 을 버림 (DEC-0094 · DEC-0097)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · humanSigned · zoneCheck · .github/workflows/check.yml 서명 사실 · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · DEC-0094(다른 develop 세션, main PR #25 의 묶음 4 — 처음 번호 RULE-0550) · DEC-0097 섞기: 처음 이 브랜치에서 push 계정으로 판정하던 RULE-0551 을 서명 판정으로 바꿈 — push 계정 판정은 사람이 마지막에 push 하면 봇의 선언 없는 커밋도 통과하는 구멍", "enforce": "machine"}, "sha": "1bfb6729c458f2bd49b07fb51a10f3ae7a1e6afb2c697c8c44e95295194308c9"}
+    + {"seq": 394, "at": "2026-11-24", "why": "DEC-0097 섞기 — ci-zone 을 DEC-0094(사람 서명)로: RULE-0551 뜻을 계정 → 서명으로 · RULE-0548 문장(DEC-0094 묶음 4 의 ops 그대로)", "file": "enforcement", "op": "set", "key": "RULE-0551", "before": {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "const agent = who && who.human === false;", "repl": "const agent = false;", "tests": ["tests/ci_zone.test.mjs"], "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남", "result": "caught", "at": "2026-11-24", "red": "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"}, "after": {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "if (human) return", "repl": "if (true) return", "tests": ["tests/ci_zone.test.mjs"], "note": "서명 사실을 보지 않고 선언 없는 커밋을 모두 사람으로 보면 N8 커밋이 CI 를 지남", "result": "caught", "at": "2026-11-24", "red": "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"}, "sha": "23fd3a52714da768538a821ade79975e807570b788162ec76998e05e034586c9"}
+    + {"seq": 395, "at": "2026-11-24", "why": "DEC-0097 섞기 — ci-zone 을 DEC-0094(사람 서명)로: RULE-0551 뜻을 계정 → 서명으로 · RULE-0548 문장(DEC-0094 묶음 4 의 ops 그대로)", "file": "links", "op": "set", "key": "RULE-0551|because|code:rebuild/ci-zone.mjs", "before": {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남"}, "after": {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "선언 없는 커밋을 모두 사람으로 보면 영수증을 빼고 만든 AI 커밋이 구역 점검을 지남"}, "sha": "e73c41a487d793c981ee1f53e3f1e6872274091d51c7c7ac457fe5643466a0b7"}
+    + {"seq": 396, "at": "2026-11-24", "why": "RULE-0551 변이 다시 돌림 (서명 판정) — caught", "file": "enforcement", "op": "set", "key": "RULE-0551", "before": {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "if (human) return", "repl": "if (true) return", "tests": ["tests/ci_zone.test.mjs"], "note": "서명 사실을 보지 않고 선언 없는 커밋을 모두 사람으로 보면 N8 커밋이 CI 를 지남", "result": "caught", "at": "2026-11-24", "red": "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"}, "after": {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "if (human) return", "repl": "if (true) return", "tests": ["tests/ci_zone.test.mjs"], "note": "서명 사실을 보지 않고 선언 없는 커밋을 모두 사람으로 보면 N8 커밋이 CI 를 지남", "result": "caught", "at": "2026-11-24", "red": "판정 (순수): 선언한 모드의 구역 안 · 밖 · 선언 없음(사람 서명이면 알리기만 · 아니면 AI 로 봄, DEC-0094) · 영수증 자체는 판정 밖"}, "sha": "5dd37c94b211caa4057bf044806531b9065e1aafcbd56c6c2b6cd71b312e628f"}
+    + {"seq": 397, "at": "2026-11-24", "why": "DEC-0095 — develop 의 except 에 훅을 끄는 자리 2 (settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길) · 묶음 DEC-0095-hooks-bundle.patch 와 같은 커밋", "file": "permissions", "op": "set", "key": "PERM-0017", "before": {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드·문서(L1·L2) 손 쓰기 — 데이터·도장·핸드오프와 L6(문지기 셋 · 권한의 뿌리 7)는 except 로 뺌 (STG-12 · DEC-0048)", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff · 문지기 셋 · 권한의 뿌리 7: 권한 표 · 판정 코드 · 승인 도구 · 그 시험 · 도장 등록부와 CI 구역 점검의 판정 코드 8: .github/** · rebuild/ci-zone.mjs · judicial/attestation.js · judicial/acceptance.js · judicial/transition_audit.js · 그 시험 3 — DEC-0087)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(권한 표)의 L1·L2 자리 목록으로"}, "after": {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드·문서(L1·L2) 손 쓰기 — 데이터·도장·핸드오프와 L6(문지기 셋 · 권한의 뿌리 7)는 except 로 뺌 (STG-12 · DEC-0048)", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff · 문지기 셋 · 권한의 뿌리 7: 권한 표 · 판정 코드 · 승인 도구 · 그 시험 · 도장 등록부와 CI 구역 점검의 판정 코드 8: .github/** · rebuild/ci-zone.mjs · judicial/attestation.js · judicial/acceptance.js · judicial/transition_audit.js · 그 시험 3 — DEC-0087), 훅을 끄는 자리 2: .claude/settings.local.json · .claude/hooks/** — DEC-0095)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(권한 표)의 L1·L2 자리 목록으로"}, "sha": "dddadb01decf15099a18a335e0dd4f7e547ba27c289ec22d99933fbefe54f90c"}
+- rebuild/rules/enforcement.jsonl [L4 ledger:rules · tool.rules] — changed: 1 줄 삭제
+    - {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "const agent = who && who.human === false;", "repl": "const agent = false;", "tests": ["tests/ci_zone.test.mjs"], "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남", "result": "caught", "at": "2026-11-24", "red": "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"}
+    + {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "if (human) return", "repl": "if (true) return", "tests": ["tests/ci_zone.test.mjs"], "note": "서명 사실을 보지 않고 선언 없는 커밋을 모두 사람으로 보면 N8 커밋이 CI 를 지남", "result": "caught", "at": "2026-11-24", "red": "판정 (순수): 선언한 모드의 구역 안 · 밖 · 선언 없음(사람 서명이면 알리기만 · 아니면 AI 로 봄, DEC-0094) · 영수증 자체는 판정 밖"}
+- rebuild/rules/links.jsonl [L4 ledger:rules · tool.rules] — changed: 1 줄 삭제
+    - {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남"}
+    + {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "선언 없는 커밋을 모두 사람으로 보면 영수증을 빼고 만든 AI 커밋이 구역 점검을 지남"}
+- rebuild/rules/modes.json [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -           "tests/trust_check.test.mjs"
+    +           "tests/trust_check.test.mjs",
+    +           ".claude/settings.local.json",
+    +           ".claude/hooks/**"
+- rebuild/rules/permissions.jsonl [L4 ledger:rules · tool.rules] — changed: 1 줄 삭제
+    - {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드·문서(L1·L2) 손 쓰기 — 데이터·도장·핸드오프와 L6(문지기 셋 · 권한의 뿌리 7)는 except 로 뺌 (STG-12 · DEC-0048)", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff · 문지기 셋 · 권한의 뿌리 7: 권한 표 · 판정 코드 · 승인 도구 · 그 시험 · 도장 등록부와 CI 구역 점검의 판정 코드 8: .github/** · rebuild/ci-zone.mjs · judicial/attestation.js · judicial/acceptance.js · judicial/transition_audit.js · 그 시험 3 — DEC-0087)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(권한 표)의 L1·L2 자리 목록으로"}
+    + {"id": "PERM-0017", "layer": "gate", "mode": "develop", "list": "write", "what": ["**"], "why": "코드·문서(L1·L2) 손 쓰기 — 데이터·도장·핸드오프와 L6(문지기 셋 · 권한의 뿌리 7)는 except 로 뺌 (STG-12 · DEC-0048)", "by": "원문에 없음", "at": "2026-10-29", "src": "432934d", "revoke": "`rebuild/rules/modes.json` gate 의 그 자리를 지우고 이 장부 줄을 remove 또는 what 을 줄임 (node rebuild/rules.mjs apply)", "wide": "모든 자리 — except(data · attestations · handoff · 문지기 셋 · 권한의 뿌리 7: 권한 표 · 판정 코드 · 승인 도구 · 그 시험 · 도장 등록부와 CI 구역 점검의 판정 코드 8: .github/** · rebuild/ci-zone.mjs · judicial/attestation.js · judicial/acceptance.js · judicial/transition_audit.js · 그 시험 3 — DEC-0087), 훅을 끄는 자리 2: .claude/settings.local.json · .claude/hooks/** — DEC-0095)와 문지기 protect 가 빼냄. 자기 검사 시험 8 은 설정 ask 로 사람 확인 (PERM-0023). 다음 단계: ** 를 구역 표(권한 표)의 L1·L2 자리 목록으로"}
+- rebuild/rules/rules.jsonl [L4 ledger:rules · tool.rules] — changed: 2 줄 삭제
+    - {"id": "RULE-0548", "text": "CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다 — 영수증을 빼고 커밋해 RULE-0546 을 피하는 길을 막는다. 그 밖의 변경은 전처럼 알리기만(PLAN-114 의 '선언 없음 = 사람의 커밋' 을 이 한 가지만큼 좁힘)", "modes": ["author", "inspect", "develop"], "where": "rebuild/ci-zone.mjs judgeCommit · tests/registry_policy.test.mjs ⑥", "from_code": "2026-11-23 RULE-0546 두 번째 독립 재검토(세션 브랜치 claude/rule-0546-independent-review · 5d42c41) R1 — 선언 없는 커밋은 등록부 정책을 지나침 (DEC-0084)", "enforce": "machine"}
+    - {"id": "RULE-0551", "text": "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의 커밋(알리기만), 그 밖의 계정(봇)이면 문지기를 거치지 않은 AI 커밋으로 거부한다. 행위자나 사람 목록을 모르면 옛 판정(알리기만). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · zoneCheck · humansOf · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · 2026-11-24 봇 신원 확인(push actor = daduteria) · PLAN-117", "enforce": "machine"}
+    + {"id": "RULE-0548", "text": "CI 구역 점검에서 모드 선언(영수증)이 없는 커밋도 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 금지 · 새 승인 도장의 승인자 integrator 만 — registryPolicy, 종류 정책 없이)은 본다 — 영수증을 빼고 커밋해 RULE-0546 을 피하는 길을 막는다. 사람 서명 커밋도 이 정책은 본다(그 밖의 변경은 알리기만) · 사람 서명도 없는 커밋은 RULE-0550 (DEC-0094)", "modes": ["author", "inspect", "develop"], "where": "rebuild/ci-zone.mjs judgeCommit · tests/registry_policy.test.mjs ⑥", "from_code": "2026-11-23 RULE-0546 두 번째 독립 재검토(세션 브랜치 claude/rule-0546-independent-review · 5d42c41) R1 — 선언 없는 커밋은 등록부 정책을 지나침 (DEC-0084)", "enforce": "machine"}
+    + {"id": "RULE-0551", "text": "CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일(영수증 밖)이 있으면 위반. 사람 서명 = GitHub 이 검증한 서명(verification.verified)이고 커미터 계정이 사람 계정(rebuild/ci-zone.mjs HUMANS · .github/CODEOWNERS 와 같은 목록). 작성자 이메일 · 웹 흐름 서명 · push 계정은 사람의 증거가 아니고, 서명 사실이 없으면 사람이 아니다(fail-closed). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로). PLAN-114 의 '선언 없음 = 사람의 커밋' 을 버림 (DEC-0094 · DEC-0097)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · humanSigned · zoneCheck · .github/workflows/check.yml 서명 사실 · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · DEC-0094(다른 develop 세션, main PR #25 의 묶음 4 — 처음 번호 RULE-0550) · DEC-0097 섞기: 처음 이 브랜치에서 push 계정으로 판정하던 RULE-0551 을 서명 판정으로 바꿈 — push 계정 판정은 사람이 마지막에 push 하면 봇의 선언 없는 커밋도 통과하는 구멍", "enforce": "machine"}
+- tests/bypass_scenarios.test.mjs [L2 code:tests · session:develop, session:field] — changed: 2 줄 삭제
+    -     const res = Z.zoneCheck(r.base, 'HEAD', r.dir), by = (c) => res.commits.find((x) => x.c === c);
+    -     assert.equal(by(human).status, 'undeclared', '선언 없음은 알리기만 (PLAN-114 사용자 결정 그대로)');
+    +     const res = Z.zoneCheck(r.base, 'HEAD', r.dir, { [human]: { verified: true, committer: 'Duckiteat' } }), by = (c) => res.commits.find((x) => x.c === c); // 사람 서명 사실 (DEC-0094)
+    +     assert.equal(by(human).status, 'undeclared', '사람 서명 커밋은 알리기만 (DEC-0094 — 서명 사실이 없으면 AI 로 봄)');
+- tests/ci_zone.test.mjs [L2 code:tests · session:develop, session:field] — changed: 32 줄 삭제
+    - test('판정 (순수): 선언한 모드의 구역 안 · 밖 · 선언 없음 · 영수증 자체는 판정 밖', () => {
+    -   const u = Z.judgeCommit(P, ['.claude/settings.json'], []); assert.equal(u.status, 'undeclared'); assert.deepEqual(u.files, ['.claude/settings.json']);
+    - test('통합: 구역 밖 커밋은 종료 코드 1 · 선언 없음은 알리기만 · 병합 커밋 건너뜀', () => {
+    -     const res = Z.zoneCheck(r.base, 'HEAD', r.dir), text = res.lines.join('\n');
+    -     assert.match(text, /사람의 설정 커밋 — 모드 선언\(영수증\) 없음 → 사람의 커밋으로 봄 \(알리기만\)/);
+    -     // 선언 없음만 있으면 통과
+    -     assert.equal(Z.zoneCheck(bad, 'HEAD', r.dir).exit, 0);
+    - test('사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정', () => {
+    -   assert.deepEqual(Z.humansOf('# 주석 @Nobody\n/.github/  @Duckiteat\n/x @Duckiteat @org/team\nfoo@bar.com @Second-One\n'), ['duckiteat', 'second-one'], '주석 · 팀 · 전자우편은 세지 않음');
+    -   assert.deepEqual(Z.whoOf('Duckiteat', ['duckiteat']), { actor: 'Duckiteat', human: true });
+    -   assert.deepEqual(Z.whoOf('daduteria', ['duckiteat']), { actor: 'daduteria', human: false });
+    -   assert.equal(Z.whoOf(null, ['duckiteat']).human, null, '행위자 모름');
+    -   assert.equal(Z.whoOf('daduteria', null).human, null, '사람 목록 모름');
+    -   const bot = Z.judgeCommit(P, ['engine/x.js'], [], null, [], Z.whoOf('daduteria', ['duckiteat']));
+    -   assert.equal(bot.status, 'violation'); assert.equal(bot.agent, true);
+    -   assert.equal(Z.judgeCommit(P, ['engine/x.js'], [], null, [], Z.whoOf('Duckiteat', ['duckiteat'])).status, 'undeclared', '사람 계정은 알리기만');
+    -   assert.equal(Z.judgeCommit(P, ['engine/x.js'], []).status, 'undeclared', 'who 없음 = 옛 판정');
+    -   assert.equal(Z.judgeCommit(P, ['engine/x.js'], [{ mode: 'develop', role: null }], null, [], Z.whoOf('daduteria', ['duckiteat'])).status, 'ok', '선언이 있으면 봇도 구역 판정만');
+    - test('통합 (RULE-0551): 사람 목록은 부모의 CODEOWNERS 에서 · 봇 push 는 선언 없는 커밋에서 종료 1 · 커밋이 자기를 사람으로 올리지 못함 · main 에 든 커밋은 다시 안 봄', () => {
+    -     r.put('.github/CODEOWNERS', '/.github/ @Duckiteat\n'); const owners = r.commit('사람 목록');
+    -     r.put('engine/a.js', '1\n'); r.commit('선언 없는 커밋');
+    -     const bot = Z.zoneCheck(owners, 'HEAD', r.dir, { actor: 'daduteria' }), text = bot.lines.join('\n');
+    -     assert.equal(bot.exit, 1); assert.match(text, /AI 계정\(daduteria\)이 민 커밋인데 모드 선언\(영수증\)이 없음 \(RULE-0551\)/); assert.match(text, /행위자 daduteria/);
+    -     const human = Z.zoneCheck(owners, 'HEAD', r.dir, { actor: 'Duckiteat' });
+    -     assert.equal(human.exit, 0); assert.match(human.lines.join('\n'), /사람 계정\(Duckiteat\)의 커밋 \(알리기만\)/);
+    -     assert.equal(Z.zoneCheck(owners, 'HEAD', r.dir, { actor: null }).exit, 0, '행위자 모름 = 옛 판정');
+    -     // 커밋이 CODEOWNERS 에 봇을 더해도 그 커밋은 부모의 목록으로 판정된다
+    -     r.put('.github/CODEOWNERS', '/.github/ @Duckiteat @daduteria\n'); r.put('engine/b.js', '1\n'); const self = r.commit('봇을 사람으로');
+    -     const s = Z.zoneCheck(owners, 'HEAD', r.dir, { actor: 'daduteria' }); assert.equal(s.commits.find((x) => x.c === self).status, 'violation');
+    -     // main 에 이미 든 커밋(사람이 받아들인 것)은 봇 브랜치 범위에 들어와도 다시 판정하지 않는다 — 단 main 으로의 push 는 그대로 판정
+    -     const onBot = Z.zoneCheck(r.base, 'HEAD', r.dir, { actor: 'daduteria', main: 'main' });
+    -     assert.equal(Z.zoneCheck(r.base, 'HEAD', r.dir, { actor: 'daduteria', main: 'main' }).exit, 1, 'main 으로의 push 는 빼지 않음');
+    + const signed = (...cs) => Object.fromEntries(cs.map((c) => [c, { verified: true, committer: 'Duckiteat' }])); // 사람 서명 사실 (DEC-0094)
+    + test('판정 (순수): 선언한 모드의 구역 안 · 밖 · 선언 없음(사람 서명이면 알리기만 · 아니면 AI 로 봄, DEC-0094) · 영수증 자체는 판정 밖', () => {
+    +   const u = Z.judgeCommit(P, ['.claude/settings.json'], [], null, [], true); assert.equal(u.status, 'undeclared'); assert.deepEqual(u.files, ['.claude/settings.json']);
+    +   const a = Z.judgeCommit(P, ['.claude/settings.json', 'workspace/receipts/s.jsonl'], []); assert.equal(a.status, 'violation', '선언도 사람 서명도 없음 = AI'); assert.deepEqual(a.bad, ['.claude/settings.json']);
+    +   assert.equal(Z.judgeCommit(P, ['workspace/receipts/s.jsonl'], []).status, 'ok', '영수증만 바뀐 커밋은 판정 밖');
+    +   // 사람 서명: GitHub 이 검증 + 커미터가 사람 계정 — 작성자 · 웹 흐름 · 검증 안 됨은 아님
+    +   assert.equal(Z.humanSigned({ verified: true, committer: 'Duckiteat' }), true);
+    +   for (const f of [{ verified: false, committer: 'Duckiteat' }, { verified: true, committer: 'daduteria' }, { verified: true, committer: 'web-flow' }, { verified: 'true', committer: 'Duckiteat' }, null, undefined]) assert.equal(Z.humanSigned(f), false, JSON.stringify(f));
+    + test('통합: 구역 밖 커밋은 종료 코드 1 · 선언 없음은 사람 서명이면 알리기만, 아니면 1 (DEC-0094) · 병합 커밋 건너뜀', () => {
+    +     const res = Z.zoneCheck(r.base, 'HEAD', r.dir, signed(human)), text = res.lines.join('\n');
+    +     assert.match(text, /사람의 설정 커밋 — 모드 선언\(영수증\) 없음 · 사람 서명\(Duckiteat\) → 알리기만/);
+    +     // 사람 서명 커밋만 있으면 통과 · 서명 사실이 없으면(또는 봇 계정) AI 로 봄 — 공격 재검토 N8 의 선언 없는 커밋
+    +     assert.equal(Z.zoneCheck(bad, 'HEAD', r.dir, signed(human)).exit, 0);
+    +     const n8 = Z.zoneCheck(bad, 'HEAD', r.dir);
+    +     assert.equal(n8.exit, 1); assert.match(n8.lines.join('\n'), /사람의 설정 커밋 — 모드 선언\(영수증\)도 사람 서명도 없는 커밋 → AI 로 봄 \(DEC-0094 · RULE-0551\): 바뀐 파일 1: \.claude\/settings\.json/);
+    +     assert.equal(Z.zoneCheck(bad, 'HEAD', r.dir, { [human]: { verified: true, committer: 'daduteria' } }).exit, 1, '봇 계정의 검증된 서명은 사람이 아님');
+    + test('판정 (순수, DEC-0094 · DEC-0097 섞기): 서명은 선언을 대신하지 않고 등록부 정책도 못 피함 · 영수증만 바꾼 커밋은 통과 · 사람 계정은 GitHub 이 돌려준 로그인 그대로', () => {
+    +   const st = (by) => ({ subject: { sense: 'O900001', field: 'accept', ns: 'evidence', value: 'O900001' }, claim: 'accept', issued_at: '2026-01-01', by, reason: 'x' });
+    +   assert.equal(Z.judgeCommit(P, ['data/db.json'], [{ mode: 'develop', role: null }], null, [], true).status, 'violation', '사람 서명이어도 선언한 모드의 구역은 그대로 본다');
+    +   assert.equal(Z.judgeCommit(P, ['engine/x.js'], [], null, [], true).status, 'undeclared', '사람 서명 · 선언 없음 → 알리기만');
+    +   assert.equal(Z.judgeCommit(P, ['engine/x.js'], [], null, [], false).status, 'violation', '서명 없음 · 선언 없음 → AI');
+    +   assert.equal(Z.judgeCommit(P, ['workspace/receipts/s.jsonl'], [], null, [], false).status, 'ok', '영수증만 바꾼 커밋은 바꾼 파일이 없음');
+    +   assert.equal(Z.judgeCommit(P, ['attestations/registry.json'], [], { before: { stamps: [] }, after: { stamps: [st('human')] } }, [], true).status, 'violation', '사람 서명도 by: human 승인 도장은 못 넣음 (RULE-0548)');
+    +   assert.equal(Z.humanSigned({ verified: true, committer: 'duckiteat' }), false, '로그인은 GitHub 이 돌려준 글자 그대로 — 대소문자를 바꾼 이름은 사람 아님');
+    +   assert.deepEqual(Z.HUMANS, ['Duckiteat'], '사람 계정 목록 = CODEOWNERS 의 계정 (DEC-0090)');
+    +   const owners = readFileSync(join(ROOT, '.github/CODEOWNERS'), 'utf8');
+    +   assert.ok(Z.HUMANS.every((h) => owners.includes('@' + h)), 'HUMANS 의 계정이 CODEOWNERS 에 있음');
+    +   assert.ok(!/@daduteria\b/.test(owners), '봇 계정은 CODEOWNERS 에 없음');
+    + test('통합 (PLAN-118 · DEC-0097): main 에 이미 든 커밋은 봇 브랜치 범위에 들어와도 다시 판정하지 않음 — main 으로의 push 는 그대로', () => {
+    +     r.put('engine/old.js', '1\n'); r.commit('main 의 옛 사람 커밋 (서명 없음)');
+    +     const onBot = Z.zoneCheck(r.base, 'HEAD', r.dir, {}, { main: 'main' });
+    +     assert.match(onBot.lines.join('\n'), /main 에 든 커밋 제외/);
+    +     assert.equal(Z.zoneCheck(r.base, 'HEAD', r.dir, {}, { main: 'main' }).exit, 1, 'main 으로의 push 는 빼지 않음 — 서명 없는 선언 없음은 AI');
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — changed: 1 줄 삭제
+    -   for (const ev of ['post', 'stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 막을 수 없는 단계`);
+    + 
+    + 
+    + });
+    + });
+    +   const d = repo();
+    +   try {
+    +   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+    +   assert.equal(G.failClosed('post', { tool_name: 'Write' }, new Error('x')), 2, 'post 는 이미 실행된 뒤 — 종료 2 로 AI 에게 알림');
+    +   for (const ev of ['stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 알리기만 (멈춤을 막으면 되풀이)`);
+    +     const po = hook(d, 'post', { tool_name: 'Bash', tool_input: { command: 'echo' }, tool_response: {} });
+    +     assert.equal(po.status, 2, 'post 오류는 알림 (종료 2)'); assert.match(po.stderr, /\[RULE-0550\]/);
+    + test('㉔ 훅을 끄는 자리는 어느 모드도 못 쓴다 (DEC-0095 — settings.local.json 의 disableAllHooks 로 문지기를 통째로 끄는 길) · 문지기가 불러지기 전에 죽어도 막힘 (훅 명령 끝 || exit 2 — 다른 세션의 N11 묶음, DEC-0097 섞기)', () => {
+    +   const P = JSON.parse(readFileSync(join(ROOT, 'rebuild/rules/modes.json'), 'utf8')).gate;
+    +   for (const m of G.MODES) for (const f of ['.claude/settings.local.json', '.claude/settings.json', '.claude/hooks/x.sh']) assert.equal(G.mayWrite(P, m, null, f), false, `${m}: ${f}`);
+    +   const S = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8'));
+    +   for (const t of ['Edit', 'Write']) for (const f of ['.claude/settings.local.json', '.claude/hooks/**']) assert.ok(S.permissions.deny.includes(`${t}(${f})`), `deny ${t}(${f})`);
+    +   for (const ev of ['PreToolUse', 'PostToolUse']) for (const h of S.hooks[ev].flatMap((x) => x.hooks)) assert.match(h.command, /node rebuild\/gate\.mjs hook (pre|post) \|\| exit 2$/, `${ev}: ${h.command}`);
+    + test('㉕ 시작 안내에 열린 일 (DEC-0092 · 다른 세션의 N11 묶음, DEC-0097 섞기): 완결 안 된 번호를 한 줄로 · 완결된 번호는 안 보임', () => {
+    +     const rec = (seq, extra = {}) => JSON.stringify({ seq, from: 'inspect', to: 'develop', at: '2026-11-24', why: 'x', target: [], files: [], open: [], ...extra });
+    +     mkdirSync(join(d, 'workspace'), { recursive: true });
+    +     writeFileSync(join(d, 'workspace/transitions.jsonl'), [rec(20), rec('21a', { opened_by: 'DEC-0093' }), rec('21b'), rec('22a', { opened_by: 'DEC-0096' }), rec('22b', { close: true })].join('\n') + '\n');
+    +     const s = hook(d, 'session-start', {});
+    +     assert.equal(s.status, 0);
+    +     assert.match(s.stdout, /열린 일\(완결 전 번호\): 21 — 21b 까지 2 기록 · 연 결정 DEC-0093/);
+    +     assert.doesNotMatch(s.stdout, /22 — 22/, '완결된 번호는 열린 일이 아님');
+- tests/registry_policy.test.mjs [L6 guard:gate · human] — changed: 8 줄 삭제
+    -     let res = Z.zoneCheck(r.base, 'HEAD', r.dir);
+    -     r.put('notes.txt', 'x'); r.commit('선언 없는 다른 변경');
+    -     r.put('attestations/registry.json', JSON.stringify(plus(human), null, 2)); r.commit('선언 없이 by human 승인 도장');
+    -     res = Z.zoneCheck(r.base, 'HEAD', r.dir);
+    -       r2.put('attestations/registry.json', JSON.stringify(plus(st('verified', 'D900009')), null, 2)); r2.commit('선언 없이 신원 도장 더함');
+    -       assert.equal(Z.zoneCheck(r2.base, 'HEAD', r2.dir).exit, 0, '승인 도장 밖의 변경은 종류 정책을 보지 않음(선언이 없으니 모드가 없다)');
+    -       r2.put('attestations/registry.json', JSON.stringify({ ...REG, stamps: REG.stamps.filter((s) => s.claim !== 'accept') }, null, 2)); r2.commit('선언 없이 승인 도장 지움');
+    -       const res2 = Z.zoneCheck(r2.base, 'HEAD', r2.dir);
+    +     const H = (...cs) => Object.fromEntries(cs.map((c) => [c, { verified: true, committer: 'Duckiteat' }])); // 사람 서명 사실 (DEC-0094) — 서명 없는 선언 없음은 이제 AI 로 봄(ci_zone 시험)
+    +     r.put('notes.txt', 'x'); const c1 = r.commit('선언 없는 다른 변경');
+    +     let res = Z.zoneCheck(r.base, 'HEAD', r.dir, H(c1));
+    +     r.put('attestations/registry.json', JSON.stringify(plus(human), null, 2)); const c2 = r.commit('선언 없이 by human 승인 도장');
+    +     res = Z.zoneCheck(r.base, 'HEAD', r.dir, H(c1, c2));
+    +       r2.put('attestations/registry.json', JSON.stringify(plus(st('verified', 'D900009')), null, 2)); const d1 = r2.commit('선언 없이 신원 도장 더함');
+    +       assert.equal(Z.zoneCheck(r2.base, 'HEAD', r2.dir, H(d1)).exit, 0, '승인 도장 밖의 변경은 종류 정책을 보지 않음(선언이 없으니 모드가 없다)');
+    +       r2.put('attestations/registry.json', JSON.stringify({ ...REG, stamps: REG.stamps.filter((s) => s.claim !== 'accept') }, null, 2)); const d2 = r2.commit('선언 없이 승인 도장 지움');
+    +       const res2 = Z.zoneCheck(r2.base, 'HEAD', r2.dir, H(d1, d2));

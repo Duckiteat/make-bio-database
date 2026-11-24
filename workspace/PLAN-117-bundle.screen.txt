@@ -1,0 +1,182 @@
+지문 82625e9c1dc7cfc933f326d505c04b16be137825e13dcc69e93617decc296363
+묶음 11 파일 — 자동 0 · 사람 승인 11 · 거부 0
+
+## 사람 승인 필요
+- .github/CODEOWNERS — added_only
+    + # 사람 계정 (PLAN-117 · DEC-0090) — L6 자리(지키는 장치)를 바꾸는 PR 은 이 계정의 리뷰가 필요하다.
+    + #   힘이 생기려면 main 규칙 세트에서 "Require review from Code Owners" 를 켠다 (사람 — GitHub 설정).
+    + #   rebuild/ci-zone.mjs 는 부모 커밋의 이 파일에 적힌 @계정을 "사람 계정" 으로 읽는다(RULE-0551) — 여기 없는 계정이 민 선언 없는 커밋은 AI 커밋으로 거부.
+    + #   이 파일도 L6(.github/**) — 사람 커밋으로만 바뀐다. AI 계정(봇)을 여기 적지 않는다.
+    + # 자리 목록은 저장 지도(docs/textbook/storage-map.json)의 L6 와 문지기 보호 목록에서 — 하나를 더하면 여기도 더한다.
+    + 
+    + 
+    + /.github/                         @Duckiteat
+    + /.claude/settings.json            @Duckiteat
+    + /rebuild/gate.mjs                 @Duckiteat
+    + /rebuild/rules/modes.json         @Duckiteat
+    + /rebuild/ci-zone.mjs              @Duckiteat
+    + /rebuild/trust-check.mjs          @Duckiteat
+    + /rebuild/bundle.mjs               @Duckiteat
+    + /docs/textbook/authority.json     @Duckiteat
+    + /judicial/authority.js            @Duckiteat
+    + /judicial/approval.js             @Duckiteat
+    + /judicial/attestation.js          @Duckiteat
+    + /judicial/acceptance.js           @Duckiteat
+    + /judicial/transition_audit.js     @Duckiteat
+    + /tests/gate.test.mjs              @Duckiteat
+    + /tests/registry_policy.test.mjs   @Duckiteat
+    + /tests/affected.mjs               @Duckiteat
+    + /tests/trace.mjs                  @Duckiteat
+    + /tests/snapshot.mjs               @Duckiteat
+    + /tests/permissions.test.mjs       @Duckiteat
+    + /tests/mutation/run.mjs           @Duckiteat
+    + /tests/acceptance.test.mjs        @Duckiteat
+    + /tests/governance.test.mjs        @Duckiteat
+    + /tests/rebuild.test.mjs           @Duckiteat
+    + /tests/authority.test.mjs         @Duckiteat
+    + /tests/approval.test.mjs          @Duckiteat
+    + /tests/bundle.test.mjs            @Duckiteat
+    + /tests/guard-matrix.test.mjs      @Duckiteat
+    + /tests/trust_check.test.mjs       @Duckiteat
+- docs/design/supervisor.md [L2 doc:history · human] — changed: 1 줄 삭제
+    - | 검수 · 넘김 기록 (DEC-0079) | 감독 장부 · 전환 기록은 덧붙이기만 — 모드를 선언한 커밋이 기존 줄을 고치거나 지우면 CI 구역 점검이 거부(줄 순서만 바뀐 것은 통과 · 사람의 커밋은 알리기만). 문지기 쪽 검사는 아직 없음 | `rebuild/ci-zone.mjs` appendOnly · RULE-0544 |
+    + | 검수 · 넘김 기록 (DEC-0079) | 감독 장부 · 전환 기록은 덧붙이기만 — 모드를 선언한 커밋이 기존 줄을 고치거나 지우면 CI 구역 점검이 거부(줄 순서만 바뀐 것은 통과 · 사람의 커밋은 알리기만 — 사람 = push · PR 을 일으킨 계정이 부모 커밋 `.github/CODEOWNERS` 의 @계정, 그 밖의 계정이 민 선언 없는 커밋은 거부 RULE-0551). 문지기 쪽 검사는 아직 없음 | `rebuild/ci-zone.mjs` appendOnly · RULE-0544 |
+- docs/textbook/storage-map.json [L4 ledger:storage-map · unassigned] — added_only
+    +     },
+    +     {
+    +       "write_keys": [
+    +       "level": "L6",
+    +       "area": "guard:gate",
+    +         "human"
+    +       "class": "management",
+    +       ],
+    +       "writer": "사람",
+    +       "path": ".github/CODEOWNERS",
+    +       "format": "GitHub CODEOWNERS (자리 · @계정)",
+    +       "readers": "GitHub (Require review from Code Owners) · rebuild/ci-zone.mjs (부모 커밋의 @계정 = 사람 계정, RULE-0551)",
+    +       "interpret": "사람 계정 목록 (PLAN-117 · DEC-0090) — L6 자리를 바꾸는 PR 에 이 계정의 리뷰를 요구(규칙 세트에서 켜야 힘이 있음). CI 구역 점검은 여기 적힌 계정만 사람으로 보고, 그 밖의 계정(봇)이 민 선언 없는 커밋을 거부한다. AI 계정을 적지 않는다"
+- rebuild/ci-zone.mjs [L6 guard:gate · human] — changed: 8 줄 삭제
+    - export function judgeCommit(P, changed, decl, reg, ledgers) {
+    -     // 선언 없음은 알리기만 — 단 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 · 새 도장의 승인자)만은 본다(DEC-0084 (c) · RULE-0546): 사람의 커밋도 by: human 도장을 새로 넣을 일은 없다
+    -     return { status: stamps.length ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], modes: ['선언 없음'] };
+    - export function zoneCheck(base, head = 'HEAD', root = ROOT) {
+    -   try { list = git(['rev-list', '--reverse', '--no-merges', `${base}..${head}`], root).split('\n').filter(Boolean); }
+    -     out.commits.push({ c, subject: git(['log', '-1', '--format=%s', c], root).trim(), ...judgeCommit(P, changed, decl, reg, ledgers) });
+    -   out.lines.push(`구역 점검 (CI 겹) — ${base.slice(0, 8)}..${head.slice(0, 8)} · 커밋 ${out.commits.length} (병합 커밋 제외) · 통과 ${n('ok')} · 선언 없음 ${n('undeclared')} · 정책 없음 ${n('no_policy')}${n('no_parent') ? ` · 부모 없음 ${n('no_parent')}` : ''} · 구역 밖 ${n('violation')}`);
+    -     else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 → 사람의 커밋으로 봄 (알리기만) · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+    + }
+    + const AGENT_RULE = 'RULE-0551'; // AI 계정이 민 커밋은 모드 선언이 있어야 한다 (PLAN-117 · DEC-0090)
+    + // 사람 계정 = 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정 (L6 · 사람 커밋으로만 바뀜 — 커밋이 자기를 사람으로 올리지 못하게 부모에서 읽는다). 팀(@조직/팀)은 세지 않는다
+    + export const OWNERS = '.github/CODEOWNERS';
+    + export function humansOf(text) {
+    +   const out = new Set();
+    +   for (const l of String(text || '').split('\n')) { const s = l.replace(/#.*/, ''); for (const m of s.matchAll(/(?:^|\s)@([A-Za-z0-9-]+)(?=\s|$)/g)) out.add(m[1].toLowerCase()); }
+    +   return [...out];
+    + // who = { actor, human: true | false | null } — null 이면 모름(행위자 · 사람 목록이 없음: 옛 판정 그대로 알리기만)
+    + export const whoOf = (actor, humans) => ({ actor: actor || null, human: actor && humans && humans.length ? humans.includes(String(actor).toLowerCase()) : null });
+    + export function judgeCommit(P, changed, decl, reg, ledgers, who = { actor: null, human: null }) {
+    +     // 선언 없음 — 도장 등록부의 승인 도장 정책(지우기 · 바꾸기 · 새 도장의 승인자)은 늘 본다(DEC-0084 (c) · RULE-0546): 사람의 커밋도 by: human 도장을 새로 넣을 일은 없다
+    +     // AI 계정(봇)이 민 커밋인데 선언이 없음 — 문지기를 거치지 않은 AI 커밋(따옴표 속 커밋 N8 · 훅 없는 실행 B1)이라 거부. 사람 계정이면 전처럼 알리기만 (RULE-0551)
+    +     const agent = who && who.human === false;
+    +     return { status: stamps.length || agent ? 'violation' : 'undeclared', files, bad: [], stamps, rewrites: [], agent, who, modes: ['선언 없음'] };
+    + // actor: 이 push · PR 을 일으킨 GitHub 계정 — CI 에서는 GitHub 이 정하는 GITHUB_ACTOR(실행 환경이 꾸밀 수 없음). 없으면 모름(옛 판정)
+    + // main 에 이미 들어간 커밋은 다시 판정하지 않는다 — 사람이 병합해 받아들인 것이고, 봇이 main 을 자기 브랜치로 합쳐 오면 그 커밋들이 범위에 들어온다.
+    + //   단 head 자체가 main 에 들어 있으면(main 으로의 push) 빼지 않는다 — 빼면 아무것도 판정하지 않게 된다.
+    + export function zoneCheck(base, head = 'HEAD', root = ROOT, opt = {}) {
+    +   const actor = opt.actor === undefined ? (process.env.GITHUB_ACTOR || null) : opt.actor;
+    +   const mainRef = opt.main === undefined ? ['origin/main', 'main'].find((r) => { try { git(['rev-parse', '--verify', '-q', r + '^{commit}'], root); return true; } catch { return false; } }) : opt.main;
+    +   let exclude = [];
+    +   if (mainRef) { try { git(['merge-base', '--is-ancestor', head, mainRef], root); } catch { exclude = ['--not', mainRef]; } }
+    +   try { list = git(['rev-list', '--reverse', '--no-merges', `${base}..${head}`, ...exclude], root).split('\n').filter(Boolean); }
+    +     const who = whoOf(actor, show(parent, OWNERS, root) === null ? null : humansOf(show(parent, OWNERS, root)));
+    +     out.commits.push({ c, subject: git(['log', '-1', '--format=%s', c], root).trim(), ...judgeCommit(P, changed, decl, reg, ledgers, who) });
+    +   out.lines.push(`구역 점검 (CI 겹) — ${base.slice(0, 8)}..${head.slice(0, 8)} · 행위자 ${actor || '모름'} · 커밋 ${out.commits.length} (병합 커밋 · main 에 이미 든 커밋 제외) · 통과 ${n('ok')} · 선언 없음 ${n('undeclared')} · 정책 없음 ${n('no_policy')}${n('no_parent') ? ` · 부모 없음 ${n('no_parent')}` : ''} · 구역 밖 ${n('violation')}`);
+    +     if (x.status === 'violation' && x.agent) out.lines.push(`✗ ${h} — AI 계정(${x.who.actor})이 민 커밋인데 모드 선언(영수증)이 없음 (${AGENT_RULE}) — 문지기를 거치지 않은 커밋 · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+    +     else if (x.status === 'undeclared') out.lines.push(`· ${h} — 모드 선언(영수증) 없음 → ${x.who && x.who.human ? `사람 계정(${x.who.actor})의 커밋 (알리기만)` : '사람의 커밋으로 봄 (알리기만) · 행위자 또는 사람 계정 목록(CODEOWNERS)을 모름'} · 바뀐 파일 ${x.files.length}: ${x.files.slice(0, 8).join(' · ')}${x.files.length > 8 ? ' …' : ''}`);
+- rebuild/gate.mjs [L6 guard:gate · human] — changed: 문지기 · 설정 · 모드 표는 추가도 항상 사람 승인
+    -     let code = 0; try { code = hook(arg, input, root); } catch (e) { process.stderr.write(`문지기 오류 (통과시킴 — 영수증에 남지 않았을 수 있음): ${e.message}\n`); code = 0; }
+    + 
+    + }
+    +   return 0;
+    + // 문지기가 예외로 판단하지 못할 때 (RULE-0550 · 공격 경로 N11 · PLAN-117) — fail-closed: 쓰는 도구는 막고(종료 2), 읽는 도구만 통과.
+    + //   전에는 모든 예외를 통과시켜, 영수증 한 줄을 망가뜨리면 문지기가 꺼진 것과 같았다. 목록에 없는 도구는 쓰는 도구로 본다(모르면 막음).
+    + export const READ_TOOLS = ['Read', 'Grep', 'Glob', 'LS', 'ToolSearch', 'WebSearch', 'WebFetch', 'TaskList', 'TaskGet'];
+    + const READ_MCP_RE = /^mcp__biodb-(?:query|run)__/; // 읽기 전용 서버 (.mcp.json — 저장소를 바꾸지 않음)
+    + const FAIL_RULE = 'RULE-0550';
+    + export function failClosed(event, input, err) {
+    +   const t = (input && input.tool_name) || '';
+    +   const reads = READ_TOOLS.includes(t) || READ_MCP_RE.test(t);
+    +   if (event === 'pre' && !reads) { process.stderr.write(`문지기 [${FAIL_RULE}]: 문지기 오류로 판단하지 못함 — 쓰는 도구(${t || '이름 없음'})를 막는다 (fail-closed). 사람에게 알린다: ${err && err.message}\n`); return 2; }
+    +   process.stderr.write(`문지기 오류 (${event}${t ? ' · ' + t : ''} — ${event === 'pre' ? '읽는 도구라 통과' : '막을 수 없는 단계'}, 영수증에 남지 않았을 수 있음): ${err && err.message}\n`);
+    +     let code = 0; try { code = hook(arg, input, root); } catch (e) { code = failClosed(arg, input, e); }
+- rebuild/rules/changes.jsonl [L4 ledger:rules · tool.rules] — added_only
+    + {"seq": 386, "at": "2026-11-24", "why": "PLAN-117 · 공격 경로 N8 · DEC-0090 — 봇 계정 분리 뒤 'CI 의 선언 없음 = 사람의 커밋' 가정이 틀림", "file": "rules", "op": "add", "key": "RULE-0551", "before": null, "after": {"id": "RULE-0551", "text": "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의 커밋(알리기만), 그 밖의 계정(봇)이면 문지기를 거치지 않은 AI 커밋으로 거부한다. 행위자나 사람 목록을 모르면 옛 판정(알리기만). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · zoneCheck · humansOf · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · 2026-11-24 봇 신원 확인(push actor = daduteria) · PLAN-117", "enforce": "machine"}, "sha": "51f0ca17672945a964e1bccdabe12f19c7fd1f45cdf66a694240e95a2da4708b"}
+    + {"seq": 387, "at": "2026-11-24", "why": "PLAN-117 · 공격 경로 N8 · DEC-0090 — 봇 계정 분리 뒤 'CI 의 선언 없음 = 사람의 커밋' 가정이 틀림", "file": "links", "op": "add", "key": "RULE-0551|because|code:rebuild/ci-zone.mjs", "before": null, "after": {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남"}, "sha": "44bda4978e248cbe520b214520e7456691cbbc0ec8c3e378c1ed950f97fd0728"}
+    + {"seq": 388, "at": "2026-11-24", "why": "PLAN-117 · 공격 경로 N8 · DEC-0090 — 봇 계정 분리 뒤 'CI 의 선언 없음 = 사람의 커밋' 가정이 틀림", "file": "enforcement", "op": "add", "key": "RULE-0551", "before": null, "after": {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "const agent = who && who.human === false;", "repl": "const agent = false;", "tests": ["tests/ci_zone.test.mjs"], "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남", "result": "caught", "at": "2026-11-24", "red": "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"}, "sha": "e58585294f8b587c312099cbd06d63cdb4a4c1e677a1a4e6a6cd56bf71ae8584"}
+    + {"seq": 389, "at": "2026-11-24", "why": "PLAN-117 · 공격 경로 N11 — 문지기가 예외로 판단하지 못하면 모든 도구를 통과시켰다(fail-open)", "file": "rules", "op": "add", "key": "RULE-0550", "before": null, "after": {"id": "RULE-0550", "text": "문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도구 포함)는 막고, 읽는 도구(Read · Grep · Glob · 읽기 전용 MCP 등)만 통과한다. 영수증 한 줄을 망가뜨려 문지기를 끄는 길(N11)을 막는다. 도구 뒤 · 끝 · 시작 단계는 막을 수 없어 알리기만", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/gate.mjs failClosed · tests/gate.test.mjs ㉓", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N11 (live 영수증에 깨진 줄 하나로 재현) · PLAN-117", "enforce": "machine"}, "sha": "214e8c5f15615c92b279f75c0a0c44ddf6e91ff77974c6fd6b2d8fd9d5029dc4"}
+    + {"seq": 390, "at": "2026-11-24", "why": "PLAN-117 · 공격 경로 N11 — 문지기가 예외로 판단하지 못하면 모든 도구를 통과시켰다(fail-open)", "file": "links", "op": "add", "key": "RULE-0550|because|code:rebuild/gate.mjs", "before": null, "after": {"from": "RULE-0550", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과"}, "sha": "555271c7b48fcfc1a6b3a774fc8266622066fd91da4223176b62c6dd3c7d026e"}
+    + {"seq": 391, "at": "2026-11-24", "why": "PLAN-117 · 공격 경로 N11 — 문지기가 예외로 판단하지 못하면 모든 도구를 통과시켰다(fail-open)", "file": "enforcement", "op": "add", "key": "RULE-0550", "before": null, "after": {"rule": "RULE-0550", "op": "replace", "file": "rebuild/gate.mjs", "find": "if (event === 'pre' && !reads) {", "repl": "if (false && event === 'pre' && !reads) {", "tests": ["tests/gate.test.mjs"], "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과", "result": "caught", "at": "2026-11-24", "red": "㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과"}, "sha": "2f46a72a10b5a211184d1f855fd22306ac02e3ee9767c2da12eff7452f50ab38"}
+- rebuild/rules/enforcement.jsonl [L4 ledger:rules · tool.rules] — added_only
+    + {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "const agent = who && who.human === false;", "repl": "const agent = false;", "tests": ["tests/ci_zone.test.mjs"], "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남", "result": "caught", "at": "2026-11-24", "red": "사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정"}
+    + {"rule": "RULE-0550", "op": "replace", "file": "rebuild/gate.mjs", "find": "if (event === 'pre' && !reads) {", "repl": "if (false && event === 'pre' && !reads) {", "tests": ["tests/gate.test.mjs"], "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과", "result": "caught", "at": "2026-11-24", "red": "㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과"}
+- rebuild/rules/links.jsonl [L4 ledger:rules · tool.rules] — added_only
+    + {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "봇 판정을 끄면 봇이 민 선언 없는 커밋이 알리기만으로 지남"}
+    + {"from": "RULE-0550", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과"}
+- rebuild/rules/rules.jsonl [L4 ledger:rules · tool.rules] — added_only
+    + {"id": "RULE-0551", "text": "CI 구역 점검: 모드 선언(영수증)이 없는 커밋은 그 push · PR 을 일으킨 GitHub 계정(GITHUB_ACTOR)으로 가른다 — 부모 커밋의 .github/CODEOWNERS 에 적힌 @계정이면 사람의 커밋(알리기만), 그 밖의 계정(봇)이면 문지기를 거치지 않은 AI 커밋으로 거부한다. 행위자나 사람 목록을 모르면 옛 판정(알리기만). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · zoneCheck · humansOf · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · 2026-11-24 봇 신원 확인(push actor = daduteria) · PLAN-117", "enforce": "machine"}
+    + {"id": "RULE-0550", "text": "문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도구 포함)는 막고, 읽는 도구(Read · Grep · Glob · 읽기 전용 MCP 등)만 통과한다. 영수증 한 줄을 망가뜨려 문지기를 끄는 길(N11)을 막는다. 도구 뒤 · 끝 · 시작 단계는 막을 수 없어 알리기만", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/gate.mjs failClosed · tests/gate.test.mjs ㉓", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N11 (live 영수증에 깨진 줄 하나로 재현) · PLAN-117", "enforce": "machine"}
+- tests/ci_zone.test.mjs [L2 code:tests · session:develop, session:field] — added_only
+    + 
+    + 
+    + });
+    + });
+    +   const r = setup();
+    +   try {
+    +   } finally { rmSync(r.dir, { recursive: true, force: true }); }
+    + test('사람 계정 (RULE-0551 · PLAN-117): CODEOWNERS 의 @계정만 사람 · 봇이 민 선언 없는 커밋은 거부 · 모르면 옛 판정', () => {
+    +   assert.deepEqual(Z.humansOf('# 주석 @Nobody\n/.github/  @Duckiteat\n/x @Duckiteat @org/team\nfoo@bar.com @Second-One\n'), ['duckiteat', 'second-one'], '주석 · 팀 · 전자우편은 세지 않음');
+    +   assert.deepEqual(Z.whoOf('Duckiteat', ['duckiteat']), { actor: 'Duckiteat', human: true });
+    +   assert.deepEqual(Z.whoOf('daduteria', ['duckiteat']), { actor: 'daduteria', human: false });
+    +   assert.equal(Z.whoOf(null, ['duckiteat']).human, null, '행위자 모름');
+    +   assert.equal(Z.whoOf('daduteria', null).human, null, '사람 목록 모름');
+    +   const bot = Z.judgeCommit(P, ['engine/x.js'], [], null, [], Z.whoOf('daduteria', ['duckiteat']));
+    +   assert.equal(bot.status, 'violation'); assert.equal(bot.agent, true);
+    +   assert.equal(Z.judgeCommit(P, ['engine/x.js'], [], null, [], Z.whoOf('Duckiteat', ['duckiteat'])).status, 'undeclared', '사람 계정은 알리기만');
+    +   assert.equal(Z.judgeCommit(P, ['engine/x.js'], []).status, 'undeclared', 'who 없음 = 옛 판정');
+    +   assert.equal(Z.judgeCommit(P, ['engine/x.js'], [{ mode: 'develop', role: null }], null, [], Z.whoOf('daduteria', ['duckiteat'])).status, 'ok', '선언이 있으면 봇도 구역 판정만');
+    + test('통합 (RULE-0551): 사람 목록은 부모의 CODEOWNERS 에서 · 봇 push 는 선언 없는 커밋에서 종료 1 · 커밋이 자기를 사람으로 올리지 못함 · main 에 든 커밋은 다시 안 봄', () => {
+    +     r.put('.github/CODEOWNERS', '/.github/ @Duckiteat\n'); const owners = r.commit('사람 목록');
+    +     r.put('engine/a.js', '1\n'); r.commit('선언 없는 커밋');
+    +     const bot = Z.zoneCheck(owners, 'HEAD', r.dir, { actor: 'daduteria' }), text = bot.lines.join('\n');
+    +     assert.equal(bot.exit, 1); assert.match(text, /AI 계정\(daduteria\)이 민 커밋인데 모드 선언\(영수증\)이 없음 \(RULE-0551\)/); assert.match(text, /행위자 daduteria/);
+    +     const human = Z.zoneCheck(owners, 'HEAD', r.dir, { actor: 'Duckiteat' });
+    +     assert.equal(human.exit, 0); assert.match(human.lines.join('\n'), /사람 계정\(Duckiteat\)의 커밋 \(알리기만\)/);
+    +     assert.equal(Z.zoneCheck(owners, 'HEAD', r.dir, { actor: null }).exit, 0, '행위자 모름 = 옛 판정');
+    +     // 커밋이 CODEOWNERS 에 봇을 더해도 그 커밋은 부모의 목록으로 판정된다
+    +     r.put('.github/CODEOWNERS', '/.github/ @Duckiteat @daduteria\n'); r.put('engine/b.js', '1\n'); const self = r.commit('봇을 사람으로');
+    +     const s = Z.zoneCheck(owners, 'HEAD', r.dir, { actor: 'daduteria' }); assert.equal(s.commits.find((x) => x.c === self).status, 'violation');
+    +     // main 에 이미 든 커밋(사람이 받아들인 것)은 봇 브랜치 범위에 들어와도 다시 판정하지 않는다 — 단 main 으로의 push 는 그대로 판정
+    +     r.g('checkout', '-qb', 'bot'); r.put('workspace/receipts/s.jsonl', open('develop')); r.put('engine/c.js', '1\n'); const mine = r.commit('봇의 선언 커밋');
+    +     const onBot = Z.zoneCheck(r.base, 'HEAD', r.dir, { actor: 'daduteria', main: 'main' });
+    +     assert.deepEqual(onBot.commits.map((x) => x.c), [mine], 'main 의 커밋은 빠짐'); assert.equal(onBot.exit, 0);
+    +     r.g('checkout', '-q', 'main');
+    +     assert.equal(Z.zoneCheck(r.base, 'HEAD', r.dir, { actor: 'daduteria', main: 'main' }).exit, 1, 'main 으로의 push 는 빼지 않음');
+- tests/gate.test.mjs [L6 guard:self-tests · session:develop] — changed: 243 째 줄 근처: 위험한 모양 — test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예
+    + 
+    + });
+    +   const d = repo();
+    +   try {
+    +     assert.equal(tool(d, 'Bash', { command: 'node rebuild/gate.mjs open develop' }).status, 0);
+    +   } finally { rmSync(d, { recursive: true, force: true }); for (const f of [finishFile(d), scratchFile(d), G.liveRoot(d)]) rmSync(f, { recursive: true, force: true }); }
+    +     const r = RD(d), f = join(r, readdirSync(r).find((x) => x.endsWith('.jsonl')));
+    + test('㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과', () => {
+    +   // 판단 (순수) — 목록에 없는 도구는 쓰는 도구로 본다
+    +   for (const t of ['Write', 'Edit', 'Bash', 'NotebookEdit', 'mcp__github__push_files', 'mcp__biodb-clerk__merge', 'Agent', '']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 2, t || '이름 없음');
+    +   for (const t of ['Read', 'Grep', 'Glob', 'mcp__biodb-query__summary', 'mcp__biodb-run__run_fate']) assert.equal(G.failClosed('pre', { tool_name: t }, new Error('x')), 0, t);
+    +   for (const ev of ['post', 'stop', 'session-start']) assert.equal(G.failClosed(ev, { tool_name: 'Write' }, new Error('x')), 0, `${ev} 는 막을 수 없는 단계`);
+    +   // 끝에서 끝 — live 영수증에 깨진 줄 하나(공격 경로 N11 의 재현)로 훅이 예외를 낸다
+    +     writeFileSync(f, readFileSync(f, 'utf8') + '깨진 줄\n');
+    +     const w = hook(d, 'pre', { tool_name: 'Write', tool_input: { file_path: join(d, 'engine/e.js') } });
+    +     assert.equal(w.status, 2, '쓰는 도구는 막힘'); assert.match(w.stderr, /\[RULE-0550\]/); assert.match(w.stderr, /fail-closed/);
+    +     assert.equal(hook(d, 'pre', { tool_name: 'Bash', tool_input: { command: 'ls' } }).status, 2, '셸도 막힘');
+    +     assert.equal(hook(d, 'pre', { tool_name: 'Read', tool_input: { file_path: join(d, 'core.js') } }).status, 0, '읽는 도구는 통과 — 사람이 원인을 볼 수 있게');
