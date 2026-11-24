@@ -14,7 +14,7 @@
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
 | L2 | `code:mcp` | 6 | 2 | 4 | 2 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
-| L2 | `code:tests` | 60 | 26 | 2 | 32 |
+| L2 | `code:tests` | 60 | 27 | 2 | 32 |
 | L2 | `code:tools` | 18 | 7 | 6 | 8 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
