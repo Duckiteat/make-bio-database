@@ -543,7 +543,7 @@
 ## 근거 점검 (계산 — 원본에서 센 것)
 
 - 작업 139: ☑ 완료 50 · ◐ 진행 16 · ☐ 대기 72 · 보류 보류 1
-- 걸어온 길: 사건 386 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 181)
+- 걸어온 길: 사건 387 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 182)
 - 결정 63 — 누가: 사용자 47 · 사용자와 합의 6 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
 - 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-117 · PLAN-119 · PLAN-120 · PLAN-121 · PLAN-122 · PLAN-123 · PLAN-124 · PLAN-125 · PLAN-126 · PLAN-127 · PLAN-128 · PLAN-129 · PLAN-130 · PLAN-131 · PLAN-132 · PLAN-133 · PLAN-134
