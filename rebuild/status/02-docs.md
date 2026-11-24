@@ -490,6 +490,7 @@
 | `workspace/PLAN-116-G3-README.md` | 3.1 | 19 |  | 미분류 |
 | `workspace/PLAN-116-G5-README.md` | 2.5 | 20 |  | 미분류 |
 | `workspace/PLAN-117-README.md` | 5.7 | 38 |  | 미분류 |
+| `workspace/PLAN-117-approval-README.md` | 3.4 | 27 |  | 미분류 |
 | `workspace/PLAN-118-B-README.md` | 6.1 | 51 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
