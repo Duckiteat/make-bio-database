@@ -47,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 34.3 | 102 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 56.2 | 502 |  | 생성물 |
+| `docs/plan/build.md` | 56.4 | 503 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -131,6 +131,7 @@
 | `docs/plan/decisions/DEC-0089.md` | 2.4 | 15 |  | 생성물 |
 | `docs/plan/decisions/DEC-0090.md` | 2.2 | 14 |  | 생성물 |
 | `docs/plan/decisions/DEC-0091.md` | 1.7 | 13 |  | 생성물 |
+| `docs/plan/decisions/DEC-0092.md` | 2.1 | 11 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -267,7 +268,7 @@
 | `docs/plan/items/PLAN-113.md` | 3.7 | 27 |  | 생성물 |
 | `docs/plan/items/PLAN-114.md` | 4.7 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.4 | 40 |  | 생성물 |
-| `docs/plan/items/PLAN-116.md` | 15.7 | 68 |  | 생성물 |
+| `docs/plan/items/PLAN-116.md` | 15.9 | 69 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
