@@ -1,27 +1,46 @@
 // 사법부 — 감독 장부의 승인 증거 판정 (PLAN-102 · 설계 docs/design/supervisor.md §4.3 · DEC-0064 가 · DEC-0068 · DEC-0069)
 // 계약: 순수 — 값만 받고 값만 돌려준다 (git 읽기 · 파일 · 실행 없음). 사실은 감독 도구(supervise.mjs 의 evidence)가 모아 넘긴다.
 //
-// 승인은 장부에 적는 사건이 아니라 사실에서 계산한다:
+// 승인은 장부에 적는 사건이 아니라 사실에서 계산한다 (PLAN-117 — 사람 승인 = GitHub 사실, DEC-0090 봇 신원 분리 뒤):
 //   ① 승인 대상 = 마지막으로 넘긴 실행(baseline 이 아닌)의 커밋에서 바뀐 파일들의 바이트 (git blob — 지움은 null)
 //   ② 그 바이트가 main 의 어떤 커밋에 "모두 그대로" 처음 나타남 — 머지 · 스쿼시 · 리베이스 어느 방식이든 (커밋 모양에 기대지 않음, HEAD 가 아니라 처음)
-//   ③ 그 병합을 사람이 했다는 보장 — 지금 가능한 것은 Claude Code 설정의 PR 병합 도구 막음(DEC-0069 가). 그 커밋 시점 설정에 막음이 없으면
-//      "병합 확인 · 사람 보장 없음" 이다 (DEC-0068: AI 의 병합도 merged_by 가 사람 계정으로 남는다)
-//   ④ 영수증에 AI 세션의 PR 병합 호출이 있으면 사람 승인으로 치지 않는다
-// 결과는 상태 하나와 이유 목록. 이 판정은 쓰지 않고, 장부를 고치지 않는다.
+//   ③ 그 커밋의 PR 에 대한 GitHub 사실(facts) — 병합한 계정(merged_by)이 사람 계정이고, 사람 계정의 승인 리뷰가 PR 머리 커밋(head)에 있음
+//      (PR 작성자 자신의 리뷰 · 봇 리뷰 · 옛 커밋에 대한 승인 · 승인 뒤 커밋 추가는 세지 않는다). 사실은 CI(main 의 코드 · 읽기 권한)가
+//      GitHub API 로 모은다 — 세션의 GitHub 도구는 봇 신원이라 사실을 대신 모을 자리가 아니다. 사실이 없으면 승인이 아니다(fail-closed)
+//   ④ 영수증의 AI 병합 호출(시간 창)은 보조 표시로만 남긴다 — 판정에 쓰지 않는다
+// 사람 계정 목록(humans)은 부르는 쪽이 넘긴다(CI 구역 점검의 HUMANS — 한 곳, 감독 도구가 넘김). 결과는 상태 하나와 이유 목록. 쓰지 않고 장부를 고치지 않는다.
 export const MERGE_TOOL = 'mcp__github__merge_pull_request';
 export const STATUS = {
   empty: '승인 대상 없음 — 넘긴 커밋에서 바뀐 파일이 없음',
   not_merged: '병합 전 — main 에 이 바이트가 아직 없음',
-  merged_unguarded: '병합 확인 · 사람 보장 없음 — 그 시점 설정에 AI 의 PR 병합 막음이 없음 (PLAN-113 전)',
-  merged_ai: '병합 확인 · AI 병합 흔적 — 영수증에 PR 병합 호출이 있음, 사람 승인으로 치지 않음',
-  approved: '승인 — 사람이 병합 (Claude Code 설정이 AI 의 병합을 막은 뒤, 영수증에 AI 병합 호출 없음) · 다른 실행 환경까지의 보장은 CI 겹(PLAN-114) · 서명(나중)',
+  no_facts: '병합 확인 · GitHub 사실 없음 — 승인 아님 (CI 의 승인 판정 · workflow approval 이 사실을 모아 판정한다)',
+  no_pr: '병합 확인 · PR 이 없는 커밋 — 사람 승인 리뷰가 없어 승인 아님',
+  merged_ai: '병합 확인 · AI 병합 — GitHub 의 병합한 계정이 사람 계정이 아님',
+  unreviewed: '병합 확인 · 사람이 병합했지만 PR 머리 커밋에 대한 사람의 승인 리뷰가 없음 — 승인 아님',
+  approved: '승인 — 사람 계정이 PR 머리 커밋을 승인하고 사람 계정이 병합 (GitHub 사실)',
 };
 
+const FACTS_RULE = 'RULE-0552'; // 승인 = GitHub 사실 (PLAN-117) — 승인이 아닌 판정에 번호를 붙인다
+// GitHub 사실 하나의 판정 (순수) — f = { pr, author, merged_by, head, reviews: [{ user, state, commit_id }] } · null 이면 PR 없음
+export function judgeFacts(f, humans = []) {
+  if (f === undefined) return { status: 'no_facts', reasons: [], rule: FACTS_RULE };
+  if (f === null) return { status: 'no_pr', reasons: [], rule: FACTS_RULE };
+  const H = new Set(humans), pr = `PR #${f.pr}`;
+  if (!H.has(f.merged_by)) return { status: 'merged_ai', reasons: [`${pr} — 병합한 계정 ${f.merged_by || '없음'} 은 사람 계정(${humans.join(' · ')})이 아님`], rule: FACTS_RULE };
+  const ok = (f.reviews || []).filter((r) => r.state === 'APPROVED' && H.has(r.user) && r.user !== f.author && r.commit_id === f.head);
+  if (!ok.length) {
+    const appr = (f.reviews || []).filter((r) => r.state === 'APPROVED');
+    return { status: 'unreviewed', reasons: [`${pr} — 승인 리뷰 ${appr.length}${appr.length ? ` (${appr.map((r) => `${r.user}@${String(r.commit_id).slice(0, 7)}`).join(' · ')})` : ''} 중 사람 계정 · 작성자 아님 · 머리 커밋 ${String(f.head).slice(0, 7)} 인 것이 없음`], rule: FACTS_RULE };
+  }
+  return { status: 'approved', reasons: [`${pr} — ${f.merged_by} 가 병합 · ${ok.map((r) => r.user).join(' · ')} 가 머리 커밋 ${String(f.head).slice(0, 7)} 을 승인`] };
+}
+
 // target  : { [path]: blob | null }  승인 대상 (null = 지운 파일)
-// commits : [{ sha, time, blobs: { [path]: blob | null }, denyMerge: boolean }]  main 의 커밋, 오래된 것부터 (분기점 뒤) · time = 커밋 시각(ISO)
-// aiMerges: [{ at, receipt }]  영수증의 PR 병합 호출 (분기점 뒤) — 그 커밋 시각 앞 WINDOW 초 안의 호출만 그 병합으로 본다
+// commits : [{ sha, time, blobs: { [path]: blob | null } }]  main 의 커밋(본줄기), 오래된 것부터 (분기점 뒤) · time = 커밋 시각(ISO)
+// facts   : { [커밋 sha]: GitHub 사실 | null(PR 없음) } — CI 가 모은 것. 없으면(null · 그 커밋 없음) 승인 아님
+// aiMerges: [{ at, receipt }]  영수증의 PR 병합 호출 — 보조 표시만 (그 커밋 시각 앞 WINDOW 초 안)
 export const WINDOW = { before: 600, after: 60 };
-export function judge({ target, commits, aiMerges = [] }) {
+export function judge({ target, commits, aiMerges = [], facts = null, humans = [] }) {
   const paths = Object.keys(target || {}).sort();
   if (!paths.length) return { status: 'empty', text: STATUS.empty, commit: null, reasons: [] };
   const hit = (commits || []).find((c) => paths.every((p) => (c.blobs[p] ?? null) === target[p]));
@@ -34,9 +53,9 @@ export function judge({ target, commits, aiMerges = [] }) {
   }
   const reasons = [`${paths.length} 파일의 바이트가 main 커밋 ${hit.sha.slice(0, 7)} 에 처음 모두 나타남`];
   const t = Date.parse(hit.time || ''), near = aiMerges.filter((m) => { const a = Date.parse(m.at); return Number.isFinite(t) && Number.isFinite(a) && a >= t - WINDOW.before * 1000 && a <= t + WINDOW.after * 1000; });
-  if (near.length) return { status: 'merged_ai', text: STATUS.merged_ai, commit: hit.sha, reasons: [...reasons, ...near.map((m) => `영수증 ${m.receipt} · ${m.at} — ${MERGE_TOOL} (병합 커밋 시각 ${hit.time} 근처)`)] };
-  if (!hit.denyMerge) return { status: 'merged_unguarded', text: STATUS.merged_unguarded, commit: hit.sha, reasons: [...reasons, `커밋 ${hit.sha.slice(0, 7)} 의 .claude/settings.json deny 에 ${MERGE_TOOL} 없음`] };
-  return { status: 'approved', text: STATUS.approved, commit: hit.sha, reasons };
+  const aux = near.map((m) => `보조(판정에 안 씀): 영수증 ${m.receipt} · ${m.at} — ${MERGE_TOOL} (병합 커밋 시각 ${hit.time} 근처)`);
+  const v = judgeFacts(facts ? facts[hit.sha] : undefined, humans);
+  return { status: v.status, text: STATUS[v.status], commit: hit.sha, reasons: [...reasons, ...v.reasons, ...aux], ...(v.rule ? { rule: v.rule } : {}) };
 }
 
 // 감독 장부의 상위 작업(접은 것) + 승인 판정 + baseline 사실 → 계산된 상태
@@ -108,7 +127,7 @@ export function recommend({ sup, verdict, kindOf, indep }) {
   if (sup.steps.includes('inspect') && (!indep || indep.level !== 'full')) return { ...r('hold', '보류 — 독립성을 다 셀 수 없음 (검수 영수증 · 인용 출처가 없어 정보 접근 · 판단 근거를 모름) — 사람이 확인', indep ? Object.entries(indep.factors).filter(([, v]) => v.ok === null).map(([k, v]) => `${k}: ${v.why}`) : ['독립성 계산 없음']), rule: 'RULE-0543' };
   if (!verdict) return r('hold', '보류 — 승인 대상을 계산하지 못함');
   if (verdict.status === 'approved') return r('approved', '이미 승인됨 — 사람이 병합');
-  if (verdict.status === 'merged_ai' || verdict.status === 'merged_unguarded') return r('hold', `확인 필요 — ${verdict.text}`);
+  if (['merged_ai', 'unreviewed', 'no_pr', 'no_facts'].includes(verdict.status)) return r('hold', `확인 필요 — ${verdict.text}`); // 병합됐지만 사람 승인이 사실로 서지 않음 (PLAN-117)
   if (verdict.status === 'empty') return r('hold', '보류 — 승인 대상 파일 없음');
   return r('mergeable', '병합해도 됨 — 사용자 결정', ['병합 = 사람 승인 (DEC-0069) · 승인 대상 바이트가 바뀌면 이 권고는 무효']);
 }

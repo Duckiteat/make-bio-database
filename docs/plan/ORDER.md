@@ -22,8 +22,8 @@
 16. [PLAN-114](items/PLAN-114.md) Governor 의 CI 겹 — ☑ 완료 · build — DEC-0070 — 자동 배정이 실행 모듈을 늘리기 전에 Governor 를 실행 환경 밖(CI)에 한 겹
 17. [PLAN-115](items/PLAN-115.md) 주장 층 — 칸 단위 근거 — ◐ 진행 · build — DEC-0074 — 사람 손을 덜 타야 데이터가 빨리 쌓임: 주장 층 형식 · 이관 · 칸 상태 계산 · 인용 자동 대조(설계 보고서 §15 단계 0–2) 먼저 — 데이터를 칸 단위로 다시 쓰게 되므로 지금 형식으로 손 고침을 하지 않음
 18. [PLAN-116](items/PLAN-116.md) 거버넌스 — 권한 분리 · 독립 검증 대조 조사 — ◐ 진행 · build — DEC-0074 — 검수 독립성 계산 · Deny/Hold 사유 · 승인 보고서 한 장(1 단계 보고서 G2–G4): 사람이 산출물 전체가 아니라 한 장만 보게 — 자동 배정의 선행
-19. [PLAN-118](items/PLAN-118.md) 보안 묶음 마무리 — ◐ 진행 · build — DEC-0096 0 바닥 — 실행 모듈을 늘리기 전 마지막 보안 셋 (전환 #20 open)
-20. [PLAN-117](items/PLAN-117.md) 승인 증거를 GitHub 사실로 — ☐ 대기 · build — DEC-0096 0 바닥 — 사람 승인을 GitHub 사실로 (main 의 PLAN-117 · DEC-0093 ⑤ · DEC-0094)
+19. [PLAN-118](items/PLAN-118.md) 보안 묶음 마무리 — ☑ 완료 · build — DEC-0096 0 바닥 — 실행 모듈을 늘리기 전 마지막 보안 셋 (전환 #20 open)
+20. [PLAN-117](items/PLAN-117.md) 승인 증거를 GitHub 사실로 — ◐ 진행 · build — DEC-0096 0 바닥 — 사람 승인을 GitHub 사실로 (main 의 PLAN-117 · DEC-0093 ⑤ · DEC-0094)
 21. [PLAN-135](items/PLAN-135.md) L6 PR 을 우회 없이 — ☐ 대기 · build — DEC-0098 — PLAN-117 의 GitHub 사실 모으기 위에서: L6 PR 을 우회 없이 사람 승인 + 사람 서명으로
 22. [PLAN-119](items/PLAN-119.md) 성장 속도 기준선 — ☐ 대기 · build — DEC-0096 0 바닥 — 성장 속도 기준선 (효과를 재려면 먼저)
 23. [PLAN-120](items/PLAN-120.md) 오케스트레이터 설계 독립 재검토 — ☐ 대기 · build — DEC-0096 0 바닥 — 설계 독립 재검토
@@ -94,7 +94,7 @@
 
 ## 끝난 것
 
-- build: 50 / 140
+- build: 51 / 140
 - rebuild: 39 / 42
 - assay: 1 / 17
 

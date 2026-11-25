@@ -2,7 +2,7 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 209)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`
+원본: `docs/textbook/storage-map.json`(구역·자리) · `rebuild/rules/rules.jsonl`(규칙의 where) · `rebuild/state/plans.jsonl`(열린 작업). 이름 하나로 적힌 자리(* 없는 것 210)만 센다. **연결 없음**은 결함이 아니라 후보다 — 닿는 규칙이나 계획이 있으면 where·결과에 경로를 적는다. 자리마다 자세히: `node rebuild/probe.mjs <파일>` · 새 파일: `node rebuild/probe.mjs --new`
 
 | 등급 | 구역 | 자리 | 규칙에 닿음 | 열린 계획에 닿음 | 연결 없음 |
 |---|---|---|---|---|---|
@@ -14,7 +14,7 @@
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
 | L2 | `code:mcp` | 6 | 2 | 4 | 2 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
-| L2 | `code:tests` | 60 | 26 | 2 | 32 |
+| L2 | `code:tests` | 60 | 27 | 2 | 32 |
 | L2 | `code:tools` | 18 | 7 | 6 | 8 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
@@ -33,11 +33,11 @@
 | L5 | `data:dictionary` | 1 | 0 | 0 | 1 |
 | L5 | `data:prereg` | 1 | 1 | 0 | 0 |
 | L6 | `guard:authority` | 7 | 4 | 1 | 3 |
-| L6 | `guard:gate` | 14 | 7 | 6 | 5 |
+| L6 | `guard:gate` | 15 | 7 | 5 | 6 |
 | L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
-## 연결 없는 자리 (105)
+## 연결 없는 자리 (106)
 
 - `code:compiler`: `compiler/obs_operator.js` · `compiler/detmath.js` · `compiler/tape.js`
 - `code:config`: `.gitignore` · `.mcp.json`
@@ -61,6 +61,6 @@
 - `data:assumptions`: `data/assumptions.jsonl`
 - `data:dictionary`: `data/dictionary.jsonl`
 - `guard:authority`: `rebuild/bundle.mjs` · `tests/bundle.test.mjs` · `docs/textbook/authority.json`
-- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `.github/CODEOWNERS` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs`
+- `guard:gate`: `.github/workflows/check.yml` · `.github/workflows/trust.yml` · `.github/workflows/approval.yml` · `.github/CODEOWNERS` · `rebuild/rules/modes.json` · `tests/guard-matrix.test.mjs`
 - `guard:self-tests`: `tests/affected.mjs` · `tests/trace.mjs` · `tests/snapshot.mjs` · `tests/mutation/run.mjs`
 - `guard:settings`: `.claude/settings.json`
