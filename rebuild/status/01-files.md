@@ -11,7 +11,7 @@
 | docs | 472 | 3680.8 |
 | (최상위) | 19 | 1037.3 |
 | tests | 120 | 859.9 |
-| workspace | 99 | 685.2 |
+| workspace | 99 | 686.2 |
 | judicial | 37 | 657.9 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
