@@ -19,3 +19,4 @@
 ## 닿는 결정
 
 - [DEC-0096](../decisions/DEC-0096.md) 2026-11-24 오케스트레이터 순서 — MVP(최종 형식으로 · 있는 것 최대한) → 범위 넓히기 → 병렬 → 자율(사람은 주제 · 결정 · 확인 · 승락만)
+- [DEC-0102](../decisions/DEC-0102.md) 2026-11-25 승인 판정 코드(judicial/supervise_approval.js · rebuild/supervise.mjs)는 MVP 실증(PLAN-124) 끝에 L6 로 — PLAN-135 확인 PR 은 CODEOWNERS 주석 두 줄
