@@ -47,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 41.0 | 123 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 62.1 | 553 |  | 생성물 |
+| `docs/plan/build.md` | 62.3 | 554 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -139,6 +139,7 @@
 | `docs/plan/decisions/DEC-0097.md` | 2.1 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0098.md` | 2.0 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0099.md` | 1.4 | 12 |  | 생성물 |
+| `docs/plan/decisions/DEC-0100.md` | 1.7 | 12 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -276,7 +277,7 @@
 | `docs/plan/items/PLAN-114.md` | 4.8 | 31 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.4 | 40 |  | 생성물 |
 | `docs/plan/items/PLAN-116.md` | 18.7 | 79 |  | 생성물 |
-| `docs/plan/items/PLAN-117.md` | 5.1 | 28 |  | 생성물 |
+| `docs/plan/items/PLAN-117.md` | 5.3 | 29 |  | 생성물 |
 | `docs/plan/items/PLAN-118.md` | 6.2 | 34 |  | 생성물 |
 | `docs/plan/items/PLAN-119.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-120.md` | 1.7 | 21 |  | 생성물 |
@@ -294,7 +295,7 @@
 | `docs/plan/items/PLAN-132.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-133.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-134.md` | 1.4 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-135.md` | 2.6 | 22 |  | 생성물 |
+| `docs/plan/items/PLAN-135.md` | 3.2 | 24 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -457,6 +458,7 @@
 | `docs/reports/2026-11-24-governance-system-map.md` | 21.0 | 208 |  | 미분류 |
 | `docs/reports/2026-11-24-orchestrator-parallel-architecture-design.md` | 60.3 | 520 |  | 미분류 |
 | `docs/reports/2026-11-24-security-bundles-check.md` | 3.0 | 12 |  | 미분류 |
+| `docs/reports/2026-11-25-human-signing-key-setup.md` | 3.6 | 43 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |

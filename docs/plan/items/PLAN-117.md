@@ -26,3 +26,4 @@
 - [DEC-0097](../decisions/DEC-0097.md) 2026-11-24 보안 셋 섞기 — fail-closed · CODEOWNERS 는 이 브랜치의 적용분(d600490), ci-zone 은 DEC-0094(사람 서명 커밋만 사람)로 다시, 묶음 5(훅을 끄는 자리)는 이 브랜치에 맞춰 다시
 - [DEC-0098](../decisions/DEC-0098.md) 2026-11-24 L6 PR 은 이번(PR #26)만 우회 병합 — 앞으로는 독립 판정이 "코드 소유자 승인 + 사람 서명 커밋" 이면 통과(조건 셋), 그 뒤 우회 목록을 비움
 - [DEC-0099](../decisions/DEC-0099.md) 2026-11-24 PLAN-117 — 승인 사실(병합한 계정 · 승인 리뷰)은 CI 가 모으고 판정도 CI 에서, 세션은 그 결과만 읽는다
+- [DEC-0100](../decisions/DEC-0100.md) 2026-11-25 사람 서명 = 사용자 자신의 SSH 서명 키 — Codespaces 의 GPG verification(GitHub 키 · 커미터 web-flow)은 끈다
