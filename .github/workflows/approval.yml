@@ -1,0 +1,44 @@
+name: approval
+# 승인 판정 (PLAN-117 · DEC-0099 · RULE-0552) — 사람 승인을 GitHub 사실로. main 에 push 될 때 main 의 코드로 돈다.
+#   이 push 의 PR 병합과 감독 장부의 상위 작업마다(node rebuild/supervise.mjs hits) "병합한 계정 · 머리 커밋에 대한 사람 승인 리뷰" 를
+#   GitHub API 로 모아 node rebuild/supervise.mjs verdicts 로 판정하고, 결과를 실행 요약(Summary)에 남긴다.
+#   세션(봇 신원)은 사실을 모으지 않는다 — 결과만 읽는다. 권한은 읽기만 · 비밀 값 없음.
+#   이 push 의 PR 병합이 사람 승인이 아니면(merged_ai · unreviewed) 실패 — main 에서 빨개져 사람이 본다. 조회가 실패한 커밋은 사실 없음 = 승인 아님(no_facts).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  approval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 승인 판정 — GitHub 사실 (병합한 계정 · 머리 커밋 승인 리뷰)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          FACTS="$RUNNER_TEMP/facts.json"; echo '{}' > "$FACTS"
+          # 커밋 하나 → { sha: 사실 } · PR 이 없으면 { sha: null } · 조회가 실패하면 아무것도 넣지 않음 (= 사실 없음 · 승인 아님)
+          fact() {
+            local c="$1" pr
+            pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$c/pulls" --jq "[.[] | select(.merged_at != null and .merge_commit_sha == \"$c\")][0].number // \"\"") || return 0
+            if [ -z "$pr" ]; then jq -n --arg c "$c" '{($c): null}'; return 0; fi
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$pr" --jq '{pr: .number, author: .user.login, merged_by: .merged_by.login, head: .head.sha}' > "$RUNNER_TEMP/p.json" || return 0
+            gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$pr/reviews" --jq '.[] | {user: .user.login, state: .state, commit_id: .commit_id}' > "$RUNNER_TEMP/r.jsonl" || return 0
+            jq -n --arg c "$c" --slurpfile p "$RUNNER_TEMP/p.json" --slurpfile r "$RUNNER_TEMP/r.jsonl" '{($c): ($p[0] + {reviews: $r})}'
+          }
+          for c in $( { echo "$GITHUB_SHA"; node rebuild/supervise.mjs hits; } | sort -u ); do
+            fact "$c" > "$RUNNER_TEMP/one.json" || true
+            if [ -s "$RUNNER_TEMP/one.json" ]; then jq -s '.[0] * .[1]' "$FACTS" "$RUNNER_TEMP/one.json" > "$RUNNER_TEMP/next.json" && mv "$RUNNER_TEMP/next.json" "$FACTS"; fi
+          done
+          echo "사실: $(jq 'length' "$FACTS") 커밋"
+          node rebuild/supervise.mjs verdicts --facts "$FACTS" --commit "$GITHUB_SHA" | tee -a "$GITHUB_STEP_SUMMARY"

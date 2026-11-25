@@ -9,7 +9,7 @@
 | `.claude/skills/develop/SKILL.md` | 6.6 | 86 |  | 미분류 |
 | `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.9 | 89 |  | 미분류 |
-| `CHANGES.md` | 366.1 | 359 |  | 분류됨 1 |
+| `CHANGES.md` | 366.7 | 360 |  | 분류됨 1 |
 | `CLAUDE.md` | 8.1 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -472,7 +472,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 151.4 | 887 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 152.0 | 888 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
 | `workspace/21-security-bundles-README.md` | 2.9 | 25 |  | 미분류 |
 | `workspace/CODEOWNERS-README.md` | 2.9 | 25 |  | 미분류 |

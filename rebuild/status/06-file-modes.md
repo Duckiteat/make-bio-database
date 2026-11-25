@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 393 | 8765.5 |
+| 공통 `common` | 393 | 8767.0 |
 | 정보 작성 `author` | 571 | 17475.2 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 221 | 2767.5 |
+| 디벨롭 `develop` | 222 | 2770.9 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 136 | 2180.7 |
 
@@ -54,15 +54,15 @@
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 126 | 1799.3 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 12 | 526.3 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/textbook/**` | common | 12 | 527.8 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
 | `docs/design/**` | common | 23 | 351.1 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
 | `docs/**` | common | 308 | 989.3 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.5 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 366.1 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 366.7 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 112.6 | 형식 |
 | `*.md` | common | 4 | 65.0 | 최상위 문서 |
 | `.claude/**` | common | 6 | 38.7 | 도구 설정 |
-| `.github/**` | develop | 3 | 8.2 | CI |
+| `.github/**` | develop | 4 | 11.0 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
 | `.mcp.json` | develop | 1 | 0.3 | 세션에 꽂는 MCP 서버 설정 (PLAN-105) |
 
