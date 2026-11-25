@@ -47,7 +47,7 @@
 | `docs/modes/inspect.md` | 6.7 | 84 |  | 생성물 |
 | `docs/plan/ORDER.md` | 41.0 | 123 |  | 생성물 |
 | `docs/plan/assay.md` | 5.3 | 84 |  | 생성물 |
-| `docs/plan/build.md` | 62.3 | 554 |  | 생성물 |
+| `docs/plan/build.md` | 62.5 | 555 |  | 생성물 |
 | `docs/plan/decisions/DEC-0001.md` | 1.0 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0002.md` | 0.9 | 11 |  | 생성물 |
 | `docs/plan/decisions/DEC-0003.md` | 1.3 | 17 |  | 생성물 |
@@ -140,6 +140,7 @@
 | `docs/plan/decisions/DEC-0098.md` | 2.0 | 13 |  | 생성물 |
 | `docs/plan/decisions/DEC-0099.md` | 1.4 | 12 |  | 생성물 |
 | `docs/plan/decisions/DEC-0100.md` | 1.7 | 12 |  | 생성물 |
+| `docs/plan/decisions/DEC-0101.md` | 1.6 | 11 |  | 생성물 |
 | `docs/plan/items/ASY-00.md` | 5.8 | 32 |  | 생성물 |
 | `docs/plan/items/ASY-01.md` | 1.5 | 22 |  | 생성물 |
 | `docs/plan/items/ASY-02.md` | 1.5 | 22 |  | 생성물 |
@@ -295,7 +296,7 @@
 | `docs/plan/items/PLAN-132.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-133.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-134.md` | 1.4 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-135.md` | 4.1 | 26 |  | 생성물 |
+| `docs/plan/items/PLAN-135.md` | 5.2 | 30 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
@@ -494,6 +495,7 @@
 | `workspace/PLAN-117-README.md` | 5.7 | 38 |  | 미분류 |
 | `workspace/PLAN-117-approval-README.md` | 3.4 | 27 |  | 미분류 |
 | `workspace/PLAN-118-B-README.md` | 6.1 | 51 |  | 미분류 |
+| `workspace/PLAN-135-README.md` | 3.0 | 34 |  | 미분류 |
 | `workspace/README.md` | 3.1 | 39 |  | 분류됨 25 |
 | `workspace/SOURCES.md` | 3.2 | 35 |  | 분류됨 22 |
 | `workspace/START-HERE.md` | 4.8 | 57 |  | 분류됨 32 |

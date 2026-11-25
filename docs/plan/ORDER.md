@@ -24,7 +24,7 @@
 18. [PLAN-116](items/PLAN-116.md) 거버넌스 — 권한 분리 · 독립 검증 대조 조사 — ◐ 진행 · build — DEC-0074 — 검수 독립성 계산 · Deny/Hold 사유 · 승인 보고서 한 장(1 단계 보고서 G2–G4): 사람이 산출물 전체가 아니라 한 장만 보게 — 자동 배정의 선행
 19. [PLAN-118](items/PLAN-118.md) 보안 묶음 마무리 — ☑ 완료 · build — DEC-0096 0 바닥 — 실행 모듈을 늘리기 전 마지막 보안 셋 (전환 #20 open)
 20. [PLAN-117](items/PLAN-117.md) 승인 증거를 GitHub 사실로 — ☑ 완료 · build — DEC-0096 0 바닥 — 사람 승인을 GitHub 사실로 (main 의 PLAN-117 · DEC-0093 ⑤ · DEC-0094)
-21. [PLAN-135](items/PLAN-135.md) L6 PR 을 우회 없이 — ☐ 대기 · build — DEC-0098 — PLAN-117 의 GitHub 사실 모으기 위에서: L6 PR 을 우회 없이 사람 승인 + 사람 서명으로
+21. [PLAN-135](items/PLAN-135.md) L6 PR 을 우회 없이 — ◐ 진행 · build — DEC-0098 — PLAN-117 의 GitHub 사실 모으기 위에서: L6 PR 을 우회 없이 사람 승인 + 사람 서명으로
 22. [PLAN-119](items/PLAN-119.md) 성장 속도 기준선 — ☐ 대기 · build — DEC-0096 0 바닥 — 성장 속도 기준선 (효과를 재려면 먼저)
 23. [PLAN-120](items/PLAN-120.md) 오케스트레이터 설계 독립 재검토 — ☐ 대기 · build — DEC-0096 0 바닥 — 설계 독립 재검토
 24. [PLAN-121](items/PLAN-121.md) MVP ① 감독 장부 형식 일반화 — ☐ 대기 · build — DEC-0096 1 MVP — 최종 형식부터

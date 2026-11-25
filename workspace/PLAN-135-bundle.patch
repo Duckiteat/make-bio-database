@@ -1,0 +1,299 @@
+diff --git a/.github/CODEOWNERS b/.github/CODEOWNERS
+index 206715d..a13b5ea 100644
+--- a/.github/CODEOWNERS
++++ b/.github/CODEOWNERS
+@@ -6,6 +6,7 @@
+ 
+ /.github/                         @Duckiteat
+ /.claude/settings.json            @Duckiteat
++/.claude/hooks/                   @Duckiteat
+ /rebuild/gate.mjs                 @Duckiteat
+ /rebuild/rules/modes.json         @Duckiteat
+ /rebuild/ci-zone.mjs              @Duckiteat
+diff --git a/.github/workflows/trust.yml b/.github/workflows/trust.yml
+index 32fa066..b060c8d 100644
+--- a/.github/workflows/trust.yml
++++ b/.github/workflows/trust.yml
+@@ -3,7 +3,8 @@ name: trust
+ # pull_request_target: 이 워크플로 · 판정 코드(rebuild/trust-check.mjs) · 그 의존 파일은 모두 main(기준 브랜치)의 것이다.
+ #   PR 이 이 파일 · 판정 코드 · model.js 를 바꿔도 이 검사에는 닿지 않는다(C6 · N10). PR 의 코드는 실행하지 않고 git 객체로만 읽는다.
+ #   권한은 읽기만 · 비밀 값 없음. 병합 커밋 · 커밋 나누기와 상관없이 갈림점 → head 의 순 변경으로 본다(N9).
+-# 힘이 생기려면: main 규칙 세트의 필수 검사에 'independent-judge' 를 건다(사용자 GitHub 설정). 실패한 PR 은 사람이 규칙 우회로만 병합 — 기록이 남는다.
++# 힘이 생기려면: main 규칙 세트의 필수 검사에 'independent-judge' 를 건다(사용자 GitHub 설정).
++# 지키는 자리(L6)는 사람 서명 커밋으로만 바꿀 수 있다(PLAN-135 · DEC-0101) — 사람의 승인은 규칙 세트(코드 소유자 리뷰 · 지난 승인 무효)가 병합 전에 본다.
+ on:
+   pull_request_target:
+     branches: [main]
+@@ -28,8 +29,16 @@ jobs:
+         run: |
+           git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
+           test "$(git rev-parse refs/remotes/pr/head)" = "$HEAD_SHA"
+-      - name: 독립 판정 — main 의 코드로 순 변경 (도장 등록부 정책 · 지키는 자리)
++      - name: 독립 판정 — main 의 코드로 순 변경 (도장 등록부 정책 · 지키는 자리는 사람 서명 커밋으로만)
+         env:
+           BASE: ${{ github.event.pull_request.base.sha }}
+           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+-        run: node rebuild/trust-check.mjs "$BASE" "$HEAD_SHA"
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          # 서명 사실 (PLAN-135 · DEC-0094): PR 의 커밋마다 GitHub 이 검증한 서명인지 · 커미터 계정 — 조회가 실패한 커밋은 사실 없음 = 사람 아님(fail-closed)
++          SIG="$RUNNER_TEMP/signatures.json"
++          for c in $(git rev-list --no-merges "$BASE..$HEAD_SHA"); do
++            gh api "repos/$GITHUB_REPOSITORY/commits/$c" --jq "{\"$c\": {verified: .commit.verification.verified, committer: .committer.login}}" || echo "서명 사실 조회 실패: $c" >&2
++          done | jq -s 'add // {}' > "$SIG"
++          echo "서명 사실: $(jq 'length' "$SIG") 커밋 · 검증된 서명 $(jq '[.[] | select(.verified == true)] | length' "$SIG")"
++          node rebuild/trust-check.mjs "$BASE" "$HEAD_SHA" --signatures "$SIG"
+diff --git a/docs/design/supervisor.md b/docs/design/supervisor.md
+index 0cc4712..99c95ab 100644
+--- a/docs/design/supervisor.md
++++ b/docs/design/supervisor.md
+@@ -125,7 +125,7 @@
+ | ② | 그 커밋의 PR 에 대한 **GitHub 사실**: 병합한 계정(`merged_by`)이 사람 계정 · 사람 계정(PR 작성자 아님)의 APPROVED 리뷰가 **PR 머리 커밋**에 있음 — 봇 병합은 `merged_ai`, 승인 없음 · 승인 뒤 커밋 추가는 `unreviewed`, PR 없음은 `no_pr`, 사실 없음은 `no_facts` (모두 승인 아님) | PLAN-117 · RULE-0552 — 사람 계정 목록은 `rebuild/ci-zone.mjs` HUMANS 한 곳 |
+ | ③ | 사실은 **CI 가 모으고 판정도 CI 에서** — `.github/workflows/approval.yml`(main 에 push 될 때 · main 의 코드 · 읽기 권한)이 GitHub API 로 모아 `node rebuild/supervise.mjs verdicts` 로 판정, 결과는 실행 요약에. 이 push 의 PR 병합이 사람 승인이 아니면 빨개짐. 세션의 `evidence` 는 사실 없이 돌면 `no_facts` — 세션은 CI 의 판정을 본다(봇 신원의 세션 도구는 사실을 모을 자리가 아님) | PLAN-117 (워크플로는 L6 — 승인 묶음) |
+ | ④ | 실행 환경 밖의 겹 — CI 가 구역 밖 변경을 거부 · 선언 없는 커밋은 사람 서명일 때만 · GitHub main 보호(승인 1 · 코드 소유자 리뷰 · 필수 검사) · AI 의 병합 도구 막음(Claude Code 설정) | PLAN-113 · 114 · DEC-0094 · DEC-0098 |
+-| ⑤ (나중) | 높은 위험 변경(권한 · 판정 기준 · 탐지기 보호)은 사람 서명 커밋 + 코드 소유자 승인으로 우회 없이 | PLAN-135 |
++| ⑤ | 지키는 자리(L6 · 판정 코드의 의존 닫힘 · `.github/**` 처럼 폴더 전부)는 **사람 서명 커밋**으로만 바뀐다 — 독립 판정이 커밋마다 서명 사실을 본다(RULE-0553). 사람의 승인은 GitHub 규칙 세트(코드 소유자 리뷰 · 지난 승인 무효)가 병합 전에 — 그래서 L6 PR 도 우회 없이 승인 + 병합 | PLAN-135 · DEC-0101 |
+ 
+ 승인으로 **치지 않는 것**: accept 도장의 `by: human` (RP1) · `BIODB_ROLE` · MCP 역할 · AI 가 쓴 결정 기록의 문장 · 하위 에이전트의 검토 · 영수증의 병합 호출 시간 창(보조 표시로만) · 세션이 GitHub 도구로 읽어 온 사실.
+ 
+diff --git a/docs/textbook/storage-map.json b/docs/textbook/storage-map.json
+index 890624f..8af07c8 100644
+--- a/docs/textbook/storage-map.json
++++ b/docs/textbook/storage-map.json
+@@ -2380,6 +2380,32 @@
+       "readers": "GitHub Actions",
+       "interpret": "독립 판정 워크플로 (DEC-0088 Q2 · DEC-0089) — pull_request_target 이라 워크플로 · 판정 코드 · 의존 파일이 모두 main 의 것. PR 은 git 객체로만 가져와 rebuild/trust-check.mjs 로 순 변경을 판정(실행하지 않음 · 권한 읽기만 · 비밀 값 없음). main 규칙의 필수 검사로 걸어야 힘이 있다(사용자 GitHub 설정)"
+     },
++    {
++      "class": "management",
++      "area": "guard:gate",
++      "level": "L6",
++      "write_keys": [
++        "human"
++      ],
++      "path": ".github/**",
++      "format": "GitHub 설정 · 워크플로 (자리 전부)",
++      "writer": "사람",
++      "readers": "GitHub · rebuild/trust-check.mjs",
++      "interpret": "L6 폴더 전부 (PLAN-135) — 독립 판정이 파일 목록에 아직 없는 새 파일(PR #27 의 approval.yml)도 지키는 자리로 잡게. 사람 서명 커밋으로만 바뀐다"
++    },
++    {
++      "class": "management",
++      "area": "guard:gate",
++      "level": "L6",
++      "write_keys": [
++        "human"
++      ],
++      "path": ".claude/hooks/**",
++      "format": "Claude Code 훅 대본 (지금은 없음)",
++      "writer": "사람",
++      "readers": "Claude Code · rebuild/trust-check.mjs",
++      "interpret": "훅을 끄거나 바꾸는 자리 (DEC-0095) — 생기면 독립 판정이 지키는 자리로 본다"
++    },
+     {
+       "class": "management",
+       "area": "guard:gate",
+diff --git a/rebuild/rules/changes.jsonl b/rebuild/rules/changes.jsonl
+index 3d2ad4c..a475c44 100644
+--- a/rebuild/rules/changes.jsonl
++++ b/rebuild/rules/changes.jsonl
+@@ -399,3 +399,6 @@
+ {"seq": 399, "at": "2026-11-24", "why": "PLAN-117 — 감독 장부의 사람 승인을 영수증 시간 창 추정에서 GitHub 사실로 (DEC-0090 봇 신원 분리 뒤)", "file": "rules", "op": "add", "key": "RULE-0552", "before": null, "after": {"id": "RULE-0552", "text": "감독 장부의 승인(approved)은 GitHub 사실로만 — 승인 대상 바이트가 처음 나타난 main 커밋의 PR 에서 병합한 계정(merged_by)이 사람 계정이고, 사람 계정(PR 작성자 아님)의 APPROVED 리뷰가 PR 머리 커밋(head)에 있어야 한다. 봇 병합은 merged_ai · 사람 승인 없는 병합 · 승인 뒤 커밋 추가는 unreviewed · PR 없는 커밋은 no_pr · 사실이 없으면 no_facts — 모두 승인 아님(fail-closed). 사실은 CI(main 코드 · 읽기 권한)가 모으고 판정도 CI 에서(workflow approval) — 영수증의 병합 호출 시간 창은 보조 표시로만", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "judicial/supervise_approval.js judgeFacts · judge · rebuild/supervise.mjs evidence · verdicts · hits · tests/supervise_approval.test.mjs ② ⑥ ⑦", "from_code": "2026-11-24 PLAN-117 (main 의 PLAN-117 설계 · DEC-0093 ⑤ · DEC-0094 와 같은 길) — PR #26 의 실제 사실(봇이 엶 · Duckiteat 가 머리 111dead 승인 · Duckiteat 병합)로 approved 확인", "enforce": "machine"}, "sha": "a7cdb5dd313951318948b4ce0f3beb10ccbf92b07c2b5c7b01f22007a84a72e8"}
+ {"seq": 400, "at": "2026-11-24", "why": "PLAN-117 — 감독 장부의 사람 승인을 영수증 시간 창 추정에서 GitHub 사실로 (DEC-0090 봇 신원 분리 뒤)", "file": "links", "op": "add", "key": "RULE-0552|because|code:judicial/supervise_approval.js", "before": null, "after": {"from": "RULE-0552", "rel": "because", "to": "code:judicial/supervise_approval.js", "by": "judged", "note": "병합한 계정을 보지 않으면 봇이 병합한 PR 도 승인으로 셈"}, "sha": "d1103be4e7870286d63dd64ffd3d165c0b79418fd39ada7301b6760902e74337"}
+ {"seq": 401, "at": "2026-11-24", "why": "PLAN-117 — 감독 장부의 사람 승인을 영수증 시간 창 추정에서 GitHub 사실로 (DEC-0090 봇 신원 분리 뒤)", "file": "enforcement", "op": "add", "key": "RULE-0552", "before": null, "after": {"rule": "RULE-0552", "op": "replace", "file": "judicial/supervise_approval.js", "find": "if (!H.has(f.merged_by)) return", "repl": "if (false) return", "tests": ["tests/supervise_approval.test.mjs"], "note": "병합한 계정을 보지 않으면 봇이 병합한 PR 도 승인으로 셈", "result": "caught", "at": "2026-11-24", "red": "② 판정 (PLAN-117 끝나는 조건): 사실 파일이 없으면 승인 아님 · 봇 병합 → merged_ai · 사람 승인 없이 사람 병합 → unreviewed · 승인 뒤 커밋 추가 → 승인 아님 · 사람 승인 + 사람 병합 + 지문 일치 → approved"}, "sha": "aa2a934032764d82779241265f94d31bd8460663fbc6caa9b9cad9d00f451301"}
++{"seq": 402, "at": "2026-11-25", "why": "PLAN-135 · DEC-0098 · DEC-0101 — L6 PR 을 우회 없이: 지키는 자리는 사람 서명 커밋으로만", "file": "rules", "op": "add", "key": "RULE-0553", "before": null, "after": {"id": "RULE-0553", "text": "독립 판정(trust-check)에서 지키는 자리(저장 지도 L6 — 폴더 글롭으로 새 파일 포함 · 판정 코드의 의존 닫힘) 변경은 그 자리를 바꾼 커밋이 모두 사람 서명 커밋(GitHub 이 검증한 서명 + 커미터가 사람 계정 — DEC-0094 와 같은 판정)일 때만 통과. 병합 커밋이 부모 어디에도 없던 내용을 그 자리에 넣으면 실패 · 바꾼 커밋 없이 순 변경이 있으면 실패 · 서명 사실이 없으면 사람 아님(fail-closed). 사람의 승인은 GitHub 규칙 세트(코드 소유자 리뷰 · 지난 승인 무효)가 병합 전에 — 이 판정은 리뷰를 보지 않는다(리뷰 이벤트는 main 의 코드로 돌 수 없음)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/trust-check.mjs signedPaths · judge · trustCheck · .github/workflows/trust.yml 서명 사실 · tests/trust_check.test.mjs", "from_code": "2026-11-25 PLAN-135 (DEC-0098 조건 셋 · DEC-0101 ② 는 규칙 세트로) — PR #26 · #27 이 우회로만 병합되던 것 · PR #27 의 새 파일 구멍(approval.yml 이 지키는 자리로 안 잡힘)", "enforce": "machine"}, "sha": "2c4d15dd69cb2c13e23af9b2f1c2718d92388d308276078a01a85e5367914d2c"}
++{"seq": 403, "at": "2026-11-25", "why": "PLAN-135 · DEC-0098 · DEC-0101 — L6 PR 을 우회 없이: 지키는 자리는 사람 서명 커밋으로만", "file": "links", "op": "add", "key": "RULE-0553|because|code:rebuild/trust-check.mjs", "before": null, "after": {"from": "RULE-0553", "rel": "because", "to": "code:rebuild/trust-check.mjs", "by": "judged", "note": "서명 검사를 끄면 봇 커밋의 지키는 자리 변경이 독립 판정을 지남"}, "sha": "4496b25fc4ec6993f97eb6b851d8f1654dee02cde7f4a7f4993db032f8a63f6c"}
++{"seq": 404, "at": "2026-11-25", "why": "PLAN-135 · DEC-0098 · DEC-0101 — L6 PR 을 우회 없이: 지키는 자리는 사람 서명 커밋으로만", "file": "enforcement", "op": "add", "key": "RULE-0553", "before": null, "after": {"rule": "RULE-0553", "op": "replace", "file": "rebuild/trust-check.mjs", "find": "for (const c of cs) if (!signed(c)) unsigned.push", "repl": "for (const c of cs) if (false) unsigned.push", "tests": ["tests/trust_check.test.mjs"], "note": "서명 검사를 끄면 봇 커밋의 지키는 자리 변경이 독립 판정을 지남", "result": "caught", "at": "2026-11-25", "red": "보통 변경은 통과 · 판정 코드 의존 파일(N10) 변경은 사람 확인"}, "sha": "dfc8a9849152ac3f0e4baf1067fbc485067cf220068ea0f602c320b037089e95"}
+diff --git a/rebuild/rules/enforcement.jsonl b/rebuild/rules/enforcement.jsonl
+index f640e9a..ee664c4 100644
+--- a/rebuild/rules/enforcement.jsonl
++++ b/rebuild/rules/enforcement.jsonl
+@@ -338,3 +338,4 @@
+ {"rule": "RULE-0551", "op": "replace", "file": "rebuild/ci-zone.mjs", "find": "if (human) return", "repl": "if (true) return", "tests": ["tests/ci_zone.test.mjs"], "note": "서명 사실을 보지 않고 선언 없는 커밋을 모두 사람으로 보면 N8 커밋이 CI 를 지남", "result": "caught", "at": "2026-11-24", "red": "판정 (순수): 선언한 모드의 구역 안 · 밖 · 선언 없음(사람 서명이면 알리기만 · 아니면 AI 로 봄, DEC-0094) · 영수증 자체는 판정 밖"}
+ {"rule": "RULE-0550", "op": "replace", "file": "rebuild/gate.mjs", "find": "if (event === 'pre' && !reads) {", "repl": "if (false && event === 'pre' && !reads) {", "tests": ["tests/gate.test.mjs"], "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과", "result": "caught", "at": "2026-11-24", "red": "㉓ 문지기 fail-closed (RULE-0550 · N11 · PLAN-117): 문지기가 예외로 판단하지 못하면 쓰는 도구는 막고 읽는 도구만 통과"}
+ {"rule": "RULE-0552", "op": "replace", "file": "judicial/supervise_approval.js", "find": "if (!H.has(f.merged_by)) return", "repl": "if (false) return", "tests": ["tests/supervise_approval.test.mjs"], "note": "병합한 계정을 보지 않으면 봇이 병합한 PR 도 승인으로 셈", "result": "caught", "at": "2026-11-24", "red": "② 판정 (PLAN-117 끝나는 조건): 사실 파일이 없으면 승인 아님 · 봇 병합 → merged_ai · 사람 승인 없이 사람 병합 → unreviewed · 승인 뒤 커밋 추가 → 승인 아님 · 사람 승인 + 사람 병합 + 지문 일치 → approved"}
++{"rule": "RULE-0553", "op": "replace", "file": "rebuild/trust-check.mjs", "find": "for (const c of cs) if (!signed(c)) unsigned.push", "repl": "for (const c of cs) if (false) unsigned.push", "tests": ["tests/trust_check.test.mjs"], "note": "서명 검사를 끄면 봇 커밋의 지키는 자리 변경이 독립 판정을 지남", "result": "caught", "at": "2026-11-25", "red": "보통 변경은 통과 · 판정 코드 의존 파일(N10) 변경은 사람 확인"}
+diff --git a/rebuild/rules/links.jsonl b/rebuild/rules/links.jsonl
+index c33db82..3c07723 100644
+--- a/rebuild/rules/links.jsonl
++++ b/rebuild/rules/links.jsonl
+@@ -572,3 +572,4 @@
+ {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "선언 없는 커밋을 모두 사람으로 보면 영수증을 빼고 만든 AI 커밋이 구역 점검을 지남"}
+ {"from": "RULE-0550", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과"}
+ {"from": "RULE-0552", "rel": "because", "to": "code:judicial/supervise_approval.js", "by": "judged", "note": "병합한 계정을 보지 않으면 봇이 병합한 PR 도 승인으로 셈"}
++{"from": "RULE-0553", "rel": "because", "to": "code:rebuild/trust-check.mjs", "by": "judged", "note": "서명 검사를 끄면 봇 커밋의 지키는 자리 변경이 독립 판정을 지남"}
+diff --git a/rebuild/rules/rules.jsonl b/rebuild/rules/rules.jsonl
+index d730e4f..7c4b37a 100644
+--- a/rebuild/rules/rules.jsonl
++++ b/rebuild/rules/rules.jsonl
+@@ -550,3 +550,4 @@
+ {"id": "RULE-0551", "text": "CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일(영수증 밖)이 있으면 위반. 사람 서명 = GitHub 이 검증한 서명(verification.verified)이고 커미터 계정이 사람 계정(rebuild/ci-zone.mjs HUMANS · .github/CODEOWNERS 와 같은 목록). 작성자 이메일 · 웹 흐름 서명 · push 계정은 사람의 증거가 아니고, 서명 사실이 없으면 사람이 아니다(fail-closed). main 에 이미 든 커밋은 다시 판정하지 않는다(main 으로의 push 는 그대로). PLAN-114 의 '선언 없음 = 사람의 커밋' 을 버림 (DEC-0094 · DEC-0097)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/ci-zone.mjs judgeCommit · humanSigned · zoneCheck · .github/workflows/check.yml 서명 사실 · tests/ci_zone.test.mjs", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N8 (따옴표 속 커밋 = 선언 없음) · DEC-0094(다른 develop 세션, main PR #25 의 묶음 4 — 처음 번호 RULE-0550) · DEC-0097 섞기: 처음 이 브랜치에서 push 계정으로 판정하던 RULE-0551 을 서명 판정으로 바꿈 — push 계정 판정은 사람이 마지막에 push 하면 봇의 선언 없는 커밋도 통과하는 구멍", "enforce": "machine"}
+ {"id": "RULE-0550", "text": "문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도구 포함)는 막고, 읽는 도구(Read · Grep · Glob · 읽기 전용 MCP 등)만 통과한다. 영수증 한 줄을 망가뜨려 문지기를 끄는 길(N11)을 막는다. 도구 뒤 · 끝 · 시작 단계는 막을 수 없어 알리기만", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/gate.mjs failClosed · tests/gate.test.mjs ㉓", "from_code": "2026-11-23 공격 경로 매트릭스 독립 재검토 N11 (live 영수증에 깨진 줄 하나로 재현) · PLAN-117", "enforce": "machine"}
+ {"id": "RULE-0552", "text": "감독 장부의 승인(approved)은 GitHub 사실로만 — 승인 대상 바이트가 처음 나타난 main 커밋의 PR 에서 병합한 계정(merged_by)이 사람 계정이고, 사람 계정(PR 작성자 아님)의 APPROVED 리뷰가 PR 머리 커밋(head)에 있어야 한다. 봇 병합은 merged_ai · 사람 승인 없는 병합 · 승인 뒤 커밋 추가는 unreviewed · PR 없는 커밋은 no_pr · 사실이 없으면 no_facts — 모두 승인 아님(fail-closed). 사실은 CI(main 코드 · 읽기 권한)가 모으고 판정도 CI 에서(workflow approval) — 영수증의 병합 호출 시간 창은 보조 표시로만", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "judicial/supervise_approval.js judgeFacts · judge · rebuild/supervise.mjs evidence · verdicts · hits · tests/supervise_approval.test.mjs ② ⑥ ⑦", "from_code": "2026-11-24 PLAN-117 (main 의 PLAN-117 설계 · DEC-0093 ⑤ · DEC-0094 와 같은 길) — PR #26 의 실제 사실(봇이 엶 · Duckiteat 가 머리 111dead 승인 · Duckiteat 병합)로 approved 확인", "enforce": "machine"}
++{"id": "RULE-0553", "text": "독립 판정(trust-check)에서 지키는 자리(저장 지도 L6 — 폴더 글롭으로 새 파일 포함 · 판정 코드의 의존 닫힘) 변경은 그 자리를 바꾼 커밋이 모두 사람 서명 커밋(GitHub 이 검증한 서명 + 커미터가 사람 계정 — DEC-0094 와 같은 판정)일 때만 통과. 병합 커밋이 부모 어디에도 없던 내용을 그 자리에 넣으면 실패 · 바꾼 커밋 없이 순 변경이 있으면 실패 · 서명 사실이 없으면 사람 아님(fail-closed). 사람의 승인은 GitHub 규칙 세트(코드 소유자 리뷰 · 지난 승인 무효)가 병합 전에 — 이 판정은 리뷰를 보지 않는다(리뷰 이벤트는 main 의 코드로 돌 수 없음)", "modes": ["author", "baseline", "develop", "field", "inspect"], "where": "rebuild/trust-check.mjs signedPaths · judge · trustCheck · .github/workflows/trust.yml 서명 사실 · tests/trust_check.test.mjs", "from_code": "2026-11-25 PLAN-135 (DEC-0098 조건 셋 · DEC-0101 ② 는 규칙 세트로) — PR #26 · #27 이 우회로만 병합되던 것 · PR #27 의 새 파일 구멍(approval.yml 이 지키는 자리로 안 잡힘)", "enforce": "machine"}
+diff --git a/rebuild/trust-check.mjs b/rebuild/trust-check.mjs
+index dc6b53c..2e71b35 100644
+--- a/rebuild/trust-check.mjs
++++ b/rebuild/trust-check.mjs
+@@ -6,9 +6,11 @@
+ //   pull_request_target: 워크플로 · 이 코드 · 의존 파일 모두 main 의 것, PR 은 git 객체로만 읽고 실행하지 않음).
+ // 판정 둘 — 커밋 하나하나가 아니라 갈림점 → head 의 순 변경으로 본다(병합 커밋 · 커밋 나누기와 상관없음):
+ //   ① 도장 등록부: 승인 도장 지우기 · 바꾸기 · 승인자 밖 새 승인 도장(judicial/attestation.js registryPolicy — 선언 없는 커밋과 같은 정책, RULE-0548)
+-//   ② 지키는 자리: 저장 지도의 L6 자리 + 판정 코드의 의존 닫힘(require · import 를 따라감 — 목록을 손으로 적지 않음, N10)을 바꾼 PR 은
+-//      사람 확인 필요로 실패한다. 사람은 GitHub 의 규칙 우회(기록이 남음)로만 병합 — 클릭이 아니라 기록된 예외.
+-// 한계: 사람과 AI 가 같은 GitHub 계정이면 ② 의 우회도 그 계정이 할 수 있다 — 신원 분리(DEC-0088 Q1) 뒤에 완성된다.
++//   ② 지키는 자리: 저장 지도의 L6 자리(글롭 — .github/** 처럼 폴더 전부, 새 파일도) + 판정 코드의 의존 닫힘(require · import 를 따라감 — 목록을 손으로 적지 않음, N10)은
++//      사람 서명 커밋으로만 바꿀 수 있다(PLAN-135 · DEC-0101 · RULE-0553): 그 자리를 바꾼 커밋이 모두 사람 서명(GitHub 이 검증한 서명 + 커미터가 사람 계정 —
++//      서명 사실은 워크플로가 GitHub API 로 모아 --signatures 로) · 병합 커밋이 부모에 없던 내용을 넣지 않음. 사실이 없으면 사람이 아니다(fail-closed).
++//      사람의 승인(머리 커밋에 묶인 코드 소유자 리뷰)은 이 판정이 보지 않는다 — 리뷰 이벤트는 main 의 코드로 돌 수 없어 GitHub 규칙 세트(코드 소유자 리뷰 ·
++//      지난 승인 무효)가 병합 전에, workflow approval 이 병합 뒤에 본다.
+ // 종료 코드: 0 = 통과 · 1 = 등록부 정책 위반 또는 지키는 자리 변경(사람 확인) · 2 = 판정 못 함
+ import { execFileSync } from 'node:child_process';
+ import { readFileSync } from 'node:fs';
+@@ -16,9 +18,11 @@ import { join, dirname, normalize } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ import { createRequire } from 'node:module';
+ 
++import { HUMANS, humanSigned } from './ci-zone.mjs'; // 사람 서명 = GitHub 이 검증한 서명 + 커미터가 사람 계정 (DEC-0094 — 판정 하나를 함께 씀)
+ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+ const ATT = createRequire(import.meta.url)('../judicial/attestation.js');
+ const REGISTRY = 'attestations/registry.json', MAP = 'docs/textbook/storage-map.json';
++const SIGN_RULE = 'RULE-0553'; // 지키는 자리는 사람 서명 커밋으로만 (PLAN-135)
+ // 판정 코드의 뿌리 — 여기서 require · import 를 따라간 닫힘 전체를 지킨다
+ export const JUDGE_ROOTS = ['rebuild/trust-check.mjs', 'rebuild/ci-zone.mjs', 'rebuild/gate.mjs', 'rebuild/bundle.mjs',
+   'judicial/attestation.js', 'judicial/acceptance.js', 'judicial/transition_audit.js', 'judicial/approval.js', 'judicial/authority.js'];
+@@ -53,14 +57,32 @@ export function guardedOf(map, deps) {
+   return (p) => exact.has(p) || globs.some((g) => g.test(p));
+ }
+ 
+-// 판정 (순수): reg = { before, after } (등록부 글, 없으면 null) · changed = 순 변경 경로 · isGuarded
+-export function judge({ reg, changed, isGuarded }) {
++// 지키는 자리를 바꾼 길 (순수 — PLAN-135 · DEC-0098 · DEC-0101): 사람 서명 커밋으로만 바꿀 수 있다.
++//   touches = { 경로: [그 경로를 바꾼 병합 아닌 커밋 sha …] } · merges = [{ c, paths: { 경로: { self, parents: [blob…] } } }] · signed(sha) → 사람 서명이면 true
++//   ① 그 경로를 바꾼 커밋이 모두 사람 서명 ② 병합 커밋 속에서 새로 생긴 내용이 없음(병합 커밋의 그 경로 내용 = 부모 중 하나 — 몰래 넣은 병합 막기)
++//   ③ 바꾼 커밋이 하나도 없는데 순 변경이 있으면(설명되지 않는 변경) 실패. 사람의 승인(머리 커밋에 묶인 코드 소유자 리뷰)은 GitHub 규칙 세트가 병합 전에,
++//   병합 뒤에는 workflow approval 이 사실로 본다 — 이 판정은 승인 리뷰를 보지 않는다(리뷰 이벤트는 main 의 코드로 돌 수 없어서, DEC-0101)
++export function signedPaths({ guarded, touches, merges, signed }) {
++  const unsigned = [], evil = [], unexplained = [];
++  for (const p of guarded) {
++    const cs = (touches && touches[p]) || [];
++    if (!cs.length) unexplained.push(p);
++    for (const c of cs) if (!signed(c)) unsigned.push({ path: p, commit: c });
++    for (const m of merges || []) { const x = m.paths && m.paths[p]; if (x && !x.parents.includes(x.self)) evil.push({ path: p, commit: m.c }); }
++  }
++  return { ok: !unsigned.length && !evil.length && !unexplained.length, unsigned, evil, unexplained };
++}
++
++// 판정 (순수): reg = { before, after } (등록부 글, 없으면 null) · changed = 순 변경 경로 · isGuarded · how = 지키는 자리를 바꾼 길(signedPaths 의 재료, 없으면 사람 서명 없음으로)
++export function judge({ reg, changed, isGuarded, how = null }) {
+   const stamps = reg ? ATT.registryPolicy(reg.before ? JSON.parse(reg.before) : { stamps: [] }, reg.after ? JSON.parse(reg.after) : { stamps: [] }, null) : [];
+   const guarded = changed.filter(isGuarded);
+-  return { ok: !stamps.length && !guarded.length, stamps, guarded };
++  const sp = signedPaths({ guarded, touches: how ? how.touches : {}, merges: how ? how.merges : [], signed: how ? how.signed : () => false });
++  return { ...sp, ok: !stamps.length && sp.ok, stamps, guarded }; // sp.ok 는 지키는 자리만의 것 — 등록부 정책과 함께 덮어쓴다
+ }
+ 
+-export function trustCheck(base, head, root = ROOT, trusted = ROOT) {
++// signatures = { sha: { verified, committer } } — 워크플로가 GitHub API 로 모은 서명 사실(DEC-0094 와 같은 모양). 없으면 아무 커밋도 사람 서명이 아님(fail-closed)
++export function trustCheck(base, head, root = ROOT, trusted = ROOT, signatures = {}) {
+   let mb;
+   try { mb = git(['merge-base', base, head], root).trim(); } catch { return { exit: 2, lines: [`갈림점(${base}, ${head})을 찾을 수 없음 — 전체 역사가 필요 (fetch-depth: 0)`] }; }
+   const changed = git(['diff', '--name-only', '--no-renames', mb, head], root).split('\n').filter(Boolean);
+@@ -69,17 +91,30 @@ export function trustCheck(base, head, root = ROOT, trusted = ROOT) {
+   let map = null; try { map = JSON.parse(readT(MAP)); } catch { return { exit: 2, lines: [`판정 쪽에 ${MAP} 이 없음`] }; }
+   const deps = closure(JUDGE_ROOTS, readT);
+   const reg = changed.includes(REGISTRY) ? { before: show(mb, REGISTRY, root), after: show(head, REGISTRY, root) } : null;
+-  const r = judge({ reg, changed, isGuarded: guardedOf(map, deps) });
++  const isGuarded = guardedOf(map, deps), guarded = changed.filter(isGuarded), sig = signatures || {};
++  const blob = (rev, p) => { try { return git(['rev-parse', '--verify', '-q', `${rev}:${p}`], root).trim(); } catch { return null; } };
++  const touches = Object.fromEntries(guarded.map((p) => [p, git(['log', '--format=%H', '--no-merges', `${mb}..${head}`, '--', p], root).split('\n').filter(Boolean)]));
++  const merges = guarded.length ? git(['rev-list', '--merges', `${mb}..${head}`], root).split('\n').filter(Boolean).map((c) => {
++    const ps = git(['rev-list', '--parents', '-n', '1', c], root).trim().split(' ').slice(1);
++    return { c, paths: Object.fromEntries(guarded.map((p) => [p, { self: blob(c, p), parents: ps.map((x) => blob(x, p)) }])) };
++  }) : [];
++  const r = judge({ reg, changed, isGuarded, how: { touches, merges, signed: (c) => humanSigned(sig[c]) } });
+   const lines = [`독립 판정 (main 의 코드) — 갈림점 ${mb.slice(0, 8)} → ${head.slice(0, 8)} · 순 변경 ${changed.length} 파일 · 지키는 자리 ${deps.length} 의존 + 저장 지도 L6`];
+   for (const v of r.stamps) lines.push(`✗ 도장 등록부 [${v.rule}] ${v.msg}`);
+-  if (r.guarded.length) lines.push(`✗ 지키는 자리 변경 ${r.guarded.length} — 사람 확인 필요 (GitHub 규칙 우회로만 병합, 기록이 남음): ${r.guarded.slice(0, 20).join(' · ')}${r.guarded.length > 20 ? ' …' : ''}`);
+-  if (r.ok) lines.push('통과 — 등록부 정책 위반 0 · 지키는 자리 변경 0');
++  if (r.guarded.length) lines.push(`${r.unsigned.length || r.evil.length || r.unexplained.length ? '✗' : '✓'} 지키는 자리 변경 ${r.guarded.length}: ${r.guarded.slice(0, 20).join(' · ')}${r.guarded.length > 20 ? ' …' : ''}`);
++  for (const u of r.unsigned) lines.push(`✗ [${SIGN_RULE}] ${u.path} 을 바꾼 커밋 ${u.commit.slice(0, 8)} 은 사람 서명 커밋이 아님 (검증된 서명 + 커미터 ${HUMANS.join(' · ')})`);
++  for (const e of r.evil) lines.push(`✗ [${SIGN_RULE}] 병합 커밋 ${e.commit.slice(0, 8)} 이 ${e.path} 에 부모 어디에도 없던 내용을 넣음`);
++  for (const p of r.unexplained) lines.push(`✗ [${SIGN_RULE}] ${p} 의 변경을 설명하는 커밋이 없음`);
++  if (r.ok) lines.push(r.guarded.length ? `통과 — 등록부 정책 위반 0 · 지키는 자리 변경은 모두 사람 서명 커밋 (사람의 승인은 GitHub 규칙 세트가 병합 전에)` : '통과 — 등록부 정책 위반 0 · 지키는 자리 변경 0');
+   return { exit: r.ok ? 0 : 1, lines, ...r, changed, deps };
+ }
+ 
+ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+-  const [base, head] = process.argv.slice(2);
+-  if (!base || !head) { console.error('사용: node rebuild/trust-check.mjs <base> <head>'); process.exit(2); }
++  const argv = process.argv.slice(2), si = argv.indexOf('--signatures');
++  let signatures = {};
++  if (si >= 0) { try { signatures = JSON.parse(readFileSync(argv[si + 1], 'utf8')); } catch (e) { console.error(`서명 사실 '${argv[si + 1]}' 을 읽을 수 없음: ${e.message}`); process.exit(2); } argv.splice(si, 2); }
++  const [base, head] = argv;
++  if (!base || !head) { console.error('사용: node rebuild/trust-check.mjs <base> <head> [--signatures <파일>]'); process.exit(2); }
+   // 판정 대상 저장소는 GIT_DIR(또는 지금 폴더), 판정 기준(지도 · 의존)은 이 파일이 놓인 사본
+-  const r = trustCheck(base, head, process.cwd(), ROOT); console.log(r.lines.join('\n')); process.exit(r.exit);
++  const r = trustCheck(base, head, process.cwd(), ROOT, signatures); console.log(r.lines.join('\n')); process.exit(r.exit);
+ }
+diff --git a/tests/trust_check.test.mjs b/tests/trust_check.test.mjs
+index 1731e7b..4570694 100644
+--- a/tests/trust_check.test.mjs
++++ b/tests/trust_check.test.mjs
+@@ -64,3 +64,56 @@ test('PR 이 자기 저장 지도를 낮춰도 판정 쪽(main) 지도로 본다
+     const v = run(r); assert.equal(v.exit, 1); assert.ok(v.guarded.includes('rebuild/gate.mjs'));
+   } finally { rmSync(r.dir, { recursive: true, force: true }); }
+ });
++
++// PLAN-135 · DEC-0098 · DEC-0101 · RULE-0553 — 지키는 자리는 사람 서명 커밋으로만 (사람의 승인은 GitHub 규칙 세트가)
++const human = (...cs) => Object.fromEntries(cs.map((c) => [c, { verified: true, committer: 'Duckiteat' }]));
++
++test('순수 (RULE-0553): 지키는 자리를 바꾼 커밋이 모두 사람 서명일 때만 · 병합 커밋 속 새 내용 · 설명 안 되는 변경은 실패', () => {
++  const S = (ok) => (c) => ok.includes(c);
++  assert.equal(T.signedPaths({ guarded: ['a'], touches: { a: ['c1', 'c2'] }, merges: [], signed: S(['c1', 'c2']) }).ok, true);
++  assert.deepEqual(T.signedPaths({ guarded: ['a'], touches: { a: ['c1', 'c2'] }, merges: [], signed: S(['c1']) }).unsigned, [{ path: 'a', commit: 'c2' }], '하나라도 서명 없음');
++  assert.deepEqual(T.signedPaths({ guarded: ['a'], touches: { a: ['c1'] }, merges: [{ c: 'm', paths: { a: { self: 'x', parents: ['y', 'z'] } } }], signed: S(['c1']) }).evil, [{ path: 'a', commit: 'm' }], '병합 커밋이 새 내용을 넣음');
++  assert.equal(T.signedPaths({ guarded: ['a'], touches: { a: ['c1'] }, merges: [{ c: 'm', paths: { a: { self: 'y', parents: ['y', 'z'] } } }], signed: S(['c1']) }).ok, true, '부모 하나와 같으면 정상 병합');
++  assert.deepEqual(T.signedPaths({ guarded: ['a'], touches: { a: [] }, merges: [], signed: S([]) }).unexplained, ['a']);
++  assert.equal(T.signedPaths({ guarded: [], touches: {}, merges: [], signed: S([]) }).ok, true, '지키는 자리 변경 없음');
++});
++
++test('통합 (RULE-0553): 사람 서명 커밋의 지키는 자리 변경은 통과 · 봇 서명 · 웹 흐름 · 서명 없음 · 섞임은 실패 · 서명 사실이 없으면 실패', () => {
++  const r = setup();
++  try {
++    r.put('model.js', '1\n'); const h = r.commit('사람이 판정 의존 파일을 고침');
++    const ok = T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(h));
++    assert.equal(ok.exit, 0); assert.match(ok.lines.join('\n'), /모두 사람 서명 커밋/);
++    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, { [h]: { verified: true, committer: 'daduteria' } }).exit, 1, '봇 계정의 서명');
++    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, { [h]: { verified: true, committer: 'web-flow' } }).exit, 1, 'Codespaces GPG · 웹 편집 (DEC-0100)');
++    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, { [h]: { verified: false, committer: 'Duckiteat' } }).exit, 1, '검증 안 된 서명');
++    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT).exit, 1, '서명 사실 없음 = 사람 아님');
++    r.put('model.js', '2\n'); const b = r.commit('봇이 이어서 고침');
++    const mix = T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(h));
++    assert.equal(mix.exit, 1); assert.match(mix.lines.join('\n'), new RegExp(`\\[RULE-0553\\] model\\.js 을 바꾼 커밋 ${b.slice(0, 8)}`));
++  } finally { rmSync(r.dir, { recursive: true, force: true }); }
++});
++
++test('통합 (RULE-0553): 병합 커밋 속에 몰래 넣은 지키는 자리 변경은 실패 · 정상 병합은 통과', () => {
++  const r = setup();
++  try {
++    r.g('checkout', '-qb', 'a'); r.put('model.js', 'A\n'); const a = r.commit('사람 서명 A');
++    r.g('checkout', '-qb', 'b', r.base); r.put('engine/x.js', 'B\n'); r.commit('보통 B');
++    r.g('merge', '-q', '--no-ff', '-m', '정상 병합', 'a');
++    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(a)).exit, 0, '병합 커밋의 model.js = 부모 a 의 것');
++    r.g('checkout', '-qb', 'c', r.base); r.put('engine/x.js', 'C\n'); r.commit('보통 C');
++    r.g('merge', '-q', '--no-ff', '--no-commit', 'a'); r.put('model.js', 'A\n// 병합하며 몰래 한 줄\n'); r.commit('몰래 넣은 병합');
++    const v = T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(a));
++    assert.equal(v.exit, 1); assert.match(v.lines.join('\n'), /병합 커밋 [0-9a-f]{8} 이 model\.js 에 부모 어디에도 없던 내용을 넣음/);
++  } finally { rmSync(r.dir, { recursive: true, force: true }); }
++});
++
++test('통합 (PLAN-135 새 파일 구멍): L6 폴더 아래 새 파일(.github/**)도 지키는 자리 — PR #27 의 approval.yml 처럼', () => {
++  const r = setup();
++  try {
++    r.put('.github/workflows/new.yml', 'name: x\n'); const c = r.commit('새 워크플로');
++    const v = T.trustCheck(r.base, 'HEAD', r.dir, ROOT);
++    assert.equal(v.exit, 1); assert.deepEqual(v.guarded, ['.github/workflows/new.yml']);
++    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(c)).exit, 0, '사람 서명이면 통과');
++  } finally { rmSync(r.dir, { recursive: true, force: true }); }
++});
