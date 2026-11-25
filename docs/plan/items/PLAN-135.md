@@ -13,6 +13,7 @@
 - `2026-11-25` 커밋 전 기록: 2026-11-25 선행 DEC-0100: 사람 서명은 사용자 자신의 SSH 서명 키로(Codespaces GPG 는 커미터가 web-flow 라 DEC-0094 판정을 통과 못 함 — PR #27 의 c298b23). 절차서 docs/reports/2026-11-25-human-signing-key-setup.md — 사용자 설정 뒤 다음 사람 커밋의 커미터 · Verified 로 확인
 - `2026-11-25` 커밋 전 기록: · 2026-11-25 찾은 것(RULE-0262): PR #27 에서 independent-judge 가 통과 — 새 파일 .github/workflows/approval.yml 은 main 의 저장 지도 L6 에 아직 없어 지키는 자리로 잡히지 않음. L6 폴더(.github/** 등) 아래 새 파일을 못 잡는 구멍 — 지키는 자리를 저장 지도의 파일 목록이 아니라 모드표 except 의 글롭(.github/** · 문지기 셋 · 판정 코드)에서도 계산해야. 병합에는 코드 소유자 리뷰가 여전히 필요(CODEOWNERS /.github/)라 지금 열린 길은 아님. 또 PR #27 의 rules 실패: c298b23 은 Codespaces GPG 서명(검증됨)이지만 커미터 web-flow → DEC-0100(사용자 SSH 서명 키)
 - `2026-11-25` 커밋 전 기록: · 2026-11-25 승인 묶음 workspace/PLAN-135-bundle.patch (지문 2ea71e6a6cd2… · 10 파일 · 거부 0): trust-check signedPaths · trust.yml 서명 사실 · 저장 지도 글롭 · CODEOWNERS /.claude/hooks/ · RULE-0553(변이 caught) · 시험 trust_check 넷 · 감독 규격 §4.3 ⑤. 사본 전체 572 통과. 만들며 잡은 것: judge 에서 ...sp 가 ok 를 덮어써 등록부 정책 실패가 사라지던 것 — 기존 N9 시험이 잡음. 이 PR 이 마지막 우회(main 의 판정 코드가 옛것) — 병합 뒤 우회 목록을 비우고 다음 서명된 L6 PR 이 녹색이면 끝
+- `2026-11-25` 커밋 전 기록: · 2026-11-25 PR #28 병합 fb53c5f(Duckiteat · 승인 리뷰 + 마지막 우회 · Merge commit) — 사람 커밋 7da772e 의 L6 파일이 묶음 2ea71e6a6c 와 바이트 동일. CI: rules ✗(7da772e 커미터 GitHub · PGP — 사용자 SSH 서명 키가 아직 안 걸림, DEC-0100 점검 중) · independent-judge ✗(main 의 옛 판정 코드 — 예상). 남은 끝나는 조건: 사용자가 규칙 세트 우회 목록을 비움 · 서명 설정 고침(SSH 서명 · 커미터 Duckiteat) · 다음 서명된 L6 PR 이 우회 없이 independent-judge · rules 녹색으로 병합
 
 ## 걸어온 길
 
@@ -21,6 +22,7 @@
 - `2026-11-25` 커밋 전 기록 결과 덧붙음 — PR #27 병합 · approval 워크플로 첫 실행 approved
 - `2026-11-25` 커밋 전 기록 상태 ☐ → ◐ 2026-11-25 — 사용자 결정 DEC-0101 · PLAN-135 묶음
 - `2026-11-25` 커밋 전 기록 결과 덧붙음 — 사용자 결정 DEC-0101 · PLAN-135 묶음
+- `2026-11-25` 커밋 전 기록 결과 덧붙음 — PR #28 병합 — 마지막 우회
 
 ## 닿는 결정
 

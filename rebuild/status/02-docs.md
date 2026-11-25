@@ -296,7 +296,7 @@
 | `docs/plan/items/PLAN-132.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-133.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-134.md` | 1.4 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-135.md` | 5.2 | 30 |  | 생성물 |
+| `docs/plan/items/PLAN-135.md` | 5.9 | 32 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
