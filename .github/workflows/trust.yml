@@ -3,7 +3,8 @@ name: trust
 # pull_request_target: 이 워크플로 · 판정 코드(rebuild/trust-check.mjs) · 그 의존 파일은 모두 main(기준 브랜치)의 것이다.
 #   PR 이 이 파일 · 판정 코드 · model.js 를 바꿔도 이 검사에는 닿지 않는다(C6 · N10). PR 의 코드는 실행하지 않고 git 객체로만 읽는다.
 #   권한은 읽기만 · 비밀 값 없음. 병합 커밋 · 커밋 나누기와 상관없이 갈림점 → head 의 순 변경으로 본다(N9).
-# 힘이 생기려면: main 규칙 세트의 필수 검사에 'independent-judge' 를 건다(사용자 GitHub 설정). 실패한 PR 은 사람이 규칙 우회로만 병합 — 기록이 남는다.
+# 힘이 생기려면: main 규칙 세트의 필수 검사에 'independent-judge' 를 건다(사용자 GitHub 설정).
+# 지키는 자리(L6)는 사람 서명 커밋으로만 바꿀 수 있다(PLAN-135 · DEC-0101) — 사람의 승인은 규칙 세트(코드 소유자 리뷰 · 지난 승인 무효)가 병합 전에 본다.
 on:
   pull_request_target:
     branches: [main]
@@ -28,8 +29,16 @@ jobs:
         run: |
           git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
           test "$(git rev-parse refs/remotes/pr/head)" = "$HEAD_SHA"
-      - name: 독립 판정 — main 의 코드로 순 변경 (도장 등록부 정책 · 지키는 자리)
+      - name: 독립 판정 — main 의 코드로 순 변경 (도장 등록부 정책 · 지키는 자리는 사람 서명 커밋으로만)
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: node rebuild/trust-check.mjs "$BASE" "$HEAD_SHA"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # 서명 사실 (PLAN-135 · DEC-0094): PR 의 커밋마다 GitHub 이 검증한 서명인지 · 커미터 계정 — 조회가 실패한 커밋은 사실 없음 = 사람 아님(fail-closed)
+          SIG="$RUNNER_TEMP/signatures.json"
+          for c in $(git rev-list --no-merges "$BASE..$HEAD_SHA"); do
+            gh api "repos/$GITHUB_REPOSITORY/commits/$c" --jq "{\"$c\": {verified: .commit.verification.verified, committer: .committer.login}}" || echo "서명 사실 조회 실패: $c" >&2
+          done | jq -s 'add // {}' > "$SIG"
+          echo "서명 사실: $(jq 'length' "$SIG") 커밋 · 검증된 서명 $(jq '[.[] | select(.verified == true)] | length' "$SIG")"
+          node rebuild/trust-check.mjs "$BASE" "$HEAD_SHA" --signatures "$SIG"

@@ -64,3 +64,56 @@ test('PR 이 자기 저장 지도를 낮춰도 판정 쪽(main) 지도로 본다
     const v = run(r); assert.equal(v.exit, 1); assert.ok(v.guarded.includes('rebuild/gate.mjs'));
   } finally { rmSync(r.dir, { recursive: true, force: true }); }
 });
+
+// PLAN-135 · DEC-0098 · DEC-0101 · RULE-0553 — 지키는 자리는 사람 서명 커밋으로만 (사람의 승인은 GitHub 규칙 세트가)
+const human = (...cs) => Object.fromEntries(cs.map((c) => [c, { verified: true, committer: 'Duckiteat' }]));
+
+test('순수 (RULE-0553): 지키는 자리를 바꾼 커밋이 모두 사람 서명일 때만 · 병합 커밋 속 새 내용 · 설명 안 되는 변경은 실패', () => {
+  const S = (ok) => (c) => ok.includes(c);
+  assert.equal(T.signedPaths({ guarded: ['a'], touches: { a: ['c1', 'c2'] }, merges: [], signed: S(['c1', 'c2']) }).ok, true);
+  assert.deepEqual(T.signedPaths({ guarded: ['a'], touches: { a: ['c1', 'c2'] }, merges: [], signed: S(['c1']) }).unsigned, [{ path: 'a', commit: 'c2' }], '하나라도 서명 없음');
+  assert.deepEqual(T.signedPaths({ guarded: ['a'], touches: { a: ['c1'] }, merges: [{ c: 'm', paths: { a: { self: 'x', parents: ['y', 'z'] } } }], signed: S(['c1']) }).evil, [{ path: 'a', commit: 'm' }], '병합 커밋이 새 내용을 넣음');
+  assert.equal(T.signedPaths({ guarded: ['a'], touches: { a: ['c1'] }, merges: [{ c: 'm', paths: { a: { self: 'y', parents: ['y', 'z'] } } }], signed: S(['c1']) }).ok, true, '부모 하나와 같으면 정상 병합');
+  assert.deepEqual(T.signedPaths({ guarded: ['a'], touches: { a: [] }, merges: [], signed: S([]) }).unexplained, ['a']);
+  assert.equal(T.signedPaths({ guarded: [], touches: {}, merges: [], signed: S([]) }).ok, true, '지키는 자리 변경 없음');
+});
+
+test('통합 (RULE-0553): 사람 서명 커밋의 지키는 자리 변경은 통과 · 봇 서명 · 웹 흐름 · 서명 없음 · 섞임은 실패 · 서명 사실이 없으면 실패', () => {
+  const r = setup();
+  try {
+    r.put('model.js', '1\n'); const h = r.commit('사람이 판정 의존 파일을 고침');
+    const ok = T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(h));
+    assert.equal(ok.exit, 0); assert.match(ok.lines.join('\n'), /모두 사람 서명 커밋/);
+    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, { [h]: { verified: true, committer: 'daduteria' } }).exit, 1, '봇 계정의 서명');
+    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, { [h]: { verified: true, committer: 'web-flow' } }).exit, 1, 'Codespaces GPG · 웹 편집 (DEC-0100)');
+    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, { [h]: { verified: false, committer: 'Duckiteat' } }).exit, 1, '검증 안 된 서명');
+    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT).exit, 1, '서명 사실 없음 = 사람 아님');
+    r.put('model.js', '2\n'); const b = r.commit('봇이 이어서 고침');
+    const mix = T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(h));
+    assert.equal(mix.exit, 1); assert.match(mix.lines.join('\n'), new RegExp(`\\[RULE-0553\\] model\\.js 을 바꾼 커밋 ${b.slice(0, 8)}`));
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});
+
+test('통합 (RULE-0553): 병합 커밋 속에 몰래 넣은 지키는 자리 변경은 실패 · 정상 병합은 통과', () => {
+  const r = setup();
+  try {
+    r.g('checkout', '-qb', 'a'); r.put('model.js', 'A\n'); const a = r.commit('사람 서명 A');
+    r.g('checkout', '-qb', 'b', r.base); r.put('engine/x.js', 'B\n'); r.commit('보통 B');
+    r.g('merge', '-q', '--no-ff', '-m', '정상 병합', 'a');
+    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(a)).exit, 0, '병합 커밋의 model.js = 부모 a 의 것');
+    r.g('checkout', '-qb', 'c', r.base); r.put('engine/x.js', 'C\n'); r.commit('보통 C');
+    r.g('merge', '-q', '--no-ff', '--no-commit', 'a'); r.put('model.js', 'A\n// 병합하며 몰래 한 줄\n'); r.commit('몰래 넣은 병합');
+    const v = T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(a));
+    assert.equal(v.exit, 1); assert.match(v.lines.join('\n'), /병합 커밋 [0-9a-f]{8} 이 model\.js 에 부모 어디에도 없던 내용을 넣음/);
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});
+
+test('통합 (PLAN-135 새 파일 구멍): L6 폴더 아래 새 파일(.github/**)도 지키는 자리 — PR #27 의 approval.yml 처럼', () => {
+  const r = setup();
+  try {
+    r.put('.github/workflows/new.yml', 'name: x\n'); const c = r.commit('새 워크플로');
+    const v = T.trustCheck(r.base, 'HEAD', r.dir, ROOT);
+    assert.equal(v.exit, 1); assert.deepEqual(v.guarded, ['.github/workflows/new.yml']);
+    assert.equal(T.trustCheck(r.base, 'HEAD', r.dir, ROOT, human(c)).exit, 0, '사람 서명이면 통과');
+  } finally { rmSync(r.dir, { recursive: true, force: true }); }
+});

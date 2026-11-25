@@ -8,10 +8,10 @@
 
 | 모드 | 파일 | KB |
 |---|---|---|
-| 공통 `common` | 395 | 8782.5 |
+| 공통 `common` | 395 | 8793.4 |
 | 정보 작성 `author` | 576 | 17539.9 |
 | 기초시험 `baseline` | 45 | 287.8 |
-| 디벨롭 `develop` | 222 | 2770.9 |
+| 디벨롭 `develop` | 222 | 2777.3 |
 | 적분장 `field` | 0 | 0.0 |
 | 점검·검증 `inspect` | 137 | 2184.3 |
 
@@ -19,7 +19,7 @@
 
 | 형식 | 모드 | 파일 | KB | 왜 |
 |---|---|---|---|---|
-| `rebuild/**` | common | 38 | 6796.8 | 재건 관리 — 모든 모드가 읽기만 |
+| `rebuild/**` | common | 38 | 6805.8 | 재건 관리 — 모든 모드가 읽기만 |
 | `data/fetched/**` | author | 405 | 13954.0 | 수신함 — 정보 작성·수집이 받는다 (점검·검증이 대조) |
 | `data/db.json` | author | 1 | 696.6 | 지식 원본 — 패치·관문으로만 |
 | `data/patches/**` | author | 71 | 1082.5 | 병합 기록 |
@@ -50,19 +50,19 @@
 | `scenarios.js` | develop | 1 | 1.6 | 시나리오 읽기 |
 | `inbox.js` | develop | 1 | 5.4 | 수신함 해석 |
 | `tests/fixtures/rejections/**` | develop | 29 | 35.7 | 거부 말뭉치 |
-| `tests/**` | develop | 91 | 819.7 | 시험 |
+| `tests/**` | develop | 91 | 824.2 | 시험 |
 | `viewer.html` | inspect | 1 | 33.7 | 화면 — 사람이 읽는 자리 |
 | `index.html` | inspect | 1 | 33.7 | 화면 복사본 |
 | `docs/reports/**` | inspect | 127 | 1802.9 | 보고서 — 읽기·점검 |
-| `docs/textbook/**` | common | 12 | 527.8 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
-| `docs/design/**` | common | 23 | 351.1 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
-| `docs/**` | common | 310 | 996.6 | 안내 문서 |
+| `docs/textbook/**` | common | 12 | 529.3 | 교과서 — 재건으로 읽기 모드가 대신할 글 |
+| `docs/design/**` | common | 23 | 351.3 | 설계 문서 — 장부 단위가 모드를 따로 가짐 |
+| `docs/**` | common | 310 | 996.7 | 안내 문서 |
 | `limitations.md` | author | 1 | 95.5 | 한계 등록부 (생성물) |
-| `CHANGES.md` | develop | 1 | 366.7 | 변경 기록 |
+| `CHANGES.md` | develop | 1 | 367.7 | 변경 기록 |
 | `SCHEMA.md` | author | 1 | 112.6 | 형식 |
 | `*.md` | common | 4 | 65.0 | 최상위 문서 |
-| `.claude/**` | common | 6 | 38.7 | 도구 설정 |
-| `.github/**` | develop | 4 | 11.0 | CI |
+| `.claude/**` | common | 6 | 38.8 | 도구 설정 |
+| `.github/**` | develop | 4 | 11.9 | CI |
 | `.gitignore` | develop | 1 | 0.0 | 설정 |
 | `.mcp.json` | develop | 1 | 0.3 | 세션에 꽂는 MCP 서버 설정 (PLAN-105) |
 

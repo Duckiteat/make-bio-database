@@ -125,7 +125,7 @@
 | ② | 그 커밋의 PR 에 대한 **GitHub 사실**: 병합한 계정(`merged_by`)이 사람 계정 · 사람 계정(PR 작성자 아님)의 APPROVED 리뷰가 **PR 머리 커밋**에 있음 — 봇 병합은 `merged_ai`, 승인 없음 · 승인 뒤 커밋 추가는 `unreviewed`, PR 없음은 `no_pr`, 사실 없음은 `no_facts` (모두 승인 아님) | PLAN-117 · RULE-0552 — 사람 계정 목록은 `rebuild/ci-zone.mjs` HUMANS 한 곳 |
 | ③ | 사실은 **CI 가 모으고 판정도 CI 에서** — `.github/workflows/approval.yml`(main 에 push 될 때 · main 의 코드 · 읽기 권한)이 GitHub API 로 모아 `node rebuild/supervise.mjs verdicts` 로 판정, 결과는 실행 요약에. 이 push 의 PR 병합이 사람 승인이 아니면 빨개짐. 세션의 `evidence` 는 사실 없이 돌면 `no_facts` — 세션은 CI 의 판정을 본다(봇 신원의 세션 도구는 사실을 모을 자리가 아님) | PLAN-117 (워크플로는 L6 — 승인 묶음) |
 | ④ | 실행 환경 밖의 겹 — CI 가 구역 밖 변경을 거부 · 선언 없는 커밋은 사람 서명일 때만 · GitHub main 보호(승인 1 · 코드 소유자 리뷰 · 필수 검사) · AI 의 병합 도구 막음(Claude Code 설정) | PLAN-113 · 114 · DEC-0094 · DEC-0098 |
-| ⑤ (나중) | 높은 위험 변경(권한 · 판정 기준 · 탐지기 보호)은 사람 서명 커밋 + 코드 소유자 승인으로 우회 없이 | PLAN-135 |
+| ⑤ | 지키는 자리(L6 · 판정 코드의 의존 닫힘 · `.github/**` 처럼 폴더 전부)는 **사람 서명 커밋**으로만 바뀐다 — 독립 판정이 커밋마다 서명 사실을 본다(RULE-0553). 사람의 승인은 GitHub 규칙 세트(코드 소유자 리뷰 · 지난 승인 무효)가 병합 전에 — 그래서 L6 PR 도 우회 없이 승인 + 병합 | PLAN-135 · DEC-0101 |
 
 승인으로 **치지 않는 것**: accept 도장의 `by: human` (RP1) · `BIODB_ROLE` · MCP 역할 · AI 가 쓴 결정 기록의 문장 · 하위 에이전트의 검토 · 영수증의 병합 호출 시간 창(보조 표시로만) · 세션이 GitHub 도구로 읽어 온 사실.
 

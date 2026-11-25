@@ -7,9 +7,9 @@
 | `.claude/skills/author/SKILL.md` | 13.7 | 145 |  | 미분류 |
 | `.claude/skills/baseline/SKILL.md` | 4.8 | 72 |  | 미분류 |
 | `.claude/skills/develop/SKILL.md` | 6.6 | 86 |  | 미분류 |
-| `.claude/skills/field/SKILL.md` | 1.8 | 37 |  | 미분류 |
+| `.claude/skills/field/SKILL.md` | 1.9 | 37 |  | 미분류 |
 | `.claude/skills/inspect/SKILL.md` | 6.9 | 89 |  | 미분류 |
-| `CHANGES.md` | 366.7 | 360 |  | 분류됨 1 |
+| `CHANGES.md` | 367.7 | 361 |  | 분류됨 1 |
 | `CLAUDE.md` | 8.1 | 98 | 입구 | 생성물 |
 | `DESIGN-v4.md` | 18.2 | 258 |  | 분류됨 152 |
 | `FEATURES.md` | 14.1 | 193 |  | 분류됨 122 |
@@ -34,7 +34,7 @@
 | `docs/design/scaling-limits.md` | 8.3 | 102 |  | 분류됨 54 |
 | `docs/design/structure-realignment.md` | 20.7 | 208 |  | 분류됨 102 |
 | `docs/design/substrate-axis.md` | 9.2 | 90 |  | 미분류 |
-| `docs/design/supervisor.md` | 18.3 | 215 |  | 미분류 |
+| `docs/design/supervisor.md` | 18.5 | 215 |  | 미분류 |
 | `docs/design/tca-validation-protocol.md` | 11.2 | 112 |  | 분류됨 57 |
 | `docs/design/transfer-judgment.md` | 17.9 | 221 |  | 미분류 |
 | `docs/design/tripartite-governance.md` | 11.2 | 133 |  | 분류됨 95 |
@@ -475,7 +475,7 @@
 | `docs/textbook/06-출력-해석.md` | 22.9 | 197 |  | 분류됨 115 |
 | `docs/textbook/07-AI-작업-절차.md` | 19.4 | 186 |  | 분류됨 117 |
 | `docs/textbook/08-한계와-진화.md` | 7.5 | 77 |  | 분류됨 46 |
-| `docs/textbook/90-부록-자동생성.md` | 152.0 | 888 |  | 생성물 |
+| `docs/textbook/90-부록-자동생성.md` | 152.5 | 890 |  | 생성물 |
 | `limitations.md` | 95.5 | 199 |  | 생성물 |
 | `workspace/21-security-bundles-README.md` | 2.9 | 25 |  | 미분류 |
 | `workspace/CODEOWNERS-README.md` | 2.9 | 25 |  | 미분류 |

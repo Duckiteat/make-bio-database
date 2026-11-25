@@ -572,3 +572,4 @@
 {"from": "RULE-0551", "rel": "because", "to": "code:rebuild/ci-zone.mjs", "by": "judged", "note": "선언 없는 커밋을 모두 사람으로 보면 영수증을 빼고 만든 AI 커밋이 구역 점검을 지남"}
 {"from": "RULE-0550", "rel": "because", "to": "code:rebuild/gate.mjs", "by": "judged", "note": "fail-closed 를 끄면 영수증이 깨진 세션에서 쓰는 도구가 통과"}
 {"from": "RULE-0552", "rel": "because", "to": "code:judicial/supervise_approval.js", "by": "judged", "note": "병합한 계정을 보지 않으면 봇이 병합한 PR 도 승인으로 셈"}
+{"from": "RULE-0553", "rel": "because", "to": "code:rebuild/trust-check.mjs", "by": "judged", "note": "서명 검사를 끄면 봇 커밋의 지키는 자리 변경이 독립 판정을 지남"}

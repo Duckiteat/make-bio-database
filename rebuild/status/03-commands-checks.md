@@ -127,7 +127,7 @@
 | `tests/supervise_report.test.mjs` | 6 |
 | `tests/telomere.test.mjs` | 7 |
 | `tests/transitions.test.mjs` | 5 |
-| `tests/trust_check.test.mjs` | 5 |
+| `tests/trust_check.test.mjs` | 9 |
 | `tests/values.test.mjs` | 4 |
 
 거부 말뭉치: 28
