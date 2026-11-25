@@ -6,12 +6,13 @@
 - **작업**: **승인 증거를 GitHub 사실로** (PLAN-102 의 다음 판 · DEC-0093 ⑤ · DEC-0094 와 같은 길) — 지금 judicial/supervise_approval.js 는 'AI 가 병합했나' 를 영수증의 병합 호출 시간 창(병합 커밋 앞 600 초 · 뒤 60 초)으로 추정한다. 봇 신원 분리(DEC-0090 · 전환 기록 main #20: push · PR actor = daduteria, 병합 = Duckiteat) 뒤에는 GitHub 이 사실을 준다. 설계: ① 사실 = 병합 커밋 → 그 PR(커밋의 PR 조회) · merged_by.login · 리뷰 중 state APPROVED 이고 commit_id = 병합 직전 PR head 인 것의 user.login. ② 판정(순수, 실행 · 쓰기 없음) approved = merged_by ∈ HUMANS 이고 승인 리뷰어 중 HUMANS 하나 이상(PR 작성자 아님 · head 와 같은 커밋 — 승인 뒤 커밋을 밀어 넣으면 무효) · merged_ai = merged_by ∉ HUMANS · unreviewed = 사람 승인 없음 · 사실 없음 = 승인 아님(fail-closed). HUMANS 는 한 곳(ci-zone.mjs HUMANS, L6)에서 가져온다. ③ 지문 대조(PLAN-102 ① ②: 넘긴 바이트가 main 에 처음 나타난 커밋)는 그대로 — 사실 판정은 그 커밋의 PR 에 대해. ④ 영수증 시간 창은 사실이 없을 때의 보조 표시로만 남기고 판정에서 뺌. ⑤ 사실 모으기: CI(trust.yml 처럼 main 코드 · 읽기 권한 토큰)에서 JSON 으로 — 세션의 GitHub 도구는 봇 신원이라 사실을 꾸밀 수 있는 자리가 아니게, 판정은 CI 가 모은 사실만. 남는 한계: 같은 사람 계정이 승인 · 병합(R3) · GitHub 계정 탈취
 - **자리**: judicial/supervise_approval.js 사실 칸 · rebuild/supervise.mjs 모으기(입력 JSON) · .github/workflows (사실 모으기) · 시험 tests/supervise_approval.test.mjs — 판정 코드 · 워크플로는 L6 라 승인 묶음
 - **끝나는 조건**: 봇이 병합 → merged_ai · 사람 승인 없이 사람 병합 → unreviewed · 승인 뒤 커밋 추가 → 승인 아님 · 사람 승인 + 사람 병합 + 지문 일치 → approved 시험 · 사실 파일이 없으면 승인 아님 · 판정 모듈이 실행 · 쓰기를 하지 않음 · 사용자 결정(설계 검토) 뒤 구현
-- **상태**: ◐ 진행 2026-11-24
+- **상태**: ☑ 완료 2026-11-25
 
 ## 결과 (날짜별)
 
 - `2026-11-24` 커밋 전 기록: · 2026-11-24 DEC-0096: 오케스트레이터 계획의 0 바닥에 이 작업을 그대로 씀(따로 두지 않음)
 - `2026-11-24` 커밋 전 기록: · 2026-11-24 구현 1 (DEC-0099 가): 판정 judicial/supervise_approval.js judgeFacts · judge(facts · humans) — 상태 approved · merged_ai · unreviewed · no_pr · no_facts, 설정 막음 · 영수증 시간 창은 판정에서 뺌(보조 표시) · rebuild/supervise.mjs evidence(facts) · hits · verdicts · RULE-0552(변이 caught) · 시험 supervise_approval ①②③⑤⑥⑦ (끝나는 조건 여섯 모두) · 감독 규격 §4.3. PR #26 의 실제 사실(봇이 엶 · Duckiteat 가 머리 111dead 승인 · Duckiteat 병합)로 approved. 남은 것: 워크플로 .github/workflows/approval.yml(L6 — 승인 묶음) · main 에서 실제 실행 확인
+- `2026-11-25` 커밋 전 기록: · 2026-11-25 끝: PR #27 병합 999edd1(Duckiteat · 승인 리뷰 + 우회 · Merge commit). approval 워크플로 첫 실제 실행(run 45529766986, main 의 코드) — '이 push | 999edd1 | approved | PR #27 — Duckiteat 가 병합 · Duckiteat 가 머리 커밋 e4b05e6 을 승인' · SUP-0001 은 not_merged(취소된 상위 작업). 끝나는 조건 여섯은 시험으로 · 실제 실행 확인까지 채움. 남은 권고: 판정 코드(supervise_approval.js · supervise.mjs)를 L6 로 올릴지 — PLAN-135 와 함께
 
 ## 걸어온 길
 
@@ -19,6 +20,8 @@
 - `2026-11-24` 커밋 전 기록 결과 처음 적힘 — 사용자 결정 DEC-0096(처음 DEC-0093 으로 적음) · DEC-0097 — main(PR #25)과 번호가 겹쳐 다시 매겨 적용
 - `2026-11-24` 커밋 전 기록 상태 ☐ 2026-11-24 → ◐ 2026-11-24 — PLAN-117 구현 시작 — 사용자 결정 가(사실과 판정 모두 CI)
 - `2026-11-24` 커밋 전 기록 결과 덧붙음 — PLAN-117 구현 시작 — 사용자 결정 가(사실과 판정 모두 CI)
+- `2026-11-25` 커밋 전 기록 상태 ◐ 2026-11-24 → ☑ 2026-11-25 — PR #27 병합 · approval 워크플로 첫 실행 approved
+- `2026-11-25` 커밋 전 기록 결과 덧붙음 — PR #27 병합 · approval 워크플로 첫 실행 approved
 
 ## 닿는 결정
 

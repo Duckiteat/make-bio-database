@@ -11,11 +11,13 @@
 ## 결과 (날짜별)
 
 - `2026-11-25` 커밋 전 기록: 2026-11-25 선행 DEC-0100: 사람 서명은 사용자 자신의 SSH 서명 키로(Codespaces GPG 는 커미터가 web-flow 라 DEC-0094 판정을 통과 못 함 — PR #27 의 c298b23). 절차서 docs/reports/2026-11-25-human-signing-key-setup.md — 사용자 설정 뒤 다음 사람 커밋의 커미터 · Verified 로 확인
+- `2026-11-25` 커밋 전 기록: · 2026-11-25 찾은 것(RULE-0262): PR #27 에서 independent-judge 가 통과 — 새 파일 .github/workflows/approval.yml 은 main 의 저장 지도 L6 에 아직 없어 지키는 자리로 잡히지 않음. L6 폴더(.github/** 등) 아래 새 파일을 못 잡는 구멍 — 지키는 자리를 저장 지도의 파일 목록이 아니라 모드표 except 의 글롭(.github/** · 문지기 셋 · 판정 코드)에서도 계산해야. 병합에는 코드 소유자 리뷰가 여전히 필요(CODEOWNERS /.github/)라 지금 열린 길은 아님. 또 PR #27 의 rules 실패: c298b23 은 Codespaces GPG 서명(검증됨)이지만 커미터 web-flow → DEC-0100(사용자 SSH 서명 키)
 
 ## 걸어온 길
 
 - `2026-11-24` 커밋 전 기록 계획에 들어옴 (☐ 대기) — 사용자 결정 DEC-0098 — L6 PR 을 우회 없이 (PLAN-135)
 - `2026-11-25` 커밋 전 기록 결과 처음 적힘 — 사용자 결정 DEC-0100 — 사람 서명은 사용자 자신의 키로
+- `2026-11-25` 커밋 전 기록 결과 덧붙음 — PR #27 병합 · approval 워크플로 첫 실행 approved
 
 ## 닿는 결정
 

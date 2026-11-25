@@ -277,7 +277,7 @@
 | `docs/plan/items/PLAN-114.md` | 4.8 | 31 |  | 생성물 |
 | `docs/plan/items/PLAN-115.md` | 11.4 | 40 |  | 생성물 |
 | `docs/plan/items/PLAN-116.md` | 18.7 | 79 |  | 생성물 |
-| `docs/plan/items/PLAN-117.md` | 5.3 | 29 |  | 생성물 |
+| `docs/plan/items/PLAN-117.md` | 6.1 | 32 |  | 생성물 |
 | `docs/plan/items/PLAN-118.md` | 6.2 | 34 |  | 생성물 |
 | `docs/plan/items/PLAN-119.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-120.md` | 1.7 | 21 |  | 생성물 |
@@ -295,7 +295,7 @@
 | `docs/plan/items/PLAN-132.md` | 1.6 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-133.md` | 1.7 | 21 |  | 생성물 |
 | `docs/plan/items/PLAN-134.md` | 1.4 | 21 |  | 생성물 |
-| `docs/plan/items/PLAN-135.md` | 3.2 | 24 |  | 생성물 |
+| `docs/plan/items/PLAN-135.md` | 4.1 | 26 |  | 생성물 |
 | `docs/plan/items/PLAN-H01.md` | 1.4 | 17 |  | 생성물 |
 | `docs/plan/items/STG-00.md` | 0.9 | 21 |  | 생성물 |
 | `docs/plan/items/STG-00p.md` | 1.5 | 23 |  | 생성물 |
