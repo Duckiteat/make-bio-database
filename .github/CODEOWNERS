@@ -6,6 +6,7 @@
 
 /.github/                         @Duckiteat
 /.claude/settings.json            @Duckiteat
+/.claude/hooks/                   @Duckiteat
 /rebuild/gate.mjs                 @Duckiteat
 /rebuild/rules/modes.json         @Duckiteat
 /rebuild/ci-zone.mjs              @Duckiteat

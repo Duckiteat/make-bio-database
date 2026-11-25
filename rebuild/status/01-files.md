@@ -7,12 +7,12 @@
 | 폴더 | 파일 | KB |
 |---|---|---|
 | data | 483 | 16696.4 |
-| rebuild | 38 | 6790.7 |
-| docs | 471 | 3673.8 |
-| (최상위) | 19 | 1036.4 |
-| tests | 120 | 855.4 |
+| rebuild | 38 | 6805.8 |
+| docs | 472 | 3680.1 |
+| (최상위) | 19 | 1037.3 |
+| tests | 120 | 859.9 |
+| workspace | 98 | 682.8 |
 | judicial | 37 | 657.9 |
-| workspace | 93 | 618.1 |
 | attestations | 1 | 299.0 |
 | examples | 47 | 289.6 |
 | engine | 18 | 224.9 |
@@ -21,8 +21,8 @@
 | mcp | 6 | 59.8 |
 | compiler | 8 | 57.8 |
 | schemas | 2 | 40.5 |
-| .claude | 6 | 38.7 |
-| .github | 4 | 11.0 |
+| .claude | 6 | 38.8 |
+| .github | 4 | 11.9 |
 
 ## 큰 파일 25
 
@@ -33,12 +33,12 @@
 | `data/fetched/uniprot/P04637.json` | 854.2 |
 | `data/db.json` | 696.6 |
 | `data/log/genesis-db.json` | 608.9 |
-| `rebuild/state/plan-log.jsonl` | 495.5 |
-| `rebuild/state/plans.jsonl` | 452.3 |
+| `rebuild/state/plan-log.jsonl` | 498.4 |
+| `rebuild/state/plans.jsonl` | 455.4 |
 | `data/fetched/consensus/uniprot/P61769.json` | 390.5 |
 | `data/fetched/uniprot/P61769.json` | 390.5 |
-| `rebuild/rules/changes.jsonl` | 370.8 |
-| `CHANGES.md` | 366.7 |
+| `rebuild/rules/changes.jsonl` | 373.6 |
+| `CHANGES.md` | 367.7 |
 | `data/fetched/consensus/uniprot/P04439.json` | 314.5 |
 | `data/fetched/uniprot/P04439.json` | 314.5 |
 | `attestations/registry.json` | 299.0 |
@@ -51,5 +51,5 @@
 | `data/assumptions.jsonl` | 182.3 |
 | `data/fetched/consensus/uniprot/P62877.json` | 179.6 |
 | `data/fetched/uniprot/P62877.json` | 179.6 |
-| `docs/textbook/storage-map.json` | 177.3 |
-| `rebuild/rules/rules.jsonl` | 176.9 |
+| `docs/textbook/storage-map.json` | 178.2 |
+| `rebuild/rules/rules.jsonl` | 178.1 |

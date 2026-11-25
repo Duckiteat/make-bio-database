@@ -2387,6 +2387,32 @@
       "write_keys": [
         "human"
       ],
+      "path": ".github/**",
+      "format": "GitHub 설정 · 워크플로 (자리 전부)",
+      "writer": "사람",
+      "readers": "GitHub · rebuild/trust-check.mjs",
+      "interpret": "L6 폴더 전부 (PLAN-135) — 독립 판정이 파일 목록에 아직 없는 새 파일(PR #27 의 approval.yml)도 지키는 자리로 잡게. 사람 서명 커밋으로만 바뀐다"
+    },
+    {
+      "class": "management",
+      "area": "guard:gate",
+      "level": "L6",
+      "write_keys": [
+        "human"
+      ],
+      "path": ".claude/hooks/**",
+      "format": "Claude Code 훅 대본 (지금은 없음)",
+      "writer": "사람",
+      "readers": "Claude Code · rebuild/trust-check.mjs",
+      "interpret": "훅을 끄거나 바꾸는 자리 (DEC-0095) — 생기면 독립 판정이 지키는 자리로 본다"
+    },
+    {
+      "class": "management",
+      "area": "guard:gate",
+      "level": "L6",
+      "write_keys": [
+        "human"
+      ],
       "path": ".github/workflows/approval.yml",
       "format": "GitHub Actions 워크플로 (push main)",
       "writer": "사람",

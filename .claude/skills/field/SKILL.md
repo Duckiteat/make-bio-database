@@ -22,11 +22,11 @@ description: "적분장 모드 — 다음 엔진(공간·확률 장)의 설계�
 
 ## 컴퓨터가 막는 규칙
 
-15 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
+16 개 — 어기면 검사 오류에 그 번호(`RULE-…`)가 붙어 나온다. 주제별 번호는 아래 — 한 줄 제목은 `node rebuild/read.mjs RULE-… --depth 0`, 이유·맥락은 깊이 1·2.
 
 - 권한·쓰기 (삼권 분립): RULE-0049 · RULE-0050 · RULE-0051 · RULE-0052 · RULE-0053 · RULE-0054 · RULE-0055
 - 한계: RULE-0138
-- 코드에서 찾은 검사: RULE-0535 · RULE-0536 · RULE-0544 · RULE-0545 · RULE-0550 · RULE-0551 · RULE-0552
+- 코드에서 찾은 검사: RULE-0535 · RULE-0536 · RULE-0544 · RULE-0545 · RULE-0550 · RULE-0551 · RULE-0552 · RULE-0553
 
 ## 형식 설명
 

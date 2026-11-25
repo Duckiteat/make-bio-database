@@ -2,11 +2,11 @@
 
 > 생성물 — `node rebuild/status.mjs --write`(응답이 끝날 때 훅이 돌림). 손으로 고치지 않는다. 읽기 점검용이며 다른 코드가 읽지 않는다.
 
-원본: `rebuild/rules/rules.jsonl` · 규칙 552 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
+원본: `rebuild/rules/rules.jsonl` · 규칙 553 (판단으로 매긴 원래 규칙 단위마다 하나, 사본은 copies). 휴리스틱으로 매긴 규칙 단위 0 은 아직 장부에 묶지 않음.
 
 ## 은퇴 · 예약
 
-살아 있는 규칙 537 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
+살아 있는 규칙 538 · 은퇴 15 (`rebuild/archive/old-hub.json` · `rebuild/archive/p3-p5-layer.json` · `rebuild/archive/merged.json`) · 예약 2
 
 | 규칙 | 예약 대상 | 맥락 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 | 집행 | 규칙 |
 |---|---|
-| machine | 347 |
+| machine | 348 |
 | text | 203 |
 | none | 0 |
 | unchecked | 2 |
@@ -26,13 +26,13 @@
 
 | 곳 | 규칙 |
 |---|---|
-| 1 곳 | 331 |
+| 1 곳 | 332 |
 | 2 곳 | 105 |
 | 3 곳 | 60 |
 | 4 곳 | 33 |
 | 5 곳 이상 | 23 |
 
-## 여러 모드에 걸친 규칙 99 (6 단계 모드 문서에서 빠지면 안 되는 것)
+## 여러 모드에 걸친 규칙 100 (6 단계 모드 문서에서 빠지면 안 되는 것)
 
 | 규칙 | 모드 | 내용 |
 |---|---|---|
@@ -135,6 +135,7 @@
 | RULE-0551 | author · baseline · develop · field · inspect | CI 구역 점검에서 모드 선언(영수증)도 사람 서명도 없는 커밋은 AI 의 '모드 없음' 커밋 — 바꾼 파일(영수증 밖)이 있으면 위반. 사람 서명 = GitHub 이 검증한 서명(verification.verifi |
 | RULE-0550 | author · baseline · develop · field · inspect | 문지기 훅이 예외로 판단하지 못하면 fail-closed — 도구 앞(pre)에서 쓰는 도구(목록에 없는 도구 포함)는 막고, 읽는 도구(Read · Grep · Glob · 읽기 전용 MCP 등)만 통과한다. 영수 |
 | RULE-0552 | author · baseline · develop · field · inspect | 감독 장부의 승인(approved)은 GitHub 사실로만 — 승인 대상 바이트가 처음 나타난 main 커밋의 PR 에서 병합한 계정(merged_by)이 사람 계정이고, 사람 계정(PR 작성자 아님)의 APPROV |
+| RULE-0553 | author · baseline · develop · field · inspect | 독립 판정(trust-check)에서 지키는 자리(저장 지도 L6 — 폴더 글롭으로 새 파일 포함 · 판정 코드의 의존 닫힘) 변경은 그 자리를 바꾼 커밋이 모두 사람 서명 커밋(GitHub 이 검증한 서명 + 커미 |
 
 ## 규칙 여러 개를 한 문장에 묶은 사본 57 (나누면 6 단계 모드 문서가 정확해짐)
 

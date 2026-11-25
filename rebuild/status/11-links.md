@@ -14,7 +14,7 @@
 | L2 | `code:legislative` | 3 | 3 | 1 | 0 |
 | L2 | `code:mcp` | 6 | 2 | 4 | 2 |
 | L2 | `code:migration` | 2 | 0 | 0 | 2 |
-| L2 | `code:tests` | 60 | 27 | 2 | 32 |
+| L2 | `code:tests` | 60 | 27 | 1 | 32 |
 | L2 | `code:tools` | 18 | 7 | 6 | 8 |
 | L2 | `doc:history` | 2 | 0 | 0 | 2 |
 | L2 | `doc:scenario` | 1 | 0 | 0 | 1 |
@@ -33,7 +33,7 @@
 | L5 | `data:dictionary` | 1 | 0 | 0 | 1 |
 | L5 | `data:prereg` | 1 | 1 | 0 | 0 |
 | L6 | `guard:authority` | 7 | 4 | 1 | 3 |
-| L6 | `guard:gate` | 15 | 7 | 5 | 6 |
+| L6 | `guard:gate` | 15 | 9 | 5 | 6 |
 | L6 | `guard:self-tests` | 8 | 4 | 0 | 4 |
 | L6 | `guard:settings` | 1 | 0 | 0 | 1 |
 
