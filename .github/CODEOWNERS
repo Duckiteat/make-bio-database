@@ -3,6 +3,8 @@
 #   사람 계정 목록은 rebuild/ci-zone.mjs 의 HUMANS(DEC-0094 — 사람 서명 커밋의 커미터)와 같아야 한다 — 하나를 바꾸면 둘 다 바꾼다.
 #   이 파일도 L6(.github/**) — 사람 커밋으로만 바뀐다. AI 계정(봇)을 여기 적지 않는다.
 # 자리 목록은 저장 지도(docs/textbook/storage-map.json)의 L6 와 문지기 보호 목록에서 — 하나를 더하면 여기도 더한다.
+# 곧 L6 (DEC-0102 — PLAN-124 MVP 실증 끝에): /judicial/supervise_approval.js · /rebuild/supervise.mjs — 오케스트레이터의 '완료' 를 정하는 승인 판정 코드.
+#   MVP(PLAN-121–123)가 두 파일을 크게 고치는 동안은 L6 가 아니다 — 형식이 굳은 뒤 잠근다.
 
 /.github/                         @Duckiteat
 /.claude/settings.json            @Duckiteat
