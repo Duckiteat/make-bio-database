@@ -12,8 +12,8 @@
 |---|---|---|---|---|---|---|---|
 | `term` | active | token | `model.ID_RE.T` | legislative merge (meta.next.T) | `data/db.json#terms` | 1222 · 212 · 25 | 210 · 없음 2 |
 | `sense` | active | token | `model.ID_RE.D` | legislative merge (meta.next.D) | `data/db.json#senses` | 12150 · 221 · 348 | 212 · 없음 9 |
-| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1092 · 60 · 82 | 57 · 없음 3 |
-| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 3027 · 130 · 216 | 127 · 없음 3 |
+| `step` | active | token | `model.ID_RE.S` | legislative merge (meta.next.S) | `data/db.json#steps` | 1095 · 60 · 83 | 57 · 없음 3 |
+| `limitation` | active | token | `model.ID_RE.L` | legislative merge (meta.next.L) | `data/db.json#limitations` | 3028 · 130 · 217 | 127 · 없음 3 |
 | `observation` | active | token | `model.ID_RE.O` | legislative merge (meta.next.O) | `data/db.json#observations` | 899 · 40 · 110 | 28 · 없음 12 |
 | `value` | active | token | `^V\d{6}$` | legislative foldValues (meta.next.V) | `data/db.json#values` | 103 · 73 · 13 | 68 · 없음 5 |
 | `claim` | active | token | `model.ID_RE.C` | legislative merge (meta.next.C) | `data/db.json#claims` | 13 · 1 · 1 | 0 · 없음 1 |
