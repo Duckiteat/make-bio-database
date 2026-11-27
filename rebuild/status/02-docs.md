@@ -463,6 +463,7 @@
 | `docs/reports/2026-11-27-db-history-and-documents.md` | 5.6 | 64 |  | 미분류 |
 | `docs/reports/2026-11-27-independent-orchestrator-design.md` | 12.8 | 128 |  | 미분류 |
 | `docs/reports/2026-11-27-multi-source-values-design.md` | 12.1 | 134 |  | 미분류 |
+| `docs/reports/2026-11-27-session-wrapup-and-fit-check.md` | 9.0 | 76 |  | 미분류 |
 | `docs/reports/2026-11-27-signal-forms-design-notes.md` | 11.8 | 102 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
