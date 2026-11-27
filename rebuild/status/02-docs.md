@@ -461,6 +461,7 @@
 | `docs/reports/2026-11-24-security-bundles-check.md` | 3.0 | 12 |  | 미분류 |
 | `docs/reports/2026-11-25-human-signing-key-setup.md` | 3.6 | 43 |  | 미분류 |
 | `docs/reports/2026-11-27-db-history-and-documents.md` | 5.6 | 64 |  | 미분류 |
+| `docs/reports/2026-11-27-independent-orchestrator-design.md` | 12.8 | 128 |  | 미분류 |
 | `docs/reports/2026-11-27-multi-source-values-design.md` | 12.1 | 134 |  | 미분류 |
 | `docs/reports/2026-11-27-signal-forms-design-notes.md` | 11.8 | 102 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
