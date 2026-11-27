@@ -168,6 +168,7 @@
 | [DEC-0099](decisions/DEC-0099.md) | 2026-11-24 | 사용자 | 설계 | PLAN-117 — 승인 사실(병합한 계정 · 승인 리뷰)은 CI 가 모으고 판정도 CI 에서, 세션은 그 결과만 읽는다 | 2 |
 | [DEC-0100](decisions/DEC-0100.md) | 2026-11-25 | 사용자 | 방법 | 사람 서명 = 사용자 자신의 SSH 서명 키 — Codespaces 의 GPG verification(GitHub 키 · 커미터 web-flow)은 끈다 | 2 |
 | [DEC-0101](decisions/DEC-0101.md) | 2026-11-25 | 사용자 | 설계 | PLAN-135 조건 ②(머리 커밋에 묶인 사람 승인)는 GitHub 규칙 세트에 맡긴다 — 독립 판정은 사람 서명 커밋 · 병합 커밋 속 변경 · 새 파일 구멍을 본다 | 1 |
+| [DEC-0102](decisions/DEC-0102.md) | 2026-11-25 | 사용자 | 순서 | 승인 판정 코드(judicial/supervise_approval.js · rebuild/supervise.mjs)는 MVP 실증(PLAN-124) 끝에 L6 로 — PLAN-135 확인 PR 은 CODEOWNERS 주석 두 줄 | 4 |
 
 ## 4. 작업 — 결과와 걸어온 길
 
@@ -548,8 +549,8 @@
 ## 근거 점검 (계산 — 원본에서 센 것)
 
 - 작업 140: ☑ 완료 52 · ◐ 진행 16 · ☐ 대기 71 · 보류 보류 1
-- 걸어온 길: 사건 399 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 194)
-- 결정 67 — 누가: 사용자 51 · 사용자와 합의 6 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
+- 걸어온 길: 사건 402 (git 역사 205 — 커밋 80 개, `e4423d8` 2026-10-29 까지 · 그 뒤 197)
+- 결정 68 — 누가: 사용자 52 · 사용자와 합의 6 · 사용자가 AI 에게 맡김 3 · 원문에 누가인지 없음 7
 - 완료인데 결과 글이 없는 작업: PLAN-041
 - 결정이 닿는데 아직 대기인 작업: PLAN-015 · PLAN-016 · PLAN-017 · PLAN-018 · PLAN-019 · PLAN-023 · PLAN-024 · PLAN-038 · PLAN-039 · PLAN-040 · PLAN-028 · PLAN-029 · PLAN-030 · PLAN-031 · PLAN-032 · PLAN-033 · PLAN-034 · PLAN-035 · PLAN-036 · PLAN-050 · PLAN-051 · PLAN-052 · PLAN-053 · PLAN-054 · PLAN-056 · PLAN-057 · PLAN-078 · PLAN-071 · PLAN-082 · PLAN-083 · PLAN-084 · PLAN-086 · PLAN-087 · ASY-01 · ASY-02 · ASY-03 · ASY-04 · ASY-05 · ASY-07 · ASY-09 · ASY-11 · ASY-12 · ASY-13 · ASY-16 · PLAN-089 · PLAN-090 · PLAN-091 · PLAN-097 · PLAN-098 · ASY-10 · PLAN-103 · PLAN-104 · PLAN-112 · PLAN-107 · PLAN-108 · PLAN-109 · PLAN-110 · PLAN-064 · PLAN-119 · PLAN-120 · PLAN-121 · PLAN-122 · PLAN-123 · PLAN-124 · PLAN-125 · PLAN-126 · PLAN-127 · PLAN-128 · PLAN-129 · PLAN-130 · PLAN-131 · PLAN-132 · PLAN-133 · PLAN-134
 - 옛 문서에서 고친 깨진 곳: 14 행: 칸 사이 '||' → ' | ' (2026-10-15 `65f2a3e` – 2026-10-25 `3b0503f` 판에서)

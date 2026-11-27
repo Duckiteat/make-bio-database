@@ -1,0 +1,7 @@
+지문 eaf08d8c82d501f4a037928514b818da71a3f6e1e0ec4f8cf583194bead627d8
+묶음 1 파일 — 자동 0 · 사람 승인 1 · 거부 0
+
+## 사람 승인 필요
+- .github/CODEOWNERS [L6 guard:gate · human] — added_only
+    + # 곧 L6 (DEC-0102 — PLAN-124 MVP 실증 끝에): /judicial/supervise_approval.js · /rebuild/supervise.mjs — 오케스트레이터의 '완료' 를 정하는 승인 판정 코드.
+    + #   MVP(PLAN-121–123)가 두 파일을 크게 고치는 동안은 L6 가 아니다 — 형식이 굳은 뒤 잠근다.
