@@ -462,6 +462,7 @@
 | `docs/reports/2026-11-25-human-signing-key-setup.md` | 3.6 | 43 |  | 미분류 |
 | `docs/reports/2026-11-27-db-history-and-documents.md` | 5.6 | 64 |  | 미분류 |
 | `docs/reports/2026-11-27-multi-source-values-design.md` | 12.1 | 134 |  | 미분류 |
+| `docs/reports/2026-11-27-signal-forms-design-notes.md` | 9.2 | 87 |  | 미분류 |
 | `docs/reports/collection-system-develop-brief.md` | 6.5 | 69 |  | 미분류 |
 | `docs/reports/mhc-dc-maturation-lps-fate.md` | 8.6 | 102 |  | 미분류 |
 | `docs/reports/project-management-system-audit.md` | 40.3 | 477 |  | 미분류 |
